@@ -47,7 +47,6 @@ IRIS_ENABLED=true
 
 IMS_STORAGE_PATH=/data
 IMS_BUFFER_PATH=/data/_buffer
-IRIS_DB_PATH=/data/iris/db
 
 BIOFORMAT_ENABLED="false"
 
