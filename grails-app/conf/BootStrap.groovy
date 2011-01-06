@@ -16,12 +16,12 @@ class BootStrap {
 
       def users = User.list() ?: []
       if (!users) {
-        usersSamples.each { username, profilteAttrs ->
+        usersSamples.each { username, userSamples ->
           def user = new User(
                   username : username,
-                  firstname : profilteAttrs.firstname,
-                  lastname : profilteAttrs.lastname,
-                  email : profilteAttrs.email,
+                  firstname : userSamples.firstname,
+                  lastname : userSamples.lastname,
+                  email : userSamples.email,
                   password : springSecurityService.encodePassword("password"),
                   dateCreated : new Date(),
                   enabled : true)
