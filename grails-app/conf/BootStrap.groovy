@@ -7,7 +7,7 @@ class BootStrap {
     def init = { servletContext ->
       def usersSamples = [
               'rmaree' : [ firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be'],
-              'rlrollus' : [  firstname : 'Loïc', lastname : 'Rollus', email : 'lrollus@ulg.ac.be'],
+              'lrollus' : [  firstname : 'Loïc', lastname : 'Rollus', email : 'lrollus@ulg.ac.be'],
               'stevben' : [  firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be'],
       ]
 
