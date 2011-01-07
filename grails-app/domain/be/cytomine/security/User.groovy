@@ -10,7 +10,7 @@ class User extends SecUser {
   static constraints = {
     firstname blank : false
     lastname blank : false
-    email blank : false
+    email (blank : false, email:true)
     dateCreated blank : false
   }
 
