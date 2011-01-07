@@ -19,13 +19,8 @@ class UserTests extends GrailsUnitTestCase {
         mockDomain(User)
         def today = new Date()
         def user = new User(firstname:"John",lastname:"Doe",email:"johndoe@site.com", dateCreated:today,password:"toto",username:"toto")
-        println user.errors.firstname
-        println user.errors.lastname
-        println user.errors.email
-        println user.errors.dateCreated
-        println user.errors.authority
 
-        if(user.validate()) {
+/*        if(user.validate()) {
            println "ok"
         }
         else {
@@ -33,9 +28,16 @@ class UserTests extends GrailsUnitTestCase {
             user.errors.allErrors.each {
             println it
             }
-        }
+        }*/
+
+        assertTrue 'validation should be OK', user.validate()
+    }
+
+    void testInValidEmail() {
+        mockDomain(User)
+        def today = new Date()
+        def user = new User(firstname:"John",lastname:"Doe",email:"johndoe@", dateCreated:today,password:"toto",username:"toto")
 
         assertFalse 'validation should be OK', user.validate()
     }
-
 }
