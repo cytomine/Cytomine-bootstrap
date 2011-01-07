@@ -18,7 +18,7 @@ class UserTests extends GrailsUnitTestCase {
     void testValidEmail() {
         mockDomain(User)
         def today = new Date()
-        def user = new User(firstname:"John",lastname:"Doe",email:"johndoe@site.com", dateCreated:today,authority:"toto",password:"toto",username:"toto")
+        def user = new User(firstname:"John",lastname:"Doe",email:"johndoe@site.com", dateCreated:today,password:"toto",username:"toto")
         println user.errors.firstname
         println user.errors.lastname
         println user.errors.email
