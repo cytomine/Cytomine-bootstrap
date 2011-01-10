@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 class LoginController {
 
+
 	/**
 	 * Dependency injection for the authenticationTrustResolver.
 	 */
@@ -114,13 +115,14 @@ class LoginController {
 	 * The Ajax success redirect url.
 	 */
 	def ajaxSuccess = {
-		render([success: true, username: springSecurityService.authentication.name] as JSON)
+		render([success: true, username: springSecurityService.authentication.name, followUrl : grailsApplication.config.grails.serverURL] as JSON)
 	}
 
 	/**
 	 * The Ajax denied redirect url.
 	 */
 	def ajaxDenied = {
-		render([error: 'access denied'] as JSON)
+		render([success: false, error: 'access denied'] as JSON)  //data no send trough response but why ?
 	}
+
 }

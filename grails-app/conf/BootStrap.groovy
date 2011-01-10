@@ -7,7 +7,7 @@ class BootStrap {
     def init = { servletContext ->
       def usersSamples = [
               'rmaree' : [ firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be'],
-              'lrollus' : [  firstname : 'Loïc', lastname : 'Rollus', email : 'lrollus@ulg.ac.be'],
+              'lrollus' : [  firstname : 'Loic', lastname : 'Rollus', email : 'lrollus@ulg.ac.be'],
               'stevben' : [  firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be'],
       ]
 
@@ -16,7 +16,7 @@ class BootStrap {
 
       def users = User.list() ?: []
       if (!users) {
-        usersSamples.each { username, userSamples ->
+          usersSamples.each { username, userSamples ->
           def user = new User(
                   username : username,
                   firstname : userSamples.firstname,

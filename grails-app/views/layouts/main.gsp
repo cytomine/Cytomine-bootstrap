@@ -1,16 +1,25 @@
 <html>
-    <head>
-        <title><g:layoutTitle default="Grails" /></title>
-        <link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
-        <link rel="shortcut icon" href="${resource(dir:'images',file:'favicon.ico')}" type="image/x-icon" />
-        <g:layoutHead />
-        <g:javascript library="application" />
-    </head>
-    <body>
-        <div id="spinner" class="spinner" style="display:none;">
-            <img src="${resource(dir:'images',file:'spinner.gif')}" alt="${message(code:'spinner.alt',default:'Loading...')}" />
-        </div>
-        <div id="grailsLogo"><a href="http://grails.org"><img src="${resource(dir:'images',file:'grails_logo.png')}" alt="Grails" border="0" /></a></div>
-        <g:layoutBody />
-    </body>
+      <head>
+       <title><g:layoutTitle default="Grails" /></title>
+		<link rel="stylesheet" href="${createLinkTo(dir:'js',file:'ext-3.3.1/resources/css/ext-all.css')}" />
+		<link rel="stylesheet" href="${createLinkTo(dir:'js',file:'ext-3.3.1/resources/css/xtheme-gray.css')}" />
+		<script type="text/javascript" src="${createLinkTo(dir:'js',file:'ext-3.3.1/adapter/ext/ext-base.js')}" />
+		<script type="text/javascript" src="${createLinkTo(dir:'js',file:'ext-3.3.1/ext-all-debug.js')}" />
+		<script type="text/javascript" charset="utf-8">
+			Ext.BLANK_IMAGE_URL = "${createLinkTo(dir:'js',file:'ext-3.3.1/resources/images/default/s.gif')}";
+		</script>
+		<g:javascript library="application" />
+          <g:layoutHead />
+      </head>
+      <body onload="${pageProperty(name:'body.onload')}">
+            <div id="container">
+			<div id="header">
+			</div>
+			<div id="content">
+				<div id="include">
+					<g:layoutBody />
+				</div>
+			</div>
+		</div>
+      </body>
 </html>

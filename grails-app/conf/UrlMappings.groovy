@@ -6,7 +6,12 @@ class UrlMappings {
 				// apply constraints here
 			}
 		}
-
+        "/api/user.$format"(controller:"restuser"){
+            action = [GET:"list", POST:"save"]
+        }
+        "/api/user/$id.$format"(controller:"restuser"){
+            action = [GET:"show", PUT:"update", DELETE:"delete"]
+        }
 		"/"(view:"/index")
 		"500"(view:'/error')
 	}
