@@ -13,9 +13,6 @@ import grails.test.ControllerUnitTestCase;
 
 
     void testIndex() {
-      def uc = new UserController()
-      uc.index()
-      assertEquals "/user/list", uc.response.redirectedUrl
 	}
 
 	void testList() {
