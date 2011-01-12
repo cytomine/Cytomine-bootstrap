@@ -8,7 +8,7 @@
 		<!--<script type="text/javascript" charset="utf-8">
 			Ext.BLANK_IMAGE_URL = "${createLinkTo(dir:'js',file:'ext-3.3.1/resources/images/default/s.gif')}";
 		</script>-->
-        <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/security/login.js')}" ></script>
+        <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/login/auth.js')}" ></script>
         <g:layoutHead />
       </head>
       <body onload="${pageProperty(name:'body.onload')}">

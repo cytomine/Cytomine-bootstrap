@@ -23,10 +23,10 @@ Ext.samples.samplesCatalog = [{
             desc: 'Demonstrates how one could build a desktop in the browser using Ext components including a module plugin system.'
         },
         /*{
-            text: 'Image Organizer',
+            text: 'Scan Organizer',
             url:  'image-organizer/index.html',
             icon: 'image-organizer.gif',
-            desc: 'Image management application example utilizing MySQL lite and Ext.Direct.',
+            desc: 'Scan management application example utilizing MySQL lite and Ext.Direct.',
             status: 'new'
         }*/
         {
@@ -50,7 +50,7 @@ Ext.samples.samplesCatalog = [{
             status: 'modified'
         },
         {
-            text: 'Image Viewer',
+            text: 'Scan Viewer',
             url:  'organizer/organizer.html',
             icon: 'organizer.gif',
             desc: 'DataView and TreePanel example that demonstrates dragging data items from a DataView into a TreePanel.'

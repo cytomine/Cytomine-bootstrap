@@ -26,7 +26,7 @@ Ext.onReady(function(){
     };
 
     btn = new Ext.Button({
-	    text: "Insert Image",
+	    text: "Insert Scan",
 		handler: choose,
         renderTo: 'buttons'
     });

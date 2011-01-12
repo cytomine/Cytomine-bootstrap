@@ -24,8 +24,8 @@ var store = new Ext.data.JsonStore({
  * <p>This store is configured to consume a returned object of the form:<pre><code>
 {
     images: [
-        {name: 'Image one', url:'/GetImage.php?id=1', size:46.5, lastmod: new Date(2007, 10, 29)},
-        {name: 'Image Two', url:'/GetImage.php?id=2', size:43.2, lastmod: new Date(2007, 10, 30)}
+        {name: 'Scan one', url:'/GetImage.php?id=1', size:46.5, lastmod: new Date(2007, 10, 29)},
+        {name: 'Scan Two', url:'/GetImage.php?id=2', size:43.2, lastmod: new Date(2007, 10, 30)}
     ]
 }
  * </code></pre>

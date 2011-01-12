@@ -14,6 +14,11 @@ class RestuserController {
 
   def springSecurityService
 
+
+    def index = {
+      redirect(controller : "user")
+    }
+
   /* REST API */
 
     def list = {

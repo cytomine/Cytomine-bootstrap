@@ -5,9 +5,9 @@
  * http://www.sencha.com/license
  */
 /*
- * Sample Image Organizer utilizing Ext.Direct
+ * Sample Scan Organizer utilizing Ext.Direct
  * Tagging/Organizing into galleries
- * Image uploading
+ * Scan uploading
  */
 
 Ext.ns('Imgorg','Imgorg.App');
@@ -19,7 +19,7 @@ Imgorg.App = function() {
             upload_url: "php/router.php",
             file_size_limit: "100 MB",
             file_types: "*.*",
-            file_types_description: "Image Files",
+            file_types_description: "Scan Files",
             file_upload_limit: 100,
             file_queue_limit: 100, 
             debug: false,

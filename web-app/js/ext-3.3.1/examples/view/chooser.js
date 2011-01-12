@@ -65,7 +65,7 @@ ImageChooser.prototype = {
 			});
 
 			var cfg = {
-		    	title: 'Choose an Image',
+		    	title: 'Choose an Scan',
 		    	id: 'img-chooser-dlg',
 		    	layout: 'border',
 				minWidth: 500,
@@ -162,7 +162,7 @@ ImageChooser.prototype = {
 			'<div class="details">',
 				'<tpl for=".">',
 					'<img src="{url}"><div class="details-info">',
-					'<b>Image Name:</b>',
+					'<b>Scan Name:</b>',
 					'<span>{name}</span>',
 					'<b>Size:</b>',
 					'<span>{sizeString}</span>',
