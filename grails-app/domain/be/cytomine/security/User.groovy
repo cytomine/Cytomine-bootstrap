@@ -6,6 +6,7 @@ class User extends SecUser {
   String lastname
   String email
   Date dateCreated
+  String justForATestYouCanDeleteMe
 
   static constraints = {
     firstname blank : false
