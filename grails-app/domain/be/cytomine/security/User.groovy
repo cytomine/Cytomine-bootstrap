@@ -13,6 +13,7 @@ class User extends SecUser {
     lastname blank : false
     email (blank : false, email:true)
     dateCreated blank : false
+    justForATestYouCanDeleteMe nullable : true
   }
 
 
