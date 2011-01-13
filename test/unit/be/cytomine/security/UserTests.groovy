@@ -31,7 +31,7 @@ class UserTests extends GrailsUnitTestCase {
         def today = new Date()
         def user = new User(firstname:"John",lastname:"Doe",email:"johndoe@site.com", dateCreated:today,password:"toto",username:"toto")
 
-        if(user.validate()) {
+        /*if(user.validate()) {
            println "ok"
         }
         else {
@@ -39,7 +39,7 @@ class UserTests extends GrailsUnitTestCase {
             user.errors.allErrors.each {
             println it
             }
-        }
+        }    */
 
         assertTrue 'validation should be OK', user.validate()
     }
