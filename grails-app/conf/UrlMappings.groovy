@@ -6,6 +6,7 @@ class UrlMappings {
 				// apply constraints here
 			}
 		}
+
         "/api/user.$format"(controller:"restuser"){
             action = [GET:"list", POST:"save"]
         }
@@ -18,6 +19,10 @@ class UrlMappings {
         "/api/scan/$id.$format"(controller:"restscan"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
+       "/api/image/thumb/$idscan"(controller:"restimage"){
+            action = [GET:"thumb"]
+        }
+
 		"/"(view:"/index")
 		"500"(view:'/error')
 	}

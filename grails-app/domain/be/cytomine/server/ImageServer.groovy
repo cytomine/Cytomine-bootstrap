@@ -6,9 +6,9 @@ class ImageServer {
 
   String name
   String url
+  String className
 
-  static hasMany = [ parameters:ImageServerParameters,  mime:Mime ]
-
+  static hasMany = [mimes:Mime]
 
   static constraints = {
     name blank : false

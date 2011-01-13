@@ -7,12 +7,12 @@ class Mime {
     String extension
     String mimeType
 
+    static belongsTo = [imageServer:ImageServer]
+
     static constraints = {
       extension (maxSize : 5, blank : false)
-      mimeType blank : false
+      mimeType (blank : false, unique : true)
     }
-
-    static belongsTo = {imageServer : ImageServer}
 
     String toString() {
       extension

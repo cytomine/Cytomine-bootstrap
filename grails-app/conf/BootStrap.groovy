@@ -6,7 +6,7 @@ import be.cytomine.warehouse.Mime
 import be.cytomine.warehouse.Data
 import be.cytomine.acquisition.Scanner
 import be.cytomine.server.ImageServer
-import be.cytomine.server.ImageServerParameters
+
 
 class BootStrap {
   def springSecurityService
@@ -78,6 +78,35 @@ class BootStrap {
       }
     }
 
+    /* Image Server */
+    def imageServerSamples =  [
+            [
+                    'name' : 'Adore-Djatoka',
+                    'url' : 'http://139.165.108.140:38/adore-djatoka/resolver',
+                    'className' : 'DjatokaResolver'
+            ]
+    ]
+
+    def imageServers = ImageServer.list() ?: []
+    if (!imageServers) {
+      imageServerSamples.each { item ->
+        ImageServer imageServer = new ImageServer(name : item.name, url : item.url, className : item.className)
+
+        if (imageServer.validate()) {
+          println "Creating image server ${imageServer.name}"
+
+          imageServer.save()
+
+          imageServers << imageServer
+        } else {
+          println("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
+          imageServer.errors.each {
+            err -> println err
+          }
+        }
+      }
+    }
+
     /* MIME Types */
     def mimeSamples = [
             [extension : "jp2", mimeType : "image/jp2"],
@@ -87,11 +116,13 @@ class BootStrap {
     def mimes = Mime.list() ?: []
     if (!mimes) {
       mimeSamples.each { item ->
-        Mime mime = new Mime(extension : item.extension, mimeType : item.mimeType)
+        Mime mime = new Mime(extension : item.extension, mimeType : item.mimeType, imageServer: ImageServer.findById(1))
         if (mime.validate()) {
           println "Creating mime ${mime.extension} : ${mime.mimeType}"
 
           mime.save(flush : true)
+
+
 
           mimes << mime
         } else {
@@ -103,52 +134,7 @@ class BootStrap {
       }
     }
 
-    /* Image Server */
-    def imageServerSamples =  [
-            [
-                    'name' : 'Adore-Djatoka',
-                    'url' : 'http://139.165.108.140:38/adore-djatoka/resolver?',
-                    'parameters' : [
-                      ["key": "url_ver", "value" : "Z39.88-2004"],
-                      ["key":"svc_id","value" :  "info:lanl-repo/svc/getRegion"],
-                      ["key":"svc_val_fmt", "value" : "info:ofi/fmt:kev:mtx:jpeg2000"],
-                      ["key":"svc.format","value" :  "image/jpeg"],
-                      ["key":"svc.level", "value" : "0"],
-                      ["key":"svc.rotate", "value" : "0"],
-                      ["key":"svc.scale", "value" : "192"]
-                    ]
-            ]
-    ]
 
-    /**/
-    def imageServers = ImageServer.list() ?: []
-    if (!imageServers) {
-      imageServerSamples.each { item ->
-        ImageServer imageServer = new ImageServer(name : item.name, url : item.url)
-
-        if (imageServer.validate()) {
-          println "Creating image server ${imageServer.name}"
-
-          Mime mime = Mime.findByExtension("jp2")
-
-          imageServer.addToMime(mime)
-
-          item.parameters.each { it ->
-            ImageServerParameters isp = new ImageServerParameters(key : it.key, value : it.value)
-            imageServer.addToParameters(isp)
-          }
-
-          imageServer.save()
-
-
-        } else {
-          println("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
-          imageServer.errors.each {
-            err -> println err
-          }
-        }
-      }
-    }
     /* Scans */
     def imagesSamples = [
             [filename : 'Boyden - essai _10x_02', path : 'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Boyden/essai_10x_02.one.jp2'],
