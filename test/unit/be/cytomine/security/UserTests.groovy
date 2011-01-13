@@ -49,6 +49,6 @@ class UserTests extends GrailsUnitTestCase {
         def today = new Date()
         def user = new User(firstname:"John",lastname:"Doe",email:"johndoe@", dateCreated:today,password:"toto",username:"toto")
 
-        assertFalse 'validation should be OK', user.validate()
+        assertFalse 'validation should be NOK', user.validate()
     }
 }
