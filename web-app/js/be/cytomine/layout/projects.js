@@ -17,13 +17,13 @@ ULg.Projects = {
                 autoLoad: true,
                 root: 'scan',
                 fields:[
-                    'id','filename', {name:'path', mapping:'data.path'}
+                    'id','filename'
                 ]
             }),
             tpl: new Ext.XTemplate(
                     '<tpl for=".">',
                     '<div class="thumb-wrap" id="{id}">',
-                    '<div class="thumb"><img src="http://139.165.108.140:38/adore-djatoka/resolver?url_ver=Z39.88-2004&rft_id={path}&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.scale=192" title="{filename}"></div>',
+                    '<div class="thumb"><img src="/cytomine-web/api/image/thumb/{id}" title="{filename}"></div>',
                     '<span class="x-editable">{filename}</span></div>',
                     '</tpl>'
             ),

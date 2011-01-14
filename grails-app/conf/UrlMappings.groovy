@@ -7,6 +7,13 @@ class UrlMappings {
 			}
 		}
 
+        /* HOME */
+        "/"(view:"/index")
+
+        /* ERROS */
+        "500"(view:'/error')
+
+        /* API MAPPINGS */
         "/api/user.$format"(controller:"restuser"){
             action = [GET:"list", POST:"save"]
         }
@@ -22,8 +29,8 @@ class UrlMappings {
        "/api/image/thumb/$idscan"(controller:"restimage"){
             action = [GET:"thumb"]
         }
-
-		"/"(view:"/index")
-		"500"(view:'/error')
+        "/api/image/metadata/$idscan"(controller:"restimage"){
+            action = [GET:"metadata"]
+        }
 	}
 }

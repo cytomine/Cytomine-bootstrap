@@ -6,6 +6,7 @@ import be.cytomine.warehouse.Mime
 import be.cytomine.warehouse.Data
 import be.cytomine.acquisition.Scanner
 import be.cytomine.server.ImageServer
+import be.cytomine.server.MimeImageServer
 
 
 class BootStrap {
@@ -78,35 +79,6 @@ class BootStrap {
       }
     }
 
-    /* Image Server */
-    def imageServerSamples =  [
-            [
-                    'name' : 'Adore-Djatoka',
-                    'url' : 'http://139.165.108.140:38/adore-djatoka/resolver',
-                    'className' : 'DjatokaResolver'
-            ]
-    ]
-
-    def imageServers = ImageServer.list() ?: []
-    if (!imageServers) {
-      imageServerSamples.each { item ->
-        ImageServer imageServer = new ImageServer(name : item.name, url : item.url, className : item.className)
-
-        if (imageServer.validate()) {
-          println "Creating image server ${imageServer.name}"
-
-          imageServer.save()
-
-          imageServers << imageServer
-        } else {
-          println("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
-          imageServer.errors.each {
-            err -> println err
-          }
-        }
-      }
-    }
-
     /* MIME Types */
     def mimeSamples = [
             [extension : "jp2", mimeType : "image/jp2"],
@@ -116,12 +88,13 @@ class BootStrap {
     def mimes = Mime.list() ?: []
     if (!mimes) {
       mimeSamples.each { item ->
-        Mime mime = new Mime(extension : item.extension, mimeType : item.mimeType, imageServer: ImageServer.findById(1))
+        Mime mime = new Mime(extension : item.extension,
+                mimeType : item.mimeType,
+                imageServer: ImageServer.findById(1))
         if (mime.validate()) {
           println "Creating mime ${mime.extension} : ${mime.mimeType}"
 
           mime.save(flush : true)
-
 
 
           mimes << mime
@@ -133,6 +106,72 @@ class BootStrap {
         }
       }
     }
+
+    /* Image Server */
+    def imageServerSamples =  [
+            [
+                    'name' : 'Adore-Djatoka',
+                    'url' : 'http://is1.cytomine.be:38',
+                    'service' : '/adore-djatoka/resolver',
+                    'className' : 'DjatokaResolver'
+            ],
+            [
+                    'name' : 'Adore-Djatoka',
+                    'url' : 'http://is2.cytomine.be:38',
+                    'service' : '/adore-djatoka/resolver',
+                    'className' : 'DjatokaResolver'
+            ],
+            [
+                    'name' : 'Adore-Djatoka',
+                    'url' : 'http://is3.cytomine.be:38',
+                    'service' : '/adore-djatoka/resolver',
+                    'className' : 'DjatokaResolver'
+            ],
+            [
+                    'name' : 'Adore-Djatoka',
+                    'url' : 'http://is4.cytomine.be:38',
+                    'service' : '/adore-djatoka/resolver',
+                    'className' : 'DjatokaResolver'
+            ],
+            [
+                    'name' : 'Adore-Djatoka',
+                    'url' : 'http://is5.cytomine.be:38',
+                    'service' : '/adore-djatoka/resolver',
+                    'className' : 'DjatokaResolver'
+            ]
+
+    ]
+
+    def imageServers = ImageServer.list() ?: []
+    if (!imageServers) {
+      imageServerSamples.each { item ->
+        ImageServer imageServer = new ImageServer(
+                name : item.name,
+                url : item.url,
+                service : item.service,
+                className : item.className)
+
+        if (imageServer.validate()) {
+          println "Creating image server ${imageServer.name} : ${imageServer.url}"
+
+          imageServer.save()
+
+          imageServers << imageServer
+
+          /* Link with MIME JP2 */
+          Mime mime = Mime.findByExtension("jp2")
+          MimeImageServer.link(imageServer, mime)
+
+        } else {
+          println("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
+          imageServer.errors.each {
+            err -> println err
+          }
+        }
+      }
+    }
+
+
 
 
     /* Scans */

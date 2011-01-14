@@ -17,7 +17,6 @@ class RestscanController {
     def list = {
        def data = [:]
        data.scan = Scan.list()
-
        if (params.format.toLowerCase() == "json") {
           render data as JSON
        } else if (params.format.toLowerCase() == "xml") {

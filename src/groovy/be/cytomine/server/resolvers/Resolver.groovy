@@ -17,10 +17,11 @@ abstract class Resolver {
 
   public Resolver() {
     this.args = new HashMap<String, String>()
+
   }
 
   public String toURL(String base_url) {
-    String url = base_url + ARGS_PREFIX;
+    String url = base_url  + ARGS_PREFIX;
     int cpt = 0;
     for (String key : args.keySet()) {
       url += key;
@@ -32,7 +33,15 @@ abstract class Resolver {
     return url;
   }
 
-  public abstract String getFileKey()
+  public static Resolver getResolver(String className) {
+     /* Init resolvers, maybe we should load it dynamically with name but fails in grails */
+     Map<String, Object> resolvers = new HashMap<String,Object>()
+     resolvers.put("DjatokaResolver", new DjatokaResolver())
+     return resolvers.get(className)
 
+  }
+
+  public abstract String getThumbUrl(String baseUrl, String imagePath)
+  public abstract String getMetaDataURL(String baseUrl, String imagePath)
 
 }

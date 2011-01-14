@@ -4,5 +4,4 @@ class MimeController {
 
     def scaffold = Mime
 
-
 }

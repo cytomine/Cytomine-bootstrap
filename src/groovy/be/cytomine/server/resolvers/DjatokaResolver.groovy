@@ -10,18 +10,25 @@ class DjatokaResolver extends Resolver {
 
   public DjatokaResolver() {
     super()
-    args.put("rft_id", "")
+  }
+
+  public String getThumbUrl(String baseUrl, String imagePath) {
+    args.put("rft_id", imagePath)
     args.put("url_ver", "Z39.88-2004")
     args.put("svc_id", "info:lanl-repo/svc/getRegion")
     args.put("svc_val_fmt", "info:ofi/fmt:kev:mtx:jpeg2000")
     args.put("svc.format", "image/jpeg")
     args.put("svc.scale", "192")
-    //args.put("svc.level", "8")
-    //args.put("svc.rotate", "0")
+    return toURL(baseUrl)
   }
 
-  public String getFileKey() {
-    "rft_id"
+  public String getMetaDataURL(String baseUrl, String imagePath) {
+    args.put("rft_id", imagePath)
+    args.put("url_ver", "Z39.88-2004")
+    args.put("svc_id", "info:lanl-repo/svc/getMetadata")
+    args.put("svc_val_fmt", "info:ofi/fmt:kev:mtx:jpeg2000")
+    args.put("svc.format", "image/jpeg")
+    return toURL(baseUrl)
   }
 
 }
