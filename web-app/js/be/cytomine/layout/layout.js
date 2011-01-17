@@ -1,19 +1,44 @@
-Ext.BLANK_IMAGE_URL = 'images/default/s.gif';
+Ext.namespace('Cytomine');
 
-Ext.onReady(function(){   
-    var viewport = new Ext.Viewport(
-    {
-        layout: 'fit',
-        items: [ new Ext.TabPanel({
-            activeTab: 0,
-            items: [
-                ULg.Projects.tab()
-                /*,
-                ULg.Viewer.tab(),
-                ULg.ontologies.Manager.tab()*/
-            ]
-            })
+Cytomine.tabs = null;
+
+Ext.onReady(function() {
+    setTimeout(function(){
+        Ext.get('loading').remove();
+        Ext.get('loading-mask').fadeOut({remove:true});
+    }, 250);
+
+    //Create our centre panel with tabs
+    Cytomine.tabs = new Ext.TabPanel({
+        region:'center',
+        renderTo:'content',
+        activeTab:0,
+        margins: '5 5 5 0',
+        resizeTabs:true, // turn on tab resizing
+        minTabWidth: 115,
+        items:[
+            Cytomine.Project.tab()]
+    });
+
+    //Create our layout
+    var viewport = new Ext.Viewport({
+        layout:'border', //set the layout style. Check the Ext JS API for more styles
+        defaults: {
+            collapsible: false,
+            split: true
+        },
+        items: [
+            Cytomine.tabs,
+            {
+                cls: 'docs-header',
+                height: 30,
+                region:'south',
+                xtype:'box',
+                el:'footer',
+                border:false,
+                margins: '0 0 5 0'
+            }
         ]
     });
-    Ext.QuickTips.init();
 });
+

@@ -9,11 +9,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head><title>${scan.filename}</title>
-
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
   <script type="text/javascript">
-    function init(){
+    function initOpenLayers(){
       var urls = ${urls};
       var metadataUrl = "/cytomine-web/api/image/metadata/${scan.id}";
       var OUlayer = new OpenLayers.Layer.OpenURL( "${scan.filename}", urls, {transitionEffect: 'resize', layername: 'basic', format:'image/jpeg', rft_id:'${scan.getData().path}', metadataUrl: metadataUrl} );
@@ -22,25 +19,28 @@
       var maxExtent = new OpenLayers.Bounds(0, 0, metadata.width, metadata.height);
       var tileSize = OUlayer.getTileSize();
       var options = {resolutions: resolutions, maxExtent: maxExtent, tileSize: tileSize, controls: [
-                        new OpenLayers.Control.Navigation(),
-                        new OpenLayers.Control.PanZoomBar(),
-                        new OpenLayers.Control.LayerSwitcher({'ascending':false}),
-                        new OpenLayers.Control.MousePosition(),
-                        new OpenLayers.Control.OverviewMap(),
-                        new OpenLayers.Control.KeyboardDefaults()
-                    ]};
-
-      var map = new OpenLayers.Map( 'map', options);
+        new OpenLayers.Control.Navigation(),
+        new OpenLayers.Control.PanZoomBar(),
+        new OpenLayers.Control.LayerSwitcher({'ascending':false}),
+        new OpenLayers.Control.MousePosition(),
+        new OpenLayers.Control.OverviewMap(),
+        new OpenLayers.Control.KeyboardDefaults()
+      ]};
+      var map = new OpenLayers.Map( 'map${scan.id}', options);
       map.addLayer(OUlayer);
       var lon = metadata.width / 2;
       var lat = metadata.height / 2;
       map.setCenter(new OpenLayers.LonLat(lon, lat), 0);
     }
-  </script>
-</head>
-<body onload="init()">
-<div id="map"></div>
-<div id="overview"></div>
 
+
+    Ext.onReady(function () {
+      initOpenLayers();
+    });
+  </script>
+
+</head>
+<body>
+<div id="map${scan.id}"></div>
 </body>
 </html>

@@ -9,7 +9,7 @@
 
 // Create a standard HttpProxy instance.
 var proxy = new Ext.data.HttpProxy({
-    url: 'http://localhost:8080/cytomine-web/api/user.json'
+    url: '/cytomine-web/api/user.json'
 });
 
 // Typical JsonReader.  Notice additional meta-data params for defining the core attributes of your json-response

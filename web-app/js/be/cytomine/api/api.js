@@ -1,0 +1,2 @@
+Ext.namespace('Cytomine.api');
+
