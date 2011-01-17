@@ -17,6 +17,8 @@ class Scan {
     scanner blank : false
   }
 
+
+
   def getThumbURL()  {
     Collection<ImageServer> imageServers = getData().getMime().imageServers()
     def urls = []
@@ -27,9 +29,7 @@ class Scan {
     }
     def index = (Integer) Math.round(Math.random()*(urls.size()-1)) //select an url randomly
     return urls[index]
-
   }
-
 
   def getMetadataURL()  {
     Set<ImageServer> imageServers = getData().getMime().imageServers()
@@ -40,6 +40,19 @@ class Scan {
       urls << url
     }
      def index = (Integer) Math.round(Math.random()*(urls.size()-1)) //select an url randomly
+    return urls[index]
+  }
+
+
+  def getCropURL(int topLeftX, int topLeftY, int width, int height, int zoom)  {
+    Collection<ImageServer> imageServers = getData().getMime().imageServers()
+    def urls = []
+    imageServers.each {
+      Resolver resolver = Resolver.getResolver(it.className)
+      String url = resolver.getCropURL(it.getBaseUrl(), getData().getPath(),topLeftX,topLeftY,width,height,zoom)
+      urls << url
+    }
+    def index = (Integer) Math.round(Math.random()*(urls.size()-1)) //select an url randomly
     return urls[index]
   }
 }

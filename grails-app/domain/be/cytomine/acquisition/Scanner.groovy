@@ -5,6 +5,7 @@ class Scanner {
     String brand
     String model
 
+
     static constraints = {
     }
 
