@@ -1,6 +1,7 @@
 package be.cytomine.api
 
 import be.cytomine.project.Scan
+import groovy.xml.MarkupBuilder
 
 class RestimageController {
 
@@ -42,6 +43,29 @@ class RestimageController {
     else {
       response.contentType = "image/jpeg"; response.getOutputStream() << out.toByteArray()
     }
+  }
+
+
+  def retrieval = {
+    //Sample code to call Pixit-Retrival. Must be more generic (use with crop,...)
+    println "retrieval"
+    Scan scan = Scan.findById(params.idscan)
+    println "scan: " + params.idscan
+
+    def writer = new StringWriter()
+    def xml = new MarkupBuilder(writer)
+    xml.SEARCHPICTURE(k:10,path:scan.data.path)
+
+    println "xml=" + writer.toString()
+
+    //TODO: send to socket au server:1234
+
+    //TODO: get xml similar list from socket
+
+    //TODO: decode this list
+
+    //TODO: print pictures
+
   }
 
 
