@@ -7,7 +7,7 @@ class MimeImageServer {
   ImageServer imageServer
   Mime mime
 
-  static MimeImageServer link(imageServer, mime) {
+  static MimeImageServer link(ImageServer imageServer, Mime mime) {
     def mis = MimeImageServer.findByImageServerAndMime(imageServer, mime)
     if (!mis)
     {
@@ -19,7 +19,7 @@ class MimeImageServer {
     return mis
   }
 
-  static void unlink(imageServer, mime) {
+  static void unlink(ImageServer imageServer,Mime mime) {
     def mis = MimeImageServer.findByImageServerAndMime(imageServer, mime)
     if (mis)
     {

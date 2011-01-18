@@ -5,23 +5,23 @@ import be.cytomine.server.MimeImageServer
 
 class Mime {
 
-    String extension
-    String mimeType
+  String extension
+  String mimeType
 
-    static belongsTo = ImageServer
-    static hasMany = [mis:MimeImageServer]
+  static belongsTo = ImageServer
+  static hasMany = [mis:MimeImageServer]
 
-    static constraints = {
-      extension (maxSize : 5, blank : false)
-      mimeType (blank : false, unique : true)
+  static constraints = {
+    extension (maxSize : 5, blank : false)
+    mimeType (blank : false, unique : true)
 
-    }
+  }
 
-    def imageServers() {
-		return mis.collect{it.imageServer}
-	}
+  def imageServers() {
+    return mis.collect{it.imageServer}
+  }
 
-    String toString() {
-      extension
-    }
+  String toString() {
+    extension
+  }
 }

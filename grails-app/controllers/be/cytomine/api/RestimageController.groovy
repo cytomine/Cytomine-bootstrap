@@ -1,10 +1,6 @@
 package be.cytomine.api
 
 import be.cytomine.project.Scan
-import be.cytomine.server.ImageServer
-import be.cytomine.server.resolvers.*
-
-
 
 class RestimageController {
 
@@ -15,7 +11,7 @@ class RestimageController {
     response.contentLength = out.size();
     if (request.method == 'HEAD') { render(text: "", contentType: "image/jpeg"); }
     else {
-      response.contentType = "image/jpeg"; response.outputStream << out.toByteArray()
+      response.contentType = "image/jpeg"; response.getOutputStream() << out.toByteArray()
     }
   }
 
@@ -29,7 +25,7 @@ class RestimageController {
 
   def crop = {
     Scan scan = Scan.findById(params.idscan)
-    println params.topleftx
+
     int topLeftX = Integer.parseInt(params.topleftx)
     int topLeftY = Integer.parseInt(params.toplefty)
     int width = Integer.parseInt(params.width)
@@ -44,7 +40,7 @@ class RestimageController {
       render(text: "", contentType: "image/jpeg");
     }
     else {
-      response.contentType = "image/jpeg"; response.outputStream << out.toByteArray()
+      response.contentType = "image/jpeg"; response.getOutputStream() << out.toByteArray()
     }
   }
 

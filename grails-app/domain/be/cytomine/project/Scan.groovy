@@ -11,6 +11,9 @@ class Scan {
   Data data
   Scanner scanner
 
+  static belongsTo = Project
+  static hasMany = [projectScan:ProjectScan]
+
   static constraints = {
     filename blank : false
     data blank : false
@@ -39,7 +42,7 @@ class Scan {
       String url = resolver.getMetaDataURL(it.getBaseUrl(), getData().getPath())
       urls << url
     }
-     def index = (Integer) Math.round(Math.random()*(urls.size()-1)) //select an url randomly
+    def index = (Integer) Math.round(Math.random()*(urls.size()-1)) //select an url randomly
     return urls[index]
   }
 
