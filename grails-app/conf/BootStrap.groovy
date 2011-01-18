@@ -161,7 +161,7 @@ class BootStrap {
           user.save(flush : true)
 
           /* Create a special group the user */
-          def userGroupName = item.username + "_private_group"
+          def userGroupName = item.username
           def userGroup = [
                   [name : userGroupName]
           ]
@@ -339,7 +339,7 @@ class BootStrap {
         def data = new Data(path : item.path, mime : mime)
 
         if (data.validate()) {
-          println "Create data ${data.path}..."
+          println "Creating data ${data.path}..."
 
           data.save(flush : true)
 
@@ -352,7 +352,7 @@ class BootStrap {
           )
 
           if (scan.validate()) {
-            println "Create scan : ${scan.filename}..."
+            println "Creating scan : ${scan.filename}..."
 
             scan.save(flush : true)
 
