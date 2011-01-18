@@ -14,7 +14,6 @@ class Mime {
   static constraints = {
     extension (maxSize : 5, blank : false)
     mimeType (blank : false, unique : true)
-
   }
 
   def imageServers() {

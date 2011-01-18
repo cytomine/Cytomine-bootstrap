@@ -18,4 +18,8 @@ class Project {
     updated (nullable : true)
     deleted (nullable : true)
   }
+
+  String toString() {
+    name
+  }
 }

@@ -20,7 +20,9 @@ class Scan {
     slide nullable : true
   }
 
-
+  String toString() {
+    filename + " (" + slide.getName() + ")"
+  }
 
   def getThumbURL()  {
     Collection<ImageServer> imageServers = getData().getMime().imageServers()

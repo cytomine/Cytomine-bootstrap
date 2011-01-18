@@ -17,6 +17,8 @@ class User extends SecUser {
     dateCreated blank : false
   }
 
-
+  String toString() {
+    firstname + lastname + " (" + username + ")"
+  }
 
 }

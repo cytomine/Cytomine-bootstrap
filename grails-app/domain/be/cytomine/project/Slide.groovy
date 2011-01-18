@@ -11,6 +11,10 @@ class Slide {
     }
   }
 
+  String toString() {
+    name
+  }
+
   static hasMany = [projectSlide:ProjectSlide, scan:Scan]
 
   static constraints = {

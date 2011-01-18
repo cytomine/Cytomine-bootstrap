@@ -2,8 +2,12 @@ package be.cytomine.laboratory
 
 class Source {
 
-    String name
+  String name
 
-    static constraints = {
-    }
+  static constraints = {
+  }
+
+  String toString() {
+    name
+  }
 }
