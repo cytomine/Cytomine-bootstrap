@@ -11,7 +11,7 @@ class Group {
 
   String name
 
-  static belongsTo = User
-  static hasMany = [userGroup:UserGroup, project:Project, projectGroup:ProjectGroup]
+  static belongsTo = Project
+  static hasMany = [userGroup:UserGroup, projectGroup:ProjectGroup]
 
 }

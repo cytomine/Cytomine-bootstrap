@@ -1,8 +1,8 @@
-package be.cytomine.project
+package be.cytomine.laboratory
 
 import grails.test.*
 
-class ProjectScanTests extends GrailsUnitTestCase {
+class SourceControllerTests extends ControllerUnitTestCase {
     protected void setUp() {
         super.setUp()
     }

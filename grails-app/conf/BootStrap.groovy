@@ -11,6 +11,8 @@ import be.cytomine.security.Group
 import be.cytomine.security.UserGroup
 import be.cytomine.project.Project
 import be.cytomine.project.ProjectGroup
+import be.cytomine.project.Slide
+import be.cytomine.project.ProjectSlide
 
 class BootStrap {
   def springSecurityService
@@ -87,18 +89,24 @@ class BootStrap {
 
     /* Projects */
     def projectSamples = [
-            [name : "GIGA-DEV", updated : null, deleted : null,  group : [[ name :"GIGA"]]]
+            [name : "GIGA-DEV", updated : null, deleted : null,  groups : [[ name :"GIGA"]]]
     ]
 
     createProjects(projectSamples)
 
+    /* Slides */
+    def slideSamples = [
+            [name : "testSlide", order : 8, projects : [[name : "GIGA-DEV"]]]
+    ]
+    createSlides(slideSamples)
+
     /* Scans */
     def scanSamples = [
-            [filename : 'Boyden - essai _10x_02', path : 'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Boyden/essai_10x_02.one.jp2'],
-            [filename : 'Aperio - 003' , path : 'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Aperio/003.jp2'],
-            [filename : 'Aperio - 2005900969-2', path : 'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Aperio/2005900969-2.jp2'],
-            [filename : 'Agar_seul_1', path : 'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Cops/Agar_seul_1.jp2'],
-            [filename : 'Curcu2', path : 'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Cops/Curcu2.jp2']
+            [filename : 'Boyden - essai _10x_02', path : 'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Boyden/essai_10x_02.one.jp2', slide : "testSlide"],
+            [filename : 'Aperio - 003' , path : 'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Aperio/003.jp2', slide : "testSlide"],
+            [filename : 'Aperio - 2005900969-2', path : 'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Aperio/2005900969-2.jp2', slide : "testSlide"],
+            [filename : 'Agar_seul_1', path : 'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Cops/Agar_seul_1.jp2', slide : "testSlide"],
+            [filename : 'Curcu2', path : 'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Cops/Curcu2.jp2', slide : "testSlide"]
     ]
     createScans(scanSamples)
 
@@ -276,7 +284,7 @@ class BootStrap {
           project.save(flush : true)
 
           /* Handle groups */
-          item.group.each { elem ->
+          item.groups.each { elem ->
             Group group = Group.findByName(elem.name)
             ProjectGroup.link(project, group)
           }
@@ -293,6 +301,32 @@ class BootStrap {
     }
   }
 
+  def createSlides(slideSamples) {
+    def slides = Slide.list() ?: []
+    if (!slides) {
+      slideSamples.each {item->
+        def slide = new Slide(name : item.name, order : item.order)
+
+        if (slide.validate()) {
+          println "Creating slide  ${item.name}..."
+
+          slide.save(flush : true)
+
+          /* Link to projects */
+          item.projects.each { elem ->
+            Project project = Project.findByName(elem.name)
+            ProjectSlide.link(project, slide)
+          }
+
+        } else {
+          println("\n\n\n Errors in slide boostrap for ${item.name}!\n\n\n")
+          slide.errors.each {
+            err -> println err
+          }
+        }
+      }
+    }
+  }
 
   def createScans(scanSamples) {
     def scans = Scan.list() ?: []
@@ -313,8 +347,10 @@ class BootStrap {
           def scan = new Scan(
                   filename: item.filename,
                   data : data,
-                  scanner : scanner
+                  scanner : scanner,
+                  slide : Slide.findByName(item.slide)
           )
+
           if (scan.validate()) {
             println "Create scan : ${scan.filename}..."
 

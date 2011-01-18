@@ -1,15 +1,14 @@
 package be.cytomine.acquisition
 
-class Scanner {
+class Scanner extends Digitizer {
 
-    String brand
-    String model
+  String maxResolution
 
+  static constraints = {
+    maxResolution nullable : true
+  }
 
-    static constraints = {
-    }
-
-    String toString() {
-      brand + "-" + model
-    }
+  String toString() {
+    brand + "-" + model
+  }
 }

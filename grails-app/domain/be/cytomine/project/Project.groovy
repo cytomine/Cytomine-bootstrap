@@ -9,9 +9,9 @@ class Project {
   Date updated
   Date deleted
 
-  static hasMany = [scan:Scan, projectScan:ProjectScan, projectGroup:ProjectGroup]
+  static hasMany = [projectSlide:ProjectSlide, projectGroup:ProjectGroup]
 
-  static belongsTo = Group
+  //static belongsTo = Group
 
   static constraints = {
     name ( maxSize : 100)

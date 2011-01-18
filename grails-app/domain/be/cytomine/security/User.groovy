@@ -7,7 +7,8 @@ class User extends SecUser {
   String email
   Date dateCreated
 
-  static hasMany = [group:Group, userGroup:UserGroup]
+  static belongsTo = Group
+  static hasMany = [userGroup:UserGroup]
 
   static constraints = {
     firstname blank : false

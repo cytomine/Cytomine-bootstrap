@@ -4,20 +4,20 @@ import be.cytomine.warehouse.Data
 import be.cytomine.acquisition.Scanner
 import be.cytomine.server.resolvers.Resolver
 import be.cytomine.server.ImageServer
-import java.net.URL
 
 class Scan {
   String filename
   Data data
   Scanner scanner
+  Slide slide
 
-  static belongsTo = Project
-  static hasMany = [projectScan:ProjectScan]
+  static belongsTo = Slide
 
   static constraints = {
-    filename blank : false
-    data blank : false
-    scanner blank : false
+    filename (blank : false)
+    data (blank : false)
+    scanner (blank : false , nullable : true)
+    slide nullable : true
   }
 
 
