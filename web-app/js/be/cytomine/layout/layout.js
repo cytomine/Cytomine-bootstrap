@@ -11,18 +11,20 @@ Ext.onReady(function() {
     //Create our centre panel with tabs
     Cytomine.tabs = new Ext.TabPanel({
         region:'center',
-        renderTo:'content',
         activeTab:0,
+        //autoScroll:true,
         margins: '5 5 5 0',
         resizeTabs:true, // turn on tab resizing
         minTabWidth: 115,
         items:[
-            Cytomine.Project.tab()]
+            Cytomine.Project.tab()
+            ]
     });
 
     //Create our layout
     var viewport = new Ext.Viewport({
         layout:'border', //set the layout style. Check the Ext JS API for more styles
+        defaults: {autoScroll: true},
         defaults: {
             collapsible: false,
             split: true
@@ -32,9 +34,9 @@ Ext.onReady(function() {
             {
                 cls: 'docs-header',
                 height: 30,
-                region:'south',
+                region:'north',
                 xtype:'box',
-                el:'footer',
+                el:'header',
                 border:false,
                 margins: '0 0 5 0'
             }
