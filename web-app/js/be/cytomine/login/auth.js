@@ -39,8 +39,8 @@ Ext.onReady(function(){
         url: '/cytomine-web/j_spring_security_check',
         waitMsg: 'Processing Request',
         success: function(loginForm, resp){
-            alert(resp.result.followUrl);
-            //window.location = resp.result.followUrl;
+            //alert(resp.result.followUrl);
+            window.location = resp.result.followUrl;
             //successMsg('Success', 'Welcome to Cytomine "'+ resp.result.username);
 
         },

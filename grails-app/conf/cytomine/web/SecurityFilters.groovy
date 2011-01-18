@@ -6,10 +6,10 @@ class SecurityFilters {
     def filters = {
         all(controller:'*', action:'*') {
             before = {
-               /*if(controllerName != "login" && actionName != "auth" && !springSecurityService.isLoggedIn()) {
+               if(controllerName != "login" && actionName != "auth" && !springSecurityService.isLoggedIn()) {
                   redirect(controller:'login', action:'auth')
                   return false
-               }*/
+               }
             }
             after = {
                 
