@@ -1,4 +1,4 @@
-package be.cytomine.api
+package be.cytomine.api.project
 
 import grails.test.*
 
