@@ -1,56 +1,15 @@
-/**
- * Created by IntelliJ IDEA.
- * User: stevben
- * Date: 9/01/11
- * Time: 21:33
- * To change this template use File | Settings | File Templates.
- */
+Ext.namespace('Cytomine.auth');
 
 // Path to the blank image should point to a valid location on your server
 Ext.BLANK_IMAGE_URL = './extjs/resources/images/default/s.gif';
+
+
 
 Ext.onReady(function(){
 
     Ext.QuickTips.init();
 
-    var successMsg = function(title, msg) {
-        Ext.Msg.show({
-            title: title,
-            msg: msg,
-            minWidth: 200,
-            modal: true,
-            icon: Ext.Msg.INFO,
-            buttons: Ext.Msg.OK
-        });
-    };
-
-    var failureMsg = function(title, msg) {
-        Ext.Msg.show({
-            title: title,
-            msg: msg,
-            minWidth: 200,
-            modal: true,
-            icon: Ext.Msg.ERROR,
-            buttons: Ext.Msg.OK
-        });
-    };
-
-    var handleLoginResponse =  {
-        url: '/cytomine-web/j_spring_security_check',
-        waitMsg: 'Processing Request',
-        success: function(loginForm, resp){
-            //alert(resp.result.followUrl);
-            window.location = resp.result.followUrl;
-            //successMsg('Success', 'Welcome to Cytomine "'+ resp.result.username);
-
-        },
-        failure : function(loginForm, resp) {
-            //alert(resp.result.error); //TO DO error is null but why ?
-            failureMsg('Error', 'Oops ');
-        }
-    };
-
-    var loginForm = new Ext.form.FormPanel({
+    Cytomine.auth.loginForm = new Ext.form.FormPanel({
         frame:true,
         renderTo: 'login',
         width:280,
@@ -81,18 +40,34 @@ Ext.onReady(function(){
             id : 'submit_login',
             text: 'Submit',
             handler: function(){
-                if(loginForm.getForm().isValid()){
-                    loginForm.getForm().submit(handleLoginResponse);
+                if(Cytomine.auth.loginForm.getForm().isValid()){
+                    Cytomine.auth.loginForm.getForm().submit(Cytomine.auth.handleLoginResponse);
                 }
             }
         }],
         keys: [
             { key: [Ext.EventObject.ENTER], handler: function() {
-                loginForm.getForm().submit(handleLoginResponse)
+                Cytomine.auth.loginForm.getForm().submit(Cytomine.auth.handleLoginResponse)
             }
             }
         ]
     });
+
+
+    Cytomine.auth.handleLoginResponse =  {
+        url: '/cytomine-web/j_spring_security_check',
+        waitMsg: 'Processing Request',
+        success: function(loginForm, resp){
+            //alert(resp.result.followUrl);
+            window.location = resp.result.followUrl;
+            //successMsg('Success', 'Welcome to Cytomine "'+ resp.result.username);
+
+        },
+        failure : function(loginForm, resp) {
+            //alert(resp.result.error); //TO DO error is null but why ?
+            failureMsg('Error', 'Oops ');
+        }
+    };
 
     var loginWindow = new Ext.Window({
         title: 'Welcome to Cytomine',
@@ -102,7 +77,7 @@ Ext.onReady(function(){
         closable: false,
         resizable: false,
         draggable: false,
-        items: [loginForm]
+        items: [Cytomine.auth.loginForm]
     });
 
     loginWindow.show();

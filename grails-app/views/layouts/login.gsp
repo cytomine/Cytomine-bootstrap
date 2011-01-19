@@ -9,6 +9,9 @@
 			Ext.BLANK_IMAGE_URL = "${createLinkTo(dir:'js',file:'ext-3.3.1/resources/images/default/s.gif')}";
 		</script>-->
         <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/login/auth.js')}" ></script>
+        <!-- DEV -->
+        <script type="text/javascript" src="${createLinkTo(dir:'js',file:'dev.js')}" ></script>
+        <!-- /DEV -->
         <g:layoutHead />
       </head>
       <body onload="${pageProperty(name:'body.onload')}">
