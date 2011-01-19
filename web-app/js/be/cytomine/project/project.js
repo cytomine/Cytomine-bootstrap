@@ -30,8 +30,8 @@ Cytomine.Project = {
             listeners: {
                 click: function(dataview, index, node, e) {
                     var data = dataview.getStore().getAt(index);
-                    //Cytomine.Browser.openScan(data.get('id'),data.get('id'), data.get('filename')); //multiple tabs
-                    Cytomine.Browser.openScan('browser', data.get('id'), data.get('filename')); //unique tabs
+                    Cytomine.Browser.openScan(data.get('id'),data.get('id'), data.get('filename')); //multiple tabs
+                    //Cytomine.Browser.openScan('browser', data.get('id'), data.get('filename')); //unique tabs
                 }
             }
         });

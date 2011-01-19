@@ -1,4 +1,4 @@
-package be.cytomine.api
+package be.cytomine.api.security
 
 import be.cytomine.security.User
 import grails.converters.*

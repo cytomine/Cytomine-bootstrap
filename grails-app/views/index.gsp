@@ -10,7 +10,7 @@
   <div style="float:right; margin-bottom: 10px;margin-right: 10px;color: #CCC">
     <a href="http://www.cytomine.be/" style="padding:5px">Cytomine Project</a> |
     <a href="http://www.giga.ulg.ac.be/" style="padding:5px">GIGA ULg</a> |
-    <sec:ifLoggedIn><a href="/cytomine-web/logout">Logout</a></sec:ifLoggedIn>
+    <sec:ifLoggedIn><sec:username /> (<g:link controller="logout">Logout</g:link>)</sec:ifLoggedIn>
   </div>
 </div>
 <div id="content"></div>

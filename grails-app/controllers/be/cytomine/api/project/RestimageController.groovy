@@ -1,4 +1,4 @@
-package be.cytomine.api
+package be.cytomine.api.project
 
 import be.cytomine.project.Scan
 import groovy.xml.MarkupBuilder
