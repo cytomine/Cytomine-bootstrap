@@ -35,5 +35,9 @@ class UrlMappings {
         "/api/image/crop/$idscan/$topleftx/$toplefty/$width/$height/$zoom"(controller:"restimage"){
             action = [GET:"crop"]
         }
+         "/api/image/retrieval/$idscan/$maxsimilarpictures"(controller:"restimage"){
+            action = [GET:"retrieval"]
+        }
+        //"/api/image/retrieval/$idscan/$maxsimilarpictures"(view:"/retrieval")
 	}
 }
