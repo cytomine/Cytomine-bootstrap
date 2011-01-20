@@ -31,7 +31,7 @@ Cytomine.Retrieval = {
                     '<tpl for=".">',
                     '<div class="thumb-wrap" id="{sim}">',
                     '<div class="thumb"><img src="{path}" title=""></div>',
-                    '<span class="x-editable">{path}</span></div>',
+                    '<span class="x-editable">{sim}</span></div>',
                     '</tpl>'
                     ),
             listeners: {

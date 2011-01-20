@@ -46,29 +46,42 @@ class RestImageController {
     }
   }
 
-
   def retrieval = {
-    //Sample code to call Pixit-Retrival. Must be more generic (use with crop,...)
-    println "retrieval"
     Scan scan = Scan.findById(params.idscan)
-    println "scan: " + params.idscan
-
+    int maxSimilarPictures = Integer.parseInt(params.maxsimilarpictures)
     def writer = new StringWriter()
     def xml = new MarkupBuilder(writer)
-    xml.SEARCHPICTURE(k:10,path:scan.data.path)
+    //xml.SEARCHPICTURE(k:maxSimilarPictures,path:scan.getThumbURL())
+     xml.SEARCHPICTURE(k:maxSimilarPictures,path:"/var/www/images/neohisto/study_NEO13-grp_CNS-NEO13_CNS_2.10_4_3_01.tif-tile_9567.png")
+    String req = writer.toString()
+    println "***Connect socket..."
+    Socket s = new Socket("139.165.108.28", 1230)
+    println "***Write request on socket..." + req
+    s << req +"\n"
+    s << "STOP\n"
+    String xmlString =""
+    println "***Read response from socket..."
+    s.withStreams { inStream, outStream ->
+      def reader = inStream.newReader()
 
-    println "xml=" + writer.toString()
+      String line = ""
+      while (!line.equals("STOP"))
+      {
+        println line
+        line = reader.readLine()
+        if(!line.equals("STOP")) xmlString = xmlString + line;
+      }
+    }
 
-    //TODO: send to socket au server:1234
+    println "***Read: "+  xmlString;
 
-    //TODO: get xml similar list from socket
-
-    //TODO: decode this list
-
-    //TODO: print pictures
-
+    def xmlObj = new XmlParser().parseText(xmlString)
+    def list = []
+    xmlObj.pict.each {
+      list << [path:it.attribute("id"),sim:it.attribute("sim")]
+    }
+    render list as JSON
   }
-
 
 }
 
