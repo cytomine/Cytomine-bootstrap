@@ -17,17 +17,20 @@ Ext.onReady(function() {
         resizeTabs:true, // turn on tab resizing
         minTabWidth: 115,
         items:[
-            Cytomine.Project.tab()
+            Cytomine.Project.tab() ,
+             Cytomine.Retrieval.tab()
+
             ]
     });
 
     //Create our layout
     var viewport = new Ext.Viewport({
         layout:'border', //set the layout style. Check the Ext JS API for more styles
-        defaults: {autoScroll: true},
         defaults: {
             collapsible: false,
-            split: true
+            split: true,
+            autoScroll: true
+
         },
         items: [
             Cytomine.tabs,

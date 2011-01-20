@@ -10,6 +10,8 @@
 
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/layout/layout.js')}" ></script>
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/project.js')}" ></script>
+  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/retrieval.js')}" ></script>
+
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/browser.js')}" ></script>
   <script type="text/javascript" charset="utf-8">
     Ext.BLANK_IMAGE_URL = "${createLinkTo(dir:'js',file:'ext-3.3.1/resources/images/default/s.gif')}";
