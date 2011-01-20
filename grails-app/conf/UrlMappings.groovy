@@ -14,30 +14,32 @@ class UrlMappings {
         "500"(view:'/error')
 
         /* API MAPPINGS */
-        "/api/user.$format"(controller:"restuser"){
+        "/api/users.$format"(controller:"restUser"){
             action = [GET:"list", POST:"save"]
         }
-        "/api/user/$id.$format"(controller:"restuser"){
+        "/api/user/$id.$format"(controller:"restUser"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
-        "/api/scan.$format"(controller:"restscan"){
+        "/api/scan.$format"(controller: "restScan"){
             action = [GET:"list", POST:"save"]
         }
-        "/api/scan/$id.$format"(controller:"restscan"){
+        "/api/scan/$id.$format"(controller: "restScan"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
-       "/api/image/thumb/$idscan"(controller:"restimage"){
+       "/api/image/thumb/$idscan"(controller: "restImage"){
             action = [GET:"thumb"]
         }
-        "/api/image/metadata/$idscan"(controller:"restimage"){
+        "/api/image/metadata/$idscan"(controller: "restImage"){
             action = [GET:"metadata"]
         }
-        "/api/image/crop/$idscan/$topleftx/$toplefty/$width/$height/$zoom"(controller:"restimage"){
+        "/api/image/crop/$idscan/$topleftx/$toplefty/$width/$height/$zoom"(controller: "restImage"){
             action = [GET:"crop"]
         }
-         "/api/image/retrieval/$idscan/$maxsimilarpictures"(controller:"restimage"){
+        "/api/projects.$format"(controller: "restProject"){
+            action = [GET:"list"]
+        }
+        "/api/image/retrieval/$idscan/$maxsimilarpictures"(controller: "restImage") {
             action = [GET:"retrieval"]
         }
-        //"/api/image/retrieval/$idscan/$maxsimilarpictures"(view:"/retrieval")
 	}
 }
