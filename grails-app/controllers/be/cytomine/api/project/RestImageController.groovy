@@ -2,6 +2,7 @@ package be.cytomine.api.project
 
 import be.cytomine.project.Scan
 import groovy.xml.MarkupBuilder
+import grails.converters.*
 
 class RestImageController {
 
