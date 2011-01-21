@@ -17,8 +17,8 @@ Ext.onReady(function() {
         resizeTabs:true, // turn on tab resizing
         minTabWidth: 115,
         items:[
-            Cytomine.Project.tab() ,
-             Cytomine.Retrieval.tab()
+            Cytomine.Project.tab()
+
 
             ]
     });
