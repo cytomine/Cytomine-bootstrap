@@ -52,7 +52,7 @@ class RestImageController {
     def writer = new StringWriter()
     def xml = new MarkupBuilder(writer)
     //xml.SEARCHPICTURE(k:maxSimilarPictures,path:scan.getThumbURL())
-     xml.SEARCHPICTURE(k:maxSimilarPictures,path:"/var/www/images/neohisto/study_NEO13-grp_CNS-NEO13_CNS_2.10_4_3_01.tif-tile_9567.png")
+     xml.SEARCHPICTURE(k:maxSimilarPictures,path:"/var/www/images/neohisto100000/study_NEO4-grp_Curcu_INH-NEO_4_Curcu_INH_1.40_3_5_01.tif-tile_5914.png")
     String req = writer.toString()
     println "***Connect socket..."
     Socket s = new Socket("139.165.108.28", 1230)
