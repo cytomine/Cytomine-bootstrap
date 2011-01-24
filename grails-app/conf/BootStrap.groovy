@@ -13,6 +13,7 @@ import be.cytomine.project.Project
 import be.cytomine.project.ProjectGroup
 import be.cytomine.project.Slide
 import be.cytomine.project.ProjectSlide
+import be.cytomine.command.Transaction
 
 class BootStrap {
   def springSecurityService
@@ -182,7 +183,7 @@ class BootStrap {
     def users = User.list() ?: []
     if (!users) {
       usersSamples.each { item ->
-        def user = new User(
+        User user = new User(
                 username : item.username,
                 firstname : item.firstname,
                 lastname : item.lastname,
@@ -192,7 +193,7 @@ class BootStrap {
                 enabled : true)
         if (user.validate()) {
           println "Creating user ${user.username}..."
-
+         // user.addToTransactions(new Transaction())
           user.save(flush : true)
 
           /* Create a special group the user */

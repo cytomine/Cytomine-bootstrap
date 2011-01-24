@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="${createLinkTo(dir:'js',file:'ext-3.3.1/resources/css/xtheme-gray.css')}" />
 
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/layout/layout.js')}" ></script>
+  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/layout/toolbar.js')}" ></script>
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/project.js')}" ></script>
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/retrieval.js')}" ></script>
 

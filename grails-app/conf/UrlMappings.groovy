@@ -14,7 +14,7 @@ class UrlMappings {
         "500"(view:'/error')
 
         /* API MAPPINGS */
-        "/api/users.$format"(controller:"restUser"){
+        "/api/user.$format"(controller:"restUser"){
             action = [GET:"list", POST:"save"]
         }
         "/api/user/$id.$format"(controller:"restUser"){

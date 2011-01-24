@@ -10,7 +10,6 @@ class Project {
   Date deleted
 
   static hasMany = [projectSlide:ProjectSlide, projectGroup:ProjectGroup]
-
   //static belongsTo = Group
 
   static constraints = {

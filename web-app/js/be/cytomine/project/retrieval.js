@@ -25,6 +25,8 @@ Cytomine.Retrieval = {
             store: new Ext.data.JsonStore({
                 url: '/cytomine-web/api/image/retrieval/'+idScan+'/100',
                 autoLoad: true,
+                title: tabTitle,
+                closable:true,
                 root: '',
                 fields:[
                     'path','sim'
