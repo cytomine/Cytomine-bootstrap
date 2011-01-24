@@ -1,6 +1,6 @@
 package be.cytomine.acquisition
 
-class Scanner extends Digitizer {
+class Scanner extends Instrument {
 
   String maxResolution
 

@@ -2,7 +2,7 @@ package be.cytomine.acquisition
 
 import grails.test.*
 
-class DigitizerTests extends GrailsUnitTestCase {
+class InstrumentTests extends GrailsUnitTestCase {
     protected void setUp() {
         super.setUp()
     }

@@ -1,6 +1,6 @@
 package be.cytomine.acquisition
 
-class Digitizer {
+class Instrument {
 
   String brand
   String model
