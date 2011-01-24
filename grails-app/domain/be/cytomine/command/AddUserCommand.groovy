@@ -1,7 +1,6 @@
 package be.cytomine.command
 
 import be.cytomine.security.User
-import grails.converters.*
 
 class AddUserCommand extends UndoRedoCommand {
 
@@ -20,7 +19,6 @@ class AddUserCommand extends UndoRedoCommand {
     } else {
       return [data : newUser, status : 403]
     }
-
   }
 
   def undo() {
@@ -32,7 +30,7 @@ class AddUserCommand extends UndoRedoCommand {
   def redo() {
     def newUser = User.getUserFromData(data)
     newUser.save()
-    idUser = newUser.id //TO DO :problem here !!! we break command which have references to this object
+    idUser = newUser.id //TO DO :problem here !!! we break command which had references to this object
     this.save()
     return [data : newUser, status : 200]
   }

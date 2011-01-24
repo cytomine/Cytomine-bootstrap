@@ -10,7 +10,6 @@ class ImageServer {
   String className
 
   static hasMany = [mimes:Mime, mis:MimeImageServer]
-  //static mappedBy = [mimes:"extension"]
 
   static constraints = {
     name blank : false

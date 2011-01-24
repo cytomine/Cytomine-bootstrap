@@ -1,7 +1,5 @@
 package be.cytomine.security
 
-import grails.converters.*
-
 class UserController {
 
     def springSecurityService

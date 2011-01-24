@@ -1,7 +1,5 @@
 package be.cytomine.project
 
-import be.cytomine.security.Group
-
 class Project {
 
   String name
@@ -10,7 +8,6 @@ class Project {
   Date deleted
 
   static hasMany = [projectSlide:ProjectSlide, projectGroup:ProjectGroup]
-  //static belongsTo = Group
 
   static constraints = {
     name ( maxSize : 100)

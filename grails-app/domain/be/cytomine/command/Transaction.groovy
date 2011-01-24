@@ -1,7 +1,5 @@
 package be.cytomine.command
 
-import be.cytomine.security.User
-
 class Transaction {
 
   Date dateBegin = new Date()
