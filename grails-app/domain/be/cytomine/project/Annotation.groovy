@@ -5,8 +5,9 @@ class Annotation {
 
    String name
    MultiPolygon location
+   Scan scan
 
-  static belongsTo = Scan
+    static belongsTo = [scan:Scan]
 
     static constraints = {
     }

@@ -109,9 +109,10 @@ class BootStrap {
     ]
     createSlides(slideSamples)
 
+
     /* Scans */
     def scanSamples = [
-            [filename: 'Boyden - essai _10x_02',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Boyden/essai_10x_02.one.jp2',slide : 'testslide' ],
+            [filename: 'Boyden - essai _10x_02',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Boyden/essai_10x_02.one.jp2',slide : 'testslide'],
             [filename: 'Aperio - 003',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Aperio/003.jp2',slide : 'testslide' ],
             [filename: 'Aperio - 2005900969-2', path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Aperio/2005900969-2.jp2',slide : 'testslide' ],
             [filename: 'bottom-nocompression', path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/bottom-nocompression-crop-8levels-256.jp2',slide : 'testslide' ],
@@ -153,12 +154,15 @@ class BootStrap {
             [filename: 'HPg 7',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-7.jp2',slide : 'testslide' ]
     ]
     createScans(scanSamples)
-    /* Slides */
+
+      /* Annotations */
     def annotationSamples = [
-            [name : "annot1", location : "POLYGON((2000 1000, 30 0, 40 10, 30 20, 2000 1000))"],
-            [name : "annot2", location : "POLYGON((20 10, 30 50, 40 10, 30 20, 20 10))"]
+            [name : "annot3", location : ["POLYGON((2000 1000, 30 0, 40 10, 30 20, 2000 1000))","POLYGON((20 10, 30 0, 40 10, 30 20, 20 10))"], scan: [filename: "Boyden - essai _10x_02"]],
+            [name : "annot2", location : ["POLYGON((20 10, 30 50, 40 10, 30 20, 20 10))"],scan: [filename: "Boyden - essai _10x_02"]]
     ]
     createAnnotations(annotationSamples)
+
+
 
     def destroy = {
     }
@@ -405,6 +409,16 @@ class BootStrap {
             println "Creating scan : ${scan.filename}..."
 
             scan.save(flush : true)
+/*
+            *//* Link to projects *//*
+            item.annotations.each { elem ->
+              Annotation annotation = Annotation.findByName(elem.name)
+              println 'ScanAnnotation:' + scan.filename + " " + annotation.name
+              ScanAnnotation.link(scan, annotation)
+              println 'ScanAnnotation: OK'
+            }*/
+
+
 
             scans << scan
           } else {
@@ -431,18 +445,22 @@ class BootStrap {
     def annotations = Annotation.list() ?: []
     if (!annotations) {
       annotationSamples.each { item ->
-        //def mime = Mime.findByExtension("jp2")
-        //def scanner = Scanner.findByBrand("gigascan")
-        //def data = new Data(path : item.path, mime : mime)
-        GeometryFactory geometryFactory = new GeometryFactory()
-        def polygon1 =   new WKTReader().read(item.location)
-        Polygon[] polygons = new Polygon[1];
-        polygons[0] = polygon1;
-        def multipoly = geometryFactory.createMultiPolygon(polygons)
-        def annotation = new Annotation(name: item.name, location:multipoly)
 
-        //def point = geometryFactory.createPoint(new Coordinate(4,5))
-        //def annotation = new Annotation(name: "My Annotation", location:multipoly)
+        //println "Creating annotation " + item.name
+        GeometryFactory geometryFactory = new GeometryFactory()
+        Polygon[] polygons = new Polygon[(item.location).size()];
+        //println "Building polygones: "   + (item.location).size()
+        int i=0
+        (item.location).each {itemPoly ->
+          polygons[i] =  new WKTReader().read(itemPoly);
+          //println "Building polygones " + itemPoly
+          i++;
+        }
+
+        def multipoly = geometryFactory.createMultiPolygon(polygons)
+        def scanParent = Scan.findByFilename(item.scan.filename)
+
+        def annotation = new Annotation(name: item.name, location:multipoly, scan:scanParent)
 
         if (annotation.validate()) {
           println "Creating annotation : ${annotation.name}..."
@@ -461,35 +479,4 @@ class BootStrap {
       }
     }
   }
-
-  /*def createAnnotation() {
-    GeometryFactory geometryFactory = new GeometryFactory();
-
-    WKTReader reader = new WKTReader( geometryFactory );
-    Polygon polygon = (Polygon) reader.read("POLYGON((20 10, 30 0, 40 10, 30 20, 20 10))");
-
-    def polygon1 =   new WKTReader().read("POLYGON((2000 1000, 30 0, 40 10, 30 20, 2000 1000))")
-    def polygon2 =   new WKTReader().read("POLYGON((20 10, 30 50, 40 10, 30 20, 20 10))")
-    // def polygon3 =   geometryFactory.create
-
-
-    Polygon[] polygons = new Polygon[2];
-    polygons[0] = polygon1;
-    polygons[1] = polygon2;
-
-    def multipoly = geometryFactory.createMultiPolygon(polygons)
-
-    //def point = geometryFactory.createPoint(new Coordinate(4,5))
-    def annotation = new Annotation(name: "My Annotation", location:multipoly)
-    if(annotation.validate()) {
-      println "Creating annotation " + " My Annotation"
-      annotation.save(flush : true)
-    }
-    else {
-      println("\n\n\n Errors in slide boostrap for My Annotation!\n\n\n")
-      slide.errors.each {
-        err -> println err
-      }
-    }
-  }*/
 }
