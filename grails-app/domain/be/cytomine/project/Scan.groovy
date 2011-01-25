@@ -12,6 +12,7 @@ class Scan {
   Slide slide
 
   static belongsTo = Slide
+  static hasMany = [ annotations : Annotation ]
 
   static constraints = {
     filename (blank : false)

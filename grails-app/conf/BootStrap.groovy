@@ -13,7 +13,15 @@ import be.cytomine.project.Project
 import be.cytomine.project.ProjectGroup
 import be.cytomine.project.Slide
 import be.cytomine.project.ProjectSlide
+import be.cytomine.project.Annotation
 import be.cytomine.command.Transaction
+import com.vividsolutions.jts.geom.Point
+import com.vividsolutions.jts.geom.Coordinate
+import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.geom.PrecisionModel
+import com.vividsolutions.jts.io.WKTReader
+import com.vividsolutions.jts.geom.Polygon
+
 
 class BootStrap {
   def springSecurityService
@@ -145,6 +153,12 @@ class BootStrap {
             [filename: 'HPg 7',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-7.jp2',slide : 'testslide' ]
     ]
     createScans(scanSamples)
+    /* Slides */
+    def annotationSamples = [
+            [name : "annot1", location : "POLYGON((2000 1000, 30 0, 40 10, 30 20, 2000 1000))"],
+            [name : "annot2", location : "POLYGON((20 10, 30 50, 40 10, 30 20, 20 10))"]
+    ]
+    createAnnotations(annotationSamples)
 
     def destroy = {
     }
@@ -193,7 +207,7 @@ class BootStrap {
                 enabled : true)
         if (user.validate()) {
           println "Creating user ${user.username}..."
-         // user.addToTransactions(new Transaction())
+          // user.addToTransactions(new Transaction())
           user.save(flush : true)
 
           /* Create a special group the user */
@@ -410,4 +424,72 @@ class BootStrap {
       }
     }
   }
+
+
+
+  def createAnnotations(annotationSamples) {
+    def annotations = Annotation.list() ?: []
+    if (!annotations) {
+      annotationSamples.each { item ->
+        //def mime = Mime.findByExtension("jp2")
+        //def scanner = Scanner.findByBrand("gigascan")
+        //def data = new Data(path : item.path, mime : mime)
+        GeometryFactory geometryFactory = new GeometryFactory()
+        def polygon1 =   new WKTReader().read(item.location)
+        Polygon[] polygons = new Polygon[1];
+        polygons[0] = polygon1;
+        def multipoly = geometryFactory.createMultiPolygon(polygons)
+        def annotation = new Annotation(name: item.name, location:multipoly)
+
+        //def point = geometryFactory.createPoint(new Coordinate(4,5))
+        //def annotation = new Annotation(name: "My Annotation", location:multipoly)
+
+        if (annotation.validate()) {
+          println "Creating annotation : ${annotation.name}..."
+
+          annotation.save(flush : true)
+
+          annotations << annotation
+        } else {
+          println("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
+          scan.errors.each {
+            err -> println err
+          }
+
+        }
+
+      }
+    }
+  }
+
+  /*def createAnnotation() {
+    GeometryFactory geometryFactory = new GeometryFactory();
+
+    WKTReader reader = new WKTReader( geometryFactory );
+    Polygon polygon = (Polygon) reader.read("POLYGON((20 10, 30 0, 40 10, 30 20, 20 10))");
+
+    def polygon1 =   new WKTReader().read("POLYGON((2000 1000, 30 0, 40 10, 30 20, 2000 1000))")
+    def polygon2 =   new WKTReader().read("POLYGON((20 10, 30 50, 40 10, 30 20, 20 10))")
+    // def polygon3 =   geometryFactory.create
+
+
+    Polygon[] polygons = new Polygon[2];
+    polygons[0] = polygon1;
+    polygons[1] = polygon2;
+
+    def multipoly = geometryFactory.createMultiPolygon(polygons)
+
+    //def point = geometryFactory.createPoint(new Coordinate(4,5))
+    def annotation = new Annotation(name: "My Annotation", location:multipoly)
+    if(annotation.validate()) {
+      println "Creating annotation " + " My Annotation"
+      annotation.save(flush : true)
+    }
+    else {
+      println("\n\n\n Errors in slide boostrap for My Annotation!\n\n\n")
+      slide.errors.each {
+        err -> println err
+      }
+    }
+  }*/
 }
