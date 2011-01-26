@@ -155,10 +155,13 @@ class BootStrap {
     ]
     createScans(scanSamples)
 
-      /* Annotations */
+    /* Annotations */
     def annotationSamples = [
-            [name : "annot3", location : ["POLYGON((2000 1000, 30 0, 40 10, 30 20, 2000 1000))","POLYGON((20 10, 30 0, 40 10, 30 20, 20 10))"], scan: [filename: "Boyden - essai _10x_02"]],
-            [name : "annot2", location : ["POLYGON((20 10, 30 50, 40 10, 30 20, 20 10))"],scan: [filename: "Boyden - essai _10x_02"]]
+            //[name : "annot3", location : ["POLYGON((2000 1000, 30 0, 40 10, 30 20, 2000 1000))","POLYGON((20 10, 30 0, 40 10, 30 20, 20 10))"], scan: [filename: "Boyden - essai _10x_02"]],
+            //[name : "annot2", location : ["POLYGON((20 10, 30 50, 40 10, 30 20, 20 10))"],scan: [filename: "Boyden - essai _10x_02"]]
+            [name : "annot3", location : ["POINT(10000 10000)"], scan: [filename: "Boyden - essai _10x_02"]],
+            [name : "annot2", location : ["POINT(5000 5000)"],scan: [filename: "Boyden - essai _10x_02"]],
+            [name : "annot4", location : ["POLYGON((5000 20000, 20000 17000, 20000 10000, 10000 7500, 5000 20000))","POLYGON((10000 15000, 15000 12000, 12000 12000, 10000 15000))"],scan: [filename: "Boyden - essai _10x_02"]]
     ]
     createAnnotations(annotationSamples)
 
@@ -444,24 +447,29 @@ class BootStrap {
   def createAnnotations(annotationSamples) {
     def annotations = Annotation.list() ?: []
     if (!annotations) {
+      def annotation = null
+      GeometryFactory geometryFactory = new GeometryFactory()
       annotationSamples.each { item ->
-
-        //println "Creating annotation " + item.name
-        GeometryFactory geometryFactory = new GeometryFactory()
-        Polygon[] polygons = new Polygon[(item.location).size()];
-        //println "Building polygones: "   + (item.location).size()
-        int i=0
-        (item.location).each {itemPoly ->
-          polygons[i] =  new WKTReader().read(itemPoly);
-          //println "Building polygones " + itemPoly
-          i++;
+        /* Read spatial data an create annotation*/
+        if(item.location[0].startsWith('POINT'))
+        {
+          Point point = new WKTReader().read(item.location[0]);
+          def scanParent = Scan.findByFilename(item.scan.filename)
+          annotation = new Annotation(name: item.name, location:point, scan:scanParent)
         }
-
-        def multipoly = geometryFactory.createMultiPolygon(polygons)
-        def scanParent = Scan.findByFilename(item.scan.filename)
-
-        def annotation = new Annotation(name: item.name, location:multipoly, scan:scanParent)
-
+        else
+        {
+          Polygon[] polygons = new Polygon[(item.location).size()];
+          int i=0
+          (item.location).each {itemPoly ->
+            polygons[i] =  new WKTReader().read(itemPoly);
+            i++;
+          }
+          def multipoly = geometryFactory.createMultiPolygon(polygons)
+          def scanParent = Scan.findByFilename(item.scan.filename)
+          annotation = new Annotation(name: item.name, location:multipoly, scan:scanParent)
+          }
+        /* Save annotation */
         if (annotation.validate()) {
           println "Creating annotation : ${annotation.name}..."
 
@@ -475,7 +483,6 @@ class BootStrap {
           }
 
         }
-
       }
     }
   }

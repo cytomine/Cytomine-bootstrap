@@ -1,10 +1,10 @@
 package be.cytomine.project
-import com.vividsolutions.jts.geom.MultiPolygon
+import com.vividsolutions.jts.geom.Geometry
 
 class Annotation {
 
    String name
-   MultiPolygon location
+   Geometry location
    Scan scan
 
     static belongsTo = [scan:Scan]
