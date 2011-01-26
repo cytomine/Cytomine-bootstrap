@@ -41,5 +41,16 @@ class UrlMappings {
         "/api/image/retrieval/$idscan/$maxsimilarpictures"(controller: "restImage") {
             action = [GET:"retrieval"]
         }
+
+        /* Annotation */
+        "/api/annotation.$format"(controller:"restAnnotation"){
+            action = [GET:"list"]
+        }
+        "/api/annotation/$idannotation.$format"(controller:"restAnnotation"){
+            action = [GET:"show"]
+        }
+        "/api/annotation/scan/$idscan.$format"(controller:"restAnnotation"){
+            action = [GET:"scanlist"]
+        }
 	}
 }
