@@ -43,7 +43,7 @@ var store = new Ext.data.Store({
     writer: writer    // <-- plug a DataWriter into the store just as you would a Reader
 });
 
-// load the store immeditately
+// load the store immediately
 store.load();
 
 ////

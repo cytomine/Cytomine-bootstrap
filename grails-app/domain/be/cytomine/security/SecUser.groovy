@@ -17,14 +17,20 @@ class SecUser {
 
   static hasMany = [userGroup:UserGroup, transactions:Transaction]
 
+  def beforeInsert() {
+    if (id == null)
+      id = User.generateID()
+  }
 
   static constraints = {
     username blank: false, unique: true
     password blank: false
+    id unique : true
   }
 
   static mapping = {
     password column: '`password`'
+    id (generator:'assigned', unique : true)
   }
 
   Set<SecRole> getAuthorities() {
@@ -72,4 +78,13 @@ class SecUser {
     }
     return transaction
   }
+
+  static int generateID() {
+    int max = 0
+    User.list().each { user->
+      max = Math.max(max, user.id)
+    }
+    return ++max
+  }
+
 }

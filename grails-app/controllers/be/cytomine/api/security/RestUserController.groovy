@@ -7,6 +7,10 @@ import be.cytomine.command.AddUserCommand
 import be.cytomine.command.stack.UndoStack
 import be.cytomine.command.Transaction
 import be.cytomine.command.Command
+import be.cytomine.command.EditUserCommand
+import be.cytomine.security.Group
+import be.cytomine.security.UserGroup
+import be.cytomine.command.DeleteUserCommand
 
 /**
  * Cytomine @ GIGA-ULG
@@ -28,20 +32,19 @@ class RestUserController {
   def list = {
     def data = [:]
     data.user = User.list()
-    if (params.format.toLowerCase() == "json") {
-      render data as JSON
-    } else if (params.format.toLowerCase() == "xml") {
-      render data as XML
+
+    withFormat {
+      json { render data as JSON }
+      xml { render data as XML }
     }
   }
 
   def show = {
     if(params.id && User.exists(params.id)) {
       def data = User.findById(params.id)
-      if (params.format.toLowerCase() == "json") {
-        render data as JSON
-      } else if (params.format.toLowerCase() == "xml") {
-        render data as XML
+      withFormat {
+        json { render data as JSON }
+        xml { render data as XML }
       }
     } else {
       SendNotFoundResponse()
@@ -49,11 +52,8 @@ class RestUserController {
   }
 
   def save = {
-    User user = User.findByUsername("stevben")
-
-    Command addUserCommand = new AddUserCommand(data : request.JSON.toString())
-
-
+    User user = User.findById(3)
+    Command addUserCommand = new AddUserCommand(postData : request.JSON.toString())
     Transaction currentTransaction = user.getNextTransaction()
     currentTransaction.addToCommands(addUserCommand)
     def result = addUserCommand.execute()
@@ -61,66 +61,64 @@ class RestUserController {
     if (result.status == 201) {
       addUserCommand.save()
       new UndoStack(command : addUserCommand, user: user).save()
-      response.status = result.status
-      if (params.format.toLowerCase() == "json")
-        render result.data as JSON
-      else if (params.format.toLowerCase() == "xml")
-        render result.data as XML
     }
-    else if (result.status == 403) {
-      sendValidationFailedResponse(result.data, 403)
+
+    response.status = result.status
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML }
     }
   }
+
 
   def update = {
-    User user = User.get(params.id)
-    def data
-    if (!user) {
-      SendNotFoundResponse()
+    User user = User.findById(3)
+    Command editUserCommand = new EditUserCommand(postData : request.JSON.toString())
+    Transaction currentTransaction = user.getNextTransaction()
+    currentTransaction.addToCommands(editUserCommand)
+    def result = editUserCommand.execute()
+
+    if (result.status == 200) {
+      if (!editUserCommand.validate()) {
+        sendValidationFailedResponse(editUserCommand, 403)
+      }
+      editUserCommand.save()
+      new UndoStack(command : editUserCommand, user: user).save()
     }
 
-    if (params.format.toLowerCase() == "json") {
-      data = request.JSON
-      user.username = data.user.username
-      user.firstname = data.user.firstname
-      user.lastname = data.user.lastname
-      user.email = data.user.email
-      user.password = springSecurityService.encodePassword(data.user.password)
-      user.enabled = true
+    response.status = result.status
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML }
     }
-    else if (params.format.toLowerCase() == "xml") {
-      data = request.XML
-      user.username = data.user.username.user.text()
-      user.firstname = data.user.firstname.text()
-      user.lastname = data.user.lastname.text()
-      user.email = data.user.email.text()
-      user.password = springSecurityService.encodePassword(data.user.password.text())
-      user.enabled = true
-    }
+  }
 
-    if (user.validate()) {
-      user.save();
-      response.status = 201
-      render ""
+  def delete =  {
+    User user = User.findById(3)
+    def postData = ([id : params.id]) as JSON
+    def result = null
+
+    if (params.id == "3") {
+      result = [data : [success : false, message : "The user can't delete herself"], status : 403]
     } else {
-      sendValidationFailedResponse(user, 403)
+      Command deleteUserCommand = new DeleteUserCommand(postData : postData.toString())
+      Transaction currentTransaction = user.getNextTransaction()
+      currentTransaction.addToCommands(deleteUserCommand)
+      result = deleteUserCommand.execute()
+
+      if (result.status == 204) {
+        deleteUserCommand.save()
+        new UndoStack(command : deleteUserCommand, user: user).save()
+      }
+    }
+    response.status = result.status
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML }
     }
   }
 
-
-  def delete = {
-    User user = User.get(params.id)
-    if (!user) {
-      SendNotFoundResponse()
-    }
-    SecUserSecRole.removeAll(user)
-    user.delete();
-    response.status = 204
-    render ""
-  }
-
-
-  /* REST UTILITIES */
+/* REST UTILITIES */
   private def SendNotFoundResponse() {
     response.status = 404
     render contentType: "application/xml", {

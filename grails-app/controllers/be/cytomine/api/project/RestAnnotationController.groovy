@@ -17,12 +17,12 @@ class RestAnnotationController {
     List<Annotation> data = Annotation.list()
     HashMap jsonMap = getAnnotationsMap(data)
 
-    if (params.format.toLowerCase() == "json") {
-      //render data as Json doesn't work with geometry type
-      render jsonMap as JSON
-    } else if (params.format.toLowerCase() == "xml") {
-      render jsonMap as XML
+
+    withFormat {
+      json { render jsonMap as JSON }
+      xml { render jsonMap as XML}
     }
+
   }
 
   def show = {
@@ -31,12 +31,11 @@ class RestAnnotationController {
     data.add(annotation)
     HashMap jsonMap = getAnnotationsMap(data)
 
-    if (params.format.toLowerCase() == "json") {
-      //render data as Json doesn't work with geometry type
-      render jsonMap as JSON
-    } else if (params.format.toLowerCase() == "xml") {
-      render jsonMap as XML
+    withFormat {
+      json { render jsonMap as JSON }
+      xml { render jsonMap as XML}
     }
+
   }
 
   def scanlist = {
@@ -50,12 +49,11 @@ class RestAnnotationController {
 
     HashMap jsonMap = getAnnotationsMap(data)
 
-    if (params.format.toLowerCase() == "json") {
-      //render data as Json doesn't work with geometry type
-      render jsonMap as JSON
-    } else if (params.format.toLowerCase() == "xml") {
-      render jsonMap as XML
+    withFormat {
+      json { render jsonMap as JSON }
+      xml { render jsonMap as XML}
     }
+
   }
 
   def add = {
@@ -69,7 +67,7 @@ class RestAnnotationController {
 
     if(annotation.validate())
     {
-        annotation.save(flush:true)
+      annotation.save(flush:true)
     }
     else
     {

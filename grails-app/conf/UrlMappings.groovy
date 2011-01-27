@@ -14,16 +14,16 @@ class UrlMappings {
         "500"(view:'/error')
 
         /* API MAPPINGS */
-        "/api/user.$format"(controller:"restUser"){
+        "/api/user"(controller:"restUser"){
             action = [GET:"list", POST:"save"]
         }
-        "/api/user/$id.$format"(controller:"restUser"){
+        "/api/user/$id"(controller:"restUser"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
-        "/api/scan.$format"(controller: "restScan"){
+        "/api/scan"(controller: "restScan"){
             action = [GET:"list", POST:"save"]
         }
-        "/api/scan/$id.$format"(controller: "restScan"){
+        "/api/scan/$id"(controller: "restScan"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
        "/api/image/thumb/$idscan"(controller: "restImage"){
@@ -35,7 +35,7 @@ class UrlMappings {
         "/api/image/crop/$idscan/$topleftx/$toplefty/$width/$height/$zoom"(controller: "restImage"){
             action = [GET:"crop"]
         }
-        "/api/projects.$format"(controller: "restProject"){
+        "/api/projects"(controller: "restProject"){
             action = [GET:"list"]
         }
         "/api/image/retrieval/$idscan/$maxsimilarpictures"(controller: "restImage") {
@@ -46,10 +46,10 @@ class UrlMappings {
         "/api/annotation.$format"(controller:"restAnnotation"){
             action = [GET:"list"]
         }
-        "/api/annotation/$idannotation.$format"(controller:"restAnnotation"){
+        "/api/annotation/$idannotation"(controller:"restAnnotation"){
             action = [GET:"show"]
         }
-        "/api/annotation/scan/$idscan.$format"(controller:"restAnnotation"){
+        "/api/annotation/scan/$idscan"(controller:"restAnnotation"){
             action = [GET:"scanlist"]
         }
         //must be merge with the previous block

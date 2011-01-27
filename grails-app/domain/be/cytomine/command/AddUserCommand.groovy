@@ -1,37 +1,33 @@
 package be.cytomine.command
 
 import be.cytomine.security.User
+import grails.converters.JSON
 
-class AddUserCommand extends UndoRedoCommand {
-
-  Long idUser
-
-  static constraints = {
-    data maxSize: 1000
-  }
+class AddUserCommand extends Command implements UndoRedoCommand {
 
   def execute() {
-    def newUser = User.getUserFromData(data)
+    def newUser = User.getUserFromData(JSON.parse(postData))
     if (newUser.validate()) {
       newUser.save()
-      idUser = newUser.id
-      return [data : newUser, status : 201]
+      data = newUser.encodeAsJSON()
+      return [data : [success : true, message:"ok", user : newUser], status : 201]
     } else {
-      return [data : newUser, status : 403]
+      return [data : [user : newUser, errors : [newUser.errors]], status : 403]
     }
   }
 
   def undo() {
-    def user = User.findById(idUser)
+    def userData = JSON.parse(data)
+    def user = User.findById(userData.id)
     user.delete()
     return [data : null, status : 200]
   }
 
   def redo() {
-    def newUser = User.getUserFromData(data)
-    newUser.save()
-    idUser = newUser.id //TO DO :problem here !!! we break command which had references to this object
-    this.save()
-    return [data : newUser, status : 200]
+    def userData = JSON.parse(data)
+    def user = User.getUserFromData(JSON.parse(postData))
+    user.id = userData.id
+    user.save()
+    return [data : [user : user], status : 200]
   }
 }

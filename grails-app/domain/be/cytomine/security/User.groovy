@@ -1,7 +1,5 @@
 package be.cytomine.security
 
-import grails.converters.JSON
-
 class User extends SecUser {
 
   def springSecurityService
@@ -10,6 +8,8 @@ class User extends SecUser {
   String lastname
   String email
   Date dateCreated = new Date()
+
+
 
   static constraints = {
     firstname blank : false
@@ -24,15 +24,15 @@ class User extends SecUser {
 
 
   static User getUserFromData(data) {
-    def userData = JSON.parse(data)
     def user = new User()
-    user.username = userData.user.username
-    user.firstname = userData.user.firstname
-    user.lastname = userData.user.lastname
-    user.email = userData.user.email
-    user.password = user.springSecurityService.encodePassword(userData.user.password)
+    user.username = data.user.username
+    user.firstname = data.user.firstname
+    user.lastname = data.user.lastname
+    user.email = data.user.email
+    user.password = user.springSecurityService.encodePassword(data.user.password)
     user.enabled = true
     return user;
   }
+
 
 }

@@ -5,12 +5,13 @@ class Command {
   Transaction transaction
   String data
   Date date = new Date()
+  String postData
 
   static belongsTo = Transaction
 
   static constraints = {
-    data maxSize:1024
+    data (type:'text', maxSize:2048, nullable : true)
+    postData (type:'text', maxSize:2048)
   }
 
-  def execute() {}
 }
