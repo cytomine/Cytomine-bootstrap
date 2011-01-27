@@ -29,18 +29,10 @@ class RestImageController {
   def crop = {
     Scan scan = Scan.findById(params.idscan)
     Annotation annotation = Annotation.findById(params.idannotation)
-    def metadata = JSON.parse(new URL(scan.getMetadataURL()).text)
-
-    Coordinate[] coordinates = annotation.getLocation().getEnvelope().getCoordinates()
-
-    int topLeftX = coordinates[3].x
-    int topLeftY = Integer.parseInt(metadata.height) - coordinates[3].y
-    int width =  coordinates[1].x - coordinates[0].x
-    int height =  coordinates[3].y - coordinates[0].y
-    int zoom = Integer.parseInt(metadata.levels)
+    def boundaries = annotation.getBoundaries()
 
     def out = new ByteArrayOutputStream()
-    out << new URL(scan.getCropURL(topLeftX, topLeftY, width, height, zoom)).openStream()
+    out << new URL(scan.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, boundaries.zoom)).openStream()
 
     response.contentLength = out.size()
     if (request.method == 'HEAD') {
@@ -51,15 +43,40 @@ class RestImageController {
     }
   }
 
-  def retrieval = {
+  def retrievalannotation = {
+    Scan scan = Scan.findById(params.idscan)
+    Annotation annotation = Annotation.findById(params.idannotation)
+    int maxSimilarPictures = Integer.parseInt(params.maxsimilarpictures)
+    def boundaries = annotation.getBoundaries()
+    String pathReq = scan.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, boundaries.zoom)
+
+    def list = retrieval(pathReq, maxSimilarPictures)
+
+    withFormat {
+      json { render list as JSON }
+      xml { render list as XML}
+    }
+  }
+
+  def retrievalscan = {
     Scan scan = Scan.findById(params.idscan)
     int maxSimilarPictures = Integer.parseInt(params.maxsimilarpictures)
+
+    def list = retrieval(scan.getThumbURL(), maxSimilarPictures)
+
+    withFormat {
+      json { render list as JSON }
+      xml { render list as XML}
+    }
+  }
+
+  private def retrieval (String pathReq, int maxSimilarPictures) {
     def writer = new StringWriter()
     def xml = new MarkupBuilder(writer)
     //xml.SEARCHPICTURE(k:maxSimilarPictures,path:scan.getThumbURL())
 
     //String pathReq = "http://139.165.108.28:8008/images/neohisto100000/study_NEO4-grp_Curcu_INH-NEO_4_Curcu_INH_1.40_3_5_01.tif-tile_5914.png"
-    String pathReq = scan.getThumbURL()
+    //String pathReq = scan.getThumbURL()
     //String pathReq = "http://is3.cytomine.be:38/adore-djatoka/resolver?url_ver=Z39.88-2004&rft_id=file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/Curcu-5.jp2&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format=image/jpeg&svc.level=2&svc.rotate=0&svc.region=0,0,244,333"
 
     xml.SEARCHPICTURE(k:maxSimilarPictures,path:pathReq)
@@ -91,7 +108,8 @@ class RestImageController {
     xmlObj.pict.each {
       list << [path:it.attribute("id"),sim:it.attribute("sim")]
     }
-    render list as JSON
+
+    return list
   }
 
 }

@@ -39,7 +39,10 @@ class UrlMappings {
             action = [GET:"list"]
         }
         "/api/image/retrieval/$idscan/$maxsimilarpictures"(controller: "restImage") {
-            action = [GET:"retrieval"]
+            action = [GET:"retrievalscan"]
+        }
+        "/api/image/retrieval/$idscan/$idannotation/$maxsimilarpictures"(controller: "restImage") {
+            action = [GET:"retrievalannotation"]
         }
 
         /* Annotation */
