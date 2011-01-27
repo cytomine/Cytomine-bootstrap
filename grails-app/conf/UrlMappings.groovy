@@ -55,8 +55,12 @@ class UrlMappings {
         }
 
         //must be merge with the previous block
-        "/api/annotation/scan/$idscan/$annotation"(controller:"restAnnotation"){
+        "/api/annotation/scan/$idscan/$location"(controller:"restAnnotation"){
             action = [POST:"add"]
+        }
+       //must be merge with the previous block
+        "/api/annotation/$idannotation/$location"(controller:"restAnnotation"){
+            action = [PUT:"update"]
         }
 	}
 }
