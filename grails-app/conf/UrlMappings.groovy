@@ -32,7 +32,10 @@ class UrlMappings {
         "/api/image/metadata/$idscan"(controller: "restImage"){
             action = [GET:"metadata"]
         }
-        "/api/image/crop/$zoom/$idannotation/"(controller: "restImage"){
+        "/api/image/crop/$zoom/$idannotation"(controller: "restImage"){
+            action = [GET:"crop"]
+        }
+        "/api/image/crop/$idannotation"(controller: "restImage"){
             action = [GET:"crop"]
         }
         "/api/projects"(controller: "restProject"){
@@ -41,7 +44,9 @@ class UrlMappings {
         "/api/image/retrieval/$maxsimilarpictures/$idannotation/"(controller: "restImage") {
             action = [GET:"retrieval"]
         }
-
+        "/api/image/retrieval/$zoom/$maxsimilarpictures/$idannotation/"(controller: "restImage") {
+            action = [GET:"retrieval"]
+        }
         /* Annotation */
         "/api/annotation"(controller:"restAnnotation"){
             action = [GET:"list"]

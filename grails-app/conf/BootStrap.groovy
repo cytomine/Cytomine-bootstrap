@@ -21,6 +21,7 @@ import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.geom.PrecisionModel
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Polygon
+import be.cytomine.server.RetrievalServer
 
 
 class BootStrap {
@@ -95,6 +96,15 @@ class BootStrap {
 
     ]
     createImageServers(imageServerSamples)
+
+    def retrievalServerSamples = [
+            [
+                    'url' : '139.165.108.28',
+                    'port' : 1230,
+                    'description' : 'marée'
+            ]
+    ]
+    createRetrievalServers(retrievalServerSamples)
 
     /* Projects */
     def projectSamples = [
@@ -293,6 +303,28 @@ class BootStrap {
     }
   }
 
+  def createRetrievalServers(retrievalServerSamples) {
+    def retrievalServers = RetrievalServer.list() ?: []
+    if (!retrievalServers) {
+      retrievalServerSamples.each { item->
+        RetrievalServer retrievalServer = new RetrievalServer( url : item.url, port : item.port, description : item.description)
+        if (retrievalServer.validate()) {
+          println "Creating retrieval server ${item.description}... "
+
+          retrievalServer.save(flush:true)
+
+          retrievalServers <<  retrievalServer
+        } else {
+          println("\n\n\n Errors in retrieval server boostrap for ${item.description} !\n\n\n")
+          item.errors.each {
+            err -> println err
+          }
+        }
+      }
+    }
+  }
+
+
   def createImageServers(imageServerSamples) {
     def imageServers = ImageServer.list() ?: []
     if (!imageServers) {
@@ -468,7 +500,7 @@ class BootStrap {
           def multipoly = geometryFactory.createMultiPolygon(polygons)
           def scanParent = Scan.findByFilename(item.scan.filename)
           annotation = new Annotation(name: item.name, location:multipoly, scan:scanParent)
-          }
+        }
         /* Save annotation */
         if (annotation.validate()) {
           println "Creating annotation : ${annotation.name}..."

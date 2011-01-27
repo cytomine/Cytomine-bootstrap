@@ -68,6 +68,9 @@ class Scan {
 
   def getZoomLevels () {
     def metadata = JSON.parse(new URL(getMetadataURL()).text)
-    return [min : 0, max : Integer.parseInt(metadata.levels)]
+    int max = Integer.parseInt(metadata.levels)
+    int min = 0
+    int middle = ((max - min) / 2)
+    return [min : 0, max : max, middle : middle]
   }
 }
