@@ -159,9 +159,9 @@ class BootStrap {
     def annotationSamples = [
             //[name : "annot3", location : ["POLYGON((2000 1000, 30 0, 40 10, 30 20, 2000 1000))","POLYGON((20 10, 30 0, 40 10, 30 20, 20 10))"], scan: [filename: "Boyden - essai _10x_02"]],
             //[name : "annot2", location : ["POLYGON((20 10, 30 50, 40 10, 30 20, 20 10))"],scan: [filename: "Boyden - essai _10x_02"]]
-            [name : "annot3", location : ["POINT(10000 10000)"], scan: [filename: "Boyden - essai _10x_02"]],
-            [name : "annot2", location : ["POINT(5000 5000)"],scan: [filename: "Boyden - essai _10x_02"]],
-            [name : "annot4", location : ["POLYGON((5000 20000, 20000 17000, 20000 10000, 10000 7500, 5000 20000))","POLYGON((10000 15000, 15000 12000, 12000 12000, 10000 15000))"],scan: [filename: "Boyden - essai _10x_02"]]
+            [name : "annot3", location : ["POINT(10000 10000)"], scan: [filename: "Aperio - 003"]],
+            [name : "annot2", location : ["POINT(5000 5000)"],scan: [filename: "Aperio - 003"]],
+            [name : "annot4", location : ["POLYGON((5000 20000, 20000 17000, 20000 10000, 10000 7500, 5000 20000))","POLYGON((10000 15000, 15000 12000, 12000 12000, 10000 15000))"],scan: [filename: "Aperio - 003"]]
     ]
     createAnnotations(annotationSamples)
 

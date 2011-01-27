@@ -52,5 +52,9 @@ class UrlMappings {
         "/api/annotation/scan/$idscan.$format"(controller:"restAnnotation"){
             action = [GET:"scanlist"]
         }
+        //must be merge with the previous block
+        "/api/annotation/scan/$idscan/$annotation"(controller:"restAnnotation"){
+            action = [POST:"add"]
+        }
 	}
 }

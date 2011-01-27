@@ -3,56 +3,80 @@ package be.cytomine.api.project
 import grails.converters.*
 import be.cytomine.project.Annotation
 import be.cytomine.project.Scan
+import com.vividsolutions.jts.io.WKTReader
+import com.vividsolutions.jts.geom.Geometry
 
 class RestAnnotationController {
 
-    def index = { }
+  def index = { }
 
 
 
   def list = {
 
-      List<Annotation> data = Annotation.list()
-      HashMap jsonMap = getAnnotationsMap(data)
+    List<Annotation> data = Annotation.list()
+    HashMap jsonMap = getAnnotationsMap(data)
 
-      if (params.format.toLowerCase() == "json") {
-        //render data as Json doesn't work with geometry type
-        render jsonMap as JSON
-      } else if (params.format.toLowerCase() == "xml") {
-        render jsonMap as XML
+    if (params.format.toLowerCase() == "json") {
+      //render data as Json doesn't work with geometry type
+      render jsonMap as JSON
+    } else if (params.format.toLowerCase() == "xml") {
+      render jsonMap as XML
     }
   }
 
   def show = {
-      Annotation annotation = Annotation.get(params.idannotation)
-      def data = []
-      data.add(annotation)
-      HashMap jsonMap = getAnnotationsMap(data)
+    Annotation annotation = Annotation.get(params.idannotation)
+    def data = []
+    data.add(annotation)
+    HashMap jsonMap = getAnnotationsMap(data)
 
-      if (params.format.toLowerCase() == "json") {
-        //render data as Json doesn't work with geometry type
-        render jsonMap as JSON
-      } else if (params.format.toLowerCase() == "xml") {
-        render jsonMap as XML
+    if (params.format.toLowerCase() == "json") {
+      //render data as Json doesn't work with geometry type
+      render jsonMap as JSON
+    } else if (params.format.toLowerCase() == "xml") {
+      render jsonMap as XML
     }
   }
 
   def scanlist = {
-     // List<Annotation> data = Annotation.findAllByScan(Integer.parseInt(params.idscan))
+    // List<Annotation> data = Annotation.findAllByScan(Integer.parseInt(params.idscan))
 
-      Scan scan =  Scan.get(params.idscan)
-      if((scan==null)) println "Scan is null"
-      else println "Scan is not null"
-      println "Search annotation from " + scan.filename
-      def data = Annotation.findAllByScan(scan)
+    Scan scan =  Scan.get(params.idscan)
+    if((scan==null)) println "Scan is null"
+    else println "Scan is not null"
+    println "Search annotation from " + scan.filename
+    def data = Annotation.findAllByScan(scan)
 
-      HashMap jsonMap = getAnnotationsMap(data)
+    HashMap jsonMap = getAnnotationsMap(data)
 
-      if (params.format.toLowerCase() == "json") {
-        //render data as Json doesn't work with geometry type
-        render jsonMap as JSON
-      } else if (params.format.toLowerCase() == "xml") {
-        render jsonMap as XML
+    if (params.format.toLowerCase() == "json") {
+      //render data as Json doesn't work with geometry type
+      render jsonMap as JSON
+    } else if (params.format.toLowerCase() == "xml") {
+      render jsonMap as XML
+    }
+  }
+
+  def add = {
+    println params.annotation
+    Scan scan =  Scan.get(params.idscan)
+    if((scan==null)) println "Scan is null"
+    else println "Scan is not null"
+
+    Geometry geom = new WKTReader().read(params.annotation);
+    Annotation annotation = new Annotation(name: "toto", location:geom, scan:scan)
+
+    if(annotation.validate())
+    {
+        annotation.save(flush:true)
+    }
+    else
+    {
+      println("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
+      scan.errors.each {
+        err -> println err
+      }
     }
   }
 
@@ -64,7 +88,7 @@ class RestAnnotationController {
   def getAnnotationsMap(annotationList) {
     if(annotationList==null || annotationList.size()==0)
     {
-        new HashMap()
+      new HashMap()
     }
     else
     {
