@@ -3,6 +3,8 @@ package be.cytomine.api.project
 import be.cytomine.project.Scan
 import groovy.xml.MarkupBuilder
 import grails.converters.*
+import be.cytomine.project.Annotation
+import com.vividsolutions.jts.geom.Coordinate
 
 class RestImageController {
 
@@ -24,15 +26,18 @@ class RestImageController {
     render(contentType: "application/json", text: "${url.text}")
   }
 
-
   def crop = {
     Scan scan = Scan.findById(params.idscan)
+    Annotation annotation = Annotation.findById(params.idannotation)
+    def metadata = JSON.parse(new URL(scan.getMetadataURL()).text)
 
-    int topLeftX = Integer.parseInt(params.topleftx)
-    int topLeftY = Integer.parseInt(params.toplefty)
-    int width = Integer.parseInt(params.width)
-    int height = Integer.parseInt(params.height)
-    int zoom = Integer.parseInt(params.zoom)
+    Coordinate[] coordinates = annotation.getLocation().getEnvelope().getCoordinates()
+
+    int topLeftX = coordinates[3].x
+    int topLeftY = Integer.parseInt(metadata.height) - coordinates[3].y
+    int width =  coordinates[1].x - coordinates[0].x
+    int height =  coordinates[3].y - coordinates[0].y
+    int zoom = Integer.parseInt(metadata.levels)
 
     def out = new ByteArrayOutputStream()
     out << new URL(scan.getCropURL(topLeftX, topLeftY, width, height, zoom)).openStream()
@@ -54,10 +59,10 @@ class RestImageController {
     //xml.SEARCHPICTURE(k:maxSimilarPictures,path:scan.getThumbURL())
 
     //String pathReq = "http://139.165.108.28:8008/images/neohisto100000/study_NEO4-grp_Curcu_INH-NEO_4_Curcu_INH_1.40_3_5_01.tif-tile_5914.png"
-      String pathReq = scan.getThumbURL()
+    String pathReq = scan.getThumbURL()
     //String pathReq = "http://is3.cytomine.be:38/adore-djatoka/resolver?url_ver=Z39.88-2004&rft_id=file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/Curcu-5.jp2&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format=image/jpeg&svc.level=2&svc.rotate=0&svc.region=0,0,244,333"
 
-     xml.SEARCHPICTURE(k:maxSimilarPictures,path:pathReq)
+    xml.SEARCHPICTURE(k:maxSimilarPictures,path:pathReq)
     String req = writer.toString()
     println "***Connect socket..."
     Socket s = new Socket("139.165.108.28", 1230)

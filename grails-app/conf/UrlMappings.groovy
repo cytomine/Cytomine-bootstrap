@@ -32,7 +32,7 @@ class UrlMappings {
         "/api/image/metadata/$idscan"(controller: "restImage"){
             action = [GET:"metadata"]
         }
-        "/api/image/crop/$idscan/$topleftx/$toplefty/$width/$height/$zoom"(controller: "restImage"){
+        "/api/image/crop/$idscan/$idannotation/"(controller: "restImage"){
             action = [GET:"crop"]
         }
         "/api/projects"(controller: "restProject"){
