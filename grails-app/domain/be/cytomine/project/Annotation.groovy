@@ -8,6 +8,7 @@ class Annotation {
   String name
   Geometry location
   Scan scan
+  String cropURL
 
   static belongsTo = [scan:Scan]
 
@@ -20,7 +21,7 @@ class Annotation {
     }
   }
 
-  def getBoundaries () {
+  private def getBoundaries () {
     def metadata = JSON.parse(new URL(scan.getMetadataURL()).text)
     Coordinate[] coordinates = location.getEnvelope().getCoordinates()
 
@@ -32,6 +33,10 @@ class Annotation {
     return [topLeftX : topLeftX, topLeftY : topLeftY,width : width, height : height, zoom : zoom]
   }
 
+  def getCropURL() {
+    def boundaries = getBoundaries()
+    return scan.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height,1)
+  }
 
 
 

@@ -10,7 +10,7 @@ class UrlMappings {
         /* HOME */
         "/"(view:"/index")
 
-        /* ERROS */
+        /* ERRORS */
         "500"(view:'/error')
 
         /* API MAPPINGS */
@@ -38,23 +38,25 @@ class UrlMappings {
         "/api/projects"(controller: "restProject"){
             action = [GET:"list"]
         }
-        "/api/image/retrieval/$idscan/$maxsimilarpictures"(controller: "restImage") {
-            action = [GET:"retrievalscan"]
+        "/api/image/retrieval/$maxsimilarpictures/$idannotation/"(controller: "restImage") {
+            action = [GET:"retrieval"]
         }
-        "/api/image/retrieval/$idscan/$idannotation/$maxsimilarpictures"(controller: "restImage") {
+        /*"/api/image/retrieval/scan/$maxsimilarpictures/$idscan/$idannotation"(controller: "restImage") {
             action = [GET:"retrievalannotation"]
-        }
+        }*/
 
         /* Annotation */
-        "/api/annotation.$format"(controller:"restAnnotation"){
+        "/api/annotation"(controller:"restAnnotation"){
+            action = [GET:"list"]
+        }
+        /* Annotation */
+        "/api/annotation/scan/$idscan"(controller:"restAnnotation"){
             action = [GET:"list"]
         }
         "/api/annotation/$idannotation"(controller:"restAnnotation"){
             action = [GET:"show"]
         }
-        "/api/annotation/scan/$idscan"(controller:"restAnnotation"){
-            action = [GET:"scanlist"]
-        }
+
         //must be merge with the previous block
         "/api/annotation/scan/$idscan/$annotation"(controller:"restAnnotation"){
             action = [POST:"add"]

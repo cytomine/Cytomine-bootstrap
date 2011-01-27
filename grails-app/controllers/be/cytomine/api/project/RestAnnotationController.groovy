@@ -8,15 +8,10 @@ import com.vividsolutions.jts.geom.Geometry
 
 class RestAnnotationController {
 
-  def index = { }
-
-
-
   def list = {
-
-    List<Annotation> data = Annotation.list()
+    println params.idscan
+    List<Annotation> data = (params.idscan == null) ? Annotation.list() : (Annotation.findAllByScan(Scan.findById(params.idscan)))
     HashMap jsonMap = getAnnotationsMap(data)
-
 
     withFormat {
       json { render jsonMap as JSON }
@@ -29,24 +24,6 @@ class RestAnnotationController {
     Annotation annotation = Annotation.get(params.idannotation)
     def data = []
     data.add(annotation)
-    HashMap jsonMap = getAnnotationsMap(data)
-
-    withFormat {
-      json { render jsonMap as JSON }
-      xml { render jsonMap as XML}
-    }
-
-  }
-
-  def scanlist = {
-    // List<Annotation> data = Annotation.findAllByScan(Integer.parseInt(params.idscan))
-
-    Scan scan =  Scan.get(params.idscan)
-    if((scan==null)) println "Scan is null"
-    else println "Scan is not null"
-    println "Search annotation from " + scan.filename
-    def data = Annotation.findAllByScan(scan)
-
     HashMap jsonMap = getAnnotationsMap(data)
 
     withFormat {
@@ -77,7 +54,6 @@ class RestAnnotationController {
       }
     }
   }
-
 
 
   /* Take a List of annotation(s) and return a Map of annotation with only some attribute.
