@@ -27,17 +27,18 @@ class RestImageController {
   }
 
   def crop = {
-    Scan scan = Scan.findById(params.idscan)
+    int zoom = Integer.parseInt(params.zoom)
     Annotation annotation = Annotation.findById(params.idannotation)
 
-    if (scan == null || annotation == null) {
+
+    if (annotation == null || zoom < annotation.getScan().getZoomLevels().min || zoom > annotation.getScan().getZoomLevels().max) {
       response.status = 404
       render "404"
       return
     }
 
     def out = new ByteArrayOutputStream()
-    out << new URL(annotation.getCropURL()).openStream()
+    out << new URL(annotation.getCropURL(zoom)).openStream()
 
     response.contentLength = out.size()
     if (request.method == 'HEAD') {
@@ -59,18 +60,6 @@ class RestImageController {
       xml { render list as XML}
     }
   }
-
-  /*def retrievalscan = {
-    Scan scan = Scan.findById(params.idscan)
-    int maxSimilarPictures = Integer.parseInt(params.maxsimilarpictures)
-
-    def list = retrieval(scan.getThumbURL(), maxSimilarPictures)
-
-    withFormat {
-      json { render list as JSON }
-      xml { render list as XML}
-    }
-  }*/
 
   private def retrieval (String pathReq, int maxSimilarPictures) {
     def writer = new StringWriter()

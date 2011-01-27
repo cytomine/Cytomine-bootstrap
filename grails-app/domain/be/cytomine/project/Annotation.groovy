@@ -8,9 +8,10 @@ class Annotation {
   String name
   Geometry location
   Scan scan
-  String cropURL
 
   static belongsTo = [scan:Scan]
+
+  static transients = ["cropURL", "boundaries"]
 
   static constraints = {
   }
@@ -33,9 +34,9 @@ class Annotation {
     return [topLeftX : topLeftX, topLeftY : topLeftY,width : width, height : height, zoom : zoom]
   }
 
-  def getCropURL() {
+  def getCropURL(int zoom) {
     def boundaries = getBoundaries()
-    return scan.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height,1)
+    return scan.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, zoom)
   }
 
 

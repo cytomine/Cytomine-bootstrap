@@ -20,7 +20,7 @@ Ext.onReady(function() {
             Cytomine.Project.tab()
 
 
-            ]
+        ]
     });
 
     //Create our layout
