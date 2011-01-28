@@ -11,9 +11,11 @@
 <head><title>${scan.filename}</title>
 
   <script type="text/javascript">
+    function selected (evt) {
+     // alert(evt.feature.id + " selected on " + this.name);
+    }
 
-
-    var map, vectorsDrawAnnotations, controls;
+    var map, vectorsDrawAnnotations, controls,req;
     function initOpenLayers(){
 
       /**Load picture */
@@ -46,78 +48,108 @@
 
       /**Load layer for user drawing annotation*/
       vectorsDrawAnnotations = new OpenLayers.Layer.Vector("Vector Layer");
+      vectorsDrawAnnotations.events.on({
+        'featureadded': onFeatureAdded,
+        'beforefeaturemodified': function(evt) {
+          console.log("Selected " + evt.feature.id  + " for modification");
+        },
+        'afterfeaturemodified': onFeatureUpdate
+      });
+      vectorsDrawAnnotations.events.register("featureselected", vectorsDrawAnnotations, selected);
       map.addLayer(vectorsDrawAnnotations);
 
-    function report(event) {
-      OpenLayers.Console.log(event.type, event.feature ? event.feature.id : event.components);
-    }
-    console.log("vectorsDrawAnnotations.events");
-    vectorsDrawAnnotations.events.on({
-      "beforefeaturemodified": report,
-      "featuremodified": report,
-      "afterfeaturemodified": report,
-      "vertexmodified": report,
-      "sketchmodified": report,
-      "sketchstarted": report,
-      "sketchcomplete": report
-    });
-    console.log("controls");
-    controls = {
-      point: new OpenLayers.Control.DrawFeature(vectorsDrawAnnotations,
-              OpenLayers.Handler.Point),
-      line: new OpenLayers.Control.DrawFeature(vectorsDrawAnnotations,
-              OpenLayers.Handler.Path),
-      polygon: new OpenLayers.Control.DrawFeature(vectorsDrawAnnotations,
-              OpenLayers.Handler.Polygon),
-      regular: new OpenLayers.Control.DrawFeature(vectorsDrawAnnotations,
-              OpenLayers.Handler.RegularPolygon,
-      {handlerOptions: {sides: 5}}),
-      modify: new OpenLayers.Control.ModifyFeature(vectorsDrawAnnotations)
-    };
 
-
-     /**Add controller when stop drawing*/
-    console.log("for(var key in controls)");
-    for(var key in controls) {
-      controls[key].events.on({featureadded: onFeatureAdded});
-      map.addControl(controls[key]);
-    }
-
-    function onFeatureAdded(evt) {
-
-       //call restannotationcontroller
-      var format = new OpenLayers.Format.WKT();
-      var feature = evt.feature;
-      var geomwkt = format.write(feature);
-      console.log("geomwkt="+geomwkt);
-
-      var req = new XMLHttpRequest();
-      req.open("POST", "/cytomine-web/api/annotation/scan/${scan.id}/"+geomwkt, true);
-      //req.send("annotation="+geomwkt);
-      //req.onreadystatechange = decodeAnnotations;   // the handler
+      /**Load annotation from databases**/
+      req = new XMLHttpRequest();
+      req.open("GET", "/cytomine-web/api/annotation/scan/${scan.id}.json", true);
+      req.onreadystatechange = decodeAnnotations;   // the handler
       req.send(null);
-        //refresh page
+      map.addLayer(vectorsDrawAnnotations);
 
-        console.log("add feature");
-        location.relaod(true);
+
+      /**Add controls**/
+      console.log("controls");
+      controls = {
+        point: new OpenLayers.Control.DrawFeature(vectorsDrawAnnotations,
+                OpenLayers.Handler.Point),
+        line: new OpenLayers.Control.DrawFeature(vectorsDrawAnnotations,
+                OpenLayers.Handler.Path),
+        polygon: new OpenLayers.Control.DrawFeature(vectorsDrawAnnotations,
+                OpenLayers.Handler.Polygon),
+        regular: new OpenLayers.Control.DrawFeature(vectorsDrawAnnotations,
+                OpenLayers.Handler.RegularPolygon,
+        {handlerOptions: {sides: 5}}),
+        modify: new OpenLayers.Control.ModifyFeature(vectorsDrawAnnotations)
+      };
+      for(var key in controls) {
+        map.addControl(controls[key]);
+      }
+
+      /** Triggered when add new feature **/
+      function onFeatureAdded(evt) {
+        console.log("onFeatureAdded start:"+evt.feature.attributes.idAnnotation);
+        /* Check if feature must throw a listener when it is added
+         * true: annotation already in database (no new insert!)
+         * false: new annotation that just have been draw (need insert)
+         * */
+        if(evt.feature.attributes.nolistener!='t')
+        {
+          var format = new OpenLayers.Format.WKT();
+          var feature = evt.feature;
+          var geomwkt = format.write(feature);
+          console.log("add geomwkt="+geomwkt);
+
+          req = new XMLHttpRequest();
+             console.log("/cytomine-web/api/annotation/scan/${scan.id}/"+geomwkt);
+          req.open("POST", "/cytomine-web/api/annotation/scan/${scan.id}/"+geomwkt+".json", true);
+          req.onreadystatechange = decodeNewAnnotation;
+          req.send(null);
+          //Annotation hasn't any id => -1
+          feature.attributes = {idAnnotation: "-1"};
+          vectorsDrawAnnotations.removeFeatures([feature]);
+          //feature.remove();
+          console.log("onFeatureAdded end");
+        }
+      }
+
+      function onFeatureUpdate(evt) {
+        console.log("onFeatureUpdate start");
+
+        var format = new OpenLayers.Format.WKT();
+        var feature = evt.feature;
+        var geomwkt = format.write(feature);
+        console.log("update geomwkt="+geomwkt + " " + feature.attributes.idAnnotation);
+
+        req = new XMLHttpRequest();
+        req.open("PUT", "/cytomine-web/api/annotation/"+feature.attributes.idAnnotation+"/"+geomwkt, true);
+        req.send(null);
+
+        console.log("onFeatureUpdate end");
+
+      }
+
+
+      document.getElementById('noneToggle').checked = true;
+
+      printMapInfo();
+      var lon = metadata.width / 2;
+      var lat = metadata.height / 2;
+      map.setCenter(new OpenLayers.LonLat(lon, lat), 0);
+
     }
 
 
+    Ext.onReady(function () {
+      initOpenLayers();
+    });
 
-
-    document.getElementById('noneToggle').checked = true;
-
-    var req = new XMLHttpRequest();
-    req.open("GET", "/cytomine-web/api/annotation/scan/${scan.id}.json", true);
-    req.onreadystatechange = decodeAnnotations;   // the handler
-    req.send(null);
 
     function decodeAnnotations()
     {
       var format = new OpenLayers.Format.WKT();
-      var vectorLayer = new OpenLayers.Layer.Vector("Overlay");
+      //vectorsAnnotations = new OpenLayers.Layer.Vector("Overlay");
       var points = [];
-      console.log("decodeAnnotations");
+      console.log("decodeAnnotations:"+req.readyState);
       if (req.readyState == 4)
       {
         //eval json
@@ -135,22 +167,60 @@
                   geom,
           {some:'data'},
           {pointRadius: 10, fillColor: "green", fillOpacity: 0.5, strokeColor: "black"});
-          vectorLayer.addFeatures(feature);
+
+          feature.attributes = {idAnnotation: JSONannotations.annotations[i].id, nolistener:'t',importance: 10 };
+
+          vectorsDrawAnnotations.addFeatures(feature);
         }
 
       }
-      map.addLayer(vectorLayer);
-    }
-    var lon = metadata.width / 2;
-    var lat = metadata.height / 2;
-    map.setCenter(new OpenLayers.LonLat(lon, lat), 0);
 
     }
 
 
-    Ext.onReady(function () {
-      initOpenLayers();
-    });
+    function decodeNewAnnotation()
+    {
+      var format = new OpenLayers.Format.WKT();
+      var points = [];
+      console.log("decodeNewAnnotation:"+req.readyState);
+      if (req.readyState == 4)
+      {
+        //eval json
+        console.log("response:"+req.responseText);
+        var JSONannotations = eval('(' + req.responseText + ')');
+        console.log(JSONannotations.annotations);
+
+        for (i=0;i<JSONannotations.annotations.length;i++)
+        {
+          console.log(JSONannotations.annotations[i].id);
+          //read from wkt to geometry
+          var point =  (format.read(JSONannotations.annotations[i].location));
+          var geom = point.geometry;
+
+          var feature = new OpenLayers.Feature.Vector(
+                  geom,
+          {some:'data'},
+          {pointRadius: 10, fillColor: "green", fillOpacity: 0.5, strokeColor: "black"});
+
+          feature.attributes = {idAnnotation: JSONannotations.annotations[i].id, nolistener:'t',importance: 10 };
+
+          vectorsDrawAnnotations.addFeatures(feature);
+        }
+
+      }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     function update() {
       console.log("update")
@@ -191,6 +261,30 @@
         } else {
           control.deactivate();
         }
+      }
+    }
+
+    function printMapInfo() {
+      console.log("*****PRINT MAP INFO");
+      var layers = map.layers;
+
+      for(i=0;i<layers.length;i++)
+      {
+        var layer = layers[i];
+        console.log("***********LAYER: id=|"+layer.id + "|  |" + layer.name + "|  |" + layer.type);
+        /*var featuresArray = layer.features;
+
+         for(property in featuresArray) {
+         console.log("property="+property);
+         }*/
+
+
+        /*console.log(layer.features.type);
+         for(j=0;j<featuresArray.length;j++)
+         {
+         var feature = featuresArray[j];
+         console.log("*******************FEATURE:"+feature.geometry);
+         }  */
       }
     }
 

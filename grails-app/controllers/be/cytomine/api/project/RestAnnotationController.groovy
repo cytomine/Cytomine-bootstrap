@@ -34,17 +34,27 @@ class RestAnnotationController {
   }
 
   def add = {
-    println params.annotation
+    println params.location
     Scan scan =  Scan.get(params.idscan)
     if((scan==null)) println "Scan is null"
     else println "Scan is not null"
 
-    Geometry geom = new WKTReader().read(params.annotation);
+    Geometry geom = new WKTReader().read(params.location);
     Annotation annotation = new Annotation(name: "toto", location:geom, scan:scan)
 
     if(annotation.validate())
     {
       annotation.save(flush:true)
+
+      def annotationList = []
+      annotationList.add(annotation)
+      HashMap jsonMap = getAnnotationsMap(annotationList)
+
+      withFormat {
+        json { render jsonMap as JSON }
+        xml { render jsonMap as XML}
+      }
+
     }
     else
     {
@@ -55,6 +65,38 @@ class RestAnnotationController {
     }
   }
 
+
+  def update = {
+    println params.location
+    Annotation annotation =  Annotation.get(params.idannotation)
+    if((annotation==null)) println "Annotation is null"
+    else println "Annotation is not null"
+
+    Geometry geom = new WKTReader().read(params.location);
+    annotation.location = geom
+
+    if(annotation.validate())
+    {
+      annotation.save(flush:true)
+
+      def annotationList = []
+      annotationList.add(annotation)
+      HashMap jsonMap = getAnnotationsMap(annotationList)
+
+      withFormat {
+        json { render jsonMap as JSON }
+        xml { render jsonMap as XML}
+      }
+
+    }
+    else
+    {
+      println("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
+      scan.errors.each {
+        err -> println err
+      }
+    }
+  }
 
   /* Take a List of annotation(s) and return a Map of annotation with only some attribute.
   *  Avoid that the converter go into the geometry object.
