@@ -12,7 +12,7 @@ class RestAnnotationController {
     println params.idscan
     List<Annotation> data = (params.idscan == null) ? Annotation.list() : (Annotation.findAllByScan(Scan.findById(params.idscan)))
     HashMap jsonMap = getAnnotationsMap(data)
-
+    println data
     withFormat {
       json { render jsonMap as JSON }
       xml { render jsonMap as XML}
@@ -98,13 +98,34 @@ class RestAnnotationController {
     }
   }
 
+  def delete = {
+    println params.idannotation
+    Annotation annotation =  Annotation.get(params.idannotation)
+    if((annotation==null)) println "Annotation is null"
+    else println "Annotation is not null"
+
+     annotation.delete()
+
+     def annotationList = []
+     annotationList.add(annotation)
+     HashMap jsonMap = getAnnotationsMap(annotationList)
+
+      withFormat {
+        json { render jsonMap as JSON }
+        xml { render jsonMap as XML}
+      }
+  }
+
   /* Take a List of annotation(s) and return a Map of annotation with only some attribute.
   *  Avoid that the converter go into the geometry object.
   * */
   def getAnnotationsMap(annotationList) {
     if(annotationList==null || annotationList.size()==0)
     {
-      new HashMap()
+      HashMap jsonMap = new HashMap()
+      jsonMap.annotations = []
+      jsonMap
+
     }
     else
     {

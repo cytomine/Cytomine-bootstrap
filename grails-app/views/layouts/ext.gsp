@@ -12,6 +12,7 @@
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/layout/toolbar.js')}" ></script>
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/project.js')}" ></script>
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/retrieval.js')}" ></script>
+  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/layerAnnotation.js')}" ></script>
 
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/browser.js')}" ></script>
   <script type="text/javascript" charset="utf-8">

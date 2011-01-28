@@ -67,5 +67,9 @@ class UrlMappings {
         "/api/annotation/$idannotation/$location"(controller:"restAnnotation"){
             action = [PUT:"update"]
         }
+       //must be merge with the previous block
+        "/api/annotation/$idannotation"(controller:"restAnnotation"){
+            action = [DELETE:"delete"]
+        }
 	}
 }
