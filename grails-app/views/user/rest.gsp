@@ -8,10 +8,13 @@
 
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
-  <head><title>Simple GSP page</title></head>
-  <body>
-    <div class="container" style="width:500px">
-      <div id="user-grid"></div>
-    </div>
-  </body>
+<head>
+  <title>RESTFul user</title>
+  <meta name="layout" content="user" />
+</head>
+<body>
+<div class="container" style="width:500px">
+  <div id="user-grid"></div>
+</div>
+</body>
 </html>

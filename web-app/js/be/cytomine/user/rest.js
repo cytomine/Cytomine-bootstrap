@@ -1,124 +1,106 @@
-/*!
- * Ext JS Library 3.3.1
- * Copyright(c) 2006-2010 Sencha Inc.
- * licensing@sencha.com
- * http://www.sencha.com/license
- */
-// Application instance for showing user-feedback messages.
-//var App = new Ext.App({});
+Ext.namespace('Cytomine');
+Ext.namespace('Cytomine.Security');
+Ext.namespace('Cytomine.Security.User');
 
-// Create a standard HttpProxy instance.
-var proxy = new Ext.data.HttpProxy({
-    url: '/cytomine-web/api/user.json'
-});
+Cytomine.Security.User = {
 
-// Typical JsonReader.  Notice additional meta-data params for defining the core attributes of your json-response
-var reader = new Ext.data.JsonReader({
-    totalProperty: 'total',
-    successProperty: 'success',
-    idProperty: 'id',
-    root: "user",
-    messageProperty: 'message'  // <-- New "messageProperty" meta-data
-}, [
-    {name: 'id'},
-    {name: 'username', allowBlank: false},
-    {name: 'firstname', allowBlank: false},
-    {name: 'lastname', allowBlank: false},
-    {name: 'email', allowBlank: false},
-    {name: 'password', allowBlank: false}
-]);
+    // Create a standard HttpProxy instance.
+    proxy : function () {
+        return new Ext.data.HttpProxy({
+            url: '/cytomine-web/api/user.json'
+        })},
+    // Typical JsonReader.  Notice additional meta-data params for defining the core attributes of your json-response
+    reader :  function () {
+        return new Ext.data.JsonReader({
+            totalProperty: 'total',
+            successProperty: 'success',
+            idProperty: 'id',
+            root: "user",
+            messageProperty: 'message'  // <-- New "messageProperty" meta-data
+        }, [
+            {name: 'id'},
+            {name: 'username', allowBlank: false},
+            {name: 'firstname', allowBlank: false},
+            {name: 'lastname', allowBlank: false},
+            {name: 'email', allowBlank: false},
+            {name: 'password', allowBlank: false}
+        ])},
+    writer : function () { return new Ext.data.JsonWriter({
+        encode: false,   // <-- don't return encoded JSON -- causes Ext.Ajax#request to send data using jsonData config rather than HTTP params
+        writeAllFields: true
+    })},
+    store : function (proxy, reader, writer) {
+        return new Ext.data.Store({
+            id: 'user',
+            autoLoad : true,
+            restful: true,     // <-- This Store is RESTful
+            proxy: Cytomine.Security.User.proxy(),
+            reader: Cytomine.Security.User.reader(),
+            writer: Cytomine.Security.User.writer()   // <-- plug a DataWriter into the store just as you would a Reader
+        })},
+    userColumns : [
+        {header: "ID", width: 40, sortable: true, dataIndex: 'id'},
+        {header: "Username", width: 100, sortable: true, dataIndex: 'username', editor: new Ext.form.TextField({})},
+        {header: "First", width: 50, sortable: true, dataIndex: 'firstname', editor: new Ext.form.TextField({})},
+        {header: "Last", width: 50, sortable: true, dataIndex: 'lastname', editor: new Ext.form.TextField({})},
+        {header: "Email", width: 50, sortable: true, dataIndex: 'email', editor: new Ext.form.TextField({})},
+        {header: "Password", width: 50, sortable: true, dataIndex: 'password', editor: new Ext.form.TextField({})}
+    ],
+    editor :  function () {
+        return new Ext.ux.grid.RowEditor({
+            saveText: 'Update'
+        })},
+    userGrid : function() {
+        var store = Cytomine.Security.User.store();
+        var editor = Cytomine.Security.User.editor();
 
-// The new DataWriter component.
-var writer = new Ext.data.JsonWriter({
-    encode: false,   // <-- don't return encoded JSON -- causes Ext.Ajax#request to send data using jsonData config rather than HTTP params
-    writeAllFields: true
-});
+        var grid =  new Ext.grid.GridPanel({
+            iconCls: 'icon-grid',
+            frame: true,
+            title: 'Users',
+            height: 200,
+            store: store,
+            plugins: [editor],
+            columns : Cytomine.Security.User.userColumns,
+            viewConfig: {
+                forceFit: true
+            }
+        });
+        var tbar = new Ext.Toolbar({
+            items: [{
+                text: 'Add',
+                iconCls: 'silk-add',
+                handler: Cytomine.Security.User.onAdd.createDelegate(this, [grid, editor])
 
-// Typical Store collecting the Proxy, Reader and Writer together.
-var store = new Ext.data.Store({
-    id: 'user',
-    restful: true,     // <-- This Store is RESTful
-    proxy: proxy,
-    reader: reader,
-    writer: writer    // <-- plug a DataWriter into the store just as you would a Reader
-});
+            }, '-', {
+                text: 'Delete',
+                iconCls: 'silk-delete',
+                handler: Cytomine.Security.User.onDelete.createDelegate(this, [grid, editor])
 
-// load the store immediately
-store.load();
+            }]
+        });
+        grid.elements += ',tbar';
+        grid.add(tbar);
+        grid.doLayout();
 
-////
-// ***New*** centralized listening of DataProxy events "beforewrite", "write" and "writeexception"
-// upon Ext.data.DataProxy class.  This is handy for centralizing user-feedback messaging into one place rather than
-// attaching listenrs to EACH Store.
-//
-// Listen to all DataProxy beforewrite events
-//
-Ext.data.DataProxy.addListener('beforewrite', function(proxy, action) {
-    //App.setAlert(App.STATUS_NOTICE, "Before " + action);
-});
-
-////
-// all write events
-//
-Ext.data.DataProxy.addListener('write', function(proxy, action, result, res, rs) {
-    //App.setAlert(true, action + ':' + res.message);
-});
-
-////
-// all exception events
-//
-Ext.data.DataProxy.addListener('exception', function(proxy, type, action, options, res) {
-    //App.setAlert(false, "Something bad happend while executing " + action);
-});
-
-// Let's pretend we rendered our grid-columns with meta-data from our ORM framework.
-var userColumns =  [
-    {header: "ID", width: 40, sortable: true, dataIndex: 'id'},
-    {header: "Username", width: 100, sortable: true, dataIndex: 'username', editor: new Ext.form.TextField({})},
-    {header: "First", width: 50, sortable: true, dataIndex: 'firstname', editor: new Ext.form.TextField({})},
-    {header: "Last", width: 50, sortable: true, dataIndex: 'lastname', editor: new Ext.form.TextField({})},
-    {header: "Email", width: 50, sortable: true, dataIndex: 'email', editor: new Ext.form.TextField({})},
-    {header: "Password", width: 50, sortable: true, dataIndex: 'password', editor: new Ext.form.TextField({})}
-];
-
-
-Ext.onReady(function() {
-    Ext.QuickTips.init();
-
-    // use RowEditor for editing
-    var editor = new Ext.ux.grid.RowEditor({
-        saveText: 'Update'
-    });
-
-    // Create a typical GridPanel with RowEditor plugin
-    var userGrid = new Ext.grid.GridPanel({
-        renderTo: 'user-grid',
-        iconCls: 'icon-grid',
-        frame: true,
-        title: 'Users',
-        height: 300,
-        store: store,
-        plugins: [editor],
-        columns : userColumns,
-        tbar: [{
-            text: 'Add',
-            iconCls: 'silk-add',
-            handler: onAdd
-        }, '-', {
-            text: 'Delete',
-            iconCls: 'silk-delete',
-            handler: onDelete
-        }, '-'],
-        viewConfig: {
-            forceFit: true
-        }
-    });
-
-    /**
-     * onAdd
-     */
-    function onAdd(btn, ev) {
-        var u = new userGrid.store.recordType({
+        return grid;
+    },
+    beforewrite : function () {
+        return new Ext.data.DataProxy.addListener('beforewrite', function(proxy, action) {
+            //App.setAlert(App.STATUS_NOTICE, "Before " + action);
+        })
+    },
+    write : function () {
+        return new Ext.data.DataProxy.addListener('write', function(proxy, action, result, res, rs) {
+            //App.setAlert(true, action + ':' + res.message);
+        })
+    },
+    exception : function () {
+        return new Ext.data.DataProxy.addListener('exception', function(proxy, type, action, options, res) {
+            //App.setAlert(false, "Something bad happend while executing " + action);
+        })},
+    onAdd : function (grid, editor) {
+        var u = new grid.store.recordType({
             username : '',
             firstname: '',
             lastname : '',
@@ -126,18 +108,22 @@ Ext.onReady(function() {
             password : ''
         });
         editor.stopEditing();
-        userGrid.store.insert(0, u);
+        grid.store.insert(0, u);
         editor.startEditing(0);
-    }
-    /**
-     * onDelete
-     */
-    function onDelete() {
-        var rec = userGrid.getSelectionModel().getSelected();
+    },
+    onDelete : function (grid, editor) {
+        var rec = grid.getSelectionModel().getSelected();
         if (!rec) {
             return false;
         }
-        userGrid.store.remove(rec);
+        grid.store.remove(rec);
     }
+}
 
+
+Ext.onReady(function() {
+    //Cytomine.Security.User.grid = Cytomine.Security.User.userGrid();
 });
+
+
+

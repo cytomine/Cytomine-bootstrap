@@ -1,5 +1,6 @@
 body {
-    font: normal 12px helvetica,arial,verdana,tahoma,sans-serif;
+    font-family:'lucida grande',tahoma,arial,sans-serif;
+    font-size:11px;
 }
 html, body {
     margin:0;
@@ -11,9 +12,15 @@ html, body {
 }
 
 #header {
-    height : 30px;
+    background-color: #000;
+/*background: #7F99BE url(images/layout-browser-hd-bg.gif) repeat-x center;*/
 }
-
+#header h1 {
+    font-size: 16px;
+    color: #fff;
+    font-weight: normal;
+    padding: 5px 10px;
+}
 
 .thumb{
     background:#EEE;

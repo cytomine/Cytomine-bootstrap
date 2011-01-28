@@ -7,17 +7,24 @@
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
   <link rel="stylesheet" href="${createLinkTo(dir:'js',file:'ext-3.3.1/resources/css/ext-all.css')}" />
   <link rel="stylesheet" href="${createLinkTo(dir:'js',file:'ext-3.3.1/resources/css/xtheme-gray.css')}" />
+  <script type="text/javascript" charset="utf-8">
+    Ext.BLANK_IMAGE_URL = "${createLinkTo(dir:'js',file:'ext-3.3.1/resources/images/default/s.gif')}";
+  </script>
 
+  <!-- EXT JS Extensions -->
+  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'ext-3.3.1/examples/ux/RowEditor.js')}" ></script>
+
+
+  <!-- Cytomine -->
+  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/user/rest.js')}" ></script>
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/layout/layout.js')}" ></script>
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/layout/toolbar.js')}" ></script>
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/project.js')}" ></script>
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/retrieval.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/layerAnnotation.js')}" ></script>
-
+  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/dashboard.js')}" ></script>
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/browser.js')}" ></script>
-  <script type="text/javascript" charset="utf-8">
-    Ext.BLANK_IMAGE_URL = "${createLinkTo(dir:'js',file:'ext-3.3.1/resources/images/default/s.gif')}";
-  </script>
+
+
   <link rel="stylesheet" href="${createLinkTo(dir:'css',file:'loading.css')}" />
   <link rel="stylesheet" href="${createLinkTo(dir:'css',file:'ext.css')}" />
   <g:layoutHead />
