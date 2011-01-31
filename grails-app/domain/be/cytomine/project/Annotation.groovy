@@ -2,6 +2,8 @@ package be.cytomine.project
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
+import com.vividsolutions.jts.io.WKTReader
+import com.vividsolutions.jts.geom.Geometry
 
 class Annotation {
 
@@ -17,9 +19,15 @@ class Annotation {
   }
 
   static mapping = {
+    id (generator:'assigned', unique : true)
     columns {
       location type: org.hibernatespatial.GeometryUserType
     }
+  }
+
+  def beforeInsert() {
+    if (id == null)
+      id = Annotation.generateID()
   }
 
   private def getBoundaries () {
@@ -39,7 +47,20 @@ class Annotation {
     return scan.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, zoom)
   }
 
+  static Annotation getAnnotationFromData(data) {
+    def annotation = new Annotation()
+    annotation.name = data.annotation.name
+    annotation.location = new WKTReader().read(data.annotation.location);
+    annotation.scan = Scan.get(data.annotation.scan);
+    return annotation;
+  }
 
 
-
+  static int generateID() {
+    int max = 0
+    Annotation.list().each { annot ->
+      max = Math.max(max, annot.id)
+    }
+    return ++max
+  }
 }

@@ -55,10 +55,14 @@ Cytomine.Project.AnnotationLayer.prototype = {
         console.log("add geomwkt="+geomwkt);
 
         req = new XMLHttpRequest();
-        console.log("/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt);
-        req.open("POST", "/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt+".json", true);
+        //console.log("/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt);
+        //req.open("POST", "/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt+".json", true);
+        req.open("POST", "/cytomine-web/api/annotation.json", true);
         req.onreadystatechange = this.decodeNewAnnotation;
-        req.send(null);
+
+        var json = {annotation: {class:"be.cytomine.project.Annotation",name:"test",location:geomwkt,scan:this.scanID}};
+
+        req.send(JSON.stringify(json));
         //Annotation hasn't any id => -1
         //feature.attributes = {idAnnotation: "-1"};
         this.hideAnnotation(feature);
@@ -109,13 +113,13 @@ Cytomine.Project.AnnotationLayer.prototype = {
         {
             //eval json
             var JSONannotations = eval('(' + req.responseText + ')');
-            console.log(JSONannotations.annotations);
+            console.log(JSONannotations);
 
-            for (i=0;i<JSONannotations.annotations.length;i++)
+            for (i=0;i<JSONannotations.length;i++)
             {
-                console.log(JSONannotations.annotations[i].id);
+                console.log(JSONannotations[i].id);
                 //read from wkt to geometry
-                var point =  (format.read(JSONannotations.annotations[i].location));
+                var point =  (format.read(JSONannotations[i].location));
                 var geom = point.geometry;
 
                 var feature = new OpenLayers.Feature.Vector(
@@ -123,7 +127,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
                 {some:'data'},
                 {pointRadius: 10, fillColor: "green", fillOpacity: 0.5, strokeColor: "black"});
 
-                feature.attributes = {idAnnotation: JSONannotations.annotations[i].id, listener:'NO',importance: 10 };
+                feature.attributes = {idAnnotation: JSONannotations[i].id, listener:'NO',importance: 10 };
 
                 vectorsDrawAnnotations.addFeatures(feature);
             }
@@ -142,24 +146,21 @@ Cytomine.Project.AnnotationLayer.prototype = {
             //eval json
             console.log("response:"+req.responseText);
             var JSONannotations = eval('(' + req.responseText + ')');
-            console.log(JSONannotations.annotations);
+            console.log(JSONannotations.annotation);
 
-            for (i=0;i<JSONannotations.annotations.length;i++)
-            {
-                console.log(JSONannotations.annotations[i].id);
-                //read from wkt to geometry
-                var point =  (format.read(JSONannotations.annotations[i].location));
-                var geom = point.geometry;
+            console.log(JSONannotations.annotation.id);
+            //read from wkt to geometry
+            var point =  (format.read(JSONannotations.annotation.location));
+            var geom = point.geometry;
 
-                var feature = new OpenLayers.Feature.Vector(
-                        geom,
-                {some:'data'},
-                {pointRadius: 10, fillColor: "green", fillOpacity: 0.5, strokeColor: "black"});
+            var feature = new OpenLayers.Feature.Vector(
+                    geom,
+            {some:'data'},
+            {pointRadius: 10, fillColor: "green", fillOpacity: 0.5, strokeColor: "black"});
 
-                feature.attributes = {idAnnotation: JSONannotations.annotations[i].id, listener:'NO',importance: 10 };
+            feature.attributes = {idAnnotation: JSONannotations.annotation.id, listener:'NO',importance: 10 };
 
-                vectorsDrawAnnotations.addFeatures(feature);
-            }
+            vectorsDrawAnnotations.addFeatures(feature);
 
         }
 

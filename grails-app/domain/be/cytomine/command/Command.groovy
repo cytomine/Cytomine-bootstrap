@@ -10,8 +10,8 @@ class Command {
   static belongsTo = Transaction
 
   static constraints = {
-    data (type:'text', maxSize:2048, nullable : true)
-    postData (type:'text', maxSize:2048)
+    data (type:'text', maxSize:10240, nullable : true)
+    postData (type:'text', maxSize:10240)
   }
 
 }

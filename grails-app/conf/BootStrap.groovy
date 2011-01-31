@@ -22,11 +22,24 @@ import com.vividsolutions.jts.geom.PrecisionModel
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Polygon
 import be.cytomine.server.RetrievalServer
+import grails.converters.JSON
 
 
 class BootStrap {
   def springSecurityService
   def init = { servletContext ->
+
+
+  JSON.registerObjectMarshaller(Annotation)
+          {
+            def returnArray = [:]
+            returnArray['id'] = it.id
+            returnArray['name'] = it.name
+            returnArray['location'] = it.location.toString() /* etc..*/
+            returnArray['scan'] = it.scan.id /* etc..*/
+            return returnArray
+          }
+
 
     /* Groups */
     def groupsSamples = [

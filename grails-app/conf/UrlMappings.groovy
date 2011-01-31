@@ -47,19 +47,14 @@ class UrlMappings {
         "/api/image/retrieval/$zoom/$maxsimilarpictures/$idannotation/"(controller: "restImage") {
             action = [GET:"retrieval"]
         }
-        /* Annotation */
-        "/api/annotation"(controller:"restAnnotation"){
-            action = [GET:"list"]
-        }
+
         /* Annotation */
         "/api/annotation/scan/$idscan"(controller:"restAnnotation"){
             action = [GET:"list"]
         }
-        "/api/annotation/$idannotation"(controller:"restAnnotation"){
-            action = [GET:"show"]
-        }
 
-        //must be merge with the previous block
+
+       /* //must be merge with the previous block
         "/api/annotation/scan/$idscan/$location"(controller:"restAnnotation"){
             action = [POST:"add"]
         }
@@ -70,6 +65,16 @@ class UrlMappings {
        //must be merge with the previous block
         "/api/annotation/$idannotation"(controller:"restAnnotation"){
             action = [DELETE:"delete"]
+        }  */
+        "/api/annotation"(controller:"restAnnotation"){
+            action = [GET: "list",POST:"add"]
         }
+
+        "/api/annotation/$idannotation"(controller:"restAnnotation"){
+            action = [GET:"show",PUT:"update", DELETE:"delete"]
+        }
+
+
+
 	}
 }

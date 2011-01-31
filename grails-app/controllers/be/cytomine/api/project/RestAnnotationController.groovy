@@ -5,8 +5,15 @@ import be.cytomine.project.Annotation
 import be.cytomine.project.Scan
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Geometry
+import be.cytomine.security.User
+import be.cytomine.command.Command
+import be.cytomine.command.Transaction
+import be.cytomine.command.AddAnnotationCommand
+import be.cytomine.command.stack.UndoStack
 
 class RestAnnotationController {
+
+  def springSecurityService
 
   def list = {
     println params.idscan
@@ -14,7 +21,7 @@ class RestAnnotationController {
     HashMap jsonMap = getAnnotationsMap(data)
     println data
     withFormat {
-      json { render jsonMap as JSON }
+      json { render data as JSON }
       xml { render jsonMap as XML}
     }
 
@@ -33,7 +40,31 @@ class RestAnnotationController {
 
   }
 
+
+
   def add = {
+
+    User currentUser = User.get(springSecurityService.principal.id)
+    Command addAnnotationCommand = new AddAnnotationCommand(postData : request.JSON.toString())
+    Transaction currentTransaction = currentUser.getNextTransaction()
+    currentTransaction.addToCommands(addAnnotationCommand)
+    def result = addAnnotationCommand.execute()
+
+    if (result.status == 201) {
+      addAnnotationCommand.save()
+      new UndoStack(command : addAnnotationCommand, user: currentUser).save()
+    }
+
+    response.status = result.status
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML }
+    }
+  }
+
+
+
+  def addold = {
     println params.location
     Scan scan =  Scan.get(params.idscan)
     if((scan==null)) println "Scan is null"
