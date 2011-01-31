@@ -19,10 +19,11 @@
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/user/rest.js')}" ></script>
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/layout/layout.js')}" ></script>
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/layout/toolbar.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/project.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/retrieval.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/dashboard.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/browser.js')}" ></script>
+  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/Project.js')}" ></script>
+  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/Retrieval.js')}" ></script>
+  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/Dashboard.js')}" ></script>
+  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/Browser.js')}" ></script>
+  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/AnnotationLayer.js')}" ></script>
 
 
   <link rel="stylesheet" href="${createLinkTo(dir:'css',file:'loading.css')}" />

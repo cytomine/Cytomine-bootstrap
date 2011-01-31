@@ -1,23 +1,28 @@
-/**
- * Created by IntelliJ IDEA.
- * User: lrollus
- * Date: 28/01/11
- * Time: 9:03
- * To change this template use File | Settings | File Templates.
- */
+Ext.namespace('Cytomine');
+Ext.namespace('Cytomine.Project');
+Ext.namespace('Cytomine.Project.Annotation');
+//Ext.namespace('Cytomine.Project.Annotation.Layer');
 
-function LayerAnnotation (name,scanid) {
-    /* Name of the layer */
-    this.name=name;
-    /* Id of the scan */
-    this.scanid=scanid;
-    /* Openlayers Layer object*/
-    this.vectorsDrawAnnotations;
-    /* Request object to call server*/
-    this.req;
+Cytomine.Project.AnnotationLayer = function(name, scanID) {
+    this.name = name;
+    this.scanID = scanID;
+}
+
+Cytomine.Project.AnnotationLayer.prototype = {
+    // Name of the layer
+    name : null,
+
+    // Id of the scan
+    scanID : null,
+
+    //The OpenLayers.Layer.Vector on which we draw annotations
+    vectorsDrawAnnotations : null,
+
+    // Request object to call server
+    req : null,
 
     /*Load layer for annotation*/
-    this.loadToMap= function(map) {
+    loadToMap : function (map) {
         vectorsDrawAnnotations = new OpenLayers.Layer.Vector("Vector Layer");
         vectorsDrawAnnotations.events.on({
             'featureadded': onFeatureAdded,
@@ -31,29 +36,27 @@ function LayerAnnotation (name,scanid) {
         });
         vectorsDrawAnnotations.events.register("featureselected", vectorsDrawAnnotations, selected);
         map.addLayer(vectorsDrawAnnotations);
-    }
+    },
 
     /*Load annotation from database on layer */
-    this.loadAnnotations=function(map) {
+    loadAnnotations : function (map) {
         req = new XMLHttpRequest();
-        req.open("GET", "/cytomine-web/api/annotation/scan/"+this.scanid+".json", true);
+        req.open("GET", "/cytomine-web/api/annotation/scan/"+this.scanID+".json", true);
         req.onreadystatechange = this.decodeAnnotations;   // the handler
         req.send(null);
         map.addLayer(vectorsDrawAnnotations);
-
-    }
+    },
 
     /*Add annotation in database*/
-    this.addAnnotation = function(feature)
-    {
+    addAnnotation : function (feature) {
         console.log("addAnnotation start");
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
         console.log("add geomwkt="+geomwkt);
 
         req = new XMLHttpRequest();
-        console.log("/cytomine-web/api/annotation/scan/"+this.scanid+"/"+geomwkt);
-        req.open("POST", "/cytomine-web/api/annotation/scan/"+this.scanid+"/"+geomwkt+".json", true);
+        console.log("/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt);
+        req.open("POST", "/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt+".json", true);
         req.onreadystatechange = this.decodeNewAnnotation;
         req.send(null);
         //Annotation hasn't any id => -1
@@ -61,13 +64,13 @@ function LayerAnnotation (name,scanid) {
         this.hideAnnotation(feature);
         //feature.remove();
         console.log("onFeatureAdded end");
-    }
-
-    this.hideAnnotation = function(feature) {
+    },
+    hideAnnotation : function(feature) {
         vectorsDrawAnnotations.removeFeatures([feature]);
-    }
+    },
+
     /*Remove annotation from database*/
-    this.removeAnnotation = function(feature) {
+    removeAnnotation : function(feature) {
 
         console.log("deleteAnnotation start");
         console.log("delete " + "" + feature.attributes.idAnnotation);
@@ -77,10 +80,10 @@ function LayerAnnotation (name,scanid) {
         req.send(null);
         this.hideAnnotation(feature);
         console.log("deleteAnnotation end");
-    }
+    },
 
     /*Modifiy annotation on database*/
-    this.updateAnnotation = function(feature)
+    updateAnnotation : function(feature)
     {
 
         var format = new OpenLayers.Format.WKT();
@@ -93,11 +96,10 @@ function LayerAnnotation (name,scanid) {
 
         console.log("onFeatureUpdate end");
 
-    }
+    },
 
     /*Read a list of annotations from server response and add to the layer*/
-    this.decodeAnnotations = function()
-    {
+    decodeAnnotations : function() {
         var format = new OpenLayers.Format.WKT();
         //vectorsAnnotations = new OpenLayers.Layer.Vector("Overlay");
         var points = [];
@@ -128,11 +130,10 @@ function LayerAnnotation (name,scanid) {
 
         }
 
-    }
+    },
 
     /*Decode a single annotation from server response and add to the layer*/
-    this.decodeNewAnnotation = function()
-    {
+    decodeNewAnnotation : function() {
         var format = new OpenLayers.Format.WKT();
         var points = [];
         console.log("decodeNewAnnotation:"+req.readyState);
@@ -163,8 +164,16 @@ function LayerAnnotation (name,scanid) {
         }
 
     }
-
 }
+
+
+
+
+
+
+
+
+
 
 
 

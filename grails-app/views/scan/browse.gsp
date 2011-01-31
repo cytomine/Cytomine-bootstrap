@@ -16,7 +16,7 @@
     }
 
     var map, controls,req;
-    var layerAnnotation = new LayerAnnotation("totolayer",${scan.id});
+    var layerAnnotation = new Cytomine.Project.Annotation.Layer("totolayer", ${scan.id});
 
     function initOpenLayers(){
 
