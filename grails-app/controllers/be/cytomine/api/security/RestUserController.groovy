@@ -2,33 +2,24 @@ package be.cytomine.api.security
 
 import be.cytomine.security.User
 import grails.converters.*
-import be.cytomine.security.SecUserSecRole
 import be.cytomine.command.AddUserCommand
 import be.cytomine.command.stack.UndoStack
 import be.cytomine.command.Transaction
 import be.cytomine.command.Command
 import be.cytomine.command.EditUserCommand
-import be.cytomine.security.Group
-import be.cytomine.security.UserGroup
 import be.cytomine.command.DeleteUserCommand
 
 /**
- * Cytomine @ GIGA-ULG
- * User: stevben
- * Date: 6/01/11
- * Time: 20:27
+ * Handle HTTP Requests for CRUD operations on the User domain class.
  */
 class RestUserController {
 
   def springSecurityService
 
-
-  def index = {
-    redirect(controller : "user")
-  }
-
-  /* REST API */
-
+  /**
+   * Render and returns all Users into the specified format given in the request
+   * @return all Users into the specified format
+   */
   def list = {
     def data = [:]
     data.user = User.list()
@@ -39,6 +30,11 @@ class RestUserController {
     }
   }
 
+  /**
+   * Render and return an User into the specified format given in the request
+   * @param id the user identifier
+   * @return user an User into the specified format
+   */
   def show = {
     if(params.id && User.exists(params.id)) {
       def data = User.findById(params.id)
@@ -47,20 +43,32 @@ class RestUserController {
         xml { render data as XML }
       }
     } else {
-      SendNotFoundResponse()
+      response.status = 404
+      render contentType: "application/xml", {
+        errors {
+          message("User not found with id: " + params.id)
+        }
+      }
     }
   }
 
+  /**
+   * Create a new User according to the parameters passed into the request.
+   * If successful, the new user is rendered and returned into the specified format
+   * given in the request. If not, validations errors messages are returned as a response.
+   * @param data the data related to the new user
+   * @return user the new User into the specified format
+   */
   def save = {
-    User user = User.findById(3)
+    User currentUser = User.get(springSecurityService.principal.id)
     Command addUserCommand = new AddUserCommand(postData : request.JSON.toString())
-    Transaction currentTransaction = user.getNextTransaction()
+    Transaction currentTransaction = currentUser.getNextTransaction()
     currentTransaction.addToCommands(addUserCommand)
     def result = addUserCommand.execute()
 
     if (result.status == 201) {
       addUserCommand.save()
-      new UndoStack(command : addUserCommand, user: user).save()
+      new UndoStack(command : addUserCommand, user: currentUser).save()
     }
 
     response.status = result.status
@@ -70,20 +78,23 @@ class RestUserController {
     }
   }
 
-
+  /**
+   * Edit an existing User according to the parameters passed into the request.
+   * If successful, the user is rendered with its modifications and returned into the specified format
+   * given in the request. If not, validations errors messages are returned as a response.
+   * @param data the data related to the user
+   * @return user the edited User into the specified format
+   */
   def update = {
-    User user = User.findById(3)
+    User currentUser = User.get(springSecurityService.principal.id)
     Command editUserCommand = new EditUserCommand(postData : request.JSON.toString())
-    Transaction currentTransaction = user.getNextTransaction()
+    Transaction currentTransaction = currentUser.getNextTransaction()
     currentTransaction.addToCommands(editUserCommand)
     def result = editUserCommand.execute()
 
     if (result.status == 200) {
-      if (!editUserCommand.validate()) {
-        sendValidationFailedResponse(editUserCommand, 403)
-      }
       editUserCommand.save()
-      new UndoStack(command : editUserCommand, user: user).save()
+      new UndoStack(command : editUserCommand, user: currentUser).save()
     }
 
     response.status = result.status
@@ -93,8 +104,13 @@ class RestUserController {
     }
   }
 
+  /**
+   * Delete a user according to the identifier passed into the request.
+   * @param id the identifier of the user to delete
+   * @return the identifier of the deleted user
+   */
   def delete =  {
-    User user = User.findById(3)
+    User currentUser = User.get(springSecurityService.principal.id)
     def postData = ([id : params.id]) as JSON
     def result = null
 
@@ -102,45 +118,19 @@ class RestUserController {
       result = [data : [success : false, message : "The user can't delete herself"], status : 403]
     } else {
       Command deleteUserCommand = new DeleteUserCommand(postData : postData.toString())
-      Transaction currentTransaction = user.getNextTransaction()
+      Transaction currentTransaction = currentUser.getNextTransaction()
       currentTransaction.addToCommands(deleteUserCommand)
       result = deleteUserCommand.execute()
 
       if (result.status == 204) {
         deleteUserCommand.save()
-        new UndoStack(command : deleteUserCommand, user: user).save()
+        new UndoStack(command : deleteUserCommand, user: currentUser).save()
       }
     }
     response.status = result.status
     withFormat {
       json { render result.data as JSON }
       xml { render result.data as XML }
-    }
-  }
-
-/* REST UTILITIES */
-  private def SendNotFoundResponse() {
-    response.status = 404
-    render contentType: "application/xml", {
-      errors {
-        message("User not found with id: " + params.id)
-      }
-    }
-  }
-
-  private def sendSuccessResponse(user, status) {
-
-  }
-
-  private def sendValidationFailedResponse(user, status) {
-    response.status = status
-    render contentType: "application/xml", {
-      errors {
-        user?.errors?.fieldErrors?.each {err ->
-          field(err.field)
-          message(g.message(error: err))
-        }
-      }
     }
   }
 }

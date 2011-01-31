@@ -24,7 +24,7 @@ class DeleteUserCommand extends Command implements UndoRedoCommand {
 
     SecUserSecRole.removeAll(user)  //should we do that ? maybe we should create RemoveSecRole command and make a transaction
     user.delete();
-    return [data : [success : true, message : "OK"], status : 204]
+    return [data : [success : true, message : "OK", data : [user : postData.id]], status : 204]
   }
 
   def undo() {

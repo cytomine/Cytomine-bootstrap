@@ -3,12 +3,6 @@ package be.cytomine.command
 import be.cytomine.security.User
 import grails.converters.JSON
 
-/**
- * Cytomine @ GIGA-ULG
- * User: stevben
- * Date: 25/01/11
- * Time: 20:25
- */
 class EditUserCommand extends Command implements UndoRedoCommand {
 
   def execute() {
@@ -41,7 +35,7 @@ class EditUserCommand extends Command implements UndoRedoCommand {
 
   }
 
-def undo() {
+  def undo() {
     def usersData = JSON.parse(data)
     User user = User.findById(usersData.previousUser.id)
     user.username = usersData.previousUser.username

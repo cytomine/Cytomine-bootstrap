@@ -82,7 +82,6 @@ Cytomine.Security.User = {
         grid.elements += ',tbar';
         grid.add(tbar);
         grid.doLayout();
-
         return grid;
     },
     beforewrite : function () {
@@ -107,9 +106,12 @@ Cytomine.Security.User = {
             email    : '',
             password : ''
         });
+
+        var index = grid.store.data.length;
+        alert(index);
         editor.stopEditing();
-        grid.store.insert(0, u);
-        editor.startEditing(0);
+        grid.store.insert(index, u);
+        editor.startEditing(index);
     },
     onDelete : function (grid, editor) {
         var rec = grid.getSelectionModel().getSelected();
