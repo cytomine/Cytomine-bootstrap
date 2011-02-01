@@ -22,8 +22,21 @@ Ext.onReady(function() {
         items:[
             Cytomine.Dashboard.tab(),
             Cytomine.Project.tab()
-        ]
+        ],
+        listeners : {
+            tabchange: function(p) {
+                console.log("EVENT");
+                //Cytomine.currentLayer = Cytomine.annotationLayers[idTab];
+            }
+        }
     });
+
+    Cytomine.toolbar = new Ext.Window({
+        id : 'toolbarPanel',
+        layout : 'fit',
+        title  : 'Annotations controls',
+        el : 'controls'
+    }).show();
 
     //Create our layout
     var viewport = new Ext.Viewport({

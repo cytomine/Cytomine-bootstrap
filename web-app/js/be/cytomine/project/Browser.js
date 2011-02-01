@@ -18,18 +18,30 @@ Cytomine.Browser = {
             closable:true,
             autoLoad : {url:'/cytomine-web/scan/browse/'+idScan,scripts:true},
             item : [
-            /*{
-                title:'Project',
-                collapsible: true, //make this column collapsable
+                /*{
+                 title:'Project',
+                 collapsible: true, //make this column collapsable
 
-                //contentEl: 'west', //Get our content from the "west" div
-                margins: '5 0 5 5',
-                cmargins: '5 5 5 5',
-                width: 175,
-                minSize: 100, //set the limits for resizing
-                maxSize: 250 //set the limits for resizing
+                 //contentEl: 'west', //Get our content from the "west" div
+                 margins: '5 0 5 5',
+                 cmargins: '5 5 5 5',
+                 width: 175,
+                 minSize: 100, //set the limits for resizing
+                 maxSize: 250 //set the limits for resizing
 
-            }*/]
+                 }*/
+            ],
+            listeners: {
+                show: function(p) {
+                    console.log("SHOW");
+                    console.log("LAYER NULL ? " +  Cytomine.annotationLayers[idScan] != undefined);
+                    if (Cytomine.annotationLayers[idScan] != null) {
+                        Cytomine.currentLayer = Cytomine.annotationLayers[idScan];
+                        Cytomine.annotationLayers[idScan].loadToMap(Cytomine.scans[idScan]);
+                    }
+
+                }
+            }
         });
     }
 };

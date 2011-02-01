@@ -16,35 +16,63 @@ Cytomine.Project.AnnotationLayer.prototype = {
     scanID : null,
 
     //The OpenLayers.Layer.Vector on which we draw annotations
-    vectorsDrawAnnotations : null,
+    vectorsLayer : null,
 
     // Request object to call server
     req : null,
 
+    controls : null,
     /*Load layer for annotation*/
-    loadToMap : function (map) {
-        vectorsDrawAnnotations = new OpenLayers.Layer.Vector("Vector Layer");
-        vectorsDrawAnnotations.events.on({
-            'featureadded': onFeatureAdded,
+    loadToMap : function (scan) {
+        vectorsLayer = new OpenLayers.Layer.Vector("Vector Layer");
+        var alias = this;
+        vectorsLayer.events.on({
+            'featureadded': function (evt) {
+                console.log("onFeatureAdded start:"+evt.feature.attributes.idAnnotation);
+                /* Check if feature must throw a listener when it is added
+                 * true: annotation already in database (no new insert!)
+                 * false: new annotation that just have been draw (need insert)
+                 * */
+                if(evt.feature.attributes.listener!='NO')
+                {
+                    console.log("add " + evt.feature);
+                    alias.addAnnotation(evt.feature);
+                }
+            },
             'beforefeaturemodified': function(evt) {
                 console.log("Selected " + evt.feature.id  + " for modification");
             },
-            'afterfeaturemodified': onFeatureUpdate,
+            'afterfeaturemodified': function (evt) {
+                console.log("onFeatureUpdate start");
+                alias.updateAnnotation(evt.feature);
+            },
             'onDelete': function(feature) {
                 console.log("delete " + feature.id);
             }
         });
-        vectorsDrawAnnotations.events.register("featureselected", vectorsDrawAnnotations, selected);
-        map.addLayer(vectorsDrawAnnotations);
+        vectorsLayer.events.register("featureselected", vectorsLayer, selected);
+        controls = {
+            point: new OpenLayers.Control.DrawFeature(vectorsLayer,
+                    OpenLayers.Handler.Point),
+            line: new OpenLayers.Control.DrawFeature(vectorsLayer,
+                    OpenLayers.Handler.Path),
+            polygon: new OpenLayers.Control.DrawFeature(vectorsLayer,
+                    OpenLayers.Handler.Polygon),
+            regular: new OpenLayers.Control.DrawFeature(vectorsLayer,
+                    OpenLayers.Handler.RegularPolygon, {handlerOptions: {sides: 5}}),
+            modify: new OpenLayers.Control.ModifyFeature(vectorsLayer)
+        }
+        scan.initTools(controls);
+        scan.map.addLayer(vectorsLayer);
     },
 
     /*Load annotation from database on layer */
-    loadAnnotations : function (map) {
+    loadAnnotations : function (scan) {
         req = new XMLHttpRequest();
         req.open("GET", "/cytomine-web/api/annotation/scan/"+this.scanID+".json", true);
         req.onreadystatechange = this.decodeAnnotations;   // the handler
         req.send(null);
-        map.addLayer(vectorsDrawAnnotations);
+        scan.map.addLayer(vectorsLayer);
     },
 
     /*Add annotation in database*/
@@ -60,7 +88,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
         req.open("POST", "/cytomine-web/api/annotation.json", true);
         req.onreadystatechange = this.decodeNewAnnotation;
 
-        var json = {annotation: {class:"be.cytomine.project.Annotation",name:"test",location:geomwkt,scan:this.scanID}};
+        var json = {annotation: {"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,scan:this.scanID}}; //class is a reserved word in JS !
 
         req.send(JSON.stringify(json));
         //Annotation hasn't any id => -1
@@ -70,7 +98,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
         console.log("onFeatureAdded end");
     },
     hideAnnotation : function(feature) {
-        vectorsDrawAnnotations.removeFeatures([feature]);
+        vectorsLayer.removeFeatures([feature]);
     },
 
     /*Remove annotation from database*/
@@ -129,7 +157,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
 
                 feature.attributes = {idAnnotation: JSONannotations[i].id, listener:'NO',importance: 10 };
 
-                vectorsDrawAnnotations.addFeatures(feature);
+                vectorsLayer.addFeatures(feature);
             }
 
         }
@@ -160,11 +188,71 @@ Cytomine.Project.AnnotationLayer.prototype = {
 
             feature.attributes = {idAnnotation: JSONannotations.annotation.id, listener:'NO',importance: 10 };
 
-            vectorsDrawAnnotations.addFeatures(feature);
+            vectorsLayer.addFeatures(feature);
 
         }
 
-    }
+    },
+    /** Triggered when add new feature **/
+    /*onFeatureAdded : function (evt) {
+     console.log("onFeatureAdded start:"+evt.feature.attributes.idAnnotation);
+     // Check if feature must throw a listener when it is added
+     // true: annotation already in database (no new insert!)
+     // false: new annotation that just have been draw (need insert)
+     //
+     if(evt.feature.attributes.listener!='NO')
+     {
+     console.log("add " + evt.feature);
+     alias.addAnnotation(evt.feature);
+     }
+     },*/
+
+    /** Triggered when update feature **/
+    /* onFeatureUpdate : function (evt) {
+     console.log("onFeatureUpdate start");
+
+     this.updateAnnotation(evt.feature);
+     },*/
+    update : function() {
+        console.log("update")
+        // reset modification mode
+        this.controls.modify.mode = OpenLayers.Control.ModifyFeature.RESHAPE;
+        var rotate = document.getElementById("rotate").checked;
+        if(rotate) {
+            this.controls.modify.mode |= OpenLayers.Control.ModifyFeature.ROTATE;
+        }
+        var resize = document.getElementById("resize").checked;
+        if(resize) {
+            this.controls.modify.mode |= OpenLayers.Control.ModifyFeature.RESIZE;
+            var keepAspectRatio = document.getElementById("keepAspectRatio").checked;
+            if (keepAspectRatio) {
+                this.controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
+            }
+        }
+        var drag = document.getElementById("drag").checked;
+        if(drag) {
+            this.controls.modify.mode |= OpenLayers.Control.ModifyFeature.DRAG;
+        }
+        if (rotate || drag) {
+            this.controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
+        }
+        var sides = parseInt(document.getElementById("sides").value);
+        sides = Math.max(3, isNaN(sides) ? 0 : sides);
+        this.controls.regular.handler.sides = sides;
+        var irregular =  document.getElementById("irregular").checked;
+        this.controls.regular.handler.irregular = irregular;
+    }, toggleControl :
+       function (element) {
+           console.log("toggleControl")
+           for(key in controls) {
+               var control = controls[key];
+               if(element.value == key && element.checked) {
+                   control.activate();
+               } else {
+                   control.deactivate();
+               }
+           }
+       }
 }
 
 

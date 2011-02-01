@@ -1,5 +1,9 @@
 Ext.namespace('Cytomine');
 
+Cytomine.scans = [];
+Cytomine.annotationLayers = [];
+Cytomine.currentLayer = null;
+
 /**
  * @class Cytomine.Project
  * @singleton
@@ -30,7 +34,9 @@ Cytomine.Project = {
             listeners: {
                 click: function(dataview, index, node, e) {
                     var data = dataview.getStore().getAt(index);
+
                     Cytomine.Browser.openScan(data.get('id'),data.get('id'), data.get('filename')); //multiple tabs
+
                     //Cytomine.Retrieval.showSimilarities(data.get('id'),data.get('id'), data.get('filename')); //multiple tabs
                     //Cytomine.Browser.openScan('browser', data.get('id'), data.get('filename')); //unique tabs
                 }
