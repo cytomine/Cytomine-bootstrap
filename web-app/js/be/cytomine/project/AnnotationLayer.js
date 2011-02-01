@@ -123,8 +123,11 @@ Cytomine.Project.AnnotationLayer.prototype = {
         console.log("update geomwkt="+geomwkt + " " + feature.attributes.idAnnotation);
 
         req = new XMLHttpRequest();
-        req.open("PUT", "/cytomine-web/api/annotation/"+feature.attributes.idAnnotation+"/"+geomwkt, true);
-        req.send(null);
+        req.open("PUT", "/cytomine-web/api/annotation/"+feature.attributes.idAnnotation+".json", true);
+
+        var json = {annotation: {"id":feature.attributes.idAnnotation,"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,scan:this.scanID}}; //class is a reserved word in JS !
+
+        req.send(JSON.stringify(json));
 
         console.log("onFeatureUpdate end");
 

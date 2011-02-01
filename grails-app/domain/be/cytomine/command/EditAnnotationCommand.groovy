@@ -2,6 +2,8 @@ package be.cytomine.command
 
 import grails.converters.JSON
 import be.cytomine.project.Annotation
+import com.vividsolutions.jts.io.WKTReader
+import be.cytomine.project.Scan
 
 class EditAnnotationCommand extends Command implements UndoRedoCommand  {
 
@@ -16,13 +18,28 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
     }
 
     for (property in postData.annotation) {
+      //TODO: bad code...
 
-      updatedAnnotation.properties.put(property.key, property.value)
+      if(property.key.equals("location"))
+      {
+      //location is a Geometry object
+        updatedAnnotation.properties.put(property.key, new WKTReader().read(property.value))
+      }
+      else if(property.key.equals("scan"))
+      {
+        //scan is a scan object and not a simple id
+        updatedAnnotation.properties.put(property.key, Scan.get(property.value))
+      }
+      else if(!property.key.equals("class"))
+      {
+        //no propery class
+        updatedAnnotation.properties.put(property.key, property.value)
+      }
     }
 
 
     if ( updatedAnnotation.validate()) {
-      data = ([ previousUser : (JSON.parse(backup)), newUser :  updatedAnnotation]) as JSON
+      data = ([ previousAnnotation : (JSON.parse(backup)), newAnnotation :  updatedAnnotation]) as JSON
       updatedAnnotation.save()
       return [data : [success : true, message:"ok", user :  updatedAnnotation], status : 200]
     } else {
@@ -36,8 +53,8 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
     def annotationsData = JSON.parse(data)
     Annotation annotation = Annotation.findById(annotationsData.previousAnnotation.id)
     annotation.name = annotationsData.previousAnnotation.name
-    annotation.location = annotationsData.previousAnnotation.location
-    annotation.scan = annotationsData.previousAnnotation.scan
+    annotation.location = new WKTReader().read(annotationsData.previousAnnotation.location)
+    annotation.scan = Scan.get(annotationsData.previousAnnotation.scan)
     annotation.save()
     return [data : [success : true, message:"ok", annotation : annotation], status : 200]
   }
@@ -45,9 +62,9 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
   def redo() {
     def annotationsData = JSON.parse(data)
     Annotation annotation = Annotation.findById(annotationsData.newAnnotation.id)
-    annotation.name = annotationsData.newUser.name
-    annotation.location = annotationsData.newUser.location
-    annotation.scan = annotationsData.newUser.scan
+    annotation.name = annotationsData.newAnnotation.name
+    annotation.location = new WKTReader().read(annotationsData.newAnnotation.location)
+    annotation.scan = Scan.get(annotationsData.newAnnotation.scan)
     annotation.save()
     return [data : [success : true, message:"ok", nnotation : annotation], status : 200]
   }
