@@ -10,6 +10,8 @@ import be.cytomine.command.Command
 import be.cytomine.command.Transaction
 import be.cytomine.command.AddAnnotationCommand
 import be.cytomine.command.stack.UndoStack
+import be.cytomine.command.DeleteAnnotationCommand
+import be.cytomine.command.EditAnnotationCommand
 
 class RestAnnotationController {
 
@@ -40,11 +42,9 @@ class RestAnnotationController {
 
   }
 
-
-
   def add = {
 
-    User currentUser = User.get(springSecurityService.principal.id)
+    User currentUser = User.get(3)
     Command addAnnotationCommand = new AddAnnotationCommand(postData : request.JSON.toString())
     Transaction currentTransaction = currentUser.getNextTransaction()
     currentTransaction.addToCommands(addAnnotationCommand)
@@ -62,6 +62,49 @@ class RestAnnotationController {
     }
   }
 
+
+  def delete = {
+    println "delete"
+    //springSecurityService.principal.id
+    User currentUser = User.get(3)
+    def postData = ([id : params.idannotation]) as JSON
+    println postData.toString()
+    Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData : postData.toString())
+    Transaction currentTransaction = currentUser.getNextTransaction()
+    currentTransaction.addToCommands(deleteAnnotationCommand)
+    def result = deleteAnnotationCommand.execute()
+
+    if (result.status == 204) {
+      deleteAnnotationCommand.save()
+      new UndoStack(command : deleteAnnotationCommand, user: currentUser).save()
+    }
+
+    response.status = result.status
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML }
+    }
+  }
+
+
+  def update = {
+    User currentUser = User.get(3)
+    Command editAnnotationCommand = new EditAnnotationCommand(postData : request.JSON.toString())
+    Transaction currentTransaction = currentUser.getNextTransaction()
+    currentTransaction.addToCommands(editAnnotationCommand)
+    def result = editAnnotationCommand.execute()
+
+    if (result.status == 200) {
+      editAnnotationCommand.save()
+      new UndoStack(command : editAnnotationCommand, user: currentUser).save()
+    }
+
+    response.status = result.status
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML }
+    }
+  }
 
 
   def addold = {
@@ -97,7 +140,7 @@ class RestAnnotationController {
   }
 
 
-  def update = {
+  def updateold = {
     println params.location
     Annotation annotation =  Annotation.get(params.idannotation)
     if((annotation==null)) println "Annotation is null"
@@ -129,22 +172,22 @@ class RestAnnotationController {
     }
   }
 
-  def delete = {
+  def deleteold = {
     println params.idannotation
     Annotation annotation =  Annotation.get(params.idannotation)
     if((annotation==null)) println "Annotation is null"
     else println "Annotation is not null"
 
-     annotation.delete()
+    annotation.delete()
 
-     def annotationList = []
-     annotationList.add(annotation)
-     HashMap jsonMap = getAnnotationsMap(annotationList)
+    def annotationList = []
+    annotationList.add(annotation)
+    HashMap jsonMap = getAnnotationsMap(annotationList)
 
-      withFormat {
-        json { render jsonMap as JSON }
-        xml { render jsonMap as XML}
-      }
+    withFormat {
+      json { render jsonMap as JSON }
+      xml { render jsonMap as XML}
+    }
   }
 
   /* Take a List of annotation(s) and return a Map of annotation with only some attribute.

@@ -7,7 +7,6 @@ import be.cytomine.security.User
 class CommandController {
 
   def undo = {
-
     User user = User.findByUsername("stevben")
     def lastCommands = UndoStack.findAllByUser(user)
 
