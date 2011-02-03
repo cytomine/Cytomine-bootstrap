@@ -31,6 +31,7 @@ class RestAnnotationController {
 
   //return 404 when not found
   def show = {
+    Scan.createOrGetBasicScan()
     println "show:" + params.idannotation
     Annotation data = Annotation.get(params.idannotation)
     if(data!=null)  {

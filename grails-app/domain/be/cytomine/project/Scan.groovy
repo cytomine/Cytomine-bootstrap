@@ -78,14 +78,10 @@ class Scan {
 
 
 
-  static Scan createBasicScan() {
-    def mime = new Mime(extension:"ext",mimeType:"mimeT")
-    mime.save(flush : true)
-    def data = new Data(path : "path", mime : mime)
-    data.save(flush : true)
-    def scanner = new Scanner(maxResolution:"40x",brand:"brand",model:"model")
-    scanner.save(flush : true)
-    def scan = new Scan(filename: "filename",data : data,scanner : scanner ,slide : null)
+  static Scan createOrGetBasicScan() {
+    println "createOrGetBasicScan()"
+    def scan = new Scan(filename: "filename",data : Data.createOrGetBasicData(),scanner : Scanner.createOrGetBasicScanner() ,slide : null)
+    println scan.validate()
     scan.save(flush : true)
     scan
   }

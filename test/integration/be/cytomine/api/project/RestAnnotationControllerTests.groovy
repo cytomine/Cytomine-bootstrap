@@ -63,7 +63,7 @@ ssvc.metaClass.getPrincipal = { u }*/
   void testShowAnnotation() {
     String name = "name"
     String location = "POINT (1000 1000)"
-    def scan = Scan.createBasicScan()
+    def scan = Scan.createOrGetBasicScan()
     def annotation = new Annotation(name:name,location:new WKTReader().read(location),scan: scan);
     assertTrue(annotation.validate())
     annotation.save(flush : true)

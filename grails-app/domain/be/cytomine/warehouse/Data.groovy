@@ -13,4 +13,13 @@ class Data {
   String toString() {
     path
   }
+
+  static Data createOrGetBasicData() {
+
+    println "createOrGetBasicData()"
+    def data = new Data(path:"pathpathpath",mime:Mime.createOrGetBasicMime())
+    data.save(flush : true)
+    data
+
+  }
 }
