@@ -5,6 +5,7 @@ import be.cytomine.acquisition.Scanner
 import be.cytomine.server.resolvers.Resolver
 import be.cytomine.server.ImageServer
 import grails.converters.JSON
+import be.cytomine.warehouse.Mime
 
 class Scan {
   String filename
@@ -72,5 +73,20 @@ class Scan {
     int min = 0
     int middle = ((max - min) / 2)
     return [min : 0, max : max, middle : middle]
+  }
+
+
+
+
+  static Scan createBasicScan() {
+    def mime = new Mime(extension:"ext",mimeType:"mimeT")
+    mime.save(flush : true)
+    def data = new Data(path : "path", mime : mime)
+    data.save(flush : true)
+    def scanner = new Scanner(maxResolution:"40x",brand:"brand",model:"model")
+    scanner.save(flush : true)
+    def scan = new Scan(filename: "filename",data : data,scanner : scanner ,slide : null)
+    scan.save(flush : true)
+    scan
   }
 }

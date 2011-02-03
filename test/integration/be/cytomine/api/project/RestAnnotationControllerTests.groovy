@@ -17,7 +17,7 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
 
   protected void setUp() {
     super.setUp()
-    def mime = new Mime(extension:"ext",mimeType:"mimeT")
+   /* def mime = new Mime(extension:"ext",mimeType:"mimeT")
     assertTrue(mime.validate())
     mime.save(flush : true)
     def data = new Data(path : "path", mime : mime)
@@ -28,7 +28,7 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
     scanner.save(flush : true)
     scan = new Scan(filename: "filename",data : data,scanner : scanner ,slide : null)
     assertTrue(scan.validate())
-    scan.save(flush : true)
+    scan.save(flush : true)*/
   }
 
   protected void tearDown() {
@@ -40,6 +40,7 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
     Data.list()*.delete()
     Mime.list()*.delete()
   }
+
 
   void testAddAnnotation() {
    /*  println "1"
@@ -64,7 +65,7 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
   void testShowAnnotation() {
     String name = "name"
     String location = "POINT (1000 1000)"
-
+    def scan = Scan.createBasicScan()
     def annotation = new Annotation(name:name,location:new WKTReader().read(location),scan: scan);
     assertTrue(annotation.validate())
     annotation.save(flush : true)
