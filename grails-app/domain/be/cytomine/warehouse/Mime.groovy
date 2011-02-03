@@ -26,7 +26,7 @@ class Mime {
 
   static Mime createOrGetBasicMime() {
     println "createOrGetBasicMime()"
-    def mimeList = Mime.findByMimeType("ext");
+    def mimeList = Mime.findAllByMimeType("mimeT");
     def mime
     if(mimeList==null || mimeList.size()==0)
     {
@@ -37,6 +37,7 @@ class Mime {
     {
       mime = mimeList[0]
     }
+    println "createOrGetBasicMime()="+mime
     mime
   }
 }

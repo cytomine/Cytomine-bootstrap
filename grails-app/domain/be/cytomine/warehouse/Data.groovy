@@ -17,7 +17,9 @@ class Data {
   static Data createOrGetBasicData() {
 
     println "createOrGetBasicData()"
-    def data = new Data(path:"pathpathpath",mime:Mime.createOrGetBasicMime())
+    Mime mime = Mime.createOrGetBasicMime()
+    println mime
+    def data = new Data(path:"pathpathpath",mime:mime)
     data.save(flush : true)
     data
 
