@@ -49,3 +49,7 @@ html, body {
     text-align: center;
 }
 .overflow-auto { overflow: auto; }
+
+#overviewMap > .olControlOverviewMapElement {
+    background-color : #FFF;
+}

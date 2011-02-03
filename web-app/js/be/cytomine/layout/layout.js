@@ -35,8 +35,13 @@ Ext.onReady(function() {
         id : 'toolbarPanel',
         layout : 'fit',
         title  : 'Annotations controls',
-        el : 'controls'
-    }).show();
+        el : 'controls',
+        x : 400,
+        y : 65
+    });
+
+
+    Cytomine.overview = null;//created dynamically by browse.gsp
 
     //Create our layout
     var viewport = new Ext.Viewport({

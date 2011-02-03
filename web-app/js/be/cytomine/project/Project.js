@@ -28,7 +28,7 @@ Cytomine.Project = {
                     '<tpl for=".">',
                     '<div class="thumb-wrap" id="{id}">',
                     '<div class="thumb"><img src="/cytomine-web/api/image/thumb/{id}" title="{filename}"></div>',
-                    '<span class="x-editable">{filename}</span></div>',
+                    '<span class="x-editable">{filename} {id}</span></div>',
                     '</tpl>'
                     ),
             listeners: {
@@ -48,7 +48,13 @@ Cytomine.Project = {
             bodyCssClass: 'overflow-auto',
             iconCls: 'envelope-label',
             title: 'Project',
-            items: [view]
+            items: [view],
+            listeners: {
+                show: function(p) {
+                    if (Cytomine.toolbar != null) Cytomine.toolbar.hide();
+                    if (Cytomine.overview != null) Cytomine.overview.hide();
+                }
+            }
         });
     }
 };

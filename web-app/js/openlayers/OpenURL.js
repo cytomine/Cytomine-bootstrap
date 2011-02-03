@@ -67,6 +67,8 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
             (Math.log(this.imgMetadata.width) - Math.log(OpenLayers.Layer.OpenURL.viewerWidth)),
             (Math.log(this.imgMetadata.height) - Math.log(OpenLayers.Layer.OpenURL.viewerHeight)))/
                Math.log(2)));
+
+        viewerLevel = this.imgMetadata.levels - 1;
         this.zoomOffset = minLevel - viewerLevel;
 
         // width at level viewerLevel
@@ -129,6 +131,7 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
      *          parameters
      */
     getURL: function (bounds) {
+        console.log(bounds.toString());
         bounds = this.adjustBounds(bounds);
         this.calculatePositionAndSize(bounds);
         var z = this.map.getZoom() + this.zoomOffset;

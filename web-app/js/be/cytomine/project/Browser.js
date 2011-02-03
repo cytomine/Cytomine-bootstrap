@@ -54,4 +54,6 @@ Cytomine.Browser.openScan = function(idTab, idScan, title) {
     }
     tab = Cytomine.tabs.add(Cytomine.Browser.tab(idTab, idScan, title)).show();
     Cytomine.tabs.setActiveTab(tab);
+    if (Cytomine.toolbar != null) Cytomine.toolbar.show();
+    if (Cytomine.overview != null) Cytomine.overview.show();
 }
