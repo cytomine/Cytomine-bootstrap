@@ -81,11 +81,11 @@ ssvc.metaClass.getPrincipal = { u }*/
     assertEquals(name,json.annotation.name)// access a property
     assertEquals(location, json.annotation.location)
 
-    Annotation.list()*.delete()
+    /*Annotation.list()*.delete()
     Scan.list()*.delete()
     Scanner.list()*.delete()
     Data.list()*.delete()
-    Mime.list()*.delete()
+    Mime.list()*.delete()*/
   }
 
   void testShowAnnotationNotExist() {
