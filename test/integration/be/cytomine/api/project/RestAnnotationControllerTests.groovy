@@ -33,6 +33,7 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
 
   protected void tearDown() {
     super.tearDown()
+    scan = null
     Annotation.list()*.delete()
     Scan.list()*.delete()
     Scanner.list()*.delete()
