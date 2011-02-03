@@ -4,7 +4,6 @@ import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.*
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Geometry
-import net.sf.json.groovy.JsonGroovyBuilder
 
 
 class Annotation {

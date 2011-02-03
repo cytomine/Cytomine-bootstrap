@@ -12,7 +12,6 @@ import be.cytomine.command.AddAnnotationCommand
 import be.cytomine.command.stack.UndoStack
 import be.cytomine.command.DeleteAnnotationCommand
 import be.cytomine.command.EditAnnotationCommand
-import groovyx.net.http.HTTPBuilder
 
 class RestAnnotationController {
 
