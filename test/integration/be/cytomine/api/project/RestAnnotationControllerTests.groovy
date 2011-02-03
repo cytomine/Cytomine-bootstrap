@@ -23,7 +23,7 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
     def data = new Data(path : "path", mime : mime)
     assertTrue(data.validate())
     data.save(flush : true)
-    def scanner = new Scanner(maxResolution:"40x")
+    def scanner = new Scanner(maxResolution:"40x",brand:"brand",model:"model")
     assertTrue(scanner.validate())
     scanner.save(flush : true)
     scan = new Scan(filename: "filename",data : data,scanner : scanner ,slide : null)
