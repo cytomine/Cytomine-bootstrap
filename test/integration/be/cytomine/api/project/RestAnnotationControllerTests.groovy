@@ -1,6 +1,7 @@
 package be.cytomine.api.project
 
 import grails.test.*
+import be.cytomine.acquisition.Scanner
 import be.cytomine.project.Scan
 import be.cytomine.warehouse.Data
 import be.cytomine.warehouse.Mime
@@ -24,7 +25,7 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
     data.save(flush : true)
     def scanner = new Scanner(maxResolution:"40x")
     assertTrue(scanner.validate())
-    scanner .save(flush : true)
+    scanner.save(flush : true)
     scan = new Scan(filename: "filename",data : data,scanner : scanner ,slide : null)
     assertTrue(scan.validate())
     scan.save(flush : true)
@@ -34,6 +35,7 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
     super.tearDown()
     Annotation.list()*.delete()
     Scan.list()*.delete()
+    Scanner.list()*.delete()
     Data.list()*.delete()
     Mime.list()*.delete()
   }
