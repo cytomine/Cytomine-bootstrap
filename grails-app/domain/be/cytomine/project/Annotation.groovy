@@ -1,9 +1,11 @@
 package be.cytomine.project
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.Coordinate
-import grails.converters.JSON
+import grails.converters.*
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Geometry
+import net.sf.json.groovy.JsonGroovyBuilder
+
 
 class Annotation {
 
@@ -62,5 +64,11 @@ class Annotation {
       max = Math.max(max, annot.id)
     }
     return ++max
+  }
+
+  static def convertToMap(Annotation annotation){
+      HashMap jsonMap = new HashMap()
+      jsonMap.annotation = [id: annotation.id, name: annotation.name, location: annotation.location.toString(), scan: annotation.scan.id]
+      jsonMap
   }
 }

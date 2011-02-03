@@ -53,19 +53,6 @@ class UrlMappings {
             action = [GET:"list"]
         }
 
-
-       /* //must be merge with the previous block
-        "/api/annotation/scan/$idscan/$location"(controller:"restAnnotation"){
-            action = [POST:"add"]
-        }
-       //must be merge with the previous block
-        "/api/annotation/$idannotation/$location"(controller:"restAnnotation"){
-            action = [PUT:"update"]
-        }
-       //must be merge with the previous block
-        "/api/annotation/$idannotation"(controller:"restAnnotation"){
-            action = [DELETE:"delete"]
-        }  */
         "/api/annotation"(controller:"restAnnotation"){
             action = [GET: "list",POST:"add"]
         }
@@ -75,6 +62,10 @@ class UrlMappings {
         }
 
 
+
+        "/api/test/"(controller:"restAnnotation"){
+            action = [GET:"test"]
+        }
 
 	}
 }

@@ -29,18 +29,18 @@ class BootStrap {
   def springSecurityService
   def init = { servletContext ->
 
+    println "configure JSON annotation"
+    JSON.registerObjectMarshaller(Annotation)
+            {
+              def returnArray = [:]
+              returnArray['id'] = it.id
+              returnArray['name'] = it.name
+              returnArray['location'] = it.location.toString() /* etc..*/
+              returnArray['scan'] = it.scan.id /* etc..*/
+              return returnArray
+            }
 
-  JSON.registerObjectMarshaller(Annotation)
-          {
-            def returnArray = [:]
-            returnArray['id'] = it.id
-            returnArray['name'] = it.name
-            returnArray['location'] = it.location.toString() /* etc..*/
-            returnArray['scan'] = it.scan.id /* etc..*/
-            return returnArray
-          }
-
-
+    println "add Data"
     /* Groups */
     def groupsSamples = [
             [name : "GIGA"],
