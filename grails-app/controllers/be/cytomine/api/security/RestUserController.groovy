@@ -2,12 +2,12 @@ package be.cytomine.api.security
 
 import be.cytomine.security.User
 import grails.converters.*
-import be.cytomine.command.AddUserCommand
-import be.cytomine.command.stack.UndoStack
+import be.cytomine.command.user.AddUserCommand
+import be.cytomine.command.UndoStack
 import be.cytomine.command.Transaction
 import be.cytomine.command.Command
-import be.cytomine.command.EditUserCommand
-import be.cytomine.command.DeleteUserCommand
+import be.cytomine.command.user.EditUserCommand
+import be.cytomine.command.user.DeleteUserCommand
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.

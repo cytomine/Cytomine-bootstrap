@@ -8,10 +8,10 @@ import com.vividsolutions.jts.geom.Geometry
 import be.cytomine.security.User
 import be.cytomine.command.Command
 import be.cytomine.command.Transaction
-import be.cytomine.command.AddAnnotationCommand
-import be.cytomine.command.stack.UndoStack
-import be.cytomine.command.DeleteAnnotationCommand
-import be.cytomine.command.EditAnnotationCommand
+import be.cytomine.command.annotation.AddAnnotationCommand
+import be.cytomine.command.UndoStack
+import be.cytomine.command.annotation.DeleteAnnotationCommand
+import be.cytomine.command.annotation.EditAnnotationCommand
 
 class RestAnnotationController {
 

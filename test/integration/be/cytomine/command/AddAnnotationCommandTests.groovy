@@ -1,10 +1,10 @@
 package be.cytomine.command
 
-import grails.test.*
 import be.cytomine.project.Scan
 
 import be.cytomine.project.Annotation
-import grails.converters.JSON
+
+import be.cytomine.command.annotation.AddAnnotationCommand
 
 class AddAnnotationCommandTests extends GroovyTestCase {
     protected void setUp() {

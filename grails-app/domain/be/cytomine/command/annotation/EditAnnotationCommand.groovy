@@ -1,9 +1,11 @@
-package be.cytomine.command
+package be.cytomine.command.annotation
 
 import grails.converters.JSON
 import be.cytomine.project.Annotation
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.project.Scan
+import be.cytomine.command.Command
+import be.cytomine.command.UndoRedoCommand
 
 class EditAnnotationCommand extends Command implements UndoRedoCommand  {
 

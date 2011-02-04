@@ -1,4 +1,4 @@
-package be.cytomine.command.stack
+package be.cytomine.command
 
 import be.cytomine.command.Command
 import be.cytomine.security.User

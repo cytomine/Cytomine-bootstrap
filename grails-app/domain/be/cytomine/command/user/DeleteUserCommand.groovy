@@ -1,9 +1,11 @@
-package be.cytomine.command
+package be.cytomine.command.user
 
 import grails.converters.JSON
 import be.cytomine.security.User
 import be.cytomine.security.UserGroup
 import be.cytomine.security.SecUserSecRole
+import be.cytomine.command.Command
+import be.cytomine.command.UndoRedoCommand
 
 class DeleteUserCommand extends Command implements UndoRedoCommand {
 

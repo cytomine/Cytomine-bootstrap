@@ -1,7 +1,5 @@
 package be.cytomine.command
 
-import be.cytomine.command.stack.RedoStack
-import be.cytomine.command.stack.UndoStack
 import be.cytomine.security.User
 
 class CommandController {

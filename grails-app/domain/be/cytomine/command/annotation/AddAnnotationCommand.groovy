@@ -1,8 +1,10 @@
-package be.cytomine.command
+package be.cytomine.command.annotation
 
 import be.cytomine.security.User
 import be.cytomine.project.Annotation
 import grails.converters.JSON
+import be.cytomine.command.Command
+import be.cytomine.command.UndoRedoCommand
 
 class AddAnnotationCommand extends Command implements UndoRedoCommand {
 
