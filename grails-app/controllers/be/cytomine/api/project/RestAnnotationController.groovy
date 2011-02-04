@@ -17,6 +17,7 @@ class RestAnnotationController {
 
   def springSecurityService
 
+
   def list = {
     println params.idscan
     List<Annotation> data = (params.idscan == null) ? Annotation.list() : (Annotation.findAllByScan(Scan.findById(params.idscan)))
@@ -31,7 +32,7 @@ class RestAnnotationController {
 
   //return 404 when not found
   def show = {
-    Scan.createOrGetBasicScan()
+    //testExecuteEditAnnotation()
     println "show:" + params.idannotation
     Annotation data = Annotation.get(params.idannotation)
     if(data!=null)  {

@@ -18,7 +18,6 @@ class Data {
 
     println "createOrGetBasicData()"
     Mime mime = Mime.createOrGetBasicMime()
-    println mime
     def data = new Data(path:"pathpathpath",mime:mime)
     data.save(flush : true)
     data

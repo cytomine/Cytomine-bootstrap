@@ -37,7 +37,6 @@ class Mime {
     {
       mime = mimeList[0]
     }
-    println "createOrGetBasicMime()="+mime
     mime
   }
 }

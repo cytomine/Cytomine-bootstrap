@@ -11,15 +11,22 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
 
 
   def execute() {
-    def postData = JSON.parse(postData)
-    def updatedAnnotation = Annotation.get(postData.annotation.id)
-    def backup = updatedAnnotation.encodeAsJSON() //we encode as JSON otherwise hibernate will update its values
+    println "postData="+postData
+    println "JSON.parse(postData)="+JSON.parse(postData)
+    println "Annotation.getAnnotationFromData(JSON.parse(postData))="+Annotation.getAnnotationFromData(JSON.parse(postData)).name
 
+    def postData = JSON.parse(postData)
+    def editAnnotation = Annotation.getAnnotationFromData(postData)
+    println "editAnnotation.id="+postData.annotation.id
+    def updatedAnnotation = Annotation.get(postData.annotation.id)
+    println "updatedAnnotation.id="+updatedAnnotation.id
+    def backup = Annotation.convertToMap(updatedAnnotation) as JSON //we encode as JSON otherwise hibernate will update its values
+    println "backup="+ backup
     if (!updatedAnnotation ) {
-      return [data : [success : false, message : "Annotation not found with id: " + postData.annotation.id], status : 404]
+      return [data : [success : false, message : "Annotation not found with id: " + editAnnotation.id], status : 404]
     }
 
-    for (property in postData.annotation) {
+    for (property in postData) {
       //TODO: bad code...
 
       if(property.key.equals("location"))
@@ -34,14 +41,14 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
       }
       else if(!property.key.equals("class"))
       {
-        //no propery class
+        //no property class
         updatedAnnotation.properties.put(property.key, property.value)
       }
     }
 
 
     if ( updatedAnnotation.validate()) {
-      data = ([ previousAnnotation : (JSON.parse(backup)), newAnnotation :  updatedAnnotation]) as JSON
+      data = ([ previousAnnotation : backup, newAnnotation :  updatedAnnotation]) as JSON
       updatedAnnotation.save()
       return [data : [success : true, message:"ok", user :  updatedAnnotation], status : 200]
     } else {

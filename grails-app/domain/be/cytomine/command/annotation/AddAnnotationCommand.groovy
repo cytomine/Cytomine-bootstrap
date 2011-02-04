@@ -9,15 +9,21 @@ import be.cytomine.command.UndoRedoCommand
 class AddAnnotationCommand extends Command implements UndoRedoCommand {
 
   def execute() {
-    def newAnnotation = Annotation.getAnnotationFromData(JSON.parse(postData))
-    if(newAnnotation.validate()) {
-      newAnnotation.save()
-      //data = newAnnotation.encodeAsJSON()
-      data = Annotation.convertToMap(newAnnotation)
-      return [data : [success : true , message:"ok", annotation : newAnnotation], status : 201]
-    } else {
-      return [data : [user : newAnnotation , errors : [newAnnotation.errors]], status : 403]
+    try
+    {
+      def newAnnotation = Annotation.getAnnotationFromData(JSON.parse(postData))
+      if(newAnnotation.validate()) {
+        newAnnotation.save()
+        //data = newAnnotation.encodeAsJSON()
+        data = Annotation.convertToMap(newAnnotation)
+        return [data : [success : true , message:"ok", annotation : newAnnotation], status : 201]
+      } else {
+        return [data : [annotation : newAnnotation , errors : [newAnnotation.errors]], status : 400]
 
+      }
+    }catch(com.vividsolutions.jts.io.ParseException e)
+    {
+      return [data : [annotation : null , errors : ["Geometry "+ JSON.parse(postData).annotation.location +" is not valid:"+e.toString()]], status : 400]
     }
   }
 

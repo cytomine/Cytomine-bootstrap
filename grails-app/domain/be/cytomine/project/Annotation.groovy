@@ -50,9 +50,11 @@ class Annotation {
 
   static Annotation getAnnotationFromData(data) {
     def annotation = new Annotation()
+    //if(data.annotation.id!=null)  annotation.id = data.annotation.id
     annotation.name = data.annotation.name
     annotation.location = new WKTReader().read(data.annotation.location);
     annotation.scan = Scan.get(data.annotation.scan);
+
     return annotation;
   }
 
@@ -65,9 +67,28 @@ class Annotation {
     return ++max
   }
 
+  boolean equals(object) {
+       if(object instanceof Annotation)
+       {
+          (this.id==object.id && this.name.equals(object.name) && this.location==object.location && this.scan.id==object.scan.id)
+       }
+       else false
+  }
+
   static def convertToMap(Annotation annotation){
       HashMap jsonMap = new HashMap()
-      jsonMap.annotation = [id: annotation.id, name: annotation.name, location: annotation.location.toString(), scan: annotation.scan.id]
+
+      jsonMap.annotation = [id: annotation.id, name: annotation.name, location: annotation.location.toString(), scan: annotation.scan.id,'class':annotation.class]
+      if (annotation.id==null)  jsonMap.annotation.remove('id')
       jsonMap
+  }
+
+  static Annotation createOrGetBasicAnnotation() {
+    println "createOrGetBasicAnnotation()"
+    def annotation = new Annotation(location:new WKTReader().read("POINT(17573.5 21853.5)"), name:"test",scan:Scan.createOrGetBasicScan())
+
+    println "annotation.validate()=" + annotation.validate()
+    annotation.save(flush : true)
+    annotation
   }
 }
