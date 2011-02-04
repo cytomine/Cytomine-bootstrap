@@ -2,7 +2,7 @@ package be.cytomine.command
 
 import grails.test.*
 import be.cytomine.project.Scan
-import net.sf.json.JSONObject
+
 import be.cytomine.project.Annotation
 import grails.converters.JSON
 
