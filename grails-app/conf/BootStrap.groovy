@@ -23,22 +23,14 @@ import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Polygon
 import be.cytomine.server.RetrievalServer
 import grails.converters.JSON
+import be.cytomine.marshallers.Marshallers
 
 
 class BootStrap {
   def springSecurityService
   def init = { servletContext ->
 
-    println "configure JSON annotation"
-    JSON.registerObjectMarshaller(Annotation)
-            {
-              def returnArray = [:]
-              returnArray['id'] = it.id
-              returnArray['name'] = it.name
-              returnArray['location'] = it.location.toString() /* etc..*/
-              returnArray['scan'] = it.scan.id /* etc..*/
-              return returnArray
-            }
+    Marshallers.init();
 
     println "add Data"
     /* Groups */

@@ -50,11 +50,9 @@ class Annotation {
 
   static Annotation getAnnotationFromData(data) {
     def annotation = new Annotation()
-    //if(data.annotation.id!=null)  annotation.id = data.annotation.id
     annotation.name = data.annotation.name
     annotation.location = new WKTReader().read(data.annotation.location);
     annotation.scan = Scan.get(data.annotation.scan);
-
     return annotation;
   }
 
@@ -90,5 +88,18 @@ class Annotation {
     println "annotation.validate()=" + annotation.validate()
     annotation.save(flush : true)
     annotation
+  }
+  
+  
+  static void registerMarshaller() {
+    println "Register custom JSON renderer for " + Annotation.class
+    JSON.registerObjectMarshaller(Annotation) {
+      def returnArray = [:]
+      returnArray['id'] = it.id
+      returnArray['name'] = it.name
+      returnArray['location'] = it.location.toString()
+      returnArray['scan'] = it.scan.id
+      return returnArray
+    }
   }
 }

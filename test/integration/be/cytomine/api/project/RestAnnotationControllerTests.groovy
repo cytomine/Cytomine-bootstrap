@@ -10,12 +10,15 @@ import be.cytomine.project.Annotation
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.marshallers.Marshallers
 
 class RestAnnotationControllerTests extends GrailsUnitTestCase {
 
 
+
   protected void setUp() {
     super.setUp()
+    Marshallers.init();
   }
 
   protected void tearDown() {
@@ -68,6 +71,16 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
   }
 
 
+
+  void testMarshallers() {
+      def annotation = Annotation.findById(3)
+      println annotation
+      def json = annotation.encodeAsJSON()
+      println json
+
+
+
+  }
 
   void testShowAnnotation() {
     String name = "name"
