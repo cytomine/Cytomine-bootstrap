@@ -219,32 +219,33 @@ Cytomine.Project.AnnotationLayer.prototype = {
     update : function() {
         console.log("update")
         // reset modification mode
-        this.controls.modify.mode = OpenLayers.Control.ModifyFeature.RESHAPE;
+        controls.modify.mode = OpenLayers.Control.ModifyFeature.RESHAPE;
         var rotate = document.getElementById("rotate").checked;
         if(rotate) {
-            this.controls.modify.mode |= OpenLayers.Control.ModifyFeature.ROTATE;
+            controls.modify.mode |= OpenLayers.Control.ModifyFeature.ROTATE;
         }
         var resize = document.getElementById("resize").checked;
         if(resize) {
-            this.controls.modify.mode |= OpenLayers.Control.ModifyFeature.RESIZE;
+            controls.modify.mode |= OpenLayers.Control.ModifyFeature.RESIZE;
             var keepAspectRatio = document.getElementById("keepAspectRatio").checked;
             if (keepAspectRatio) {
-                this.controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
+                controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
             }
         }
         var drag = document.getElementById("drag").checked;
         if(drag) {
-            this.controls.modify.mode |= OpenLayers.Control.ModifyFeature.DRAG;
+            controls.modify.mode |= OpenLayers.Control.ModifyFeature.DRAG;
         }
         if (rotate || drag) {
-            this.controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
+            controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
         }
         var sides = parseInt(document.getElementById("sides").value);
         sides = Math.max(3, isNaN(sides) ? 0 : sides);
-        this.controls.regular.handler.sides = sides;
+        controls.regular.handler.sides = sides;
         var irregular =  document.getElementById("irregular").checked;
-        this.controls.regular.handler.irregular = irregular;
-    }, toggleControl :
+        controls.regular.handler.irregular = irregular;
+    },
+    toggleControl :
        function (element) {
            console.log("toggleControl")
            for(key in controls) {

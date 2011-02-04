@@ -5,9 +5,10 @@ import be.cytomine.command.stack.UndoStack
 import be.cytomine.security.User
 
 class CommandController {
+  def springSecurityService
 
   def undo = {
-    User user = User.findByUsername("stevben")
+    User user = User.get(springSecurityService.principal.id)
     def lastCommands = UndoStack.findAllByUser(user)
 
     if (lastCommands.size() == 0) {
@@ -30,7 +31,7 @@ class CommandController {
   }
 
   def redo = {
-    User user = User.findByUsername("stevben")
+    User user = User.get(springSecurityService.principal.id)
     def redoCommands = RedoStack.findAllByUser(user)
 
     if (redoCommands.size() == 0) {

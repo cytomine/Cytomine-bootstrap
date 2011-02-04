@@ -36,6 +36,7 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
     svc_val_fmt: "info:ofi/fmt:kev:mtx:jpeg2000",
     format: null,
     tileHeight: null,
+    viewerLevel : null,
 
     /**
      * Constructor: OpenLayers.Layer.OpenURL
@@ -46,6 +47,7 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
      * options - {Object} Hashtable of extra options to tag onto the layer
      */
     initialize: function(name, url, options) {
+
         var newArguments = [];
         newArguments.push(name, url, {}, options);
         OpenLayers.Layer.Grid.prototype.initialize.apply(this, newArguments);
@@ -63,12 +65,13 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
 
         // viewerLevel is the smallest useful zoom level: i.e., it is the largest level that fits entirely
         // within the bounds of the viewer div.
-        var viewerLevel = Math.ceil(Math.min(minLevel, Math.max(
+        viewerLevel = Math.ceil(Math.min(minLevel, Math.max(
             (Math.log(this.imgMetadata.width) - Math.log(OpenLayers.Layer.OpenURL.viewerWidth)),
             (Math.log(this.imgMetadata.height) - Math.log(OpenLayers.Layer.OpenURL.viewerHeight)))/
                Math.log(2)));
 
-        viewerLevel = this.imgMetadata.levels - 1;
+        viewerLevel = Math.ceil(Math.log( this.imgMetadata.width / 512) / Math.log(2));
+
         this.zoomOffset = minLevel - viewerLevel;
 
         // width at level viewerLevel
@@ -82,9 +85,14 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
           this.resolutions.push(Math.pow(2, i));
         }
 
+        //this.tileSize = new OpenLayers.Size(Math.ceil(w), Math.ceil(h));
         this.tileSize = new OpenLayers.Size(Math.ceil(w), Math.ceil(h));
-    },
 
+
+    },
+    getViewerLevel : function () {
+        return viewerLevel;
+    },
     /**
      * APIMethod:destroy
      */
@@ -131,7 +139,7 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
      *          parameters
      */
     getURL: function (bounds) {
-        console.log(bounds.toString());
+        //console.log(bounds.toString());
         bounds = this.adjustBounds(bounds);
         this.calculatePositionAndSize(bounds);
         var z = this.map.getZoom() + this.zoomOffset;

@@ -24,6 +24,7 @@ Cytomine.Project.Scan.prototype = {
     },
     initMap : function () {
         var openURLLayer = new OpenLayers.Layer.OpenURL( this.filename, this.urls, {transitionEffect: 'resize', layername: 'basic', format:'image/jpeg', rft_id: this.path, metadataUrl: this.getMetaDataURL()} );
+        console.log("openURLLayer.viewerLevel " + openURLLayer.getViewerLevel());
         var metadata = openURLLayer.getImageMetadata();
         var resolutions = openURLLayer.getResolutions();
         var maxExtent = new OpenLayers.Bounds(0, 0, metadata.width, metadata.height);
@@ -42,8 +43,11 @@ Cytomine.Project.Scan.prototype = {
             new OpenLayers.Control.MousePosition(),
             new OpenLayers.Control.OverviewMap({
                 div : $('overviewMap'),
-                size: new OpenLayers.Size(metadata.width / Math.pow(2, (metadata.levels-1)), metadata.height / Math.pow(2,(metadata.levels-1))),
-
+       //         size : new OpenLayers.Size(256,256),
+                size: new OpenLayers.Size(metadata.width / Math.pow(2, openURLLayer.getViewerLevel()), metadata.height / Math.pow(2,(openURLLayer.getViewerLevel()))),
+                //maxRatio : 1,
+                minRatio : 1,
+                maxRatio : 1024,
                 mapOptions: mapOptions}),
             new OpenLayers.Control.KeyboardDefaults()
         ]};

@@ -108,7 +108,6 @@ Cytomine.Security.User = {
         });
 
         var index = grid.store.data.length;
-        alert(index);
         editor.stopEditing();
         grid.store.insert(index, u);
         editor.startEditing(index);
