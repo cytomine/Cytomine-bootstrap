@@ -42,8 +42,6 @@
 <g:layoutBody />
 
 <div id="controls">
-
-
   <input type="radio" name="type" value="none" id="noneToggle" onclick="Cytomine.currentLayer.toggleControl(this);" checked="checked" />
   <label for="noneToggle">navigate</label>
 
@@ -78,9 +76,9 @@
   <input id="drag" type="checkbox" name="drag" onchange="Cytomine.currentLayer.update()" />
   <label for="drag">allow dragging</label>
 
-  <button type="button" onclick="JavaScript: alert('Bouton text')">
+  <!--<button type="button" onclick="JavaScript: alert('Bouton text')">
     Save all annotations
-  </button>
+  </button>-->
 
 
 </div>

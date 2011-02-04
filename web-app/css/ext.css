@@ -53,3 +53,7 @@ html, body {
 #overviewMap > .olControlOverviewMapElement {
     background-color : #FFF;
 }
+
+#controls {
+    background-color : #FFF;
+}

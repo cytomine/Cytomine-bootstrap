@@ -70,7 +70,7 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
             (Math.log(this.imgMetadata.height) - Math.log(OpenLayers.Layer.OpenURL.viewerHeight)))/
                Math.log(2)));
 
-        viewerLevel = Math.ceil(Math.log( this.imgMetadata.width / 512) / Math.log(2));
+        viewerLevel = Math.ceil(Math.log( this.imgMetadata.width / 256) / Math.log(2));
 
         this.zoomOffset = minLevel - viewerLevel;
 
