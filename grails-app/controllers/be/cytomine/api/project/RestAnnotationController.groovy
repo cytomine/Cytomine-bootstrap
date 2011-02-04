@@ -59,7 +59,9 @@ class RestAnnotationController {
 
   def add = {
 
+    println "add"
     User currentUser = User.get(3)
+    println request.JSON.toString()
     Command addAnnotationCommand = new AddAnnotationCommand(postData : request.JSON.toString())
     Transaction currentTransaction = currentUser.getNextTransaction()
     currentTransaction.addToCommands(addAnnotationCommand)

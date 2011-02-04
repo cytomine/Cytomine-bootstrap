@@ -12,7 +12,7 @@ class AddUserCommand extends Command implements UndoRedoCommand {
       data = newUser.encodeAsJSON()
       return [data : [success : true, message:"ok", user : newUser], status : 201]
     } else {
-      return [data : [user : newUser, errors : [newUser.errors]], status : 403]
+      return [data : [user : newUser, errors : [newUser.errors]], status : 400]
     }
   }
 

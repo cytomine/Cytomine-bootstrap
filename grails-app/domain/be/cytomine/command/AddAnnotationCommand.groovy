@@ -10,7 +10,8 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
     def newAnnotation = Annotation.getAnnotationFromData(JSON.parse(postData))
     if(newAnnotation.validate()) {
       newAnnotation.save()
-      data = newAnnotation.encodeAsJSON()
+      //data = newAnnotation.encodeAsJSON()
+      data = Annotation.convertToMap(newAnnotation)
       return [data : [success : true , message:"ok", annotation : newAnnotation], status : 201]
     } else {
       return [data : [user : newAnnotation , errors : [newAnnotation.errors]], status : 403]

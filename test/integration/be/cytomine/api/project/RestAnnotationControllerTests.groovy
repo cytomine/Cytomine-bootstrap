@@ -16,46 +16,55 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
 
   protected void setUp() {
     super.setUp()
-    /* def mime = new Mime(extension:"ext",mimeType:"mimeT")
-  assertTrue(mime.validate())
-  mime.save(flush : true)
-  def data = new Data(path : "path", mime : mime)
-  assertTrue(data.validate())
-  data.save(flush : true)
-  def scanner = new Scanner(maxResolution:"40x",brand:"brand",model:"model")
-  assertTrue(scanner.validate())
-  scanner.save(flush : true)
-  scan = new Scan(filename: "filename",data : data,scanner : scanner ,slide : null)
-  assertTrue(scan.validate())
-  scan.save(flush : true)*/
   }
 
   protected void tearDown() {
     super.tearDown()
-    /*Annotation.list()*.delete()
-    Scan.list()*.delete()
-    Scanner.list()*.delete()
-    Data.list()*.delete()
-    Mime.list()*.delete() */
   }
 
 
   void testAddAnnotation() {
-    /*  println "1"
-  def ssvc = new grails.plugins.springsecurity.SpringSecurityService();
-println "2"
-  def u = new org.springframework.security.core.userdetails.User(
-    "lrollus","password",true,true,true,true,
-    [new org.springframework.security.core.authority.GrantedAuthorityImpl("TEST_ROLE")]);
-println "3"
-ssvc.metaClass.getPrincipal = { u }*/
+    /*println "1"
+    def ssvc = new grails.plugins.springsecurity.SpringSecurityService();
+    println "2"
+    def u = new org.springframework.security.core.userdetails.User(
+            "lrollus","password",true,true,true,true,
+            [new org.springframework.security.core.authority.GrantedAuthorityImpl("TEST_ROLE")]);
 
+    println "3"
+    ssvc.metaClass.getPrincipal = { u }
+
+
+
+    String name = "name"
+    String location = "POINT (1000 1000)"
+     println "4"
+    def scan = Scan.createOrGetBasicScan()
+    println "5"
+    def annotation = new Annotation(name:name,location:new WKTReader().read(location),scan: scan);
+    println "6"
+    assertTrue(annotation.validate())
+    println "7"
+    annotation.save(flush : true)
+    println "8"
+    RestAnnotationController c = new RestAnnotationController()
+    println "9"
+   // c.request.setAttribute("JSON","{\"annotation\":{\"location\":\"POINT(17573.5 21853.5)\",\"name\":\"test\",\"class\":\"be.cytomine.project.Annotation\",\"scan\":37}}" )
+    c.request = "{\"annotation\":{\"location\":\"POINT(17573.5 21853.5)\",\"name\":\"test\",\"class\":\"be.cytomine.project.Annotation\",\"scan\":37}}"
+    println "10"
+    c.springSecurityService = ssvc
+    println "11"
+    c.add()
+    println "12"
+    def jsonAnnotation = c.response.contentAsString
+    println "13"
+    println  jsonAnnotation
     // c.springSecurityService = ssvc
     //
     //
     //
     // //assertFalse c.hasAuthority("TEST_ROLE_NO")
-    //assertTrue c.hasAuthority("TEST_ROLE")
+    //assertTrue c.hasAuthority("TEST_ROLE")   */
   }
 
 
@@ -63,6 +72,7 @@ ssvc.metaClass.getPrincipal = { u }*/
   void testShowAnnotation() {
     String name = "name"
     String location = "POINT (1000 1000)"
+
     def scan = Scan.createOrGetBasicScan()
     def annotation = new Annotation(name:name,location:new WKTReader().read(location),scan: scan);
     assertTrue(annotation.validate())
@@ -71,21 +81,18 @@ ssvc.metaClass.getPrincipal = { u }*/
     RestAnnotationController c = new RestAnnotationController()
     c.params.idannotation = annotation.id
     c.show()
+
     def jsonAnnotation = c.response.contentAsString
     println  jsonAnnotation
-    def json = JSON.parse(jsonAnnotation); // Parse a JSON String
+    def json = JSON.parse(jsonAnnotation);
     //{"annotation":{"id":4,"name":"name","location":"POINT (1000 1000)","scan":119}}
+
     assert json instanceof JSONObject // In this case, JSON.parse returns a JSONObject instance
     assert json instanceof Map // which implements the Map interface
 
     assertEquals(name,json.annotation.name)// access a property
     assertEquals(location, json.annotation.location)
 
-    /*Annotation.list()*.delete()
-    Scan.list()*.delete()
-    Scanner.list()*.delete()
-    Data.list()*.delete()
-    Mime.list()*.delete()*/
   }
 
   void testShowAnnotationNotExist() {
@@ -97,15 +104,6 @@ ssvc.metaClass.getPrincipal = { u }*/
     println code
     assertEquals(404,code)
   }
-
-  static boolean compareAnnotations(objectAnnotation,jsonAnnotation)
-  {
-
-  }
-
-
-
-
 
   void testGoogleAccess() {
     URL url =  new URL("http://www.google.com")
