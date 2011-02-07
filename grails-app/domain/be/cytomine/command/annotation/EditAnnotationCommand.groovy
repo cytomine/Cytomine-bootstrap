@@ -11,48 +11,49 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
 
 
   def execute() {
-    println "postData="+postData
-    println "JSON.parse(postData)="+JSON.parse(postData)
-    println "Annotation.getAnnotationFromData(JSON.parse(postData))="+Annotation.getAnnotationFromData(JSON.parse(postData)).name
 
-    def postData = JSON.parse(postData)
-    def editAnnotation = Annotation.getAnnotationFromData(postData)
-    println "editAnnotation.id="+postData.annotation.id
-    def updatedAnnotation = Annotation.get(postData.annotation.id)
-    println "updatedAnnotation.id="+updatedAnnotation.id
-    def backup = Annotation.convertToMap(updatedAnnotation) as JSON //we encode as JSON otherwise hibernate will update its values
-    println "backup="+ backup
-    if (!updatedAnnotation ) {
-      return [data : [success : false, message : "Annotation not found with id: " + editAnnotation.id], status : 404]
-    }
+    try
+    {
 
-    for (property in postData) {
-      //TODO: bad code...
+      println "postData="+postData
 
-      if(property.key.equals("location"))
-      {
-      //location is a Geometry object
-        updatedAnnotation.properties.put(property.key, new WKTReader().read(property.value))
+      def postData = JSON.parse(postData)
+      def updatedAnnotation = Annotation.get(postData.annotation.id)
+      def backup = updatedAnnotation.encodeAsJSON() //we encode as JSON otherwise hibernate will update its values
+
+      if (!updatedAnnotation ) {
+        return [data : [success : false, message : "Annotation not found with id: " + postData.annotation.id], status : 404]
       }
-      else if(property.key.equals("scan"))
-      {
-        //scan is a scan object and not a simple id
-        updatedAnnotation.properties.put(property.key, Scan.get(property.value))
-      }
-      else if(!property.key.equals("class"))
-      {
-        //no property class
-        updatedAnnotation.properties.put(property.key, property.value)
-      }
-    }
+      for (property in postData.annotation) {
 
+        if(property.key.equals("location"))
+        {
+          //location is a Geometry object
+          updatedAnnotation.properties.put(property.key, new WKTReader().read(property.value))
+        }
+        else if(property.key.equals("scan"))
+        {
+          //scan is a scan object and not a simple id
+          updatedAnnotation.properties.put(property.key, Scan.get(property.value))
+        }
+        else if(!property.key.equals("class"))
+        {
+          //no property class
+          updatedAnnotation.properties.put(property.key, property.value)
+        }
 
-    if ( updatedAnnotation.validate()) {
-      data = ([ previousAnnotation : backup, newAnnotation :  updatedAnnotation]) as JSON
-      updatedAnnotation.save()
-      return [data : [success : true, message:"ok", user :  updatedAnnotation], status : 200]
-    } else {
-      return [data : [user :  updatedAnnotation, errors : [ updatedAnnotation.errors]], status : 403]
+      }
+
+      if ( updatedAnnotation.validate()) {
+        data = ([ previousAnnotation : (JSON.parse(backup)), newAnnotation :  updatedAnnotation]) as JSON
+        updatedAnnotation.save()
+        return [data : [success : true, message:"ok", annotation :  updatedAnnotation], status : 200]
+      } else {
+        return [data : [annotation :  updatedAnnotation, errors : [ updatedAnnotation.errors]], status : 400]
+      }
+    }catch(com.vividsolutions.jts.io.ParseException e)
+    {
+      return [data : [annotation : null , errors : ["Geometry "+ JSON.parse(postData).annotation.location +" is not valid:"+e.toString()]], status : 400]
     }
 
 
@@ -63,6 +64,7 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
     Annotation annotation = Annotation.findById(annotationsData.previousAnnotation.id)
     annotation.name = annotationsData.previousAnnotation.name
     annotation.location = new WKTReader().read(annotationsData.previousAnnotation.location)
+    println  "undo="+annotation.location
     annotation.scan = Scan.get(annotationsData.previousAnnotation.scan)
     annotation.save()
     return [data : [success : true, message:"ok", annotation : annotation], status : 200]

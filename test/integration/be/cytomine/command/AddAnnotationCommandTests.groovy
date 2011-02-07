@@ -7,10 +7,12 @@ import be.cytomine.project.Annotation
 import be.cytomine.command.annotation.AddAnnotationCommand
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
+import be.cytomine.marshallers.Marshallers
 
 class AddAnnotationCommandTests extends GroovyTestCase {
   protected void setUp() {
     super.setUp()
+    Marshallers.init();
   }
 
   protected void tearDown() {
@@ -20,7 +22,7 @@ class AddAnnotationCommandTests extends GroovyTestCase {
   void testExecuteAddAnnotation()
   {
     Annotation annotationToAdd = Annotation.createOrGetBasicAnnotation()
-    def jsonAnnotation = Annotation.convertToMap(annotationToAdd) as JSON;
+    def jsonAnnotation = ([annotation : annotationToAdd]).encodeAsJSON()
     println "jsonAnnotation="+jsonAnnotation.toString();
     Command addAnnotationCommand = new AddAnnotationCommand(postData : jsonAnnotation.toString())
     //add annotation
@@ -33,17 +35,29 @@ class AddAnnotationCommandTests extends GroovyTestCase {
     //test if exist and is equal
     def newAnnotation = Annotation.get(annotation.id)
     assertNotNull("Annotation is not in database", newAnnotation)
-    assertTrue("Annotation add and get are different",newAnnotation.equals(annotation))
+    assertEquals("Annotation add and get are different",annotation,newAnnotation)
+
+    //test if unod work
+    addAnnotationCommand.undo()
+    newAnnotation = Annotation.get(annotation.id)
+    assertNull("Annotation is in database", newAnnotation)
+
+    //test if redo work
+    addAnnotationCommand.redo()
+    newAnnotation = Annotation.get(annotation.id)
+    assertNotNull("Annotation is not in database", newAnnotation)
+    assertEquals("Annotation add and get are different",annotation,newAnnotation)
   }
 
 
   void testExecuteAddAnnotationWithBadGeom()
   {
     Annotation annotationToAdd = Annotation.createOrGetBasicAnnotation()
-    def obj =  Annotation.convertToMap(annotationToAdd) as JSON
-    def jsonAnnotation = JSON.parse(obj.toString())
-    println "jsonAnnotation="+jsonAnnotation.toString();
-    jsonAnnotation.annotation.location = 'POINT(BAD GEOMETRY)'
+    def jsonAnnotation = ([annotation : annotationToAdd]).encodeAsJSON()
+    def updateAnnotation = JSON.parse(jsonAnnotation)
+    updateAnnotation.annotation.location = 'POINT(BAD GEOMETRY)'
+    jsonAnnotation = updateAnnotation.encodeAsJSON()
+
     println "jsonAnnotation="+jsonAnnotation.toString();
     Command addAnnotationCommand = new AddAnnotationCommand(postData : jsonAnnotation.toString())
     //add annotation
@@ -53,16 +67,16 @@ class AddAnnotationCommandTests extends GroovyTestCase {
     assertNull("Annotation response with bad geometry must be null",result.data.annotation)
 
     println(result.data.errors)
-
   }
 
   void testExecuteAddAnnotationWithScanNotExist()
   {
     Annotation annotationToAdd = Annotation.createOrGetBasicAnnotation()
-    def obj =  Annotation.convertToMap(annotationToAdd) as JSON
-    println obj.toString()
-    def jsonAnnotation = JSON.parse(obj.toString())
-    jsonAnnotation.annotation.scan = -99
+    def jsonAnnotation = ([annotation : annotationToAdd]).encodeAsJSON()
+    def updateAnnotation = JSON.parse(jsonAnnotation)
+    updateAnnotation.annotation.scan = -99
+    jsonAnnotation = updateAnnotation.encodeAsJSON()
+
     println "jsonAnnotation="+jsonAnnotation.toString();
     Command addAnnotationCommand = new AddAnnotationCommand(postData : jsonAnnotation.toString())
     //add annotation
