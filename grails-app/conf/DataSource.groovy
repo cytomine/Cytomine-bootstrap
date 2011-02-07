@@ -26,8 +26,8 @@ environments {
   }
   production {
     dataSource {
-      dbCreate = "update"
-      url = "jdbc:mysql://127.0.0.1:3306/cytomine?useUnicode=yes&characterEncoding=UTF-8"
+      dbCreate = "create-drop"
+      url = "jdbc:postgresql://localhost:5432/cytomineprod"
     }
   }
 }

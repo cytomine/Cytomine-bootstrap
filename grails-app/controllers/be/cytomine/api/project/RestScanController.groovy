@@ -41,8 +41,16 @@ class RestScanController {
 
   def showByProject = {
     if(params.id && Project.exists(params.id)) {
-      def data = Project.findById(params.id).projectSlide.slide.scan
-      def resp = [scan : data[0]]
+      def scan = []
+      Project.findAllById(params.id).each {
+        it.projectSlide.each { ps ->
+          ps.slide.scan.each { sc ->
+            scan << sc
+          }
+        }
+      }
+      def resp = [ scan : scan]
+
       withFormat {
         json { render resp as JSON }
         xml { render resp as XML}
