@@ -15,14 +15,18 @@ Ext.onReady(function() {
     Cytomine.tabs = new Ext.TabPanel({
         region:'center',
         activeTab:0,
-        //autoScroll:true,
+        autoScroll:true,
+        enableTabScroll:true,
         margins: '0 0 0 0',
         resizeTabs:true, // turn on tab resizing
         minTabWidth: 115,
         items:[
-            Cytomine.Dashboard.tab(),
-            Cytomine.Project.tab()
+            Cytomine.Dashboard.tab()
         ],
+        defaults: {
+            autoScroll:true
+        },
+        plugins: new Ext.ux.TabCloseMenu(),
         listeners : {
             tabchange: function(p) {
                 console.log("EVENT");

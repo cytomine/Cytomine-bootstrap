@@ -16,6 +16,6 @@
   <h1>Cytomine</h1>
 </div>
 <div id="content"></div>
-
+<div id="project"></div>
 
 </body>

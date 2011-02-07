@@ -19,7 +19,10 @@ Cytomine.Dashboard = {
             bodyCssClass: 'overflow-auto',
             iconCls: 'envelope-label',
             title: 'Dashboard',
-            items: [Cytomine.Security.User.userGrid()],
+            items: [
+            //    Cytomine.Security.User.grid(),
+                Cytomine.Rest.Project.grid()
+            ],
             listeners : {
                 show: function(p) {
                     if (Cytomine.toolbar != null) Cytomine.toolbar.hide();

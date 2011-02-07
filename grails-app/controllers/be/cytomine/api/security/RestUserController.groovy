@@ -23,6 +23,7 @@ class RestUserController {
   def list = {
     def data = [:]
     data.user = User.list()
+    data.total = User.count()
 
     withFormat {
       json { render data as JSON }
@@ -114,7 +115,7 @@ class RestUserController {
     def postData = ([id : params.id]) as JSON
     def result = null
 
-    if (params.id == "3") {
+    if (params.id == springSecurityService.principal.id) {
       result = [data : [success : false, message : "The user can't delete herself"], status : 403]
     } else {
       Command deleteUserCommand = new DeleteUserCommand(postData : postData.toString())

@@ -10,6 +10,7 @@ Ext.onReady(function(){
     Ext.QuickTips.init();
 
     Cytomine.auth.loginForm = new Ext.form.FormPanel({
+        formId: 'login_form',
         frame:true,
         renderTo: 'login',
         width:280,

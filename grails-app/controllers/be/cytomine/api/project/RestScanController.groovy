@@ -2,6 +2,7 @@ package be.cytomine.api.project
 
 import be.cytomine.project.Scan
 import grails.converters.*
+import be.cytomine.project.Project
 
 
 class RestScanController {
@@ -26,14 +27,30 @@ class RestScanController {
   def show = {
     if(params.id && scan.exists(params.id)) {
       def data = scan.findById(params.id)
-    } else {
       withFormat {
-      json { render data as JSON }
-      xml { render data as XML}
-    }
-      //SendNotFoundResponse()
+        json { render data as JSON }
+        xml { render data as XML}
+      }
+    } else {
+      response.status = 404
+      render ""
     }
 
+
+  }
+
+  def showByProject = {
+    if(params.id && Project.exists(params.id)) {
+      def data = Project.findById(params.id).projectSlide.slide.scan
+      def resp = [scan : data[0]]
+      withFormat {
+        json { render resp as JSON }
+        xml { render resp as XML}
+      }
+    } else {
+      response.status = 404
+      render ""
+    }
   }
 
 

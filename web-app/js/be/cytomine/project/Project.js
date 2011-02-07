@@ -1,8 +1,11 @@
 Ext.namespace('Cytomine');
+Ext.namespace('Cytomine.Project');
+
 
 Cytomine.scans = [];
 Cytomine.annotationLayers = [];
 Cytomine.currentLayer = null;
+
 
 /**
  * @class Cytomine.Project
@@ -13,11 +16,29 @@ Cytomine.Project = {
      * Retourne l'onglet correspondant au gestionnaire de projets
      * @return {Ext.Panel}
      */
-    tab: function() {
-        var view = new Ext.DataView({
+    tab: function(id) {
+        var view = this.getView(id);
+
+        return new Ext.Panel({
+            id: 'Project',
+            bodyCssClass: 'overflow-auto',
+            iconCls: 'envelope-label',
+            title: 'Project',
+            items: [view],
+            listeners: {
+                show: function(p) {
+                    if (Cytomine.toolbar != null) Cytomine.toolbar.hide();
+                    if (Cytomine.overview != null) Cytomine.overview.hide();
+                }
+            }
+        });
+    },
+    getView : function(id) {
+        return new Ext.DataView({
             itemSelector: 'div.thumb-wrap',
             store: new Ext.data.JsonStore({
-                url: '/cytomine-web/api/scan.json',
+                //url: '/cytomine-web/api/scan.json',
+                url : '/cytomine-web/api/project/scan/'+id+'.json',
                 autoLoad: true,
                 root: 'scan',
                 fields:[
@@ -39,20 +60,6 @@ Cytomine.Project = {
 
                     //Cytomine.Retrieval.showSimilarities(data.get('id'),data.get('id'), data.get('filename')); //multiple tabs
                     //Cytomine.Browser.openScan('browser', data.get('id'), data.get('filename')); //unique tabs
-                }
-            }
-        });
-
-        return new Ext.Panel({
-            id: 'Project',
-            bodyCssClass: 'overflow-auto',
-            iconCls: 'envelope-label',
-            title: 'Project',
-            items: [view],
-            listeners: {
-                show: function(p) {
-                    if (Cytomine.toolbar != null) Cytomine.toolbar.hide();
-                    if (Cytomine.overview != null) Cytomine.overview.hide();
                 }
             }
         });

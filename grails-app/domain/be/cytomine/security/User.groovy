@@ -1,5 +1,7 @@
 package be.cytomine.security
 
+import grails.converters.JSON
+
 class User extends SecUser {
 
   def springSecurityService
@@ -32,6 +34,20 @@ class User extends SecUser {
     user.password = user.springSecurityService.encodePassword(data.user.password)
     user.enabled = true
     return user;
+  }
+
+  static void registerMarshaller() {
+    println "Register custom JSON renderer for " + User.class
+    JSON.registerObjectMarshaller(User) {
+      def returnArray = [:]
+      returnArray['id'] = it.id
+      returnArray['username'] = it.username
+      returnArray['firstname'] = it.firstname
+      returnArray['lastname'] = it.lastname
+      returnArray['email'] = it.email
+      returnArray['password'] = "******"
+      return returnArray
+    }
   }
 
 

@@ -13,7 +13,7 @@
 
   <!-- EXT JS Extensions -->
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'ext-3.3.1/examples/ux/RowEditor.js')}" ></script>
-
+  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'ext-3.3.1/examples/ux/TabCloseMenu.js')}" ></script>
 
   <!-- Cytomine -->
   <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/user/rest.js')}" ></script>

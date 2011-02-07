@@ -1,6 +1,6 @@
 Ext.onReady(function () {
 
-   /* LOG AUTOMATICALLY FOR DEV*/
+    /* LOG AUTOMATICALLY FOR DEV*/
     var login = function () {
 
         var form = Cytomine.auth.loginForm.getForm();

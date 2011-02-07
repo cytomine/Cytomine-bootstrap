@@ -113,14 +113,16 @@ class BootStrap {
 
     /* Projects */
     def projectSamples = [
-            [name : "GIGA-DEV", updated : null, deleted : null,  groups : [[ name :"GIGA"]]]
+            [name : "GIGA-DEV", updated : null, deleted : null,  groups : [[ name :"GIGA"]]],
+            [name : "GIGA-DEV2", updated : null, deleted : null,  groups : [[ name :"GIGA"]]]
     ]
 
     createProjects(projectSamples)
 
     /* Slides */
     def slideSamples = [
-            [name : "testSlide", order : 8, projects : [[name : "GIGA-DEV"]]]
+            [name : "testslide", order : 8, projects : [[name : "GIGA-DEV"]]],
+            [name : "testslide2", order : 8, projects : [[name : "GIGA-DEV2"]]]
     ]
     createSlides(slideSamples)
 
@@ -161,12 +163,12 @@ class BootStrap {
             [filename: 'Gemzar + Curcu 5',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/Gemzar-Curcu-5.jp2',slide : 'testslide' ],
             [filename: 'Gemzar + Curcu 6',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/Gemzar-Curcu-6.jp2',slide : 'testslide' ],
             [filename: 'Gemzar + Curcu 7',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/Gemzar-Curcu-7.jp2',slide : 'testslide' ],
-            [filename: 'HPg 1',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-1.jp2',slide : 'testslide' ],
-            [filename: 'HPg 3',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-3.jp2',slide : 'testslide' ],
-            [filename: 'HPg 4',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-4.jp2',slide : 'testslide' ],
-            [filename: 'HPg 5',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-5.jp2',slide : 'testslide' ],
-            [filename: 'HPg 6',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-6.jp2',slide : 'testslide' ],
-            [filename: 'HPg 7',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-7.jp2',slide : 'testslide' ]
+            [filename: 'HPg 1',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-1.jp2',slide : 'testslide2' ],
+            [filename: 'HPg 3',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-3.jp2',slide : 'testslide2' ],
+            [filename: 'HPg 4',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-4.jp2',slide : 'testslide2' ],
+            [filename: 'HPg 5',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-5.jp2',slide : 'testslide2' ],
+            [filename: 'HPg 6',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-6.jp2',slide : 'testslide2' ],
+            [filename: 'HPg 7',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-7.jp2',slide : 'testslide2' ]
     ]
     createScans(scanSamples)
 
