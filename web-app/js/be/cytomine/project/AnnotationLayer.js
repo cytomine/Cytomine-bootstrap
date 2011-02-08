@@ -22,11 +22,37 @@ Cytomine.Project.AnnotationLayer.prototype = {
     req : null,
 
     controls : null,
+
+    dialog : null,
     /*Load layer for annotation*/
     loadToMap : function (scan) {
         vectorsLayer = new OpenLayers.Layer.Vector("Vector Layer");
         var alias = this;
         vectorsLayer.events.on({
+            featureselected : function (evt) {
+                console.log("featureselected start:"+evt.feature.attributes.idAnnotation);
+
+                    dialog = new Ext.Window({
+                                title: "Feature Info",
+                                layout: "fit",
+                                height: 80, width: 130,
+                                plain: true,
+                                items: [{
+                                    border: false,
+                                    bodyStyle: {
+                                        padding: 5, fontSize: 13
+                                    },
+                                    html: "Feature:"+evt.feature.attributes.idAnnotation
+                                }]
+                            });
+                            dialog.show();
+
+
+
+            },
+            'featureunselected': function() {
+                dialog.destroy();
+            },
             'featureadded': function (evt) {
                 console.log("onFeatureAdded start:"+evt.feature.attributes.idAnnotation);
                 /* Check if feature must throw a listener when it is added
@@ -60,7 +86,8 @@ Cytomine.Project.AnnotationLayer.prototype = {
                     OpenLayers.Handler.Polygon),
             regular: new OpenLayers.Control.DrawFeature(vectorsLayer,
                     OpenLayers.Handler.RegularPolygon, {handlerOptions: {sides: 5}}),
-            modify: new OpenLayers.Control.ModifyFeature(vectorsLayer)
+            modify: new OpenLayers.Control.ModifyFeature(vectorsLayer),
+            select: new OpenLayers.Control.SelectFeature(vectorsLayer)
         }
         scan.initTools(controls);
         scan.map.addLayer(vectorsLayer);
@@ -144,13 +171,13 @@ Cytomine.Project.AnnotationLayer.prototype = {
         {
             //eval json
             var JSONannotations = eval('(' + req.responseText + ')');
-            console.log(JSONannotations);
+            console.log(JSONannotations.annotation);
 
-            for (i=0;i<JSONannotations.length;i++)
+            for (i=0;i<JSONannotations.annotation.length;i++)
             {
-                console.log(JSONannotations[i].id);
+                console.log(JSONannotations.annotation[i].id);
                 //read from wkt to geometry
-                var point =  (format.read(JSONannotations[i].location));
+                var point =  (format.read(JSONannotations.annotation[i].location));
                 var geom = point.geometry;
 
                 var feature = new OpenLayers.Feature.Vector(
@@ -158,7 +185,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
                 {some:'data'},
                 {pointRadius: 10, fillColor: "green", fillOpacity: 0.5, strokeColor: "black"});
 
-                feature.attributes = {idAnnotation: JSONannotations[i].id, listener:'NO',importance: 10 };
+                feature.attributes = {idAnnotation: JSONannotations.annotation[i].id, listener:'NO',importance: 10 };
 
                 vectorsLayer.addFeatures(feature);
             }

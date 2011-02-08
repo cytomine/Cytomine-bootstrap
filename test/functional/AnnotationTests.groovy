@@ -1,8 +1,7 @@
 import com.gargoylesoftware.htmlunit.WebClient
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.client.utils.URIUtils
+
 import be.cytomine.HttpClient
 /**
  * Created by IntelliJ IDEA.

@@ -67,10 +67,12 @@ class UrlMappings {
       action = [GET:"show",PUT:"update", DELETE:"delete"]
     }
 
-
-
-    "/api/test/"(controller:"restAnnotation"){
-      action = [GET:"test"]
+    /* Term */
+    "/api/term"(controller:"restTerm"){
+      action = [GET: "list",POST:"add"]
+    }
+     "/api/term/$idterm"(controller:"restTerm"){
+      action = [GET:"show",PUT:"update", DELETE:"delete"]
     }
 
   }

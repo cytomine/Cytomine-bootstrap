@@ -25,63 +25,6 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
     super.tearDown()
   }
 
-
-  void testAddAnnotation() {
-    /*println "1"
-    def ssvc = new grails.plugins.springsecurity.SpringSecurityService();
-    println "2"
-    def u = new org.springframework.security.core.userdetails.User(
-            "lrollus","password",true,true,true,true,
-            [new org.springframework.security.core.authority.GrantedAuthorityImpl("TEST_ROLE")]);
-
-    println "3"
-    ssvc.metaClass.getPrincipal = { u }
-
-
-
-    String name = "name"
-    String location = "POINT (1000 1000)"
-     println "4"
-    def scan = Scan.createOrGetBasicScan()
-    println "5"
-    def annotation = new Annotation(name:name,location:new WKTReader().read(location),scan: scan);
-    println "6"
-    assertTrue(annotation.validate())
-    println "7"
-    annotation.save(flush : true)
-    println "8"
-    RestAnnotationController c = new RestAnnotationController()
-    println "9"
-   // c.request.setAttribute("JSON","{\"annotation\":{\"location\":\"POINT(17573.5 21853.5)\",\"name\":\"test\",\"class\":\"be.cytomine.project.Annotation\",\"scan\":37}}" )
-    c.request = "{\"annotation\":{\"location\":\"POINT(17573.5 21853.5)\",\"name\":\"test\",\"class\":\"be.cytomine.project.Annotation\",\"scan\":37}}"
-    println "10"
-    c.springSecurityService = ssvc
-    println "11"
-    c.add()
-    println "12"
-    def jsonAnnotation = c.response.contentAsString
-    println "13"
-    println  jsonAnnotation
-    // c.springSecurityService = ssvc
-    //
-    //
-    //
-    // //assertFalse c.hasAuthority("TEST_ROLE_NO")
-    //assertTrue c.hasAuthority("TEST_ROLE")   */
-  }
-
-
-
-  void testMarshallers() {
-      def annotation = Annotation.findById(3)
-      println annotation
-      def json = annotation.encodeAsJSON()
-      println json
-
-
-
-  }
-
   void testShowAnnotation() {
     String name = "name"
     String location = "POINT (1000 1000)"

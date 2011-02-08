@@ -13,6 +13,7 @@ class Annotation {
   Scan scan
 
   static belongsTo = [scan:Scan]
+  static hasMany = [ term : Term ]
 
   static transients = ["cropURL", "boundaries"]
 
