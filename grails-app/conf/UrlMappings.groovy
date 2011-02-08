@@ -68,6 +68,9 @@ class UrlMappings {
     }
 
     /* Term */
+    "/api/term/annotation/$idannotation"(controller:"restTerm"){
+      action = [GET: "list"]
+    }
     "/api/term"(controller:"restTerm"){
       action = [GET: "list",POST:"add"]
     }

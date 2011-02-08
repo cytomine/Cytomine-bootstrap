@@ -6,6 +6,7 @@ import be.cytomine.security.User
 import be.cytomine.project.Project
 import grails.converters.JSON
 import be.cytomine.project.Slide
+import be.cytomine.project.Term
 
 /**
  * Cytomine @ GIGA-ULG
@@ -16,6 +17,7 @@ import be.cytomine.project.Slide
 class Marshallers {
 
   public static void init() {
+    Term.registerMarshaller();
     Annotation.registerMarshaller();
     User.registerMarshaller();
     Project.registerMarshaller();

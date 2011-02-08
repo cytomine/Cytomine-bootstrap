@@ -13,7 +13,7 @@ class Annotation {
   Scan scan
 
   static belongsTo = [scan:Scan]
-  static hasMany = [ term : Term ]
+  static hasMany = [ annotationTerm: AnnotationTerm ]
 
   static transients = ["cropURL", "boundaries"]
 
@@ -26,6 +26,10 @@ class Annotation {
       location type: org.hibernatespatial.GeometryUserType
     }
   }
+  /* Get all terms map with the annotation */
+  def terms() {
+    return annotationTerm.collect{it.term}
+   }
 
   def beforeInsert() {
     if (id == null)

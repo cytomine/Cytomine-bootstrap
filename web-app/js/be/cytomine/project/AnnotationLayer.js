@@ -30,28 +30,18 @@ Cytomine.Project.AnnotationLayer.prototype = {
         var alias = this;
         vectorsLayer.events.on({
             featureselected : function (evt) {
-                console.log("featureselected start:"+evt.feature.attributes.idAnnotation);
-
-                    dialog = new Ext.Window({
-                                title: "Feature Info",
-                                layout: "fit",
-                                height: 80, width: 130,
-                                plain: true,
-                                items: [{
-                                    border: false,
-                                    bodyStyle: {
-                                        padding: 5, fontSize: 13
-                                    },
-                                    html: "Feature:"+evt.feature.attributes.idAnnotation
-                                }]
-                            });
-                            dialog.show();
-
-
+                console.log("featureselected start:"+evt.feature.attributes.idAnnotation + "|"+"/cytomine-web/api/term/annotation/"+evt.feature.attributes.idAnnotation+".json"+"|");
+                req = new XMLHttpRequest();
+                 console.log("req 1");
+                req.open("GET", "/cytomine-web/api/term/annotation/"+evt.feature.attributes.idAnnotation+".json", true);
+                console.log("req 2");
+                req.onreadystatechange = alias.selectAnnotation;   // the handler
+                console.log("req 3");
+                req.send(null);
 
             },
             'featureunselected': function() {
-                dialog.destroy();
+                if(alias.dialog!=null) alias.dialog.destroy();
             },
             'featureadded': function (evt) {
                 console.log("onFeatureAdded start:"+evt.feature.attributes.idAnnotation);
@@ -220,6 +210,38 @@ Cytomine.Project.AnnotationLayer.prototype = {
 
             vectorsLayer.addFeatures(feature);
 
+        }
+
+    },
+    /* Launch a dialog with annotation info */
+    selectAnnotation : function() {
+
+        console.log("selectAnnotation:"+req.readyState);
+        if (req.readyState == 4)
+        {
+            //eval json
+            console.log("response:"+req.responseText);
+            var JSONannotations = eval('(' + req.responseText + ')');
+
+            var terms =""+ "<BR>";
+            for (i=0;i<JSONannotations.term.length;i++)
+            {
+               terms = terms +"*" +JSONannotations.term[i].name + "<BR>"
+            }
+            this.dialog = new Ext.Window({
+                    title: "Feature Info",
+                    layout: "fit",
+                    height: 130, width: 200,
+                    plain: true,
+                    items: [{
+                        border: false,
+                        bodyStyle: {
+                            padding: 5, fontSize: 13
+                        },
+                        html: "Term: "+terms
+                    }]
+                });
+            this.dialog.show();
         }
 
     },
