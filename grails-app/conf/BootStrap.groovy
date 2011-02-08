@@ -178,7 +178,7 @@ class BootStrap {
 
     def LBTDScans = [
            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO13/grp_CNS/converti/jpg/ImageNEO13_CNS_5.10_5_4_01.tif.jp2',name:'ImageNEO13_CNS_5.10_5_4_01.tif.jp2',slidename:'ImageNEO13_CNS',order:10,study:'NEO13'],
-           [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO13/grp_CNS/converti/jpg/ImageNEO13_CNS_5.1_5_3_01.tif.jp2',name:'ImageNEO13_CNS_5.1_5_3_01.tif.jp2',slidename:'ImageNEO13_CNS',order:1,study:'NEO13'],
+ /*          [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO13/grp_CNS/converti/jpg/ImageNEO13_CNS_5.1_5_3_01.tif.jp2',name:'ImageNEO13_CNS_5.1_5_3_01.tif.jp2',slidename:'ImageNEO13_CNS',order:1,study:'NEO13'],
            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO13/grp_CNS/converti/jpg/ImageNEO13_CNS_5.20_5_5_01.tif.jp2',name:'ImageNEO13_CNS_5.20_5_5_01.tif.jp2',slidename:'ImageNEO13_CNS',order:20,study:'NEO13'],
            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO13/grp_CNS/converti/jpg/NEO13_CNS_1.10_5_1_01.tif.jp2',name:'NEO13_CNS_1.10_5_1_01.tif.jp2',slidename:'NEO13_CNS_1',order:10,study:'NEO13'],
            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO13/grp_CNS/converti/jpg/NEO13_CNS_1.1_4_10_01.tif.jp2',name:'NEO13_CNS_1.1_4_10_01.tif.jp2',slidename:'NEO13_CNS_1',order:1,study:'NEO13'],
@@ -521,7 +521,7 @@ class BootStrap {
            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.1001.tif.jp2',name:'_NEO4_HPg_INH_8.1001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:10,study:'NEO4'],
            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.101.tif.jp2',name:'_NEO4_HPg_INH_8.101.tif.jp2',slidename:'NEO4_HPg_INH_8',order:11,study:'NEO4'],
            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.2001.tif.jp2',name:'_NEO4_HPg_INH_8.2001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:20,study:'NEO4'],
-           [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.3001.tif.jp2',name:'_NEO4_HPg_INH_8.3001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:30,study:'NEO4'],
+           [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.3001.tif.jp2',name:'_NEO4_HPg_INH_8.3001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:30,study:'NEO4'],*/
            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.4001.tif.jp2',name:'_NEO4_HPg_INH_8.4001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:40,study:'NEO4'],
            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.5001.tif.jp2',name:'_NEO4_HPg_INH_8.5001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:50,study:'NEO4'],
            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.6001.tif.jp2',name:'_NEO4_HPg_INH_8.6001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:60,study:'NEO4'],
@@ -564,7 +564,10 @@ class BootStrap {
           slide.save(flush : true)
 
           /* Link to projects */
+          println "item.study=" + item.study
+
           Project project = Project.findByName(item.study)
+          println "project=" + project
           ProjectSlide.link(project, slide)
         }
       }
