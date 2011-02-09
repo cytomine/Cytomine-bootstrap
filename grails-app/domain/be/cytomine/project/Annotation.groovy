@@ -84,16 +84,9 @@ class Annotation {
       jsonMap
   }
 
-  static Annotation createOrGetBasicAnnotation() {
-    println "createOrGetBasicAnnotation()"
-    def annotation = new Annotation(location:new WKTReader().read("POINT(17573.5 21853.5)"), name:"test",image:Image.createOrGetBasicScan())
 
-    println "annotation.validate()=" + annotation.validate()
-    annotation.save(flush : true)
-    annotation
-  }
-  
-  
+
+
   static void registerMarshaller() {
     println "Register custom JSON renderer for " + Annotation.class
     JSON.registerObjectMarshaller(Annotation) {

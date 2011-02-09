@@ -2,14 +2,13 @@ package be.cytomine.api.project
 
 import grails.test.*
 
-import be.cytomine.project.Image
-
 import be.cytomine.project.Annotation
 
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.marshallers.Marshallers
+import be.cytomine.test.BasicInstance
 
 class RestAnnotationControllerTests extends GrailsUnitTestCase {
 
@@ -28,7 +27,7 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
     String name = "name"
     String location = "POINT (1000 1000)"
 
-    def scan = Image.createOrGetBasicScan()
+    def scan = BasicInstance.createOrGetBasicImage()
     def annotation = new Annotation(name:name,location:new WKTReader().read(location),image: scan);
     assertTrue(annotation.validate())
     annotation.save(flush : true)

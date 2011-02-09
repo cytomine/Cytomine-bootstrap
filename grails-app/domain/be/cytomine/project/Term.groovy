@@ -7,10 +7,12 @@ class Term {
   String name
   String comment
 
+
   static belongsTo = Annotation
   static hasMany = [ child : Term, annotationTerm:AnnotationTerm, termOntology: TermOntology ]
 
     static constraints = {
+      comment(blank:true,nullable:true)
     }
 
   def ontologies() {

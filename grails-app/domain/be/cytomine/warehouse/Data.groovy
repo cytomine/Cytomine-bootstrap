@@ -1,5 +1,7 @@
 package be.cytomine.warehouse
 
+import be.cytomine.test.BasicInstance
+
 class Data {
 
   String path
@@ -14,13 +16,4 @@ class Data {
     path
   }
 
-  static Data createOrGetBasicData() {
-
-    println "createOrGetBasicData()"
-    Mime mime = Mime.createOrGetBasicMime()
-    def data = new Data(path:"pathpathpath",mime:mime)
-    data.save(flush : true)
-    data
-
-  }
 }

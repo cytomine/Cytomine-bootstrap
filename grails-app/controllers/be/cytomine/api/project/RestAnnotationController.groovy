@@ -60,13 +60,13 @@ class RestAnnotationController {
     Transaction currentTransaction = currentUser.getNextTransaction()
     currentTransaction.addToCommands(addAnnotationCommand)
     def result = addAnnotationCommand.execute()
-
     if (result.status == 201) {
       addAnnotationCommand.save()
       new UndoStack(command : addAnnotationCommand, user: currentUser).save()
     }
 
     response.status = result.status
+    println "result.data"   + result.data
     withFormat {
       json { render result.data as JSON }
       xml { render result.data as XML }

@@ -24,19 +24,4 @@ class Mime {
     extension
   }
 
-  static Mime createOrGetBasicMime() {
-    println "createOrGetBasicMime()"
-    def mimeList = Mime.findAllByMimeType("mimeT");
-    def mime
-    if(mimeList==null || mimeList.size()==0)
-    {
-      mime = new Mime(extension:"ext",mimeType:"mimeT")
-      mime.save(flush : true)
-    }
-    else
-    {
-      mime = mimeList[0]
-    }
-    mime
-  }
 }

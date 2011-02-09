@@ -6,6 +6,7 @@ import be.cytomine.command.annotation.AddAnnotationCommand
 
 import grails.converters.JSON
 import be.cytomine.marshallers.Marshallers
+import be.cytomine.test.BasicInstance
 
 class AddAnnotationCommandTests extends GroovyTestCase {
   protected void setUp() {
@@ -19,7 +20,7 @@ class AddAnnotationCommandTests extends GroovyTestCase {
 
   void testExecuteAddAnnotation()
   {
-    Annotation annotationToAdd = Annotation.createOrGetBasicAnnotation()
+    Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
     def jsonAnnotation = ([annotation : annotationToAdd]).encodeAsJSON()
     println "jsonAnnotation="+jsonAnnotation.toString();
     Command addAnnotationCommand = new AddAnnotationCommand(postData : jsonAnnotation.toString())
@@ -50,7 +51,7 @@ class AddAnnotationCommandTests extends GroovyTestCase {
 
   void testExecuteAddAnnotationWithBadGeom()
   {
-    Annotation annotationToAdd = Annotation.createOrGetBasicAnnotation()
+    Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
     def jsonAnnotation = ([annotation : annotationToAdd]).encodeAsJSON()
     def updateAnnotation = JSON.parse(jsonAnnotation)
     updateAnnotation.annotation.location = 'POINT(BAD GEOMETRY)'
@@ -69,7 +70,7 @@ class AddAnnotationCommandTests extends GroovyTestCase {
 
   void testExecuteAddAnnotationWithScanNotExist()
   {
-    Annotation annotationToAdd = Annotation.createOrGetBasicAnnotation()
+    Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
     def jsonAnnotation = ([annotation : annotationToAdd]).encodeAsJSON()
     def updateAnnotation = JSON.parse(jsonAnnotation)
     updateAnnotation.annotation.image = -99

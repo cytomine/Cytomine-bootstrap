@@ -5,6 +5,7 @@ import be.cytomine.acquisition.Scanner
 import be.cytomine.server.resolvers.Resolver
 import be.cytomine.server.ImageServer
 import grails.converters.JSON
+import be.cytomine.test.BasicInstance
 
 class Image {
   String filename
@@ -74,14 +75,4 @@ class Image {
     return [min : 0, max : max, middle : middle]
   }
 
-
-
-
-  static Image createOrGetBasicScan() {
-    println "createOrGetBasicScan()"
-    def image = new Image(filename: "filename",data : Data.createOrGetBasicData(),scanner : Scanner.createOrGetBasicScanner() ,slide : null)
-    println image.validate()
-    image.save(flush : true)
-    image
-  }
 }

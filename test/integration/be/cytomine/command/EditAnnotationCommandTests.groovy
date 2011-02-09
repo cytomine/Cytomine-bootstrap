@@ -1,11 +1,11 @@
 package be.cytomine.command
 
-import grails.test.*
 import be.cytomine.project.Annotation
 import grails.converters.JSON
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.command.annotation.EditAnnotationCommand
 import be.cytomine.marshallers.Marshallers
+import be.cytomine.test.BasicInstance
 
 class EditAnnotationCommandTests extends GroovyTestCase {
     protected void setUp() {
@@ -22,7 +22,7 @@ class EditAnnotationCommandTests extends GroovyTestCase {
       String newGeom = "POINT (9999 9999)"
 
       /* Create a old annotation with point 1111 1111 */
-      Annotation annotationToAdd = Annotation.createOrGetBasicAnnotation()
+      Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
       annotationToAdd.location =  new WKTReader().read(oldGeom)
       annotationToAdd.save()
 
@@ -65,7 +65,7 @@ class EditAnnotationCommandTests extends GroovyTestCase {
     void testExecuteEditAnnotationNotExist() {
 
       /* Create a old annotation */
-      Annotation annotationToAdd = Annotation.createOrGetBasicAnnotation()
+      Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
 
       /* Encode a niew annotation with point 9999 9999 */
       Annotation annotationToEdit = Annotation.get(annotationToAdd.id)
@@ -88,7 +88,7 @@ class EditAnnotationCommandTests extends GroovyTestCase {
       String newGeom = "POINT (BAD GEOMETRY)"
 
       /* Create a old annotation with point 1111 1111 */
-      Annotation annotationToAdd = Annotation.createOrGetBasicAnnotation()
+      Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
       annotationToAdd.location =  new WKTReader().read(oldGeom)
       annotationToAdd.save()
 

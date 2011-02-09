@@ -15,7 +15,6 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
       if(newAnnotation.validate()) {
         newAnnotation.save()
         data = newAnnotation.encodeAsJSON()
-
         return [data : [success : true , message:"ok", annotation : newAnnotation], status : 201]
       } else {
         return [data : [annotation : newAnnotation , errors : [newAnnotation.errors]], status : 400]

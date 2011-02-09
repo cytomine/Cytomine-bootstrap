@@ -5,6 +5,9 @@ import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider
 import be.cytomine.HttpClient
 import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
+import be.cytomine.test.BasicInstance
+import be.cytomine.project.Annotation
+import org.codehaus.groovy.grails.commons.*
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -13,33 +16,41 @@ import grails.converters.JSON
  * To change this template use File | Settings | File Templates.
  */
 class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
-
+  def config = ConfigurationHolder.config.grails
   void testGetAnnotationsWithCredential() {
-    HttpClient client = new HttpClient("http://localhost:8080/cytomine-web/api/image.json","lrollus","password");
+    Annotation annotation =  BasicInstance.createOrGetBasicAnnotation()
+    HttpClient client = new HttpClient(config.serverURL,"lrollus","password");
     client.connect("GET");
-    //TODO: test if it is a JSON
     int code  = client.getResponseCode()
     String response = client.getResponseString()
     client.disconnect();
     assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
-
-    //assertEquals(200,client.getResponseCode())
   }
 
   void testGetAnnotationsWithoutCredential() {
-    HttpClient client = new HttpClient("http://localhost:8080/cytomine-web/api/image.json","badlogin","badpassword");
+    HttpClient client = new HttpClient(config.serverURL,"badlogin","badpassword");
     client.connect("GET");
-    assertEquals(401,client.getResponseCode())
+    int code  = client.getResponseCode()
+    assertEquals(401,code)
     client.disconnect();
-    //assertEquals(401,client.getResponseCode())
   }
 
-
   void testAddAnnotationCorrect() {
-    //test with and withouth credential
-
+    /*def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
+    String jsonAnnotation = ([annotation : annotationToAdd]).encodeAsJSON()
+    println jsonAnnotation
+    HttpClient client = new HttpClient("http://localhost:8080/cytomine-web/api/annotation.json","lrollus","password");
+    client.connect("POST");
+    client.post(jsonAnnotation.toString())
+    int code  = client.getResponseCode()
+    println "code="+code
+    String response = client.getResponseString()
+    client.disconnect();
+    assertEquals(201,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject  */
   }
 
   void testAddAnnotationBadGeom() {

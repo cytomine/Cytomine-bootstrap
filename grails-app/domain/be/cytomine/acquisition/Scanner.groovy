@@ -12,12 +12,4 @@ class Scanner extends Instrument {
     brand + "-" + model
   }
 
-  static Scanner createOrGetBasicScanner() {
-
-    println "createOrGetBasicScanner()"
-    def scanner = new Scanner(maxResolution:"x40",brand:"brand", model:"model")
-    scanner.save(flush : true)
-    scanner
-
-  }
 }
