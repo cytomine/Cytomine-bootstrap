@@ -75,10 +75,13 @@ class UrlMappings {
       action = [GET:"show",PUT:"update", DELETE:"delete"]
     }
     
-    /* TEST */
-    "/api/test/"(controller:"restAnnotation"){
-      action = [GET:"test"]
-    }
 
+     /* Ontology */
+    "/api/ontology"(controller:"restOntology"){
+      action = [GET: "list",POST:"add"]
+    }
+    "/api/ontology/$id"(controller:"restOntology"){
+      action = [GET:"show",PUT:"update", DELETE:"delete"]
+    }
   }
 }

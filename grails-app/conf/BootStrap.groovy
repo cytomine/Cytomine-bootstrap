@@ -26,6 +26,8 @@ import grails.converters.JSON
 import be.cytomine.marshallers.Marshallers
 import be.cytomine.project.Term
 import be.cytomine.project.AnnotationTerm
+import be.cytomine.project.Ontology
+import be.cytomine.project.TermOntology
 
 
 class BootStrap {
@@ -532,11 +534,17 @@ class BootStrap {
     ]
     createLBTDScans(LBTDScans)
 
+    def ontologySamples = [
+            [name: "Ontology1"],
+            [name: "Ontology2"],
+            [name: "Ontology3"]
+    ]
+    createOntology(ontologySamples)
 
     def termSamples = [
-            [name: "Cell in vivo",comment:""],
-            [name: "Cell ex vivo",comment:""],
-            [name: "Cell",comment:"A comment for cell",child:["Cell in vivo","Cell ex vivo"]]
+            [name: "Cell in vivo",comment:"",ontology:["Ontology1"]],
+            [name: "Cell ex vivo",comment:"",ontology:["Ontology1","Ontology3"]],
+            [name: "Cell",comment:"A comment for cell",child:["Cell in vivo","Cell ex vivo"],ontology:[]]
     ]
     createTerms(termSamples)
 
@@ -955,6 +963,31 @@ class BootStrap {
     }
   }
 
+  def createOntology(ontologySamples) {
+    println "createOntology"
+    def ontologies =   Ontology.list()?:[]
+    if(!ontologies) {
+      def ontology = null
+      ontologySamples.each { item ->
+        ontology = new Ontology(name:item.name)
+        println "create ontology="+ ontology.name
+
+        if(ontology.validate()) {
+          println "Creating ontology : ${ontology.name}..."
+          ontology.save(flush : true)
+
+          ontologies << ontology
+        } else {
+          println("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
+          ontology.errors.each {
+            err -> println err
+          }
+
+        }
+      }
+    }
+  }
+
   def createTerms(termSamples) {
     println "createTerms"
     def terms =   Term.list()?:[]
@@ -970,6 +1003,12 @@ class BootStrap {
         if(term.validate()) {
           println "Creating term : ${term.name}..."
           term.save(flush : true)
+
+          item.ontology.each {  ontology ->
+              println "add Ontology " + ontology
+              //annotation.addToTerm(Term.findByName(term))
+              TermOntology.link(term, Ontology.findByName(ontology))
+          }
 
           terms << term
         } else {
