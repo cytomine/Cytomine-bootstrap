@@ -3,7 +3,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage
 import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider
 
 import be.cytomine.HttpClient
-import net.sf.json.JSONObject
+import org.codehaus.groovy.grails.web.json.JSONObject
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
