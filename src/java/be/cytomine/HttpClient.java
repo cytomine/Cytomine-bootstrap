@@ -67,20 +67,21 @@ public class HttpClient
         server.disconnect();
     }
 
-    public void displayResponse() throws Exception
+    public String getResponseString() throws Exception
     {
-        String line;
+        String response="";
 
         try
         {
             BufferedReader s = new BufferedReader(new InputStreamReader(server.getInputStream()));
-            line = s.readLine();
+            String line = s.readLine();
             while (line != null)
             {
-                System.out.println(line);
+                response = response+line;
                 line = s.readLine();
             }
             s.close();
+            return response;
         }
         catch(Exception e)
         {
@@ -115,17 +116,17 @@ public class HttpClient
         {
             HttpClient c = new HttpClient(argv[0],"toto","lehero");
             c.connect("GET");
-            c.displayResponse();
+          //  c.displayResponse();
             c.disconnect();
 
             c.connect("POST");
             c.post("data=Posted request");
-            c.displayResponse();
+         //   c.displayResponse();
             c.disconnect();
 
             c.connect("POST");
             c.post("data=2nd request");
-            c.displayResponse();
+           // c.displayResponse();
             c.disconnect();
         }
         catch (Exception e)
