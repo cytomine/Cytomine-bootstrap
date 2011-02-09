@@ -1,11 +1,12 @@
 Ext.namespace('Cytomine');
 Ext.namespace('Cytomine.Project');
 
-Cytomine.Project.Scan = function (urls, scanID, filename, path) {
+Cytomine.Project.Scan = function (urls, scanID, filename, path, metadataUrl) {
     this.urls = urls;
     this.scanID = scanID;
     this.filename = filename;
     this.path = path;
+    this.metadataUrl = metadataUrl;
     this.initMap();
 }
 
@@ -16,14 +17,8 @@ Cytomine.Project.Scan.prototype = {
     filename : null,
     path : null,
     map : null,
-    getMetaDataURL : function () {
-        return "/cytomine-web/api/image/"+this.scanID+"/metadata.json";
-    },
-    getThumbURL : function () {
-        return "/cytomine-web/api/image/"+this.scanID+"/thumb.jpg";
-    },
     initMap : function () {
-        var openURLLayer = new OpenLayers.Layer.OpenURL( this.filename, this.urls, {transitionEffect: 'resize', layername: 'basic', format:'image/jpeg', rft_id: this.path, metadataUrl: this.getMetaDataURL()} );
+        var openURLLayer = new OpenLayers.Layer.OpenURL( this.filename, this.urls, {transitionEffect: 'resize', layername: 'basic', format:'image/jpeg', rft_id: this.path, metadataUrl: this.metadataUrl} );
         console.log("openURLLayer.viewerLevel " + openURLLayer.getViewerLevel());
         var metadata = openURLLayer.getImageMetadata();
         var resolutions = openURLLayer.getResolutions();

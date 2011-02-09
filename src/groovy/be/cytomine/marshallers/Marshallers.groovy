@@ -7,6 +7,7 @@ import be.cytomine.project.Project
 import grails.converters.JSON
 import be.cytomine.project.Slide
 import be.cytomine.project.Term
+import be.cytomine.project.Image
 
 /**
  * Cytomine @ GIGA-ULG
@@ -21,17 +22,9 @@ class Marshallers {
     Annotation.registerMarshaller();
     User.registerMarshaller();
     Project.registerMarshaller();
-    //Slide.registerMarshaller();
+    Slide.registerMarshaller();
+    Image.registerMarshaller();
 
-    println "Register custom JSON renderer for " + Slide.class
-    JSON.registerObjectMarshaller(Slide) {
-      def returnArray = [:]
-      returnArray['class'] = it.class
-      returnArray['id'] = it.id
-      returnArray['name'] = it.name
-      returnArray['imagee'] = it.image
-      return returnArray
-    }
 
   }
 }

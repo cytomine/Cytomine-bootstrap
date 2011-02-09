@@ -1,6 +1,7 @@
 package be.cytomine.project
 
 import grails.converters.JSON
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class Project {
 
@@ -28,6 +29,11 @@ class Project {
     return project;
   }
 
+  def getImageURL() {
+    return ConfigurationHolder.config.grails.serverURL + '/api/project/'+ this.id +'/image.json';
+  }
+
+
   static void registerMarshaller() {
     println "Register custom JSON renderer for " + Project.class
     JSON.registerObjectMarshaller(Project) {
@@ -35,6 +41,7 @@ class Project {
       returnArray['class'] = it.class
       returnArray['id'] = it.id
       returnArray['name'] = it.name
+      returnArray['image'] = it.getImageURL()
       return returnArray
     }
   }

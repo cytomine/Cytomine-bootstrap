@@ -5,7 +5,7 @@ import be.cytomine.acquisition.Scanner
 import be.cytomine.server.resolvers.Resolver
 import be.cytomine.server.ImageServer
 import grails.converters.JSON
-import be.cytomine.test.BasicInstance
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class Image {
   String filename
@@ -75,4 +75,24 @@ class Image {
     return [min : 0, max : max, middle : middle]
   }
 
+
+
+  static void registerMarshaller() {
+    println "Register custom JSON renderer for " + Image.class
+    JSON.registerObjectMarshaller(Image) {
+      def returnArray = [:]
+      returnArray['class'] = it.class
+      returnArray['id'] = it.id
+      returnArray['annotations'] = it.annotations
+      returnArray['path'] = it.data.path
+      returnArray['filename'] = it.filename
+      returnArray['scanner'] = it.scanner
+      returnArray['slide'] = it.slide
+      returnArray['thumb'] = it.getThumbURL()
+      returnArray['metadataUrl'] = ConfigurationHolder.config.grails.serverURL + "/api/image/"+it.id+"/metadata.json"
+      returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
+      returnArray['imageServerBaseURL'] = it.data.getMime().imageServers().url
+      return returnArray
+    }
+  }
 }

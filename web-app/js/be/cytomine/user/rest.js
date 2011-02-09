@@ -19,13 +19,14 @@ Cytomine.Rest.Project = {
             messageProperty: 'message'  // <-- New "messageProperty" meta-data
         }, [
             {name: 'id'},
-            {name: 'name', allowBlank: false}
+            {name: 'name', allowBlank: false},
+            {name: 'image', allowBlank: false}
         ])},
     writer : function () { return new Ext.data.JsonWriter({
         encode: false,   // <-- don't return encoded JSON -- causes Ext.Ajax#request to send data using jsonData config rather than HTTP params
         writeAllFields: true
     })},
-    store : function (proxy, reader, writer) {
+    store : function () {
         return new Ext.data.Store({
             id: 'project',
             autoLoad : true,
@@ -68,8 +69,9 @@ Cytomine.Rest.Project = {
                 singleSelect: true,
                 listeners: {
                     rowselect: function(smObj, rowIndex, record) {
+                        var project = store.getById(record.id);
                         detailsPanel.removeAll();
-                        detailsPanel.add(Cytomine.Project.getView(record.id));
+                        detailsPanel.add(Cytomine.Project.getView(project.get("image")));
                         detailsPanel.doLayout();
                     }
                 }
@@ -164,7 +166,7 @@ Cytomine.Security.User = {
         encode: false,   // <-- don't return encoded JSON -- causes Ext.Ajax#request to send data using jsonData config rather than HTTP params
         writeAllFields: true
     })},
-    store : function (proxy, reader, writer) {
+    store : function () {
         return new Ext.data.Store({
             id: 'user',
             autoLoad : true,

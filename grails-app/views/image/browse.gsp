@@ -18,15 +18,24 @@
     Ext.namespace('Cytomine');
 
     function initOpenLayers(){
-      var scan = new Cytomine.Project.Scan(${urls}, ${scan.id}, "${scan.filename}", "${scan.getData().path}");
-      layerAnnotation = new Cytomine.Project.AnnotationLayer( "totolayer", ${scan.id});
-      layerAnnotation.loadToMap(scan);
-      layerAnnotation.loadAnnotations(scan);
+      Ext.Ajax.request({
+        url : '/cytomine-web/api/image/${scan.id}.json',
+        success: function (response) {
+          var image = Ext.decode( response.responseText );
+          var scan = new Cytomine.Project.Scan(${urls}, image.id, image.filename, image.path, image.metadataUrl);
+          console.log(image.metadataUrl);
+          layerAnnotation = new Cytomine.Project.AnnotationLayer( "totolayer", ${scan.id});
+          layerAnnotation.loadToMap(scan);
+          layerAnnotation.loadAnnotations(scan);
 
-      Cytomine.scans[${scan.id}] = scan;
-      Cytomine.annotationLayers[${scan.id}] = layerAnnotation;
-      Cytomine.currentLayer = Cytomine.annotationLayers[${scan.id}];
-      document.getElementById('noneToggle').checked = true;
+          Cytomine.scans[${scan.id}] = scan;
+          Cytomine.annotationLayers[${scan.id}] = layerAnnotation;
+          Cytomine.currentLayer = Cytomine.annotationLayers[${scan.id}];
+          document.getElementById('noneToggle').checked = true;
+        },
+        failure: function (response) { console.log('failure : ' + response.responseText);}
+      });
+
     }
 
     Ext.onReady(function () {

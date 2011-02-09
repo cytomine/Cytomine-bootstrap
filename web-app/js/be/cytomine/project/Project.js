@@ -16,8 +16,8 @@ Cytomine.Project = {
      * Retourne l'onglet correspondant au gestionnaire de projets
      * @return {Ext.Panel}
      */
-    tab: function(id) {
-        var view = this.getView(id);
+    tab: function(url) {
+        var view = this.getView(url);
 
         return new Ext.Panel({
             id: 'Project',
@@ -33,30 +33,28 @@ Cytomine.Project = {
             }
         });
     },
-    getView : function(id) {
+    getView : function(url) {
         return new Ext.DataView({
             itemSelector: 'div.thumb-wrap',
             store: new Ext.data.JsonStore({
-                //url: '/cytomine-web/api/scan.json',
-                url : '/cytomine-web/api/project/'+id+'/image.json',
+                url : url,
                 autoLoad: true,
                 root: 'scan',
                 fields:[
-                    'id','filename'
+                    'id','filename', 'thumb', 'browse'
                 ]
             }),
             tpl: new Ext.XTemplate(
                     '<tpl for=".">',
                     '<div class="thumb-wrap" id="{id}">',
-                    '<div class="thumb"><img src="/cytomine-web/api/image/{id}/thumb.jpg" title="{filename}"></div>',
+                    '<div class="thumb"><img src="{thumb}" title="{filename}"></div>',
                     '<span class="x-editable">{filename} {id}</span></div>',
                     '</tpl>'
                     ),
             listeners: {
                 click: function(dataview, index, node, e) {
                     var data = dataview.getStore().getAt(index);
-
-                    Cytomine.Browser.openScan(data.get('id'),data.get('id'), data.get('filename')); //multiple tabs
+                    Cytomine.Browser.openScan(data.get('id'), data.get('id'),data.get('browse'), data.get('filename')); //multiple tabs
 
                     //Cytomine.Retrieval.showSimilarities(data.get('id'),data.get('id'), data.get('filename')); //multiple tabs
                     //Cytomine.Browser.openScan('browser', data.get('id'), data.get('filename')); //unique tabs

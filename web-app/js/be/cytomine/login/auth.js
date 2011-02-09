@@ -56,7 +56,7 @@ Ext.onReady(function(){
 
 
     Cytomine.auth.handleLoginResponse =  {
-        url: '/cytomine-web/j_spring_security_check',
+        url: '../j_spring_security_check',
         waitMsg: 'Processing Request',
         success: function(loginForm, resp){
             //alert(resp.result.followUrl);

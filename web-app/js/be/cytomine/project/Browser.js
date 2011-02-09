@@ -9,14 +9,14 @@ Cytomine.Browser = {
      * Retourne l'onglet correspondant au viewer de image
      * @return {Ext.Panel}
      */
-    tab: function(idTab, idScan, tabTitle) {
+    tab: function(idTab, idImage, url, tabTitle) {
         return new Ext.Panel({
             id: idTab,
             bodyCssClass: 'overflow-auto',
             iconCls: 'envelope-label',
             title: tabTitle,
             closable:true,
-            autoLoad : {url:'/cytomine-web/image/browse/'+idScan,scripts:true},
+            autoLoad : {url:url,scripts:true},
             item : [
                 /*{
                  title:'Project',
@@ -34,10 +34,10 @@ Cytomine.Browser = {
             listeners: {
                 show: function(p) {
                     console.log("SHOW");
-                    console.log("LAYER NULL ? " +  Cytomine.annotationLayers[idScan] != undefined);
-                    if (Cytomine.annotationLayers[idScan] != null) {
-                        Cytomine.currentLayer = Cytomine.annotationLayers[idScan];
-                        Cytomine.annotationLayers[idScan].loadToMap(Cytomine.scans[idScan]);
+                    console.log("LAYER NULL ? " +  Cytomine.annotationLayers[idImage] != undefined);
+                    if (Cytomine.annotationLayers[idImage] != null) {
+                        Cytomine.currentLayer = Cytomine.annotationLayers[idImage];
+                        Cytomine.annotationLayers[idImage].loadToMap(Cytomine.scans[idImage]);
                     }
 
                 }
@@ -47,12 +47,12 @@ Cytomine.Browser = {
 };
 
 // Update the contents of a tab if it exists, otherwise create a new one
-Cytomine.Browser.openScan = function(idTab, idScan, title) {
+Cytomine.Browser.openScan = function(idTab, idImage, url, title) {
     var tab = Cytomine.tabs.getItem(idTab);
     if(tab){
         Cytomine.tabs.remove(tab);
     }
-    tab = Cytomine.tabs.add(Cytomine.Browser.tab(idTab, idScan, title)).show();
+    tab = Cytomine.tabs.add(Cytomine.Browser.tab(idTab, idImage, url, title)).show();
     Cytomine.tabs.setActiveTab(tab);
     if (Cytomine.toolbar != null) Cytomine.toolbar.show();
     if (Cytomine.overview != null) Cytomine.overview.show();

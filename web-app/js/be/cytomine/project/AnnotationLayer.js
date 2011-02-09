@@ -79,8 +79,10 @@ Cytomine.Project.AnnotationLayer.prototype = {
             modify: new OpenLayers.Control.ModifyFeature(vectorsLayer),
             select: new OpenLayers.Control.SelectFeature(vectorsLayer)
         }
+        console.log("initTools on image : " + scan.filename);
         scan.initTools(controls);
         scan.map.addLayer(vectorsLayer);
+
     },
 
     /*Load annotation from database on layer */
