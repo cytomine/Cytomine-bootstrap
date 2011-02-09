@@ -4,6 +4,7 @@ import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider
 
 import be.cytomine.HttpClient
 import org.codehaus.groovy.grails.web.json.JSONObject
+import grails.converters.JSON
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -17,20 +18,22 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     HttpClient client = new HttpClient("http://localhost:8080/cytomine-web/api/image.json","lrollus","password");
     client.connect("GET");
     //TODO: test if it is a JSON
-    String str = client.getResponseString()
-    def json = JSON.parse(str)
-    assert json instanceof JSONObject
+    int code  = client.getResponseCode()
+    String response = client.getResponseString()
     client.disconnect();
-    assertEquals(200,client.getResponseCode())
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+    //assertEquals(200,client.getResponseCode())
   }
 
   void testGetAnnotationsWithoutCredential() {
     HttpClient client = new HttpClient("http://localhost:8080/cytomine-web/api/image.json","badlogin","badpassword");
     client.connect("GET");
-    def json = JSON.parse(client.getResponseString())
-    assert json instanceof JSONObject
-    client.disconnect();
     assertEquals(401,client.getResponseCode())
+    client.disconnect();
+    //assertEquals(401,client.getResponseCode())
   }
 
 
