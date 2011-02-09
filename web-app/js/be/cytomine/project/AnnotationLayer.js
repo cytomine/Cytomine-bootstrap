@@ -86,7 +86,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
     /*Load annotation from database on layer */
     loadAnnotations : function (scan) {
         req = new XMLHttpRequest();
-        req.open("GET", "/cytomine-web/api/annotation/scan/"+this.scanID+".json", true);
+        req.open("GET", "/cytomine-web/api/image/"+this.scanID+"/annotation.json", true);
         req.onreadystatechange = this.decodeAnnotations;   // the handler
         req.send(null);
         scan.map.addLayer(vectorsLayer);
@@ -105,7 +105,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
         req.open("POST", "/cytomine-web/api/annotation.json", true);
         req.onreadystatechange = this.decodeNewAnnotation;
 
-        var json = {annotation: {"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,scan:this.scanID}}; //class is a reserved word in JS !
+        var json = {annotation: {"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,image:this.scanID}}; //class is a reserved word in JS !
 
         req.send(JSON.stringify(json));
         //Annotation hasn't any id => -1
@@ -142,7 +142,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
         req = new XMLHttpRequest();
         req.open("PUT", "/cytomine-web/api/annotation/"+feature.attributes.idAnnotation+".json", true);
 
-        var json = {annotation: {"id":feature.attributes.idAnnotation,"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,scan:this.scanID}}; //class is a reserved word in JS !
+        var json = {annotation: {"id":feature.attributes.idAnnotation,"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,image:this.scanID}}; //class is a reserved word in JS !
 
         req.send(JSON.stringify(json));
 

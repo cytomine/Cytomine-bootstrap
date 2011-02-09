@@ -20,6 +20,7 @@ grails.mime.use.accept.header = false
 grails.mime.types = [ html: ['text/html','application/xhtml+xml'],
                       json: ['application/json','text/json'],
                       xml: ['text/xml', 'application/xml'],
+                      jpg : 'image/jpeg',
                       text: 'text/plain',
                       js: 'text/javascript',
                       rss: 'application/rss+xml',

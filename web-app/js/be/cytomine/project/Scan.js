@@ -17,10 +17,10 @@ Cytomine.Project.Scan.prototype = {
     path : null,
     map : null,
     getMetaDataURL : function () {
-        return "/cytomine-web/api/image/metadata/" + this.scanID;
+        return "/cytomine-web/api/image/"+this.scanID+"/metadata.json";
     },
     getThumbURL : function () {
-        return "/cytomine-web/api/image/thumb/" + this.scanID;
+        return "/cytomine-web/api/image/"+this.scanID+"/thumb.jpg";
     },
     initMap : function () {
         var openURLLayer = new OpenLayers.Layer.OpenURL( this.filename, this.urls, {transitionEffect: 'resize', layername: 'basic', format:'image/jpeg', rft_id: this.path, metadataUrl: this.getMetaDataURL()} );

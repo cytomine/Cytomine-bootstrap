@@ -1,14 +1,13 @@
 package be.cytomine.api.project
 
-import be.cytomine.project.Scan
+import be.cytomine.project.Image
 import grails.converters.*
 import be.cytomine.project.Project
-
 
 class RestScanController {
 
   def index = {
-    redirect(controller: "scan")
+    redirect(controller: "image")
   }
 
   def springSecurityService
@@ -17,7 +16,7 @@ class RestScanController {
 
   def list = {
     def data = [:]
-    data.scan = Scan.list()
+    data.scan = Image.list()
     withFormat {
       json { render data as JSON }
       xml { render data as XML}
@@ -25,8 +24,8 @@ class RestScanController {
   }
 
   def show = {
-    if(params.id && scan.exists(params.id)) {
-      def data = scan.findById(params.id)
+    if(params.id && Image.exists(params.id)) {
+      def data = Image.findById(params.id)
       withFormat {
         json { render data as JSON }
         xml { render data as XML}

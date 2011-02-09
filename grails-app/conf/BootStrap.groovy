@@ -1,7 +1,7 @@
 import be.cytomine.security.User
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUserSecRole
-import be.cytomine.project.Scan
+import be.cytomine.project.Image
 import be.cytomine.warehouse.Mime
 import be.cytomine.warehouse.Data
 import be.cytomine.acquisition.Scanner
@@ -594,7 +594,7 @@ class BootStrap {
         data.save(flush : true)
 
 
-        def scan = new Scan(
+        def scan = new Image(
                 filename: item.name,
                 data : data,
                 scanner : scanner,
@@ -847,7 +847,7 @@ class BootStrap {
   }
 
   def createScans(scanSamples, slides) {
-    def scans = Scan.list() ?: []
+    def scans = Image.list() ?: []
     if (!scans) {
       scanSamples.each { item ->
         def mime = Mime.findByExtension("jp2")
@@ -862,7 +862,7 @@ class BootStrap {
           data.save(flush : true)
 
 
-          def scan = new Scan(
+          def scan = new Image(
                   filename: item.filename,
                   data : data,
                   scanner : scanner,
@@ -913,8 +913,8 @@ class BootStrap {
         if(item.location[0].startsWith('POINT'))
         {
           Point point = new WKTReader().read(item.location[0]);
-          def scanParent = Scan.findByFilename(item.scan.filename)
-          annotation = new Annotation(name: item.name, location:point, scan:scanParent)
+          def scanParent = Image.findByFilename(item.scan.filename)
+          annotation = new Annotation(name: item.name, location:point, image:scanParent)
         }
         else
         {
@@ -925,8 +925,8 @@ class BootStrap {
             i++;
           }
           def multipoly = geometryFactory.createMultiPolygon(polygons)
-          def scanParent = Scan.findByFilename(item.scan.filename)
-          annotation = new Annotation(name: item.name, location:multipoly, scan:scanParent)
+          def scanParent = Image.findByFilename(item.scan.filename)
+          annotation = new Annotation(name: item.name, location:multipoly, image:scanParent)
         }
 
 
@@ -946,7 +946,7 @@ class BootStrap {
           annotations << annotation
         } else {
           println("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
-          scan.errors.each {
+          annotation.errors.each {
             err -> println err
           }
 

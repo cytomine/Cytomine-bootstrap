@@ -1,11 +1,9 @@
 package be.cytomine.command
 
-import be.cytomine.project.Scan
-
 import be.cytomine.project.Annotation
 
 import be.cytomine.command.annotation.AddAnnotationCommand
-import com.vividsolutions.jts.io.WKTReader
+
 import grails.converters.JSON
 import be.cytomine.marshallers.Marshallers
 
@@ -74,7 +72,7 @@ class AddAnnotationCommandTests extends GroovyTestCase {
     Annotation annotationToAdd = Annotation.createOrGetBasicAnnotation()
     def jsonAnnotation = ([annotation : annotationToAdd]).encodeAsJSON()
     def updateAnnotation = JSON.parse(jsonAnnotation)
-    updateAnnotation.annotation.scan = -99
+    updateAnnotation.annotation.image = -99
     jsonAnnotation = updateAnnotation.encodeAsJSON()
 
     println "jsonAnnotation="+jsonAnnotation.toString();

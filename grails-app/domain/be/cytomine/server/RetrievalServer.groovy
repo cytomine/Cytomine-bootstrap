@@ -17,10 +17,10 @@ class RetrievalServer {
   def search(String pathReq, int maxSimilarPictures) {
     def writer = new StringWriter()
     def xml = new MarkupBuilder(writer)
-    //xml.SEARCHPICTURE(k:maxSimilarPictures,path:scan.getThumbURL())
+    //xml.SEARCHPICTURE(k:maxSimilarPictures,path:image.getThumbURL())
 
     //String pathReq = "http://139.165.108.28:8008/images/neohisto100000/study_NEO4-grp_Curcu_INH-NEO_4_Curcu_INH_1.40_3_5_01.tif-tile_5914.png"
-    //String pathReq = scan.getThumbURL()
+    //String pathReq = image.getThumbURL()
     //String pathReq = "http://is3.cytomine.be:38/adore-djatoka/resolver?url_ver=Z39.88-2004&rft_id=file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/Curcu-5.jp2&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format=image/jpeg&svc.level=2&svc.rotate=0&svc.region=0,0,244,333"
 
     xml.SEARCHPICTURE(k:maxSimilarPictures,path:pathReq)

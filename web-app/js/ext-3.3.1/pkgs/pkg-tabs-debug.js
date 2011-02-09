@@ -485,7 +485,7 @@ new Ext.TabPanel({
     },
 
     /**
-     * True to scan the markup in this tab panel for <tt>{@link #autoTabs}</tt> using the
+     * True to image the markup in this tab panel for <tt>{@link #autoTabs}</tt> using the
      * <tt>{@link #autoTabSelector}</tt>
      * @param {Boolean} removeExisting True to remove existing tabs
      */

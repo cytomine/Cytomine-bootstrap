@@ -2,7 +2,6 @@ package be.cytomine.api.project
 
 import grails.converters.*
 import be.cytomine.project.Annotation
-import be.cytomine.project.Scan
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Geometry
 import be.cytomine.security.User
@@ -12,26 +11,29 @@ import be.cytomine.command.annotation.AddAnnotationCommand
 import be.cytomine.command.UndoStack
 import be.cytomine.command.annotation.DeleteAnnotationCommand
 import be.cytomine.command.annotation.EditAnnotationCommand
+import be.cytomine.project.Image
 
 class RestAnnotationController {
 
   def springSecurityService
 
   def list = {
-    println "list with id scan:"+params.idscan
+    println "list with id scan:"+params.id
     def data = [:]
-    data.annotation = (params.idscan == null) ? Annotation.list() : (Annotation.findAllByScan(Scan.findById(params.idscan)))
+    data.annotation = (params.id == null) ? Annotation.list() : (Annotation.findAllByImage(Image.findById(params.id)))
     withFormat {
       json { render data as JSON }
-      xml { render data as XML}
+      xml { render jsonMap as XML}
     }
+
   }
 
+  //return 404 when not found
   def show = {
     //testExecuteEditAnnotation()
-    println "show with id:" + params.idannotation
+    println "show with id:" + params.id
     def data = [:]
-    data.annotation = Annotation.findById(params.idannotation)
+    data.annotation = Annotation.findById(params.id)
     if(data.annotation!=null)  {
       withFormat {
         json { render data as JSON }
@@ -43,12 +45,11 @@ class RestAnnotationController {
       response.status = 404
       render contentType: "application/xml", {
         errors {
-          message("Annotation not found with id: " + params.idannotation)
+          message("Annotation not found with id: " + params.id)
         }
       }
     }
   }
-
 
   def add = {
 
@@ -77,7 +78,7 @@ class RestAnnotationController {
     println "delete"
     //springSecurityService.principal.id
     User currentUser = User.get(3)
-    def postData = ([id : params.idannotation]) as JSON
+    def postData = ([id : params.id]) as JSON
     println postData.toString()
     Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData : postData.toString())
     Transaction currentTransaction = currentUser.getNextTransaction()

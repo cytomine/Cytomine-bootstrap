@@ -23,7 +23,7 @@ Cytomine.Retrieval = {
         var view = new Ext.DataView({
             itemSelector: 'div.thumb-wrap',
             store: new Ext.data.JsonStore({
-                url: '/cytomine-web/api/image/retrieval/'+idScan+'/100',
+                url: '/cytomine-web/api/image/retrieval/'+idScan+'/100', //TO DO : outdated !!
                 autoLoad: true,
                 title: tabTitle,
                 closable:true,

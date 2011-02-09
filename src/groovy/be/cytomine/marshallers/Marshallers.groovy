@@ -29,7 +29,7 @@ class Marshallers {
       returnArray['class'] = it.class
       returnArray['id'] = it.id
       returnArray['name'] = it.name
-      returnArray['scan'] = it.scan
+      returnArray['imagee'] = it.image
       return returnArray
     }
 

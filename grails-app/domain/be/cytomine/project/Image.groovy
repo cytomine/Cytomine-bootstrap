@@ -5,9 +5,8 @@ import be.cytomine.acquisition.Scanner
 import be.cytomine.server.resolvers.Resolver
 import be.cytomine.server.ImageServer
 import grails.converters.JSON
-import be.cytomine.warehouse.Mime
 
-class Scan {
+class Image {
   String filename
   Data data
   Scanner scanner
@@ -78,11 +77,11 @@ class Scan {
 
 
 
-  static Scan createOrGetBasicScan() {
+  static Image createOrGetBasicScan() {
     println "createOrGetBasicScan()"
-    def scan = new Scan(filename: "filename",data : Data.createOrGetBasicData(),scanner : Scanner.createOrGetBasicScanner() ,slide : null)
-    println scan.validate()
-    scan.save(flush : true)
-    scan
+    def image = new Image(filename: "filename",data : Data.createOrGetBasicData(),scanner : Scanner.createOrGetBasicScanner() ,slide : null)
+    println image.validate()
+    image.save(flush : true)
+    image
   }
 }

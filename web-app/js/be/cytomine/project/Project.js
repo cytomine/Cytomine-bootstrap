@@ -38,7 +38,7 @@ Cytomine.Project = {
             itemSelector: 'div.thumb-wrap',
             store: new Ext.data.JsonStore({
                 //url: '/cytomine-web/api/scan.json',
-                url : '/cytomine-web/api/project/scan/'+id+'.json',
+                url : '/cytomine-web/api/project/'+id+'/image.json',
                 autoLoad: true,
                 root: 'scan',
                 fields:[
@@ -48,7 +48,7 @@ Cytomine.Project = {
             tpl: new Ext.XTemplate(
                     '<tpl for=".">',
                     '<div class="thumb-wrap" id="{id}">',
-                    '<div class="thumb"><img src="/cytomine-web/api/image/thumb/{id}" title="{filename}"></div>',
+                    '<div class="thumb"><img src="/cytomine-web/api/image/{id}/thumb.jpg" title="{filename}"></div>',
                     '<span class="x-editable">{filename} {id}</span></div>',
                     '</tpl>'
                     ),

@@ -1,10 +1,9 @@
 package be.cytomine.api.project
 
 import grails.test.*
-import be.cytomine.acquisition.Scanner
-import be.cytomine.project.Scan
-import be.cytomine.warehouse.Data
-import be.cytomine.warehouse.Mime
+
+import be.cytomine.project.Image
+
 import be.cytomine.project.Annotation
 
 import com.vividsolutions.jts.io.WKTReader
@@ -29,19 +28,19 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
     String name = "name"
     String location = "POINT (1000 1000)"
 
-    def scan = Scan.createOrGetBasicScan()
-    def annotation = new Annotation(name:name,location:new WKTReader().read(location),scan: scan);
+    def scan = Image.createOrGetBasicScan()
+    def annotation = new Annotation(name:name,location:new WKTReader().read(location),image: scan);
     assertTrue(annotation.validate())
     annotation.save(flush : true)
 
     RestAnnotationController c = new RestAnnotationController()
-    c.params.idannotation = annotation.id
+    c.params.id = annotation.id
     c.show()
 
     def jsonAnnotation = c.response.contentAsString
     println  jsonAnnotation
     def json = JSON.parse(jsonAnnotation);
-    //{"annotation":{"id":4,"name":"name","location":"POINT (1000 1000)","scan":119}}
+    //{"annotation":{"id":4,"name":"name","location":"POINT (1000 1000)","image":119}}
 
     assert json instanceof JSONObject // In this case, JSON.parse returns a JSONObject instance
     assert json instanceof Map // which implements the Map interface
@@ -54,7 +53,7 @@ class RestAnnotationControllerTests extends GrailsUnitTestCase {
   void testShowAnnotationNotExist() {
 
     RestAnnotationController c = new RestAnnotationController()
-    c.params.idannotation = -99
+    c.params.id = -99
     c.show()
     def code = c.response.status
     println code

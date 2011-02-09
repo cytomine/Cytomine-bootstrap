@@ -15,7 +15,7 @@ class Slide {
     name
   }
 
-  static hasMany = [projectSlide:ProjectSlide, scan:Scan]
+  static hasMany = [projectSlide:ProjectSlide, scan:Image]
 
   static constraints = {
   }

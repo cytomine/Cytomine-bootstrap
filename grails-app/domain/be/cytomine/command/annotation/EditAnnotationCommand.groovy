@@ -3,7 +3,7 @@ package be.cytomine.command.annotation
 import grails.converters.JSON
 import be.cytomine.project.Annotation
 import com.vividsolutions.jts.io.WKTReader
-import be.cytomine.project.Scan
+import be.cytomine.project.Image
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 
@@ -31,10 +31,10 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
           //location is a Geometry object
           updatedAnnotation.properties.put(property.key, new WKTReader().read(property.value))
         }
-        else if(property.key.equals("scan"))
+        else if(property.key.equals("image"))
         {
-          //scan is a scan object and not a simple id
-          updatedAnnotation.properties.put(property.key, Scan.get(property.value))
+          //image is a image object and not a simple id
+          updatedAnnotation.properties.put(property.key, Image.get(property.value))
         }
         else if(!property.key.equals("class"))
         {
@@ -65,7 +65,7 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
     annotation.name = annotationsData.previousAnnotation.name
     annotation.location = new WKTReader().read(annotationsData.previousAnnotation.location)
     println  "undo="+annotation.location
-    annotation.scan = Scan.get(annotationsData.previousAnnotation.scan)
+    annotation.image = Image.get(annotationsData.previousAnnotation.image)
     annotation.save()
     return [data : [success : true, message:"ok", annotation : annotation], status : 200]
   }
@@ -75,7 +75,7 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
     Annotation annotation = Annotation.findById(annotationsData.newAnnotation.id)
     annotation.name = annotationsData.newAnnotation.name
     annotation.location = new WKTReader().read(annotationsData.newAnnotation.location)
-    annotation.scan = Scan.get(annotationsData.newAnnotation.scan)
+    annotation.image = Image.get(annotationsData.newAnnotation.image)
     annotation.save()
     return [data : [success : true, message:"ok", nnotation : annotation], status : 200]
   }

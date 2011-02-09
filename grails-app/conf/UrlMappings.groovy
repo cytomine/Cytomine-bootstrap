@@ -13,61 +13,58 @@ class UrlMappings {
     /* ERRORS */
     "500"(view:'/error')
 
-    /* API MAPPINGS */
+    /* USER */
     "/api/user"(controller:"restUser"){
       action = [GET:"list", POST:"save"]
     }
     "/api/user/$id"(controller:"restUser"){
       action = [GET:"show", PUT:"update", DELETE:"delete"]
     }
+
+    /* PROJECT */
     "/api/project"(controller: "restProject"){
       action = [GET:"list", POST:"save"]
     }
     "/api/project/$id"(controller: "restProject"){
       action = [GET:"show", PUT:"update", DELETE:"delete"]
     }
-    "/api/project/scan/$id"(controller: "restScan"){
+    "/api/project/$id/image"(controller: "restScan"){
       action = [GET:"showByProject"]
     }
-    "/api/scan"(controller: "restScan"){
+
+    /* IMAGE */
+    "/api/image"(controller: "restScan"){   //TO DO : fusionner scan & image
       action = [GET:"list", POST:"save"]
     }
-    "/api/scan/$id"(controller: "restScan"){
+    "/api/image/$id"(controller: "restScan"){
       action = [GET:"show", PUT:"update", DELETE:"delete"]
     }
-    "/api/image/thumb/$idscan"(controller: "restImage"){
+    "/api/image/$id/thumb"(controller: "restImage"){
       action = [GET:"thumb"]
     }
-    "/api/image/metadata/$idscan"(controller: "restImage"){
+    "/api/image/$id/metadata"(controller: "restImage"){
       action = [GET:"metadata"]
-    }
-    "/api/image/crop/$zoom/$idannotation"(controller: "restImage"){
-      action = [GET:"crop"]
-    }
-    "/api/image/crop/$idannotation"(controller: "restImage"){
-      action = [GET:"crop"]
-    }
-    "/api/image/retrieval/$maxsimilarpictures/$idannotation/"(controller: "restImage") {
-      action = [GET:"retrieval"]
-    }
-    "/api/image/retrieval/$zoom/$maxsimilarpictures/$idannotation/"(controller: "restImage") {
-      action = [GET:"retrieval"]
     }
 
     /* Annotation */
-    "/api/annotation/scan/$idscan"(controller:"restAnnotation"){
-      action = [GET:"list"]
-    }
-
     "/api/annotation"(controller:"restAnnotation"){
       action = [GET: "list",POST:"add"]
     }
-
-    "/api/annotation/$idannotation"(controller:"restAnnotation"){
+    "/api/annotation/$id"(controller:"restAnnotation"){
       action = [GET:"show",PUT:"update", DELETE:"delete"]
     }
+    "/api/annotation/$id/$zoom/crop"(controller: "restImage"){
+      action = [GET:"crop"]
+    }
+    "/api/image/$id/annotation"(controller:"restAnnotation"){
+      action = [GET:"list"]
+    }
+    "/api/annotation/$id/retrieval/$zoom/$maxsimilarpictures"(controller: "restImage") {
+      action = [GET:"retrieval"]
+    }
 
-    /* Term */
+
+       /* Term */
     "/api/term/annotation/$idannotation"(controller:"restTerm"){
       action = [GET: "list"]
     }
@@ -76,6 +73,11 @@ class UrlMappings {
     }
      "/api/term/$idterm"(controller:"restTerm"){
       action = [GET:"show",PUT:"update", DELETE:"delete"]
+    }
+    
+    /* TEST */
+    "/api/test/"(controller:"restAnnotation"){
+      action = [GET:"test"]
     }
 
   }

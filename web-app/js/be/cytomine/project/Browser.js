@@ -6,7 +6,7 @@ Ext.namespace('Cytomine');
  */
 Cytomine.Browser = {
     /**
-     * Retourne l'onglet correspondant au viewer de scan
+     * Retourne l'onglet correspondant au viewer de image
      * @return {Ext.Panel}
      */
     tab: function(idTab, idScan, tabTitle) {
@@ -16,7 +16,7 @@ Cytomine.Browser = {
             iconCls: 'envelope-label',
             title: tabTitle,
             closable:true,
-            autoLoad : {url:'/cytomine-web/scan/browse/'+idScan,scripts:true},
+            autoLoad : {url:'/cytomine-web/image/browse/'+idScan,scripts:true},
             item : [
                 /*{
                  title:'Project',

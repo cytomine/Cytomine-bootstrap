@@ -2,7 +2,7 @@ package be.cytomine.project
 
 import grails.test.*
 
-class ScanControllerTests extends ControllerUnitTestCase {
+class ImageControllerTests extends ControllerUnitTestCase {
     protected void setUp() {
         super.setUp()
     }

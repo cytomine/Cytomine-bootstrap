@@ -9,6 +9,8 @@ import be.cytomine.project.AnnotationTerm
 class RestTermController {
 
   def list = {
+
+    println "..."
     println params.idannotation
     def data = [:]
     Annotation annotation = Annotation.get(params.idannotation);
@@ -28,6 +30,7 @@ class RestTermController {
   }
 
   def show = {
+
     if(params.idterm && Term.exists(params.idterm)) {
       def data = Term.findById(params.idterm)
       withFormat {

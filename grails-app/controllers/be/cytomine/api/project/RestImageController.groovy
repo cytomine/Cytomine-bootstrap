@@ -1,37 +1,49 @@
 package be.cytomine.api.project
 
-import be.cytomine.project.Scan
-import groovy.xml.MarkupBuilder
+import be.cytomine.project.Image
+
 import grails.converters.*
 import be.cytomine.project.Annotation
-import com.vividsolutions.jts.geom.Coordinate
+
 import be.cytomine.server.RetrievalServer
 
 class RestImageController {
 
   def thumb = {
-    Scan scan = Scan.findById(params.idscan)
+    Image scan = Image.findById(params.id)
+    print scan.getThumbURL()
     def out = new ByteArrayOutputStream()
     out << new URL(scan.getThumbURL()).openStream()
     response.contentLength = out.size();
-    if (request.method == 'HEAD') { render(text: "", contentType: "image/jpeg"); }
-    else {
-      response.contentType = "image/jpeg"; response.getOutputStream() << out.toByteArray()
+    withFormat {
+      jpg {
+        if (request.method == 'HEAD') {
+          render(text: "", contentType: "image/jpeg");
+        }
+        else {
+          response.contentType = "image/jpeg"; response.getOutputStream() << out.toByteArray()
+        }
+      }
     }
   }
 
 
   def metadata = {
-    Scan scan = Scan.findById(params.idscan)
+    Image scan = Image.findById(params.id)
     def url = new URL(scan.getMetadataURL())
-    render(contentType: "application/json", text: "${url.text}")
+    withFormat {
+      json {
+        render(contentType: "application/json", text: "${url.text}")
+      }
+    }
+
   }
 
   def crop = {
     Annotation annotation = Annotation.findById(params.idannotation)
-    int zoom = (params.zoom != null) ? Integer.parseInt(params.zoom) : annotation.getScan().getZoomLevels().middle
+    int zoom = (params.zoom != null) ? Integer.parseInt(params.zoom) : annotation.getImage().getZoomLevels().middle
 
-    if (annotation == null || zoom < annotation.getScan().getZoomLevels().min || zoom > annotation.getScan().getZoomLevels().max) {
+    if (annotation == null || zoom < annotation.getImage().getZoomLevels().min || zoom > annotation.getImage().getZoomLevels().max) {
       response.status = 404
       render "404"
       return
@@ -41,17 +53,22 @@ class RestImageController {
     out << new URL(annotation.getCropURL(zoom)).openStream()
 
     response.contentLength = out.size()
-    if (request.method == 'HEAD') {
-      render(text: "", contentType: "image/jpeg");
-    }
-    else {
-      response.contentType = "image/jpeg"; response.getOutputStream() << out.toByteArray()
+
+    withFormat {
+      jpg {
+        if (request.method == 'HEAD') {
+          render(text: "", contentType: "image/jpeg");
+        }
+        else {
+          response.contentType = "image/jpeg"; response.getOutputStream() << out.toByteArray()
+        }
+      }
     }
   }
 
   def retrieval = {
     Annotation annotation = Annotation.findById(params.idannotation)
-    int zoom = (params.zoom != null) ? Integer.parseInt(params.zoom) : annotation.getScan().getZoomLevels().middle
+    int zoom = (params.zoom != null) ? Integer.parseInt(params.zoom) : annotation.getImage().getZoomLevels().middle
     int maxSimilarPictures = Integer.parseInt(params.maxsimilarpictures)
     def retrievalServers = RetrievalServer.findAll()
     println annotation.getCropURL(1)
