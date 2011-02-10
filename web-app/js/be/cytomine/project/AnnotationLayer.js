@@ -27,12 +27,13 @@ Cytomine.Project.AnnotationLayer.prototype = {
     /*Load layer for annotation*/
     loadToMap : function (scan) {
         vectorsLayer = new OpenLayers.Layer.Vector("Vector Layer");
+
         var alias = this;
         vectorsLayer.events.on({
             featureselected : function (evt) {
                 console.log("featureselected start:"+evt.feature.attributes.idAnnotation + "|"+"/cytomine-web/api/term/annotation/"+evt.feature.attributes.idAnnotation+".json"+"|");
                 req = new XMLHttpRequest();
-                 console.log("req 1");
+                console.log("req 1");
                 req.open("GET", "/cytomine-web/api/term/annotation/"+evt.feature.attributes.idAnnotation+".json", true);
                 console.log("req 2");
                 req.onreadystatechange = alias.selectAnnotation;   // the handler
@@ -67,21 +68,37 @@ Cytomine.Project.AnnotationLayer.prototype = {
             }
         });
         vectorsLayer.events.register("featureselected", vectorsLayer, selected);
-        controls = {
-            point: new OpenLayers.Control.DrawFeature(vectorsLayer,
-                    OpenLayers.Handler.Point),
-            line: new OpenLayers.Control.DrawFeature(vectorsLayer,
-                    OpenLayers.Handler.Path),
-            polygon: new OpenLayers.Control.DrawFeature(vectorsLayer,
-                    OpenLayers.Handler.Polygon),
-            regular: new OpenLayers.Control.DrawFeature(vectorsLayer,
-                    OpenLayers.Handler.RegularPolygon, {handlerOptions: {sides: 5}}),
-            modify: new OpenLayers.Control.ModifyFeature(vectorsLayer),
-            select: new OpenLayers.Control.SelectFeature(vectorsLayer)
-        }
-        console.log("initTools on image : " + scan.filename);
-        scan.initTools(controls);
+        /*controls = {
+         point: new OpenLayers.Control.DrawFeature(vectorsLayer,
+         OpenLayers.Handler.Point),
+         line: new OpenLayers.Control.DrawFeature(vectorsLayer,
+         OpenLayers.Handler.Path),
+         polygon: new OpenLayers.Control.DrawFeature(vectorsLayer,
+         OpenLayers.Handler.Polygon),
+         regular: new OpenLayers.Control.DrawFeature(vectorsLayer,
+         OpenLayers.Handler.RegularPolygon, {handlerOptions: {sides: 5}}),
+         modify: new OpenLayers.Control.ModifyFeature(vectorsLayer),
+         select: new OpenLayers.Control.SelectFeature(vectorsLayer)
+
+         }
+         console.log("initTools on image : " + scan.filename);
+         scan.initTools(controls);*/
         scan.map.addLayer(vectorsLayer);
+        var zb = new OpenLayers.Control.ZoomBox({title:"Zoom box: Selecting it you can zoom on an area by clicking and dragging."});
+        var panel = new OpenLayers.Control.Panel({defaultControl: zb});
+        panel.addControls([
+            new OpenLayers.Control.MouseDefaults({title:'You can use the default mouse configuration'}), zb,
+            new OpenLayers.Control.DrawFeature(vectorsLayer, OpenLayers.Handler.Path, {title:'Draw a feature'}),
+            new OpenLayers.Control.ZoomToMaxExtent({title:"Zoom to the max extent"})
+        ]);
+
+        nav = new OpenLayers.Control.NavigationHistory();
+        // parent control must be added to the map
+        scan.map.addControl(nav);
+        panel.addControls([nav.next, nav.previous]);
+
+        scan.map.addControl(panel);
+
 
     },
 
@@ -228,21 +245,21 @@ Cytomine.Project.AnnotationLayer.prototype = {
             var terms =""+ "<BR>";
             for (i=0;i<JSONannotations.term.length;i++)
             {
-               terms = terms +"*" +JSONannotations.term[i].name + "<BR>"
+                terms = terms +"*" +JSONannotations.term[i].name + "<BR>"
             }
             this.dialog = new Ext.Window({
-                    title: "Feature Info",
-                    layout: "fit",
-                    height: 130, width: 200,
-                    plain: true,
-                    items: [{
-                        border: false,
-                        bodyStyle: {
-                            padding: 5, fontSize: 13
-                        },
-                        html: "Term: "+terms
-                    }]
-                });
+                title: "Feature Info",
+                layout: "fit",
+                height: 130, width: 200,
+                plain: true,
+                items: [{
+                    border: false,
+                    bodyStyle: {
+                        padding: 5, fontSize: 13
+                    },
+                    html: "Term: "+terms
+                }]
+            });
             this.dialog.show();
         }
 
@@ -297,17 +314,18 @@ Cytomine.Project.AnnotationLayer.prototype = {
         controls.regular.handler.irregular = irregular;
     },
     toggleControl :
-       function (element) {
-           console.log("toggleControl")
-           for(key in controls) {
-               var control = controls[key];
-               if(element.value == key && element.checked) {
-                   control.activate();
-               } else {
-                   control.deactivate();
-               }
-           }
-       }
+    function (element) {
+        console.log("toggleControl")
+        for(key in controls) {
+            var control = controls[key];
+            if(element.value == key && element.checked) {
+                control.activate();
+            } else {
+                console.log("deactivate control : " + key)
+                control.deactivate();
+            }
+        }
+    }
 }
 
 

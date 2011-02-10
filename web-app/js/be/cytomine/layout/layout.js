@@ -6,6 +6,7 @@ var brol = '<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed met
 
 
 Ext.onReady(function() {
+
     setTimeout(function(){
         Ext.get('loading').remove();
         Ext.get('loading-mask').fadeOut({remove:true});

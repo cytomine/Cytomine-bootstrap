@@ -54,6 +54,5 @@ Cytomine.Project.Scan.prototype = {
         for(var key in controls) {
             this.map.addControl(controls[key]);
         }
-
     }
 }

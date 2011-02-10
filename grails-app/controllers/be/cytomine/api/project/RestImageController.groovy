@@ -40,7 +40,7 @@ class RestImageController {
   }
 
   def crop = {
-    Annotation annotation = Annotation.findById(params.idannotation)
+    Annotation annotation = Annotation.findById(params.id)
     int zoom = (params.zoom != null) ? Integer.parseInt(params.zoom) : annotation.getImage().getZoomLevels().middle
 
     if (annotation == null || zoom < annotation.getImage().getZoomLevels().min || zoom > annotation.getImage().getZoomLevels().max) {
