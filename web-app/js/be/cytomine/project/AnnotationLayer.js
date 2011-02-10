@@ -68,7 +68,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
             }
         });
         vectorsLayer.events.register("featureselected", vectorsLayer, selected);
-        /*controls = {
+        controls = {
          point: new OpenLayers.Control.DrawFeature(vectorsLayer,
          OpenLayers.Handler.Point),
          line: new OpenLayers.Control.DrawFeature(vectorsLayer,
@@ -82,18 +82,11 @@ Cytomine.Project.AnnotationLayer.prototype = {
 
          }
          console.log("initTools on image : " + scan.filename);
-         scan.initTools(controls);*/
+        scan.initTools(controls);
         scan.map.addLayer(vectorsLayer);
-        var zb = new OpenLayers.Control.ZoomBox({title:"Zoom box: Selecting it you can zoom on an area by clicking and dragging."});
-        var panel = new OpenLayers.Control.Panel({defaultControl: zb});
-        panel.addControls([
-            new OpenLayers.Control.MouseDefaults({title:'You can use the default mouse configuration'}), zb,
-            new OpenLayers.Control.DrawFeature(vectorsLayer, OpenLayers.Handler.Path, {title:'Draw a feature'}),
-            new OpenLayers.Control.ZoomToMaxExtent({title:"Zoom to the max extent"})
-        ]);
 
-        nav = new OpenLayers.Control.NavigationHistory();
-        // parent control must be added to the map
+        var panel = new OpenLayers.Control.Panel();
+        var nav = new OpenLayers.Control.NavigationHistory();
         scan.map.addControl(nav);
         panel.addControls([nav.next, nav.previous]);
 
