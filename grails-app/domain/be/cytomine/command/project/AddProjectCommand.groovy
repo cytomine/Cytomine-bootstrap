@@ -28,7 +28,7 @@ class AddProjectCommand extends Command implements UndoRedoCommand {
 
   def redo() {
     def projectData = JSON.parse(data)
-    def project = Project.getUserFromData(JSON.parse(postData))
+    def project = Project.getProjectFromData(JSON.parse(postData))
     project.id = projectData.id
     project.save()
     return [data : [project : project], status : 200]
