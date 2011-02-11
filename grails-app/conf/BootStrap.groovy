@@ -28,14 +28,14 @@ import be.cytomine.project.Term
 import be.cytomine.project.AnnotationTerm
 import be.cytomine.project.Ontology
 import be.cytomine.project.TermOntology
-
+ import org.apache.log4j.*
 
 class BootStrap {
   def springSecurityService
   def init = { servletContext ->
 
     Marshallers.init();
-
+    log.info "add data"
     println "add Data"
     /* Groups */
     def groupsSamples = [

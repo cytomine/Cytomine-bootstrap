@@ -6,6 +6,7 @@ import be.cytomine.project.Annotation
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.project.Image
 import be.cytomine.acquisition.Scanner
+import be.cytomine.project.Term
 
 /**
  * Created by IntelliJ IDEA.
@@ -66,6 +67,32 @@ class BasicInstance {
     def scanner = new Scanner(maxResolution:"x40",brand:"brand", model:"model")
     scanner.save(flush : true)
     scanner
+
+  }
+
+  static Term createOrGetBasicTerm() {
+
+    println "createOrGetBasicTerm()"
+    def termchild = new Term(name:"basicTermChild",comment:"basicTermComment")
+    printIfErrors(termchild)
+    termchild.save(flush : true)
+    def term = new Term(name:"basicTermName",comment:"basicTermComment")
+    printIfErrors(term)
+    term.addToChild(termchild)
+    term.save(flush : true)
+    term
+  }
+
+  static void printIfErrors(object) {
+
+    if(object.validate()) {
+        println "validate()==true"
+    }
+    else {
+        object.errors.allErrors.each {
+            println "error="+it
+        }
+    }
 
   }
 }

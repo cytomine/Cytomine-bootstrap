@@ -14,6 +14,7 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
       Annotation newAnnotation = Annotation.getAnnotationFromData(JSON.parse(postData))
       if(newAnnotation.validate()) {
         newAnnotation.save()
+        println "save annotation with id:"+newAnnotation.id
         data = newAnnotation.encodeAsJSON()
         return [data : [success : true , message:"ok", annotation : newAnnotation], status : 201]
       } else {
@@ -27,9 +28,13 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
   }
 
   def undo() {
+    println "undo"
     def annotationData = JSON.parse(data)
+    println "id="+ annotationData.id
     def annotation = Annotation.findById(annotationData.id)
+    println "delete"
     annotation.delete()
+    println "return"
     return [data : null, status : 200]
   }
 

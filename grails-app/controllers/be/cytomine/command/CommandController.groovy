@@ -6,8 +6,11 @@ class CommandController {
   def springSecurityService
 
   def undo = {
+   println "undo command controller"
     User user = User.get(springSecurityService.principal.id)
+    println "user="+user.id
     def lastCommands = UndoStack.findAllByUser(user)
+    println "lastcommands="+lastCommands
 
     if (lastCommands.size() == 0) {
       response.status = 404

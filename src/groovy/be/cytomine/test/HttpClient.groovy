@@ -1,0 +1,180 @@
+package be.cytomine.test
+import org.apache.http.entity.ContentProducer
+import org.apache.http.HttpEntity
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.entity.EntityTemplate
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.auth.AuthScope
+import org.apache.http.auth.UsernamePasswordCredentials
+import org.apache.http.HttpResponse
+import org.apache.commons.io.IOUtils
+import org.apache.http.client.AuthCache
+import org.apache.http.impl.client.BasicAuthCache
+import org.apache.http.impl.auth.BasicScheme
+import org.apache.http.protocol.BasicHttpContext
+import org.apache.http.client.protocol.ClientContext
+import org.apache.http.HttpHost
+/**
+ * Created by IntelliJ IDEA.
+ * User: lrollus
+ * Date: 11/02/11
+ * Time: 8:18
+ * To change this template use File | Settings | File Templates.
+ */
+class HttpClient {
+
+  DefaultHttpClient client
+  HttpHost targetHost
+  BasicHttpContext localcontext
+  URL URL
+  HttpResponse response
+
+  void connect(String url, String username, String password)
+  {
+    println "HttpClient: Connection to " + url + " with login="+username + " and pass=" + password
+    URL = new URL(url)
+    targetHost = new HttpHost(URL.getHost(),URL.getPort());
+    client = new DefaultHttpClient();
+    // Create AuthCache instance
+    AuthCache authCache = new BasicAuthCache();
+    // Generate BASIC scheme object and add it to the local
+    // auth cache
+    BasicScheme basicAuth = new BasicScheme();
+    authCache.put(targetHost, basicAuth);
+
+    // Add AuthCache to the execution context
+    localcontext = new BasicHttpContext();
+    localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
+    // Set credentials
+    UsernamePasswordCredentials creds = new UsernamePasswordCredentials(username, password);
+    client.getCredentialsProvider().setCredentials(AuthScope.ANY, creds);
+  }
+
+  void get()
+  {
+    // Try to get the report again
+    //
+    println "HttpClient: Get " + URL.getPath()
+    HttpGet httpGet = new HttpGet(URL.getPath());
+    response = client.execute(targetHost, httpGet, localcontext);
+    /*HttpEntity entity = response.getEntity();
+    String content = IOUtils.toString(entity.getContent());
+    println "HttpClient: Get Response :" + content
+    content */
+
+  }
+
+
+  void post(String data)
+  {
+    println "HttpClient: Post " + URL.getPath()
+    HttpPost httpPost = new HttpPost(URL.getPath());
+    println "HttpClient: Post send :" + data
+    //write data
+    ContentProducer cp = new ContentProducer() {
+      public void writeTo(OutputStream outstream) throws IOException {
+        Writer writer = new OutputStreamWriter(outstream, "UTF-8");
+        writer.write(data);
+        writer.flush();
+      }
+    };
+    HttpEntity entity = new EntityTemplate(cp);
+    httpPost.setEntity(entity);
+
+    response = client.execute(targetHost, httpPost, localcontext);
+  }
+
+  String getResponseData()   {
+    HttpEntity entityResponse = response.getEntity();
+
+    String content = IOUtils.toString(entityResponse.getContent());
+
+    println "HttpClient: Response :" + content
+
+    content
+
+  }
+
+
+
+
+
+  int getResponseCode() {
+    return response.getStatusLine().getStatusCode()}
+
+  void disconnect()
+  {
+    try {client.getConnectionManager().shutdown();} catch(Exception e){}
+  }
+
+
+
+
+
+  /* void testPostTermHttp() {
+    Term term =  BasicInstance.createOrGetBasicTerm()
+    String URL = Infos.CYTOMINEURL+"api/term.json"
+    //HttpClient client = new HttpClient(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+     println "URL="+URL
+      HttpHost targetHost = new HttpHost("localhost",8080);
+    DefaultHttpClient client = new DefaultHttpClient();
+    // Our request method
+
+
+            // Create AuthCache instance
+            AuthCache authCache = new BasicAuthCache();
+            // Generate BASIC scheme object and add it to the local
+            // auth cache
+            BasicScheme basicAuth = new BasicScheme();
+            authCache.put(targetHost, basicAuth);
+
+            // Add AuthCache to the execution context
+            BasicHttpContext localcontext = new BasicHttpContext();
+            localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
+
+
+    // Set credentials
+    UsernamePasswordCredentials creds = new UsernamePasswordCredentials(Infos.GOODLOGIN, Infos.GOODPASSWORD);
+    client.getCredentialsProvider().setCredentials(AuthScope.ANY, creds);
+    // Try to get the report again
+    //
+    HttpPost httpPost = new HttpPost(URL);
+
+
+
+    def termToAdd = BasicInstance.createOrGetBasicTerm()
+    String jsonTerm = ([term : termToAdd]).encodeAsJSON()
+
+
+ContentProducer cp = new ContentProducer() {
+    public void writeTo(OutputStream outstream) throws IOException {
+        Writer writer = new OutputStreamWriter(outstream, "UTF-8");
+        writer.write(jsonTerm.toString());
+        writer.flush();
+    }
+};
+HttpEntity entity = new EntityTemplate(cp);
+
+     httpPost.setEntity(entity);
+      println "httppost"
+
+    HttpResponse response = client.execute(targetHost, httpPost, localcontext);
+    println "response"
+
+    HttpEntity entity3 = response.getEntity();
+    println "entity2"
+    String content = IOUtils.toString(entity3.getContent());
+    println "content"
+    println content
+
+  }
+*/
+
+
+
+
+
+
+
+}
