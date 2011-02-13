@@ -55,7 +55,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
   void testAddAnnotationCorrect() {
 
-    def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
+    /*def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
     String jsonAnnotation = ([annotation : annotationToAdd]).encodeAsJSON()
     println jsonAnnotation
     String URL = Infos.CYTOMINEURL+"api/annotation.json"
@@ -72,33 +72,42 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     println "idAnnotation=" + idAnnotation
     //check if object exist in DB
 
-    //test undo
-    /*client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    assertEquals(200,code)*/
-
-    //test if deleted
-    /*client = new HttpClient();
+    client = new HttpClient();
     URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(404,code) */
+    assertEquals(200,code)
+
+    //test undo
+    client = new HttpClient()
+    URL = Infos.CYTOMINEURL+Infos.UNDOURL
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    assertEquals(200,code)
+
+    //test if deleted
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+    assertEquals(404,code)
 
     //test redo
-    /*client = new HttpClient()
+    client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.REDOURL
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.get()
     code  = client.getResponseCode()
     response = client.getResponseData()
-    assertEquals(200,code)*/
+    assertEquals(200,code)
 
     //test is re-created
     client = new HttpClient();
@@ -108,7 +117,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(200,code)
+    assertEquals(200,code)    */
   }
 
 

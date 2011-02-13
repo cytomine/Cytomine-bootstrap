@@ -31,7 +31,7 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
     println "undo"
     def annotationData = JSON.parse(data)
     println "id="+ annotationData.id
-    def annotation = Annotation.findById(annotationData.id)
+    def annotation = Annotation.get(annotationData.id)
     println "delete"
     annotation.delete()
     println "return"

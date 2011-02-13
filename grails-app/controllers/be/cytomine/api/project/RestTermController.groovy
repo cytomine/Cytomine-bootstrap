@@ -38,6 +38,13 @@ class RestTermController {
   }
 
   def show = {
+    println "RestTermController show:"+ params.idterm
+
+    Term.all.each{ term ->
+      println "term:"+term.id
+
+    }
+
 
     if(params.idterm && Term.exists(params.idterm)) {
       def data = Term.findById(params.idterm)
@@ -49,7 +56,7 @@ class RestTermController {
       response.status = 404
       render contentType: "application/xml", {
         errors {
-          message("Term not found with id: " + params.id)
+          message("Term not found with id: " + params.idterm)
         }
       }
     }

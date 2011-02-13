@@ -36,7 +36,7 @@ class BootStrap {
 
     Marshallers.init();
     log.info "add data"
-    println "add Data"
+    println """add Data"""
     /* Groups */
     def groupsSamples = [
             [name : "GIGA"],

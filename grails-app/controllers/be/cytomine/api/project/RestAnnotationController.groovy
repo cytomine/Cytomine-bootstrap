@@ -33,7 +33,15 @@ class RestAnnotationController {
     //testExecuteEditAnnotation()
     println "show with id:" + params.id
     def data = [:]
+    println("Annotation.get(params.id)="+Annotation.get(params.id))
+    Annotation.list().each{ annot ->
+      println "annotation:"+annot.id
+
+    }
+
+
     data.annotation = Annotation.get(params.id)
+    println("Annotation.get(params.id)="+Annotation.get(params.id))
     if(data.annotation!=null)  {
       withFormat {
         json { render data as JSON }

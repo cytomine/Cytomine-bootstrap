@@ -23,6 +23,7 @@ class Term {
     def term = new Term()
     term.name = data.term.name
     term.comment = data.term.comment
+    //TODO: implement children&co
     return term;
   }
 
