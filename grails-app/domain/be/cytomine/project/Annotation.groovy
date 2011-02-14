@@ -27,7 +27,7 @@ class Annotation {
   /* Get all terms map with the annotation */
   def terms() {
     return annotationTerm.collect{it.term}
-   }
+  }
 
   def beforeInsert() {
     if (id == null)
@@ -60,31 +60,27 @@ class Annotation {
   }
 
 
-  static int generateID() {
-    int max = 0
-    Annotation.list().each { annot ->
-      max = Math.max(max, annot.id)
-    }
+  static long generateID() {
+    long max = 0
+    def annotations = Annotation.list(sort:"id", order:"desc")
+    if (annotations) max = Math.max(max, annotations.first().id)
     return ++max
   }
 
   boolean equals(object) {
-       if(object instanceof Annotation)
-       {
-          (this.id==object.id && this.name.equals(object.name) && this.location==object.location && this.image.id==object.image.id)
-       }
-       else false
+    if(object instanceof Annotation)
+    {
+      (this.id==object.id && this.name.equals(object.name) && this.location==object.location && this.image.id==object.image.id)
+    }
+    else false
   }
 
   static def convertToMap(Annotation annotation){
-      HashMap jsonMap = new HashMap()
-
-      jsonMap.annotation = [id: annotation.id, name: annotation.name, location: annotation.location.toString(), scan: annotation.image.id,'class':annotation.class]
-      if (annotation.id==null)  jsonMap.annotation.remove('id')
-      jsonMap
+    HashMap jsonMap = new HashMap()
+    jsonMap.annotation = [id: annotation.id, name: annotation.name, location: annotation.location.toString(), scan: annotation.image.id,'class':annotation.class]
+    if (annotation.id==null)  jsonMap.annotation.remove('id')
+    jsonMap
   }
-
-
 
 
   static void registerMarshaller() {

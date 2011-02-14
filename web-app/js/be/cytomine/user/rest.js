@@ -20,7 +20,7 @@ Cytomine.Rest.Project = {
         }, [
             {name: 'id'},
             {name: 'name', allowBlank: false},
-            {name: 'image', allowBlank: false}
+            {name: 'image'}
         ])},
     writer : function () { return new Ext.data.JsonWriter({
         encode: false,   // <-- don't return encoded JSON -- causes Ext.Ajax#request to send data using jsonData config rather than HTTP params
@@ -37,7 +37,8 @@ Cytomine.Rest.Project = {
         })},
     userColumns : [
         /*{header: "ID", width: 40, sortable: true, dataIndex: 'id'},*/
-        {header: "Name", width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})}
+        {header: "Name", width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
+        /*{header: "Image", width: 100, sortable: true, dataIndex: 'image', editor: new Ext.form.TextField({})}*/
     ],
     editor :  function () {
         return new Ext.ux.grid.RowEditor({
