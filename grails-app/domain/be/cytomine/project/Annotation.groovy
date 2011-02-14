@@ -90,7 +90,7 @@ class Annotation {
       returnArray['id'] = it.id
       returnArray['name'] = it.name
       returnArray['location'] = it.location.toString()
-      returnArray['image'] = it.image.id
+      if(it.image!=null) returnArray['image'] = it.image.id
       return returnArray
     }
   }
