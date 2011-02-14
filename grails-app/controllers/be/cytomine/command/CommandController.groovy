@@ -1,23 +1,24 @@
 package be.cytomine.command
 
 import be.cytomine.security.User
+import grails.converters.*
 
 class CommandController {
   def springSecurityService
 
   def undo = {
-   println "undo command controller"
+    log.info "Undo"
     User user = User.get(springSecurityService.principal.id)
-    println "user="+user.id
+    log.debug "User="+user.id
     def lastCommands = UndoStack.findAllByUser(user)
-    println "lastcommands="+lastCommands
+    log.debug "Lastcommands="+lastCommands
 
     if (lastCommands.size() == 0) {
+      log.error "Command stack is empty"
       response.status = 404
       render ""
       return
     }
-
 
     def lastTransaction = lastCommands.last().getCommand().getTransaction()
     def result = null
@@ -28,7 +29,11 @@ class CommandController {
       undoCommand.delete()
     }
     response.status = result.status
-    render ""
+
+    withFormat {
+      json { render result.data ?: "" }
+      xml { render result.data ?: ""}
+    }
   }
 
   def redo = {
@@ -50,6 +55,12 @@ class CommandController {
       redoCommand.delete()
     }
     response.status = result.status
-    render ""
+
+    /*withFormat {
+      json { render result.data ?: "" }
+      xml { render result.data ?: ""}
+    }*/
+    //TODO: must work with withformat!
+    render result.data as JSON
   }
 }

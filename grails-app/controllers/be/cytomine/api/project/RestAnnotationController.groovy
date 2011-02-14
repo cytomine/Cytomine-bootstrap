@@ -18,9 +18,26 @@ class RestAnnotationController {
   def springSecurityService
 
   def list = {
-    println "list with id scan:"+params.id
+    log.info "List with id image:"+params.id
     def data = [:]
-    data.annotation = (params.id == null) ? Annotation.list() : (Annotation.findAllByImage(Image.findById(params.id)))
+
+    if(params.id == null) {
+      data.annotation = Annotation.list()
+    }
+    else {
+      if(Image.findById(params.id)!=null) {
+        (Annotation.findAllByImage(Image.findById(params.id)))
+      }
+      else {
+        log.error "Image Id " + params.id+ " don't exist"
+        response.status = 404
+        render contentType: "application/xml", {
+          errors {
+            message("Annotation not found with id image: " + params.id)
+          }
+        }
+      }
+    }
     withFormat {
       json { render data as JSON }
       xml { render jsonMap as XML}
@@ -31,25 +48,17 @@ class RestAnnotationController {
   //return 404 when not found
   def show = {
     //testExecuteEditAnnotation()
-    println "show with id:" + params.id
+    log.info "Show with id:" + params.id
     def data = [:]
-    println("Annotation.get(params.id)="+Annotation.get(params.id))
-    Annotation.list().each{ annot ->
-      println "annotation:"+annot.id
-
-    }
-
-
     data.annotation = Annotation.get(params.id)
-    println("Annotation.get(params.id)="+Annotation.get(params.id))
     if(data.annotation!=null)  {
       withFormat {
         json { render data as JSON }
         xml { render data as XML}
       }
     }
-    else
-    {
+    else {
+      log.error "Annotation Id " + params.id+ " don't exist"
       response.status = 404
       render contentType: "application/xml", {
         errors {
@@ -61,20 +70,22 @@ class RestAnnotationController {
 
   def add = {
 
-    println "add"
-    User currentUser = User.get(3)
-    println request.JSON.toString()
+    log.info "Add"
+    User currentUser = User.get(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
+
     Command addAnnotationCommand = new AddAnnotationCommand(postData : request.JSON.toString())
     Transaction currentTransaction = currentUser.getNextTransaction()
     currentTransaction.addToCommands(addAnnotationCommand)
     def result = addAnnotationCommand.execute()
     if (result.status == 201) {
-      addAnnotationCommand.save()
+      log.info "Save command on stack"
+      addAnnotationCommand.save(flush:true)
       new UndoStack(command : addAnnotationCommand, user: currentUser).save()
     }
 
     response.status = result.status
-    println "result.data"   + result.data
+    log.debug "result.status="+result.status+" result.data=" + result.data
     withFormat {
       json { render result.data as JSON }
       xml { render result.data as XML }
@@ -85,7 +96,7 @@ class RestAnnotationController {
   def delete = {
     println "delete"
     //springSecurityService.principal.id
-    User currentUser = User.get(3)
+    User currentUser = User.get(springSecurityService.principal.id)
     def postData = ([id : params.id]) as JSON
     println postData.toString()
     Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData : postData.toString())
@@ -108,7 +119,7 @@ class RestAnnotationController {
 
   def update = {
     println "update"
-    User currentUser = User.get(3)
+    User currentUser = User.get(springSecurityService.principal.id)
     println "json=" + request.JSON.toString()
     Command editAnnotationCommand = new EditAnnotationCommand(postData : request.JSON.toString())
     Transaction currentTransaction = currentUser.getNextTransaction()

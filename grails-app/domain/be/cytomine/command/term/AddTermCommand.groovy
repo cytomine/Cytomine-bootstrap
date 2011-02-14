@@ -30,10 +30,7 @@ class AddTermCommand extends Command implements UndoRedoCommand {
     def termData = JSON.parse(data)
     def term = Term.getTermFromData(JSON.parse(postData))
     term.id = termData.id
-    println "redo term.id=" + term.id   + " term.validate()"+term.validate()
     term.save(flush:true)
-    //return [data : [term : term], status : 200]
-    println "response"
-    return [data : "ibiza", status : 200]
+    return [data : [term : term], status : 200]
   }
 }

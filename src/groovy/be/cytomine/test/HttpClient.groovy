@@ -15,6 +15,9 @@ import org.apache.http.impl.auth.BasicScheme
 import org.apache.http.protocol.BasicHttpContext
 import org.apache.http.client.protocol.ClientContext
 import org.apache.http.HttpHost
+
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -30,9 +33,11 @@ class HttpClient {
   URL URL
   HttpResponse response
 
+  private Log log = LogFactory.getLog(HttpClient.class)
+
   void connect(String url, String username, String password)
   {
-    println "HttpClient: Connection to " + url + " with login="+username + " and pass=" + password
+    log.debug("Connection to " + url + " with login="+username + " and pass=" + password)
     URL = new URL(url)
     targetHost = new HttpHost(URL.getHost(),URL.getPort());
     client = new DefaultHttpClient();
@@ -53,24 +58,17 @@ class HttpClient {
 
   void get()
   {
-    // Try to get the report again
-    //
-    println "HttpClient: Get " + URL.getPath()
+    log.debug("Get " + URL.getPath())
     HttpGet httpGet = new HttpGet(URL.getPath());
     response = client.execute(targetHost, httpGet, localcontext);
-    /*HttpEntity entity = response.getEntity();
-    String content = IOUtils.toString(entity.getContent());
-    println "HttpClient: Get Response :" + content
-    content */
-
   }
 
 
   void post(String data)
   {
-    println "HttpClient: Post " + URL.getPath()
+    log.debug("Post " + URL.getPath())
     HttpPost httpPost = new HttpPost(URL.getPath());
-    println "HttpClient: Post send :" + data
+    log.debug("Post send :" + data.replace("\n",""))
     //write data
     ContentProducer cp = new ContentProducer() {
       public void writeTo(OutputStream outstream) throws IOException {
@@ -87,94 +85,19 @@ class HttpClient {
 
   String getResponseData()   {
     HttpEntity entityResponse = response.getEntity();
-
     String content = IOUtils.toString(entityResponse.getContent());
-
-    println "HttpClient: Response :" + content
-
+    log.debug("Response :" + content.replace("\n",""))
     content
-
   }
 
-
-
-
-
   int getResponseCode() {
-    return response.getStatusLine().getStatusCode()}
+    log.debug("Code :" + response.getStatusLine().getStatusCode())
+    return response.getStatusLine().getStatusCode()
+  }
 
   void disconnect()
   {
-    try {client.getConnectionManager().shutdown();} catch(Exception e){}
+    log.debug("Disconnect")
+    try {client.getConnectionManager().shutdown();} catch(Exception e){log.error(e)}
   }
-
-
-
-
-
-  /* void testPostTermHttp() {
-    Term term =  BasicInstance.createOrGetBasicTerm()
-    String URL = Infos.CYTOMINEURL+"api/term.json"
-    //HttpClient client = new HttpClient(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-     println "URL="+URL
-      HttpHost targetHost = new HttpHost("localhost",8080);
-    DefaultHttpClient client = new DefaultHttpClient();
-    // Our request method
-
-
-            // Create AuthCache instance
-            AuthCache authCache = new BasicAuthCache();
-            // Generate BASIC scheme object and add it to the local
-            // auth cache
-            BasicScheme basicAuth = new BasicScheme();
-            authCache.put(targetHost, basicAuth);
-
-            // Add AuthCache to the execution context
-            BasicHttpContext localcontext = new BasicHttpContext();
-            localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
-
-
-    // Set credentials
-    UsernamePasswordCredentials creds = new UsernamePasswordCredentials(Infos.GOODLOGIN, Infos.GOODPASSWORD);
-    client.getCredentialsProvider().setCredentials(AuthScope.ANY, creds);
-    // Try to get the report again
-    //
-    HttpPost httpPost = new HttpPost(URL);
-
-
-
-    def termToAdd = BasicInstance.createOrGetBasicTerm()
-    String jsonTerm = ([term : termToAdd]).encodeAsJSON()
-
-
-ContentProducer cp = new ContentProducer() {
-    public void writeTo(OutputStream outstream) throws IOException {
-        Writer writer = new OutputStreamWriter(outstream, "UTF-8");
-        writer.write(jsonTerm.toString());
-        writer.flush();
-    }
-};
-HttpEntity entity = new EntityTemplate(cp);
-
-     httpPost.setEntity(entity);
-      println "httppost"
-
-    HttpResponse response = client.execute(targetHost, httpPost, localcontext);
-    println "response"
-
-    HttpEntity entity3 = response.getEntity();
-    println "entity2"
-    String content = IOUtils.toString(entity3.getContent());
-    println "content"
-    println content
-
-  }
-*/
-
-
-
-
-
-
-
 }

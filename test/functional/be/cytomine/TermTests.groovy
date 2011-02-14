@@ -32,9 +32,36 @@ import be.cytomine.test.HttpClient
  */
 class TermTests extends functionaltestplugin.FunctionalTestCase {
 
+  void testGetAnnotationsWithCredential() {
+    Term term =  BasicInstance.createOrGetBasicTerm()
+    String URL = Infos.CYTOMINEURL+"api/term/"+term.id +".json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+
+    client.disconnect();
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+  }
+
+  void testGetAnnotationsWithoutCredential() {
+    String URL = Infos.CYTOMINEURL+"api/term/1.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.BADLOGIN,Infos.BADPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+
+    client.disconnect();
+    assertEquals(401,code)
+  }
+
   void testAddTermCorrect() {
 
-   /* def termToAdd = BasicInstance.createOrGetBasicTerm()
+    def termToAdd = BasicInstance.createOrGetBasicTerm()
     String jsonTerm = ([term : termToAdd]).encodeAsJSON()
     println jsonTerm
     String URL = Infos.CYTOMINEURL+"api/term.json"
@@ -49,8 +76,8 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     assert json instanceof JSONObject
     int idTerm = json.term.id
     println "idTerm=" + idTerm
-    //check if object exist in DB
 
+    //check if object exist in DB
     client = new HttpClient();
     URL = Infos.CYTOMINEURL+"api/term/"+idTerm +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
@@ -62,11 +89,13 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
     //test undo
     client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL
+    URL = Infos.CYTOMINEURL+Infos.UNDOURL+".json"
+    //URL = Infos.CYTOMINEURL+"api/term/"+idTerm +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.get()
     code  = client.getResponseCode()
     response = client.getResponseData()
+    client.disconnect();
     assertEquals(200,code)
 
     //test if deleted
@@ -81,11 +110,12 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
     //test redo
     client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL
+    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.get()
     code  = client.getResponseCode()
     response = client.getResponseData()
+    client.disconnect();
     assertEquals(200,code)
 
     //must be done because redo change id
@@ -101,74 +131,14 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(200,code) */
-  }
-
-
-
-  void testGetAnnotationsWithCredential() {
-    /*Term term =  BasicInstance.createOrGetBasicTerm()
-    String URL = Infos.CYTOMINEURL+"api/term/"+term.id +".json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-
-    client.disconnect();
     assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject  */
   }
 
-  void testGetAnnotationsWithoutCredential() {
-   /* String URL = Infos.CYTOMINEURL+"api/term/1.json"
-    HttpClient client = new HttpClient(URL,Infos.BADLOGIN,Infos.BADPASSWORD);
-    client.connect("GET");
-    int code  = client.getResponseCode()
-    assertEquals(401,code)
-    client.disconnect();  */
-  }
-
-  /* void testAddTermCorrect() {
-  def termToAdd = BasicInstance.createOrGetBasicTerm()
-  String jsonTerm = ([term : termToAdd]).encodeAsJSON()
-  println "jsonTerm="+jsonTerm
-
-  String URL = Infos.CYTOMINEURL+"api/term.json"
-  HttpClient client = new HttpClient(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-
-  client.connect("POST");
-  //jsonTerm.toString()
-  client.post(jsonTerm.toString())
-  int code  = client.getResponseCode()
-  println "code="+code
-  String response = client.getResponseString()
-  client.disconnect();
-  assertEquals(201,code)
-  def json = JSON.parse(response)
-  assert json instanceof JSONObject
-}  */
-
-  void testGetTermHttp() {
-    /*Term term =  BasicInstance.createOrGetBasicTerm()
-    String URL = Infos.CYTOMINEURL+"api/term.json"
-    be.cytomine.test.HttpClient client = new be.cytomine.test.HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println "Code="+code */
-  }
-
-  void testPostTermHttp() {
-    /*def termToAdd = BasicInstance.createOrGetBasicTerm()
-    String jsonTerm = ([term : termToAdd]).encodeAsJSON()
-        String URL = Infos.CYTOMINEURL+"api/term.json"
-        be.cytomine.test.HttpClient client = new be.cytomine.test.HttpClient()
-        client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-        client.post(jsonTerm)    */
+  void testAddTermWithChildren() {
 
   }
 
+  void testAddTermWithChildrenNotExist() {
+
+  }
 }

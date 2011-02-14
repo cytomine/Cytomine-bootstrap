@@ -112,6 +112,8 @@ log4j = {
     additivity = true
   }
   //debug "org.hibernate.SQL"
+  debug 'be.cytomine'
+  debug 'grails.app'
   debug 'grails.app.service'
   debug 'grails.app.controller'
 }

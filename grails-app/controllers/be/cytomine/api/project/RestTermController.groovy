@@ -39,13 +39,6 @@ class RestTermController {
 
   def show = {
     println "RestTermController show:"+ params.idterm
-
-    Term.all.each{ term ->
-      println "term:"+term.id
-
-    }
-
-
     if(params.idterm && Term.exists(params.idterm)) {
       def data = Term.findById(params.idterm)
       withFormat {
