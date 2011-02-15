@@ -4,7 +4,10 @@ import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.*
 import com.vividsolutions.jts.io.WKTReader
 
+
 class Annotation {
+
+  def sequenceService
 
   String name
   Geometry location
@@ -19,7 +22,7 @@ class Annotation {
   }
 
   static mapping = {
-    id (generator:'assigned', unique : true)
+    id (generator:'assigned' , unique : true)
     columns {
       location type: org.hibernatespatial.GeometryUserType
     }
@@ -31,7 +34,7 @@ class Annotation {
 
   def beforeInsert() {
     if (id == null)
-      id = Annotation.generateID()
+      id = sequenceService.generateID(this)
   }
 
   private def getBoundaries () {
@@ -59,13 +62,6 @@ class Annotation {
     return annotation;
   }
 
-
-  static long generateID() {
-    long max = 0
-    def annotations = Annotation.list(sort:"id", order:"desc")
-    if (annotations) max = Math.max(max, annotations.first().id)
-    return ++max
-  }
 
   boolean equals(object) {
     if(object instanceof Annotation)

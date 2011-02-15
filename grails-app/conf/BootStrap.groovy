@@ -14,27 +14,27 @@ import be.cytomine.project.ProjectGroup
 import be.cytomine.project.Slide
 import be.cytomine.project.ProjectSlide
 import be.cytomine.project.Annotation
-import be.cytomine.command.Transaction
 import com.vividsolutions.jts.geom.Point
-import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.GeometryFactory
-import com.vividsolutions.jts.geom.PrecisionModel
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Polygon
 import be.cytomine.server.RetrievalServer
-import grails.converters.JSON
-import be.cytomine.marshallers.Marshallers
 import be.cytomine.project.Term
 import be.cytomine.project.AnnotationTerm
 import be.cytomine.project.Ontology
 import be.cytomine.project.TermOntology
- import org.apache.log4j.*
 
 class BootStrap {
   def springSecurityService
+  def sequenceService
+  def marshallersService
+
   def init = { servletContext ->
 
-    Marshallers.init();
+    marshallersService.initMarshallers()
+    sequenceService.initSequences()
+
+
     log.info "add data"
     println """add Data"""
     /* Groups */

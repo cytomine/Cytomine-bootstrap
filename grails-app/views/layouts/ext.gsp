@@ -1,34 +1,34 @@
 <html>
 <head>
   <title><g:layoutTitle default="Grails" /></title>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'ext-3.3.1/adapter/ext/ext-base.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'ext-3.3.1/ext-all-debug.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
-  <link rel="stylesheet" href="${createLinkTo(dir:'js',file:'ext-3.3.1/resources/css/ext-all.css')}" />
-  <link rel="stylesheet" href="${createLinkTo(dir:'js',file:'ext-3.3.1/resources/css/xtheme-gray.css')}" />
+  <script type="text/javascript" src="${resource(dir:'js',file:'ext-3.3.1/adapter/ext/ext-base.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'ext-3.3.1/ext-all-debug.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
+  <link rel="stylesheet" href="${resource(dir:'js',file:'ext-3.3.1/resources/css/ext-all.css')}" />
+  <link rel="stylesheet" href="${resource(dir:'js',file:'ext-3.3.1/resources/css/xtheme-gray.css')}" />
   <script type="text/javascript" charset="utf-8">
-    Ext.BLANK_IMAGE_URL = "${createLinkTo(dir:'js',file:'ext-3.3.1/resources/images/default/s.gif')}";
+    Ext.BLANK_IMAGE_URL = "${resource(dir:'js',file:'ext-3.3.1/resources/images/default/s.gif')}";
   </script>
 
   <!-- EXT JS Extensions -->
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'ext-3.3.1/examples/ux/RowEditor.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'ext-3.3.1/examples/ux/TabCloseMenu.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'ext-3.3.1/examples/ux/RowEditor.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'ext-3.3.1/examples/ux/TabCloseMenu.js')}" ></script>
 
   <!-- Cytomine -->
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/user/rest.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/layout/layout.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/api/api.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/Project.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/Retrieval.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/Dashboard.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/Browser.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/Scan.js')}" ></script>
-  <script type="text/javascript" src="${createLinkTo(dir:'js',file:'be/cytomine/project/AnnotationLayer.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/user/rest.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/layout/layout.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/api/api.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/project/Project.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/project/Retrieval.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/project/Dashboard.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/project/Browser.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/project/Scan.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/project/AnnotationLayer.js')}" ></script>
 
 
-  <link rel="stylesheet" href="${createLinkTo(dir:'css',file:'loading.css')}" />
-  <link rel="stylesheet" href="${createLinkTo(dir:'css',file:'ext.css')}" />
+  <link rel="stylesheet" href="${resource(dir:'css',file:'loading.css')}" />
+  <link rel="stylesheet" href="${resource(dir:'css',file:'ext.css')}" />
   <g:layoutHead />
 
 </head>

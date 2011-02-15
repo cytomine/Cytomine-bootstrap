@@ -69,19 +69,19 @@ Cytomine.Project.AnnotationLayer.prototype = {
         });
         vectorsLayer.events.register("featureselected", vectorsLayer, selected);
         controls = {
-         point: new OpenLayers.Control.DrawFeature(vectorsLayer,
-         OpenLayers.Handler.Point),
-         line: new OpenLayers.Control.DrawFeature(vectorsLayer,
-         OpenLayers.Handler.Path),
-         polygon: new OpenLayers.Control.DrawFeature(vectorsLayer,
-         OpenLayers.Handler.Polygon),
-         regular: new OpenLayers.Control.DrawFeature(vectorsLayer,
-         OpenLayers.Handler.RegularPolygon, {handlerOptions: {sides: 5}}),
-         modify: new OpenLayers.Control.ModifyFeature(vectorsLayer),
-         select: new OpenLayers.Control.SelectFeature(vectorsLayer)
+            point: new OpenLayers.Control.DrawFeature(vectorsLayer,
+                    OpenLayers.Handler.Point),
+            line: new OpenLayers.Control.DrawFeature(vectorsLayer,
+                    OpenLayers.Handler.Path),
+            polygon: new OpenLayers.Control.DrawFeature(vectorsLayer,
+                    OpenLayers.Handler.Polygon),
+            regular: new OpenLayers.Control.DrawFeature(vectorsLayer,
+                    OpenLayers.Handler.RegularPolygon, {handlerOptions: {sides: 5}}),
+            modify: new OpenLayers.Control.ModifyFeature(vectorsLayer),
+            select: new OpenLayers.Control.SelectFeature(vectorsLayer)
 
-         }
-         console.log("initTools on image : " + scan.filename);
+        }
+        console.log("initTools on image : " + scan.filename);
         scan.initTools(controls);
         scan.map.addLayer(vectorsLayer);
 
@@ -110,16 +110,18 @@ Cytomine.Project.AnnotationLayer.prototype = {
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
         console.log("add geomwkt="+geomwkt);
+        var i = 0;
+        for (i = 0; i < 150; i++) {
+            req = new XMLHttpRequest();
+            //console.log("/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt);
+            //req.open("POST", "/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt+".json", true);
+            req.open("POST", "/cytomine-web/api/annotation.json", true);
+            if (i == 999) req.onreadystatechange = this.decodeNewAnnotation;
 
-        req = new XMLHttpRequest();
-        //console.log("/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt);
-        //req.open("POST", "/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt+".json", true);
-        req.open("POST", "/cytomine-web/api/annotation.json", true);
-        req.onreadystatechange = this.decodeNewAnnotation;
+            var json = {annotation: {"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,image:this.scanID}}; //class is a reserved word in JS !
 
-        var json = {annotation: {"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,image:this.scanID}}; //class is a reserved word in JS !
-
-        req.send(JSON.stringify(json));
+            req.send(JSON.stringify(json));
+        }
         //Annotation hasn't any id => -1
         //feature.attributes = {idAnnotation: "-1"};
         this.hideAnnotation(feature);

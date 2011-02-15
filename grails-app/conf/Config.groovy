@@ -86,7 +86,7 @@ log4j = {
 
   appenders {
     rollingFile name:"appLog",
-            file:"/home/lrollus/Cytomine/cyto.log",
+            file:"/tmp/cyto.log",
             maxFileSize:'300kB',
             maxBackupIndex:1,
             layout:pattern(conversionPattern: '%d{[EEE, dd-MMM-yyyy @ HH:mm:ss.SSS]} [%t] %-5p %c %x - %m%n')

@@ -15,8 +15,6 @@ import be.cytomine.project.Image
 
 class RestAnnotationController {
 
-  def springSecurityService
-
   def list = {
     log.info "List with id image:"+params.id
     def data = [:]
