@@ -20,7 +20,7 @@ environments {
   }
   test {
     dataSource {
-      dbCreate = "create-drop"
+      dbCreate = "create"
       url="jdbc:postgresql://localhost:5432/cytomine"
     }
   }
