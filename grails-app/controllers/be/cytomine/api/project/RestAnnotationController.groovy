@@ -15,6 +15,8 @@ import be.cytomine.project.Image
 
 class RestAnnotationController {
 
+  def springSecurityService
+
   def list = {
     log.info "List with id image:"+params.id
     def data = [:]
@@ -93,7 +95,7 @@ class RestAnnotationController {
 
   def delete = {
     println "delete"
-    //springSecurityService.principal.id
+
     User currentUser = User.get(springSecurityService.principal.id)
     def postData = ([id : params.id]) as JSON
     println postData.toString()
