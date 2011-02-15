@@ -81,9 +81,7 @@ class RestAnnotationController {
     if (result.status == 201) {
       log.info "Save command on stack with Transaction:" + currentTransaction
       log.debug "addAnnotationCommand.transaction "+addAnnotationCommand.transaction
-      //addAnnotationCommand.transaction = currentTransaction
       currentTransaction.save(flush:true)
-      //addAnnotationCommand.save(flush:true)
       new UndoStack(command : addAnnotationCommand, user: currentUser).save(flush:true)
     }
 
@@ -97,19 +95,22 @@ class RestAnnotationController {
 
 
   def delete = {
-    println "delete"
 
+    log.info "Delete"
     User currentUser = User.get(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " params.id=" + params.id
+
     def postData = ([id : params.id]) as JSON
-    println postData.toString()
+
     Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData : postData.toString())
     Transaction currentTransaction = currentUser.getNextTransaction()
     currentTransaction.addToCommands(deleteAnnotationCommand)
     def result = deleteAnnotationCommand.execute()
 
     if (result.status == 204) {
-      deleteAnnotationCommand.save()
-      new UndoStack(command : deleteAnnotationCommand, user: currentUser).save()
+      log.info "Save command on stack"
+      currentTransaction.save(flush:true)
+      new UndoStack(command : deleteAnnotationCommand, user: currentUser).save(flush:true)
     }
 
     response.status = result.status
@@ -141,7 +142,7 @@ class RestAnnotationController {
 
       if (result.status == 200) {
         log.info "Save command on stack"
-        editAnnotationCommand.save(flush:true)
+        currentTransaction.save(flush:true)
         new UndoStack(command : editAnnotationCommand, user: currentUser).save(flush:true)
       }
     }

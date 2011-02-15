@@ -19,6 +19,7 @@ import org.apache.http.HttpHost
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.apache.http.client.methods.HttpPut
+import org.apache.http.client.methods.HttpDelete
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -64,6 +65,12 @@ class HttpClient {
     response = client.execute(targetHost, httpGet, localcontext);
   }
 
+  void delete()
+  {
+    log.debug("Delete " + URL.getPath())
+    HttpDelete httpDelete = new HttpDelete(URL.getPath());
+    response = client.execute(targetHost, httpDelete, localcontext);
+  }
 
   void post(String data)
   {
