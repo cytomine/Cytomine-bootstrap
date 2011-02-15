@@ -63,7 +63,7 @@ class SecUser {
       //create new transaction and return it
       transaction = new Transaction (dateBegin: new Date(), dateEnd : null)
       addToTransactions(transaction)
-      transaction.save()
+      transaction.save(flush:true)
       return transaction
     }
 
@@ -74,7 +74,7 @@ class SecUser {
       //create new transaction
       transaction = new Transaction (dateBegin: new Date(), dateEnd : null)
       addToTransactions(transaction)
-      transaction.save()
+      transaction.save(flush:true)
     }
     return transaction
   }

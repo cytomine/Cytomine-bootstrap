@@ -4,7 +4,6 @@ import com.gargoylesoftware.htmlunit.WebClient
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider
 
-import be.cytomine.HttpClient
 import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
 import be.cytomine.test.BasicInstance
@@ -182,7 +181,6 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(200,code)
   }
 
-
   void testAddAnnotationBadGeom() {
 
     log.info("create annotation")
@@ -292,70 +290,220 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
   void testEditAnnotation() {
 
- /*   String oldGeom = "POINT (1111 1111)"
+    String oldGeom = "POINT (1111 1111)"
     String newGeom = "POINT (9999 9999)"
 
-//    /* Create a old annotation with point 1111 1111 */
-//    log.info("create annotation")
-//    Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
-//    annotationToAdd.location =  new WKTReader().read(oldGeom)
-//    annotationToAdd.save()
-//
-//    /* Encode a niew annotation with point 9999 9999 */
-//    Annotation annotationToEdit = Annotation.get(annotationToAdd.id)
-//    def json = [annotation : annotationToEdit]
-//    def jsonAnnotation = json.encodeAsJSON()
-//    def jsonUpdate = JSON.parse(jsonAnnotation)
-//    jsonUpdate.annotation.location = newGeom
-//    jsonAnnotation = jsonUpdate.encodeAsJSON()
-//    println "jsonAnnotation="+jsonAnnotation.toString();
+    /* Create a old annotation with point 1111 1111 */
+    log.info("create annotation")
+    Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
+    annotationToAdd.location =  new WKTReader().read(oldGeom)
+    annotationToAdd.save(flush:true)
 
-    //update annotation a
+    /* Encode a niew annotation with point 9999 9999 */
+    Annotation annotationToEdit = Annotation.get(annotationToAdd.id)
+    def jsonEdit = [annotation : annotationToEdit]
+    def jsonAnnotation = jsonEdit.encodeAsJSON()
+    def jsonUpdate = JSON.parse(jsonAnnotation)
+    jsonUpdate.annotation.location = newGeom
+    jsonAnnotation = jsonUpdate.encodeAsJSON()
 
-    //put
+    log.info("put annotation:"+jsonAnnotation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/annotation/"+annotationToEdit.id+".json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.put(jsonAnnotation)
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
 
-    //check if 200 + equals
-
-
-//
-//      /* Call command to update POINT 1111 1111 => 9999 9999 */
-//      Command editAnnotationCommand = new EditAnnotationCommand(postData : jsonAnnotation.toString())
-//      def result = editAnnotationCommand.execute()
-//      assertEquals(200,result.status)
-//      Annotation annotation = result.data.annotation
-//      assertTrue("Annotation result is not a correct annotation", (annotation instanceof Annotation))
-//
-//      /* Test if exist and is equal */
-//       println "annotation.id=" +annotation.id
-//      def newAnnotation = Annotation.get(annotation.id)
-//        println "annotation.location=" +newAnnotation.location
-//
-//      assertNotNull("Annotation is not in database", newAnnotation)
-//      assertEquals("Annotation geom is not modified",newGeom.replace(' ', ''),newAnnotation.location.toString().replace(' ',''))
-//
-//       /* Test if undo work and is equal to old annotation */
-//      editAnnotationCommand.undo()
-//      newAnnotation = Annotation.get(annotation.id)
-//      println "annotation.location=" +newAnnotation.location
-//      assertEquals("Annotation undo don't work",oldGeom.replace(' ', ''),newAnnotation.location.toString().replace(' ',''))
-//
-//      /* Test if redo work and is equal to old annotation */
-//      editAnnotationCommand.redo()
-//      newAnnotation = Annotation.get(annotation.id)
-//      assertEquals("Annotation redo don't work",newGeom.replace(' ', ''),newAnnotation.location.toString().replace(' ',''))
-//    }*/
+    log.info("check response")
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+    int idAnnotation = json.annotation.id
 
 
+    assertEquals("Annotation geom is not modified (response)",newGeom.replace(' ', ''),json.annotation.location.toString().replace(' ',''))
+
+    log.info("check if object "+ idAnnotation +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+
+    assertEquals(200,code)
+    json = JSON.parse(response)
+    assert json instanceof JSONObject
+    assertEquals("Annotation geom is not modified (annother request)",newGeom.replace(' ', ''),json.annotation.location.replace(' ',''))
+
+
+    log.info("test undo")
+    client = new HttpClient()
+    URL = Infos.CYTOMINEURL+Infos.UNDOURL
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+    assertEquals(200,code)
+
+    log.info("check if object "+ idAnnotation +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+
+    assertEquals(200,code)
+    json = JSON.parse(response)
+    assert json instanceof JSONObject
+    assertEquals("Annotation geom is not modified (annother request)",oldGeom.replace(' ', ''),json.annotation.location.replace(' ',''))
+
+    log.info("test redo")
+    client = new HttpClient()
+    URL = Infos.CYTOMINEURL+Infos.REDOURL
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+    assertEquals(200,code)
+
+    log.info("check if object "+ idAnnotation +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+
+    assertEquals(200,code)
+    json = JSON.parse(response)
+    assert json instanceof JSONObject
+    assertEquals("Annotation geom is not modified (annother request)",newGeom.replace(' ', ''),json.annotation.location.replace(' ',''))
+
+
+    log.info("check if object "+ idAnnotation +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+
+    assertEquals(200,code)
+    json = JSON.parse(response)
+    assert json instanceof JSONObject
+    assertEquals("Annotation geom is not modified (annother request)",newGeom.replace(' ', ''),json.annotation.location.replace(' ',''))
+
+
+    //TODO: check for change in scan (?)
+  }
+
+  void testEditAnnotationDifferent() {
+
+     String oldGeom = "POINT (1111 1111)"
+    String newGeom = "POINT (9999 9999)"
+
+    /* Create a old annotation with point 1111 1111 */
+    log.info("create annotation")
+    Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
+    annotationToAdd.location =  new WKTReader().read(oldGeom)
+    annotationToAdd.save(flush:true)
+
+    /* Encode a niew annotation with point 9999 9999 */
+    Annotation annotationToEdit = Annotation.get(annotationToAdd.id)
+    def jsonEdit = [annotation : annotationToEdit]
+    def jsonAnnotation = jsonEdit.encodeAsJSON()
+    def jsonUpdate = JSON.parse(jsonAnnotation)
+    jsonUpdate.annotation.location = newGeom
+    jsonAnnotation = jsonUpdate.encodeAsJSON()
+
+    log.info("put annotation:"+jsonAnnotation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/annotation/-99.json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.put(jsonAnnotation)
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(400,code)
 
   }
 
   void testEditAnnotationNotExist() {
 
+     String oldGeom = "POINT (1111 1111)"
+    String newGeom = "POINT (9999 9999)"
+
+    /* Create a old annotation with point 1111 1111 */
+    log.info("create annotation")
+    Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
+    annotationToAdd.location =  new WKTReader().read(oldGeom)
+    annotationToAdd.save(flush:true)
+
+    /* Encode a niew annotation with point 9999 9999 */
+    Annotation annotationToEdit = Annotation.get(annotationToAdd.id)
+    def jsonEdit = [annotation : annotationToEdit]
+    def jsonAnnotation = jsonEdit.encodeAsJSON()
+    def jsonUpdate = JSON.parse(jsonAnnotation)
+    jsonUpdate.annotation.location = newGeom
+    jsonUpdate.annotation.id = "-99"
+    jsonAnnotation = jsonUpdate.encodeAsJSON()
+
+    log.info("put annotation:"+jsonAnnotation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/annotation/-99.json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.put(jsonAnnotation)
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(404,code)
 
   }
 
   void testEditAnnotationWithBadGeometry() {
 
+    String oldGeom = "POINT (1111 1111)"
+    String newGeom = "POINT (BAD GEOMETRY)"
+
+    /* Create a old annotation with point 1111 1111 */
+    log.info("create annotation")
+    Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
+    annotationToAdd.location =  new WKTReader().read(oldGeom)
+    annotationToAdd.save(flush:true)
+
+    /* Encode a niew annotation with point 9999 9999 */
+    Annotation annotationToEdit = Annotation.get(annotationToAdd.id)
+    def jsonEdit = [annotation : annotationToEdit]
+    def jsonAnnotation = jsonEdit.encodeAsJSON()
+    def jsonUpdate = JSON.parse(jsonAnnotation)
+    jsonUpdate.annotation.location = newGeom
+    jsonAnnotation = jsonUpdate.encodeAsJSON()
+
+    log.info("put annotation:"+jsonAnnotation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/annotation/"+annotationToAdd.id+".json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.put(jsonAnnotation)
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(400,code)
 
   }
 

@@ -18,6 +18,7 @@ import org.apache.http.HttpHost
 
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.apache.http.client.methods.HttpPut
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -81,6 +82,25 @@ class HttpClient {
     httpPost.setEntity(entity);
 
     response = client.execute(targetHost, httpPost, localcontext);
+  }
+
+  void put(String data)
+  {
+    log.debug("Put " + URL.getPath())
+    HttpPut httpPut = new HttpPut(URL.getPath());
+    log.debug("Put send :" + data.replace("\n",""))
+    //write data
+    ContentProducer cp = new ContentProducer() {
+      public void writeTo(OutputStream outstream) throws IOException {
+        Writer writer = new OutputStreamWriter(outstream, "UTF-8");
+        writer.write(data);
+        writer.flush();
+      }
+    };
+    HttpEntity entity = new EntityTemplate(cp);
+    httpPut.setEntity(entity);
+
+    response = client.execute(targetHost, httpPut, localcontext);
   }
 
   String getResponseData()   {

@@ -1,7 +1,7 @@
 package be.cytomine.project
+import grails.converters.*
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.Coordinate
-import grails.converters.*
 import com.vividsolutions.jts.io.WKTReader
 
 
@@ -12,6 +12,12 @@ class Annotation {
   String name
   Geometry location
   Image image
+  Double zoomLevel
+  String channels
+
+  Date created
+  Date updated
+  Date deleted
 
   static belongsTo = [image:Image]
   static hasMany = [ annotationTerm: AnnotationTerm ]
@@ -19,6 +25,13 @@ class Annotation {
   static transients = ["cropURL", "boundaries"]
 
   static constraints = {
+    name(blank:false)
+    location(nullable:false)
+    zoomLevel(nullable:true)
+    channels(nullable:true)
+    created(nullable:true)
+    updated(nullable:true)
+    deleted(nullable:true)
   }
 
   static mapping = {
@@ -32,10 +45,15 @@ class Annotation {
     return annotationTerm.collect{it.term}
   }
 
-  def beforeInsert() {
+   def beforeInsert() {
+    created = new Date()
     if (id == null)
       id = sequenceService.generateID(this)
-  }
+   }
+
+   def beforeUpdate() {
+       updated = new Date()
+   }
 
   private def getBoundaries () {
     def metadata = JSON.parse(new URL(image.getMetadataURL()).text)
@@ -59,23 +77,12 @@ class Annotation {
     annotation.name = data.annotation.name
     annotation.location = new WKTReader().read(data.annotation.location);
     annotation.image = Image.get(data.annotation.image);
+    annotation.zoomLevel = data.annotation.zoomLevel!=null ? ((String)data.annotation.zoomLevel).toDouble() : 0
+    annotation.channels =  data.annotation.channels
+    annotation.created = data.annotation.created
+    annotation.updated = data.annotation.updated
+    annotation.deleted = data.annotation.deleted
     return annotation;
-  }
-
-
-  boolean equals(object) {
-    if(object instanceof Annotation)
-    {
-      (this.id==object.id && this.name.equals(object.name) && this.location==object.location && this.image.id==object.image.id)
-    }
-    else false
-  }
-
-  static def convertToMap(Annotation annotation){
-    HashMap jsonMap = new HashMap()
-    jsonMap.annotation = [id: annotation.id, name: annotation.name, location: annotation.location.toString(), scan: annotation.image.id,'class':annotation.class]
-    if (annotation.id==null)  jsonMap.annotation.remove('id')
-    jsonMap
   }
 
 

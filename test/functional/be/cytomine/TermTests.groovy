@@ -61,7 +61,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
   void testAddTermCorrect() {
 
-    def termToAdd = BasicInstance.createOrGetBasicTerm()
+   /* def termToAdd = BasicInstance.createOrGetBasicTerm()
     String jsonTerm = ([term : termToAdd]).encodeAsJSON()
     println jsonTerm
     String URL = Infos.CYTOMINEURL+"api/term.json"
@@ -131,7 +131,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(200,code)
+    assertEquals(200,code) */
   }
 
   void testAddTermWithChildren() {

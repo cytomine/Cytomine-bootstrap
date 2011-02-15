@@ -79,9 +79,12 @@ class RestAnnotationController {
     currentTransaction.addToCommands(addAnnotationCommand)
     def result = addAnnotationCommand.execute()
     if (result.status == 201) {
-      log.info "Save command on stack"
-      addAnnotationCommand.save(flush:true)
-      new UndoStack(command : addAnnotationCommand, user: currentUser).save()
+      log.info "Save command on stack with Transaction:" + currentTransaction
+      log.debug "addAnnotationCommand.transaction "+addAnnotationCommand.transaction
+      //addAnnotationCommand.transaction = currentTransaction
+      currentTransaction.save(flush:true)
+      //addAnnotationCommand.save(flush:true)
+      new UndoStack(command : addAnnotationCommand, user: currentUser).save(flush:true)
     }
 
     response.status = result.status
@@ -118,20 +121,33 @@ class RestAnnotationController {
 
 
   def update = {
-    println "update"
-    User currentUser = User.get(springSecurityService.principal.id)
-    println "json=" + request.JSON.toString()
-    Command editAnnotationCommand = new EditAnnotationCommand(postData : request.JSON.toString())
-    Transaction currentTransaction = currentUser.getNextTransaction()
-    currentTransaction.addToCommands(editAnnotationCommand)
-    def result = editAnnotationCommand.execute()
 
-    if (result.status == 200) {
-      editAnnotationCommand.save()
-      new UndoStack(command : editAnnotationCommand, user: currentUser).save()
+    log.info "Update"
+    User currentUser = User.get(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
+
+    def result
+
+    if((String)params.id!=(String)request.JSON.annotation.id) {
+      log.error "Annotation id from URL and from data are different:"+ params.id + " vs " +  request.JSON.annotation.id
+      result = [data : [annotation : null , errors : ["Annotation id from URL and from data are different:"+ params.id + " vs " +  request.JSON.annotation.id ]], status : 400]
+    }
+    else
+    {
+      Command editAnnotationCommand = new EditAnnotationCommand(postData : request.JSON.toString())
+      Transaction currentTransaction = currentUser.getNextTransaction()
+      currentTransaction.addToCommands(editAnnotationCommand)
+      result = editAnnotationCommand.execute()
+
+      if (result.status == 200) {
+        log.info "Save command on stack"
+        editAnnotationCommand.save(flush:true)
+        new UndoStack(command : editAnnotationCommand, user: currentUser).save(flush:true)
+      }
     }
 
     response.status = result.status
+    log.debug "result.status="+result.status+" result.data=" + result.data
     withFormat {
       json { render result.data as JSON }
       xml { render result.data as XML }
