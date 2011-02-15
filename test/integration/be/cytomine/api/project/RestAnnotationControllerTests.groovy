@@ -7,16 +7,15 @@ import be.cytomine.project.Annotation
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.marshallers.Marshallers
 import be.cytomine.test.BasicInstance
 
 class RestAnnotationControllerTests extends GrailsUnitTestCase {
 
-
+  def marshallersService
 
   protected void setUp() {
     super.setUp()
-    Marshallers.init();
+    marshallersService.initMarshallers()
   }
 
   protected void tearDown() {

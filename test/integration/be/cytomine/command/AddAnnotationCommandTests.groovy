@@ -5,13 +5,16 @@ import be.cytomine.project.Annotation
 import be.cytomine.command.annotation.AddAnnotationCommand
 
 import grails.converters.JSON
-import be.cytomine.marshallers.Marshallers
+
 import be.cytomine.test.BasicInstance
 
 class AddAnnotationCommandTests extends GroovyTestCase {
+
+  def marshallersService
+
   protected void setUp() {
     super.setUp()
-    Marshallers.init();
+    marshallersService.initMarshallers()
   }
 
   protected void tearDown() {
