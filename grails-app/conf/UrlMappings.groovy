@@ -33,10 +33,10 @@ class UrlMappings {
     }
 
     /* IMAGE */
-    "/api/image"(controller: "restScan"){   //TO DO : fusionner scan & image
-      action = [GET:"list", POST:"save"]
+    "/api/image"(controller: "restImage"){   //TO DO : fusionner scan & image
+      action = [GET:"list", POST:"add"]
     }
-    "/api/image/$id"(controller: "restScan"){
+    "/api/image/$id"(controller: "restImage"){
       action = [GET:"show", PUT:"update", DELETE:"delete"]
     }
     "/api/image/$id/thumb"(controller: "restImage"){

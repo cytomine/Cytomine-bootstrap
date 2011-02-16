@@ -3,7 +3,6 @@ import be.cytomine.security.SecRole
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.project.Image
 import be.cytomine.warehouse.Mime
-import be.cytomine.warehouse.Data
 import be.cytomine.acquisition.Scanner
 import be.cytomine.server.ImageServer
 import be.cytomine.server.MimeImageServer
@@ -594,19 +593,14 @@ class BootStrap {
 
       def scanner = Scanner.findByBrand("gigascan")
 
-      def data = new Data(path : item.filename, mime : mime)
-
-      if (data.validate()) {
-        println "Creating data ${data.path}..."
-
-        data.save(flush : true)
 
 
         def scan = new Image(
                 filename: item.name,
-                data : data,
                 scanner : scanner,
-                slide : slide
+                slide : slide,
+                path : item.path,
+                mime : mime
         )
 
         if (scan.validate()) {
@@ -615,7 +609,7 @@ class BootStrap {
           scan.save(flush : true)
         }
 
-      }
+
     }
   }
 
@@ -862,17 +856,12 @@ class BootStrap {
 
         def scanner = Scanner.findByBrand("gigascan")
 
-        def data = new Data(path : item.path, mime : mime)
-
-        if (data.validate()) {
-          println "Creating data ${data.path}..."
-
-          data.save(flush : true)
-
-
+     //  String path
+  //Mime mime
           def scan = new Image(
                   filename: item.filename,
-                  data : data,
+                  path : item.path,
+                  mime : mime,
                   scanner : scanner,
                   slide : slides[item.slide]
           )
@@ -900,16 +889,9 @@ class BootStrap {
             }
 
           }
-        } else {
-          println("\n\n\n Errors in account boostrap for ${item.filename}!\n\n\n")
-          data.errors.each {
-            err -> println err
-          }
-
         }
       }
     }
-  }
 
   def createAnnotations(annotationSamples) {
     def annotations = Annotation.list() ?: []

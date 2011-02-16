@@ -112,6 +112,7 @@ class Annotation {
     println "Register custom JSON renderer for " + Annotation.class
     JSON.registerObjectMarshaller(Annotation) {
       def returnArray = [:]
+      returnArray['class'] = it.class
       returnArray['id'] = it.id
       returnArray['name'] = it.name
       returnArray['location'] = it.location.toString()

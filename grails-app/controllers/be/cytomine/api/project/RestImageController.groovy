@@ -6,8 +6,94 @@ import grails.converters.*
 import be.cytomine.project.Annotation
 
 import be.cytomine.server.RetrievalServer
+import be.cytomine.security.User
+import be.cytomine.command.Command
+import be.cytomine.command.image.AddImageCommand
+import be.cytomine.command.Transaction
+import be.cytomine.command.UndoStack
 
 class RestImageController {
+
+  def springSecurityService
+
+  /* REST API */
+  def list = {
+    log.info "list"
+    def data = [:]
+    data.image = Image.list()
+    withFormat {
+      json { render data as JSON }
+      xml { render data as XML}
+    }
+  }
+
+  def show = {
+    log.info "show image " + params.id
+    if(params.id && Image.exists(params.id)) {
+      def data = [:]
+      data.image = Image.findById(params.id)
+      withFormat {
+        json { render data as JSON }
+        xml { render data as XML}
+      }
+    } else {
+      response.status = 404
+      render ""
+    }
+  }
+
+  def showByProject = {
+    if(params.id && Project.exists(params.id)) {
+      def scan = []
+      Project.findAllById(params.id).each {
+        it.projectSlide.each { ps ->
+          ps.slide.scan.each { sc ->
+            scan << sc
+          }
+        }
+      }
+      def resp = [ scan : scan]
+
+      withFormat {
+        json { render resp as JSON }
+        xml { render resp as XML}
+      }
+    } else {
+      response.status = 404
+      render ""
+    }
+  }
+
+
+  def index = {
+    redirect(controller: "image")
+  }
+
+  def add = {
+
+    log.info "Add"
+    User currentUser = User.get(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
+
+    Command addImageCommand = new AddImageCommand(postData : request.JSON.toString())
+    Transaction currentTransaction = currentUser.getNextTransaction()
+    currentTransaction.addToCommands(addImageCommand)
+    def result = addImageCommand.execute()
+    if (result.status == 201) {
+      log.info "Save command on stack with Transaction:" + currentTransaction
+      log.debug "addAnnotationCommand.transaction "+addImageCommand.transaction
+      currentTransaction.save(flush:true)
+      new UndoStack(command : addImageCommand, user: currentUser).save(flush:true)
+    }
+
+    response.status = result.status
+    log.debug "result.status="+result.status+" result.data=" + result.data
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML }
+    }
+  }
+
 
   def thumb = {
     Image scan = Image.findById(params.id)

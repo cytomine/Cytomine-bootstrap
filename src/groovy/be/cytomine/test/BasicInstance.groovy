@@ -1,7 +1,6 @@
 package be.cytomine.test
 
 import be.cytomine.warehouse.Mime
-import be.cytomine.warehouse.Data
 import be.cytomine.project.Annotation
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.project.Image
@@ -41,19 +40,6 @@ class BasicInstance {
     Mime.findByExtension("jp2")
   }
 
-  static Data createOrGetBasicData() {
-
-    log.debug  "createOrGetBasicData()"
-    Mime mime = BasicInstance.createOrGetBasicMime()
-    def data = new Data(path:"pathpathpath",mime:mime)
-    data.validate()
-    log.debug("data.errors="+data.errors)
-    data.save(flush : true)
-    log.debug("data.errors="+data.errors)
-    data
-
-  }
-
   static Annotation createOrGetBasicAnnotation() {
     log.debug  "createOrGetBasicAnnotation()"
     def annotation = new Annotation(location:new WKTReader().read("POINT(17573.5 21853.5)"), name:"test",image:createOrGetBasicImage(), user:createOrGetBasicUser())
@@ -66,7 +52,7 @@ class BasicInstance {
 
   static Image createOrGetBasicImage() {
     log.debug  "createOrGetBasicImage()"
-    def image = new Image(filename: "filename",data : BasicInstance.createOrGetBasicData(),scanner : createOrGetBasicScanner() ,slide : null)
+    def image = new Image(filename: "filename",scanner : createOrGetBasicScanner() ,slide : null,mime:BasicInstance.createOrGetBasicMime(),path:"pathpathpath")
     image.validate()
     log.debug "image.errors="+image.errors
     image.save(flush : true)
