@@ -1,20 +1,14 @@
 package be.cytomine
 
-import com.gargoylesoftware.htmlunit.WebClient
-import com.gargoylesoftware.htmlunit.html.HtmlPage
-import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider
 
 import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
 import be.cytomine.test.BasicInstance
 import be.cytomine.project.Annotation
-import org.codehaus.groovy.grails.commons.*
 import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import com.vividsolutions.jts.io.WKTReader
-import be.cytomine.api.project.RestAnnotationController
-
-import be.cytomine.test.BasicInstance
+import be.cytomine.security.User
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -293,10 +287,28 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     String oldGeom = "POINT (1111 1111)"
     String newGeom = "POINT (9999 9999)"
 
+    Double oldZoomLevel = 1
+    Double newZoomLevel = 9
+
+    String oldChannels = "OLDCHANNELS"
+    String newChannels = "NEWCHANNELS"
+
+    User oldUser = BasicInstance.getBenjamin()
+    User newUser = BasicInstance.getLoic()
+
+
+    def mapNew = ["geom":newGeom,"zoomLevel":newZoomLevel,"channels":newChannels,"user":newUser]
+    def mapOld = ["geom":oldGeom,"zoomLevel":oldZoomLevel,"channels":oldChannels,"user":oldUser]
+
+
+
     /* Create a old annotation with point 1111 1111 */
     log.info("create annotation")
     Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
     annotationToAdd.location =  new WKTReader().read(oldGeom)
+    annotationToAdd.zoomLevel = oldZoomLevel
+    annotationToAdd.channels = oldChannels
+    annotationToAdd.user = oldUser
     annotationToAdd.save(flush:true)
 
     /* Encode a niew annotation with point 9999 9999 */
@@ -305,6 +317,9 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     def jsonAnnotation = jsonEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonAnnotation)
     jsonUpdate.annotation.location = newGeom
+    jsonUpdate.annotation.zoomLevel = newZoomLevel
+    jsonUpdate.annotation.channels = newChannels
+    jsonUpdate.annotation.user = newUser.id
     jsonAnnotation = jsonUpdate.encodeAsJSON()
 
     log.info("put annotation:"+jsonAnnotation.replace("\n",""))
@@ -337,8 +352,8 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(200,code)
     json = JSON.parse(response)
     assert json instanceof JSONObject
-    assertEquals("Annotation geom is not modified (annother request)",newGeom.replace(' ', ''),json.annotation.location.replace(' ',''))
 
+    BasicInstance.compareAnnotation(mapNew,json)
 
     log.info("test undo")
     client = new HttpClient()
@@ -364,6 +379,8 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     assert json instanceof JSONObject
     assertEquals("Annotation geom is not modified (annother request)",oldGeom.replace(' ', ''),json.annotation.location.replace(' ',''))
 
+    BasicInstance.compareAnnotation(mapOld,json)
+
     log.info("test redo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.REDOURL
@@ -387,6 +404,8 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     json = JSON.parse(response)
     assert json instanceof JSONObject
     assertEquals("Annotation geom is not modified (annother request)",newGeom.replace(' ', ''),json.annotation.location.replace(' ',''))
+
+    BasicInstance.compareAnnotation(mapNew,json)
 
 
     log.info("check if object "+ idAnnotation +" exist in DB")

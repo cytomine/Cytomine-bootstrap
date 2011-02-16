@@ -26,7 +26,7 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
         log.error "Annotation not found with id: " + postData.annotation.id
         return [data : [success : false, message : "Annotation not found with id: " + postData.annotation.id], status : 404]
       }
-      for (property in postData.annotation) {
+      /*for (property in postData.annotation) {
 
         if(property.key.equals("location"))
         {
@@ -44,7 +44,11 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
           updatedAnnotation.properties.put(property.key, property.value)
         }
 
-      }
+      }*/
+
+      updatedAnnotation = Annotation.getAnnotationFromData(updatedAnnotation,postData.annotation)
+      updatedAnnotation.id = postData.annotation.id
+
 
       if ( updatedAnnotation.validate() && updatedAnnotation.save(flush:true)) {
         log.info "New annotation is saved"
@@ -67,10 +71,11 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
     log.info "Undo"
     def annotationsData = JSON.parse(data)
     Annotation annotation = Annotation.findById(annotationsData.previousAnnotation.id)
-    annotation.name = annotationsData.previousAnnotation.name
+    annotation = Annotation.getAnnotationFromData(annotation,annotationsData.previousAnnotation)
+    /*annotation.name = annotationsData.previousAnnotation.name
     annotation.location = new WKTReader().read(annotationsData.previousAnnotation.location)
-    println  "undo="+annotation.location
-    annotation.image = Image.get(annotationsData.previousAnnotation.image)
+
+    annotation.image = Image.get(annotationsData.previousAnnotation.image)  */
     annotation.save(flush:true)
     return [data : [success : true, message:"ok", annotation : annotation], status : 200]
   }
@@ -79,9 +84,10 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
     log.info "Redo"
     def annotationsData = JSON.parse(data)
     Annotation annotation = Annotation.findById(annotationsData.newAnnotation.id)
-    annotation.name = annotationsData.newAnnotation.name
+    annotation = Annotation.getAnnotationFromData(annotation,annotationsData.newAnnotation)
+    /*annotation.name = annotationsData.newAnnotation.name
     annotation.location = new WKTReader().read(annotationsData.newAnnotation.location)
-    annotation.image = Image.get(annotationsData.newAnnotation.image)
+    annotation.image = Image.get(annotationsData.newAnnotation.image) */
     annotation.save(flush:true)
     return [data : [success : true, message:"ok", nnotation : annotation], status : 200]
   }

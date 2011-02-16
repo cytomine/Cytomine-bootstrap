@@ -12,7 +12,8 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
     try
     {
       log.info("Execute")
-      Annotation newAnnotation = Annotation.getAnnotationFromData(JSON.parse(postData))
+      def json = JSON.parse(postData)
+      Annotation newAnnotation = Annotation.createAnnotationFromData(json.annotation)
       if(newAnnotation.validate() && newAnnotation.save(flush:true)) {
         log.info("Save annotation with id:"+newAnnotation.id)
         data = newAnnotation.encodeAsJSON()
@@ -25,6 +26,11 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
     {
       log.error("Cannot save annotation with bad geometry:"+e.toString())
       return [data : [annotation : null , errors : ["Geometry "+ JSON.parse(postData).annotation.location +" is not valid:"+e.toString()]], status : 400]
+    }catch(Exception e)
+    {
+      log.error("Cannot save annotation"+e.toString())
+      e.printStackTrace()
+      return [data : [annotation : null , errors : ["Annotation is not valid:"+e.toString()]], status : 400]
     }
   }
 
@@ -42,7 +48,8 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
 
     log.info("Redo:"+data.replace("\n",""))
     def annotationData = JSON.parse(data)
-    def annotation = Annotation.getAnnotationFromData(JSON.parse(postData))
+    def json = JSON.parse(postData)
+    def annotation = Annotation.createAnnotationFromData(json.annotation)
     annotation.id = annotationData.id
     annotation.save(flush:true)
     log.debug("Save annotation:"+annotation.id)

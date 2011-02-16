@@ -9,6 +9,7 @@ import be.cytomine.acquisition.Scanner
 import be.cytomine.project.Term
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import be.cytomine.security.User
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,10 +22,11 @@ class BasicInstance {
 
   private static Log log = LogFactory.getLog(BasicInstance.class)
 
+
   static Mime createOrGetBasicMime() {
 
     log.debug "createOrGetBasicMime()"
-    def mime = Mime.findByMimeType("mimeT");
+    /*def mime = Mime.findByMimeType("mimeT");
     log.debug "mime="+ mime
     if(mime==null)
     {
@@ -35,23 +37,8 @@ class BasicInstance {
       mime.save(flush : true)
       log.debug("mime.errors="+mime.errors)
     }
-
-
-   /* if(mimeList==null || mimeList.size()==0)
-    {
-      log.debug "mimeList is empty"
-      mime = new Mime(extension:"ext",mimeType:"mimeT")
-      mime.validate()
-      log.debug("mime.errors="+mime.errors)
-      mime.save(flush : true)
-      log.debug("mime.errors="+mime.errors)
-    }
-    else
-    {
-      log.debug "mimeList is not empty"
-      mime = mimeList[0]
-    }  */
-    mime
+    mime */
+    Mime.findByExtension("jp2")
   }
 
   static Data createOrGetBasicData() {
@@ -69,7 +56,7 @@ class BasicInstance {
 
   static Annotation createOrGetBasicAnnotation() {
     log.debug  "createOrGetBasicAnnotation()"
-    def annotation = new Annotation(location:new WKTReader().read("POINT(17573.5 21853.5)"), name:"test",image:createOrGetBasicImage())
+    def annotation = new Annotation(location:new WKTReader().read("POINT(17573.5 21853.5)"), name:"test",image:createOrGetBasicImage(), user:createOrGetBasicUser())
     annotation.validate()
     log.debug("annotation.errors="+annotation.errors)
     annotation.save(flush : true)
@@ -119,4 +106,74 @@ class BasicInstance {
     term
   }
 
+  static User getBenjamin() {
+
+    log.debug  "createOrGetBasicUser()"
+    User.get(3)
+  }
+
+  static User getLoic() {
+
+    log.debug  "createOrGetBasicUser()"
+    User.get(2)
+  }
+
+  static User createOrGetBasicUser() {
+
+    log.debug  "createOrGetBasicUser()"
+    User.get(2)
+  }
+
+  //    def mapNew = ["newGeom":newGeom,"newZoomLevel":newZoomLevel,"newChannels":newChannels,"newUser":newUser]
+  static void compareAnnotation(map, json)  {
+
+    /*assertEquals("Annotation geom is not modified (annother request)",map.geom.replace(' ', ''),json.annotation.location.replace(' ',''))
+    assertEquals("Zoom level is not modified (annother request)",map.zoomLevel,json.annotation.zoomLevel)
+    assertEquals("Channels is not modified (annother request)",map.channels,json.annotation.channels)
+    assertEquals("User is not modified (annother request)",map.user.id,json.annotation.user) */
+
+    assert map.geom.replace(' ', '').equals(json.annotation.location.replace(' ',''))
+    assert toDouble(map.zoomLevel).equals(toDouble(json.annotation.zoomLevel))
+    assert map.channels.equals(json.annotation.channels)
+    assert toLong(map.user.id).equals(toLong(json.annotation.user))
+  }
+
+  static Double toDouble(String s)
+  {
+     if(s==null && s.equals("null")) return null
+     else return Double.parseDouble(s)
+  }
+
+  static Double toDouble(Integer s)
+  {
+     if(s==null) return null
+     else return Double.parseDouble(s.toString())
+  }
+
+  static Double toDouble(Double s)
+  {
+     return s
+  }
+
+  static Integer toInteger(String s)
+  {
+     if(s==null && s.equals("null")) return null
+     else return Integer.parseDouble(s)
+  }
+
+  static Integer toInteger(Integer s)
+  {
+     return s
+  }
+
+  static Integer toLong(String s)
+  {
+     if(s==null && s.equals("null")) return null
+     else return Integer.parseLong(s)
+  }
+
+  static Integer toLong(Long s)
+  {
+     return s
+  }
 }
