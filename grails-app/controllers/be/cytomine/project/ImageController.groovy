@@ -8,7 +8,7 @@ class ImageController {
       //println "params.id="+params.id
        Image scan = Image.findById(params.id)
       //generate possibles urls for the OpenLayers.Layer instance
-       def urls = '["' + scan.getData().getMime().imageServers().url.join('","') + '"]'
+       def urls = '["' + scan.getMime().imageServers().url.join('","') + '"]'
        ['scan' : scan, 'urls' : urls]
     }
 }
