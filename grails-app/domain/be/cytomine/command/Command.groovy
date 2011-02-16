@@ -7,7 +7,7 @@ class Command {
   Date date = new Date()
   String postData
 
-  static belongsTo = Transaction
+  static belongsTo = [transaction:Transaction]
 
   static constraints = {
     data (type:'text', maxSize:10240, nullable : true)

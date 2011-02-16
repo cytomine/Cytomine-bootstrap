@@ -4,6 +4,8 @@ import be.cytomine.command.Command
 import be.cytomine.security.User
 
 class RedoStack {
-    User user
-    Command command
+  User user
+  Command command
+
+  static belongsTo = [user:User, command:Command]
 }

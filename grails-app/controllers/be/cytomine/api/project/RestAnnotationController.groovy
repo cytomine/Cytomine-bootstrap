@@ -15,6 +15,7 @@ import be.cytomine.project.Image
 
 class RestAnnotationController {
 
+  def transactionService
   def springSecurityService
 
   def list = {
@@ -75,7 +76,7 @@ class RestAnnotationController {
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
     Command addAnnotationCommand = new AddAnnotationCommand(postData : request.JSON.toString())
-    Transaction currentTransaction = currentUser.getNextTransaction()
+    Transaction currentTransaction = transactionService.next(currentUser)
     currentTransaction.addToCommands(addAnnotationCommand)
     def result = addAnnotationCommand.execute()
     if (result.status == 201) {
