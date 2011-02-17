@@ -34,7 +34,7 @@ class AddImageCommand extends Command implements UndoRedoCommand {
     def image = Image.get(imageData.id)
     image.delete(flush:true)
     log.debug("Delete image with id:"+imageData.id)
-    return [data : null, status : 200]
+    return [data : [message : "Image successfuly deleted", annotation : imageData.id], status : 200]
   }
 
   def redo() {

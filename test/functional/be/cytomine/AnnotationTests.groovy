@@ -159,6 +159,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
     assertEquals(200,code)
 
+    println json
     //must be done because redo change id
     json = JSON.parse(response)
     assert json instanceof JSONObject

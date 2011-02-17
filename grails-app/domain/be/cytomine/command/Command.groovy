@@ -1,14 +1,12 @@
 package be.cytomine.command
 
 import be.cytomine.SequenceDomain
+import be.cytomine.security.User
 
 class Command extends SequenceDomain {
 
-  Transaction transaction
   String data
   String postData
-
-  static belongsTo = [transaction:Transaction]
 
   static constraints = {
     data (type:'text', maxSize:10240, nullable : true)

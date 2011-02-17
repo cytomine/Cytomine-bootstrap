@@ -7,6 +7,7 @@ class Transaction extends SequenceDomain {
 
   Date dateEnd
   User user
+  Boolean inProgress
 
   static constraints = {
     dateEnd nullable : true

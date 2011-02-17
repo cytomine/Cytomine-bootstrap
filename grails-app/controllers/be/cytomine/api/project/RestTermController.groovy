@@ -62,13 +62,12 @@ class RestTermController {
     println "force"
     println "request.JSON.toString()="+request.JSON.toString()
     Command addTermCommand = new AddTermCommand(postData : request.JSON.toString())
-    Transaction currentTransaction = transactionService.next(currentUser)
-    currentTransaction.addToCommands(addTermCommand)
+
     def result = addTermCommand.execute()
 
     if (result.status == 201) {
-      currentTransaction.save()
-      new UndoStack(command : addTermCommand, user: currentUser).save()
+      addTermCommand.save()
+      new UndoStack(command : addTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
     }
 
     response.status = result.status

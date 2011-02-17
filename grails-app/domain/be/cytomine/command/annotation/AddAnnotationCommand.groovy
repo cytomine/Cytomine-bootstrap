@@ -41,7 +41,7 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
     def annotation = Annotation.get(annotationData.id)
     annotation.delete(flush:true)
     log.debug("Delete annotation with id:"+annotationData.id)
-    return [data : null, status : 200]
+    return [data : [message : "Annotation successfuly deleted", annotation : annotationData.id], status : 200]
   }
 
   def redo() {

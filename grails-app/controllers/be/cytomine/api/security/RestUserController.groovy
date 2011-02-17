@@ -64,13 +64,12 @@ class RestUserController {
   def save = {
     User currentUser = User.get(springSecurityService.principal.id)
     Command addUserCommand = new AddUserCommand(postData : request.JSON.toString())
-    Transaction currentTransaction = transactionService.next(currentUser)
-    currentTransaction.addToCommands(addUserCommand)
+
     def result = addUserCommand.execute()
 
     if (result.status == 201) {
-      currentTransaction.save()
-      new UndoStack(command : addUserCommand, user: currentUser).save()
+      addUserCommand.save()
+      new UndoStack(command : addUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
     }
 
     response.status = result.status
@@ -90,13 +89,11 @@ class RestUserController {
   def update = {
     User currentUser = User.get(springSecurityService.principal.id)
     Command editUserCommand = new EditUserCommand(postData : request.JSON.toString())
-    Transaction currentTransaction = transactionService.next(currentUser)
-    currentTransaction.addToCommands(editUserCommand)
-    def result = editUserCommand.execute()
 
+    def result = editUserCommand.execute()
     if (result.status == 200) {
-      currentTransaction.save()
-      new UndoStack(command : editUserCommand, user: currentUser).save()
+      editUserCommand.save()
+      new UndoStack(command : editUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
     }
 
     response.status = result.status
@@ -120,13 +117,11 @@ class RestUserController {
       result = [data : [success : false, message : "The user can't delete herself"], status : 403]
     } else {
       Command deleteUserCommand = new DeleteUserCommand(postData : postData.toString())
-      Transaction currentTransaction = transactionService.next(currentUser)
-      currentTransaction.addToCommands(deleteUserCommand)
-      result = deleteUserCommand.execute()
 
+      result = deleteUserCommand.execute()
       if (result.status == 204) {
-        currentTransaction.save()
-        new UndoStack(command : deleteUserCommand, user: currentUser).save()
+        deleteUserCommand.save()
+        new UndoStack(command : deleteUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
       }
     }
     response.status = result.status

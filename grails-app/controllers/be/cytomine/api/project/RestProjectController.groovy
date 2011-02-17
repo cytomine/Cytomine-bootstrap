@@ -13,7 +13,6 @@ import be.cytomine.command.project.EditProjectCommand
 class RestProjectController {
 
   def springSecurityService
-  def transactionService
 
   def list = {
     def data = [:]
@@ -44,13 +43,12 @@ class RestProjectController {
   def save = {
     User currentUser = User.get(springSecurityService.principal.id)
     Command addProjectCommand = new AddProjectCommand(postData : request.JSON.toString())
-    Transaction currentTransaction = transactionService.next(currentUser)
-    currentTransaction.addToCommands(addProjectCommand)
+
     def result = addProjectCommand.execute()
 
     if (result.status == 201) {
-      currentTransaction.save()
-      new UndoStack(command : addProjectCommand, user: currentUser).save()
+      addProjectCommand.save()
+      new UndoStack(command : addProjectCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
     }
 
     response.status = result.status
@@ -64,13 +62,11 @@ class RestProjectController {
   def update = {
     User currentUser = User.get(springSecurityService.principal.id)
     Command editProjectCommand = new EditProjectCommand(postData : request.JSON.toString())
-    Transaction currentTransaction = transactionService.next(currentUser)
-    currentTransaction.addToCommands(editProjectCommand)
-    def result = editProjectCommand.execute()
 
+    def result = editProjectCommand.execute()
     if (result.status == 200) {
-      currentTransaction.save()
-      new UndoStack(command : editProjectCommand, user: currentUser).save()
+      editProjectCommand.save()
+      new UndoStack(command : editProjectCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
     }
 
     response.status = result.status
@@ -86,13 +82,11 @@ class RestProjectController {
     def result = null
 
     Command deleteProjectCommand = new DeleteProjectCommand(postData : postData.toString())
-    Transaction currentTransaction = transactionService.next(currentUser)
-    currentTransaction.addToCommands(deleteProjectCommand)
-    result = deleteProjectCommand.execute()
 
+    result = deleteProjectCommand.execute()
     if (result.status == 204) {
-      currentTransaction.save()
-      new UndoStack(command : deleteProjectCommand, user: currentUser).save()
+      deleteProjectCommand.save()
+      new UndoStack(command : deleteProjectCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
     }
     response.status = result.status
     withFormat {

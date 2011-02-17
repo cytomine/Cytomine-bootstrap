@@ -15,7 +15,6 @@ import be.cytomine.project.Image
 
 class RestAnnotationController {
 
-  def transactionService
   def springSecurityService
 
   def list = {
@@ -27,7 +26,7 @@ class RestAnnotationController {
     }
     else {
       if(Image.findById(params.id)!=null) {
-        (Annotation.findAllByImage(Image.findById(params.id)))
+        data.annotation = Annotation.findAllByImage(Image.findById(params.id))
       }
       else {
         log.error "Image Id " + params.id+ " don't exist"
@@ -72,17 +71,14 @@ class RestAnnotationController {
   def add = {
 
     log.info "Add"
-    User currentUser = User.get(springSecurityService.principal.id)
+    User currentUser = User.read(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
     Command addAnnotationCommand = new AddAnnotationCommand(postData : request.JSON.toString())
     def result = addAnnotationCommand.execute()
     if (result.status == 201) {
-      addAnnotationCommand.transaction = transactionService.next(currentUser)
       addAnnotationCommand.save(flush : true)
-      log.info "Save command on stack with Transaction:" + addAnnotationCommand.transaction
-      log.debug "addAnnotationCommand.transaction "+addAnnotationCommand.transaction
-      new UndoStack(command : addAnnotationCommand, user: currentUser).save(flush : true)
+      new UndoStack(command : addAnnotationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush : true)
     }
 
     response.status = result.status
@@ -106,9 +102,8 @@ class RestAnnotationController {
     def result = deleteAnnotationCommand.execute()
     if (result.status == 204) {
       log.info "Save command on stack"
-      deleteAnnotationCommand.transaction = transactionService.next(currentUser)
       deleteAnnotationCommand.save()
-      new UndoStack(command : deleteAnnotationCommand, user: currentUser).save()
+      new UndoStack(command : deleteAnnotationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
     }
 
     response.status = result.status
@@ -122,7 +117,7 @@ class RestAnnotationController {
   def update = {
 
     log.info "Update"
-    User currentUser = User.get(springSecurityService.principal.id)
+    User currentUser = User.read(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
     def result
@@ -138,9 +133,8 @@ class RestAnnotationController {
       result = editAnnotationCommand.execute()
       if (result.status == 200) {
         log.info "Save command on stack"
-        editAnnotationCommand.transaction = transactionService.next(currentUser)
         editAnnotationCommand.save()
-        new UndoStack(command : editAnnotationCommand, user: currentUser).save()
+        new UndoStack(command : editAnnotationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
       }
     }
 

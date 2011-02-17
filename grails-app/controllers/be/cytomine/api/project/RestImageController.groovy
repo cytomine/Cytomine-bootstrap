@@ -75,17 +75,14 @@ class RestImageController {
   def add = {
 
     log.info "Add"
-    User currentUser = User.get(springSecurityService.principal.id)
+    User currentUser = User.read(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
     Command addImageCommand = new AddImageCommand(postData : request.JSON.toString())
     def result = addImageCommand.execute()
     if (result.status == 201) {
-      addImageCommand.transaction = transactionService.next(currentUser)
       addImageCommand.save(flush:true)
-      log.info "Save command on stack with Transaction:" + addImageCommand.transaction
-      log.debug "addAnnotationCommand.transaction "+addImageCommand.transaction
-      new UndoStack(command : addImageCommand, user: currentUser).save(flush:true)
+      new UndoStack(command : addImageCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
 
     response.status = result.status
