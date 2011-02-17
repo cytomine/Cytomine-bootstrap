@@ -5,13 +5,17 @@ class AnnotationTerm {
   Annotation annotation
   Term term
 
+  static mapping = {
+    version false
+  }
+
   static AnnotationTerm link(Annotation annotation,Term term) {
     def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation, term)
     if (!annotationTerm) {
       annotationTerm = new AnnotationTerm()
       annotation?.addToAnnotationTerm(annotationTerm)
       term?.addToAnnotationTerm(annotationTerm)
-      annotationTerm.save()
+      annotationTerm.save(flush : true)
     }
     return annotationTerm
   }
@@ -21,7 +25,7 @@ class AnnotationTerm {
     if (annotationTerm) {
       annotation?.removeFromAnnotationTerm(annotationTerm)
       term?.removeFromAnnotationTerm(annotationTerm)
-      annotationTerm.delete()
+      annotationTerm.delete(flush : true)
     }
 
   }

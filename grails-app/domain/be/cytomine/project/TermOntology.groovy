@@ -7,13 +7,17 @@ class TermOntology {
   Term term
   Ontology ontology
 
+  static mapping = {
+    version false
+  }
+
   static TermOntology link(Term term,Ontology ontology) {
     def termOntology = TermOntology.findByTermAndOntology(term, ontology)
     if (!termOntology) {
       termOntology = new TermOntology()
       term?.addToTermOntology(termOntology)
       ontology?.addToTermOntology(termOntology)
-      termOntology.save()
+      termOntology.save(flush : true)
     }
     return termOntology
   }
@@ -23,7 +27,7 @@ class TermOntology {
     if (termOntology) {
       term?.removeFromTermOntology(termOntology)
       ontology?.removeFromTermOntology(termOntology)
-      termOntology.delete()
+      termOntology.delete(flush : true)
     }
 
   }

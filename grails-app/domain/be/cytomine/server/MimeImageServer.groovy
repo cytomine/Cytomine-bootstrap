@@ -7,6 +7,10 @@ class MimeImageServer {
   ImageServer imageServer
   Mime mime
 
+  static mapping = {
+    version false
+  }
+
   static MimeImageServer link(ImageServer imageServer, Mime mime) {
     def mis = MimeImageServer.findByImageServerAndMime(imageServer, mime)
     if (!mis)
@@ -14,7 +18,7 @@ class MimeImageServer {
       mis = new MimeImageServer()
       imageServer?.addToMis(mis)
       mime?.addToMis(mis)
-      mis.save()
+      mis.save(flush : true)
     }
     return mis
   }
@@ -25,7 +29,7 @@ class MimeImageServer {
     {
       imageServer?.removeFromMis(mis)
       mime?.removeFromMis(mis)
-      mis.delete()
+      mis.delete(flush : true)
     }
   }
 

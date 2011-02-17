@@ -4,10 +4,9 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.security.User
+import be.cytomine.SequenceDomain
 
-class Annotation {
-
-  def sequenceService
+class Annotation extends SequenceDomain {
 
   String name
   Geometry location
@@ -15,10 +14,6 @@ class Annotation {
   Double zoomLevel
   String channels
   User user
-
-  Date created
-  Date updated
-  Date deleted
 
   static belongsTo = [image:Image]
   static hasMany = [ annotationTerm: AnnotationTerm ]
@@ -31,9 +26,6 @@ class Annotation {
     zoomLevel(nullable:true)
     channels(nullable:true)
     user(nullable:true)
-    created(nullable:true)
-    updated(nullable:true)
-    deleted(nullable:true)
   }
 
   static mapping = {

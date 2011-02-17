@@ -5,13 +5,17 @@ class UserGroup {
   User user
   Group group
 
+  static mapping = {
+    version false
+  }
+
   static UserGroup link(User user, Group group) {
     def userGroup = UserGroup.findByUserAndGroup(user, group)
     if (!userGroup) {
       userGroup = new UserGroup()
       user?.addToUserGroup(userGroup)
       group?.addToUserGroup(userGroup)
-      userGroup.save()
+      userGroup.save(flush : true)
     }
   }
 
@@ -20,7 +24,7 @@ class UserGroup {
     if (userGroup) {
       user?.removeFromUserGroup(userGroup)
       group?.removeFromUserGroup(userGroup)
-      userGroup.delete()
+      userGroup.delete(flush : true)
     }
   }
 }

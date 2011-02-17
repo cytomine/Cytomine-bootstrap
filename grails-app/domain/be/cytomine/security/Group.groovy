@@ -2,8 +2,9 @@ package be.cytomine.security
 
 import be.cytomine.project.Project
 import be.cytomine.project.ProjectGroup
+import be.cytomine.SequenceDomain
 
-class Group {
+class Group extends SequenceDomain {
 
   String name
 

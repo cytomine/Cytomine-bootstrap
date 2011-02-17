@@ -30,6 +30,7 @@ class SequenceService {
   def generateID(domain) {
     int classNameIndex=domain.getClass().getName().lastIndexOf ('.') + 1;
     def seqName =  domain.getClass().getName().substring(classNameIndex) + SEQ_SUFFIX
+    println "Get nextval for " + seqName
     sessionFactory.getCurrentSession().clear();
     def statement  = sessionFactory.currentSession.connection().createStatement()
     def res = statement.executeQuery("select nextval('"+seqName+"')")

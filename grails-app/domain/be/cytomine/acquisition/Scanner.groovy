@@ -4,12 +4,13 @@ class Scanner extends Instrument {
 
   String maxResolution
 
-  static constraints = {
+  static constraints =  {
     maxResolution nullable : true
+    id (generator:'assigned' , unique : true)
   }
 
   String toString() {
-    brand + "-" + model
+    brand + "-" + model + " with maxResolution = " + maxResolution
   }
 
 }

@@ -18,6 +18,11 @@ Cytomine.Project.Scan.prototype = {
     path : null,
     map : null,
     initMap : function () {
+
+        console.log("metadataURl" + this.metadataUrl);
+        console.log("filename" + this.filename);
+        console.log("urls" + this.urls);
+        console.log("path" + this.path);
         var openURLLayer = new OpenLayers.Layer.OpenURL( this.filename, this.urls, {transitionEffect: 'resize', layername: 'basic', format:'image/jpeg', rft_id: this.path, metadataUrl: this.metadataUrl} );
         console.log("openURLLayer.viewerLevel " + openURLLayer.getViewerLevel());
         var metadata = openURLLayer.getImageMetadata();

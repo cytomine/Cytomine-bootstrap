@@ -1,8 +1,9 @@
 package be.cytomine.security
 
 import be.cytomine.command.Transaction
+import be.cytomine.SequenceDomain
 
-class SecUser {
+class SecUser extends SequenceDomain {
 
   String username
   String password
@@ -16,11 +17,6 @@ class SecUser {
   static transients = ["currentTransaction", "nextTransaction"]
 
   static hasMany = [userGroup:UserGroup, transactions:Transaction]
-
-  def beforeInsert() {
-    if (id == null)
-      id = User.generateID()
-  }
 
   static constraints = {
     username blank: false, unique: true
@@ -79,12 +75,5 @@ class SecUser {
     return transaction
   }
 
-  static int generateID() {
-    int max = 0
-    User.list().each { user->
-      max = Math.max(max, user.id)
-    }
-    return ++max
-  }
 
 }

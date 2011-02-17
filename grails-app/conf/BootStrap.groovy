@@ -116,10 +116,10 @@ class BootStrap {
 
     /* Projects */
     def projectSamples = [
-            [name : "GIGA-DEV", updated : null, deleted : null,  groups : [[ name :"GIGA"]]],
-            [name : "GIGA-DEV2", updated : null, deleted : null,  groups : [[ name :"GIGA"]]],
-            [name : "NEO13", updated : null, deleted : null,  groups : [[ name :"GIGA"]]],
-            [name : "NEO4", updated : null, deleted : null,  groups : [[ name :"GIGA"]]]
+            [name : "GIGA-DEV",  groups : [[ name :"GIGA"]]],
+            [name : "GIGA-DEV2",  groups : [[ name :"GIGA"]]],
+            [name : "NEO13", groups : [[ name :"GIGA"]]],
+            [name : "NEO4",  groups : [[ name :"GIGA"]]]
 
     ]
 
@@ -180,7 +180,7 @@ class BootStrap {
 
 
     def LBTDScans = [
-            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO13/grp_CNS/converti/jpg/ImageNEO13_CNS_5.10_5_4_01.tif.jp2',name:'ImageNEO13_CNS_5.10_5_4_01.tif.jp2',slidename:'ImageNEO13_CNS',order:10,study:'NEO13'],
+            [filename:'file:///home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO13/grp_CNS/converti/jpg/ImageNEO13_CNS_5.10_5_4_01.tif.jp2',name:'ImageNEO13_CNS_5.10_5_4_01.tif.jp2',slidename:'ImageNEO13_CNS',order:10,study:'NEO13'],
             /*          [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO13/grp_CNS/converti/jpg/ImageNEO13_CNS_5.1_5_3_01.tif.jp2',name:'ImageNEO13_CNS_5.1_5_3_01.tif.jp2',slidename:'ImageNEO13_CNS',order:1,study:'NEO13'],
             [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO13/grp_CNS/converti/jpg/ImageNEO13_CNS_5.20_5_5_01.tif.jp2',name:'ImageNEO13_CNS_5.20_5_5_01.tif.jp2',slidename:'ImageNEO13_CNS',order:20,study:'NEO13'],
             [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO13/grp_CNS/converti/jpg/NEO13_CNS_1.10_5_1_01.tif.jp2',name:'NEO13_CNS_1.10_5_1_01.tif.jp2',slidename:'NEO13_CNS_1',order:10,study:'NEO13'],
@@ -525,13 +525,13 @@ class BootStrap {
             [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.101.tif.jp2',name:'_NEO4_HPg_INH_8.101.tif.jp2',slidename:'NEO4_HPg_INH_8',order:11,study:'NEO4'],
             [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.2001.tif.jp2',name:'_NEO4_HPg_INH_8.2001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:20,study:'NEO4'],
             [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.3001.tif.jp2',name:'_NEO4_HPg_INH_8.3001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:30,study:'NEO4'],*/
-            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.4001.tif.jp2',name:'_NEO4_HPg_INH_8.4001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:40,study:'NEO4'],
-            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.5001.tif.jp2',name:'_NEO4_HPg_INH_8.5001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:50,study:'NEO4'],
-            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.6001.tif.jp2',name:'_NEO4_HPg_INH_8.6001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:60,study:'NEO4'],
-            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.7001.tif.jp2',name:'_NEO4_HPg_INH_8.7001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:70,study:'NEO4'],
-            [filename:'file:////home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_test/grp/converti/jpg/NEO_4_Curcu_INH_1.10_3_2_01.tif.jp2',name:'NEO_4_Curcu_INH_1.10_3_2_01.tif.jp2',slidename:'NEO_4_Curcu_INH_1',order:10,study:'NEO4']
+            [filename:'file:///home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.4001.tif.jp2',name:'_NEO4_HPg_INH_8.4001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:40,study:'NEO4'],
+            [filename:'file:///home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.5001.tif.jp2',name:'_NEO4_HPg_INH_8.5001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:50,study:'NEO4'],
+            [filename:'file:///home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.6001.tif.jp2',name:'_NEO4_HPg_INH_8.6001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:60,study:'NEO4'],
+            [filename:'file:///home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.7001.tif.jp2',name:'_NEO4_HPg_INH_8.7001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:70,study:'NEO4'],
+            [filename:'file:///home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_test/grp/converti/jpg/NEO_4_Curcu_INH_1.10_3_2_01.tif.jp2',name:'NEO_4_Curcu_INH_1.10_3_2_01.tif.jp2',slidename:'NEO_4_Curcu_INH_1',order:10,study:'NEO4']
     ]
-    createLBTDScans(LBTDScans)
+   // createLBTDScans(LBTDScans)
 
     def ontologySamples = [
             [name: "Ontology1"],
@@ -570,7 +570,7 @@ class BootStrap {
 
   def createLBTDScans(LBTDScans) {
     LBTDScans.each { item ->
-      def slide = Slide.findByName("slidename")
+      def slide = Slide.findByName(item.slidename)
       if (!slide) {
 
         slide = new Slide(name : item.slidename, order : item.order)
@@ -595,19 +595,25 @@ class BootStrap {
 
 
 
-        def scan = new Image(
-                filename: item.name,
-                scanner : scanner,
-                slide : slide,
-                path : item.path,
-                mime : mime
-        )
+      def scan = new Image(
+              filename: item.name,
+              scanner : scanner,
+              slide : slide,
+              path : item.filename,
+              mime : mime
+      )
 
-        if (scan.validate()) {
-          println "Creating scan : ${scan.filename}..."
+      if (scan.validate()) {
+        println "Creating scan : ${scan.filename}..."
 
-          scan.save(flush : true)
+        scan.save(flush : true)
+      } else {
+        println("\n\n\n Errors in scan boostrap for ${item.filename}!\n\n\n")
+        scan.errors.each {
+          err -> println err
         }
+
+      }
 
 
     }
@@ -638,8 +644,8 @@ class BootStrap {
 
 
   def createUsers(usersSamples) {
-    def userRole = SecRole.findByAuthority("ROLE_USER") ?: new SecRole(authority : "ROLE_USER").save()
-    def adminRole = SecRole.findByAuthority("ROLE_ADMIN") ?: new SecRole(authority : "ROLE_ADMIN").save()
+    def userRole = SecRole.findByAuthority("ROLE_USER") ?: new SecRole(authority : "ROLE_USER").save(flush : true)
+    def adminRole = SecRole.findByAuthority("ROLE_ADMIN") ?: new SecRole(authority : "ROLE_ADMIN").save(flush : true)
 
     def users = User.list() ?: []
     if (!users) {
@@ -767,7 +773,7 @@ class BootStrap {
         if (imageServer.validate()) {
           println "Creating image server ${imageServer.name}... : ${imageServer.url}"
 
-          imageServer.save()
+          imageServer.save(flush : true)
 
           imageServers << imageServer
 
@@ -856,20 +862,20 @@ class BootStrap {
 
         def scanner = Scanner.findByBrand("gigascan")
 
-     //  String path
-  //Mime mime
-          def scan = new Image(
-                  filename: item.filename,
-                  path : item.path,
-                  mime : mime,
-                  scanner : scanner,
-                  slide : slides[item.slide]
-          )
+        //  String path
+        //Mime mime
+        def scan = new Image(
+                filename: item.filename,
+                path : item.path,
+                mime : mime,
+                scanner : scanner,
+                slide : slides[item.slide]
+        )
 
-          if (scan.validate()) {
-            println "Creating scan : ${scan.filename}..."
+        if (scan.validate()) {
+          println "Creating scan : ${scan.filename}..."
 
-            scan.save(flush : true)
+          scan.save(flush : true)
 /*
             *//* Link to projects *//*
             item.annotations.each { elem ->
@@ -881,17 +887,17 @@ class BootStrap {
 
 
 
-            scans << scan
-          } else {
-            println("\n\n\n Errors in account boostrap for ${item.filename}!\n\n\n")
-            scan.errors.each {
-              err -> println err
-            }
-
+          scans << scan
+        } else {
+          println("\n\n\n Errors in account boostrap for ${item.filename}!\n\n\n")
+          scan.errors.each {
+            err -> println err
           }
+
         }
       }
     }
+  }
 
   def createAnnotations(annotationSamples) {
     def annotations = Annotation.list() ?: []
@@ -928,9 +934,9 @@ class BootStrap {
           annotation.save(flush : true)
 
           item.term.each {  term ->
-              println "add Term " + term
-              //annotation.addToTerm(Term.findByName(term))
-              AnnotationTerm.link(annotation, Term.findByName(term))
+            println "add Term " + term
+            //annotation.addToTerm(Term.findByName(term))
+            AnnotationTerm.link(annotation, Term.findByName(term))
           }
 
           annotations << annotation
@@ -987,9 +993,9 @@ class BootStrap {
           term.save(flush : true)
 
           item.ontology.each {  ontology ->
-              println "add Ontology " + ontology
-              //annotation.addToTerm(Term.findByName(term))
-              TermOntology.link(term, Ontology.findByName(ontology))
+            println "add Ontology " + ontology
+            //annotation.addToTerm(Term.findByName(term))
+            TermOntology.link(term, Ontology.findByName(ontology))
           }
 
           terms << term

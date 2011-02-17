@@ -1,8 +1,9 @@
 package be.cytomine.project
 
 import grails.converters.JSON
+import be.cytomine.SequenceDomain
 
-class Slide {
+class Slide extends SequenceDomain {
 
   String name
   int order

@@ -1,6 +1,7 @@
 package be.cytomine.server
 
 import groovy.xml.MarkupBuilder
+import be.cytomine.SequenceDomain
 
 /**
  * Cytomine @ GIGA-ULG
@@ -8,7 +9,7 @@ import groovy.xml.MarkupBuilder
  * Date: 27/01/11
  * Time: 15:21
  */
-class RetrievalServer {
+class RetrievalServer extends SequenceDomain {
 
   String description
   String url

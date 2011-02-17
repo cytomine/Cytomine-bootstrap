@@ -72,7 +72,8 @@
       Ext.Ajax.request({
         url : '/cytomine-web/api/image/${scan.id}.json',
         success: function (response) {
-          var image = Ext.decode( response.responseText );
+          var data = Ext.decode( response.responseText );
+          var image = data.image;
           var scan = new Cytomine.Project.Scan(${urls}, image.id, image.filename, image.path, image.metadataUrl);
           console.log(image.metadataUrl);
           layerAnnotation = new Cytomine.Project.AnnotationLayer( "totolayer", ${scan.id});

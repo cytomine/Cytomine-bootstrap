@@ -1,10 +1,11 @@
 package be.cytomine.command
 
-class Command {
+import be.cytomine.SequenceDomain
+
+class Command extends SequenceDomain {
 
   Transaction transaction
   String data
-  Date date = new Date()
   String postData
 
   static belongsTo = [transaction:Transaction]

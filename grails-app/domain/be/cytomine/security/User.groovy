@@ -21,7 +21,7 @@ class User extends SecUser {
   }
 
   String toString() {
-    firstname + lastname + " (" + username + ")"
+    firstname + " " + lastname + " (" + username + ")"
   }
 
 

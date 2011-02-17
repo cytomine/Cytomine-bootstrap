@@ -9,8 +9,9 @@ import com.vividsolutions.jts.geom.Geometry
 import be.cytomine.warehouse.Mime
 import be.cytomine.security.User
 import com.vividsolutions.jts.io.WKTReader
+import be.cytomine.SequenceDomain
 
-class Image {
+class Image extends SequenceDomain {
 
   String filename
 
@@ -27,9 +28,6 @@ class Image {
   Geometry roi
 
   User user
-
-  Date created
-  Date updated
 
   static belongsTo = Slide
   static hasMany = [ annotations : Annotation ]
@@ -52,8 +50,6 @@ class Image {
 
     user(nullable:true)
 
-    created(nullable:true)
-    updated(nullable:true)
 
   }
 
