@@ -90,6 +90,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     client.post(jsonImage)
     int code  = client.getResponseCode()
     String response = client.getResponseData()
+    println response
     client.disconnect();
 
     log.info("check response")

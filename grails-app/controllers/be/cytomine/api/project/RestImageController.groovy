@@ -79,13 +79,12 @@ class RestImageController {
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
     Command addImageCommand = new AddImageCommand(postData : request.JSON.toString())
-    Transaction currentTransaction = transactionService.next(currentUser)
-    currentTransaction.addToCommands(addImageCommand)
     def result = addImageCommand.execute()
     if (result.status == 201) {
-      log.info "Save command on stack with Transaction:" + currentTransaction
+      addImageCommand.transaction = transactionService.next(currentUser)
+      addImageCommand.save(flush:true)
+      log.info "Save command on stack with Transaction:" + addImageCommand.transaction
       log.debug "addAnnotationCommand.transaction "+addImageCommand.transaction
-      currentTransaction.save(flush:true)
       new UndoStack(command : addImageCommand, user: currentUser).save(flush:true)
     }
 

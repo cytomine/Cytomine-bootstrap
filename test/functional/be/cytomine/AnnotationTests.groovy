@@ -309,7 +309,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     annotationToAdd.zoomLevel = oldZoomLevel
     annotationToAdd.channels = oldChannels
     annotationToAdd.user = oldUser
-    annotationToAdd.save(flush:true)
+    assert (annotationToAdd.save(flush:true) != null)
 
     /* Encode a niew annotation with point 9999 9999 */
     Annotation annotationToEdit = Annotation.get(annotationToAdd.id)
@@ -329,6 +329,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     client.put(jsonAnnotation)
     int code  = client.getResponseCode()
     String response = client.getResponseData()
+    println response
     client.disconnect();
 
     log.info("check response")

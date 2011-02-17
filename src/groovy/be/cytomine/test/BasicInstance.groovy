@@ -95,19 +95,19 @@ class BasicInstance {
   static User getBenjamin() {
 
     log.debug  "createOrGetBasicUser()"
-    User.get(3)
+    User.findByUsername("stevben")
   }
 
   static User getLoic() {
 
     log.debug  "createOrGetBasicUser()"
-    User.get(2)
+    User.findByUsername("lrollus")
   }
 
   static User createOrGetBasicUser() {
 
     log.debug  "createOrGetBasicUser()"
-    User.get(2)
+    User.findByUsername("stevben")
   }
 
   //    def mapNew = ["newGeom":newGeom,"newZoomLevel":newZoomLevel,"newChannels":newChannels,"newUser":newUser]

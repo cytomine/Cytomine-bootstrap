@@ -79,10 +79,10 @@ class RestAnnotationController {
     def result = addAnnotationCommand.execute()
     if (result.status == 201) {
       addAnnotationCommand.transaction = transactionService.next(currentUser)
-      addAnnotationCommand.save()
+      addAnnotationCommand.save(flush : true)
       log.info "Save command on stack with Transaction:" + addAnnotationCommand.transaction
       log.debug "addAnnotationCommand.transaction "+addAnnotationCommand.transaction
-//      new UndoStack(command : addAnnotationCommand, user: currentUser).save()
+      new UndoStack(command : addAnnotationCommand, user: currentUser).save(flush : true)
     }
 
     response.status = result.status
@@ -103,13 +103,11 @@ class RestAnnotationController {
     def postData = ([id : params.id]) as JSON
 
     Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData : postData.toString())
-    Transaction currentTransaction = transactionService.next(currentUser)
-    currentTransaction.addToCommands(deleteAnnotationCommand)
     def result = deleteAnnotationCommand.execute()
-
     if (result.status == 204) {
       log.info "Save command on stack"
-      currentTransaction.save()
+      deleteAnnotationCommand.transaction = transactionService.next(currentUser)
+      deleteAnnotationCommand.save()
       new UndoStack(command : deleteAnnotationCommand, user: currentUser).save()
     }
 
@@ -136,13 +134,12 @@ class RestAnnotationController {
     else
     {
       Command editAnnotationCommand = new EditAnnotationCommand(postData : request.JSON.toString())
-      Transaction currentTransaction = transactionService.next(currentUser)
-      currentTransaction.addToCommands(editAnnotationCommand)
-      result = editAnnotationCommand.execute()
 
+      result = editAnnotationCommand.execute()
       if (result.status == 200) {
         log.info "Save command on stack"
-        currentTransaction.save()
+        editAnnotationCommand.transaction = transactionService.next(currentUser)
+        editAnnotationCommand.save()
         new UndoStack(command : editAnnotationCommand, user: currentUser).save()
       }
     }
