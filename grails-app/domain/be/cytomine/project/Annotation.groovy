@@ -29,7 +29,6 @@ class Annotation extends SequenceDomain {
   }
 
   static mapping = {
-    id (generator:'assigned' , unique : true)
     columns {
       location type: org.hibernatespatial.GeometryUserType
     }
@@ -37,16 +36,6 @@ class Annotation extends SequenceDomain {
   /* Get all terms map with the annotation */
   def terms() {
     return annotationTerm.collect{it.term}
-  }
-
-  def beforeInsert() {
-    created = new Date()
-    if (id == null)
-      id = sequenceService.generateID(this)
-  }
-
-  def beforeUpdate() {
-    updated = new Date()
   }
 
   private def getBoundaries () {

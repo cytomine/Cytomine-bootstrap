@@ -8,27 +8,30 @@ class TransactionService {
   static transactional = true
 
   private def createTransaction(SecUser user) {
+    user.lock()
     def newTransaction = new Transaction()
     user.addToTransactions(newTransaction)
     newTransaction.save()
+    return newTransaction
   }
 
   def next(SecUser user) {
 
-
     if (user.transactions.size() == 0) {
-      createTransaction(user)
+      return createTransaction(user)
     }
 
     if (!user.transactionInProgress) {
-      Transaction lastTransaction = user.transactions.last()
+      /*Transaction lastTransaction = user.transactions.last()
+      lastTransaction.lock()
       lastTransaction.setDateEnd(new Date())
-      user.save()
+      lastTransaction.save()*/
 
-      createTransaction(user)
+      return createTransaction(user)
+
+    } else {
+      return user.transactions.last()
     }
-
-    return user.transactions.last()
   }
 
 }

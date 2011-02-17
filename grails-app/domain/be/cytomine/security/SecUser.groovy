@@ -59,8 +59,7 @@ class SecUser extends SequenceDomain {
       //create new transaction and return it
       transaction = new Transaction (dateBegin: new Date(), dateEnd : null)
       addToTransactions(transaction)
-      transaction.save(flush:true)
-      return transaction
+      transaction.save()
     }
 
     if (!transactionInProgress) {
@@ -70,7 +69,7 @@ class SecUser extends SequenceDomain {
       //create new transaction
       transaction = new Transaction (dateBegin: new Date(), dateEnd : null)
       addToTransactions(transaction)
-      transaction.save(flush:true)
+      transaction.save()
     }
     return transaction
   }

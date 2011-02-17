@@ -82,8 +82,9 @@ class RestAnnotationController {
     if (result.status == 201) {
       log.info "Save command on stack with Transaction:" + currentTransaction
       log.debug "addAnnotationCommand.transaction "+addAnnotationCommand.transaction
-      currentTransaction.save(flush:true)
-      new UndoStack(command : addAnnotationCommand, user: currentUser).save(flush:true)
+
+      currentTransaction.save()
+      new UndoStack(command : addAnnotationCommand, user: currentUser).save()
     }
 
     response.status = result.status
