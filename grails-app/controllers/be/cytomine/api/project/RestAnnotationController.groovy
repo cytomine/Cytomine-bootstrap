@@ -76,15 +76,13 @@ class RestAnnotationController {
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
     Command addAnnotationCommand = new AddAnnotationCommand(postData : request.JSON.toString())
-    Transaction currentTransaction = transactionService.next(currentUser)
-    currentTransaction.addToCommands(addAnnotationCommand)
     def result = addAnnotationCommand.execute()
     if (result.status == 201) {
-      log.info "Save command on stack with Transaction:" + currentTransaction
+      addAnnotationCommand.transaction = transactionService.next(currentUser)
+      addAnnotationCommand.save()
+      log.info "Save command on stack with Transaction:" + addAnnotationCommand.transaction
       log.debug "addAnnotationCommand.transaction "+addAnnotationCommand.transaction
-
-      currentTransaction.save()
-      new UndoStack(command : addAnnotationCommand, user: currentUser).save()
+//      new UndoStack(command : addAnnotationCommand, user: currentUser).save()
     }
 
     response.status = result.status

@@ -18,6 +18,7 @@ abstract class SequenceDomain {
 
   public beforeInsert() {
     created = new Date()
+    println "beforeInsert in " + this.class.getName()
     if (id == null)
       id = sequenceService.generateID(this)
   }
