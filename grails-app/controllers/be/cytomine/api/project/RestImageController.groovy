@@ -17,6 +17,7 @@ import be.cytomine.project.ProjectSlide
 class RestImageController {
 
   def springSecurityService
+  def transactionService
 
   /* REST API */
   def list = {
@@ -78,7 +79,7 @@ class RestImageController {
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
     Command addImageCommand = new AddImageCommand(postData : request.JSON.toString())
-    Transaction currentTransaction = currentUser.getNextTransaction()
+    Transaction currentTransaction = transactionService.next(currentUser)
     currentTransaction.addToCommands(addImageCommand)
     def result = addImageCommand.execute()
     if (result.status == 201) {

@@ -33,7 +33,7 @@ class SecUser extends SequenceDomain {
     SecUserSecRole.findAllBySecUser(this).collect { it.secRole } as Set
   }
 
-  private void setTransactionInProgress(Boolean transactionInProgress) {
+  /*private void setTransactionInProgress(Boolean transactionInProgress) {
 
     //prevent to begin a transaction more than one time
     if (this.transactionInProgress && transactionInProgress) return
@@ -72,7 +72,7 @@ class SecUser extends SequenceDomain {
       transaction.save()
     }
     return transaction
-  }
+  }*/
 
 
 }

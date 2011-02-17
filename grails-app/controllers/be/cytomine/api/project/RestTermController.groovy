@@ -14,7 +14,7 @@ import be.cytomine.command.UndoStack
 class RestTermController {
 
   def springSecurityService
-
+  def transactionService
 
   def list = {
 
@@ -62,12 +62,12 @@ class RestTermController {
     println "force"
     println "request.JSON.toString()="+request.JSON.toString()
     Command addTermCommand = new AddTermCommand(postData : request.JSON.toString())
-    Transaction currentTransaction = currentUser.getNextTransaction()
+    Transaction currentTransaction = transactionService.next(currentUser)
     currentTransaction.addToCommands(addTermCommand)
     def result = addTermCommand.execute()
 
     if (result.status == 201) {
-      addTermCommand.save()
+      currentTransaction.save()
       new UndoStack(command : addTermCommand, user: currentUser).save()
     }
 
