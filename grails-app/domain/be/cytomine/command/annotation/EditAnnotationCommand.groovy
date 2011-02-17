@@ -50,7 +50,7 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
       updatedAnnotation.id = postData.annotation.id
 
 
-      if ( updatedAnnotation.validate() && updatedAnnotation.save(flush:true)) {
+      if ( updatedAnnotation.validate() && updatedAnnotation.save()) {
         log.info "New annotation is saved"
         data = ([ previousAnnotation : (JSON.parse(backup)), newAnnotation :  updatedAnnotation]) as JSON
         return [data : [success : true, message:"ok", annotation :  updatedAnnotation], status : 200]

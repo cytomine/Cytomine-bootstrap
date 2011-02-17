@@ -21,7 +21,7 @@ class DeleteAnnotationCommand extends Command implements UndoRedoCommand{
       return [data : [success : false, message : "Annotation not found with id: " + postData.id], status : 404]
     }
     log.info "Delete annotation " + postData.id
-    annotation.delete(flush:true);
+    annotation.delete();
     return [data : [success : true, message : "OK", data : [annotation : postData.id]], status : 204]
   }
 

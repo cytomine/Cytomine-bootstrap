@@ -5,13 +5,13 @@ import be.cytomine.command.Transaction
 
 class TransactionService {
 
-  static transactional = true
+  static transactional = false
 
   private def createTransaction(SecUser user) {
-    user.lock()
+
     def newTransaction = new Transaction()
     user.addToTransactions(newTransaction)
-    newTransaction.save()
+    user.save()
     return newTransaction
   }
 

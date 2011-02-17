@@ -29,6 +29,7 @@ class Annotation extends SequenceDomain {
   }
 
   static mapping = {
+    id generator : "assigned"
     columns {
       location type: org.hibernatespatial.GeometryUserType
     }
