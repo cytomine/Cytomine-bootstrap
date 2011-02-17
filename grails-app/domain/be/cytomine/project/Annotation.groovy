@@ -94,7 +94,7 @@ class Annotation extends SequenceDomain {
 
     annotation.created = (!jsonAnnotation.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonAnnotation.created)) : null
     annotation.updated = (!jsonAnnotation.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonAnnotation.updated)) : null
-    annotation.deleted = (!jsonAnnotation.deleted.toString().equals("null"))  ? new Date(Long.parseLong(jsonAnnotation.deleted)) : null
+
     return annotation;
   }
 
@@ -114,7 +114,6 @@ class Annotation extends SequenceDomain {
       returnArray['user'] = it.user? it.user.id : null
       returnArray['created'] = it.created? it.created.time.toString() : null
       returnArray['updated'] = it.updated? it.updated.time.toString() : null
-      returnArray['deleted'] = it.deleted? it.deleted.time.toString() : null
       return returnArray
     }
   }
