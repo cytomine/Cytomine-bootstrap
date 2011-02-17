@@ -105,14 +105,14 @@ class RestAnnotationController {
     def postData = ([id : params.id]) as JSON
 
     Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData : postData.toString())
-    Transaction currentTransaction = currentUser.getNextTransaction()
+    Transaction currentTransaction = transactionService.next(currentUser)
     currentTransaction.addToCommands(deleteAnnotationCommand)
     def result = deleteAnnotationCommand.execute()
 
     if (result.status == 204) {
       log.info "Save command on stack"
-      currentTransaction.save(flush:true)
-      new UndoStack(command : deleteAnnotationCommand, user: currentUser).save(flush:true)
+      currentTransaction.save()
+      new UndoStack(command : deleteAnnotationCommand, user: currentUser).save()
     }
 
     response.status = result.status
@@ -138,14 +138,14 @@ class RestAnnotationController {
     else
     {
       Command editAnnotationCommand = new EditAnnotationCommand(postData : request.JSON.toString())
-      Transaction currentTransaction = currentUser.getNextTransaction()
+      Transaction currentTransaction = transactionService.next(currentUser)
       currentTransaction.addToCommands(editAnnotationCommand)
       result = editAnnotationCommand.execute()
 
       if (result.status == 200) {
         log.info "Save command on stack"
-        currentTransaction.save(flush:true)
-        new UndoStack(command : editAnnotationCommand, user: currentUser).save(flush:true)
+        currentTransaction.save()
+        new UndoStack(command : editAnnotationCommand, user: currentUser).save()
       }
     }
 
