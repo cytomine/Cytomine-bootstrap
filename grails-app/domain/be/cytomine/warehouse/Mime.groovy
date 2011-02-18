@@ -17,7 +17,10 @@ class Mime {
   }
 
   def imageServers() {
-    return mis.collect{it.imageServer}
+    if(mis!=null)
+      return mis.collect{it.imageServer}
+    else
+      return []
   }
 
   String toString() {

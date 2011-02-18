@@ -15,10 +15,13 @@ import be.cytomine.command.UndoRedoCommand
 class AddImageCommand extends Command implements UndoRedoCommand {
 
   def execute() {
+    try
+    {
       log.info("Execute")
       def json = JSON.parse(postData)
       Image newImage = Image.createImageFromData(json.image)
-      if(newImage.validate() && newImage.save(flush:true)) {
+      if(newImage.validate()) {
+        newImage.save(flush:true)
         log.info("Save image with id:"+newImage.id)
         data = newImage.encodeAsJSON()
         return [data : [success : true , message:"ok", image : newImage], status : 201]
@@ -26,6 +29,11 @@ class AddImageCommand extends Command implements UndoRedoCommand {
         log.error("Cannot save image:"+newImage.errors)
         return [data : [image : newImage , errors : [newImage.errors]], status : 400]
       }
+    }catch(IllegalArgumentException ex)
+    {
+      log.error("Cannot save image:"+ex.toString())
+      return [data : [image : null , errors : ["Cannot save image:"+ex.toString()]], status : 400]
+    }
   }
 
   def undo() {

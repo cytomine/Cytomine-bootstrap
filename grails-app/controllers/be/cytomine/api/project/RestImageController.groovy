@@ -13,6 +13,8 @@ import be.cytomine.command.Transaction
 import be.cytomine.command.UndoStack
 import be.cytomine.project.Project
 import be.cytomine.project.ProjectSlide
+import be.cytomine.command.image.EditImageCommand
+import be.cytomine.command.image.DeleteImageCommand
 
 class RestImageController {
 
@@ -94,6 +96,71 @@ class RestImageController {
   }
 
 
+  def update = {
+
+    log.info "Update"
+    User currentUser = User.get(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
+
+    def result
+
+    if((String)params.id!=(String)request.JSON.image.id) {
+      log.error "Image id from URL and from data are different:"+ params.id + " vs " +  request.JSON.image.id
+      result = [data : [image : null , errors : ["Image id from URL and from data are different:"+ params.id + " vs " +  request.JSON.image.id ]], status : 400]
+    }
+    else
+    {
+      Command editImageCommand = new EditImageCommand(postData : request.JSON.toString())
+      result = editImageCommand.execute()
+
+      if (result.status == 200) {
+        log.info "Save command on stack"
+        //editImageCommand.transaction = transactionService.next(currentUser)
+        editImageCommand.save()
+        new UndoStack(command : editImageCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      }
+    }
+
+    response.status = result.status
+    log.debug "result.status="+result.status+" result.data=" + result.data
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML }
+    }
+  }
+
+  def delete = {
+
+    log.info "Delete"
+    User currentUser = User.get(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " params.id=" + params.id
+
+    def postData = ([id : params.id]) as JSON
+
+    Command deleteImageCommand = new DeleteImageCommand(postData : postData.toString())
+    def result = deleteImageCommand.execute()
+    if (result.status == 204) {
+      log.info "Save command on stack"
+      //deleteImageCommand.transaction = transactionService.next(currentUser)
+      deleteImageCommand.save()
+      new UndoStack(command : deleteImageCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save()
+
+    }
+
+        if (UndoStack.findAllByUser( currentUser).size() == 0) {
+      log.error "Command stack is empty!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      response.status = 404
+      render ""
+      return
+    }
+
+    response.status = result.status
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML }
+    }
+  }
+
   def thumb = {
     Image scan = Image.findById(params.id)
     print scan.getThumbURL()
@@ -111,6 +178,7 @@ class RestImageController {
       }
     }
   }
+
 
 
   def metadata = {

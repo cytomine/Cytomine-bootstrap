@@ -29,6 +29,13 @@ class Image extends SequenceDomain {
 
   User user
 
+  /*
+   * If you modify/add an attribute, don't forget to:
+   * -Update getXXXXFromData
+   * -Update registerMarshaller
+   * -Update functionnal test (add/edit test)
+   */
+
   static belongsTo = Slide
   static hasMany = [ annotations : Annotation ]
 
@@ -61,19 +68,61 @@ class Image extends SequenceDomain {
     def image = new Image()
     getImageFromData(image,jsonImage)
   }
+
   static Image getImageFromData(image,jsonImage) {
+    println "getImageFromData:"+ jsonImage
     image.filename = jsonImage.filename
-    image.scanner = Scanner.get(jsonImage.scanner)
-    image.slide = !jsonImage.slide.toString().equals("null")? Slide.get(jsonImage.slide) : null
     image.path = jsonImage.path
-    image.mime = !jsonImage.mime.toString().equals("null")? Mime.get(jsonImage.mime) : null
-    image.height = jsonImage.height
-    image.width = jsonImage.width
+
+    image.height = (!jsonImage.height.toString().equals("null"))  ? ((String)jsonImage.height).toInteger() : -1
+    image.width = (!jsonImage.width.toString().equals("null"))  ? ((String)jsonImage.width).toInteger() : -1
     image.scale = (!jsonImage.scale.toString().equals("null"))  ? ((String)jsonImage.scale).toDouble() : -1
-    image.roi = !jsonImage.roi.toString().equals("null")? new WKTReader().read(jsonImage.roi) : null
-    image.user =  User.get(jsonImage.user);
+
     image.created = (!jsonImage.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonImage.created)) : null
     image.updated = (!jsonImage.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonImage.updated)) : null
+
+    String scannerId = jsonImage.scanner.toString()
+    if(!scannerId.equals("null")) {
+      image.scanner = Scanner.get(scannerId)
+      if (image.scanner==null) throw new IllegalArgumentException("Scanner was not found with id:"+ scannerId)
+    }
+    else image.scanner = null
+
+    String slideId = jsonImage.slide.toString()
+    if(!slideId.equals("null")) {
+      image.slide = Slide.get(slideId)
+      if(image.slide==null) throw new IllegalArgumentException("Slide was not found with id:"+ slideId)
+    }
+    else image.slide = null
+
+    String mimeId = jsonImage.mime.toString()
+    image.mime = Mime.get(mimeId)
+    if(image.mime==null) {
+      throw new IllegalArgumentException("Mime was not found with id:"+ mimeId)
+    }
+    else if(image.mime.imageServers().size()==0) {
+      throw new IllegalArgumentException("Mime with id:"+ mimeId + " has not image server")
+    }
+
+    String roi = jsonImage.roi.toString()
+    if(!roi.equals("null"))
+    {
+      try { image.roi = new WKTReader().read(roi)}
+      catch(com.vividsolutions.jts.io.ParseException e)
+      {
+        throw new IllegalArgumentException("Bad Geometry:"+ e.getMessage())
+      }
+
+    }
+    else image.roi = null
+
+    String userId = jsonImage.user.toString()
+    if(!userId.equals("null")) {
+      image.user = User.get(userId)
+      if(image.user==null) throw new IllegalArgumentException("User was not found with id:"+userId)
+    }
+    else image.user = null
+
     return image;
   }
 
@@ -84,15 +133,28 @@ class Image extends SequenceDomain {
       returnArray['class'] = it.class
       println "id"
       returnArray['id'] = it.id
-      //returnArray['annotations'] = it.annotations
-      returnArray['path'] = it.path
-      returnArray['mime'] = it.mime.id
       returnArray['filename'] = it.filename
       returnArray['scanner'] = it.scanner? it.scanner.id : null
       returnArray['slide'] = it.slide? it.slide.id : null
+      returnArray['path'] = it.path
+      returnArray['mime'] = it.mime.id
+
+      returnArray['width'] = it.width
+      returnArray['height'] = it.height
+
+      returnArray['scale'] = it.scale
+
+      returnArray['roi'] = it.roi.toString()
+
+      returnArray['user'] = it.user? it.user.id : null
+      returnArray['created'] = it.created? it.created.time.toString() : null
+      returnArray['updated'] = it.updated? it.updated.time.toString() : null
+
+      //returnArray['annotations'] = it.annotations
       returnArray['thumb'] = it.getThumbURL()
       returnArray['metadataUrl'] = ConfigurationHolder.config.grails.serverURL + "/api/image/"+it.id+"/metadata.json"
       returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
+
       returnArray['imageServerBaseURL'] = it.getMime().imageServers().url
       return returnArray
     }
@@ -105,7 +167,6 @@ class Image extends SequenceDomain {
     imageServers.each {
       Resolver resolver = Resolver.getResolver(it.className)
       String url = resolver.getThumbUrl(it.getBaseUrl(), getPath())
-      log.debug "url="+url
       urls << url
     }
     if(urls.size()<1) return null

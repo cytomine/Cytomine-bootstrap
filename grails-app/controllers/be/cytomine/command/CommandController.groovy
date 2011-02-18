@@ -8,7 +8,11 @@ class CommandController {
   def springSecurityService
 
   def undo = {
+    log.info "Undo"
     User user = User.read(springSecurityService.principal.id)
+    log.debug "User="+user.id
+    def lastCommands = UndoStack.findAllByUser(user)
+    log.debug "Lastcommands="+lastCommands
 
     if (UndoStack.findAllByUser(user).size() == 0) {
       log.error "Command stack is empty"

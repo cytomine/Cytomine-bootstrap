@@ -22,6 +22,7 @@ import be.cytomine.project.Term
 import be.cytomine.project.AnnotationTerm
 import be.cytomine.project.Ontology
 import be.cytomine.project.TermOntology
+import java.lang.management.ManagementFactory
 
 class BootStrap {
   def springSecurityService
@@ -32,6 +33,13 @@ class BootStrap {
 
     marshallersService.initMarshallers()
     sequenceService.initSequences()
+
+    List inputArgs = ManagementFactory.getRuntimeMXBean().getInputArguments();
+    for(int i =0;i<inputArgs.size();i++)
+    {
+       println inputArgs.get(i)
+    }
+
 
 
     log.info "add data"

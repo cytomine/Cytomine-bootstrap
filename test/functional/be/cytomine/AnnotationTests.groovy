@@ -294,8 +294,8 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     String oldChannels = "OLDCHANNELS"
     String newChannels = "NEWCHANNELS"
 
-    User oldUser = BasicInstance.getBenjamin()
-    User newUser = BasicInstance.getLoic()
+    User oldUser = BasicInstance.getOldUser()
+    User newUser = BasicInstance.getNewUser()
 
 
     def mapNew = ["geom":newGeom,"zoomLevel":newZoomLevel,"channels":newChannels,"user":newUser]
@@ -533,9 +533,9 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     log.info("create annotation")
     def annotationToDelete = BasicInstance.createOrGetBasicAnnotation()
     String jsonAnnotation = ([annotation : annotationToDelete]).encodeAsJSON()
-
+    int idAnnotation = annotationToDelete.id
     log.info("delete annotation:"+jsonAnnotation.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/annotation/"+annotationToDelete.id+".json"
+    String URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation+".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.delete()
@@ -544,6 +544,61 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("check response")
     assertEquals(204,code)
+
+    log.info("check if object "+ idAnnotation +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    client.disconnect();
+
+    assertEquals(404,code)
+
+    log.info("test undo")
+    client = new HttpClient()
+    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.get()
+    code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+    assertEquals(201,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+    int newIdAnnotation  = json.annotation.id
+
+    log.info("check if object "+ idAnnotation +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/annotation/"+newIdAnnotation  +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+
+    assertEquals(200,code)
+    json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+
+    log.info("test redo")
+    client = new HttpClient()
+    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.get()
+    code  = client.getResponseCode()
+    client.disconnect();
+    assertEquals(204,code)
+
+    log.info("check if object "+ newIdAnnotation +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    client.disconnect();
+    assertEquals(404,code)
 
   }
 

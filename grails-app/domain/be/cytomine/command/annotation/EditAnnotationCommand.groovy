@@ -72,10 +72,6 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
     def annotationsData = JSON.parse(data)
     Annotation annotation = Annotation.findById(annotationsData.previousAnnotation.id)
     annotation = Annotation.getAnnotationFromData(annotation,annotationsData.previousAnnotation)
-    /*annotation.name = annotationsData.previousAnnotation.name
-    annotation.location = new WKTReader().read(annotationsData.previousAnnotation.location)
-
-    annotation.image = Image.get(annotationsData.previousAnnotation.image)  */
     annotation.save(flush:true)
     return [data : [success : true, message:"ok", annotation : annotation], status : 200]
   }
@@ -85,10 +81,7 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
     def annotationsData = JSON.parse(data)
     Annotation annotation = Annotation.findById(annotationsData.newAnnotation.id)
     annotation = Annotation.getAnnotationFromData(annotation,annotationsData.newAnnotation)
-    /*annotation.name = annotationsData.newAnnotation.name
-    annotation.location = new WKTReader().read(annotationsData.newAnnotation.location)
-    annotation.image = Image.get(annotationsData.newAnnotation.image) */
     annotation.save(flush:true)
-    return [data : [success : true, message:"ok", nnotation : annotation], status : 200]
+    return [data : [success : true, message:"ok", annotation : annotation], status : 200]
   }
 }

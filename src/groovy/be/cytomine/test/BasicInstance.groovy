@@ -9,6 +9,8 @@ import be.cytomine.project.Term
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import be.cytomine.security.User
+import be.cytomine.project.Slide
+import be.cytomine.project.Project
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,8 +26,15 @@ class BasicInstance {
 
   static Mime createOrGetBasicMime() {
 
-    log.debug "createOrGetBasicMime()"
-    /*def mime = Mime.findByMimeType("mimeT");
+    log.debug "createOrGetBasicMime1()"
+    def jp2mime = Mime.findByExtension("jp2")
+    jp2mime.refresh()
+    jp2mime.imageServers()
+    jp2mime
+  }
+
+  static Mime createNewMime() {
+     def mime = Mime.findByMimeType("mimeT");
     log.debug "mime="+ mime
     if(mime==null)
     {
@@ -36,8 +45,8 @@ class BasicInstance {
       mime.save(flush : true)
       log.debug("mime.errors="+mime.errors)
     }
-    mime */
-    Mime.findByExtension("jp2")
+    assert mime!=null
+    mime
   }
 
   static Annotation createOrGetBasicAnnotation() {
@@ -47,6 +56,7 @@ class BasicInstance {
     log.debug("annotation.errors="+annotation.errors)
     annotation.save(flush : true)
     log.debug("annotation.errors="+annotation.errors)
+    assert annotation!=null
     annotation
   }
 
@@ -57,8 +67,12 @@ class BasicInstance {
     log.debug "image.errors="+image.errors
     image.save(flush : true)
     log.debug "image.errors="+image.errors
+    assert image!=null
     image
   }
+
+
+
 
   static Scanner createOrGetBasicScanner() {
 
@@ -68,9 +82,50 @@ class BasicInstance {
     log.debug "scanner.errors="+scanner.errors
     scanner.save(flush : true)
     log.debug "scanner.errors="+scanner.errors
+    assert scanner!=null
     scanner
 
   }
+  static Scanner createNewScanner() {
+
+    log.debug  "createNewScanner()"
+    def scanner = new Scanner(maxResolution:"x60",brand:"newBrand", model:"newModel")
+    scanner.validate()
+    log.debug "scanner.errors="+scanner.errors
+    scanner.save(flush : true)
+    log.debug "scanner.errors="+scanner.errors
+    assert scanner!=null
+    scanner
+
+  }
+
+
+   static Slide createOrGetBasicSlide() {
+
+    log.debug  "createOrGetBasicSlide()"
+    def slide = new Slide(name:"slide",order:1)
+    slide.validate()
+    log.debug "slide.errors="+slide.errors
+    slide.save(flush : true)
+    log.debug "slide.errors="+slide.errors
+    assert slide!=null
+    slide
+
+  }
+
+   static Slide createNewSlide() {
+
+    log.debug  "createNewSlide()"
+    def slide = new Slide(name:"newSlide",order:2)
+    slide.validate()
+    log.debug "slide.errors="+slide.errors
+    slide.save(flush : true)
+    log.debug "slide.errors="+slide.errors
+     assert slide!=null
+    slide
+
+  }
+
 
   static Term createOrGetBasicTerm() {
 
@@ -89,40 +144,96 @@ class BasicInstance {
     term.addToChild(termchild)
     term.save(flush : true)
     log.debug "term.errors="+term.errors
+    assert term!=null
     term
   }
 
-  static User getBenjamin() {
+  static User getOldUser() {
 
     log.debug  "createOrGetBasicUser()"
-    User.findByUsername("stevben")
+    User user = User.findByUsername("stevben")
+    assert user!=null
+    user
   }
 
-  static User getLoic() {
+  static User getNewUser() {
 
     log.debug  "createOrGetBasicUser()"
-    User.findByUsername("lrollus")
+    User user = User.findByUsername("lrollus")
+    assert user!=null
+    user
   }
 
   static User createOrGetBasicUser() {
 
     log.debug  "createOrGetBasicUser()"
-    User.findByUsername("stevben")
+    User user = User.findByUsername("lrollus")
+    assert user!=null
+    user
   }
 
-  //    def mapNew = ["newGeom":newGeom,"newZoomLevel":newZoomLevel,"newChannels":newChannels,"newUser":newUser]
-  static void compareAnnotation(map, json)  {
+   static Project createOrGetBasicProject() {
 
-    /*assertEquals("Annotation geom is not modified (annother request)",map.geom.replace(' ', ''),json.annotation.location.replace(' ',''))
-    assertEquals("Zoom level is not modified (annother request)",map.zoomLevel,json.annotation.zoomLevel)
-    assertEquals("Channels is not modified (annother request)",map.channels,json.annotation.channels)
-    assertEquals("User is not modified (annother request)",map.user.id,json.annotation.user) */
+    log.debug  "createOrGetBasicProject()"
+    def project = new Project(name:"project")
+    project.validate()
+    log.debug "project.errors="+project.errors
+    project.save(flush : true)
+    log.debug "project.errors="+project.errors
+    assert project!=null
+    project
+
+  }
+
+  static void compareAnnotation(map, json)  {
 
     assert map.geom.replace(' ', '').equals(json.annotation.location.replace(' ',''))
     assert toDouble(map.zoomLevel).equals(toDouble(json.annotation.zoomLevel))
     assert map.channels.equals(json.annotation.channels)
     assert toLong(map.user.id).equals(toLong(json.annotation.user))
   }
+
+  static void compareImage(map, json)  {
+
+    assert map.filename.equals(json.image.filename)
+    assert map.geom.replace(' ', '').equals(json.image.roi.replace(' ',''))
+    assert toLong(map.user.id).equals(toLong(json.image.user))
+    assert toLong(map.scanner.id).equals(toLong(json.image.scanner))
+    assert toLong(map.slide.id).equals(toLong(json.image.slide))
+    assert map.path.equals(json.image.path)
+    assert toLong(map.mime.id).equals(toLong(json.image.mime))
+    assert toInteger(map.width).equals(toInteger(json.image.width))
+    assert toInteger(map.height).equals(toInteger(json.image.height))
+    assert toDouble(map.scale).equals(toDouble(json.image.scale))
+
+  }
+
+  static void compareProject(map, json)  {
+
+    assert map.name.equals(json.project.name)
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   static Double toDouble(String s)
   {
