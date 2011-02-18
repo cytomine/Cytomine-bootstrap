@@ -8,45 +8,61 @@ import be.cytomine.project.Project
 class EditProjectCommand extends Command implements UndoRedoCommand {
 
   def execute() {
-    def postData = JSON.parse(postData)
-    def updatedProject = Project.get(postData.project.id)
-    def backup = updatedProject.encodeAsJSON()
+    log.info "Execute"
+    log.debug "postData="+postData
 
-    if (!updatedProject ) {
-      return [data : [success : false, message : "Project not found with id: " + postData.project.id], status : 404]
+    try {
+      def postData = JSON.parse(postData)
+      log.debug "Image id="+postData.project.id
+      def updatedProject = Project.get(postData.project.id)
+      def backup = updatedProject.encodeAsJSON()
+
+      if (!updatedProject ) {
+        log.error "Project not found with id: " + postData.image.id
+        return [data : [success : false, message : "Project not found with id: " + postData.project.id], status : 404]
+      }
+
+      updatedProject = Project.getProjectFromData(updatedProject,postData.project)
+      updatedProject.id = postData.project.id
+
+      if ( updatedProject.validate() && updatedProject.save(flush:true)) {
+        log.info "New image is saved"
+        data = ([ previousProject : (JSON.parse(backup)), newProject :  updatedProject]) as JSON
+        return [data : [success : true, message:"ok", project :  updatedProject], status : 200]
+      } else {
+        log.error "New image can't be saved: " +  updatedProject.errors
+        return [data : [project :  updatedProject, errors : [ updatedProject.errors]], status : 400]
+      }
     }
-
-    for (property in postData.project) {
-      updatedProject.properties.put(property.key, property.value)
+    catch(IllegalArgumentException e)
+    {
+      log.error "New Project can't be saved: " +  e.toString()
+      return [data : [project : null , errors : [e.toString()]], status : 400]
     }
-
-
-    if ( updatedProject.validate()) {
-      data = ([ previousProject : (JSON.parse(backup)), newProject :  updatedProject]) as JSON
-      updatedProject.save()
-      return [data : [success : true, message:"ok", project :  updatedProject], status : 200]
-    } else {
-      return [data : [user :  updatedProject, errors : [ updatedProject.errors]], status : 403]
-    }
-
-
   }
 
+
+
   def undo() {
-    def usersData = JSON.parse(data)
-    Project project = Project.findById(usersData.previousProject.id)
-    project.name = usersData.previousProject.name
-    project.save()
-    return [data : [success : true, message:"ok", user : project], status : 200]
+    log.info "Undo"
+    def projectData = JSON.parse(data)
+    Project project = Project.findById(projectData.previousProject.id)
+    project = Project.getProjectFromData(project,projectData.previousProject)
+    project.save(flush:true)
+    return [data : [success : true, message:"ok", project : project], status : 200]
   }
 
   def redo() {
-    def usersData = JSON.parse(data)
-    Project project = Project.findById(usersData.newProject.id)
-    project.name = usersData.newProject.name
-    project.save()
-    return [data : [success : true, message:"ok", user : project], status : 200]
+    log.info "Redo"
+    def projectData = JSON.parse(data)
+    Project project = Project.findById(projectData.newProject.id)
+    project = Project.getProjectFromData(project,projectData.newProject)
+    project.save(flush:true)
+    return [data : [success : true, message:"ok", project : project], status : 200]
   }
+
+
+
 
 
 }

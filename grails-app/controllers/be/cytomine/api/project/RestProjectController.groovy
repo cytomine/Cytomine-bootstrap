@@ -24,7 +24,8 @@ class RestProjectController {
 
   def show = {
     if(params.id && Project.exists(params.id)) {
-      def data = Project.findById(params.id)
+      def data = [:]
+      data.project = Project.findById(params.id)
       withFormat {
         json { render data as JSON }
         xml { render data as XML }
@@ -40,41 +41,63 @@ class RestProjectController {
   }
 
   def save = {
+    log.info "Add"
     User currentUser = User.get(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
+
     Command addProjectCommand = new AddProjectCommand(postData : request.JSON.toString())
 
     def result = addProjectCommand.execute()
 
     if (result.status == 201) {
       addProjectCommand.save()
-      new UndoStack(command : addProjectCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
+      new UndoStack(command : addProjectCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save()
     }
 
     response.status = result.status
+    log.debug "result.status="+result.status+" result.data=" + result.data
     withFormat {
       json { render result.data as JSON }
       xml { render result.data as XML }
     }
   }
 
-  
-  def update = {
-    User currentUser = User.get(springSecurityService.principal.id)
-    Command editProjectCommand = new EditProjectCommand(postData : request.JSON.toString())
 
-    def result = editProjectCommand.execute()
+  def update = {
+    log.info "Update"
+    User currentUser = User.get(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
+
+    def result
+    if((String)params.id!=(String)request.JSON.project.id) {
+      log.error "Project id from URL and from data are different:"+ params.id + " vs " +  request.JSON.project.id
+      result = [data : [project : null , errors : ["Project id from URL and from data are different:"+ params.id + " vs " +  request.JSON.project.id ]], status : 400]
+    }
+    else
+    {
+
+    Command editProjectCommand = new EditProjectCommand(postData : request.JSON.toString())
+    result = editProjectCommand.execute()
+
     if (result.status == 200) {
       editProjectCommand.save()
       new UndoStack(command : editProjectCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
     }
+    }
 
     response.status = result.status
+    log.debug "result.status="+result.status+" result.data=" + result.data
     withFormat {
       json { render result.data as JSON }
       xml { render result.data as XML }
     }
   }
-  
+
+
+
+
+
+
   def delete =  {
     User currentUser = User.get(springSecurityService.principal.id)
     def postData = ([id : params.id]) as JSON

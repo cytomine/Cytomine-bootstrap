@@ -18,10 +18,15 @@ class Project extends SequenceDomain {
     name
   }
 
-  static Project getProjectFromData(data) {
+  static Project createProjectFromData(jsonProject) {
     def project = new Project()
-    project.name = data.project.name
-    project.created = new Date()
+    getProjectFromData(project,jsonProject)
+  }
+
+  static Project getProjectFromData(project,jsonProject) {
+    if(!jsonProject.name.toString().equals("null"))
+      project.name = jsonProject.name
+    else throw new IllegalArgumentException("Project name cannot be null")
     return project;
   }
 
