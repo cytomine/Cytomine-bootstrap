@@ -3,7 +3,6 @@ package be.cytomine.api.project
 import grails.converters.*
 import be.cytomine.project.Project
 import be.cytomine.command.project.AddProjectCommand
-import be.cytomine.command.Transaction
 import be.cytomine.command.Command
 import be.cytomine.security.User
 import be.cytomine.command.UndoStack

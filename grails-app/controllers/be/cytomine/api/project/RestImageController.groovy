@@ -9,7 +9,6 @@ import be.cytomine.server.RetrievalServer
 import be.cytomine.security.User
 import be.cytomine.command.Command
 import be.cytomine.command.image.AddImageCommand
-import be.cytomine.command.Transaction
 import be.cytomine.command.UndoStack
 import be.cytomine.project.Project
 import be.cytomine.project.ProjectSlide

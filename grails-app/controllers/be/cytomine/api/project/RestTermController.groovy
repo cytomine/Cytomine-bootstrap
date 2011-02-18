@@ -8,7 +8,6 @@ import be.cytomine.project.AnnotationTerm
 import be.cytomine.security.User
 import be.cytomine.command.Command
 import be.cytomine.command.term.AddTermCommand
-import be.cytomine.command.Transaction
 import be.cytomine.command.UndoStack
 
 class RestTermController {

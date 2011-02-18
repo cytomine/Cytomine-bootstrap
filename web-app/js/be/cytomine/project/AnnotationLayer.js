@@ -110,17 +110,17 @@ Cytomine.Project.AnnotationLayer.prototype = {
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
         console.log("add geomwkt="+geomwkt);
-
+        for (var i = 0; i < 1; i++){
         req = new XMLHttpRequest();
         //console.log("/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt);
         //req.open("POST", "/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt+".json", true);
         req.open("POST", "/cytomine-web/api/annotation.json", true);
-        req.onreadystatechange = this.decodeNewAnnotation;
+        if (i == 0) req.onreadystatechange = this.decodeNewAnnotation;
 
         var json = {annotation: {"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,image:this.scanID}}; //class is a reserved word in JS !
 
         req.send(JSON.stringify(json));
-
+        }
         //Annotation hasn't any id => -1
         //feature.attributes = {idAnnotation: "-1"};
         this.hideAnnotation(feature);

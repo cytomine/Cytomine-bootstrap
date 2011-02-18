@@ -1,6 +1,5 @@
 package be.cytomine.security
 
-import be.cytomine.command.Transaction
 import be.cytomine.SequenceDomain
 
 class SecUser extends SequenceDomain {

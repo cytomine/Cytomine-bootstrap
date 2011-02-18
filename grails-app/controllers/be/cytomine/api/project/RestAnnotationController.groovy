@@ -6,7 +6,6 @@ import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Geometry
 import be.cytomine.security.User
 import be.cytomine.command.Command
-import be.cytomine.command.Transaction
 import be.cytomine.command.annotation.AddAnnotationCommand
 import be.cytomine.command.UndoStack
 import be.cytomine.command.annotation.DeleteAnnotationCommand
@@ -77,8 +76,8 @@ class RestAnnotationController {
     Command addAnnotationCommand = new AddAnnotationCommand(postData : request.JSON.toString())
     def result = addAnnotationCommand.execute()
     if (result.status == 201) {
-      addAnnotationCommand.save(flush : true)
-      new UndoStack(command : addAnnotationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush : true)
+      addAnnotationCommand.save()
+      new UndoStack(command : addAnnotationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
     }
 
     response.status = result.status

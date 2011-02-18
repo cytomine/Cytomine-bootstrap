@@ -4,7 +4,6 @@ import be.cytomine.security.User
 import grails.converters.*
 import be.cytomine.command.user.AddUserCommand
 import be.cytomine.command.UndoStack
-import be.cytomine.command.Transaction
 import be.cytomine.command.Command
 import be.cytomine.command.user.EditUserCommand
 import be.cytomine.command.user.DeleteUserCommand
