@@ -20,8 +20,8 @@ Cytomine.Dashboard = {
             iconCls: 'envelope-label',
             title: 'Dashboard',
             items: [
-            //    Cytomine.Security.User.grid(),
-                Cytomine.Rest.Project.grid()
+                Cytomine.Views.User.Grid.init(),
+                Cytomine.Views.Project.Grid.init()
             ],
             listeners : {
                 show: function(p) {
