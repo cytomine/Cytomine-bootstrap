@@ -20,7 +20,7 @@ class AddProjectCommand extends Command implements UndoRedoCommand {
         data = newProject.encodeAsJSON()
         return [data : [success : true, message:"ok", project : newProject], status : 201]
       } else {
-        return [data : [project : newProject, errors : [newProject.errors]], status : 400]
+        return [data : [project : newProject, errors : newProject.retrieveErrors()], status : 400]
       }
     }catch(IllegalArgumentException ex)
     {

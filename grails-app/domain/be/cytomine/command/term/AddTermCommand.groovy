@@ -20,7 +20,7 @@ class AddTermCommand extends Command implements UndoRedoCommand {
         data = newTerm.encodeAsJSON()
         return [data : [success : true, message:"ok", term : newTerm], status : 201]
       } else {
-        return [data : [term : newTerm, errors : [newTerm.errors]], status : 400]
+        return [data : [term : newTerm, errors : newTerm.retrieveErrors()], status : 400]
       }
     }catch(IllegalArgumentException ex)
     {

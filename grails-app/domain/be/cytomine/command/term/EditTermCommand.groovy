@@ -31,7 +31,7 @@ class EditTermCommand extends Command implements UndoRedoCommand {
         return [data : [success : true, message:"ok", term :  updatedTerm], status : 200]
       } else {
         log.error "New Term can't be saved: " +  updatedTerm.errors
-        return [data : [term :  updatedTerm, errors : [ updatedTerm.errors]], status : 400]
+        return [data : [term :  updatedTerm, errors : updatedTerm.retrieveErrors()], status : 400]
       }
     }
     catch(IllegalArgumentException e)

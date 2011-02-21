@@ -31,7 +31,7 @@ class EditUserCommand extends Command implements UndoRedoCommand {
       updatedUser.save()
       return [data : [success : true, message:"ok", user :  updatedUser], status : 200]
     } else {
-      return [data : [user :  updatedUser, errors : [ updatedUser.errors]], status : 403]
+      return [data : [user :  updatedUser, errors :  updatedUser.retrieveErrors()], status : 403]
     }
 
 

@@ -19,7 +19,7 @@ class AddRelationCommand extends Command implements UndoRedoCommand {
         data = newRelation.encodeAsJSON()
         return [data : [success : true, message:"ok", relation : newRelation], status : 201]
       } else {
-        return [data : [relation : newRelation, errors : [newRelation.errors]], status : 400]
+        return [data : [relation : newRelation, errors : newRelation.retrieveErrors()], status : 400]
       }
     }catch(IllegalArgumentException ex)
     {

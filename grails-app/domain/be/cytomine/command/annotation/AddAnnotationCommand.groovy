@@ -20,7 +20,7 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
         return [data : [success : true , message:"ok", annotation : newAnnotation], status : 201]
       } else {
         log.error("Cannot save annotation:"+newAnnotation.errors)
-        return [data : [annotation : newAnnotation , errors : [newAnnotation.errors]], status : 400]
+        return [data : [annotation : newAnnotation , errors : newAnnotation.retrieveErrors()], status : 400]
       }
     }catch(com.vividsolutions.jts.io.ParseException e)
     {

@@ -43,7 +43,7 @@ class EditImageCommand extends Command implements UndoRedoCommand  {
         return [data : [success : true, message:"ok", image :  updatedImage], status : 200]
       } else {
         log.error "New image can't be saved: " +  updatedImage.errors
-        return [data : [image :  updatedImage, errors : [ updatedImage.errors]], status : 400]
+        return [data : [image :  updatedImage, errors : updatedImage.retrieveErrors()], status : 400]
       }
     }catch(IllegalArgumentException e)
     {

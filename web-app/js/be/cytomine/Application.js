@@ -112,20 +112,20 @@ Ext.onReady(Cytomine.Application.init, Cytomine.Application);
 var App = new Ext.App({});
 
 Ext.data.DataProxy.addListener('beforewrite', function(proxy, action) {
-    App.setAlert(App.STATUS_NOTICE, "Before " + action);
+    //App.setAlert(App.STATUS_NOTICE, "Before " + action);
 });
 
 ////
 // all write events
 //
 Ext.data.DataProxy.addListener('write', function(proxy, action, result, res, rs) {
-
-    App.setAlert(true, action + ':' + res.message);
+    App.setAlert(true, res.message);
 });
 
 ////
 // all exception events
 //
 Ext.data.DataProxy.addListener('exception', function(proxy, type, action, options, res) {
-    App.setAlert(false, "Something bad happend while executing " + action);
+    var jsonData = Ext.util.JSON.decode(res.responseText);
+    App.setAlert(false, ""+ jsonData.errors);
 });

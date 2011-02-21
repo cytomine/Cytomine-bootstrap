@@ -27,7 +27,7 @@ class AddImageCommand extends Command implements UndoRedoCommand {
         return [data : [success : true , message:"ok", image : newImage], status : 201]
       } else {
         log.error("Cannot save image:"+newImage.errors)
-        return [data : [image : newImage , errors : [newImage.errors]], status : 400]
+        return [data : [image : newImage , errors : newImage.retrieveErrors()], status : 400]
       }
     }catch(IllegalArgumentException ex)
     {

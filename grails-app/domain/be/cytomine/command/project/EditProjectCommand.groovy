@@ -31,7 +31,7 @@ class EditProjectCommand extends Command implements UndoRedoCommand {
         return [data : [success : true, message:"ok", project :  updatedProject], status : 200]
       } else {
         log.error "New projectcan't be saved: " +  updatedProject.errors
-        return [data : [project :  updatedProject, errors : [ updatedProject.errors]], status : 400]
+        return [data : [project :  updatedProject, errors :  updatedProject.retrieveErrors()], status : 400]
       }
     }
     catch(IllegalArgumentException e)

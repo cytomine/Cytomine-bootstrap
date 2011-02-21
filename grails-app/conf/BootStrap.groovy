@@ -30,16 +30,28 @@ class BootStrap {
   def springSecurityService
   def sequenceService
   def marshallersService
+  def grailsApplication
+  def messageSource
 
   def init = { servletContext ->
 
     marshallersService.initMarshallers()
     sequenceService.initSequences()
 
+    grailsApplication.domainClasses.each {domainClass ->//iterate over the domainClasses
+      if (domainClass.clazz.name.contains("be.cytomine")) {//only add it to the domains in my plugin
+
+        domainClass.metaClass.retrieveErrors = {
+          def list = delegate?.errors?.allErrors?.collect{messageSource.getMessage(it,null)}
+          return list?.join('\n')
+        }
+      }
+    }
+
     List inputArgs = ManagementFactory.getRuntimeMXBean().getInputArguments();
     for(int i =0;i<inputArgs.size();i++)
     {
-       println inputArgs.get(i)
+      println inputArgs.get(i)
     }
 
 
@@ -541,7 +553,7 @@ class BootStrap {
             [filename:'file:///home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.7001.tif.jp2',name:'_NEO4_HPg_INH_8.7001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:70,study:'NEO4'],
             [filename:'file:///home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_test/grp/converti/jpg/NEO_4_Curcu_INH_1.10_3_2_01.tif.jp2',name:'NEO_4_Curcu_INH_1.10_3_2_01.tif.jp2',slidename:'NEO_4_Curcu_INH_1',order:10,study:'NEO4']
     ]
-   // createLBTDScans(LBTDScans)
+    // createLBTDScans(LBTDScans)
 
     def ontologySamples = [
             [name: "Ontology1"],

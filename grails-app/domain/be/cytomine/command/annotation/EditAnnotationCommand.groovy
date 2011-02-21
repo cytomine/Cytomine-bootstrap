@@ -56,7 +56,7 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
         return [data : [success : true, message:"ok", annotation :  updatedAnnotation], status : 200]
       } else {
         log.error "New annotation can't be saved: " +  updatedAnnotation.errors
-        return [data : [annotation :  updatedAnnotation, errors : [ updatedAnnotation.errors]], status : 400]
+        return [data : [annotation :  updatedAnnotation, errors : updatedAnnotation.retrieveErrors()], status : 400]
       }
     }catch(com.vividsolutions.jts.io.ParseException e)
     {

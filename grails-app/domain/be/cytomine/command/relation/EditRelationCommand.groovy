@@ -30,7 +30,7 @@ class EditRelationCommand extends Command implements UndoRedoCommand {
         return [data : [success : true, message:"ok", relation :  updatedRelation], status : 200]
       } else {
         log.error "New Relation can't be saved: " +  updatedRelation.errors
-        return [data : [relation :  updatedRelation, errors : [ updatedRelation.errors]], status : 400]
+        return [data : [relation :  updatedRelation, errors :  updatedRelation.retrieveErrors()], status : 400]
       }
     }
     catch(IllegalArgumentException e)
