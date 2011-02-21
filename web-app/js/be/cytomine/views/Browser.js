@@ -1,10 +1,12 @@
 Ext.namespace('Cytomine');
+Ext.namespace('Cytomine.Views');
+Ext.namespace('Cytomine.Views.Browser');
 
 /**
- * @class Cytomine.Browser
+ * @class Cytomine.Views.Browser
  * @singleton
  */
-Cytomine.Browser = {
+Cytomine.Views.Browser = {
     /**
      * Retourne l'onglet correspondant au viewer de image
      * @return {Ext.Panel}
@@ -43,17 +45,15 @@ Cytomine.Browser = {
                 }
             }
         });
+    },
+    openScan : function(idTab, idImage, url, title) {
+        var tab = Cytomine.tabs.getItem(idTab);
+        if(tab){
+            Cytomine.tabs.remove(tab);
+        }
+        tab = Cytomine.tabs.add(this.tab(idTab, idImage, url, title)).show();
+        Cytomine.tabs.setActiveTab(tab);
+        if (Cytomine.toolbar != null) Cytomine.toolbar.show();
+        if (Cytomine.overview != null) Cytomine.overview.show();
     }
 };
-
-// Update the contents of a tab if it exists, otherwise create a new one
-Cytomine.Browser.openScan = function(idTab, idImage, url, title) {
-    var tab = Cytomine.tabs.getItem(idTab);
-    if(tab){
-        Cytomine.tabs.remove(tab);
-    }
-    tab = Cytomine.tabs.add(Cytomine.Browser.tab(idTab, idImage, url, title)).show();
-    Cytomine.tabs.setActiveTab(tab);
-    if (Cytomine.toolbar != null) Cytomine.toolbar.show();
-    if (Cytomine.overview != null) Cytomine.overview.show();
-}

@@ -32,8 +32,8 @@ Cytomine.Models.User = {
             id: 'user',
             autoLoad : true,
             restful: true,     // <-- This Store is RESTful
-            proxy: Cytomine.Models.User.proxy(),
-            reader: Cytomine.Models.User.reader(),
-            writer: Cytomine.Models.User.writer()   // <-- plug a DataWriter into the store just as you would a Reader
+            proxy: this.proxy(),
+            reader: this.reader(),
+            writer: this.writer()   // <-- plug a DataWriter into the store just as you would a Reader
         })}
 }
