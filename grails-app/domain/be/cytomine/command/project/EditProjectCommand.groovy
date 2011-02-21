@@ -13,12 +13,12 @@ class EditProjectCommand extends Command implements UndoRedoCommand {
 
     try {
       def postData = JSON.parse(postData)
-      log.debug "Image id="+postData.project.id
+      log.debug "Project id="+postData.project.id
       def updatedProject = Project.get(postData.project.id)
       def backup = updatedProject.encodeAsJSON()
 
       if (!updatedProject ) {
-        log.error "Project not found with id: " + postData.image.id
+        log.error "Project not found with id: " + postData.project.id
         return [data : [success : false, message : "Project not found with id: " + postData.project.id], status : 404]
       }
 
@@ -26,11 +26,11 @@ class EditProjectCommand extends Command implements UndoRedoCommand {
       updatedProject.id = postData.project.id
 
       if ( updatedProject.validate() && updatedProject.save(flush:true)) {
-        log.info "New image is saved"
+        log.info "New project is saved"
         data = ([ previousProject : (JSON.parse(backup)), newProject :  updatedProject]) as JSON
         return [data : [success : true, message:"ok", project :  updatedProject], status : 200]
       } else {
-        log.error "New image can't be saved: " +  updatedProject.errors
+        log.error "New projectcan't be saved: " +  updatedProject.errors
         return [data : [project :  updatedProject, errors : [ updatedProject.errors]], status : 400]
       }
     }

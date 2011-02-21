@@ -8,9 +8,11 @@ class Term {
   String name
   String comment
 
-
   static belongsTo = Annotation
-  static hasMany = [ child : Term, annotationTerm:AnnotationTerm, termOntology: TermOntology ]
+  static hasMany = [annotationTerm:AnnotationTerm, termOntology: TermOntology, relationTerm1:RelationTerm, relationTerm2:RelationTerm]
+
+   //must be done because RelationTerm has two Term attribute
+   static mappedBy = [relationTerm1:'term1', relationTerm2:'term2']
 
     static constraints = {
       comment(blank:true,nullable:true)
@@ -20,11 +22,36 @@ class Term {
     return annotationTerm.collect{it.term}
    }
 
-  static Term getTermFromData(data) {
+  def relationAsTerm1() {
+    def relations = []
+    relationTerm1.each {
+      def map = [:]
+      map.put(it.relation,it.term2)
+      relations.add(map)
+    }
+    return relations
+   }
+
+  def relationAsTerm2() {
+    def relations = []
+    relationTerm2.each {
+      def map = [:]
+      map.put(it.relation,it.term1)
+      relations.add(map)
+    }
+    return relations
+   }
+
+  static Term createTermFromData(jsonTerm) {
     def term = new Term()
-    term.name = data.term.name
-    term.comment = data.term.comment
-    //TODO: implement children&co
+    getTermFromData(term,jsonTerm)
+  }
+
+  static Term getTermFromData(term,jsonTerm) {
+    if(!jsonTerm.name.toString().equals("null"))
+      term.name = jsonTerm.name
+    else throw new IllegalArgumentException("Term name cannot be null")
+    term.comment = jsonTerm.comment
     return term;
   }
 
@@ -37,13 +64,13 @@ class Term {
       returnArray['name'] = it.name
       returnArray['comment'] = it.comment
 
-      def children = [:]
+      /*def children = [:]
       it.child.each { child ->
         def childArray = [:]
         childArray['name'] = child.name
         children[child.id] = childArray
       }
-      returnArray['children'] = children
+      returnArray['children'] = children*/
       return returnArray
     }
   }

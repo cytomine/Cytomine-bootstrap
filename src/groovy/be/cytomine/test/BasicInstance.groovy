@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory
 import be.cytomine.security.User
 import be.cytomine.project.Slide
 import be.cytomine.project.Project
+import be.cytomine.project.Relation
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,6 +24,40 @@ class BasicInstance {
 
   private static Log log = LogFactory.getLog(BasicInstance.class)
 
+  static Relation createOrGetBasicRelation() {
+
+    log.debug "createOrGetBasicRelation()"
+    def relation = Relation.findByName("BasicRelation")
+    if(!relation) {
+      relation =  new Relation(name:"BasicRelation")
+      relation.validate()
+      log.debug("relation.errors="+relation.errors)
+      relation.save(flush : true)
+      log.debug("relation.errors="+relation.errors)
+    }
+    assert relation!=null
+    relation
+  }
+
+  static Relation getBasicRelationNotExist() {
+
+    log.debug "createOrGetBasicRelationNotExist()"
+    def random = new Random()
+    def randomInt = random.nextInt()
+    def relation = Relation.findByName(randomInt+"")
+
+    while(relation){
+      randomInt = random.nextInt()
+      relation = Relation.findByName(randomInt+"")
+   }
+
+    relation =  new Relation(name:randomInt+"")
+    relation.validate()
+    log.debug("relation.errors="+relation.errors)
+
+    assert relation!=null
+    relation
+  }
 
   static Mime createOrGetBasicMime() {
 
@@ -34,7 +69,7 @@ class BasicInstance {
   }
 
   static Mime createNewMime() {
-     def mime = Mime.findByMimeType("mimeT");
+    def mime = Mime.findByMimeType("mimeT");
     log.debug "mime="+ mime
     if(mime==null)
     {
@@ -100,7 +135,7 @@ class BasicInstance {
   }
 
 
-   static Slide createOrGetBasicSlide() {
+  static Slide createOrGetBasicSlide() {
 
     log.debug  "createOrGetBasicSlide()"
     def slide = new Slide(name:"slide",order:1)
@@ -113,7 +148,7 @@ class BasicInstance {
 
   }
 
-   static Slide createNewSlide() {
+  static Slide createNewSlide() {
 
     log.debug  "createNewSlide()"
     def slide = new Slide(name:"newSlide",order:2)
@@ -121,32 +156,12 @@ class BasicInstance {
     log.debug "slide.errors="+slide.errors
     slide.save(flush : true)
     log.debug "slide.errors="+slide.errors
-     assert slide!=null
+    assert slide!=null
     slide
 
   }
 
 
-  static Term createOrGetBasicTerm() {
-
-    log.debug  "createOrGetBasicTerm()"
-    log.debug  "Create child term"
-    def termchild = new Term(name:"basicTermChild",comment:"basicTermComment")
-    termchild.validate()
-    log.debug "termchild.errors="+termchild.errors
-    termchild.save(flush : true)
-    log.debug "termchild.errors="+termchild.errors
-
-    log.debug  "Create main term"
-    def term = new Term(name:"basicTermName",comment:"basicTermComment")
-    term.validate()
-    log.debug "term.errors="+term.errors
-    term.addToChild(termchild)
-    term.save(flush : true)
-    log.debug "term.errors="+term.errors
-    assert term!=null
-    term
-  }
 
   static User getOldUser() {
 
@@ -172,17 +187,68 @@ class BasicInstance {
     user
   }
 
-   static Project createOrGetBasicProject() {
-
+  static Project createOrGetBasicProject() {
     log.debug  "createOrGetBasicProject()"
-    def project = new Project(name:"project")
-    project.validate()
-    log.debug "project.errors="+project.errors
-    project.save(flush : true)
-    log.debug "project.errors="+project.errors
+    def project = Project.findByName("BasicProject")
+    if(!project) {
+
+      project = new Project(name:"BasicProject")
+      project.validate()
+      log.debug "project.errors="+project.errors
+      project.save(flush : true)
+      log.debug "project.errors="+project.errors
+    }
     assert project!=null
     project
+  }
 
+  static Project getBasicProjectNotExist() {
+
+    log.debug "getBasicProjectNotExist()"
+    def random = new Random()
+    def randomInt = random.nextInt()
+    def project = Project.findByName(randomInt+"")
+
+    while(project){
+      randomInt = random.nextInt()
+      project = Project.findByName(randomInt+"")
+   }
+
+    project =  new Project(name:randomInt+"")
+    project.validate()
+    project
+  }
+
+  static Term createOrGetBasicTerm() {
+    log.debug  "createOrGetBasicTerm()"
+    def term = Term.findByName("BasicTerm")
+    if(!term) {
+
+      term = new Term(name:"BasicTerm")
+      term.validate()
+      log.debug "term.errors="+term.errors
+      term.save(flush : true)
+      log.debug "term.errors="+term.errors
+    }
+    assert term!=null
+    term
+  }
+
+  static Term getBasicTermNotExist() {
+
+    log.debug "getBasicTermNotExist()"
+    def random = new Random()
+    def randomInt = random.nextInt()
+    def term = Term.findByName(randomInt+"")
+
+    while(term){
+      randomInt = random.nextInt()
+      term = Term.findByName(randomInt+"")
+   }
+
+    term =  new Term(name:randomInt+"")
+    term.validate()
+    term
   }
 
   static void compareAnnotation(map, json)  {
@@ -214,9 +280,18 @@ class BasicInstance {
 
   }
 
+    static void compareRelation(map, json)  {
 
+    assert map.name.equals(json.relation.name)
 
+  }
 
+     static void compareTerm(map, json)  {
+
+    assert map.name.equals(json.term.name)
+    assert map.comment.equals(json.term.comment)
+
+  }
 
 
 
@@ -237,40 +312,40 @@ class BasicInstance {
 
   static Double toDouble(String s)
   {
-     if(s==null && s.equals("null")) return null
-     else return Double.parseDouble(s)
+    if(s==null && s.equals("null")) return null
+    else return Double.parseDouble(s)
   }
 
   static Double toDouble(Integer s)
   {
-     if(s==null) return null
-     else return Double.parseDouble(s.toString())
+    if(s==null) return null
+    else return Double.parseDouble(s.toString())
   }
 
   static Double toDouble(Double s)
   {
-     return s
+    return s
   }
 
   static Integer toInteger(String s)
   {
-     if(s==null && s.equals("null")) return null
-     else return Integer.parseDouble(s)
+    if(s==null && s.equals("null")) return null
+    else return Integer.parseDouble(s)
   }
 
   static Integer toInteger(Integer s)
   {
-     return s
+    return s
   }
 
   static Integer toLong(String s)
   {
-     if(s==null && s.equals("null")) return null
-     else return Integer.parseLong(s)
+    if(s==null && s.equals("null")) return null
+    else return Integer.parseLong(s)
   }
 
   static Integer toLong(Long s)
   {
-     return s
+    return s
   }
 }

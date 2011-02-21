@@ -1,29 +1,24 @@
 package be.cytomine
-
 import be.cytomine.test.BasicInstance
-import be.cytomine.project.Image
-import be.cytomine.acquisition.Scanner
 import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
-import be.cytomine.security.User
-import be.cytomine.project.Slide
-import be.cytomine.warehouse.Mime
 import be.cytomine.project.Project
+import be.cytomine.project.Relation
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
- * Date: 17/02/11
- * Time: 16:16
+ * Date: 21/02/11
+ * Time: 11:23
  * To change this template use File | Settings | File Templates.
  */
-class ProjectTests extends functionaltestplugin.FunctionalTestCase{
+class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
-  void testListProjectWithCredential() {
+  void testListRelationWithCredential() {
 
-    log.info("get project")
-    String URL = Infos.CYTOMINEURL+"api/project.json"
+    log.info("get relation")
+    String URL = Infos.CYTOMINEURL+"api/relation.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -37,10 +32,10 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     assert json instanceof JSONObject
   }
 
-  void testListProjectWithoutCredential() {
+  void testListRelationWithoutCredential() {
 
-    log.info("get project")
-    String URL = Infos.CYTOMINEURL+"api/project.json"
+    log.info("get relation")
+    String URL = Infos.CYTOMINEURL+"api/relation.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.BADLOGIN,Infos.BADPASSWORD);
     client.get()
@@ -52,13 +47,13 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(401,code)
   }
 
-  void testShowProjectWithCredential() {
+  void testShowRelationWithCredential() {
 
-    log.info("create project")
-    Project project =  BasicInstance.createOrGetBasicProject()
+    log.info("create relation")
+    Relation relation =  BasicInstance.createOrGetBasicRelation()
 
-    log.info("get project")
-    String URL = Infos.CYTOMINEURL+"api/project/"+ project.id +".json"
+    log.info("get relation")
+    String URL = Infos.CYTOMINEURL+"api/relation/"+ relation.id +".json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -73,17 +68,17 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
   }
 
 
-  void testAddProjectCorrect() {
+  void testAddRelationCorrect() {
 
-    log.info("create project")
-    def projectToAdd = BasicInstance.getBasicProjectNotExist()
-    String jsonProject = ([project : projectToAdd]).encodeAsJSON()
+    log.info("create relation")
+    def relationToAdd = BasicInstance.getBasicRelationNotExist()
+    String jsonRelation = ([relation : relationToAdd]).encodeAsJSON()
 
-    log.info("post project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project.json"
+    log.info("post relation:"+jsonRelation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/relation.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonProject)
+    client.post(jsonRelation)
     int code  = client.getResponseCode()
     String response = client.getResponseData()
     println response
@@ -93,11 +88,11 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(201,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
-    int idProject = json.project.id
+    int idRelation = json.relation.id
 
-    log.info("check if object "+ idProject +" exist in DB")
+    log.info("check if object "+ idRelation +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -115,9 +110,9 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
     assertEquals(201,code)
 
-    log.info("check if object "+ idProject +" not exist in DB")
+    log.info("check if object "+ idRelation +" not exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -138,11 +133,11 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     //must be done because redo change id
     json = JSON.parse(response)
     assert json instanceof JSONObject
-    idProject = json.project.id
+    idRelation = json.relation.id
 
-    log.info("check if object "+ idProject +" exist in DB")
+    log.info("check if object "+ idRelation +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -152,21 +147,21 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testAddProjectWithBadName() {
+  void testAddRelationWithBadName() {
 
-    log.info("create project")
-    def projectToAdd = BasicInstance.createOrGetBasicProject()
-    String jsonProject = ([project : projectToAdd]).encodeAsJSON()
+    log.info("create relation")
+    def relationToAdd = BasicInstance.getBasicRelationNotExist()
+    String jsonRelation = ([relation : relationToAdd]).encodeAsJSON()
 
-    def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.project.name = null
-    jsonProject = jsonUpdate.encodeAsJSON()
+    def jsonUpdate = JSON.parse(jsonRelation)
+    jsonUpdate.relation.name = null
+    jsonRelation = jsonUpdate.encodeAsJSON()
 
-    log.info("post project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project.json"
+    log.info("post relation:"+jsonRelation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/relation.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonProject)
+    client.post(jsonRelation)
     int code  = client.getResponseCode()
     String response = client.getResponseData()
     println response
@@ -177,7 +172,34 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testEditProjectCorrect() {
+  void testAddRelationWithNameAlreadyExist() {
+
+    log.info("create relation")
+    def relationToAdd = BasicInstance.getBasicRelationNotExist()
+    String jsonRelation = ([relation : relationToAdd]).encodeAsJSON()
+
+    //save the relation, so the "add" below must failed
+    relationToAdd.save(flush:true)
+    assertNotNull relationToAdd
+
+    log.info("post relation:"+jsonRelation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/relation.json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.post(jsonRelation)
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    println response
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(400,code)
+
+  }
+
+
+
+  void testEditRelationCorrect() {
 
     String oldName = "Name1"
     String newName = "Name2"
@@ -185,25 +207,25 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     def mapNew = ["name":newName]
     def mapOld = ["name":oldName]
 
-    /* Create a Name1 project */
-    log.info("create project")
-    Project projectToAdd = BasicInstance.createOrGetBasicProject()
-    projectToAdd.name = oldName
-    assert (projectToAdd.save(flush:true) != null)
+    /* Create a Name1 relation */
+    log.info("create relation")
+    Relation relationToAdd = BasicInstance.createOrGetBasicRelation()
+    relationToAdd.name = oldName
+    assert (relationToAdd.save(flush:true) != null)
 
-    /* Encode a niew project Name2*/
-    Project projectToEdit = Project.get(projectToAdd.id)
-    def jsonEdit = [project : projectToEdit]
-    def jsonProject = jsonEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.project.name = newName
-    jsonProject = jsonUpdate.encodeAsJSON()
+    /* Encode a niew relation Name2*/
+    Relation relationToEdit = Relation.get(relationToAdd.id)
+    def jsonEdit = [relation : relationToEdit]
+    def jsonRelation = jsonEdit.encodeAsJSON()
+    def jsonUpdate = JSON.parse(jsonRelation)
+    jsonUpdate.relation.name = newName
+    jsonRelation = jsonUpdate.encodeAsJSON()
 
-    log.info("put project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project/"+projectToEdit.id+".json"
+    log.info("put relation:"+jsonRelation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/relation/"+relationToEdit.id+".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonProject)
+    client.put(jsonRelation)
     int code  = client.getResponseCode()
     String response = client.getResponseData()
     println response
@@ -213,11 +235,11 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
-    int idProject = json.project.id
+    int idRelation = json.relation.id
 
-    log.info("check if object "+ idProject +" exist in DB")
+    log.info("check if object "+ idRelation +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -228,7 +250,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     json = JSON.parse(response)
     assert json instanceof JSONObject
 
-    BasicInstance.compareProject(mapNew,json)
+    BasicInstance.compareRelation(mapNew,json)
 
     log.info("test undo")
     client = new HttpClient()
@@ -240,9 +262,9 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
     assertEquals(200,code)
 
-    log.info("check if object "+ idProject +" exist in DB")
+    log.info("check if object "+ idRelation +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -253,7 +275,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     json = JSON.parse(response)
     assert json instanceof JSONObject
 
-    BasicInstance.compareProject(mapOld,json)
+    BasicInstance.compareRelation(mapOld,json)
 
     log.info("test redo")
     client = new HttpClient()
@@ -265,9 +287,9 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
     assertEquals(200,code)
 
-    log.info("check if object "+ idProject +" exist in DB")
+    log.info("check if object "+ idRelation +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -278,12 +300,12 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     json = JSON.parse(response)
     assert json instanceof JSONObject
 
-    BasicInstance.compareProject(mapNew,json)
+    BasicInstance.compareRelation(mapNew,json)
 
 
-    log.info("check if object "+ idProject +" exist in DB")
+    log.info("check if object "+ idRelation +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -296,25 +318,25 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testEditProjectWithBadName() {
+  void testEditRelationWithBadName() {
 
-    /* Create a Name1 project */
-    log.info("create project")
-    Project projectToAdd = BasicInstance.createOrGetBasicProject()
+    /* Create a Name1 relation */
+    log.info("create relation")
+    Relation relationToAdd = BasicInstance.createOrGetBasicRelation()
 
-    /* Encode a niew project Name2*/
-    Project projectToEdit = Project.get(projectToAdd.id)
-    def jsonEdit = [project : projectToEdit]
-    def jsonProject = jsonEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.project.name = null
-    jsonProject = jsonUpdate.encodeAsJSON()
+    /* Encode a niew relation Name2*/
+    Relation relationToEdit = Relation.get(relationToAdd.id)
+    def jsonEdit = [relation : relationToEdit]
+    def jsonRelation = jsonEdit.encodeAsJSON()
+    def jsonUpdate = JSON.parse(jsonRelation)
+    jsonUpdate.relation.name = null
+    jsonRelation = jsonUpdate.encodeAsJSON()
 
-    log.info("put project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project/"+projectToEdit.id+".json"
+    log.info("put relation:"+jsonRelation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/relation/"+relationToEdit.id+".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonProject)
+    client.put(jsonRelation)
     int code  = client.getResponseCode()
     client.disconnect();
 
@@ -323,30 +345,30 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testEditProjectWithNameAlreadyExist() {
+  void testEditRelationWithNameAlreadyExist() {
 
-    /* Create a Name1 project */
-    log.info("create project")
-    Project projectWithOldName = BasicInstance.createOrGetBasicProject()
-    Project projectWithNewName = BasicInstance.getBasicProjectNotExist()
-    projectWithNewName.save(flush:true)
+    /* Create a Name1 relation */
+    log.info("create relation")
+    Relation relationWithOldName = BasicInstance.createOrGetBasicRelation()
+    Relation relationWithNewName = BasicInstance.getBasicRelationNotExist()
+    relationWithNewName.save(flush:true)
 
 
-    /* Encode a niew project Name2*/
-    Project projectToEdit = Project.get(projectWithNewName.id)
-    log.info("projectToEdit="+projectToEdit)
-    def jsonEdit = [project : projectToEdit]
-    def jsonProject = jsonEdit.encodeAsJSON()
-    log.info("jsonProject="+jsonProject)
-    def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.project.name = projectWithOldName.name
-    jsonProject = jsonUpdate.encodeAsJSON()
+    /* Encode a niew relation Name2*/
+    Relation relationToEdit = Relation.get(relationWithNewName.id)
+    log.info("relationToEdit="+relationToEdit)
+    def jsonEdit = [relation : relationToEdit]
+    def jsonRelation = jsonEdit.encodeAsJSON()
+    log.info("jsonRelation="+jsonRelation)
+    def jsonUpdate = JSON.parse(jsonRelation)
+    jsonUpdate.relation.name = relationWithOldName.name
+    jsonRelation = jsonUpdate.encodeAsJSON()
 
-    log.info("put project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project/"+projectToEdit.id+".json"
+    log.info("put relation:"+jsonRelation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/relation/"+relationToEdit.id+".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonProject)
+    client.put(jsonRelation)
     int code  = client.getResponseCode()
     client.disconnect();
 
@@ -355,14 +377,18 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testDeleteProject() {
 
-    log.info("create project")
-    def projectToDelete = BasicInstance.createOrGetBasicProject()
-    String jsonProject = ([project : projectToDelete]).encodeAsJSON()
-    int idProject = projectToDelete.id
-    log.info("delete project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project/"+idProject+".json"
+
+
+
+  void testDeleteRelation() {
+
+    log.info("create relation")
+    def relationToDelete = BasicInstance.createOrGetBasicRelation()
+    String jsonRelation = ([relation : relationToDelete]).encodeAsJSON()
+    int idRelation = relationToDelete.id
+    log.info("delete relation:"+jsonRelation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/relation/"+idRelation+".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.delete()
@@ -372,9 +398,9 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     log.info("check response")
     assertEquals(204,code)
 
-    log.info("check if object "+ idProject +" exist in DB")
+    log.info("check if object "+ idRelation +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -393,11 +419,11 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(201,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
-    int newIdProject  = json.project.id
+    int newIdRelation  = json.relation.id
 
-    log.info("check if object "+ idProject +" exist in DB")
+    log.info("check if object "+ idRelation +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+newIdProject  +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+newIdRelation  +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -418,9 +444,9 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
     assertEquals(204,code)
 
-    log.info("check if object "+ newIdProject +" exist in DB")
+    log.info("check if object "+ newIdRelation +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -429,14 +455,14 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testDeleteProjectNotExist() {
+  void testDeleteRelationNotExist() {
 
-     log.info("create project")
-    def projectToDelete = BasicInstance.createOrGetBasicProject()
-    String jsonProject = ([project : projectToDelete]).encodeAsJSON()
+     log.info("create relation")
+    def relationToDelete = BasicInstance.createOrGetBasicRelation()
+    String jsonRelation = ([relation : relationToDelete]).encodeAsJSON()
 
-    log.info("delete project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project/-99.json"
+    log.info("delete relation:"+jsonRelation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/relation/-99.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.delete()
@@ -446,6 +472,4 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     log.info("check response")
     assertEquals(404,code)
   }
-
-
 }

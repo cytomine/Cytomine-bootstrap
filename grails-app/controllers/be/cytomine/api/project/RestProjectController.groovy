@@ -99,7 +99,9 @@ class RestProjectController {
 
 
   def delete =  {
+    log.info "Delete"
     User currentUser = User.get(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " params.id=" + params.id
     def postData = ([id : params.id]) as JSON
     def result = null
 

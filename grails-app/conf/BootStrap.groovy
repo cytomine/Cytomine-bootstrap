@@ -23,6 +23,8 @@ import be.cytomine.project.AnnotationTerm
 import be.cytomine.project.Ontology
 import be.cytomine.project.TermOntology
 import java.lang.management.ManagementFactory
+import be.cytomine.project.Relation
+import be.cytomine.project.RelationTerm
 
 class BootStrap {
   def springSecurityService
@@ -551,9 +553,24 @@ class BootStrap {
     def termSamples = [
             [name: "Cell in vivo",comment:"",ontology:["Ontology1"]],
             [name: "Cell ex vivo",comment:"",ontology:["Ontology1","Ontology3"]],
-            [name: "Cell",comment:"A comment for cell",child:["Cell in vivo","Cell ex vivo"],ontology:[]]
+            [name: "Cell",comment:"A comment for cell",ontology:[]],
+            [name: "Cell within a living organism",comment:"",ontology:["Ontology1"]]
     ]
     createTerms(termSamples)
+
+    def relationSamples = [
+            [name: "Synonym"],
+            [name: "Parent"],
+    ]
+    createRelation(relationSamples)
+
+
+    def relationTermSamples = [
+            [relation: "Parent",term1:"Cell", term2: "Cell ex vivo"],
+            [relation: "Parent",term1:"Cell", term2: "Cell in vivo"],
+            [relation: "Synonym", term1:"Cell within a living organism", term2: "Cell in vivo"],
+    ]
+    createRelationTerm(relationTermSamples)
 
 
 
@@ -992,10 +1009,7 @@ class BootStrap {
       termSamples.each { item ->
         term = new Term(name:item.name,comment:item.comment)
         println "create term="+ term.name
-        item.child.each { child ->
-          println "addd child="+ child
-          term.addToChild(Term.findByName(child))
-        }
+
         if(term.validate()) {
           println "Creating term : ${term.name}..."
           term.save(flush : true)
@@ -1017,4 +1031,47 @@ class BootStrap {
       }
     }
   }
+
+  def createRelation(relationsSamples) {
+    println "createRelation"
+    def relations =   Relation.list()?:[]
+    if(!relations) {
+      def relation = null
+      relationsSamples.each { item ->
+        relation = new Relation(name:item.name)
+        println "create relation="+ relation.name
+
+        if(relation.validate()) {
+          println "Creating relation : ${relation.name}..."
+          relation.save(flush : true)
+
+          relations << relation
+        } else {
+          println("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
+          relation.errors.each {
+            err -> println err
+          }
+
+        }
+      }
+    }
+  }
+
+  def createRelationTerm(relationTermSamples) {
+    def relationTerm = RelationTerm.list() ?: []
+
+    if (!relationTerm) {
+      relationTermSamples.each {item->
+
+        def relation = Relation.findByName(item.relation)
+        def term1 = Term.findByName(item.term1)
+        def term2 = Term.findByName(item.term2)
+
+        println "Creating term/relation  ${relation.name}:${item.term1}/${item.term2}..."
+        RelationTerm.link(term1,term2,relation)
+
+      }
+    }
+  }
+
 }

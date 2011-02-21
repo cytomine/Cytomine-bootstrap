@@ -23,8 +23,16 @@ class DeleteProjectCommand extends Command implements UndoRedoCommand {
 
   def undo() {
     def projectData = JSON.parse(data)
-    Project project = new Project(projectData)
-    project.save()
+    Project project = Project.createProjectFromData(projectData)
+    project.save(flush:true)
+
+    //save new id of the object that has been re-created
+    def postDataLocal = JSON.parse(postData)
+    postDataLocal.id =  project.id
+    postData = postDataLocal.toString()
+
+    log.debug "image project with id " + project.id
+
     return [data : [success : true, project : project, message : "OK"], status : 201]
   }
 
