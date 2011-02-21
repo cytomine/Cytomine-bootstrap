@@ -18,7 +18,7 @@ Cytomine.Models.Project = {
             messageProperty: 'message'  // <-- New "messageProperty" meta-data
         }, [
             {name: 'id'},
-            {name: 'name', allowBlank: false},
+            {name: 'name', allowBlank: true},
             {name: 'image'}
         ])},
     writer : function () { return new Ext.data.JsonWriter({

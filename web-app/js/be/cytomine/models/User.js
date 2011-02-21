@@ -17,11 +17,11 @@ Cytomine.Models.User = {
             messageProperty: 'message'  // <-- New "messageProperty" meta-data
         }, [
             {name: 'id'},
-            {name: 'username', allowBlank: false},
-            {name: 'firstname', allowBlank: false},
-            {name: 'lastname', allowBlank: false},
-            {name: 'email', allowBlank: false},
-            {name: 'password', allowBlank: false}
+            {name: 'username', allowBlank: true},
+            {name: 'firstname', allowBlank: true},
+            {name: 'lastname', allowBlank: true},
+            {name: 'email', allowBlank: true},
+            {name: 'password', allowBlank: true}
         ])},
     writer : function () { return new Ext.data.JsonWriter({
         encode: false,   // <-- don't return encoded JSON -- causes Ext.Ajax#request to send data using jsonData config rather than HTTP params

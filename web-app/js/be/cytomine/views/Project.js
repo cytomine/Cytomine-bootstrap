@@ -2,7 +2,8 @@ Ext.namespace('Cytomine');
 Ext.namespace('Cytomine.Views');
 Ext.namespace('Cytomine.Views.Project');
 
-Cytomine.Views.Project.Grid = {
+
+Cytomine.Views.Project = {
     userColumns : [
         /*{header: "ID", width: 40, sortable: true, dataIndex: 'id'},*/
         {header: "Name", width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
@@ -12,7 +13,8 @@ Cytomine.Views.Project.Grid = {
         return new Ext.ux.grid.RowEditor({
             saveText: 'Update'
         })},
-    init : function() {
+    grid : function() {
+        var alias = this;
         var store = Cytomine.Models.Project.store();
         var editor = this.editor();
         var detailsPanel = new Ext.Panel({
@@ -40,7 +42,7 @@ Cytomine.Views.Project.Grid = {
                     rowselect: function(smObj, rowIndex, record) {
                         var project = store.getById(record.id);
                         detailsPanel.removeAll();
-                        detailsPanel.add(Cytomine.Project.getView(project.get("image")));
+                        detailsPanel.add(alias.getView(project.get("image")));
                         detailsPanel.doLayout();
                     }
                 }
@@ -74,20 +76,6 @@ Cytomine.Views.Project.Grid = {
         })
         return ct;
     },
-    beforewrite : function () {
-        return new Ext.data.DataProxy.addListener('beforewrite', function(proxy, action) {
-            //App.setAlert(App.STATUS_NOTICE, "Before " + action);
-        })
-    },
-    write : function () {
-        return new Ext.data.DataProxy.addListener('write', function(proxy, action, result, res, rs) {
-            //App.setAlert(true, action + ':' + res.message);
-        })
-    },
-    exception : function () {
-        return new Ext.data.DataProxy.addListener('exception', function(proxy, type, action, options, res) {
-            //App.setAlert(false, "Something bad happend while executing " + action);
-        })},
     onAdd : function (grid, editor) {
         var u = new grid.store.recordType({
             name : ''
@@ -105,5 +93,35 @@ Cytomine.Views.Project.Grid = {
             return false;
         }
         grid.store.remove(rec);
+    },
+    getView : function(url) {
+        console.log("Getview " + url);
+        return new Ext.DataView({
+            itemSelector: 'div.thumb-wrap',
+            store: new Ext.data.JsonStore({
+                url : url,
+                autoLoad: true,
+                root: 'scan',
+                fields:[
+                    'id','filename', 'thumb', 'browse'
+                ]
+            }),
+            tpl: new Ext.XTemplate(
+                    '<tpl for=".">',
+                    '<div class="thumb-wrap" id="{id}">',
+                    '<div class="thumb"><img src="{thumb}" title="{filename}"></div>',
+                    '<span class="x-editable">{filename} {id}</span></div>',
+                    '</tpl>'
+                    ),
+            listeners: {
+                click: function(dataview, index, node, e) {
+                    var data = dataview.getStore().getAt(index);
+                    Cytomine.Views.Browser.openScan(data.get('id'), data.get('id'),data.get('browse'), data.get('filename')); //multiple tabs
+
+                    //Cytomine.Retrieval.showSimilarities(data.get('id'),data.get('id'), data.get('filename')); //multiple tabs
+                    //Cytomine.Browser.openScan('browser', data.get('id'), data.get('filename')); //unique tabs
+                }
+            }
+        });
     }
 }

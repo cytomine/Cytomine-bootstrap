@@ -2,7 +2,7 @@ Ext.namespace('Cytomine');
 Ext.namespace('Cytomine.Views');
 Ext.namespace('Cytomine.Views.User');
 
-Cytomine.Views.User.Grid = {
+Cytomine.Views.User = {
     userColumns : [
         /*{header: "ID", width: 40, sortable: true, dataIndex: 'id'},*/
         {header: "Username", width: 100, sortable: true, dataIndex: 'username', editor: new Ext.form.TextField({})},
@@ -15,7 +15,7 @@ Cytomine.Views.User.Grid = {
         return new Ext.ux.grid.RowEditor({
             saveText: 'Update'
         })},
-    init : function() {
+    grid : function() {
         var store = Cytomine.Models.User.store();
         var editor = this.editor();
 
@@ -49,20 +49,6 @@ Cytomine.Views.User.Grid = {
         grid.doLayout();
         return grid;
     },
-    beforewrite : function () {
-        return new Ext.data.DataProxy.addListener('beforewrite', function(proxy, action) {
-            //App.setAlert(App.STATUS_NOTICE, "Before " + action);
-        })
-    },
-    write : function () {
-        return new Ext.data.DataProxy.addListener('write', function(proxy, action, result, res, rs) {
-            //App.setAlert(true, action + ':' + res.message);
-        })
-    },
-    exception : function () {
-        return new Ext.data.DataProxy.addListener('exception', function(proxy, type, action, options, res) {
-            //App.setAlert(false, "Something bad happend while executing " + action);
-        })},
     onAdd : function (grid, editor) {
         var u = new grid.store.recordType({
             username : '',

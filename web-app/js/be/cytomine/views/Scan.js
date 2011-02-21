@@ -7,7 +7,6 @@ Cytomine.Project.Scan = function (urls, scanID, filename, path, metadataUrl) {
     this.filename = filename;
     this.path = path;
     this.metadataUrl = metadataUrl;
-    this.initMap();
 }
 
 

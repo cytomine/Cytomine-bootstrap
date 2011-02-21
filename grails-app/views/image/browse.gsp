@@ -75,6 +75,7 @@
           var data = Ext.decode( response.responseText );
           var image = data.image;
           var scan = new Cytomine.Project.Scan(${urls}, image.id, image.filename, image.path, image.metadataUrl);
+          scan.initMap();
           console.log(image.metadataUrl);
           layerAnnotation = new Cytomine.Project.AnnotationLayer( "totolayer", ${scan.id});
           layerAnnotation.loadToMap(scan);

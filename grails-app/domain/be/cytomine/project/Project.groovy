@@ -11,7 +11,7 @@ class Project extends SequenceDomain {
   static hasMany = [projectSlide:ProjectSlide, projectGroup:ProjectGroup]
 
   static constraints = {
-    name ( maxSize : 100)
+    name ( maxSize : 100, unique : true)
   }
 
   String toString() {
