@@ -25,7 +25,11 @@
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Scan.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/AnnotationLayer.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Browser.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Admin.js')}" ></script>
 
+
+  <!-- Langs -->
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/languages/fr.js')}" ></script>
 
   <!-- Models -->
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/User.js')}" ></script>
@@ -36,6 +40,7 @@
 
 
   <link rel="stylesheet" href="${resource(dir:'css',file:'loading.css')}" />
+  <link rel="stylesheet" href="${resource(dir:'css',file:'icons.css')}" />
   <link rel="stylesheet" href="${resource(dir:'css',file:'ext.css')}" />
   <g:layoutHead />
 
@@ -48,9 +53,9 @@
   </div>
 </div>
 <g:layoutBody />
-
+<div id="toolbar"></div>
 <div id="controls">
-  <ul id="controlToggle">
+  <!--<ul id="controlToggle">
     <li>
       <input type="radio" name="type" value="none" id="noneToggle"
               onclick="Cytomine.currentLayer.toggleControl(this);" checked="checked" />
@@ -111,7 +116,7 @@
         </li>
       </ul>
     </li>
-  </ul>
+  </ul>-->
 </div>
 
 </body>

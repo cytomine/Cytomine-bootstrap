@@ -17,7 +17,8 @@ Cytomine.Project.Scan.prototype = {
     path : null,
     map : null,
     initMap : function () {
-
+        //clear previous overview Map
+        document.getElementById("overviewMap").innerHTML="";
         console.log("metadataURl" + this.metadataUrl);
         console.log("filename" + this.filename);
         console.log("urls" + this.urls);
@@ -42,9 +43,7 @@ Cytomine.Project.Scan.prototype = {
             new OpenLayers.Control.MousePosition(),
             new OpenLayers.Control.OverviewMap({
                 div : $('overviewMap'),
-       //         size : new OpenLayers.Size(256,256),
                 size: new OpenLayers.Size(metadata.width / Math.pow(2, openURLLayer.getViewerLevel()), metadata.height / Math.pow(2,(openURLLayer.getViewerLevel()))),
-                //maxRatio : 1,
                 minRatio : 1,
                 maxRatio : 1024,
                 mapOptions: mapOptions}),

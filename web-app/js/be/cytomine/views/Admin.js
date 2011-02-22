@@ -1,12 +1,6 @@
-/**
- * Created by IntelliJ IDEA.
- * User: stevben
- * Date: 28/01/11
- * Time: 11:01
- * To change this template use File | Settings | File Templates.
- */
+Ext.namespace('Cytomine');
 
-Cytomine.Dashboard = {
+Cytomine.Admin = {
 
 
     /**
@@ -15,12 +9,12 @@ Cytomine.Dashboard = {
      */
     tab: function() {
         return new Ext.Panel({
-            id: 'Dashboard',
+            id: 'Admin',
             bodyCssClass: 'overflow-auto',
             iconCls: 'envelope-label',
-            title: 'Dashboard',
+            title: 'Admin',
             items: [
-                Cytomine.Views.Project.grid()
+                Cytomine.Views.User.grid()
             ],
             listeners : {
                 show: function(p) {

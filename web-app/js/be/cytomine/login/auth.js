@@ -4,6 +4,7 @@ Ext.namespace('Cytomine.auth');
 Ext.BLANK_IMAGE_URL = './extjs/resources/images/default/s.gif';
 
 
+var App = new Ext.App({});
 
 Ext.onReady(function(){
 
@@ -13,10 +14,10 @@ Ext.onReady(function(){
         formId: 'login_form',
         frame:true,
         renderTo: 'login',
-        width:280,
+        width:300,
         labelWidth:80,
         defaults: {
-            width: 165
+            width: 185
         },
         items: [
             new Ext.form.TextField({
@@ -54,27 +55,31 @@ Ext.onReady(function(){
         ]
     });
 
+    var footer = new Ext.Panel({
+        html : 'footer'
+    });
+
 
     Cytomine.auth.handleLoginResponse =  {
         url: '../j_spring_security_check',
         waitMsg: 'Processing Request',
         success: function(loginForm, resp){
-            //alert(resp.result.followUrl);
             window.location = resp.result.followUrl;
-            //successMsg('Success', 'Welcome to Cytomine "'+ resp.result.username);
-
         },
         failure : function(loginForm, resp) {
-            //alert(resp.result.error); //TO DO error is null but why ?
-            failureMsg('Error', 'Oops ');
+            var jsonData = Ext.util.JSON.decode(resp.response.responseText);
+
+
+            App.setAlert(false, ""+ jsonData.message);
         }
     };
 
     var loginWindow = new Ext.Window({
-        title: 'Welcome to Cytomine',
+        title: 'Cytomine Restricted Area',
         layout: 'fit',
+        iconCls: 'ulg',
         height: 160,
-        width: 280,
+        width: 300,
         closable: false,
         resizable: false,
         draggable: false,

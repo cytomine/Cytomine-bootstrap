@@ -1,0 +1,82 @@
+.control-left { background-image:url(../images/icons/control-180.png) !important; }
+.control-right { background-image:url(../images/icons/control.png) !important; }
+.control-up { background-image:url(../images/icons/control-090.png) !important; }
+.control-bottom { background-image:url(../images/icons/control-270.png) !important; }
+
+.zoom-in { background-image:url(../images/icons/magnifier-zoom.png) !important; }
+.zoom-out { background-image:url(../images/icons/magnifier-zoom-out.png) !important; }
+.zoom-real { background-image:url(../images/icons/magnifier-zoom-actual.png) !important; }
+.zoom-fit { background-image:url(../images/icons/magnifier-zoom-fit.png) !important; }
+
+.refresh { background-image:url(../images/icons/arrow-circle-double-135.png) !important; }
+
+.layer-ellipse { background-image:url(../images/icons/layer-shape-ellipse.png) !important; }
+.layer-polygon { background-image:url(../images/icons/layer-shape-polygon.png) !important; }
+.layer-shape { background-image:url(../images/icons/layer-shape.png) !important; }
+.layer-stack { background-image:url(../images/icons/layers-stack.png) !important; }
+
+.layer-transparent { background-image:url(../images/icons/layer-transparent.png) !important; }
+.color-swatch { background-image:url(../images/icons/color-swatch.png) !important; }
+
+.image-min { background-image:url(../images/icons/image-resize-actual.png) !important; }
+.image { background-image:url(../images/icons/image.png) !important; }
+
+.inbox { background-image:url(../images/icons/inbox.png) !important; }
+
+.eye { background-image:url(../images/icons/eye.png) !important; }
+.eye-red { background-image:url(../images/icons/eye-red.png) !important; }
+.eye-slash { background-image:url(../images/icons/eye-slash.png) !important; }
+
+.question { background-image:url(../images/icons/question.png) !important; }
+.information { background-image:url(../images/icons/information.png) !important; }
+
+.sticky-notes-stack { background-image:url(../images/icons/sticky-notes-stack.png) !important; }
+.sticky-note { background-image:url(../images/icons/sticky-note.png) !important; }
+.sticky-note-pencil { background-image:url(../images/icons/sticky-note--pencil.png) !important; }
+.sticky-note-minus { background-image:url(../images/icons/sticky-note--minus.png) !important; }
+
+.tag-label { background-image:url(../images/icons/tag-label.png) !important; }
+.tag-label-funnel { background-image:url(../images/icons/tag-label-funnel.png) !important; }
+.tags-label { background-image:url(../images/icons/tags-label.png) !important; }
+
+.tag-label-minus { background-image:url(../images/icons/tag-label-minus.png) !important; }
+.tag-label-pencil { background-image:url(../images/icons/tag-label-pencil.png) !important; }
+
+.ontologies-tree .x-tree-node-icon { background-image:url(../images/icons/tag-label.png) !important; }
+.x-dd-drag-ghost .x-tree-node-icon { background-image:url(../images/icons/tag-label-arrow.png) !important; }
+
+.clipboard-list { background-image:url(../images/icons/clipboard-list.png) !important; }
+
+.magnifier-medium { background-image:url(../images/icons/magnifier-medium.png) !important; }
+
+.node { background-image:url(../images/icons/node.png) !important; }
+.hand { background-image:url(../images/icons/hand.png) !important; }
+
+.cursor { background-image:url(../images/icons/cursor.png) !important; }
+
+.ruler-crop { background-image:url(../images/icons/ruler-crop.png) !important; }
+.ruler { background-image:url(../images/icons/ruler.png) !important; }
+
+.loading { background-image:url(../images/icons/loading.gif) !important; }
+.tick { background-image:url(../images/icons/tick.png) !important; }
+
+.ulg { background-image:url(../images/icons/ulg.png) !important; }
+.giga { background-image:url(../images/icons/giga.png) !important; }
+
+.background { background-image: url(../images/background.png) }
+.status-icon { background-repeat: no-repeat; padding-left: 20px !important; background-position: 0pt 50%; min-height:16px; }
+
+.map { background-image:url(../images/icons/map.png) !important; }
+.envelope-label { background-image:url(../images/icons/envelope-label.png) !important; }
+
+.plus { background-image:url(../images/icons/plus.png) !important; }
+.cross { background-image:url(../images/icons/cross.png) !important; }
+
+.funnel { background-image:url(../images/icons/funnel.png) !important; }
+.bug { background-image:url(../images/icons/bug.png) !important; }
+
+.relation { background-image:url(../images/icons/sql-join.png) !important; }
+.relation-intersection { background-image:url(../images/icons/sql-join-inner.png) !important; }
+.relation-union { background-image:url(../images/icons/sql-join-outer.png) !important; }
+.relation-disjoint { background-image:url(../images/icons/sql-join-outer-exclude.png) !important; }
+.relation-is { background-image:url(../images/icons/arrow-transition-270.png) !important; }

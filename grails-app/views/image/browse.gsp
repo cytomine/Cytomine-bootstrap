@@ -84,7 +84,7 @@
           Cytomine.scans[${scan.id}] = scan;
           Cytomine.annotationLayers[${scan.id}] = layerAnnotation;
           Cytomine.currentLayer = Cytomine.annotationLayers[${scan.id}];
-          document.getElementById('noneToggle').checked = true;
+          //document.getElementById('noneToggle').checked = true;
         },
         failure: function (response) { console.log('failure : ' + response.responseText);}
       });
@@ -93,17 +93,6 @@
 
     Ext.onReady(function () {
       initOpenLayers();
-      if (Cytomine.overview != null) {
-        Cytomine.overview.close();
-        Cytomine.overview = null;
-      }
-      Cytomine.overview = new Ext.Window({
-        id : 'overviewMapPanel',
-        title  : 'Overview',
-        el : 'overviewMap',
-        x : 10,
-        y : 500
-      }).show();
     });
 
   </script>
@@ -111,7 +100,7 @@
 </head>
 <body onload="init()">
 <div id="map${scan.id}"></div>
-<div id="overviewMap"></div>
+
 
 </body>
 </html>

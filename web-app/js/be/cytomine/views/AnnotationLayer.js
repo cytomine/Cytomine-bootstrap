@@ -24,6 +24,12 @@ Cytomine.Project.AnnotationLayer.prototype = {
     controls : null,
 
     dialog : null,
+
+    rotate : false,
+    resize : false,
+    drag : false,
+    irregular : false,
+    aspectRatio  : false,
     /*Load layer for annotation*/
     loadToMap : function (scan) {
         vectorsLayer = new OpenLayers.Layer.Vector("Vector Layer");
@@ -85,12 +91,12 @@ Cytomine.Project.AnnotationLayer.prototype = {
         scan.initTools(controls);
         scan.map.addLayer(vectorsLayer);
 
-        var panel = new OpenLayers.Control.Panel();
+        //var panel = new OpenLayers.Control.Panel();
         var nav = new OpenLayers.Control.NavigationHistory();
         scan.map.addControl(nav);
-        panel.addControls([nav.next, nav.previous]);
+        //panel.addControls([nav.next, nav.previous]);
 
-        scan.map.addControl(panel);
+        //scan.map.addControl(panel);
 
 
     },
@@ -278,41 +284,60 @@ Cytomine.Project.AnnotationLayer.prototype = {
 
      this.updateAnnotation(evt.feature);
      },*/
-    update : function() {
-        console.log("update")
-        // reset modification mode
+    toggleRotate : function() {
+        this.rotate = !this.rotate;
+        this.updateControls();
+    },
+    toggleResize : function() {
+        this.resize = !this.resize;
+        this.updateControls();
+    },
+    toggleDrag : function() {
+        this.drag = !this.drag;
+        this.updateControls();
+
+    },
+    toggleIrregular : function() {
+        this.irregular = !this.irregular;
+        this.updateControls();
+    },
+    toggleAspectRatio : function() {
+        this.aspectRatio = !this.aspectRatio;
+        this.updateControls();
+    },
+    setSides : function(sides) {
+        this.sides = sides;
+        this.updateControls();
+    },
+    updateControls : function() {
+
         controls.modify.mode = OpenLayers.Control.ModifyFeature.RESHAPE;
-        var rotate = document.getElementById("rotate").checked;
-        if(rotate) {
+        if(this.rotate) {
             controls.modify.mode |= OpenLayers.Control.ModifyFeature.ROTATE;
         }
-        var resize = document.getElementById("resize").checked;
-        if(resize) {
+
+        if(this.resize) {
             controls.modify.mode |= OpenLayers.Control.ModifyFeature.RESIZE;
-            var keepAspectRatio = document.getElementById("keepAspectRatio").checked;
-            if (keepAspectRatio) {
+            if (this.aspectRatio) {
                 controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
             }
         }
-        var drag = document.getElementById("drag").checked;
-        if(drag) {
+        if(this.drag) {
             controls.modify.mode |= OpenLayers.Control.ModifyFeature.DRAG;
         }
-        if (rotate || drag) {
+        if (this.rotate || this.drag) {
             controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
         }
-        var sides = parseInt(document.getElementById("sides").value);
-        sides = Math.max(3, isNaN(sides) ? 0 : sides);
-        controls.regular.handler.sides = sides;
-        var irregular =  document.getElementById("irregular").checked;
-        controls.regular.handler.irregular = irregular;
+        controls.regular.handler.sides = this.sides;
+        controls.regular.handler.irregular = this.irregular;
     },
     toggleControl :
     function (element) {
-        console.log("toggleControl")
+        console.log("toggleControl in " + element.name);
         for(key in controls) {
             var control = controls[key];
-            if(element.value == key && element.checked) {
+            if(element.name == key) {
+                console.log("activate control : " + key)
                 control.activate();
             } else {
                 console.log("deactivate control : " + key)

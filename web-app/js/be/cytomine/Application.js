@@ -12,12 +12,7 @@ Cytomine.Application = function() {
     return {
         init : function() {
 
-            console.log("Init Application");
-
-            Ext.BLANK_IMAGE_URL = 'http://extjs.cachefly.net/ext-3.1.0/resources/images/default/s.gif';
-
-            //Stores
-
+           console.log("Init Application");
 
 
             //Create our centre panel with tabs
@@ -30,7 +25,8 @@ Cytomine.Application = function() {
                 resizeTabs:true, // turn on tab resizing
                 minTabWidth: 115,
                 items:[
-                    Cytomine.Dashboard.tab()
+                    Cytomine.Dashboard.tab(),
+                    Cytomine.Admin.tab()
                 ],
                 defaults: {
                     autoScroll:true
@@ -44,14 +40,40 @@ Cytomine.Application = function() {
                 }
             });
 
-            Cytomine.toolbar = new Ext.Window({
-                id : 'toolbarPanel',
+            Cytomine.overview = new Ext.Window({
+                id : 'overviewMapPanel',
+                title  : 'Overview',
                 layout : 'fit',
-                title  : 'Annotations controls',
-                el : 'controls',
-                x : 400,
-                y : 65
+                iconCls :'image-min',
+                html : '<div id="overviewMap"></div>',
+                x : 10,
+                y : 500,
+                autoWidth : true,
+                autoHeight : true
             });
+
+            /*Cytomine.toolbar = new Ext.Window({
+                id : 'toolbarPanel',
+                title  : 'Controls',
+                layout :'fit',
+                el : 'toolbar',
+                tbar : {
+                    items: [
+                        {id: 'noneToggle', name : 'none',tooltip: ULg.lang.Viewer.annotations.toolMove, iconCls:'hand', enableToggle: true, toggleGroup:'controlToggle', pressed:true, handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.toggleControl(this);}},
+                        {id: 'selectToggle', name : 'select',tooltip: ULg.lang.Viewer.annotations.toolSelect, iconCls:'cursor', enableToggle: true, toggleGroup:'controlToggle', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.toggleControl(this);}},
+                        //{id:'tool-rect', tooltip: ULg.lang.Viewer.annotations.toolRectangle, iconCls:'layer-shape', enableToggle: true, toggleGroup:'tool', handler: function() {Cytomine.currentLayer.toggleControl(this);}},
+                        //{id:'tool-circle', tooltip: ULg.lang.Viewer.annotations.toolCircle, iconCls:'layer-ellipse', enableToggle: true, toggleGroup:'tool', handler: function() {Cytomine.currentLayer.toggleControl(this);}},
+                        {id:'polygonToggle', name : 'polygon',tooltip: ULg.lang.Viewer.annotations.toolPolygon, iconCls:'layer-polygon', enableToggle: true, toggleGroup:'controlToggle', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.toggleControl(this);}},
+                        '-',
+                        '->',
+                        '-'
+                    ]
+                },
+                x : 400,
+                y : 65,
+                autoHeight: true,
+                autoWidth: true
+            });*/
 
             // This is the app UI layout code.  All of the calendar views are subcomponents of
             // CalendarPanel, but the app title bar and sidebar/navigation calendar are separate
@@ -129,3 +151,5 @@ Ext.data.DataProxy.addListener('exception', function(proxy, type, action, option
     var jsonData = Ext.util.JSON.decode(res.responseText);
     App.setAlert(false, ""+ jsonData.errors);
 });
+
+
