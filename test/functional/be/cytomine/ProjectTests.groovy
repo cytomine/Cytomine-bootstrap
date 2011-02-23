@@ -355,6 +355,39 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
+  void testEditProjectNotExist() {
+
+    /* Create a Name1 project */
+    log.info("create project")
+    Project projectWithOldName = BasicInstance.createOrGetBasicProject()
+    Project projectWithNewName = BasicInstance.getBasicProjectNotExist()
+    projectWithNewName.save(flush:true)
+
+
+    /* Encode a niew project Name2*/
+    Project projectToEdit = Project.get(projectWithNewName.id)
+    log.info("projectToEdit="+projectToEdit)
+    def jsonEdit = [project : projectToEdit]
+    def jsonProject = jsonEdit.encodeAsJSON()
+    log.info("jsonProject="+jsonProject)
+    def jsonUpdate = JSON.parse(jsonProject)
+    jsonUpdate.project.name = projectWithOldName.name
+    jsonUpdate.project.id = -99
+    jsonProject = jsonUpdate.encodeAsJSON()
+
+    log.info("put project:"+jsonProject.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/project/-99.json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.put(jsonProject)
+    int code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(404,code)
+
+  }
+
   void testDeleteProject() {
 
     log.info("create project")

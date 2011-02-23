@@ -12,6 +12,8 @@ import be.cytomine.security.User
 import be.cytomine.project.Slide
 import be.cytomine.project.Project
 import be.cytomine.project.Relation
+import be.cytomine.project.RelationTerm
+import be.cytomine.project.AnnotationTerm
 
 /**
  * Created by IntelliJ IDEA.
@@ -234,6 +236,21 @@ class BasicInstance {
     term
   }
 
+  static Term createOrGetAnotherBasicTerm() {
+    log.debug  "createOrGetBasicTerm()"
+    def term = Term.findByName("AnotherBasicTerm")
+    if(!term) {
+
+      term = new Term(name:"AnotherBasicTerm")
+      term.validate()
+      log.debug "term.errors="+term.errors
+      term.save(flush : true)
+      log.debug "term.errors="+term.errors
+    }
+    assert term!=null
+    term
+  }
+
   static Term getBasicTermNotExist() {
 
     log.debug "getBasicTermNotExist()"
@@ -250,6 +267,76 @@ class BasicInstance {
     term.validate()
     term
   }
+
+
+  static RelationTerm createOrGetBasicRelationTerm() {
+    log.debug  "createOrGetBasicRelationTerm()"
+    def relation = createOrGetBasicRelation()
+    def term1 = createOrGetBasicTerm()
+    def term2 = createOrGetAnotherBasicTerm()
+
+    def relationTerm = RelationTerm.findWhere('relation':relation,'term1':term1,'term2':term2)
+    log.debug "relationTerm=" + relationTerm
+    if(!relationTerm) {
+      log.debug "relationTerm link"
+      relationTerm = RelationTerm.link(relation,term1,term2)
+      log.debug "relationTerm.errors="+relationTerm.errors
+    }
+    assert relationTerm!=null
+    relationTerm
+  }
+
+  static RelationTerm getBasicRelationTermNotExist() {
+
+    log.debug "getBasicRelationTermNotExist()"
+    def random = new Random()
+    def randomInt = random.nextInt()
+
+    def relation = getBasicRelationNotExist()
+    def term1 = getBasicTermNotExist()
+    def term2 = getBasicTermNotExist()
+    relation.save(flush:true)
+    term1.save(flush:true)
+    term2.save(flush:true)
+
+    def relationTerm = RelationTerm.link(relation,term1,term2)
+    log.debug "relationTerm.errors="+relationTerm.errors
+    relationTerm
+  }
+
+
+  static AnnotationTerm createOrGetBasicAnnotationTerm() {
+    log.debug  "createOrGetBasicAnnotationTerm()"
+    def annotation = createOrGetBasicAnnotation()
+    def term = getBasicTermNotExist()
+    term.save(flush:true)
+    assert term!=null
+    def annotationTerm =  AnnotationTerm.findByAnnotationAndTerm(annotation,term)
+
+    if(!annotationTerm) {
+      log.debug "annotationTerm link"
+      annotationTerm = AnnotationTerm.link(annotation,term)
+      log.debug "AnnotationTerm.errors="+annotationTerm.errors
+    }
+    assert annotationTerm!=null
+    annotationTerm
+  }
+
+  static AnnotationTerm getBasicAnnotationTermNotExist() {
+
+    log.debug "getBasicAnnotationTermNotExist()"
+    def random = new Random()
+    def randomInt = random.nextInt()
+
+    def annotation = createOrGetBasicAnnotation()
+    def term = getBasicTermNotExist()
+    term.save(flush:true)
+    assert term!=null
+    def annotationTerm = AnnotationTerm.link(annotation,term)
+    log.debug "annotationTerm.errors="+annotationTerm.errors
+    annotationTerm
+  }
+
 
   static void compareAnnotation(map, json)  {
 

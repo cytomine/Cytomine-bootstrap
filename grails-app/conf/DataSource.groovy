@@ -20,6 +20,7 @@ environments {
   }
   test {
     dataSource {
+      //loggingSql = true
       dbCreate = "create"
       url="jdbc:postgresql://localhost:5432/cytomine"
     }

@@ -477,4 +477,26 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     assert json instanceof JSONObject
 
   }
+
+  void testAddTermAnnotationMapping()
+  {
+
+  }
+
+  void testAddTermAnnotationMappingAlreadyExist()
+  {
+
+  }
+
+
+  void testAddTermNoExistToAnnotationMapping()
+  {
+
+  }
+
+  void testAddTermToAnnotationNotExistMapping()
+  {
+
+  }
+
 }

@@ -51,7 +51,7 @@ class RestProjectController {
 
     if (result.status == 201) {
       addProjectCommand.save()
-      new UndoStack(command : addProjectCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save()
+      new UndoStack(command : addProjectCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
 
     response.status = result.status
@@ -81,7 +81,7 @@ class RestProjectController {
 
     if (result.status == 200) {
       editProjectCommand.save()
-      new UndoStack(command : editProjectCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
+      new UndoStack(command : editProjectCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
     }
 
@@ -110,7 +110,7 @@ class RestProjectController {
     result = deleteProjectCommand.execute()
     if (result.status == 204) {
       deleteProjectCommand.save()
-      new UndoStack(command : deleteProjectCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
+      new UndoStack(command : deleteProjectCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
     response.status = result.status
     withFormat {

@@ -11,6 +11,7 @@ import be.cytomine.command.term.AddTermCommand
 import be.cytomine.command.UndoStack
 import be.cytomine.command.term.EditTermCommand
 import be.cytomine.command.term.DeleteTermCommand
+import be.cytomine.command.annotationterm.AddAnnotationTermCommand
 
 class RestTermController {
 
@@ -32,7 +33,7 @@ class RestTermController {
         response.status = 404
         render contentType: "application/xml", {
           errors {
-            message("Term not found with id: " + params.idterm)
+            message("Annotation not found with id: " + params.id)
           }
         }
       }
@@ -73,7 +74,7 @@ class RestTermController {
 
     if (result.status == 201) {
       addTermCommand.save()
-      new UndoStack(command : addTermCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save()
+      new UndoStack(command : addTermCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
 
     response.status = result.status
@@ -102,7 +103,7 @@ class RestTermController {
 
       if (result.status == 200) {
         editTermCommand.save()
-        new UndoStack(command : editTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
+        new UndoStack(command : editTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
       }
     }
 
@@ -126,7 +127,7 @@ class RestTermController {
     result = deleteTermCommand.execute()
     if (result.status == 204) {
       deleteTermCommand.save()
-      new UndoStack(command : deleteTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
+      new UndoStack(command : deleteTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
     response.status = result.status
     withFormat {
@@ -135,5 +136,24 @@ class RestTermController {
     }
   }
 
+  def addTerm = {
 
+    log.info "AddTerme"
+    User currentUser = User.read(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
+
+    Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : request.JSON.toString())
+    def result = addAnnotationTermCommand.execute()
+    if (result.status == 201) {
+      addAnnotationTermCommand.save()
+      new UndoStack(command : addAnnotationTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+    }
+
+    response.status = result.status
+    log.debug "result.status="+result.status+" result.data=" + result.data
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML }
+    }
+  }
 }

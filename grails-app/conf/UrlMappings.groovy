@@ -68,6 +68,15 @@ class UrlMappings {
     "/api/term/annotation/$id"(controller:"restTerm"){
       action = [GET: "list"]
     }
+
+    "/api/annotationterm"(controller:"restAnnotationTerm"){
+      action = [GET: "list",POST:"add"]
+    }
+    "/api/annotationterm/$id"(controller:"restAnnotationTerm"){
+      action = [GET:"show",DELETE:"delete"]
+    }
+
+
     "/api/term"(controller:"restTerm"){
       action = [GET: "list",POST:"add"]
     }
@@ -91,7 +100,12 @@ class UrlMappings {
       action = [GET:"show", PUT:"update", DELETE:"delete"]
     }
 
-
+    "/api/relationterm"(controller:"restRelationTerm"){
+      action = [GET: "list",POST:"add"]
+    }
+    "/api/relationterm/$id"(controller:"restRelationTerm"){
+      action = [GET:"show",PUT:"update", DELETE:"delete"]
+    }
 
   }
 }

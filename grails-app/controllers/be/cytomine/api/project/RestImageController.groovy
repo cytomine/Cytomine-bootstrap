@@ -142,7 +142,7 @@ class RestImageController {
       log.info "Save command on stack"
       //deleteImageCommand.transaction = transactionService.next(currentUser)
       deleteImageCommand.save()
-      new UndoStack(command : deleteImageCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save()
+      new UndoStack(command : deleteImageCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
 
     }
 

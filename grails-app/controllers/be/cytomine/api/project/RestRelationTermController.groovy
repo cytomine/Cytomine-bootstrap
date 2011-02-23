@@ -4,18 +4,19 @@ import be.cytomine.security.User
 import be.cytomine.command.Command
 import be.cytomine.command.UndoStack
 import be.cytomine.project.Relation
-import be.cytomine.command.relation.AddRelationCommand
-import be.cytomine.command.relation.EditRelationCommand
-import be.cytomine.command.relation.DeleteRelationCommand
+import be.cytomine.command.relationterm.AddRelationTermCommand
+import be.cytomine.command.relationterm.EditRelationTermCommand
+import be.cytomine.command.relationterm.DeleteRelationTermCommand
+import be.cytomine.project.RelationTerm
 
-class RestRelationController {
+class RestRelationTermController {
 
     def springSecurityService
 
   def list = {
     log.info "List"
       def data = [:]
-      data.relation = Relation.list()
+      data.relationTerm = RelationTerm.list()
       withFormat {
         json { render data as JSON }
         xml { render data as XML}
@@ -24,9 +25,9 @@ class RestRelationController {
 
     def show = {
       log.info "Show"
-      if(params.id && Relation.exists(params.id)) {
+      if(params.id && RelationTerm.exists(params.id)) {
         def data = [:]
-        data.relation = Relation.findById(params.id)
+        data.relationTerm = RelationTerm.findById(params.id)
         withFormat {
           json { render data as JSON }
           xml { render data as XML }
@@ -35,7 +36,7 @@ class RestRelationController {
         response.status = 404
         render contentType: "application/xml", {
           errors {
-            message("Relation not found with id: " + params.id)
+            message("Relation Term not found with id: " + params.id)
           }
         }
       }
@@ -46,13 +47,13 @@ class RestRelationController {
       User currentUser = User.get(springSecurityService.principal.id)
       log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
-      Command addRelationCommand = new AddRelationCommand(postData : request.JSON.toString())
+      Command addRelationTermCommand = new AddRelationTermCommand(postData : request.JSON.toString())
 
-      def result = addRelationCommand.execute()
+      def result = addRelationTermCommand.execute()
 
       if (result.status == 201) {
-        addRelationCommand.save()
-        new UndoStack(command : addRelationCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+        addRelationTermCommand.save()
+        new UndoStack(command : addRelationTermCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
       }
 
       response.status = result.status
@@ -69,19 +70,19 @@ class RestRelationController {
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
     def result
-    if((String)params.id!=(String)request.JSON.relation.id) {
-      log.error "Relation id from URL and from data are different:"+ params.id + " vs " +  request.JSON.relation.id
-      result = [data : [relation : null , errors : ["Relation id from URL and from data are different:"+ params.id + " vs " +  request.JSON.relation.id ]], status : 400]
+    if((String)params.id!=(String)request.JSON.relationTerm.id) {
+      log.error "RelationTerm id from URL and from data are different:"+ params.id + " vs " +  request.JSON.relationTerm.id
+      result = [data : [relationTerm : null , errors : ["RelationTerm id from URL and from data are different:"+ params.id + " vs " +  request.JSON.relationTerm.id ]], status : 400]
     }
     else
     {
 
-    Command editRelationCommand = new EditRelationCommand(postData : request.JSON.toString())
-    result = editRelationCommand.execute()
+    Command editRelationTermCommand = new EditRelationTermCommand(postData : request.JSON.toString())
+    result = editRelationTermCommand.execute()
 
     if (result.status == 200) {
-      editRelationCommand.save()
-      new UndoStack(command : editRelationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      editRelationTermCommand.save()
+      new UndoStack(command : editRelationTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
     }
 
@@ -100,12 +101,12 @@ class RestRelationController {
     def postData = ([id : params.id]) as JSON
     def result = null
 
-    Command deleteRelationCommand = new DeleteRelationCommand(postData : postData.toString())
+    Command deleteRelationTermCommand = new DeleteRelationTermCommand(postData : postData.toString())
 
-    result = deleteRelationCommand.execute()
+    result = deleteRelationTermCommand.execute()
     if (result.status == 204) {
-      deleteRelationCommand.save()
-      new UndoStack(command : deleteRelationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      deleteRelationTermCommand.save()
+      new UndoStack(command : deleteRelationTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
     response.status = result.status
     withFormat {
@@ -113,5 +114,4 @@ class RestRelationController {
       xml { render result.data as XML }
     }
   }
-
 }

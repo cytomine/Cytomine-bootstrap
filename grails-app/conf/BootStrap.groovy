@@ -1080,7 +1080,7 @@ class BootStrap {
         def term2 = Term.findByName(item.term2)
 
         println "Creating term/relation  ${relation.name}:${item.term1}/${item.term2}..."
-        RelationTerm.link(term1,term2,relation)
+        RelationTerm.link(relation, term1, term2)
 
       }
     }

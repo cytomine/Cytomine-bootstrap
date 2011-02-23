@@ -377,7 +377,38 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
+  void testEditRelationNotExist() {
 
+    /* Create a Name1 relation */
+    log.info("create relation")
+    Relation relationWithOldName = BasicInstance.createOrGetBasicRelation()
+    Relation relationWithNewName = BasicInstance.getBasicRelationNotExist()
+    relationWithNewName.save(flush:true)
+
+
+    /* Encode a niew relation Name2*/
+    Relation relationToEdit = Relation.get(relationWithNewName.id)
+    log.info("relationToEdit="+relationToEdit)
+    def jsonEdit = [relation : relationToEdit]
+    def jsonRelation = jsonEdit.encodeAsJSON()
+    log.info("jsonRelation="+jsonRelation)
+    def jsonUpdate = JSON.parse(jsonRelation)
+    jsonUpdate.relation.name = relationWithOldName.name
+    jsonUpdate.relation.id = -99
+    jsonRelation = jsonUpdate.encodeAsJSON()
+
+    log.info("put relation:"+jsonRelation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/relation/-99.json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.put(jsonRelation)
+    int code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(404,code)
+
+  }
 
 
 
@@ -471,5 +502,23 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("check response")
     assertEquals(404,code)
+  }
+
+
+  void testAddRelationWithTerms() {
+
+  }
+
+  void testAddRelationNotExistWithTerm() {
+
+  }
+
+  void testAddRelationWithTermNotExist() {
+
+  }
+
+
+  void testAddRelationWithTermsAlreadyExist() {
+
   }
 }
