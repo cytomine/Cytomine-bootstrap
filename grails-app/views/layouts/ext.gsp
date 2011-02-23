@@ -53,71 +53,8 @@
   </div>
 </div>
 <g:layoutBody />
-<div id="toolbar"></div>
-<div id="controls">
-  <!--<ul id="controlToggle">
-    <li>
-      <input type="radio" name="type" value="none" id="noneToggle"
-              onclick="Cytomine.currentLayer.toggleControl(this);" checked="checked" />
-      <label for="noneToggle">navigate</label>
-    </li>
-    <li>
-      <input type="radio" name="type" value="select" id="selectToggle" onclick="Cytomine.currentLayer.toggleControl(this);" checked="checked" />
-      <label for="selectToggle">select</label>
-    </li>
-    <li>
-      <input type="radio" name="type" value="point" id="pointToggle" onclick="Cytomine.currentLayer.toggleControl(this);" />
-      <label for="pointToggle">draw point</label>
-    </li>
-    <li>
-      <input type="radio" name="type" value="line" id="lineToggle" onclick="Cytomine.currentLayer.toggleControl(this);" />
-      <label for="lineToggle">draw line</label>
-    </li>
-    <li>
-      <input type="radio" name="type" value="polygon" id="polygonToggle" onclick="Cytomine.currentLayer.toggleControl(this);" />
-      <label for="polygonToggle">draw polygon</label>
-    </li>
-    <li>
-      <input type="radio" name="type" value="regular" id="regularToggle" onclick="Cytomine.currentLayer.toggleControl(this);" />
-      <label for="regularToggle">draw regular polygon</label>
-      <label for="sides"> - sides</label>
-      <input id="sides" type="text" size="2" maxlength="2"
-              name="sides" value="5" onchange="Cytomine.currentLayer.update()" />
-      <ul>
-        <li>
-          ==><input id="irregular" type="checkbox"
-                name="irregular" onchange="Cytomine.currentLayer.update()" />
-          <label for="irregular">irregular</label>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <input type="radio" name="type" value="modify" id="modifyToggle"
-              onclick="Cytomine.currentLayer.toggleControl(this);" />
-      <label for="modifyToggle">modify feature</label>
-      <ul>
-        <li>
-          ==><input id="rotate" type="checkbox"
-                name="rotate" onchange="Cytomine.currentLayer.update()" />
-          <label for="rotate">allow rotation</label>
-        </li>
-        <li>
-          ==><input id="resize" type="checkbox"
-                name="resize" onchange="Cytomine.currentLayer.update()" />
-          <label for="resize">allow resizing</label>
-          (<input id="keepAspectRatio" type="checkbox"
-                name="keepAspectRatio" onchange="Cytomine.currentLayer.update()" checked="checked" />
-          <label for="keepAspectRatio">keep aspect ratio</label>)
-        </li>
-        <li>
-          ==><input id="drag" type="checkbox"
-                name="drag" onchange="Cytomine.currentLayer.update()" />
-          <label for="drag">allow dragging</label>
-        </li>
-      </ul>
-    </li>
-  </ul>-->
-</div>
+
+
 
 </body>
 </html>

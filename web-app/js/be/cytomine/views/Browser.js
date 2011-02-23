@@ -28,7 +28,7 @@ Cytomine.Views.Browser = {
                     {name : 'modify',tooltip: ULg.lang.Viewer.annotations.toolPolygon, iconCls:'ruler-crop', enableToggle: true, toggleGroup:'controlToggle'+idTab+'', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.toggleControl(this);}},
                     {
                         xtype: 'tbsplit',
-                        text: 'Edit Options',
+                        text: 'Options',
                         menu: [{
                             text: 'Allow Rotate',
                             checked: false,

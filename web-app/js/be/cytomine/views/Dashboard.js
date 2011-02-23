@@ -14,13 +14,14 @@ Cytomine.Dashboard = {
      * @return {Ext.Panel}
      */
     tab: function() {
+
         return new Ext.Panel({
             id: 'Dashboard',
             bodyCssClass: 'overflow-auto',
             iconCls: 'envelope-label',
             title: 'Dashboard',
             items: [
-                Cytomine.Views.Project.grid()
+                Cytomine.Views.Project.grid(), Cytomine.Views.Project.detailPanel
             ],
             listeners : {
                 show: function(p) {

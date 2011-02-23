@@ -6,7 +6,7 @@ Ext.namespace('Cytomine.Views.Project');
 Cytomine.Views.Project = {
     userColumns : [
         /*{header: "ID", width: 40, sortable: true, dataIndex: 'id'},*/
-        {header: "Name", width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
+        {header: "Name", width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})}
         /*{header: "Image", width: 100, sortable: true, dataIndex: 'image', editor: new Ext.form.TextField({})}*/
     ],
     editor :  function () {
@@ -17,22 +17,15 @@ Cytomine.Views.Project = {
         var alias = this;
         var store = Cytomine.Models.Project.store();
         var editor = this.editor();
-        var detailsPanel = new Ext.Panel({
-            id: 'detailsPanel',
-            region: 'center',
-            title: 'Details',
-            bodyStyle: {
-                background: '#ffffff',
-                padding: '7px'
-            },
-            html: ''
-        });
+
         var grid =  new Ext.grid.GridPanel({
             iconCls: 'icon-grid',
             title: 'Projects',
             store: store,
             plugins: [editor],
             columns : this.userColumns,
+            autoWidth : true,
+            autoHeight : true,
             viewConfig: {
                 forceFit: true
             },
@@ -41,9 +34,10 @@ Cytomine.Views.Project = {
                 listeners: {
                     rowselect: function(smObj, rowIndex, record) {
                         var project = store.getById(record.id);
-                        detailsPanel.removeAll();
-                        detailsPanel.add(alias.getView(project.get("image")));
-                        detailsPanel.doLayout();
+                        Cytomine.Views.Project.detailPanel.removeAll();
+                        Cytomine.Views.Project.detailPanel.add(alias.getView(project.get("image")));
+                        Cytomine.Views.Project.detailPanel.doLayout();
+                        Cytomine.Views.Project.detailPanel.show();
                     }
                 }
             }),
@@ -67,14 +61,7 @@ Cytomine.Views.Project = {
         grid.elements += ',tbar';
         grid.add(tbar);
         grid.doLayout();
-        var ct = new Ext.Panel({
-            layout:'fit',
-            items: [
-                grid,
-                detailsPanel
-            ]
-        })
-        return ct;
+        return grid;
     },
     onAdd : function (grid, editor) {
         var u = new grid.store.recordType({
@@ -125,3 +112,10 @@ Cytomine.Views.Project = {
         });
     }
 }
+
+Cytomine.Views.Project.detailPanel = new Ext.Panel({
+    id: 'detailsPanel',
+    region: 'center',
+    title: 'Details',
+    html: ''
+}).hide();
