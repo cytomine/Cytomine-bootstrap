@@ -26,25 +26,6 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
         log.error "Annotation not found with id: " + postData.annotation.id
         return [data : [success : false, message : "Annotation not found with id: " + postData.annotation.id], status : 404]
       }
-      /*for (property in postData.annotation) {
-
-        if(property.key.equals("location"))
-        {
-          //location is a Geometry object
-          updatedAnnotation.properties.put(property.key, new WKTReader().read(property.value))
-        }
-        else if(property.key.equals("image"))
-        {
-          //image is a image object and not a simple id
-          updatedAnnotation.properties.put(property.key, Image.get(property.value))
-        }
-        else if(!property.key.equals("class"))
-        {
-          //no property class
-          updatedAnnotation.properties.put(property.key, property.value)
-        }
-
-      }*/
 
       updatedAnnotation = Annotation.getAnnotationFromData(updatedAnnotation,postData.annotation)
       updatedAnnotation.id = postData.annotation.id

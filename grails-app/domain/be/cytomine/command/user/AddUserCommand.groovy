@@ -8,11 +8,14 @@ import be.cytomine.command.UndoRedoCommand
 class AddUserCommand extends Command implements UndoRedoCommand {
 
   def execute() {
-    def newUser = User.getUserFromData(JSON.parse(postData))
+    def userData = JSON.parse(postData)
+    def newUser = User.getUserFromData(userData.user)
     if (newUser.validate()) {
       newUser.save()
       data = newUser.encodeAsJSON()
-      return [data : [success : true, message:"ok", user : newUser], status : 201]
+      def callback =  "Cytomine.Views.User.reload()"
+      def message = messageSource.getMessage('be.cytomine.AddUserCommand', [newUser.username] as Object[], Locale.ENGLISH)
+      return [data : [success : true, message: message, user : newUser, callback : callback], status : 201]
     } else {
       return [data : [user : newUser, errors : newUser.retrieveErrors()], status : 400]
     }
@@ -22,14 +25,18 @@ class AddUserCommand extends Command implements UndoRedoCommand {
     def userData = JSON.parse(data)
     def user = User.findById(userData.id)
     user.delete()
-    return [data : null, status : 200]
+    def callback =  "Cytomine.Views.User.reload()"
+    def message = messageSource.getMessage('be.cytomine.DeleteUserCommand', [userData.username] as Object[], Locale.ENGLISH)
+    return [data : [callback : callback , message: message], status : 200]
   }
 
   def redo() {
     def userData = JSON.parse(data)
-    def user = User.getUserFromData(JSON.parse(postData))
+    def user = User.getUserFromData(userData)
     user.id = userData.id
     user.save()
-    return [data : [user : user], status : 200]
+    def callback =  "Cytomine.Views.User.reload()"
+    def message = messageSource.getMessage('be.cytomine.AddUserCommand', [user.username] as Object[], Locale.ENGLISH)
+    return [data : [user : user, callback : callback, message : message], status : 200]
   }
 }

@@ -113,11 +113,12 @@ class RestUserController {
     def result = null
 
     if (params.id == springSecurityService.principal.id) {
-      result = [data : [success : false, message : "The user can't delete herself"], status : 403]
+      result = [data : [success : false, errors : "The user can't delete herself"], status : 403]
     } else {
       Command deleteUserCommand = new DeleteUserCommand(postData : postData.toString())
 
       result = deleteUserCommand.execute()
+
       if (result.status == 204) {
         deleteUserCommand.save()
         new UndoStack(command : deleteUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()

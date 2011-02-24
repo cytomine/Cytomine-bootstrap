@@ -6,6 +6,7 @@ import grails.converters.XML
 
 class CommandController {
   def springSecurityService
+  def messageSource
 
   def undo = {
     log.info "Undo"
@@ -15,9 +16,13 @@ class CommandController {
     log.debug "Lastcommands="+lastCommands
 
     if (UndoStack.findAllByUser(user).size() == 0) {
-      log.error "Command stack is empty"
-      response.status = 404
-      render ""
+      def message = messageSource.getMessage('be.cytomine.UndoCommand', [] as Object[], Locale.ENGLISH)
+      def data = [success : true, message: message, callback : null]
+      response.status = 200
+      withFormat {
+        json { render data as JSON }
+        xml { render data as XML }
+      }
       return
     }
 
@@ -43,6 +48,7 @@ class CommandController {
       }
     }
 
+    println "result : " + result
     response.status = result.status
 
     withFormat {
@@ -55,9 +61,13 @@ class CommandController {
     User user = User.read(springSecurityService.principal.id)
 
     if (RedoStack.findAllByUser(user).size() == 0) {
-      log.error "Command stack is empty"
-      response.status = 404
-      render ""
+      def message = messageSource.getMessage('be.cytomine.RedoCommand', [] as Object[], Locale.ENGLISH)
+      def data = [success : true, message: message, callback : null]
+      response.status = 200
+       withFormat {
+        json { render data as JSON }
+        xml { render data as XML }
+      }
       return
     }
 

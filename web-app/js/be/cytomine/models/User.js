@@ -1,5 +1,6 @@
 Ext.namespace('Cytomine');
 Ext.namespace('Cytomine.Models');
+Ext.namespace('Cytomine.Models.User');
 
 Cytomine.Models.User = {
     // Create a standard HttpProxy instance.
@@ -17,11 +18,11 @@ Cytomine.Models.User = {
             messageProperty: 'message'  // <-- New "messageProperty" meta-data
         }, [
             {name: 'id'},
-            {name: 'username', allowBlank: true},
-            {name: 'firstname', allowBlank: true},
-            {name: 'lastname', allowBlank: true},
-            {name: 'email', allowBlank: true},
-            {name: 'password', allowBlank: true}
+            {name: 'username', allowBlank: false},
+            {name: 'firstname', allowBlank: false},
+            {name: 'lastname', allowBlank: false},
+            {name: 'email', allowBlank: false},
+            {name: 'password', allowBlank: false}
         ])},
     writer : function () { return new Ext.data.JsonWriter({
         encode: false,   // <-- don't return encoded JSON -- causes Ext.Ajax#request to send data using jsonData config rather than HTTP params
@@ -36,4 +37,7 @@ Cytomine.Models.User = {
             reader: this.reader(),
             writer: this.writer()   // <-- plug a DataWriter into the store just as you would a Reader
         })}
+
 }
+
+

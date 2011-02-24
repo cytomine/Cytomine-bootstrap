@@ -25,15 +25,18 @@ class User extends SecUser {
   }
 
 
-  static User getUserFromData(data) {
-    def user = new User()
-    user.username = data.user.username
-    user.firstname = data.user.firstname
-    user.lastname = data.user.lastname
-    user.email = data.user.email
-    user.password = user.springSecurityService.encodePassword(data.user.password)
+  static User getUserFromData(User user, data) {
+    user.username = data.username
+    user.firstname = data.firstname
+    user.lastname = data.lastname
+    user.email = data.email
+    user.password = user.springSecurityService.encodePassword(data.password)
     user.enabled = true
     return user;
+  }
+
+  static User getUserFromData(data) {
+    getUserFromData(new User(), data)
   }
 
   static void registerMarshaller() {

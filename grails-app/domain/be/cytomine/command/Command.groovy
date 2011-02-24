@@ -5,6 +5,8 @@ import be.cytomine.security.User
 
 class Command extends SequenceDomain {
 
+  def messageSource
+
   String data
   String postData
 

@@ -1,6 +1,6 @@
 
 Ext.namespace('Cytomine');
-
+Ext.namespace('Cytomine.Application');
 
 
 Cytomine.overview = null;//created dynamically by browse.gsp
@@ -8,11 +8,34 @@ Cytomine.scans = [];
 Cytomine.annotationLayers = [];
 Cytomine.currentLayer = null;
 
+
 Cytomine.Application = function() {
+
     return {
+        received : function(response) {
+            console.log("undo/redo resp : " + response.responseText);
+            var jsonData = Ext.util.JSON.decode(response.responseText);
+            if (jsonData.callback != undefined) eval(jsonData.callback);
+            if (jsonData.message != undefined) App.setAlert(true, jsonData.message);
+
+        },
+        undo : function () {
+            Ext.Ajax.request({
+                url: '/cytomine-web/command/undo',
+                success: this.received,
+                failure: function () { console.log('failure');}
+            });
+        },
+        redo  : function () {
+            Ext.Ajax.request({
+                url: '/cytomine-web/command/redo',
+                success: this.received,
+                failure: function () { console.log('failure');}
+            });
+        },
         init : function() {
 
-           console.log("Init Application");
+            console.log("Init Application");
 
 
             //Create our centre panel with tabs
@@ -53,27 +76,27 @@ Cytomine.Application = function() {
             });
 
             /*Cytomine.toolbar = new Ext.Window({
-                id : 'toolbarPanel',
-                title  : 'Controls',
-                layout :'fit',
-                el : 'toolbar',
-                tbar : {
-                    items: [
-                        {id: 'noneToggle', name : 'none',tooltip: ULg.lang.Viewer.annotations.toolMove, iconCls:'hand', enableToggle: true, toggleGroup:'controlToggle', pressed:true, handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.toggleControl(this);}},
-                        {id: 'selectToggle', name : 'select',tooltip: ULg.lang.Viewer.annotations.toolSelect, iconCls:'cursor', enableToggle: true, toggleGroup:'controlToggle', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.toggleControl(this);}},
-                        //{id:'tool-rect', tooltip: ULg.lang.Viewer.annotations.toolRectangle, iconCls:'layer-shape', enableToggle: true, toggleGroup:'tool', handler: function() {Cytomine.currentLayer.toggleControl(this);}},
-                        //{id:'tool-circle', tooltip: ULg.lang.Viewer.annotations.toolCircle, iconCls:'layer-ellipse', enableToggle: true, toggleGroup:'tool', handler: function() {Cytomine.currentLayer.toggleControl(this);}},
-                        {id:'polygonToggle', name : 'polygon',tooltip: ULg.lang.Viewer.annotations.toolPolygon, iconCls:'layer-polygon', enableToggle: true, toggleGroup:'controlToggle', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.toggleControl(this);}},
-                        '-',
-                        '->',
-                        '-'
-                    ]
-                },
-                x : 400,
-                y : 65,
-                autoHeight: true,
-                autoWidth: true
-            });*/
+             id : 'toolbarPanel',
+             title  : 'Controls',
+             layout :'fit',
+             el : 'toolbar',
+             tbar : {
+             items: [
+             {id: 'noneToggle', name : 'none',tooltip: ULg.lang.Viewer.annotations.toolMove, iconCls:'hand', enableToggle: true, toggleGroup:'controlToggle', pressed:true, handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.toggleControl(this);}},
+             {id: 'selectToggle', name : 'select',tooltip: ULg.lang.Viewer.annotations.toolSelect, iconCls:'cursor', enableToggle: true, toggleGroup:'controlToggle', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.toggleControl(this);}},
+             //{id:'tool-rect', tooltip: ULg.lang.Viewer.annotations.toolRectangle, iconCls:'layer-shape', enableToggle: true, toggleGroup:'tool', handler: function() {Cytomine.currentLayer.toggleControl(this);}},
+             //{id:'tool-circle', tooltip: ULg.lang.Viewer.annotations.toolCircle, iconCls:'layer-ellipse', enableToggle: true, toggleGroup:'tool', handler: function() {Cytomine.currentLayer.toggleControl(this);}},
+             {id:'polygonToggle', name : 'polygon',tooltip: ULg.lang.Viewer.annotations.toolPolygon, iconCls:'layer-polygon', enableToggle: true, toggleGroup:'controlToggle', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.toggleControl(this);}},
+             '-',
+             '->',
+             '-'
+             ]
+             },
+             x : 400,
+             y : 65,
+             autoHeight: true,
+             autoWidth: true
+             });*/
 
             // This is the app UI layout code.  All of the calendar views are subcomponents of
             // CalendarPanel, but the app title bar and sidebar/navigation calendar are separate
@@ -84,8 +107,58 @@ Cytomine.Application = function() {
                 title : 'Cytomine',
                 items: [
                     {
-                        xtype: 'box',
                         region: 'north',
+                        border: false,
+
+                        tbar: [{
+                            xtype:'tbtext',
+                            text: '<h1>Cytomine</h1>'
+                        },'-',{
+                            text: 'New',
+                            menu: [{
+                                text: 'Project'
+                            }, {
+                                text: 'Slide'
+                            }]
+                        }, '-', {
+                            text: 'Undo',
+                            handler : function () {
+                                Cytomine.Application.undo();
+                            }
+                        }, {
+                            text: 'Redo',
+                            handler : function () {
+                                Cytomine.Application.redo();
+                            }
+                        }, '->', {
+                            text: 'Options',
+                            iconCls: 'options_icon',
+                            menu: [{
+                                text: 'User Info',
+                                handler : function () {
+                                    App.setAlert(true,"Not yet ;-)");
+                                }
+                            }, {
+                                text: 'Settings',
+                                handler : function () {
+                                    App.setAlert(true,"Not yet ;-)");
+                                }
+                            }]
+                        }, {
+                            text: 'Help',
+                            handler : function () {
+                                App.setAlert(true,"You are such a n00b :D");
+                            }
+                        }, '-', {
+                            text: 'Logout',
+                            handler : function () {
+                                App.setAlert(true,"Very soon ;-)");
+                            }
+                        }]
+                    },
+                    {
+                        xtype: 'box',
+                        region: 'center',
                         applyTo: 'header',
                         height: 30
                     },
@@ -149,7 +222,9 @@ Ext.data.DataProxy.addListener('write', function(proxy, action, result, res, rs)
 //
 Ext.data.DataProxy.addListener('exception', function(proxy, type, action, options, res) {
     var jsonData = Ext.util.JSON.decode(res.responseText);
+    console.log("ERROR : " + res.responseText);
     App.setAlert(false, ""+ jsonData.errors);
 });
+
 
 
