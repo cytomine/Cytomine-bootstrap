@@ -6,7 +6,7 @@ import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.security.User
 import be.cytomine.SequenceDomain
 
-class Annotation extends SequenceDomain {
+class Annotation extends SequenceDomain implements Serializable {
 
   String name
   Geometry location

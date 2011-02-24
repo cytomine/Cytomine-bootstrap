@@ -19,7 +19,7 @@ class AddRelationTermCommand extends Command implements UndoRedoCommand {
         data = newRelationTerm.encodeAsJSON()
         return [data : [success : true, message:"ok", relationTerm : newRelationTerm], status : 201]
       } else {
-        return [data : [relationTerm : newRelationTerm, errors : [newRelationTerm.errors]], status : 400]
+        return [data : [relationTerm : newRelationTerm, errors : newRelationTerm.retrieveErrors()], status : 400]
       }
     }catch(IllegalArgumentException ex)
     {

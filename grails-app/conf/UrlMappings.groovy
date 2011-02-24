@@ -64,17 +64,19 @@ class UrlMappings {
     }
 
 
-       /* Term */
-    "/api/term/annotation/$id"(controller:"restTerm"){
-      action = [GET: "list"]
+    "/api/term/$idterm/annotation"(controller:"restAnnotationTerm"){
+      action = [GET: "listByTerm"]
     }
 
-    "/api/annotationterm"(controller:"restAnnotationTerm"){
-      action = [GET: "list",POST:"add"]
+    "/api/annotation/$idannotation/term"(controller:"restAnnotationTerm"){
+      action = [GET: "listByAnnotation",POST:"add"]
     }
-    "/api/annotationterm/$id"(controller:"restAnnotationTerm"){
+    "/api/annotation/$idannotation/term/$idterm"(controller:"restAnnotationTerm"){
       action = [GET:"show",DELETE:"delete"]
     }
+
+
+
 
 
     "/api/term"(controller:"restTerm"){

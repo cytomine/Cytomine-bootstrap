@@ -101,10 +101,10 @@ log4j = {
           'org.codehaus.groovy.grails.plugins', // plugins
           'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
           'org.springframework',
-          'org.hibernate',
           'net.sf.ehcache.hibernate'
 
-  info   'be.cytomine'
+  info   'be.cytomine' ,'org.hibernate'
+
 
 
   root {
@@ -116,16 +116,11 @@ log4j = {
   debug 'grails.app'
   debug 'grails.app.service'
   debug 'grails.app.controller'
+
+  //UNCOMMENT THESE 2 LINES TO SEE SQL REQUEST AND THEIR PARAMETERS VALUES
+  //debug 'org.hibernate.SQL'
+  //debug 'org.hibernate.type'
 }
-
-
-
-
-
-
-
-
-
 
 
 // Added by the Spring Security Core plugin:

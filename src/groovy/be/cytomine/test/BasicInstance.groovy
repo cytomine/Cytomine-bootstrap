@@ -97,6 +97,23 @@ class BasicInstance {
     annotation
   }
 
+  static Annotation getBasicAnnotationNotExist() {
+
+    log.debug "getBasicAnnotationNotExist()"
+    def random = new Random()
+    def randomInt = random.nextInt()
+    def annotation = Annotation.findByName(randomInt+"")
+
+    while(annotation){
+      randomInt = random.nextInt()
+      annotation = Annotation.findByName(randomInt+"")
+   }
+
+    annotation =  new Annotation(location:new WKTReader().read("POINT(17573.5 21853.5)"), name:randomInt,image:createOrGetBasicImage(), user:createOrGetBasicUser())
+    annotation.validate()
+    annotation
+  }
+
   static Image createOrGetBasicImage() {
     log.debug  "createOrGetBasicImage()"
     def image = new Image(filename: "filename",scanner : createOrGetBasicScanner() ,slide : null,mime:BasicInstance.createOrGetBasicMime(),path:"pathpathpath")
@@ -114,7 +131,7 @@ class BasicInstance {
   static Scanner createOrGetBasicScanner() {
 
     log.debug  "createOrGetBasicScanner()"
-    def scanner = new Scanner(maxResolution:"x40",brand:"brand", model:"model")
+    Scanner scanner = new Scanner(maxResolution:"x40",brand:"brand", model:"model")
     scanner.validate()
     log.debug "scanner.errors="+scanner.errors
     scanner.save(flush : true)
@@ -253,7 +270,7 @@ class BasicInstance {
 
   static Term getBasicTermNotExist() {
 
-    log.debug "getBasicTermNotExist()"
+    log.debug "getBasicTermNotExist() start"
     def random = new Random()
     def randomInt = random.nextInt()
     def term = Term.findByName(randomInt+"")
@@ -265,6 +282,7 @@ class BasicInstance {
 
     term =  new Term(name:randomInt+"")
     term.validate()
+    log.debug "getBasicTermNotExist() end"
     term
   }
 
@@ -307,14 +325,34 @@ class BasicInstance {
 
   static AnnotationTerm createOrGetBasicAnnotationTerm() {
     log.debug  "createOrGetBasicAnnotationTerm()"
-    def annotation = createOrGetBasicAnnotation()
+
+    def annotation = getBasicAnnotationNotExist()
+    annotation.save(flush:true)
+    assert annotation!=null
     def term = getBasicTermNotExist()
     term.save(flush:true)
     assert term!=null
     def annotationTerm =  AnnotationTerm.findByAnnotationAndTerm(annotation,term)
+    assert annotationTerm==null
+    println "***********************************************************"
+    println "***********Execute end*************"
+    println "***********************************************************"
+    AnnotationTerm.list().each { println "annotation.id=" + it.annotation.id + " term.id=" + it.term.id }
+    println "***********************************************************"
+      println "add | annotation.id=" + annotation.id + " term.id=" + term.id
+    println "***********************************************************"
 
+    log.debug "annotation.id:" + annotation.id + " term.id:" + term.id
     if(!annotationTerm) {
       log.debug "annotationTerm link"
+    println "***********************************************************"
+    println "***********Execute end*************"
+    println "***********************************************************"
+    AnnotationTerm.list().each { println "annotation.id=" + it.annotation.id + " term.id=" + it.term.id }
+    println "***********************************************************"
+      println "add | annotation.id=" + annotation.id + " term.id=" + term.id
+    println "***********************************************************"
+
       annotationTerm = AnnotationTerm.link(annotation,term)
       log.debug "AnnotationTerm.errors="+annotationTerm.errors
     }
@@ -322,17 +360,30 @@ class BasicInstance {
     annotationTerm
   }
 
-  static AnnotationTerm getBasicAnnotationTermNotExist() {
+  static AnnotationTerm getBasicAnnotationTermNotExist(String method) {
 
     log.debug "getBasicAnnotationTermNotExist()"
     def random = new Random()
     def randomInt = random.nextInt()
 
-    def annotation = createOrGetBasicAnnotation()
     def term = getBasicTermNotExist()
+
+    log.debug "term:" + term.id
+    log.debug "term.name" + term.name
+    log.debug "term.created:" + term.created
+     log.debug "term.attached:" + term.attached
+     log.debug "term.dirty:" + term.dirty
+
     term.save(flush:true)
     assert term!=null
-    def annotationTerm = AnnotationTerm.link(annotation,term)
+
+    def annotation = getBasicAnnotationNotExist()
+
+    log.debug "annotation:" + annotation.id
+    annotation.save(flush:true)
+    assert annotation!=null
+    def annotationTerm =  new AnnotationTerm(annotation:annotation,term:term)
+
     log.debug "annotationTerm.errors="+annotationTerm.errors
     annotationTerm
   }

@@ -14,6 +14,10 @@ class Project extends SequenceDomain {
     name ( maxSize : 100, unique : true)
   }
 
+  static mapping = {
+    id generator : "assigned"
+  }
+
   String toString() {
     name
   }

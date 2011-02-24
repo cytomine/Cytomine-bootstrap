@@ -1,13 +1,16 @@
 package be.cytomine.project
 import grails.converters.JSON
-class AnnotationTerm {
+import be.cytomine.SequenceDomain
+
+class AnnotationTerm implements Serializable{
 
   Annotation annotation
   Term term
 
-  /*static mapping = {
-    version false
-  }           */
+  String toString()
+  {
+    "[" + this.id + " <" + annotation + "," + term + ">]"
+  }
 
   static AnnotationTerm link(Annotation annotation,Term term) {
     def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation, term)
@@ -15,33 +18,36 @@ class AnnotationTerm {
       annotationTerm = new AnnotationTerm()
       annotation?.addToAnnotationTerm(annotationTerm)
       term?.addToAnnotationTerm(annotationTerm)
+      println "save annotationTerm"
       annotationTerm.save(flush : true)
-    }
+    } else throw new IllegalArgumentException("Annotation " + annotation.id + " and term " + term.id + " are already mapped")
     return annotationTerm
   }
 
+
   static AnnotationTerm link(long id,Annotation annotation,Term term) {
     def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation, term)
+
     if (!annotationTerm) {
       annotationTerm = new AnnotationTerm()
       annotationTerm.id = id
       annotation?.addToAnnotationTerm(annotationTerm)
       term?.addToAnnotationTerm(annotationTerm)
       annotationTerm.save(flush:true)
-    }
+    } else throw new IllegalArgumentException("Annotation " + annotation.id + " and term " + term.id + " are already mapped")
     return annotationTerm
   }
 
   static void unlink(Annotation annotation, Term term) {
     def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation, term)
+
     println "unlink annotationTerm="+annotationTerm
     if (annotationTerm) {
-      annotation?.removeFromAnnotationTerm(annotationTerm)
-      term?.removeFromAnnotationTerm(annotationTerm)
-      println "unlink delete annotationTerm.id="+annotationTerm.id
+        annotation?.removeFromAnnotationTerm(annotationTerm)
+        term?.removeFromAnnotationTerm(annotationTerm)
       annotationTerm.delete(flush : true)
-    }
 
+    }
   }
 
   static AnnotationTerm createAnnotationTermFromData(jsonAnnotationTerm) {
@@ -50,21 +56,9 @@ class AnnotationTerm {
   }
 
   static AnnotationTerm getAnnotationTermFromData(annotationTerm,jsonAnnotationTerm) {
-    //TODO: check constraint
     println "jsonAnnotationTerm from getAnnotationTermFromData = " + jsonAnnotationTerm
-    
-    String annotationId = jsonAnnotationTerm.annotation.id.toString()
-    println "annotationId =" + annotationId
-    if(!annotationId.equals("null"))
-      annotationTerm.annotation = Annotation.get(annotationId)
-    if(annotationTerm.annotation==null) throw new IllegalArgumentException("Annotation was not found with id:"+ annotationId)
-    
-    
-    String termId = jsonAnnotationTerm.term.id.toString()
-    if(!termId.equals("null"))
-      annotationTerm.term = Term.get(termId)
-    if(annotationTerm.term==null) throw new IllegalArgumentException("Term was not found with id:"+ termId)
-
+    annotationTerm.annotation = Annotation.get(jsonAnnotationTerm.annotation.id.toString())
+    annotationTerm.term = Term.get(jsonAnnotationTerm.term.id.toString())
     return annotationTerm;
   }
 

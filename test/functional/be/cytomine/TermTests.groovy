@@ -437,46 +437,6 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
   }
 
 
-  void testListByAnnotation() {
-
-    log.info("create term")
-    Annotation annotation = BasicInstance.createOrGetBasicAnnotation()
-
-    log.info("get term")
-    String URL = Infos.CYTOMINEURL+"api/term/annotation/"+ annotation.id +".json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response:"+response)
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-  }
-
-  void testListByAnnotationNotExist() {
-
-    log.info("create term")
-
-    log.info("get term")
-    String URL = Infos.CYTOMINEURL+"api/term/annotation/-99.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response:"+response)
-    assertEquals(404,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-  }
 
   void testAddTermAnnotationMapping()
   {

@@ -3,12 +3,12 @@ package be.cytomine.project
 import grails.converters.JSON
 import be.cytomine.SequenceDomain
 
-class Term {
+class Term extends SequenceDomain implements Serializable {
 
   String name
   String comment
 
-  static belongsTo = Annotation
+ //static belongsTo = Annotation
   static hasMany = [annotationTerm:AnnotationTerm, termOntology: TermOntology, relationTerm1:RelationTerm, relationTerm2:RelationTerm]
 
    //must be done because RelationTerm has two Term attribute
@@ -17,10 +17,13 @@ class Term {
     static constraints = {
       comment(blank:true,nullable:true)
     }
+    static mapping = {
+    id (generator:'assigned', unique : true)
+  }
 
-  def ontologies() {
-    return annotationTerm.collect{it.term}
-   }
+  def annotation() {
+    return annotationTerm.collect{it.annotation}
+  }
 
   def relationAsTerm1() {
     def relations = []

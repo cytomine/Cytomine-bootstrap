@@ -16,7 +16,7 @@ class DeleteUserCommand extends Command implements UndoRedoCommand {
     data = user.encodeAsJSON()
 
     if (!user) {
-      return [data : [success : false, message : "User not found with id: " + postData.id], status : 404]
+      return [data : [success : false, errors : "User not found with id: " + postData.id], status : 404]
     }
 
     /*def userGroups = UserGroup.findAllByUser(user)

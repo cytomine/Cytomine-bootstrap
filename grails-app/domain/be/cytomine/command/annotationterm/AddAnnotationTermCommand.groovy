@@ -3,6 +3,9 @@ import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
 import be.cytomine.project.AnnotationTerm
+import be.cytomine.project.Annotation
+import be.cytomine.project.Term
+import org.hibernate.SessionFactory
 
 class AddAnnotationTermCommand extends Command implements UndoRedoCommand {
 
@@ -18,7 +21,7 @@ class AddAnnotationTermCommand extends Command implements UndoRedoCommand {
         data = newAnnotationTerm.encodeAsJSON()
         return [data : [success : true, message:"ok", annotationTerm : newAnnotationTerm], status : 201]
       } else {
-        return [data : [annotationTerm : newAnnotationTerm, errors : [newAnnotationTerm.errors]], status : 400]
+        return [data : [annotationTerm : newAnnotationTerm, errors : newAnnotationTerm.retrieveErrors()], status : 400]
       }
     }catch(IllegalArgumentException ex)
     {
@@ -30,7 +33,7 @@ class AddAnnotationTermCommand extends Command implements UndoRedoCommand {
   def undo() {
     log.info("Undo")
     def annotationTermData = JSON.parse(data)
-    def annotationTerm = AnnotationTerm.findById(annotationTermData.id)
+    def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(Annotation.get(annotationTermData.annotation.id),Term.get(annotationTermData.term.id))
     AnnotationTerm.unlink(annotationTerm.annotation,annotationTerm.term)
     log.debug("Delete annotationTerm with id:"+annotationTermData.id)
     return [data : ["AnnotationTerm deleted"], status : 201]
@@ -43,10 +46,15 @@ class AddAnnotationTermCommand extends Command implements UndoRedoCommand {
     log.debug("Redo json:"+ json.toString() )
     def annotationTerm = AnnotationTerm.createAnnotationTermFromData(json.annotationTerm)
     annotationTerm = AnnotationTerm.link(annotationTermData.id,annotationTerm.annotation,annotationTerm.term)
-    println "annotationTermData.id="+annotationTermData.id
+    //println "annotationTermData.id="+annotationTermData.id
 
     log.debug("Save annotationTerm:"+annotationTerm.id)
+    /*def session = sessionFactory.getCurrentSession()
+    session.clear()     */
+    //hibSession.
+
     return [data : [annotationTerm : annotationTerm], status : 200]
   }
+  //def sessionFactory
 
 }

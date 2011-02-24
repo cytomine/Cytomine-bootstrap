@@ -1,53 +1,59 @@
 package be.cytomine.project
 import grails.converters.JSON
+import be.cytomine.SequenceDomain
+
 class RelationTerm {
 
   Relation relation
   Term term1
   Term term2
 
-  static mapping = {
-    version false
-  }
 
   static RelationTerm link(Relation relation, Term term1, Term term2) {
-    def relationTerm = RelationTerm.linkNoSave(relation,term1,term2)
-    relationTerm.save(flush : true)
-    println "link=" +  relationTerm.errors
-    return relationTerm
-  }
-
-  static RelationTerm link(long id,Relation relation, Term term1, Term term2) {
-    def relationTerm = RelationTerm.linkNoSave(relation,term1,term2)
-    relationTerm.id = id
-    println "link id=" + id
-    RelationTerm.list().each {println it.id}
-
-
-    relationTerm.save(flush : true)
-    println "link=" +  relationTerm.errors
-    return relationTerm
-  }
-
-  static RelationTerm linkNoSave(Relation relation, Term term1, Term term2) {
-    println "Link Term " + term1 + " with Term " + term2 + " with relation " + relation
+    println "Link Term " + term1.id + " with Term " + term2.id + " with relation " + relation.id
     def relationTerm = RelationTerm.findWhere('relation': relation,'term1':term1, 'term2':term2)
+    RelationTerm.list().each {
+      println it.id + " it.relation.id=" + it.relation.id + " it.term1.id=" + it.term1.id + " it.term2.id=" + it.term2.id
+    }
+
+
     if (!relationTerm) {
       println "LINKED"
       relationTerm = new RelationTerm()
       term1?.addToRelationTerm1(relationTerm)
       term2?.addToRelationTerm2(relationTerm)
       relation?.addToRelationTerm(relationTerm)
+      relationTerm.save(flush:true)
     }
     return relationTerm
   }
 
-  static void unlink(Relation relation, Term term1, Term term2) {
+  static RelationTerm link(long id,Relation relation, Term term1, Term term2) {
+    println "Link Term " + term1.id + " with Term " + term2.id + " with relation " + relation.id
     def relationTerm = RelationTerm.findWhere('relation': relation,'term1':term1, 'term2':term2)
+    println "relationTerm ="+ relationTerm
+    if (!relationTerm) {
+      relationTerm = new RelationTerm()
+      relationTerm.id = id
+      term1?.addToRelationTerm1(relationTerm)
+      term2?.addToRelationTerm2(relationTerm)
+      relation?.addToRelationTerm(relationTerm)
+      println "relationTerm save"
+      relationTerm.save(flush:true)
+    }
+    return relationTerm
+  }
+
+
+  static void unlink(Relation relation, Term term1, Term term2) {
+    println "Unlink Term " + term1.id + " with Term " + term2.id + " with relation " + relation.id
+    def relationTerm = RelationTerm.findWhere('relation': relation,'term1':term1, 'term2':term2)
+    println "relationTerm ="+ relationTerm
     if (relationTerm) {
       term1?.removeFromRelationTerm1(relationTerm)
       term2?.removeFromRelationTerm2(relationTerm)
       relation?.removeFromRelationTerm(relationTerm)
+      println "relationTerm delete"
       relationTerm.delete(flush : true)
     }
 
@@ -73,18 +79,9 @@ class RelationTerm {
   }
 
   static RelationTerm getRelationTermFromData(relationTerm,jsonRelationTerm) {
-    //TODO: check constraint
-    println "jsonRelationTerm from getRelationTermFromData = " + jsonRelationTerm
-    def relation = Relation.get(jsonRelationTerm.relation.id)
-    def term1 = Term.get(jsonRelationTerm.term1.id)
-    def term2 = Term.get(jsonRelationTerm.term2.id)
-
-    relationTerm.relation = relation
-    relationTerm.term1 = term1
-    relationTerm.term2 = term2
-
-    //relationTerm = RelationTerm.linkNoSave(relation,term1,term2)
-
+    relationTerm.relation = Relation.get(jsonRelationTerm.relation.id)
+    relationTerm.term1 = Term.get(jsonRelationTerm.term1.id)
+    relationTerm.term2 = Term.get(jsonRelationTerm.term2.id)
     return relationTerm;
   }
 
