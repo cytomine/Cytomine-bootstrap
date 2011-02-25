@@ -1,6 +1,6 @@
 package be.cytomine.project
+
 import grails.converters.JSON
-import be.cytomine.SequenceDomain
 
 class RelationTerm {
 

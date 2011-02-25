@@ -5,7 +5,7 @@ import be.cytomine.project.Annotation
 import be.cytomine.security.User
 import be.cytomine.command.Command
 import be.cytomine.command.annotation.AddAnnotationCommand
-import be.cytomine.command.UndoStack
+import be.cytomine.command.UndoStackItem
 import be.cytomine.command.annotation.DeleteAnnotationCommand
 import be.cytomine.command.annotation.EditAnnotationCommand
 import be.cytomine.project.Image
@@ -75,7 +75,7 @@ class RestAnnotationController {
     def result = addAnnotationCommand.execute()
     if (result.status == 201) {
       addAnnotationCommand.save()
-      new UndoStack(command : addAnnotationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      new UndoStackItem(command : addAnnotationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
 
     response.status = result.status
@@ -100,7 +100,7 @@ class RestAnnotationController {
     if (result.status == 204) {
       log.info "Save command on stack"
       deleteAnnotationCommand.save()
-      new UndoStack(command : deleteAnnotationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      new UndoStackItem(command : deleteAnnotationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
 
     response.status = result.status
@@ -131,7 +131,7 @@ class RestAnnotationController {
       if (result.status == 200) {
         log.info "Save command on stack"
         editAnnotationCommand.save()
-        new UndoStack(command : editAnnotationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+        new UndoStackItem(command : editAnnotationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
       }
     }
 

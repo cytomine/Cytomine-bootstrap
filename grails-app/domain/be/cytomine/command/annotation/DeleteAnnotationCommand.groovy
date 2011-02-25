@@ -1,6 +1,5 @@
 package be.cytomine.command.annotation
 
-import be.cytomine.security.User
 import be.cytomine.project.Annotation
 import grails.converters.JSON
 import be.cytomine.command.Command

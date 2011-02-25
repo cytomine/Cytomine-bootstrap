@@ -4,11 +4,11 @@ import be.cytomine.project.Term
 import grails.converters.XML
 import grails.converters.JSON
 import be.cytomine.project.Annotation
-import be.cytomine.project.AnnotationTerm
+
 import be.cytomine.security.User
 import be.cytomine.command.Command
 import be.cytomine.command.term.AddTermCommand
-import be.cytomine.command.UndoStack
+import be.cytomine.command.UndoStackItem
 import be.cytomine.command.term.EditTermCommand
 import be.cytomine.command.term.DeleteTermCommand
 import be.cytomine.command.annotationterm.AddAnnotationTermCommand
@@ -74,7 +74,7 @@ class RestTermController {
 
     if (result.status == 201) {
       addTermCommand.save()
-      new UndoStack(command : addTermCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      new UndoStackItem(command : addTermCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
 
     response.status = result.status
@@ -103,7 +103,7 @@ class RestTermController {
 
       if (result.status == 200) {
         editTermCommand.save()
-        new UndoStack(command : editTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+        new UndoStackItem(command : editTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
       }
     }
 
@@ -127,7 +127,7 @@ class RestTermController {
     result = deleteTermCommand.execute()
     if (result.status == 204) {
       deleteTermCommand.save()
-      new UndoStack(command : deleteTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      new UndoStackItem(command : deleteTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
     response.status = result.status
     withFormat {
@@ -146,7 +146,7 @@ class RestTermController {
     def result = addAnnotationTermCommand.execute()
     if (result.status == 201) {
       addAnnotationTermCommand.save()
-      new UndoStack(command : addAnnotationTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      new UndoStackItem(command : addAnnotationTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
 
     response.status = result.status

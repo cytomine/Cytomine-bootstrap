@@ -3,7 +3,7 @@ package be.cytomine.api.security
 import be.cytomine.security.User
 import grails.converters.*
 import be.cytomine.command.user.AddUserCommand
-import be.cytomine.command.UndoStack
+import be.cytomine.command.UndoStackItem
 import be.cytomine.command.Command
 import be.cytomine.command.user.EditUserCommand
 import be.cytomine.command.user.DeleteUserCommand
@@ -68,7 +68,7 @@ class RestUserController {
 
     if (result.status == 201) {
       addUserCommand.save()
-      new UndoStack(command : addUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
+      new UndoStackItem(command : addUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
     }
 
     response.status = result.status
@@ -92,7 +92,7 @@ class RestUserController {
     def result = editUserCommand.execute()
     if (result.status == 200) {
       editUserCommand.save()
-      new UndoStack(command : editUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
+      new UndoStackItem(command : editUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
     }
 
     response.status = result.status
@@ -121,7 +121,7 @@ class RestUserController {
 
       if (result.status == 204) {
         deleteUserCommand.save()
-        new UndoStack(command : deleteUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
+        new UndoStackItem(command : deleteUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
       }
     }
     response.status = result.status

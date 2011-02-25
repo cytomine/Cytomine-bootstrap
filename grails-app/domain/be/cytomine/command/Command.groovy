@@ -1,7 +1,6 @@
 package be.cytomine.command
 
 import be.cytomine.SequenceDomain
-import be.cytomine.security.User
 
 class Command extends SequenceDomain {
 

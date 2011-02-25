@@ -1,4 +1,5 @@
 package be.cytomine.command.relationterm
+
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON

@@ -1,4 +1,5 @@
 package be.cytomine.project
+
 import grails.converters.JSON
 
 class Relation {

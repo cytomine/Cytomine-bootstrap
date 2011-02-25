@@ -1,4 +1,5 @@
 package be.cytomine
+
 import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
 import be.cytomine.test.BasicInstance

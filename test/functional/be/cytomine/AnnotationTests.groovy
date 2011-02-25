@@ -1,6 +1,5 @@
 package be.cytomine
 
-
 import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
 import be.cytomine.test.BasicInstance
@@ -262,7 +261,6 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(404,code)
 
   }
-
 
   void testGetAnnotationNotExist() {
 

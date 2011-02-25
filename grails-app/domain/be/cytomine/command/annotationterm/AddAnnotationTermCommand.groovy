@@ -1,11 +1,11 @@
 package be.cytomine.command.annotationterm
+
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
 import be.cytomine.project.AnnotationTerm
 import be.cytomine.project.Annotation
 import be.cytomine.project.Term
-import org.hibernate.SessionFactory
 
 class AddAnnotationTermCommand extends Command implements UndoRedoCommand {
 

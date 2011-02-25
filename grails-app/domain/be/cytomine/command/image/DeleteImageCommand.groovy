@@ -7,8 +7,6 @@ package be.cytomine.command.image
  * Time: 14:57
  * To change this template use File | Settings | File Templates.
  */
-import be.cytomine.security.User
-import be.cytomine.project.Annotation
 import grails.converters.JSON
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand

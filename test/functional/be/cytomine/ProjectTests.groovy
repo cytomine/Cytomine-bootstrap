@@ -1,15 +1,10 @@
 package be.cytomine
 
 import be.cytomine.test.BasicInstance
-import be.cytomine.project.Image
-import be.cytomine.acquisition.Scanner
 import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
-import be.cytomine.security.User
-import be.cytomine.project.Slide
-import be.cytomine.warehouse.Mime
 import be.cytomine.project.Project
 /**
  * Created by IntelliJ IDEA.

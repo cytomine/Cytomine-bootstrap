@@ -1,4 +1,5 @@
 package be.cytomine
+
 import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import org.codehaus.groovy.grails.web.json.JSONObject

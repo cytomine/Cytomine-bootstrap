@@ -1,8 +1,9 @@
 package be.cytomine.api.project
+
 import grails.converters.*
 import be.cytomine.security.User
 import be.cytomine.command.Command
-import be.cytomine.command.UndoStack
+import be.cytomine.command.UndoStackItem
 import be.cytomine.project.AnnotationTerm
 import be.cytomine.command.annotationterm.AddAnnotationTermCommand
 import be.cytomine.command.annotationterm.DeleteAnnotationTermCommand
@@ -83,7 +84,7 @@ class RestAnnotationTermController {
 
     if (result.status == 201) {
       addAnnotationTermCommand.save()
-      new UndoStack(command : addAnnotationTermCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      new UndoStackItem(command : addAnnotationTermCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
 
     response.status = result.status
@@ -107,7 +108,7 @@ class RestAnnotationTermController {
     result = deleteAnnotationTermCommand.execute()
     if (result.status == 204) {
       deleteAnnotationTermCommand.save()
-      new UndoStack(command : deleteAnnotationTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      new UndoStackItem(command : deleteAnnotationTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
     response.status = result.status
     withFormat {

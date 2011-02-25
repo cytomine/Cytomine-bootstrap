@@ -1,6 +1,5 @@
 package be.cytomine.command.image
 
-import be.cytomine.security.User
 import be.cytomine.project.Image
 import grails.converters.JSON
 import be.cytomine.command.Command

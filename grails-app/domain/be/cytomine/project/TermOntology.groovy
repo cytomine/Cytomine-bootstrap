@@ -1,7 +1,5 @@
 package be.cytomine.project
 
-import be.cytomine.security.Group
-
 class TermOntology {
 
   Term term

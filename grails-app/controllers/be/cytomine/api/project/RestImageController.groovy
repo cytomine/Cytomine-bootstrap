@@ -1,17 +1,14 @@
 package be.cytomine.api.project
 
 import be.cytomine.project.Image
-
 import grails.converters.*
 import be.cytomine.project.Annotation
-
 import be.cytomine.server.RetrievalServer
 import be.cytomine.security.User
 import be.cytomine.command.Command
 import be.cytomine.command.image.AddImageCommand
-import be.cytomine.command.UndoStack
+import be.cytomine.command.UndoStackItem
 import be.cytomine.project.Project
-import be.cytomine.project.ProjectSlide
 import be.cytomine.command.image.EditImageCommand
 import be.cytomine.command.image.DeleteImageCommand
 
@@ -68,7 +65,6 @@ class RestImageController {
     }
   }
 
-
   def index = {
     redirect(controller: "image")
   }
@@ -83,7 +79,7 @@ class RestImageController {
     def result = addImageCommand.execute()
     if (result.status == 201) {
       addImageCommand.save(flush:true)
-      new UndoStack(command : addImageCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      new UndoStackItem(command : addImageCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
 
     response.status = result.status
@@ -116,7 +112,7 @@ class RestImageController {
         log.info "Save command on stack"
         //editImageCommand.transaction = transactionService.next(currentUser)
         editImageCommand.save()
-        new UndoStack(command : editImageCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+        new UndoStackItem(command : editImageCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
       }
     }
 
@@ -142,11 +138,11 @@ class RestImageController {
       log.info "Save command on stack"
       //deleteImageCommand.transaction = transactionService.next(currentUser)
       deleteImageCommand.save()
-      new UndoStack(command : deleteImageCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      new UndoStackItem(command : deleteImageCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
 
     }
 
-        if (UndoStack.findAllByUser( currentUser).size() == 0) {
+        if (UndoStackItem.findAllByUser( currentUser).size() == 0) {
       log.error "Command stack is empty!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
       response.status = 404
       render ""

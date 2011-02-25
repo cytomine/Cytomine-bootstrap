@@ -2,8 +2,6 @@ package be.cytomine.command.annotation
 
 import grails.converters.JSON
 import be.cytomine.project.Annotation
-import com.vividsolutions.jts.io.WKTReader
-import be.cytomine.project.Image
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 

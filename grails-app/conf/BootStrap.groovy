@@ -25,6 +25,7 @@ import be.cytomine.project.TermOntology
 import java.lang.management.ManagementFactory
 import be.cytomine.project.Relation
 import be.cytomine.project.RelationTerm
+import grails.util.GrailsUtil
 
 class BootStrap {
   def springSecurityService
@@ -198,7 +199,18 @@ class BootStrap {
             [filename: 'HPg 6',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-6.jp2',slide :1 ],
             [filename: 'HPg 7',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/DCataldo/20090805-20090810/HPg-7.jp2',slide :1 ]
     ]
+    /*//reduce data set for test
+    switch(GrailsUtil.environment) {
+        case "test":
+          for(int i=scanSamples.size()-1;i>4;i--)
+            scanSamples.remove(i)
+        break
+    }*/
     createScans(scanSamples, slides)
+
+
+
+
 
 
     def LBTDScans = [
@@ -600,7 +612,7 @@ class BootStrap {
 
     def destroy = {
     }
-
+     //end of init
   }
 
   /* Methods */

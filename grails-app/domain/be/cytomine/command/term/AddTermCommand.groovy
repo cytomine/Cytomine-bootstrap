@@ -2,7 +2,6 @@ package be.cytomine.command.term
 
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
-import be.cytomine.project.Project
 import grails.converters.JSON
 import be.cytomine.project.Term
 

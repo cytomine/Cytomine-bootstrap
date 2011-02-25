@@ -28,7 +28,7 @@ class UrlMappings {
     "/api/project/$id"(controller: "restProject"){
       action = [GET:"show", PUT:"update", DELETE:"delete"]
     }
-    "/api/project/$id/image"(controller: "restScan"){
+    "/api/project/$id/image"(controller: "restImage"){
       action = [GET:"showByProject"]
     }
 

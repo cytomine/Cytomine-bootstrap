@@ -1,8 +1,9 @@
 package be.cytomine.api.project
+
 import grails.converters.*
 import be.cytomine.security.User
 import be.cytomine.command.Command
-import be.cytomine.command.UndoStack
+import be.cytomine.command.UndoStackItem
 import be.cytomine.project.Relation
 import be.cytomine.command.relation.AddRelationCommand
 import be.cytomine.command.relation.EditRelationCommand
@@ -52,7 +53,7 @@ class RestRelationController {
 
       if (result.status == 201) {
         addRelationCommand.save()
-        new UndoStack(command : addRelationCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+        new UndoStackItem(command : addRelationCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
       }
 
       response.status = result.status
@@ -81,7 +82,7 @@ class RestRelationController {
 
     if (result.status == 200) {
       editRelationCommand.save()
-      new UndoStack(command : editRelationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      new UndoStackItem(command : editRelationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
     }
 
@@ -105,7 +106,7 @@ class RestRelationController {
     result = deleteRelationCommand.execute()
     if (result.status == 204) {
       deleteRelationCommand.save()
-      new UndoStack(command : deleteRelationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      new UndoStackItem(command : deleteRelationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
     response.status = result.status
     withFormat {

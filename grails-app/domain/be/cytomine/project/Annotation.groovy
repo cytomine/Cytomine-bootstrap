@@ -1,4 +1,5 @@
 package be.cytomine.project
+
 import grails.converters.*
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.Coordinate
