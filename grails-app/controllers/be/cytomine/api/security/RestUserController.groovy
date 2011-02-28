@@ -129,7 +129,7 @@ class RestUserController {
 
       result = deleteUserCommand.execute()
 
-      if (result.status == 204) {
+      if (result.status == 200) {
         deleteUserCommand.save()
         new UndoStackItem(command : deleteUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
       }

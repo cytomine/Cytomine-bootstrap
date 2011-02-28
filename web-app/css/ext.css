@@ -50,8 +50,12 @@ html, body {
 }
 .overflow-auto { overflow: auto; }
 
-#overviewMap > .olControlOverviewMapElement {
-    background-color : #FFF;
+
+div.olControlOverviewMapElement {
+    align : center;
+
+    background-color: #FFF;
+    align : center;
 }
 
 #controls {

@@ -63,18 +63,6 @@ Cytomine.Application = function() {
                 }
             });
 
-            Cytomine.overview = new Ext.Window({
-                id : 'overviewMapPanel',
-                title  : 'Overview',
-                layout : 'fit',
-                iconCls :'image-min',
-                html : '<div id="overviewMap"></div>',
-                x : 10,
-                y : 500,
-                autoWidth : true,
-                autoHeight : true
-            });
-
             /*Cytomine.toolbar = new Ext.Window({
              id : 'toolbarPanel',
              title  : 'Controls',
@@ -113,48 +101,52 @@ Cytomine.Application = function() {
                         tbar: [{
                             xtype:'tbtext',
                             text: '<h1>Cytomine</h1>'
-                        },'-',{
-                            text: 'New',
-                            menu: [{
-                                text: 'Project'
-                            }, {
-                                text: 'Slide'
-                            }]
-                        }, '-', {
-                            text: 'Undo',
-                            handler : function () {
-                                Cytomine.Application.undo();
-                            }
-                        }, {
-                            text: 'Redo',
-                            handler : function () {
-                                Cytomine.Application.redo();
-                            }
-                        }, '->', {
-                            text: 'Options',
-                            iconCls: 'options_icon',
-                            menu: [{
-                                text: 'User Info',
+                        },'-',
+                            /*{
+                             text: 'New',
+                             menu: [{
+                             text: 'Project'
+                             }, {
+                             text: 'Slide'
+                             }]
+                             }
+                             , '-',
+                             */
+                            {
+                                text: 'Undo',
                                 handler : function () {
-                                    App.setAlert(true,"Not yet ;-)");
+                                    Cytomine.Application.undo();
                                 }
                             }, {
-                                text: 'Settings',
+                                text: 'Redo',
                                 handler : function () {
-                                    App.setAlert(true,"Not yet ;-)");
+                                    Cytomine.Application.redo();
+                                }
+                            }, '->', {
+                                text: 'Options',
+                                iconCls: 'options_icon',
+                                menu: [{
+                                    text: 'User Info',
+                                    handler : function () {
+                                        App.setAlert(true,"Not yet ;-)");
+                                    }
+                                }, {
+                                    text: 'Settings',
+                                    handler : function () {
+                                        App.setAlert(true,"Not yet ;-)");
+                                    }
+                                }]
+                            }, {
+                                text: 'Help',
+                                handler : function () {
+                                    App.setAlert(true,"You are such a n00b :D");
+                                }
+                            }, '-', {
+                                text: 'Logout',
+                                handler : function () {
+                                    App.setAlert(true,"Very soon ;-)");
                                 }
                             }]
-                        }, {
-                            text: 'Help',
-                            handler : function () {
-                                App.setAlert(true,"You are such a n00b :D");
-                            }
-                        }, '-', {
-                            text: 'Logout',
-                            handler : function () {
-                                App.setAlert(true,"Very soon ;-)");
-                            }
-                        }]
                     },
                     {
                         xtype: 'box',

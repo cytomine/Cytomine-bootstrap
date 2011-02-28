@@ -13,6 +13,7 @@ class DeleteUserCommand extends Command implements UndoRedoCommand {
     def postData = JSON.parse(postData)
 
     User user = User.findById(postData.id)
+    def username = user.username
     data = user.encodeAsJSON()
 
     if (!user) {
@@ -24,23 +25,30 @@ class DeleteUserCommand extends Command implements UndoRedoCommand {
       return [data : [success : false, errors : "User is in one or more groups: " + userGroups.toString()], status : 403]
     }*/
 
-    SecUserSecRole.removeAll(user)  //should we do that ? maybe we should create RemoveSecRole command and make a transaction
+    //SecUserSecRole.removeAll(user)  //should we do that ? maybe we should create RemoveSecRole command and make a transaction
     user.delete();
-    return [data : [success : true,callback : "Cytomine.Views.User.reload()", message: messageSource.getMessage('be.cytomine.DeleteUserCommand', [postData.username] as Object[], Locale.ENGLISH), data : [user : postData.id]], status : 200]
+    return [data : [success : true,callback : "Cytomine.Views.User.reload()", message: messageSource.getMessage('be.cytomine.DeleteUserCommand', [username] as Object[], Locale.ENGLISH)], status : 200]
   }
 
   def undo() {
     def userData = JSON.parse(data)
     User user = new User(userData)
+    user.id = userData.id
+    def username = user.username
     user.save()
-    return [data : [success : true, user : user,  callback : "Cytomine.Views.User.reload()", message: messageSource.getMessage('be.cytomine.AddUserCommand', [user.username] as Object[], Locale.ENGLISH)], status : 201]
+    def callback =  "Cytomine.Views.User.reload()"
+    def message = messageSource.getMessage('be.cytomine.AddUserCommand', [username] as Object[], Locale.ENGLISH)
+    return [data : [success : true, callback : callback, message: message], status : 200]
   }
 
   def redo() {
     def postData = JSON.parse(postData)
     User user = User.findById(postData.id)
+    def username = user.username
     user.delete();
-    return [data : [success : true,  callback : "Cytomine.Views.User.reload()", message: messageSource.getMessage('be.cytomine.DeleteUserCommand', [postData.username] as Object[], Locale.ENGLISH)], status : 200]
+    def callback =  "Cytomine.Views.User.reload()"
+    def message = messageSource.getMessage('be.cytomine.DeleteUserCommand', [username] as Object[], Locale.ENGLISH)
+    return [data : [success : true, callback : callback, message: message], status : 200]
 
   }
 }

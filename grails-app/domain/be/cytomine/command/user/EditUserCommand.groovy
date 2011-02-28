@@ -24,9 +24,6 @@ class EditUserCommand extends Command implements UndoRedoCommand {
       updatedUser.properties.put(property.key, property.value)
     }
 
-
-
-
     if ( updatedUser.validate()) {
       data = ([ previousUser : (JSON.parse(backup)), newUser :  updatedUser]) as JSON
       updatedUser.save()
@@ -34,7 +31,7 @@ class EditUserCommand extends Command implements UndoRedoCommand {
       def message = messageSource.getMessage('be.cytomine.EditUserCommand', [updatedUser.username] as Object[], Locale.ENGLISH)
       return [data : [success : true, message: message, callback: callback, user :  updatedUser], status : 200]
     } else {
-      return [data : [user :  updatedUser, errors :  updatedUser.retrieveErrors()], status : 403]
+      return [data : [user :  updatedUser, message :  updatedUser.retrieveErrors()], status : 403]
     }
 
 
@@ -42,16 +39,28 @@ class EditUserCommand extends Command implements UndoRedoCommand {
 
   def undo() {
     def usersData = JSON.parse(data)
-    User user = User.getUserFromData(User.findById(usersData.previousUser.id), usersData.previousUser)
+    User user = User.findById(usersData.previousUser.id)
+    user.username = usersData.previousUser.username
+    user.firstname = usersData.previousUser.firstname
+    user.lastname = usersData.previousUser.lastname
+    user.email = usersData.previousUser.email
+    user.password = usersData.previousUser.password
+    user.email = usersData.previousUser.email
     user.save()
     def callback =  "Cytomine.Views.User.reload()"
     def message = messageSource.getMessage('be.cytomine.EditUserCommand', [user.username] as Object[], Locale.ENGLISH)
-    return [data : [success : true, message: message, user : user], callback: callback,status : 200]
+    return [data : [success : true, message: message, callback: callback,user : user], status : 200]
   }
 
   def redo() {
     def usersData = JSON.parse(data)
-    User user = User.getUserFromData(User.findById(usersData.newUser.id), usersData.newUser)
+    User user = User.findById(usersData.newUser.id)
+    user.username = usersData.newUser.username
+    user.firstname = usersData.newUser.firstname
+    user.lastname = usersData.newUser.lastname
+    user.email = usersData.newUser.email
+    user.password = usersData.newUser.password
+    user.email = usersData.newUser.email
     user.save()
     def callback =  "Cytomine.Views.User.reload()"
     def message = messageSource.getMessage('be.cytomine.EditUserCommand', [user.username] as Object[], Locale.ENGLISH)

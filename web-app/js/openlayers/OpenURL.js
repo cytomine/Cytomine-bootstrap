@@ -65,12 +65,14 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
 
         // viewerLevel is the smallest useful zoom level: i.e., it is the largest level that fits entirely
         // within the bounds of the viewer div.
-        viewerLevel = Math.ceil(Math.min(minLevel, Math.max(
+        /*viewerLevel = Math.ceil(Math.min(minLevel, Math.max(
             (Math.log(this.imgMetadata.width) - Math.log(OpenLayers.Layer.OpenURL.viewerWidth)),
             (Math.log(this.imgMetadata.height) - Math.log(OpenLayers.Layer.OpenURL.viewerHeight)))/
-               Math.log(2)));
+               Math.log(2)));*/
 
-        viewerLevel = Math.ceil(Math.log( Math.max(this.imgMetadata.width, this.imgMetadata.height) / 256) / Math.log(2));
+        viewerLevel = Math.ceil(Math.log( this.imgMetadata.width / 256) / Math.log(2));
+
+        if (this.imgMetadata.width / Math.pow(2, viewerLevel) < 200) viewerLevel--;
 
         this.zoomOffset = minLevel - viewerLevel;
 
@@ -260,7 +262,7 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
     CLASS_NAME: "OpenLayers.Layer.OpenURL"
 });
 
-OpenLayers.Layer.OpenURL.viewerWidth = 512;
-OpenLayers.Layer.OpenURL.viewerHeight = 512;
+/*OpenLayers.Layer.OpenURL.viewerWidth = 512;
+OpenLayers.Layer.OpenURL.viewerHeight = 512;*/
 OpenLayers.Layer.OpenURL.minDjatokaLevelDimension = 48;
 OpenLayers.Layer.OpenURL.djatokaURL = '/adore-djatoka/resolver';

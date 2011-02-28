@@ -12,8 +12,22 @@ Cytomine.Views.Browser = {
      * @return {Ext.Panel}
      */
     tab: function(idTab, idImage, url, tabTitle) {
+
+        var overview = new Ext.Panel({
+            cls : 'overviewMapPanel',
+            title  : 'Overview',
+            layout : 'fit',
+            iconCls :'image-min',
+            collapsible: true,
+            html : '<div id="overviewMap'+idImage+'"></div>',
+            /*autoWidth : true,*/
+            width : 256,
+            autoHeight : true
+        });
+
         return new Ext.Panel({
             id: idTab,
+            layout   : 'border',
             bodyCssClass: 'overflow-auto',
             iconCls: 'magnifier-medium',
             title: tabTitle,
@@ -64,29 +78,43 @@ Cytomine.Views.Browser = {
                     '-'
                 ]
             },
-            autoLoad : {url:url,scripts:true},
-            item : [
-                /*{
-                 title:'Project',
-                 collapsible: true, //make this column collapsable
-
-                 //contentEl: 'west', //Get our content from the "west" div
-                 margins: '5 0 5 5',
-                 cmargins: '5 5 5 5',
-                 width: 175,
-                 minSize: 100, //set the limits for resizing
-                 maxSize: 250 //set the limits for resizing
-
-                 }*/
+            items : [
+                {
+                    region: 'east',
+                    animCollapse: false,
+                    collapsible: true,
+                    split: true,
+                    autoWidth : true,
+                    minSize: 256,
+                    maxSize: 256,
+                    collapseMode:'mini',
+                    title : tabTitle,
+                    listeners: {
+                        collapse: function(p) {console.log("collapse");},
+                        expand: function(p) {console.log("expand");}
+                    },
+                    containerScroll: true,
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretch'
+                    },
+                    items : [
+                         overview
+                    ]
+                },
+                {
+                    region: 'center',
+                    autoLoad : {url:url,scripts:true}
+                }
             ],
             listeners: {
                 show: function(p) {
                     console.log("SHOW");
                     console.log("LAYER NULL ? " +  Cytomine.annotationLayers[idImage] != undefined);
-                    if (Cytomine.annotationLayers[idImage] != null) {
+                    /*if (Cytomine.annotationLayers[idImage] != null) {
                         Cytomine.currentLayer = Cytomine.annotationLayers[idImage];
                         Cytomine.annotationLayers[idImage].loadToMap(Cytomine.scans[idImage]);
-                    }
+                    }*/
 
                 }
             }
@@ -99,7 +127,5 @@ Cytomine.Views.Browser = {
         }
         tab = Cytomine.tabs.add(this.tab(idTab, idImage, url, title)).show();
         Cytomine.tabs.setActiveTab(tab);
-        if (Cytomine.toolbar != null) Cytomine.toolbar.show().syncSize();
-        if (Cytomine.overview != null) Cytomine.overview.show().syncSize();
     }
 };
