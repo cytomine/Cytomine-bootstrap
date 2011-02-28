@@ -14,6 +14,7 @@ import be.cytomine.project.Project
 import be.cytomine.project.Relation
 import be.cytomine.project.RelationTerm
 import be.cytomine.project.AnnotationTerm
+import be.cytomine.project.Ontology
 
 /**
  * Created by IntelliJ IDEA.
@@ -211,7 +212,7 @@ class BasicInstance {
     def project = Project.findByName("BasicProject")
     if(!project) {
 
-      project = new Project(name:"BasicProject")
+      project = new Project(name:"BasicProject", ontology:createOrGetBasicOntology())
       project.validate()
       log.debug "project.errors="+project.errors
       project.save(flush : true)
@@ -233,9 +234,41 @@ class BasicInstance {
       project = Project.findByName(randomInt+"")
    }
 
-    project =  new Project(name:randomInt+"")
+    project =  new Project(name:randomInt+"",ontology:createOrGetBasicOntology())
     project.validate()
     project
+  }
+
+  static Ontology createOrGetBasicOntology() {
+    log.debug  "createOrGetBasicOntology()"
+    def ontology = Ontology.findByName("BasicOntology")
+    if(!ontology) {
+
+      ontology = new Ontology(name:"BasicOntology")
+      ontology.validate()
+      log.debug "ontology.errors="+ontology.errors
+      ontology.save(flush : true)
+      log.debug "ontology.errors="+ontology.errors
+    }
+    assert ontology!=null
+    ontology
+  }
+
+  static Ontology getBasicOntologyNotExist() {
+
+    log.debug "getBasicOntologyNotExist()"
+    def random = new Random()
+    def randomInt = random.nextInt()
+    def ontology = Ontology.findByName(randomInt+"")
+
+    while(ontology){
+      randomInt = random.nextInt()
+      ontology = Ontology.findByName(randomInt+"")
+   }
+
+    ontology =  new Ontology(name:randomInt+"")
+    ontology.validate()
+   ontology
   }
 
   static Term createOrGetBasicTerm() {
@@ -415,6 +448,7 @@ class BasicInstance {
   static void compareProject(map, json)  {
 
     assert map.name.equals(json.project.name)
+    assert toLong(map.ontology.id).equals(toLong(json.project.ontology))
 
   }
 

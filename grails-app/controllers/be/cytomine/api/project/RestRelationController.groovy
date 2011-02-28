@@ -47,7 +47,7 @@ class RestRelationController {
       User currentUser = User.get(springSecurityService.principal.id)
       log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
-      Command addRelationCommand = new AddRelationCommand(postData : request.JSON.toString())
+      Command addRelationCommand = new AddRelationCommand(postData : request.JSON.toString(),user: currentUser)
 
       def result = addRelationCommand.execute()
 
@@ -77,7 +77,7 @@ class RestRelationController {
     else
     {
 
-    Command editRelationCommand = new EditRelationCommand(postData : request.JSON.toString())
+    Command editRelationCommand = new EditRelationCommand(postData : request.JSON.toString(),user: currentUser)
     result = editRelationCommand.execute()
 
     if (result.status == 200) {
@@ -101,7 +101,7 @@ class RestRelationController {
     def postData = ([id : params.id]) as JSON
     def result = null
 
-    Command deleteRelationCommand = new DeleteRelationCommand(postData : postData.toString())
+    Command deleteRelationCommand = new DeleteRelationCommand(postData : postData.toString(),user: currentUser)
 
     result = deleteRelationCommand.execute()
     if (result.status == 204) {

@@ -6,6 +6,7 @@ import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.security.User
 import be.cytomine.SequenceDomain
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class Annotation extends SequenceDomain implements Serializable {
 
@@ -26,7 +27,7 @@ class Annotation extends SequenceDomain implements Serializable {
     location(nullable:false)
     zoomLevel(nullable:true)
     channels(nullable:true)
-    user(nullable:true)
+    user(nullable:false)
   }
 
   static mapping = {
@@ -105,7 +106,13 @@ class Annotation extends SequenceDomain implements Serializable {
       returnArray['user'] = it.user? it.user.id : null
       returnArray['created'] = it.created? it.created.time.toString() : null
       returnArray['updated'] = it.updated? it.updated.time.toString() : null
+
+      returnArray['term'] = it.getTermsURL()
       return returnArray
     }
+  }
+
+  def getTermsURL() {
+    return ConfigurationHolder.config.grails.serverURL + '/api/annotation/'+ this.id +'/term.json';
   }
 }

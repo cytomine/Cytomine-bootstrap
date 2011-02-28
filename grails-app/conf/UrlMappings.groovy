@@ -42,12 +42,16 @@ class UrlMappings {
     "/api/image/$id"(controller: "restImage"){
       action = [GET:"show", PUT:"update", DELETE:"delete"]
     }
+    "/api/image/user/$id"(controller:"restImage"){
+      action = [GET:"listByUser"]
+    }
     "/api/image/$id/thumb"(controller: "restImage"){
       action = [GET:"thumb"]
     }
     "/api/image/$id/metadata"(controller: "restImage"){
       action = [GET:"metadata"]
     }
+
 
     /* Annotation */
     "/api/annotation"(controller:"restAnnotation"){
@@ -59,9 +63,18 @@ class UrlMappings {
     "/api/annotation/$id/$zoom/crop"(controller: "restImage"){
       action = [GET:"crop"]
     }
-    "/api/image/$id/annotation"(controller:"restAnnotation"){
-      action = [GET:"list"]
+    "/api/annotation/user/$id"(controller:"restAnnotation"){
+      action = [GET:"listByUser"]
     }
+    "/api/annotation/image/$id"(controller:"restAnnotation"){
+      action = [GET:"listByImage"]
+    }
+    "/api/annotation/image/$idImage/user/$idUser"(controller:"restAnnotation"){
+      action = [GET:"listByImageAndUser"]
+    }
+
+
+
     "/api/annotation/$id/retrieval/$zoom/$maxsimilarpictures"(controller: "restImage") {
       action = [GET:"retrieval"]
     }
@@ -77,10 +90,6 @@ class UrlMappings {
     "/api/annotation/$idannotation/term/$idterm"(controller:"restAnnotationTerm"){
       action = [GET:"show",DELETE:"delete"]
     }
-
-
-
-
 
     "/api/term"(controller:"restTerm"){
       action = [GET: "list",POST:"add"]

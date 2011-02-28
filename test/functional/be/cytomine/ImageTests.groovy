@@ -60,6 +60,47 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
+  void testListAnnotationsByUserWithCredential() {
+
+    log.info("create annotation")
+    Image image =  BasicInstance.createOrGetBasicImage()
+    User user = BasicInstance.createOrGetBasicUser()
+
+    log.info("get annotation")
+    String URL = Infos.CYTOMINEURL+"api/image/user/"+user.id+".json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+  }
+
+  void testListAnnotationsByUserNoExistWithCredential() {
+
+    log.info("create annotation")
+    Image image =  BasicInstance.createOrGetBasicImage()
+
+    log.info("get annotation")
+    String URL = Infos.CYTOMINEURL+"api/image/user/-99.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(404,code)
+
+  }
+
   void testGetImageWithCredential() {
 
     log.info("create annotation")

@@ -8,6 +8,7 @@ import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.security.User
+import be.cytomine.project.Image
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -94,6 +95,131 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("check response")
     assertEquals(401,code)
+
+  }
+
+  void testGetAnnotationsByUserWithCredential() {
+
+    log.info("create annotation")
+    Annotation annotation =  BasicInstance.createOrGetBasicAnnotation()
+    User user = BasicInstance.createOrGetBasicUser()
+
+    log.info("get annotation")
+    String URL = Infos.CYTOMINEURL+"api/annotation/user/"+user.id+".json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+  }
+
+  void testGetAnnotationsByUserNoExistWithCredential() {
+
+    log.info("create annotation")
+    Annotation annotation =  BasicInstance.createOrGetBasicAnnotation()
+    User user = BasicInstance.createOrGetBasicUser()
+
+    log.info("get annotation")
+    String URL = Infos.CYTOMINEURL+"api/annotation/user/-99.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(404,code)
+
+  }
+
+  void testGetAnnotationsByImageWithCredential() {
+
+    log.info("create annotation")
+    Annotation annotation =  BasicInstance.createOrGetBasicAnnotation()
+    Image image = BasicInstance.createOrGetBasicImage()
+
+    log.info("get annotation")
+    String URL = Infos.CYTOMINEURL+"api/annotation/image/"+image.id+".json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+  }
+
+  void testGetAnnotationsByImageNoExistWithCredential() {
+
+    log.info("create annotation")
+    Annotation annotation =  BasicInstance.createOrGetBasicAnnotation()
+
+    log.info("get annotation")
+    String URL = Infos.CYTOMINEURL+"api/annotation/image/-99.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(404,code)
+
+  }
+
+  void testGetAnnotationsByImageAndUserWithCredential() {
+
+    log.info("create annotation")
+    Annotation annotation =  BasicInstance.createOrGetBasicAnnotation()
+    Image image = BasicInstance.createOrGetBasicImage()
+    User user = BasicInstance.createOrGetBasicUser()
+
+    log.info("get annotation")
+    String URL = Infos.CYTOMINEURL+"api/annotation/image/"+image.id+"/user/"+ user.id +".json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+  }
+
+  void testGetAnnotationsByImageAndUserNoExistWithCredential() {
+
+    log.info("create annotation")
+    Annotation annotation =  BasicInstance.createOrGetBasicAnnotation()
+
+    log.info("get annotation")
+    String URL = Infos.CYTOMINEURL+"api/annotation/image/-99/user/-99.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(404,code)
 
   }
 
@@ -228,7 +354,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     Annotation annotation =  BasicInstance.createOrGetBasicAnnotation()
 
     log.info("get annotation with scan:"+annotation.image.id)
-    String URL = Infos.CYTOMINEURL+"api/image/"+annotation.image.id +"/annotation.json"
+    String URL = Infos.CYTOMINEURL+"api/annotation/image/"+annotation.image.id +".json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()

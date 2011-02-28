@@ -104,7 +104,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
     /*Load annotation from database on layer */
     loadAnnotations : function (scan) {
         req = new XMLHttpRequest();
-        req.open("GET", "/cytomine-web/api/image/"+this.scanID+"/annotation.json", true);
+        req.open("GET", "/cytomine-web/api/annotation/image/"+this.scanID+".json", true);
         req.onreadystatechange = this.decodeAnnotations;   // the handler
         req.send(null);
         scan.map.addLayer(vectorsLayer);

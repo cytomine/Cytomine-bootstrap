@@ -45,7 +45,7 @@ class RestProjectController {
     User currentUser = User.get(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
-    Command addProjectCommand = new AddProjectCommand(postData : request.JSON.toString())
+    Command addProjectCommand = new AddProjectCommand(postData : request.JSON.toString(),user: currentUser)
 
     def result = addProjectCommand.execute()
 
@@ -76,7 +76,7 @@ class RestProjectController {
     else
     {
 
-    Command editProjectCommand = new EditProjectCommand(postData : request.JSON.toString())
+    Command editProjectCommand = new EditProjectCommand(postData : request.JSON.toString(),user: currentUser)
     result = editProjectCommand.execute()
 
     if (result.status == 200) {
@@ -105,7 +105,7 @@ class RestProjectController {
     def postData = ([id : params.id]) as JSON
     def result = null
 
-    Command deleteProjectCommand = new DeleteProjectCommand(postData : postData.toString())
+    Command deleteProjectCommand = new DeleteProjectCommand(postData : postData.toString(),user: currentUser)
 
     result = deleteProjectCommand.execute()
     if (result.status == 204) {

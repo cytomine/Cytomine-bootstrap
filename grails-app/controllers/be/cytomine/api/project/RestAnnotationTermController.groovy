@@ -18,7 +18,8 @@ class RestAnnotationTermController {
     log.info "listByAnnotation"
     if(params.idannotation && Annotation.exists(params.idannotation)) {
       def data = [:]
-      data.annotationTerm = AnnotationTerm.findByAnnotation(Annotation.get(params.idannotation))
+      data.term = Annotation.get(params.idannotation).terms()
+      //data.annotationTerm = AnnotationTerm.findAllByAnnotation(Annotation.get(params.idannotation))
       withFormat {
         json { render data as JSON }
         xml { render data as XML}
@@ -78,7 +79,7 @@ class RestAnnotationTermController {
     User currentUser = User.get(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
-    Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : request.JSON.toString())
+    Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : request.JSON.toString(),user: currentUser)
 
     def result = addAnnotationTermCommand.execute()
 
@@ -103,7 +104,7 @@ class RestAnnotationTermController {
     def postData = ([annotation : params.idannotation,term :params.idterm]) as JSON
     def result = null
 
-    Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData : postData.toString())
+    Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData : postData.toString(),user: currentUser)
 
     result = deleteAnnotationTermCommand.execute()
     if (result.status == 204) {

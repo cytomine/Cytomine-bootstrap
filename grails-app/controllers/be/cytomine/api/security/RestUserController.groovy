@@ -72,7 +72,7 @@ class RestUserController {
    */
   def save = {
     User currentUser = User.get(springSecurityService.principal.id)
-    Command addUserCommand = new AddUserCommand(postData : request.JSON.toString())
+    Command addUserCommand = new AddUserCommand(postData : request.JSON.toString(),user: currentUser)
 
     def result = addUserCommand.execute()
 
@@ -97,7 +97,7 @@ class RestUserController {
    */
   def update = {
     User currentUser = User.get(springSecurityService.principal.id)
-    Command editUserCommand = new EditUserCommand(postData : request.JSON.toString())
+    Command editUserCommand = new EditUserCommand(postData : request.JSON.toString(),user: currentUser)
 
     def result = editUserCommand.execute()
     if (result.status == 200) {
@@ -125,7 +125,7 @@ class RestUserController {
     if (params.id == springSecurityService.principal.id) {
       result = [data : [success : false, errors : "The user can't delete herself"], status : 403]
     } else {
-      Command deleteUserCommand = new DeleteUserCommand(postData : postData.toString())
+      Command deleteUserCommand = new DeleteUserCommand(postData : postData.toString(),user: currentUser)
 
       result = deleteUserCommand.execute()
 

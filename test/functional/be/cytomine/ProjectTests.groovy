@@ -6,6 +6,7 @@ import be.cytomine.test.HttpClient
 import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
 import be.cytomine.project.Project
+import be.cytomine.project.Ontology
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -177,13 +178,18 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     String oldName = "Name1"
     String newName = "Name2"
 
-    def mapNew = ["name":newName]
-    def mapOld = ["name":oldName]
+    Ontology oldOtology = BasicInstance.createOrGetBasicOntology()
+    Ontology newOtology = BasicInstance.getBasicOntologyNotExist()
+    newOtology.save(flush:true)
+
+    def mapNew = ["name":newName,"ontology":newOtology]
+    def mapOld = ["name":oldName,"ontology":oldOtology]
 
     /* Create a Name1 project */
     log.info("create project")
     Project projectToAdd = BasicInstance.createOrGetBasicProject()
     projectToAdd.name = oldName
+    projectToAdd.ontology = oldOtology
     assert (projectToAdd.save(flush:true) != null)
 
     /* Encode a niew project Name2*/
@@ -192,6 +198,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     def jsonProject = jsonEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonProject)
     jsonUpdate.project.name = newName
+    jsonUpdate.project.ontology = newOtology.id
     jsonProject = jsonUpdate.encodeAsJSON()
 
     log.info("put project:"+jsonProject.replace("\n",""))

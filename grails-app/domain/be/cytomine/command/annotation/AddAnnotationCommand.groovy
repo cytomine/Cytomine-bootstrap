@@ -12,6 +12,7 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
     {
       log.info("Execute")
       def json = JSON.parse(postData)
+      json.annotation.user = user.id
       Annotation newAnnotation = Annotation.createAnnotationFromData(json.annotation)
       if(newAnnotation.validate() && newAnnotation.save(flush : true)) {
         log.info("Save annotation with id:"+newAnnotation.id)

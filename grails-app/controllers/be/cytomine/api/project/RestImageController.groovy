@@ -43,6 +43,29 @@ class RestImageController {
     }
   }
 
+  def listByUser = {
+    log.info "List with id user:"+params.id
+    def data = [:]
+
+      if(User.findById(params.id)!=null) {
+        data.image = Image.findAllByUser(User.findById(params.id))
+      }
+      else {
+        log.error "User Id " + params.id+ " don't exist"
+        response.status = 404
+        render contentType: "application/xml", {
+          errors {
+            message("User not found with id : " + params.id)
+          }
+        }
+      }
+
+    withFormat {
+      json { render data as JSON }
+      xml { render jsonMap as XML}
+    }
+  }
+
   def showByProject = {
     if(params.id && Project.exists(params.id)) {
       def scan = []
@@ -75,7 +98,7 @@ class RestImageController {
     User currentUser = User.read(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
-    Command addImageCommand = new AddImageCommand(postData : request.JSON.toString())
+    Command addImageCommand = new AddImageCommand(postData : request.JSON.toString(), user: currentUser)
     def result = addImageCommand.execute()
     if (result.status == 201) {
       addImageCommand.save(flush:true)
@@ -105,7 +128,7 @@ class RestImageController {
     }
     else
     {
-      Command editImageCommand = new EditImageCommand(postData : request.JSON.toString())
+      Command editImageCommand = new EditImageCommand(postData : request.JSON.toString(), user: currentUser)
       result = editImageCommand.execute()
 
       if (result.status == 200) {
@@ -132,7 +155,7 @@ class RestImageController {
 
     def postData = ([id : params.id]) as JSON
 
-    Command deleteImageCommand = new DeleteImageCommand(postData : postData.toString())
+    Command deleteImageCommand = new DeleteImageCommand(postData : postData.toString(), user: currentUser)
     def result = deleteImageCommand.execute()
     if (result.status == 204) {
       log.info "Save command on stack"

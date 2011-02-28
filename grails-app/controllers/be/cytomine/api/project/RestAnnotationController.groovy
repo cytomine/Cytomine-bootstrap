@@ -42,7 +42,86 @@ class RestAnnotationController {
 
   }
 
-  //return 404 when not found
+  def listByUser = {
+    log.info "List with id user:"+params.id
+    def data = [:]
+
+    if(User.findById(params.id)!=null) {
+      data.annotation = Annotation.findAllByUser(User.findById(params.id))
+    }
+    else {
+      log.error "User Id " + params.id+ " don't exist"
+      response.status = 404
+      render contentType: "application/xml", {
+        errors {
+          message("User not found with id : " + params.id)
+        }
+      }
+    }
+
+    withFormat {
+      json { render data as JSON }
+      xml { render jsonMap as XML}
+    }
+  }
+
+  def listByImage = {
+    log.info "List with id image:"+params.id
+    def data = [:]
+
+    if(Image.findById(params.id)!=null) {
+      data.annotation = Annotation.findAllByImage(Image.findById(params.id))
+    }
+    else {
+      log.error "Image Id " + params.id+ " don't exist"
+      response.status = 404
+      render contentType: "application/xml", {
+        errors {
+          message("Image not found with id : " + params.id)
+        }
+      }
+    }
+
+    withFormat {
+      json { render data as JSON }
+      xml { render jsonMap as XML}
+    }
+  }
+
+  def listByImageAndUser = {
+    log.info "List with id image:"+params.idImage + " and id user:" + params.idUser
+    def image = Image.get(params.idImage)
+    def user = User.get(params.idUser)
+
+    def data = [:]
+
+    if(image && user) {
+      data.annotation = Annotation.findAllByImageAndUser(image,user)
+    }
+    else if(!user){
+      log.error "User Id " + params.idUser+ " don't exist"
+      response.status = 404
+      render contentType: "application/xml", {
+        errors {
+          message("User not found with id : " + params.idUser)
+        }
+      }
+    } else if(!image){
+      log.error "Image Id " + params.idImage+ " don't exist"
+      response.status = 404
+      render contentType: "application/xml", {
+        errors {
+          message("Image not found with id : " + params.idImage)
+        }
+      }
+    }
+
+    withFormat {
+      json { render data as JSON }
+      xml { render jsonMap as XML}
+    }
+  }
+
   def show = {
     //testExecuteEditAnnotation()
     log.info "Show with id:" + params.id
@@ -71,7 +150,7 @@ class RestAnnotationController {
     User currentUser = User.read(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
-    Command addAnnotationCommand = new AddAnnotationCommand(postData : request.JSON.toString())
+    Command addAnnotationCommand = new AddAnnotationCommand(postData : request.JSON.toString(), user: currentUser)
     def result = addAnnotationCommand.execute()
     if (result.status == 201) {
       addAnnotationCommand.save()
@@ -95,7 +174,7 @@ class RestAnnotationController {
 
     def postData = ([id : params.id]) as JSON
 
-    Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData : postData.toString())
+    Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData : postData.toString(), user: currentUser)
     def result = deleteAnnotationCommand.execute()
     if (result.status == 204) {
       log.info "Save command on stack"
@@ -125,7 +204,7 @@ class RestAnnotationController {
     }
     else
     {
-      Command editAnnotationCommand = new EditAnnotationCommand(postData : request.JSON.toString())
+      Command editAnnotationCommand = new EditAnnotationCommand(postData : request.JSON.toString(), user: currentUser)
 
       result = editAnnotationCommand.execute()
       if (result.status == 200) {

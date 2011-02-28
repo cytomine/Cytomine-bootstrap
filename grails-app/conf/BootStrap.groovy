@@ -123,6 +123,36 @@ class BootStrap {
                     'url' : 'http://is5.cytomine.be:38',
                     'service' : '/adore-djatoka/resolver',
                     'className' : 'DjatokaResolver'
+            ],
+            [
+                    'name' : 'Adore-Djatoka',
+                    'url' : 'http://is6.cytomine.be:38',
+                    'service' : '/adore-djatoka/resolver',
+                    'className' : 'DjatokaResolver'
+            ],
+            [
+                    'name' : 'Adore-Djatoka',
+                    'url' : 'http://is7.cytomine.be:38',
+                    'service' : '/adore-djatoka/resolver',
+                    'className' : 'DjatokaResolver'
+            ],
+            [
+                    'name' : 'Adore-Djatoka',
+                    'url' : 'http://is8.cytomine.be:38',
+                    'service' : '/adore-djatoka/resolver',
+                    'className' : 'DjatokaResolver'
+            ],
+            [
+                    'name' : 'Adore-Djatoka',
+                    'url' : 'http://is9.cytomine.be:38',
+                    'service' : '/adore-djatoka/resolver',
+                    'className' : 'DjatokaResolver'
+            ],
+            [
+                    'name' : 'Adore-Djatoka',
+                    'url' : 'http://is10.cytomine.be:38',
+                    'service' : '/adore-djatoka/resolver',
+                    'className' : 'DjatokaResolver'
             ]
 
     ]
@@ -137,12 +167,19 @@ class BootStrap {
     ]
     createRetrievalServers(retrievalServerSamples)
 
+    def ontologySamples = [
+            [name: "Ontology1"],
+            [name: "Ontology2"],
+            [name: "Ontology3"]
+    ]
+    createOntology(ontologySamples)
+
     /* Projects */
     def projectSamples = [
-            [name : "GIGA-DEV",  groups : [[ name :"GIGA"]]],
-            [name : "GIGA-DEV2",  groups : [[ name :"GIGA"]]],
-            [name : "NEO13", groups : [[ name :"GIGA"]]],
-            [name : "NEO4",  groups : [[ name :"GIGA"]]]
+            [name : "GIGA-DEV",  groups : [[ name :"GIGA"]],ontology: "Ontology1"],
+            [name : "GIGA-DEV2",  groups : [[ name :"GIGA"]],ontology: "Ontology2"]
+           // [name : "NEO13", groups : [[ name :"GIGA"]]],
+           // [name : "NEO4",  groups : [[ name :"GIGA"]]]
 
     ]
 
@@ -567,12 +604,7 @@ class BootStrap {
     ]
     // createLBTDScans(LBTDScans)
 
-    def ontologySamples = [
-            [name: "Ontology1"],
-            [name: "Ontology2"],
-            [name: "Ontology3"]
-    ]
-    createOntology(ontologySamples)
+
 
     def termSamples = [
             [name: "Cell in vivo",comment:"",ontology:["Ontology1"]],
@@ -602,9 +634,9 @@ class BootStrap {
     def annotationSamples = [
             //[name : "annot3", location : ["POLYGON((2000 1000, 30 0, 40 10, 30 20, 2000 1000))","POLYGON((20 10, 30 0, 40 10, 30 20, 20 10))"], scan: [filename: "Boyden - essai _10x_02"]],
             //[name : "annot2", location : ["POLYGON((20 10, 30 50, 40 10, 30 20, 20 10))"],scan: [filename: "Boyden - essai _10x_02"]]
-            [name : "annot3", location : ["POINT(10000 10000)"], scan: [filename: "Aperio - 003"],term:["Cell","Cell in vivo"]],
-            [name : "annot2", location : ["POINT(5000 5000)"],scan: [filename: "Aperio - 003"]],
-            [name : "annot4", location : ["POLYGON((5000 20000, 20000 17000, 20000 10000, 10000 7500, 5000 20000))","POLYGON((10000 15000, 15000 12000, 12000 12000, 10000 15000))"],scan: [filename: "Aperio - 003"],term:["Cell ex vivo"]]
+            [name : "annot3", location : ["POINT(10000 10000)"], scan: [filename: "Aperio - 003"],term:["Cell","Cell in vivo"], user:"lrollus"],
+            [name : "annot2", location : ["POINT(5000 5000)"],scan: [filename: "Aperio - 003"],user:"lrollus"],
+            [name : "annot4", location : ["POLYGON((5000 20000, 20000 17000, 20000 10000, 10000 7500, 5000 20000))","POLYGON((10000 15000, 15000 12000, 12000 12000, 10000 15000))"],scan: [filename: "Aperio - 003"],term:["Cell ex vivo"],user:"lrollus"]
     ]
     createAnnotations(annotationSamples)
 
@@ -844,8 +876,10 @@ class BootStrap {
     def projects = Project.list() ?: []
     if (!projects) {
       projectSamples.each { item->
+        def ontology = Ontology.findByName(item.ontology)
         def project = new Project(
                 name : item.name,
+                ontology : ontology,
                 created : new Date(),
                 updated : item.updated,
                 deleted : item.deleted
@@ -910,7 +944,7 @@ class BootStrap {
         def mime = Mime.findByExtension("jp2")
 
         def scanner = Scanner.findByBrand("gigascan")
-
+        def user = User.findByUsername("lrollus")
         //  String path
         //Mime mime
         def scan = new Image(
@@ -918,7 +952,8 @@ class BootStrap {
                 path : item.path,
                 mime : mime,
                 scanner : scanner,
-                slide : slides[item.slide]
+                slide : slides[item.slide],
+                user:user
         )
 
         if (scan.validate()) {
@@ -955,25 +990,27 @@ class BootStrap {
       GeometryFactory geometryFactory = new GeometryFactory()
       annotationSamples.each { item ->
         /* Read spatial data an create annotation*/
+        def geom
         if(item.location[0].startsWith('POINT'))
         {
-          Point point = new WKTReader().read(item.location[0]);
-          def scanParent = Image.findByFilename(item.scan.filename)
-          annotation = new Annotation(name: item.name, location:point, image:scanParent)
+          //point
+          geom = new WKTReader().read(item.location[0]);
         }
         else
         {
+          //multipolygon
           Polygon[] polygons = new Polygon[(item.location).size()];
           int i=0
           (item.location).each {itemPoly ->
             polygons[i] =  new WKTReader().read(itemPoly);
             i++;
           }
-          def multipoly = geometryFactory.createMultiPolygon(polygons)
-          def scanParent = Image.findByFilename(item.scan.filename)
-          annotation = new Annotation(name: item.name, location:multipoly, image:scanParent)
+          geom = geometryFactory.createMultiPolygon(polygons)
         }
-
+        def scanParent = Image.findByFilename(item.scan.filename)
+        def user = User.findByUsername(item.user)
+        println "user " + item.user +"=" + user.username
+        annotation = new Annotation(name: item.name, location:geom, image:scanParent,user:user)
 
 
         /* Save annotation */

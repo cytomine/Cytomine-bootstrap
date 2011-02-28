@@ -47,7 +47,7 @@ class RestRelationTermController {
       User currentUser = User.get(springSecurityService.principal.id)
       log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
-      Command addRelationTermCommand = new AddRelationTermCommand(postData : request.JSON.toString())
+      Command addRelationTermCommand = new AddRelationTermCommand(postData : request.JSON.toString(),user: currentUser)
 
       def result = addRelationTermCommand.execute()
 
@@ -72,7 +72,7 @@ class RestRelationTermController {
     def postData = ([id : params.id]) as JSON
     def result = null
 
-    Command deleteRelationTermCommand = new DeleteRelationTermCommand(postData : postData.toString())
+    Command deleteRelationTermCommand = new DeleteRelationTermCommand(postData : postData.toString(),user: currentUser)
 
     result = deleteRelationTermCommand.execute()
     if (result.status == 204) {

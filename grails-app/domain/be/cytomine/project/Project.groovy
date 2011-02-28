@@ -7,6 +7,7 @@ import be.cytomine.SequenceDomain
 class Project extends SequenceDomain {
 
   String name
+  Ontology ontology
 
   static hasMany = [projectSlide:ProjectSlide, projectGroup:ProjectGroup]
 
@@ -31,6 +32,7 @@ class Project extends SequenceDomain {
     if(!jsonProject.name.toString().equals("null"))
       project.name = jsonProject.name
     else throw new IllegalArgumentException("Project name cannot be null")
+    project.ontology = Ontology.get(jsonProject.ontology)
     return project;
   }
 
@@ -46,6 +48,7 @@ class Project extends SequenceDomain {
       returnArray['class'] = it.class
       returnArray['id'] = it.id
       returnArray['name'] = it.name
+      returnArray['ontology'] = it.ontology? it.ontology.id : null
       returnArray['image'] = it.getImageURL()
       return returnArray
     }

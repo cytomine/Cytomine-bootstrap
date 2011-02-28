@@ -68,7 +68,7 @@ class RestTermController {
     User currentUser = User.get(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
-    Command addTermCommand = new AddTermCommand(postData : request.JSON.toString())
+    Command addTermCommand = new AddTermCommand(postData : request.JSON.toString(),user: currentUser)
 
     def result = addTermCommand.execute()
 
@@ -98,7 +98,7 @@ class RestTermController {
     else
     {
 
-      Command editTermCommand = new EditTermCommand(postData : request.JSON.toString())
+      Command editTermCommand = new EditTermCommand(postData : request.JSON.toString(),user: currentUser)
       result = editTermCommand.execute()
 
       if (result.status == 200) {
@@ -122,7 +122,7 @@ class RestTermController {
     def postData = ([id : params.id]) as JSON
     def result = null
 
-    Command deleteTermCommand = new DeleteTermCommand(postData : postData.toString())
+    Command deleteTermCommand = new DeleteTermCommand(postData : postData.toString(),user: currentUser)
 
     result = deleteTermCommand.execute()
     if (result.status == 204) {
@@ -142,7 +142,7 @@ class RestTermController {
     User currentUser = User.read(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
-    Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : request.JSON.toString())
+    Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : request.JSON.toString(),user: currentUser)
     def result = addAnnotationTermCommand.execute()
     if (result.status == 201) {
       addAnnotationTermCommand.save()
