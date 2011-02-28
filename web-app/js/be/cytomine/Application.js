@@ -35,8 +35,48 @@ Cytomine.Application = function() {
         },
         init : function() {
 
+            Ext.QuickTips.init();
+
             console.log("Init Application");
 
+            var welcomePanel = new Ext.Panel({
+                title : "Welcome",
+                html : "welcome"
+            });
+
+            var faqPanel = new Ext.Panel({
+                title : "FAQ",
+                html : "faq"
+            });
+
+            var screencastsPanel = new Ext.Panel({
+                title : "Screencasts",
+                html : "content"
+            });
+
+
+
+
+            Cytomine.Application.HelpWindow = new Ext.Window({
+                title:'Help',
+                width:500,
+                height:400,
+                plain:true,
+                closable:true,
+                closeAction:'hide',
+                layoutConfig:{animate:true},
+                border:false,
+                items:[{
+                    defaults:{border:false, activeTab:0}
+                    ,items:[{
+                        defaults:{layout:'fit'}
+                        ,xtype:'tabpanel'
+                        ,items:[welcomePanel, screencastsPanel, faqPanel]
+                    }]
+                }]
+            });
+
+            //Cytomine.Application.HelpWindow.show();
 
             //Create our centre panel with tabs
             Cytomine.tabs = new Ext.TabPanel({
@@ -128,23 +168,27 @@ Cytomine.Application = function() {
                                 menu: [{
                                     text: 'User Info',
                                     handler : function () {
-                                        App.setAlert(true,"Not yet ;-)");
+                                        App.setAlert(true,"Work in progress");
                                     }
                                 }, {
                                     text: 'Settings',
                                     handler : function () {
-                                        App.setAlert(true,"Not yet ;-)");
+                                        App.setAlert(true,"Work in progress");
                                     }
                                 }]
                             }, {
                                 text: 'Help',
                                 handler : function () {
-                                    App.setAlert(true,"You are such a n00b :D");
+                                    Cytomine.Application.HelpWindow.show();
                                 }
                             }, '-', {
                                 text: 'Logout',
                                 handler : function () {
-                                    App.setAlert(true,"Very soon ;-)");
+                                    var logoutFunction = function() {
+                                        window.location = "logout";
+                                    };
+                                    Cytomine.Notifications.confirm("Are you sure ?", "Logout", logoutFunction,"question", function(){});
+
                                 }
                             }]
                     },
@@ -219,4 +263,5 @@ Ext.data.DataProxy.addListener('exception', function(proxy, type, action, option
 });
 
 
-
+//Prevent closing the app accidentaly
+//window.onbeforeunload = function(){ return ''; }

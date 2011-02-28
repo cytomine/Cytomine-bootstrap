@@ -17,6 +17,7 @@
   <script type="text/javascript" src="${resource(dir:'js',file:'ext-3.3.1/examples/ux/TabCloseMenu.js')}" ></script>
 
   <!-- Views -->
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Notifications.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/User.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Project.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Project.js')}" ></script>
@@ -51,6 +52,11 @@
   <div class="loading-indicator">
     Chargement...
   </div>
+</div>
+
+<div id="helpTabs">
+  <li>Help</li>
+
 </div>
 <g:layoutBody />
 
