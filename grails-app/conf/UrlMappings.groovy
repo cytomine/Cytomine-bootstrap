@@ -20,6 +20,9 @@ class UrlMappings {
     "/api/user/$id"(controller:"restUser"){
       action = [GET:"show", PUT:"update", DELETE:"delete"]
     }
+    "/api/user/current"(controller:"restUser"){
+      action = [GET:"showCurrent"]
+    }
 
     /* PROJECT */
     "/api/project"(controller: "restProject"){

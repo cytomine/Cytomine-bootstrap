@@ -38,7 +38,8 @@ class RestUserController {
    */
   def show = {
     if(params.id && User.exists(params.id)) {
-      def data = User.findById(params.id)
+      def data = [:]
+      data.user = User.findById(params.id)
       withFormat {
         json { render data as JSON }
         xml { render data as XML }
@@ -51,6 +52,15 @@ class RestUserController {
         }
       }
     }
+  }
+
+  def showCurrent = {
+      def data = [:]
+      data.user = User.get(springSecurityService.principal.id)
+      withFormat {
+        json { render data as JSON }
+        xml { render data as XML }
+      }
   }
 
   /**
