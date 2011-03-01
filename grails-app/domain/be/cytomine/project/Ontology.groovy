@@ -13,6 +13,10 @@ class Ontology {
   }
 
   def terms() {
-    return termOntology.collect{it.term}
+    def list = []
+    return termOntology.collect{
+      it.term.color = it.color
+      it.term
+    }
   }
 }

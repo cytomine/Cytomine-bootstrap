@@ -19,6 +19,10 @@ class TermOntology {
      TermOntology.link(null,term,ontology,"FF0000")
   }
 
+  static TermOntology link(Term term,Ontology ontology, String color) {
+     TermOntology.link(null,term,ontology,color)
+  }
+
   static TermOntology link(TermOntology termOntology) {
     TermOntology.link(null,termOntology.term,termOntology.ontology,termOntology.color)
   }

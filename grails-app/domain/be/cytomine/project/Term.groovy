@@ -8,6 +8,10 @@ class Term extends SequenceDomain implements Serializable {
   String name
   String comment
 
+  String color
+
+  static transients = [ "color" ]
+
  //static belongsTo = Annotation
   static hasMany = [annotationTerm:AnnotationTerm, termOntology: TermOntology, relationTerm1:RelationTerm, relationTerm2:RelationTerm]
 
@@ -70,6 +74,7 @@ class Term extends SequenceDomain implements Serializable {
       returnArray['id'] = it.id
       returnArray['name'] = it.name
       returnArray['comment'] = it.comment
+      if(it.color) returnArray['color'] = it.color
 
       /*def children = [:]
       it.child.each { child ->
