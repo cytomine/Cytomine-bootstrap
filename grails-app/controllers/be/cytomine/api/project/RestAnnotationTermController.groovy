@@ -14,7 +14,7 @@ class RestAnnotationTermController {
 
   def springSecurityService
 
-  def listByAnnotation = {
+  def listTermByAnnotation = {
     log.info "listByAnnotation"
     if(params.idannotation && Annotation.exists(params.idannotation)) {
       def data = [:]
@@ -34,11 +34,11 @@ class RestAnnotationTermController {
     }
   }
 
-  def listByTerm = {
+  def listAnnotationByTerm = {
     log.info "listByTerm"
     if(params.idterm && Term.exists(params.idterm)) {
       def data = [:]
-      data.annotationTerm = AnnotationTerm.findByTerm(Term.get(params.idterm))
+      data.annotation = Term.get(params.idterm).annotations()
       withFormat {
         json { render data as JSON }
         xml { render data as XML}

@@ -11,4 +11,8 @@ class Ontology {
   static constraints = {
     name(blank:false, unique:true)
   }
+
+  def terms() {
+    return termOntology.collect{it.term}
+  }
 }

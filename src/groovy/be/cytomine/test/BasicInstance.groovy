@@ -15,6 +15,7 @@ import be.cytomine.project.Relation
 import be.cytomine.project.RelationTerm
 import be.cytomine.project.AnnotationTerm
 import be.cytomine.project.Ontology
+import be.cytomine.project.TermOntology
 
 /**
  * Created by IntelliJ IDEA.
@@ -367,24 +368,10 @@ class BasicInstance {
     assert term!=null
     def annotationTerm =  AnnotationTerm.findByAnnotationAndTerm(annotation,term)
     assert annotationTerm==null
-    println "***********************************************************"
-    println "***********Execute end*************"
-    println "***********************************************************"
-    AnnotationTerm.list().each { println "annotation.id=" + it.annotation.id + " term.id=" + it.term.id }
-    println "***********************************************************"
-      println "add | annotation.id=" + annotation.id + " term.id=" + term.id
-    println "***********************************************************"
 
     log.debug "annotation.id:" + annotation.id + " term.id:" + term.id
     if(!annotationTerm) {
       log.debug "annotationTerm link"
-    println "***********************************************************"
-    println "***********Execute end*************"
-    println "***********************************************************"
-    AnnotationTerm.list().each { println "annotation.id=" + it.annotation.id + " term.id=" + it.term.id }
-    println "***********************************************************"
-      println "add | annotation.id=" + annotation.id + " term.id=" + term.id
-    println "***********************************************************"
 
       annotationTerm = AnnotationTerm.link(annotation,term)
       log.debug "AnnotationTerm.errors="+annotationTerm.errors
@@ -422,6 +409,44 @@ class BasicInstance {
   }
 
 
+  static TermOntology createOrGetBasicTermOntology() {
+    log.debug  "createOrGetBasicTermOntology()"
+
+    def ontology = getBasicOntologyNotExist()
+    ontology.save(flush:true)
+    assert ontology!=null
+    def term = getBasicTermNotExist()
+    term.save(flush:true)
+    assert term!=null
+    def ontologyTerm =  TermOntology.findByOntologyAndTerm(ontology,term)
+    assert ontologyTerm==null
+
+    log.debug "ontology.id:" + ontology.id + " term.id:" + term.id
+    if(!ontologyTerm) {
+      log.debug "ontologyTerm link"
+      ontologyTerm = TermOntology.link(term,ontology)
+      log.debug "TermOntology.errors="+ontologyTerm.errors
+    }
+    assert ontologyTerm!=null
+    ontologyTerm
+  }
+
+  static TermOntology getBasicTermOntologyNotExist(String method) {
+
+    log.debug "getBasicTermOntologyNotExist()"
+    def term = getBasicTermNotExist()
+    term.save(flush:true)
+    assert term!=null
+    def ontology = getBasicOntologyNotExist()
+    log.debug "ontology:" + ontology.id
+    ontology.save(flush:true)
+    assert ontology!=null
+    def ontologyTerm =  new TermOntology(ontology:ontology,term:term, color:"FF0000")
+    log.debug "ontologyTerm.errors="+ontologyTerm.errors
+    ontologyTerm
+  }
+
+
   static void compareAnnotation(map, json)  {
 
     assert map.geom.replace(' ', '').equals(json.annotation.location.replace(' ',''))
@@ -450,6 +475,12 @@ class BasicInstance {
     assert map.name.equals(json.project.name)
     assert toLong(map.ontology.id).equals(toLong(json.project.ontology))
 
+  }
+
+
+  static void compareTermOntology(map, json)  {
+
+    assert map.color.equals(json.termOntology.color)
   }
 
     static void compareRelation(map, json)  {

@@ -21,8 +21,12 @@ class Term extends SequenceDomain implements Serializable {
     id (generator:'assigned', unique : true)
   }
 
-  def annotation() {
+  def annotations() {
     return annotationTerm.collect{it.annotation}
+  }
+
+  def ontologies() {
+    return termOntology.collect{it.ontology}
   }
 
   def relationAsTerm1() {
