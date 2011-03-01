@@ -81,11 +81,11 @@ class UrlMappings {
 
 
     "/api/term/$idterm/annotation"(controller:"restAnnotationTerm"){
-      action = [GET: "listByTerm"]
+      action = [GET: "listAnnotationByTerm"]
     }
 
     "/api/annotation/$idannotation/term"(controller:"restAnnotationTerm"){
-      action = [GET: "listByAnnotation",POST:"add"]
+      action = [GET: "listTermByAnnotation",POST:"add"]
     }
     "/api/annotation/$idannotation/term/$idterm"(controller:"restAnnotationTerm"){
       action = [GET:"show",DELETE:"delete"]
