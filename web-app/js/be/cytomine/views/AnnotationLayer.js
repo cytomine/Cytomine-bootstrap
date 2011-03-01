@@ -38,10 +38,10 @@ Cytomine.Project.AnnotationLayer.prototype = {
         var alias = this;
         vectorsLayer.events.on({
             featureselected : function (evt) {
-                console.log("featureselected start:"+evt.feature.attributes.idAnnotation + "|"+"/cytomine-web/api/term/annotation/"+evt.feature.attributes.idAnnotation+".json"+"|");
+                console.log("featureselected start:"+evt.feature.attributes.idAnnotation + "|"+"/cytomine-web/api/annotation/"+evt.feature.attributes.idAnnotation+"/term.json"+"|");
                 req = new XMLHttpRequest();
                 console.log("req 1");
-                req.open("GET", "/cytomine-web/api/term/annotation/"+evt.feature.attributes.idAnnotation+".json", true);
+                req.open("GET", "/cytomine-web/api/annotation/"+evt.feature.attributes.idAnnotation+"/term.json", true);
                 console.log("req 2");
                 req.onreadystatechange = alias.selectAnnotation;   // the handler
                 console.log("req 3");
@@ -105,7 +105,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
     /*Load annotation from database on layer */
     loadAnnotations : function (image) {
         req = new XMLHttpRequest();
-        req.open("GET", "/cytomine-web/api/annotation/image/"+this.imageID+".json", true);
+        req.open("GET", "/cytomine-web/api/image/"+this.imageID+"/annotation.json", true);
         req.onreadystatechange = this.decodeAnnotations;   // the handler
         req.send(null);
         image.map.addLayer(vectorsLayer);

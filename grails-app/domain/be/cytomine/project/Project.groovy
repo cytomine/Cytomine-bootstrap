@@ -1,8 +1,8 @@
 package be.cytomine.project
 
 import grails.converters.JSON
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import be.cytomine.SequenceDomain
+import be.cytomine.rest.UrlApi
 
 class Project extends SequenceDomain {
 
@@ -15,9 +15,9 @@ class Project extends SequenceDomain {
     name ( maxSize : 100, unique : true)
   }
 
-  static mapping = {
+  /*static mapping = {
     id generator : "assigned"
-  }
+  } */
 
   String toString() {
     name
@@ -29,15 +29,12 @@ class Project extends SequenceDomain {
   }
 
   static Project getProjectFromData(project,jsonProject) {
-    if(!jsonProject.name.toString().equals("null"))
+    String name = jsonProject.name.toString()
+    if(!name.equals("null"))
       project.name = jsonProject.name
     else throw new IllegalArgumentException("Project name cannot be null")
     project.ontology = Ontology.get(jsonProject.ontology)
     return project;
-  }
-
-  def getImageURL() {
-    return ConfigurationHolder.config.grails.serverURL + '/api/project/'+ this.id +'/image.json';
   }
 
 
@@ -49,7 +46,10 @@ class Project extends SequenceDomain {
       returnArray['id'] = it.id
       returnArray['name'] = it.name
       returnArray['ontology'] = it.ontology? it.ontology.id : null
-      returnArray['image'] = it.getImageURL()
+
+      returnArray['image'] = UrlApi.getImageURLWithProjectId(it.id)
+      returnArray['term'] = UrlApi.getTermsURLWithOntologyId(it.ontology.id)
+
       return returnArray
     }
   }

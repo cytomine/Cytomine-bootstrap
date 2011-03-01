@@ -67,7 +67,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     User user = BasicInstance.createOrGetBasicUser()
 
     log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/image/user/"+user.id+".json"
+    String URL = Infos.CYTOMINEURL+"api/user/"+user.id+"/image.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -88,7 +88,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     Image image =  BasicInstance.createOrGetBasicImage()
 
     log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/image/user/-99.json"
+    String URL = Infos.CYTOMINEURL+"api/user/-99/image.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()

@@ -126,6 +126,10 @@ class Image extends SequenceDomain {
     return image;
   }
 
+  def getTermsURL() {
+    return ConfigurationHolder.config.grails.serverURL + '/api/annotation/'+ this.id +'/term.json';
+  }
+
   static void registerMarshaller() {
     println "Register custom JSON renderer for " + Image.class
     JSON.registerObjectMarshaller(Image) {

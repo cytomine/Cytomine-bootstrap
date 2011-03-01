@@ -6,7 +6,7 @@ import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.security.User
 import be.cytomine.SequenceDomain
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import be.cytomine.rest.UrlApi
 
 class Annotation extends SequenceDomain implements Serializable {
 
@@ -23,7 +23,7 @@ class Annotation extends SequenceDomain implements Serializable {
   static transients = ["cropURL", "boundaries"]
 
   static constraints = {
-    name(blank:false)
+    name(blank:true)
     location(nullable:false)
     zoomLevel(nullable:true)
     channels(nullable:true)
@@ -36,7 +36,19 @@ class Annotation extends SequenceDomain implements Serializable {
       location type: org.hibernatespatial.GeometryUserType
     }
   }
-  /* Get all terms map with the annotation */
+
+  /**
+   * If name is empty, fill it by "Annotation $id"
+   */
+  public beforeInsert() {
+    super.beforeInsert()
+    name = name && !name.trim().equals("")? name : "Annotation " + id
+  }
+
+  /**
+   * Get all terms map with the annotation
+   * @return list of terms
+   */
   def terms() {
     return annotationTerm.collect{it.term}
   }
@@ -107,12 +119,9 @@ class Annotation extends SequenceDomain implements Serializable {
       returnArray['created'] = it.created? it.created.time.toString() : null
       returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
-      returnArray['term'] = it.getTermsURL()
+      returnArray['term'] = UrlApi.getImageURLWithProjectId(it.id)
       return returnArray
     }
   }
 
-  def getTermsURL() {
-    return ConfigurationHolder.config.grails.serverURL + '/api/annotation/'+ this.id +'/term.json';
-  }
 }

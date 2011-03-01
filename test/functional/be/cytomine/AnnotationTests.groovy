@@ -105,7 +105,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     User user = BasicInstance.createOrGetBasicUser()
 
     log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/annotation/user/"+user.id+".json"
+    String URL = Infos.CYTOMINEURL+"api/user/"+user.id+"/annotation.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -127,7 +127,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     User user = BasicInstance.createOrGetBasicUser()
 
     log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/annotation/user/-99.json"
+    String URL = Infos.CYTOMINEURL+"api/user/-99/annotation.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -147,7 +147,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     Image image = BasicInstance.createOrGetBasicImage()
 
     log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/annotation/image/"+image.id+".json"
+    String URL = Infos.CYTOMINEURL+"api/image/"+image.id+"/annotation.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -168,7 +168,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     Annotation annotation =  BasicInstance.createOrGetBasicAnnotation()
 
     log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/annotation/image/-99.json"
+    String URL = Infos.CYTOMINEURL+"api/image/-99/annotation.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -189,7 +189,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     User user = BasicInstance.createOrGetBasicUser()
 
     log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/annotation/image/"+image.id+"/user/"+ user.id +".json"
+    String URL = Infos.CYTOMINEURL+"api/user/"+ user.id +"/image/"+image.id+"/annotation.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -210,7 +210,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     Annotation annotation =  BasicInstance.createOrGetBasicAnnotation()
 
     log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/annotation/image/-99/user/-99.json"
+    String URL = Infos.CYTOMINEURL+"api/user/-99/image/-99/annotation.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -354,7 +354,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     Annotation annotation =  BasicInstance.createOrGetBasicAnnotation()
 
     log.info("get annotation with scan:"+annotation.image.id)
-    String URL = Infos.CYTOMINEURL+"api/annotation/image/"+annotation.image.id +".json"
+    String URL = Infos.CYTOMINEURL+"api/image/"+annotation.image.id +"/annotation.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()

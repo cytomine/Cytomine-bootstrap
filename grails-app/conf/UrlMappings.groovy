@@ -7,13 +7,13 @@ class UrlMappings {
       }
     }
 
-    /* HOME */
+    /* Home */
     "/"(view:"/index")
 
-    /* ERRORS */
+    /* Errors */
     "500"(view:'/error')
 
-    /* USER */
+    /* User */
     "/api/user"(controller:"restUser"){
       action = [GET:"list", POST:"save"]
     }
@@ -23,8 +23,19 @@ class UrlMappings {
     "/api/user/current"(controller:"restUser"){
       action = [GET:"showCurrent"]
     }
+    "/api/user/$id/image"(controller:"restImage"){
+      action = [GET:"listByUser"]
+    }
+    "/api/user/$id/annotation/"(controller:"restAnnotation"){
+      action = [GET:"listByUser"]
+    }
+    "/api/user/$idUser/image/$idImage/annotation"(controller:"restAnnotation"){
+      action = [GET:"listByImageAndUser"]
+    }
+    //TODO: /user/$id/project
 
-    /* PROJECT */
+
+    /* Project */
     "/api/project"(controller: "restProject"){
       action = [GET:"list", POST:"save"]
     }
@@ -34,16 +45,14 @@ class UrlMappings {
     "/api/project/$id/image"(controller: "restImage"){
       action = [GET:"showByProject"]
     }
+    //TODO: /project/$id/user
 
-    /* IMAGE */
-    "/api/image"(controller: "restImage"){   //TO DO : fusionner scan & image
+    /* Image */
+    "/api/image"(controller: "restImage"){
       action = [GET:"list", POST:"add"]
     }
     "/api/image/$id"(controller: "restImage"){
       action = [GET:"show", PUT:"update", DELETE:"delete"]
-    }
-    "/api/image/user/$id"(controller:"restImage"){
-      action = [GET:"listByUser"]
     }
     "/api/image/$id/thumb"(controller: "restImage"){
       action = [GET:"thumb"]
@@ -51,7 +60,9 @@ class UrlMappings {
     "/api/image/$id/metadata"(controller: "restImage"){
       action = [GET:"metadata"]
     }
-
+    "/api/image/$id/annotation"(controller:"restAnnotation"){
+      action = [GET:"listByImage"]
+    }
 
     /* Annotation */
     "/api/annotation"(controller:"restAnnotation"){
@@ -63,27 +74,9 @@ class UrlMappings {
     "/api/annotation/$id/$zoom/crop"(controller: "restImage"){
       action = [GET:"crop"]
     }
-    "/api/annotation/user/$id"(controller:"restAnnotation"){
-      action = [GET:"listByUser"]
-    }
-    "/api/annotation/image/$id"(controller:"restAnnotation"){
-      action = [GET:"listByImage"]
-    }
-    "/api/annotation/image/$idImage/user/$idUser"(controller:"restAnnotation"){
-      action = [GET:"listByImageAndUser"]
-    }
-
-
-
     "/api/annotation/$id/retrieval/$zoom/$maxsimilarpictures"(controller: "restImage") {
       action = [GET:"retrieval"]
     }
-
-
-    "/api/term/$idterm/annotation"(controller:"restAnnotationTerm"){
-      action = [GET: "listAnnotationByTerm"]
-    }
-
     "/api/annotation/$idannotation/term"(controller:"restAnnotationTerm"){
       action = [GET: "listTermByAnnotation",POST:"add"]
     }
@@ -91,39 +84,42 @@ class UrlMappings {
       action = [GET:"show",DELETE:"delete"]
     }
 
+    /* Term */
     "/api/term"(controller:"restTerm"){
       action = [GET: "list",POST:"add"]
     }
      "/api/term/$id"(controller:"restTerm"){
       action = [GET:"show",PUT:"update", DELETE:"delete"]
     }
-
-     "/api/ontology/$idontology/term"(controller:"restTermOntology"){
-      action = [GET:"listTermByOntology"]
+    "/api/term/$idterm/annotation"(controller:"restAnnotationTerm"){
+      action = [GET: "listAnnotationByTerm"]
+    }
+    "/api/term/$idterm/ontology"(controller:"restTermOntology"){
+      action = [GET:"listOntologyByTerm",POST:"add"]
     }
      "/api/term/$idterm/ontology/$idontology"(controller:"restTermOntology"){
       action = [GET:"show", PUT:"update",DELETE:"delete"]
     }
-     "/api/term/$idterm/ontology"(controller:"restTermOntology"){
-      action = [GET:"listOntologyByTerm",POST:"add"]
-    }
-    
 
-     /* Ontology */
+    /* Ontology */
     "/api/ontology"(controller:"restOntology"){
       action = [GET: "list",POST:"add"]
     }
     "/api/ontology/$id"(controller:"restOntology"){
       action = [GET:"show",PUT:"update", DELETE:"delete"]
     }
+     "/api/ontology/$idontology/term"(controller:"restTermOntology"){
+      action = [GET:"listTermByOntology"]
+    }
 
+
+    /* Relation (term)*/
     "/api/relation"(controller: "restRelation"){
       action = [GET:"list", POST:"add"]
     }
     "/api/relation/$id"(controller: "restRelation"){
       action = [GET:"show", PUT:"update", DELETE:"delete"]
     }
-
     "/api/relationterm"(controller:"restRelationTerm"){
       action = [GET: "list",POST:"add"]
     }
