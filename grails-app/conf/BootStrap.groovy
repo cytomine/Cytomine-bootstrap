@@ -608,8 +608,8 @@ class BootStrap {
 
     def termSamples = [
             [name: "Cell in vivo",comment:"",ontology:["Ontology1"]],
-            [name: "Cell ex vivo",comment:"",ontology:["Ontology1","Ontology3"]],
-            [name: "Cell",comment:"A comment for cell",ontology:[]],
+            [name: "Cell ex vivo",comment:"",ontology:["Ontology1","Ontology2"]],
+            [name: "Cell",comment:"A comment for cell",ontology:["Ontology1"]],
             [name: "Cell within a living organism",comment:"",ontology:["Ontology1"]]
     ]
     createTerms(termSamples)
@@ -624,7 +624,7 @@ class BootStrap {
     def relationTermSamples = [
             [relation: "Parent",term1:"Cell", term2: "Cell ex vivo"],
             [relation: "Parent",term1:"Cell", term2: "Cell in vivo"],
-            [relation: "Synonym", term1:"Cell within a living organism", term2: "Cell in vivo"],
+            [relation: "Synonym", term1:"Cell within a living organism", term2: "Cell in vivo"]
     ]
     createRelationTerm(relationTermSamples)
 
