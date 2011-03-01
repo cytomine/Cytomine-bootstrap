@@ -3,43 +3,34 @@ Ext.namespace('Cytomine.Project');
 Ext.namespace('Cytomine.Project.Annotation');
 //Ext.namespace('Cytomine.Project.Annotation.Layer');
 
-Cytomine.Project.AnnotationLayer = function(name, scanID, userID) {
+Cytomine.Project.AnnotationLayer = function(name, imageID, userID) {
     this.name = name;
-    this.imageID = scanID;
+    this.imageID = imageID;
     this.userID = userID;
+    this.vectorsLayer = new OpenLayers.Layer.Vector(this.name);
 }
 
 Cytomine.Project.AnnotationLayer.prototype = {
     // Name of the layer
     name : null,
-
     // Id of the scan
     imageID : null,
-
     //The OpenLayers.Layer.Vector on which we draw annotations
     vectorsLayer : null,
-
-    // Request object to call server
-    req : null,
-
     controls : null,
-
     dialog : null,
-
     rotate : false,
     resize : false,
     drag : false,
     irregular : false,
     aspectRatio  : false,
-    /*Load layer for annotation*/
-    loadToMap : function (image) {
-        vectorsLayer = new OpenLayers.Layer.Vector("Vector Layer");
 
+    initControls : function(image) {
         var alias = this;
-        vectorsLayer.events.on({
+        this.vectorsLayer.events.on({
             featureselected : function (evt) {
                 console.log("featureselected start:"+evt.feature.attributes.idAnnotation + "|"+"/cytomine-web/api/annotation/"+evt.feature.attributes.idAnnotation+"/term.json"+"|");
-                req = new XMLHttpRequest();
+                var req = new XMLHttpRequest();
                 console.log("req 1");
                 req.open("GET", "/cytomine-web/api/annotation/"+evt.feature.attributes.idAnnotation+"/term.json", true);
                 console.log("req 2");
@@ -74,18 +65,18 @@ Cytomine.Project.AnnotationLayer.prototype = {
                 console.log("delete " + feature.id);
             }
         });
-        vectorsLayer.events.register("featureselected", vectorsLayer, this.selectAnnotation);
+        //vectorsLayer.events.register("featureselected", vectorsLayer, this.selectAnnotation);
         controls = {
-            point: new OpenLayers.Control.DrawFeature(vectorsLayer,
+            point: new OpenLayers.Control.DrawFeature(this.vectorsLayer,
                     OpenLayers.Handler.Point),
-            line: new OpenLayers.Control.DrawFeature(vectorsLayer,
+            line: new OpenLayers.Control.DrawFeature(this.vectorsLayer,
                     OpenLayers.Handler.Path),
-            polygon: new OpenLayers.Control.DrawFeature(vectorsLayer,
+            polygon: new OpenLayers.Control.DrawFeature(this.vectorsLayer,
                     OpenLayers.Handler.Polygon),
-            regular: new OpenLayers.Control.DrawFeature(vectorsLayer,
+            regular: new OpenLayers.Control.DrawFeature(this.vectorsLayer,
                     OpenLayers.Handler.RegularPolygon, {handlerOptions: {sides: 5}}),
-            modify: new OpenLayers.Control.ModifyFeature(vectorsLayer),
-            select: new OpenLayers.Control.SelectFeature(vectorsLayer)
+            modify: new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
+            select: new OpenLayers.Control.SelectFeature(this.vectorsLayer)
 
         }
         console.log("initTools on image : " + image.filename);
@@ -98,17 +89,45 @@ Cytomine.Project.AnnotationLayer.prototype = {
         //panel.addControls([nav.next, nav.previous]);
 
         //scan.map.addControl(panel);
-
-
     },
+
 
     /*Load annotation from database on layer */
     loadAnnotations : function (image) {
-        req = new XMLHttpRequest();
-        req.open("GET", "/cytomine-web/api/image/"+this.imageID+"/annotation.json", true);
-        req.onreadystatechange = this.decodeAnnotations;   // the handler
+        var req = new XMLHttpRequest();
+        var url = "/cytomine-web/api/user/"+this.userID+"/image/"+this.imageID+"/annotation.json";
+        console.log("Annotations URL : " + url);
+        req.open("GET", url , true);
+        //req.open("GET", "/cytomine-web/api/annotation/image/"+this.imageID+".json", true);
+        var alias = this;
+        req.onreadystatechange = function() {
+            var format = new OpenLayers.Format.WKT();
+            //vectorsAnnotations = new OpenLayers.Layer.Vector("Overlay");
+            var points = [];
+            console.log("response for " + url + " : " +  req.responseText);
+            if (req.readyState == 4)
+            {
+                var JSONannotations = eval('(' + req.responseText + ')');
+                console.log(JSONannotations.annotation);
+
+                for (i=0;i<JSONannotations.annotation.length;i++)
+                {
+                    console.log("JSONannotations ID: " + JSONannotations.annotation[i].id);
+                    //read from wkt to geometry
+                    var point =  (format.read(JSONannotations.annotation[i].location));
+                    var geom = point.geometry;
+
+                    var feature = new OpenLayers.Feature.Vector(geom, {some:'data'}, {pointRadius: 10, fillColor: "green", fillOpacity: 0.5, strokeColor: "black"});
+
+                    feature.attributes = {idAnnotation: JSONannotations.annotation[i].id, listener:'NO',importance: 10 };
+
+                    alias.vectorsLayer.addFeatures(feature);
+                }
+
+            }
+        };
         req.send(null);
-        image.map.addLayer(vectorsLayer);
+        image.map.addLayer(this.vectorsLayer);
     },
 
     /*Add annotation in database*/
@@ -116,17 +135,44 @@ Cytomine.Project.AnnotationLayer.prototype = {
         console.log("addAnnotation start");
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
+        var alias = this;
         console.log("add geomwkt="+geomwkt);
         for (var i = 0; i < 1; i++){
-        req = new XMLHttpRequest();
-        //console.log("/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt);
-        //req.open("POST", "/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt+".json", true);
-        req.open("POST", "/cytomine-web/api/annotation.json", true);
-        if (i == 0) req.onreadystatechange = this.decodeNewAnnotation;
+            var req = new XMLHttpRequest();
+            //console.log("/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt);
+            //req.open("POST", "/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt+".json", true);
+            req.open("POST", "/cytomine-web/api/annotation.json", true);
+            if (i == 0) req.onreadystatechange =  function() {
+                var format = new OpenLayers.Format.WKT();
+                var points = [];
+                if (req.readyState == 4)
+                {
+                    //eval json
+                    console.log("response:"+req.responseText);
+                    var JSONannotations = eval('(' + req.responseText + ')');
+                    console.log(JSONannotations.annotation);
 
-        var json = {annotation: {"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,image:this.imageID}}; //class is a reserved word in JS !
+                    console.log(JSONannotations.annotation.id);
+                    //read from wkt to geometry
+                    var point =  (format.read(JSONannotations.annotation.location));
+                    var geom = point.geometry;
 
-        req.send(JSON.stringify(json));
+                    var feature = new OpenLayers.Feature.Vector(
+                            geom,
+                    {some:'data'},
+                    {pointRadius: 10, fillColor: "green", fillOpacity: 0.5, strokeColor: "black"});
+
+                    feature.attributes = {idAnnotation: JSONannotations.annotation.id, listener:'NO',importance: 10 };
+
+                    alias.vectorsLayer.addFeatures(feature);
+
+                }
+
+            };
+
+            var json = {annotation: {"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,image:this.imageID}}; //class is a reserved word in JS !
+
+            req.send(JSON.stringify(json));
         }
         //Annotation hasn't any id => -1
         //feature.attributes = {idAnnotation: "-1"};
@@ -135,7 +181,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
         console.log("onFeatureAdded end");
     },
     hideAnnotation : function(feature) {
-        vectorsLayer.removeFeatures([feature]);
+        this.vectorsLayer.removeFeatures([feature]);
     },
 
     /*Remove annotation from database*/
@@ -144,7 +190,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
         console.log("deleteAnnotation start");
         console.log("delete " + "" + feature.attributes.idAnnotation);
 
-        req = new XMLHttpRequest();
+        var req = new XMLHttpRequest();
         req.open("DELETE", "/cytomine-web/api/annotation/"+feature.attributes.idAnnotation, true);
         req.send(null);
         this.hideAnnotation(feature);
@@ -159,7 +205,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
         var geomwkt = format.write(feature);
         console.log("update geomwkt="+geomwkt + " " + feature.attributes.idAnnotation);
 
-        req = new XMLHttpRequest();
+        var req = new XMLHttpRequest();
         req.open("PUT", "/cytomine-web/api/annotation/"+feature.attributes.idAnnotation+".json", true);
 
         var json = {annotation: {"id":feature.attributes.idAnnotation,"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,image:this.imageID}}; //class is a reserved word in JS !
@@ -171,7 +217,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
     },
 
     /*Read a list of annotations from server response and add to the layer*/
-    decodeAnnotations : function() {
+    decodeAnnotations : function(alias) {
         var format = new OpenLayers.Format.WKT();
         //vectorsAnnotations = new OpenLayers.Layer.Vector("Overlay");
         var points = [];
@@ -197,7 +243,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
 
                 feature.attributes = {idAnnotation: JSONannotations.annotation[i].id, listener:'NO',importance: 10 };
 
-                vectorsLayer.addFeatures(feature);
+                alias.vectorsLayer.addFeatures(feature);
             }
 
         }
@@ -208,7 +254,6 @@ Cytomine.Project.AnnotationLayer.prototype = {
     decodeNewAnnotation : function() {
         var format = new OpenLayers.Format.WKT();
         var points = [];
-        console.log("decodeNewAnnotation:"+req.readyState);
         if (req.readyState == 4)
         {
             //eval json
@@ -228,6 +273,8 @@ Cytomine.Project.AnnotationLayer.prototype = {
 
             feature.attributes = {idAnnotation: JSONannotations.annotation.id, listener:'NO',importance: 10 };
 
+            console.log("add to " + vectorsLayer.name);
+            console.log("add to " + this.vectorsLayer.name);
             vectorsLayer.addFeatures(feature);
 
         }
@@ -235,7 +282,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
     },
     /* Launch a dialog with annotation info */
     selectAnnotation : function() {
-
+        /*
         console.log("selectAnnotation:"+req.readyState);
         if (req.readyState == 4)
         {
@@ -262,7 +309,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
                 }]
             });
             this.dialog.show();
-        }
+        } */
 
     },
     /** Triggered when add new feature **/

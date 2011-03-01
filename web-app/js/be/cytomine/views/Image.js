@@ -1,21 +1,25 @@
 Ext.namespace('Cytomine');
 Ext.namespace('Cytomine.Project');
 
-Cytomine.Project.Scan = function (urls, scanID, filename, path, metadataUrl) {
+Cytomine.Project.Image = function (urls, scanID, filename, path, metadataUrl) {
     this.urls = urls;
     this.scanID = scanID;
     this.filename = filename;
     this.path = path;
     this.metadataUrl = metadataUrl;
+    this.userLayer = null;
+    this.annotationsLayers = [];
 }
 
 
-Cytomine.Project.Scan.prototype = {
+Cytomine.Project.Image.prototype = {
     urls : null,
     imageID : null,
     filename : null,
     path : null,
     map : null,
+    userLayer : null, //the logged user can draw only on this layer
+    annotationsLayers : {},
     initMap : function () {
         //clear previous overview Map
         //document.getElementById("overviewMap"+this.scanID).innerHTML="";

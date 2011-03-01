@@ -23,7 +23,6 @@ Cytomine.Views.Browser = {
             width : 256,
             autoHeight : true
         });
-
         return new Ext.Panel({
             id: idTab,
             layout   : 'border',
@@ -37,7 +36,7 @@ Cytomine.Views.Browser = {
                     {name : 'select',tooltip: ULg.lang.Viewer.annotations.toolSelect, iconCls:'cursor', enableToggle: true, toggleGroup:'controlToggle'+idTab+'', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.toggleControl(this);}},
                     {name : 'regular',tooltip: ULg.lang.Viewer.annotations.toolSelect, iconCls:'layer-shape', enableToggle: true, toggleGroup:'controlToggle'+idTab+'', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.setSides(4);Cytomine.currentLayer.toggleControl(this);}},
                     {name : 'regular',tooltip: ULg.lang.Viewer.annotations.toolSelect, iconCls:'layer-ellipse', enableToggle: true, toggleGroup:'controlToggle'+idTab+'', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.setSides(30);Cytomine.currentLayer.toggleControl(this);}},
-                    {name : 'polygon',tooltip: ULg.lang.Viewer.annotations.toolPolygon, iconCls:'layer-polygon', enableToggle: true, toggleGroup:'controlToggle'+idTab+'', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.toggleControl(this);}},
+                    {name : 'polygon',tooltip: ULg.lang.Viewer.annotations.toolPolygon, iconCls:'layer-polygon', enableToggle: true, toggleGroup:'controlToggle'+idTab+'', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);console.log(Cytomine.currentLayer.imageID);Cytomine.currentLayer.toggleControl(this);}},
                     {name : 'modify',tooltip: ULg.lang.Viewer.annotations.toolPolygon, iconCls:'ruler-crop', enableToggle: true, toggleGroup:'controlToggle'+idTab+'', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);Cytomine.currentLayer.toggleControl(this);}},
                     {
                         xtype: 'tbsplit',
@@ -109,13 +108,10 @@ Cytomine.Views.Browser = {
             ],
             listeners: {
                 show: function(p) {
-                    console.log("SHOW");
-                    console.log("LAYER NULL ? " +  Cytomine.annotationLayers[idImage] != undefined);
-                    /*if (Cytomine.annotationLayers[idImage] != null) {
-                     Cytomine.currentLayer = Cytomine.annotationLayers[idImage];
-                     Cytomine.annotationLayers[idImage].loadToMap(Cytomine.scans[idImage]);
-                     }*/
-
+                    if (Cytomine.images[idImage] != null) {
+                        Cytomine.currentLayer =  Cytomine.images[idImage].userLayer;
+                        Cytomine.currentLayer.initControls(Cytomine.images[idImage]);
+                    }
                 }
             }
         });
@@ -125,28 +121,54 @@ Cytomine.Views.Browser = {
         if(tab){
             Cytomine.tabs.remove(tab);
         }
-        tab = Cytomine.tabs.add(this.tab(idTab, idImage, title));
+
+        var alias = this;
+        Ext.Ajax.request({
+            url : '/cytomine-web/api/user/current.json',
+            success: function (response) {
+                var data = Ext.decode( response.responseText );
+                console.log("Current User is : " + data.user.username);
+                alias.initAnnotationLayers(idImage, data.user.id);
+                tab = Cytomine.tabs.add(alias.tab(idTab, idImage, title));
+                tab.show();
+                Cytomine.tabs.setActiveTab(tab);
+            }
+        });
+
+
+    },
+    initAnnotationLayers : function (idImage, currentUserID) {
 
         Ext.Ajax.request({
             url : '/cytomine-web/api/image/'+idImage+'.json',
             success: function (response) {
                 var data = Ext.decode( response.responseText );
-                var image = data.image;
-                var scan = new Cytomine.Project.Scan(image.imageServerBaseURL, image.id, image.filename, image.path, image.metadataUrl);
-                scan.initMap();
-                console.log(image.metadataUrl);
-                layerAnnotation = new Cytomine.Project.AnnotationLayer( "totolayer", idImage);
-                layerAnnotation.loadToMap(scan);
-                layerAnnotation.loadAnnotations(scan);
+                var imageData = data.image;
+                var image = new Cytomine.Project.Image(imageData.imageServerBaseURL, imageData.id, imageData.filename, imageData.path, imageData.metadataUrl);
+                image.initMap();
+                Cytomine.images[idImage] = image;
+                var usersStore = Cytomine.Models.User.store();
 
-                Cytomine.scans[idImage] = scan;
-                Cytomine.annotationLayers[idImage] = layerAnnotation;
-                Cytomine.currentLayer = Cytomine.annotationLayers[idImage];
-                //document.getElementById('noneToggle').checked = true;
+                usersStore.on('load', function(){
+                    usersStore.each(function(item) {
+                        var userID = item.data.id;
+                        var userName = item.data.firstname + " " + item.data.lastname;
+                        var layerAnnotation = new Cytomine.Project.AnnotationLayer( userName, idImage, userID);
+                        layerAnnotation.loadAnnotations(image);
+                        image.annotationsLayers[item.data.id] = layerAnnotation;
+                        if (item.data.id == currentUserID) {
+                            console.log("User " + item.data.username + " is owner");
+                            image.userLayer = layerAnnotation;
+                            Cytomine.currentLayer =  layerAnnotation;
+                            layerAnnotation.initControls(image);
+                        }
+
+                    });
+
+                });
+
             },
             failure: function (response) { console.log('failure : ' + response.responseText);}
         });
-        tab.show();
-        Cytomine.tabs.setActiveTab(tab);
     }
 };

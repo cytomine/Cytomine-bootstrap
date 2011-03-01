@@ -23,7 +23,7 @@
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Project.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Retrieval.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Dashboard.js')}" ></script>
-  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Scan.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Image.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/AnnotationLayer.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Browser.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Admin.js')}" ></script>

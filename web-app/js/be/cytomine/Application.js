@@ -2,12 +2,8 @@
 Ext.namespace('Cytomine');
 Ext.namespace('Cytomine.Application');
 
-
-Cytomine.overview = null;//created dynamically by browse.gsp
-Cytomine.scans = [];
-Cytomine.annotationLayers = [];
-Cytomine.currentLayer = null;
-
+Cytomine.images = [];
+//Cytomine.userLayers = [];
 
 Cytomine.Application = function() {
 
