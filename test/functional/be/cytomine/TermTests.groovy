@@ -7,6 +7,7 @@ import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.project.Term
 import be.cytomine.test.HttpClient
+import be.cytomine.project.Ontology
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -15,6 +16,86 @@ import be.cytomine.test.HttpClient
  * To change this template use File | Settings | File Templates.
  */
 class TermTests extends functionaltestplugin.FunctionalTestCase {
+
+
+  void testListOntologyTermByOntologyWithCredential() {
+
+    Term term = BasicInstance.createOrGetBasicTerm()
+
+    log.info("get by ontology")
+    String URL = Infos.CYTOMINEURL+"api/ontology/"+term.ontology.id+"/term.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+  }
+
+  void testListTermOntologyByOntologyWithOntologyNotExist() {
+
+    log.info("get by ontology not exist")
+    String URL = Infos.CYTOMINEURL+"api/ontology/-99/term.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(404,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+  }
+
+  void testListTermOntologyByTermWithCredential() {
+
+    Term term = BasicInstance.createOrGetBasicTerm()
+
+    log.info("get by term")
+    String URL = Infos.CYTOMINEURL+"api/term/"+term.id+"/ontology.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+  }
+
+  void testListTermOntologyByTermWithTermNotExist() {
+
+    log.info("get by term not exist")
+    String URL = Infos.CYTOMINEURL+"api/term/-99/ontology.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(404,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+  }
+
+
+
 
   void testListTermWithCredential() {
 
@@ -183,14 +264,24 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     String oldComment = "Comment1"
     String newComment = "Comment2"
 
-    def mapNew = ["name":newName,"comment":newComment]
-    def mapOld = ["name":oldName,"comment":oldComment]
+    String oldColor = "000000"
+    String newColor = "FFFFFF"
+
+    Ontology oldOntology = BasicInstance.createOrGetBasicOntology()
+    Ontology newOntology = BasicInstance.getBasicOntologyNotExist()
+    newOntology.save(flush:true)
+
+    def mapOld = ["name":oldName,"comment":oldComment,"color":oldColor,"ontology":oldOntology]
+    def mapNew = ["name":newName,"comment":newComment,"color":newColor,"ontology":newOntology]
+
 
     /* Create a Name1 term */
     log.info("create term")
     Term termToAdd = BasicInstance.createOrGetBasicTerm()
     termToAdd.name = oldName
     termToAdd.comment = oldComment
+    termToAdd.color = oldColor
+    termToAdd.ontology = oldOntology
     assert (termToAdd.save(flush:true) != null)
 
     /* Encode a niew term Name2*/
@@ -200,6 +291,8 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     def jsonUpdate = JSON.parse(jsonTerm)
     jsonUpdate.term.name = newName
     jsonUpdate.term.comment = newComment
+    jsonUpdate.term.color = newColor
+    jsonUpdate.term.ontology = newOntology.id
     jsonTerm = jsonUpdate.encodeAsJSON()
 
     log.info("put term:"+jsonTerm.replace("\n",""))

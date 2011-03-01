@@ -12,6 +12,7 @@ import be.cytomine.command.UndoStackItem
 import be.cytomine.command.term.EditTermCommand
 import be.cytomine.command.term.DeleteTermCommand
 import be.cytomine.command.annotationterm.AddAnnotationTermCommand
+import be.cytomine.project.Ontology
 
 class RestTermController {
 
@@ -58,6 +59,25 @@ class RestTermController {
       render contentType: "application/xml", {
         errors {
           message("Term not found with id: " + params.idterm)
+        }
+      }
+    }
+  }
+
+  def listTermByOntology = {
+    log.info "listTermByOntology"
+    if(params.idontology && Ontology.exists(params.idontology)) {
+      def data = [:]
+      data.term = Ontology.get(params.idontology).terms()
+      withFormat {
+        json { render data as JSON }
+        xml { render data as XML}
+      }
+    } else {
+      response.status = 404
+      render contentType: "application/xml", {
+        errors {
+          message("Ontology not found with id: " + params.idontology)
         }
       }
     }

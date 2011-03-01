@@ -8,9 +8,10 @@ class Term extends SequenceDomain implements Serializable {
   String name
   String comment
 
+  Ontology ontology
   String color
 
-  static transients = [ "color" ]
+  static belongsTo = [ontology:Ontology]
 
  //static belongsTo = Annotation
   static hasMany = [annotationTerm:AnnotationTerm, termOntology: TermOntology, relationTerm1:RelationTerm, relationTerm2:RelationTerm]
@@ -27,10 +28,6 @@ class Term extends SequenceDomain implements Serializable {
 
   def annotations() {
     return annotationTerm.collect{it.annotation}
-  }
-
-  def ontologies() {
-    return termOntology.collect{it.ontology}
   }
 
   def relationAsTerm1() {
@@ -63,6 +60,15 @@ class Term extends SequenceDomain implements Serializable {
       term.name = jsonTerm.name
     else throw new IllegalArgumentException("Term name cannot be null")
     term.comment = jsonTerm.comment
+
+    String ontologyId = jsonTerm.ontology.toString()
+    if(!ontologyId.equals("null")) {
+      term.ontology = Ontology.get(ontologyId)
+      if(term.ontology==null) throw new IllegalArgumentException("Ontology was not found with id:"+ ontologyId)
+    }
+    else term.ontology = null
+
+    term.color = jsonTerm.color
     return term;
   }
 
@@ -74,6 +80,7 @@ class Term extends SequenceDomain implements Serializable {
       returnArray['id'] = it.id
       returnArray['name'] = it.name
       returnArray['comment'] = it.comment
+      returnArray['ontology'] = it.ontology? it.ontology.id : null
       if(it.color) returnArray['color'] = it.color
 
       /*def children = [:]

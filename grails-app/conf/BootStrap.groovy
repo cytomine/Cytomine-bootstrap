@@ -607,10 +607,10 @@ class BootStrap {
 
 
     def termSamples = [
-            [name: "Cell in vivo",comment:"",ontology:[[name:"Ontology1",color:"FF0000"]]],
-            [name: "Cell ex vivo",comment:"",ontology:[[name:"Ontology1",color:"00FF00"],[name:"Ontology2",color:"FF00F0"]]],
-            [name: "Cell",comment:"A comment for cell",ontology:[[name:"Ontology1",color:"FF00FF"]]],
-            [name: "Cell within a living organism",comment:"",ontology:[[name:"Ontology1",color:"0000FF"]]]
+            [name: "Cell in vivo",comment:"",ontology:[name:"Ontology1"],color:"FF0000"],
+            [name: "Cell ex vivo",comment:"",ontology:[name:"Ontology1"],color:"00FF00"],
+            [name: "Cell",comment:"A comment for cell",ontology:[name:"Ontology1"],color:"FF00FF"],
+            [name: "Cell within a living organism",comment:"",ontology:[name:"Ontology1"],color:"0000FF"]
     ]
     createTerms(termSamples)
 
@@ -1068,18 +1068,19 @@ class BootStrap {
     if(!terms) {
       def term = null
       termSamples.each { item ->
-        term = new Term(name:item.name,comment:item.comment)
+        term = new Term(name:item.name,comment:item.comment,ontology:Ontology.findByName(item.ontology.name),color:item.color)
         println "create term="+ term.name
 
         if(term.validate()) {
           println "Creating term : ${term.name}..."
           term.save(flush : true)
 
-          item.ontology.each {  ontology ->
+
+        /*  item.ontology.each {  ontology ->
             println "add Ontology " + ontology.name
             //annotation.addToTerm(Term.findByName(term))
             TermOntology.link(term, Ontology.findByName(ontology.name),ontology.color)
-          }
+          }*/
 
           terms << term
         } else {

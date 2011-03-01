@@ -50,7 +50,11 @@ class Annotation extends SequenceDomain implements Serializable {
    * @return list of terms
    */
   def terms() {
-    return annotationTerm.collect{it.term}
+    def list = []
+    return annotationTerm.collect{
+      it.term.color = it.color
+      it.term
+    }
   }
 
   private def getBoundaries () {
@@ -119,7 +123,7 @@ class Annotation extends SequenceDomain implements Serializable {
       returnArray['created'] = it.created? it.created.time.toString() : null
       returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
-      returnArray['term'] = UrlApi.getImageURLWithProjectId(it.id)
+      returnArray['term'] = UrlApi.getTermsURLWithAnnotationId(it.id)
       return returnArray
     }
   }

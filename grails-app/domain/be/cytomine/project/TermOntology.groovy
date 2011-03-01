@@ -4,7 +4,7 @@ import grails.converters.JSON
 
 class TermOntology {
 
-  Term term
+  /*Term term
   Ontology ontology
 
   String color //TODO: must be change by Style style (color, thick,...)
@@ -79,6 +79,6 @@ class TermOntology {
       returnArray['color'] = it.color
       return returnArray
     }
-  }
+  }*/
 
 }

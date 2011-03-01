@@ -277,7 +277,7 @@ class BasicInstance {
     def term = Term.findByName("BasicTerm")
     if(!term) {
 
-      term = new Term(name:"BasicTerm")
+      term = new Term(name:"BasicTerm", ontology:createOrGetBasicOntology(),color:"FF0000")
       term.validate()
       log.debug "term.errors="+term.errors
       term.save(flush : true)
@@ -292,7 +292,7 @@ class BasicInstance {
     def term = Term.findByName("AnotherBasicTerm")
     if(!term) {
 
-      term = new Term(name:"AnotherBasicTerm")
+      term = new Term(name:"AnotherBasicTerm",ontology:createOrGetBasicOntology(),color:"F0000F")
       term.validate()
       log.debug "term.errors="+term.errors
       term.save(flush : true)
@@ -314,7 +314,7 @@ class BasicInstance {
       term = Term.findByName(randomInt+"")
    }
 
-    term =  new Term(name:randomInt+"")
+    term =  new Term(name:randomInt+"",ontology:createOrGetBasicOntology(),color:"0F00F0")
     term.validate()
     log.debug "getBasicTermNotExist() end"
     term
@@ -478,21 +478,18 @@ class BasicInstance {
   }
 
 
-  static void compareTermOntology(map, json)  {
-
-    assert map.color.equals(json.termOntology.color)
-  }
-
     static void compareRelation(map, json)  {
 
     assert map.name.equals(json.relation.name)
 
   }
 
-     static void compareTerm(map, json)  {
+  static void compareTerm(map, json)  {
 
     assert map.name.equals(json.term.name)
     assert map.comment.equals(json.term.comment)
+    assert map.color.equals(json.term.color)
+    assert toLong(map.ontology.id).equals(toLong(json.term.ontology))
 
   }
 

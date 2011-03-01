@@ -45,4 +45,23 @@ class RestOntologyController {
       }
     }
   }
+
+  def listOntologyByTerm = {
+    log.info "listOntologyByTerm"
+    if(params.idterm && Term.exists(params.idterm)) {
+      def data = [:]
+      data.ontology = Term.get(params.idterm).ontology
+      withFormat {
+        json { render data as JSON }
+        xml { render data as XML}
+      }
+    } else {
+      response.status = 404
+      render contentType: "application/xml", {
+        errors {
+          message("Term not found with id: " + params.idterm)
+        }
+      }
+    }
+  }  
 }

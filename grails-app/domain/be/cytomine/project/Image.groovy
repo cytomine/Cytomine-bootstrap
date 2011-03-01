@@ -64,6 +64,15 @@ class Image extends SequenceDomain {
     filename
   }
 
+  def terms() {
+    def terms = []
+    annotations.each {
+       it.terms().each {
+          terms << it
+       }
+    }
+  }
+
   static Image createImageFromData(jsonImage) {
     def image = new Image()
     getImageFromData(image,jsonImage)

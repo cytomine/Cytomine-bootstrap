@@ -94,11 +94,8 @@ class UrlMappings {
     "/api/term/$idterm/annotation"(controller:"restAnnotationTerm"){
       action = [GET: "listAnnotationByTerm"]
     }
-    "/api/term/$idterm/ontology"(controller:"restTermOntology"){
-      action = [GET:"listOntologyByTerm",POST:"add"]
-    }
-     "/api/term/$idterm/ontology/$idontology"(controller:"restTermOntology"){
-      action = [GET:"show", PUT:"update",DELETE:"delete"]
+    "/api/term/$idterm/ontology"(controller:"restOntology"){
+      action = [GET:"listOntologyByTerm"]
     }
 
     /* Ontology */
@@ -108,12 +105,13 @@ class UrlMappings {
     "/api/ontology/$id"(controller:"restOntology"){
       action = [GET:"show",PUT:"update", DELETE:"delete"]
     }
-     "/api/ontology/$idontology/term"(controller:"restTermOntology"){
+     "/api/ontology/$idontology/term"(controller:"restTerm"){
       action = [GET:"listTermByOntology"]
     }
 
 
     /* Relation (term)*/
+    //TODO: Implement (see AnnotationTerm for template)
     "/api/relation"(controller: "restRelation"){
       action = [GET:"list", POST:"add"]
     }

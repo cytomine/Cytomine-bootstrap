@@ -4,8 +4,6 @@ class Ontology {
 
   String name
 
-  static belongsTo = Term
-
   static hasMany = [ termOntology: TermOntology ]
 
   static constraints = {
