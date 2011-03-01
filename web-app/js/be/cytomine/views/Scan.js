@@ -12,7 +12,7 @@ Cytomine.Project.Scan = function (urls, scanID, filename, path, metadataUrl) {
 
 Cytomine.Project.Scan.prototype = {
     urls : null,
-    scanID : null,
+    imageID : null,
     filename : null,
     path : null,
     map : null,

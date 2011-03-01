@@ -11,8 +11,7 @@ Cytomine.Views.Browser = {
      * Retourne l'onglet correspondant au viewer de image
      * @return {Ext.Panel}
      */
-    tab: function(idTab, idImage, url, tabTitle) {
-
+    tab: function(idTab, idImage, tabTitle) {
         var overview = new Ext.Panel({
             cls : 'overviewMapPanel',
             title  : 'Overview',
@@ -99,12 +98,13 @@ Cytomine.Views.Browser = {
                         align: 'stretch'
                     },
                     items : [
-                         overview
+                        overview
                     ]
                 },
                 {
                     region: 'center',
-                    autoLoad : {url:url,scripts:true}
+                    html : '<div id="map'+idImage+'"></div>'
+                    //autoLoad : {url:url,scripts:true}
                 }
             ],
             listeners: {
@@ -112,20 +112,41 @@ Cytomine.Views.Browser = {
                     console.log("SHOW");
                     console.log("LAYER NULL ? " +  Cytomine.annotationLayers[idImage] != undefined);
                     /*if (Cytomine.annotationLayers[idImage] != null) {
-                        Cytomine.currentLayer = Cytomine.annotationLayers[idImage];
-                        Cytomine.annotationLayers[idImage].loadToMap(Cytomine.scans[idImage]);
-                    }*/
+                     Cytomine.currentLayer = Cytomine.annotationLayers[idImage];
+                     Cytomine.annotationLayers[idImage].loadToMap(Cytomine.scans[idImage]);
+                     }*/
 
                 }
             }
         });
     },
-    openScan : function(idTab, idImage, url, title) {
+    openScan : function(idTab, idImage, title) {
         var tab = Cytomine.tabs.getItem(idTab);
         if(tab){
             Cytomine.tabs.remove(tab);
         }
-        tab = Cytomine.tabs.add(this.tab(idTab, idImage, url, title)).show();
+        tab = Cytomine.tabs.add(this.tab(idTab, idImage, title));
+
+        Ext.Ajax.request({
+            url : '/cytomine-web/api/image/'+idImage+'.json',
+            success: function (response) {
+                var data = Ext.decode( response.responseText );
+                var image = data.image;
+                var scan = new Cytomine.Project.Scan(image.imageServerBaseURL, image.id, image.filename, image.path, image.metadataUrl);
+                scan.initMap();
+                console.log(image.metadataUrl);
+                layerAnnotation = new Cytomine.Project.AnnotationLayer( "totolayer", idImage);
+                layerAnnotation.loadToMap(scan);
+                layerAnnotation.loadAnnotations(scan);
+
+                Cytomine.scans[idImage] = scan;
+                Cytomine.annotationLayers[idImage] = layerAnnotation;
+                Cytomine.currentLayer = Cytomine.annotationLayers[idImage];
+                //document.getElementById('noneToggle').checked = true;
+            },
+            failure: function (response) { console.log('failure : ' + response.responseText);}
+        });
+        tab.show();
         Cytomine.tabs.setActiveTab(tab);
     }
 };

@@ -90,7 +90,7 @@ Cytomine.Views.Project = {
                 autoLoad: true,
                 root: 'scan',
                 fields:[
-                    'id','filename', 'thumb', 'browse'
+                    'id','filename', 'thumb'
                 ]
             }),
             tpl: new Ext.XTemplate(
@@ -103,7 +103,7 @@ Cytomine.Views.Project = {
             listeners: {
                 click: function(dataview, index, node, e) {
                     var data = dataview.getStore().getAt(index);
-                    Cytomine.Views.Browser.openScan(data.get('id'), data.get('id'),data.get('browse'), data.get('filename')); //multiple tabs
+                    Cytomine.Views.Browser.openScan(data.get('id'), data.get('id'), data.get('filename')); //multiple tabs
 
                     //Cytomine.Retrieval.showSimilarities(data.get('id'),data.get('id'), data.get('filename')); //multiple tabs
                     //Cytomine.Browser.openScan('browser', data.get('id'), data.get('filename')); //unique tabs

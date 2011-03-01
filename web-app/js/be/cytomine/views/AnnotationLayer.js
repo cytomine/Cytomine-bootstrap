@@ -3,9 +3,10 @@ Ext.namespace('Cytomine.Project');
 Ext.namespace('Cytomine.Project.Annotation');
 //Ext.namespace('Cytomine.Project.Annotation.Layer');
 
-Cytomine.Project.AnnotationLayer = function(name, scanID) {
+Cytomine.Project.AnnotationLayer = function(name, scanID, userID) {
     this.name = name;
-    this.scanID = scanID;
+    this.imageID = scanID;
+    this.userID = userID;
 }
 
 Cytomine.Project.AnnotationLayer.prototype = {
@@ -13,7 +14,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
     name : null,
 
     // Id of the scan
-    scanID : null,
+    imageID : null,
 
     //The OpenLayers.Layer.Vector on which we draw annotations
     vectorsLayer : null,
@@ -31,7 +32,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
     irregular : false,
     aspectRatio  : false,
     /*Load layer for annotation*/
-    loadToMap : function (scan) {
+    loadToMap : function (image) {
         vectorsLayer = new OpenLayers.Layer.Vector("Vector Layer");
 
         var alias = this;
@@ -73,7 +74,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
                 console.log("delete " + feature.id);
             }
         });
-        vectorsLayer.events.register("featureselected", vectorsLayer, selected);
+        vectorsLayer.events.register("featureselected", vectorsLayer, this.selectAnnotation);
         controls = {
             point: new OpenLayers.Control.DrawFeature(vectorsLayer,
                     OpenLayers.Handler.Point),
@@ -87,13 +88,13 @@ Cytomine.Project.AnnotationLayer.prototype = {
             select: new OpenLayers.Control.SelectFeature(vectorsLayer)
 
         }
-        console.log("initTools on image : " + scan.filename);
-        scan.initTools(controls);
-        scan.map.addLayer(vectorsLayer);
+        console.log("initTools on image : " + image.filename);
+        image.initTools(controls);
+        //scan.map.addLayer(vectorsLayer);
 
         //var panel = new OpenLayers.Control.Panel();
         var nav = new OpenLayers.Control.NavigationHistory();
-        scan.map.addControl(nav);
+        image.map.addControl(nav);
         //panel.addControls([nav.next, nav.previous]);
 
         //scan.map.addControl(panel);
@@ -102,12 +103,12 @@ Cytomine.Project.AnnotationLayer.prototype = {
     },
 
     /*Load annotation from database on layer */
-    loadAnnotations : function (scan) {
+    loadAnnotations : function (image) {
         req = new XMLHttpRequest();
-        req.open("GET", "/cytomine-web/api/annotation/image/"+this.scanID+".json", true);
+        req.open("GET", "/cytomine-web/api/annotation/image/"+this.imageID+".json", true);
         req.onreadystatechange = this.decodeAnnotations;   // the handler
         req.send(null);
-        scan.map.addLayer(vectorsLayer);
+        image.map.addLayer(vectorsLayer);
     },
 
     /*Add annotation in database*/
@@ -123,7 +124,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
         req.open("POST", "/cytomine-web/api/annotation.json", true);
         if (i == 0) req.onreadystatechange = this.decodeNewAnnotation;
 
-        var json = {annotation: {"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,image:this.scanID}}; //class is a reserved word in JS !
+        var json = {annotation: {"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,image:this.imageID}}; //class is a reserved word in JS !
 
         req.send(JSON.stringify(json));
         }
@@ -161,7 +162,7 @@ Cytomine.Project.AnnotationLayer.prototype = {
         req = new XMLHttpRequest();
         req.open("PUT", "/cytomine-web/api/annotation/"+feature.attributes.idAnnotation+".json", true);
 
-        var json = {annotation: {"id":feature.attributes.idAnnotation,"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,image:this.scanID}}; //class is a reserved word in JS !
+        var json = {annotation: {"id":feature.attributes.idAnnotation,"class":"be.cytomine.project.Annotation",name:"test",location:geomwkt,image:this.imageID}}; //class is a reserved word in JS !
 
         req.send(JSON.stringify(json));
 

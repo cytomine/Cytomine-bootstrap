@@ -33,6 +33,7 @@
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/languages/fr.js')}" ></script>
 
   <!-- Models -->
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/Annotation.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/User.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/Project.js')}" ></script>
 

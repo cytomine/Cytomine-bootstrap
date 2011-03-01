@@ -54,9 +54,6 @@ Cytomine.Application = function() {
                 html : "content"
             });
 
-
-
-
             Cytomine.Application.HelpWindow = new Ext.Window({
                 title:'Help',
                 width:500,
@@ -265,3 +262,4 @@ Ext.data.DataProxy.addListener('exception', function(proxy, type, action, option
 
 //Prevent closing the app accidentaly
 //window.onbeforeunload = function(){ return ''; }
+
