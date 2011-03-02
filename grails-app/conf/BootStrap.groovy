@@ -21,7 +21,6 @@ import be.cytomine.server.RetrievalServer
 import be.cytomine.project.Term
 import be.cytomine.project.AnnotationTerm
 import be.cytomine.project.Ontology
-import be.cytomine.project.TermOntology
 import java.lang.management.ManagementFactory
 import be.cytomine.project.Relation
 import be.cytomine.project.RelationTerm

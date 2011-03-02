@@ -14,7 +14,7 @@ class Term extends SequenceDomain implements Serializable {
   static belongsTo = [ontology:Ontology]
 
  //static belongsTo = Annotation
-  static hasMany = [annotationTerm:AnnotationTerm, termOntology: TermOntology, relationTerm1:RelationTerm, relationTerm2:RelationTerm]
+  static hasMany = [annotationTerm:AnnotationTerm,relationTerm1:RelationTerm, relationTerm2:RelationTerm]
 
    //must be done because RelationTerm has two Term attribute
    static mappedBy = [relationTerm1:'term1', relationTerm2:'term2']

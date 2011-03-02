@@ -15,7 +15,6 @@ import be.cytomine.project.Relation
 import be.cytomine.project.RelationTerm
 import be.cytomine.project.AnnotationTerm
 import be.cytomine.project.Ontology
-import be.cytomine.project.TermOntology
 
 /**
  * Created by IntelliJ IDEA.
@@ -407,45 +406,6 @@ class BasicInstance {
     log.debug "annotationTerm.errors="+annotationTerm.errors
     annotationTerm
   }
-
-
-  static TermOntology createOrGetBasicTermOntology() {
-    log.debug  "createOrGetBasicTermOntology()"
-
-    def ontology = getBasicOntologyNotExist()
-    ontology.save(flush:true)
-    assert ontology!=null
-    def term = getBasicTermNotExist()
-    term.save(flush:true)
-    assert term!=null
-    def ontologyTerm =  TermOntology.findByOntologyAndTerm(ontology,term)
-    assert ontologyTerm==null
-
-    log.debug "ontology.id:" + ontology.id + " term.id:" + term.id
-    if(!ontologyTerm) {
-      log.debug "ontologyTerm link"
-      ontologyTerm = TermOntology.link(term,ontology)
-      log.debug "TermOntology.errors="+ontologyTerm.errors
-    }
-    assert ontologyTerm!=null
-    ontologyTerm
-  }
-
-  static TermOntology getBasicTermOntologyNotExist(String method) {
-
-    log.debug "getBasicTermOntologyNotExist()"
-    def term = getBasicTermNotExist()
-    term.save(flush:true)
-    assert term!=null
-    def ontology = getBasicOntologyNotExist()
-    log.debug "ontology:" + ontology.id
-    ontology.save(flush:true)
-    assert ontology!=null
-    def ontologyTerm =  new TermOntology(ontology:ontology,term:term, color:"FF0000")
-    log.debug "ontologyTerm.errors="+ontologyTerm.errors
-    ontologyTerm
-  }
-
 
   static void compareAnnotation(map, json)  {
 

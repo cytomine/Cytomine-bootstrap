@@ -55,6 +55,16 @@ class Annotation extends SequenceDomain implements Serializable {
     }
   }
 
+  private def getArea() {
+    //TODO: must be compute with zoom level
+    return location.area
+  }
+
+  private def getPerimeter() {
+    //TODO: must be compute with zoom level
+    return location.getLength()
+  }
+
   private def getBoundaries () {
     def metadata = JSON.parse(new URL(image.getMetadataURL()).text)
     Coordinate[] coordinates = location.getEnvelope().getCoordinates()
@@ -118,6 +128,10 @@ class Annotation extends SequenceDomain implements Serializable {
       returnArray['zoomLevel'] = it.zoomLevel
       returnArray['channels'] = it.channels
       returnArray['user'] = it.user? it.user.id : null
+
+      returnArray['area'] = it.getArea()
+      returnArray['perimeter'] = it.getPerimeter()
+
       returnArray['created'] = it.created? it.created.time.toString() : null
       returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
