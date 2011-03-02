@@ -18,7 +18,7 @@ class Slide extends SequenceDomain {
     name
   }
 
-  static hasMany = [projectSlide:ProjectSlide, scan:Image]
+  static hasMany = [projectSlide:ProjectSlide, image:Image]
 
   static constraints = {
   }

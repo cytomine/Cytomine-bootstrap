@@ -68,15 +68,15 @@ class RestImageController {
 
   def showByProject = {
     if(params.id && Project.exists(params.id)) {
-      def scan = []
+      def image = []
       Project.findAllById(params.id).each {
         it.projectSlide.each { ps ->
-          ps.slide.scan.each { sc ->
-            scan << sc
+          ps.slide.image.each { sc ->
+            image << sc
           }
         }
       }
-      def resp = [ scan : scan]
+      def resp = [ image : image]
 
       withFormat {
         json { render resp as JSON }
@@ -180,10 +180,10 @@ class RestImageController {
   }
 
   def thumb = {
-    Image scan = Image.findById(params.id)
-    print scan.getThumbURL()
+    Image image = Image.findById(params.id)
+    print image.getThumbURL()
     def out = new ByteArrayOutputStream()
-    out << new URL(scan.getThumbURL()).openStream()
+    out << new URL(image.getThumbURL()).openStream()
     response.contentLength = out.size();
     withFormat {
       jpg {
@@ -200,8 +200,8 @@ class RestImageController {
 
 
   def metadata = {
-    Image scan = Image.findById(params.id)
-    def url = new URL(scan.getMetadataURL())
+    Image image = Image.findById(params.id)
+    def url = new URL(image.getMetadataURL())
     withFormat {
       json {
         render(contentType: "application/json", text: "${url.text}")

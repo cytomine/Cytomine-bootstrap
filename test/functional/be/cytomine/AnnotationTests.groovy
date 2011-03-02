@@ -353,7 +353,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     log.info("create annotation")
     Annotation annotation =  BasicInstance.createOrGetBasicAnnotation()
 
-    log.info("get annotation with scan:"+annotation.image.id)
+    log.info("get annotation with image:"+annotation.image.id)
     String URL = Infos.CYTOMINEURL+"api/image/"+annotation.image.id +"/annotation.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
@@ -374,7 +374,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     log.info("create annotation")
     Annotation annotation =  BasicInstance.createOrGetBasicAnnotation()
 
-    log.info("get annotation with scan:"+annotation.image.id)
+    log.info("get annotation with image:"+annotation.image.id)
     String URL = Infos.CYTOMINEURL+"api/image/-99/annotation.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
@@ -549,7 +549,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals("Annotation geom is not modified (annother request)",newGeom.replace(' ', ''),json.annotation.location.replace(' ',''))
 
 
-    //TODO: check for change in scan (?)
+    //TODO: check for change in image (?)
   }
 
   void testEditAnnotationDifferent() {

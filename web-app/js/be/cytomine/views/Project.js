@@ -88,7 +88,7 @@ Cytomine.Views.Project = {
             store: new Ext.data.JsonStore({
                 url : url,
                 autoLoad: true,
-                root: 'scan',
+                root: 'image',
                 fields:[
                     'id','filename', 'thumb'
                 ]

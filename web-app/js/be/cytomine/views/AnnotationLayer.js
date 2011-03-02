@@ -13,7 +13,7 @@ Cytomine.Project.AnnotationLayer = function(name, imageID, userID) {
 Cytomine.Project.AnnotationLayer.prototype = {
     // Name of the layer
     name : null,
-    // Id of the scan
+    // Id of the image
     imageID : null,
     //The OpenLayers.Layer.Vector on which we draw annotations
     vectorsLayer : null,
@@ -81,14 +81,14 @@ Cytomine.Project.AnnotationLayer.prototype = {
         }
         console.log("initTools on image : " + image.filename);
         image.initTools(controls);
-        //scan.map.addLayer(vectorsLayer);
+        //image.map.addLayer(vectorsLayer);
 
         //var panel = new OpenLayers.Control.Panel();
         var nav = new OpenLayers.Control.NavigationHistory();
         image.map.addControl(nav);
         //panel.addControls([nav.next, nav.previous]);
 
-        //scan.map.addControl(panel);
+        //image.map.addControl(panel);
     },
 
 
@@ -139,8 +139,8 @@ Cytomine.Project.AnnotationLayer.prototype = {
         console.log("add geomwkt="+geomwkt);
         for (var i = 0; i < 1; i++){
             var req = new XMLHttpRequest();
-            //console.log("/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt);
-            //req.open("POST", "/cytomine-web/api/annotation/scan/"+this.scanID+"/"+geomwkt+".json", true);
+            //console.log("/cytomine-web/api/annotation/image/"+this.scanID+"/"+geomwkt);
+            //req.open("POST", "/cytomine-web/api/annotation/image/"+this.scanID+"/"+geomwkt+".json", true);
             req.open("POST", "/cytomine-web/api/annotation.json", true);
             if (i == 0) req.onreadystatechange =  function() {
                 var format = new OpenLayers.Format.WKT();

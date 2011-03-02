@@ -632,8 +632,8 @@ class BootStrap {
 
     /* Annotations */
     def annotationSamples = [
-            //[name : "annot3", location : ["POLYGON((2000 1000, 30 0, 40 10, 30 20, 2000 1000))","POLYGON((20 10, 30 0, 40 10, 30 20, 20 10))"], scan: [filename: "Boyden - essai _10x_02"]],
-            //[name : "annot2", location : ["POLYGON((20 10, 30 50, 40 10, 30 20, 20 10))"],scan: [filename: "Boyden - essai _10x_02"]]
+            //[name : "annot3", location : ["POLYGON((2000 1000, 30 0, 40 10, 30 20, 2000 1000))","POLYGON((20 10, 30 0, 40 10, 30 20, 20 10))"], image: [filename: "Boyden - essai _10x_02"]],
+            //[name : "annot2", location : ["POLYGON((20 10, 30 50, 40 10, 30 20, 20 10))"],image: [filename: "Boyden - essai _10x_02"]]
             [name : "annot3", location : ["POINT(10000 10000)"], scan: [filename: "Aperio - 003"],term:["Cell","Cell in vivo"], user:"lrollus"],
             [name : "", location : ["POINT(5000 5000)"],scan: [filename: "Aperio - 003"],user:"lrollus"],
             [name : "annot4", location : ["POLYGON((5000 20000, 20000 17000, 20000 10000, 10000 7500, 5000 20000))","POLYGON((10000 15000, 15000 12000, 12000 12000, 10000 15000))"],scan: [filename: "Aperio - 003"],term:["Cell ex vivo"],user:"lrollus"]
@@ -676,7 +676,7 @@ class BootStrap {
 
 
 
-      def scan = new Image(
+      def image = new Image(
               filename: item.name,
               scanner : scanner,
               slide : slide,
@@ -684,13 +684,13 @@ class BootStrap {
               mime : mime
       )
 
-      if (scan.validate()) {
-        println "Creating scan : ${scan.filename}..."
+      if (image.validate()) {
+        println "Creating image : ${image.filename}..."
 
-        scan.save(flush : true)
+        image.save(flush : true)
       } else {
-        println("\n\n\n Errors in scan boostrap for ${item.filename}!\n\n\n")
-        scan.errors.each {
+        println("\n\n\n Errors in image boostrap for ${item.filename}!\n\n\n")
+        image.errors.each {
           err -> println err
         }
 
@@ -938,8 +938,8 @@ class BootStrap {
   }
 
   def createScans(scanSamples, slides) {
-    def scans = Image.list() ?: []
-    if (!scans) {
+    def images = Image.list() ?: []
+    if (!images) {
       scanSamples.each { item ->
         def mime = Mime.findByExtension("jp2")
 
@@ -947,7 +947,7 @@ class BootStrap {
         def user = User.findByUsername("lrollus")
         //  String path
         //Mime mime
-        def scan = new Image(
+        def image = new Image(
                 filename: item.filename,
                 path : item.path,
                 mime : mime,
@@ -956,25 +956,25 @@ class BootStrap {
                 user:user
         )
 
-        if (scan.validate()) {
-          println "Creating scan : ${scan.filename}..."
+        if (image.validate()) {
+          println "Creating image : ${image.filename}..."
 
-          scan.save(flush : true)
+          image.save(flush : true)
 /*
             *//* Link to projects *//*
             item.annotations.each { elem ->
               Annotation annotation = Annotation.findByName(elem.name)
-              println 'ScanAnnotation:' + scan.filename + " " + annotation.name
-              ScanAnnotation.link(scan, annotation)
+              println 'ScanAnnotation:' + image.filename + " " + annotation.name
+              ScanAnnotation.link(image, annotation)
               println 'ScanAnnotation: OK'
             }*/
 
 
 
-          scans << scan
+          images << image
         } else {
           println("\n\n\n Errors in account boostrap for ${item.filename}!\n\n\n")
-          scan.errors.each {
+          image.errors.each {
             err -> println err
           }
 

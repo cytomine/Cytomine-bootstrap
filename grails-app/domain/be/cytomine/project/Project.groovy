@@ -15,10 +15,6 @@ class Project extends SequenceDomain {
     name ( maxSize : 100, unique : true)
   }
 
-  /*static mapping = {
-    id generator : "assigned"
-  } */
-
   String toString() {
     name
   }
@@ -46,9 +42,8 @@ class Project extends SequenceDomain {
       returnArray['id'] = it.id
       returnArray['name'] = it.name
       returnArray['ontology'] = it.ontology? it.ontology.id : null
-
       returnArray['image'] = UrlApi.getImageURLWithProjectId(it.id)
-      returnArray['term'] = UrlApi.getTermsURLWithOntologyId(it.ontology.id)
+      returnArray['term'] = UrlApi.getTermsURLWithOntologyId(it.ontology?.id)
 
       return returnArray
     }
