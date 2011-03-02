@@ -13,6 +13,7 @@ import be.cytomine.command.term.EditTermCommand
 import be.cytomine.command.term.DeleteTermCommand
 import be.cytomine.command.annotationterm.AddAnnotationTermCommand
 import be.cytomine.project.Ontology
+import be.cytomine.project.Image
 
 class RestTermController {
 
@@ -78,6 +79,25 @@ class RestTermController {
       render contentType: "application/xml", {
         errors {
           message("Ontology not found with id: " + params.idontology)
+        }
+      }
+    }
+  }
+
+  def listTermByImage = {
+    log.info "listTermByImage"
+    if(params.id && Image.exists(params.id)) {
+      def data = [:]
+      data.term = Image.get(params.id).terms()
+      withFormat {
+        json { render data as JSON }
+        xml { render data as XML}
+      }
+    } else {
+      response.status = 404
+      render contentType: "application/xml", {
+        errors {
+          message("Image not found with id: " + params.id)
         }
       }
     }

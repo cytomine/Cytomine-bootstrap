@@ -50,9 +50,7 @@ class Annotation extends SequenceDomain implements Serializable {
    * @return list of terms
    */
   def terms() {
-    def list = []
     return annotationTerm.collect{
-      it.term.color = it.color
       it.term
     }
   }

@@ -63,6 +63,9 @@ class UrlMappings {
     "/api/image/$id/annotation"(controller:"restAnnotation"){
       action = [GET:"listByImage"]
     }
+    "/api/image/$id/term"(controller:"restTerm"){
+      action = [GET:"listTermByImage"]
+    }
 
     /* Annotation */
     "/api/annotation"(controller:"restAnnotation"){

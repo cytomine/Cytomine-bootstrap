@@ -8,6 +8,8 @@ import be.cytomine.test.Infos
 import be.cytomine.project.Term
 import be.cytomine.test.HttpClient
 import be.cytomine.project.Ontology
+import be.cytomine.project.Annotation
+import be.cytomine.project.AnnotationTerm
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -80,6 +82,45 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("get by term not exist")
     String URL = Infos.CYTOMINEURL+"api/term/-99/ontology.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(404,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+  }
+
+
+  void testListTermByImageWithCredential() {
+
+    AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+
+    log.info("get by ontology")
+    String URL = Infos.CYTOMINEURL+"api/image/"+annotationTerm.annotation.image.id+"/term.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+  }
+
+  void testListTermByImageWithImageNotExist() {
+
+    log.info("get by ontology not exist")
+    String URL = Infos.CYTOMINEURL+"api/image/-99/term.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -496,7 +537,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
   void testDeleteTermNotExist() {
 
-     log.info("create term")
+    log.info("create term")
     def termToDelete = BasicInstance.createOrGetBasicTerm()
     String jsonTerm = ([term : termToDelete]).encodeAsJSON()
 

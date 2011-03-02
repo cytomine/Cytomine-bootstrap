@@ -12,19 +12,26 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
 class UrlApi {
 
   static def getImageURLWithProjectId(Long idProject) {
-    return ConfigurationHolder.config.grails.serverURL + '/api/project/'+ idProject +'/image.json';
+    return ConfigurationHolder.config.grails.serverURL + '/api/project/'+ idProject +'/image.json'
   }
 
   static def getTermsURLWithOntologyId(Long idOntology) {
-    return ConfigurationHolder.config.grails.serverURL + '/api/ontology/'+ idOntology +'/term.json';
+    return ConfigurationHolder.config.grails.serverURL + '/api/ontology/'+ idOntology +'/term.json'
   }
 
   static def getTermsURLWithAnnotationId(Long idAnnotation) {
-    return ConfigurationHolder.config.grails.serverURL + '/api/annotation/'+ idAnnotation +'/term.json';
+    return ConfigurationHolder.config.grails.serverURL + '/api/annotation/'+ idAnnotation +'/term.json'
   }
 
   static def getTermsURLWithImageId(Long idImage) {
-    return ConfigurationHolder.config.grails.serverURL + '/api/image/'+ idImage +'/term.json';
+    return ConfigurationHolder.config.grails.serverURL + '/api/image/'+ idImage +'/term.json'
   }
 
+  static def getThumbURLWithImageId(Long idImage) {
+    return ConfigurationHolder.config.grails.serverURL + "/api/image/"+idImage+"/thumb.jpg"
+  }
+
+  static def getMetadataURLWithImageId(Long idImage) {
+    return ConfigurationHolder.config.grails.serverURL + "/api/image/"+idImage+"/metadata.json"
+  }
 }

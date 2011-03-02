@@ -10,6 +10,7 @@ import be.cytomine.warehouse.Mime
 import be.cytomine.security.User
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.SequenceDomain
+import be.cytomine.rest.UrlApi
 
 class Image extends SequenceDomain {
 
@@ -66,11 +67,12 @@ class Image extends SequenceDomain {
 
   def terms() {
     def terms = []
-    annotations.each {
-       it.terms().each {
-          terms << it
+    annotations.each { annotation ->
+       annotation.terms().each { term ->
+          terms << term
        }
     }
+    terms
   }
 
   static Image createImageFromData(jsonImage) {
@@ -165,8 +167,8 @@ class Image extends SequenceDomain {
 
       //returnArray['annotations'] = it.annotations
       //returnArray['thumb'] = it.getThumbURL()
-      returnArray['thumb'] = ConfigurationHolder.config.grails.serverURL + "/api/image/"+it.id+"/thumb.jpg"
-      returnArray['metadataUrl'] = ConfigurationHolder.config.grails.serverURL + "/api/image/"+it.id+"/metadata.json"
+      returnArray['thumb'] = UrlApi.getThumbURLWithImageId(it.id)
+      returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.id)
       //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
 
       returnArray['imageServerBaseURL'] = it.getMime().imageServers().url
