@@ -21,17 +21,21 @@ class User extends SecUser {
   }
 
 
-  static User getUserFromData(User user, data) {
-    user.username = data.username
-    user.firstname = data.firstname
-    user.lastname = data.lastname
-    user.email = data.email
-    user.password = user.springSecurityService.encodePassword(data.password)
+  static User getUserFromData(User user, jsonUser) {
+    user.username = jsonUser.username
+    user.firstname = jsonUser.firstname
+    user.lastname = jsonUser.lastname
+    user.email = jsonUser.email
+    user.password = user.springSecurityService.encodePassword(jsonUser.password)
     user.enabled = true
+
+    user.created = (!jsonUser.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.created)) : null
+    user.updated = (!jsonUser.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.updated)) : null
+
     return user;
   }
 
-  static User getUserFromData(data) {
+  static User createUserFromData(data) {
     getUserFromData(new User(), data)
   }
 
@@ -45,6 +49,10 @@ class User extends SecUser {
       returnArray['lastname'] = it.lastname
       returnArray['email'] = it.email
       returnArray['password'] = "******"
+
+      returnArray['created'] = it.created? it.created.time.toString() : null
+      returnArray['updated'] = it.updated? it.updated.time.toString() : null
+
       return returnArray
     }
   }

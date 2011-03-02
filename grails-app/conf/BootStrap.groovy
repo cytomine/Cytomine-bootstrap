@@ -736,7 +736,6 @@ class BootStrap {
                 lastname : item.lastname,
                 email : item.email,
                 password : springSecurityService.encodePassword("password"),
-                dateCreated : new Date(),
                 enabled : true)
         if (user.validate()) {
           println "Creating user ${user.username}..."

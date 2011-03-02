@@ -20,4 +20,10 @@ class Group extends SequenceDomain {
     name
   }
 
+  def users() {
+    return userGroup.collect{
+      it.user
+    }
+  }
+
 }

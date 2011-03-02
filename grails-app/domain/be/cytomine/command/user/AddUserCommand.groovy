@@ -9,7 +9,8 @@ class AddUserCommand extends Command implements UndoRedoCommand {
 
   def execute() {
     def userData = JSON.parse(postData)
-    def newUser = User.getUserFromData(userData.user)
+    def newUser = User.createUserFromData(userData.user)
+
     if (newUser.validate()) {
       newUser.save()
       data = newUser.encodeAsJSON()
@@ -24,7 +25,8 @@ class AddUserCommand extends Command implements UndoRedoCommand {
   def undo() {
     def userData = JSON.parse(data)
     def user = User.findById(userData.id)
-    user.delete()
+    log.debug("Delete user with id:"+userData.id)
+    user.delete(flush:true)
     def callback =  "Cytomine.Views.User.reload()"
     def message = messageSource.getMessage('be.cytomine.DeleteUserCommand', [userData.username] as Object[], Locale.ENGLISH)
     return [data : [callback : callback , message: message], status : 200]
@@ -32,11 +34,12 @@ class AddUserCommand extends Command implements UndoRedoCommand {
 
   def redo() {
     def userData = JSON.parse(data)
-    def user = User.getUserFromData(userData)
+    def user = User.createUserFromData(userData)
     user.id = userData.id
-    user.save()
+    user.save(flush:true)
     def callback =  "Cytomine.Views.User.reload()"
     def message = messageSource.getMessage('be.cytomine.AddUserCommand', [user.username] as Object[], Locale.ENGLISH)
     return [data : [user : user, callback : callback, message : message], status : 200]
   }
+
 }

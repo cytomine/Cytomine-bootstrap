@@ -45,7 +45,11 @@ class UrlMappings {
     "/api/project/$id/image"(controller: "restImage"){
       action = [GET:"showByProject"]
     }
-    //TODO: /project/$id/user
+    "/api/project/$id/user"(controller: "restUser"){
+      action = [GET:"showByProject"]
+    }
+    //TODO:  + add current user
+
 
     /* Image */
     "/api/image"(controller: "restImage"){

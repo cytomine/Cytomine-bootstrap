@@ -199,13 +199,61 @@ class BasicInstance {
     user
   }
 
+  /* User user = new User(
+                username : item.username,
+                firstname : item.firstname,
+                lastname : item.lastname,
+                email : item.email,
+                password : springSecurityService.encodePassword("password"),
+                dateCreated : new Date(),
+                enabled : true)*/
+
+
   static User createOrGetBasicUser() {
 
-    log.debug  "createOrGetBasicUser()"
-    User user = User.findByUsername("lrollus")
+log.debug  "createOrGetBasicUser()"
+    def user = User.findByUsername("BasicUser")
+    if(!user) {
+       user = new User(
+                username : "BasicUser",
+                firstname : "Basic",
+                lastname : "User",
+                email : "Basic@User.be",
+                password : "password",
+                enabled : true)
+      user.validate()
+      log.debug "user.errors="+user.errors
+      user.save(flush : true)
+      log.debug "user.errors="+user.errors
+    }
     assert user!=null
     user
   }
+
+  static User getBasicUserNotExist() {
+
+    log.debug "getBasicUserNotExist()"
+    def random = new Random()
+    def randomInt = random.nextInt()
+    def user = User.findByUsername(randomInt+"")
+
+    while(user){
+      randomInt = random.nextInt()
+      user = User.findByUsername(randomInt+"")
+   }
+
+    user = new User(
+                username : randomInt+"",
+                firstname : "BasicNotExist",
+                lastname : "UserNotExist",
+                email : "BasicNotExist@User.be",
+                password : "password",
+                enabled : true)
+    assert user.validate()==true
+    log.debug "user.errors="+user.errors
+    user
+  }
+
 
   static Project createOrGetBasicProject() {
     log.debug  "createOrGetBasicProject()"

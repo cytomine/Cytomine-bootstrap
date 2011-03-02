@@ -7,6 +7,7 @@ import be.cytomine.command.UndoStackItem
 import be.cytomine.command.Command
 import be.cytomine.command.user.EditUserCommand
 import be.cytomine.command.user.DeleteUserCommand
+import be.cytomine.project.Project
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
@@ -61,6 +62,26 @@ class RestUserController {
         json { render data as JSON }
         xml { render data as XML }
       }
+  }
+
+  def showByProject = {
+    if(params.id && Project.exists(params.id)) {
+      def data = [:]
+
+      data.user = Project.read(params.id).users()
+      //data.current = User.get(springSecurityService.principal.id).id
+      withFormat {
+        json { render data as JSON }
+        xml { render data as XML }
+      }
+    } else {
+      response.status = 404
+      render contentType: "application/xml", {
+        errors {
+          message("Project not found with id: " + params.id)
+        }
+      }
+    }
   }
 
   /**

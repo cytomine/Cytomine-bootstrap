@@ -34,4 +34,12 @@ class UrlApi {
   static def getMetadataURLWithImageId(Long idImage) {
     return ConfigurationHolder.config.grails.serverURL + "/api/image/"+idImage+"/metadata.json"
   }
+
+  static def getOntologyURLWithOntologyId(Long idOntology) {
+    return ConfigurationHolder.config.grails.serverURL + '/api/ontology/'+ idOntology +'.json'
+  }
+
+  static def getUsersURLWithProjectId(Long idProject) {
+    return ConfigurationHolder.config.grails.serverURL + '/api/project/'+ idProject +'/user.json'
+  }
 }
