@@ -478,7 +478,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(200,code)
 
-    log.info("check if object "+ idTerm +" exist in DB")
+    /*log.info("check if object "+ idTerm +" exist in DB")
     client = new HttpClient();
     URL = Infos.CYTOMINEURL+"api/term/"+idTerm +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
@@ -486,7 +486,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     client.disconnect();
 
-    assertEquals(404,code)
+    assertEquals(404,code)*/
      /*
     log.info("test undo")
     client = new HttpClient()
