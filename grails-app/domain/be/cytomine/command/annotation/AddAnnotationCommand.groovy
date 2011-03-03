@@ -61,6 +61,10 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
     annotation.id = annotationData.id
     annotation.save(flush:true)
     log.debug("Save annotation:"+annotation.id)
-    return [data : [annotation : annotation], status : 201]
+    def callback = [method : "be.cytomine.AddAnnotationCommand", annotationID : annotationData.id , imageID : annotation.image.id ]
+    def message = messageSource.getMessage('be.cytomine.AddAnnotationCommand', [annotationData.id, filename] as Object[], Locale.ENGLISH)
+    log.debug("Delete annotation with id:"+annotationData.id)
+
+    return [data : [annotation : annotation, message : message, callback : callback], status : 201]
   }
 }
