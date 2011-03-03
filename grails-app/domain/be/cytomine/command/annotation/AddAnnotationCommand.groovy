@@ -13,14 +13,16 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
       log.info("Execute")
       def json = JSON.parse(postData)
       json.annotation.user = user.id
-      Annotation newAnnotation = Annotation.createAnnotationFromData(json.annotation)
-      if(newAnnotation.validate() && newAnnotation.save(flush : true)) {
-        log.info("Save annotation with id:"+newAnnotation.id)
-        data = newAnnotation.encodeAsJSON()
-        return [data : [success : true , message:"ok", annotation : newAnnotation], status : 201]
+      Annotation annotation = Annotation.createAnnotationFromData(json.annotation)
+      if(annotation.validate() && annotation.save(flush : true)) {
+        log.info("Save annotation with id:"+annotation.id)
+        data = annotation.encodeAsJSON()
+        def filename = annotation.getImage().getFilename()
+        def message = messageSource.getMessage('be.cytomine.AddAnnotationCommand', [annotation.id, filename] as Object[], Locale.ENGLISH)
+        return [data : [success : true , message: message, annotation : annotation], status : 201]
       } else {
-        log.error("Cannot save annotation:"+newAnnotation.errors)
-        return [data : [annotation : newAnnotation , errors : newAnnotation.retrieveErrors()], status : 400]
+        log.error("Cannot save annotation:"+annotation.errors)
+        return [data : [annotation : annotation , errors : annotation.retrieveErrors()], status : 400]
       }
     }catch(com.vividsolutions.jts.io.ParseException e)
     {
@@ -39,9 +41,13 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
     def annotationData = JSON.parse(data)
 
     def annotation = Annotation.get(annotationData.id)
+    def filename = annotation.getImage().getFilename()
     annotation.delete(flush:true)
+    //def callback =  "Cytomine.Views.Browser.removeAnnotation(" + annotationData.id + "," + annotation.image.id + ")"
+    def callback = [method : "be.cytomine.DeleteAnnotationCommand", annotationID : annotationData.id , imageID : annotation.image.id ]
+    def message = messageSource.getMessage('be.cytomine.DeleteAnnotationCommand', [annotationData.id, filename] as Object[], Locale.ENGLISH)
     log.debug("Delete annotation with id:"+annotationData.id)
-    return [data : [message : "Annotation successfuly deleted", annotation : annotationData.id], status : 200]
+    return [data : [message : message, annotation : annotationData.id, callback : callback], status : 200]
   }
 
   def redo() {
@@ -49,7 +55,9 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
     log.info("Redo:"+data.replace("\n",""))
     def annotationData = JSON.parse(data)
     def json = JSON.parse(postData)
-    def annotation = Annotation.createAnnotationFromData(json.annotation)
+    json.annotation.user = user.id
+    Annotation annotation = Annotation.createAnnotationFromData(json.annotation)
+    def filename = annotation.getImage().getFilename()
     annotation.id = annotationData.id
     annotation.save(flush:true)
     log.debug("Save annotation:"+annotation.id)

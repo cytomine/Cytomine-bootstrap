@@ -3,6 +3,9 @@ Ext.namespace('Cytomine.Views');
 Ext.namespace('Cytomine.Views.Project');
 
 
+Cytomine.gridSelectedProject = null;
+Cytomine.currentProject = null;
+
 Cytomine.Views.Project = {
     userColumns : [
         /*{header: "ID", width: 40, sortable: true, dataIndex: 'id'},*/
@@ -20,7 +23,7 @@ Cytomine.Views.Project = {
 
         var grid =  new Ext.grid.GridPanel({
             iconCls: 'icon-grid',
-            title: 'Projects',
+            //title: 'Projects',
             store: store,
             plugins: [editor],
             columns : this.userColumns,
@@ -34,8 +37,9 @@ Cytomine.Views.Project = {
                 listeners: {
                     rowselect: function(smObj, rowIndex, record) {
                         var project = store.getById(record.id);
+                        Cytomine.gridSelectedProject = project.get("id");
                         Cytomine.Views.Project.detailPanel.removeAll();
-                        Cytomine.Views.Project.detailPanel.add(alias.getView(project.get("image")));
+                        Cytomine.Views.Project.detailPanel.add(alias.getView(project.get("imageURL")));
                         Cytomine.Views.Project.detailPanel.doLayout();
                         Cytomine.Views.Project.detailPanel.show();
                     }
@@ -45,15 +49,22 @@ Cytomine.Views.Project = {
             autoSizeColumns: true,
             trackMouseOver: true
         });
+        //select first row
+        store.on('load', function(){
+            grid.getSelectionModel().selectRow(0);
+            grid.fireEvent('rowclick', grid, 0)
+        }, this, {
+            single: true
+        });
         var tbar = new Ext.Toolbar({
             items: [{
                 text: 'Add',
-                iconCls: 'silk-add',
+                iconCls: 'add',
                 handler: this.onAdd.createDelegate(this, [grid, editor])
 
             }, '-', {
                 text: 'Delete',
-                iconCls: 'silk-delete',
+                iconCls: 'delete',
                 handler: this.onDelete.createDelegate(this, [grid, editor])
 
             }]
@@ -61,6 +72,7 @@ Cytomine.Views.Project = {
         grid.elements += ',tbar';
         grid.add(tbar);
         grid.doLayout();
+
         return grid;
     },
     onAdd : function (grid, editor) {
@@ -103,10 +115,27 @@ Cytomine.Views.Project = {
             listeners: {
                 click: function(dataview, index, node, e) {
                     var data = dataview.getStore().getAt(index);
-                    Cytomine.Views.Browser.openScan(data.get('id'), data.get('id'), data.get('filename')); //multiple tabs
+                    var closeBrowser = function () {
+                        for (imageID in Cytomine.images) {
+                            var tab = Cytomine.tabs.getItem(imageID);
+                            if(tab){
+                                Cytomine.tabs.remove(tab);
+                            }
+                        }
+                        openImage();
+                    }
+                    var openImage = function() {
+                        Cytomine.currentProject = Cytomine.gridSelectedProject;
+                        Cytomine.Views.Browser.create(data.get('id')); //multiple tabs
+
+                    }
+                    if (Cytomine.currentProject != null && Cytomine.gridSelectedProject != Cytomine.currentProject) {
+                        Cytomine.Notifications.confirm("Do you want to close the active project ?", "OpenProject", closeBrowser,"question", openImage);
+                    } else {
+                        openImage();
+                    }
 
                     //Cytomine.Retrieval.showSimilarities(data.get('id'),data.get('id'), data.get('filename')); //multiple tabs
-                    //Cytomine.Browser.openScan('browser', data.get('id'), data.get('filename')); //unique tabs
                 }
             }
         });

@@ -16,10 +16,10 @@ Cytomine.Dashboard = {
     tab: function() {
 
         return new Ext.Panel({
-            id: 'Dashboard',
+            id: 'Projects',
             bodyCssClass: 'overflow-auto',
-            iconCls: 'envelope-label',
-            title: 'Dashboard',
+            iconCls: 'layer-stack',
+            title: 'Projects',
             items: [
                 Cytomine.Views.Project.grid(), Cytomine.Views.Project.detailPanel
             ],

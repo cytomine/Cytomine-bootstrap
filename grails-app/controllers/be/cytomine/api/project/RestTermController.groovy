@@ -69,6 +69,7 @@ class RestTermController {
     log.info "listTermByOntology"
     if(params.idontology && Ontology.exists(params.idontology)) {
       def data = [:]
+      //data.ontology = data.term = Ontology.get(params.idontology)
       data.term = Ontology.get(params.idontology).terms()
       withFormat {
         json { render data as JSON }

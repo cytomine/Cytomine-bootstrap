@@ -18,8 +18,12 @@ Cytomine.Models.Project = {
             messageProperty: 'message'  // <-- New "messageProperty" meta-data
         }, [
             {name: 'id'},
-            {name: 'name', allowBlank: true},
-            {name: 'image'}
+            {name: 'name', allowBlank: false},
+            {name: 'image'},
+            {name : 'ontologyURL'},
+            {name : 'imageURL'},
+            {name : 'termURL'},
+            {name : 'userURL'}
         ])},
     writer : function () { return new Ext.data.JsonWriter({
         encode: false,   // <-- don't return encoded JSON -- causes Ext.Ajax#request to send data using jsonData config rather than HTTP params

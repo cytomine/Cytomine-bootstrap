@@ -89,6 +89,7 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
 
         //this.tileSize = new OpenLayers.Size(Math.ceil(w), Math.ceil(h));
         this.tileSize = new OpenLayers.Size(Math.ceil(w), Math.ceil(h));
+        this.tileSize = new OpenLayers.Size(Math.ceil(w), Math.ceil(h));
 
 
     },

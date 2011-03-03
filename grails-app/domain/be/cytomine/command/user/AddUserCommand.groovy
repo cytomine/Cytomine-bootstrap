@@ -14,7 +14,7 @@ class AddUserCommand extends Command implements UndoRedoCommand {
     if (newUser.validate()) {
       newUser.save()
       data = newUser.encodeAsJSON()
-      def callback =  "Cytomine.Views.User.reload()"
+      def callback = [method : "be.cytomine.AddUserCommand"]
       def message = messageSource.getMessage('be.cytomine.AddUserCommand', [newUser.username] as Object[], Locale.ENGLISH)
       return [data : [success : true, message: message, user : newUser, callback : callback], status : 201]
     } else {
@@ -27,7 +27,7 @@ class AddUserCommand extends Command implements UndoRedoCommand {
     def user = User.findById(userData.id)
     log.debug("Delete user with id:"+userData.id)
     user.delete(flush:true)
-    def callback =  "Cytomine.Views.User.reload()"
+    def callback = [method : "be.cytomine.DeleteUserCommand"]
     def message = messageSource.getMessage('be.cytomine.DeleteUserCommand', [userData.username] as Object[], Locale.ENGLISH)
     return [data : [callback : callback , message: message], status : 200]
   }
@@ -37,7 +37,7 @@ class AddUserCommand extends Command implements UndoRedoCommand {
     def user = User.createUserFromData(userData)
     user.id = userData.id
     user.save(flush:true)
-    def callback =  "Cytomine.Views.User.reload()"
+    def callback = [method : "be.cytomine.AddUserCommand"]
     def message = messageSource.getMessage('be.cytomine.AddUserCommand', [user.username] as Object[], Locale.ENGLISH)
     return [data : [user : user, callback : callback, message : message], status : 201]
   }

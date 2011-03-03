@@ -24,7 +24,6 @@ class Ontology {
       returnArray['class'] = it.class
       returnArray['id'] = it.id
       returnArray['name'] = it.name
-      returnArray['children'] = it.termsParent()
       return returnArray
     }
   }

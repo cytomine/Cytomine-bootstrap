@@ -63,7 +63,7 @@
 .ulg { background-image:url(../images/icons/ulg.png) !important; }
 .giga { background-image:url(../images/icons/giga.png) !important; }
 
-.background { background-image: url(../images/background.png) }
+/*.background { background-image: url(../images/background.png) } */
 .status-icon { background-repeat: no-repeat; padding-left: 20px !important; background-position: 0pt 50%; min-height:16px; }
 
 .map { background-image:url(../images/icons/map.png) !important; }
@@ -80,3 +80,16 @@
 .relation-union { background-image:url(../images/icons/sql-join-outer.png) !important; }
 .relation-disjoint { background-image:url(../images/icons/sql-join-outer-exclude.png) !important; }
 .relation-is { background-image:url(../images/icons/arrow-transition-270.png) !important; }
+
+.user_gray { background-image:url(../images/icons/user_gray.png); !important; }
+
+.add { background-image:url(../images/icons/add.gif); !important; }
+.delete { background-image:url(../images/icons/delete.gif); !important; }
+
+.cog { background-image:url(../images/icons/cog.png); !important; }
+.cog-edit { background-image:url(../images/icons/cog_edit.png); !important; }
+
+.folder_wrench { background-image:url(../images/icons/folder_wrench.png); !important; }
+
+.control_rewind { background-image:url(../images/icons/control_rewind.png); !important; }
+.control_forward { background-image:url(../images/icons/control_forward.png); !important; }

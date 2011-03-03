@@ -44,7 +44,7 @@ Cytomine.Views.User = (function() {
         grid =  new Ext.grid.GridPanel({
             iconCls: 'icon-grid',
             frame: true,
-            title: 'Users',
+            //title: 'Users',
             height: 300,
             store: store,
             plugins: [editor],
@@ -56,12 +56,12 @@ Cytomine.Views.User = (function() {
         var tbar = new Ext.Toolbar({
             items: [{
                 text: 'Add',
-                iconCls: 'silk-add',
+                iconCls: 'add',
                 handler: onAdd.createDelegate(this, [grid, editor])
 
             }, '-', {
                 text: 'Delete',
-                iconCls: 'silk-delete',
+                iconCls: 'delete',
                 handler: onDelete.createDelegate(this, [grid, editor])
 
             }]
@@ -73,7 +73,7 @@ Cytomine.Views.User = (function() {
 
     return {
         grid : function () {
-            if (grid == null) init();
+            init();
             return grid;
         },
         reload : function(url) {

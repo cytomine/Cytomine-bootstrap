@@ -3,15 +3,69 @@ Ext.namespace('Cytomine');
 Ext.namespace('Cytomine.Application');
 
 Cytomine.images = [];
-//Cytomine.userLayers = [];
+Cytomine.currentProject = null;
 
 Cytomine.Application = function() {
 
+
+    var models = [];
+
     return {
+        dispatch : function(callback) {
+            //basic dispatcher
+
+            //Annotations
+            if (callback.method == "be.cytomine.AddAnnotationCommand") {
+                var tab = Cytomine.tabs.getItem(callback.imageID);
+                if (tab) Cytomine.tabs.setActiveTab(tab);
+                Cytomine.Views.Browser.addAnnotation(callback.annotationID, callback.imageID);
+            } else if (callback.method == "be.cytomine.EditAnnotationCommand") {
+                var tab = Cytomine.tabs.getItem(callback.imageID);
+                if (tab) Cytomine.tabs.setActiveTab(tab);
+                Cytomine.Views.Browser.updateAnnotation(callback.annotationID, callback.imageID);
+            } else if (callback.method == "be.cytomine.DeleteAnnotationCommand") {
+                var tab = Cytomine.tabs.getItem(callback.imageID);
+                if (tab) Cytomine.tabs.setActiveTab(tab);
+                Cytomine.Views.Browser.removeAnnotation(callback.annotationID, callback.imageID);
+            }
+            //Users
+            else if (callback.method == "be.cytomine.AddUserCommand"){
+                var usersTab = Cytomine.tabs.getItem("Users");
+                if (usersTab) Cytomine.tabs.setActiveTab(usersTab);
+                Cytomine.Views.User.reload();
+            }
+            else if (callback.method == "be.cytomine.EditUserCommand"){
+                var usersTab = Cytomine.tabs.getItem("Users");
+                if (usersTab) Cytomine.tabs.setActiveTab(usersTab);
+                Cytomine.Views.User.reload();
+            }
+            else if (callback.method == "be.cytomine.DeleteUserCommand"){
+                var usersTab = Cytomine.tabs.getItem("Users");
+                if (usersTab) Cytomine.tabs.setActiveTab(usersTab);
+                Cytomine.Views.User.reload();
+            }
+
+        },
+        storeImage : function(imageID, image) {
+            Cytomine.images[imageID] = image;
+        },
+        addTab : function(idTab, tab) {
+            var existingTab = Cytomine.tabs.getItem(idTab);
+            if(existingTab){
+                Cytomine.tabs.remove(tab);
+            }
+            tab = Cytomine.tabs.add(tab);
+            tab.show();
+            Cytomine.tabs.setActiveTab(tab);
+        },
         received : function(response) {
             console.log("undo/redo resp : " + response.responseText);
             var jsonData = Ext.util.JSON.decode(response.responseText);
-            if (jsonData.callback != undefined) eval(jsonData.callback);
+            if (jsonData.callback != undefined) {
+                Cytomine.Application.dispatch(jsonData.callback);
+                //eval(jsonData.callback);
+            }
+
             if (jsonData.message != undefined) App.setAlert(true, jsonData.message);
 
         },
@@ -30,6 +84,29 @@ Cytomine.Application = function() {
             });
         },
         init : function() {
+            this.regModels();
+            var alias = this;
+            var session = Cytomine.Application.getModel('session');
+            console.log("-------");
+            session.on('load', function(){
+                session.each(function(user) {
+                    console.log("logged user is : " + user.data.id);
+                    Cytomine.Application.userID = user.data.id;
+                    alias.initComponents();
+                });
+
+            });
+        },
+        regModels : function() {
+            models['image'] = Cytomine.Models.Image.store();
+            models['project'] = Cytomine.Models.Project.store();
+            models['session'] = Cytomine.Models.Session.store();
+            models['user'] = Cytomine.Models.User.store();
+        },
+        getModel : function (name) {
+            return models[name]
+        },
+        initComponents : function() {
 
             Ext.QuickTips.init();
 
@@ -81,8 +158,7 @@ Cytomine.Application = function() {
                 resizeTabs:true, // turn on tab resizing
                 minTabWidth: 115,
                 items:[
-                    Cytomine.Dashboard.tab(),
-                    Cytomine.Admin.tab()
+                    Cytomine.Dashboard.tab()
                 ],
                 defaults: {
                     autoScroll:true
@@ -135,29 +211,36 @@ Cytomine.Application = function() {
                             xtype:'tbtext',
                             text: '<h1>Cytomine</h1>'
                         },'-',
-                            /*{
-                             text: 'New',
-                             menu: [{
-                             text: 'Project'
-                             }, {
-                             text: 'Slide'
-                             }]
-                             }
-                             , '-',
-                             */
+
                             {
                                 text: 'Undo',
+                                iconCls : 'control_rewind',
                                 handler : function () {
                                     Cytomine.Application.undo();
                                 }
                             }, {
                                 text: 'Redo',
+                                iconCls : 'control_forward',
                                 handler : function () {
                                     Cytomine.Application.redo();
                                 }
-                            }, '->', {
+                            }, '->',
+                            {
+                                text: 'Administration',
+                                iconCls : 'folder_wrench',
+                                menu: [{
+                                    text: 'Users',
+                                    iconCls: 'user_gray',
+                                    handler : function () {
+                                        Cytomine.Application.addTab("users",Cytomine.Admin.tab());
+                                    }
+                                }/*, {
+                                 text: 'Slide'
+                                 }*/
+                                ]
+                            } , '-',{
                                 text: 'Options',
-                                iconCls: 'options_icon',
+                                iconCls: 'cog-edit',
                                 menu: [{
                                     text: 'User Info',
                                     handler : function () {
@@ -171,6 +254,7 @@ Cytomine.Application = function() {
                                 }]
                             }, {
                                 text: 'Help',
+                                iconCls : 'question',
                                 handler : function () {
                                     Cytomine.Application.HelpWindow.show();
                                 }

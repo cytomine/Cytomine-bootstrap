@@ -30,7 +30,7 @@ class EditUserCommand extends Command implements UndoRedoCommand {
       log.info "New User is saved"
       data = ([ previousUser : (JSON.parse(backup)), newUser :  updatedUser]) as JSON
 
-      def callback =  "Cytomine.Views.User.reload()"
+      def callback = [method : "be.cytomine.EditUserCommand"]
       def message = messageSource.getMessage('be.cytomine.EditUserCommand', [updatedUser.username] as Object[], Locale.ENGLISH)
       return [data : [success : true, message: message, callback: callback, user :  updatedUser], status : 200]
     } else {
@@ -52,7 +52,7 @@ class EditUserCommand extends Command implements UndoRedoCommand {
     User user = User.findById(userData.previousUser.id)
     user = User.getUserFromData(user,userData.previousUser)
     user.save(flush:true)
-    def callback =  "Cytomine.Views.User.reload()"
+    def callback = [method : "be.cytomine.EditUserCommand"]
     def message = messageSource.getMessage('be.cytomine.EditUserCommand', [user.username] as Object[], Locale.ENGLISH)
     return [data : [success : true, message: message, callback: callback,user : user], status : 200]
   }
@@ -63,7 +63,7 @@ class EditUserCommand extends Command implements UndoRedoCommand {
     User user = User.findById(userData.newUser.id)
     user = User.getUserFromData(user, userData.newUser)
     user.save(flush:true)
-    def callback =  "Cytomine.Views.User.reload()"
+    def callback = [method : "be.cytomine.EditUserCommand"]
     def message = messageSource.getMessage('be.cytomine.EditUserCommand', [user.username] as Object[], Locale.ENGLISH)
     return [data : [success : true, message: message, callback: callback, user : user], status : 200]
   }

@@ -33,9 +33,11 @@
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/languages/fr.js')}" ></script>
 
   <!-- Models -->
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/Image.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/Annotation.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/User.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/Project.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/Session.js')}" ></script>
 
   <!-- Cytomine -->
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/Application.js')}" ></script>
@@ -55,10 +57,7 @@
   </div>
 </div>
 
-<div id="helpTabs">
-  <li>Help</li>
 
-</div>
 <g:layoutBody />
 
 

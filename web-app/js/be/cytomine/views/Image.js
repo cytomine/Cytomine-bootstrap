@@ -1,9 +1,9 @@
 Ext.namespace('Cytomine');
 Ext.namespace('Cytomine.Project');
 
-Cytomine.Project.Image = function (urls, scanID, filename, path, metadataUrl) {
+Cytomine.Project.Image = function (urls, imageID, filename, path, metadataUrl) {
     this.urls = urls;
-    this.scanID = scanID;
+    this.imageID = imageID;
     this.filename = filename;
     this.path = path;
     this.metadataUrl = metadataUrl;
@@ -20,6 +20,10 @@ Cytomine.Project.Image.prototype = {
     map : null,
     userLayer : null, //the logged user can draw only on this layer
     annotationsLayers : {},
+    getUserLayer : function () {
+        console.log("-------this.userLayer is : " + this.imageID);
+        return this.userLayer;
+    },
     initMap : function () {
         //clear previous overview Map
         //document.getElementById("overviewMap"+this.scanID).innerHTML="";
@@ -41,19 +45,22 @@ Cytomine.Project.Image.prototype = {
             maximized : true
         };
         var options = {resolutions: resolutions, maxExtent: maxExtent, tileSize: tileSize, controls: [
+            //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),
             new OpenLayers.Control.Navigation(),
             new OpenLayers.Control.PanZoomBar(),
-            new OpenLayers.Control.LayerSwitcher({'ascending':false}),
+            //new OpenLayers.Control.LayerSwitcher({'ascending':false}),
+            new OpenLayers.Control.LayerSwitcher({roundedCorner:false,roundedCornerColor: false,'div' : $('layerSwitcher'+this.imageID)}),
             new OpenLayers.Control.MousePosition(),
             new OpenLayers.Control.OverviewMap({
-                div : $('overviewMap'+this.scanID),
+                div : $('overviewMap'+this.imageID),
+                //size: new OpenLayers.Size(metadata.width / Math.pow(2, openURLLayer.getViewerLevel()), metadata.height / Math.pow(2,(openURLLayer.getViewerLevel()))),
                 size: new OpenLayers.Size(metadata.width / Math.pow(2, openURLLayer.getViewerLevel()), metadata.height / Math.pow(2,(openURLLayer.getViewerLevel()))),
                 minRatio : 1,
                 maxRatio : 1024,
                 mapOptions: mapOptions}),
             new OpenLayers.Control.KeyboardDefaults()
         ]};
-        this.map = new OpenLayers.Map("map"+this.scanID, options);
+        this.map = new OpenLayers.Map("map"+this.imageID, options);
         this.map.addLayer(openURLLayer);
         this.map.setCenter(new OpenLayers.LonLat(lon, lat), 2);
     },

@@ -47,18 +47,19 @@ class DeleteUserCommand extends Command implements UndoRedoCommand {
     def username = user.username
     user.save(flush:true)
     log.info "Save user " +   user.id
-    def callback =  "Cytomine.Views.User.reload()"
+    def callback = [method : "be.cytomine.AddUserCommand"]
     def message = messageSource.getMessage('be.cytomine.AddUserCommand', [username] as Object[], Locale.ENGLISH)
     return [data : [success : true, callback : callback, message: message], status : 201]
   }
 
   def redo() {
     def postData = JSON.parse(postData)
+    print postData
     User user = User.findById(postData.id)
     def username = user.username
     log.info "Delete user " +  user.id
     user.delete(flush:true);
-    def callback =  "Cytomine.Views.User.reload()"
+    def callback = [method : "be.cytomine.DeleteUserCommand"]
     def message = messageSource.getMessage('be.cytomine.DeleteUserCommand', [username] as Object[], Locale.ENGLISH)
     return [data : [success : true, callback : callback, message: message], status : 200]
 

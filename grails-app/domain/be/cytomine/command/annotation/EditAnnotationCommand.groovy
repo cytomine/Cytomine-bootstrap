@@ -33,8 +33,11 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
 
       if ( updatedAnnotation.validate() && updatedAnnotation.save()) {
         log.info "New annotation is saved"
+        def filename = updatedAnnotation.getImage().getFilename()
+        def callback = [method : "be.cytomine.EditAnnotationCommand", annotationID : updatedAnnotation.id , imageID : updatedAnnotation.image.id ]
+        def message = messageSource.getMessage('be.cytomine.EditAnnotationCommand', [updatedAnnotation.id, filename] as Object[], Locale.ENGLISH)
         data = ([ previousAnnotation : (JSON.parse(backup)), newAnnotation :  updatedAnnotation]) as JSON
-        return [data : [success : true, message:"ok", annotation :  updatedAnnotation], status : 200]
+        return [data : [success : true, annotation :  updatedAnnotation, message : message], status : 200]
       } else {
         log.error "New annotation can't be saved: " +  updatedAnnotation.errors
         return [data : [annotation :  updatedAnnotation, errors : updatedAnnotation.retrieveErrors()], status : 400]
@@ -54,7 +57,11 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
     Annotation annotation = Annotation.findById(annotationsData.previousAnnotation.id)
     annotation = Annotation.getAnnotationFromData(annotation,annotationsData.previousAnnotation)
     annotation.save(flush:true)
-    return [data : [success : true, message:"ok", annotation : annotation], status : 200]
+    def filename = annotation.getImage().getFilename()
+    def callback = [method : "be.cytomine.EditAnnotationCommand", annotationID : annotation.id , imageID : annotation.image.id ]
+    //def callback =  "Cytomine.Views.Browser.updateAnnotation(" + annotation.id + "," + annotation.image.id + ")"
+    def message = messageSource.getMessage('be.cytomine.EditAnnotationCommand', [annotation.id, filename] as Object[], Locale.ENGLISH)
+    return [data : [success : true, message: message, callback : callback, annotation : annotation], status : 200]
   }
 
   def redo() {
@@ -63,6 +70,10 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
     Annotation annotation = Annotation.findById(annotationsData.newAnnotation.id)
     annotation = Annotation.getAnnotationFromData(annotation,annotationsData.newAnnotation)
     annotation.save(flush:true)
-    return [data : [success : true, message:"ok", annotation : annotation], status : 200]
+    def filename = annotation.getImage().getFilename()
+    def callback = [method : "be.cytomine.EditAnnotationCommand", annotationID : annotation.id , imageID : annotation.image.id ]
+    //def callback =  "Cytomine.Views.Browser.updateAnnotation(" + annotation.id + "," + annotation.image.id + ")"
+    def message = messageSource.getMessage('be.cytomine.EditAnnotationCommand', [annotation.id, filename] as Object[], Locale.ENGLISH)
+    return [data : [success : true, message: message, callback : callback, annotation : annotation], status : 200]
   }
 }

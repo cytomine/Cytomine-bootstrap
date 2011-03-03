@@ -63,5 +63,40 @@ class RestOntologyController {
         }
       }
     }
-  }  
+  }
+
+  def tree =  {
+    if(params.id && Ontology.exists(params.id)) {
+      def res = []
+      def data = [:]
+      def ontology = Ontology.findById(params.id)
+      data.id = ontology.id
+      data.text = ontology.getName()
+      data.checked = false
+
+      def terms = []
+      ontology.terms().each {
+          def term = [:]
+          term.id = it.getId()
+          term.text = it.getName()
+          term.checked = false
+          term.leaf = false
+          terms << term
+      }
+      data.children =  terms
+      res << data
+      withFormat {
+        json { render res as JSON }
+        xml { render res as XML }
+      }
+    } else {
+      response.status = 404
+      render contentType: "application/xml", {
+        errors {
+          message("Ontology not found with id: " + params.id)
+        }
+      }
+    }
+
+  }
 }

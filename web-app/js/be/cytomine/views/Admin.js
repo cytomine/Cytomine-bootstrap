@@ -13,10 +13,11 @@ Cytomine.Admin = {
     tab: function() {
         //var userView = new Cytomine.Views.User();
         return new Ext.Panel({
-            id: 'Admin',
+            id: 'Users',
             bodyCssClass: 'overflow-auto',
-            iconCls: 'envelope-label',
-            title: 'Admin',
+            iconCls: 'user_gray',
+            title: 'Users',
+            closable:true,
             items: [
                 Cytomine.Views.User.grid()
         ],

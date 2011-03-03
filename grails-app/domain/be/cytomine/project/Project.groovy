@@ -54,7 +54,8 @@ class Project extends SequenceDomain {
     if(!name.equals("null"))
       project.name = jsonProject.name
     else throw new IllegalArgumentException("Project name cannot be null")
-    project.ontology = Ontology.get(jsonProject.ontology)
+    if (jsonProject.ontology)
+      project.ontology = Ontology.read(jsonProject.ontology)
     return project;
   }
 
@@ -67,7 +68,7 @@ class Project extends SequenceDomain {
       returnArray['id'] = it.id
       returnArray['name'] = it.name
       returnArray['ontology'] = it.ontology? it.ontology.id : null
-      returnArray['ontologyURL'] = UrlApi.getOntologyURLWithOntologyId(it.ontology.id)
+      returnArray['ontologyURL'] = UrlApi.getOntologyURLWithOntologyId(it.ontology?.id)
       returnArray['imageURL'] = UrlApi.getImageURLWithProjectId(it.id)
       returnArray['termURL'] = UrlApi.getTermsURLWithOntologyId(it.ontology?.id)
       returnArray['userURL'] = UrlApi.getUsersURLWithProjectId(it.id)

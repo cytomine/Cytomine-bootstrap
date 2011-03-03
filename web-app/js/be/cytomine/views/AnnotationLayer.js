@@ -3,29 +3,48 @@ Ext.namespace('Cytomine.Project');
 Ext.namespace('Cytomine.Project.Annotation');
 //Ext.namespace('Cytomine.Project.Annotation.Layer');
 
-Cytomine.Project.AnnotationLayer = function(name, imageID, userID) {
+Cytomine.Project.AnnotationLayer = function(name, imageID, userID, color) {
+
+    var myStyles = new OpenLayers.StyleMap({
+        "default": new OpenLayers.Style({
+            pointRadius: "${type}", // sized according to type attribute
+            fillColor: color,
+            strokeColor: "#000",
+            strokeWidth: 2,
+            graphicZIndex: 1,
+            fillOpacity: 0.5
+        }),
+        "select": new OpenLayers.Style({
+            fillColor: "#EEE",
+            strokeColor: "#000",
+            graphicZIndex: 2
+        }),
+        "modify": new OpenLayers.Style({
+            fillColor: "#EEE",
+            strokeColor: "#000",
+            graphicZIndex: 2
+        })
+    });
+
     this.name = name;
     this.imageID = imageID;
     this.userID = userID;
-    this.vectorsLayer = new OpenLayers.Layer.Vector(this.name);
+    this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
+        //styleMap: myStyles,
+        rendererOptions: {zIndexing: true}
+    });
+    this.features = [];
+    this.controls = null;
+    this.dialog = null;
+    this.rotate = false;
+    this.resize = false;
+    this.drag = false;
+    this.irregular = false;
+    this.aspectRatio = false;
 }
 
 Cytomine.Project.AnnotationLayer.prototype = {
-    // Name of the layer
-    name : null,
-    // Id of the image
-    imageID : null,
-    //The OpenLayers.Layer.Vector on which we draw annotations
-    vectorsLayer : null,
-    controls : null,
-    dialog : null,
-    rotate : false,
-    resize : false,
-    drag : false,
-    irregular : false,
-    aspectRatio  : false,
-
-    initControls : function(image) {
+    registerEvents : function() {
         var alias = this;
         this.vectorsLayer.events.on({
             featureselected : function (evt) {
@@ -65,8 +84,11 @@ Cytomine.Project.AnnotationLayer.prototype = {
                 console.log("delete " + feature.id);
             }
         });
+    },
+    initControls : function(image) {
+        var alias = this;
         //vectorsLayer.events.register("featureselected", vectorsLayer, this.selectAnnotation);
-        controls = {
+        this.controls = {
             point: new OpenLayers.Control.DrawFeature(this.vectorsLayer,
                     OpenLayers.Handler.Point),
             line: new OpenLayers.Control.DrawFeature(this.vectorsLayer,
@@ -80,12 +102,12 @@ Cytomine.Project.AnnotationLayer.prototype = {
 
         }
         console.log("initTools on image : " + image.filename);
-        image.initTools(controls);
+        image.initTools(this.controls);
         //image.map.addLayer(vectorsLayer);
 
         //var panel = new OpenLayers.Control.Panel();
-        var nav = new OpenLayers.Control.NavigationHistory();
-        image.map.addControl(nav);
+        //var nav = new OpenLayers.Control.NavigationHistory();
+        //image.map.addControl(nav);
         //panel.addControls([nav.next, nav.previous]);
 
         //image.map.addControl(panel);
@@ -116,12 +138,9 @@ Cytomine.Project.AnnotationLayer.prototype = {
                     //read from wkt to geometry
                     var point =  (format.read(JSONannotations.annotation[i].location));
                     var geom = point.geometry;
-
-                    var feature = new OpenLayers.Feature.Vector(geom, {some:'data'}, {pointRadius: 10, fillColor: "green", fillOpacity: 0.5, strokeColor: "black"});
-
-                    feature.attributes = {idAnnotation: JSONannotations.annotation[i].id, listener:'NO',importance: 10 };
-
-                    alias.vectorsLayer.addFeatures(feature);
+                    var feature = new OpenLayers.Feature.Vector(geom);
+                    feature.attributes = {idAnnotation : JSONannotations.annotation[i].id, listener:'NO',importance: 10 };
+                    alias.addFeature(feature);
                 }
 
             }
@@ -129,7 +148,16 @@ Cytomine.Project.AnnotationLayer.prototype = {
         req.send(null);
         image.map.addLayer(this.vectorsLayer);
     },
+    addFeature : function(feature) {
+        this.features[feature.attributes.idAnnotation] = feature;
+        this.vectorsLayer.addFeatures(feature);
+    },
+    removeFeature : function(idAnnotation) {
+        var feature = this.features[idAnnotation];
+        this.vectorsLayer.removeFeatures(feature);
+        this.features[idAnnotation] = null;
 
+    },
     /*Add annotation in database*/
     addAnnotation : function (feature) {
         console.log("addAnnotation start");
@@ -144,27 +172,16 @@ Cytomine.Project.AnnotationLayer.prototype = {
             req.open("POST", "/cytomine-web/api/annotation.json", true);
             if (i == 0) req.onreadystatechange =  function() {
                 var format = new OpenLayers.Format.WKT();
-                var points = [];
                 if (req.readyState == 4)
                 {
-                    //eval json
                     console.log("response:"+req.responseText);
                     var JSONannotations = eval('(' + req.responseText + ')');
-                    console.log(JSONannotations.annotation);
-
                     console.log(JSONannotations.annotation.id);
-                    //read from wkt to geometry
                     var point =  (format.read(JSONannotations.annotation.location));
                     var geom = point.geometry;
-
-                    var feature = new OpenLayers.Feature.Vector(
-                            geom,
-                    {some:'data'},
-                    {pointRadius: 10, fillColor: "green", fillOpacity: 0.5, strokeColor: "black"});
-
+                    var feature = new OpenLayers.Feature.Vector(geom);
                     feature.attributes = {idAnnotation: JSONannotations.annotation.id, listener:'NO',importance: 10 };
-
-                    alias.vectorsLayer.addFeatures(feature);
+                    alias.addFeature(feature);
 
                 }
 
@@ -283,33 +300,33 @@ Cytomine.Project.AnnotationLayer.prototype = {
     /* Launch a dialog with annotation info */
     selectAnnotation : function() {
         /*
-        console.log("selectAnnotation:"+req.readyState);
-        if (req.readyState == 4)
-        {
-            //eval json
-            console.log("response:"+req.responseText);
-            var JSONannotations = eval('(' + req.responseText + ')');
+         console.log("selectAnnotation:"+req.readyState);
+         if (req.readyState == 4)
+         {
+         //eval json
+         console.log("response:"+req.responseText);
+         var JSONannotations = eval('(' + req.responseText + ')');
 
-            var terms =""+ "<BR>";
-            for (i=0;i<JSONannotations.term.length;i++)
-            {
-                terms = terms +"*" +JSONannotations.term[i].name + "<BR>"
-            }
-            this.dialog = new Ext.Window({
-                title: "Feature Info",
-                layout: "fit",
-                height: 130, width: 200,
-                plain: true,
-                items: [{
-                    border: false,
-                    bodyStyle: {
-                        padding: 5, fontSize: 13
-                    },
-                    html: "Term: "+terms
-                }]
-            });
-            this.dialog.show();
-        } */
+         var terms =""+ "<BR>";
+         for (i=0;i<JSONannotations.term.length;i++)
+         {
+         terms = terms +"*" +JSONannotations.term[i].name + "<BR>"
+         }
+         this.dialog = new Ext.Window({
+         title: "Feature Info",
+         layout: "fit",
+         height: 130, width: 200,
+         plain: true,
+         items: [{
+         border: false,
+         bodyStyle: {
+         padding: 5, fontSize: 13
+         },
+         html: "Term: "+terms
+         }]
+         });
+         this.dialog.show();
+         } */
 
     },
     /** Triggered when add new feature **/
@@ -359,36 +376,36 @@ Cytomine.Project.AnnotationLayer.prototype = {
     },
     updateControls : function() {
 
-        controls.modify.mode = OpenLayers.Control.ModifyFeature.RESHAPE;
+        this.controls.modify.mode = OpenLayers.Control.ModifyFeature.RESHAPE;
         if(this.rotate) {
-            controls.modify.mode |= OpenLayers.Control.ModifyFeature.ROTATE;
+            this.controls.modify.mode |= OpenLayers.Control.ModifyFeature.ROTATE;
         }
 
         if(this.resize) {
-            controls.modify.mode |= OpenLayers.Control.ModifyFeature.RESIZE;
+            this.controls.modify.mode |= OpenLayers.Control.ModifyFeature.RESIZE;
             if (this.aspectRatio) {
-                controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
+                this.controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
             }
         }
         if(this.drag) {
-            controls.modify.mode |= OpenLayers.Control.ModifyFeature.DRAG;
+            this.controls.modify.mode |= OpenLayers.Control.ModifyFeature.DRAG;
         }
         if (this.rotate || this.drag) {
-            controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
+            this.controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
         }
-        controls.regular.handler.sides = this.sides;
-        controls.regular.handler.irregular = this.irregular;
+        this.controls.regular.handler.sides = this.sides;
+        this.controls.regular.handler.irregular = this.irregular;
     },
     toggleControl :
     function (element) {
         console.log("toggleControl in " + element.name);
-        for(key in controls) {
-            var control = controls[key];
+        for(key in this.controls) {
+            var control = this.controls[key];
             if(element.name == key) {
-                console.log("activate control : " + key)
+                console.log("activate control : " + key + " in " + this.imageID);
                 control.activate();
             } else {
-                console.log("deactivate control : " + key)
+                console.log("deactivate control : " + key  + " in " + this.imageID);
                 control.deactivate();
             }
         }
