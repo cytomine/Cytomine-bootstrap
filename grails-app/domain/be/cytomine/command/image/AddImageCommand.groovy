@@ -54,6 +54,6 @@ class AddImageCommand extends Command implements UndoRedoCommand {
     image.id = imageData.id
     image.save(flush:true)
     log.debug("Save image:"+image.id)
-    return [data : [image : image], status : 200]
+    return [data : [image : image], status : 201]
   }
 }

@@ -38,6 +38,9 @@ class RestUserController {
    * @return user an User into the specified format
    */
   def show = {
+    /*User.list().each{
+      println "user=" + it.id
+    }   */
     if(params.id && User.exists(params.id)) {
       def data = [:]
       data.user = User.findById(params.id)
@@ -99,7 +102,7 @@ class RestUserController {
 
     if (result.status == 201) {
       addUserCommand.save()
-      new UndoStackItem(command : addUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
+      new UndoStackItem(command : addUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
 
     response.status = result.status
@@ -123,7 +126,7 @@ class RestUserController {
     def result = editUserCommand.execute()
     if (result.status == 200) {
       editUserCommand.save()
-      new UndoStackItem(command : editUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
+      new UndoStackItem(command : editUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
 
     response.status = result.status
@@ -152,7 +155,7 @@ class RestUserController {
 
       if (result.status == 200) {
         deleteUserCommand.save()
-        new UndoStackItem(command : deleteUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save()
+        new UndoStackItem(command : deleteUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
       }
     }
     response.status = result.status

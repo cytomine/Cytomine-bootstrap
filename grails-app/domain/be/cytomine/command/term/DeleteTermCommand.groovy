@@ -18,7 +18,7 @@ class DeleteTermCommand extends Command implements UndoRedoCommand {
     }
 
     term.delete();
-    return [data : [success : true, message : "OK", data : [term : postData.id]], status : 204]
+    return [data : [success : true, message : "OK", data : [term : postData.id]], status : 200]
   }
 
   def undo() {
@@ -41,7 +41,7 @@ class DeleteTermCommand extends Command implements UndoRedoCommand {
     def postData = JSON.parse(postData)
     Term term = Term.findById(postData.id)
     term.delete(flush:true);
-    return [data : [success : true, message : "OK"], status : 204]
+    return [data : [success : true, message : "OK"], status : 200]
 
   }
 }

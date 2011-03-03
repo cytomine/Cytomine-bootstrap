@@ -34,7 +34,7 @@ class AddRelationCommand extends Command implements UndoRedoCommand {
     def relation = Relation.findById(relationData.id)
     relation.delete(flush:true)
     log.debug("Delete relation with id:"+relationData.id)
-    return [data : ["Relation deleted"], status : 201]
+    return [data : ["Relation deleted"], status : 200]
   }
 
   def redo() {
@@ -46,6 +46,6 @@ class AddRelationCommand extends Command implements UndoRedoCommand {
     relation.id = relationData.id
     relation.save(flush:true)
     log.debug("Save relation:"+relation.id)
-    return [data : [relation : relation], status : 200]
+    return [data : [relation : relation], status : 201]
   }
 }

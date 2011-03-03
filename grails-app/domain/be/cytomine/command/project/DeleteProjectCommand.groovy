@@ -18,7 +18,7 @@ class DeleteProjectCommand extends Command implements UndoRedoCommand {
     }
 
     project.delete();
-    return [data : [success : true, message : "OK", data : [project : postData.id]], status : 204]
+    return [data : [success : true, message : "OK", data : [project : postData.id]], status : 200]
   }
 
   def undo() {
@@ -40,7 +40,7 @@ class DeleteProjectCommand extends Command implements UndoRedoCommand {
     def postData = JSON.parse(postData)
     Project project = Project.findById(postData.id)
     project.delete();
-    return [data : [success : true, message : "OK"], status : 204]
+    return [data : [success : true, message : "OK"], status : 200]
 
   }
 

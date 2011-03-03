@@ -34,7 +34,7 @@ class AddTermCommand extends Command implements UndoRedoCommand {
     def term = Term.findById(termData.id)
     term.delete(flush:true)
     log.debug("Delete term with id:"+termData.id)
-    return [data : ["Term deleted"], status : 201]
+    return [data : ["Term deleted"], status : 200]
   }
 
   def redo() {
@@ -46,6 +46,6 @@ class AddTermCommand extends Command implements UndoRedoCommand {
     term.id = termData.id
     term.save(flush:true)
     log.debug("Save term:"+term.id)
-    return [data : [term : term], status : 200]
+    return [data : [term : term], status : 201]
   }
 }

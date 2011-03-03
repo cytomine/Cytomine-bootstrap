@@ -53,6 +53,6 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
     annotation.id = annotationData.id
     annotation.save(flush:true)
     log.debug("Save annotation:"+annotation.id)
-    return [data : [annotation : annotation], status : 200]
+    return [data : [annotation : annotation], status : 201]
   }
 }

@@ -17,7 +17,7 @@ class DeleteRelationTermCommand extends Command implements UndoRedoCommand {
       return [data : [success : false, message : "RelationTerm not found with id: " + postData.id], status : 404]
     }
     RelationTerm.unlink(relationTerm.relation, relationTerm.term1,relationTerm.term2)
-    return [data : [success : true, message : "OK", data : [relationTerm : postData.id]], status : 204]
+    return [data : [success : true, message : "OK", data : [relationTerm : postData.id]], status : 200]
   }
 
   def undo() {
@@ -39,7 +39,7 @@ class DeleteRelationTermCommand extends Command implements UndoRedoCommand {
     def postData = JSON.parse(postData)
     RelationTerm relationTerm = RelationTerm.findById(postData.id)
     RelationTerm.unlink(relationTerm.relation, relationTerm.term1, relationTerm.term2)
-    return [data : [success : true, message : "OK"], status : 204]
+    return [data : [success : true, message : "OK"], status : 200]
 
   }
 

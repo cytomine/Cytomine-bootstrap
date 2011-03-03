@@ -125,7 +125,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(200,code)
+    assertEquals(201,code)
 
     //must be done because redo change id
     json = JSON.parse(response)
@@ -219,21 +219,280 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
 
   void testEditUser() {
 
+    String oldFirstname = "Firstname1"
+    String newFirstname = "Firstname2"
+
+    String oldLastname = "Lastname1"
+    String newLastname = "Lastname2"
+
+    String oldEmail = "old@email.com"
+    String newEmail = "new@email.com"
+
+    String oldUsername = "Username1"
+    String newUsername = "Username2"
+
+
+    def mapOld = ["firstname":oldFirstname,"lastname":oldLastname,"email":oldEmail,"username":oldUsername]
+    def mapNew = ["firstname":newFirstname,"lastname":newLastname,"email":newEmail,"username":newUsername]
+
+
+    /* Create a Name1 user */
+    log.info("create user")
+    User userToAdd = BasicInstance.createOrGetBasicUser()
+    userToAdd.firstname = oldFirstname
+    userToAdd.lastname = oldLastname
+    userToAdd.email = oldEmail
+    userToAdd.username = oldUsername
+    assert (userToAdd.save(flush:true) != null)
+
+    /* Encode a niew user Name2*/
+    User userToEdit = User.get(userToAdd.id)
+    def jsonEdit = [user : userToEdit]
+    def jsonUser = jsonEdit.encodeAsJSON()
+    def jsonUpdate = JSON.parse(jsonUser)
+    jsonUpdate.user.firstname = newFirstname
+    jsonUpdate.user.lastname = newLastname
+    jsonUpdate.user.email = newEmail
+    jsonUpdate.user.username = newUsername
+    jsonUser = jsonUpdate.encodeAsJSON()
+
+    log.info("put user:"+jsonUser.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/user/"+userToEdit.id+".json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.put(jsonUser)
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    println response
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+    int idUser = json.user.id
+
+    log.info("check if object "+ idUser +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/user/"+idUser +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+
+    assertEquals(200,code)
+    json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+    BasicInstance.compareUser(mapNew,json)
+
+    log.info("test undo")
+    client = new HttpClient()
+    URL = Infos.CYTOMINEURL+Infos.UNDOURL + ".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+    assertEquals(200,code)
+
+    log.info("check if object "+ idUser +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/user/"+idUser +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+
+    assertEquals(200,code)
+    json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+    BasicInstance.compareUser(mapOld,json)
+
+    log.info("test redo")
+    client = new HttpClient()
+    URL = Infos.CYTOMINEURL+Infos.REDOURL + ".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+    assertEquals(200,code)
+
+    log.info("check if object "+ idUser +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/user/"+idUser +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+
+    assertEquals(200,code)
+    json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+    BasicInstance.compareUser(mapNew,json)
+
+
+    log.info("check if object "+ idUser +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/user/"+idUser +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+
+    assertEquals(200,code)
+    json = JSON.parse(response)
+    assert json instanceof JSONObject
+
   }
 
   void testEditUserWithUsernameAlreadyExist() {
 
+    /* Create a Name1 user */
+    log.info("create user")
+    User userToAdd = BasicInstance.createOrGetBasicUser()
+
+    /* Encode a niew user Name2*/
+    User userToEdit = User.get(userToAdd.id)
+    def jsonEdit = [user : userToEdit]
+    def jsonUser = jsonEdit.encodeAsJSON()
+    def jsonUpdate = JSON.parse(jsonUser)
+    jsonUpdate.user.username = BasicInstance.getOldUser().username
+    jsonUser = jsonUpdate.encodeAsJSON()
+
+    log.info("put user:"+jsonUser.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/user/"+userToEdit.id+".json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.put(jsonUser)
+    int code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(400,code)
+
   }
 
   void testEditUserWithEmailInvalid() {
+     /* Create a Name1 user */
+    log.info("create user")
+    User userToAdd = BasicInstance.createOrGetBasicUser()
 
+    /* Encode a niew user Name2*/
+    User userToEdit = User.get(userToAdd.id)
+    def jsonEdit = [user : userToEdit]
+    def jsonUser = jsonEdit.encodeAsJSON()
+    def jsonUpdate = JSON.parse(jsonUser)
+    jsonUpdate.user.email = "badmail"
+    jsonUser = jsonUpdate.encodeAsJSON()
+
+    log.info("put user:"+jsonUser.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/user/"+userToEdit.id+".json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.put(jsonUser)
+    int code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(400,code)
   }
 
-  void testDeleteUser(){
+  void testDeleteUser() {
+
+    log.info("create user")
+    def userToDelete = BasicInstance.createOrGetBasicUser()
+    String jsonUser = ([user : userToDelete]).encodeAsJSON()
+    int idUser = userToDelete.id
+    log.info("delete user:"+jsonUser.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/user/"+idUser+".json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.delete()
+    int code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+
+    log.info("check if object "+ idUser +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/user/"+idUser +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    client.disconnect();
+
+    assertEquals(404,code)
+
+   /* log.info("test undo")
+    client = new HttpClient()
+    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.get()
+    code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+    assertEquals(201,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+    log.info("check if object "+ idUser +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/user/"+idUser  +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+
+    assertEquals(200,code)
+    json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+
+    log.info("test redo")
+    client = new HttpClient()
+    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.get()
+    code  = client.getResponseCode()
+    client.disconnect();
+    assertEquals(200,code)
+
+    log.info("check if object "+ idUser +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/user/"+idUser +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    client.disconnect();
+    assertEquals(404,code)*/
 
   }
 
   void testDeleteUserNotExist() {
 
+     log.info("create user")
+    def userToDelete = BasicInstance.createOrGetBasicUser()
+    String jsonUser = ([user : userToDelete]).encodeAsJSON()
+
+    log.info("delete user:"+jsonUser.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/user/-99.json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.delete()
+    int code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(404,code)
   }
 }

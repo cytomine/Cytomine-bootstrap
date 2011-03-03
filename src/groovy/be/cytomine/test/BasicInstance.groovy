@@ -501,22 +501,14 @@ log.debug  "createOrGetBasicUser()"
 
   }
 
+  static void compareUser(map, json)  {
 
+    assert map.firstname.equals(json.user.firstname)
+    assert map.lastname.equals(json.user.lastname)
+    assert map.email.equals(json.user.email)
+    assert map.username.equals(json.user.username)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  }
 
   static Double toDouble(String s)
   {

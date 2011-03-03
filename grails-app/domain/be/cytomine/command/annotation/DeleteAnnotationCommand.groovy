@@ -21,7 +21,7 @@ class DeleteAnnotationCommand extends Command implements UndoRedoCommand{
     }
     log.info "Delete annotation " + postData.id
     annotation.delete();
-    return [data : [success : true, message : "OK", data : [annotation : postData.id]], status : 204]
+    return [data : [success : true, message : "OK", data : [annotation : postData.id]], status : 200]
   }
 
   def undo() {
@@ -44,7 +44,7 @@ class DeleteAnnotationCommand extends Command implements UndoRedoCommand{
     def postData = JSON.parse(postData)
     Annotation annotation = Annotation.findById(postData.id)
     annotation.delete(flush:true);
-    return [data : [success : true, message : "OK"], status : 204]
+    return [data : [success : true, message : "OK"], status : 200]
 
   }
 }

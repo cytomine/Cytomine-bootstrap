@@ -34,7 +34,7 @@ class AddRelationTermCommand extends Command implements UndoRedoCommand {
     def relationTermData = JSON.parse(data)
     RelationTerm.unlink(relationTermData.id)
     log.debug("Delete relationTerm with id:"+relationTermData.id)
-    return [data : ["RelationTerm deleted"], status : 201]
+    return [data : ["RelationTerm deleted"], status : 200]
   }
 
   def redo() {
@@ -46,7 +46,7 @@ class AddRelationTermCommand extends Command implements UndoRedoCommand {
     relationTerm = RelationTerm.link(relationTermData.id,relationTerm.relation,relationTerm.term1,relationTerm.term2)
 
     log.debug("Save relationTerm:"+relationTerm.id)
-    return [data : [relationTerm : relationTerm], status : 200]
+    return [data : [relationTerm : relationTerm], status : 201]
   }
 
 }

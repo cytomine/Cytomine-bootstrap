@@ -39,7 +39,7 @@ class AddUserCommand extends Command implements UndoRedoCommand {
     user.save(flush:true)
     def callback =  "Cytomine.Views.User.reload()"
     def message = messageSource.getMessage('be.cytomine.AddUserCommand', [user.username] as Object[], Locale.ENGLISH)
-    return [data : [user : user, callback : callback, message : message], status : 200]
+    return [data : [user : user, callback : callback, message : message], status : 201]
   }
 
 }

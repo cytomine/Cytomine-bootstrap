@@ -28,7 +28,7 @@ class DeleteImageCommand extends Command implements UndoRedoCommand{
     }
     log.info "Delete image " + postData.id
     image.delete();
-    return [data : [success : true, message : "OK", data : [image : postData.id]], status : 204]
+    return [data : [success : true, message : "OK", data : [image : postData.id]], status : 200]
   }
 
   def undo() {
@@ -51,7 +51,7 @@ class DeleteImageCommand extends Command implements UndoRedoCommand{
     def postData = JSON.parse(postData)
     Image image = Image.findById(postData.id)
     image.delete(flush:true);
-    return [data : [success : true, message : "OK"], status : 204]
+    return [data : [success : true, message : "OK"], status : 200]
 
   }
 

@@ -18,7 +18,7 @@ class DeleteRelationCommand extends Command implements UndoRedoCommand {
     }
 
     relation.delete();
-    return [data : [success : true, message : "OK", data : [relation : postData.id]], status : 204]
+    return [data : [success : true, message : "OK", data : [relation : postData.id]], status : 200]
   }
 
   def undo() {
@@ -40,7 +40,7 @@ class DeleteRelationCommand extends Command implements UndoRedoCommand {
     def postData = JSON.parse(postData)
     Relation relation = Relation.findById(postData.id)
     relation.delete(flush:true);
-    return [data : [success : true, message : "OK"], status : 204]
+    return [data : [success : true, message : "OK"], status : 200]
 
   }
 }

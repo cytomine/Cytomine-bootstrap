@@ -34,7 +34,7 @@ class AddProjectCommand extends Command implements UndoRedoCommand {
     def project = Project.findById(projectData.id)
     project.delete(flush:true)
     log.debug("Delete project with id:"+projectData.id)
-    return [data : ["Project deleted"], status : 201]
+    return [data : ["Project deleted"], status : 200]
   }
 
   def redo() {
@@ -46,7 +46,7 @@ class AddProjectCommand extends Command implements UndoRedoCommand {
     project.id = projectData.id
     project.save(flush:true)
     log.debug("Save project:"+project.id)
-    return [data : [project : project], status : 200]
+    return [data : [project : project], status : 201]
   }
 
 }

@@ -36,7 +36,7 @@ class AddAnnotationTermCommand extends Command implements UndoRedoCommand {
     def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(Annotation.get(annotationTermData.annotation.id),Term.get(annotationTermData.term.id))
     AnnotationTerm.unlink(annotationTerm.annotation,annotationTerm.term)
     log.debug("Delete annotationTerm with id:"+annotationTermData.id)
-    return [data : ["AnnotationTerm deleted"], status : 201]
+    return [data : ["AnnotationTerm deleted"], status : 200]
   }
 
   def redo() {
@@ -53,7 +53,7 @@ class AddAnnotationTermCommand extends Command implements UndoRedoCommand {
     session.clear()     */
     //hibSession.
 
-    return [data : [annotationTerm : annotationTerm], status : 200]
+    return [data : [annotationTerm : annotationTerm], status : 201]
   }
   //def sessionFactory
 

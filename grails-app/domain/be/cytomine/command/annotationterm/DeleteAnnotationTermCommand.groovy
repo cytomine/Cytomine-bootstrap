@@ -26,7 +26,7 @@ class DeleteAnnotationTermCommand extends Command implements UndoRedoCommand {
     log.info "Unlink=" + annotationTerm.annotation +" " + annotationTerm.term
     AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term)
 
-    return [data : [success : true, message : "OK", data : [annotationTerm : postData.id]], status : 204]
+    return [data : [success : true, message : "OK", data : [annotationTerm : postData.id]], status : 200]
   }
 
   def undo() {
@@ -54,7 +54,7 @@ class DeleteAnnotationTermCommand extends Command implements UndoRedoCommand {
       Term term = Term.get(postData.term)
     AnnotationTerm annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
     AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term)
-    return [data : [success : true, message : "OK"], status : 204]
+    return [data : [success : true, message : "OK"], status : 200]
 
   }
 
