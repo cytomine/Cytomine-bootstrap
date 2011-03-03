@@ -16,9 +16,14 @@ class DeleteRelationCommand extends Command implements UndoRedoCommand {
     if (!relation) {
       return [data : [success : false, message : "Relation not found with id: " + postData.id], status : 404]
     }
-
-    relation.delete();
-    return [data : [success : true, message : "OK", data : [relation : postData.id]], status : 200]
+    try {
+      relation.delete(flush:true);
+      return [data : [success : true, message : "OK", data : [relation : postData.id]], status : 200]
+    } catch(org.springframework.dao.DataIntegrityViolationException e)
+    {
+      log.error(e)
+      return [data : [success : false, errors : "Relation is still map with data (term,...)"], status : 400]
+    }
   }
 
   def undo() {

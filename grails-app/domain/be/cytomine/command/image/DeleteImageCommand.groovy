@@ -27,8 +27,14 @@ class DeleteImageCommand extends Command implements UndoRedoCommand{
       return [data : [success : false, message : "Image not found with id: " + postData.id], status : 404]
     }
     log.info "Delete image " + postData.id
-    image.delete();
-    return [data : [success : true, message : "OK", data : [image : postData.id]], status : 200]
+    try {
+      image.delete(flush:true);
+      return [data : [success : true, message : "OK", data : [image : postData.id]], status : 200]
+    } catch(org.springframework.dao.DataIntegrityViolationException e)
+    {
+      log.error(e)
+      return [data : [success : false, errors : "Image has still data (annotation,...)"], status : 400]
+    }
   }
 
   def undo() {

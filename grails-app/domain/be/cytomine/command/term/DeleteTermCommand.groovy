@@ -16,9 +16,14 @@ class DeleteTermCommand extends Command implements UndoRedoCommand {
     if (!term) {
       return [data : [success : false, message : "Term not found with id: " + postData.id], status : 404]
     }
-
-    term.delete();
-    return [data : [success : true, message : "OK", data : [term : postData.id]], status : 200]
+    try {
+      term.delete(flush:true);
+      return [data : [success : true, message : "OK", data : [term : postData.id]], status : 200]
+    } catch(org.springframework.dao.DataIntegrityViolationException e)
+    {
+      log.error(e)
+      return [data : [success : false, errors : "Term is still map with data (relation, annotation...)"], status : 400]
+    }
   }
 
   def undo() {

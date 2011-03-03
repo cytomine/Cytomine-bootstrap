@@ -157,7 +157,7 @@ class RestImageController {
 
     Command deleteImageCommand = new DeleteImageCommand(postData : postData.toString(), user: currentUser)
     def result = deleteImageCommand.execute()
-    if (result.status == 204) {
+    if (result.status == 200) {
       log.info "Save command on stack"
       //deleteImageCommand.transaction = transactionService.next(currentUser)
       deleteImageCommand.save()

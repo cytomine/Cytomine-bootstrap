@@ -13,4 +13,6 @@ class UndoStackItem extends SequenceDomain implements Comparable {
   int compareTo(obj) {
     created.compareTo(obj.created)
   }
+
+  String toString() { return "|user="+user.id + " command="+command}
 }

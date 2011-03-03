@@ -115,6 +115,24 @@ class BasicInstance {
     annotation
   }
 
+  static Image getBasicImageNotExist() {
+
+    log.debug "getBasicImageNotExist()"
+    def random = new Random()
+    def randomInt = random.nextInt()
+    def image = Image.findByFilename(randomInt+"")
+
+    while(image){
+      randomInt = random.nextInt()
+      image = Image.findByFilename(randomInt+"")
+   }
+
+    image =  new Image(filename: randomInt,scanner : createOrGetBasicScanner() ,slide : null,mime:BasicInstance.createOrGetBasicMime(),path:"pathpathpath")
+    image.validate()
+    image
+  }
+
+
   static Image createOrGetBasicImage() {
     log.debug  "createOrGetBasicImage()"
     def image = new Image(filename: "filename",scanner : createOrGetBasicScanner() ,slide : null,mime:BasicInstance.createOrGetBasicMime(),path:"pathpathpath")

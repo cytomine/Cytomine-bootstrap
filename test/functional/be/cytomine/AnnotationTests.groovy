@@ -655,7 +655,8 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
   void testDeleteAnnotation() {
 
     log.info("create annotation")
-    def annotationToDelete = BasicInstance.createOrGetBasicAnnotation()
+    def annotationToDelete = BasicInstance.getBasicAnnotationNotExist()
+    assert annotationToDelete.save(flush:true) !=null
     String jsonAnnotation = ([annotation : annotationToDelete]).encodeAsJSON()
     int idAnnotation = annotationToDelete.id
     log.info("delete annotation:"+jsonAnnotation.replace("\n",""))
@@ -665,7 +666,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     client.delete()
     int code  = client.getResponseCode()
     client.disconnect();
-/*
+
     log.info("check response")
     assertEquals(200,code)
 
@@ -722,7 +723,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(404,code) */
+    assertEquals(404,code)
 
   }
 
@@ -742,6 +743,25 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("check response")
     assertEquals(404,code)
+  }
+
+  void testDeleteAnnotationWithData() {
+
+     log.info("create annotation")
+    def annotTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+    def annotationToDelete = annotTerm.annotation
+    String jsonAnnotation = ([annotation : annotationToDelete]).encodeAsJSON()
+
+    log.info("delete annotation:"+jsonAnnotation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/annotation/"  + annotationToDelete.id + ".json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.delete()
+    int code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(400,code)
   }
 
 }

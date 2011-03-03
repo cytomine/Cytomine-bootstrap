@@ -408,7 +408,8 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
   void testDeleteUser() {
 
     log.info("create user")
-    def userToDelete = BasicInstance.createOrGetBasicUser()
+    def userToDelete = BasicInstance.getBasicUserNotExist()
+    assert userToDelete.save(flush:true) != null
     String jsonUser = ([user : userToDelete]).encodeAsJSON()
     int idUser = userToDelete.id
     log.info("delete user:"+jsonUser.replace("\n",""))
@@ -432,7 +433,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
 
     assertEquals(404,code)
 
-   /* log.info("test undo")
+    log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -474,8 +475,29 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(404,code)*/
+    assertEquals(404,code)
 
+  }
+
+  void testDeleteUserWithData() {
+    log.info("create user")
+    def userToDelete = BasicInstance.createOrGetBasicUser()
+    def image =  BasicInstance.createOrGetBasicImage()
+    image.user = userToDelete
+    assert image.save(flush:true)!=null
+
+    String jsonUser = ([user : userToDelete]).encodeAsJSON()
+    int idUser = userToDelete.id
+    log.info("delete user:"+jsonUser.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/user/"+idUser+".json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.delete()
+    int code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(400,code)
   }
 
   void testDeleteUserNotExist() {

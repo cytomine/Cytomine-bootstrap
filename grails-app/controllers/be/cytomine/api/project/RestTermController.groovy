@@ -165,7 +165,7 @@ class RestTermController {
     Command deleteTermCommand = new DeleteTermCommand(postData : postData.toString(),user: currentUser)
 
     result = deleteTermCommand.execute()
-    if (result.status == 204) {
+    if (result.status == 200) {
       deleteTermCommand.save()
       new UndoStackItem(command : deleteTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }

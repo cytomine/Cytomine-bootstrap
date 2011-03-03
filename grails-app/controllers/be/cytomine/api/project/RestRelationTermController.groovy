@@ -75,7 +75,7 @@ class RestRelationTermController {
     Command deleteRelationTermCommand = new DeleteRelationTermCommand(postData : postData.toString(),user: currentUser)
 
     result = deleteRelationTermCommand.execute()
-    if (result.status == 204) {
+    if (result.status == 200) {
       deleteRelationTermCommand.save()
       new UndoStackItem(command : deleteRelationTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }

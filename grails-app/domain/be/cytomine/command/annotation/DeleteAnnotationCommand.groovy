@@ -6,6 +6,7 @@ import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 
 class DeleteAnnotationCommand extends Command implements UndoRedoCommand{
+  String toString() {"DeleteAnnotationCommand"}
 
   def execute() {
 
@@ -20,8 +21,14 @@ class DeleteAnnotationCommand extends Command implements UndoRedoCommand{
       return [data : [success : false, message : "Annotation not found with id: " + postData.id], status : 404]
     }
     log.info "Delete annotation " + postData.id
-    annotation.delete();
-    return [data : [success : true, message : "OK", data : [annotation : postData.id]], status : 200]
+    try {
+      annotation.delete(flush:true);
+      return [data : [success : true, message : "OK", data : [annotation : postData.id]], status : 200]
+    } catch(org.springframework.dao.DataIntegrityViolationException e)
+    {
+      log.error(e)
+      return [data : [success : false, errors : "Annotation is still map with data (term,...)"], status : 400]
+    }
   }
 
   def undo() {

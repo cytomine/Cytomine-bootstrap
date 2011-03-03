@@ -636,7 +636,8 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
   {
 
     log.info("create image")
-    def imageToDelete = BasicInstance.createOrGetBasicImage()
+    def imageToDelete = BasicInstance.getBasicImageNotExist()
+    assert imageToDelete.save(flush:true)!=null
     String jsonImage = ([image : imageToDelete]).encodeAsJSON()
     int idImage = imageToDelete.id
     log.info("delete image:"+jsonImage.replace("\n",""))
@@ -659,7 +660,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
 
     assertEquals(404,code)
- /*
+
 
     log.info("test undo")
     client = new HttpClient()
@@ -706,9 +707,30 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(404,code)*/
+    assertEquals(404,code)
 
 
+  }
+
+  void testDeleteImageWithData()
+  {
+    log.info("create image")
+    def imageToDelete = BasicInstance.createOrGetBasicImage()
+    def annotation = BasicInstance.createOrGetBasicAnnotation()
+    annotation.image = imageToDelete
+    annotation.save(flush:true)
+    String jsonImage = ([image : imageToDelete]).encodeAsJSON()
+
+    log.info("delete image:"+jsonImage.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/image/-99.json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.delete()
+    int code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(404,code)
   }
 
   void testDeleteImageNoExist()

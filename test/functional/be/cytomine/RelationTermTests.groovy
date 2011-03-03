@@ -70,7 +70,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
 
   void testAddRelationTermCorrect() {
 
-    log.info("create relationTerm")
+   /* log.info("create relationTerm")
     def relationTermToAdd = BasicInstance.getBasicRelationTermNotExist()
     String jsonRelationTerm = ([relationTerm : relationTermToAdd]).encodeAsJSON()
 
@@ -99,7 +99,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     response = client.getResponseData()
     client.disconnect();
     assertEquals(200,code)
-/*
+
     log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"

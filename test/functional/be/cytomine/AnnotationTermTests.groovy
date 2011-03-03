@@ -290,7 +290,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("check response")
     assertEquals(200,code)
-/*
+
     log.info("check if object "+ idAnnotation +"/" + idTerm + " exist in DB")
     client = new HttpClient();
     URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation + "/term/"+idTerm+".json"
@@ -344,7 +344,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(404,code) */
+    assertEquals(404,code)
 
   }
 

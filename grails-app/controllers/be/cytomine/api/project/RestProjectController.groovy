@@ -108,7 +108,7 @@ class RestProjectController {
     Command deleteProjectCommand = new DeleteProjectCommand(postData : postData.toString(),user: currentUser)
 
     result = deleteProjectCommand.execute()
-    if (result.status == 204) {
+    if (result.status == 200) {
       deleteProjectCommand.save()
       new UndoStackItem(command : deleteProjectCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }

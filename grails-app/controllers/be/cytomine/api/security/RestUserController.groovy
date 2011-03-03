@@ -123,6 +123,7 @@ class RestUserController {
     User currentUser = User.get(springSecurityService.principal.id)
     Command editUserCommand = new EditUserCommand(postData : request.JSON.toString(),user: currentUser)
 
+
     def result = editUserCommand.execute()
     if (result.status == 200) {
       editUserCommand.save()

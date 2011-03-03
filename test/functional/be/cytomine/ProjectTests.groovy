@@ -393,7 +393,8 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
   void testDeleteProject() {
 
     log.info("create project")
-    def projectToDelete = BasicInstance.createOrGetBasicProject()
+    def projectToDelete = BasicInstance.getBasicProjectNotExist()
+    assert projectToDelete.save(flush:true)!=null
     String jsonProject = ([project : projectToDelete]).encodeAsJSON()
     int idProject = projectToDelete.id
     log.info("delete project:"+jsonProject.replace("\n",""))
@@ -416,7 +417,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
 
     assertEquals(404,code)
-/*
+
     log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
@@ -460,7 +461,11 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(404,code)*/
+    assertEquals(404,code)
+
+  }
+
+  void testDeleteProjectWithData() {
 
   }
 

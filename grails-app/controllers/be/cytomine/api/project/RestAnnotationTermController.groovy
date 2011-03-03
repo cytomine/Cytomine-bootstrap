@@ -107,7 +107,7 @@ class RestAnnotationTermController {
     Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData : postData.toString(),user: currentUser)
 
     result = deleteAnnotationTermCommand.execute()
-    if (result.status == 204) {
+    if (result.status == 200) {
       deleteAnnotationTermCommand.save()
       new UndoStackItem(command : deleteAnnotationTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }

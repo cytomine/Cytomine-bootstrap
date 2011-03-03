@@ -438,7 +438,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
 
     assertEquals(404,code)
-/*
+
     log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
@@ -482,10 +482,13 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(404,code)  */
+    assertEquals(404,code)
 
   }
 
+  void testDeleteRelationWithData() {
+
+  }
   void testDeleteRelationNotExist() {
 
      log.info("create relation")

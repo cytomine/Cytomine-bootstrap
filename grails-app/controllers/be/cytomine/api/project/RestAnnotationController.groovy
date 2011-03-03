@@ -150,13 +150,15 @@ class RestAnnotationController {
     User currentUser = User.read(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
+    log.debug "Lastcommands="+UndoStackItem.findAllByUser(currentUser)
+
     Command addAnnotationCommand = new AddAnnotationCommand(postData : request.JSON.toString(), user: currentUser)
     def result = addAnnotationCommand.execute()
     if (result.status == 201) {
       addAnnotationCommand.save()
       new UndoStackItem(command : addAnnotationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
-
+    log.debug "Lastcommands="+UndoStackItem.findAllByUser(currentUser)
     response.status = result.status
     log.debug "result.status="+result.status+" result.data=" + result.data
     withFormat {
@@ -173,15 +175,15 @@ class RestAnnotationController {
     log.info "User:" + currentUser.username + " params.id=" + params.id
 
     def postData = ([id : params.id]) as JSON
-
+     log.debug "Lastcommands="+UndoStackItem.findAllByUser(currentUser)
     Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData : postData.toString(), user: currentUser)
     def result = deleteAnnotationCommand.execute()
-    if (result.status == 204) {
+    if (result.status == 200) {
       log.info "Save command on stack"
-      deleteAnnotationCommand.save()
+      deleteAnnotationCommand.save(flush:true)
       new UndoStackItem(command : deleteAnnotationCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
     }
-
+    log.debug "Lastcommands="+UndoStackItem.findAllByUser(currentUser)
     response.status = result.status
     withFormat {
       json { render result.data as JSON }

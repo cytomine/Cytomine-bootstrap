@@ -478,7 +478,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(200,code)
 
-    /*log.info("check if object "+ idTerm +" exist in DB")
+    log.info("check if object "+ idTerm +" exist in DB")
     client = new HttpClient();
     URL = Infos.CYTOMINEURL+"api/term/"+idTerm +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
@@ -486,8 +486,8 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     client.disconnect();
 
-    assertEquals(404,code)*/
-     /*
+    assertEquals(404,code)
+
     log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
@@ -531,12 +531,12 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(404,code)*/
+    assertEquals(404,code)
 
   }
 
   void testDeleteTermNotExist() {
-    /*
+
     log.info("create term")
     def termToDelete = BasicInstance.createOrGetBasicTerm()
     String jsonTerm = ([term : termToDelete]).encodeAsJSON()
@@ -550,9 +550,27 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(404,code)   */
+    assertEquals(404,code)
   }
 
+  void testDeleteTermWithData() {
+
+    log.info("create term")
+    def annotTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+    def termToDelete = annotTerm.term
+    String jsonTerm = ([term : termToDelete]).encodeAsJSON()
+
+    log.info("delete term:"+jsonTerm.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/term/"+ termToDelete.id +".json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.delete()
+    int code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(400,code)
+  }
 
 
   void testAddTermAnnotationMapping()
