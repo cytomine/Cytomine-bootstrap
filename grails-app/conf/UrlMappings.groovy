@@ -128,11 +128,17 @@ class UrlMappings {
     "/api/relation/$id"(controller: "restRelation"){
       action = [GET:"show", PUT:"update", DELETE:"delete"]
     }
-    "/api/relationterm"(controller:"restRelationTerm"){
-      action = [GET: "list",POST:"add"]
+
+
+    "/api/relation/$id/term"(controller:"restRelationTerm"){
+      action = [GET: "listByRelation",POST:"add"]
     }
-    "/api/relationterm/$id"(controller:"restRelationTerm"){
-      action = [GET:"show",PUT:"update", DELETE:"delete"]
+    "/api/relation/$idrelation/term1/$idterm1/term2/$idterm2"(controller:"restRelationTerm"){
+      action = [GET: "show",DELETE:"delete"]
+    }
+    //i = 1 or 2 (term 1 or term 2), id = id term
+    "/api/relation/term/$i/$id"(controller:"restRelationTerm"){
+      action = [GET: "listByTerm"]
     }
 
   }

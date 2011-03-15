@@ -416,8 +416,9 @@ log.debug  "createOrGetBasicUser()"
     term1.save(flush:true)
     term2.save(flush:true)
 
-    def relationTerm = RelationTerm.link(relation,term1,term2)
+    def relationTerm = new RelationTerm(relation:relation,term1:term1,term2:term2)
     log.debug "relationTerm.errors="+relationTerm.errors
+    assert relationTerm!=null
     relationTerm
   }
 

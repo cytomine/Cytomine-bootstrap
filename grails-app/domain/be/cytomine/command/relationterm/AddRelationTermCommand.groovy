@@ -4,6 +4,8 @@ import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
 import be.cytomine.project.RelationTerm
+import be.cytomine.project.Relation
+import be.cytomine.project.Term
 
 class AddRelationTermCommand extends Command implements UndoRedoCommand {
 
@@ -32,7 +34,8 @@ class AddRelationTermCommand extends Command implements UndoRedoCommand {
   def undo() {
     log.info("Undo")
     def relationTermData = JSON.parse(data)
-    RelationTerm.unlink(relationTermData.id)
+    def relationTerm = RelationTerm.findWhere('relation': Relation.get(relationTermData.relation.id),'term1':Term.get(relationTermData.term1.id), 'term2':Term.get(relationTermData.term2.id))
+    RelationTerm.unlink(relationTerm.relation,relationTerm.term1,relationTerm.term2)
     log.debug("Delete relationTerm with id:"+relationTermData.id)
     return [data : ["RelationTerm deleted"], status : 200]
   }

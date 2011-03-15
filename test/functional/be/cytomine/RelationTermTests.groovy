@@ -18,8 +18,10 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
 
   void testListRelationTermWithCredential() {
 
+    RelationTerm relationTerm = BasicInstance.createOrGetBasicRelationTerm()
+
     log.info("get relationTerm")
-    String URL = Infos.CYTOMINEURL+"api/relationterm.json"
+    String URL = Infos.CYTOMINEURL+"api/relation/" + relationTerm.relation.id + "/term.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -35,8 +37,10 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
 
   void testListRelationTermWithoutCredential() {
 
-    log.info("get relationterm")
-    String URL = Infos.CYTOMINEURL+"api/relationterm.json"
+    RelationTerm relationTerm = BasicInstance.createOrGetBasicRelationTerm()
+
+    log.info("get relationTerm")
+    String URL = Infos.CYTOMINEURL+"api/relation/" + relationTerm.relation.id + "/term.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.BADLOGIN,Infos.BADPASSWORD);
     client.get()
@@ -48,13 +52,12 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(401,code)
   }
 
-  void testShowRelationTermWithCredential() {
+  void testListRelationTermByTerm1() {
 
-    log.info("create relationTerm")
-    RelationTerm relationTerm =  BasicInstance.createOrGetBasicRelationTerm()
+    RelationTerm relationTerm = BasicInstance.createOrGetBasicRelationTerm()
 
     log.info("get relationTerm")
-    String URL = Infos.CYTOMINEURL+"api/relationterm/"+ relationTerm.id +".json"
+    String URL = Infos.CYTOMINEURL+"api/relation/term/1/"+relationTerm.term1.id+".json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -67,15 +70,34 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     def json = JSON.parse(response)
     assert json instanceof JSONObject
   }
+  void testListRelationTermByTerm2() {
 
+    RelationTerm relationTerm = BasicInstance.createOrGetBasicRelationTerm()
+
+    log.info("get relationTerm")
+    String URL = Infos.CYTOMINEURL+"api/relation/term/2/"+relationTerm.term2.id+".json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response:"+response)
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+  }
   void testAddRelationTermCorrect() {
 
-   /* log.info("create relationTerm")
+    log.info("create RelationTerm")
     def relationTermToAdd = BasicInstance.getBasicRelationTermNotExist()
+    relationTermToAdd.discard()
     String jsonRelationTerm = ([relationTerm : relationTermToAdd]).encodeAsJSON()
 
     log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/relationterm.json"
+    String URL = Infos.CYTOMINEURL+"api/relation/"+ relationTermToAdd.relation.id +"/term.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.post(jsonRelationTerm)
@@ -88,11 +110,14 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(201,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
-    int idRelationTerm = json.relationTerm.id
+    int idRelation= json.relationTerm.relation.id
+    int idTerm1= json.relationTerm.term1.id
+    int idTerm2= json.relationTerm.term2.id
 
-    log.info("check if object "+ idRelationTerm +" exist in DB")
+    log.info("check if object "+ idRelation +"/"+ idTerm1 +"/"+ idTerm2 +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/relationterm/"+idRelationTerm +".json"
+
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation+"/term1/"+idTerm1 +"/term2/" + idTerm2 +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -108,11 +133,11 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(201,code)
+    assertEquals(200,code)
 
-    log.info("check if object "+ idRelationTerm +" not exist in DB")
+    log.info("check if object "+ idRelation +"/"+ idTerm1 +"/"+ idTerm2 +" not exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/relationterm/"+idRelationTerm +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation+"/term1/"+idTerm1 +"/term2/" + idTerm2 +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -128,37 +153,53 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(200,code)
+    assertEquals(201,code)
 
     //must be done because redo change id
     json = JSON.parse(response)
     assert json instanceof JSONObject
-    idRelationTerm = json.relationTerm.id
 
-    log.info("check if object "+ idRelationTerm +" exist in DB")
+    log.info("check if object "+ idRelation +"/"+ idTerm1 +"/"+ idTerm2 +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/relationterm/"+idRelationTerm +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation+"/term1/"+idTerm1 +"/term2/" + idTerm2 +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(200,code) */
+    assertEquals(200,code)
 
   }
 
-  void testAddRelationTermWithRelationNotExist() {
+  void testAddRelationTermAlreadyExist() {
+    log.info("create RelationTerm")
+    def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
+    String jsonRelationTerm = ([relationTerm : relationTermToAdd]).encodeAsJSON()
 
-    /*log.info("create relationterm")
-    def relationTermAdd = BasicInstance.getBasicRelationTermNotExist()
-    String jsonRelationTerm = ([relationTerm : relationTermAdd]).encodeAsJSON()
-    log.info("jsonRelationTerm="+jsonRelationTerm)
+    log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/relation/"+ relationTermToAdd.relation.id +"/term.json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.post(jsonRelationTerm)
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    println response
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(400,code)
+  }
+
+  void testAddRelationTermWithRelationNotExist() {
+     log.info("create RelationTerm")
+    def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
+    String jsonRelationTerm = ([relationTerm : relationTermToAdd]).encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonRelationTerm)
     jsonUpdate.relationTerm.relation.id = -99
     jsonRelationTerm = jsonUpdate.encodeAsJSON()
 
-    log.info("post relationterm:"+jsonRelationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/relationterm.json"
+    log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/relation/-99/term.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.post(jsonRelationTerm)
@@ -168,22 +209,19 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)*/
-
+    assertEquals(400,code)
   }
 
-  void testAddRelationTerm1WithTermNotExist() {
-
-    /*log.info("create relationterm")
-    def relationTermAdd = BasicInstance.getBasicRelationTermNotExist()
-    String jsonRelationTerm = ([relationTerm : relationTermAdd]).encodeAsJSON()
-    log.info("jsonRelationTerm="+jsonRelationTerm)
+  void testAddRelationTermWithTerm1NotExist() {
+      log.info("create RelationTerm")
+    def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
+    String jsonRelationTerm = ([relationTerm : relationTermToAdd]).encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonRelationTerm)
     jsonUpdate.relationTerm.term1.id = -99
     jsonRelationTerm = jsonUpdate.encodeAsJSON()
 
-    log.info("post relationterm:"+jsonRelationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/relationterm.json"
+    log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/relation/"+ relationTermToAdd.relation.id +"/term.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.post(jsonRelationTerm)
@@ -193,22 +231,19 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)  */
-
+    assertEquals(400,code)
   }
 
-  void testAddRelationTerm2WithTermNotExist() {
-
-   /* log.info("create relationterm")
-    def relationTermAdd = BasicInstance.getBasicRelationTermNotExist()
-    String jsonRelationTerm = ([relationTerm : relationTermAdd]).encodeAsJSON()
-    log.info("jsonRelationTerm="+jsonRelationTerm)
+  void testAddRelationTermWithTerm2NotExist() {
+      log.info("create RelationTerm")
+    def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
+    String jsonRelationTerm = ([relationTerm : relationTermToAdd]).encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonRelationTerm)
     jsonUpdate.relationTerm.term2.id = -99
     jsonRelationTerm = jsonUpdate.encodeAsJSON()
 
-    log.info("post relationterm:"+jsonRelationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/relationterm.json"
+    log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/relation/"+ relationTermToAdd.relation.id +"/term.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.post(jsonRelationTerm)
@@ -218,18 +253,22 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)   */
-
+    assertEquals(400,code)
   }
 
   void testDeleteRelationTerm() {
 
-   /* log.info("create relationTerm")
-    def relationTermToDelete = BasicInstance.createOrGetBasicRelationTerm()
+    log.info("create relationTerm")
+    def relationTermToDelete = BasicInstance.getBasicRelationTermNotExist()
+    assert relationTermToDelete.save(flush:true)!=null
+   // relationTermToDelete.discard()
     String jsonRelationTerm = ([relationTerm : relationTermToDelete]).encodeAsJSON()
-    int idRelationTerm = relationTermToDelete.id
+
+    int idRelation = relationTermToDelete.relation.id
+    int idTerm1 = relationTermToDelete.term1.id
+    int idTerm2 = relationTermToDelete.term2.id
     log.info("delete relationTerm:"+jsonRelationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/relationterm/"+idRelationTerm+".json"
+    String URL = Infos.CYTOMINEURL+"api/relation/"+relationTermToDelete.relation.id + "/term1/"+relationTermToDelete.term1.id+"/term2/"+relationTermToDelete.term2.id+".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.delete()
@@ -237,11 +276,11 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
 
     log.info("check response")
-    assertEquals(204,code)
+    assertEquals(200,code)
 
-    log.info("check if object "+ idRelationTerm +" exist in DB")
+    log.info("check if object "+ idRelation +"/" + idTerm1 + " exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/relationterm/"+idRelationTerm +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation + "/term1/"+idTerm1+"/term2/"+idTerm2+".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -260,11 +299,10 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(201,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
-    int newIdRelationTerm  = json.relationTerm.id
 
-    log.info("check if object "+ idRelationTerm +" exist in DB")
+    log.info("check if object "+ idRelation +"/" + idTerm1 +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/relationterm/"+newIdRelationTerm  +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation + "/term1/"+idTerm1+"/term2/"+idTerm2+".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -283,56 +321,24 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(204,code)
+    assertEquals(200,code)
 
-    log.info("check if object "+ newIdRelationTerm +" exist in DB")
+    log.info("check if object "+ idRelation +"/" + idTerm1 +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/relationterm/"+idRelationTerm +".json"
+    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation + "/term1/"+idTerm1+"/term2/"+idTerm2+".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(404,code) */
+    assertEquals(404,code)
 
   }
 
   void testDeleteRelationTermNotExist() {
 
-    /* log.info("create project")
-    def relationTermToDelete = BasicInstance.createOrGetBasicRelationTerm()
-    String jsonRelationTerm = ([relationTerm : relationTermToDelete]).encodeAsJSON()
+    log.info("create relationTerm")
 
-    log.info("delete relationTerm:"+jsonRelationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/relationterm/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code) */
-  }
-
-  /*void testRel() {
-    def relationTermToDelete = BasicInstance.createOrGetBasicRelationTerm()
-      def relation = relationTermToDelete.relation
-      def term1 = relationTermToDelete.term1
-      def term2 = relationTermToDelete.term2
-     log.info("create relationterm")
-
-     log.info("unlink")
-    RelationTerm.unlink(relation,term1,term2)
-    log.info("link")
-    RelationTerm.link(relation,term1,term2)
-    log.info("unlink")
-    RelationTerm.unlink(relation,term1,term2)
-    log.info("end")
-    def relationTermToDelete2 = BasicInstance.createOrGetBasicRelationTerm()
-    String jsonRelationTerm = ([relationTerm : relationTermToDelete]).encodeAsJSON()
-
-    log.info("delete relationTerm:"+jsonRelationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/relationterm/-99.json"
+    String URL = Infos.CYTOMINEURL+"api/relation/-99/term1/-99/term2/-99.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.delete()
@@ -341,6 +347,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("check response")
     assertEquals(404,code)
-  }  */
+  }
+
 
 }

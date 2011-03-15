@@ -7,6 +7,10 @@ import be.cytomine.project.Ontology
 
 class RestOntologyController {
 
+
+  //TODO: add/delete/update
+
+
   def list = {
 
     println params.id

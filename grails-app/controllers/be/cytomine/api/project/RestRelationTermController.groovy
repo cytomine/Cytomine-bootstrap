@@ -8,6 +8,8 @@ import be.cytomine.command.UndoStackItem
 import be.cytomine.command.relationterm.AddRelationTermCommand
 import be.cytomine.command.relationterm.DeleteRelationTermCommand
 import be.cytomine.project.RelationTerm
+import be.cytomine.project.Relation
+import be.cytomine.project.Term
 
 class RestRelationTermController {
 
@@ -23,24 +25,70 @@ class RestRelationTermController {
       }
     }
 
-    def show = {
-      log.info "Show"
-      if(params.id && RelationTerm.exists(params.id)) {
-        def data = [:]
-        data.relationTerm = RelationTerm.findById(params.id)
-        withFormat {
-          json { render data as JSON }
-          xml { render data as XML }
-        }
-      } else {
-        response.status = 404
-        render contentType: "application/xml", {
-          errors {
-            message("Relation Term not found with id: " + params.id)
-          }
+  def listByRelation = {
+    log.info "listByRelation"
+    Relation relation = Relation.read(params.id)
+    if(relation) {
+      def data = [:]
+      data.relationTerm = RelationTerm.findAllByRelation(relation)
+      withFormat {
+        json { render data as JSON }
+        xml { render data as XML}
+      }
+    } else {
+      response.status = 404
+      render contentType: "application/xml", {
+        errors {
+          message("Relation Term not found with relation id: " + params.id)
         }
       }
     }
+  }
+
+  def listByTerm = {
+    log.info "listByTerm"
+    Term term = Term.read(params.id)
+    String position = params.i
+    if(term && (position=="1" || position=="2")) {
+      def data = [:]
+      data.relationTerm = position=="1" ? RelationTerm.findAllByTerm1(term) : RelationTerm.findAllByTerm2(term)
+      withFormat {
+        json { render data as JSON }
+        xml { render data as XML}
+      }
+    } else {
+      response.status = 404
+      render contentType: "application/xml", {
+        errors {
+          message("Relation Term not found with term" + position + " id: " + params.id)
+        }
+      }
+    }
+  }
+
+
+  def show = {
+    log.info "Show"
+    Relation relation = Relation.get(params.idrelation)
+    Term term1 = Term.get(params.idterm1)
+    Term term2 = Term.get(params.idterm2)
+    def relationTerm = RelationTerm.findWhere('relation': relation,'term1':term1, 'term2':term2)
+    if(relation && term1 && term2 && relationTerm) {
+      def data = [:]
+      data.relationTerm = relationTerm
+      withFormat {
+        json { render data as JSON }
+        xml { render data as XML }
+      }
+    } else {
+      response.status = 404
+      render contentType: "application/xml", {
+        errors {
+          message("Relation Term not found with relation id " + params.idrelation + ", term1 id " + params.idterm1 + " and term2 id " + params.idterm2)
+        }
+      }
+    }
+  }
 
     def add = {
       log.info "Add"
@@ -69,7 +117,7 @@ class RestRelationTermController {
     log.info "Delete"
     User currentUser = User.get(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " params.id=" + params.id
-    def postData = ([id : params.id]) as JSON
+    def postData = ([relation : params.idrelation,term1: params.idterm1,term2: params.idterm2]) as JSON
     def result = null
 
     Command deleteRelationTermCommand = new DeleteRelationTermCommand(postData : postData.toString(),user: currentUser)
