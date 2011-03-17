@@ -102,6 +102,7 @@ Cytomine.Application = function() {
             models['project'] = Cytomine.Models.Project.store();
             models['session'] = Cytomine.Models.Session.store();
             models['user'] = Cytomine.Models.User.store();
+            models['term'] = Cytomine.Models.Term.store();
         },
         getModel : function (name) {
             return models[name]

@@ -10,6 +10,9 @@ class UrlMappings {
     /* Home */
     "/"(view:"/index")
 
+    /* Term test (delete me) */
+    "/term"(view:"/term")
+
     /* Errors */
     "500"(view:'/error')
 

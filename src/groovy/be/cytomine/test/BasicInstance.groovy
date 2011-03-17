@@ -529,6 +529,12 @@ log.debug  "createOrGetBasicUser()"
 
   }
 
+  static void compareOntology(map, json)  {
+
+    assert map.name.equals(json.ontology.name)
+
+  }
+
   static Double toDouble(String s)
   {
     if(s==null && s.equals("null")) return null

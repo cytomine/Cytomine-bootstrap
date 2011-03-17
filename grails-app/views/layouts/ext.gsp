@@ -27,7 +27,7 @@
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/AnnotationLayer.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Browser.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Admin.js')}" ></script>
-
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/views/Term.js')}" ></script>
 
   <!-- Langs -->
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/languages/fr.js')}" ></script>
@@ -37,6 +37,7 @@
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/Annotation.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/User.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/Project.js')}" ></script>
+  <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/Term.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/models/Session.js')}" ></script>
 
   <!-- Cytomine -->

@@ -48,6 +48,20 @@ Cytomine.Views.Browser = {
             width : 256
 
         });
+        var termsPrinter = new Ext.Panel({
+            flex:1,
+            cls : 'termsPrinterPanel',
+            title  : 'Terms',
+            layout : 'fit',
+            iconCls :'magnifier-medium',
+            collapsible: true,
+            autoScroll: false,
+            html : '<div id="termsPrinter'+idImage+'">Term</div>',
+            /*autoWidth : true,*/
+            autoHeight : true,
+            width : 256
+
+        });
         var ontologyPanel = new Ext.Panel({
             id:'tp-ontologies-filter',
             flex:1,
@@ -195,6 +209,7 @@ Cytomine.Views.Browser = {
                     items : [
                         overview,
                         layerSwitcher
+                        //termsPrinter
                         //ontologyPanel
                     ]
                 },

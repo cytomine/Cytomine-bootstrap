@@ -4,10 +4,17 @@ import be.cytomine.project.Term
 import grails.converters.JSON
 import grails.converters.XML
 import be.cytomine.project.Ontology
+import be.cytomine.security.User
+import be.cytomine.command.UndoStackItem
+import be.cytomine.command.Command
+import be.cytomine.command.ontology.EditOntologyCommand
+import be.cytomine.command.ontology.DeleteOntologyCommand
+import be.cytomine.command.ontology.AddOntologyCommand
 
 class RestOntologyController {
 
-
+  def springSecurityService
+  def transactionService
   //TODO: add/delete/update
 
 
@@ -102,5 +109,78 @@ class RestOntologyController {
       }
     }
 
+  }
+
+  def add = {
+    log.info "Add"
+    User currentUser = User.get(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
+
+    Command addOntologyCommand = new AddOntologyCommand(postData : request.JSON.toString(),user: currentUser)
+
+    def result = addOntologyCommand.execute()
+
+    if (result.status == 201) {
+      addOntologyCommand.save()
+      new UndoStackItem(command : addOntologyCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+    }
+
+    response.status = result.status
+    log.debug "result.status="+result.status+" result.data=" + result.data
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML }
+    }
+  }
+
+  def update = {
+    log.info "Update"
+    User currentUser = User.get(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
+
+    def result
+    if((String)params.id!=(String)request.JSON.ontology.id) {
+      log.error "Ontology id from URL and from data are different:"+ params.id + " vs " +  request.JSON.ontology.id
+      result = [data : [ontology : null , errors : ["Ontology id from URL and from data are different:"+ params.id + " vs " +  request.JSON.ontology.id ]], status : 400]
+    }
+    else
+    {
+
+      Command editOntologyCommand = new EditOntologyCommand(postData : request.JSON.toString(),user: currentUser)
+      result = editOntologyCommand.execute()
+
+      if (result.status == 200) {
+        editOntologyCommand.save()
+        new UndoStackItem(command : editOntologyCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+      }
+    }
+
+    response.status = result.status
+    log.debug "result.status="+result.status+" result.data=" + result.data
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML }
+    }
+  }
+
+  def delete =  {
+    log.info "Delete"
+    User currentUser = User.get(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " params.id=" + params.id
+    def postData = ([id : params.id]) as JSON
+    def result = null
+
+    Command deleteOntologyCommand = new DeleteOntologyCommand(postData : postData.toString(),user: currentUser)
+
+    result = deleteOntologyCommand.execute()
+    if (result.status == 200) {
+      deleteOntologyCommand.save()
+      new UndoStackItem(command : deleteOntologyCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
+    }
+    response.status = result.status
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML }
+    }
   }
 }
