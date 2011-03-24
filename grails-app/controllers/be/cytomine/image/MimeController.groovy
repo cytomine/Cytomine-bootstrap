@@ -1,4 +1,4 @@
-package be.cytomine.warehouse
+package be.cytomine.image
 
 import be.cytomine.image.Mime
 
