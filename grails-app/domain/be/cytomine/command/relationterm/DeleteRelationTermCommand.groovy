@@ -3,9 +3,9 @@ package be.cytomine.command.relationterm
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
-import be.cytomine.project.RelationTerm
-import be.cytomine.project.Relation
-import be.cytomine.project.Term
+import be.cytomine.ontology.RelationTerm
+import be.cytomine.ontology.Relation
+import be.cytomine.ontology.Term
 
 class DeleteRelationTermCommand extends Command implements UndoRedoCommand {
 

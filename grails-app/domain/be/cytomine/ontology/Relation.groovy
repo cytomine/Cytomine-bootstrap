@@ -1,4 +1,4 @@
-package be.cytomine.project
+package be.cytomine.ontology
 
 import grails.converters.JSON
 

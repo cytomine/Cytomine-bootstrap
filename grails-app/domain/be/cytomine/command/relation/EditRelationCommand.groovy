@@ -3,7 +3,7 @@ package be.cytomine.command.relation
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
-import be.cytomine.project.Relation
+import be.cytomine.ontology.Relation
 
 class EditRelationCommand extends Command implements UndoRedoCommand {
 

@@ -9,7 +9,7 @@ package be.cytomine.command.ontology
  */
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
-import be.cytomine.project.Ontology
+import be.cytomine.ontology.Ontology
 import grails.converters.JSON
 
 class DeleteOntologyCommand extends Command implements UndoRedoCommand {

@@ -1,20 +1,20 @@
 package be.cytomine.test
 
 import be.cytomine.image.Mime
-import be.cytomine.project.Annotation
+import be.cytomine.ontology.Annotation
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.image.Image
 import be.cytomine.image.acquisition.Scanner
-import be.cytomine.project.Term
+import be.cytomine.ontology.Term
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import be.cytomine.security.User
 import be.cytomine.project.Slide
 import be.cytomine.project.Project
-import be.cytomine.project.Relation
-import be.cytomine.project.RelationTerm
-import be.cytomine.project.AnnotationTerm
-import be.cytomine.project.Ontology
+import be.cytomine.ontology.Relation
+import be.cytomine.ontology.RelationTerm
+import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.ontology.Ontology
 
 /**
  * Created by IntelliJ IDEA.

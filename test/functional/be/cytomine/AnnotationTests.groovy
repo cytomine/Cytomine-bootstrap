@@ -3,7 +3,7 @@ package be.cytomine
 import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
 import be.cytomine.test.BasicInstance
-import be.cytomine.project.Annotation
+import be.cytomine.ontology.Annotation
 import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import com.vividsolutions.jts.io.WKTReader

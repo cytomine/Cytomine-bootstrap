@@ -7,9 +7,9 @@ import be.cytomine.command.UndoStackItem
 
 import be.cytomine.command.relationterm.AddRelationTermCommand
 import be.cytomine.command.relationterm.DeleteRelationTermCommand
-import be.cytomine.project.RelationTerm
-import be.cytomine.project.Relation
-import be.cytomine.project.Term
+import be.cytomine.ontology.RelationTerm
+import be.cytomine.ontology.Relation
+import be.cytomine.ontology.Term
 
 class RestRelationTermController {
 

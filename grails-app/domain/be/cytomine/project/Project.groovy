@@ -3,6 +3,7 @@ package be.cytomine.project
 import grails.converters.JSON
 import be.cytomine.SequenceDomain
 import be.cytomine.rest.UrlApi
+import be.cytomine.ontology.Ontology
 
 class Project extends SequenceDomain {
 

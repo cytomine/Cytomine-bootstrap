@@ -12,20 +12,26 @@ import be.cytomine.project.Project
 import be.cytomine.project.ProjectGroup
 import be.cytomine.project.Slide
 import be.cytomine.project.ProjectSlide
-import be.cytomine.project.Annotation
+import be.cytomine.ontology.Annotation
 import com.vividsolutions.jts.geom.Point
 import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Polygon
 import be.cytomine.image.server.RetrievalServer
-import be.cytomine.project.Term
-import be.cytomine.project.AnnotationTerm
-import be.cytomine.project.Ontology
+import be.cytomine.ontology.Term
+import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.ontology.Ontology
 import java.lang.management.ManagementFactory
-import be.cytomine.project.Relation
-import be.cytomine.project.RelationTerm
+import be.cytomine.ontology.Relation
+import be.cytomine.ontology.RelationTerm
 import grails.util.GrailsUtil
 import be.cytomine.image.Mime
+import be.cytomine.ontology.Term
+import be.cytomine.ontology.RelationTerm
+import be.cytomine.ontology.Relation
+import be.cytomine.ontology.Ontology
+import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.ontology.Annotation
 
 class BootStrap {
   def springSecurityService

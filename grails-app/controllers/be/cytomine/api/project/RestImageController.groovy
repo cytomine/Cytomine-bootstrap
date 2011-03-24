@@ -2,7 +2,7 @@ package be.cytomine.api.project
 
 import be.cytomine.image.Image
 import grails.converters.*
-import be.cytomine.project.Annotation
+import be.cytomine.ontology.Annotation
 import be.cytomine.image.server.RetrievalServer
 import be.cytomine.security.User
 import be.cytomine.command.Command

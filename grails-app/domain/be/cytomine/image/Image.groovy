@@ -12,7 +12,7 @@ import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.SequenceDomain
 import be.cytomine.rest.UrlApi
 import be.cytomine.project.Slide
-import be.cytomine.project.Annotation
+import be.cytomine.ontology.Annotation
 
 class Image extends SequenceDomain {
 

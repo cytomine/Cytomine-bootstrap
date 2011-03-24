@@ -5,7 +5,8 @@ import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
-import be.cytomine.project.Relation
+import be.cytomine.ontology.Relation
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus

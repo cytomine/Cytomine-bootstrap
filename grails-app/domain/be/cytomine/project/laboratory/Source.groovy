@@ -1,4 +1,4 @@
-package be.cytomine.laboratory
+package be.cytomine.project.laboratory
 
 import be.cytomine.SequenceDomain
 

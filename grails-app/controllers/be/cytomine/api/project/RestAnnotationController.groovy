@@ -1,7 +1,7 @@
 package be.cytomine.api.project
 
 import grails.converters.*
-import be.cytomine.project.Annotation
+import be.cytomine.ontology.Annotation
 import be.cytomine.security.User
 import be.cytomine.command.Command
 import be.cytomine.command.annotation.AddAnnotationCommand

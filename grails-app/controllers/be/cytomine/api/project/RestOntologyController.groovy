@@ -1,9 +1,9 @@
 package be.cytomine.api.project
 
-import be.cytomine.project.Term
+import be.cytomine.ontology.Term
 import grails.converters.JSON
 import grails.converters.XML
-import be.cytomine.project.Ontology
+import be.cytomine.ontology.Ontology
 import be.cytomine.security.User
 import be.cytomine.command.UndoStackItem
 import be.cytomine.command.Command

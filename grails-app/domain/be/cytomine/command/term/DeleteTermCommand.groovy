@@ -2,7 +2,7 @@ package be.cytomine.command.term
 
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
-import be.cytomine.project.Term
+import be.cytomine.ontology.Term
 import grails.converters.JSON
 
 class DeleteTermCommand extends Command implements UndoRedoCommand {

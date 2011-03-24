@@ -1,9 +1,9 @@
 package be.cytomine.api.project
 
-import be.cytomine.project.Term
+import be.cytomine.ontology.Term
 import grails.converters.XML
 import grails.converters.JSON
-import be.cytomine.project.Annotation
+import be.cytomine.ontology.Annotation
 
 import be.cytomine.security.User
 import be.cytomine.command.Command
@@ -12,7 +12,7 @@ import be.cytomine.command.UndoStackItem
 import be.cytomine.command.term.EditTermCommand
 import be.cytomine.command.term.DeleteTermCommand
 import be.cytomine.command.annotationterm.AddAnnotationTermCommand
-import be.cytomine.project.Ontology
+import be.cytomine.ontology.Ontology
 import be.cytomine.image.Image
 
 class RestTermController {

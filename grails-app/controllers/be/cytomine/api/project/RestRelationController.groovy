@@ -4,7 +4,7 @@ import grails.converters.*
 import be.cytomine.security.User
 import be.cytomine.command.Command
 import be.cytomine.command.UndoStackItem
-import be.cytomine.project.Relation
+import be.cytomine.ontology.Relation
 import be.cytomine.command.relation.AddRelationCommand
 import be.cytomine.command.relation.EditRelationCommand
 import be.cytomine.command.relation.DeleteRelationCommand

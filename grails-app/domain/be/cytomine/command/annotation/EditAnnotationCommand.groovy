@@ -1,7 +1,7 @@
 package be.cytomine.command.annotation
 
 import grails.converters.JSON
-import be.cytomine.project.Annotation
+import be.cytomine.ontology.Annotation
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 

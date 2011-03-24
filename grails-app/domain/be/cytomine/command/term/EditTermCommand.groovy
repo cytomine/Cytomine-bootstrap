@@ -3,7 +3,7 @@ package be.cytomine.command.term
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
-import be.cytomine.project.Term
+import be.cytomine.ontology.Term
 
 class EditTermCommand extends Command implements UndoRedoCommand {
 

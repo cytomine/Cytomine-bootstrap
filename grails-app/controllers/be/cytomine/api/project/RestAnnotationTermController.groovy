@@ -4,11 +4,11 @@ import grails.converters.*
 import be.cytomine.security.User
 import be.cytomine.command.Command
 import be.cytomine.command.UndoStackItem
-import be.cytomine.project.AnnotationTerm
+import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.command.annotationterm.AddAnnotationTermCommand
 import be.cytomine.command.annotationterm.DeleteAnnotationTermCommand
-import be.cytomine.project.Annotation
-import be.cytomine.project.Term
+import be.cytomine.ontology.Annotation
+import be.cytomine.ontology.Term
 
 class RestAnnotationTermController {
 

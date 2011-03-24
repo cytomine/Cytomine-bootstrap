@@ -4,7 +4,7 @@ import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
-import be.cytomine.project.RelationTerm
+import be.cytomine.ontology.RelationTerm
 import be.cytomine.test.BasicInstance
 
 /**

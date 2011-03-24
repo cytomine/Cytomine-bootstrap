@@ -4,11 +4,10 @@ import grails.converters.JSON
 import be.cytomine.test.BasicInstance
 
 import be.cytomine.test.Infos
-import be.cytomine.project.Term
+
 import be.cytomine.test.HttpClient
-import be.cytomine.project.Ontology
-import be.cytomine.project.Annotation
-import be.cytomine.project.AnnotationTerm
+import be.cytomine.ontology.Ontology
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
