@@ -7,6 +7,7 @@ import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.security.User
 import be.cytomine.SequenceDomain
 import be.cytomine.rest.UrlApi
+import be.cytomine.image.Image
 
 class Annotation extends SequenceDomain implements Serializable {
 

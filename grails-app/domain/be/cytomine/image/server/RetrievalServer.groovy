@@ -1,4 +1,4 @@
-package be.cytomine.server
+package be.cytomine.image.server
 
 import groovy.xml.MarkupBuilder
 import be.cytomine.SequenceDomain

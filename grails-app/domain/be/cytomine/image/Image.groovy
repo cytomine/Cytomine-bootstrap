@@ -1,16 +1,18 @@
-package be.cytomine.project
+package be.cytomine.image
 
-import be.cytomine.acquisition.Scanner
-import be.cytomine.server.resolvers.Resolver
-import be.cytomine.server.ImageServer
+import be.cytomine.image.acquisition.Scanner
+import be.cytomine.image.server.resolvers.Resolver
+import be.cytomine.image.server.ImageServer
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import com.vividsolutions.jts.geom.Geometry
-import be.cytomine.warehouse.Mime
+
 import be.cytomine.security.User
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.SequenceDomain
 import be.cytomine.rest.UrlApi
+import be.cytomine.project.Slide
+import be.cytomine.project.Annotation
 
 class Image extends SequenceDomain {
 

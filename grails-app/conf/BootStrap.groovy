@@ -1,11 +1,11 @@
 import be.cytomine.security.User
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUserSecRole
-import be.cytomine.project.Image
-import be.cytomine.warehouse.Mime
-import be.cytomine.acquisition.Scanner
-import be.cytomine.server.ImageServer
-import be.cytomine.server.MimeImageServer
+import be.cytomine.image.Image
+import be.cytomine.image.Mime
+import be.cytomine.image.acquisition.Scanner
+import be.cytomine.image.server.ImageServer
+import be.cytomine.image.server.MimeImageServer
 import be.cytomine.security.Group
 import be.cytomine.security.UserGroup
 import be.cytomine.project.Project
@@ -17,7 +17,7 @@ import com.vividsolutions.jts.geom.Point
 import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Polygon
-import be.cytomine.server.RetrievalServer
+import be.cytomine.image.server.RetrievalServer
 import be.cytomine.project.Term
 import be.cytomine.project.AnnotationTerm
 import be.cytomine.project.Ontology
@@ -25,6 +25,7 @@ import java.lang.management.ManagementFactory
 import be.cytomine.project.Relation
 import be.cytomine.project.RelationTerm
 import grails.util.GrailsUtil
+import be.cytomine.image.Mime
 
 class BootStrap {
   def springSecurityService

@@ -13,7 +13,7 @@ import be.cytomine.command.term.EditTermCommand
 import be.cytomine.command.term.DeleteTermCommand
 import be.cytomine.command.annotationterm.AddAnnotationTermCommand
 import be.cytomine.project.Ontology
-import be.cytomine.project.Image
+import be.cytomine.image.Image
 
 class RestTermController {
 

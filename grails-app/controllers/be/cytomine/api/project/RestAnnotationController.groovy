@@ -8,7 +8,7 @@ import be.cytomine.command.annotation.AddAnnotationCommand
 import be.cytomine.command.UndoStackItem
 import be.cytomine.command.annotation.DeleteAnnotationCommand
 import be.cytomine.command.annotation.EditAnnotationCommand
-import be.cytomine.project.Image
+import be.cytomine.image.Image
 
 class RestAnnotationController {
 

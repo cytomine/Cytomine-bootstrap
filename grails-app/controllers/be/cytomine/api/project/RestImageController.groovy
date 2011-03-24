@@ -1,9 +1,9 @@
 package be.cytomine.api.project
 
-import be.cytomine.project.Image
+import be.cytomine.image.Image
 import grails.converters.*
 import be.cytomine.project.Annotation
-import be.cytomine.server.RetrievalServer
+import be.cytomine.image.server.RetrievalServer
 import be.cytomine.security.User
 import be.cytomine.command.Command
 import be.cytomine.command.image.AddImageCommand

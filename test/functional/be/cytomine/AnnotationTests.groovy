@@ -8,7 +8,8 @@ import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.security.User
-import be.cytomine.project.Image
+import be.cytomine.image.Image
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus

@@ -1,4 +1,4 @@
-package be.cytomine.acquisition
+package be.cytomine.image.acquisition
 
 import be.cytomine.SequenceDomain
 

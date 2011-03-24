@@ -1,6 +1,6 @@
-package be.cytomine.server
+package be.cytomine.image.server
 
-import be.cytomine.warehouse.Mime
+import be.cytomine.image.Mime
 import be.cytomine.SequenceDomain
 
 class ImageServer extends SequenceDomain {

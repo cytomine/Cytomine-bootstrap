@@ -1,4 +1,4 @@
-package be.cytomine.server.resolvers
+package be.cytomine.image.server.resolvers
 
 import grails.converters.JSON
 

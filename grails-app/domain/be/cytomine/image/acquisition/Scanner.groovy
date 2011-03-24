@@ -1,4 +1,4 @@
-package be.cytomine.acquisition
+package be.cytomine.image.acquisition
 
 class Scanner extends Instrument {
 

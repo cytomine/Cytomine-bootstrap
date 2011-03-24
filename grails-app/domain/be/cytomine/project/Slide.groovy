@@ -2,6 +2,7 @@ package be.cytomine.project
 
 import grails.converters.JSON
 import be.cytomine.SequenceDomain
+import be.cytomine.image.Image
 
 class Slide extends SequenceDomain {
 

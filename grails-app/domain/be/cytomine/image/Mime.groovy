@@ -1,7 +1,7 @@
-package be.cytomine.warehouse
+package be.cytomine.image
 
-import be.cytomine.server.ImageServer
-import be.cytomine.server.MimeImageServer
+import be.cytomine.image.server.ImageServer
+import be.cytomine.image.server.MimeImageServer
 
 class Mime {
 

@@ -1,10 +1,10 @@
 package be.cytomine.test
 
-import be.cytomine.warehouse.Mime
+import be.cytomine.image.Mime
 import be.cytomine.project.Annotation
 import com.vividsolutions.jts.io.WKTReader
-import be.cytomine.project.Image
-import be.cytomine.acquisition.Scanner
+import be.cytomine.image.Image
+import be.cytomine.image.acquisition.Scanner
 import be.cytomine.project.Term
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
