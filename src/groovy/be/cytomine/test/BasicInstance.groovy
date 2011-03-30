@@ -490,7 +490,7 @@ log.debug  "createOrGetBasicUser()"
     assert toLong(map.scanner.id).equals(toLong(json.image.scanner))
     assert toLong(map.slide.id).equals(toLong(json.image.slide))
     assert map.path.equals(json.image.path)
-    assert toLong(map.mime.id).equals(toLong(json.image.mime))
+    assert map.mime.extension.equals(json.image.mime)
     assert toInteger(map.width).equals(toInteger(json.image.width))
     assert toInteger(map.height).equals(toInteger(json.image.height))
     assert toDouble(map.scale).equals(toDouble(json.image.scale))

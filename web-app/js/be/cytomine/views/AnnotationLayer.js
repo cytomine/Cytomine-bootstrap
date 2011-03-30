@@ -158,6 +158,25 @@ Cytomine.Project.AnnotationLayer.prototype = {
         this.features[idAnnotation] = null;
 
     },
+    removeSelection : function() {
+		for (var i in this.vectorsLayer.selectedFeatures) {
+			var feature = this.vectorsLayer.selectedFeatures[i];
+			console.log(feature);
+			this.removeAnnotation(feature);
+		}
+	},
+    /*Remove annotation from database*/
+    removeAnnotation : function(feature) {
+
+        console.log("deleteAnnotation start");
+        //console.log("delete " + "" + feature.attributes.idAnnotation);
+
+        var req = new XMLHttpRequest();
+        req.open("DELETE", "/cytomine-web/api/annotation/"+feature.attributes.idAnnotation, true);
+        req.send(null);
+        this.vectorsLayer.removeFeatures(feature);
+        console.log("deleteAnnotation end");
+    },
     /*Add annotation in database*/
     addAnnotation : function (feature) {
         console.log("addAnnotation start");

@@ -146,7 +146,7 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
         bounds = this.adjustBounds(bounds);
         this.calculatePositionAndSize(bounds);
         var z = this.map.getZoom() + this.zoomOffset;
-        var path = OpenLayers.Layer.OpenURL.djatokaURL + "?url_ver=" + this.url_ver + "&rft_id=" + this.rft_id +
+        var path = "?url_ver=" + this.url_ver + "&rft_id=" + this.rft_id +
             "&svc_id=" + this.svc_id + "&svc_val_fmt=" + this.svc_val_fmt + "&svc.format=" +
             this.format + "&svc.level=" + z + "&svc.rotate=0&svc.region=" + this.tilePos.lat + "," +
             this.tilePos.lon + "," + this.imageSize.h + "," + this.imageSize.w;
@@ -266,4 +266,4 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
 /*OpenLayers.Layer.OpenURL.viewerWidth = 512;
 OpenLayers.Layer.OpenURL.viewerHeight = 512;*/
 OpenLayers.Layer.OpenURL.minDjatokaLevelDimension = 48;
-OpenLayers.Layer.OpenURL.djatokaURL = '/adore-djatoka/resolver';
+//OpenLayers.Layer.OpenURL.djatokaURL = '/adore-djatoka/resolver';

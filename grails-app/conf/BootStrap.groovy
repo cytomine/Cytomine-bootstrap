@@ -78,7 +78,8 @@ class BootStrap {
     def usersSamples = [
             [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group : [[ name :"GIGA"]]],
             [username : 'lrollus', firstname : 'Loic', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[ name :"GIGA"]]],
-            [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[ name :"GIGA"], [name : "ANAPATH"]]]
+            [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[ name :"GIGA"], [name : "ANAPATH"]]] ,
+            [username : 'demo', firstname : 'Jean', lastname : 'Dupont', email : 'mymail@ulg.ac.be', group : [[ name :"GIGA"], [name : "ANAPATH"]]]
     ]
     createUsers(usersSamples)
 
@@ -94,6 +95,7 @@ class BootStrap {
     def mimeSamples = [
             [extension : "jp2", mimeType : "image/jp2"],
             [extension : "tif", mimeType : "image/tiff"],
+            [extension : "gdal", mimeType : "gdalType"],
     ]
     createMimes(mimeSamples)
 
@@ -104,61 +106,78 @@ class BootStrap {
                     'name' : 'Adore-Djatoka',
                     'url' : 'http://is1.cytomine.be:38',
                     'service' : '/adore-djatoka/resolver',
-                    'className' : 'DjatokaResolver'
+                    'className' : 'DjatokaResolver',
+                    'extension' : 'jp2'
             ],
             [
                     'name' : 'Adore-Djatoka',
                     'url' : 'http://is2.cytomine.be:38',
                     'service' : '/adore-djatoka/resolver',
-                    'className' : 'DjatokaResolver'
+                    'className' : 'DjatokaResolver',
+                    'extension' : 'jp2'
             ],
             [
                     'name' : 'Adore-Djatoka',
                     'url' : 'http://is3.cytomine.be:38',
                     'service' : '/adore-djatoka/resolver',
-                    'className' : 'DjatokaResolver'
+                    'className' : 'DjatokaResolver',
+                    'extension' : 'jp2'
             ],
             [
                     'name' : 'Adore-Djatoka',
                     'url' : 'http://is4.cytomine.be:38',
                     'service' : '/adore-djatoka/resolver',
-                    'className' : 'DjatokaResolver'
+                    'className' : 'DjatokaResolver',
+                    'extension' : 'jp2'
             ],
             [
                     'name' : 'Adore-Djatoka',
                     'url' : 'http://is5.cytomine.be:38',
                     'service' : '/adore-djatoka/resolver',
-                    'className' : 'DjatokaResolver'
+                    'className' : 'DjatokaResolver',
+                    'extension' : 'jp2'
             ],
             [
                     'name' : 'Adore-Djatoka',
                     'url' : 'http://is6.cytomine.be:38',
                     'service' : '/adore-djatoka/resolver',
-                    'className' : 'DjatokaResolver'
+                    'className' : 'DjatokaResolver',
+                    'extension' : 'jp2'
             ],
             [
                     'name' : 'Adore-Djatoka',
                     'url' : 'http://is7.cytomine.be:38',
                     'service' : '/adore-djatoka/resolver',
-                    'className' : 'DjatokaResolver'
+                    'className' : 'DjatokaResolver',
+                    'extension' : 'jp2'
             ],
             [
                     'name' : 'Adore-Djatoka',
                     'url' : 'http://is8.cytomine.be:38',
                     'service' : '/adore-djatoka/resolver',
-                    'className' : 'DjatokaResolver'
+                    'className' : 'DjatokaResolver',
+                    'extension' : 'jp2'
             ],
             [
                     'name' : 'Adore-Djatoka',
                     'url' : 'http://is9.cytomine.be:38',
                     'service' : '/adore-djatoka/resolver',
-                    'className' : 'DjatokaResolver'
+                    'className' : 'DjatokaResolver',
+                    'extension' : 'jp2'
             ],
             [
                     'name' : 'Adore-Djatoka',
                     'url' : 'http://is10.cytomine.be:38',
                     'service' : '/adore-djatoka/resolver',
-                    'className' : 'DjatokaResolver'
+                    'className' : 'DjatokaResolver',
+                    'extension' : 'jp2'
+            ],
+            [
+                    'name' : 'GDAL',
+                    'url' : 'http://localhost/~stevben',
+                    'service' : '/gdal',
+                    'className' : 'GDALResolver',
+                    'extension' : 'gdal'
             ]
 
     ]
@@ -184,8 +203,8 @@ class BootStrap {
     def projectSamples = [
             [name : "GIGA-DEV",  groups : [[ name :"GIGA"]],ontology: "Ontology1"],
             [name : "GIGA-DEV2",  groups : [[ name :"GIGA"]],ontology: "Ontology2"]
-           // [name : "NEO13", groups : [[ name :"GIGA"]]],
-           // [name : "NEO4",  groups : [[ name :"GIGA"]]]
+            // [name : "NEO13", groups : [[ name :"GIGA"]]],
+            // [name : "NEO4",  groups : [[ name :"GIGA"]]]
 
     ]
 
@@ -201,6 +220,7 @@ class BootStrap {
 
     /* Scans */
     def scanSamples = [
+            [filename: 'ImageNEO13_CNS_5.10_5_4_01',path:'ImageNEO13_CNS_5.10_5_4_01', extension : 'gdal', slide : 0],
             [filename: 'Boyden - essai _10x_02',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Boyden/essai_10x_02.one.jp2',slide : 0],
             [filename: 'Aperio - 003',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Aperio/003.jp2',slide : 0 ],
             [filename: 'Aperio - 2005900969-2', path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Aperio/2005900969-2.jp2',slide : 0 ],
@@ -650,7 +670,7 @@ class BootStrap {
 
     def destroy = {
     }
-     //end of init
+    //end of init
   }
 
   /* Methods */
@@ -676,7 +696,8 @@ class BootStrap {
         }
       }
 
-      def mime = Mime.findByExtension("jp2")
+      def extension = item.extension ?: "jp2"
+      def mime = Mime.findByExtension(extension)
 
       def scanner = Scanner.findByBrand("gigascan")
 
@@ -742,7 +763,7 @@ class BootStrap {
                 firstname : item.firstname,
                 lastname : item.lastname,
                 email : item.email,
-                password : springSecurityService.encodePassword("password"),
+                password : springSecurityService.encodePassword("demodemo"),
                 enabled : true)
         if (user.validate()) {
           println "Creating user ${user.username}..."
@@ -806,8 +827,7 @@ class BootStrap {
     if (!mimes) {
       mimeSamples.each { item ->
         Mime mime = new Mime(extension : item.extension,
-                mimeType : item.mimeType,
-                imageServer: ImageServer.findById(1))
+                mimeType : item.mimeType)
         if (mime.validate()) {
           println "Creating mime ${mime.extension} : ${mime.mimeType}..."
 
@@ -864,7 +884,7 @@ class BootStrap {
           imageServers << imageServer
 
           /* Link with MIME JP2 */
-          Mime mime = Mime.findByExtension("jp2")
+          Mime mime = Mime.findByExtension(item.extension)
           MimeImageServer.link(imageServer, mime)
 
         } else {
@@ -946,7 +966,8 @@ class BootStrap {
     def images = Image.list() ?: []
     if (!images) {
       scanSamples.each { item ->
-        def mime = Mime.findByExtension("jp2")
+        def extension = item.extension ?: "jp2"
+        def mime = Mime.findByExtension(extension)
 
         def scanner = Scanner.findByBrand("gigascan")
         def user = User.findByUsername("lrollus")
@@ -1081,7 +1102,7 @@ class BootStrap {
           term.save(flush : true)
 
 
-        /*  item.ontology.each {  ontology ->
+          /*  item.ontology.each {  ontology ->
             println "add Ontology " + ontology.name
             //annotation.addToTerm(Term.findByName(term))
             TermOntology.link(term, Ontology.findByName(ontology.name),ontology.color)

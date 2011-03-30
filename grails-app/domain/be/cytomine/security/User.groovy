@@ -31,8 +31,8 @@ class User extends SecUser {
     user.password = user.springSecurityService.encodePassword(jsonUser.password)
     user.enabled = true
     println "getUserFromData 3"
-    user.created = (!jsonUser.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.created)) : null
-    user.updated = (!jsonUser.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.updated)) : null
+//    user.created = (!jsonUser.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.created)) : null
+//    user.updated = (!jsonUser.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.updated)) : null
     println "getUserFromData 4"
     return user;
   }

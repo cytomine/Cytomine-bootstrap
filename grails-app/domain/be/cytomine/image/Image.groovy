@@ -109,7 +109,7 @@ class Image extends SequenceDomain {
     else image.slide = null
 
     String mimeId = jsonImage.mime.toString()
-    image.mime = Mime.get(mimeId)
+    image.mime = Mime.findByExtension(mimeId)
     if(image.mime==null) {
       throw new IllegalArgumentException("Mime was not found with id:"+ mimeId)
     }
@@ -154,7 +154,7 @@ class Image extends SequenceDomain {
       returnArray['scanner'] = it.scanner? it.scanner.id : null
       returnArray['slide'] = it.slide? it.slide.id : null
       returnArray['path'] = it.path
-      returnArray['mime'] = it.mime.id
+      returnArray['mime'] = it.mime.extension
 
       returnArray['width'] = it.width
       returnArray['height'] = it.height
@@ -173,7 +173,7 @@ class Image extends SequenceDomain {
       returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.id)
       //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
 
-      returnArray['imageServerBaseURL'] = it.getMime().imageServers().url
+      returnArray['imageServerBaseURL'] = it.getMime().imageServers().collect { it.getBaseUrl() }
       return returnArray
     }
   }
@@ -187,7 +187,7 @@ class Image extends SequenceDomain {
       String url = resolver.getThumbUrl(it.getBaseUrl(), getPath())
       urls << url
     }
-    if(urls.size()<1) return null
+    if(urls.size()<1) return null //to do, send an url to a default blank image or error image
 
     def index = (Integer) Math.round(Math.random()*(urls.size()-1)) //select an url randomly
     log.debug "index="+index

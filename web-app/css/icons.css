@@ -14,6 +14,7 @@
 .layer-polygon { background-image:url(../images/icons/layer-shape-polygon.png) !important; }
 .layer-shape { background-image:url(../images/icons/layer-shape.png) !important; }
 .layer-stack { background-image:url(../images/icons/layers-stack.png) !important; }
+.layer-edit {background-image:url(../images/icons/layer-edit.gif) !important;}
 
 .layer-transparent { background-image:url(../images/icons/layer-transparent.png) !important; }
 .color-swatch { background-image:url(../images/icons/color-swatch.png) !important; }

@@ -142,7 +142,14 @@ Cytomine.Views.Browser = {
                     {name : 'regular',tooltip: ULg.lang.Viewer.annotations.toolSelect, iconCls:'layer-shape', enableToggle: true, toggleGroup:'controlToggle'+idTab+'', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);image.getUserLayer().setSides(4);image.getUserLayer().toggleControl(this);}},
                     {name : 'regular',tooltip: ULg.lang.Viewer.annotations.toolSelect, iconCls:'layer-ellipse', enableToggle: true, toggleGroup:'controlToggle'+idTab+'', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);image.getUserLayer().setSides(30);image.getUserLayer().toggleControl(this);}},
                     {name : 'polygon',tooltip: ULg.lang.Viewer.annotations.toolPolygon, iconCls:'layer-polygon', enableToggle: true, toggleGroup:'controlToggle'+idTab+'', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);image.getUserLayer().toggleControl(this);}},
-                    {name : 'modify',tooltip: ULg.lang.Viewer.annotations.toolPolygon, iconCls:'ruler-crop', enableToggle: true, toggleGroup:'controlToggle'+idTab+'', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);image.getUserLayer().toggleControl(this);}},
+                    {name : 'modify',tooltip: ULg.lang.Viewer.annotations.toolPolygon, iconCls:'layer-edit', enableToggle: true, toggleGroup:'controlToggle'+idTab+'', handler: function() {console.log("Toolbar toggle : " + this.id);this.toggle(true);image.getUserLayer().toggleControl(this);}},
+					{
+                        xtype: 'button',
+						iconCls:'cross',
+						handler: function() {
+							image.getUserLayer().removeSelection();
+						}
+					},
                     {
                         xtype: 'tbsplit',
                         text: 'Options',
@@ -188,9 +195,8 @@ Cytomine.Views.Browser = {
                     animCollapse: false,
                     collapsible: false,
                     split: true,
-                    autoWidth : true,
-                    minSize: 256,
-                    maxSize: 256,
+                    //autoWidth : true, //does not work in Firefox
+					width : 256,
                     collapseMode:'mini',
                     title : tabTitle,
                     listeners: {
@@ -287,14 +293,15 @@ Cytomine.Views.Browser = {
         var alias = this;
         var imageStore = Cytomine.Application.getModel('image');
         var record = imageStore.getById(imageID);
-        var image = new Cytomine.Project.Image(record.get('imageServerBaseURL'), record.get('id'), record.get('filename'), record.get('path'), record.get('metadataUrl'));
+        var image = null;
+        if (record.get('mime') == 'jp2') { //Djatoka
+            image = new Cytomine.Project.Image(record.get('imageServerBaseURL'), record.get('id'), record.get('filename'), record.get('path'), record.get('metadataUrl'));
+        } else if (record.get('mime') == 'gdal') { //Gdal
+            image = new Cytomine.Project.GDALImage(record.get('imageServerBaseURL'), record.get('id'), record.get('filename'), record.get('path'), record.get('metadataUrl'));
+        }
         Cytomine.Application.addTab(imageID, alias.tab(record.get('id'), record.get('id'), record.get('filename'), image));
         image.initMap(); //render into created tab
         Cytomine.Application.storeImage(imageID, image);
-
-
-
-
         alias.initSideBar(imageID, image);
     },
     addAnnotation : function(idAnnotation, idImage) {

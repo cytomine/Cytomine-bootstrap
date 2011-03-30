@@ -20,7 +20,7 @@ Cytomine.Models.Image = {
         }, [
             {name: 'id'},
             {name: 'filename', allowBlank: true},
-            {name: 'image'},
+            {name: 'mime'},
             {name: 'imageServerBaseURL'},
             {name: 'path'},
             {name: 'metadataUrl'}

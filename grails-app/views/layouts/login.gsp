@@ -11,8 +11,9 @@
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js',file:'ext-3.3.1/resources/images/default/s.gif')}";
 		</script>-->
         <script type="text/javascript" src="${resource(dir:'js',file:'be/cytomine/login/auth.js')}" ></script>
-        <!-- DEV -->
+        <!-- DEV
         <script type="text/javascript" src="${resource(dir:'js',file:'dev.js')}" ></script>
+        -->
         <!-- /DEV -->
         <g:layoutHead />
       </head>

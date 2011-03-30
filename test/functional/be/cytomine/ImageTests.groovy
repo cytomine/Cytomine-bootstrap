@@ -397,7 +397,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     jsonUpdate.image.scanner = newScanner.id
     jsonUpdate.image.slide = newSlide.id
     jsonUpdate.image.path = newPath
-    jsonUpdate.image.mime = newMime.id
+    jsonUpdate.image.mime = newMime.extension
     jsonUpdate.image.width = newWidth
     jsonUpdate.image.height = newHeight
     jsonUpdate.image.scale = newScale

@@ -23,7 +23,9 @@ class DeleteAnnotationCommand extends Command implements UndoRedoCommand{
     log.info "Delete annotation " + postData.id
     try {
       annotation.delete(flush:true);
-      return [data : [success : true, message : "OK", data : [annotation : postData.id]], status : 200]
+      def filename = annotation.getImage().getFilename()
+      def message = messageSource.getMessage('be.cytomine.DeleteAnnotationCommand', [annotation.id, filename] as Object[], Locale.ENGLISH)
+      return [data : [success : true, message : message, data : [annotation : postData.id]], status : 200]
     } catch(org.springframework.dao.DataIntegrityViolationException e)
     {
       log.error(e)
@@ -37,13 +39,15 @@ class DeleteAnnotationCommand extends Command implements UndoRedoCommand{
     Annotation annotation = Annotation.createAnnotationFromData(annotationData)
     annotation.save()
     log.debug "annotation save with id " + annotation.id
-
+    def filename = annotation.getImage().getFilename()
+    def callback = [method : "be.cytomine.AddAnnotationCommand", annotationID : annotation.id , imageID : annotation.image.id ]
+    def message = messageSource.getMessage('be.cytomine.AddAnnotationCommand', [annotation.id, filename] as Object[], Locale.ENGLISH)
     //save new id of the object that has been re-created
     def postDataLocal = JSON.parse(postData)
     postDataLocal.id =  annotation.id
     postData = postDataLocal.toString()
 
-    return [data : [success : true, annotation : annotation, message : "OK"], status : 201]
+    return [data : [success : true, annotation : annotation, message : message, callback : callback], status : 201]
   }
 
   def redo() {
@@ -51,7 +55,10 @@ class DeleteAnnotationCommand extends Command implements UndoRedoCommand{
     def postData = JSON.parse(postData)
     Annotation annotation = Annotation.findById(postData.id)
     annotation.delete(flush:true);
-    return [data : [success : true, message : "OK"], status : 200]
+    def filename = annotation.getImage().getFilename()
+    def callback = [method : "be.cytomine.DeleteAnnotationCommand", annotationID : annotation.id , imageID : annotation.image.id ]
+    def message = messageSource.getMessage('be.cytomine.DeleteAnnotationCommand', [annotation.id, filename] as Object[], Locale.ENGLISH)
+    return [data : [success : true, message : message, callback: callback], status : 200]
 
   }
 }
