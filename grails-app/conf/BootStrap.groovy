@@ -76,10 +76,10 @@ class BootStrap {
 
     /* Users */
     def usersSamples = [
-            [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group : [[ name :"GIGA"]]],
-            [username : 'lrollus', firstname : 'Loic', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[ name :"GIGA"]]],
-            [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[ name :"GIGA"], [name : "ANAPATH"]]] ,
-            [username : 'demo', firstname : 'Jean', lastname : 'Dupont', email : 'mymail@ulg.ac.be', group : [[ name :"GIGA"], [name : "ANAPATH"]]]
+            [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group : [[ name :"GIGA"]], password : 'password'],
+            [username : 'lrollus', firstname : 'Loic', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[ name :"GIGA"]], password : 'password'],
+            [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[ name :"GIGA"], [name : "ANAPATH"]], password : 'password'] ,
+            [username : 'demo', firstname : 'Jean', lastname : 'Dupont', email : 'mymail@ulg.ac.be', group : [[ name :"GIGA"], [name : "ANAPATH"]], password : 'demodemo']
     ]
     createUsers(usersSamples)
 
@@ -763,7 +763,7 @@ class BootStrap {
                 firstname : item.firstname,
                 lastname : item.lastname,
                 email : item.email,
-                password : springSecurityService.encodePassword("demodemo"),
+                password : springSecurityService.encodePassword(item.password),
                 enabled : true)
         if (user.validate()) {
           println "Creating user ${user.username}..."
