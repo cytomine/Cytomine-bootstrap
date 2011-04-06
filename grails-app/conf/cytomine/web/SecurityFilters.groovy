@@ -12,14 +12,14 @@ class SecurityFilters {
                }
             }
             after = {
-                
+
             }
             afterView = {
-                
+
             }
         }
     }
-    
+
 }
 
 

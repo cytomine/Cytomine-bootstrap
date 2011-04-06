@@ -182,6 +182,7 @@ class RestImageController {
   def thumb = {
     Image image = Image.findById(params.id)
     print image.getThumbURL()
+    try {
     def out = new ByteArrayOutputStream()
     out << new URL(image.getThumbURL()).openStream()
     response.contentLength = out.size();
@@ -194,6 +195,9 @@ class RestImageController {
           response.contentType = "image/jpeg"; response.getOutputStream() << out.toByteArray()
         }
       }
+    }
+    } catch ( Exception e) {
+      //log.error(e);
     }
   }
 

@@ -1,0 +1,171 @@
+body {
+    background:#f8f8f8;
+    color:#333;
+}
+
+a {
+    color:#333;
+    text-decoration:none;
+}
+
+a:hover { color:#333; }
+
+h1 { font-size:18px; }
+h2 { font-size:15px; }
+h3 { font-size:13px; }
+
+.header {
+    background:#666;
+    position:fixed;
+    left:0px;
+    right:0px;
+    top:0px;
+    height:20px;
+    padding:15px 10px;
+    z-index: 10;
+}
+
+.header a,
+.header h1 {
+    float:left;
+}
+
+.header h1 {
+    color:#f8f8f8;
+    text-shadow:#333 0px 1px 0px;
+    margin-right:20px;
+}
+
+.header h1 a {
+    font-weight:bold;
+    color:#f8f8f8;
+}
+
+.header h1 .logo {
+    float:left;
+    background-color:transparent;
+    background-position:-20px -270px;
+    margin-right:5px;
+}
+
+.header h1 .separator {
+    background-position:-40px -270px;
+    margin:0px 5px;
+}
+
+.header .actions a {
+    font-weight:bold;
+    float:left;
+    padding:0px 10px;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    margin:0px 5px;
+}
+
+.header .actions {
+    position:absolute;
+    right:0px;
+    top:10px;
+    background:#eee;
+    height:25px;
+    line-height:20px;
+    padding:5px 5px 10px 4px;
+    border-width:1px 0px 0px 1px;
+    border-style:solid;
+    border-color:#fff;
+    -moz-border-radius:5px 0px 0px 0px;
+    -webkit-border-radius:5px 0px 0px 0px;
+}
+
+
+/**
+ * Menu =======================================================================
+ */
+.menu li { position:relative; }
+.menu li .icon { top:5px; }
+.menu li .edit { right:26px; }
+
+.menu li a.title {
+    position:relative;
+    display:block;
+    padding:15px 10px 14px 60px;
+    border-bottom:1px solid #ddd;
+    font-size:15px;
+    font-weight:bold;
+    color:#666;
+}
+
+.menu li a.title .file {
+    position:absolute;
+    left:10px;
+    top:5px;
+}
+
+.menu li a.title.active {
+    color:#fff;
+    background:#48a;
+    border-color:#268;
+}
+
+
+.view { background:#f8f8f8; }
+
+/*.main {
+    background: #eee;
+    top:50px;
+    left:50%;
+    right:0px;
+    bottom:0px;
+}*/
+
+.sidebar {
+    position:fixed;
+    top:50px;
+    left:0px;
+    bottom:0px;
+    width:50%;
+    border-right:1px solid #ccc;
+    overflow:auto;
+}
+
+#explorer .sidebar {
+    width:15%;
+}
+
+#explorer .main {
+    left:15%;
+    width:85%;
+    top :50px;
+    z-index:1;
+    position : fixed;
+}
+
+.thumb{
+    background:#FFF;
+    border:#CCC solid 1px;
+    padding:3px;
+    height: 192px;
+    width: 192px;
+}
+.thumb-wrap{
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 5px;
+    /*cursor: pointer;*/
+}
+
+div.inline {
+    float:left;
+}
+
+.clearBoth {
+    clear:both;
+}
+
+.thumb-wrap span{
+    display: block;
+    overflow: hidden;
+    text-align: center;
+}
+

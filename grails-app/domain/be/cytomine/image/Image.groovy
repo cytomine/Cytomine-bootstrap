@@ -168,8 +168,8 @@ class Image extends SequenceDomain {
       returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
       //returnArray['annotations'] = it.annotations
-      //returnArray['thumb'] = it.getThumbURL()
-      returnArray['thumb'] = UrlApi.getThumbURLWithImageId(it.id)
+      returnArray['thumb'] = it.getThumbURL()
+      //returnArray['thumb'] = UrlApi.getThumbURLWithImageId(it.id)
       returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.id)
       //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
 

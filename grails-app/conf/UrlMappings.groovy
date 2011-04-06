@@ -14,7 +14,7 @@ class UrlMappings {
     "/term"(view:"/term")
 
     /* Errors */
-    "500"(view:'/error')
+    "500" (view:'/error')
 
     /* User */
     "/api/user"(controller:"restUser"){

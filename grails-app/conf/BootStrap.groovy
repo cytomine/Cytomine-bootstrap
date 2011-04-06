@@ -220,7 +220,7 @@ class BootStrap {
 
     /* Scans */
     def scanSamples = [
-            [filename: 'ImageNEO13_CNS_5.10_5_4_01',path:'ImageNEO13_CNS_5.10_5_4_01', extension : 'gdal', slide : 0],
+            //[filename: 'ImageNEO13_CNS_5.10_5_4_01',path:'ImageNEO13_CNS_5.10_5_4_01', extension : 'gdal', slide : 0],
             [filename: 'Boyden - essai _10x_02',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Boyden/essai_10x_02.one.jp2',slide : 0],
             [filename: 'Aperio - 003',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Aperio/003.jp2',slide : 0 ],
             [filename: 'Aperio - 2005900969-2', path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Aperio/2005900969-2.jp2',slide : 0 ],
