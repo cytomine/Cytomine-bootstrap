@@ -1,6 +1,8 @@
 
 var ApplicationController = Backbone.Controller.extend({
 
+    models : {},
+
     routes: {
         "login"     :   "login",
         "logout"    :   "logout",
@@ -83,6 +85,15 @@ var ApplicationController = Backbone.Controller.extend({
     },
 
     startup : function () {
+        //init models
+        window.models = {};
+        window.models.images = new ImageCollection();
+        window.models.images.fetch();
+
+        //init controllers
+        new ProjectController();
+        new ImageController();
+        new BrowseController();
 
 		this.status = new Status('server/ping', function(status) {
             var dialog = new ConfirmDialogView({
@@ -103,13 +114,14 @@ var ApplicationController = Backbone.Controller.extend({
             }).render();
         }, 10000);
 
-        new ProjectController();
-        new ImageController();
-        new BrowseController();
+        //init base layout
         window.app = new ApplicationView({
             el: $('#app')
         }).render();
+
+        //show explorer
         this.showComponent(window.app.components.explorer);
+
         Backbone.history.start();
 
 

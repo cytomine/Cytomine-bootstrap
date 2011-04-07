@@ -5,7 +5,7 @@ var ImageThumbView = Backbone.View.extend({
     },
 
     open : function () {
-        console.log("open it :-)" + this.model.get("filename")); //work only in firefox
+        console.log("click");
     },
 
     initialize: function(options) {

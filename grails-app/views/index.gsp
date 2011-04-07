@@ -1,5 +1,5 @@
 <head>
-  <meta name='layout' content='ext' />
+  <meta name='layout' content='viewport' />
   <title>Cytomine</title>
 </head>
 <body>

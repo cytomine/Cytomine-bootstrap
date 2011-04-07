@@ -169,3 +169,8 @@ div.inline {
     text-align: center;
 }
 
+.map {
+    align : center;
+    width : 95%;
+    height : 500px;
+}

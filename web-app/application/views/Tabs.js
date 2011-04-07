@@ -7,14 +7,28 @@ var Tabs = Backbone.View.extend({
     render: function() {
         $(this.el).html(ich.taptpl({}, true));
         var tabs = $(this.el).children('.tabs');
-        tabs.tabs();
+        tabs.tabs({
+            add: function(event, ui) {
+                tabs.tabs('select', '#' + ui.panel.id);
+            },
+            'show': function(event, ui){
+                $(ui.panel).attr('style', 'width:100%;height:100%;');
+                return true;
+            }
+        });
         return this;
     },
     openTab: function(image) {
-        console.log("openTab" + image);
-      var tabs = $(this.el).children('.tabs');
-      this.images.image = new BrowseImageView({
-            el: tabs
-      }).render();
+        var self = this;
+        window.models.images.fetch({
+            success : function () {
+                var tabs = $(self.el).children('.tabs');
+                self.images.image = new BrowseImageView({
+                    model : window.models.images.get(image),
+                    el: tabs
+                }).render();
+            }
+        });
+
     }
 });

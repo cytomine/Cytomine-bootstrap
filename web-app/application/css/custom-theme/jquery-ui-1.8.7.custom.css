@@ -620,7 +620,11 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 	-webkit-border-radius: 0;
 	border-radius: 0;
 }
-.ui-tabs .ui-tabs-hide { display: none !important; }
+.ui-tabs .ui-tabs-hide {
+    position: absolute !important;
+    left: -10000px !important;
+    display:block !important;
+}
 /*
  * jQuery UI Datepicker 1.8.7
  *
