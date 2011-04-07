@@ -7,7 +7,7 @@ var ProjectController = Backbone.Controller.extend({
 
     project : function() {
         if (!this.view) {
-
+             console.log("Project controller");
             this.view = new ProjectView({
                 model : new ImageCollection(),
                 el:$("#warehouse > .project"),

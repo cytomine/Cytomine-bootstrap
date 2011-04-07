@@ -1,9 +1,11 @@
 package be.cytomine.image
 
-class ImageFile {
+import be.cytomine.SequenceDomain
+
+class ImageFile extends SequenceDomain {
 
     File file
-    Image image;
+    Image image
 
     static constraints = {
     }

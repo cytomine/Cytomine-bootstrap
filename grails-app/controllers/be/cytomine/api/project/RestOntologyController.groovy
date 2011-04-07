@@ -83,6 +83,7 @@ class RestOntologyController {
       def ontology = Ontology.findById(params.id)
       data.id = ontology.id
       data.text = ontology.getName()
+      data.data = ontology.getName()
       data.checked = false
 
       def terms = []
@@ -90,6 +91,7 @@ class RestOntologyController {
           def term = [:]
           term.id = it.getId()
           term.text = it.getName()
+          term.data = it.getName()
           term.checked = false
           term.leaf = false
           terms << term

@@ -26,6 +26,12 @@
   <script type="text/javascript" src="application/lib/ICanHaz.js"></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
 <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
+   <!-- Libs JStree-->
+  <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/_docs/syntax/!script.js"></script>
+  <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.cookie.js"></script>
+  <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.hotkeys.js"></script>
+  <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.jstree.js"></script>
+   <!-- Libs JStree -->
 
 <!-- Styles -->
 <link rel='stylesheet' href='application/css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
@@ -79,9 +85,13 @@
   <div id="warehouse">
     <div class="main project"></div>
     <div class="main image"></div>
+    <div class="main term"></div>
+    <div class="main ontology"></div>
+
     <div class='sidebar'>
       <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
       <ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
+      <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul>      
       <ul class='menu libraries'></ul>
       <div class='buttons'>
         <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
@@ -110,6 +120,18 @@
 
 
 <script type="text/html" id="imageviewtpl">
+</script>
+
+<script type="text/html" id="termviewtpl">
+
+</script>
+
+<script type="text/html" id="ontologyviewtpl">
+  <div id='ontologytree'></div>
+</script>
+
+<script type="text/html" id="termitemviewtpl">
+  <div class='thumb-info'><a href='#browse/{{ id }}'>Hello</a></div>
 </script>
 
 <script type="text/html" id="menubuttontpl">
@@ -166,8 +188,12 @@
 <script type="text/javascript" src="application/controllers/ProjectController.js" ></script>
 <script type="text/javascript" src="application/controllers/ImageController.js" ></script>
 <script type="text/javascript" src="application/controllers/BrowseController.js" ></script>
+<script type="text/javascript" src="application/controllers/TermController.js" ></script>
+<script type="text/javascript" src="application/controllers/OntologyController.js" ></script>
 <!-- Models -->
 <script type="text/javascript" src="application/models/ImageModel.js" ></script>
+<script type="text/javascript" src="application/models/TermModel.js" ></script>
+<script type="text/javascript" src="application/models/OntologyModel.js" ></script>
 <script type="text/javascript" src="application/models/UserModel.js" ></script>
 <!-- View -->
 <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
@@ -177,6 +203,8 @@
 <script type="text/javascript" src="application/views/ImageView.js" ></script>
 <script type="text/javascript" src="application/views/BrowseImageView.js" ></script>
 <script type="text/javascript" src="application/views/ImageThumbView.js" ></script>
+<script type="text/javascript" src="application/views/TermView.js" ></script>
+<script type="text/javascript" src="application/views/OntologyView.js" ></script>
 <script type="text/javascript" src="application/views/Tabs.js" ></script>
 
 

@@ -25,6 +25,22 @@ class Ontology {
       returnArray['class'] = it.class
       returnArray['id'] = it.id
       returnArray['name'] = it.name
+
+      returnArray['data'] = it.name
+      returnArray['state'] = "open"
+
+      def terms = []
+      it.terms().each {
+          def term = [:]
+          term.id = it.getId()
+          term.text = it.getName()
+          term.data = it.getName()
+          term.checked = false
+          term.leaf = false
+          terms << term
+      }
+      returnArray['children'] = terms
+
       return returnArray
     }
   }

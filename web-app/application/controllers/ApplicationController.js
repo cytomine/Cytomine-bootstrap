@@ -93,10 +93,19 @@ var ApplicationController = Backbone.Controller.extend({
         window.models.users = new UserCollection();
         window.models.users.fetch();
 
+
+        window.models.terms = new TermCollection();
+        window.models.terms.fetch();
+
+        window.models.ontologies = new OntologyCollection();
+        window.models.ontologies.fetch();
+
         //init controllers
         new ProjectController();
         new ImageController();
         new BrowseController();
+        new TermController();
+        new OntologyController();
 
 		this.status = new Status('server/ping', function(status) {
             var dialog = new ConfirmDialogView({
