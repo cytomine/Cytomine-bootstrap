@@ -154,7 +154,7 @@
 
 <script type="text/html" id="browseimagetpl">
   <div id="tabs-{{id}}">
-    <div id="toolbar{{id}}">
+    <div class="toolbar" id="toolbar{{id}}">
 
         <span class="draw">
           <input type="radio" id="none{{id}}"      name="draw" checked="checked" /><label for="none{{id}}">None</label>
@@ -173,8 +173,8 @@
     </div>
     <div class="map" id="map{{id}}"></div>
     <div>
-      <div class="inline" id="overviewMap{{id}}"></div>
-      <div class="inline" id="layerSwitcher{{id}}"></div>
+      <div class="inline overview" id="overviewMap{{id}}"></div>
+      <div class="inline layerSwitcher" id="layerSwitcher{{id}}"></div>
       <div class="inline" id="ontology{{id}}"></div>
       <div class="clearboth"></div>
     </div>

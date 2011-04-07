@@ -5,10 +5,13 @@ import grails.converters.XML
 
 class ServerController {
 
+  def springSecurityService
+
   def ping = {
 
     def data = [:]
     data.alive = true;
+    data.user = springSecurityService.principal.id
 
     withFormat {
       json { render data as JSON }

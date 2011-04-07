@@ -7,15 +7,22 @@ var Tabs = Backbone.View.extend({
     render: function() {
         $(this.el).html(ich.taptpl({}, true));
         var tabs = $(this.el).children('.tabs');
+        var height = 0;
         tabs.tabs({
             add: function(event, ui) {
                 tabs.tabs('select', '#' + ui.panel.id);
+                $("#"+ui.panel.id).parent().parent().css('height', "100%");
+                //$("#"+ui.panel.id).attr('style', 'width:100%;height:100%;');
             },
             'show': function(event, ui){
-                $(ui.panel).attr('style', 'width:100%;height:100%;');
+                //$("#"+ui.panel.id).attr('style', 'width:100%;height:100%;');
                 return true;
             }
         });
+        $("ul.tabs a").css('height', $("ul.tabs").height())
+
+
+
         return this;
     },
     openTab: function(image) {

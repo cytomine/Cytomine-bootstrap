@@ -51,15 +51,21 @@ var Status = function(url, callback, interval) {
 };
 
 Status.prototype.start = function() {
+    var self = this;
+    var ajaxFn = function() {
+        $.ajax({
+            url: self.url,
+            type: 'GET',
+            success : function (data) {
+                window.app.user = data.user;
+            },
+            error: self.error
+        });
+    };
+    ajaxFn(); //call it one first time in order the get user id
     if (!this.watcher) {
         var that = this;
-        this.watcher = setInterval(function() {
-            $.ajax({
-                url: that.url,
-                type: 'GET',
-                error: that.error
-            });
-        }, this.interval);
+        this.watcher = setInterval(ajaxFn, this.interval);
     }
 };
 

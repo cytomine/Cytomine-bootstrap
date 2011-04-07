@@ -130,7 +130,7 @@ var BrowseImageView = Backbone.View.extend({
                     console.log(user.get('username'));
                     var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), colors[colorIndex]);
                     layerAnnotation.loadAnnotations(self.map);
-                    if (user.get('id') == 10) {
+                    if (user.get('id') == window.app.user) {
                         self.userLayer = layerAnnotation;
                         layerAnnotation.initControls(self);
                         layerAnnotation.registerEvents();
