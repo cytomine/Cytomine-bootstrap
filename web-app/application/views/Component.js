@@ -41,3 +41,4 @@ var Component = Backbone.View.extend({
         $(view.el).fadeIn('fast');
     }
 });
+

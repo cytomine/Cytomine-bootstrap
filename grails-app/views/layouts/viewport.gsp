@@ -129,21 +129,21 @@
 <script type="text/html" id="browseimagetpl">
   <div id="tabs-{{id}}">
     <div id="toolbar{{id}}">
-      <span class="ui-widget-header ui-corner-all">
-        <div class="draw">
-          <input type="radio" name="none" checked="checked" />none
-          <input type="radio" name="select" />select
-          <input type="radio" name="regular4" />regular4
-          <input type="radio" name="regular30" />regular30
-          <input type="radio" name="polygon" />polygon
-          <input type="radio" name="modify" />modify
-        </div>
-        <button id="delete">delete</button>
-        <input type="checkbox" name="rotate" />Rotate
-        <input type="checkbox" name="resize" />Resize
-        <input type="checkbox" name="drag" />Drag
-        <input type="checkbox" name="irregular" />Irregular
-      </span>
+
+        <span class="draw">
+          <input type="radio" id="none{{id}}"      name="draw" checked="checked" /><label for="none{{id}}">None</label>
+          <input type="radio" id="select{{id}}"    name="draw" /><label for="select{{id}}">Select</label>
+          <input type="radio" id="regular4{{id}}"  name="draw" /><label for="regular4{{id}}">Regular4</label>
+          <input type="radio" id="regular30{{id}}" name="draw" /><label for="regular30{{id}}">Regular30</label>
+          <input type="radio" id="polygon{{id}}"   name="draw" /><label for="polygon{{id}}">Polygon</label>
+          <input type="radio" id="modify{{id}}"    name="draw" /><label for="modify{{id}}">Modify</label>
+        </span>
+        <button name="delete">delete</button>
+        <input type="checkbox" name="rotate" id="rotate{{id}}" /><label for="rotate{{id}}">Rotate</label>
+        <input type="checkbox" name="resize" id="resize{{id}}" /><label for="resize{{id}}">Resize</label>
+        <input type="checkbox" name="drag" id="drag{{id}}" /><label for="drag{{id}}">Drag</label>
+        <input type="checkbox" name="irregular" id="irregular{{id}}" /><label for="irregular{{id}}">Irregular</label>
+
     </div>
     <div class="map" id="map{{id}}"></div>
     <div>
