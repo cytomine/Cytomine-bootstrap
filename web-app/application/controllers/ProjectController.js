@@ -10,13 +10,13 @@ var ProjectController = Backbone.Controller.extend({
 
             this.view = new ProjectView({
                 model : new ImageCollection(),
-                el:$("#explorer > .project"),
+                el:$("#warehouse > .project"),
                 container : window.app.components.explorer
             }).render();
 
             this.view.container.views.project = this.view;
         }
 
-        this.view.container.show(this.view, "#explorer > .sidebar", "project");
+        this.view.container.show(this.view, "#warehouse > .sidebar", "project");
     }
 });

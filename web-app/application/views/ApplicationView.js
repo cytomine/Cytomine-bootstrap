@@ -8,7 +8,7 @@ var ApplicationView = Backbone.View.extend({
     //template : _.template($('#base-layout-tpl').html()),
     components : {},
     initialize: function(options) {
-        
+
     },
     render: function() {
         $(this.el).html(ich.baselayouttpl({}, true));
@@ -17,19 +17,33 @@ var ApplicationView = Backbone.View.extend({
         return this;
     },
     initComponents : function() {
+        this.components.warehouse = new Component({
+            el : $("#content"),
+            //template : _.template($('#admin-tpl').html()),
+            template : ich.warehousetpl({}, true),
+            buttonAttr : {
+                elButton : "warehouse-button",
+                buttonText : "Manage",
+                buttonWrapper : $("#menu"),
+                icon : "ui-icon-search",
+                route : "#warehouse"
+            },
+            divId : "warehouse"
+        }).render();
         this.components.explorer = new Component({
             el : $("#content"),
             //template : _.template($('#explorer-tpl').html()),
             template : ich.explorertpl({}, true),
             buttonAttr : {
                 elButton : "explorer-button",
-                buttonText : "Explorer",
+                buttonText : "Explore",
                 buttonWrapper : $("#menu"),
-                icon : "ui-icon-search",
+                icon : "ui-icon-image",
                 route : "#explorer"
             },
             divId : "explorer"
         }).render();
+
         this.components.admin = new Component({
             el : $("#content"),
             //template : _.template($('#admin-tpl').html()),
@@ -83,6 +97,16 @@ var ApplicationView = Backbone.View.extend({
             pnotify_stack: stack_bottomright
         };
         $.pnotify(opts);
+
+    },
+    showComponent : function (component) {
+        for (var i in window.app.components) {
+            var c = window.app.components[i];
+            if (c == component) continue;
+            c.deactivate();
+        }
+        $("#app").show();
+        component.activate();
 
     }
 });

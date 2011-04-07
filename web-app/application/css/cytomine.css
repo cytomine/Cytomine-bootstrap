@@ -128,13 +128,22 @@ h3 { font-size:13px; }
     overflow:auto;
 }
 
-#explorer .sidebar {
+#warehouse .sidebar {
     width:15%;
 }
 
-#explorer .main {
+#warehouse .main {
     left:15%;
     width:85%;
+    top :50px;
+    z-index:1;
+    position : fixed;
+}
+
+
+#explorer .main {
+    left:0%;
+    width:100%;
     top :50px;
     z-index:1;
     position : fixed;

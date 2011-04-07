@@ -19,8 +19,8 @@ var BrowseController = Backbone.Controller.extend({
         }
 
         this.view.openTab(image);
-
-        this.view.container.show(this.view);
+        window.app.showComponent(this.view.container);
+        //this.view.container.show(this.view);
     }
 
 });

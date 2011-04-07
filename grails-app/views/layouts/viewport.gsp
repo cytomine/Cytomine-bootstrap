@@ -72,6 +72,11 @@
 <script type="text/html" id="explorertpl">
   <div id="explorer">
     <div class="main browser"></div>
+    </div>
+</script>
+
+<script type="text/html" id="warehousetpl">
+  <div id="warehouse">
     <div class="main project"></div>
     <div class="main image"></div>
     <div class='sidebar'>
@@ -81,7 +86,7 @@
       <div class='buttons'>
         <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
       </div>
-    </div>
+  </div>
 </script>
 
 <script type="text/html" id="admintpl">

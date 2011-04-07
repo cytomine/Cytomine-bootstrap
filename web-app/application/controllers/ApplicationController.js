@@ -8,6 +8,7 @@ var ApplicationController = Backbone.Controller.extend({
         "logout"    :   "logout",
         "explorer"  :   "explorer",
         "admin"     :   "admin",
+        "warehouse" :   "warehouse",
         "undo"      :   "undo",
         "redo"      :   "redo"
     },
@@ -122,7 +123,7 @@ var ApplicationController = Backbone.Controller.extend({
         }).render();
 
         //show explorer
-        this.showComponent(window.app.components.explorer);
+        window.app.showComponent(window.app.components.explorer);
 
         Backbone.history.start();
 
@@ -131,22 +132,17 @@ var ApplicationController = Backbone.Controller.extend({
 
 
     explorer: function() {
-        this.showComponent(window.app.components.explorer);
+        window.app.showComponent(window.app.components.explorer);
     },
 
     admin: function() {
-        this.showComponent(window.app.components.admin);
+        window.app.showComponent(window.app.components.admin);
     },
 
-    showComponent : function (component) {
-        for (var i in window.app.components) {
-            var c = window.app.components[i];
-            if (c == component) continue;
-            c.deactivate();
-        }
-        $("#app").show();
-        component.activate();
-
+    warehouse : function () {
+        window.app.showComponent(window.app.components.warehouse);
     }
+
+
 
 });

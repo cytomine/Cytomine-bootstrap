@@ -9,21 +9,19 @@ var ImageController = Backbone.Controller.extend({
     },
 
     image : function(page) {
-        /*   $("#explorer > .sidebar").find("a[class=title]").removeClass("active");
-        $("#explorer > .sidebar").find("a[name=image]").addClass("active");*/
         if (!this.view) {
-
+                              console.log("new imageview");
             this.view = new ImageView({
                 page : page,
                 model : window.models.images,
-                el:$("#explorer > .image"),
-                container : window.app.components.explorer
+                el:$("#warehouse > .image"),
+                container : window.app.components.warehouse
             }).render();
 
             this.view.container.views.image = this.view;
         }
 
-        this.view.container.show(this.view, "#explorer > .sidebar", "image");
+        this.view.container.show(this.view, "#warehouse > .sidebar", "image");
     }
 
 
