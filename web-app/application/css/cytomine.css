@@ -169,8 +169,96 @@ div.inline {
     text-align: center;
 }
 
+
+
 .map {
     align : center;
     width : 95%;
     height : 500px;
 }
+
+.map {
+  /*overflow:hidden;
+  position:absolute;
+  left:0px;
+  right:0px;
+  top:0px;
+  height:60%;*/
+  border-bottom:1px solid #ccc;
+  background:#f8f8f8 url(../images/canvas.png) 0% 0% repeat;
+  }
+
+.map .olMap {
+  position:absolute;
+  left:0px;
+  right:0px;
+  top:0px;
+  bottom:0px;
+  }
+
+body.minimal .map,
+.map.fullscreen {
+  position:fixed;
+  top:50px;
+  left:0px;
+  right:0px;
+  bottom:0px;
+  width:auto;
+  height:auto;
+  border:0px;
+  }
+
+div.olControlOverviewMapElement {
+    align : center;
+    background-color: #FFF;
+    align : center;
+}
+.map .olHandlerBoxZoomBox {
+  position:absolute;
+  //background:url(../images/palette.png);
+  border:2px solid;
+  font-size:1px;
+  }
+
+.map .control {
+  /*background:url(../images/palette.png);*/
+  height:20px;
+  padding:5px;
+  position:absolute;
+  bottom:0px;
+  right:0px;
+  left:0px;
+  z-index:1003;
+  }
+
+.map .reverse { background-color:transparent; }
+
+.map .control > a,
+.map .control > span { position:absolute; }
+
+.map .control a.active,
+.map .control a:hover {
+  background-color:#111;
+  box-shadow:#666 0px 0px 3px 1px;
+  -moz-box-shadow:#666 0px 0px 3px 1px;
+  -webkit-box-shadow:#666 0px 0px 3px 1px;
+  }
+
+.map .control a:active { margin-top:1px; }
+
+.map .zoom-display { left:10px; }
+.map .map-legend { right:31px; }
+.map .map-fullscreen { right:10px; }
+
+.map .wax-legends { display:none; }
+.map.legend .wax-legends { display:block; }
+
+.zoom-display label {
+  font-size:11px;
+  font-weight:bold;
+  color:#eee;
+  float:left;
+  padding:0px 10px 0px 0px;
+  }
+
+.zoom-display .icon { float:left; }

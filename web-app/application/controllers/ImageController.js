@@ -9,7 +9,8 @@ var ImageController = Backbone.Controller.extend({
     },
 
     image : function(page) {
-        console.log("request page "+ page);
+        /*   $("#explorer > .sidebar").find("a[class=title]").removeClass("active");
+        $("#explorer > .sidebar").find("a[name=image]").addClass("active");*/
         if (!this.view) {
 
             this.view = new ImageView({
@@ -22,7 +23,7 @@ var ImageController = Backbone.Controller.extend({
             this.view.container.views.image = this.view;
         }
 
-        this.view.container.show(this.view);
+        this.view.container.show(this.view, "#explorer > .sidebar", "image");
     }
 
 

@@ -17,6 +17,6 @@ var ProjectController = Backbone.Controller.extend({
             this.view.container.views.project = this.view;
         }
 
-        this.view.container.show(this.view);
+        this.view.container.show(this.view, "#explorer > .sidebar", "project");
     }
 });

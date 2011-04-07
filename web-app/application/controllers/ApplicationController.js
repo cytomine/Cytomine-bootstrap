@@ -13,7 +13,7 @@ var ApplicationController = Backbone.Controller.extend({
     },
 
     undo : function() {
-		$.getJSON('command/undo.json', function(data) {
+		$.post('command/undo.json', {}, function(data) {
             var items = [];
 
             $.each(data, function(key, val) {
@@ -23,12 +23,12 @@ var ApplicationController = Backbone.Controller.extend({
             window.app.message("Redo", data.message, "");
 
 
-        });
+        }, "json");
 
     },
 
     redo : function () {
-        $.getJSON('command/redo.json', function(data) {
+        $.post('command/redo.json', {}, function(data) {
             var items = [];
 
             $.each(data, function(key, val) {
@@ -38,7 +38,7 @@ var ApplicationController = Backbone.Controller.extend({
             window.app.message("Undo", data.message, "");
 
 
-        });
+        }, "json");
 
     },
 
@@ -89,6 +89,8 @@ var ApplicationController = Backbone.Controller.extend({
         window.models = {};
         window.models.images = new ImageCollection();
         window.models.images.fetch();
+        window.models.users = new UserCollection();
+        window.models.users.fetch();
 
         //init controllers
         new ProjectController();

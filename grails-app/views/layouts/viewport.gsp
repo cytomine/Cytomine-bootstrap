@@ -74,10 +74,9 @@
     <div class="main browser"></div>
     <div class="main project"></div>
     <div class="main image"></div>
-
     <div class='sidebar'>
-      <ul class='menu fixed'><li class="handle"><a href="#project" class="title">Projects</a></li></ul>
-      <ul class='menu fixed'><li class="handle"><a href="#image" class="title">Images</a></li></ul>
+      <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
+      <ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
       <ul class='menu libraries'></ul>
       <div class='buttons'>
         <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
@@ -138,7 +137,7 @@
           <input type="radio" id="polygon{{id}}"   name="draw" /><label for="polygon{{id}}">Polygon</label>
           <input type="radio" id="modify{{id}}"    name="draw" /><label for="modify{{id}}">Modify</label>
         </span>
-        <button name="delete">delete</button>
+        <button id="delete{{id}}" name="delete">delete</button>
         <input type="checkbox" name="rotate" id="rotate{{id}}" /><label for="rotate{{id}}">Rotate</label>
         <input type="checkbox" name="resize" id="resize{{id}}" /><label for="resize{{id}}">Resize</label>
         <input type="checkbox" name="drag" id="drag{{id}}" /><label for="drag{{id}}">Drag</label>
@@ -164,6 +163,7 @@
 <script type="text/javascript" src="application/controllers/BrowseController.js" ></script>
 <!-- Models -->
 <script type="text/javascript" src="application/models/ImageModel.js" ></script>
+<script type="text/javascript" src="application/models/UserModel.js" ></script>
 <!-- View -->
 <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
 <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
