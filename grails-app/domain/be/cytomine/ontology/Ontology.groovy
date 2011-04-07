@@ -30,7 +30,8 @@ class Ontology {
       returnArray['state'] = "open"
 
       def terms = []
-      it.terms().each {
+      try {
+      Term.findAllByOntology(it).each {
           def term = [:]
           term.id = it.getId()
           term.text = it.getName()
@@ -39,6 +40,8 @@ class Ontology {
           term.leaf = false
           terms << term
       }
+      }   //TODO: Term.findAllByOntology(it) throw exception if Ontology (it) is not save before...Must be change!
+      catch(Exception e) {println "ERROR: " + e}
       returnArray['children'] = terms
 
       return returnArray
