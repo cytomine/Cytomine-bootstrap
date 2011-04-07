@@ -8,7 +8,7 @@ class CommandController {
   def springSecurityService
   def messageSource
 
-  static allowedMethods = [undo:'POST', redo:'POST']
+  //static allowedMethods = [undo:'POST', redo:'POST']
 
   def undo = {
     log.info "Undo"
