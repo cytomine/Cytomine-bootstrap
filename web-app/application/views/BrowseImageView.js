@@ -1,5 +1,6 @@
 var BrowseImageView = Backbone.View.extend({
     tagName: "div",
+    layers : {},
     initialize: function (options) {
 
     },
@@ -19,53 +20,103 @@ var BrowseImageView = Backbone.View.extend({
         return this.userLayer;
     },
     initMap: function () {
-        var openURLLayer = new OpenLayers.Layer.OpenURL(this.model.get('filename'), this.model.get('imageServerBaseURL'), {
+        this.layers.baseLayer = new OpenLayers.Layer.OpenURL(this.model.get('filename'), this.model.get('imageServerBaseURL'), {
             transitionEffect: 'resize',
             layername: 'basic',
             format: 'image/jpeg',
             rft_id: this.model.get('path'),
             metadataUrl: this.model.get('metadataUrl')
         });
-        var metadata = openURLLayer.getImageMetadata();
-        var resolutions = openURLLayer.getResolutions();
+        /* this.layers.secondLayer = new OpenLayers.Layer.OpenURL(this.model.get('filename'), this.model.get('imageServerBaseURL'), {
+         transitionEffect: 'resize',
+         layername: 'basic',
+         format: 'image/jpeg',
+         rft_id: this.model.get('path'),
+         metadataUrl: this.model.get('metadataUrl'),
+         rotate : 90
+         });*/
+        var self = this;
+        var metadata = this.layers.baseLayer.getImageMetadata();
+        var resolutions = this.layers.baseLayer.getResolutions();
         var maxExtent = new OpenLayers.Bounds(0, 0, metadata.width, metadata.height);
-        var tileSize = openURLLayer.getTileSize();
+        var tileSize = this.layers.baseLayer.getTileSize();
         var lon = metadata.width / 2;
         var lat = metadata.height / 2;
         var mapOptions = {
             maxExtent: maxExtent,
             maximized: true
         };
+
+        var layerSwitcher = new OpenLayers.Control.LayerSwitcher({
+            roundedCorner: false,
+            roundedCornerColor: false,
+            'div': document.getElementById('layerSwitcher' + this.model.get('id')),
+            mouseDown: function(evt) {//IF WE DON'T DO THAT, Mouse Up is not triggered if dragging or sliding
+                this.isMouseDown = false;  //CONTINUE
+                /*this.ignoreEvent(evt);*/
+            }
+        });
         var options = {
             resolutions: resolutions,
             maxExtent: maxExtent,
             tileSize: tileSize,
             controls: [
-            //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),
-            new OpenLayers.Control.Navigation(), new OpenLayers.Control.PanZoomBar(),
-            //new OpenLayers.Control.LayerSwitcher({'ascending':false}),
-            new OpenLayers.Control.LayerSwitcher({
-                roundedCorner: false,
-                roundedCornerColor: false,
-                'div': document.getElementById('layerSwitcher' + this.model.get('id'))
-            }), new OpenLayers.Control.MousePosition(), new OpenLayers.Control.OverviewMap({
-                div: document.getElementById('overviewMap' + this.model.get('id')),
-                //size: new OpenLayers.Size(metadata.width / Math.pow(2, openURLLayer.getViewerLevel()), metadata.height / Math.pow(2,(openURLLayer.getViewerLevel()))),
-                size: new OpenLayers.Size(metadata.width / Math.pow(2, openURLLayer.getViewerLevel()), metadata.height / Math.pow(2, (openURLLayer.getViewerLevel()))),
-                minRatio: 1,
-                maxRatio: 1024,
-                mapOptions: mapOptions
-            }), new OpenLayers.Control.KeyboardDefaults()]
+                //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),
+                new OpenLayers.Control.Navigation(), new OpenLayers.Control.PanZoomBar(),
+                layerSwitcher,
+                new OpenLayers.Control.MousePosition(),
+                new OpenLayers.Control.OverviewMap({
+                    div: document.getElementById('overviewMap' + this.model.get('id')),
+                    //size: new OpenLayers.Size(metadata.width / Math.pow(2, openURLLayer.getViewerLevel()), metadata.height / Math.pow(2,(openURLLayer.getViewerLevel()))),
+                    size: new OpenLayers.Size(metadata.width / Math.pow(2, this.layers.baseLayer.getViewerLevel()), metadata.height / Math.pow(2, (this.layers.baseLayer.getViewerLevel()))),
+                    minRatio: 1,
+                    maxRatio: 1024,
+                    mapOptions: mapOptions
+                }),
+                new OpenLayers.Control.KeyboardDefaults()]
         };
         this.map = new OpenLayers.Map("map" + this.model.get('id'), options);
-        this.map.addLayer(openURLLayer);
+        this.map.addLayer(this.layers.baseLayer);
+        //this.map.addLayer(this.layers.secondLayer);
         this.map.setCenter(new OpenLayers.LonLat(lon, lat), 2);
+
+
+        $('#layerSwitcher' + this.model.get('id')).find('.slider').slider({
+            value: 100,
+            slide: function(e, ui) {
+                self.layers.baseLayer.setOpacity(ui.value / 100);
+            }
+        });
+
+        /*for (var i in layerSwitcher.baseLayers) {
+            var layer = layerSwitcher.baseLayers[i];
+            var switchName = layer['inputElem']['name'];
+            var elemName = 'input[name="' + switchName + '"]';
+
+        }*/
+
+        var overviewWidth = $('#overviewMap' + this.model.get('id')).width();
+        var overviewHeight = $('#overviewMap' + this.model.get('id')).width();
+        $('#overviewMap' + this.model.get('id')).draggable({
+             drag: function(event, ui) {
+                    $(this).css("width", overviewWidth);
+                    $(this).css("height", overviewHeight);
+             }
+        });
+        var layerSwitecherWidth = $('#layerSwitcher' + this.model.get('id')).width();
+        var layerSwitecherHeight = $('#layerSwitcher' + this.model.get('id')).width();
+        $('#layerSwitcher' + this.model.get('id')).draggable({
+             drag: function(event, ui) {
+                    $(this).css("width", layerSwitecherWidth);
+                    $(this).css("height", layerSwitecherHeight);
+             }
+        });
     },
     initSideBar: function () {
         var toolbar = $('#toolbar' + this.model.get('id'));
         var self = this;
         toolbar.find('input[name=select]').button({
-/*text : false,
+            /*text : false,
              icons: {
              primary: "ui-icon-seek-start"
              }*/
@@ -93,7 +144,7 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().toggleControl("regular");
         });
         toolbar.find('input[id=regular30' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().setSides(30);
+            self.getUserLayer().setSides(15);
             self.getUserLayer().toggleControl("regular");
         });
         toolbar.find('input[id=polygon' + this.model.get('id') + ']').click(function () {
@@ -216,7 +267,7 @@ AnnotationLayer.prototype = {
             },
             'featureadded': function (evt) {
                 console.log("onFeatureAdded start:" + evt.feature.attributes.idAnnotation);
-/* Check if feature must throw a listener when it is added
+                /* Check if feature must throw a listener when it is added
                  * true: annotation already in database (no new insert!)
                  * false: new annotation that just have been draw (need insert)
                  * */
@@ -437,7 +488,7 @@ AnnotationLayer.prototype = {
                 var geom = point.geometry;
 
                 var feature = new OpenLayers.Feature.Vector(
-                geom, {
+                        geom, {
                     some: 'data'
                 }, {
                     pointRadius: 10,
@@ -475,7 +526,7 @@ AnnotationLayer.prototype = {
             var geom = point.geometry;
 
             var feature = new OpenLayers.Feature.Vector(
-            geom, {
+                    geom, {
                 some: 'data'
             }, {
                 pointRadius: 10,
@@ -499,7 +550,7 @@ AnnotationLayer.prototype = {
     },
     /* Launch a dialog with annotation info */
     selectAnnotation: function () {
-/*
+        /*
          console.log("selectAnnotation:"+req.readyState);
          if (req.readyState == 4)
          {
@@ -530,7 +581,7 @@ AnnotationLayer.prototype = {
 
     },
     /** Triggered when add new feature **/
-/*onFeatureAdded : function (evt) {
+    /*onFeatureAdded : function (evt) {
      console.log("onFeatureAdded start:"+evt.feature.attributes.idAnnotation);
      // Check if feature must throw a listener when it is added
      // true: annotation already in database (no new insert!)
@@ -544,7 +595,7 @@ AnnotationLayer.prototype = {
      },*/
 
     /** Triggered when update feature **/
-/* onFeatureUpdate : function (evt) {
+    /* onFeatureUpdate : function (evt) {
      console.log("onFeatureUpdate start");
 
      this.updateAnnotation(evt.feature);

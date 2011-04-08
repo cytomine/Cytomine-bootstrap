@@ -10,7 +10,6 @@ var ImageController = Backbone.Controller.extend({
 
     image : function(page) {
         if (!this.view) {
-                              console.log("new imageview");
             this.view = new ImageView({
                 page : page,
                 model : window.models.images,

@@ -23,6 +23,7 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
      * {Boolean}
      */
     isBaseLayer: true,
+    rotate : 0,
 
     /**
      * APIProperty: tileOrigin
@@ -53,6 +54,7 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
         OpenLayers.Layer.Grid.prototype.initialize.apply(this, newArguments);
         this.rft_id = options.rft_id;
         this.format = options.format;
+
         // Get image metadata if it hasn't been set
         if (!options.imgMetadata) {
           var request = OpenLayers.Request.issue({url: options.metadataUrl, async: false});
@@ -148,7 +150,7 @@ OpenLayers.Layer.OpenURL = OpenLayers.Class(OpenLayers.Layer.Grid, {
         var z = this.map.getZoom() + this.zoomOffset;
         var path = "?url_ver=" + this.url_ver + "&rft_id=" + this.rft_id +
             "&svc_id=" + this.svc_id + "&svc_val_fmt=" + this.svc_val_fmt + "&svc.format=" +
-            this.format + "&svc.level=" + z + "&svc.rotate=0&svc.region=" + this.tilePos.lat + "," +
+            this.format + "&svc.level=" + z + "&svc.rotate="+this.rotate+"&svc.region=" + this.tilePos.lat + "," +
             this.tilePos.lon + "," + this.imageSize.h + "," + this.imageSize.w;
 
         var url = this.url;

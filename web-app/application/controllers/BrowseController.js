@@ -1,26 +1,26 @@
 
 var BrowseController = Backbone.Controller.extend({
 
-
-
+    tabs : null,
     routes: {
-        "browse/:image"   :   "browse"
+        "browse/:idImage"   :   "browse"
     },
 
-    browse : function (image) {
+    browse : function (idImage) {
         //create tabs if not exist
-        if (!this.view) {
-            this.view = new Tabs({
+        if (this.tabs == null) {
+            this.tabs = new Tabs({
                 el:$("#explorer > .browser"),
                 container : window.app.components.explorer
             }).render();
 
-            this.view.container.views.tabs = this.view;
+         //   this.tabs.container.views.tabs = this.tabs;
         }
 
-        this.view.openTab(image);
-        window.app.showComponent(this.view.container);
-        //this.view.container.show(this.view);
+        this.tabs.addTab(idImage);
+        this.tabs.showTab(idImage);
+
+        window.app.showComponent(this.tabs.container);
     }
 
 });

@@ -224,7 +224,7 @@ div .overview {
     position : absolute;
     right : 30px;
     top : 100px;
-    z-index : 2010;
+    z-index : 2020;
     background-color: rgba(0, 0, 0, 0.6);
     color : #fff;
     padding: 0px;
@@ -238,7 +238,7 @@ div .overview {
 div .toolbar {
     position : absolute;
     left : 90px;
-    top : 35px;
+    top : 40px;
     z-index : 2010;
     background-color: transparent;
     color : #fff;
@@ -246,6 +246,7 @@ div .toolbar {
     margin : 0px;
 
 }
+
 
 div .layerSwitcher {
     position : absolute;
@@ -259,7 +260,8 @@ div .layerSwitcher {
     -webkit-border-radius: 6px;
     border-radius: 6px;
     opacity: 0.7;
-    width:150px;
+    width : 200px;
+    height : 200px;
 }
 
 div.olControlOverviewMapElement img {

@@ -132,7 +132,7 @@ var ApplicationController = Backbone.Controller.extend({
         }).render();
 
         //show explorer
-        window.app.showComponent(window.app.components.explorer);
+        window.app.showComponent(window.app.components.warehouse);
 
         Backbone.history.start();
 

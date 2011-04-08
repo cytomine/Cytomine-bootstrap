@@ -174,7 +174,9 @@
     <div class="map" id="map{{id}}"></div>
     <div>
       <div class="inline overview" id="overviewMap{{id}}"></div>
-      <div class="inline layerSwitcher" id="layerSwitcher{{id}}"></div>
+      <div class="inline layerSwitcher" id="layerSwitcher{{id}}">
+        <div class="slider"></div>
+      </div>
       <div class="inline" id="ontology{{id}}"></div>
       <div class="clearboth"></div>
     </div>
@@ -220,5 +222,6 @@
 <body>
 <div id='app'></div>
 <div id='dialogs'></div>
+
 </body>
 </html>

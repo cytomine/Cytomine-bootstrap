@@ -31,7 +31,7 @@ Cytomine.Project.Image.prototype = {
         console.log("urls" + this.urls);
         console.log("path" + this.path);
         var openURLLayer = new OpenLayers.Layer.OpenURL( this.filename, this.urls, {transitionEffect: 'resize', layername: 'basic', format:'image/jpeg', rft_id: this.path, metadataUrl: this.metadataUrl} );
-        console.log("openURLLayer.viewerLevel " + openURLLayer.getViewerLevel());
+        console.log("baseLayer.viewerLevel " + openURLLayer.getViewerLevel());
         var metadata = openURLLayer.getImageMetadata();
         var resolutions = openURLLayer.getResolutions();
         var maxExtent = new OpenLayers.Bounds(0, 0, metadata.width, metadata.height);

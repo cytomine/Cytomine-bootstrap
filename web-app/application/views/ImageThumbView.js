@@ -1,11 +1,7 @@
 var ImageThumbView = Backbone.View.extend({
 
     events: {
-        "click"             : "open"
-    },
 
-    open : function () {
-        console.log("click");
     },
 
     initialize: function(options) {
