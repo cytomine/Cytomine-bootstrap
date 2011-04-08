@@ -235,6 +235,23 @@ div .overview {
 
 }
 
+
+div .ontologypanel {
+    align : center;
+    position : absolute;
+    left : 30px;
+    bottom : 100px;
+    z-index : 2021;
+    background-color: rgba(0, 0, 0, 0.6);
+    color : #fff;
+    padding: 0px;
+    margin : 0px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+
+}
+
 div .toolbar {
     position : absolute;
     left : 90px;

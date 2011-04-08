@@ -130,6 +130,10 @@
   <div id='ontologytree'></div>
 </script>
 
+<script type="text/html" id="imageontologyviewtpl">
+  <div class="tree"></div>
+</script>
+
 <script type="text/html" id="termitemviewtpl">
   <div class='thumb-info'><a href='#browse/{{ id }}'>Hello</a></div>
 </script>
@@ -177,7 +181,7 @@
       <div class="inline layerSwitcher" id="layerSwitcher{{id}}">
         <div class="slider"></div>
       </div>
-      <div class="inline" id="ontology{{id}}"></div>
+      <div class="inline ontologypanel" id="ontology{{id}}"></div>
       <div class="clearboth"></div>
     </div>
   </div>
@@ -197,6 +201,7 @@
 <script type="text/javascript" src="application/models/TermModel.js" ></script>
 <script type="text/javascript" src="application/models/OntologyModel.js" ></script>
 <script type="text/javascript" src="application/models/UserModel.js" ></script>
+<script type="text/javascript" src="application/models/ProjectModel.js" ></script>
 <!-- View -->
 <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
 <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
@@ -207,6 +212,7 @@
 <script type="text/javascript" src="application/views/ImageThumbView.js" ></script>
 <script type="text/javascript" src="application/views/TermView.js" ></script>
 <script type="text/javascript" src="application/views/OntologyView.js" ></script>
+<script type="text/javascript" src="application/views/ProjectView.js" ></script>
 <script type="text/javascript" src="application/views/Tabs.js" ></script>
 
 

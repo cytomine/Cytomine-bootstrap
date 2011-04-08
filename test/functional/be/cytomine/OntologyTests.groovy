@@ -75,6 +75,7 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
 
    log.info("create ontology")
     def ontologyToAdd = BasicInstance.getBasicOntologyNotExist()
+    println("ontologyToAdd.version="+ontologyToAdd.version)
     String jsonOntology = ([ontology : ontologyToAdd]).encodeAsJSON()
 
     log.info("post ontology:"+jsonOntology.replace("\n",""))

@@ -100,6 +100,9 @@ var ApplicationController = Backbone.Controller.extend({
         window.models.ontologies = new OntologyCollection();
         window.models.ontologies.fetch();
 
+        window.models.projects = new ProjectCollection();
+        window.models.projects.fetch();
+
         //init controllers
         new ProjectController();
         new ImageController();
@@ -133,6 +136,8 @@ var ApplicationController = Backbone.Controller.extend({
 
         //show explorer
         window.app.showComponent(window.app.components.warehouse);
+
+        window.app.currentProject =  25;
 
         Backbone.history.start();
 
