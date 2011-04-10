@@ -42,10 +42,11 @@ Watcher.prototype.destroy = function() {
 // - `url` URL to poll
 // - `callback` function to call if the URL request results in an error
 // - `interval` interval to poll the URL (in milliseconds)
-var Status = function(url, callback, interval) {
+var Status = function(url, errorcallback, successcallback, interval) {
     _.bindAll(this, 'start', 'error', 'stop');
     this.url = url;
-    this.callback = callback;
+    this.errorcallback = errorcallback;
+    this.successcallback = successcallback;
     this.interval = interval || 1000;
     this.start();
 };
@@ -56,13 +57,10 @@ Status.prototype.start = function() {
         $.ajax({
             url: self.url,
             type: 'GET',
-            success : function (data) {
-                window.app.user = data.user;
-            },
+            success : self.successcallback,
             error: self.error
         });
     };
-    ajaxFn(); //call it one first time in order the get user id
     if (!this.watcher) {
         var that = this;
         this.watcher = setInterval(ajaxFn, this.interval);
@@ -71,7 +69,7 @@ Status.prototype.start = function() {
 
 Status.prototype.error = function() {
     this.stop();
-    this.callback(this);
+    this.errorcallback(this);
 };
 
 Status.prototype.stop = function() {

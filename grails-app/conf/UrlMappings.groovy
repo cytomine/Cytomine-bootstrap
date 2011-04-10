@@ -10,11 +10,9 @@ class UrlMappings {
     /* Home */
     "/"(view:"/index")
 
-    /* Term test (delete me) */
-    "/term"(view:"/term")
-
     /* Errors */
-    "500" (view:'/error')
+    "/500" (view:'/error')
+    "/403" (view:'/forbidden')
 
     /* User */
     "/api/user"(controller:"restUser"){

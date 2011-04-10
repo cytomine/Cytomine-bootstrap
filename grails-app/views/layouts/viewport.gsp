@@ -14,7 +14,7 @@
   <link rel="icon" type="image/png" href="favicon.ico">
 
   <!-- Libs -->
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js"></script>
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"></script>
   <script type="text/javascript" src="https://github.com/documentcloud/underscore/raw/master/underscore.js"></script>
   <script type="text/javascript" src="https://github.com/documentcloud/backbone/raw/master/backbone.js"></script>
@@ -25,20 +25,20 @@
   <script type="text/javascript" src="application/lib/mustache.js"></script>
   <script type="text/javascript" src="application/lib/ICanHaz.js"></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
-<script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
-   <!-- Libs JStree-->
+  <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
+  <!-- Libs JStree-->
   <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/_docs/syntax/!script.js"></script>
   <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.cookie.js"></script>
   <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.hotkeys.js"></script>
   <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.jstree.js"></script>
-   <!-- Libs JStree -->
+  <!-- Libs JStree -->
 
-<!-- Styles -->
-<link rel='stylesheet' href='application/css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
-<link rel='stylesheet' href='application/css/reset.css' type='text/css'/>
-<link rel='stylesheet' href='application/css/cytomine.css' type='text/css'/>
-<link rel='stylesheet' href='application/css/jquery.pnotify.default.css' type='text/css'/>
-<link rel='stylesheet' href='application/css/isotope.css' type='text/css'/>
+  <!-- Styles -->
+  <link rel='stylesheet' href='application/css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
+  <link rel='stylesheet' href='application/css/reset.css' type='text/css'/>
+  <link rel='stylesheet' href='application/css/cytomine.css' type='text/css'/>
+  <link rel='stylesheet' href='application/css/jquery.pnotify.default.css' type='text/css'/>
+  <link rel='stylesheet' href='application/css/isotope.css' type='text/css'/>
 
 
 <!-- Templates -->
@@ -48,8 +48,8 @@
       <a class='home' href='#'><span class='logo'></span>Cytomine</a>
     </h1>
     <div id="menu" class="ui-buttonset actions">
-      <a href="#undo" style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-w"></span><span class="ui-button-text">Undo</span></a>
-      <a href="#redo" style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-e"></span><span class="ui-button-text">Redo</span></a>
+      <a id="undo"  style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-w"></span><span class="ui-button-text">Undo</span></a>
+      <a id="redo" style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-e"></span><span class="ui-button-text">Redo</span></a>
     </div>
   </div>
   <div id="content">
@@ -57,9 +57,19 @@
 </script>
 
 <script type="text/html" id="logindialogtpl">
-          <div id="login-confirm" title="Login Area">
-          <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />Login</p>
-          </div>
+  <div id="login-confirm" title="Login">
+  <div align="center" style="margin:auto;">
+    <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
+  </div>
+  <form id="login-form">
+    <fieldset>
+      <input type="text" size="20" id="j_username" value="username" name="j_username"  class="text ui-widget-content ui-corner-all" >
+      <input type="password" size="20" id="j_password" value="password" name="j_password"  class="text ui-widget-content ui-corner-all">
+      <label for="remember_me" >Remember me</label>
+      <input type="checkbox" id="remember_me" name="remember_me"  class="text ui-widget-content ui-corner-all">
+    </fieldset>
+  </form>
+  </div>
 </script>
 
 
@@ -77,8 +87,9 @@
 
 <script type="text/html" id="explorertpl">
   <div id="explorer">
-    <div class="main browser"></div>
+    <div class="main browser">
     </div>
+  </div>
 </script>
 
 <script type="text/html" id="warehousetpl">
@@ -89,14 +100,14 @@
     <div class="main ontology"></div>
 
     <div class='sidebar'>
-      <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
+      <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
       <ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
-      <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul>      
+      <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul>
       <ul class='menu libraries'></ul>
       <div class='buttons'>
         <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
       </div>
-  </div>
+    </div>
 </script>
 
 <script type="text/html" id="admintpl">
@@ -158,21 +169,21 @@
 
 <script type="text/html" id="browseimagetpl">
   <div id="tabs-{{id}}">
-    <div class="toolbar" id="toolbar{{id}}">
+    <div class="toolbar" id="toolbar{{id}}" class="ui-widget-header ui-corner-all">
 
-        <span class="draw">
-          <input type="radio" id="none{{id}}"      name="draw" checked="checked" /><label for="none{{id}}">None</label>
-          <input type="radio" id="select{{id}}"    name="draw" /><label for="select{{id}}">Select</label>
-          <input type="radio" id="regular4{{id}}"  name="draw" /><label for="regular4{{id}}">Regular4</label>
-          <input type="radio" id="regular30{{id}}" name="draw" /><label for="regular30{{id}}">Regular30</label>
-          <input type="radio" id="polygon{{id}}"   name="draw" /><label for="polygon{{id}}">Polygon</label>
-          <input type="radio" id="modify{{id}}"    name="draw" /><label for="modify{{id}}">Modify</label>
-        </span>
-        <button id="delete{{id}}" name="delete">delete</button>
-        <input type="checkbox" name="rotate" id="rotate{{id}}" /><label for="rotate{{id}}">Rotate</label>
-        <input type="checkbox" name="resize" id="resize{{id}}" /><label for="resize{{id}}">Resize</label>
-        <input type="checkbox" name="drag" id="drag{{id}}" /><label for="drag{{id}}">Drag</label>
-        <input type="checkbox" name="irregular" id="irregular{{id}}" /><label for="irregular{{id}}">Irregular</label>
+      <span class="draw">
+        <input type="radio" id="none{{id}}"      name="draw" checked="checked" /><label for="none{{id}}">None</label>
+        <input type="radio" id="select{{id}}"    name="draw" /><label for="select{{id}}">Select</label>
+        <input type="radio" id="regular4{{id}}"  name="draw" /><label for="regular4{{id}}">Regular4</label>
+        <input type="radio" id="regular30{{id}}" name="draw" /><label for="regular30{{id}}">Regular30</label>
+        <input type="radio" id="polygon{{id}}"   name="draw" /><label for="polygon{{id}}">Polygon</label>
+        <input type="radio" id="modify{{id}}"    name="draw" /><label for="modify{{id}}">Modify</label>
+      </span>
+      <button id="delete{{id}}" name="delete">delete</button>
+      <input type="checkbox" name="rotate" id="rotate{{id}}" /><label for="rotate{{id}}">Rotate</label>
+      <input type="checkbox" name="resize" id="resize{{id}}" /><label for="resize{{id}}">Resize</label>
+      <input type="checkbox" name="drag" id="drag{{id}}" /><label for="drag{{id}}">Drag</label>
+      <input type="checkbox" name="irregular" id="irregular{{id}}" /><label for="irregular{{id}}">Irregular</label>
 
     </div>
     <div class="map" id="map{{id}}"></div>
@@ -191,17 +202,20 @@
 <script type="text/javascript" src="application/Utilities.js" ></script>
 <!-- controllers -->
 <script type="text/javascript" src="application/controllers/ApplicationController.js" ></script>
+<script type="text/javascript" src="application/controllers/AuthController.js" ></script>
 <script type="text/javascript" src="application/controllers/ProjectController.js" ></script>
 <script type="text/javascript" src="application/controllers/ImageController.js" ></script>
 <script type="text/javascript" src="application/controllers/BrowseController.js" ></script>
 <script type="text/javascript" src="application/controllers/TermController.js" ></script>
 <script type="text/javascript" src="application/controllers/OntologyController.js" ></script>
+<script type="text/javascript" src="application/controllers/CommandController.js" ></script>
 <!-- Models -->
 <script type="text/javascript" src="application/models/ImageModel.js" ></script>
 <script type="text/javascript" src="application/models/TermModel.js" ></script>
 <script type="text/javascript" src="application/models/OntologyModel.js" ></script>
 <script type="text/javascript" src="application/models/UserModel.js" ></script>
 <script type="text/javascript" src="application/models/ProjectModel.js" ></script>
+<script type="text/javascript" src="application/models/AnnotationModel.js" ></script>
 <!-- View -->
 <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
 <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
@@ -219,7 +233,7 @@
 <script type="text/javascript">
   $(function() {
     // Create the app.
-    new ApplicationController().startup();
+    window.app = new ApplicationController();
   });
 </script>
 

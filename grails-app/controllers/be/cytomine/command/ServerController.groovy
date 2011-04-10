@@ -10,8 +10,10 @@ class ServerController {
   def ping = {
 
     def data = [:]
-    data.alive = true;
-    data.user = springSecurityService.principal.id
+    data.alive = true
+    data.authenticated = springSecurityService.isLoggedIn()
+    if (data.authenticated)
+      data.user = springSecurityService.principal.id
 
     withFormat {
       json { render data as JSON }

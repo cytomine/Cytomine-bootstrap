@@ -64,7 +64,8 @@ Ext.onReady(function(){
         url: '../j_spring_security_check',
         waitMsg: 'Processing Request',
         success: function(loginForm, resp){
-            window.location = resp.result.followUrl;
+
+            /*window.location = resp.result.followUrl;*/
         },
         failure : function(loginForm, resp) {
             var jsonData = Ext.util.JSON.decode(resp.response.responseText);

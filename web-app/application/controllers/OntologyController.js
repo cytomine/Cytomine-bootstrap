@@ -15,13 +15,12 @@ var OntologyController = Backbone.Controller.extend({
     },
 
     ontology : function() {
-        console.log("ontology controller");
         if (!this.view) {
 
             this.view = new OntologyView({
-                model : window.models.ontologies,
+                model : window.app.models.ontologies,
                 el:$("#warehouse > .ontology"),
-                container : window.app.components.warehouse
+                container : window.app.view.components.warehouse
             }).render();
 
             this.view.container.views.ontology = this.view;

@@ -2,115 +2,52 @@
 var ApplicationController = Backbone.Controller.extend({
 
     models : {},
+    controllers : {},
+    view : null,
+    status : {},
 
     routes: {
-        "login"     :   "login",
         "logout"    :   "logout",
         "explorer"  :   "explorer",
         "admin"     :   "admin",
-        "warehouse" :   "warehouse",
-        "undo"      :   "undo",
-        "redo"      :   "redo"
-    },
-
-    undo : function() {
-		$.post('command/undo.json', {}, function(data) {
-            var items = [];
-
-            $.each(data, function(key, val) {
-
-            });
-
-            window.app.message("Redo", data.message, "");
-
-
-        }, "json");
-
-    },
-
-    redo : function () {
-        $.post('command/redo.json', {}, function(data) {
-            var items = [];
-
-            $.each(data, function(key, val) {
-
-            });
-
-            window.app.message("Undo", data.message, "");
-
-
-        }, "json");
-
-    },
-
-    login : function () {
-        $("#app").hide();
-        new ConfirmDialogView({
-            el:'#dialogs',
-            //template : _.template($('#login-dialog-tpl').html()),
-            template : ich.logindialogtpl({}, true),
-            dialogAttr : {
-                dialogID : "#login-confirm",
-                buttons: {
-                    "Login": function() {
-
-                    }
-                },
-                close :function (event) {
-                    $(this).remove();
-                }
-            }
-        }).render();
-    },
-
-    logout : function () {
-        var dialog = new ConfirmDialogView({
-            el:'#dialogs',
-            //template : _.template($('#logout-dialog-tpl').html()),
-            template : ich.logoutdialogtpl({}, true),
-            dialogAttr : {
-                dialogID : "#logout-confirm",
-                buttons: {
-                    "Confirm": function() {
-                        window.location = "logout";
-                    },
-                    "Cancel": function() {
-                        $(this).dialog("close");
-                    }
-                },
-                close :function (event) {
-                    $(this).remove();
-                }
-            }
-        }).render();
+        "warehouse" :   "warehouse"
     },
 
     startup : function () {
         //init models
-        window.models = {};
-        window.models.images = new ImageCollection();
-        window.models.images.fetch();
-        window.models.users = new UserCollection();
-        window.models.users.fetch();
+        this.models.images = new ImageCollection();
+        this.models.users = new UserCollection();
+        this.models.terms = new TermCollection();
+        this.models.ontologies = new OntologyCollection();
+        this.models.projects = new ProjectCollection();
+        _.each(this.models, function(model){
+            model.fetch();
+        });
 
+        //top component
+        this.view = new ApplicationView({
+            el: $('#app')
+        }).render();
 
-        window.models.terms = new TermCollection();
-        window.models.terms.fetch();
+        this.status.currentProject =  25; //TMP
 
-        window.models.ontologies = new OntologyCollection();
-        window.models.ontologies.fetch();
+        this.warehouse(); //go to the warehouse when logged in
 
-        window.models.projects = new ProjectCollection();
-        window.models.projects.fetch();
+        Backbone.history.start();
+    },
 
+    initialize : function () {
         //init controllers
-        new ProjectController();
-        new ImageController();
-        new BrowseController();
-        new TermController();
-        new OntologyController();
+        this.controllers.project      = new ProjectController();
+        this.controllers.image        = new ImageController();
+        this.controllers.browse       = new BrowseController();
+        this.controllers.term         = new TermController();
+        this.controllers.ontology     = new OntologyController()
+        this.controllers.auth         = new AuthController();
+        this.controllers.command      = new CommandController();
 
-		this.status = new Status('server/ping', function(status) {
+        var self = this;
+        var serverDown = function(status) {
             var dialog = new ConfirmDialogView({
                 el:'#dialogs',
                 //template : _.template($('#server-down-tpl').html()),
@@ -118,43 +55,52 @@ var ApplicationController = Backbone.Controller.extend({
                 dialogAttr : {
                     dialogID : "#server-down",
                     buttons: {
-                        "OK": function() {
-
+                        "Ok :(": function() {
+                            $(this).dialog("close");
                         }
                     },
                     close :function (event) {
                         $(this).remove();
                     }
                 }
-            }).render();
-        }, 10000);
+            });
+        }
 
-        //init base layout
-        window.app = new ApplicationView({
-            el: $('#app')
-        }).render();
+        var successcallback =  function (data) {
+            self.status.user = {
+                id : data.user,
+                authenticated : data.authenticated
+            }
+            if (data.authenticated) {
+                self.startup();
+            } else {
+                self.controllers.auth.login();
+            }
+        }
 
-        //show explorer
-        window.app.showComponent(window.app.components.warehouse);
+        var pingURL = 'server/ping';
+        $.ajax({
+            url: pingURL,
+            type: 'GET',
+            success : successcallback
+        });
 
-        window.app.currentProject =  25;
-
-        Backbone.history.start();
-
-
+        this.status = new Status(pingURL, serverDown,
+                                function () { //TO DO: HANDLE WHEN USER IS DISCONNECTED BY SERVER
+                                }, 10000);
     },
 
-
     explorer: function() {
-        window.app.showComponent(window.app.components.explorer);
+        this.view.showComponent(this.view.components.explorer);
     },
 
     admin: function() {
-        window.app.showComponent(window.app.components.admin);
+        this.view.showComponent(this.view.components.admin);
     },
 
     warehouse : function () {
-        window.app.showComponent(window.app.components.warehouse);
+        this.controllers.image.image(0);
+        this.view.showComponent(this.view.components.warehouse);
     }
 
 

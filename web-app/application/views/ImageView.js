@@ -13,7 +13,7 @@ var ImageView = Backbone.View.extend({
         this.model.fetch({
             success: function(){
                 var cpt = 0;
-                var nb_thumb_by_page = 15;
+                var nb_thumb_by_page = 21;
                 var inf = Math.abs(self.page) * nb_thumb_by_page;
                 var sup = (Math.abs(self.page) + 1) * nb_thumb_by_page;
                 console.log("Model size=" + self.model.length);

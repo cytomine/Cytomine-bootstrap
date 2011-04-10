@@ -11,6 +11,7 @@ import org.springframework.security.authentication.LockedException
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import javax.servlet.http.HttpServletResponse
 
 class LoginController {
 
@@ -112,11 +113,29 @@ class LoginController {
   /**
    * The Ajax success redirect url.
    */
-  def ajaxSuccess = {
+  /* def ajaxSuccess = {
     response.status = 200
     render([success: true, username: springSecurityService.authentication.name, followUrl : grailsApplication.config.grails.serverURL] as JSON)
+  }*/
+
+
+  def authAjax = {
+    response.sendError HttpServletResponse.SC_UNAUTHORIZED
   }
 
+  /**
+   * The Ajax success redirect url.
+   */
+  def ajaxSuccess = {
+    User user = User.read(springSecurityService.principal.id)
+    render([success: true, id: user.id, fullname : user.firstname + " " + user.lastname] as JSON)
+  }
 
+  /**
+   * The Ajax denied redirect url.
+   */
+  def ajaxDenied = {
+    render([error: 'access denied'] as JSON)
+  }
 
 }

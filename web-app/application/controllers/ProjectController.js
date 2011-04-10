@@ -9,9 +9,9 @@ var ProjectController = Backbone.Controller.extend({
         if (!this.view) {
              console.log("Project controller");
             this.view = new ProjectView({
-                model : new ImageCollection(),
+                model : window.app.models.projects,
                 el:$("#warehouse > .project"),
-                container : window.app.components.explorer
+                container : window.app.view.components.explorer
             }).render();
 
             this.view.container.views.project = this.view;

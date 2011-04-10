@@ -8,13 +8,13 @@ var BrowseImageView = Backbone.View.extend({
         var tpl = ich.browseimagetpl(this.model.toJSON(), true);
         $(this.el).append(tpl);
         var tabs = $(this.el).children('.tabs');
-        console.log(this.model.get('filename'));
         this.el.tabs("add", "#tabs-" + this.model.get('id'), this.model.get('filename'));
         this.el.css("display", "block");
+        this.initToolbar();
         this.initMap();
         this.initVectorLayers();
         this.initOntology();
-        this.initSideBar();
+
         return this;
     },
     getUserLayer: function () {
@@ -113,7 +113,7 @@ var BrowseImageView = Backbone.View.extend({
             }
         });
     },
-    initSideBar: function () {
+    initToolbar: function () {
         var toolbar = $('#toolbar' + this.model.get('id'));
         var self = this;
         toolbar.find('input[name=select]').button({
@@ -168,21 +168,18 @@ var BrowseImageView = Backbone.View.extend({
         });
         toolbar.find('input[id=irregular' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().toggleIrregular();
-
         });
-        //image.getUserLayer().toggleControl(this);
     },
     initVectorLayers: function () {
         var self = this;
         var colors = ["#006b9a", "#a11323", "#b7913e"];
         var colorIndex = 0;
-        window.models.users.fetch({
+        window.app.models.users.fetch({
             success: function () {
-                window.models.users.each(function (user) {
-                    console.log(user.get('username'));
+                window.app.models.users.each(function (user) {
                     var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), colors[colorIndex]);
                     layerAnnotation.loadAnnotations(self.map);
-                    if (user.get('id') == window.app.user) {
+                    if (user.get('id') == window.app.status.user.id) {
                         self.userLayer = layerAnnotation;
                         layerAnnotation.initControls(self);
                         layerAnnotation.registerEvents();
@@ -195,48 +192,32 @@ var BrowseImageView = Backbone.View.extend({
     initOntology: function () {
 
         var self = this;
-
-
-        //ontologyID
-
-        console.log("initOntology.render");
-
-        var self = this;
         var tpl = ich.imageontologyviewtpl({}, true);
         $("#ontology"+ this.model.get("id")).html(tpl);
-
-        window.models.projects.fetch({
+        window.app.models.projects.fetch({
             success: function () {
                 console.log("fetch project");
-                var currentProject = models.projects.get(window.app.currentProject);
+                var currentProject = window.app.models.projects.get(window.app.status.currentProject);
                 console.log("currentProject:"+currentProject);
                 var currentOntologyId = currentProject.get('ontology');
 
 
-                window.models.ontologies.fetch({
+                window.app.models.ontologies.fetch({
                     success: function () {
-                        console.log("fetch ontologies");
-                        var currentOntology = models.ontologies.get(currentOntologyId);
-                        console.log("currentOntology:"+currentOntology);
+                        var currentOntology = window.app.models.ontologies.get(currentOntologyId);
                         var json = currentOntology.toJSON();
                         console.log("json="+JSON.stringify(json));
+                        $("#ontology"+ self.model.get("id")).find('.tree').jstree({
+                            "json_data" : {
+                                "data" :json
+                            },
+                            "plugins" : ["json_data", "ui","themeroller"]
 
-                        $(function () {
-                            $("#ontology"+ self.model.get("id")).find('.tree').jstree({
-                                "json_data" : {
-                                    "data" :json
-                                },
-                                "plugins" : ["json_data", "ui","themeroller"]
-
-                            });
                         });
                     }
                 });
-
             }
         });
-
-        //$("#ontology"+ this.model.get("id")).find('.tree').html("coucou");
 
         var ontologyPanelWidth = $('#ontology' + this.model.get('id')).width();
         var ontologyPanelHeight = $('#ontology' + this.model.get('id')).height();
@@ -247,17 +228,6 @@ var BrowseImageView = Backbone.View.extend({
             }
         });
 
-
-        //console.log("html");
-        //console.log("$('#ontology'"+this.model.get('id')").exists()="+($('#ontology' + this.model.get('id')).length>0));
-        //console.log("$('#ontology{{id}}').exists()="+($('#ontology' + this.model.get('id')).length>0));
-        //console.log("$('#browseimagetpl').exists()="+($('#browseimagetpl').length>0));
-
-        //$('#imageontologytree').append("HELLO"+ "<br>");
-
-
-        //$("#ontologyid").append("ontology" + "<br>");
-        //$("#ontologyid").append("ontology" + "<br>");
     },
     initTools: function (controls) {
         for (var key in controls) {
@@ -726,5 +696,25 @@ AnnotationLayer.prototype = {
                 control.deactivate();
             }
         }
+    },
+
+    annotationAdded : function(idAnnotation) {
+        var self = this;
+        var annotation = new AnnotationModel({id : idAnnotation}).fetch({
+            success : function (model) {
+                var format = new OpenLayers.Format.WKT();
+                var location =  format.read(model.get('location'));
+                var feature = new OpenLayers.Feature.Vector( location.geometry);
+                feature.attributes = {idAnnotation: model.get('id'), listener:'NO',importance: 10 };
+                self.addFeature(feature);
+            }
+        });
+    },
+    annotationRemoved : function(idAnnotation) {
+        this.removeFeature(idAnnotation);
+    },
+    annotationUpdated : function(idAnnotation, idImage) {
+        this.annotationRemoved(idAnnotation);
+        this.annotationAdded(idAnnotation);
     }
 }

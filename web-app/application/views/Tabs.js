@@ -25,9 +25,6 @@ var Tabs = Backbone.View.extend({
         });
 
         $("ul.tabs a").css('height', $("ul.tabs").height())
-
-
-
         return this;
     },
     addTab : function(idImage) {
@@ -36,11 +33,11 @@ var Tabs = Backbone.View.extend({
             console.log("Already exists : " + idImage);
             return; //already added
         }
-        window.models.images.fetch({
+        window.app.models.images.fetch({
             success : function () {
                 var tabs = $(self.el).children('.tabs');
                 self.images[idImage] = new BrowseImageView({
-                    model : window.models.images.get(idImage),
+                    model : window.app.models.images.get(idImage),
                     el: tabs
                 }).render();
             }

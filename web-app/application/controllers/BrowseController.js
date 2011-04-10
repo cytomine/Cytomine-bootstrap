@@ -11,7 +11,7 @@ var BrowseController = Backbone.Controller.extend({
         if (this.tabs == null) {
             this.tabs = new Tabs({
                 el:$("#explorer > .browser"),
-                container : window.app.components.explorer
+                container : window.app.view.components.explorer
             }).render();
 
          //   this.tabs.container.views.tabs = this.tabs;
@@ -20,7 +20,7 @@ var BrowseController = Backbone.Controller.extend({
         this.tabs.addTab(idImage);
         this.tabs.showTab(idImage);
 
-        window.app.showComponent(this.tabs.container);
+        window.app.view.showComponent(this.tabs.container);
     }
 
 });
