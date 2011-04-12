@@ -16,6 +16,8 @@
   <!-- Libs -->
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js"></script>
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"></script>
+  <script type="text/javascript" src="application/lib/jquery.fileupload-ui.js"></script>
+  <script type="text/javascript" src="application/lib/jquery.fileupload.js"></script>
   <script type="text/javascript" src="https://github.com/documentcloud/underscore/raw/master/underscore.js"></script>
   <script type="text/javascript" src="https://github.com/documentcloud/backbone/raw/master/backbone.js"></script>
   <script type="text/javascript" src="application/lib/json2.js" ></script>
@@ -25,20 +27,21 @@
   <script type="text/javascript" src="application/lib/mustache.js"></script>
   <script type="text/javascript" src="application/lib/ICanHaz.js"></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
-  <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
-  <!-- Libs JStree-->
-  <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/_docs/syntax/!script.js"></script>
-  <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.cookie.js"></script>
-  <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.hotkeys.js"></script>
-  <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.jstree.js"></script>
-  <!-- Libs JStree -->
+<script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
+<!-- Libs JStree-->
+<script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/_docs/syntax/!script.js"></script>
+<script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.cookie.js"></script>
+<script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.hotkeys.js"></script>
+<script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.jstree.js"></script>
+<!-- Libs JStree -->
 
-  <!-- Styles -->
-  <link rel='stylesheet' href='application/css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
-  <link rel='stylesheet' href='application/css/reset.css' type='text/css'/>
-  <link rel='stylesheet' href='application/css/cytomine.css' type='text/css'/>
-  <link rel='stylesheet' href='application/css/jquery.pnotify.default.css' type='text/css'/>
-  <link rel='stylesheet' href='application/css/isotope.css' type='text/css'/>
+<!-- Styles -->
+<link rel='stylesheet' href='application/css/reset.css' type='text/css'/>
+<link rel='stylesheet' href='application/css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
+<link rel='stylesheet' href='application/css/jquery.fileupload-ui.css' type='text/css'/>
+<link rel='stylesheet' href='application/css/jquery.pnotify.default.css' type='text/css'/>
+<link rel='stylesheet' href='application/css/isotope.css' type='text/css'/>
+<link rel='stylesheet' href='application/css/cytomine.css' type='text/css'/>
 
 
 <!-- Templates -->
@@ -91,6 +94,22 @@
     </div>
   </div>
 </script>
+
+<script type="text/html" id="uploadtpl">
+  <div id="upload">
+    <div class='main upload'>
+      <form id="file_upload" action="upload/image" method="POST" enctype="multipart/form-data">
+      <input type="file" name="file" multiple>
+      <button>Upload</button>
+      <div>Upload files</div>
+    </form>
+      <button id="start_uploads">Start uploads</button>
+      <table id="files"></table>
+    </div>
+  </div>
+</script>
+
+
 
 <script type="text/html" id="warehousetpl">
   <div id="warehouse">

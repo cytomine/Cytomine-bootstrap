@@ -9,12 +9,14 @@ var ApplicationController = Backbone.Controller.extend({
     routes: {
         "logout"    :   "logout",
         "explorer"  :   "explorer",
+        "upload"    :   "upload",
         "admin"     :   "admin",
         "warehouse" :   "warehouse"
     },
 
     startup : function () {
         //init models
+
         this.models.images = new ImageCollection();
         this.models.users = new UserCollection();
         this.models.terms = new TermCollection();
@@ -92,6 +94,10 @@ var ApplicationController = Backbone.Controller.extend({
 
     explorer: function() {
         this.view.showComponent(this.view.components.explorer);
+    },
+
+    upload: function() {
+        this.view.showComponent(this.view.components.upload);
     },
 
     admin: function() {

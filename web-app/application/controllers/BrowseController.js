@@ -2,6 +2,7 @@
 var BrowseController = Backbone.Controller.extend({
 
     tabs : null,
+
     routes: {
         "browse/:idImage"   :   "browse"
     },
