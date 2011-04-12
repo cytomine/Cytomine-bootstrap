@@ -6,6 +6,7 @@ import be.cytomine.test.HttpClient
 import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
 import be.cytomine.ontology.Relation
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,7 +31,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
     log.info("check response:"+response)
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
   }
 
   void testListRelationWithoutCredential() {
@@ -73,7 +74,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("create relation")
     def relationToAdd = BasicInstance.getBasicRelationNotExist()
-    String jsonRelation = ([relation : relationToAdd]).encodeAsJSON()
+    String jsonRelation = relationToAdd.encodeAsJSON()
 
     log.info("post relation:"+jsonRelation.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/relation.json"
@@ -152,10 +153,10 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("create relation")
     def relationToAdd = BasicInstance.getBasicRelationNotExist()
-    String jsonRelation = ([relation : relationToAdd]).encodeAsJSON()
+    String jsonRelation =  relationToAdd.encodeAsJSON()
 
     def jsonUpdate = JSON.parse(jsonRelation)
-    jsonUpdate.relation.name = null
+    jsonUpdate.name = null
     jsonRelation = jsonUpdate.encodeAsJSON()
 
     log.info("post relation:"+jsonRelation.replace("\n",""))
@@ -177,7 +178,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("create relation")
     def relationToAdd = BasicInstance.getBasicRelationNotExist()
-    String jsonRelation = ([relation : relationToAdd]).encodeAsJSON()
+    String jsonRelation = relationToAdd.encodeAsJSON()
 
     //save the relation, so the "add" below must failed
     relationToAdd.save(flush:true)
@@ -216,10 +217,9 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
     /* Encode a niew relation Name2*/
     Relation relationToEdit = Relation.get(relationToAdd.id)
-    def jsonEdit = [relation : relationToEdit]
-    def jsonRelation = jsonEdit.encodeAsJSON()
+    def jsonRelation = relationToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonRelation)
-    jsonUpdate.relation.name = newName
+    jsonUpdate.name = newName
     jsonRelation = jsonUpdate.encodeAsJSON()
 
     log.info("put relation:"+jsonRelation.replace("\n",""))
@@ -327,10 +327,9 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
     /* Encode a niew relation Name2*/
     Relation relationToEdit = Relation.get(relationToAdd.id)
-    def jsonEdit = [relation : relationToEdit]
-    def jsonRelation = jsonEdit.encodeAsJSON()
+    def jsonRelation = relationToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonRelation)
-    jsonUpdate.relation.name = null
+    jsonUpdate.name = null
     jsonRelation = jsonUpdate.encodeAsJSON()
 
     log.info("put relation:"+jsonRelation.replace("\n",""))
@@ -358,11 +357,10 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
     /* Encode a niew relation Name2*/
     Relation relationToEdit = Relation.get(relationWithNewName.id)
     log.info("relationToEdit="+relationToEdit)
-    def jsonEdit = [relation : relationToEdit]
-    def jsonRelation = jsonEdit.encodeAsJSON()
+    def jsonRelation = relationToEdit.encodeAsJSON()
     log.info("jsonRelation="+jsonRelation)
     def jsonUpdate = JSON.parse(jsonRelation)
-    jsonUpdate.relation.name = relationWithOldName.name
+    jsonUpdate.name = relationWithOldName.name
     jsonRelation = jsonUpdate.encodeAsJSON()
 
     log.info("put relation:"+jsonRelation.replace("\n",""))
@@ -390,12 +388,11 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
     /* Encode a niew relation Name2*/
     Relation relationToEdit = Relation.get(relationWithNewName.id)
     log.info("relationToEdit="+relationToEdit)
-    def jsonEdit = [relation : relationToEdit]
-    def jsonRelation = jsonEdit.encodeAsJSON()
+    def jsonRelation = relationToEdit.encodeAsJSON()
     log.info("jsonRelation="+jsonRelation)
     def jsonUpdate = JSON.parse(jsonRelation)
-    jsonUpdate.relation.name = relationWithOldName.name
-    jsonUpdate.relation.id = -99
+    jsonUpdate.name = relationWithOldName.name
+    jsonUpdate.id = -99
     jsonRelation = jsonUpdate.encodeAsJSON()
 
     log.info("put relation:"+jsonRelation.replace("\n",""))
@@ -417,7 +414,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("create relation")
     def relationToDelete = BasicInstance.createOrGetBasicRelation()
-    String jsonRelation = ([relation : relationToDelete]).encodeAsJSON()
+    String jsonRelation = relationToDelete.encodeAsJSON()
     int idRelation = relationToDelete.id
     log.info("delete relation:"+jsonRelation.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/relation/"+idRelation+".json"
@@ -494,7 +491,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
      log.info("create relation")
     def relationToDelete = BasicInstance.createOrGetBasicRelation()
-    String jsonRelation = ([relation : relationToDelete]).encodeAsJSON()
+    String jsonRelation = relationToDelete.encodeAsJSON()
 
     log.info("delete relation:"+jsonRelation.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/relation/-99.json"

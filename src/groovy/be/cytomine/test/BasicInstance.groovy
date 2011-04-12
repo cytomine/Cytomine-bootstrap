@@ -476,62 +476,62 @@ log.debug  "createOrGetBasicUser()"
 
   static void compareAnnotation(map, json)  {
 
-    assert map.geom.replace(' ', '').equals(json.annotation.location.replace(' ',''))
-    assert toDouble(map.zoomLevel).equals(toDouble(json.annotation.zoomLevel))
-    assert map.channels.equals(json.annotation.channels)
-    assert toLong(map.user.id).equals(toLong(json.annotation.user))
+    assert map.geom.replace(' ', '').equals(json.location.replace(' ',''))
+    assert toDouble(map.zoomLevel).equals(toDouble(json.zoomLevel))
+    assert map.channels.equals(json.channels)
+    assert toLong(map.user.id).equals(toLong(json.user))
   }
 
   static void compareImage(map, json)  {
 
-    assert map.filename.equals(json.image.filename)
-    assert map.geom.replace(' ', '').equals(json.image.roi.replace(' ',''))
-    assert toLong(map.user.id).equals(toLong(json.image.user))
-    assert toLong(map.scanner.id).equals(toLong(json.image.scanner))
-    assert toLong(map.slide.id).equals(toLong(json.image.slide))
-    assert map.path.equals(json.image.path)
-    assert map.mime.extension.equals(json.image.mime)
-    assert toInteger(map.width).equals(toInteger(json.image.width))
-    assert toInteger(map.height).equals(toInteger(json.image.height))
-    assert toDouble(map.scale).equals(toDouble(json.image.scale))
+    assert map.filename.equals(json.filename)
+    assert map.geom.replace(' ', '').equals(json.roi.replace(' ',''))
+    assert toLong(map.user.id).equals(toLong(json.user))
+    assert toLong(map.scanner.id).equals(toLong(json.scanner))
+    assert toLong(map.slide.id).equals(toLong(json.slide))
+    assert map.path.equals(json.path)
+    assert map.mime.extension.equals(json.mime)
+    assert toInteger(map.width).equals(toInteger(json.width))
+    assert toInteger(map.height).equals(toInteger(json.height))
+    assert toDouble(map.scale).equals(toDouble(json.scale))
 
   }
 
   static void compareProject(map, json)  {
 
-    assert map.name.equals(json.project.name)
-    assert toLong(map.ontology.id).equals(toLong(json.project.ontology))
+    assert map.name.equals(json.name)
+    assert toLong(map.ontology.id).equals(toLong(json.ontology))
 
   }
 
 
     static void compareRelation(map, json)  {
 
-    assert map.name.equals(json.relation.name)
+    assert map.name.equals(json.name)
 
   }
 
   static void compareTerm(map, json)  {
 
-    assert map.name.equals(json.term.name)
-    assert map.comment.equals(json.term.comment)
-    assert map.color.equals(json.term.color)
-    assert toLong(map.ontology.id).equals(toLong(json.term.ontology))
+    assert map.name.equals(json.name)
+    assert map.comment.equals(json.comment)
+    assert map.color.equals(json.color)
+    assert toLong(map.ontology.id).equals(toLong(json.ontology))
 
   }
 
   static void compareUser(map, json)  {
 
-    assert map.firstname.equals(json.user.firstname)
-    assert map.lastname.equals(json.user.lastname)
-    assert map.email.equals(json.user.email)
-    assert map.username.equals(json.user.username)
+    assert map.firstname.equals(json.firstname)
+    assert map.lastname.equals(json.lastname)
+    assert map.email.equals(json.email)
+    assert map.username.equals(json.username)
 
   }
 
   static void compareOntology(map, json)  {
 
-    assert map.name.equals(json.ontology.name)
+    assert map.name.equals(json.name)
 
   }
 

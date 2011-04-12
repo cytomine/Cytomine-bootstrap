@@ -17,8 +17,7 @@ class RestAnnotationTermController {
   def listTermByAnnotation = {
     log.info "listByAnnotation"
     if(params.idannotation && Annotation.exists(params.idannotation)) {
-      def data = [:]
-      data.term = Annotation.get(params.idannotation).terms()
+      def data = Annotation.get(params.idannotation).terms()
       //data.annotationTerm = AnnotationTerm.findAllByAnnotation(Annotation.get(params.idannotation))
       withFormat {
         json { render data as JSON }
@@ -37,8 +36,7 @@ class RestAnnotationTermController {
   def listAnnotationByTerm = {
     log.info "listByTerm"
     if(params.idterm && Term.exists(params.idterm)) {
-      def data = [:]
-      data.annotation = Term.get(params.idterm).annotations()
+      def data = Term.get(params.idterm).annotations()
       withFormat {
         json { render data as JSON }
         xml { render data as XML}
@@ -58,8 +56,7 @@ class RestAnnotationTermController {
       Annotation annotation = Annotation.get(params.idannotation)
       Term term = Term.get(params.idterm)
     if(annotation!=null && term!=null && AnnotationTerm.findByAnnotationAndTerm(annotation,term)!=null) {
-      def data = [:]
-      data.annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
+      def data  = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
       withFormat {
         json { render data as JSON }
         xml { render data as XML }

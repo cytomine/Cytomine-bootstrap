@@ -14,7 +14,7 @@ class AddAnnotationTermCommand extends Command implements UndoRedoCommand {
     try
     {
       def json = JSON.parse(postData)
-      AnnotationTerm newAnnotationTerm = AnnotationTerm.createAnnotationTermFromData(json.annotationTerm)
+      AnnotationTerm newAnnotationTerm = AnnotationTerm.createAnnotationTermFromData(json)
       if (newAnnotationTerm.validate()) {
         newAnnotationTerm =  AnnotationTerm.link(newAnnotationTerm.annotation,newAnnotationTerm.term)
         log.info("Save AnnotationTerm with id:"+newAnnotationTerm.id)
@@ -44,7 +44,7 @@ class AddAnnotationTermCommand extends Command implements UndoRedoCommand {
     def annotationTermData = JSON.parse(data)
     def json = JSON.parse(postData)
     log.debug("Redo json:"+ json.toString() )
-    def annotationTerm = AnnotationTerm.createAnnotationTermFromData(json.annotationTerm)
+    def annotationTerm = AnnotationTerm.createAnnotationTermFromData(json)
     annotationTerm = AnnotationTerm.link(annotationTermData.id,annotationTerm.annotation,annotationTerm.term)
     //println "annotationTermData.id="+annotationTermData.id
 

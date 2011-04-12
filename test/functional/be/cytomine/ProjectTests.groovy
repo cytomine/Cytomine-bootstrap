@@ -7,6 +7,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
 import be.cytomine.project.Project
 import be.cytomine.ontology.Ontology
+import org.codehaus.groovy.grails.web.json.JSONArray
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -30,7 +31,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     log.info("check response:"+response)
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
   }
 
   void testListProjectWithoutCredential() {
@@ -73,7 +74,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("create project")
     def projectToAdd = BasicInstance.getBasicProjectNotExist()
-    String jsonProject = ([project : projectToAdd]).encodeAsJSON()
+    String jsonProject = projectToAdd.encodeAsJSON()
 
     log.info("post project:"+jsonProject.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/project.json"
@@ -152,10 +153,10 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("create project")
     def projectToAdd = BasicInstance.createOrGetBasicProject()
-    String jsonProject = ([project : projectToAdd]).encodeAsJSON()
+    String jsonProject =  projectToAdd.encodeAsJSON()
 
     def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.project.name = null
+    jsonUpdate.name = null
     jsonProject = jsonUpdate.encodeAsJSON()
 
     log.info("post project:"+jsonProject.replace("\n",""))
@@ -194,11 +195,10 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
 
     /* Encode a niew project Name2*/
     Project projectToEdit = Project.get(projectToAdd.id)
-    def jsonEdit = [project : projectToEdit]
-    def jsonProject = jsonEdit.encodeAsJSON()
+    def jsonProject = projectToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.project.name = newName
-    jsonUpdate.project.ontology = newOtology.id
+    jsonUpdate.name = newName
+    jsonUpdate.ontology = newOtology.id
     jsonProject = jsonUpdate.encodeAsJSON()
 
     log.info("put project:"+jsonProject.replace("\n",""))
@@ -306,10 +306,9 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
 
     /* Encode a niew project Name2*/
     Project projectToEdit = Project.get(projectToAdd.id)
-    def jsonEdit = [project : projectToEdit]
-    def jsonProject = jsonEdit.encodeAsJSON()
+    def jsonProject = projectToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.project.name = null
+    jsonUpdate.name = null
     jsonProject = jsonUpdate.encodeAsJSON()
 
     log.info("put project:"+jsonProject.replace("\n",""))
@@ -337,11 +336,10 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     /* Encode a niew project Name2*/
     Project projectToEdit = Project.get(projectWithNewName.id)
     log.info("projectToEdit="+projectToEdit)
-    def jsonEdit = [project : projectToEdit]
-    def jsonProject = jsonEdit.encodeAsJSON()
+    def jsonProject = projectToEdit.encodeAsJSON()
     log.info("jsonProject="+jsonProject)
     def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.project.name = projectWithOldName.name
+    jsonUpdate.name = projectWithOldName.name
     jsonProject = jsonUpdate.encodeAsJSON()
 
     log.info("put project:"+jsonProject.replace("\n",""))
@@ -369,12 +367,11 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     /* Encode a niew project Name2*/
     Project projectToEdit = Project.get(projectWithNewName.id)
     log.info("projectToEdit="+projectToEdit)
-    def jsonEdit = [project : projectToEdit]
-    def jsonProject = jsonEdit.encodeAsJSON()
+    def jsonProject = projectToEdit.encodeAsJSON()
     log.info("jsonProject="+jsonProject)
     def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.project.name = projectWithOldName.name
-    jsonUpdate.project.id = -99
+    jsonUpdate.name = projectWithOldName.name
+    jsonUpdate.id = -99
     jsonProject = jsonUpdate.encodeAsJSON()
 
     log.info("put project:"+jsonProject.replace("\n",""))
@@ -395,7 +392,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     log.info("create project")
     def projectToDelete = BasicInstance.getBasicProjectNotExist()
     assert projectToDelete.save(flush:true)!=null
-    String jsonProject = ([project : projectToDelete]).encodeAsJSON()
+    String jsonProject = projectToDelete.encodeAsJSON()
     int idProject = projectToDelete.id
     log.info("delete project:"+jsonProject.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/project/"+idProject+".json"
@@ -473,7 +470,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
 
      log.info("create project")
     def projectToDelete = BasicInstance.createOrGetBasicProject()
-    String jsonProject = ([project : projectToDelete]).encodeAsJSON()
+    String jsonProject = projectToDelete.encodeAsJSON()
 
     log.info("delete project:"+jsonProject.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/project/-99.json"

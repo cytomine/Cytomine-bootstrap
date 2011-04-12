@@ -12,7 +12,7 @@ class AddProjectCommand extends Command implements UndoRedoCommand {
     try
     {
       def json = JSON.parse(postData)
-      Project newProject = Project.createProjectFromData(json.project)
+      Project newProject = Project.createProjectFromData(json)
       if (newProject.validate()) {
         newProject.save(flush:true)
         log.info("Save project with id:"+newProject.id)
@@ -42,7 +42,7 @@ class AddProjectCommand extends Command implements UndoRedoCommand {
     def projectData = JSON.parse(data)
     def json = JSON.parse(postData)
     log.debug("Redo json:"+ json.toString() )
-    def project = Project.createProjectFromData(json.project)
+    def project = Project.createProjectFromData(json)
     project.id = projectData.id
     project.save(flush:true)
     log.debug("Save project:"+project.id)

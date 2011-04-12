@@ -6,6 +6,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.test.BasicInstance
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,7 +33,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     log.info("check response:"+response)
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
   }
 
   void testListRelationTermWithoutCredential() {
@@ -68,7 +69,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     log.info("check response:"+response)
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
   }
   void testListRelationTermByTerm2() {
 
@@ -86,7 +87,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     log.info("check response:"+response)
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
 
   }
   void testAddRelationTermCorrect() {
@@ -94,7 +95,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     log.info("create RelationTerm")
     def relationTermToAdd = BasicInstance.getBasicRelationTermNotExist()
     relationTermToAdd.discard()
-    String jsonRelationTerm = ([relationTerm : relationTermToAdd]).encodeAsJSON()
+    String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
 
     log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/relation/"+ relationTermToAdd.relation.id +"/term.json"
@@ -174,7 +175,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
   void testAddRelationTermAlreadyExist() {
     log.info("create RelationTerm")
     def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
-    String jsonRelationTerm = ([relationTerm : relationTermToAdd]).encodeAsJSON()
+    String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
 
     log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/relation/"+ relationTermToAdd.relation.id +"/term.json"
@@ -193,9 +194,9 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
   void testAddRelationTermWithRelationNotExist() {
      log.info("create RelationTerm")
     def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
-    String jsonRelationTerm = ([relationTerm : relationTermToAdd]).encodeAsJSON()
+    String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonRelationTerm)
-    jsonUpdate.relationTerm.relation.id = -99
+    jsonUpdate.relation.id = -99
     jsonRelationTerm = jsonUpdate.encodeAsJSON()
 
     log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
@@ -215,9 +216,9 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
   void testAddRelationTermWithTerm1NotExist() {
       log.info("create RelationTerm")
     def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
-    String jsonRelationTerm = ([relationTerm : relationTermToAdd]).encodeAsJSON()
+    String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonRelationTerm)
-    jsonUpdate.relationTerm.term1.id = -99
+    jsonUpdate.term1.id = -99
     jsonRelationTerm = jsonUpdate.encodeAsJSON()
 
     log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
@@ -237,9 +238,9 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
   void testAddRelationTermWithTerm2NotExist() {
       log.info("create RelationTerm")
     def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
-    String jsonRelationTerm = ([relationTerm : relationTermToAdd]).encodeAsJSON()
+    String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonRelationTerm)
-    jsonUpdate.relationTerm.term2.id = -99
+    jsonUpdate.term2.id = -99
     jsonRelationTerm = jsonUpdate.encodeAsJSON()
 
     log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
@@ -262,7 +263,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     def relationTermToDelete = BasicInstance.getBasicRelationTermNotExist()
     assert relationTermToDelete.save(flush:true)!=null
    // relationTermToDelete.discard()
-    String jsonRelationTerm = ([relationTerm : relationTermToDelete]).encodeAsJSON()
+    String jsonRelationTerm = relationTermToDelete.encodeAsJSON()
 
     int idRelation = relationTermToDelete.relation.id
     int idTerm1 = relationTermToDelete.term1.id

@@ -13,17 +13,17 @@ class EditTermCommand extends Command implements UndoRedoCommand {
 
     try {
       def postData = JSON.parse(postData)
-      log.debug "Term id="+postData.term.id
-      def updatedTerm = Term.get(postData.term.id)
+      log.debug "Term id="+postData.id
+      def updatedTerm = Term.get(postData.id)
       def backup = updatedTerm.encodeAsJSON()
 
       if (!updatedTerm ) {
-        log.error "Term not found with id: " + postData.term.id
-        return [data : [success : false, message : "Term not found with id: " + postData.term.id], status : 404]
+        log.error "Term not found with id: " + postData.id
+        return [data : [success : false, message : "Term not found with id: " + postData.id], status : 404]
       }
 
-      updatedTerm = Term.getTermFromData(updatedTerm,postData.term)
-      updatedTerm.id = postData.term.id
+      updatedTerm = Term.getTermFromData(updatedTerm,postData)
+      updatedTerm.id = postData.id
 
       if ( updatedTerm.validate() && updatedTerm.save(flush:true)) {
         log.info "New Term is saved"

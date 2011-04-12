@@ -9,7 +9,7 @@ class AddUserCommand extends Command implements UndoRedoCommand {
 
   def execute() {
     def userData = JSON.parse(postData)
-    def newUser = User.createUserFromData(userData.user)
+    def newUser = User.createUserFromData(userData)
 
     if (newUser.validate()) {
       newUser.save()

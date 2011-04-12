@@ -5,6 +5,7 @@ import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import be.cytomine.security.User
+import org.codehaus.groovy.grails.web.json.JSONArray
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -28,7 +29,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response:"+response)
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
   }
 
   void testListUserWithoutCredential() {
@@ -69,7 +70,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
   void testAddUserCorrect() {
     log.info("create user")
     def userToAdd = BasicInstance.getBasicUserNotExist()
-    String jsonUser = ([user : userToAdd]).encodeAsJSON()
+    String jsonUser = userToAdd.encodeAsJSON()
 
     log.info("post user:"+jsonUser.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/user.json"
@@ -172,7 +173,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("create user")
     def userToAdd = BasicInstance.createOrGetBasicUser()
-    String jsonUser = ([user : userToAdd]).encodeAsJSON()
+    String jsonUser = userToAdd.encodeAsJSON()
 
     def jsonUpdate = JSON.parse(jsonUser)
     jsonUser = jsonUpdate.encodeAsJSON()
@@ -196,10 +197,10 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("create user")
     def userToAdd = BasicInstance.getBasicUserNotExist()
-    String jsonUser = ([user : userToAdd]).encodeAsJSON()
+    String jsonUser = userToAdd.encodeAsJSON()
 
     def jsonUpdate = JSON.parse(jsonUser)
-    jsonUpdate.user.email = "invalid@email"
+    jsonUpdate.email = "invalid@email"
     jsonUser = jsonUpdate.encodeAsJSON()
 
     log.info("post user:"+jsonUser.replace("\n",""))
@@ -247,13 +248,12 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
 
     /* Encode a niew user Name2*/
     User userToEdit = User.get(userToAdd.id)
-    def jsonEdit = [user : userToEdit]
-    def jsonUser = jsonEdit.encodeAsJSON()
+    def jsonUser = userToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonUser)
-    jsonUpdate.user.firstname = newFirstname
-    jsonUpdate.user.lastname = newLastname
-    jsonUpdate.user.email = newEmail
-    jsonUpdate.user.username = newUsername
+    jsonUpdate.firstname = newFirstname
+    jsonUpdate.lastname = newLastname
+    jsonUpdate.email = newEmail
+    jsonUpdate.username = newUsername
     jsonUser = jsonUpdate.encodeAsJSON()
 
     log.info("put user:"+jsonUser.replace("\n",""))
@@ -361,10 +361,9 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
 
     /* Encode a niew user Name2*/
     User userToEdit = User.get(userToAdd.id)
-    def jsonEdit = [user : userToEdit]
-    def jsonUser = jsonEdit.encodeAsJSON()
+    def jsonUser = userToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonUser)
-    jsonUpdate.user.username = BasicInstance.getOldUser().username
+    jsonUpdate.username = BasicInstance.getOldUser().username
     jsonUser = jsonUpdate.encodeAsJSON()
 
     log.info("put user:"+jsonUser.replace("\n",""))
@@ -387,10 +386,9 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
 
     /* Encode a niew user Name2*/
     User userToEdit = User.get(userToAdd.id)
-    def jsonEdit = [user : userToEdit]
-    def jsonUser = jsonEdit.encodeAsJSON()
+    def jsonUser = userToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonUser)
-    jsonUpdate.user.email = "badmail"
+    jsonUpdate.email = "badmail"
     jsonUser = jsonUpdate.encodeAsJSON()
 
     log.info("put user:"+jsonUser.replace("\n",""))
@@ -410,7 +408,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
     log.info("create user")
     def userToDelete = BasicInstance.getBasicUserNotExist()
     assert userToDelete.save(flush:true) != null
-    String jsonUser = ([user : userToDelete]).encodeAsJSON()
+    String jsonUser = userToDelete.encodeAsJSON()
     int idUser = userToDelete.id
     log.info("delete user:"+jsonUser.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/user/"+idUser+".json"
@@ -486,7 +484,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
     image.user = userToDelete
     assert image.save(flush:true)!=null
 
-    String jsonUser = ([user : userToDelete]).encodeAsJSON()
+    String jsonUser = userToDelete.encodeAsJSON()
     int idUser = userToDelete.id
     log.info("delete user:"+jsonUser.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/user/"+idUser+".json"
@@ -504,7 +502,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
 
      log.info("create user")
     def userToDelete = BasicInstance.createOrGetBasicUser()
-    String jsonUser = ([user : userToDelete]).encodeAsJSON()
+    String jsonUser = userToDelete.encodeAsJSON()
 
     log.info("delete user:"+jsonUser.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/user/-99.json"

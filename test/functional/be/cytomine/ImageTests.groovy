@@ -11,6 +11,7 @@ import be.cytomine.security.User
 import be.cytomine.project.Slide
 import be.cytomine.image.Mime
 import com.vividsolutions.jts.io.WKTReader
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,7 +38,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     log.info("check response:"+response)
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
 
   }
 
@@ -78,7 +79,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     log.info("check response")
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
 
   }
 
@@ -126,7 +127,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("create image")
     def imageToAdd = BasicInstance.createOrGetBasicImage()
-    String jsonImage = ([image : imageToAdd]).encodeAsJSON()
+    String jsonImage = imageToAdd.encodeAsJSON()
 
     log.info("post image:"+jsonImage.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/image.json"
@@ -205,9 +206,9 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("create image")
     def imageToAdd = BasicInstance.createOrGetBasicImage()
-    String jsonImage = ([image : imageToAdd]).encodeAsJSON()
+    String jsonImage = imageToAdd.encodeAsJSON()
     def updateImage = JSON.parse(jsonImage)
-    updateImage.image.roi = 'POINT(BAD GEOMETRY)'
+    updateImage.roi = 'POINT(BAD GEOMETRY)'
     jsonImage = updateImage.encodeAsJSON()
 
     log.info("post image:"+jsonImage.replace("\n",""))
@@ -230,9 +231,9 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("create image")
     def imageToAdd = BasicInstance.createOrGetBasicImage()
-    String jsonImage = ([image : imageToAdd]).encodeAsJSON()
+    String jsonImage = imageToAdd.encodeAsJSON()
     def updateImage = JSON.parse(jsonImage)
-    updateImage.image.scanner = -99
+    updateImage.scanner = -99
     jsonImage = updateImage.encodeAsJSON()
 
     log.info("post image:"+jsonImage.replace("\n",""))
@@ -255,9 +256,9 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("create image")
     def imageToAdd = BasicInstance.createOrGetBasicImage()
-    String jsonImage = ([image : imageToAdd]).encodeAsJSON()
+    String jsonImage = imageToAdd.encodeAsJSON()
     def updateImage = JSON.parse(jsonImage)
-    updateImage.image.slide = -99
+    updateImage.slide = -99
     jsonImage = updateImage.encodeAsJSON()
 
     log.info("post image:"+jsonImage.replace("\n",""))
@@ -280,9 +281,9 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("create image")
     def imageToAdd = BasicInstance.createOrGetBasicImage()
-    String jsonImage = ([image : imageToAdd]).encodeAsJSON()
+    String jsonImage = imageToAdd.encodeAsJSON()
     def updateImage = JSON.parse(jsonImage)
-    updateImage.image.mime = -99
+    updateImage.mime = -99
     jsonImage = updateImage.encodeAsJSON()
 
     log.info("post image:"+jsonImage.replace("\n",""))
@@ -310,9 +311,9 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     def imageToAdd = BasicInstance.createOrGetBasicImage()
 
 
-    String jsonImage = ([image : imageToAdd]).encodeAsJSON()
+    String jsonImage = imageToAdd.encodeAsJSON()
     def updateImage = JSON.parse(jsonImage)
-    updateImage.image.mime = mimeToAdd.id
+    updateImage.mime = mimeToAdd.id
     jsonImage = updateImage.encodeAsJSON()
 
     log.info("post image:"+jsonImage.replace("\n",""))
@@ -387,20 +388,19 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
     /* Encode a new image to modify */
     Image imageToEdit = Image.get(imageToAdd.id)
-    def jsonEdit = [image : imageToEdit]
-    def jsonImage = jsonEdit.encodeAsJSON()
+    def jsonImage = imageToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonImage)
 
-    jsonUpdate.image.filename = newFilename
-    jsonUpdate.image.roi = newGeom
-    jsonUpdate.image.user = newUser.id
-    jsonUpdate.image.scanner = newScanner.id
-    jsonUpdate.image.slide = newSlide.id
-    jsonUpdate.image.path = newPath
-    jsonUpdate.image.mime = newMime.extension
-    jsonUpdate.image.width = newWidth
-    jsonUpdate.image.height = newHeight
-    jsonUpdate.image.scale = newScale
+    jsonUpdate.filename = newFilename
+    jsonUpdate.roi = newGeom
+    jsonUpdate.user = newUser.id
+    jsonUpdate.scanner = newScanner.id
+    jsonUpdate.slide = newSlide.id
+    jsonUpdate.path = newPath
+    jsonUpdate.mime = newMime.extension
+    jsonUpdate.width = newWidth
+    jsonUpdate.height = newHeight
+    jsonUpdate.scale = newScale
 
     jsonImage = jsonUpdate.encodeAsJSON()
 
@@ -512,10 +512,9 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
     /* Encode a new image to modify */
     Image imageToEdit = Image.get(imageToAdd.id)
-    def jsonEdit = [image : imageToEdit]
-    def jsonImage = jsonEdit.encodeAsJSON()
+    def jsonImage = imageToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonImage)
-    jsonUpdate.image.roi = newGeom
+    jsonUpdate.roi = newGeom
 
     jsonImage = jsonUpdate.encodeAsJSON()
 
@@ -545,11 +544,10 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
     /* Encode a new image to modify */
     Image imageToEdit = Image.get(imageToAdd.id)
-    def jsonEdit = [image : imageToEdit]
-    def jsonImage = jsonEdit.encodeAsJSON()
+    def jsonImage = imageToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonImage)
 
-    jsonUpdate.image.slide = -99
+    jsonUpdate.slide = -99
 
     jsonImage = jsonUpdate.encodeAsJSON()
 
@@ -579,10 +577,9 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
     /* Encode a new image to modify */
     Image imageToEdit = Image.get(imageToAdd.id)
-    def jsonEdit = [image : imageToEdit]
-    def jsonImage = jsonEdit.encodeAsJSON()
+    def jsonImage = imageToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonImage)
-    jsonUpdate.image.mime = -99
+    jsonUpdate.mime = -99
 
     jsonImage = jsonUpdate.encodeAsJSON()
 
@@ -611,11 +608,10 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
     /* Encode a new image to modify */
     Image imageToEdit = Image.get(imageToAdd.id)
-    def jsonEdit = [image : imageToEdit]
-    def jsonImage = jsonEdit.encodeAsJSON()
+    def jsonImage = imageToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonImage)
 
-    jsonUpdate.image.scanner = -99
+    jsonUpdate.scanner = -99
 
     jsonImage = jsonUpdate.encodeAsJSON()
 
@@ -638,7 +634,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     log.info("create image")
     def imageToDelete = BasicInstance.getBasicImageNotExist()
     assert imageToDelete.save(flush:true)!=null
-    String jsonImage = ([image : imageToDelete]).encodeAsJSON()
+    String jsonImage = imageToDelete.encodeAsJSON()
     int idImage = imageToDelete.id
     log.info("delete image:"+jsonImage.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/image/"+idImage+".json"
@@ -719,7 +715,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     def annotation = BasicInstance.createOrGetBasicAnnotation()
     annotation.image = imageToDelete
     annotation.save(flush:true)
-    String jsonImage = ([image : imageToDelete]).encodeAsJSON()
+    String jsonImage = imageToDelete.encodeAsJSON()
 
     log.info("delete image:"+jsonImage.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/image/-99.json"
@@ -737,7 +733,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
   {
     log.info("create image")
     def imageToDelete = BasicInstance.createOrGetBasicImage()
-    String jsonImage = ([image : imageToDelete]).encodeAsJSON()
+    String jsonImage = imageToDelete.encodeAsJSON()
 
     log.info("delete image:"+jsonImage.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/image/-99.json"

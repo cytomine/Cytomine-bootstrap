@@ -34,6 +34,7 @@
 <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.hotkeys.js"></script>
 <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.jstree.js"></script>
 <!-- Libs JStree -->
+   <script type="text/javascript" src="http://www.netgrow.com.au/assets/files/jquery_plugins/jquery.dump.js"></script>
 
 <!-- Styles -->
 <link rel='stylesheet' href='application/css/reset.css' type='text/css'/>
@@ -157,7 +158,17 @@
 </script>
 
 <script type="text/html" id="ontologyviewtpl">
+  <div id='ontologytreepanel'>
+    <button id='ontologytreeaddontologybutton' type="button" >Add Ontology</button>
+    <button id='ontologytreeaddtermbutton' type="button" >Add Term</button>
+    <button id='ontologytreerenamebutton' type="button" >Rename</button>
+    <button id='ontologytreedeletebutton' type="button" >Remove</button>
+    <button id='ontologytreeselectednode' type="button" > Print selected nodes</button>
+
+  </div>
   <div id='ontologytree'></div>
+
+  <div id='ontologytreedebug'></div>
 </script>
 
 <script type="text/html" id="imageontologyviewtpl">

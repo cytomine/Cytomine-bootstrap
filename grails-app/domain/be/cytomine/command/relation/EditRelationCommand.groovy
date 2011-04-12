@@ -13,17 +13,17 @@ class EditRelationCommand extends Command implements UndoRedoCommand {
 
     try {
       def postData = JSON.parse(postData)
-      log.debug "Relation id="+postData.relation.id
-      def updatedRelation = Relation.get(postData.relation.id)
+      log.debug "Relation id="+postData.id
+      def updatedRelation = Relation.get(postData.id)
       def backup = updatedRelation.encodeAsJSON()
 
       if (!updatedRelation ) {
-        log.error "Relation not found with id: " + postData.relation.id
-        return [data : [success : false, message : "Relation not found with id: " + postData.relation.id], status : 404]
+        log.error "Relation not found with id: " + postData.id
+        return [data : [success : false, message : "Relation not found with id: " + postData.id], status : 404]
       }
 
-      updatedRelation = Relation.getRelationFromData(updatedRelation,postData.relation)
-      updatedRelation.id = postData.relation.id
+      updatedRelation = Relation.getRelationFromData(updatedRelation,postData)
+      updatedRelation.id = postData.id
 
       if ( updatedRelation.validate() && updatedRelation.save(flush:true)) {
         log.info "New Relation is saved"

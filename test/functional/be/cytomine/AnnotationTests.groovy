@@ -9,6 +9,7 @@ import be.cytomine.test.HttpClient
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.security.User
 import be.cytomine.image.Image
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,7 +37,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
 
   }
 
@@ -117,7 +118,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
 
   }
 
@@ -159,7 +160,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
 
   }
 
@@ -201,7 +202,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
 
   }
 
@@ -228,7 +229,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("create annotation")
     def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
-    String jsonAnnotation = ([annotation : annotationToAdd]).encodeAsJSON()
+    String jsonAnnotation = annotationToAdd.encodeAsJSON()
 
     log.info("post annotation:"+jsonAnnotation.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/annotation.json"
@@ -306,9 +307,9 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("create annotation")
     def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
-    String jsonAnnotation = ([annotation : annotationToAdd]).encodeAsJSON()
+    String jsonAnnotation = annotationToAdd.encodeAsJSON()
     def updateAnnotation = JSON.parse(jsonAnnotation)
-    updateAnnotation.annotation.location = 'POINT(BAD GEOMETRY)'
+    updateAnnotation.location = 'POINT(BAD GEOMETRY)'
     jsonAnnotation = updateAnnotation.encodeAsJSON()
 
     log.info("post annotation:"+jsonAnnotation.replace("\n",""))
@@ -331,9 +332,9 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("create annotation")
     def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
-    def jsonAnnotation = ([annotation : annotationToAdd]).encodeAsJSON()
+    def jsonAnnotation = annotationToAdd.encodeAsJSON()
     def updateAnnotation = JSON.parse(jsonAnnotation)
-    updateAnnotation.annotation.image = -99
+    updateAnnotation.image = -99
     jsonAnnotation = updateAnnotation.encodeAsJSON()
 
     log.info("post annotation:"+jsonAnnotation.replace("\n",""))
@@ -366,7 +367,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
 
   }
 
@@ -439,13 +440,13 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     /* Encode a niew annotation with point 9999 9999 */
     Annotation annotationToEdit = Annotation.get(annotationToAdd.id)
-    def jsonEdit = [annotation : annotationToEdit]
+    def jsonEdit = annotationToEdit
     def jsonAnnotation = jsonEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonAnnotation)
-    jsonUpdate.annotation.location = newGeom
-    jsonUpdate.annotation.zoomLevel = newZoomLevel
-    jsonUpdate.annotation.channels = newChannels
-    jsonUpdate.annotation.user = newUser.id
+    jsonUpdate.location = newGeom
+    jsonUpdate.zoomLevel = newZoomLevel
+    jsonUpdate.channels = newChannels
+    jsonUpdate.user = newUser.id
     jsonAnnotation = jsonUpdate.encodeAsJSON()
 
     log.info("put annotation:"+jsonAnnotation.replace("\n",""))
@@ -504,7 +505,6 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(200,code)
     json = JSON.parse(response)
     assert json instanceof JSONObject
-    assertEquals("Annotation geom is not modified (annother request)",oldGeom.replace(' ', ''),json.annotation.location.replace(' ',''))
 
     BasicInstance.compareAnnotation(mapOld,json)
 
@@ -530,7 +530,6 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(200,code)
     json = JSON.parse(response)
     assert json instanceof JSONObject
-    assertEquals("Annotation geom is not modified (annother request)",newGeom.replace(' ', ''),json.annotation.location.replace(' ',''))
 
     BasicInstance.compareAnnotation(mapNew,json)
 
@@ -547,8 +546,6 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(200,code)
     json = JSON.parse(response)
     assert json instanceof JSONObject
-    assertEquals("Annotation geom is not modified (annother request)",newGeom.replace(' ', ''),json.annotation.location.replace(' ',''))
-
 
     //TODO: check for change in image (?)
   }
@@ -566,10 +563,9 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     /* Encode a niew annotation with point 9999 9999 */
     Annotation annotationToEdit = Annotation.get(annotationToAdd.id)
-    def jsonEdit = [annotation : annotationToEdit]
-    def jsonAnnotation = jsonEdit.encodeAsJSON()
+    def jsonAnnotation = annotationToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonAnnotation)
-    jsonUpdate.annotation.location = newGeom
+    jsonUpdate.location = newGeom
     jsonAnnotation = jsonUpdate.encodeAsJSON()
 
     log.info("put annotation:"+jsonAnnotation.replace("\n",""))
@@ -599,11 +595,10 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     /* Encode a niew annotation with point 9999 9999 */
     Annotation annotationToEdit = Annotation.get(annotationToAdd.id)
-    def jsonEdit = [annotation : annotationToEdit]
-    def jsonAnnotation = jsonEdit.encodeAsJSON()
+    def jsonAnnotation = annotationToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonAnnotation)
-    jsonUpdate.annotation.location = newGeom
-    jsonUpdate.annotation.id = "-99"
+    jsonUpdate.location = newGeom
+    jsonUpdate.id = "-99"
     jsonAnnotation = jsonUpdate.encodeAsJSON()
 
     log.info("put annotation:"+jsonAnnotation.replace("\n",""))
@@ -633,10 +628,9 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     /* Encode a niew annotation with point 9999 9999 */
     Annotation annotationToEdit = Annotation.get(annotationToAdd.id)
-    def jsonEdit = [annotation : annotationToEdit]
-    def jsonAnnotation = jsonEdit.encodeAsJSON()
+    def jsonAnnotation = annotationToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonAnnotation)
-    jsonUpdate.annotation.location = newGeom
+    jsonUpdate.location = newGeom
     jsonAnnotation = jsonUpdate.encodeAsJSON()
 
     log.info("put annotation:"+jsonAnnotation.replace("\n",""))
@@ -658,7 +652,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     log.info("create annotation")
     def annotationToDelete = BasicInstance.getBasicAnnotationNotExist()
     assert annotationToDelete.save(flush:true) !=null
-    String jsonAnnotation = ([annotation : annotationToDelete]).encodeAsJSON()
+    String jsonAnnotation = annotationToDelete.encodeAsJSON()
     int idAnnotation = annotationToDelete.id
     log.info("delete annotation:"+jsonAnnotation.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation+".json"
@@ -732,7 +726,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
      log.info("create annotation")
     def annotationToDelete = BasicInstance.createOrGetBasicAnnotation()
-    String jsonAnnotation = ([annotation : annotationToDelete]).encodeAsJSON()
+    String jsonAnnotation = annotationToDelete.encodeAsJSON()
 
     log.info("delete annotation:"+jsonAnnotation.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/annotation/-99.json"
@@ -751,7 +745,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
      log.info("create annotation")
     def annotTerm = BasicInstance.createOrGetBasicAnnotationTerm()
     def annotationToDelete = annotTerm.annotation
-    String jsonAnnotation = ([annotation : annotationToDelete]).encodeAsJSON()
+    String jsonAnnotation = annotationToDelete.encodeAsJSON()
 
     log.info("delete annotation:"+jsonAnnotation.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/annotation/"  + annotationToDelete.id + ".json"

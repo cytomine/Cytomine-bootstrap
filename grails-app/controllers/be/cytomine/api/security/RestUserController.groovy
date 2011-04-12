@@ -22,9 +22,7 @@ class RestUserController {
    * @return all Users into the specified format
    */
   def list = {
-    def data = [:]
-    data.user = User.list()
-    data.total = User.count()
+    def data = User.list()
 
     withFormat {
       json { render data as JSON }
@@ -42,8 +40,8 @@ class RestUserController {
       println "user=" + it.id
     }   */
     if(params.id && User.exists(params.id)) {
-      def data = [:]
-      data.user = User.findById(params.id)
+      def data
+      data = User.findById(params.id)
       withFormat {
         json { render data as JSON }
         xml { render data as XML }
@@ -59,8 +57,7 @@ class RestUserController {
   }
 
   def showCurrent = {
-      def data = [:]
-      data.user = User.get(springSecurityService.principal.id)
+      def data = User.get(springSecurityService.principal.id)
       withFormat {
         json { render data as JSON }
         xml { render data as XML }
@@ -69,9 +66,7 @@ class RestUserController {
 
   def showByProject = {
     if(params.id && Project.exists(params.id)) {
-      def data = [:]
-
-      data.user = Project.read(params.id).users()
+      def data = Project.read(params.id).users()
       //data.current = User.get(springSecurityService.principal.id).id
       withFormat {
         json { render data as JSON }

@@ -20,18 +20,20 @@ class EditOntologyCommand extends Command implements UndoRedoCommand {
 
     try {
       def postData = JSON.parse(postData)
-      log.debug "Ontology id="+postData.ontology.id
-      def updatedOntology = Ontology.get(postData.ontology.id)
+      log.debug "Ontology id="+postData.id
+      def updatedOntology = Ontology.get(postData.id)
       def backup = updatedOntology.encodeAsJSON()
 
       if (!updatedOntology ) {
-        log.error "Ontology not found with id: " + postData.ontology.id
-        return [data : [success : false, message : "Ontology not found with id: " + postData.ontology.id], status : 404]
+        log.error "Ontology not found with id: " + postData.id
+        return [data : [success : false, message : "Ontology not found with id: " + postData.id], status : 404]
       }
 
-      updatedOntology = Ontology.getOntologyFromData(updatedOntology,postData.ontology)
-      updatedOntology.id = postData.ontology.id
-
+      updatedOntology = Ontology.getOntologyFromData(updatedOntology,postData)
+      updatedOntology.id = postData.id
+      log.info "updatedOntology=" + updatedOntology
+      log.info "updatedOntology.id=" + updatedOntology.id
+      log.info "updatedOntology.name=" + updatedOntology.name
       if ( updatedOntology.validate() && updatedOntology.save(flush:true)) {
         log.info "New Ontology is saved"
         data = ([ previousOntology : (JSON.parse(backup)), newOntology :  updatedOntology]) as JSON

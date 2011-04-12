@@ -10,6 +10,7 @@ import be.cytomine.test.HttpClient
 import be.cytomine.ontology.Ontology
 
 import be.cytomine.ontology.AnnotationTerm
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,7 +38,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
 
   }
 
@@ -55,7 +56,6 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(404,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
 
   }
 
@@ -75,7 +75,6 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
 
   }
 
@@ -93,7 +92,6 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(404,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
 
   }
 
@@ -114,7 +112,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
 
   }
 
@@ -132,7 +130,6 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(404,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
 
   }
 
@@ -153,7 +150,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response:"+response)
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
   }
 
   void testListTermWithoutCredential() {
@@ -196,7 +193,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("create term")
     def termToAdd = BasicInstance.getBasicTermNotExist()
-    String jsonTerm = ([term : termToAdd]).encodeAsJSON()
+    String jsonTerm = termToAdd.encodeAsJSON()
 
     log.info("post term:"+jsonTerm.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/term.json"
@@ -275,10 +272,10 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("create term")
     def termToAdd = BasicInstance.getBasicTermNotExist()
-    String jsonTerm = ([term : termToAdd]).encodeAsJSON()
+    String jsonTerm = termToAdd.encodeAsJSON()
 
     def jsonUpdate = JSON.parse(jsonTerm)
-    jsonUpdate.term.name = null
+    jsonUpdate.name = null
     jsonTerm = jsonUpdate.encodeAsJSON()
 
     log.info("post term:"+jsonTerm.replace("\n",""))
@@ -328,13 +325,12 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
     /* Encode a niew term Name2*/
     Term termToEdit = Term.get(termToAdd.id)
-    def jsonEdit = [term : termToEdit]
-    def jsonTerm = jsonEdit.encodeAsJSON()
+    def jsonTerm = termToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonTerm)
-    jsonUpdate.term.name = newName
-    jsonUpdate.term.comment = newComment
-    jsonUpdate.term.color = newColor
-    jsonUpdate.term.ontology = newOntology.id
+    jsonUpdate.name = newName
+    jsonUpdate.comment = newComment
+    jsonUpdate.color = newColor
+    jsonUpdate.ontology = newOntology.id
     jsonTerm = jsonUpdate.encodeAsJSON()
 
     log.info("put term:"+jsonTerm.replace("\n",""))
@@ -442,10 +438,9 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
     /* Encode a niew term Name2*/
     Term termToEdit = Term.get(termToAdd.id)
-    def jsonEdit = [term : termToEdit]
-    def jsonTerm = jsonEdit.encodeAsJSON()
+    def jsonTerm = termToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonTerm)
-    jsonUpdate.term.name = null
+    jsonUpdate.name = null
     jsonTerm = jsonUpdate.encodeAsJSON()
 
     log.info("put term:"+jsonTerm.replace("\n",""))
@@ -466,7 +461,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("create term")
     def termToDelete = BasicInstance.createOrGetBasicTerm()
-    String jsonTerm = ([term : termToDelete]).encodeAsJSON()
+    String jsonTerm = termToDelete.encodeAsJSON()
     int idTerm = termToDelete.id
     log.info("delete term:"+jsonTerm.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/term/"+idTerm+".json"
@@ -540,7 +535,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("create term")
     def termToDelete = BasicInstance.createOrGetBasicTerm()
-    String jsonTerm = ([term : termToDelete]).encodeAsJSON()
+    String jsonTerm = termToDelete.encodeAsJSON()
 
     log.info("delete term:"+jsonTerm.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/term/-99.json"
@@ -559,7 +554,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("create term")
     def annotTerm = BasicInstance.createOrGetBasicAnnotationTerm()
     def termToDelete = annotTerm.term
-    String jsonTerm = ([term : termToDelete]).encodeAsJSON()
+    String jsonTerm = termToDelete.encodeAsJSON()
 
     log.info("delete term:"+jsonTerm.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/term/"+ termToDelete.id +".json"

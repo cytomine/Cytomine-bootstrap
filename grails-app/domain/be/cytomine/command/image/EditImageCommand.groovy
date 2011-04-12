@@ -23,17 +23,17 @@ class EditImageCommand extends Command implements UndoRedoCommand  {
       log.debug "postData="+postData
       def postData = JSON.parse(postData)
 
-      log.debug "Image id="+postData.image.id
-      def updatedImage = Image.get(postData.image.id)
+      log.debug "Image id="+postData.id
+      def updatedImage = Image.get(postData.id)
       def backup = updatedImage.encodeAsJSON() //we encode as JSON otherwise hibernate will update its values
 
       if (!updatedImage ) {
-        log.error "Image not found with id: " + postData.image.id
-        return [data : [success : false, message : "Image not found with id: " + postData.image.id], status : 404]
+        log.error "Image not found with id: " + postData.id
+        return [data : [success : false, message : "Image not found with id: " + postData.id], status : 404]
       }
-      log.info "getImageFromData:"+postData.image
-      updatedImage = Image.getImageFromData(updatedImage,postData.image)
-      updatedImage.id = postData.image.id
+      log.info "getImageFromData:"+postData
+      updatedImage = Image.getImageFromData(updatedImage,postData)
+      updatedImage.id = postData.id
 
       log.info "updatedImage.id=" + updatedImage.id
       log.info "updatedImage.filename=" + updatedImage.filename

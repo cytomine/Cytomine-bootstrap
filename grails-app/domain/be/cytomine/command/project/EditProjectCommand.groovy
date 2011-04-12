@@ -13,17 +13,17 @@ class EditProjectCommand extends Command implements UndoRedoCommand {
 
     try {
       def postData = JSON.parse(postData)
-      log.debug "Project id="+postData.project.id
-      def updatedProject = Project.get(postData.project.id)
+      log.debug "Project id="+postData.id
+      def updatedProject = Project.get(postData.id)
       def backup = updatedProject.encodeAsJSON()
 
       if (!updatedProject ) {
-        log.error "Project not found with id: " + postData.project.id
-        return [data : [success : false, message : "Project not found with id: " + postData.project.id], status : 404]
+        log.error "Project not found with id: " + postData.id
+        return [data : [success : false, message : "Project not found with id: " + postData.id], status : 404]
       }
 
-      updatedProject = Project.getProjectFromData(updatedProject,postData.project)
-      updatedProject.id = postData.project.id
+      updatedProject = Project.getProjectFromData(updatedProject,postData)
+      updatedProject.id = postData.id
 
       if ( updatedProject.validate() && updatedProject.save(flush:true)) {
         log.info "New project is saved"

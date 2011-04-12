@@ -17,18 +17,18 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
       log.info "Execute"
       log.debug "postData="+postData
       def postData = JSON.parse(postData)
-      postData.annotation.user = user.id
-      log.debug "Annotation id="+postData.annotation.id
-      def updatedAnnotation = Annotation.get(postData.annotation.id)
+      postData.user = user.id
+      log.debug "Annotation id="+postData.id
+      def updatedAnnotation = Annotation.get(postData.id)
       def backup = updatedAnnotation.encodeAsJSON() //we encode as JSON otherwise hibernate will update its values
 
       if (!updatedAnnotation ) {
-        log.error "Annotation not found with id: " + postData.annotation.id
-        return [data : [success : false, message : "Annotation not found with id: " + postData.annotation.id], status : 404]
+        log.error "Annotation not found with id: " + postData.id
+        return [data : [success : false, message : "Annotation not found with id: " + postData.id], status : 404]
       }
 
-      updatedAnnotation = Annotation.getAnnotationFromData(updatedAnnotation,postData.annotation)
-      updatedAnnotation.id = postData.annotation.id
+      updatedAnnotation = Annotation.getAnnotationFromData(updatedAnnotation,postData)
+      updatedAnnotation.id = postData.id
 
 
       if ( updatedAnnotation.validate() && updatedAnnotation.save()) {
@@ -45,7 +45,7 @@ class EditAnnotationCommand extends Command implements UndoRedoCommand  {
     }catch(com.vividsolutions.jts.io.ParseException e)
     {
       log.error "New annotation can't be saved (bad geom): " +  e.toString()
-      return [data : [annotation : null , errors : ["Geometry "+ JSON.parse(postData).annotation.location +" is not valid:"+e.toString()]], status : 400]
+      return [data : [annotation : null , errors : ["Geometry "+ JSON.parse(postData).location +" is not valid:"+e.toString()]], status : 400]
     }
 
 

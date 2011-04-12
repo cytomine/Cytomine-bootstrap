@@ -12,8 +12,8 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
     {
       log.info("Execute")
       def json = JSON.parse(postData)
-      json.annotation.user = user.id
-      Annotation annotation = Annotation.createAnnotationFromData(json.annotation)
+      json.user = user.id
+      Annotation annotation = Annotation.createAnnotationFromData(json)
       if(annotation.validate() && annotation.save(flush : true)) {
         log.info("Save annotation with id:"+annotation.id)
         data = annotation.encodeAsJSON()
@@ -27,7 +27,7 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
     }catch(com.vividsolutions.jts.io.ParseException e)
     {
       log.error("Cannot save annotation with bad geometry:"+e.toString())
-      return [data : [annotation : null , errors : ["Geometry "+ JSON.parse(postData).annotation.location +" is not valid:"+e.toString()]], status : 400]
+      return [data : [annotation : null , errors : ["Geometry "+ JSON.parse(postData).location +" is not valid:"+e.toString()]], status : 400]
     }catch(Exception e)
     {
       log.error("Cannot save annotation"+e.toString())
@@ -55,8 +55,8 @@ class AddAnnotationCommand extends Command implements UndoRedoCommand {
     log.info("Redo:"+data.replace("\n",""))
     def annotationData = JSON.parse(data)
     def json = JSON.parse(postData)
-    json.annotation.user = user.id
-    Annotation annotation = Annotation.createAnnotationFromData(json.annotation)
+    json.user = user.id
+    Annotation annotation = Annotation.createAnnotationFromData(json)
     def filename = annotation.getImage().getFilename()
     annotation.id = annotationData.id
     annotation.save(flush:true)

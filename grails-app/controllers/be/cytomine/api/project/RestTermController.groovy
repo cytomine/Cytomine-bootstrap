@@ -23,14 +23,14 @@ class RestTermController {
   def list = {
 
     log.info "List:"+ params.id
-    def data = [:]
+    def data
 
     if(params.id == null) {
-      data.term = Term.list()
+      data = Term.list()
     } else
     {
       if(Annotation.exists(params.id))
-        data.term = Annotation.get(params.id).terms()
+        data = Annotation.get(params.id).terms()
       else {
         response.status = 404
         render contentType: "application/xml", {
@@ -49,8 +49,7 @@ class RestTermController {
   def show = {
     log.info "Show:"+ params.id
     if(params.id && Term.exists(params.id)) {
-      def data = [:]
-      data.term = Term.findById(params.id)
+      def data = Term.findById(params.id)
       withFormat {
         json { render data as JSON }
         xml { render data as XML }
@@ -68,9 +67,7 @@ class RestTermController {
   def listTermByOntology = {
     log.info "listTermByOntology"
     if(params.idontology && Ontology.exists(params.idontology)) {
-      def data = [:]
-      //data.ontology = data.term = Ontology.get(params.idontology)
-      data.term = Ontology.get(params.idontology).terms()
+      def data = Ontology.get(params.idontology).terms()
       withFormat {
         json { render data as JSON }
         xml { render data as XML}
@@ -88,8 +85,7 @@ class RestTermController {
   def listTermByImage = {
     log.info "listTermByImage"
     if(params.id && Image.exists(params.id)) {
-      def data = [:]
-      data.term = Image.get(params.id).terms()
+      def data = Image.get(params.id).terms()
       withFormat {
         json { render data as JSON }
         xml { render data as XML}
@@ -132,9 +128,9 @@ class RestTermController {
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
     def result
-    if((String)params.id!=(String)request.JSON.term.id) {
-      log.error "Term id from URL and from data are different:"+ params.id + " vs " +  request.JSON.term.id
-      result = [data : [term : null , errors : ["Term id from URL and from data are different:"+ params.id + " vs " +  request.JSON.term.id ]], status : 400]
+    if((String)params.id!=(String)request.JSON.id) {
+      log.error "Term id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id
+      result = [data : [term : null , errors : ["Term id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id ]], status : 400]
     }
     else
     {

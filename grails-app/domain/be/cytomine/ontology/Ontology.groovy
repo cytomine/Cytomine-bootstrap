@@ -26,7 +26,10 @@ class Ontology {
       returnArray['id'] = it.id
       returnArray['name'] = it.name
 
+      returnArray['attr'] = [ "id" : it.id, "type" : it.class]
       returnArray['data'] = it.name
+
+
       returnArray['state'] = "open"
 
       def terms = []
@@ -35,7 +38,11 @@ class Ontology {
           def term = [:]
           term.id = it.getId()
           term.text = it.getName()
+          term.class = it.class
+          term.attr = [ "id" : it.id, "type" : it.class]
           term.data = it.getName()
+
+
           term.checked = false
           term.leaf = false
           terms << term
@@ -56,7 +63,8 @@ class Ontology {
     if(!jsonOntology.name.toString().equals("null"))
       ontology.name = jsonOntology.name
     else throw new IllegalArgumentException("Ontology name cannot be null")
-
+    println "jsonOntology.name=" + jsonOntology.name
+    println "ontology.name=" +  ontology.name
     return ontology;
   }
 

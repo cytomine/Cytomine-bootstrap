@@ -11,20 +11,20 @@ class EditUserCommand extends Command implements UndoRedoCommand {
     log.info "Execute"
     log.debug "postData="+postData
     def postData = JSON.parse(postData)
-    def updatedUser = User.get(postData.user.id)
+    def updatedUser = User.get(postData.id)
     def backup = updatedUser.encodeAsJSON() //we encode as JSON otherwise hibernate will update its values
 
     if (!updatedUser ) {
-      return [data : [success : false, message : "User not found with id: " + postData.user.id], status : 404]
+      return [data : [success : false, message : "User not found with id: " + postData.id], status : 404]
     }
     try
     {
-    updatedUser = User.getUserFromData(updatedUser,postData.user)
-    updatedUser.id = postData.user.id
+    updatedUser = User.getUserFromData(updatedUser,postData)
+    updatedUser.id = postData.id
 
     //encode the password if necessary
-    if (updatedUser.password != postData.user.password)
-      postData.user.password = updatedUser.springSecurityService.encodePassword(postData.user.password)
+    if (updatedUser.password != postData.password)
+      postData.password = updatedUser.springSecurityService.encodePassword(postData.password)
 
     if ( updatedUser.validate() && updatedUser.save(flush:true)) {
       log.info "New User is saved"

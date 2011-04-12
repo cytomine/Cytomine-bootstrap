@@ -14,8 +14,7 @@ class RestProjectController {
   def springSecurityService
 
   def list = {
-    def data = [:]
-    data.project = Project.list()
+    def data = Project.list()
     withFormat {
       json { render data as JSON }
       xml { render data as XML}
@@ -24,8 +23,7 @@ class RestProjectController {
 
   def show = {
     if(params.id && Project.exists(params.id)) {
-      def data = [:]
-      data.project = Project.findById(params.id)
+      def data = Project.findById(params.id)
       withFormat {
         json { render data as JSON }
         xml { render data as XML }
@@ -69,9 +67,9 @@ class RestProjectController {
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
     def result
-    if((String)params.id!=(String)request.JSON.project.id) {
-      log.error "Project id from URL and from data are different:"+ params.id + " vs " +  request.JSON.project.id
-      result = [data : [project : null , errors : ["Project id from URL and from data are different:"+ params.id + " vs " +  request.JSON.project.id ]], status : 400]
+    if((String)params.id!=(String)request.JSON.id) {
+      log.error "Project id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id
+      result = [data : [project : null , errors : ["Project id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id ]], status : 400]
     }
     else
     {

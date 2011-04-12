@@ -16,14 +16,14 @@ class RestAnnotationController {
 
   def list = {
     log.info "List with id image:"+params.id
-    def data = [:]
+    def data;
 
     if(params.id == null) {
-      data.annotation = Annotation.list()
+      data = Annotation.list()
     }
     else {
       if(Image.findById(params.id)!=null) {
-        data.annotation = Annotation.findAllByImage(Image.findById(params.id))
+        data = Annotation.findAllByImage(Image.findById(params.id))
       }
       else {
         log.error "Image Id " + params.id+ " don't exist"
@@ -37,7 +37,7 @@ class RestAnnotationController {
     }
     withFormat {
       json { render data as JSON }
-      xml { render jsonMap as XML}
+      xml { render data as XML}
     }
 
   }
@@ -47,7 +47,7 @@ class RestAnnotationController {
     def data = [:]
 
     if(User.findById(params.id)!=null) {
-      data.annotation = Annotation.findAllByUser(User.findById(params.id))
+      data = Annotation.findAllByUser(User.findById(params.id))
     }
     else {
       log.error "User Id " + params.id+ " don't exist"
@@ -70,7 +70,7 @@ class RestAnnotationController {
     def data = [:]
 
     if(Image.findById(params.id)!=null) {
-      data.annotation = Annotation.findAllByImage(Image.findById(params.id))
+      data = Annotation.findAllByImage(Image.findById(params.id))
     }
     else {
       log.error "Image Id " + params.id+ " don't exist"
@@ -96,7 +96,7 @@ class RestAnnotationController {
     def data = [:]
 
     if(image && user) {
-      data.annotation = Annotation.findAllByImageAndUser(image,user)
+      data = Annotation.findAllByImageAndUser(image,user)
     }
     else if(!user){
       log.error "User Id " + params.idUser+ " don't exist"
@@ -125,9 +125,9 @@ class RestAnnotationController {
   def show = {
     //testExecuteEditAnnotation()
     log.info "Show with id:" + params.id
-    def data = [:]
-    data.annotation = Annotation.get(params.id)
-    if(data.annotation!=null)  {
+
+    def data = Annotation.get(params.id)
+    if(data!=null)  {
       withFormat {
         json { render data as JSON }
         xml { render data as XML}
@@ -200,9 +200,9 @@ class RestAnnotationController {
 
     def result
 
-    if((String)params.id!=(String)request.JSON.annotation.id) {
-      log.error "Annotation id from URL and from data are different:"+ params.id + " vs " +  request.JSON.annotation.id
-      result = [data : [annotation : null , errors : ["Annotation id from URL and from data are different:"+ params.id + " vs " +  request.JSON.annotation.id ]], status : 400]
+    if((String)params.id!=(String)request.JSON.id) {
+      log.error "Annotation id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id
+      result = [data : [annotation : null , errors : ["Annotation id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id ]], status : 400]
     }
     else
     {

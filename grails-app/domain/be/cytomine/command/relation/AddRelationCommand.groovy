@@ -12,7 +12,7 @@ class AddRelationCommand extends Command implements UndoRedoCommand {
     try
     {
       def json = JSON.parse(postData)
-      Relation newRelation = Relation.createRelationFromData(json.relation)
+      Relation newRelation = Relation.createRelationFromData(json)
       if (newRelation.validate()) {
         newRelation.save(flush:true)
         log.info("Save relation with id:"+newRelation.id)
@@ -42,7 +42,7 @@ class AddRelationCommand extends Command implements UndoRedoCommand {
     def relationData = JSON.parse(data)
     def json = JSON.parse(postData)
     log.debug("Redo json:"+ json.toString() )
-    def relation = Relation.createRelationFromData(json.relation)
+    def relation = Relation.createRelationFromData(json)
     relation.id = relationData.id
     relation.save(flush:true)
     log.debug("Save relation:"+relation.id)

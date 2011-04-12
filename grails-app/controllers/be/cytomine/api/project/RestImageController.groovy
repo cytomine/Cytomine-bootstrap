@@ -20,8 +20,7 @@ class RestImageController {
   /* REST API */
   def list = {
     log.info "list"
-    def data = [:]
-    data.image = Image.list()
+    def data  = Image.list()
     withFormat {
       json { render data as JSON }
       xml { render data as XML}
@@ -31,8 +30,7 @@ class RestImageController {
   def show = {
     log.info "show image " + params.id
     if(params.id && Image.exists(params.id)) {
-      def data = [:]
-      data.image = Image.findById(params.id)
+      def data = Image.findById(params.id)
       withFormat {
         json { render data as JSON }
         xml { render data as XML}
@@ -45,10 +43,10 @@ class RestImageController {
 
   def listByUser = {
     log.info "List with id user:"+params.id
-    def data = [:]
+    def data
 
       if(User.findById(params.id)!=null) {
-        data.image = Image.findAllByUser(User.findById(params.id))
+        data = Image.findAllByUser(User.findById(params.id))
       }
       else {
         log.error "User Id " + params.id+ " don't exist"
@@ -62,7 +60,7 @@ class RestImageController {
 
     withFormat {
       json { render data as JSON }
-      xml { render jsonMap as XML}
+      xml { render data as XML}
     }
   }
 
@@ -76,7 +74,7 @@ class RestImageController {
           }
         }
       }
-      def resp = [ image : image]
+      def resp = image
 
       withFormat {
         json { render resp as JSON }
@@ -122,9 +120,9 @@ class RestImageController {
 
     def result
 
-    if((String)params.id!=(String)request.JSON.image.id) {
-      log.error "Image id from URL and from data are different:"+ params.id + " vs " +  request.JSON.image.id
-      result = [data : [image : null , errors : ["Image id from URL and from data are different:"+ params.id + " vs " +  request.JSON.image.id ]], status : 400]
+    if((String)params.id!=(String)request.JSON.id) {
+      log.error "Image id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id
+      result = [data : [image : null , errors : ["Image id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id ]], status : 400]
     }
     else
     {
@@ -166,7 +164,6 @@ class RestImageController {
     }
 
         if (UndoStackItem.findAllByUser( currentUser).size() == 0) {
-      log.error "Command stack is empty!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
       response.status = 404
       render ""
       return

@@ -17,8 +17,7 @@ class RestRelationTermController {
 
   def list = {
     log.info "List"
-      def data = [:]
-      data.relationTerm = RelationTerm.list()
+      def data = RelationTerm.list()
       withFormat {
         json { render data as JSON }
         xml { render data as XML}
@@ -29,8 +28,7 @@ class RestRelationTermController {
     log.info "listByRelation"
     Relation relation = Relation.read(params.id)
     if(relation) {
-      def data = [:]
-      data.relationTerm = RelationTerm.findAllByRelation(relation)
+      def data =RelationTerm.findAllByRelation(relation)
       withFormat {
         json { render data as JSON }
         xml { render data as XML}
@@ -50,8 +48,7 @@ class RestRelationTermController {
     Term term = Term.read(params.id)
     String position = params.i
     if(term && (position=="1" || position=="2")) {
-      def data = [:]
-      data.relationTerm = position=="1" ? RelationTerm.findAllByTerm1(term) : RelationTerm.findAllByTerm2(term)
+      def data =  position=="1" ? RelationTerm.findAllByTerm1(term) : RelationTerm.findAllByTerm2(term)
       withFormat {
         json { render data as JSON }
         xml { render data as XML}
@@ -74,8 +71,7 @@ class RestRelationTermController {
     Term term2 = Term.get(params.idterm2)
     def relationTerm = RelationTerm.findWhere('relation': relation,'term1':term1, 'term2':term2)
     if(relation && term1 && term2 && relationTerm) {
-      def data = [:]
-      data.relationTerm = relationTerm
+      def data = relationTerm
       withFormat {
         json { render data as JSON }
         xml { render data as XML }

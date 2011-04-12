@@ -15,8 +15,7 @@ class RestRelationController {
 
   def list = {
     log.info "List"
-      def data = [:]
-      data.relation = Relation.list()
+      def data  = Relation.list()
       withFormat {
         json { render data as JSON }
         xml { render data as XML}
@@ -26,8 +25,7 @@ class RestRelationController {
     def show = {
       log.info "Show"
       if(params.id && Relation.exists(params.id)) {
-        def data = [:]
-        data.relation = Relation.findById(params.id)
+        def data = Relation.findById(params.id)
         withFormat {
           json { render data as JSON }
           xml { render data as XML }
@@ -70,9 +68,9 @@ class RestRelationController {
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
     def result
-    if((String)params.id!=(String)request.JSON.relation.id) {
-      log.error "Relation id from URL and from data are different:"+ params.id + " vs " +  request.JSON.relation.id
-      result = [data : [relation : null , errors : ["Relation id from URL and from data are different:"+ params.id + " vs " +  request.JSON.relation.id ]], status : 400]
+    if((String)params.id!=(String)request.JSON.id) {
+      log.error "Relation id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id
+      result = [data : [relation : null , errors : ["Relation id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id ]], status : 400]
     }
     else
     {

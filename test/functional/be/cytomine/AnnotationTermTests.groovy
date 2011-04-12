@@ -7,6 +7,7 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import be.cytomine.ontology.Term
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,7 +35,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
 
   }
 
@@ -54,7 +55,6 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(404,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
 
   }
 
@@ -74,7 +74,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
 
   }
 
@@ -94,7 +94,6 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(404,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
 
   }
 
@@ -125,7 +124,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("create AnnotationTerm")
     def annotationTermToAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermCorrect")
     annotationTermToAdd.discard()
-    String jsonAnnotationTerm = ([annotationTerm : annotationTermToAdd]).encodeAsJSON()
+    String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
 
     log.info("post annotationTerm:"+jsonAnnotationTerm.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/annotation/"+ annotationTermToAdd.annotation.id +"/term.json"
@@ -207,7 +206,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     def annotationTermToAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermAlreadyExist")
     annotationTermToAdd.save(flush:true)
     //annotationTermToAdd is in database, we will try to add it twice
-    String jsonAnnotationTerm = ([annotationTerm : annotationTermToAdd]).encodeAsJSON()
+    String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
 
     log.info("post annotationTerm:"+jsonAnnotationTerm.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/annotation/"+ annotationTermToAdd.annotation.id +"/term.json"
@@ -226,10 +225,10 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("create annotationterm")
     def annotationTermAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermWithAnnotationNotExist")
-    String jsonAnnotationTerm = ([annotationTerm : annotationTermAdd]).encodeAsJSON()
+    String jsonAnnotationTerm = annotationTermAdd.encodeAsJSON()
     log.info("jsonAnnotationTerm="+jsonAnnotationTerm)
     def jsonUpdate = JSON.parse(jsonAnnotationTerm)
-    jsonUpdate.annotationTerm.annotation.id = -99
+    jsonUpdate.annotation.id = -99
     jsonAnnotationTerm = jsonUpdate.encodeAsJSON()
 
     log.info("post annotationterm:"+jsonAnnotationTerm.replace("\n",""))
@@ -251,10 +250,10 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("create annotationterm")
     def annotationTermAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermWithTermNotExist")
-    String jsonAnnotationTerm = ([annotationTerm : annotationTermAdd]).encodeAsJSON()
+    String jsonAnnotationTerm = annotationTermAdd.encodeAsJSON()
     log.info("jsonAnnotationTerm="+jsonAnnotationTerm)
     def jsonUpdate = JSON.parse(jsonAnnotationTerm)
-    jsonUpdate.annotationTerm.term.id = -99
+    jsonUpdate.term.id = -99
     jsonAnnotationTerm = jsonUpdate.encodeAsJSON()
 
     log.info("post annotationterm:"+jsonAnnotationTerm.replace("\n",""))
@@ -276,7 +275,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("create annotationTerm")
     def annotationTermToDelete = BasicInstance.createOrGetBasicAnnotationTerm()
-    String jsonAnnotationTerm = ([annotationTerm : annotationTermToDelete]).encodeAsJSON()
+    String jsonAnnotationTerm = annotationTermToDelete.encodeAsJSON()
 
     int idAnnotation = annotationTermToDelete.annotation.id
     int idTerm = annotationTermToDelete.term.id
@@ -352,7 +351,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
      log.info("create project")
     def annotationTermToDelete = BasicInstance.createOrGetBasicAnnotationTerm()
-    String jsonAnnotationTerm = ([annotationTerm : annotationTermToDelete]).encodeAsJSON()
+    String jsonAnnotationTerm = annotationTermToDelete.encodeAsJSON()
 
     log.info("delete annotationTerm:"+jsonAnnotationTerm.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/annotation/-99/term/-99.json"

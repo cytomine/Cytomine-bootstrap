@@ -7,6 +7,7 @@ import be.cytomine.test.Infos
 
 import be.cytomine.test.HttpClient
 import be.cytomine.ontology.Ontology
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,7 +32,7 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assert json instanceof JSONArray
 
   }
 
@@ -76,7 +77,7 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
    log.info("create ontology")
     def ontologyToAdd = BasicInstance.getBasicOntologyNotExist()
     println("ontologyToAdd.version="+ontologyToAdd.version)
-    String jsonOntology = ([ontology : ontologyToAdd]).encodeAsJSON()
+    String jsonOntology = ontologyToAdd.encodeAsJSON()
 
     log.info("post ontology:"+jsonOntology.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/ontology.json"
@@ -155,7 +156,7 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     log.info("create ontology")
     def ontologyToAdd = BasicInstance.createOrGetBasicOntology()
     //ontologyToAdd is save in DB
-    String jsonOntology = ([ontology : ontologyToAdd]).encodeAsJSON()
+    String jsonOntology = ontologyToAdd.encodeAsJSON()
 
     log.info("post ontology:"+jsonOntology.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/ontology.json"
@@ -174,10 +175,10 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
   void testAddOntologyWithBadName() {
     log.info("create ontology")
     def ontologyToAdd = BasicInstance.getBasicOntologyNotExist()
-    String jsonOntology = ([ontology : ontologyToAdd]).encodeAsJSON()
+    String jsonOntology = ontologyToAdd.encodeAsJSON()
 
     def jsonUpdate = JSON.parse(jsonOntology)
-    jsonUpdate.ontology.name = null
+    jsonUpdate.name = null
     jsonOntology = jsonUpdate.encodeAsJSON()
 
     log.info("post ontology:"+jsonOntology.replace("\n",""))
@@ -210,10 +211,9 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
 
     /* Encode a niew ontology Name2*/
     Ontology ontologyToEdit = Ontology.get(ontologyToAdd.id)
-    def jsonEdit = [ontology : ontologyToEdit]
-    def jsonOntology = jsonEdit.encodeAsJSON()
+    def jsonOntology = ontologyToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonOntology)
-    jsonUpdate.ontology.name = newName
+    jsonUpdate.name = newName
     jsonOntology = jsonUpdate.encodeAsJSON()
 
     log.info("put ontology:"+jsonOntology.replace("\n",""))
@@ -320,10 +320,9 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
 
     /* Encode a niew ontology Name2*/
     Ontology ontologyToEdit = Ontology.get(ontologyToAdd.id)
-    def jsonEdit = [ontology : ontologyToEdit]
-    def jsonOntology = jsonEdit.encodeAsJSON()
+    def jsonOntology = ontologyToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonOntology)
-    jsonUpdate.ontology.id = -99
+    jsonUpdate.id = -99
     jsonOntology = jsonUpdate.encodeAsJSON()
 
     log.info("put ontology:"+jsonOntology.replace("\n",""))
@@ -350,11 +349,10 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     /* Encode a niew ontology Name2*/
     Ontology ontologyToEdit = Ontology.get(ontologyWithNewName.id)
     log.info("ontologyToEdit="+ontologyToEdit)
-    def jsonEdit = [ontology : ontologyToEdit]
-    def jsonOntology = jsonEdit.encodeAsJSON()
+    def jsonOntology = ontologyToEdit.encodeAsJSON()
     log.info("jsonOntology="+jsonOntology)
     def jsonUpdate = JSON.parse(jsonOntology)
-    jsonUpdate.ontology.name = ontologyWithOldName.name
+    jsonUpdate.name = ontologyWithOldName.name
     jsonOntology = jsonUpdate.encodeAsJSON()
 
     log.info("put ontology:"+jsonOntology.replace("\n",""))
@@ -378,10 +376,9 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
 
     /* Encode a niew ontology Name2*/
     Ontology ontologyToEdit = Ontology.get(ontologyToAdd.id)
-    def jsonEdit = [ontology : ontologyToEdit]
-    def jsonOntology = jsonEdit.encodeAsJSON()
+    def jsonOntology = ontologyToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonOntology)
-    jsonUpdate.ontology.name = null
+    jsonUpdate.name = null
     jsonOntology = jsonUpdate.encodeAsJSON()
 
     log.info("put ontology:"+jsonOntology.replace("\n",""))
@@ -402,7 +399,7 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     log.info("create ontology")
     def ontologyToDelete = BasicInstance.getBasicOntologyNotExist()
     assert ontologyToDelete.save(flush:true)!=null
-    String jsonOntology = ([ontology : ontologyToDelete]).encodeAsJSON()
+    String jsonOntology = ontologyToDelete.encodeAsJSON()
     int idOntology = ontologyToDelete.id
     log.info("delete ontology:"+jsonOntology.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology+".json"
@@ -476,7 +473,7 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
 
      log.info("create ontology")
     def ontologyToDelete = BasicInstance.createOrGetBasicOntology()
-    String jsonOntology = ([ontology : ontologyToDelete]).encodeAsJSON()
+    String jsonOntology = ontologyToDelete.encodeAsJSON()
 
     log.info("delete ontology:"+jsonOntology.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/ontology/-99.json"
@@ -498,7 +495,7 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     def project = BasicInstance.createOrGetBasicProject()
     def ontologyToDelete = project.ontology
     assert ontologyToDelete.save(flush:true)!=null
-    String jsonOntology = ([ontology : ontologyToDelete]).encodeAsJSON()
+    String jsonOntology = ontologyToDelete.encodeAsJSON()
     int idOntology = ontologyToDelete.id
     log.info("delete ontology:"+jsonOntology.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology+".json"

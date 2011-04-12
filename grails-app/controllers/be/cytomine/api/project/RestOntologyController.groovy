@@ -21,16 +21,16 @@ class RestOntologyController {
   def list = {
 
     println params.id
-    def data = [:]
+    def data
     Term term = Term.get(params.id);
     println term
 
     if(params.id == null) {
-      data.ontology = Ontology.list()
+      data = Ontology.list()
     } else
     {
       //TODO: check if term exist
-      data.ontology = Term.get(params.id).ontologies()
+      data = Term.get(params.id).ontologies()
     }
     withFormat {
       json { render data as JSON }
@@ -41,8 +41,7 @@ class RestOntologyController {
   def show = {
 
     if(params.id && Ontology.exists(params.id)) {
-      def data = [:]
-      data.ontology = Ontology.findById(params.id)
+      def data  = Ontology.findById(params.id)
       withFormat {
         json { render data as JSON }
         xml { render data as XML }
@@ -60,8 +59,7 @@ class RestOntologyController {
   def listOntologyByTerm = {
     log.info "listOntologyByTerm"
     if(params.idterm && Term.exists(params.idterm)) {
-      def data = [:]
-      data.ontology = Term.get(params.idterm).ontology
+      def data  = Term.get(params.idterm).ontology
       withFormat {
         json { render data as JSON }
         xml { render data as XML}
@@ -141,9 +139,9 @@ class RestOntologyController {
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
 
     def result
-    if((String)params.id!=(String)request.JSON.ontology.id) {
-      log.error "Ontology id from URL and from data are different:"+ params.id + " vs " +  request.JSON.ontology.id
-      result = [data : [ontology : null , errors : ["Ontology id from URL and from data are different:"+ params.id + " vs " +  request.JSON.ontology.id ]], status : 400]
+    if((String)params.id!=(String)request.JSON.id) {
+      log.error "Ontology id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id
+      result = [data : [ontology : null , errors : ["Ontology id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id ]], status : 400]
     }
     else
     {

@@ -19,7 +19,7 @@ class AddOntologyCommand extends Command implements UndoRedoCommand {
     try
     {
       def json = JSON.parse(postData)
-      Ontology newOntology = Ontology.createOntologyFromData(json.ontology)
+      Ontology newOntology = Ontology.createOntologyFromData(json)
       if (newOntology.validate()) {
         newOntology.save(flush:true)
         log.info("Save ontology with id:"+newOntology.id)
@@ -49,7 +49,7 @@ class AddOntologyCommand extends Command implements UndoRedoCommand {
     def ontologyData = JSON.parse(data)
     def json = JSON.parse(postData)
     log.debug("Redo json:"+ json.toString() )
-    def ontology = Ontology.createOntologyFromData(json.ontology)
+    def ontology = Ontology.createOntologyFromData(json)
     ontology.id = ontologyData.id
     ontology.save(flush:true)
     log.debug("Save ontology:"+ontology.id)

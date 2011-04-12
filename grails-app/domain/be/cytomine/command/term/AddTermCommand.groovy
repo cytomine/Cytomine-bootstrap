@@ -12,7 +12,7 @@ class AddTermCommand extends Command implements UndoRedoCommand {
     try
     {
       def json = JSON.parse(postData)
-      Term newTerm = Term.createTermFromData(json.term)
+      Term newTerm = Term.createTermFromData(json)
       if (newTerm.validate()) {
         newTerm.save(flush:true)
         log.info("Save term with id:"+newTerm.id)
@@ -42,7 +42,7 @@ class AddTermCommand extends Command implements UndoRedoCommand {
     def termData = JSON.parse(data)
     def json = JSON.parse(postData)
     log.debug("Redo json:"+ json.toString() )
-    def term = Term.createTermFromData(json.term)
+    def term = Term.createTermFromData(json)
     term.id = termData.id
     term.save(flush:true)
     log.debug("Save term:"+term.id)
