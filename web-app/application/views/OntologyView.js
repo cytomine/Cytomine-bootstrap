@@ -7,9 +7,31 @@
  */
 var OntologyView = Backbone.View.extend({
     tagName : "div",
+    self : this,
     // template : _.template($('#image-view-tpl').html()),
     initialize: function(options) {
         this.container = options.container;
+    },
+    uncheckAll : function() {
+
+                     //$('#ontologytree').jstree('check_all');
+                     $('#ontologytree').jstree('unchecked_all');
+
+    },
+    checkItem : function(iditem) {
+
+                     //$('#ontologytree').jstree('check_all');
+                     $('#ontologytree').jstree('get_checked',null,true).each(function () {
+                             console.log("check:"+this.id);
+                             if(iditem==this.id) $('#ontologytree').jstree('check_node',this);
+                     });
+                     $('#ontologytree').jstree('get_unchecked',null,true).each(function () {
+                            console.log("uncheck:"+this.id);
+                            if(iditem==this.id) $('#ontologytree').jstree('check_node',this);
+                            //$('#ontologytree').jstree('check_node',this)
+                            //69
+                     });
+
     },
     render: function() {
         console.log("OntologyView.render");
@@ -25,188 +47,210 @@ var OntologyView = Backbone.View.extend({
 
                 var json = self.model.toJSON();
                 //console.log("json="+json);
-                console.log("json="+JSON.stringify(json[0].ontology));
-
-                $(function () {
-                    $("#ontologytreeaddontologybutton").click(function () {
-                        console.log("add ontology");
-                        //$("#ontologytree").jstree("Add ontology");
-                        $("#ontologytree").jstree("create",-1,false,"New ontology",false,false);
-
-                        //var data1 = $("#ontologytree").jstree('get_json',-1);
-                        //var data2 = jQuery.jstree._reference("#ontologytree").get_json(-1,false,false);
+                console.log("json="+JSON.stringify(json));
 
 
-                       // var json = jQuery.jstree._reference("#ontologytree").get_json(-1);
-                        //var jsonString = JSON.stringify(json.ontology);
+                $("#ontologytreeaddontologybutton").click(function () {
+                    console.log("add ontology");
+                    //$("#ontologytree").jstree("Add ontology");
+                    $("#ontologytree").jstree("create",-1,false,"New ontology",false,false);
 
-                        //console.log("test1:"+jsonString);
+                    //var data1 = $("#ontologytree").jstree('get_json',-1);
+                    //var data2 = jQuery.jstree._reference("#ontologytree").get_json(-1,false,false);
 
-                        //console.log("test2="+data);
-                    });
+
+                    // var json = jQuery.jstree._reference("#ontologytree").get_json(-1);
+                    //var jsonString = JSON.stringify(json.ontology);
+
+                    //console.log("test1:"+jsonString);
+
+                    //console.log("test2="+data);
                 });
 
-                $(function () {
-                    $("#ontologytreeaddtermbutton").click(function () {
-                        console.log("add term");
+                $("#ontologytreeaddtermbutton").click(function () {
+                    console.log("add term");
 
-                        $("#ontologytree").jstree("create");
+                    $("#ontologytree").jstree("create");
 
-                        var json = jQuery.jstree._reference("#ontologytree").get_selected();
-                        console.log(json);
+                    var json = jQuery.jstree._reference("#ontologytree").get_selected();
+                    console.log(json);
 
-                    });
                 });
 
-                $(function () {
-                    $("#ontologytreeselectednode").click(function () {
-                        console.log("selected node");
-                        var data = $("#ontologytree").jstree('_get_node');
-                    });
+                $("#ontologytreeselectednode").click(function () {
+                    console.log("selected node");
+                    var data = $("#ontologytree").jstree('_get_node');
                 });
 
 
-                $(function () {
-                    $("#ontologytreerenamebutton").click(function () {
-                        console.log("rename");
-                        $("#ontologytree").jstree("rename");
-                    });
+                $("#ontologytreerenamebutton").click(function () {
+                    console.log("rename");
+                    $("#ontologytree").jstree("rename");
                 });
 
-                $(function () {
-                    $("#ontologytreedeletebutton").click(function () {
-                        console.log("remove");
-                        $("#ontologytree").jstree("remove");
-                    });
+                $("#ontologytreedeletebutton").click(function () {
+                    console.log("remove");
+                    $("#ontologytree").jstree("remove");
                 });
 
-                $(function () {
-                    $("#ontologytree")
-                            .bind("open_node.jstree", function(e) { console.log("Last operation " + e.type);})
-                        //.bind("before.jstree", function(e) { console.log("Before operation " + e.type);})
-                        /**
-                         * Add a JSTREE element
-                         */
-                            .bind("create_node.jstree", function(e, data) {
-                        console.log("create_node.jstree");
-                        //Check if it's a ontology (level: 0?)
-                        console.log("new name:"+ data.state);
-                        //console.log("new name:"+ data.state);
-                        //if its an ontology: create ontology
+                 $("#ontologytreeprintselectbutton").click(function () {
+                    console.log("print");
+                    $('#ontologytreedebug').empty();
+                    $('#ontologytreedebug').append("ID Checked");
+                    $('#ontologytree').jstree('get_checked').each(function () {
+                        //console.log("id="+this.id);
+                        $('#ontologytreedebug').append("<BR>" +this.id);
+                    });
+
+                      $('#ontologytreedebug').append("<BR>" +this.id);
 
 
-                        //else create term
+                     //$('#ontologytree').jstree('close_all');
+
+                     self.checkItem('70');
+
+                });
 
 
-                    })
+                $("#ontologytree")
+                        .bind("open_node.jstree", function(e) { console.log("Last operation " + e.type);})
+                    //.bind("before.jstree", function(e) { console.log("Before operation " + e.type);})
+                    /**
+                     * Add a JSTREE element
+                     */
+                        .bind("create_node.jstree", function(e, data) {
+                    console.log("create_node.jstree");
+                    //Check if it's a ontology (level: 0?)
+                    console.log("new name:"+ data.rslt.name);
+                    console.log("new postion:"+ data.rslt.position);
+                    console.log("id parent:"+ data.rslt.parent);
+                    //console.log("id :"+ data.rslt.attr("id"));
+                    //console.log("class :"+ data.rslt.attr("class"));
 
-                        /**
-                         * Rename a JSTREE element
-                         */
-                            .bind("rename.jstree", function(e, data) {
-                        console.log("old name:"+ data.rslt.old_name);
-                        console.log("new name:"+ data.rslt.new_name);
-                        console.log("id:"+ data.rslt.obj.attr("id"));
-                        console.log("text:"+ data.inst.get_text());
 
-                        var id = data.rslt.obj.attr("id");
-                        var classtype = data.rslt.obj.attr("type");
-                        //check if ontology or term
-                        console.log("Get id:"+ id);
-                        console.log("Type: |"+ classtype + "| " + "|" + window.models.ontologies.class +"|");
-                        if(classtype==window.models.ontologies.class) {
-                            var currentOntology = window.models.ontologies.get({id:id}).fetch({success : function () {
-                                console.log("old name" + currentOntology.get('name'));
-                                currentOntology.set({name:data.rslt.new_name});
-                                console.log("new name" + currentOntology.get('name'));
-                                currentOntology.save();
-                                console.log("save");
+                    //console.log("new name:"+ data.state);
+                    //if its an ontology: create ontology
 
-                            }
-                            });
+
+                    //else create term
+
+
+                })
+
+                    /**
+                     * Rename a JSTREE element
+                     */
+                        .bind("rename.jstree", function(e, data) {
+                    console.log("old name:"+ data.rslt.old_name);
+                    console.log("new name:"+ data.rslt.new_name);
+                    console.log("id:"+ data.rslt.obj.attr("id"));
+                    console.log("text:"+ data.inst.get_text());
+
+                    var id = data.rslt.obj.attr("id");
+                    var classtype = data.rslt.obj.attr("type");
+                    //check if ontology or term
+                    console.log("Get id:"+ id);
+                    console.log("Type: |"+ classtype + "| " + "|" + window.app.models.ontologies.class +"|");
+                    if(classtype==window.app.models.ontologies.class) {
+                        var currentOntology = window.app.models.ontologies.get({id:id}).fetch({success : function () {
+                            console.log("old name" + currentOntology.get('name'));
+                            currentOntology.set({name:data.rslt.new_name});
+                            console.log("new name" + currentOntology.get('name'));
+                            currentOntology.save();
+                            console.log("save");
+
                         }
-                        else
-                        {
-                            alert("Trem");
+                        });
+                    }
+                    else
+                    {
+                        var currentTerm = window.app.models.terms.get({id:id}).fetch({success : function () {
+                            console.log("old name" + currentTerm.get('name'));
+                            currentTerm.set({name:data.rslt.new_name});
+                            console.log("new name" + currentTerm.get('name'));
+                            currentTerm.save();
+                            console.log("save");
+
                         }
-                    })
-                        /**
-                         * Remove a JSTREE element
-                         */
-                            .bind("remove.jstree", function(event, data) {
-                        var id = data.rslt.obj.attr("id");
-                        var classtype = data.rslt.obj.attr("type");
-                        //check if it's a term or a ontology
-                        if(classtype==window.models.ontologies.class) {
-                            //if it is an ontology
-                            var currentOntology = window.models.ontologies.get({id:id}).fetch({success : function () {
-                                console.log("remove " + id);
-                                currentOntology.destroy({
-                                    success:function(model, response){alert("OK!")},
-                                    error:function(model, response){alert("KO!"); $.jstree.rollback(data.rlbk);}});
-                            }
-                            });
-                        } else
-                        {
-                            //else if it is a term
-                            var currentTerm = window.models.terms.get({id:id}).fetch({success : function () {
-                                console.log("remove " + id);
-                                currentTerm.destroy({
-                                    success:function(model, response){alert("OK!")},
-                                    error:function(model, response){alert("KO!"); $.jstree.rollback(data.rlbk);}});
-                            }
-                            });
-                        }
-
-
-                    })
-
-                        /**
-                         * select a JSTREE element
-                         */
-                            .bind("select_node.jstree", function(e, data) {
-                        var id = data.rslt.obj.attr("id");
-                        console.log("id selected:"+id);
-                         //check if it's a term or a ontology
-                        var classtype = data.rslt.obj.attr("type");
-                        if(classtype==window.models.ontologies.class) {
+                        });
+                    }
+                })
+                    /**
+                     * Remove a JSTREE element
+                     */
+                        .bind("remove.jstree", function(event, data) {
+                    var id = data.rslt.obj.attr("id");
+                    var classtype = data.rslt.obj.attr("type");
+                    //check if it's a term or a ontology
+                    if(classtype==window.app.models.ontologies.class) {
                         //if it is an ontology
-                            var currentOntology = window.models.ontologies.get({id:id}).fetch({success : function () {
-                                console.log("select " + id);
-                                console.log(currentOntology.get("name"));
-                                $('#ontologytreedebug').empty();
-                                $('#ontologytreedebug').append(currentOntology.get("name") + "<BR><BR>");
-                                var selectedJson = currentOntology.toJSON();
-                                console.log("json="+JSON.stringify(selectedJson));
-                                $('#ontologytreedebug').append(JSON.stringify(selectedJson));
-                            }
-                            });
-                        } else
-                        {
-                            //else if it is a term
-                             var currentTerm = window.models.terms.get({id:id}).fetch({success : function () {
-                                console.log("select " + id);
-                                console.log(currentTerm.get("name"));
-                                $('#ontologytreedebug').empty();
-                                $('#ontologytreedebug').append(currentTerm.get("name") + "<BR><BR>");
-                                var selectedJson = currentTerm.toJSON();
-                                console.log("json="+JSON.stringify(selectedJson));
-                                $('#ontologytreedebug').append(JSON.stringify(selectedJson));
-                            }
-                            });
+                        var currentOntology = window.app.models.ontologies.get({id:id}).fetch({success : function () {
+                            console.log("remove " + id);
+                            currentOntology.destroy({
+                                success:function(model, response){alert("OK!")},
+                                error:function(model, response){alert("KO!"); $.jstree.rollback(data.rlbk);}});
                         }
+                        });
+                    } else
+                    {
+                        //else if it is a term
+                        var currentTerm = window.app.models.terms.get({id:id}).fetch({success : function () {
+                            console.log("remove " + id);
+                            currentTerm.destroy({
+                                success:function(model, response){alert("OK!")},
+                                error:function(model, response){alert("KO!"); $.jstree.rollback(data.rlbk);}});
+                        }
+                        });
+                    }
 
 
-                    })
+                })
 
-                            .jstree({
-                                        "json_data" : {
-                                            "data" : json[1].ontology
-                                        },
-                                        "plugins" : ["json_data", "ui","themeroller","crrm"]
+                    /**
+                     * select a JSTREE element
+                     */
+                        .bind("select_node.jstree", function(e, data) {
+                    var id = data.rslt.obj.attr("id");
+                    console.log("id selected:"+id);
+                    //check if it's a term or a ontology
+                    var classtype = data.rslt.obj.attr("type");
+                    if(classtype==window.app.models.ontologies.class) {
+                        //if it is an ontology
+                        var currentOntology = window.app.models.ontologies.get({id:id}).fetch({success : function () {
+                            console.log("select " + id);
+                            console.log(currentOntology.get("name"));
+                            $('#ontologytreedebug').empty();
+                            $('#ontologytreedebug').append(currentOntology.get("name") + "<BR><BR>");
+                            var selectedJson = currentOntology.toJSON();
+                            console.log("json="+JSON.stringify(selectedJson));
+                            $('#ontologytreedebug').append(JSON.stringify(selectedJson));
+                        }
+                        });
+                    } else
+                    {
+                        //else if it is a term
+                        var currentTerm = window.app.models.terms.get({id:id}).fetch({success : function () {
+                            console.log("select " + id);
+                            console.log(currentTerm.get("name"));
+                            $('#ontologytreedebug').empty();
+                            $('#ontologytreedebug').append(currentTerm.get("name") + "<BR><BR>");
+                            var selectedJson = currentTerm.toJSON();
+                            console.log("json="+JSON.stringify(selectedJson));
+                            $('#ontologytreedebug').append(JSON.stringify(selectedJson));
+                        }
+                        });
+                    }
 
-                                    });
-                });
+
+                })
+
+                        .jstree({
+                                    "json_data" : {
+                                        "data" : json
+                                    },
+                                    "plugins" : ["json_data", "ui","themes","crrm", "checkbox"]
+
+                                });
 
 
             },

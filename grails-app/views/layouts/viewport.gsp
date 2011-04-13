@@ -32,9 +32,8 @@
 <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/_docs/syntax/!script.js"></script>
 <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.cookie.js"></script>
 <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.hotkeys.js"></script>
-<script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.jstree.js"></script>
-<!-- Libs JStree -->
-   <script type="text/javascript" src="http://www.netgrow.com.au/assets/files/jquery_plugins/jquery.dump.js"></script>
+<!--<script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.jstree.js"></script>-->
+<script type="text/javascript" src="application/lib/jquery.jstree.js"></script>
 
 <!-- Styles -->
 <link rel='stylesheet' href='application/css/reset.css' type='text/css'/>
@@ -163,8 +162,8 @@
     <button id='ontologytreeaddtermbutton' type="button" >Add Term</button>
     <button id='ontologytreerenamebutton' type="button" >Rename</button>
     <button id='ontologytreedeletebutton' type="button" >Remove</button>
-    <button id='ontologytreeselectednode' type="button" > Print selected nodes</button>
-
+    <button id='ontologytreeprintselectbutton' type="button" >Print selected</button>
+    TODO: add ontology + add term
   </div>
   <div id='ontologytree'></div>
 

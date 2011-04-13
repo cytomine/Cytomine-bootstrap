@@ -11,16 +11,7 @@ var OntologyModel = Backbone.Model.extend({
 		var format = '.json';
         if (this.isNew()) return base + format;
 		return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
-	},
-
-	parse: function(response) {
-		console.log("response : " + response);
-	    return response.ontology;
-	},
-    toJSON:function(){
-      //var modelJSON = Backbone.Model.toJSON.apply(this);
-      return  _.clone({"ontology" :this.attributes});
-    }
+	}
 });
 
 
@@ -31,10 +22,5 @@ var OntologyCollection = Backbone.Collection.extend({
     url: 'api/ontology.json',
     initialize: function () {
         // something
-    },
-
-	parse: function(response) {
-		console.log("response : " + response);
-	    return response.ontology;
-	}
+    }
 });

@@ -27,6 +27,6 @@ var TermCollection = Backbone.Collection.extend({
 
 	parse: function(response) {
 		console.log("response : " + response);
-	    return response.term;
+	    return response;
 	}
 });

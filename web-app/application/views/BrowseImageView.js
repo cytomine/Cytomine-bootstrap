@@ -194,24 +194,24 @@ var BrowseImageView = Backbone.View.extend({
         var self = this;
         var tpl = ich.imageontologyviewtpl({}, true);
         $("#ontology"+ this.model.get("id")).html(tpl);
-        window.app.models.projects.fetch({
+
+
+        var currentProject = window.app.models.projects.get({id:window.app.status.currentProject}).fetch({
             success: function () {
                 console.log("fetch project");
-                var currentProject = window.app.models.projects.get(window.app.status.currentProject);
                 console.log("currentProject:"+currentProject);
                 var currentOntologyId = currentProject.get('ontology');
 
-
-                window.app.models.ontologies.fetch({
+                var currentOntology = window.app.models.ontologies.get({id:currentOntologyId}).fetch({
                     success: function () {
-                        var currentOntology = window.app.models.ontologies.get(currentOntologyId);
+
                         var json = currentOntology.toJSON();
                         console.log("json="+JSON.stringify(json));
                         $("#ontology"+ self.model.get("id")).find('.tree').jstree({
                             "json_data" : {
                                 "data" :json
                             },
-                            "plugins" : ["json_data", "ui","themeroller"]
+                            "plugins" : ["json_data", "ui","themes","crrm", "checkbox"]
 
                         });
                     }
@@ -295,7 +295,32 @@ AnnotationLayer.prototype = {
                 console.log("req 1");
                 req.open("GET", "/cytomine-web/api/annotation/" + evt.feature.attributes.idAnnotation + "/term.json", true);
                 console.log("req 2");
-                req.onreadystatechange = alias.selectAnnotation; // the handler
+                req.onreadystatechange = function () {
+
+                    if (req.readyState == 4) {
+                        var JSONterms = eval('(' + req.responseText + ')');
+                        //console.log(JSONannotations);
+                        $("#ontology30").find('.tree').jstree('uncheck_all');
+                        for (i = 0; i < JSONterms.length; i++) {
+                            console.log("JSONterms ID: " + JSONterms[i].id);
+
+                            //BAD CODE
+                             $("#ontology30").find('.tree').jstree('get_checked',null,true).each(function () {
+                                     console.log("check:"+this.id);
+                                     if(JSONterms[i].id==this.id) $("#ontology30").find('.tree').jstree('check_node',this);
+                             });
+                             $("#ontology30").find('.tree').jstree('get_unchecked',null,true).each(function () {
+                                    console.log("uncheck:"+this.id);
+                                    if(JSONterms[i].id==this.id) $("#ontology30").find('.tree').jstree('check_node',this);
+                                    //$('#ontologytree').jstree('check_node',this)
+                                    //69
+                             });
+                            //BAD CODE
+
+                        }
+
+                    }
+                };
                 console.log("req 3");
                 req.send(null);
 
@@ -368,16 +393,16 @@ AnnotationLayer.prototype = {
             //console.log("response for " + url + " : " + req.responseText);
             if (req.readyState == 4) {
                 var JSONannotations = eval('(' + req.responseText + ')');
-                //console.log(JSONannotations.annotation);
+                //console.log(JSONannotations);
 
-                for (i = 0; i < JSONannotations.annotation.length; i++) {
-                    console.log("JSONannotations ID: " + JSONannotations.annotation[i].id);
+                for (i = 0; i < JSONannotations.length; i++) {
+                    console.log("JSONannotations ID: " + JSONannotations[i].id);
                     //read from wkt to geometry
-                    var point = (format.read(JSONannotations.annotation[i].location));
+                    var point = (format.read(JSONannotations[i].location));
                     var geom = point.geometry;
                     var feature = new OpenLayers.Feature.Vector(geom);
                     feature.attributes = {
-                        idAnnotation: JSONannotations.annotation[i].id,
+                        idAnnotation: JSONannotations[i].id,
                         listener: 'NO',
                         importance: 10
                     };
@@ -450,12 +475,10 @@ AnnotationLayer.prototype = {
             };
 
             var json = {
-                annotation: {
                     "class": "be.cytomine.project.Annotation",
                     name: "test",
                     location: geomwkt,
                     image: this.imageID
-                }
             }; //class is a reserved word in JS !
             req.send(JSON.stringify(json));
         }
@@ -493,13 +516,11 @@ AnnotationLayer.prototype = {
         req.open("PUT", "/cytomine-web/api/annotation/" + feature.attributes.idAnnotation + ".json", true);
 
         var json = {
-            annotation: {
                 "id": feature.attributes.idAnnotation,
                 "class": "be.cytomine.project.Annotation",
                 name: "test",
                 location: geomwkt,
                 image: this.imageID
-            }
         }; //class is a reserved word in JS !
         req.send(JSON.stringify(json));
 
@@ -588,6 +609,13 @@ AnnotationLayer.prototype = {
     },
     /* Launch a dialog with annotation info */
     selectAnnotation: function () {
+        //get annotation term
+
+        //check term in tree
+
+
+
+
         /*
          console.log("selectAnnotation:"+req.readyState);
          if (req.readyState == 4)

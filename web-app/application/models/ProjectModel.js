@@ -27,6 +27,6 @@ var ProjectCollection = Backbone.Collection.extend({
 
 	parse: function(response) {
 		console.log("response : " + response);
-	    return response.project;
+	    return response;
 	}
 });

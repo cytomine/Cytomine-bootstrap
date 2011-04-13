@@ -18,12 +18,8 @@ var AnnotationModel = Backbone.Model.extend({
 		var format = '.json';
         if (this.isNew()) return base + format;
 		return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
-	},
-
-    parse: function(response) {
-		console.log("response : " + response);
-	    return response.annotation;
 	}
+
 
 
 });
@@ -36,11 +32,6 @@ var AnnotationCollection = Backbone.Collection.extend({
     url: 'api/annotation.json',
     initialize: function () {
         // something
-    },
-
-	parse: function(response) {
-		console.log("response : " + response);
-	    return response.annotation;
-	}
+    }
 });
 

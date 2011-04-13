@@ -33,7 +33,7 @@ var UserCollection = Backbone.Collection.extend({
 
 	parse: function(response) {
 		console.log("response : " + response);
-	    return response.user;
+	    return response;
 	}
 });
 
