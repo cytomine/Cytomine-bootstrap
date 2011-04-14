@@ -68,7 +68,7 @@ var OntologyTreeView = Backbone.View.extend({
         //add annotation-term
         var terms = [];
         this.tree.jstree('get_checked',null,true).each(function () {
-            if($(this).attr("type") != window.app.models.terms.class) return; //not a term node
+            if($(this).attr("type") != window.app.models.terms.CLASS_NAME) return; //not a term node
             terms.push(this.id);
         });
         return terms;

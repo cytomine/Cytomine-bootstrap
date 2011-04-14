@@ -150,8 +150,8 @@ var OntologyView = Backbone.View.extend({
                     var classtype = data.rslt.obj.attr("type");
                     //check if ontology or term
                     console.log("Get id:"+ id);
-                    console.log("Type: |"+ classtype + "| " + "|" + window.app.models.ontologies.class +"|");
-                    if(classtype==window.app.models.ontologies.class) {
+                    console.log("Type: |"+ classtype + "| " + "|" + window.app.models.ontologies.CLASS_NAME +"|");
+                    if(classtype==window.app.models.ontologies.CLASS_NAME) {
                         var currentOntology = window.app.models.ontologies.get({id:id}).fetch({success : function () {
                             console.log("old name" + currentOntology.get('name'));
                             currentOntology.set({name:data.rslt.new_name});
@@ -182,7 +182,7 @@ var OntologyView = Backbone.View.extend({
                     var id = data.rslt.obj.attr("id");
                     var classtype = data.rslt.obj.attr("type");
                     //check if it's a term or a ontology
-                    if(classtype==window.app.models.ontologies.class) {
+                    if(classtype==window.app.models.ontologies.CLASS_NAME) {
                         //if it is an ontology
                         var currentOntology = window.app.models.ontologies.get({id:id}).fetch({success : function () {
                             console.log("remove " + id);
@@ -214,7 +214,7 @@ var OntologyView = Backbone.View.extend({
                     console.log("id selected:"+id);
                     //check if it's a term or a ontology
                     var classtype = data.rslt.obj.attr("type");
-                    if(classtype==window.app.models.ontologies.class) {
+                    if(classtype==window.app.models.ontologies.CLASS_NAME) {
                         //if it is an ontology
                         var currentOntology = window.app.models.ontologies.get({id:id}).fetch({success : function () {
                             console.log("select " + id);

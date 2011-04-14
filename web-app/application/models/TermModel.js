@@ -44,7 +44,7 @@ var AnnotationTermCollection = Backbone.Collection.extend({
 // define our collection
 var TermCollection = Backbone.Collection.extend({
     model: TermModel,
-    class: "be.cytomine.ontology.Term",
+    CLASS_NAME: "be.cytomine.ontology.Term",
     url: 'api/term.json',
     initialize: function () {
         // something
