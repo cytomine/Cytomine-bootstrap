@@ -28,10 +28,10 @@
   <script type="text/javascript" src="application/lib/ICanHaz.js"></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
 <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
-<!-- Libs JStree-->
+<!-- Libs JStree
 <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/_docs/syntax/!script.js"></script>
 <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.cookie.js"></script>
-<script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.hotkeys.js"></script>
+<script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.hotkeys.js"></script>-->
 <!--<script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.jstree.js"></script>-->
 <script type="text/javascript" src="application/lib/jquery.jstree.js"></script>
 
@@ -171,7 +171,7 @@
 </script>
 
 <script type="text/html" id="imageontologyviewtpl">
-  <div class="tree"></div>
+  <div class="tree">N'importe quoi</div>
 </script>
 
 <script type="text/html" id="termitemviewtpl">
@@ -255,6 +255,7 @@
 <script type="text/javascript" src="application/views/ImageThumbView.js" ></script>
 <script type="text/javascript" src="application/views/TermView.js" ></script>
 <script type="text/javascript" src="application/views/OntologyView.js" ></script>
+<script type="text/javascript" src="application/views/OntologyTreeView.js" ></script>
 <script type="text/javascript" src="application/views/ProjectView.js" ></script>
 <script type="text/javascript" src="application/views/Tabs.js" ></script>
 

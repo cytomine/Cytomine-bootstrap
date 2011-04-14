@@ -19,19 +19,22 @@ var AnnotationModel = Backbone.Model.extend({
         if (this.isNew()) return base + format;
 		return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
 	}
-
-
-
 });
 
 
 // define our collection
 var AnnotationCollection = Backbone.Collection.extend({
     model: AnnotationModel,
-
-    url: 'api/annotation.json',
-    initialize: function () {
-        // something
+    url: function() {
+        if (this.user != undefined) {
+            return "api/user/" + this.user + "/image/" + this.image + "/annotation.json";
+        } else {
+            return "api/image/" + this.image + "/annotation.json";
+        }
+    },
+    initialize: function (options) {
+        this.image = options.image;
+        this.user = options.user;
     }
 });
 

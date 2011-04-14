@@ -29,11 +29,6 @@ var ImageCollection = Backbone.Collection.extend({
     url: 'api/image.json',
     initialize: function () {
         // something
-    },
-
-	parse: function(response) {
-		console.log("response : " + response);
-	    return response;
-	}
+    }
 });
 

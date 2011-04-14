@@ -33,7 +33,7 @@ class AddAnnotationTermCommand extends Command implements UndoRedoCommand {
   def undo() {
     log.info("Undo")
     def annotationTermData = JSON.parse(data)
-    def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(Annotation.get(annotationTermData.annotation.id),Term.get(annotationTermData.term.id))
+    def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(Annotation.get(annotationTermData.annotation),Term.get(annotationTermData.term))
     AnnotationTerm.unlink(annotationTerm.annotation,annotationTerm.term)
     log.debug("Delete annotationTerm with id:"+annotationTermData.id)
     return [data : ["AnnotationTerm deleted"], status : 200]

@@ -29,11 +29,6 @@ var UserCollection = Backbone.Collection.extend({
     url: 'api/user.json',
     initialize: function () {
         // something
-    },
-
-	parse: function(response) {
-		console.log("response : " + response);
-	    return response;
-	}
+    }
 });
 

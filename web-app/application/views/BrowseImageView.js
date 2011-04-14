@@ -1,6 +1,6 @@
 var BrowseImageView = Backbone.View.extend({
     tagName: "div",
-    layers : {},
+    layers: {},
     initialize: function (options) {
 
     },
@@ -12,8 +12,9 @@ var BrowseImageView = Backbone.View.extend({
         this.el.css("display", "block");
         this.initToolbar();
         this.initMap();
-        this.initVectorLayers();
         this.initOntology();
+        this.initVectorLayers();
+
 
         return this;
     },
@@ -52,8 +53,8 @@ var BrowseImageView = Backbone.View.extend({
             roundedCorner: false,
             roundedCornerColor: false,
             'div': document.getElementById('layerSwitcher' + this.model.get('id')),
-            mouseDown: function(evt) {//IF WE DON'T DO THAT, Mouse Up is not triggered if dragging or sliding
-                this.isMouseDown = false;  //CONTINUE
+            mouseDown: function (evt) { //IF WE DON'T DO THAT, Mouse Up is not triggered if dragging or sliding
+                this.isMouseDown = false; //CONTINUE
                 /*this.ignoreEvent(evt);*/
             }
         });
@@ -63,18 +64,14 @@ var BrowseImageView = Backbone.View.extend({
             tileSize: tileSize,
             controls: [
                 //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),
-                new OpenLayers.Control.Navigation(), new OpenLayers.Control.PanZoomBar(),
-                layerSwitcher,
-                new OpenLayers.Control.MousePosition(),
-                new OpenLayers.Control.OverviewMap({
+                new OpenLayers.Control.Navigation(), new OpenLayers.Control.PanZoomBar(), layerSwitcher, new OpenLayers.Control.MousePosition(), new OpenLayers.Control.OverviewMap({
                     div: document.getElementById('overviewMap' + this.model.get('id')),
                     //size: new OpenLayers.Size(metadata.width / Math.pow(2, openURLLayer.getViewerLevel()), metadata.height / Math.pow(2,(openURLLayer.getViewerLevel()))),
                     size: new OpenLayers.Size(metadata.width / Math.pow(2, this.layers.baseLayer.getViewerLevel()), metadata.height / Math.pow(2, (this.layers.baseLayer.getViewerLevel()))),
                     minRatio: 1,
                     maxRatio: 1024,
                     mapOptions: mapOptions
-                }),
-                new OpenLayers.Control.KeyboardDefaults()]
+                }), new OpenLayers.Control.KeyboardDefaults()]
         };
         this.map = new OpenLayers.Map("map" + this.model.get('id'), options);
         this.map.addLayer(this.layers.baseLayer);
@@ -84,7 +81,7 @@ var BrowseImageView = Backbone.View.extend({
 
         $('#layerSwitcher' + this.model.get('id')).find('.slider').slider({
             value: 100,
-            slide: function(e, ui) {
+            slide: function (e, ui) {
                 self.layers.baseLayer.setOpacity(ui.value / 100);
             }
         });
@@ -99,7 +96,7 @@ var BrowseImageView = Backbone.View.extend({
         var overviewWidth = $('#overviewMap' + this.model.get('id')).width();
         var overviewHeight = $('#overviewMap' + this.model.get('id')).height();
         $('#overviewMap' + this.model.get('id')).draggable({
-            drag: function(event, ui) {
+            drag: function (event, ui) {
                 $(this).css("width", overviewWidth);
                 $(this).css("height", overviewHeight);
             }
@@ -107,7 +104,7 @@ var BrowseImageView = Backbone.View.extend({
         var layerSwitecherWidth = $('#layerSwitcher' + this.model.get('id')).width();
         var layerSwitecherHeight = $('#layerSwitcher' + this.model.get('id')).height();
         $('#layerSwitcher' + this.model.get('id')).draggable({
-            drag: function(event, ui) {
+            drag: function (event, ui) {
                 $(this).css("width", layerSwitecherWidth);
                 $(this).css("height", layerSwitecherHeight);
             }
@@ -172,12 +169,12 @@ var BrowseImageView = Backbone.View.extend({
     },
     initVectorLayers: function () {
         var self = this;
-        var colors = ["#006b9a", "#a11323", "#b7913e"];
+        var colors = ["#006b9a", "#a11323", "#b7913e", "#CCCCCC"];
         var colorIndex = 0;
         window.app.models.users.fetch({
             success: function () {
                 window.app.models.users.each(function (user) {
-                    var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), colors[colorIndex]);
+                    var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), colors[colorIndex], self.ontologyTreeView );
                     layerAnnotation.loadAnnotations(self.map);
                     if (user.get('id') == window.app.status.user.id) {
                         self.userLayer = layerAnnotation;
@@ -185,48 +182,18 @@ var BrowseImageView = Backbone.View.extend({
                         layerAnnotation.registerEvents();
                     }
                     colorIndex++;
+
                 });
             }
         });
     },
     initOntology: function () {
-
-        var self = this;
-        var tpl = ich.imageontologyviewtpl({}, true);
-        $("#ontology"+ this.model.get("id")).html(tpl);
-
-
-        var currentProject = window.app.models.projects.get({id:window.app.status.currentProject}).fetch({
-            success: function () {
-                console.log("fetch project");
-                console.log("currentProject:"+currentProject);
-                var currentOntologyId = currentProject.get('ontology');
-
-                var currentOntology = window.app.models.ontologies.get({id:currentOntologyId}).fetch({
-                    success: function () {
-
-                        var json = currentOntology.toJSON();
-                        console.log("json="+JSON.stringify(json));
-                        $("#ontology"+ self.model.get("id")).find('.tree').jstree({
-                            "json_data" : {
-                                "data" :json
-                            },
-                            "plugins" : ["json_data", "ui","themes","crrm", "checkbox"]
-
-                        });
-                    }
-                });
-            }
-        });
-
-        var ontologyPanelWidth = $('#ontology' + this.model.get('id')).width();
-        var ontologyPanelHeight = $('#ontology' + this.model.get('id')).height();
-        $('#ontology' + this.model.get('id')).draggable({
-            drag: function(event, ui) {
-                $(this).css("width", ontologyPanelWidth);
-                $(this).css("height", ontologyPanelHeight);
-            }
-        });
+        var idOntology = window.app.models.projects.get(window.app.status.currentProject).get('ontology');
+        this.ontologyTreeView = new OntologyTreeView({
+            el: $("#ontology" + this.model.get("id")),
+            idImage: this.model.get("id"),
+            model: window.app.models.ontologies.get(idOntology)
+        }).render();
 
     },
     initTools: function (controls) {
@@ -242,7 +209,7 @@ var BrowseImageView = Backbone.View.extend({
 /* Annotation Layer */
 
 
-var AnnotationLayer = function (name, imageID, userID, color) {
+var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView) {
 
     var myStyles = new OpenLayers.StyleMap({
         "default": new OpenLayers.Style({
@@ -265,7 +232,7 @@ var AnnotationLayer = function (name, imageID, userID, color) {
             graphicZIndex: 2
         })
     });
-
+    this.ontologyTreeView = ontologyTreeView;
     this.name = name;
     this.imageID = imageID;
     this.userID = userID;
@@ -290,43 +257,11 @@ AnnotationLayer.prototype = {
         var alias = this;
         this.vectorsLayer.events.on({
             featureselected: function (evt) {
-                console.log("featureselected start:" + evt.feature.attributes.idAnnotation + "|" + "/cytomine-web/api/annotation/" + evt.feature.attributes.idAnnotation + "/term.json" + "|");
-                var req = new XMLHttpRequest();
-                console.log("req 1");
-                req.open("GET", "/cytomine-web/api/annotation/" + evt.feature.attributes.idAnnotation + "/term.json", true);
-                console.log("req 2");
-                req.onreadystatechange = function () {
-
-                    if (req.readyState == 4) {
-                        var JSONterms = eval('(' + req.responseText + ')');
-                        //console.log(JSONannotations);
-                        $("#ontology30").find('.tree').jstree('uncheck_all');
-                        for (i = 0; i < JSONterms.length; i++) {
-                            console.log("JSONterms ID: " + JSONterms[i].id);
-
-                            //BAD CODE
-                             $("#ontology30").find('.tree').jstree('get_checked',null,true).each(function () {
-                                     console.log("check:"+this.id);
-                                     if(JSONterms[i].id==this.id) $("#ontology30").find('.tree').jstree('check_node',this);
-                             });
-                             $("#ontology30").find('.tree').jstree('get_unchecked',null,true).each(function () {
-                                    console.log("uncheck:"+this.id);
-                                    if(JSONterms[i].id==this.id) $("#ontology30").find('.tree').jstree('check_node',this);
-                                    //$('#ontologytree').jstree('check_node',this)
-                                    //69
-                             });
-                            //BAD CODE
-
-                        }
-
-                    }
-                };
-                console.log("req 3");
-                req.send(null);
-
+                alias.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
             },
             'featureunselected': function () {
                 if (alias.dialog != null) alias.dialog.destroy();
+                alias.ontologyTreeView.clear();
             },
             'featureadded': function (evt) {
                 console.log("onFeatureAdded start:" + evt.feature.attributes.idAnnotation);
@@ -335,7 +270,6 @@ AnnotationLayer.prototype = {
                  * false: new annotation that just have been draw (need insert)
                  * */
                 if (evt.feature.attributes.listener != 'NO') {
-                    console.log("add " + evt.feature);
                     alias.addAnnotation(evt.feature);
                 }
             },
@@ -345,6 +279,7 @@ AnnotationLayer.prototype = {
             'afterfeaturemodified': function (evt) {
                 console.log("onFeatureUpdate start");
                 alias.updateAnnotation(evt.feature);
+
             },
             'onDelete': function (feature) {
                 console.log("delete " + feature.id);
@@ -353,7 +288,6 @@ AnnotationLayer.prototype = {
     },
     initControls: function (image) {
         var alias = this;
-        //vectorsLayer.events.register("featureselected", vectorsLayer, this.selectAnnotation);
         this.controls = {
             point: new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
             line: new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
@@ -369,49 +303,27 @@ AnnotationLayer.prototype = {
         }
         console.log("initTools on image : " + image.filename);
         image.initTools(this.controls);
-        //image.map.addLayer(vectorsLayer);
-        //var panel = new OpenLayers.Control.Panel();
-        //var nav = new OpenLayers.Control.NavigationHistory();
-        //image.map.addControl(nav);
-        //panel.addControls([nav.next, nav.previous]);
-        //image.map.addControl(panel);
     },
 
 
     /*Load annotation from database on layer */
     loadAnnotations: function (map) {
-        var req = new XMLHttpRequest();
-        var url = "/cytomine-web/api/user/" + this.userID + "/image/" + this.imageID + "/annotation.json";
-        console.log("Annotations URL : " + url);
-        req.open("GET", url, true);
-        //req.open("GET", "/cytomine-web/api/annotation/image/"+this.imageID+".json", true);
         var alias = this;
-        req.onreadystatechange = function () {
-            var format = new OpenLayers.Format.WKT();
-            //vectorsAnnotations = new OpenLayers.Layer.Vector("Overlay");
-            var points = [];
-            //console.log("response for " + url + " : " + req.responseText);
-            if (req.readyState == 4) {
-                var JSONannotations = eval('(' + req.responseText + ')');
-                //console.log(JSONannotations);
-
-                for (i = 0; i < JSONannotations.length; i++) {
-                    console.log("JSONannotations ID: " + JSONannotations[i].id);
-                    //read from wkt to geometry
-                    var point = (format.read(JSONannotations[i].location));
-                    var geom = point.geometry;
-                    var feature = new OpenLayers.Feature.Vector(geom);
+        new AnnotationCollection({user : this.userID, image : this.imageID}).fetch({
+            success : function (collection, response) {
+                collection.each(function(annotation) {
+                    var format = new OpenLayers.Format.WKT();
+                    var point = (format.read(annotation.get("location")));
+                    var feature = new OpenLayers.Feature.Vector(point.geometry);
                     feature.attributes = {
-                        idAnnotation: JSONannotations[i].id,
+                        idAnnotation: annotation.get("id"),
                         listener: 'NO',
                         importance: 10
                     };
                     alias.addFeature(feature);
-                }
-
+                });
             }
-        };
-        req.send(null);
+        });
         map.addLayer(this.vectorsLayer);
     },
     addFeature: function (feature) {
@@ -431,220 +343,83 @@ AnnotationLayer.prototype = {
             this.removeAnnotation(feature);
         }
     },
-    /*Remove annotation from database*/
-    removeAnnotation: function (feature) {
-
-        console.log("deleteAnnotation start");
-        //console.log("delete " + "" + feature.attributes.idAnnotation);
-        var req = new XMLHttpRequest();
-        req.open("DELETE", "/cytomine-web/api/annotation/" + feature.attributes.idAnnotation, true);
-        req.send(null);
-        this.vectorsLayer.removeFeatures(feature);
-        console.log("deleteAnnotation end");
-    },
     /*Add annotation in database*/
     addAnnotation: function (feature) {
-        console.log("addAnnotation start");
+        var newFeature = null;
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
         var alias = this;
-        console.log("add geomwkt=" + geomwkt);
-        for (var i = 0; i < 1; i++) {
-            var req = new XMLHttpRequest();
-            //console.log("/cytomine-web/api/annotation/image/"+this.scanID+"/"+geomwkt);
-            //req.open("POST", "/cytomine-web/api/annotation/image/"+this.scanID+"/"+geomwkt+".json", true);
-            req.open("POST", "/cytomine-web/api/annotation.json", true);
-            if (i == 0) req.onreadystatechange = function () {
-                var format = new OpenLayers.Format.WKT();
-                if (req.readyState == 4) {
-                    console.log("response:" + req.responseText);
-                    var JSONannotations = eval('(' + req.responseText + ')');
-                    console.log(JSONannotations.annotation.id);
-                    var point = (format.read(JSONannotations.annotation.location));
-                    var geom = point.geometry;
-                    var feature = new OpenLayers.Feature.Vector(geom);
-                    feature.attributes = {
-                        idAnnotation: JSONannotations.annotation.id,
-                        listener: 'NO',
-                        importance: 10
-                    };
-                    alias.addFeature(feature);
+        var annotation = new AnnotationModel({
+            //"class": "be.cytomine.project.Annotation",
+            name: "we don't know yet",
+            location: geomwkt,
+            image: this.imageID,
+            parse: function(response) {
+                console.log("response : " + response);
+                window.app.view.message("Annotation", response.message, "");
+                return response.annotation;
+            }});
+        annotation.save(annotation.toJSON(), {
+            success: function (model, response) {
+                console.log(response.message);
+                // window.app.view.message(response.message);
 
-                }
+                model.set({id : response.annotation.id});
+                console.log("new annotation id" + response.annotation.id);
 
-            };
-
-            var json = {
-                    "class": "be.cytomine.project.Annotation",
-                    name: "test",
-                    location: geomwkt,
-                    image: this.imageID
-            }; //class is a reserved word in JS !
-            req.send(JSON.stringify(json));
-        }
-        //Annotation hasn't any id => -1
-        //feature.attributes = {idAnnotation: "-1"};
-        this.hideAnnotation(feature);
-        //feature.remove();
-        console.log("onFeatureAdded end");
-    },
-    hideAnnotation: function (feature) {
-        this.vectorsLayer.removeFeatures([feature]);
-    },
-
-    /*Remove annotation from database*/
-    removeAnnotation: function (feature) {
-
-        console.log("deleteAnnotation start");
-        console.log("delete " + "" + feature.attributes.idAnnotation);
-
-        var req = new XMLHttpRequest();
-        req.open("DELETE", "/cytomine-web/api/annotation/" + feature.attributes.idAnnotation, true);
-        req.send(null);
-        this.hideAnnotation(feature);
-        console.log("deleteAnnotation end");
-    },
-
-    /*Modifiy annotation on database*/
-    updateAnnotation: function (feature) {
-
-        var format = new OpenLayers.Format.WKT();
-        var geomwkt = format.write(feature);
-        console.log("update geomwkt=" + geomwkt + " " + feature.attributes.idAnnotation);
-
-        var req = new XMLHttpRequest();
-        req.open("PUT", "/cytomine-web/api/annotation/" + feature.attributes.idAnnotation + ".json", true);
-
-        var json = {
-                "id": feature.attributes.idAnnotation,
-                "class": "be.cytomine.project.Annotation",
-                name: "test",
-                location: geomwkt,
-                image: this.imageID
-        }; //class is a reserved word in JS !
-        req.send(JSON.stringify(json));
-
-        console.log("onFeatureUpdate end");
-
-    },
-
-    /*Read a list of annotations from server response and add to the layer*/
-    decodeAnnotations: function (alias) {
-        var format = new OpenLayers.Format.WKT();
-        //vectorsAnnotations = new OpenLayers.Layer.Vector("Overlay");
-        var points = [];
-        console.log("decodeAnnotations:" + req.readyState);
-
-        if (req.readyState == 4) {
-            //eval json
-            var JSONannotations = eval('(' + req.responseText + ')');
-            console.log(JSONannotations.annotation);
-
-            for (i = 0; i < JSONannotations.annotation.length; i++) {
-                console.log(JSONannotations.annotation[i].id);
-                //read from wkt to geometry
-                var point = (format.read(JSONannotations.annotation[i].location));
+                var point = (format.read(response.annotation.location));
                 var geom = point.geometry;
-
-                var feature = new OpenLayers.Feature.Vector(
-                        geom, {
-                    some: 'data'
-                }, {
-                    pointRadius: 10,
-                    fillColor: "green",
-                    fillOpacity: 0.5,
-                    strokeColor: "black"
-                });
-
-                feature.attributes = {
-                    idAnnotation: JSONannotations.annotation[i].id,
+                newFeature = new OpenLayers.Feature.Vector(geom);
+                newFeature.attributes = {
+                    idAnnotation: response.annotation.id,
                     listener: 'NO',
                     importance: 10
                 };
 
-                alias.vectorsLayer.addFeatures(feature);
+                var terms = alias.ontologyTreeView.getTermsChecked();
+                var counter = 0;
+                if (terms.length == 0) {
+                    alias.addTermCallback(0,0,feature, newFeature);
+                }
+
+                _.each(terms, function (id) {
+                    new AnnotationTermModel({
+                        term: id,
+                        annotation: response.annotation.id
+                    }).save(null, {success : function (model, response) {
+                        alias.addTermCallback(terms.length, ++counter, feature, newFeature);
+                    }
+                                  });
+                });
+            },
+            error: function (model, response) {
+                console.log("error new annotation id");
             }
-
-        }
-
+        });
+    },
+    addTermCallback : function(total, counter, oldFeature, newFeature) {
+        if (counter < total) return;
+        this.addFeature(newFeature);
+        this.controls.select.unselectAll();
+        this.controls.select.select(newFeature);
+        this.vectorsLayer.removeFeatures([oldFeature]);
+    },
+    /*Remove annotation from database*/
+    removeAnnotation: function (feature) {
+        new AnnotationModel({id:feature.attributes.idAnnotation}).destroy(); //TODO : callback success-error
+        this.vectorsLayer.removeFeatures([feature]);
     },
 
-    /*Decode a single annotation from server response and add to the layer*/
-    decodeNewAnnotation: function () {
+    /*Modifiy annotation on database*/
+    updateAnnotation: function (feature) {
         var format = new OpenLayers.Format.WKT();
-        var points = [];
-        if (req.readyState == 4) {
-            //eval json
-            console.log("response:" + req.responseText);
-            var JSONannotations = eval('(' + req.responseText + ')');
-            console.log(JSONannotations.annotation);
-
-            console.log(JSONannotations.annotation.id);
-            //read from wkt to geometry
-            var point = (format.read(JSONannotations.annotation.location));
-            var geom = point.geometry;
-
-            var feature = new OpenLayers.Feature.Vector(
-                    geom, {
-                some: 'data'
-            }, {
-                pointRadius: 10,
-                fillColor: "green",
-                fillOpacity: 0.5,
-                strokeColor: "black"
-            });
-
-            feature.attributes = {
-                idAnnotation: JSONannotations.annotation.id,
-                listener: 'NO',
-                importance: 10
-            };
-
-            console.log("add to " + vectorsLayer.name);
-            console.log("add to " + this.vectorsLayer.name);
-            vectorsLayer.addFeatures(feature);
-
-        }
-
-    },
-    /* Launch a dialog with annotation info */
-    selectAnnotation: function () {
-        //get annotation term
-
-        //check term in tree
-
-
-
-
-        /*
-         console.log("selectAnnotation:"+req.readyState);
-         if (req.readyState == 4)
-         {
-         //eval json
-         console.log("response:"+req.responseText);
-         var JSONannotations = eval('(' + req.responseText + ')');
-
-         var terms =""+ "<BR>";
-         for (i=0;i<JSONannotations.term.length;i++)
-         {
-         terms = terms +"*" +JSONannotations.term[i].name + "<BR>"
-         }
-         this.dialog = new Ext.Window({
-         title: "Feature Info",
-         layout: "fit",
-         height: 130, width: 200,
-         plain: true,
-         items: [{
-         border: false,
-         bodyStyle: {
-         padding: 5, fontSize: 13
-         },
-         html: "Term: "+terms
-         }]
-         });
-         this.dialog.show();
-         } */
-
+        var geomwkt = format.write(feature);
+        new AnnotationModel({id:feature.attributes.idAnnotation}).fetch({
+            success : function(model, response) {
+                model.set({location : geomwkt});
+                model.save();  //TODO : callback success-error
+            }
+        });
     },
     /** Triggered when add new feature **/
     /*onFeatureAdded : function (evt) {
@@ -725,23 +500,29 @@ AnnotationLayer.prototype = {
             }
         }
     },
-
-    annotationAdded : function(idAnnotation) {
+    /* Callbacks undo/redo */
+    annotationAdded: function (idAnnotation) {
         var self = this;
-        var annotation = new AnnotationModel({id : idAnnotation}).fetch({
-            success : function (model) {
-                var format = new OpenLayers.Format.WKT();
-                var location =  format.read(model.get('location'));
-                var feature = new OpenLayers.Feature.Vector( location.geometry);
-                feature.attributes = {idAnnotation: model.get('id'), listener:'NO',importance: 10 };
-                self.addFeature(feature);
-            }
-        });
+        var annotation = new AnnotationModel({
+            id: idAnnotation
+        }).fetch({
+                     success: function (model) {
+                         var format = new OpenLayers.Format.WKT();
+                         var location = format.read(model.get('location'));
+                         var feature = new OpenLayers.Feature.Vector(location.geometry);
+                         feature.attributes = {
+                             idAnnotation: model.get('id'),
+                             listener: 'NO',
+                             importance: 10
+                         };
+                         self.addFeature(feature);
+                     }
+                 });
     },
-    annotationRemoved : function(idAnnotation) {
+    annotationRemoved: function (idAnnotation) {
         this.removeFeature(idAnnotation);
     },
-    annotationUpdated : function(idAnnotation, idImage) {
+    annotationUpdated: function (idAnnotation, idImage) {
         this.annotationRemoved(idAnnotation);
         this.annotationAdded(idAnnotation);
     }

@@ -23,10 +23,5 @@ var ProjectCollection = Backbone.Collection.extend({
     url: 'api/project.json',
     initialize: function () {
         // something
-    },
-
-	parse: function(response) {
-		console.log("response : " + response);
-	    return response;
-	}
+    }
 });

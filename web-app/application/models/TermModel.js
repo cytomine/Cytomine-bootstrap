@@ -15,6 +15,31 @@ var TermModel = Backbone.Model.extend({
 	}
 });
 
+var AnnotationTermModel = Backbone.Model.extend({
+	url : function() {
+        if (this.term == undefined)
+		    return 'api/annotation/' + this.annotation +'/term.json';
+        else
+            return 'api/annotation/' + this.annotation +'/term/'+this.term+'.json';
+	},
+    initialize: function (options) {
+        this.annotation = options.annotation;
+        this.term = options.term;
+    }
+});
+
+var AnnotationTermCollection = Backbone.Collection.extend({
+    model : TermModel,
+	url : function() {
+		return 'api/annotation/' + this.idAnnotation +'/term.json';
+	},
+    initialize: function (options) {
+        this.idAnnotation = options.idAnnotation;
+
+    }
+});
+
+
 
 // define our collection
 var TermCollection = Backbone.Collection.extend({
@@ -23,10 +48,5 @@ var TermCollection = Backbone.Collection.extend({
     url: 'api/term.json',
     initialize: function () {
         // something
-    },
-
-	parse: function(response) {
-		console.log("response : " + response);
-	    return response;
-	}
+    }
 });

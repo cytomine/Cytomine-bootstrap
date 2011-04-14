@@ -13,14 +13,19 @@ class AnnotationTerm implements Serializable{
   }
 
   static AnnotationTerm link(Annotation annotation,Term term) {
+
     def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation, term)
-    if (!annotationTerm) {
-      annotationTerm = new AnnotationTerm()
-      annotation?.addToAnnotationTerm(annotationTerm)
-      term?.addToAnnotationTerm(annotationTerm)
-      println "save annotationTerm"
-      annotationTerm.save(flush : true)
-    } else throw new IllegalArgumentException("Annotation " + annotation.id + " and term " + term.id + " are already mapped")
+    //Annotation.withTransaction {
+      if (!annotationTerm) {
+        annotationTerm = new AnnotationTerm()
+        annotation?.addToAnnotationTerm(annotationTerm)
+        term?.addToAnnotationTerm(annotationTerm)
+        println "save annotationTerm"
+        annotation.refresh()
+        term.refresh()
+        annotationTerm.save(flush:true)
+      } else throw new IllegalArgumentException("Annotation " + annotation.id + " and term " + term.id + " are already mapped")
+    //}
     return annotationTerm
   }
 
@@ -33,6 +38,8 @@ class AnnotationTerm implements Serializable{
       annotationTerm.id = id
       annotation?.addToAnnotationTerm(annotationTerm)
       term?.addToAnnotationTerm(annotationTerm)
+        annotation.refresh()
+        term.refresh()
       annotationTerm.save(flush:true)
     } else throw new IllegalArgumentException("Annotation " + annotation.id + " and term " + term.id + " are already mapped")
     return annotationTerm
@@ -57,8 +64,8 @@ class AnnotationTerm implements Serializable{
 
   static AnnotationTerm getAnnotationTermFromData(annotationTerm,jsonAnnotationTerm) {
     println "jsonAnnotationTerm from getAnnotationTermFromData = " + jsonAnnotationTerm
-    annotationTerm.annotation = Annotation.get(jsonAnnotationTerm.annotation.id.toString())
-    annotationTerm.term = Term.get(jsonAnnotationTerm.term.id.toString())
+    annotationTerm.annotation = Annotation.get(jsonAnnotationTerm.annotation.toString())
+    annotationTerm.term = Term.get(jsonAnnotationTerm.term.toString())
     return annotationTerm;
   }
 
@@ -68,8 +75,8 @@ class AnnotationTerm implements Serializable{
       def returnArray = [:]
       returnArray['class'] = it.class
       returnArray['id'] = it.id
-      returnArray['annotation'] = it.annotation
-      returnArray['term'] = it.term
+      returnArray['annotation'] = it.annotation?.id
+      returnArray['term'] = it.term?.id
       return returnArray
     }
   }

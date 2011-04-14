@@ -140,8 +140,8 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(201,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
-    int idAnnotation= json.annotationTerm.annotation.id
-    int idTerm= json.annotationTerm.term.id
+    int idAnnotation= json.annotationTerm.annotation
+    int idTerm= json.annotationTerm.term
 
     log.info("check if object "+ idAnnotation +"/"+ idTerm +"exist in DB")
     client = new HttpClient();
@@ -228,7 +228,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     String jsonAnnotationTerm = annotationTermAdd.encodeAsJSON()
     log.info("jsonAnnotationTerm="+jsonAnnotationTerm)
     def jsonUpdate = JSON.parse(jsonAnnotationTerm)
-    jsonUpdate.annotation.id = -99
+    jsonUpdate.annotation = -99
     jsonAnnotationTerm = jsonUpdate.encodeAsJSON()
 
     log.info("post annotationterm:"+jsonAnnotationTerm.replace("\n",""))
@@ -253,7 +253,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     String jsonAnnotationTerm = annotationTermAdd.encodeAsJSON()
     log.info("jsonAnnotationTerm="+jsonAnnotationTerm)
     def jsonUpdate = JSON.parse(jsonAnnotationTerm)
-    jsonUpdate.term.id = -99
+    jsonUpdate.term = -99
     jsonAnnotationTerm = jsonUpdate.encodeAsJSON()
 
     log.info("post annotationterm:"+jsonAnnotationTerm.replace("\n",""))
