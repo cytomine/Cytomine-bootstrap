@@ -30,7 +30,7 @@ var OntologyTreeView = Backbone.View.extend({
             "json_data" : {
                 "data" :this.model.toJSON()
             },
-            "plugins" : ["json_data", "ui","themes","crrm", "checkbox"]
+            "plugins" : ["json_data", "ui","themes", "checkbox"]
 
         });
 

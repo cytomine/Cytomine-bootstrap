@@ -7,7 +7,6 @@ var ApplicationController = Backbone.Controller.extend({
     status : {},
 
     routes: {
-        "logout"    :   "logout",
         "explorer"  :   "explorer",
         "upload"    :   "upload",
         "admin"     :   "admin",
@@ -50,22 +49,14 @@ var ApplicationController = Backbone.Controller.extend({
 
         var self = this;
         var serverDown = function(status) {
+            $("#app").fadeOut('slow');
             var dialog = new ConfirmDialogView({
                 el:'#dialogs',
-                //template : _.template($('#server-down-tpl').html()),
                 template : ich.serverdowntpl({}, true),
                 dialogAttr : {
-                    dialogID : "#server-down",
-                    buttons: {
-                        "Ok :(": function() {
-                            $(this).dialog("close");
-                        }
-                    },
-                    close :function (event) {
-                        $(this).remove();
-                    }
+                    dialogID : "#server-down"
                 }
-            });
+            }).render();
         }
 
         var successcallback =  function (data) {

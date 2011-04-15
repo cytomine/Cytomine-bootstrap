@@ -388,8 +388,7 @@ AnnotationLayer.prototype = {
                         annotation: response.annotation.id
                     }).save(null, {success : function (model, response) {
                         alias.addTermCallback(terms.length, ++counter, feature, newFeature);
-                    }
-                                  });
+                    }});
                 });
             },
             error: function (model, response) {
