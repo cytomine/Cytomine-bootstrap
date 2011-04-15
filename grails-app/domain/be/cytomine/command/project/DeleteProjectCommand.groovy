@@ -4,8 +4,9 @@ import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.project.Project
 import grails.converters.JSON
+import be.cytomine.command.DeleteCommand
 
-class DeleteProjectCommand extends Command implements UndoRedoCommand {
+class DeleteProjectCommand extends DeleteCommand implements UndoRedoCommand {
 
   def execute() {
     def postData = JSON.parse(postData)

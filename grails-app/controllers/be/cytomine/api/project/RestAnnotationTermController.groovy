@@ -3,115 +3,62 @@ package be.cytomine.api.project
 import grails.converters.*
 import be.cytomine.security.User
 import be.cytomine.command.Command
-import be.cytomine.command.UndoStackItem
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.command.annotationterm.AddAnnotationTermCommand
 import be.cytomine.command.annotationterm.DeleteAnnotationTermCommand
 import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.Term
+import be.cytomine.api.RestController
 
-class RestAnnotationTermController {
+class RestAnnotationTermController extends RestController {
 
   def springSecurityService
 
   def listTermByAnnotation = {
-    log.info "listByAnnotation"
-    if(params.idannotation && Annotation.exists(params.idannotation)) {
-      def data = Annotation.get(params.idannotation).terms()
-      //data.annotationTerm = AnnotationTerm.findAllByAnnotation(Annotation.get(params.idannotation))
-      withFormat {
-        json { render data as JSON }
-        xml { render data as XML}
-      }
-    } else {
-      response.status = 404
-      render contentType: "application/xml", {
-        errors {
-          message("Annotation Term not found with annotation id: " + params.idannotation)
-        }
-      }
+    log.info "listByAnnotation with idAnnotation=" + params.idannotation
+    if(params.idannotation=="undefined") responseNotFound("Annotation Term","Annotation", params.idannotation)
+    else
+    {
+      Annotation annotation =  Annotation.read(params.idannotation)
+      if(annotation!=null) responseSuccess(annotation.terms())
+      else responseNotFound("Annotation Term","Annotation", params.idannotation)
     }
+
   }
 
   def listAnnotationByTerm = {
-    log.info "listByTerm"
-    if(params.idterm && Term.exists(params.idterm)) {
-      def data = Term.get(params.idterm).annotations()
-      withFormat {
-        json { render data as JSON }
-        xml { render data as XML}
-      }
-    } else {
-      response.status = 404
-      render contentType: "application/xml", {
-        errors {
-          message("Annotation Term not found with term id: " + params.idterm)
-        }
-      }
-    }
+    log.info "listByTerm with idTerm=" +  params.idterm
+    Term term = Term.read(params.idterm)
+    if(term!=null) responseSuccess(term.annotations())
+    else responseNotFound("Annotation Term","Term", params.idannotation)
   }
 
   def show = {
-    log.info "Show"
-      Annotation annotation = Annotation.get(params.idannotation)
-      Term term = Term.get(params.idterm)
-    if(annotation!=null && term!=null && AnnotationTerm.findByAnnotationAndTerm(annotation,term)!=null) {
-      def data  = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
-      withFormat {
-        json { render data as JSON }
-        xml { render data as XML }
-      }
-    } else {
-      response.status = 404
-      render contentType: "application/xml", {
-        errors {
-          message("Annotation Term not found with annotation id " + params.idannotation + " and term id " + params.idterm)
-        }
-      }
-    }
+    log.info "listByTerm with idTerm=" +  params.idterm + " idAnnotation=" + params.idannotation
+    Annotation annotation = Annotation.read(params.idannotation)
+    Term term = Term.read(params.idterm)
+    if(annotation!=null && term!=null && AnnotationTerm.findByAnnotationAndTerm(annotation,term)!=null)
+      responseSuccess(AnnotationTerm.findByAnnotationAndTerm(annotation,term))
+    else  responseNotFound("Annotation Term","Term","Annotation", params.idterm,  params.idannotation)
   }
+
 
   def add = {
     log.info "Add"
-    User currentUser = User.get(springSecurityService.principal.id)
+    User currentUser = getCurrentUser(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-
     Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : request.JSON.toString(),user: currentUser)
-
-    def result = addAnnotationTermCommand.execute()
-
-    if (result.status == 201) {
-      addAnnotationTermCommand.save()
-      new UndoStackItem(command : addAnnotationTermCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
-    }
-
-    response.status = result.status
-    log.debug "result.status="+result.status+" result.data=" + result.data
-    withFormat {
-      json { render result.data as JSON }
-      xml { render result.data as XML }
-    }
+    def result = processCommand(addAnnotationTermCommand, currentUser)
+    response(result)
   }
 
   def delete =  {
     log.info "Delete"
-    User currentUser = User.get(springSecurityService.principal.id)
+    User currentUser = getCurrentUser(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " params.idannotation=" + params.idannotation
-
     def postData = ([annotation : params.idannotation,term :params.idterm]) as JSON
-    def result = null
-
     Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData : postData.toString(),user: currentUser)
-
-    result = deleteAnnotationTermCommand.execute()
-    if (result.status == 200) {
-      deleteAnnotationTermCommand.save()
-      new UndoStackItem(command : deleteAnnotationTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
-    }
-    response.status = result.status
-    withFormat {
-      json { render result.data as JSON }
-      xml { render result.data as XML }
-    }
+    def result = processCommand(deleteAnnotationTermCommand, currentUser)
+    response(result)
   }
 }

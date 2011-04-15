@@ -4,8 +4,9 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
+import be.cytomine.command.EditCommand
 
-class EditUserCommand extends Command implements UndoRedoCommand {
+class EditUserCommand extends EditCommand implements UndoRedoCommand {
 
   def execute() {
     log.info "Execute"

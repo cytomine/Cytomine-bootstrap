@@ -6,8 +6,9 @@ import grails.converters.JSON
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.Term
+import be.cytomine.command.DeleteCommand
 
-class DeleteRelationTermCommand extends Command implements UndoRedoCommand {
+class DeleteRelationTermCommand extends DeleteCommand implements UndoRedoCommand {
 
   def execute() {
     def postData = JSON.parse(postData)

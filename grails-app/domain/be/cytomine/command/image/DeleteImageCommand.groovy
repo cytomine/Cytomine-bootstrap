@@ -11,8 +11,9 @@ import grails.converters.JSON
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.image.Image
+import be.cytomine.command.DeleteCommand
 
-class DeleteImageCommand extends Command implements UndoRedoCommand{
+class DeleteImageCommand extends DeleteCommand implements UndoRedoCommand{
 
   def execute() {
 

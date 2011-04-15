@@ -550,38 +550,6 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     //TODO: check for change in image (?)
   }
 
-  void testEditAnnotationDifferent() {
-
-     String oldGeom = "POINT (1111 1111)"
-    String newGeom = "POINT (9999 9999)"
-
-    /* Create a old annotation with point 1111 1111 */
-    log.info("create annotation")
-    Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
-    annotationToAdd.location =  new WKTReader().read(oldGeom)
-    annotationToAdd.save(flush:true)
-
-    /* Encode a niew annotation with point 9999 9999 */
-    Annotation annotationToEdit = Annotation.get(annotationToAdd.id)
-    def jsonAnnotation = annotationToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonAnnotation)
-    jsonUpdate.location = newGeom
-    jsonAnnotation = jsonUpdate.encodeAsJSON()
-
-    log.info("put annotation:"+jsonAnnotation.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/annotation/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonAnnotation)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-
-  }
-
   void testEditAnnotationNotExist() {
 
      String oldGeom = "POINT (1111 1111)"

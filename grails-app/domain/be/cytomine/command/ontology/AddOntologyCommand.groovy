@@ -11,8 +11,9 @@ import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
 import be.cytomine.ontology.Ontology
+import be.cytomine.command.AddCommand
 
-class AddOntologyCommand extends Command implements UndoRedoCommand {
+class AddOntologyCommand extends AddCommand implements UndoRedoCommand {
 
   def execute() {
     log.info("Execute")

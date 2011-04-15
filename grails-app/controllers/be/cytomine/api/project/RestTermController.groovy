@@ -14,183 +14,67 @@ import be.cytomine.command.term.DeleteTermCommand
 import be.cytomine.command.annotationterm.AddAnnotationTermCommand
 import be.cytomine.ontology.Ontology
 import be.cytomine.image.Image
+import be.cytomine.api.RestController
 
-class RestTermController {
+class RestTermController extends RestController{
 
   def springSecurityService
   def transactionService
 
   def list = {
-
-    log.info "List:"+ params.id
-    def data
-
-    if(params.id == null) {
-      data = Term.list()
-    } else
-    {
-      if(Annotation.exists(params.id))
-        data = Annotation.get(params.id).terms()
-      else {
-        response.status = 404
-        render contentType: "application/xml", {
-          errors {
-            message("Annotation not found with id: " + params.id)
-          }
-        }
-      }
-    }
-    withFormat {
-      json { render data as JSON }
-      xml { render data as XML}
-    }
+    responseSuccess(Term.list())
   }
 
   def show = {
     log.info "Show:"+ params.id
-    if(params.id && Term.exists(params.id)) {
-      def data = Term.findById(params.id)
-      withFormat {
-        json { render data as JSON }
-        xml { render data as XML }
-      }
-    } else {
-      response.status = 404
-      render contentType: "application/xml", {
-        errors {
-          message("Term not found with id: " + params.idterm)
-        }
-      }
-    }
+    Term term = Term.read(params.id)
+    if(term) responseSuccess(term)
+    else responseNotFound("Term",params.id)
   }
 
-  def listTermByOntology = {
-    log.info "listTermByOntology"
-    if(params.idontology && Ontology.exists(params.idontology)) {
-      def data = Ontology.get(params.idontology).terms()
-      withFormat {
-        json { render data as JSON }
-        xml { render data as XML}
-      }
-    } else {
-      response.status = 404
-      render contentType: "application/xml", {
-        errors {
-          message("Ontology not found with id: " + params.idontology)
-        }
-      }
-    }
+  def listByOntology = {
+    log.info "listByOntology " + params.idontology
+    Ontology ontology = Ontology.read(params.idontology)
+    if(ontology) responseSuccess(ontology.terms())
+    else responseNotFound("Term","Ontology",params.idontology)
   }
 
-  def listTermByImage = {
-    log.info "listTermByImage"
-    if(params.id && Image.exists(params.id)) {
-      def data = Image.get(params.id).terms()
-      withFormat {
-        json { render data as JSON }
-        xml { render data as XML}
-      }
-    } else {
-      response.status = 404
-      render contentType: "application/xml", {
-        errors {
-          message("Image not found with id: " + params.id)
-        }
-      }
-    }
+  def listByImage = {
+    log.info "listByImage " + params.id
+    Image image = Image.read(params.id)
+    if(image) responseSuccess(image.terms())
+    else responseNotFound("Term","Image",params.id)
   }
 
   def add = {
     log.info "Add"
-    User currentUser = User.get(springSecurityService.principal.id)
+    User currentUser = getCurrentUser(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-
-    Command addTermCommand = new AddTermCommand(postData : request.JSON.toString(),user: currentUser)
-
-    def result = addTermCommand.execute()
-
-    if (result.status == 201) {
-      addTermCommand.save()
-      new UndoStackItem(command : addTermCommand, user: currentUser,transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
-    }
-
-    response.status = result.status
-    log.debug "result.status="+result.status+" result.data=" + result.data
-    withFormat {
-      json { render result.data as JSON }
-      xml { render result.data as XML }
-    }
+    Command addTermCommand = new AddTermCommand(postData : request.JSON.toString(), user: currentUser)
+    def result = processCommand(addTermCommand, currentUser)
+    response(result)
   }
+
+
+  def delete = {
+    log.info "Delete"
+    User currentUser = getCurrentUser(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " params.id=" + params.id
+    def postData = ([id : params.id]) as JSON
+    Command deleteTermCommand = new DeleteTermCommand(postData : postData.toString(), user: currentUser)
+    def result = processCommand(deleteTermCommand, currentUser)
+    response(result)
+  }
+
 
   def update = {
     log.info "Update"
-    User currentUser = User.get(springSecurityService.principal.id)
+    User currentUser = getCurrentUser(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-
-    def result
-    if((String)params.id!=(String)request.JSON.id) {
-      log.error "Term id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id
-      result = [data : [term : null , errors : ["Term id from URL and from data are different:"+ params.id + " vs " +  request.JSON.id ]], status : 400]
-    }
-    else
-    {
-
-      Command editTermCommand = new EditTermCommand(postData : request.JSON.toString(),user: currentUser)
-      result = editTermCommand.execute()
-
-      if (result.status == 200) {
-        editTermCommand.save()
-        new UndoStackItem(command : editTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
-      }
-    }
-
-    response.status = result.status
-    log.debug "result.status="+result.status+" result.data=" + result.data
-    withFormat {
-      json { render result.data as JSON }
-      xml { render result.data as XML }
-    }
+    Command editTermCommand = new EditTermCommand(postData : request.JSON.toString(), user: currentUser)
+    def result = processCommand(editTermCommand, currentUser)
+    response(result)
   }
 
-  def delete =  {
-    log.info "Delete"
-    User currentUser = User.get(springSecurityService.principal.id)
-    log.info "User:" + currentUser.username + " params.id=" + params.id
-    def postData = ([id : params.id]) as JSON
-    def result = null
 
-    Command deleteTermCommand = new DeleteTermCommand(postData : postData.toString(),user: currentUser)
-
-    result = deleteTermCommand.execute()
-    if (result.status == 200) {
-      deleteTermCommand.save()
-      new UndoStackItem(command : deleteTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
-    }
-    response.status = result.status
-    withFormat {
-      json { render result.data as JSON }
-      xml { render result.data as XML }
-    }
-  }
-
-  def addTerm = {
-
-    log.info "AddTerme"
-    User currentUser = User.read(springSecurityService.principal.id)
-    log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-
-    Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : request.JSON.toString(),user: currentUser)
-    def result = addAnnotationTermCommand.execute()
-    if (result.status == 201) {
-      addAnnotationTermCommand.save()
-      new UndoStackItem(command : addAnnotationTermCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
-    }
-
-    response.status = result.status
-    log.debug "result.status="+result.status+" result.data=" + result.data
-    withFormat {
-      json { render result.data as JSON }
-      xml { render result.data as XML }
-    }
-  }
 }

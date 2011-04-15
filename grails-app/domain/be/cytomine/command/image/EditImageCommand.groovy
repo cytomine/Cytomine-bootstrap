@@ -4,6 +4,7 @@ import grails.converters.JSON
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.image.Image
+import be.cytomine.command.EditCommand
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,7 +13,7 @@ import be.cytomine.image.Image
  * Time: 14:56
  * To change this template use File | Settings | File Templates.
  */
-class EditImageCommand extends Command implements UndoRedoCommand  {
+class EditImageCommand extends EditCommand implements UndoRedoCommand  {
 
 
   def execute() {

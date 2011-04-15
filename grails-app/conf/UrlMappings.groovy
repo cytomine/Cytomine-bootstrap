@@ -38,13 +38,13 @@ class UrlMappings {
 
     /* Project */
     "/api/project"(controller: "restProject"){
-      action = [GET:"list", POST:"save"]
+      action = [GET:"list", POST:"add"]
     }
     "/api/project/$id"(controller: "restProject"){
       action = [GET:"show", PUT:"update", DELETE:"delete"]
     }
     "/api/project/$id/image"(controller: "restImage"){
-      action = [GET:"showByProject"]
+      action = [GET:"listByProject"]
     }
     "/api/project/$id/user"(controller: "restUser"){
       action = [GET:"showByProject"]
@@ -69,7 +69,7 @@ class UrlMappings {
       action = [GET:"listByImage"]
     }
     "/api/image/$id/term"(controller:"restTerm"){
-      action = [GET:"listTermByImage"]
+      action = [GET:"listByImage"]
     }
 
     /* Annotation */
@@ -86,10 +86,10 @@ class UrlMappings {
       action = [GET:"retrieval"]
     }
     "/api/annotation/$idannotation/term"(controller:"restAnnotationTerm"){
-      action = [GET: "listTermByAnnotation",POST:"add"]
+      action = [GET: "listTermByAnnotation"]
     }
     "/api/annotation/$idannotation/term/$idterm"(controller:"restAnnotationTerm"){
-      action = [GET:"show",DELETE:"delete"]
+      action = [GET:"show",DELETE:"delete",POST:"add"]
     }
 
     /* Term */
@@ -102,8 +102,8 @@ class UrlMappings {
     "/api/term/$idterm/annotation"(controller:"restAnnotationTerm"){
       action = [GET: "listAnnotationByTerm"]
     }
-    "/api/term/$idterm/ontology"(controller:"restOntology"){
-      action = [GET:"listOntologyByTerm"]
+    "/api/term/$id/ontology"(controller:"restOntology"){
+      action = [GET:"listByTerm"]
     }
 
     /* Ontology */
@@ -114,7 +114,7 @@ class UrlMappings {
       action = [GET:"show",PUT:"update", DELETE:"delete"]
     }
     "/api/ontology/$idontology/term"(controller:"restTerm"){
-      action = [GET:"listTermByOntology"]
+      action = [GET:"listByOntology"]
     }
     "/api/ontology/$id/tree"(controller:"restOntology"){
       action = [GET:"tree"]

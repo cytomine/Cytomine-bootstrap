@@ -4,8 +4,9 @@ import grails.converters.JSON
 import be.cytomine.ontology.Annotation
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
+import be.cytomine.command.EditCommand
 
-class EditAnnotationCommand extends Command implements UndoRedoCommand  {
+class EditAnnotationCommand extends EditCommand implements UndoRedoCommand  {
 
   String toString() {"EditAnnotationCommand"}
 

@@ -127,7 +127,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
 
     log.info("post annotationTerm:"+jsonAnnotationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/annotation/"+ annotationTermToAdd.annotation.id +"/term.json"
+    String URL = Infos.CYTOMINEURL+"api/annotation/"+ annotationTermToAdd.annotation.id +"/term/"+ annotationTermToAdd.term.id +".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.post(jsonAnnotationTerm)
@@ -209,7 +209,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
 
     log.info("post annotationTerm:"+jsonAnnotationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/annotation/"+ annotationTermToAdd.annotation.id +"/term.json"
+    String URL = Infos.CYTOMINEURL+"api/annotation/"+ annotationTermToAdd.annotation.id +"/term/"+ annotationTermToAdd.term.id +".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.post(jsonAnnotationTerm)
@@ -232,7 +232,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     jsonAnnotationTerm = jsonUpdate.encodeAsJSON()
 
     log.info("post annotationterm:"+jsonAnnotationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/annotation/-99/term.json"
+    String URL = Infos.CYTOMINEURL+"api/annotation/-99/term/" + annotationTermAdd.term.id  + ".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.post(jsonAnnotationTerm)
@@ -257,7 +257,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     jsonAnnotationTerm = jsonUpdate.encodeAsJSON()
 
     log.info("post annotationterm:"+jsonAnnotationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/annotation/" + annotationTermAdd.annotation.id +"/term.json"
+    String URL = Infos.CYTOMINEURL+"api/annotation/"+ annotationTermAdd.annotation.id +"/term/"+ annotationTermAdd.term.id +".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.post(jsonAnnotationTerm)

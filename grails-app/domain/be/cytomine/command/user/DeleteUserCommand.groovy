@@ -6,8 +6,9 @@ import be.cytomine.security.UserGroup
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
+import be.cytomine.command.DeleteCommand
 
-class DeleteUserCommand extends Command implements UndoRedoCommand {
+class DeleteUserCommand extends DeleteCommand implements UndoRedoCommand {
 
   def execute() {
     log.info("Execute")

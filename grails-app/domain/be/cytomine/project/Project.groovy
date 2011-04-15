@@ -20,6 +20,16 @@ class Project extends SequenceDomain {
     name
   }
 
+  def images() {
+    def images = []
+    this.projectSlide.each { ps ->
+              ps.slide.image.each { sc ->
+                images << sc
+       }
+    }
+    return images
+  }
+
   def groups() {
     return projectGroup.collect{
       it.group

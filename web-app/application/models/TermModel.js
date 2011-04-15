@@ -17,7 +17,7 @@ var TermModel = Backbone.Model.extend({
 
 var AnnotationTermModel = Backbone.Model.extend({
 	url : function() {
-        if (this.term == undefined)
+        if (this.term == null)
 		    return 'api/annotation/' + this.annotation +'/term.json';
         else
             return 'api/annotation/' + this.annotation +'/term/'+this.term+'.json';

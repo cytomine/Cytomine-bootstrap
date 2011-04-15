@@ -74,10 +74,12 @@ var OntologyTreeView = Backbone.View.extend({
         return terms;
     },
     linkTerm : function(idTerm) {
-        new AnnotationTermModel({annotation : this.idAnnotation}).save({annotation : this.idAnnotation, term : idTerm});
+        console.log ("linkterm:" + idTerm);
+        new AnnotationTermModel({annotation : this.idAnnotation, term : idTerm}).save({annotation : this.idAnnotation, term : idTerm});
     },
     unlinkTerm : function(idTerm) {
-        new AnnotationTermModel({annotation : this.idAnnotation, term : idTerm}).destroy();
+        console.log ("unlinkterm:" + idTerm);
+        new AnnotationTermModel({annotation : this.idAnnotation, term : idTerm}).destroy({annotation : this.idAnnotation, term : idTerm});
     },
     removeBindings : function() {
         this.tree.unbind("check_node.jstree");

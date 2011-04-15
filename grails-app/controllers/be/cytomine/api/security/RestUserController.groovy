@@ -8,11 +8,12 @@ import be.cytomine.command.Command
 import be.cytomine.command.user.EditUserCommand
 import be.cytomine.command.user.DeleteUserCommand
 import be.cytomine.project.Project
+import be.cytomine.api.RestController
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
  */
-class RestUserController {
+class RestUserController extends RestController {
 
   def springSecurityService
   def transactionService
@@ -22,12 +23,7 @@ class RestUserController {
    * @return all Users into the specified format
    */
   def list = {
-    def data = User.list()
-
-    withFormat {
-      json { render data as JSON }
-      xml { render data as XML }
-    }
+    responseSuccess(User.list())
   }
 
   /**
@@ -36,50 +32,20 @@ class RestUserController {
    * @return user an User into the specified format
    */
   def show = {
-    /*User.list().each{
-      println "user=" + it.id
-    }   */
-    if(params.id && User.exists(params.id)) {
-      def data
-      data = User.findById(params.id)
-      withFormat {
-        json { render data as JSON }
-        xml { render data as XML }
-      }
-    } else {
-      response.status = 404
-      render contentType: "application/xml", {
-        errors {
-          message("User not found with id: " + params.id)
-        }
-      }
-    }
+    User user = User.read(params.id)
+    if(user) responseSuccess(user)
+    else responseNotFound("User",params.id)
   }
 
   def showCurrent = {
-      def data = User.get(springSecurityService.principal.id)
-      withFormat {
-        json { render data as JSON }
-        xml { render data as XML }
-      }
+    responseSuccess(User.read(springSecurityService.principal.id))
   }
 
   def showByProject = {
-    if(params.id && Project.exists(params.id)) {
-      def data = Project.read(params.id).users()
-      //data.current = User.get(springSecurityService.principal.id).id
-      withFormat {
-        json { render data as JSON }
-        xml { render data as XML }
-      }
-    } else {
-      response.status = 404
-      render contentType: "application/xml", {
-        errors {
-          message("Project not found with id: " + params.id)
-        }
-      }
-    }
+    Project project = Project.read(params.id)
+    if(project)
+      responseSuccess(project.users())
+    else responseNotFound("User","Project",params.id)
   }
 
   /**
@@ -90,21 +56,10 @@ class RestUserController {
    * @return user the new User into the specified format
    */
   def save = {
-    User currentUser = User.get(springSecurityService.principal.id)
+    User currentUser = getCurrentUser(springSecurityService.principal.id)
     Command addUserCommand = new AddUserCommand(postData : request.JSON.toString(),user: currentUser)
-
-    def result = addUserCommand.execute()
-
-    if (result.status == 201) {
-      addUserCommand.save()
-      new UndoStackItem(command : addUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
-    }
-
-    response.status = result.status
-    withFormat {
-      json { render result.data as JSON }
-      xml { render result.data as XML }
-    }
+    def result = processCommand(addUserCommand, currentUser)
+    response(result)
   }
 
   /**
@@ -115,21 +70,10 @@ class RestUserController {
    * @return user the edited User into the specified format
    */
   def update = {
-    User currentUser = User.get(springSecurityService.principal.id)
+    User currentUser = getCurrentUser(springSecurityService.principal.id)
     Command editUserCommand = new EditUserCommand(postData : request.JSON.toString(),user: currentUser)
-
-
-    def result = editUserCommand.execute()
-    if (result.status == 200) {
-      editUserCommand.save()
-      new UndoStackItem(command : editUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
-    }
-
-    response.status = result.status
-    withFormat {
-      json { render result.data as JSON }
-      xml { render result.data as XML }
-    }
+    def result = processCommand(editUserCommand, currentUser)
+    response(result)
   }
 
   /**
@@ -138,26 +82,17 @@ class RestUserController {
    * @return the identifier of the deleted user
    */
   def delete =  {
-    User currentUser = User.get(springSecurityService.principal.id)
-    def postData = ([id : params.id]) as JSON
-    def result = null
+    User currentUser = getCurrentUser(springSecurityService.principal.id)
 
+    def result = null
     if (params.id == springSecurityService.principal.id) {
       result = [data : [success : false, errors : "The user can't delete herself"], status : 403]
+      response.status = result.status
     } else {
+      def postData = ([id : params.id]) as JSON
       Command deleteUserCommand = new DeleteUserCommand(postData : postData.toString(),user: currentUser)
-
-      result = deleteUserCommand.execute()
-
-      if (result.status == 200) {
-        deleteUserCommand.save()
-        new UndoStackItem(command : deleteUserCommand, user: currentUser, transactionInProgress:  currentUser.transactionInProgress).save(flush:true)
-      }
+      result = processCommand(deleteUserCommand, currentUser)
     }
-    response.status = result.status
-    withFormat {
-      json { render result.data as JSON }
-      xml { render result.data as XML }
-    }
+    response(result)
   }
 }
