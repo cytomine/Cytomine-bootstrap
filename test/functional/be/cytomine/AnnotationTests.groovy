@@ -724,7 +724,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)
+    assertEquals(200,code)
   }
 
 }
