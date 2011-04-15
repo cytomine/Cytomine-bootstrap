@@ -10,7 +10,9 @@ import be.cytomine.command.Command
 import be.cytomine.command.ontology.EditOntologyCommand
 import be.cytomine.command.ontology.DeleteOntologyCommand
 import be.cytomine.command.ontology.AddOntologyCommand
+
 import be.cytomine.api.RestController
+
 
 class RestOntologyController extends RestController {
 
@@ -54,52 +56,6 @@ class RestOntologyController extends RestController {
     def result = processCommand(editOntologyCommand, currentUser)
     response(result)
   }
-
-  def delete =  {
-    log.info "Delete"
-    User currentUser = getCurrentUser(springSecurityService.principal.id)
-    log.info "User:" + currentUser.username + " params.id=" + params.id
-    def postData = ([id : params.id]) as JSON
-    Command deleteOntologyCommand = new DeleteOntologyCommand(postData : postData.toString(),user: currentUser)
-    def result = processCommand(deleteOntologyCommand, currentUser)
-    response(result)
-  }
-/*  def tree =  {
-    if(params.id && Ontology.exists(params.id)) {
-      def res = []
-      def data = [:]
-      def ontology = Ontology.findById(params.id)
-      data.id = ontology.id
-      data.text = ontology.getName()
-      data.data = ontology.getName()
-      data.checked = false
-
-      def terms = []
-      ontology.terms().each {
-          def term = [:]
-          term.id = it.getId()
-          term.text = it.getName()
-          term.data = it.getName()
-          term.checked = false
-          term.leaf = false
-          terms << term
-      }
-      data.children =  terms
-      res << data
-      withFormat {
-        json { render res as JSON }
-        xml { render res as XML }
-      }
-    } else {
-      response.status = 404
-      render contentType: "application/xml", {
-        errors {
-          message("Ontology not found with id: " + params.id)
-        }
-      }
-    }
-
-  }*/
 
 
 }

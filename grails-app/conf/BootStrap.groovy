@@ -194,15 +194,16 @@ class BootStrap {
 
     def ontologySamples = [
             [name: "Ontology1"],
-            [name: "Ontology2"],
-            [name: "Ontology3"]
+            [name: "LBA"],
+            [name: "ASP"],
+            [name: "Frottis"]
     ]
     createOntology(ontologySamples)
 
     /* Projects */
     def projectSamples = [
-            [name : "GIGA-DEV",  groups : [[ name :"GIGA"]],ontology: "Ontology1"],
-            [name : "GIGA-DEV2",  groups : [[ name :"GIGA"]],ontology: "Ontology2"]
+            [name : "GIGA-DEV",  groups : [[ name :"GIGA"]],ontology: "LBA"],
+            [name : "GIGA-DEV2",  groups : [[ name :"GIGA"]],ontology: "LBA"]
             // [name : "NEO13", groups : [[ name :"GIGA"]]],
             // [name : "NEO4",  groups : [[ name :"GIGA"]]]
 
@@ -633,24 +634,89 @@ class BootStrap {
 
 
     def termSamples = [
+            /* Ontology 1 */
             [name: "Cell in vivo",comment:"",ontology:[name:"Ontology1"],color:"FF0000"],
             [name: "Cell ex vivo",comment:"",ontology:[name:"Ontology1"],color:"00FF00"],
             [name: "Cell",comment:"A comment for cell",ontology:[name:"Ontology1"],color:"FF00FF"],
-            [name: "Cell within a living organism",comment:"",ontology:[name:"Ontology1"],color:"0000FF"]
+            [name: "Cell within a living organism",comment:"",ontology:[name:"Ontology1"],color:"0000FF"],
+            /* LBA */
+            [name: "Macrophage",comment:"",ontology:[name:"LBA"],color:"FF0000"],
+            [name: "Polynucléaire neutrophile",comment:"",ontology:[name:"LBA"],color:"FF0000"],
+            [name: "Lymphocytes",comment:"",ontology:[name:"LBA"],color:"FF0000"],
+            [name: "Cellules bronchiques ciliées",comment:"",ontology:[name:"LBA"],color:"FF0000"],
+            [name: "Cellules malpighiennes",comment:"",ontology:[name:"LBA"],color:"FF0000"],
+            [name: "Autre",comment:"",ontology:[name:"LBA"],color:"FF0000"],
+            [name: "Bactérie",comment:"",ontology:[name:"LBA"],color:"FF0000"],
+            [name: "Champignon",comment:"",ontology:[name:"LBA"],color:"FF0000"],
+            [name: "Mucus",comment:"",ontology:[name:"LBA"],color:"FF0000"],
+            [name: "Artéfact",comment:"",ontology:[name:"LBA"],color:"FF0000"],
+            /* ASP */
+            [name: "Cellules bronchiques ciliées",comment:"",ontology:[name:"ASP"],color:"FF0000"],
+            [name: "Cellules muco-sécréantes",comment:"",ontology:[name:"ASP"],color:"FF0000"],
+            [name: "Cellules tumorales",comment:"",ontology:[name:"ASP"],color:"FF0000"],
+            [name: "Carcinome épidermoïde",comment:"",ontology:[name:"ASP"],color:"FF0000"],
+            [name: "Adénocarcinome glandulaire",comment:"",ontology:[name:"ASP"],color:"FF0000"],
+            [name: "Small cell carcinoma",comment:"",ontology:[name:"ASP"],color:"FF0000"],
+            [name: "Cellules malpighiennes",comment:"",ontology:[name:"ASP"],color:"FF0000"],
+            [name: "Autre",comment:"",ontology:[name:"ASP"],color:"FF0000"],
+            [name: "Bactérie",comment:"",ontology:[name:"ASP"],color:"FF0000"],
+            [name: "Champignon",comment:"",ontology:[name:"ASP"],color:"FF0000"],
+            [name: "Mucus",comment:"",ontology:[name:"ASP"],color:"FF0000"],
+            [name: "Artéfact",comment:"",ontology:[name:"ASP"],color:"FF0000"],
+            /* Frottis */
+            [name: "Cellules tumorales",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
+            [name: "Carcinome épidermoïde",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
+            [name: "Adénocarcinome glandulaire",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
+            [name: "Small cell carcinoma",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
+            [name: "Cellules bronchiques ciliées",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
+            [name: "Cellules muco-sécréantes",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
+            [name: "Cellules malpighiennes",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
+            [name: "Autre",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
+            [name: "Bactérie",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
+            [name: "Champignon",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
+            [name: "Mucus",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
+            [name: "Artéfact",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
+
+
     ]
+
     createTerms(termSamples)
 
     def relationSamples = [
-            [name: "Synonym"],
-            [name: "Parent"],
+            [name: RelationTerm.names.PARENT],
+            [name: RelationTerm.names.SYNONYM],
     ]
     createRelation(relationSamples)
 
 
     def relationTermSamples = [
-            [relation: "Parent",term1:"Cell", term2: "Cell ex vivo"],
-            [relation: "Parent",term1:"Cell", term2: "Cell in vivo"],
-            [relation: "Synonym", term1:"Cell within a living organism", term2: "Cell in vivo"]
+            /* Ontology 1 */
+            [relation: RelationTerm.names.PARENT,term1:"Cell", term2: "Cell ex vivo", ontology : "Ontology1"],
+            [relation: RelationTerm.names.PARENT,term1:"Cell", term2: "Cell in vivo", ontology : "Ontology1"],
+            //[relation: RelationTerm.names.SYNONYM, term1:"Cell within a living organism", term2: "Cell in vivo", ontology : "Ontology1"],
+            /* LBA */
+            [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Bactérie", ontology : "LBA"],
+            [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Champignon", ontology : "LBA"],
+            [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Mucus", ontology : "LBA"],
+            [relation: RelationTerm.names.PARENT,term1:"Mucus", term2: "Artéfact", ontology : "LBA"],
+            /* ASP */
+            [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Bactérie", ontology : "ASP"],
+            [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Champignon", ontology : "ASP"],
+            [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Mucus", ontology : "ASP"],
+            [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Artéfact", ontology : "ASP"],
+            [relation: RelationTerm.names.PARENT,term1:"Cellules tumorales", term2: "Carcinome épidermoïde", ontology : "ASP"],
+            [relation: RelationTerm.names.PARENT,term1:"Cellules tumorales", term2: "Adénocarcinome glandulaire", ontology : "ASP"],
+            [relation: RelationTerm.names.PARENT,term1:"Cellules tumorales", term2: "Small cell carcinoma", ontology : "ASP"],
+            /* Frottis */
+            [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Bactérie", ontology : "Frottis"],
+            [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Champignon", ontology : "Frottis"],
+            [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Mucus", ontology : "Frottis"],
+            [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Artéfact", ontology : "Frottis"],
+            [relation: RelationTerm.names.PARENT,term1:"Cellules tumorales", term2: "Carcinome épidermoïde", ontology : "Frottis"],
+            [relation: RelationTerm.names.PARENT,term1:"Cellules tumorales", term2: "Adénocarcinome glandulaire", ontology : "Frottis"],
+            [relation: RelationTerm.names.PARENT,term1:"Cellules tumorales", term2: "Small cell carcinoma", ontology : "Frottis"]
+
+
     ]
     createRelationTerm(relationTermSamples)
 
@@ -1150,10 +1216,10 @@ class BootStrap {
 
     if (!relationTerm) {
       relationTermSamples.each {item->
-
+        def ontology = Ontology.findByName(item.ontology);
         def relation = Relation.findByName(item.relation)
-        def term1 = Term.findByName(item.term1)
-        def term2 = Term.findByName(item.term2)
+        def term1 = Term.findByNameAndOntology(item.term1, ontology)
+        def term2 = Term.findByNameAndOntology(item.term2, ontology)
 
         println "Creating term/relation  ${relation.name}:${item.term1}/${item.term2}..."
         RelationTerm.link(relation, term1, term2)

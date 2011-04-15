@@ -4,6 +4,8 @@ import grails.converters.JSON
 
 class RelationTerm implements Serializable{
 
+  static names = [PARENT : "parent", SYNONYM : "synonyme"]
+
   Relation relation
   Term term1
   Term term2

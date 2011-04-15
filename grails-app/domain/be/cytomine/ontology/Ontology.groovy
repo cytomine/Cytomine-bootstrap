@@ -10,12 +10,41 @@ class Ontology {
   }
 
   def terms() {
-      Term.findAllByOntology(this)
+    Term.findAllByOntology(this)
   }
 
   def termsParent() {
-      Term.findAllByOntology(this)
+    Term.findAllByOntology(this)
     //TODO: Check RelationTerm to remove term which have parents
+  }
+
+  def tree () {
+    def rootTerms = []
+    this.terms().each {
+      if (!it.isRoot()) return
+      rootTerms << tree(it)
+    }
+    return rootTerms;
+  }
+
+
+  def tree (Term term) {
+    def t = [:]
+    t.name = term.getName()
+    t.id = term.getId()
+    t.text = term.getName()
+    t.data = term.getName()
+    t.class = term.class
+    t.attr = [ "id" : term.id, "type" : term.class]
+    t.checked = false
+    t.children = []
+    term.relationTerm1.each() { relationTerm->
+      if (relationTerm.getRelation().getName() == RelationTerm.names.PARENT) {
+        def child = tree(relationTerm.getTerm2())
+        t.children << child
+      }
+    }
+    return t
   }
 
   static void registerMarshaller() {
@@ -34,7 +63,7 @@ class Ontology {
 
       def terms = []
       if(it.version!=null){
-      Term.findAllByOntology(it).each {
+        Term.findAllByOntology(it).each {
           def term = [:]
           term.id = it.getId()
           term.text = it.getName()
@@ -46,9 +75,10 @@ class Ontology {
           term.checked = false
           term.leaf = false
           terms << term
+        }
       }
-      }
-      returnArray['children'] = terms
+      returnArray['children'] = it.tree()
+      //returnArray['children'] = terms
 
       return returnArray
     }
