@@ -322,7 +322,7 @@ log.debug  "createOrGetBasicUser()"
 
   static Ontology getBasicOntologyNotExist() {
 
-    log.debug "getBasicOntologyNotExist()"
+    log.debug "getBasicOntologyNsotExist()"
     def random = new Random()
     def randomInt = random.nextInt()
     def ontology = Ontology.findByName(randomInt+"")

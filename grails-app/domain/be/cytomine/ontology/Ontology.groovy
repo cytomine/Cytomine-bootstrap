@@ -9,6 +9,8 @@ class Ontology {
     name(blank:false, unique:true)
   }
 
+
+
   def terms() {
     Term.findAllByOntology(this)
   }
@@ -22,13 +24,13 @@ class Ontology {
     def rootTerms = []
     this.terms().each {
       if (!it.isRoot()) return
-      rootTerms << tree(it)
+      rootTerms << branch(it)
     }
     return rootTerms;
   }
 
 
-  def tree (Term term) {
+  def branch (Term term) {
     def t = [:]
     t.name = term.getName()
     t.id = term.getId()
@@ -40,7 +42,7 @@ class Ontology {
     t.children = []
     term.relationTerm1.each() { relationTerm->
       if (relationTerm.getRelation().getName() == RelationTerm.names.PARENT) {
-        def child = tree(relationTerm.getTerm2())
+        def child = branch(relationTerm.getTerm2())
         t.children << child
       }
     }
@@ -61,24 +63,10 @@ class Ontology {
 
       returnArray['state'] = "open"
 
-      def terms = []
       if(it.version!=null){
-        Term.findAllByOntology(it).each {
-          def term = [:]
-          term.id = it.getId()
-          term.text = it.getName()
-          term.class = it.class
-          term.attr = [ "id" : it.id, "type" : it.class]
-          term.data = it.getName()
-
-
-          term.checked = false
-          term.leaf = false
-          terms << term
-        }
+        returnArray['children'] = it.tree()
       }
-      returnArray['children'] = it.tree()
-      //returnArray['children'] = terms
+      else returnArray['children'] = []
 
       return returnArray
     }

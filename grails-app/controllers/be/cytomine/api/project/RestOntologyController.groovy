@@ -57,5 +57,14 @@ class RestOntologyController extends RestController {
     response(result)
   }
 
+  def delete =  {
+    log.info "Delete"
+    User currentUser = getCurrentUser(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " params.id=" + params.id
+    def postData = ([id : params.id]) as JSON
+    Command deleteOntologyCommand = new DeleteOntologyCommand(postData : postData.toString(),user: currentUser)
+    def result = processCommand(deleteOntologyCommand, currentUser)
+    response(result)
+  }
 
 }
