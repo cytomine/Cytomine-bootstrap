@@ -75,6 +75,24 @@
   </div>
 </script>
 
+<script type="text/html" id="overviewmapcontenttpl">
+  <!--<div id="overviewmapdialog{{id}}" title="Minimap">-->
+    <div id="overviewmapcontent{{id}}"></div>
+  <!--</div>-->
+</script>
+
+<script type="text/html" id="layerswitchercontenttpl">
+  <!--<div id="layerswitcherdialog{{id}}" title="Layer Switcher">-->
+    <div id="layerswitchercontent{{id}}"></div>
+    <div class="slider"></div>
+  <!--</div>-->
+</script>
+
+<script type="text/html" id="ontologytreecontenttpl">
+  <!--<div id="ontologytreedialog{{id}}" title="Ontology">-->
+    <div id="ontologytreecontent{{id}}"></div>
+  <!--</div>-->
+</script>
 
 <script type="text/html" id="serverdowntpl">
   <div id="server-down" title="Server down">
@@ -83,8 +101,8 @@
 </script>
 
 <script type="text/html" id="logoutdialogtpl">
-          <div id="logout-confirm" title="Confirmation required">
-          <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />Do you want to leave ?</p>
+  <div id="logout-confirm" title="Confirmation required">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />Do you want to leave ?</p>
   </div>
 </script>
 
@@ -99,10 +117,10 @@
   <div id="upload">
     <div class='main upload'>
       <form id="file_upload" action="upload/image" method="POST" enctype="multipart/form-data">
-      <input type="file" name="file" multiple>
-      <button>Upload</button>
-      <div>Upload files</div>
-    </form>
+        <input type="file" name="file" multiple>
+        <button>Upload</button>
+        <div>Upload files</div>
+      </form>
       <button id="start_uploads">Start uploads</button>
       <table id="files"></table>
     </div>
@@ -171,7 +189,7 @@
 </script>
 
 <script type="text/html" id="imageontologyviewtpl">
-  <div class="tree">N'importe quoi</div>
+  <div class="tree"></div>
 </script>
 
 <script type="text/html" id="termitemviewtpl">
@@ -217,12 +235,9 @@
     </div>
     <div class="map" id="map{{id}}"></div>
     <div>
-      <div class="inline overview" id="overviewMap{{id}}"></div>
-      <div class="inline layerSwitcher" id="layerSwitcher{{id}}">
-        <div class="slider"></div>
-      </div>
-      <div class="inline ontologypanel" id="ontology{{id}}"></div>
-      <div class="clearboth"></div>
+      <div class="overviewPanel" id="overviewMap{{id}}"></div>
+      <div class="layerSwitcherPanel" id="layerSwitcher{{id}}"></div>
+      <div class="ontologypanel" id="ontologyTree{{id}}"></div>
     </div>
   </div>
 </script>
@@ -248,6 +263,7 @@
 <!-- View -->
 <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
 <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
+<script type="text/javascript" src="application/views/DraggablePanelView.js" ></script>
 <script type="text/javascript" src="application/views/Component.js" ></script>
 <script type="text/javascript" src="application/views/ProjectView.js" ></script>
 <script type="text/javascript" src="application/views/ImageView.js" ></script>

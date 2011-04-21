@@ -13,9 +13,6 @@ var BrowseImageView = Backbone.View.extend({
         this.initToolbar();
         this.initMap();
         this.initOntology();
-        this.initVectorLayers();
-
-
         return this;
     },
     getUserLayer: function () {
@@ -49,6 +46,8 @@ var BrowseImageView = Backbone.View.extend({
             maximized: true
         };
 
+
+
         var layerSwitcher = new OpenLayers.Control.LayerSwitcher({
             roundedCorner: false,
             roundedCornerColor: false,
@@ -58,6 +57,8 @@ var BrowseImageView = Backbone.View.extend({
                 /*this.ignoreEvent(evt);*/
             }
         });
+
+
         var options = {
             resolutions: resolutions,
             maxExtent: maxExtent,
@@ -73,19 +74,43 @@ var BrowseImageView = Backbone.View.extend({
                     mapOptions: mapOptions
                 }), new OpenLayers.Control.KeyboardDefaults()]
         };
+
+
+
         this.map = new OpenLayers.Map("map" + this.model.get('id'), options);
         this.map.addLayer(this.layers.baseLayer);
         //this.map.addLayer(this.layers.secondLayer);
         this.map.setCenter(new OpenLayers.LonLat(lon, lat), 2);
 
 
-        $('#layerSwitcher' + this.model.get('id')).find('.slider').slider({
+        $('#layerSwitchercontent' + this.model.get('id')).find('.slider').slider({
             value: 100,
             slide: function (e, ui) {
                 self.layers.baseLayer.setOpacity(ui.value / 100);
             }
         });
 
+        new DraggablePanelView({
+            el : $('#layerSwitcher' + this.model.get('id')),
+            template : ich.layerswitchercontenttpl({id : this.model.get('id')}, true)/*,
+             dialogAttr : {
+             dialogID : "#layerswitcherdialog" + this.model.get('id'),
+             width : 200,
+             height : 200,
+             css : {left: 'auto', right : '30px', top: 'auto', bottom : '100px'}
+             }*/
+        }).render();
+
+        new DraggablePanelView({
+            el : $('#overviewMap' + this.model.get('id')),
+            template : ich.overviewmapcontenttpl({id : this.model.get('id')}, true)/*,
+             dialogAttr : {
+             dialogID : "#overviewmapdialog" + this.model.get('id'),
+             width : 200,
+             height : 200,
+             css : {left: 'auto', right : '30px', top: '100px', bottom : 'auto'}
+             }*/
+        }).render();
         /*for (var i in layerSwitcher.baseLayers) {
          var layer = layerSwitcher.baseLayers[i];
          var switchName = layer['inputElem']['name'];
@@ -93,22 +118,6 @@ var BrowseImageView = Backbone.View.extend({
 
          }*/
 
-        var overviewWidth = $('#overviewMap' + this.model.get('id')).width();
-        var overviewHeight = $('#overviewMap' + this.model.get('id')).height();
-        $('#overviewMap' + this.model.get('id')).draggable({
-            drag: function (event, ui) {
-                $(this).css("width", overviewWidth);
-                $(this).css("height", overviewHeight);
-            }
-        });
-        var layerSwitecherWidth = $('#layerSwitcher' + this.model.get('id')).width();
-        var layerSwitecherHeight = $('#layerSwitcher' + this.model.get('id')).height();
-        $('#layerSwitcher' + this.model.get('id')).draggable({
-            drag: function (event, ui) {
-                $(this).css("width", layerSwitecherWidth);
-                $(this).css("height", layerSwitecherHeight);
-            }
-        });
     },
     initToolbar: function () {
         var toolbar = $('#toolbar' + this.model.get('id'));
@@ -188,11 +197,31 @@ var BrowseImageView = Backbone.View.extend({
         });
     },
     initOntology: function () {
+
+
+
+        var self =this;
         var idOntology = window.app.models.projects.get(window.app.status.currentProject).get('ontology');
-        this.ontologyTreeView = new OntologyTreeView({
-            el: $("#ontology" + this.model.get("id")),
-            idImage: this.model.get("id"),
-            model: window.app.models.ontologies.get(idOntology)
+        var ontology = new OntologyModel({id:idOntology}).fetch({
+            success : function(model, response) {
+                self.ontologyTreeView = new OntologyTreeView({
+                    el: $("#ontologyTree" + self.model.get("id")),
+                    idImage: self.model.get("id"),
+                    model: model
+                }).render();
+                self.initVectorLayers();
+            }
+        });
+
+        new DraggablePanelView({
+            el : $('#ontologyTree' + this.model.get('id')),
+            template : ich.ontologytreecontenttpl({id : this.model.get('id')}, true)/*,
+             dialogAttr : {
+             dialogID : "#ontologytreedialog" + this.model.get('id'),
+             width : 200,
+             height : 200,
+             css : {left: '30px', right : 'auto', top: 'auto', bottom : '100px'}
+             }*/
         }).render();
 
     },
@@ -420,7 +449,7 @@ AnnotationLayer.prototype = {
             }
         });
     },
-    /** Triggered when add new feature **/
+/** Triggered when add new feature **/
     /*onFeatureAdded : function (evt) {
      console.log("onFeatureAdded start:"+evt.feature.attributes.idAnnotation);
      // Check if feature must throw a listener when it is added
@@ -434,7 +463,7 @@ AnnotationLayer.prototype = {
      }
      },*/
 
-    /** Triggered when update feature **/
+/** Triggered when update feature **/
     /* onFeatureUpdate : function (evt) {
      console.log("onFeatureUpdate start");
 

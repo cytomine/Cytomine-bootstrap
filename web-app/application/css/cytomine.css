@@ -203,7 +203,7 @@ div.inline {
     width : 100%;
 /*height : 700px;*/
     border-bottom:1px solid #ccc;
-    background:#f8f8f8 url(../images/canvas.png) 0% 0% repeat;
+
 }
 
 
@@ -237,7 +237,7 @@ div.olControlOverviewMapElement {
     margin : 8px;
 }
 
-div .overview {
+div .overviewPanel {
     align : center;
     position : absolute;
     right : 30px;
@@ -283,7 +283,7 @@ div .toolbar {
 }
 
 
-div .layerSwitcher {
+div .layerSwitcherPanel {
     position : absolute;
     right : 30px;
     bottom : 100px;

@@ -698,7 +698,7 @@ class BootStrap {
             [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Bactérie", ontology : "LBA"],
             [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Champignon", ontology : "LBA"],
             [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Mucus", ontology : "LBA"],
-            [relation: RelationTerm.names.PARENT,term1:"Mucus", term2: "Artéfact", ontology : "LBA"],
+            [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Artéfact", ontology : "LBA"],
             /* ASP */
             [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Bactérie", ontology : "ASP"],
             [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Champignon", ontology : "ASP"],
