@@ -20,8 +20,14 @@ var ProjectModel = Backbone.Model.extend({
 var ProjectCollection = Backbone.Collection.extend({
     model: ProjectModel,
 
-    url: 'api/project.json',
-    initialize: function () {
-        // something
+    url: function() {
+        if (this.user != undefined) {
+            return "api/user/" + this.user + "/project.json";
+        } else {
+            return "api/project.json";
+        }
+    },
+    initialize: function (options) {
+        this.user = options.user;
     }
 });

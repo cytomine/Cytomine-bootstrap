@@ -2,7 +2,7 @@
 var BrowseController = Backbone.Controller.extend({
 
     tabs : null,
-
+    imagesOpen : new Array(), //keep id of open images
     routes: {
         "browse/:idImage"   :   "browse"
     },
@@ -20,7 +20,7 @@ var BrowseController = Backbone.Controller.extend({
 
         this.tabs.addTab(idImage);
         this.tabs.showTab(idImage);
-
+        this.imagesOpen[this.imagesOpen.length] = idImage;
         window.app.view.showComponent(this.tabs.container);
     }
 

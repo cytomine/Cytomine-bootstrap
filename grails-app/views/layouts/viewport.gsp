@@ -140,6 +140,7 @@
       <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
       <ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
       <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul>
+      <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
       <ul class='menu libraries'></ul>
       <div class='buttons'>
         <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
@@ -162,12 +163,48 @@
 
 </script>
 
+<script type="text/html" id="projectsviewtpl">
+  <div class="projectlist" id="projectlist">PROJECTS</div>
+</script>
+
 <script type="text/html" id="projectviewtpl">
-  PROJECT
+  <div id='projectlist{{id}}'>{{name}}
+
+<TABLE class='projecttable' BORDER="1">
+  <TR>
+ <TH> Name </TH>
+ <TH> Id </TH>
+ <TH> Ontology </TH>
+ <TH> Images </TH>
+<TH> Annotations </TH>
+<TH> Users </TH>
+<TH> ...........................</TH>
+<TH> ...........................</TH>
+
+  </TR>
+  <TR>
+ <TD> {{name}} </TD>
+ <TD> {{id}} </TD>
+ <TD> {{ontology}} </TD>
+ <TD> {{images}} </TD>
+ <TD> {{annotations}} </TD>
+ <TD> {{users}} </TD>
+ <TD> <button id='projectopenimages{{id}}' type="button" >See project images</button> </TD>
+  <TD> <button id='projectchange{{id}}' type="button" >Use this project</button> </TD>
+  </TR>
+</TABLE>
+ <br><br></div>
+
+
 </script>
 
 
 <script type="text/html" id="imageviewtpl">
+</script>
+
+<script type="text/html" id="imageprojectviewtpl">
+  <div id="imagelistprojectmain{{id}}">
+  <div id="imagelistproject{{id}}" title="close"></div></div>
 </script>
 
 <script type="text/html" id="termviewtpl">
@@ -273,6 +310,7 @@
 <script type="text/javascript" src="application/views/OntologyView.js" ></script>
 <script type="text/javascript" src="application/views/OntologyTreeView.js" ></script>
 <script type="text/javascript" src="application/views/ProjectView.js" ></script>
+<script type="text/javascript" src="application/views/ProjectPanelView.js" ></script>
 <script type="text/javascript" src="application/views/Tabs.js" ></script>
 
 

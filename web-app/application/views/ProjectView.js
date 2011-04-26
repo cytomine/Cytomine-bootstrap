@@ -2,38 +2,27 @@ var ProjectView = Backbone.View.extend({
     tagName : "div",
     //template : _.template($('#project-view-tpl').html()),
     initialize: function(options) {
-        this.container = options.container
+        this.container = options.container;
     },
     render: function() {
-        $(this.el).html(ich.projectviewtpl({}, true));
-        //$(this.el).html(this.template());
+        $(this.el).html(ich.projectsviewtpl({}, true));
         var self = this;
-        /*this.model.fetch({
-            success: function(){
-                self.model.each(function(image) {
-                    new ImageThumbView({
-                        el : self.el,
-                        model : image
-                    }).render();
-                });
 
-                $(self.el).imagesLoaded( function(){
-                    console.log("imageLoaded");
-                    $(this).isotope({
-                        itemSelector: '.thumb-wrap'
-                    });
+        new ProjectCollection({user : this.userID}).fetch({
+            success : function (collection, response) {
+                collection.each(function(project) {
+                    console.log('project:'+project.get('id'));
+                    var json = project.toJSON();
+                        //create panel for a specific project
+                        var panel = new ProjectPanelView({
+                            model : project
+                        }).render();
+
+                        $(self.el).append(panel.el);
+
                 });
-            },
-            error: function(error){
-                for (property in error) {
-                    console.log(property + ":" + error[property]);
-                }
             }
-        });*/
-
-
-
-
+        });
         return this;
     }
 });

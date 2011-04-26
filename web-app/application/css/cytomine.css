@@ -354,3 +354,43 @@ div.olControlOverviewMapElement img {
 .zoom-display .icon { float:left; }
 
 /* Tree stuff */
+
+
+/* Project Panel stuff */
+div .projectlist {
+    color:#000;
+    background:#fff;
+    border-color:#268;
+    overflow: auto;
+}
+
+div .projecttable {
+    color:#000;
+    background:#fff;
+    width:75%;
+    align : center;
+}
+table {
+border: medium solid #666;
+border-collapse: collapse;
+width: 50%;
+}
+th {
+font-family: monospace;
+border: thin solid #666;
+width: 50%;
+padding: 5px;
+background-color: #666;
+color: #fff;
+}
+td {
+font-family: sans-serif;
+border: thin solid #666;
+width: 50%;
+padding: 5px;
+text-align: center;
+background-color: #ffffff;
+}
+caption {
+font-family: sans-serif;
+}

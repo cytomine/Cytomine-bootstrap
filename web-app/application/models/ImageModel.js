@@ -25,10 +25,15 @@ var ImageModel = Backbone.Model.extend({
 // define our collection
 var ImageCollection = Backbone.Collection.extend({
     model: ImageModel,
-
-    url: 'api/image.json',
-    initialize: function () {
-        // something
+    url: function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/image.json";
+        } else {
+            return "api/image.json";
+        }
+    },
+    initialize: function (options) {
+        this.project = options.project;
     }
 });
 

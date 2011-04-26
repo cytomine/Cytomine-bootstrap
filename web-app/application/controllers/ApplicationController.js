@@ -16,11 +16,11 @@ var ApplicationController = Backbone.Controller.extend({
     startup : function () {
         //init models
 
-        this.models.images = new ImageCollection();
+        this.models.images = new ImageCollection({project:undefined});
         this.models.users = new UserCollection();
         this.models.terms = new TermCollection();
         this.models.ontologies = new OntologyCollection();
-        this.models.projects = new ProjectCollection();
+        this.models.projects = new ProjectCollection({user:undefined});
         _.each(this.models, function(model){
             model.fetch();
         });

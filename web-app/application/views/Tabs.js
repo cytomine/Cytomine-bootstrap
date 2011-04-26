@@ -1,6 +1,6 @@
 var Tabs = Backbone.View.extend({
     tagName : "div",
-    images : {}, //that we are browsing
+    images : new Array(), //that we are browsing
     initialize: function(options) {
         this.container = options.container
     },
@@ -46,5 +46,12 @@ var Tabs = Backbone.View.extend({
     showTab : function(idImage) {
         var tabs = $(this.el).children('.tabs');
         tabs.tabs('select', '#tabs-' + idImage);
+    },
+    size : function() {
+        console.log("size");
+        console.log(this.images);
+console.log(this.images instanceof Array); // true
+console.log(this.images instanceof Object); // true
+        return this.images.length;
     }
 });
