@@ -71,7 +71,7 @@ class RestAnnotationController extends RestController {
     log.info "User:" + currentUser.username + " params.id=" + params.id
     //TODO: delete annotation-term if annotation is deleted
     //This code seems to be ok BUT it's not done with command (no undo/redo) !
-    Annotation.withTransaction {
+    /*Annotation.withTransaction {
       Annotation annotation = Annotation.read(params.id)
       List<AnnotationTerm> annotationTerms
       if(annotation)
@@ -80,13 +80,13 @@ class RestAnnotationController extends RestController {
       if(annotationTerms) {
         log.info "the annotation has " + annotationTerms.size() + " term mapped"
         annotationTerms*.delete()
-      }
+      } */
       def postData = ([id : params.id]) as JSON
       Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData : postData.toString(), user: currentUser)
       def result = processCommand(deleteAnnotationCommand, currentUser)
       response(result)
 
-    }
+    //}
 
   }
 
