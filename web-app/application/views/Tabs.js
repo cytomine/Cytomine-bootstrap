@@ -48,10 +48,10 @@ var Tabs = Backbone.View.extend({
         tabs.tabs('select', '#tabs-' + idImage);
     },
     size : function() {
-        console.log("size");
-        console.log(this.images);
-console.log(this.images instanceof Array); // true
-console.log(this.images instanceof Object); // true
         return this.images.length;
+    },
+    closeAll : function() {
+        console.log("close all tabs");
+        //TODO: close all tabs
     }
 });

@@ -10,6 +10,7 @@ import be.cytomine.command.annotation.EditAnnotationCommand
 import be.cytomine.image.Image
 import be.cytomine.api.RestController
 import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.project.Project
 
 class RestAnnotationController extends RestController {
 
@@ -35,6 +36,21 @@ class RestAnnotationController extends RestController {
 
     if(user!=null) responseSuccess(Annotation.findAllByUser(user))
     else responseNotFound("User",params.id)
+  }
+
+  def listByProject = {
+    log.info "List with id user:"+params.id
+    Project project = Project.read(params.id)
+    if(project)
+    {
+    def images = project.images()
+    def annotations = []
+    images.each() {
+        annotations.addAll(Annotation.findAllByImage(it))
+    }
+      responseSuccess(annotations)
+    }
+    else responseNotFound("Project",params.id)
   }
 
   def listByImageAndUser = {

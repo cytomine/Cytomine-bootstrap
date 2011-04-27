@@ -28,6 +28,8 @@ var AnnotationCollection = Backbone.Collection.extend({
     url: function() {
         if (this.user != undefined) {
             return "api/user/" + this.user + "/image/" + this.image + "/annotation.json";
+        } else if (this.project != undefined) {
+            return "api/project/" + this.project + "/annotation.json";
         } else {
             return "api/image/" + this.image + "/annotation.json";
         }
@@ -35,6 +37,7 @@ var AnnotationCollection = Backbone.Collection.extend({
     initialize: function (options) {
         this.image = options.image;
         this.user = options.user;
+        this.project = options.project;
     }
 });
 

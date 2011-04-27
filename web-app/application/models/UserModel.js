@@ -26,9 +26,15 @@ var UserModel = Backbone.Model.extend({
 var UserCollection = Backbone.Collection.extend({
     model: UserModel,
 
-    url: 'api/user.json',
-    initialize: function () {
-        // something
+    url: function() {
+        if (this.user != undefined) {
+            return "api/project/" + this.user + "/user.json";
+        } else {
+            return "api/user.json";
+        }
+    },
+    initialize: function (options) {
+        this.project = options.project;
     }
 });
 

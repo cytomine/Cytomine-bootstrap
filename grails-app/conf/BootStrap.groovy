@@ -203,7 +203,9 @@ class BootStrap {
     /* Projects */
     def projectSamples = [
             [name : "GIGA-DEV",  groups : [[ name :"GIGA"]],ontology: "LBA"],
-            [name : "GIGA-DEV2",  groups : [[ name :"GIGA"]],ontology: "LBA"]
+            [name : "GIGA-DEV2",  groups : [[ name :"GIGA"]],ontology: "LBA"],
+            [name : "GIGA-DEV3 PROJECT",  groups : [[ name :"GIGA"]],ontology: "LBA"],
+            [name : "GIGA-DEV4 PROJECT TEST AUTOCOMPLETION",  groups : [[ name :"GIGA"]],ontology: "LBA"]
             // [name : "NEO13", groups : [[ name :"GIGA"]]],
             // [name : "NEO4",  groups : [[ name :"GIGA"]]]
 

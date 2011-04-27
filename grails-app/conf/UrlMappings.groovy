@@ -49,6 +49,9 @@ class UrlMappings {
     "/api/project/$id/user"(controller: "restUser"){
       action = [GET:"showByProject"]
     }
+    "/api/project/$id/annotation"(controller: "restAnnotation"){
+      action = [GET:"listByProject"]
+    }
     //TODO:  + add current user
 
 

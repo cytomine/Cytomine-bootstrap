@@ -357,6 +357,15 @@ div.olControlOverviewMapElement img {
 
 
 /* Project Panel stuff */
+div .project {
+    color:#000;
+    background:#fff;
+    border-color:#268;
+    overflow: auto;
+    margin-left:50;
+    overflow: auto; /* doesn't work? */
+}
+
 div .projectlist {
     color:#000;
     background:#fff;
@@ -369,28 +378,122 @@ div .projecttable {
     background:#fff;
     width:75%;
     align : center;
+    margin-left : 50px;
 }
 table {
-border: medium solid #666;
-border-collapse: collapse;
-width: 50%;
+    border: medium solid #666;
+    border-collapse: collapse;
+    width: 50%;
 }
 th {
-font-family: monospace;
-border: thin solid #666;
-width: 50%;
-padding: 5px;
-background-color: #666;
-color: #fff;
+    font-family: monospace;
+    border: thin solid #666;
+    width: 50%;
+    padding: 5px;
+    background-color: #666;
+    color: #fff;
 }
 td {
-font-family: sans-serif;
-border: thin solid #666;
-width: 50%;
-padding: 5px;
-text-align: center;
-background-color: #ffffff;
+    font-family: sans-serif;
+    border: thin solid #666;
+    width: 50%;
+    padding: 5px;
+    text-align: center;
+    background-color: #ffffff;
 }
 caption {
-font-family: sans-serif;
+    font-family: sans-serif;
+}
+
+
+
+/** Pretty Checkbox **/
+/*body {
+	font: 12px/1.3 "Lucida Grande","Lucida","Arial",Sans-serif;
+}
+
+form {
+	margin: 0 0 30px 0;
+} */
+
+legend {
+	font-size: 17px;
+}
+
+fieldset {
+	border: 0;
+}
+
+.checklist {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.checklist li {
+	float: left;
+	margin-right: 10px;
+	background: url(../images/checkboxbg.gif) no-repeat 0 0;
+	width: 105px;
+	height: 150px;
+	position: relative;
+	font: normal 11px/1.3 "Lucida Grande","Lucida","Arial",Sans-serif;
+}
+
+.checklist li.selected {
+	background-position: -105px 0;
+}
+
+.checklist li.selected .checkbox-select {
+	display: none;
+}
+
+.checkbox-select {
+	display: block;
+	float: left;
+	position: absolute;
+	top: 118px;
+	left: 10px;
+	width: 85px;
+	height: 23px;
+	background: url(../images/select.gif) no-repeat 0 0;
+	text-indent: -9999px;
+}
+
+.checklist li input {
+	display: none;
+}
+
+a.checkbox-deselect {
+	display: none;
+	color: white;
+	font-weight: bold;
+	text-decoration: none;
+	position: absolute;
+	top: 120px;
+	right: 10px;
+}
+
+.checklist li.selected a.checkbox-deselect {
+	display: block;
+}
+
+.checklist li label {
+	display: block;
+	text-align: center;
+	padding: 8px;
+}
+
+.sendit {
+	display: block;
+	float: left;
+	top: 118px;
+	left: 10px;
+	width: 115px;
+	height: 34px;
+	border: 0;
+	cursor: pointer;
+	background: url(../images/sendit.gif) no-repeat 0 0;
+	text-indent: -9999px;
+	margin: 20px 0;
 }

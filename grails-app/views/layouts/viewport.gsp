@@ -77,20 +77,20 @@
 
 <script type="text/html" id="overviewmapcontenttpl">
   <!--<div id="overviewmapdialog{{id}}" title="Minimap">-->
-    <div id="overviewmapcontent{{id}}"></div>
+  <div id="overviewmapcontent{{id}}"></div>
   <!--</div>-->
 </script>
 
 <script type="text/html" id="layerswitchercontenttpl">
   <!--<div id="layerswitcherdialog{{id}}" title="Layer Switcher">-->
-    <div id="layerswitchercontent{{id}}"></div>
-    <div class="slider"></div>
+  <div id="layerswitchercontent{{id}}"></div>
+  <div class="slider"></div>
   <!--</div>-->
 </script>
 
 <script type="text/html" id="ontologytreecontenttpl">
   <!--<div id="ontologytreedialog{{id}}" title="Ontology">-->
-    <div id="ontologytreecontent{{id}}"></div>
+  <div id="ontologytreecontent{{id}}"></div>
   <!--</div>-->
 </script>
 
@@ -164,39 +164,91 @@
 </script>
 
 <script type="text/html" id="projectsviewtpl">
-  <div class="projectlist" id="projectlist">PROJECTS</div>
+  <br>
+  <div class="projectlist" id="projectlist">PROJECTS: <input id="projectsearch" /></div>
+
+  <br>
 </script>
 
 <script type="text/html" id="projectviewtpl">
   <div id='projectlist{{id}}'>{{name}}
 
-<TABLE class='projecttable' BORDER="1">
-  <TR>
- <TH> Name </TH>
- <TH> Id </TH>
- <TH> Ontology </TH>
- <TH> Images </TH>
-<TH> Annotations </TH>
-<TH> Users </TH>
-<TH> ...........................</TH>
-<TH> ...........................</TH>
+    <table class='projecttable' border="1">
+      <tr>
+        <th> Name </th>
+        <th> Id </th>
+        <th> Ontology </th>
+        <th> Images </th>
+        <th> Annotations </th>
+        <th> Users </th>
+        <th> ..........................</th>
+        <th> ..........................</th>
+        <th> ..........................</th>
 
-  </TR>
-  <TR>
- <TD> {{name}} </TD>
- <TD> {{id}} </TD>
- <TD> {{ontology}} </TD>
- <TD> {{images}} </TD>
- <TD> {{annotations}} </TD>
- <TD> {{users}} </TD>
- <TD> <button id='projectopenimages{{id}}' type="button" >See project images</button> </TD>
-  <TD> <button id='projectchange{{id}}' type="button" >Use this project</button> </TD>
-  </TR>
-</TABLE>
- <br><br></div>
+      </tr>
+      <tr>
+        <td> {{name}} </td>
+        <td> {{id}} </td>
+        <td> {{ontology}} </td>
+        <td> {{images}} </td>
+        <td> {{annotations}} </td>
+        <td> {{users}} </td>
+        <td> <button id='projectopenimages{{id}}' type="button">See project images</button> </td>
+        <td> <button id='projectaddimages{{id}}' type="button">Add images</button> </td>
+        <td> <input id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Use this project</label></input> </td>
+
+      </tr>
+    </table>
+    <br><br></div>
 
 
 </script>
+
+<script type="text/html" id="projectchangedialog">
+  <div id='projectchangedialog{{id}}' title="Change current project">
+    <p>You want to switch to project {{id}}.</p>
+    <p>Some images from other projects are already open. Do you want to close them?</p>
+  </div>
+</script>
+
+<script type="text/html" id="projectaddimagedialog">
+  <div id='projectaddimagedialog{{id}}' title="Change current project">
+	<form action="">
+		<fieldset>
+			<legend>Choose some stuff...</legend>
+			<ul class="checklist">
+				<li>
+					<input name="jqdemo" value="value1" type="checkbox" id="choice_a"/>
+					<label for="choice_a">Here's the 1st selection</label>
+					<a class="checkbox-select" href="#">Select</a>
+					<a class="checkbox-deselect" href="#">Cancel</a>
+				</li>
+				<li>
+					<input name="jqdemo" value="value2" type="checkbox" id="choice_b"/>
+					<label for="choice_b">Here's the 2nd selection</label>
+					<a class="checkbox-select" href="#">Select</a>
+					<a class="checkbox-deselect" href="#">Cancel</a>
+				</li>
+				<li>
+					<input name="jqdemo" value="value3" type="checkbox" id="choice_c" checked="checked"/>
+					<label for="choice_c">Here's the 3rd selection</label>
+					<a class="checkbox-select" href="#">Select</a>
+					<a class="checkbox-deselect" href="#">Cancel</a>
+				</li>
+				<li>
+					<input name="jqdemo" value="value4" type="checkbox" id="choice_d"/>
+					<label for="choice_d">Here's the 4th selection</label>
+					<a class="checkbox-select" href="#">Select</a>
+					<a class="checkbox-deselect" href="#">Cancel</a>
+				</li>
+			</ul>
+			<div style="clear: both;"></div>
+			<button class="sendit" type="submit" name="submitbutton" title="Submit the form">Send it!</button>
+		</fieldset>
+	</form>
+  </div>
+</script>
+
 
 
 <script type="text/html" id="imageviewtpl">
@@ -204,7 +256,7 @@
 
 <script type="text/html" id="imageprojectviewtpl">
   <div id="imagelistprojectmain{{id}}">
-  <div id="imagelistproject{{id}}" title="close"></div></div>
+    <div id="imagelistproject{{id}}" title="close"></div></div>
 </script>
 
 <script type="text/html" id="termviewtpl">
