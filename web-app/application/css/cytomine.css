@@ -497,3 +497,19 @@ a.checkbox-deselect {
 	text-indent: -9999px;
 	margin: 20px 0;
 }
+
+/** image for "add image to project" panel**/
+.thumbProject{
+    background:#FFF;
+    border:#CCC solid 1px;
+    padding:3px;
+    height: 75px;
+    width: 75px;
+}
+.thumb-wrapProject{
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 5px;
+/*cursor: pointer;*/
+}

@@ -211,36 +211,22 @@
   </div>
 </script>
 
+<script type="text/html" id="projectaddimageitem">
+      <li id="projectaddimageitemli{{id}}">
+          <input name="jqdemo" value="value1" type="checkbox" id="choice{{id}}"/>
+          <label for="choice{{id}}">Addeeeeeeeeeeee {{name}}</label>
+          <div id="projectaddimageitempict{{id}}" alt=""/>
+          <a class="checkbox-select" href="#">Select</a>
+          <a class="checkbox-deselect" href="#">Cancel</a>
+      </li>
+</script>
+
 <script type="text/html" id="projectaddimagedialog">
   <div id='projectaddimagedialog{{id}}' title="Change current project">
 	<form action="">
 		<fieldset>
 			<legend>Choose some stuff...</legend>
-			<ul class="checklist">
-				<li>
-					<input name="jqdemo" value="value1" type="checkbox" id="choice_a"/>
-					<label for="choice_a">Here's the 1st selection</label>
-					<a class="checkbox-select" href="#">Select</a>
-					<a class="checkbox-deselect" href="#">Cancel</a>
-				</li>
-				<li>
-					<input name="jqdemo" value="value2" type="checkbox" id="choice_b"/>
-					<label for="choice_b">Here's the 2nd selection</label>
-					<a class="checkbox-select" href="#">Select</a>
-					<a class="checkbox-deselect" href="#">Cancel</a>
-				</li>
-				<li>
-					<input name="jqdemo" value="value3" type="checkbox" id="choice_c" checked="checked"/>
-					<label for="choice_c">Here's the 3rd selection</label>
-					<a class="checkbox-select" href="#">Select</a>
-					<a class="checkbox-deselect" href="#">Cancel</a>
-				</li>
-				<li>
-					<input name="jqdemo" value="value4" type="checkbox" id="choice_d"/>
-					<label for="choice_d">Here's the 4th selection</label>
-					<a class="checkbox-select" href="#">Select</a>
-					<a class="checkbox-deselect" href="#">Cancel</a>
-				</li>
+			<ul id="projectaddimagedialoglist{{id}}" class="checklist">
 			</ul>
 			<div style="clear: both;"></div>
 			<button class="sendit" type="submit" name="submitbutton" title="Submit the form">Send it!</button>
@@ -248,6 +234,8 @@
 	</form>
   </div>
 </script>
+
+
 
 
 
