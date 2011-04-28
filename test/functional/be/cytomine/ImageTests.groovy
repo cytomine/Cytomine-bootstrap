@@ -306,7 +306,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("create image")
 
-    def mimeToAdd = BasicInstance.createNewMime()
+    def mimeToAdd = BasicInstance.getBasicMimeNotExist()
 
     def imageToAdd = BasicInstance.createOrGetBasicImage()
 
@@ -345,10 +345,10 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     User newUser = BasicInstance.getNewUser()
 
     Scanner oldScanner = BasicInstance.createOrGetBasicScanner()
-    Scanner newScanner = BasicInstance.createNewScanner()
+    Scanner newScanner = BasicInstance.getNewScannerNotExist()
 
     Slide oldSlide = BasicInstance.createOrGetBasicSlide()
-    Slide newSlide = BasicInstance.createNewSlide()
+    Slide newSlide = BasicInstance.getBasicSlideNotExist()
 
     String oldPath = "oldPath"
     String newPath = "newPath"
@@ -534,7 +534,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
   void testEditImageWithBadSlide()
   {
     Slide oldSlide = BasicInstance.createOrGetBasicSlide()
-    Slide newSlide = BasicInstance.createNewSlide()
+    Slide newSlide = BasicInstance.getBasicSlideNotExist()
 
     /* Create a old image */
     log.info("create image")

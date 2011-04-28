@@ -36,6 +36,12 @@ class Project extends SequenceDomain {
     }
   }
 
+  def slides() {
+    return projectSlide.collect{
+      it.slide
+    }
+  }
+
   def users() {
     def users = []
     projectGroup.each { projGroup ->

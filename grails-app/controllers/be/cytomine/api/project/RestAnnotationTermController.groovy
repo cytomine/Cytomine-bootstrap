@@ -30,7 +30,7 @@ class RestAnnotationTermController extends RestController {
     log.info "listByTerm with idTerm=" +  params.idterm
     Term term = Term.read(params.idterm)
     if(term!=null) responseSuccess(term.annotations())
-    else responseNotFound("Annotation Term","Term", params.idannotation)
+    else responseNotFound("Annotation Term","Term", params.idterm)
   }
 
   def show = {

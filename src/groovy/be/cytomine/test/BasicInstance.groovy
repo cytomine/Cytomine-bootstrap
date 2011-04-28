@@ -15,6 +15,7 @@ import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Ontology
+import be.cytomine.project.ProjectSlide
 
 /**
  * Created by IntelliJ IDEA.
@@ -71,7 +72,7 @@ class BasicInstance {
     jp2mime
   }
 
-  static Mime createNewMime() {
+  static Mime getBasicMimeNotExist() {
     def mime = Mime.findByMimeType("mimeT");
     log.debug "mime="+ mime
     if(mime==null)
@@ -132,7 +133,6 @@ class BasicInstance {
     image
   }
 
-
   static Image createOrGetBasicImage() {
     log.debug  "createOrGetBasicImage()"
     def image = new Image(filename: "filename",scanner : createOrGetBasicScanner() ,slide : null,mime:BasicInstance.createOrGetBasicMime(),path:"pathpathpath")
@@ -143,9 +143,6 @@ class BasicInstance {
     assert image!=null
     image
   }
-
-
-
 
   static Scanner createOrGetBasicScanner() {
 
@@ -159,9 +156,10 @@ class BasicInstance {
     scanner
 
   }
-  static Scanner createNewScanner() {
 
-    log.debug  "createNewScanner()"
+  static Scanner getNewScannerNotExist() {
+
+    log.debug  "getNewScannerNotExist()"
     def scanner = new Scanner(maxResolution:"x60",brand:"newBrand", model:"newModel")
     scanner.validate()
     log.debug "scanner.errors="+scanner.errors
@@ -171,7 +169,6 @@ class BasicInstance {
     scanner
 
   }
-
 
   static Slide createOrGetBasicSlide() {
 
@@ -186,9 +183,9 @@ class BasicInstance {
 
   }
 
-  static Slide createNewSlide() {
+  static Slide getBasicSlideNotExist() {
 
-    log.debug  "createNewSlide()"
+    log.debug  "getBasicSlideNotExist()"
     def slide = new Slide(name:"newSlide",order:2)
     slide.validate()
     log.debug "slide.errors="+slide.errors
@@ -198,8 +195,6 @@ class BasicInstance {
     slide
 
   }
-
-
 
   static User getOldUser() {
 
@@ -271,7 +266,6 @@ log.debug  "createOrGetBasicUser()"
     log.debug "user.errors="+user.errors
     user
   }
-
 
   static Project createOrGetBasicProject() {
     log.debug  "createOrGetBasicProject()"
@@ -385,7 +379,6 @@ log.debug  "createOrGetBasicUser()"
     term
   }
 
-
   static RelationTerm createOrGetBasicRelationTerm() {
     log.debug  "createOrGetBasicRelationTerm()"
     def relation = createOrGetBasicRelation()
@@ -421,7 +414,6 @@ log.debug  "createOrGetBasicUser()"
     assert relationTerm!=null
     relationTerm
   }
-
 
   static AnnotationTerm createOrGetBasicAnnotationTerm() {
     log.debug  "createOrGetBasicAnnotationTerm()"
@@ -472,6 +464,57 @@ log.debug  "createOrGetBasicUser()"
 
     log.debug "annotationTerm.errors="+annotationTerm.errors
     annotationTerm
+  }
+
+  static ProjectSlide createOrGetBasicProjectSlide() {
+    log.debug  "createOrGetBasicProjectSlide()"
+
+    def project = getBasicProjectNotExist()
+    project.save(flush:true)
+    assert project!=null
+    def slide = getBasicSlideNotExist()
+    slide.save(flush:true)
+    assert slide!=null
+    def projectSlide =  ProjectSlide.findByProjectAndSlide(project,slide)
+    assert projectSlide==null
+
+    log.debug "project.id:" + project.id + " slide.id:" + slide.id
+    if(!projectSlide) {
+      log.debug "projectSlide link"
+
+      projectSlide = ProjectSlide.link(project,slide)
+      log.debug "ProjectSlide.errors="+projectSlide.errors
+    }
+    assert projectSlide!=null
+    projectSlide
+  }
+
+  static ProjectSlide getBasicProjectSlideNotExist(String method) {
+
+    log.debug "getBasicProjectSlideNotExist()"
+    def random = new Random()
+    def randomInt = random.nextInt()
+
+    def slide = getBasicSlideNotExist()
+
+    log.debug "slide:" + slide.id
+    log.debug "slide.name" + slide.name
+    log.debug "slide.created:" + slide.created
+     log.debug "slide.attached:" + slide.attached
+     log.debug "slide.dirty:" + slide.dirty
+
+    slide.save(flush:true)
+    assert slide!=null
+
+    def project = getBasicProjectNotExist()
+
+    log.debug "project:" + project.id
+    project.save(flush:true)
+    assert project!=null
+    def projectSlide =  new ProjectSlide(project:project,slide:slide)
+
+    log.debug "projectSlide.errors="+projectSlide.errors
+    projectSlide
   }
 
   static void compareAnnotation(map, json)  {

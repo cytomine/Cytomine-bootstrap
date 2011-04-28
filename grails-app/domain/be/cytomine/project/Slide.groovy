@@ -24,6 +24,12 @@ class Slide extends SequenceDomain {
   static constraints = {
   }
 
+  def projects() {
+    return projectSlide.collect{
+      it.project
+    }
+  }
+
   static void registerMarshaller() {
     println "Register custom JSON renderer for " + Slide.class
     JSON.registerObjectMarshaller(Slide) {

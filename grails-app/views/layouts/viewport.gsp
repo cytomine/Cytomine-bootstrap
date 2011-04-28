@@ -28,6 +28,9 @@
   <script type="text/javascript" src="application/lib/ICanHaz.js"></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
 <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
+<script type="text/javascript" src="application/lib/ui.panel.min.js"></script>
+<link type="text/css" href="application/css/ui.panel.css" rel="stylesheet" />
+
 <!-- Libs JStree
 <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/_docs/syntax/!script.js"></script>
 <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.cookie.js"></script>
@@ -163,17 +166,73 @@
 
 </script>
 
-<script type="text/html" id="projectsviewtpl">
-  <br>
-  <div class="projectlist" id="projectlist">PROJECTS: <input id="projectsearch" /></div>
-
-  <br>
+<script type="text/html" id="ontologieschoicetpl">
+     <input type=checkbox name=ontology id=ontologies{{id}}><label for=ontologies{{id}}>{{name}}</label></input><br>
 </script>
 
-<script type="text/html" id="projectviewtpl">
-  <div id='projectlist{{id}}'>{{name}}
+<script type="text/html" id="projectsviewtpl">
+  <div>
+     <br> <br>
+    <div id="panelCenter_4" class="centralPanel">
+		<h3>Search panel</h3>
+		<div>
+		    <table class='projecttable'>
+		      <tr>
+                <td colspan="1" width="33%"> Project Name: <input id="projectsearch" /></td>
+                <td colspan="1" width="33%"> Ontology type:<div id="ontologyChoiceList"></div></td>
+                <td colspan="1" width="33%" align="right">
+                  <button id='projectrefreshbutton' type="button">Refresh</button>
+                  <button id='projectallbutton' type="button">All projects</button>
+                  <button id='projectsearchbutton' type="button">Search</button>
+                  </td>
+              </tr>
+             </table>
+		</div>
+	</div>
+       <br><br>
+    </div>
+    <div id="lCenter">
+    <div class="projectlist" id="projectlist"><br></div>
+    </div>
+  </div>
 
-    <table class='projecttable' border="1">
+</script>
+
+
+<script type="text/html" id="projectviewtpl">
+  <div id='projectlist{{id}}' class="centralPanel">
+    <h3>{{name}}</h3>
+    <div>
+      <table class='projecttable'>
+       <tr>
+         <td colspan="1" width="33%">
+           <ul>
+              <li>Name: {{name}} </li>
+              <li>Id: {{id}} </li>
+
+             <li>Ontology: {{ontology}} </li>
+             </ul>
+           </td>
+         <td colspan="1" width="33%">
+           <ul>
+              <li>{{images}} images </li>
+              <li>{{annotations}} annotations </li>
+
+
+             </ul>
+         </td>
+         <td colspan="1" width="33%">
+            <li>{{users}} </li>
+         </td>
+      </tr>
+      <tr>
+      <td><button id='projectopenimages{{id}}' type="button">See project images</button></td>
+      <td><button id='projectaddimages{{id}}' type="button">Add images</button> </td>
+      <td><input id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Use this project</label></input> </td>
+      <tr>
+         </table>
+    </div>
+    <!--<table class='projecttable' border="1">
       <tr>
         <th> Name </th>
         <th> Id </th>
@@ -193,12 +252,12 @@
         <td> {{images}} </td>
         <td> {{annotations}} </td>
         <td> {{users}} </td>
-        <td> <button id='projectopenimages{{id}}' type="button">See project images</button> </td>
-        <td> <button id='projectaddimages{{id}}' type="button">Add images</button> </td>
-        <td> <input id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Use this project</label></input> </td>
+        <td>  </td>
+        <td> </td>
+        <td> </td>
 
       </tr>
-    </table>
+    </table> -->
     <br><br></div>
 
 
@@ -212,26 +271,26 @@
 </script>
 
 <script type="text/html" id="projectaddimageitem">
-      <li id="projectaddimageitemli{{id}}">
-          <input name="jqdemo" value="value1" type="checkbox" id="choice{{id}}"/>
-          <label for="choice{{id}}">Addeeeeeeeeeeee {{name}}</label>
-          <div id="projectaddimageitempict{{id}}" alt=""/>
-          <a class="checkbox-select" href="#">Select</a>
-          <a class="checkbox-deselect" href="#">Cancel</a>
-      </li>
+  <li id="projectaddimageitemli{{id}}">
+    <input name="jqdemo" value="value1" type="checkbox" id="choice{{id}}"/>
+    <label for="choice{{id}}">..................... {{name}}</label>
+    <div id="projectaddimageitempict{{id}}" alt=""/>
+    <a class="checkbox-select" href="#">Select</a>
+    <a class="checkbox-deselect" href="#">Cancel</a>
+  </li>
 </script>
 
 <script type="text/html" id="projectaddimagedialog">
-  <div id='projectaddimagedialog{{id}}' title="Change current project">
-	<form action="">
-		<fieldset>
-			<legend>Choose some stuff...</legend>
-			<ul id="projectaddimagedialoglist{{id}}" class="checklist">
-			</ul>
-			<div style="clear: both;"></div>
-			<button class="sendit" type="submit" name="submitbutton" title="Submit the form">Send it!</button>
-		</fieldset>
-	</form>
+  <div id='projectaddimagedialog{{id}}' title="Images project">
+    <form action="">
+      <fieldset>
+        <legend>Add images to project {{name}}</legend><br>
+        <ul id="projectaddimagedialoglist{{id}}" class="checklist">
+        </ul>
+        <div style="clear: both;"></div>
+        <!--<button class="sendit" type="submit" name="submitbutton" title="Submit the form">Send it!</button>-->
+      </fieldset>
+    </form>
   </div>
 </script>
 
@@ -337,6 +396,7 @@
 <script type="text/javascript" src="application/models/UserModel.js" ></script>
 <script type="text/javascript" src="application/models/ProjectModel.js" ></script>
 <script type="text/javascript" src="application/models/AnnotationModel.js" ></script>
+<script type="text/javascript" src="application/models/SlideModel.js" ></script>
 <!-- View -->
 <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
 <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
@@ -351,6 +411,7 @@
 <script type="text/javascript" src="application/views/OntologyTreeView.js" ></script>
 <script type="text/javascript" src="application/views/ProjectView.js" ></script>
 <script type="text/javascript" src="application/views/ProjectPanelView.js" ></script>
+<script type="text/javascript" src="application/views/AddImageProjectDialog.js" ></script>
 <script type="text/javascript" src="application/views/Tabs.js" ></script>
 
 

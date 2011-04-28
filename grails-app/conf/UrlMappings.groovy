@@ -52,6 +52,12 @@ class UrlMappings {
     "/api/project/$id/annotation"(controller: "restAnnotation"){
       action = [GET:"listByProject"]
     }
+    "/api/project/$idproject/slide"(controller:"restProjectSlide"){
+      action = [GET: "listSlideByProject"]
+    }
+    "/api/project/$idproject/slide/$idslide"(controller:"restProjectSlide"){
+      action = [GET:"show",DELETE:"delete",POST:"add"]
+    }
     //TODO:  + add current user
 
 
@@ -143,6 +149,10 @@ class UrlMappings {
     //i = 1 or 2 (term 1 or term 2), id = id term
     "/api/relation/term/$i/$id"(controller:"restRelationTerm"){
       action = [GET: "listByTerm"]
+    }
+
+    "/api/slide/$idslide/project"(controller:"restProjectSlide"){
+      action = [GET: "listProjectBySlide"]
     }
 
   }
