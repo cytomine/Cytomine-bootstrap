@@ -370,7 +370,7 @@ div .projectlist {
     color:#000;
     background:#fff;
     border-color:#268;
-    overflow:scroll;
+    overflow:auto;
 }
 
 div .projecttable {
@@ -520,4 +520,8 @@ a.checkbox-deselect {
     padding:1em;
     padding-top:0;
     overflow:hidden;
+}
+
+#searchProjectPanel{
+    width:80%;
 }

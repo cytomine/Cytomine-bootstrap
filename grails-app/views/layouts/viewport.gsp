@@ -173,15 +173,15 @@
 <script type="text/html" id="projectsviewtpl">
   <div>
      <br> <br>
-    <div id="panelCenter_4" class="centralPanel">
+    <div id="searchProjectPanel" class="centralPanel">
 		<h3>Search panel</h3>
 		<div>
 		    <table class='projecttable'>
 		      <tr>
-                <td colspan="1" width="33%"> Project Name: <input id="projectsearch" /></td>
+                <td colspan="1" width="33%"> Project Name: <input id="projectsearchtextbox" /></td>
                 <td colspan="1" width="33%"> Ontology type:<div id="ontologyChoiceList"></div></td>
                 <td colspan="1" width="33%" align="right">
-                  <button id='projectrefreshbutton' type="button">Refresh</button>
+ <!--                 <button id='projectrefreshbutton' type="button">Refresh</button>  -->
                   <button id='projectallbutton' type="button">All projects</button>
                   <button id='projectsearchbutton' type="button">Search</button>
                   </td>

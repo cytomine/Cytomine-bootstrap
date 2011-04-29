@@ -24,19 +24,22 @@ var ProjectPanelView = Backbone.View.extend({
     render: function() {
         var self = this;
         self.project = this.model;
-        console.log(self.project.toJSON());
         var json = self.project.toJSON();
 
+        //TODO: make it faster: make a service to have all this information in one json
         //Get ontology name
         new OntologyModel({id:json.ontology}).fetch({success : function (ontology,response) {
             json.ontology = ontology.get('name');
 
+            //Get image number
             new ImageCollection({project:self.project.get('id')}).fetch({success : function (collection, response) {
                 json.images = collection.length;
 
+                //Get annotation number
                 new AnnotationCollection({project:self.project.get('id'), user: undefined, image : undefined}).fetch({success : function (collection, response) {
                     json.annotations = collection.length;
 
+                    //Get users list
                     new UserCollection({project:self.project.get('id')}).fetch({success : function (collection, response) {
                         //json.users = collection.length;
                         json.users = "  ";
@@ -52,19 +55,14 @@ var ProjectPanelView = Backbone.View.extend({
                         self.renderShowImageButton(json.images);
                         self.renderAddImageButton();
 
-                            $("#projectlist"+self.project.get('id')).panel({
+                            $(self.projectElem+self.project.get('id')).panel({
                                 collapsible:false,
                                 width:"80%"
                             });
-
-                        //self.renderAddImagePanel();
-
                     }
                     });
-
                 }
                 });
-
             }
             });
         }
