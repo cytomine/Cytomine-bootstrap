@@ -38,8 +38,8 @@ var AuthController = Backbone.Controller.extend({
             template : ich.logindialogtpl({}, true),
             dialogAttr : {
                 dialogID : "#login-confirm",
-                width : 450,
-                height : 350,
+                width : 475,
+                height : 375,
                 buttons: {
                     "Login": function() {
                         $('#login-form').submit();

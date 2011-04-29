@@ -232,32 +232,6 @@
       <tr>
          </table>
     </div>
-    <!--<table class='projecttable' border="1">
-      <tr>
-        <th> Name </th>
-        <th> Id </th>
-        <th> Ontology </th>
-        <th> Images </th>
-        <th> Annotations </th>
-        <th> Users </th>
-        <th> ..........................</th>
-        <th> ..........................</th>
-        <th> ..........................</th>
-
-      </tr>
-      <tr>
-        <td> {{name}} </td>
-        <td> {{id}} </td>
-        <td> {{ontology}} </td>
-        <td> {{images}} </td>
-        <td> {{annotations}} </td>
-        <td> {{users}} </td>
-        <td>  </td>
-        <td> </td>
-        <td> </td>
-
-      </tr>
-    </table> -->
     <br><br></div>
 
 
@@ -265,7 +239,7 @@
 
 <script type="text/html" id="projectchangedialog">
   <div id='projectchangedialog{{id}}' title="Change current project">
-    <p>You want to switch to project {{id}}.</p>
+    <p>You want to switch to project {{name}}.</p>
     <p>Some images from other projects are already open. Do you want to close them?</p>
   </div>
 </script>

@@ -131,7 +131,7 @@ var ProjectPanelView = Backbone.View.extend({
             {
                 //Some images are opene
                 //Ask if close all or cancel
-                var dialog = ich.projectchangedialog({id:idNewProject});
+                var dialog = ich.projectchangedialog({id:idNewProject,name:self.project.get('name')});
                 $(self.el).append(dialog);
 
                 //Build dialog
