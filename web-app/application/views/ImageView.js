@@ -18,7 +18,7 @@ var ImageView = Backbone.View.extend({
                 var sup = (Math.abs(self.page) + 1) * nb_thumb_by_page;
                 console.log("Model size=" + self.model.length);
                 self.model.each(function(image) {
-                    if ((cpt > inf) && (cpt <= sup)) {
+                    if ((cpt >= inf) && (cpt < sup)) {
                         var thumb = new ImageThumbView({
                             model : image
                         }).render();
