@@ -15,7 +15,6 @@ var AuthController = Backbone.Controller.extend({
                 dataType : 'json',
                 data : data,
                 success : function(data){
-                    $("#login-confirm").dialog("close");
                     app.message("Welcome", "You are logged as " + data.fullname, "");
                     window.app.status.user = {
                         authenticated : true,
@@ -50,6 +49,7 @@ var AuthController = Backbone.Controller.extend({
                 }
             }
         }).render();
+        $("#progress").hide();
         $("#remember_me").button();
         $("#j_username").click(function() {
             $(this).select();

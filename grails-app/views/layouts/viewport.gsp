@@ -75,6 +75,10 @@
       <input type="checkbox" id="remember_me" name="remember_me"  class="text ui-widget-content ui-corner-all">
     </fieldset>
   </form>
+    <div id="progress" style="text-align:center;padding-top:30px;">
+        <h1>Loading data...</h1>
+        <div id="login-progressbar" style="margin-top:10px;"></div>
+    </div>
   </div>
 </script>
 
@@ -226,8 +230,8 @@
          </td>
       </tr>
       <tr>
-      <td><button id='projectopenimages{{id}}' type="button">See project images</button></td>
-      <td><button id='projectaddimages{{id}}' type="button">Add images</button> </td>
+      <td><button  id='projectopenimages{{id}}' type="button">See project images</button></td>
+      <td><button class="addSlide" id='projectaddimages{{id}}' type="button">Add images</button> </td>
       <td><input id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Use this project</label></input> </td>
       <tr>
          </table>

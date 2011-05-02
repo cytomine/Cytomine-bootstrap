@@ -15,26 +15,42 @@ var ApplicationController = Backbone.Controller.extend({
 
     startup : function () {
         //init models
-
+        var nbModelFetched = 0;
+        var self = this;
+        $("#progress").show();
+        $("#login-progressbar" ).progressbar({
+			value: 0
+		});
+        $("#login-form").hide();
         this.models.images = new ImageCollection({project:undefined});
         this.models.users = new UserCollection({project:undefined});
         this.models.terms = new TermCollection();
         this.models.ontologies = new OntologyCollection();
         this.models.projects = new ProjectCollection({user:undefined});
         _.each(this.models, function(model){
-            model.fetch();
+            model.fetch({
+                success :  function(model, response) {
+                    self.modelFetched(++nbModelFetched, _.size(self.models));
+                }
+            });
         });
 
-        //top component
-        this.view = new ApplicationView({
-            el: $('#app')
-        }).render();
-
-        this.status.currentProject =  25; //TMP
-
-        this.warehouse(); //go to the warehouse when logged in
-
         Backbone.history.start();
+    },
+
+    modelFetched : function (cpt, expected) {
+        var step = 100 / expected;
+        $("#login-progressbar" ).progressbar({
+			value: (cpt * step)
+		});
+        if (cpt == expected) {
+            $("#login-confirm").dialog("close");
+            this.view = new ApplicationView({
+                el: $('#app')
+            }).render();
+
+            this.warehouse(); //go to the warehouse when logged in
+        }
     },
 
     initialize : function () {
@@ -79,8 +95,8 @@ var ApplicationController = Backbone.Controller.extend({
         });
 
         this.status = new Status(pingURL, serverDown,
-                                function () { //TO DO: HANDLE WHEN USER IS DISCONNECTED BY SERVER
-                                }, 10000);
+                function () { //TO DO: HANDLE WHEN USER IS DISCONNECTED BY SERVER
+                }, 10000);
     },
 
     explorer: function() {

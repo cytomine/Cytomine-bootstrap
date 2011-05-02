@@ -21,10 +21,12 @@ var ProjectPanelView = Backbone.View.extend({
         this.container = options.container;
         _.bindAll(this, 'render');
     },
+    events: {
+        "click .addSlide": "showAddSlidesPanel"
+    },
     render: function() {
         var self = this;
-        self.project = this.model;
-        var json = self.project.toJSON();
+        var json = self.model.toJSON();
 
         //TODO: make it faster: make a service to have all this information in one json
         //Get ontology name
@@ -32,15 +34,15 @@ var ProjectPanelView = Backbone.View.extend({
             json.ontology = ontology.get('name');
 
             //Get image number
-            new ImageCollection({project:self.project.get('id')}).fetch({success : function (collection, response) {
+            new ImageCollection({project:self.model.get('id')}).fetch({success : function (collection, response) {
                 json.images = collection.length;
 
                 //Get annotation number
-                new AnnotationCollection({project:self.project.get('id'), user: undefined, image : undefined}).fetch({success : function (collection, response) {
+                new AnnotationCollection({project:self.model.get('id'), user: undefined, image : undefined}).fetch({success : function (collection, response) {
                     json.annotations = collection.length;
 
                     //Get users list
-                    new UserCollection({project:self.project.get('id')}).fetch({success : function (collection, response) {
+                    new UserCollection({project:self.model.get('id')}).fetch({success : function (collection, response) {
                         //json.users = collection.length;
                         json.users = "  ";
                         collection.each(function(user) {
@@ -53,12 +55,14 @@ var ProjectPanelView = Backbone.View.extend({
 
                         self.renderCurrentProjectButton();
                         self.renderShowImageButton(json.images);
-                        self.renderAddImageButton();
 
-                            $(self.projectElem+self.project.get('id')).panel({
-                                collapsible:false,
-                                width:"80%"
-                            });
+                        $(self.imageAddElem + self.model.id).button({
+                            icons : {secondary : "ui-icon-image"}
+                        });
+                        $(self.projectElem+self.model.get('id')).panel({
+                            collapsible:false,
+                            width:"80%"
+                        });
                     }
                     });
                 }
@@ -69,41 +73,32 @@ var ProjectPanelView = Backbone.View.extend({
         });
         return this;
     },
-    renderAddImageButton : function() {
-        var self = this;
-        $(self.imageAddElem+self.project.get('id')).click(function () {
+    showAddSlidesPanel : function () {
+        if(this.loadImagesInAddPanel) {
+            var dialog = ich.projectaddimagedialog({id:this.model.get('id'),name:this.model.get('name')});
+            $(this.el).append(dialog);
+            this.loadImagesInAddPanel = false;
 
+        }
+        new AddImageProjectDialog({model:this.project,idProject:this.model.id}).render();
+    },
+    showProjectSlides : function () {
 
-            //don't add dialog in document again, just reload it
-            if(self.loadImagesInAddPanel)
-            {
-                var dialog = ich.projectaddimagedialog({id:self.project.get('id'),name:self.project.get('name')});
-                $(self.el).append(dialog);
-                self.loadImagesInAddPanel = false;
-
-            }
-            new AddImageProjectDialog({model:self.project,idProject:self.project.id}).render();
-            //self.renderAddImagePanel();
-        });
-
-        $(self.imageAddElem + self.project.id).button({
-            icons : {secondary : "ui-icon-image"}
-        });
     },
     renderShowImageButton : function(imageNumber) {
         var self = this;
-        $(self.imageOpenElem+self.project.get('id')).click(function () {
-            self.openImagesList(self.project.get('id'));
+        $(self.imageOpenElem+self.model.get('id')).click(function () {
+            self.openImagesList(self.model.get('id'));
 
             //change the icon
             self.imageOpened=!self.imageOpened;
-            $(self.imageOpenElem + self.project.id).button({icons : {secondary :self.imageOpened? "ui-icon-carat-1-n":"ui-icon-carat-1-s"}});
+            $(self.imageOpenElem + self.model.id).button({icons : {secondary :self.imageOpened? "ui-icon-carat-1-n":"ui-icon-carat-1-s"}});
         });
 
         var disabledButton= true;
         if(imageNumber>0) disabledButton= false;
 
-        $(self.imageOpenElem + self.project.id).button({
+        $(self.imageOpenElem + self.model.id).button({
             icons : {secondary : "ui-icon-carat-1-s"},
             disabled: disabledButton
         });
@@ -111,15 +106,15 @@ var ProjectPanelView = Backbone.View.extend({
     renderCurrentProjectButton : function() {
         var self = this;
 
-        var isCurrentProject = window.app.status.currentProject==self.project.id
+        var isCurrentProject = window.app.status.currentProject==self.model.id
         //change button style for current project
-        $(self.projectChangeElem + self.project.id).button({
+        $(self.projectChangeElem + self.model.id).button({
             icons : {secondary : "ui-icon-star"}
         });
-        if(isCurrentProject) $(self.projectChangeElem + self.project.id).click();
+        if(isCurrentProject) $(self.projectChangeElem + self.model.id).click();
 
-        $(self.projectChangeElem+self.project.get('id')).click(function () {
-            var idNewProject = self.project.get('id');
+        $(self.projectChangeElem+self.model.get('id')).click(function () {
+            var idNewProject = self.model.get('id');
             var idOldProject = window.app.status.currentProject;
 
             console.log("change for project:"+idNewProject);
@@ -131,7 +126,7 @@ var ProjectPanelView = Backbone.View.extend({
             {
                 //Some images are opene
                 //Ask if close all or cancel
-                var dialog = ich.projectchangedialog({id:idNewProject,name:self.project.get('name')});
+                var dialog = ich.projectchangedialog({id:idNewProject,name:self.model.get('name')});
                 $(self.el).append(dialog);
 
                 //Build dialog
