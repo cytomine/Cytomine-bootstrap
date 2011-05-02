@@ -42,9 +42,9 @@ var ProjectView = Backbone.View.extend({
         $(self.allProjectsButtonElem).click(function() {
             $(self.searchProjectTextBoxElem).val("");
 
-             $.each($(self.searchProjectCheckedOntologiesElem), function(index, value) {
-                            $(self.searchProjectCheckedOntologiesElem).click();
-                        });
+            $.each($(self.searchProjectCheckedOntologiesElem), function(index, value) {
+                $(self.searchProjectCheckedOntologiesElem).click();
+            });
 
             self.filterProjects("");
         });
@@ -79,30 +79,62 @@ var ProjectView = Backbone.View.extend({
                 });
             }});
 
-        self.printProjects();
+        new ProjectCollection({user : self.userID}).fetch({
+            success : function (collection, response) {
+                self.printProjects(collection);
+            }});
 
         return this;
     },
-    //show only project that have text value in their name and a ontology from searchOntologies.
-    filterProjects : function(text,searchOntologies) {
+    //show only project that have searchText value in their name and a ontology from searchOntologies.
+    filterProjects : function(searchText,searchOntologies) {
         var self = this;
 
+        var projects =  new ProjectCollection(self.projects.models);
+
+        //each search function takes a search data and a collection and it return a collection without elem that
+        //don't match with data search
+        projects = self.filterByProjectsByName(searchText,projects);
+        projects = self.filterProjectsByOntology(searchOntologies,projects);
+        //add here filter function
+
+
         self.projects.each(function(project) {
-
-            if(text==undefined || project.get('name').toLowerCase().contains(text.toLowerCase()))
-            {
-                if(searchOntologies==undefined || self.contains(searchOntologies,project.get('ontology')))
-                    $(self.projectListElem+project.id).show();
-                else
-                    $(self.projectListElem+project.id).hide();
-
-            }
+            //if project is in project result list, show it
+            if(projects.get(project.id)!=null)
+                $(self.projectListElem+project.id).show();
             else
                 $(self.projectListElem+project.id).hide();
         });
     },
-    //print all projects
-    printProjects : function() {
+    filterByProjectsByName : function(searchText,projectOldList) {
+
+        var projectNewList =  new ProjectCollection(projectOldList.models);
+
+        projectOldList.each(function(project) {
+            //if text is undefined: don't hide project
+            //if project name contains search text, don't hide project
+            if(searchText!=undefined && !project.get('name').toLowerCase().contains(searchText.toLowerCase()))
+                projectNewList.remove(project);
+        });
+
+        return projectNewList;
+    },
+
+    filterProjectsByOntology : function(searchOntologies,projectOldList) {
+        var self = this;
+        var projectNewList =  new ProjectCollection(projectOldList.models);
+
+        projectOldList.each(function(project) {
+
+            if(searchOntologies!=undefined && !self.contains(searchOntologies,project.get('ontology')))
+               projectNewList.remove(project);
+        });
+        return projectNewList;
+    },
+
+    //print project from collection
+    printProjects : function(collection) {
         var self = this;
 
         //clear de list
@@ -110,35 +142,32 @@ var ProjectView = Backbone.View.extend({
 
         //array for autocompletion
         var projectNameArray = new Array();
-        new ProjectCollection({user : this.userID}).fetch({
-            success : function (collection, response) {
-                self.projects = collection;
-                collection.each(function(project) {
 
-                    projectNameArray.push(project.get('name'));
-                    var json = project.toJSON();
+        self.projects = collection;
+        collection.each(function(project) {
 
-                    //create panel for a specific project
-                    var panel = new ProjectPanelView({
-                        model : project
-                    }).render();
-                    $(self.projectListElem).append(panel.el);
+            projectNameArray.push(project.get('name'));
+            var json = project.toJSON();
 
-                });
-                //autocomplete
-                $(self.searchProjectTextBoxElem).autocomplete({
-                    source : projectNameArray,
-                    select : function (event,ui)
-                    {
-                        self.filterProjects(ui.item.label);
+            //create panel for a specific project
+            var panel = new ProjectPanelView({
+                model : project
+            }).render();
+            $(self.projectListElem).append(panel.el);
 
-                    },
-                    search : function(event)
-                    {
-                    }
-                });
+        });
+        //autocomplete
+        $(self.searchProjectTextBoxElem).autocomplete({
+            source : projectNameArray,
+            select : function (event,ui)
+            {
+                self.filterProjects(ui.item.label);
 
+            },
+            search : function(event)
+            {
             }
         });
+
     }
 });
