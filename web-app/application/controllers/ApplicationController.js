@@ -14,14 +14,29 @@ var ApplicationController = Backbone.Controller.extend({
     },
 
     startup : function () {
+        var dialog = new ConfirmDialogView({
+            el:'#dialogs',
+            //template : _.template($('#login-dialog-tpl').html()),
+            template : ich.loadingdialogtpl({}, true),
+            dialogAttr : {
+                dialogID : "#loading-dialog",
+                width : 475,
+                height : 375,
+                buttons: {
+
+                },
+                close :function (event) {
+
+                }
+            }
+        }).render();
         //init models
         var nbModelFetched = 0;
         var self = this;
         $("#progress").show();
         $("#login-progressbar" ).progressbar({
-			value: 0
-		});
-        $("#login-form").hide();
+            value: 0
+        });
         this.models.images = new ImageCollection({project:undefined});
         this.models.users = new UserCollection({project:undefined});
         this.models.terms = new TermCollection();
@@ -41,10 +56,10 @@ var ApplicationController = Backbone.Controller.extend({
     modelFetched : function (cpt, expected) {
         var step = 100 / expected;
         $("#login-progressbar" ).progressbar({
-			value: (cpt * step)
-		});
+            value: (cpt * step)
+        });
         if (cpt == expected) {
-            $("#login-confirm").dialog("close");
+            $("#loading-dialog").dialog("close");
             this.view = new ApplicationView({
                 el: $('#app')
             }).render();

@@ -75,6 +75,15 @@
       <input type="checkbox" id="remember_me" name="remember_me"  class="text ui-widget-content ui-corner-all">
     </fieldset>
   </form>
+  </div>
+</script>
+
+
+<script type="text/html" id="loadingdialogtpl">
+  <div id="loading-dialog" title="Loading">
+  <div align="center" style="margin:auto;">
+    <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
+  </div>
     <div id="progress" style="text-align:center;padding-top:30px;">
         <h1>Loading data...</h1>
         <div id="login-progressbar" style="margin-top:10px;"></div>

@@ -16,6 +16,7 @@ var AuthController = Backbone.Controller.extend({
                 data : data,
                 success : function(data){
                     app.message("Welcome", "You are logged as " + data.fullname, "");
+                    $("#login-confirm").dialog("close");
                     window.app.status.user = {
                         authenticated : true,
                         id : data.id
