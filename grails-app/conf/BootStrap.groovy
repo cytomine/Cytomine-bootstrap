@@ -194,9 +194,14 @@ class BootStrap {
 
     def ontologySamples = [
             [name: "Ontology1"],
+            /* ANAPATH */
             [name: "LBA"],
             [name: "ASP"],
-            [name: "Frottis"]
+            [name: "Frottis"],
+            /* LBTD */
+            [name : "Tissus"],
+            [name : "Cellules"]
+
     ]
     createOntology(ontologySamples)
 
@@ -682,8 +687,32 @@ class BootStrap {
             [name: "Champignon",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
             [name: "Mucus",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
             [name: "Artéfact",comment:"",ontology:[name:"Frottis"],color:"FF0000"],
-
-
+            /* Tissus */
+            [name: "Tumeurs",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Adénocarcinomes",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Tumeurs épidermoïdes",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Vaisseaux",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Vaisseau sanguin",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Vaisseau lymphatique",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Bronche",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Foyer d'inflammation",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Marquage",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Collagen",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Cellule en prolifération",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Alpha-smooth muscle actin",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Muscle",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Globule rouge",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Cartilage",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Artefact",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            [name: "Unknown",comment:"",ontology:[name:"Tissus"],color:"FF0000"],
+            /* Cellules */
+            [name: "Macrophages",comment:"",ontology:[name:"Cellules"],color:"FF0000"],
+            [name: "Eosinophiles",comment:"",ontology:[name:"Cellules"],color:"FF0000"],
+            [name: "Neutrophiles",comment:"",ontology:[name:"Cellules"],color:"FF0000"],
+            [name: "Cellules épithéliales",comment:"",ontology:[name:"Cellules"],color:"FF0000"],
+            [name: "Lymphocytes",comment:"",ontology:[name:"Cellules"],color:"FF0000"],
+            [name: "Red Blood Cells",comment:"",ontology:[name:"Cellules"],color:"FF0000"],
+            [name: "Artefacts",comment:"",ontology:[name:"Cellules"],color:"FF0000"],
     ]
 
     createTerms(termSamples)
@@ -720,9 +749,15 @@ class BootStrap {
             [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Artéfact", ontology : "Frottis"],
             [relation: RelationTerm.names.PARENT,term1:"Cellules tumorales", term2: "Carcinome épidermoïde", ontology : "Frottis"],
             [relation: RelationTerm.names.PARENT,term1:"Cellules tumorales", term2: "Adénocarcinome glandulaire", ontology : "Frottis"],
-            [relation: RelationTerm.names.PARENT,term1:"Cellules tumorales", term2: "Small cell carcinoma", ontology : "Frottis"]
-
-
+            [relation: RelationTerm.names.PARENT,term1:"Cellules tumorales", term2: "Small cell carcinoma", ontology : "Frottis"],
+            /* Tissus */
+            [relation: RelationTerm.names.PARENT,term1:"Tumeurs", term2: "Adénocarcinomes", ontology : "Tissus"],
+            [relation: RelationTerm.names.PARENT,term1:"Tumeurs", term2: "Tumeurs épidermoïdes", ontology : "Tissus"],
+            [relation: RelationTerm.names.PARENT,term1:"Vaisseaux", term2: "Vaisseau sanguin", ontology : "Tissus"],
+            [relation: RelationTerm.names.PARENT,term1:"Vaisseaux", term2: "Vaisseau lymphatique", ontology : "Tissus"],
+            [relation: RelationTerm.names.PARENT,term1:"Marquage", term2: "Collagen", ontology : "Tissus"],
+            [relation: RelationTerm.names.PARENT,term1:"Marquage", term2: "Cellule en prolifération", ontology : "Tissus"],
+            [relation: RelationTerm.names.PARENT,term1:"Marquage", term2: "Alpha-smooth muscle actin", ontology : "Tissus"]
     ]
     createRelationTerm(relationTermSamples)
 

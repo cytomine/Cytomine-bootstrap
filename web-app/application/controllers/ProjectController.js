@@ -11,7 +11,7 @@ var ProjectController = Backbone.Controller.extend({
             this.view = new ProjectView({
                 model : window.app.models.projects,
                 el:$("#warehouse > .project"),
-                container : window.app.view.components.explorer
+                container : window.app.view.components.warehouse
             }).render();
 
             this.view.container.views.project = this.view;
