@@ -148,6 +148,10 @@ h3 { font-size:13px; }
     top :50px;
     z-index:1;
     position : fixed;
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
 }
 
 
@@ -359,18 +363,15 @@ div.olControlOverviewMapElement img {
 /* Project Panel stuff */
 div .project {
     color:#000;
-    background:#fff;
     border-color:#268;
-    overflow: auto;
     margin-left:50;
-    overflow: auto; /* doesn't work? */
 }
 
 div .projectlist {
     color:#000;
-    background:#fff;
     border-color:#268;
     overflow:auto;
+    margin-bottom: 40px;
 }
 
 div .projecttable {
