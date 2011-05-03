@@ -293,6 +293,7 @@
       <td><input class="changeProject" id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Use this project</label></input> </td>
       <tr>
          </table>
+         <div class="scroll-content"></div>
     </div>
     <br><br>
     </div>
