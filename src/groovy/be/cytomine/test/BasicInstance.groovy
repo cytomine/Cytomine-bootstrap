@@ -269,10 +269,11 @@ log.debug  "createOrGetBasicUser()"
 
   static Project createOrGetBasicProject() {
     log.debug  "createOrGetBasicProject()"
-    def project = Project.findByName("BasicProject")
+    def name = "BasicProject".toUpperCase()
+    def project = Project.findByName(name)
     if(!project) {
 
-      project = new Project(name:"BasicProject", ontology:createOrGetBasicOntology())
+      project = new Project(name:name, ontology:createOrGetBasicOntology())
       project.validate()
       log.debug "project.errors="+project.errors
       project.save(flush : true)
@@ -542,7 +543,7 @@ log.debug  "createOrGetBasicUser()"
 
   static void compareProject(map, json)  {
 
-    assert map.name.equals(json.name)
+    assert map.name.toUpperCase().equals(json.name)
     assert toLong(map.ontology.id).equals(toLong(json.ontology))
 
   }
