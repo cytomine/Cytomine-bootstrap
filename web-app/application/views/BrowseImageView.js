@@ -322,7 +322,6 @@ AnnotationLayer.prototype = {
             select: new OpenLayers.Control.SelectFeature(this.vectorsLayer)
 
         }
-        console.log("initTools on image : " + image.filename);
         image.initTools(this.controls);
     },
 
@@ -512,13 +511,24 @@ AnnotationLayer.prototype = {
         for (key in this.controls) {
             var control = this.controls[key];
             if (name == key) {
-                console.log("activate control : " + key + " in " + this.imageID);
                 control.activate();
+                if (control == this.controls.modify) {
+                    for (var i in this.vectorsLayer.selectedFeatures) {
+                        var feature = this.vectorsLayer.selectedFeatures[i];
+                        control.selectFeature(feature);
+                    }
+                }
             } else {
-                console.log("deactivate control : " + key + " in " + this.imageID);
                 control.deactivate();
+                if (control == this.controls.modify) {
+                    for (var i in this.vectorsLayer.selectedFeatures) {
+                        var feature = this.vectorsLayer.selectedFeatures[i];
+                        control.unselectFeature(feature);
+                    }
+                }
             }
         }
+
     },
     /* Callbacks undo/redo */
     annotationAdded: function (idAnnotation) {
