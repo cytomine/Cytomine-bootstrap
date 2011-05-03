@@ -89,6 +89,7 @@ class Project extends SequenceDomain {
       returnArray['imageURL'] = UrlApi.getImageURLWithProjectId(it.id)
       returnArray['termURL'] = UrlApi.getTermsURLWithOntologyId(it.ontology?.id)
       returnArray['userURL'] = UrlApi.getUsersURLWithProjectId(it.id)
+      returnArray['numberOfImages'] = it.images().size();
 
       return returnArray
     }

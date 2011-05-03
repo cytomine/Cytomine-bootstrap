@@ -193,7 +193,6 @@ class BootStrap {
     createRetrievalServers(retrievalServerSamples)
 
     def ontologySamples = [
-            [name: "Ontology1"],
             /* ANAPATH */
             [name: "LBA"],
             [name: "ASP"],
@@ -726,8 +725,6 @@ class BootStrap {
 
     def relationTermSamples = [
             /* Ontology 1 */
-            [relation: RelationTerm.names.PARENT,term1:"Cell", term2: "Cell ex vivo", ontology : "Ontology1"],
-            [relation: RelationTerm.names.PARENT,term1:"Cell", term2: "Cell in vivo", ontology : "Ontology1"],
             //[relation: RelationTerm.names.SYNONYM, term1:"Cell within a living organism", term2: "Cell in vivo", ontology : "Ontology1"],
             /* LBA */
             [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Bactérie", ontology : "LBA"],
@@ -767,9 +764,9 @@ class BootStrap {
     def annotationSamples = [
             //[name : "annot3", location : ["POLYGON((2000 1000, 30 0, 40 10, 30 20, 2000 1000))","POLYGON((20 10, 30 0, 40 10, 30 20, 20 10))"], image: [filename: "Boyden - essai _10x_02"]],
             //[name : "annot2", location : ["POLYGON((20 10, 30 50, 40 10, 30 20, 20 10))"],image: [filename: "Boyden - essai _10x_02"]]
-            [name : "annot3", location : ["POINT(10000 10000)"], scan: [filename: "Aperio - 003"],term:["Cell","Cell in vivo"], user:"lrollus"],
+            [name : "annot3", location : ["POINT(10000 10000)"], scan: [filename: "Aperio - 003"],term:["Bactérie","Champignon"], user:"lrollus"],
             [name : "", location : ["POINT(5000 5000)"],scan: [filename: "Aperio - 003"],user:"lrollus"],
-            [name : "annot4", location : ["POLYGON((5000 20000, 20000 17000, 20000 10000, 10000 7500, 5000 20000))","POLYGON((10000 15000, 15000 12000, 12000 12000, 10000 15000))"],scan: [filename: "Aperio - 003"],term:["Cell ex vivo"],user:"lrollus"]
+            [name : "annot4", location : ["POLYGON((5000 20000, 20000 17000, 20000 10000, 10000 7500, 5000 20000))","POLYGON((10000 15000, 15000 12000, 12000 12000, 10000 15000))"],scan: [filename: "Aperio - 003"],term:["Mucus"],user:"lrollus"]
     ]
     createAnnotations(annotationSamples)
 

@@ -149,7 +149,7 @@ h3 { font-size:13px; }
     z-index:1;
     position : fixed;
     display: block;
-    overflow-x: auto;
+    overflow-x: hidden;
     overflow-y: auto;
     position: relative;
 }
@@ -519,6 +519,8 @@ a.checkbox-deselect {
     width:95%;
     margin :auto;
 }
+
+.searchProjectCriteria {display:inline; }
 
 
 /* Carousel */

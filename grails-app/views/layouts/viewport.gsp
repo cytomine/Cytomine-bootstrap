@@ -153,16 +153,16 @@
         <div class="main term"></div>
         <div class="main ontology"></div>
 
-        <div class='sidebar'>
-            <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
-            <ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
-            <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul>
-            <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
-            <ul class='menu libraries'></ul>
-            <div class='buttons'>
-                <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
-            </div>
-        </div>
+    <div class='sidebar'>
+      <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
+      <ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
+     <!-- <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul> -->
+      <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
+      <ul class='menu libraries'></ul>
+      <div class='buttons'>
+        <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
+      </div>
+    </div>
 </script>
 
 <script type="text/html" id="admintpl">
@@ -181,23 +181,67 @@
 </script>
 
 <script type="text/html" id="ontologieschoicetpl">
-     <input type=checkbox name=ontology id=ontologies{{id}}><label for=ontologies{{id}}>{{name}}</label></input><br>
+     <input type=checkbox name=ontology id=ontologies{{id}} class="searchProjectCriteria" style="display:inline;"><label for=ontologies{{id}} class="searchProjectCriteria">{{name}}</label><br></input>
+</script>
+
+<script type="text/html" id="ontologieschoiceradiotpl">
+     <input type=radio name="ontologyradio" id=ontologiesradio{{id}}  value="{{id}}"><label for=ontologies{{id}}>{{name}}</label></input><br>
+</script>
+
+<script type="text/html" id="userschoicetpl">
+     <input type=checkbox name=usercheckbox id=users{{id}} value="{{id}}"><label for=users{{id}}>{{username}}</label></input><br>
+</script>
+
+<script type="text/html" id="addprojectdialogtpl">
+  <div id="addproject" title="Create project">
+  <div align="center" style="margin:auto;">
+    <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
+  </div>
+  <form id="login-form-add-project">
+    <fieldset>
+     <div id="projecterrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+					<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+					<strong>Error:</strong><div id="errormessage"></div></p>
+				</div>
+      <label for="project-name" >Name:</label>
+      <input type="text" size="20" id="project-name" value="" class="text ui-widget-content ui-corner-all" >
+      <table class="projecttable">
+      <tr>
+          <td>
+          <label for="projectontology" >Ontology:</label>
+          <div id="projectontology"></div>
+          </td>
+          <td>
+
+         <label for="projectuser" >Users:</label>
+          <div id="projectuser"></div>
+          </td>
+        </tr>
+      </table>
+      <!--<input type="password" size="20" id="j_password" value="password" name="j_password"  class="text ui-widget-content ui-corner-all">
+      <label for="remember_me" >Remember me</label>
+      <input type="checkbox" id="remember_me" name="remember_me"  class="text ui-widget-content ui-corner-all"> -->
+    </fieldset>
+  </form>
+  </div>
 </script>
 
 <script type="text/html" id="projectsviewtpl">
   <div>
-     <br> <br>
+     <br><br>
     <div id="searchProjectPanel" class="centralPanel">
-		<h3>Search panel</h3>
+		<h3>Project Panel</h3>
 		<div>
 		    <table class='projecttable'>
 		      <tr>
-                <td colspan="1" width="33%"> Project Name: <input id="projectsearchtextbox" /></td>
-                <td colspan="1" width="33%"> Ontology type:<div id="ontologyChoiceList"></div></td>
-                <td colspan="1" width="33%" align="right">
+                <td colspan="1" width="25%"> Project Name: <input id="projectsearchtextbox" /></td>
+                <td colspan="1" width="25%"> Ontology type:<div id="ontologyChoiceList"></div></td>
+                <td colspan="1" width="25%"><label for="amount">Number of images:<input type="text" id="amount" style="border:0; font-weight:bold;" /></label><div id="numberofimage"></div></td>
+                <td colspan="1" width="25%" align="right">
  <!--                 <button id='projectrefreshbutton' type="button">Refresh</button>  -->
-                  <button id='projectallbutton' type="button">All projects</button>
-                  <button id='projectsearchbutton' type="button">Search</button>
+                  <button id='projectallbutton' type="button" class="showAllProject">Show All projects</button> <br><br>
+                  <button id='projectaddbutton' type="button" class="addProject">Add Project</button><br>
+ <!--                  <button id='projectsearchbutton' type="button">Search</button>  -->
                   </td>
               </tr>
              </table>
@@ -216,32 +260,34 @@
   <div id='projectlist{{id}}' class="projectlist">
     <h3>{{name}}</h3>
     <div>
-        <table class='projecttable'>
-          <tr>
-             <td colspan="1" width="33%">
-                <ul>
-                    <li>Name: {{name}} </li>
-                    <li>Id: {{id}} </li>
-                    <li>Ontology: {{ontology}} </li>
-                </ul>
-            </td>
-            <td colspan="1" width="33%">
-                <ul>
-                    <li>{{images}} images </li>
-                    <li>{{annotations}} annotations </li>
-                </ul>
-            </td>
-            <td colspan="1" width="33%">
-                <li>{{users}} </li>
-            </td>
-        </tr>
-        <tr>
-            <td><button  id='projectopenimages{{id}}' type="button">Browse slides</button></td>
-            <td><button class="addSlide" id='projectaddimages{{id}}' type="button">Add images</button> </td>
-            <td><input id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Use this project</label></input> </td>
-        </tr>
-        </table>
-        <div class="scroll-content"></div>
+      <table class='projecttable'>
+       <tr>
+         <td colspan="1" width="33%">
+           <ul>
+              <li>Name: {{name}} </li>
+              <li>Id: {{id}} </li>
+
+             <li>Ontology: {{ontology}} </li>
+             </ul>
+           </td>
+         <td colspan="1" width="33%">
+           <ul>
+              <li>{{images}} images </li>
+              <li>{{annotations}} annotations </li>
+
+
+             </ul>
+         </td>
+         <td colspan="1" width="33%">
+            <li>{{users}} </li>
+         </td>
+      </tr>
+      <tr>
+      <td><button class="seeSlide" id='projectopenimages{{id}}' type="button">See project images</button></td>
+      <td><button class="addSlide" id='projectaddimages{{id}}' type="button">Add images</button> </td>
+      <td><input class="changeProject" id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Use this project</label></input> </td>
+      <tr>
+         </table>
     </div>
     <br><br>
     </div>

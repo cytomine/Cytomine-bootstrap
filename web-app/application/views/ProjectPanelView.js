@@ -22,7 +22,9 @@ var ProjectPanelView = Backbone.View.extend({
         _.bindAll(this, 'render');
     },
     events: {
-        "click .addSlide": "showAddSlidesPanel"
+        "click .addSlide": "showAddSlidesPanel",
+        "click .seeSlide": "showSlidesPanel",
+        "click .changeProject": "changeProject"
     },
     render: function() {
         var self = this;
@@ -77,22 +79,65 @@ var ProjectPanelView = Backbone.View.extend({
             var dialog = ich.projectaddimagedialog({id:this.model.get('id'),name:this.model.get('name')});
             $(this.el).append(dialog);
             this.loadImagesInAddPanel = false;
-
         }
         new AddImageProjectDialog({model:this.project,idProject:this.model.id}).render();
     },
-    showProjectSlides : function () {
-
-    },
-    renderShowImageButton : function(imageNumber) {
+    showSlidesPanel : function () {
         var self = this;
-        $(self.imageOpenElem+self.model.get('id')).click(function () {
             self.openImagesList(self.model.get('id'));
 
             //change the icon
             self.imageOpened=!self.imageOpened;
             $(self.imageOpenElem + self.model.id).button({icons : {secondary :self.imageOpened? "ui-icon-carat-1-n":"ui-icon-carat-1-s"}});
-        });
+    },
+    changeProject : function () {
+        var self = this;
+        var idNewProject = self.model.get('id');
+                    var idOldProject = window.app.status.currentProject;
+
+                    console.log("change for project:"+idNewProject);
+                    console.log("current project:"+idOldProject);
+
+                    if(idNewProject==idOldProject) return;
+
+                    if(window.app.controllers.browse.imagesOpen.length>0)
+                    {
+                        //Some images are opene
+                        //Ask if close all or cancel
+                        var dialog = ich.projectchangedialog({id:idNewProject,name:self.model.get('name')});
+                        $(self.el).append(dialog);
+
+                        //Build dialog
+                        $(self.projectChangeDialog+idNewProject).dialog({
+                            buttons : {
+                                "Close all" : function() {
+                                    //close all pictures and change current project id
+                                    window.app.controllers.browse.tabs.closeAll();
+                                    window.app.status.currentProject = idNewProject;
+                                    $(self.projectChangeDialog+idNewProject).dialog("close");
+
+                                },
+                                "Cancel" : function() {
+                                    $(self.projectChangeDialog+idNewProject).dialog("close");
+                                }
+                            }
+                        });
+
+                        //Open dialog
+                        $(self.projectChangeDialog+idNewProject).dialog("open");
+                    }
+                    else
+                    {
+                        //No image open
+                        window.app.status.currentProject = idNewProject;
+                    }
+
+                    console.log("New current project:"+window.app.status.currentProject);
+
+    },
+    renderShowImageButton : function(imageNumber) {
+
+        var self = this;
 
         var disabledButton= true;
         if(imageNumber>0) disabledButton= false;
@@ -111,51 +156,6 @@ var ProjectPanelView = Backbone.View.extend({
             icons : {secondary : "ui-icon-star"}
         });
         if(isCurrentProject) $(self.projectChangeElem + self.model.id).click();
-
-        $(self.projectChangeElem+self.model.get('id')).click(function () {
-            var idNewProject = self.model.get('id');
-            var idOldProject = window.app.status.currentProject;
-
-            console.log("change for project:"+idNewProject);
-            console.log("current project:"+idOldProject);
-
-            if(idNewProject==idOldProject) return;
-
-            if(window.app.controllers.browse.imagesOpen.length>0)
-            {
-                //Some images are opene
-                //Ask if close all or cancel
-                var dialog = ich.projectchangedialog({id:idNewProject,name:self.model.get('name')});
-                $(self.el).append(dialog);
-
-                //Build dialog
-                $(self.projectChangeDialog+idNewProject).dialog({
-                    buttons : {
-                        "Close all" : function() {
-                            //close all pictures and change current project id
-                            window.app.controllers.browse.tabs.closeAll();
-                            window.app.status.currentProject = idNewProject;
-                            $(self.projectChangeDialog+idNewProject).dialog("close");
-
-                        },
-                        "Cancel" : function() {
-                            $(self.projectChangeDialog+idNewProject).dialog("close");
-                        }
-                    }
-                });
-
-                //Open dialog
-                $(self.projectChangeDialog+idNewProject).dialog("open");
-            }
-            else
-            {
-                //No image open
-                window.app.status.currentProject = idNewProject;
-            }
-
-            console.log("New current project:"+window.app.status.currentProject);
-
-        });
     },
     openImagesList: function(idProject) {
 
