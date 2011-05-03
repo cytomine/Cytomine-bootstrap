@@ -15,7 +15,14 @@ var ProjectModel = Backbone.Model.extend({
 	}
 });
 
-
+var ProjectUserModel = Backbone.Model.extend({
+	url : function() {
+            return 'api/project/' + this.project +'/user.json';
+	},
+    initialize: function (options) {
+        this.project = options.project;
+    }
+});
 // define our collection
 var ProjectCollection = Backbone.Collection.extend({
     model: ProjectModel,
@@ -31,3 +38,7 @@ var ProjectCollection = Backbone.Collection.extend({
         this.user = options.user;
     }
 });
+
+ProjectCollection.comparator = function(project) {
+  return project.get("name");
+};

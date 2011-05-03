@@ -27,8 +27,8 @@ var UserCollection = Backbone.Collection.extend({
     model: UserModel,
 
     url: function() {
-        if (this.user != undefined) {
-            return "api/project/" + this.user + "/user.json";
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/user.json";
         } else {
             return "api/user.json";
         }

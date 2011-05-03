@@ -13,7 +13,7 @@ class Project extends SequenceDomain {
   static hasMany = [projectSlide:ProjectSlide, projectGroup:ProjectGroup]
 
   static constraints = {
-    name ( maxSize : 100, unique : true)
+    name ( maxSize : 100, unique : true, blank : false)
   }
 
   String toString() {
@@ -69,7 +69,7 @@ class Project extends SequenceDomain {
     println "isNull(String key) " + jsonProject.isNull(name)
     println "isNull(String key) " + jsonProject.isNull("name")  */
     if(!name.equals("null"))
-      project.name = jsonProject.name
+      project.name = jsonProject.name.toUpperCase()
     else throw new IllegalArgumentException("Project name cannot be null")
     if (jsonProject.ontology)
       project.ontology = Ontology.read(jsonProject.ontology)

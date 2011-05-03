@@ -9,6 +9,9 @@ import be.cytomine.command.UndoStackItem
 import be.cytomine.command.project.DeleteProjectCommand
 import be.cytomine.command.project.EditProjectCommand
 import be.cytomine.api.RestController
+import be.cytomine.security.Group
+import be.cytomine.project.ProjectGroup
+import be.cytomine.security.UserGroup
 
 class RestProjectController extends RestController {
 
@@ -51,5 +54,7 @@ class RestProjectController extends RestController {
     def result = processCommand(deleteProjectCommand, currentUser)
     response(result)
   }
+
+
 }
 

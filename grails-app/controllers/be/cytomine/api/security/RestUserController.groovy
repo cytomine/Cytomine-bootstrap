@@ -9,6 +9,9 @@ import be.cytomine.command.user.EditUserCommand
 import be.cytomine.command.user.DeleteUserCommand
 import be.cytomine.project.Project
 import be.cytomine.api.RestController
+import be.cytomine.security.Group
+import be.cytomine.project.ProjectGroup
+import be.cytomine.security.UserGroup
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
@@ -94,5 +97,36 @@ class RestUserController extends RestController {
       result = processCommand(deleteUserCommand, currentUser)
     }
     response(result)
+  }
+
+  def addUser = {
+    log.info "AddUser"
+    User currentUser = getCurrentUser(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " params.idProject=" + params.id
+    log.info "Request= " + request.JSON.toString()
+    def json = request.JSON.user
+
+
+    Project project = Project.get(params.id)
+    log.info "project= " + project
+    if(project)
+    {
+      Group group = Group.findByName(project.name)
+      log.info "group= " + group
+      if(!group) group = new Group(name:project.name)
+      group.save()
+      ProjectGroup.link(project,group)
+
+      json.each {
+        User user = User.get(it)
+        println "add user " +it
+        UserGroup.link(user,group);
+      }
+
+    }
+    response.status = 201
+    def ret = [data : [message : "ok"], status : 201]
+    response(ret)
+
   }
 }

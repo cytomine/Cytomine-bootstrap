@@ -8,6 +8,8 @@ var ProjectView = Backbone.View.extend({
     searchProjectTextBoxElem : "#projectsearchtextbox",
     searchProjectButtonElem : "#projectsearchbutton",
     searchProjectCheckedOntologiesElem : 'input[type=checkbox][name=ontology]:checked',
+    addProjectCheckedOntologiesRadioElem : 'input[type=radio][name=ontologyradio]:checked',
+    addProjectCheckedUsersCheckboxElem : 'input[type=checkbox][name=usercheckbox]:checked',
     searchProjectOntolgiesListElem : "#ontologyChoiceList",
     projectListElem : "#projectlist",
     addProjectDialog : null,
@@ -76,11 +78,11 @@ var ProjectView = Backbone.View.extend({
                 var maxNumberOfImage = Number.MIN_VALUE;
                 collection.each(function(project) {
                     var numberOfImage = project.get('numberOfImages');
-                        console.log(numberOfImage + " VS " + maxNumberOfImage + " = " + (numberOfImage>maxNumberOfImage));
-                        console.log(numberOfImage + " " + minNumberOfImage + " " + maxNumberOfImage + " " + (numberOfImage<minNumberOfImage) + " " +(numberOfImage>maxNumberOfImage));
+                    console.log(numberOfImage + " VS " + maxNumberOfImage + " = " + (numberOfImage>maxNumberOfImage));
+                    console.log(numberOfImage + " " + minNumberOfImage + " " + maxNumberOfImage + " " + (numberOfImage<minNumberOfImage) + " " +(numberOfImage>maxNumberOfImage));
 
-                        if(numberOfImage<minNumberOfImage) minNumberOfImage =  numberOfImage;
-                        if(numberOfImage>maxNumberOfImage) maxNumberOfImage =  numberOfImage;
+                    if(numberOfImage<minNumberOfImage) minNumberOfImage =  numberOfImage;
+                    if(numberOfImage>maxNumberOfImage) maxNumberOfImage =  numberOfImage;
                 });
                 $( "#numberofimage" ).slider({
                     range: true,
@@ -108,29 +110,31 @@ var ProjectView = Backbone.View.extend({
         var self = this;
         $(self.searchProjectTextBoxElem).val("");
 
-        $.each($(self.searchProjectCheckedOntologiesElem), function(index, value) {
-            $(self.searchProjectCheckedOntologiesElem).click();
-        });
-         var min = $( "#numberofimage" ).slider( "option", "min");
-         var max = $( "#numberofimage" ).slider( "option", "max");
+        $(self.searchProjectCheckedOntologiesElem).attr("checked", false);
 
-         $( "#numberofimage" ).slider( "values", [min,max] );
+        //addProjectCheckedUsersCheckboxElem
+
+
+        var min = $( "#numberofimage" ).slider( "option", "min");
+        var max = $( "#numberofimage" ).slider( "option", "max");
+
+        $( "#numberofimage" ).slider( "values", [min,max] );
         //$( "#numberofimage" ).slider( "value", 1, 20 );
 
- /*$( "#numberofimage" ).slider({
-                    range: true,
-                    min: minNumberOfImage,
-                    max: maxNumberOfImage,
-                    values: [ minNumberOfImage, maxNumberOfImage ],
-                    slide: function( event, ui ) {
-                        $( "#amount" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-                        self.searchProject();
-                    },
-                    change: function( event, ui ) {
-                        $( "#amount" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-                        self.searchProject();
-                    }
-                });  */
+        /*$( "#numberofimage" ).slider({
+         range: true,
+         min: minNumberOfImage,
+         max: maxNumberOfImage,
+         values: [ minNumberOfImage, maxNumberOfImage ],
+         slide: function( event, ui ) {
+         $( "#amount" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+         self.searchProject();
+         },
+         change: function( event, ui ) {
+         $( "#amount" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+         self.searchProject();
+         }
+         });  */
         self.searchProject();
         //self.filterProjects("");
     },
@@ -161,25 +165,21 @@ var ProjectView = Backbone.View.extend({
             $(self.el).append(dialog);
 
             //render ontologies choice
-            new OntologyCollection({}).fetch({
-                success : function (collection, response) {
-                    self.ontologies = collection;
-                    $("#projectontology").empty();
-                    collection.each(function(ontology){
-                        var choice = ich.ontologieschoiceradiotpl({id:ontology.id,name:ontology.get("name")}, true);
-                        $("#projectontology").append(choice);
-                    });
-                }});
 
 
-            new UserCollection({}).fetch({
-                success : function (collection, response) {
-                    $("#projectuser").empty();
-                    collection.each(function(user){
-                        var choice = ich.userschoicetpl({id:user.id,username:user.get("username")}, true);
-                        $("#projectuser").append(choice);
-                    });
-                }});
+            $("#projectontology").empty();
+            window.app.models.ontologies.each(function(ontology){
+                var choice = ich.ontologieschoiceradiotpl({id:ontology.id,name:ontology.get("name")}, true);
+                $("#projectontology").append(choice);
+            });
+
+
+
+            $("#projectuser").empty();
+            window.app.models.users.each(function(user){
+                var choice = ich.userschoicetpl({id:user.id,username:user.get("username")}, true);
+                $("#projectuser").append(choice);
+            });
 
 
             //Build dialog
@@ -199,11 +199,25 @@ var ProjectView = Backbone.View.extend({
 
 
         }
+        self.clearAddProjectPanel();
+
+        console.log("open");
+        self.addProjectDialog.dialog("open") ;
+    },
+    clearAddProjectPanel : function() {
+        var self = this;
         $("#errormessage").empty();
         $("#projecterrorlabel").hide();
-        $("#addproject").dialog("open") ;
+        $("#project-name").val("");
+
+        $(self.addProjectCheckedOntologiesRadioElem).attr("checked", false);
+        $(self.addProjectCheckedUsersCheckboxElem).attr("checked", false);
     },
     createProject : function() {
+
+        $("#errormessage").empty();
+        $("#projecterrorlabel").hide();
+
         var self = this;
         var name =  $("#project-name").val();
         var ontology = $('input[type=radio][name=ontologyradio]:checked').attr('value');
@@ -215,23 +229,30 @@ var ProjectView = Backbone.View.extend({
 
         new ProjectModel({name : name, ontology : ontology}).save({name : name, ontology : ontology},{
             success: function (model, response) {
-                console.log(response.message);
-
-                new ProjectCollection({user : self.userID}).fetch({
-                    success : function (collection, response) {
-                        self.printProjects(collection);
+                console.log(response);
+                //var json = $.parseJSON(response);
+                var id = response.project.id;
+                console.log("project="+id + " user="+users[0])
+                new ProjectUserModel({project: id}).save({project: id, user: users},{
+                    success: function (model, response) {
+                        new ProjectCollection({user : self.userID}).fetch({
+                            success : function (collection, response) {
+                                self.printProjects(collection);
+                                $("#addproject").dialog("close") ;
+                            }});
                     }});
-                $("#addproject").dialog("destroy") ;
-                $("#addproject").dialog("close") ;
+
+                //$("#addproject").dialog("destroy") ;
+
 
             },
             error: function (model, response) {
                 /*console.log("response=");
-                console.log(response);
-                console.log("response.responseText=");
-                console.log(response.responseText);
-                console.log("response.responseText.project=");
-                console.log(response.responseText.project); */
+                 console.log(response);
+                 console.log("response.responseText=");
+                 console.log(response.responseText);
+                 console.log("response.responseText.project=");
+                 console.log(response.responseText.project); */
                 var json = $.parseJSON(response.responseText);
                 console.log("json.project="+json.errors);
 
@@ -255,8 +276,6 @@ var ProjectView = Backbone.View.extend({
         projects = self.filterByProjectsByName(searchText,projects);
         projects = self.filterProjectsByOntology(searchOntologies,projects);
         projects = self.filterProjectsByNumberOfImages(searchNumberOfImages,projects);
-
-
         //add here filter function
 
 

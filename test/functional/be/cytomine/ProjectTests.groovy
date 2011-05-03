@@ -485,4 +485,22 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
   }
 
 
+  /*void testAddProjectUser() {
+
+     log.info("add project user")
+    def project = BasicInstance.createOrGetBasicProject()
+    def user =  BasicInstance.createOrGetBasicUser()
+
+    String URL = Infos.CYTOMINEURL+"api/project/"+project.id+"/user/"+user.id +".json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.post("")
+    int code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(201,code)
+  }   */
+
+
 }

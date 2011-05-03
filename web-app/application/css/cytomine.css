@@ -521,7 +521,8 @@ a.checkbox-deselect {
 }
 
 .searchProjectCriteria {display:inline; }
-
+.ontologyChoice {display:inline; }
+.userChoice {display:inline; }
 
 /* Carousel */
 .nivo-slider {

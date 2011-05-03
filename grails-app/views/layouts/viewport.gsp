@@ -185,11 +185,14 @@
 </script>
 
 <script type="text/html" id="ontologieschoiceradiotpl">
-     <input type=radio name="ontologyradio" id=ontologiesradio{{id}}  value="{{id}}"><label for=ontologies{{id}}>{{name}}</label></input><br>
+     <input type=radio name="ontologyradio" id=ontologiesradio{{id}}  value="{{id}}" class="ontologyChoice">
+     <label for="ontologies{{id}}" class="ontologyChoice">{{name}}</label>
+     </input>
+     <br>
 </script>
 
 <script type="text/html" id="userschoicetpl">
-     <input type=checkbox name=usercheckbox id=users{{id}} value="{{id}}"><label for=users{{id}}>{{username}}</label></input><br>
+     <input type=checkbox name=usercheckbox id=users{{id}} value="{{id}}" class="userChoice"><label for=users{{id}} class="userChoice">{{username}}</label></input><br>
 </script>
 
 <script type="text/html" id="addprojectdialogtpl">
@@ -249,7 +252,9 @@
 	</div>
        <br><br>
     </div>
-    <div id="projectlist"></div>
+   <div id="lCenter">
+   <div class="projectlist" id="projectlist"><br></div>
+   </div>
     <br /><br />
   </div>
 
