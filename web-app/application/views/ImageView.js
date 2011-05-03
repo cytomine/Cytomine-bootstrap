@@ -14,8 +14,6 @@ var ImageView = Backbone.View.extend({
                 self.appendThumbs(self.page);
 
                 $(window).scroll(function(){
-                    console.log("scrollTop :" + $(window).scrollTop());
-                    console.log("diff :" + ($(document).height() - $(window).height()));
                     if  (($(window).scrollTop() + 100) >= $(document).height() - $(window).height()){
                         self.appendThumbs(++self.page);
                     }
@@ -32,7 +30,7 @@ var ImageView = Backbone.View.extend({
     appendThumbs : function(page) {
         var self = this;
         var cpt = 0;
-        var nb_thumb_by_page = 10;
+        var nb_thumb_by_page = 25;
         var inf = Math.abs(page) * nb_thumb_by_page;
         var sup = (Math.abs(page) + 1) * nb_thumb_by_page;
         self.model.each(function(image) {
