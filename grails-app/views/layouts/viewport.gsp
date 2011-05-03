@@ -26,10 +26,11 @@
   <script type="text/javascript" src="application/lib/jquery.infinitescroll.js"></script>
   <script type="text/javascript" src="application/lib/mustache.js"></script>
   <script type="text/javascript" src="application/lib/ICanHaz.js"></script>
+  <script type="text/javascript" src="application/lib/jquery.nivo.slider.pack.js"></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
-<script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
-<script type="text/javascript" src="application/lib/ui.panel.min.js"></script>
-<link type="text/css" href="application/css/ui.panel.css" rel="stylesheet" />
+  <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
+  <script type="text/javascript" src="application/lib/ui.panel.min.js"></script>
+  <link type="text/css" href="application/css/ui.panel.css" rel="stylesheet" />
 
 <!-- Libs JStree
 <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/_docs/syntax/!script.js"></script>
@@ -45,21 +46,21 @@
 <link rel='stylesheet' href='application/css/jquery.pnotify.default.css' type='text/css'/>
 <link rel='stylesheet' href='application/css/isotope.css' type='text/css'/>
 <link rel='stylesheet' href='application/css/cytomine.css' type='text/css'/>
-
+<link rel='stylesheet' href='application/css/nivo-slider.css' type='text/css'/>
 
 <!-- Templates -->
 <script type="text/html" id="baselayouttpl">
-  <div id='header' class='header clearfix'>
-    <h1 class='breadcrumb'>
-      <a class='home' href='#'><span class='logo'></span>Cytomine</a>
-    </h1>
-    <div id="menu" class="ui-buttonset actions">
-      <a id="undo"  style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-w"></span><span class="ui-button-text">Undo</span></a>
-      <a id="redo" style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-e"></span><span class="ui-button-text">Redo</span></a>
+    <div id='header' class='header clearfix'>
+        <h1 class='breadcrumb'>
+            <a class='home' href='#'><span class='logo'></span>Cytomine</a>
+        </h1>
+        <div id="menu" class="ui-buttonset actions">
+            <a id="undo"  style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-w"></span><span class="ui-button-text">Undo</span></a>
+            <a id="redo" style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-e"></span><span class="ui-button-text">Redo</span></a>
+        </div>
     </div>
-  </div>
-  <div id="content">
-  </div>
+    <div id="content">
+    </div>
 </script>
 
 <script type="text/html" id="logindialogtpl">
@@ -80,15 +81,15 @@
 
 
 <script type="text/html" id="loadingdialogtpl">
-  <div id="loading-dialog" title="Loading">
-  <div align="center" style="margin:auto;">
-    <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
-  </div>
-    <div id="progress" style="text-align:center;padding-top:30px;">
-        <h1>Loading data...</h1>
-        <div id="login-progressbar" style="margin-top:10px;"></div>
+    <div id="loading-dialog" title="Loading">
+        <div align="center" style="margin:auto;">
+            <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
+        </div>
+        <div id="progress" style="text-align:center;padding-top:30px;">
+            <h1>Loading data...</h1>
+            <div id="login-progressbar" style="margin-top:10px;"></div>
+        </div>
     </div>
-  </div>
 </script>
 
 <script type="text/html" id="overviewmapcontenttpl">
@@ -98,22 +99,22 @@
 </script>
 
 <script type="text/html" id="layerswitchercontenttpl">
-  <!--<div id="layerswitcherdialog{{id}}" title="Layer Switcher">-->
-  <div id="layerswitchercontent{{id}}"></div>
-  <div class="slider"></div>
-  <!--</div>-->
+    <!--<div id="layerswitcherdialog{{id}}" title="Layer Switcher">-->
+    <div id="layerswitchercontent{{id}}"></div>
+    <div class="slider"></div>
+    <!--</div>-->
 </script>
 
 <script type="text/html" id="ontologytreecontenttpl">
-  <!--<div id="ontologytreedialog{{id}}" title="Ontology">-->
-  <div id="ontologytreecontent{{id}}"></div>
-  <!--</div>-->
+    <!--<div id="ontologytreedialog{{id}}" title="Ontology">-->
+    <div id="ontologytreecontent{{id}}"></div>
+    <!--</div>-->
 </script>
 
 <script type="text/html" id="serverdowntpl">
-  <div id="server-down" title="Server down">
-    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />The Cytomine server could not be reached</p>
-  </div>
+    <div id="server-down" title="Server down">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />The Cytomine server could not be reached</p>
+    </div>
 </script>
 
 <script type="text/html" id="logoutdialogtpl">
@@ -123,52 +124,52 @@
 </script>
 
 <script type="text/html" id="explorertpl">
-  <div id="explorer">
-    <div class="main browser">
+    <div id="explorer">
+        <div class="main browser">
+        </div>
     </div>
-  </div>
 </script>
 
 <script type="text/html" id="uploadtpl">
-  <div id="upload">
-    <div class='main upload'>
-      <form id="file_upload" action="upload/image" method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" multiple>
-        <button>Upload</button>
-        <div>Upload files</div>
-      </form>
-      <button id="start_uploads">Start uploads</button>
-      <table id="files"></table>
+    <div id="upload">
+        <div class='main upload'>
+            <form id="file_upload" action="upload/image" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" multiple>
+                <button>Upload</button>
+                <div>Upload files</div>
+            </form>
+            <button id="start_uploads">Start uploads</button>
+            <table id="files"></table>
+        </div>
     </div>
-  </div>
 </script>
 
 
 
 <script type="text/html" id="warehousetpl">
-  <div id="warehouse">
-    <div class="main project"></div>
-    <div class="main image"></div>
-    <div class="main term"></div>
-    <div class="main ontology"></div>
+    <div id="warehouse">
+        <div class="main project"></div>
+        <div class="main image"></div>
+        <div class="main term"></div>
+        <div class="main ontology"></div>
 
-    <div class='sidebar'>
-      <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
-      <ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
-      <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul>
-      <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
-      <ul class='menu libraries'></ul>
-      <div class='buttons'>
-        <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
-      </div>
-    </div>
+        <div class='sidebar'>
+            <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
+            <ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
+            <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul>
+            <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
+            <ul class='menu libraries'></ul>
+            <div class='buttons'>
+                <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
+            </div>
+        </div>
 </script>
 
 <script type="text/html" id="admintpl">
-  <div id="admin">
-    <h1>admin</h1>
-    <div class='main'>admin</div>
-  </div>
+    <div id="admin">
+        <h1>admin</h1>
+        <div class='main'>admin</div>
+    </div>
 </script>
 
 <script type="text/html" id="logouttpl">
@@ -204,50 +205,46 @@
 	</div>
        <br><br>
     </div>
-    <div id="lCenter">
-    <div class="projectlist" id="projectlist"><br></div>
-    </div>
+    <div id="projectlist"></div>
+    <br /><br />
   </div>
 
 </script>
 
 
 <script type="text/html" id="projectviewtpl">
-  <div id='projectlist{{id}}' class="centralPanel">
+  <div id='projectlist{{id}}' class="projectlist">
     <h3>{{name}}</h3>
     <div>
-      <table class='projecttable'>
-       <tr>
-         <td colspan="1" width="33%">
-           <ul>
-              <li>Name: {{name}} </li>
-              <li>Id: {{id}} </li>
-
-             <li>Ontology: {{ontology}} </li>
-             </ul>
-           </td>
-         <td colspan="1" width="33%">
-           <ul>
-              <li>{{images}} images </li>
-              <li>{{annotations}} annotations </li>
-
-
-             </ul>
-         </td>
-         <td colspan="1" width="33%">
-            <li>{{users}} </li>
-         </td>
-      </tr>
-      <tr>
-      <td><button  id='projectopenimages{{id}}' type="button">See project images</button></td>
-      <td><button class="addSlide" id='projectaddimages{{id}}' type="button">Add images</button> </td>
-      <td><input id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Use this project</label></input> </td>
-      <tr>
-         </table>
+        <table class='projecttable'>
+          <tr>
+             <td colspan="1" width="33%">
+                <ul>
+                    <li>Name: {{name}} </li>
+                    <li>Id: {{id}} </li>
+                    <li>Ontology: {{ontology}} </li>
+                </ul>
+            </td>
+            <td colspan="1" width="33%">
+                <ul>
+                    <li>{{images}} images </li>
+                    <li>{{annotations}} annotations </li>
+                </ul>
+            </td>
+            <td colspan="1" width="33%">
+                <li>{{users}} </li>
+            </td>
+        </tr>
+        <tr>
+            <td><button  id='projectopenimages{{id}}' type="button">Browse slides</button></td>
+            <td><button class="addSlide" id='projectaddimages{{id}}' type="button">Add images</button> </td>
+            <td><input id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Use this project</label></input> </td>
+        </tr>
+        </table>
+        <div class="scroll-content"></div>
     </div>
-    <br><br></div>
-
-
+    <br><br>
+    </div>
 </script>
 
 <script type="text/html" id="projectchangedialog">
@@ -288,10 +285,6 @@
 <script type="text/html" id="imageviewtpl">
 </script>
 
-<script type="text/html" id="imageprojectviewtpl">
-  <div id="imagelistprojectmain{{id}}">
-    <div id="imagelistproject{{id}}" title="close"></div></div>
-</script>
 
 <script type="text/html" id="termviewtpl">
 
@@ -323,6 +316,10 @@
   <a id="{{ id }}" href="{{ route }}" style="margin-right:5px;">{{ text }}</a>
 </script>
 
+
+<script type="text/html" id="imagerowtpl">
+    <a href='#browse/{{ id }}'><img src='{{ thumb }}' alt='{{ filename }}' title='{{filename}}' /></a>
+</script>
 
 <script type="text/html" id="imagethumbtpl">
           <div class='thumb-wrap' id='thumb{{ id }}'>

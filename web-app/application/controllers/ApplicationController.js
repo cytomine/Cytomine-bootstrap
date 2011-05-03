@@ -7,6 +7,7 @@ var ApplicationController = Backbone.Controller.extend({
     status : {},
 
     routes: {
+        ""          :   "warehouse",
         "explorer"  :   "explorer",
         "upload"    :   "upload",
         "admin"     :   "admin",
@@ -50,6 +51,7 @@ var ApplicationController = Backbone.Controller.extend({
             });
         });
 
+        window.app.status.currentProject = 25;
         Backbone.history.start();
     },
 
@@ -60,15 +62,18 @@ var ApplicationController = Backbone.Controller.extend({
         });
         if (cpt == expected) {
             $("#loading-dialog").dialog("close");
-            this.view = new ApplicationView({
-                el: $('#app')
-            }).render();
+            $('#app').show();
 
-            this.warehouse(); //go to the warehouse when logged in
+            //this.warehouse(); //go to the warehouse when logged in
         }
     },
 
     initialize : function () {
+        $('#app').hide();
+        this.view = new ApplicationView({
+                el: $('#app')
+            }).render();
+
         //init controllers
         this.controllers.project      = new ProjectController();
         this.controllers.image        = new ImageController();

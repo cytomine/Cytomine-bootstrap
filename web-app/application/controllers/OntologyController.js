@@ -27,6 +27,7 @@ var OntologyController = Backbone.Controller.extend({
         }
 
         this.view.container.show(this.view, "#warehouse > .sidebar", "ontology");
+        window.app.view.showComponent(window.app.view.components.warehouse);
     }
 
 

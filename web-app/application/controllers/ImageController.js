@@ -21,6 +21,7 @@ var ImageController = Backbone.Controller.extend({
 		}
 
 		this.view.container.show(this.view, "#warehouse > .sidebar", "image");
+        window.app.view.showComponent(window.app.view.components.warehouse);
 	}
 
 

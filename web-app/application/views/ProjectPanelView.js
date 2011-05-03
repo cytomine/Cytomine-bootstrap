@@ -60,8 +60,7 @@ var ProjectPanelView = Backbone.View.extend({
                             icons : {secondary : "ui-icon-image"}
                         });
                         $(self.projectElem+self.model.get('id')).panel({
-                            collapsible:false,
-                            width:"80%"
+                            collapsible:false
                         });
                     }
                     });
@@ -160,24 +159,18 @@ var ProjectPanelView = Backbone.View.extend({
     },
     openImagesList: function(idProject) {
 
-        console.log("click open image:"+idProject);
-
         var self = this;
 
         if(!this.loadImages) {
             //images are already loaded
-            console.log("CLOSE");
             $(self.imagesListElem+idProject).toggle(); //toggle(1000) doesn't work with isotope?
             return;
         }
-        console.log("OPEN");
+
 
         this.loadImages = false;//don't load again images
 
         var page = 0;
-        var tpl = ich.imageprojectviewtpl({page : (Math.abs(page)+1), id : idProject}, true);
-
-        $(self.projectElem+idProject).append(tpl);
 
         new ImageCollection({project:idProject}).fetch({
             success: function(collection,response){
@@ -192,17 +185,9 @@ var ProjectPanelView = Backbone.View.extend({
                         var thumb = new ImageThumbView({
                             model : image
                         }).render();
-                        $(self.imagesListElem + idProject).append(thumb.el);
+                        $(self.el).find('.scroll-content').append(thumb.el);
                     }
                     cpt++;
-                });
-                $(self.imagesListElem + idProject).append("<br>");
-
-                $(self.imagesListElem+idProject).imagesLoaded( function(){
-                    $(self.imagesListElem+idProject).isotope({
-                        itemSelector: '.thumb-wrap'
-                    });
-
                 });
             },
             error: function(error){

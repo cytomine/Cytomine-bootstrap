@@ -31,7 +31,7 @@ var ProjectView = Backbone.View.extend({
 
         //create search panel
         $(self.searchProjectPanelElem).panel({
-            collapseSpeed:1000
+            collapseSpeed:100
         });
 
         //configure "all projects" button

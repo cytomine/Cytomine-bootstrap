@@ -18,5 +18,6 @@ var ProjectController = Backbone.Controller.extend({
         }
 
         this.view.container.show(this.view, "#warehouse > .sidebar", "project");
+        window.app.view.showComponent(window.app.view.components.warehouse);
     }
 });

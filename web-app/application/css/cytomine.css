@@ -149,7 +149,7 @@ h3 { font-size:13px; }
     z-index:1;
     position : fixed;
     display: block;
-    overflow-x: hidden;
+    overflow-x: auto;
     overflow-y: auto;
     position: relative;
 }
@@ -179,7 +179,7 @@ h3 { font-size:13px; }
     width: 192px;
 }
 .thumb-wrap{
-    float: left;
+    /*float: left;*/
     margin: 4px;
     margin-right: 0;
     padding: 5px;
@@ -361,22 +361,14 @@ div.olControlOverviewMapElement img {
 
 
 /* Project Panel stuff */
-div .project {
-    color:#000;
-    border-color:#268;
-    margin-left:50;
-}
+
 
 div .projectlist {
-    color:#000;
-    border-color:#268;
-    overflow:auto;
-    margin-bottom: 40px;
+    width:95%;
+    margin :auto;
 }
 
 div .projecttable {
-    color:#000;
-    background:#fff;
     width:80%;
     align : center;
     margin-left : 50px;
@@ -420,85 +412,85 @@ form {
 } */
 
 legend {
-	font-size: 17px;
+    font-size: 17px;
 }
 
 fieldset {
-	border: 0;
+    border: 0;
 }
 
 .checklist {
-	list-style: none;
-	margin: 0;
-	padding: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .checklist li {
-	float: left;
-	margin-right: 10px;
-	background: url(../images/checkboxbg.gif) no-repeat 0 0;
-	width: 105px;
-	height: 150px;
-	position: relative;
-	font: normal 11px/1.3 "Lucida Grande","Lucida","Arial",Sans-serif;
+    float: left;
+    margin-right: 10px;
+    background: url(../images/checkboxbg.gif) no-repeat 0 0;
+    width: 105px;
+    height: 150px;
+    position: relative;
+    font: normal 11px/1.3 "Lucida Grande","Lucida","Arial",Sans-serif;
 }
 
 .checklist li.selected {
-	background-position: -105px 0;
+    background-position: -105px 0;
 }
 
 .checklist li.selected .checkbox-select {
-	display: none;
+    display: none;
 }
 
 .checkbox-select {
-	display: block;
-	float: left;
-	position: absolute;
-	top: 118px;
-	left: 10px;
-	width: 105px;
-	height: 150px;
-	background: url(../images/select.gif) no-repeat 0 0;
-	text-indent: -9999px;
+    display: block;
+    float: left;
+    position: absolute;
+    top: 118px;
+    left: 10px;
+    width: 105px;
+    height: 150px;
+    background: url(../images/select.gif) no-repeat 0 0;
+    text-indent: -9999px;
 }
 
 .checklist li input {
-	display: none;
+    display: none;
 }
 
 a.checkbox-deselect {
-	display: none;
-	color: white;
-	font-weight: bold;
-	text-decoration: none;
-	position: absolute;
-	top: 120px;
-	right: 10px;
+    display: none;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    position: absolute;
+    top: 120px;
+    right: 10px;
 }
 
 .checklist li.selected a.checkbox-deselect {
-	display: block;
+    display: block;
 }
 
 .checklist li label {
-	display: block;
-	text-align: center;
-	padding: 8px;
+    display: block;
+    text-align: center;
+    padding: 8px;
 }
 
 .sendit {
-	display: block;
-	float: left;
-	top: 118px;
-	left: 10px;
-	width: 115px;
-	height: 34px;
-	border: 0;
-	cursor: pointer;
-	background: url(../images/sendit.gif) no-repeat 0 0;
-	text-indent: -9999px;
-	margin: 20px 0;
+    display: block;
+    float: left;
+    top: 118px;
+    left: 10px;
+    width: 115px;
+    height: 34px;
+    border: 0;
+    cursor: pointer;
+    background: url(../images/sendit.gif) no-repeat 0 0;
+    text-indent: -9999px;
+    margin: 20px 0;
 }
 
 /** image for "add image to project" panel**/
@@ -518,11 +510,30 @@ a.checkbox-deselect {
 }
 /* panel left */
 #lCenter{
-    padding:1em;
+    padding:0em;
     padding-top:0;
     overflow:hidden;
 }
 
 #searchProjectPanel{
-    width:80%;
+    width:95%;
+    margin :auto;
+}
+
+
+/* Carousel */
+.nivo-slider {
+    position:relative;
+    width:192px; /* Change this to your images width */
+    height:192px; /* Change this to your images height */
+}
+.nivo-slider  img {
+    position:absolute;
+    top:0px;
+    left:0px;
+    display:none;
+}
+.nivo-slider  a {
+    border:0;
+    display:block;
 }
