@@ -23,10 +23,9 @@
   <script type="text/javascript" src="application/lib/json2.js" ></script>
   <script type="text/javascript" src="application/lib/jquery.pnotify.js" ></script>
   <script type="text/javascript" src="application/lib/jquery.isotope.js"></script>
-  <script type="text/javascript" src="application/lib/jquery.infinitescroll.js"></script>
   <script type="text/javascript" src="application/lib/mustache.js"></script>
   <script type="text/javascript" src="application/lib/ICanHaz.js"></script>
-  <script type="text/javascript" src="application/lib/jquery.nivo.slider.pack.js"></script>
+  <script type="text/javascript" src="application/lib/jquery.showLoading.min.js"></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
   <script type="text/javascript" src="application/lib/ui.panel.min.js"></script>
@@ -46,7 +45,8 @@
 <link rel='stylesheet' href='application/css/jquery.pnotify.default.css' type='text/css'/>
 <link rel='stylesheet' href='application/css/isotope.css' type='text/css'/>
 <link rel='stylesheet' href='application/css/cytomine.css' type='text/css'/>
-<link rel='stylesheet' href='application/css/nivo-slider.css' type='text/css'/>
+<link rel='stylesheet' href='application/css/showLoading.css' type='text/css'/>
+
 
 <!-- Templates -->
 <script type="text/html" id="baselayouttpl">
@@ -374,10 +374,8 @@
 </script>
 
 <script type="text/html" id="imagethumbtpl">
-          <div class='thumb-wrap' id='thumb{{ id }}'>
-          <div class='thumb'><a href='#browse/{{ id }}'><img src='{{ thumb }}' alt='{{ filename }}' /></a></div>
-  <div class='thumb-info'><a href='#browse/{{ id }}'>{{filename}}</a></div>
-  </div>
+    <div class='thumb'><a href='#browse/{{ id }}'><img src='{{ thumb }}' alt='{{ filename }}' /></a></div>
+    <div class='thumb-info'><a href='#browse/{{ id }}'>{{filename}}</a></div>
 </script>
 
 <script type="text/html" id="taptpl">

@@ -172,14 +172,18 @@ h3 { font-size:13px; }
 }
 
 .thumb{
-    background:#FFF;
+
+    background:#EEE;
     border:#CCC solid 1px;
     padding:3px;
     height: 192px;
     width: 192px;
 }
+
 .thumb-wrap{
-    /*float: left;*/
+    text-align: center;
+    vertical-align: middle;
+    float: left;
     margin: 4px;
     margin-right: 0;
     padding: 5px;

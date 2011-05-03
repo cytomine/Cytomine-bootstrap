@@ -144,7 +144,10 @@ var ApplicationView = Backbone.View.extend({
     }
 });
 
-ApplicationView.prototype.message =  function(title, message, type) {
+ApplicationView.prototype.message =  function(title, message, type, pnotify) {
+     ApplicationView.prototype.message(title, message, type, pnotify,false);
+}
+ApplicationView.prototype.message =  function(title, message, type, pnotify,_history) {
     type = type || 'status';
     message.responseText && (message = message.responseText);
     var stack_bottomright = {"dir1": "up", "dir2": "left", "firstpos1": 15, "firstpos2": 15};
@@ -153,6 +156,7 @@ ApplicationView.prototype.message =  function(title, message, type) {
         pnotify_text: message,
         pnotify_notice_icon: "ui-icon ui-icon-info",
         pnotify_type : type,
+        pnotify_history: _history,
         pnotify_addclass: "stack-bottomright",
         pnotify_stack: stack_bottomright
     };
