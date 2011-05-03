@@ -26,14 +26,7 @@ var BrowseImageView = Backbone.View.extend({
             rft_id: this.model.get('path'),
             metadataUrl: this.model.get('metadataUrl')
         });
-        /* this.layers.secondLayer = new OpenLayers.Layer.OpenURL(this.model.get('filename'), this.model.get('imageServerBaseURL'), {
-         transitionEffect: 'resize',
-         layername: 'basic',
-         format: 'image/jpeg',
-         rft_id: this.model.get('path'),
-         metadataUrl: this.model.get('metadataUrl'),
-         rotate : 90
-         });*/
+
         var self = this;
         var metadata = this.layers.baseLayer.getImageMetadata();
         var resolutions = this.layers.baseLayer.getResolutions();
@@ -79,7 +72,6 @@ var BrowseImageView = Backbone.View.extend({
 
         this.map = new OpenLayers.Map("map" + this.model.get('id'), options);
         this.map.addLayer(this.layers.baseLayer);
-        //this.map.addLayer(this.layers.secondLayer);
         this.map.setCenter(new OpenLayers.LonLat(lon, lat), 2);
 
 

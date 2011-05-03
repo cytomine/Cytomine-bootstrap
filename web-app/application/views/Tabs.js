@@ -1,10 +1,11 @@
 var Tabs = Backbone.View.extend({
     tagName : "div",
-    images : new Array(), //that we are browsing
+    images : [], //that we are browsing
     initialize: function(options) {
         this.container = options.container
     },
     render: function() {
+        var self = this;
         $(this.el).html(ich.taptpl({}, true));
         var tabs = $(this.el).children('.tabs');
         var height = 0;
@@ -13,8 +14,13 @@ var Tabs = Backbone.View.extend({
                 tabs.tabs('select', '#' + ui.panel.id);
                 $("#"+ui.panel.id).parent().parent().css('height', "100%");
                 $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;');
+                $("a[href=#"+ui.panel.id+"]").parent().append("<span class='ui-icon ui-icon-close'>Remove Tab</span>");
+                $("a[href=#"+ui.panel.id+"]").parent().find("span.ui-icon-close" ).click(function() {
+                    var index = $( "li", tabs ).index( $( this ).parent() );
+                    self.removeTab(index);
+                });
             },
-            'show': function(event, ui){
+            show: function(event, ui){
 
                 //$("#"+ui.panel.id).attr('style', 'width:100%;height:100%;');
                 return true;
@@ -29,29 +35,42 @@ var Tabs = Backbone.View.extend({
     },
     addTab : function(idImage) {
         var self = this;
-        if (self.images[idImage] != undefined) {
-            console.log("Already exists : " + idImage);
-            return; //already added
+        var alreadyOpen = _.detect(self.images, function(object) {
+            return object.idImage == idImage;
+        });
+        if (alreadyOpen) {
+            return;
         }
-        window.app.models.images.fetch({
-            success : function () {
+        new ImageModel({id : idImage}).fetch({
+            success : function(model, response) {
                 var tabs = $(self.el).children('.tabs');
-                self.images[idImage] = new BrowseImageView({
-                    model : window.app.models.images.get(idImage),
+                var view = new BrowseImageView({
+                    model : model,
                     el: tabs
                 }).render();
+                self.images.push({
+                    idImage : idImage,
+                    browImageView : view
+                });
             }
         });
+    },
+    removeTab : function (index) {
+        this.images.splice(index,1);
+        var tabs = $(this.el).children('.tabs');
+        tabs.tabs( "remove", index);
     },
     showTab : function(idImage) {
         var tabs = $(this.el).children('.tabs');
         tabs.tabs('select', '#tabs-' + idImage);
     },
     size : function() {
-        return this.images.length;
+        return _.size(this.images);
     },
     closeAll : function() {
-        console.log("close all tabs");
-        //TODO: close all tabs
+        var self = this;
+        while (this.size() > 0) {
+            self.removeTab(0);
+        }
     }
 });

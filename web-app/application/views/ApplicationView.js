@@ -22,26 +22,13 @@ var ApplicationView = Backbone.View.extend({
     },
 
     initialize: function(options) {
-
+        this.initComponents();
     },
     render: function() {
         $(this.el).html(ich.baselayouttpl({}, true));
-        this.initComponents();
-        return this;
-    },
-    initComponents : function() {
-        this.components.upload = new Component({
-            el : $("#content"),
-            template : ich.uploadtpl({}, true),
-            buttonAttr : {
-                elButton : "upload-button",
-                buttonText : "Upload",
-                buttonWrapper : $("#menu"),
-                icon : "ui-icon-circle-arrow-s",
-                route : "#upload"
-            },
-            divId : "upload"
-        }).render();
+        _.each(this.components, function (component) {
+            component.render();
+        });
         /* init upload */
         $('#file_upload').fileUploadUI({
             uploadTable: $('#files'),
@@ -73,30 +60,46 @@ var ApplicationView = Backbone.View.extend({
             $('.file_upload_start button').click();
             return false;
         });
+        return this;
+    },
+    initComponents : function() {
+        this.components.upload = new Component({
+            el : "#content",
+            template : ich.uploadtpl({}, true),
+            buttonAttr : {
+                elButton : "upload-button",
+                buttonText : "Upload",
+                buttonWrapper : "#menu",
+                icon : "ui-icon-circle-arrow-s",
+                route : "#upload"
+            },
+            divId : "upload"
+        });
+
         this.components.warehouse = new Component({
-            el : $("#content"),
+            el : "#content",
             template : ich.warehousetpl({}, true),
             buttonAttr : {
                 elButton : "warehouse-button",
                 buttonText : "Manage",
-                buttonWrapper : $("#menu"),
+                buttonWrapper : "#menu",
                 icon : "ui-icon-search",
                 route : "#warehouse"
             },
             divId : "warehouse"
-        }).render();
+        });
         this.components.explorer = new Component({
-            el : $("#content"),
+            el : "#content",
             template : ich.explorertpl({}, true),
             buttonAttr : {
                 elButton : "explorer-button",
                 buttonText : "Explore",
-                buttonWrapper : $("#menu"),
+                buttonWrapper : "#menu",
                 icon : "ui-icon-image",
                 route : "#explorer"
             },
             divId : "explorer"
-        }).render();
+        });
 
         /*this.components.admin = new Component({
          el : $("#content"),
@@ -112,26 +115,29 @@ var ApplicationView = Backbone.View.extend({
          divId : "admin"
          }).render();*/
         this.components.logout = new Component({
-            el : $("#content"),
+            el : "#content",
             template : ich.logouttpl({}, true),
             buttonAttr : {
                 elButton : "logout-button",
                 buttonText : "Logout",
-                buttonWrapper : $("#menu"),
+                buttonWrapper : "#menu",
                 icon : "ui-icon-power",
                 route : "#logout"
             },
             divId : "logout"
-        }).render();
+        });
 
     },
 
     showComponent : function (component) {
-        for (var i in window.app.view.components) {
+        /*for (var i in window.app.view.components) {
             var c = window.app.view.components[i];
             if (c == component) continue;
             c.deactivate();
-        }
+        }*/
+        _.each(this.components, function (c) {
+            if (c != component) c.deactivate();
+        });
         $("#app").show();
         component.activate();
 

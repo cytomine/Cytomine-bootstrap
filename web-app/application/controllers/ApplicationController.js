@@ -7,7 +7,7 @@ var ApplicationController = Backbone.Controller.extend({
     status : {},
 
     routes: {
-        ""          :   "warehouse",
+        ""          :   "explorer",
         "explorer"  :   "explorer",
         "upload"    :   "upload",
         "admin"     :   "admin",
@@ -38,6 +38,7 @@ var ApplicationController = Backbone.Controller.extend({
         $("#login-progressbar" ).progressbar({
             value: 0
         });
+
         this.models.images = new ImageCollection({project:undefined});
         this.models.users = new UserCollection({project:undefined});
         this.models.terms = new TermCollection();
@@ -52,36 +53,37 @@ var ApplicationController = Backbone.Controller.extend({
         });
 
         window.app.status.currentProject = 25;
-        Backbone.history.start();
+
     },
 
     modelFetched : function (cpt, expected) {
         var step = 100 / expected;
+        var value = cpt * step;
         $("#login-progressbar" ).progressbar({
-            value: (cpt * step)
+            value: value
         });
         if (cpt == expected) {
             $("#loading-dialog").dialog("close");
-            $('#app').show();
-
-            //this.warehouse(); //go to the warehouse when logged in
+            this.view.render();
+            this.controllers.image        = new ImageController();
+            this.controllers.project      = new ProjectController();
+            this.controllers.browse       = new BrowseController();
+            this.controllers.term         = new TermController();
+            this.controllers.ontology     = new OntologyController()
+            this.controllers.command      = new CommandController();
+            Backbone.history.start();
         }
     },
 
     initialize : function () {
-        $('#app').hide();
+
         this.view = new ApplicationView({
-                el: $('#app')
-            }).render();
+            el: $('#app')
+        });
 
         //init controllers
-        this.controllers.project      = new ProjectController();
-        this.controllers.image        = new ImageController();
-        this.controllers.browse       = new BrowseController();
-        this.controllers.term         = new TermController();
-        this.controllers.ontology     = new OntologyController()
         this.controllers.auth         = new AuthController();
-        this.controllers.command      = new CommandController();
+
 
         var self = this;
         var serverDown = function(status) {
@@ -132,7 +134,7 @@ var ApplicationController = Backbone.Controller.extend({
     },
 
     warehouse : function () {
-        this.controllers.image.image(0);
+
         this.view.showComponent(this.view.components.warehouse);
     }
 

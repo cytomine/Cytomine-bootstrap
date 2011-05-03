@@ -8,6 +8,10 @@ var BrowseController = Backbone.Controller.extend({
         "close"   :   "close"
     },
 
+    initialize: function() {
+        console.log("initBrowseController");
+    },
+
     browse : function (idImage) {
         //create tabs if not exist
         if (this.tabs == null) {
