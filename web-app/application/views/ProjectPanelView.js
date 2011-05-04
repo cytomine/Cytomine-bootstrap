@@ -26,7 +26,11 @@ var ProjectPanelView = Backbone.View.extend({
     events: {
         "click .addSlide": "showAddSlidesPanel",
         "click .seeSlide": "showSlidesPanel",
-        "click .changeProject": "changeProject"
+        "click .changeProject": "changeProject",
+        "click .thumb" : "setCurrentProject"
+    },
+    setCurrentProject : function () {
+        window.app.status.currentProject = this.model.id;
     },
     render: function() {
          this.printProjectInfo();

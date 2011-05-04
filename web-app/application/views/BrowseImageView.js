@@ -193,28 +193,36 @@ var BrowseImageView = Backbone.View.extend({
 
 
         var self =this;
-        var idOntology = window.app.models.projects.get(window.app.status.currentProject).get('ontology');
-        var ontology = new OntologyModel({id:idOntology}).fetch({
+
+
+        var ontology = new ProjectModel({id:window.app.status.currentProject}).fetch({
             success : function(model, response) {
-                self.ontologyTreeView = new OntologyTreeView({
-                    el: $("#ontologyTree" + self.model.get("id")),
-                    idImage: self.model.get("id"),
-                    model: model
+                var idOntology = model.get('ontology');
+                var ontology = new OntologyModel({id:idOntology}).fetch({
+                    success : function(model, response) {
+                        self.ontologyTreeView = new OntologyTreeView({
+                            el: $("#ontologyTree" + self.model.get("id")),
+                            idImage: self.model.get("id"),
+                            model: model
+                        }).render();
+                        self.initVectorLayers();
+                    }
+                });
+
+                new DraggablePanelView({
+                    el : $('#ontologyTree' + this.model.get('id')),
+                    template : ich.ontologytreecontenttpl({id : this.model.get('id')}, true)/*,
+                     dialogAttr : {
+                     dialogID : "#ontologytreedialog" + this.model.get('id'),
+                     width : 200,
+                     height : 200,
+                     css : {left: '30px', right : 'auto', top: 'auto', bottom : '100px'}
+                     }*/
                 }).render();
-                self.initVectorLayers();
             }
         });
 
-        new DraggablePanelView({
-            el : $('#ontologyTree' + this.model.get('id')),
-            template : ich.ontologytreecontenttpl({id : this.model.get('id')}, true)/*,
-             dialogAttr : {
-             dialogID : "#ontologytreedialog" + this.model.get('id'),
-             width : 200,
-             height : 200,
-             css : {left: '30px', right : 'auto', top: 'auto', bottom : '100px'}
-             }*/
-        }).render();
+
 
     },
     initTools: function (controls) {
