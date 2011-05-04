@@ -7,7 +7,8 @@
  */
 var OntologyTreeView = Backbone.View.extend({
     tagName : "div",
-
+    tree : null,
+    activeEvent : true,
     events : {
         "click .jstree-checkbox":          "click"
     },
@@ -51,17 +52,24 @@ var OntologyTreeView = Backbone.View.extend({
         this.tree.jstree('uncheck_all');
     },
     refresh: function(idAnnotation) {
+        console.log("REFRESHHHHHHH!");
         var self = this;
-        this.removeBindings();
+
+
         this.idAnnotation = idAnnotation;
         var refreshTree = function(model , response) {
+            self.activeEvent = false;
+            console.log("self.activeEvent f="+self.activeEvent);
             self.clear();
             self.tree.jstree('get_unchecked',null,true).each(function () {
                 if (model.get(this.id) == undefined) return;
                 self.tree.jstree('check_node',this);
             });
+            self.activeEvent = true;
+            console.log("self.activeEvent t="+self.activeEvent);
         }
-        this.initBindings();
+
+
         new AnnotationTermCollection({idAnnotation:idAnnotation}).fetch({success:refreshTree});
     },
     getTermsChecked : function() {
@@ -88,9 +96,7 @@ var OntologyTreeView = Backbone.View.extend({
     initBindings : function () {
         var self = this;
         this.tree.bind("check_node.jstree", function(event, data) {
-
-            if (self.idAnnotation == null) return;
-
+            if (self.idAnnotation == null || !self.activeEvent) return;
             var idTerm = data.rslt.obj.attr("id");
             self.linkTerm(idTerm);
 
@@ -98,10 +104,15 @@ var OntologyTreeView = Backbone.View.extend({
         });
         this.tree.bind("uncheck_node.jstree", function(event, data) {
 
-            if (self.idAnnotation == null) return;
+            if (self.idAnnotation == null || !self.activeEvent) return;
 
             var idTerm = data.rslt.obj.attr("id");
             self.unlinkTerm(idTerm);
         });
+        this.tree.bind("click", function(event, data) {
+
+             this.tree.unbind("click",self.removeBindings);
+        });
+
     }
 });
