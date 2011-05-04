@@ -319,8 +319,7 @@ var ProjectView = Backbone.View.extend({
         projectOldList.each(function(project) {
 
             var numberOfImages = project.get('numberOfImages');
-            console.log("numberOfImages of " + project.id);
-            console.log("numberOfImages=" + numberOfImages + " " + searchNumberOfImages[0] + " " + searchNumberOfImages[1]);
+
             if(searchNumberOfImages[0]>numberOfImages || searchNumberOfImages[1]<numberOfImages)
                 projectNewList.remove(project);
         });
@@ -355,7 +354,8 @@ var ProjectView = Backbone.View.extend({
             source : projectNameArray,
             select : function (event,ui)
             {
-                self.filterProjects(ui.item.label);
+                $(self.searchProjectTextBoxElem).val(ui.item.label)
+                self.searchProject();
 
             },
             search : function(event)
