@@ -277,10 +277,9 @@
            </td>
          <td colspan="1" width="33%">
            <ul>
-              <li>{{images}} images </li>
-              <li>{{annotations}} annotations </li>
-
-
+             <li>{{numberOfSlides}} slides </li>
+              <li>{{numberOfImages}} images </li>
+              <li>{{numberOfAnnotations}} annotations </li>
              </ul>
          </td>
          <td colspan="1" width="33%">
@@ -446,6 +445,9 @@
 <script type="text/javascript" src="application/views/ProjectView.js" ></script>
 <script type="text/javascript" src="application/views/ProjectPanelView.js" ></script>
 <script type="text/javascript" src="application/views/AddImageProjectDialog.js" ></script>
+<script type="text/javascript" src="application/views/AddProjectDialog.js" ></script>
+
+
 <script type="text/javascript" src="application/views/Tabs.js" ></script>
 
 

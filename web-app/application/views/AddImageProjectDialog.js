@@ -6,7 +6,6 @@
  * To change this template use File | Settings | File Templates.
  */
 var AddImageProjectDialog = Backbone.View.extend({
-    idProject : null,
     checklistChecked : ".checklist input:checked",
     checklistSelected : ".checklist .checkbox-select",
     checklistDeselected : ".checklist .checkbox-deselect",
@@ -17,33 +16,49 @@ var AddImageProjectDialog = Backbone.View.extend({
     allProjectUlElem : "ul[id^=projectaddimagedialoglist]",
     imageDivElem : "#projectaddimageitempict",
     divDialog : "div#projectaddimagedialog",
+    projectPanel : null,
+    addSlideDialog : null,
     initialize: function(options) {
         this.container = options.container;
-        this.idProject = options.idProject
+        this.projectPanel = options.projectPanel;
         _.bindAll(this, 'render');
     },
     render : function() {
         var self = this;
-        console.log("Id project="+self.idProject);
+        console.log("Id project="+this.model.id);
+
+        var dialog = ich.projectaddimagedialog({id:this.model.get('id'),name:this.model.get('name')});
+        /*if($("#projectaddimagedialog"+this.model.id).length>0)
+            $("#projectaddimagedialog"+this.model.id).replaceWith(dialog);
+        else */
+            $(this.el).append(dialog);
 
         //Build dialog
-        $(self.divDialog+self.idProject).dialog({
+        self.addSlideDialog = $(self.divDialog+this.model.get('id')).dialog({
+            modal : true,
             autoOpen : false,
             buttons : {
                 "Close" : function() {
                     console.log("close");
-                    $(self.divDialog+self.idProject).dialog("close");
+                    $(self.divDialog+self.model.get('id')).dialog("close");
                 }
             },
-            width : "85%"
+            width : "85%",
+            height: "600"
         });
-        if(!$(self.divDialog+self.idProject).dialog("isOpen"))
+        /*if(!$(self.divDialog+self.idProject).dialog("isOpen"))
         {
             self.renderImageList();
             $(self.divDialog+self.idProject).dialog("open");
-        }
+        }*/
+        return this;
 
-
+    },
+    open: function() {
+        var self = this;
+        console.log("open");
+        self.renderImageList();
+        self.addSlideDialog.dialog("open") ;
     },
     refresh : function() {
         this.renderImageList();
@@ -52,7 +67,7 @@ var AddImageProjectDialog = Backbone.View.extend({
         var self = this;
 
         //Dialog is maybe already in document (but closed)...clear the all list elem
-        $(self.ulElem+self.idProject).empty();
+        $(self.ulElem+self.model.get('id')).empty();
 
         //Get all images from server
         //TODO: filter by user right
@@ -66,7 +81,7 @@ var AddImageProjectDialog = Backbone.View.extend({
                 var sup = (Math.abs(page) + 1) * nb_thumb_by_page;
 
                 //Get images from project server
-                new ImageCollection({project:self.idProject}).fetch({
+                new ImageCollection({project:self.model.get('id')}).fetch({
                     success: function(projectImages,response){
 
                         console.log("collection size=" + collection.length);
@@ -82,20 +97,20 @@ var AddImageProjectDialog = Backbone.View.extend({
 
                                 $(thumb.el).css({"width":30}); //thumb must be smaller
 
-                                $(self.ulElem+self.idProject).append(item);
-                                $(self.ulElem+self.idProject + " " + self.imageDivElem+image.id).append(thumb.el);  //get the div elem (img id) which have this project as parent
+                                $(self.ulElem+self.model.get('id')).append(item);
+                                $(self.ulElem+self.model.get('id') + " " + self.imageDivElem+image.id).append(thumb.el);  //get the div elem (img id) which have this project as parent
 
                                 //if image is already in project, selected it
                                 if(projectImages.get(image.id))
                                 {
                                     //get the li elem (img id) which have this project as parent
-                                    $(self.ulElem+self.idProject + " " +  "#"+ self.liElem+image.id).addClass(self.selectedClass);
-                                    $(self.ulElem+self.idProject + +" " + "#"+self.liElem+image.id).find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
+                                    $(self.ulElem+self.model.get('id') + " " +  "#"+ self.liElem+image.id).addClass(self.selectedClass);
+                                    $(self.ulElem+self.model.get('id') + +" " + "#"+self.liElem+image.id).find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
                                 }
                             }
                             cpt++;
                         });
-                        $(self.ulElem+self.idProject + " img").addClass("thumbProject");
+                        $(self.ulElem+self.model.get('id') + " img").addClass("thumbProject");
 
                         //build dialog and event
                         self.buildAddImagedialog();
@@ -134,11 +149,22 @@ var AddImageProjectDialog = Backbone.View.extend({
                                            //add slide to project
                                            new ImageModel({id:idImage}).fetch({success : function (image,response) {
                                                var slide = image.get('slide');
-                                               console.log("Image id = " + idImage + " Slide id = " + slide + " Project id = " + self.idProject);
-                                               new ProjectSlideModel({project : self.idProject, slide : slide}).save({project : self.idProject, slide : slide});
+                                               console.log("Image id = " + idImage + " Slide id = " + slide + " Project id = " + self.model.get('id'));
+                                               new ProjectSlideModel({project : self.model.get('id'), slide : slide}).save({project : self.model.get('id'), slide : slide},{
+                                                   success: function (model, response) {
+                                                       console.log(response);
+                                                       self.refresh();
+                                                       self.projectPanel.refresh();
+
+                                                   },
+                                                   error: function (model, response) {
+                                                       console.log("ERROR:"+response);
+                                                   }
+                                               });
+
                                            }
                                            });
-                                           self.refresh()
+
                                        }
                 );
 
@@ -156,11 +182,22 @@ var AddImageProjectDialog = Backbone.View.extend({
                                              //delete slide from project
                                              new ImageModel({id:idImage}).fetch({success : function (image,response) {
                                                  var slide = image.get('slide');
-                                                 console.log("Image id = " + idImage + " Slide id = " + slide + " Project id = " + self.idProject);
-                                                 new ProjectSlideModel({project : self.idProject, slide : slide}).destroy({project : self.idProject, slide : slide});
+                                                 console.log("Image id = " + idImage + " Slide id = " + slide + " Project id = " + self.model.get('id'));
+                                                 new ProjectSlideModel({project :self.model.get('id'), slide : slide}).destroy({
+                                                     success: function (model, response) {
+                                                         console.log(response);
+                                                       self.refresh();
+                                                       self.projectPanel.refresh();
+
+                                                     },
+                                                     error: function ( response) {
+                                                         console.log("ERROR:"+response);
+                                                     }
+                                                 });
+
                                              }
                                              });
-                                             self.refresh();
+
                                          });
 
 

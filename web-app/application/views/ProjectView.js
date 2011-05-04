@@ -78,8 +78,6 @@ var ProjectView = Backbone.View.extend({
                 var maxNumberOfImage = Number.MIN_VALUE;
                 collection.each(function(project) {
                     var numberOfImage = project.get('numberOfImages');
-                    console.log(numberOfImage + " VS " + maxNumberOfImage + " = " + (numberOfImage>maxNumberOfImage));
-                    console.log(numberOfImage + " " + minNumberOfImage + " " + maxNumberOfImage + " " + (numberOfImage<minNumberOfImage) + " " +(numberOfImage>maxNumberOfImage));
 
                     if(numberOfImage<minNumberOfImage) minNumberOfImage =  numberOfImage;
                     if(numberOfImage>maxNumberOfImage) maxNumberOfImage =  numberOfImage;
@@ -102,9 +100,15 @@ var ProjectView = Backbone.View.extend({
                         " - " + $( "#numberofimage" ).slider( "values", 1 ) );
 
                 self.printProjects(collection);
+
             }});
 
         return this;
+    },
+    refresh : function() {
+        console.log("refresh projects panel");
+
+        this.render();
     },
     showAllProject:function() {
         var self = this;
@@ -119,25 +123,10 @@ var ProjectView = Backbone.View.extend({
         var max = $( "#numberofimage" ).slider( "option", "max");
 
         $( "#numberofimage" ).slider( "values", [min,max] );
-        //$( "#numberofimage" ).slider( "value", 1, 20 );
-
-        /*$( "#numberofimage" ).slider({
-         range: true,
-         min: minNumberOfImage,
-         max: maxNumberOfImage,
-         values: [ minNumberOfImage, maxNumberOfImage ],
-         slide: function( event, ui ) {
-         $( "#amount" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-         self.searchProject();
-         },
-         change: function( event, ui ) {
-         $( "#amount" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-         self.searchProject();
-         }
-         });  */
         self.searchProject();
         //self.filterProjects("");
     },
+
     searchProject : function() {
         console.log("searchProject");
         var self = this;
@@ -161,110 +150,13 @@ var ProjectView = Backbone.View.extend({
         var self = this;
         if(self.addProjectDialog==null)
         {
-            var dialog = ich.addprojectdialogtpl({});
-            $(self.el).append(dialog);
-
-            //render ontologies choice
-
-
-            $("#projectontology").empty();
-            window.app.models.ontologies.each(function(ontology){
-                var choice = ich.ontologieschoiceradiotpl({id:ontology.id,name:ontology.get("name")}, true);
-                $("#projectontology").append(choice);
-            });
-
-
-
-            $("#projectuser").empty();
-            window.app.models.users.each(function(user){
-                var choice = ich.userschoicetpl({id:user.id,username:user.get("username")}, true);
-                $("#projectuser").append(choice);
-            });
-
-
             //Build dialog
-            self.addProjectDialog =    $("#addproject").dialog({
-                width: 500,
-                autoOpen : false,
-                modal:true,
-                buttons : {
-                    "Save" : function() {
-                        self.createProject();
-                    },
-                    "Cancel" : function() {
-                        $("#addproject").dialog("close");
-                    }
-                }
-            });
-
-
+            console.log("build dialog");
+            self.addProjectDialog = new AddProjectDialog({projectsPanel:self,el:self.el}).render();
         }
-        self.clearAddProjectPanel();
-
-        console.log("open");
-        self.addProjectDialog.dialog("open") ;
+        self.addProjectDialog.open();
     },
-    clearAddProjectPanel : function() {
-        var self = this;
-        $("#errormessage").empty();
-        $("#projecterrorlabel").hide();
-        $("#project-name").val("");
 
-        $(self.addProjectCheckedOntologiesRadioElem).attr("checked", false);
-        $(self.addProjectCheckedUsersCheckboxElem).attr("checked", false);
-    },
-    createProject : function() {
-
-        $("#errormessage").empty();
-        $("#projecterrorlabel").hide();
-
-        var self = this;
-        var name =  $("#project-name").val();
-        var ontology = $('input[type=radio][name=ontologyradio]:checked').attr('value');
-        var users = new Array();
-
-        $('input[type=checkbox][name=usercheckbox]:checked').each(function(i,item){
-            users.push($(item).attr("value"))
-        });
-
-        new ProjectModel({name : name, ontology : ontology}).save({name : name, ontology : ontology},{
-            success: function (model, response) {
-                console.log(response);
-                //var json = $.parseJSON(response);
-                var id = response.project.id;
-                console.log("project="+id + " user="+users[0])
-                new ProjectUserModel({project: id}).save({project: id, user: users},{
-                    success: function (model, response) {
-                        new ProjectCollection({user : self.userID}).fetch({
-                            success : function (collection, response) {
-                                self.printProjects(collection);
-                                $("#addproject").dialog("close") ;
-                            }});
-                    }});
-
-                //$("#addproject").dialog("destroy") ;
-
-
-            },
-            error: function (model, response) {
-                /*console.log("response=");
-                 console.log(response);
-                 console.log("response.responseText=");
-                 console.log(response.responseText);
-                 console.log("response.responseText.project=");
-                 console.log(response.responseText.project); */
-                var json = $.parseJSON(response.responseText);
-                console.log("json.project="+json.errors);
-
-                $("#projecterrorlabel").show();
-
-                console.log($("#errormessage").append(json.errors));
-            }
-        }
-                );
-
-
-    },
     //show only project that have searchText value in their name and a ontology from searchOntologies.
     filterProjects : function(searchText,searchOntologies,searchNumberOfImages) {
         var self = this;
@@ -300,8 +192,7 @@ var ProjectView = Backbone.View.extend({
 
         return projectNewList;
     },
-
-    filterProjectsByOntology : function(searchOntologies,projectOldList) {
+filterProjectsByOntology : function(searchOntologies,projectOldList) {
         var self = this;
         var projectNewList =  new ProjectCollection(projectOldList.models);
 
@@ -343,7 +234,8 @@ var ProjectView = Backbone.View.extend({
 
             //create panel for a specific project
             var panel = new ProjectPanelView({
-                model : project
+                model : project,
+                projectsPanel : self
             }).render();
             $(self.projectListElem).append(panel.el);
 

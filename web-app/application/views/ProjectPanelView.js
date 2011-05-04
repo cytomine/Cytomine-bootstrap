@@ -16,8 +16,11 @@ var ProjectPanelView = Backbone.View.extend({
     projectChangeElem :"#radioprojectchange" ,
     projectChangeDialog : "div#projectchangedialog",
     loadImagesInAddPanel: true,
+    projectsPanel : null,
+    addSlideDialog : null,
     initialize: function(options) {
         this.container = options.container;
+        this.projectsPanel = options.projectsPanel;
         _.bindAll(this, 'render');
     },
     events: {
@@ -26,60 +29,83 @@ var ProjectPanelView = Backbone.View.extend({
         "click .changeProject": "changeProject"
     },
     render: function() {
+         this.printProjectInfo();
+        return this;
+    },
+    refresh : function(model) {
         var self = this;
+        //$(this.projectElem+this.model.get('id')).empty();
+        new ProjectModel({id : self.model.id}).fetch({
+            success : function (model, response) {
+                console.log("refresh project panel");
+                console.log(model.toJSON());
+                 self.model = model;
+                self.loadImages=true;
+                self.printProjectInfo();
+
+        }});
+
+    },
+    printProjectInfo : function() {
+        var self = this;
+
         var json = self.model.toJSON();
 
+        var idOntology = json.ontology;
         //TODO: make it faster: make a service to have all this information in one json
         //Get ontology name
-        new OntologyModel({id:json.ontology}).fetch({success : function (ontology,response) {
-            json.ontology = ontology.get('name');
+        json.ontology = window.app.models.ontologies.get(idOntology).get('name');
 
-            //Get image number
-            new ImageCollection({project:self.model.get('id')}).fetch({success : function (collection, response) {
-                json.images = collection.length;
+        //Get users list
+        new UserCollection({project:self.model.get('id')}).fetch({success : function (collection, response) {
+            //json.users = collection.length;
+            json.users = "  ";
+            collection.each(function(user) {
+                json.users = json.users  + user.get('username')+ ", ";
+            });
+            json.users = json.users.substring(0,json.users.length-2);
 
-                //Get annotation number
-                new AnnotationCollection({project:self.model.get('id'), user: undefined, image : undefined}).fetch({success : function (collection, response) {
-                    json.annotations = collection.length;
-
-                    //Get users list
-                    new UserCollection({project:self.model.get('id')}).fetch({success : function (collection, response) {
-                        //json.users = collection.length;
-                        json.users = "  ";
-                        collection.each(function(user) {
-                            json.users = json.users  + user.get('username')+ ", ";
-                        });
-                        json.users = json.users.substring(0,json.users.length-2);
-
-                        var proj = ich.projectviewtpl(json);
-                        $(self.el).append(proj);
-
-                        self.renderCurrentProjectButton();
-                        self.renderShowImageButton(json.images);
-
-                        $(self.imageAddElem + self.model.id).button({
-                            icons : {secondary : "ui-icon-image"}
-                        });
-                        $(self.projectElem+self.model.get('id')).panel({
-                            collapsible:false
-                        });
-                    }
-                    });
-                }
-                });
+            var proj = ich.projectviewtpl(json);
+            console.log(proj);
+            if(self.addSlideDialog!=null){
+                console.log("addSlideDialog!=null");
+               $("#projectlist"+json.id).replaceWith(proj);
             }
+            else
+                $(self.el).append(proj);
+
+            self.renderCurrentProjectButton();
+            self.renderShowImageButton(json.numberOfImages);
+
+            $(self.imageAddElem + self.model.id).button({
+                icons : {secondary : "ui-icon-image"}
+            });
+            $(self.projectElem+self.model.get('id')).panel({
+                collapsible:false
             });
         }
         });
-        return this;
     },
+
     showAddSlidesPanel : function () {
-        if(this.loadImagesInAddPanel) {
+        /*if(this.loadImagesInAddPanel) {
             var dialog = ich.projectaddimagedialog({id:this.model.get('id'),name:this.model.get('name')});
             $(this.el).append(dialog);
             this.loadImagesInAddPanel = false;
         }
-        new AddImageProjectDialog({model:this.project,idProject:this.model.id}).render();
+        new AddImageProjectDialog({model:this.project,idProject:this.model.id,projectPanel:this}).render();*/
+
+
+        var self = this;
+        console.log($("#projectaddimagedialog"+this.model.id).length);
+        if(self.addSlideDialog==null && $("#projectaddimagedialog"+this.model.id).length==0)
+        {
+            //Build dialog
+            console.log("build dialog with project:"+this.model);
+            self.addSlideDialog = new AddImageProjectDialog({model:this.model,projectPanel:this,el:self.el}).render();
+        }
+        self.addSlideDialog.open();
+
     },
     showSlidesPanel : function () {
         var self = this;

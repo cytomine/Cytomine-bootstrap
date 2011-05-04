@@ -30,6 +30,16 @@ class Project extends SequenceDomain {
     return images
   }
 
+  def annotations() {
+    def annotations = []
+    this.images().each { img ->
+              img.annotations.each { annotation ->
+             annotations << annotation
+       }
+    }
+    return annotations
+  }
+
   def groups() {
     return projectGroup.collect{
       it.group
@@ -89,7 +99,9 @@ class Project extends SequenceDomain {
       returnArray['imageURL'] = UrlApi.getImageURLWithProjectId(it.id)
       returnArray['termURL'] = UrlApi.getTermsURLWithOntologyId(it.ontology?.id)
       returnArray['userURL'] = UrlApi.getUsersURLWithProjectId(it.id)
+      returnArray['numberOfSlides'] = it.slides().size();
       returnArray['numberOfImages'] = it.images().size();
+      returnArray['numberOfAnnotations'] = it.annotations().size();
 
       return returnArray
     }
