@@ -22,15 +22,24 @@ var CommandController = Backbone.Controller.extend({
 
         //Annotations
         if (callback.method == "be.cytomine.AddAnnotationCommand") {
-            var image = window.app.controllers.browse.tabs.images[callback.imageID];
+            var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {
+                return object.idImage == callback.imageID;
+            });
+            var image = tab.browImageView;
             if (image == undefined) return; //tab is closed
             image.getUserLayer().annotationAdded(callback.annotationID);
         } else if (callback.method == "be.cytomine.EditAnnotationCommand") {
-            var image = window.app.controllers.browse.tabs.images[callback.imageID];
+            var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {
+                return object.idImage == callback.imageID;
+            });
+            var image = tab.browImageView;
             if (image == undefined) return; //tab is closed
             image.getUserLayer().annotationUpdated(callback.annotationID);
         } else if (callback.method == "be.cytomine.DeleteAnnotationCommand") {
-            var image = window.app.controllers.browse.tabs.images[callback.imageID];
+            var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {
+                return object.idImage == callback.imageID;
+            });
+            var image = tab.browImageView;
             if (image == undefined) return; //tab is closed
             image.getUserLayer().annotationRemoved(callback.annotationID);
         }
