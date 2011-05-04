@@ -12,6 +12,8 @@ class Command extends SequenceDomain {
 
   User user
 
+  boolean saveOnUndoRedoStack = false //by default, don't save command on stack
+
   static constraints = {
     data (type:'text', maxSize:10240, nullable : true)
     postData (type:'text', maxSize:10240)

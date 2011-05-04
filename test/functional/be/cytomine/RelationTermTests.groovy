@@ -126,7 +126,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
     assertEquals(200,code)
 
-    log.info("test undo")
+    /*log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -168,7 +168,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(200,code)
+    assertEquals(200,code) */
 
   }
 
@@ -289,7 +289,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
 
     assertEquals(404,code)
 
-    log.info("test undo")
+    /*log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -331,7 +331,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(404,code)
+    assertEquals(404,code) */
 
   }
 

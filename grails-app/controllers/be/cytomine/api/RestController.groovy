@@ -42,7 +42,8 @@ class RestController {
     def result = c.execute()
     if (result.status == successCode) {
       c.save()
-      new UndoStackItem(command : c, user: user, transactionInProgress:  user.transactionInProgress).save(flush:true)
+      if(c.saveOnUndoRedoStack)
+        new UndoStackItem(command : c, user: user, transactionInProgress:  user.transactionInProgress).save(flush:true)
     }
     log.debug "Lastcommands="+UndoStackItem.findAllByUser(user)
     response.status = result.status

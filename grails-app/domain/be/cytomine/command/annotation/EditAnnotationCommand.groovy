@@ -8,6 +8,8 @@ import be.cytomine.command.EditCommand
 
 class EditAnnotationCommand extends EditCommand implements UndoRedoCommand  {
 
+  boolean saveOnUndoRedoStack = true;
+
   String toString() {"EditAnnotationCommand"}
 
 

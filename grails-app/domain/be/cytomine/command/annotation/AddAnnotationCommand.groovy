@@ -7,6 +7,7 @@ import be.cytomine.command.UndoRedoCommand
 import be.cytomine.command.AddCommand
 
 class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
+  boolean saveOnUndoRedoStack = true;
   String toString() {"AddAnnotationCommand"}
   def execute() {
     try

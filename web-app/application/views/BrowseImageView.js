@@ -210,8 +210,8 @@ var BrowseImageView = Backbone.View.extend({
                 });
 
                 new DraggablePanelView({
-                    el : $('#ontologyTree' + this.model.get('id')),
-                    template : ich.ontologytreecontenttpl({id : this.model.get('id')}, true)/*,
+                    el : $('#ontologyTree' + self.model.get('id')),
+                    template : ich.ontologytreecontenttpl({id : self.model.get('id')}, true)/*,
                      dialogAttr : {
                      dialogID : "#ontologytreedialog" + this.model.get('id'),
                      width : 200,
