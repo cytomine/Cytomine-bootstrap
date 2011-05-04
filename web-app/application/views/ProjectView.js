@@ -13,6 +13,12 @@ var ProjectView = Backbone.View.extend({
     searchProjectOntolgiesListElem : "#ontologyChoiceList",
     projectListElem : "#projectlist",
     addProjectDialog : null,
+    sliderNumberOfImagesElem : "#numberofimageSlider",
+    labelNumberOfImagesElem : "#amountNumberOfImages",
+    sliderNumberOfSlidesElem : "#numberofslideSlider",
+    labelNumberOfSlidesElem : "#amountNumberOfSlides",
+    sliderNumberOfAnnotationsElem : "#numberofannotationSlider",
+    labelNumberOfAnnotationsElem : "#amountNumberOfAnnotations",
     initialize: function(options) {
         this.container = options.container;
     },
@@ -60,8 +66,6 @@ var ProjectView = Backbone.View.extend({
         });
 
 
-
-
         //render ontologies choice
         new OntologyCollection({}).fetch({
             success : function (collection, response) {
@@ -74,41 +78,94 @@ var ProjectView = Backbone.View.extend({
 
         new ProjectCollection({user : self.userID}).fetch({
             success : function (collection, response) {
+                //init slider to serach by slides number, images number...
                 var minNumberOfImage = Number.MAX_VALUE;
                 var maxNumberOfImage = Number.MIN_VALUE;
+                var minNumberOfSlide = Number.MAX_VALUE;
+                var maxNumberOfSlide = Number.MIN_VALUE;
+                var minNumberOfAnnotation = Number.MAX_VALUE;
+                var maxNumberOfAnnotation = Number.MIN_VALUE;
+                //compute min/max value for slider
                 collection.each(function(project) {
                     var numberOfImage = project.get('numberOfImages');
+                    var numberOfSlide = project.get('numberOfSlides');
+                    var numberOfAnnotation = project.get('numberOfAnnotations');
 
                     if(numberOfImage<minNumberOfImage) minNumberOfImage =  numberOfImage;
                     if(numberOfImage>maxNumberOfImage) maxNumberOfImage =  numberOfImage;
+                    if(numberOfSlide<minNumberOfSlide) minNumberOfSlide =  numberOfSlide;
+                    if(numberOfSlide>maxNumberOfSlide) maxNumberOfSlide =  numberOfSlide;
+                    if(numberOfAnnotation<minNumberOfAnnotation) minNumberOfAnnotation =  numberOfAnnotation;
+                    if(numberOfAnnotation>maxNumberOfAnnotation) maxNumberOfAnnotation =  numberOfAnnotation;
                 });
-                $( "#numberofimage" ).slider({
-                    range: true,
-                    min: minNumberOfImage,
-                    max: maxNumberOfImage,
-                    values: [ minNumberOfImage, maxNumberOfImage ],
-                    slide: function( event, ui ) {
-                        $( "#amount" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-                        self.searchProject();
-                    },
-                    change: function( event, ui ) {
-                        $( "#amount" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-                        self.searchProject();
-                    }
-                });
-                $( "#amount" ).val( "" + $( "#numberofimage" ).slider( "values", 0 ) +
-                        " - " + $( "#numberofimage" ).slider( "values", 1 ) );
+                //create slider
+                self.createSliderWithoutAmountPrint(self.sliderNumberOfImagesElem,self.labelNumberOfImagesElem,minNumberOfImage,maxNumberOfImage);
+                self.createSliderWithoutAmountPrint(self.sliderNumberOfSlidesElem,self.labelNumberOfSlidesElem,minNumberOfSlide,maxNumberOfSlide);
+                self.createSliderWithoutAmountPrint(self.sliderNumberOfAnnotationsElem,self.labelNumberOfAnnotationsElem,minNumberOfAnnotation,maxNumberOfAnnotation);
 
+                //print all projects
                 self.printProjects(collection);
 
             }});
 
         return this;
     },
+    createSliderWithoutAmountPrint : function(sliderElem, labelElem,min,max) {
+        var self = this;
+        console.log("sliderElem="+sliderElem + " min="+min + " et max="+ max);
+                $(sliderElem).slider({
+                    range: true,
+                    min : min,
+                    max : max,
+                    values: [ min, max ],
+                    slide: function( event, ui ) {
+                        $(labelElem).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+                        self.searchProject();
+                    },
+                    change: function( event, ui ) {
+                        $(labelElem).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+                        self.searchProject();
+                    }
+                });
+                $(labelElem).val( "" + $(sliderElem).slider( "values", 0 ) +" - " + $(sliderElem).slider( "values", 1 ) );
+    },
     refresh : function() {
         console.log("refresh projects panel");
 
         this.render();
+    },
+    refreshSearchPanel : function() {
+        //refresh item from search panel
+        //ex: if a user add 1 slide to the project that have the hight number of slide, number of slides slider value must be change
+        var self = this;
+        console.log("refresh projects panel");
+        new ProjectCollection({user : self.userID}).fetch({
+            success : function (collection, response) {
+                var minNumberOfImage = Number.MAX_VALUE;
+                var maxNumberOfImage = Number.MIN_VALUE;
+                var minNumberOfSlide = Number.MAX_VALUE;
+                var maxNumberOfSlide = Number.MIN_VALUE;
+                var minNumberOfAnnotation = Number.MAX_VALUE;
+                var maxNumberOfAnnotation = Number.MIN_VALUE;
+
+                collection.each(function(project) {
+                    var numberOfImage = project.get('numberOfImages');
+                    var numberOfSlide = project.get('numberOfSlides');
+                    var numberOfAnnotation = project.get('numberOfAnnotations');
+
+                    if(numberOfImage<minNumberOfImage) minNumberOfImage =  numberOfImage;
+                    if(numberOfImage>maxNumberOfImage) maxNumberOfImage =  numberOfImage;
+                    if(numberOfSlide<minNumberOfSlide) minNumberOfSlide =  numberOfSlide;
+                    if(numberOfSlide>maxNumberOfSlide) maxNumberOfSlide =  numberOfSlide;
+                    if(numberOfAnnotation<minNumberOfAnnotation) minNumberOfAnnotation =  numberOfAnnotation;
+                    if(numberOfAnnotation>maxNumberOfAnnotation) maxNumberOfAnnotation =  numberOfAnnotation;
+                });
+
+                self.createSliderWithoutAmountPrint(self.sliderNumberOfImagesElem,self.labelNumberOfImagesElem,minNumberOfImage,maxNumberOfImage);
+                self.createSliderWithoutAmountPrint(self.sliderNumberOfSlidesElem,self.labelNumberOfSlidesElem,minNumberOfSlide,maxNumberOfSlide);
+                self.createSliderWithoutAmountPrint(self.sliderNumberOfAnnotationsElem,self.labelNumberOfAnnotationsElem,minNumberOfAnnotation,maxNumberOfAnnotation);
+
+            }});
     },
     showAllProject:function() {
         var self = this;
@@ -119,14 +176,19 @@ var ProjectView = Backbone.View.extend({
         //addProjectCheckedUsersCheckboxElem
 
 
-        var min = $( "#numberofimage" ).slider( "option", "min");
-        var max = $( "#numberofimage" ).slider( "option", "max");
+        self.resetSlider(self.sliderNumberOfImagesElem);
+        self.resetSlider(self.sliderNumberOfSlidesElem);
+        self.resetSlider(self.sliderNumberOfAnnotationsElem);
 
-        $( "#numberofimage" ).slider( "values", [min,max] );
         self.searchProject();
         //self.filterProjects("");
     },
-
+    resetSlider : function(sliderElem) {
+        //put the min slider cursor to min and the other to max
+        var min = $(sliderElem).slider( "option", "min");
+        var max = $(sliderElem).slider( "option", "max");
+        $(sliderElem).slider( "values", [min,max] );
+    },
     searchProject : function() {
         console.log("searchProject");
         var self = this;
@@ -140,11 +202,18 @@ var ProjectView = Backbone.View.extend({
         });
 
         var numberOfImages = new Array();
-        console.log("0="+$( "#numberofimage" ).slider( "values", 0 ) + " 1="+ $( "#numberofimage" ).slider( "values", 1 ));
-        numberOfImages.push($( "#numberofimage" ).slider( "values", 0 ));
-        numberOfImages.push($( "#numberofimage" ).slider( "values", 1 ));
+        numberOfImages.push($(self.sliderNumberOfImagesElem).slider( "values", 0 ));
+        numberOfImages.push($(self.sliderNumberOfImagesElem).slider( "values", 1 ));
 
-        self.filterProjects(searchText==""?undefined:searchText,searchOntologies.length==0?undefined:searchOntologies,numberOfImages);
+        var numberOfSlides = new Array();
+        numberOfSlides.push($(self.sliderNumberOfSlidesElem).slider( "values", 0 ));
+        numberOfSlides.push($(self.sliderNumberOfSlidesElem).slider( "values", 1 ));
+
+        var numberOfAnnotations = new Array();
+        numberOfAnnotations.push($(self.sliderNumberOfAnnotationsElem).slider( "values", 0 ));
+        numberOfAnnotations.push($(self.sliderNumberOfAnnotationsElem).slider( "values", 1 ));
+
+        self.filterProjects(searchText==""?undefined:searchText,searchOntologies.length==0?undefined:searchOntologies,numberOfImages,numberOfSlides,numberOfAnnotations);
     },
     showAddProjectPanel : function() {
         var self = this;
@@ -158,7 +227,7 @@ var ProjectView = Backbone.View.extend({
     },
 
     //show only project that have searchText value in their name and a ontology from searchOntologies.
-    filterProjects : function(searchText,searchOntologies,searchNumberOfImages) {
+    filterProjects : function(searchText,searchOntologies,searchNumberOfImages,searchNumberOfSlides,searchNumberOfAnnotations) {
         var self = this;
 
         var projects =  new ProjectCollection(self.projects.models);
@@ -168,6 +237,8 @@ var ProjectView = Backbone.View.extend({
         projects = self.filterByProjectsByName(searchText,projects);
         projects = self.filterProjectsByOntology(searchOntologies,projects);
         projects = self.filterProjectsByNumberOfImages(searchNumberOfImages,projects);
+        projects = self.filterProjectsByNumberOfSlides(searchNumberOfSlides,projects);
+        projects = self.filterProjectsByNumberOfAnnotations(searchNumberOfAnnotations,projects);
         //add here filter function
 
 
@@ -206,12 +277,29 @@ filterProjectsByOntology : function(searchOntologies,projectOldList) {
     filterProjectsByNumberOfImages : function(searchNumberOfImages,projectOldList) {
         var self = this;
         var projectNewList =  new ProjectCollection(projectOldList.models);
-
         projectOldList.each(function(project) {
-
             var numberOfImages = project.get('numberOfImages');
-
             if(searchNumberOfImages[0]>numberOfImages || searchNumberOfImages[1]<numberOfImages)
+                projectNewList.remove(project);
+        });
+        return projectNewList;
+    },
+    filterProjectsByNumberOfSlides : function(searchNumberOfSlides,projectOldList) {
+        var self = this;
+        var projectNewList =  new ProjectCollection(projectOldList.models);
+        projectOldList.each(function(project) {
+            var numberOfSlides = project.get('numberOfSlides');
+            if(searchNumberOfSlides[0]>numberOfSlides || searchNumberOfSlides[1]<numberOfSlides)
+                projectNewList.remove(project);
+        });
+        return projectNewList;
+    },
+    filterProjectsByNumberOfAnnotations : function(searchNumberOfAnnotations,projectOldList) {
+        var self = this;
+        var projectNewList =  new ProjectCollection(projectOldList.models);
+        projectOldList.each(function(project) {
+            var numberOfAnnotations = project.get('numberOfAnnotations');
+            if(searchNumberOfAnnotations[0]>numberOfAnnotations || searchNumberOfAnnotations[1]<numberOfAnnotations)
                 projectNewList.remove(project);
         });
         return projectNewList;

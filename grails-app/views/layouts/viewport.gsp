@@ -239,7 +239,23 @@
 		      <tr>
                 <td colspan="1" width="25%"> Project Name: <input id="projectsearchtextbox" /></td>
                 <td colspan="1" width="25%"> Ontology type:<div id="ontologyChoiceList"></div></td>
-                <td colspan="1" width="25%"><label for="amount">Number of images:<input type="text" id="amount" style="border:0; font-weight:bold;" /></label><div id="numberofimage"></div></td>
+                <td colspan="1" width="25%">
+                  <label for="amountNumberOfSlides" style="display:inline">Slides:
+                    <input type="text" id="amountNumberOfSlides" style="display:inline;border:0; font-weight:bold;" />
+                  </label>
+                  <div id="numberofslideSlider"></div>
+                  <br>
+                  <label for="amountNumberOfImages" style="display:inline">Images:
+                  <input type="text" id="amountNumberOfImages" style="display:inline;border:0; font-weight:bold;" />
+                  </label>
+                  <div id="numberofimageSlider"></div>
+                  <br>
+                 <label for="amountNumberOfAnnotations" style="display:inline">Annotations:
+                 <input type="text" id="amountNumberOfAnnotations" style="display:inline;border:0; font-weight:bold;" />
+                 </label>
+                 <div id="numberofannotationSlider"></div>
+                 <br>
+               </td>
                 <td colspan="1" width="25%" align="right">
  <!--                 <button id='projectrefreshbutton' type="button">Refresh</button>  -->
                   <button id='projectallbutton' type="button" class="showAllProject">Show All projects</button> <br><br>

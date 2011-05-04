@@ -46,6 +46,7 @@ var ProjectPanelView = Backbone.View.extend({
                  self.model = model;
                 self.loadImages=true;
                 self.printProjectInfo();
+                self.projectsPanel.refreshSearchPanel();
 
         }});
 
