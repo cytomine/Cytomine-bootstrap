@@ -131,7 +131,11 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('input[name=resize]').button();
         toolbar.find('input[name=drag]').button();
         toolbar.find('input[name=irregular]').button();
-        toolbar.find('span[class=draw]').buttonset();
+        toolbar.find('span[class=nav-toolbar]').buttonset();
+        toolbar.find('span[class=draw-toolbar]').buttonset();
+        toolbar.find('span[class=edit-toolbar]').buttonset();
+        toolbar.find('span[class=delete-toolbar]').buttonset();
+
         toolbar.find('input[id=none' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().toggleControl("none");
         });
@@ -150,23 +154,27 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().toggleControl("polygon");
         });
         toolbar.find('input[id=modify' + this.model.get('id') + ']').click(function () {
+            self.getUserLayer().toggleEdit();
             self.getUserLayer().toggleControl("modify");
         });
-        toolbar.find('button[id=delete' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().removeSelection();
+        toolbar.find('input[id=delete' + this.model.get('id') + ']').click(function () {
+            self.getUserLayer().toggleControl("erase");
         });
         toolbar.find('input[id=rotate' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().toggleRotate();
         });
         toolbar.find('input[id=resize' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().toggleResize();
+
         });
         toolbar.find('input[id=drag' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().toggleDrag();
         });
-        toolbar.find('input[id=irregular' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().toggleIrregular();
-        });
+        /*toolbar.find('input[id=irregular' + this.model.get('id') + ']').click(function () {
+         self.getUserLayer().toggleIrregular();
+         });
+         toolbar.find('input[id=irregular' + this.model.get('id') + ']').hide();*/
+
     },
     initVectorLayers: function () {
         var self = this;
@@ -181,6 +189,7 @@ var BrowseImageView = Backbone.View.extend({
                         self.userLayer = layerAnnotation;
                         layerAnnotation.initControls(self);
                         layerAnnotation.registerEvents();
+                        self.userLayer.toggleIrregular();
                     }
                     colorIndex++;
 
@@ -279,18 +288,24 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView) 
     this.drag = false;
     this.irregular = false;
     this.aspectRatio = false;
+    this.deleteOnSelect = false; //true if select tool checked
 }
 
 AnnotationLayer.prototype = {
     registerEvents: function () {
-        var alias = this;
+        var self = this;
         this.vectorsLayer.events.on({
             featureselected: function (evt) {
-                alias.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
+                self.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
+                console.log("self.deleteOnSelect =>" +self.deleteOnSelect );
+                if (self.deleteOnSelect == true) {
+                    console.log("remove selection");
+                    self.removeSelection()
+                };
             },
             'featureunselected': function () {
-                if (alias.dialog != null) alias.dialog.destroy();
-                alias.ontologyTreeView.clear();
+                if (self.dialog != null) self.dialog.destroy();
+                self.ontologyTreeView.clear();
             },
             'featureadded': function (evt) {
                 console.log("onFeatureAdded start:" + evt.feature.attributes.idAnnotation);
@@ -299,7 +314,7 @@ AnnotationLayer.prototype = {
                  * false: new annotation that just have been draw (need insert)
                  * */
                 if (evt.feature.attributes.listener != 'NO') {
-                    alias.addAnnotation(evt.feature);
+                    self.addAnnotation(evt.feature);
                 }
             },
             'beforefeaturemodified': function (evt) {
@@ -307,7 +322,7 @@ AnnotationLayer.prototype = {
             },
             'afterfeaturemodified': function (evt) {
                 console.log("onFeatureUpdate start");
-                alias.updateAnnotation(evt.feature);
+                self.updateAnnotation(evt.feature);
 
             },
             'onDelete': function (feature) {
@@ -318,16 +333,17 @@ AnnotationLayer.prototype = {
     initControls: function (image) {
         var alias = this;
         this.controls = {
-            point: new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
-            line: new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
-            polygon: new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon),
-            regular: new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.RegularPolygon, {
+            'point': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
+            'line': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
+            'polygon': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon),
+            'regular': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.RegularPolygon, {
                 handlerOptions: {
                     sides: 5
                 }
             }),
-            modify: new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
-            select: new OpenLayers.Control.SelectFeature(this.vectorsLayer)
+            'modify': new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
+            'select': new OpenLayers.Control.SelectFeature(this.vectorsLayer),
+            'erase': new OpenLayers.Control.SelectFeature(this.vectorsLayer)
 
         }
         image.initTools(this.controls);
@@ -428,7 +444,7 @@ AnnotationLayer.prototype = {
         if (counter < total) return;
         this.addFeature(newFeature);
         this.controls.select.unselectAll();
-        this.controls.select.select(newFeature);
+        //this.controls.select.select(newFeature);
         this.vectorsLayer.removeFeatures([oldFeature]);
     },
     /*Remove annotation from database*/
@@ -469,19 +485,37 @@ AnnotationLayer.prototype = {
      this.updateAnnotation(evt.feature);
      },*/
     toggleRotate: function () {
-        this.rotate = !this.rotate;
+        this.resize = false;
+        this.drag = false;
+        this.rotate = true;
         this.updateControls();
+        this.toggleControl("modify");
     },
     toggleResize: function () {
-        this.resize = !this.resize;
+        this.resize = true;
+        this.drag = false;
+        this.rotate = false;
         this.updateControls();
+        this.toggleControl("modify");
     },
     toggleDrag: function () {
-        this.drag = !this.drag;
+        this.resize = false;
+        this.drag = true;
+        this.rotate = false;
         this.updateControls();
+        this.toggleControl("modify");
+
+    },
+    toggleEdit: function () {
+        this.resize = false;
+        this.drag = false;
+        this.rotate = false;
+        this.updateControls();
+        this.toggleControl("modify");
 
     },
     toggleIrregular: function () {
+        console.log("toggleIrregular");
         this.irregular = !this.irregular;
         this.updateControls();
     },
@@ -516,10 +550,17 @@ AnnotationLayer.prototype = {
         this.controls.regular.handler.irregular = this.irregular;
     },
     toggleControl: function (name) {
+        //Simulate an OpenLayers.Control.EraseFeature tool by using SelectFeature with the flag 'deleteOnSelect'
+        if (name == "erase") {
+            this.deleteOnSelect = true;
+        } else {
+            this.deleteOnSelect = false;
+        }
         for (key in this.controls) {
             var control = this.controls[key];
             if (name == key) {
                 control.activate();
+                console.log("activate " + name);
                 if (control == this.controls.modify) {
                     for (var i in this.vectorsLayer.selectedFeatures) {
                         var feature = this.vectorsLayer.selectedFeatures[i];
@@ -528,6 +569,7 @@ AnnotationLayer.prototype = {
                 }
             } else {
                 control.deactivate();
+                console.log("deactivate " + name);
                 if (control == this.controls.modify) {
                     for (var i in this.vectorsLayer.selectedFeatures) {
                         var feature = this.vectorsLayer.selectedFeatures[i];

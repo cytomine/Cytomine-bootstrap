@@ -25,7 +25,9 @@
   <script type="text/javascript" src="application/lib/jquery.isotope.js"></script>
   <script type="text/javascript" src="application/lib/mustache.js"></script>
   <script type="text/javascript" src="application/lib/ICanHaz.js"></script>
-  <script type="text/javascript" src="application/lib/jquery.showLoading.min.js"></script>
+  <script type="text/javascript" src="application/lib/galleria-1.2.3.min.js"></script>
+
+
   <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
   <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
   <script type="text/javascript" src="application/lib/ui.panel.min.js"></script>
@@ -45,7 +47,7 @@
 <link rel='stylesheet' href='application/css/jquery.pnotify.default.css' type='text/css'/>
 <link rel='stylesheet' href='application/css/isotope.css' type='text/css'/>
 <link rel='stylesheet' href='application/css/cytomine.css' type='text/css'/>
-<link rel='stylesheet' href='application/css/showLoading.css' type='text/css'/>
+
 
 
 <!-- Templates -->
@@ -308,7 +310,9 @@
       <td><input class="changeProject" id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Use this project</label></input> </td>
       <tr>
          </table>
-         <div class="scroll-content"></div>
+
+         <div class="galleria">
+         </div>
     </div>
     <br><br>
     </div>
@@ -385,7 +389,9 @@
 
 
 <script type="text/html" id="imagerowtpl">
-    <a href='#browse/{{ id }}'><img src='{{ thumb }}' alt='{{ filename }}' title='{{filename}}' /></a>
+    <!--<a href='#browse/{{ id }}'>-->
+    <img src='{{ preview }}' alt='{{ info }}' title='{{info}}' />
+    <!--</a>-->
 </script>
 
 <script type="text/html" id="imagethumbtpl">
@@ -403,19 +409,29 @@
   <div id="tabs-{{id}}">
     <div class="toolbar" id="toolbar{{id}}" class="ui-widget-header ui-corner-all">
 
-      <span class="draw">
-        <input type="radio" id="none{{id}}"      name="draw" checked="checked" /><label for="none{{id}}">None</label>
-        <input type="radio" id="select{{id}}"    name="draw" /><label for="select{{id}}">Select</label>
-        <input type="radio" id="regular4{{id}}"  name="draw" /><label for="regular4{{id}}">Regular4</label>
-        <input type="radio" id="regular30{{id}}" name="draw" /><label for="regular30{{id}}">Regular30</label>
-        <input type="radio" id="polygon{{id}}"   name="draw" /><label for="polygon{{id}}">Polygon</label>
-        <input type="radio" id="modify{{id}}"    name="draw" /><label for="modify{{id}}">Modify</label>
+      <span class="nav-toolbar">
+        <input type="radio" id="none{{id}}" name="toolbar" checked="checked" /><label for="none{{id}}">Navigate</label>
+        <input type="radio" id="select{{id}}" name="toolbar" /><label for="select{{id}}">Select</label>
       </span>
-      <button id="delete{{id}}" name="delete">delete</button>
+      <span class="draw-toolbar">
+        <input type="radio" id="regular4{{id}}" name="toolbar" /><label for="regular4{{id}}">Quadrilateral</label>
+        <input type="radio" id="regular30{{id}}" name="toolbar" /><label for="regular30{{id}}">Ellipse</label>
+        <input type="radio" id="polygon{{id}}" name="toolbar" /><label for="polygon{{id}}">Polygon</label>
+      </span>
+      <span class="edit-toolbar">
+        <input type="radio" id="modify{{id}}" name="toolbar" /><label for="modify{{id}}">Edit</label>
+        <input type="radio" id="rotate{{id}}" name="toolbar" /><label for="rotate{{id}}">Rotate</label>
+        <input type="radio" id="resize{{id}}" name="toolbar" /><label for="resize{{id}}">Resize</label>
+        <input type="radio" id="drag{{id}}"  name="toolbar" /><label for="drag{{id}}">Drag</label>
+      </span>
+      <span class="delete-toolbar">
+        <input type="radio" id="delete{{id}}" name="toolbar" /><label for="delete{{id}}">Delete</label>
+      </span>
+      <!--<button id="delete{{id}}" name="delete">delete</button>
       <input type="checkbox" name="rotate" id="rotate{{id}}" /><label for="rotate{{id}}">Rotate</label>
       <input type="checkbox" name="resize" id="resize{{id}}" /><label for="resize{{id}}">Resize</label>
       <input type="checkbox" name="drag" id="drag{{id}}" /><label for="drag{{id}}">Drag</label>
-      <input type="checkbox" name="irregular" id="irregular{{id}}" /><label for="irregular{{id}}">Irregular</label>
+      <input type="checkbox" name="irregular" id="irregular{{id}}" /><label for="irregular{{id}}">Irregular</label>-->
 
     </div>
     <div class="map" id="map{{id}}"></div>
@@ -455,6 +471,7 @@
 <script type="text/javascript" src="application/views/ImageView.js" ></script>
 <script type="text/javascript" src="application/views/BrowseImageView.js" ></script>
 <script type="text/javascript" src="application/views/ImageThumbView.js" ></script>
+<script type="text/javascript" src="application/views/ImageRowView.js" ></script>
 <script type="text/javascript" src="application/views/TermView.js" ></script>
 <script type="text/javascript" src="application/views/OntologyView.js" ></script>
 <script type="text/javascript" src="application/views/OntologyTreeView.js" ></script>
@@ -471,6 +488,7 @@
   $(function() {
     // Create the app.
     window.app = new ApplicationController();
+    Galleria.loadTheme('application/css/galleria.classic.min.js');
   });
 </script>
 

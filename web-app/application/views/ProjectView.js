@@ -249,6 +249,7 @@ var ProjectView = Backbone.View.extend({
             else
                 $(self.projectListElem+project.id).hide();
         });
+
     },
     filterByProjectsByName : function(searchText,projectOldList) {
 
@@ -317,14 +318,15 @@ filterProjectsByOntology : function(searchOntologies,projectOldList) {
         self.projects = collection;
         collection.each(function(project) {
 
+
             projectNameArray.push(project.get('name'));
-            var json = project.toJSON();
 
             //create panel for a specific project
             var panel = new ProjectPanelView({
                 model : project,
                 projectsPanel : self
             }).render();
+
             $(self.projectListElem).append(panel.el);
 
         });

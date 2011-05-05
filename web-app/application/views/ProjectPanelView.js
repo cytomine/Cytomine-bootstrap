@@ -33,7 +33,7 @@ var ProjectPanelView = Backbone.View.extend({
         window.app.status.currentProject = this.model.id;
     },
     render: function() {
-         this.printProjectInfo();
+        this.printProjectInfo();
         return this;
     },
     refresh : function(model) {
@@ -43,12 +43,12 @@ var ProjectPanelView = Backbone.View.extend({
             success : function (model, response) {
                 console.log("refresh project panel");
                 console.log(model.toJSON());
-                 self.model = model;
+                self.model = model;
                 self.loadImages=true;
                 self.printProjectInfo();
                 self.projectsPanel.refreshSearchPanel();
 
-        }});
+            }});
 
     },
     printProjectInfo : function() {
@@ -74,7 +74,7 @@ var ProjectPanelView = Backbone.View.extend({
             console.log(proj);
             if(self.addSlideDialog!=null){
                 console.log("addSlideDialog!=null");
-               $("#projectlist"+json.id).replaceWith(proj);
+                $("#projectlist"+json.id).replaceWith(proj);
             }
             else
                 $(self.el).append(proj);
@@ -94,11 +94,11 @@ var ProjectPanelView = Backbone.View.extend({
 
     showAddSlidesPanel : function () {
         /*if(this.loadImagesInAddPanel) {
-            var dialog = ich.projectaddimagedialog({id:this.model.get('id'),name:this.model.get('name')});
-            $(this.el).append(dialog);
-            this.loadImagesInAddPanel = false;
-        }
-        new AddImageProjectDialog({model:this.project,idProject:this.model.id,projectPanel:this}).render();*/
+         var dialog = ich.projectaddimagedialog({id:this.model.get('id'),name:this.model.get('name')});
+         $(this.el).append(dialog);
+         this.loadImagesInAddPanel = false;
+         }
+         new AddImageProjectDialog({model:this.project,idProject:this.model.id,projectPanel:this}).render();*/
 
 
         var self = this;
@@ -193,7 +193,7 @@ var ProjectPanelView = Backbone.View.extend({
 
         if(!this.loadImages) {
             //images are already loaded
-            $(self.el).find('.scroll-content').toggle(); //toggle(1000) doesn't work with isotope?
+            $(self.el).find('.galleria').toggle(); //toggle(1000) doesn't work with isotope?
             return;
         }
 
@@ -212,13 +212,24 @@ var ProjectPanelView = Backbone.View.extend({
 
                 collection.each(function(image) {
                     if ((cpt >= inf) && (cpt < sup)) {
-                        var thumb = new ImageThumbView({
+                        var thumb = new ImageRowView({
                             model : image
                         }).render();
-                        $(self.el).find('.scroll-content').append(thumb.el);
+                        $(self.el).find('.galleria').append(thumb.el);
                     }
                     cpt++;
                 });
+                $(self.el).find('.galleria').galleria({
+                    width: 650,
+                    height: 500,
+                    imageCrop : 'width',
+                    imagePan : true,
+                    showInfo : true,
+                    _toggleInfo: false,
+                    overlayOpacity : 0.50
+
+                });
+
             },
             error: function(error){
                 for (property in error) {
