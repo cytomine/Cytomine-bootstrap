@@ -7,6 +7,7 @@ class UndoStackItem extends SequenceDomain implements Comparable {
   User user
   Command command
   Boolean transactionInProgress
+  int transaction
 
   static belongsTo = [user:User, command:Command]
 
@@ -14,5 +15,5 @@ class UndoStackItem extends SequenceDomain implements Comparable {
     created.compareTo(obj.created)
   }
 
-  String toString() { return "|user="+user.id + " command="+command}
+  String toString() { return "|user="+user.id + " command="+command + " transaction="+transactionInProgress}
 }

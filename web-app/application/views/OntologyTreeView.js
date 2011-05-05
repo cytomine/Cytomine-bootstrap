@@ -49,14 +49,42 @@ var OntologyTreeView = Backbone.View.extend({
         return this;
     },
     clear : function() {
+        activeEvent = false;
+        console.log("clear");
         this.tree.jstree('uncheck_all');
+        activeEvent = true;
+    },
+    clearAnnotation : function() {
+            this.idAnnotation = null;
+        },
+    check : function(idTerm) {
+        var self = this;
+        self.activeEvent = false;
+        self.tree.jstree('get_unchecked',null,true).each(function () {
+              var id = this.id;
+              if (id!=idTerm) return;
+              self.tree.jstree('check_node',this);
+        });
+        self.activeEvent = true;
+    },
+    uncheck : function(idTerm) {
+        var self = this;
+        self.activeEvent = false;
+        self.tree.jstree('get_checked',null,true).each(function () {
+                console.log("check:"+this.id);
+              var id = this.id;
+              if (id!=idTerm) return;
+              self.tree.jstree('uncheck_node',this);
+        });
+        self.activeEvent = true;
     },
     refresh: function(idAnnotation) {
-        console.log("REFRESHHHHHHH!");
+
         var self = this;
 
 
         this.idAnnotation = idAnnotation;
+        console.log("refresh: idAnnotation="+self.idAnnotation);
         var refreshTree = function(model , response) {
             self.activeEvent = false;
             console.log("self.activeEvent f="+self.activeEvent);
@@ -96,7 +124,10 @@ var OntologyTreeView = Backbone.View.extend({
     initBindings : function () {
         var self = this;
         this.tree.bind("check_node.jstree", function(event, data) {
-            if (self.idAnnotation == null || !self.activeEvent) return;
+            console.log("check node: idAnnotation=" + self.idAnnotation + " activeEvent=" + self.activeEvent);
+            if (self.idAnnotation == null) return;
+            if(!self.activeEvent) return;
+
             var idTerm = data.rslt.obj.attr("id");
             self.linkTerm(idTerm);
 
@@ -104,7 +135,8 @@ var OntologyTreeView = Backbone.View.extend({
         });
         this.tree.bind("uncheck_node.jstree", function(event, data) {
 
-            if (self.idAnnotation == null || !self.activeEvent) return;
+            if (self.idAnnotation == null) return;
+            if(!self.activeEvent) return;
 
             var idTerm = data.rslt.obj.attr("id");
             self.unlinkTerm(idTerm);

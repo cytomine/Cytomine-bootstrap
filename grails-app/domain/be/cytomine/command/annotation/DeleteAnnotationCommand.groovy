@@ -41,6 +41,7 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand{
     log.debug "undo data:"+ data
     def annotationData = JSON.parse(data)
     Annotation annotation = Annotation.createAnnotationFromData(annotationData)
+    annotation.id = annotationData.id;
     annotation.save()
     log.debug "annotation save with id " + annotation.id
     def filename = annotation.getImage().getFilename()

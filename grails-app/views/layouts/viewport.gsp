@@ -462,6 +462,7 @@
 <script type="text/javascript" src="application/models/ProjectModel.js" ></script>
 <script type="text/javascript" src="application/models/AnnotationModel.js" ></script>
 <script type="text/javascript" src="application/models/SlideModel.js" ></script>
+<script type="text/javascript" src="application/models/TransactionModel.js" ></script>
 <!-- View -->
 <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
 <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>

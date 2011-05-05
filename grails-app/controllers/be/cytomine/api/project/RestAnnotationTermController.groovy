@@ -46,7 +46,7 @@ class RestAnnotationTermController extends RestController {
   def add = {
     log.info "Add"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
-    log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
+    log.info "User:" + currentUser.username +" transaction:" +  currentUser.transactionInProgress + " request:" + request.JSON.toString()
     Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : request.JSON.toString(),user: currentUser)
     def result = processCommand(addAnnotationTermCommand, currentUser)
     response(result)

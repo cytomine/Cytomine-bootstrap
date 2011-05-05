@@ -52,6 +52,8 @@ class AnnotationTerm implements Serializable{
     if (annotationTerm) {
         annotation?.removeFromAnnotationTerm(annotationTerm)
         term?.removeFromAnnotationTerm(annotationTerm)
+        annotation.refresh()
+        term.refresh()
       annotationTerm.delete(flush : true)
 
     }

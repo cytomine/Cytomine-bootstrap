@@ -304,8 +304,11 @@ AnnotationLayer.prototype = {
                 };
             },
             'featureunselected': function () {
-                if (self.dialog != null) self.dialog.destroy();
-                self.ontologyTreeView.clear();
+                if (alias.dialog != null) alias.dialog.destroy();
+                console.log("featureunselected");
+                alias.ontologyTreeView.clear();
+                alias.ontologyTreeView.clearAnnotation();
+                //alias.ontologyTreeView.refresh(null);
             },
             'featureadded': function (evt) {
                 console.log("onFeatureAdded start:" + evt.feature.attributes.idAnnotation);
@@ -371,12 +374,19 @@ AnnotationLayer.prototype = {
         map.addLayer(this.vectorsLayer);
     },
     addFeature: function (feature) {
+
         this.features[feature.attributes.idAnnotation] = feature;
         this.vectorsLayer.addFeatures(feature);
+    },
+    selectFeature: function (feature) {
+        this.controls.select.unselectAll();
+        this.controls.select.select(feature);
     },
     removeFeature: function (idAnnotation) {
         var feature = this.features[idAnnotation];
         this.vectorsLayer.removeFeatures(feature);
+        this.ontologyTreeView.clearAnnotation();
+        this.ontologyTreeView.clear();
         this.features[idAnnotation] = null;
 
     },
@@ -403,42 +413,55 @@ AnnotationLayer.prototype = {
                 window.app.view.message("Annotation", response.message, "");
                 return response.annotation;
             }});
-        annotation.save(annotation.toJSON(), {
+
+
+        new BeginTransactionModel({}).save({}, {
             success: function (model, response) {
                 console.log(response.message);
-                // window.app.view.message(response.message);
+                annotation.save(annotation.toJSON(), {
+                    success: function (model, response) {
+                        console.log(response.message);
+                        // window.app.view.message(response.message);
 
-                model.set({id : response.annotation.id});
-                console.log("new annotation id" + response.annotation.id);
+                        model.set({id : response.annotation.id});
+                        console.log("new annotation id" + response.annotation.id);
 
-                var point = (format.read(response.annotation.location));
-                var geom = point.geometry;
-                newFeature = new OpenLayers.Feature.Vector(geom);
-                newFeature.attributes = {
-                    idAnnotation: response.annotation.id,
-                    listener: 'NO',
-                    importance: 10
-                };
+                        var point = (format.read(response.annotation.location));
+                        var geom = point.geometry;
+                        newFeature = new OpenLayers.Feature.Vector(geom);
+                        newFeature.attributes = {
+                            idAnnotation: response.annotation.id,
+                            listener: 'NO',
+                            importance: 10
+                        };
 
-                var terms = alias.ontologyTreeView.getTermsChecked();
-                var counter = 0;
-                if (terms.length == 0) {
-                    alias.addTermCallback(0,0,feature, newFeature);
-                }
+                        var terms = alias.ontologyTreeView.getTermsChecked();
+                        var counter = 0;
+                        if (terms.length == 0) {
+                            alias.addTermCallback(0,0,feature, newFeature);
+                        }
 
-                _.each(terms, function (id) {
-                    new AnnotationTermModel({
-                        term: id,
-                        annotation: response.annotation.id
-                    }).save(null, {success : function (model, response) {
-                        alias.addTermCallback(terms.length, ++counter, feature, newFeature);
-                    }});
+                        _.each(terms, function (id) {
+                            new AnnotationTermModel({
+                                term: id,
+                                annotation: response.annotation.id
+                            }).save(null, {success : function (model, response) {
+                                alias.addTermCallback(terms.length, ++counter, feature, newFeature);
+                            }});
+                        });
+
+                    },
+                    error: function (model, response) {
+                        console.log("error new annotation id");
+                    }
                 });
+
             },
             error: function (model, response) {
-                console.log("error new annotation id");
+                console.log("ERRORR: error transaction begin");
             }
         });
+
     },
     addTermCallback : function(total, counter, oldFeature, newFeature) {
         if (counter < total) return;
@@ -446,11 +469,76 @@ AnnotationLayer.prototype = {
         this.controls.select.unselectAll();
         //this.controls.select.select(newFeature);
         this.vectorsLayer.removeFeatures([oldFeature]);
+        new EndTransactionModel({}).save();
     },
-    /*Remove annotation from database*/
-    removeAnnotation: function (feature) {
-        new AnnotationModel({id:feature.attributes.idAnnotation}).destroy(); //TODO : callback success-error
+    removeTermCallback : function(total, counter, feature,idAnnotation) {
+        if (counter < total) return;
+        this.removeFeature(feature);
+        this.controls.select.unselectAll();
         this.vectorsLayer.removeFeatures([feature]);
+
+        new AnnotationModel({id:feature.attributes.idAnnotation}).destroy({success: function(){
+            console.log("Delete annotation");
+            console.log("End transaction");
+            new EndTransactionModel({}).save();
+        }});
+
+
+
+    },
+    removeAnnotation : function(feature) {
+        var alias = this;
+        var idAnnotation = feature.attributes.idAnnotation;
+        console.log("Delete annotation id ="+idAnnotation);
+        var annotation = new AnnotationModel({id:idAnnotation});
+        var counter = 0;
+        new BeginTransactionModel({}).save({}, {
+            success: function (model, response) {
+                console.log(response.message);
+
+
+                new AnnotationTermCollection({idAnnotation:idAnnotation}).fetch({success:function (collection, response){
+                    collection.each(function(term) {
+                        console.log("delete term="+term.id + " from annotation " + idAnnotation);
+                        console.log("annotationTerm="+JSON.stringify(term));
+
+                            new AnnotationTermModel({annotation:idAnnotation,term:term.id}).destroy({success : function (model, response) {
+                                alias.removeTermCallback(collection.length, ++counter, feature, idAnnotation);
+                            }});
+
+                    });
+
+                }});
+
+
+                /*annotation.destroy({
+                    success: function (model, response) {
+                        console.log(response);
+
+
+
+
+                        _.each(terms, function (id) {
+                            new AnnotationTermModel({
+                                term: id,
+                                annotation: response.annotation.id
+                            }).save(null, {success : function (model, response) {
+                                alias.addTermCallback(terms.length, ++counter, feature, newFeature);
+                            }});
+                        });
+
+                    },
+                    error: function (model, response) {
+                        console.log("error new annotation id");
+                    }
+                });*/
+
+            },
+            error: function (model, response) {
+                console.log("ERRORR: error transaction begin");
+            }
+        });
+
     },
 
     /*Modifiy annotation on database*/
@@ -596,6 +684,7 @@ AnnotationLayer.prototype = {
                              importance: 10
                          };
                          self.addFeature(feature);
+                         self.selectFeature(feature);
                      }
                  });
     },
@@ -605,5 +694,14 @@ AnnotationLayer.prototype = {
     annotationUpdated: function (idAnnotation, idImage) {
         this.annotationRemoved(idAnnotation);
         this.annotationAdded(idAnnotation);
+    },
+    termAdded: function (idAnnotation, idTerm) {
+        var self = this;
+        console.log("termAdded");
+        this.ontologyTreeView.check(idTerm);
+    },
+    termRemoved: function (idAnnotation, idTerm) {
+        console.log("termRemoved");
+        this.ontologyTreeView.uncheck(idTerm);
     }
 }

@@ -9,7 +9,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.command.AddCommand
 
 class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
-
+  boolean saveOnUndoRedoStack = true;
   def execute() {
     log.info("Execute")
     try
@@ -34,15 +34,25 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
   def undo() {
     log.info("Undo")
     def annotationTermData = JSON.parse(data)
-    def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(Annotation.get(annotationTermData.annotation),Term.get(annotationTermData.term))
+    def annotation = Annotation.get(annotationTermData.annotation)
+    def term = Term.get(annotationTermData.term)
+    def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
     AnnotationTerm.unlink(annotationTerm.annotation,annotationTerm.term)
     log.debug("Delete annotationTerm with id:"+annotationTermData.id)
-    return [data : ["AnnotationTerm deleted"], status : 200]
+
+    def callback = [method : "be.cytomine.DeleteAnnotationTermCommand", annotationID : annotation.id , termID : term.id , imageID:annotation.image.id]
+    def message = messageSource.getMessage('be.cytomine.DeleteAnnotationTermCommand', [annotation.name,term.name] as Object[], Locale.ENGLISH)
+    //return [data : ["AnnotationTerm deleted"], status : 200]
+    return [data : [message : message, annotationTerm : annotationTerm.id, callback : callback], status : 200]
+   // [message : message, annotation : annotationData.id, callback : callback] <<<<=======
   }
 
   def redo() {
     log.info("Redo:"+data.replace("\n",""))
     def annotationTermData = JSON.parse(data)
+    def annotation = Annotation.get(annotationTermData.annotation)
+    def term = Term.get(annotationTermData.term)
+
     def json = JSON.parse(postData)
     log.debug("Redo json:"+ json.toString() )
     def annotationTerm = AnnotationTerm.createAnnotationTermFromData(json)
@@ -53,8 +63,11 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
     /*def session = sessionFactory.getCurrentSession()
     session.clear()     */
     //hibSession.
+    def callback = [method : "be.cytomine.AddAnnotationTermCommand", annotationID : annotation.id , termID : term.id, imageID:annotation.image.id  ]
+    def message = messageSource.getMessage('be.cytomine.AddAnnotationTermCommand', [annotation.name,term.name] as Object[], Locale.ENGLISH)
+    log.debug("Add annotationTerm with id:"+annotationTermData.id)
 
-    return [data : [annotationTerm : annotationTerm], status : 201]
+    return [data : [annotationTerm : annotationTerm, message : message, callback : callback], status : 201]
   }
   //def sessionFactory
 

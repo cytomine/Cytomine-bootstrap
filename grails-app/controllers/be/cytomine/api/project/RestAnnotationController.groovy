@@ -74,7 +74,7 @@ class RestAnnotationController extends RestController {
   def add = {
     log.info "Add"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
-    log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
+    log.info "User:" + currentUser.username + " transaction:" +  currentUser.transactionInProgress  + " request:" + request.JSON.toString()
     Command addAnnotationCommand = new AddAnnotationCommand(postData : request.JSON.toString(), user: currentUser)
     def result = processCommand(addAnnotationCommand, currentUser)
     response(result)
@@ -84,7 +84,7 @@ class RestAnnotationController extends RestController {
   def delete = {
     log.info "Delete"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
-    log.info "User:" + currentUser.username + " params.id=" + params.id
+    log.info "User:" + currentUser.username +" transaction:" +  currentUser.transactionInProgress  + " params.id=" + params.id
     //TODO: delete annotation-term if annotation is deleted
     //This code seems to be ok BUT it's not done with command (no undo/redo) !
     /*Annotation.withTransaction {

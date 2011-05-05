@@ -209,7 +209,10 @@ class BootStrap {
             [name : "GIGA-DEV",  groups : [[ name :"GIGA"]],ontology: "LBA"],
             [name : "GIGA-DEV2",  groups : [[ name :"GIGA"]],ontology: "LBA"],
             [name : "GIGA-DEV3 PROJECT",  groups : [[ name :"GIGA"]],ontology: "LBA"],
-            [name : "GIGA-DEV4 PROJECT TEST AUTOCOMPLETION",  groups : [[ name :"GIGA"]],ontology: "LBA"]
+            [name : "GIGA-DEV4 PROJECT TEST AUTOCOMPLETION",  groups : [[ name :"GIGA"]],ontology: "LBA"],
+            [name : "STUDY NEO4",  groups : [[ name :"GIGA"]],ontology: "Tissus"],
+            [name : "STUDY NEO13",  groups : [[ name :"GIGA"]],ontology: "Cellules"],
+            [name : "ANAPATH",  groups : [[ name :"GIGA"]],ontology: "ASP"],
             // [name : "NEO13", groups : [[ name :"GIGA"]]],
             // [name : "NEO4",  groups : [[ name :"GIGA"]]]
 
@@ -639,7 +642,7 @@ class BootStrap {
             [filename:'file:///home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_NEO4/grp_HPg_INH/converti/jpg/_NEO4_HPg_INH_8.7001.tif.jp2',name:'_NEO4_HPg_INH_8.7001.tif.jp2',slidename:'NEO4_HPg_INH_8',order:70,study:'NEO4'],
             [filename:'file:///home/maree/data/CYTOMINE/LBTD/Slides/Olympus/study_test/grp/converti/jpg/NEO_4_Curcu_INH_1.10_3_2_01.tif.jp2',name:'NEO_4_Curcu_INH_1.10_3_2_01.tif.jp2',slidename:'NEO_4_Curcu_INH_1',order:10,study:'NEO4']
     ]
-    // createLBTDScans(LBTDScans)
+    //createLBTDScans(LBTDScans)
 
 
 

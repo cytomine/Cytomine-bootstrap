@@ -7,6 +7,7 @@ class RedoStackItem extends SequenceDomain implements Comparable {
   User user
   Command command
   Boolean transactionInProgress
+  int transaction
 
   static belongsTo = [user:User, command:Command]
 

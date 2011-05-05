@@ -22,7 +22,8 @@ class Infos {
   public static String UNDOURL = "command/undo"
   public static String REDOURL = "command/redo"
 
-
+  public static String BEGINTRANSACT = "transaction/begin"
+  public static String ENDTRANSACT = "transaction/end"
 
 
 }
