@@ -7,7 +7,7 @@ var ApplicationController = Backbone.Controller.extend({
     status : {},
 
     routes: {
-        ""          :   "explorer",
+        ""          :   "initialRoute",
         "explorer"  :   "explorer",
         "upload"    :   "upload",
         "admin"     :   "admin",
@@ -134,8 +134,12 @@ var ApplicationController = Backbone.Controller.extend({
     },
 
     warehouse : function () {
-
         this.view.showComponent(this.view.components.warehouse);
+    },
+
+    initialRoute: function() {
+        this.controllers.project.project();
+
     }
 
 
