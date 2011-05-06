@@ -166,7 +166,7 @@ class Image extends SequenceDomain {
             returnArray['user'] = it.user? it.user.id : null
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
-            returnArray['info'] = "Slide : " + it.slide?.name + "<br />Annotations : " + it.annotations.size()
+            returnArray['info'] = "Slide : " + it.slide?.name + "<br />Annotations : " + it.annotations?.size()
             //returnArray['annotations'] = it.annotations
             returnArray['thumb'] = it.getThumbURL()
             returnArray['preview'] = it.getPreviewURL()
