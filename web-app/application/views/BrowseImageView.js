@@ -141,9 +141,9 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().enableHightlight();
         });
         toolbar.find('input[id=select' + this.model.get('id') + ']').click(function () {
-         self.getUserLayer().toggleControl("select");
-         self.getUserLayer().disableHightlight();
-         });
+            self.getUserLayer().toggleControl("select");
+            self.getUserLayer().disableHightlight();
+        });
         toolbar.find('input[id=regular4' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().setSides(4);
             self.getUserLayer().toggleControl("regular");
@@ -198,14 +198,19 @@ var BrowseImageView = Backbone.View.extend({
                     var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), colors[colorIndex], self.ontologyTreeView );
                     layerAnnotation.loadAnnotations(self.map);
                     //layerAnnotation.initHightlight(self.map);
-                    if (user.get('id') == window.app.status.user.id) {
+                    var isOwner = user.get('id') == window.app.status.user.id;
+                    if (isOwner) {
                         self.userLayer = layerAnnotation;
-                        layerAnnotation.initControls(self);
+                        layerAnnotation.initControls(self, isOwner);
                         layerAnnotation.registerEvents(self.map);
                         self.userLayer.toggleIrregular();
                         //simulate click on Navigate button
                         var toolbar = $('#toolbar' + self.model.get('id'));
                         toolbar.find('input[id=none' + self.model.get('id') + ']').click();
+                    } else {
+                        layerAnnotation.initControls(self, isOwner);
+                        layerAnnotation.registerEvents(self.map);
+                        layerAnnotation.controls.select.activate();
                     }
                     colorIndex++;
 
@@ -214,12 +219,7 @@ var BrowseImageView = Backbone.View.extend({
         });
     },
     initOntology: function () {
-
-
-
         var self =this;
-
-
         var ontology = new ProjectModel({id:window.app.status.currentProject}).fetch({
             success : function(model, response) {
                 var idOntology = model.get('ontology');
@@ -264,34 +264,18 @@ var BrowseImageView = Backbone.View.extend({
 
 
 var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView) {
-
-    var myStyles = new OpenLayers.StyleMap({
-        "default": new OpenLayers.Style({
-            pointRadius: "${type}",
-            // sized according to type attribute
-            fillColor: color,
-            strokeColor: "#000",
-            strokeWidth: 2,
-            graphicZIndex: 1,
-            fillOpacity: 0.5
-        }),
-        "select": new OpenLayers.Style({
-            fillColor: "#EEE",
-            strokeColor: "#000",
-            graphicZIndex: 2
-        }),
-        "modify": new OpenLayers.Style({
-            fillColor: "#EEE",
-            strokeColor: "#000",
-            graphicZIndex: 2
-        })
+    var styleMap = new OpenLayers.StyleMap({
+        "default" : OpenLayers.Util.applyDefaults({fillColor: color, fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
+                OpenLayers.Feature.Vector.style["default"]),
+        "select" : OpenLayers.Util.applyDefaults({fillColor: "#25465D", fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
+                OpenLayers.Feature.Vector.style["default"])
     });
     this.ontologyTreeView = ontologyTreeView;
     this.name = name;
     this.imageID = imageID;
     this.userID = userID;
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
-        //styleMap: myStyles,
+        styleMap: styleMap,
         rendererOptions: {
             zIndexing: true
         }
@@ -309,6 +293,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView) 
 AnnotationLayer.prototype = {
     hoverControl : null,
     deleteOnSelect : false, //true if select tool checked
+    popup : false,
     registerEvents: function (map) {
         var self = this;
 
@@ -351,18 +336,25 @@ AnnotationLayer.prototype = {
             }
         });
     },
-    initControls: function (map) {
-        this.controls = {
-            'point': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
-            'line': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
-            'polygon': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon),
-            'regular': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.RegularPolygon, {
-                handlerOptions: {
-                    sides: 5
-                }
-            }),
-            'modify': new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
-            'select': new OpenLayers.Control.SelectFeature(this.vectorsLayer)
+    initControls: function (map, isOwner) {
+        if (isOwner) {
+            this.controls = {
+                'point': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
+                'line': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
+                'polygon': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon),
+                'regular': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.RegularPolygon, {
+                    handlerOptions: {
+                        sides: 5
+                    }
+                }),
+                'modify': new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
+                'select': new OpenLayers.Control.SelectFeature(this.vectorsLayer)
+            }
+        } else {
+            console.log("no owner");
+            this.controls = {
+                'select': new OpenLayers.Control.SelectFeature(this.vectorsLayer)
+            }
         }
         map.initTools(this.controls);
     },
@@ -413,35 +405,37 @@ AnnotationLayer.prototype = {
         }
     },
     clearPopup : function (map, evt) {
+        var self = this;
         feature = evt.feature;
         if (feature.popup) {
-            popup.feature = null;
+            self.popup.feature = null;
             map.removePopup(feature.popup);
             feature.popup.destroy();
             feature.popup = null;
-            popup = null;
+            self.popup = null;
         }
     },
     showPopup : function(map, evt) {
         //console.log(e.type, e.feature.id, e.feature.attributes.idAnnotation);
+        var self = this;
         if(evt.feature.popup != null){
             return;
         }
         new AnnotationModel({id : evt.feature.attributes.idAnnotation}).fetch({
             success : function (model, response) {
                 var content = ich.popupannotationtpl(model.toJSON(), true);
-                popup = new OpenLayers.Popup("chicken",
+                self.popup = new OpenLayers.Popup("chicken",
                         new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
                         new OpenLayers.Size(200,60),
                         content,
                         false);
-                popup.setBackgroundColor("transparent");
-                popup.setBorder(0);
-                popup.padding = 0;
+                self.popup.setBackgroundColor("transparent");
+                self.popup.setBorder(0);
+                self.popup.padding = 0;
 
-                evt.feature.popup = popup;
-                popup.feature = evt.feature;
-                map.addPopup(popup);
+                evt.feature.popup = self.popup;
+                self.popup.feature = evt.feature;
+                map.addPopup(self.popup);
             }
         });
     },
@@ -718,7 +712,9 @@ AnnotationLayer.prototype = {
     /* Callbacks undo/redo */
     annotationAdded: function (idAnnotation) {
         var self = this;
-        this.controls.select.deactivate();
+        var deleteOnSelectBackup = self.deleteOnSelect;
+        self.deleteOnSelect = false;
+
         var annotation = new AnnotationModel({
             id: idAnnotation
         }).fetch({
@@ -734,6 +730,7 @@ AnnotationLayer.prototype = {
                          self.addFeature(feature);
                          self.selectFeature(feature);
                          self.controls.select.activate();
+                         self.deleteOnSelect = deleteOnSelectBackup;
                      }
                  });
 
