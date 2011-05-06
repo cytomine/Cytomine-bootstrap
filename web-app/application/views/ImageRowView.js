@@ -1,7 +1,5 @@
 var ImageRowView = Backbone.View.extend({
 
-    tagName: "div",
-    className : "",
     events: {
 
     },

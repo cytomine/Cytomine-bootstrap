@@ -261,6 +261,18 @@ div .overviewPanel {
 
 }
 
+div .popupPanel {
+    width:100%;
+    color : #fff;
+    padding: 0px;
+    margin : 0px;
+    z-index : 1;
+    background-color: rgba(0, 0, 0, 0.6);
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+
+}
 
 div .ontologypanel {
     align : center;

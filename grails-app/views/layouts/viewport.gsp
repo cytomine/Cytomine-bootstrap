@@ -29,9 +29,9 @@
 
 
   <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
-  <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
-  <script type="text/javascript" src="application/lib/ui.panel.min.js"></script>
-  <link type="text/css" href="application/css/ui.panel.css" rel="stylesheet" />
+<script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
+<script type="text/javascript" src="application/lib/ui.panel.min.js"></script>
+<link type="text/css" href="application/css/ui.panel.css" rel="stylesheet" />
 
 <!-- Libs JStree
 <script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/_docs/syntax/!script.js"></script>
@@ -63,6 +63,7 @@
     </div>
     <div id="content">
     </div>
+    <div id="popup-wrapper"></div>
 </script>
 
 <script type="text/html" id="logindialogtpl">
@@ -155,16 +156,16 @@
         <div class="main term"></div>
         <div class="main ontology"></div>
 
-    <div class='sidebar'>
-      <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
-      <ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
-     <!-- <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul> -->
-      <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
-      <ul class='menu libraries'></ul>
-      <div class='buttons'>
-        <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
-      </div>
-    </div>
+        <div class='sidebar'>
+            <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
+            <ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
+            <!-- <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul> -->
+            <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
+            <ul class='menu libraries'></ul>
+            <div class='buttons'>
+                <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
+            </div>
+        </div>
 </script>
 
 <script type="text/html" id="admintpl">
@@ -288,8 +289,6 @@
          <td colspan="1" width="33%">
            <ul>
               <li>Name: {{name}} </li>
-              <li>Id: {{id}} </li>
-
              <li>Ontology: {{ontology}} </li>
              </ul>
            </td>
@@ -305,9 +304,9 @@
          </td>
       </tr>
       <tr>
-      <td><button class="seeSlide" id='projectopenimages{{id}}' type="button">See project images</button></td>
-      <td><button class="addSlide" id='projectaddimages{{id}}' type="button">Add images</button> </td>
-      <td><input class="changeProject" id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Use this project</label></input> </td>
+      <td><button class="seeSlide" id='projectopenimages{{id}}' type="button">Preview</button></td>
+      <td><button class="addSlide" id='projectaddimages{{id}}' type="button">Manage slides</button> </td>
+      <td><input class="changeProject" id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Explore</label></input> </td>
       <tr>
          </table>
 
@@ -390,7 +389,11 @@
 
 <script type="text/html" id="imagerowtpl">
     <!--<a href='#browse/{{ id }}'>-->
-    <img src='{{ preview }}' alt='{{ info }}' title='{{info}}' />
+    <a href="{{preview}}">
+            	<img title="{{filename}}"
+            	     alt="{{info}}"
+            	     src="{{preview}}">
+    </a>
     <!--</a>-->
 </script>
 
@@ -410,7 +413,7 @@
     <div class="toolbar" id="toolbar{{id}}" class="ui-widget-header ui-corner-all">
 
       <span class="nav-toolbar">
-        <input type="radio" id="none{{id}}" name="toolbar" checked="checked" /><label for="none{{id}}">Navigate</label>
+        <input type="radio" id="none{{id}}" name="toolbar" /><label for="none{{id}}">Navigate</label>
         <input type="radio" id="select{{id}}" name="toolbar" /><label for="select{{id}}">Select</label>
       </span>
       <span class="draw-toolbar">
@@ -443,6 +446,15 @@
   </div>
 </script>
 
+
+<script type="text/html" id="popupannotationtpl">
+<div class="popupPanel">
+<ul>
+<li>Area : {{area}}</li>
+<li>Perimeter : {{perimeter}}</li>
+</ul>
+</div>
+</script>
 <!-- Application -->
 <script type="text/javascript" src="application/Utilities.js" ></script>
 <!-- controllers -->
