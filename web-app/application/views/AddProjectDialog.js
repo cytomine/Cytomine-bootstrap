@@ -12,7 +12,13 @@ var AddProjectDialog = Backbone.View.extend({
         var dialog = ich.addprojectdialogtpl({});
         $(self.el).append(dialog);
 
-        //render ontologies choice
+        $("#login-form-add-project").submit(function () {self.createProject(); return false;});
+        $("#login-form-add-project").find("input").keydown(function(e){
+            if (e.keyCode == 13) { //ENTER_KEY
+                $("#login-form-add-project").submit();
+                return false;
+            }
+        });
 
 
         $("#projectontology").empty();
@@ -36,7 +42,7 @@ var AddProjectDialog = Backbone.View.extend({
             modal:true,
             buttons : {
                 "Save" : function() {
-                    self.createProject();
+                    $("#login-form-add-project").submit();
                 },
                 "Cancel" : function() {
                     $("#addproject").dialog("close");
@@ -64,8 +70,9 @@ var AddProjectDialog = Backbone.View.extend({
 
         $(self.addProjectCheckedOntologiesRadioElem).attr("checked", false);
         $(self.addProjectCheckedUsersCheckboxElem).attr("checked", false);
-    },    createProject : function() {
-
+    },
+    createProject : function() {
+        console.log("createProject...");
         $("#errormessage").empty();
         $("#projecterrorlabel").hide();
 
@@ -88,7 +95,6 @@ var AddProjectDialog = Backbone.View.extend({
                     success: function (model, response) {
                         new ProjectCollection({user : self.userID}).fetch({
                             success : function (collection, response) {
-
                                 self.projectsPanel.printProjects(collection);
                                 $("#addproject").dialog("close") ;
                             }});
