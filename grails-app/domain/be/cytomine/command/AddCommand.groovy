@@ -8,4 +8,5 @@ package be.cytomine.command
  * To change this template use File | Settings | File Templates.
  */
 class AddCommand extends Command {
+ // String actiontype = "ADD"
 }

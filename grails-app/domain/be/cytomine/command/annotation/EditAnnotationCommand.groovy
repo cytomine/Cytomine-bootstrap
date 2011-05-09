@@ -23,6 +23,9 @@ class EditAnnotationCommand extends EditCommand implements UndoRedoCommand  {
       postData.user = user.id
       log.debug "Annotation id="+postData.id
       def updatedAnnotation = Annotation.get(postData.id)
+
+      actionMessage = "EDIT ANNOTATION " + updatedAnnotation
+
       def backup = updatedAnnotation.encodeAsJSON() //we encode as JSON otherwise hibernate will update its values
 
       if (!updatedAnnotation ) {

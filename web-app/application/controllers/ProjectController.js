@@ -2,7 +2,8 @@
 var ProjectController = Backbone.Controller.extend({
 
     routes: {
-        "project"     :   "project"
+        "project"     :   "project",
+        "dashboard"  : "dashboard"
     },
 
     project : function() {
@@ -18,6 +19,22 @@ var ProjectController = Backbone.Controller.extend({
         }
 
         this.view.container.show(this.view, "#warehouse > .sidebar", "project");
+        window.app.view.showComponent(window.app.view.components.warehouse);
+    },
+
+    dashboard : function() {
+        if (!this.view) {
+             console.log("Dashboard controller");
+            this.view = new ProjectDashboardView({
+                model : window.app.models.projects.get(25),
+                el:$("#warehouse > .dashboard"),
+                container : window.app.view.components.warehouse
+            }).render();
+
+            this.view.container.views.project = this.view;
+        }
+
+        this.view.container.show(this.view, "#warehouse > .sidebar", "dashboard");
         window.app.view.showComponent(window.app.view.components.warehouse);
     }
 });

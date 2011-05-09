@@ -59,6 +59,12 @@ class UrlMappings {
       action = [GET:"show",DELETE:"delete",POST:"add"]
     }
     //TODO:  + add current user
+    "/api/project/$id/term/stat"(controller:"restProject"){
+      action = [GET:"statTerm"]
+    }
+    "/api/project/$id/last/$max"(controller:"restProject"){
+      action = [GET:"lastAction"]
+    }
 
 
     /* Image */

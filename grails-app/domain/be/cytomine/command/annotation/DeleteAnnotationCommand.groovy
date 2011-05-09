@@ -18,6 +18,9 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand{
     def postData = JSON.parse(postData)
 
     Annotation annotation = Annotation.findById(postData.id)
+
+    actionMessage = "DELETE ANNOTATION " + annotation
+
     data = annotation.encodeAsJSON()
 
     if (!annotation) {

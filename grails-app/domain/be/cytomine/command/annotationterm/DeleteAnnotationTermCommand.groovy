@@ -17,6 +17,8 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
       Annotation annotation = Annotation.get(postData.annotation)
       Term term = Term.get(postData.term)
 
+
+
     log.info "execute with annotation=" + annotation + " term=" + term
     AnnotationTerm annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
     data = annotationTerm.encodeAsJSON()
@@ -26,6 +28,7 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
     }
     log.info "Unlink=" + annotationTerm.annotation +" " + annotationTerm.term
     AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term)
+    actionMessage = "DELETE TERM " + term.name + " FROM ANNOTATION " + annotation
 
     return [data : [success : true, message : "OK", data : [annotationTerm : postData.id]], status : 200]
   }

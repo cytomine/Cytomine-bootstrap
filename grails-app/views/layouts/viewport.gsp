@@ -27,6 +27,9 @@
   <script type="text/javascript" src="application/lib/ICanHaz.js"></script>
   <script type="text/javascript" src="application/lib/galleria-1.2.3.min.js"></script>
 
+    <script type="text/javascript" src="application/lib/jquery.jqplot.js"></script>
+      <script type="text/javascript" src="application/lib/jqplot.pieRenderer.js"></script>
+
 
   <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
 <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
@@ -47,7 +50,7 @@
 <link rel='stylesheet' href='application/css/jquery.pnotify.default.css' type='text/css'/>
 <link rel='stylesheet' href='application/css/isotope.css' type='text/css'/>
 <link rel='stylesheet' href='application/css/cytomine.css' type='text/css'/>
-
+<link rel='stylesheet' href='application/css/jquery.jqplot.css' type='text/css'/>
 
 
 <!-- Templates -->
@@ -158,12 +161,14 @@
         <div class="main image"></div>
         <div class="main term"></div>
         <div class="main ontology"></div>
+        <div class="main dashboard"></div>
 
         <div class='sidebar'>
             <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
             <!-- <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul> -->
             <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
             <ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
+            <ul class='menu fixed'><li class="handle"><a href="#dashboard" name="dashboard" class="title">Dashboard</a></li></ul>
             <ul class='menu libraries'></ul>
             <div class='buttons'>
                 <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
@@ -320,6 +325,155 @@
     </div>
 </script>
 
+
+
+
+
+
+<script type="text/html" id="userlisttpl">
+    <li><div align="center"><span class="ui-icon ui-icon-person"></span></div><label style="display: inline">{{name}}</label></li>
+</script>
+
+
+<script type="text/html" id="addlisttpl">
+    <li><div align="center"><span class="ui-icon ui-icon-plus"></span></div>{{datestr}}<label style="display: inline">{{text}}</label></li>
+</script>
+<script type="text/html" id="editlisttpl">
+    <li><div align="center"><span class="ui-icon ui-icon-pencil"></span></div>{{datestr}}<label style="display: inline">{{text}}</label></li>
+</script>
+<script type="text/html" id="deletelisttpl">
+    <li><div align="center"><span class="ui-icon ui-icon-trash"></span></div>{{datestr}}<label style="display: inline">{{text}}</label></li>
+</script>
+
+
+
+
+<script type="text/html" id="projectdashboardviewtpl">
+  <div id='namedashboardinfo{{id}}' class="projectname"><h3></h3><div style="font-size: x-large; text-align : center">{{name}}</div></div>
+
+
+   <div id="lLeft">
+	<div id="panelLeft_1" class="navPanel" style="text-align:center; ">
+	    <h3>Project Info</h3>
+	    <div>
+           <ul>
+              <li>Name: {{name}} </li>
+             <li>Ontology: {{ontology}} </li>
+              <br>
+             <li>{{numberOfSlides}} slides </li>
+              <li>{{numberOfImages}} images </li>
+              <li>{{numberOfAnnotations}} annotations </li>
+               <br>
+              <li><div id="userlist"></div> </li>
+               <br>
+              <li>Created {{created}} </li>
+              <li>Updated {{updated}} </li>
+
+           </ul>
+	    </div>
+	</div>
+    </div>
+
+
+<div id="lRight">
+	<div id="panelRight_1" class="navPanel">
+	    <h3>Last action...</h3>
+	    <div>
+		Panel's initial options:
+                <ul>
+                    <div id="lastactionitem"></div>
+                </ul>
+                <b>Notes:</b>
+                <ul>
+                    <li>Not yet filter by project :-)</li>
+                </ul>
+	    </div>
+	</div>
+  </div>
+   <div id="centerpanel">
+    <div id="lCenter">
+      <div id="desktop">
+          <p>
+
+          </p>
+          <div id="panelCenter_1" class="centralPanel">
+            <h3>Project stats</h3>
+            <div>
+                        Panel's initial options:
+                        <div id="plotterms"></div>
+            </div>
+          </div>
+       </div>
+    </div>
+
+
+    <div id="lCenter2">
+      <div id="desktop2">
+          <p>
+          </p>
+          <div id="panelCenter_2" class="centralPanel">
+            <h3>Project images</h3>
+            <div id="projectImageList">
+
+            </div>
+          </div>
+       </div>
+    </div>
+    </div>
+
+
+ <!-- <div id='projectdashboardinfo{{id}}' class="projectstat">
+    <h3>{{name}}</h3>
+    <div>
+      <table class='projecttable'>
+       <tr>
+         <td colspan="1">
+           <ul>
+              <li>Name: {{name}} </li>
+             <li>Ontology: {{ontology}} </li>
+             </ul>
+           </td>
+         <td colspan="1">
+           <ul>
+             <li>{{numberOfSlides}} slides </li>
+              <li>{{numberOfImages}} images </li>
+              <li>{{numberOfAnnotations}} annotations </li>
+             </ul>
+         </td>
+         <td colspan="1"">
+            <li>{{users}} </li>
+         </td>
+      </tr>
+      <tr>
+      <td></td>
+      <td><button class="addSlide" id='projectdashboardaddimages{{id}}' type="button">Manage slides</button> </td>
+      <td></td>
+      <tr>
+         </table>
+
+         <div class="galleria">
+         </div>
+    </div>
+    <br><br>
+    </div>-->
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script type="text/html" id="projectchangedialog">
   <div id='projectchangedialog{{id}}' title="Change current project">
     <p>You want to switch to project {{name}}.</p>
@@ -352,7 +506,8 @@
 </script>
 
 
-
+<script type="text/html" id="dashboardviewtpl">
+</script>
 
 
 <script type="text/html" id="imageviewtpl">
@@ -478,6 +633,8 @@
 <script type="text/javascript" src="application/models/AnnotationModel.js" ></script>
 <script type="text/javascript" src="application/models/SlideModel.js" ></script>
 <script type="text/javascript" src="application/models/TransactionModel.js" ></script>
+<script type="text/javascript" src="application/models/StatsModel.js" ></script>
+<script type="text/javascript" src="application/models/CommandModel.js" ></script>
 <!-- View -->
 <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
 <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
@@ -495,6 +652,7 @@
 <script type="text/javascript" src="application/views/ProjectPanelView.js" ></script>
 <script type="text/javascript" src="application/views/AddImageProjectDialog.js" ></script>
 <script type="text/javascript" src="application/views/AddProjectDialog.js" ></script>
+<script type="text/javascript" src="application/views/ProjectDashboardView.js" ></script>
 
 
 <script type="text/javascript" src="application/views/Tabs.js" ></script>

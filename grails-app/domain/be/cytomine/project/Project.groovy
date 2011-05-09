@@ -103,6 +103,8 @@ class Project extends SequenceDomain {
       returnArray['numberOfImages'] = it.images().size();
       returnArray['numberOfAnnotations'] = it.annotations().size();
 
+      returnArray['created'] = it.created? it.created.time.toString() : null
+      returnArray['updated'] = it.updated? it.updated.time.toString() : null
       return returnArray
     }
   }

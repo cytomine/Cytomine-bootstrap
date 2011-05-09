@@ -8,7 +8,13 @@ import be.cytomine.command.AddCommand
 
 class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
   boolean saveOnUndoRedoStack = true;
-  String toString() {"AddAnnotationCommand"}
+  String toString() {"ADD ANNOTATION"}
+
+  /*AddAnnotationCommand() {
+    log.info("Default constructor")
+    objectType = "ANNOTATION"
+  } */
+
   def execute() {
     try
     {
@@ -16,6 +22,9 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
       def json = JSON.parse(postData)
       json.user = user.id
       Annotation annotation = Annotation.createAnnotationFromData(json)
+
+      actionMessage = "ADD ANNOTATION " + annotation
+
       if(annotation.validate() && annotation.save(flush : true)) {
         log.info("Save annotation with id:"+annotation.id)
         data = annotation.encodeAsJSON()

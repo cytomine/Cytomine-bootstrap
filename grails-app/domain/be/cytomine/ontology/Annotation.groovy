@@ -38,6 +38,8 @@ class Annotation extends SequenceDomain implements Serializable {
     }
   }
 
+  String toString() {return "Annotation " + id}
+
   /**
    * If name is empty, fill it by "Annotation $id"
    */

@@ -27,6 +27,56 @@ class RestProjectController extends RestController {
     else responseNotFound("Project", params.id)
   }
 
+  def lastAction = {
+    log.info "lastAction"
+     Project project = Project.read(params.id)    //need to be filter by project
+     int max =  Integer.parseInt(params.max);
+
+    if(project!=null) {
+      def commands = Command.list(sort:"created", order:"desc", max:max);
+      responseSuccess(commands)
+    }
+     else responseNotFound("Project", params.id)
+  }
+
+  def statTerm = {
+    Project project = Project.read(params.id)
+
+    if(project!=null) {
+      log.debug "project=" + project.name
+      def terms = project.ontology.terms()
+      def annotations = project.annotations()
+      log.debug "There are " + terms.size() + " terms and " + annotations.size() + " annotations"
+      def stats = [:]
+
+      terms.each{ term ->
+            stats[term.name] = 0
+      }
+
+      annotations.each{ annotation ->
+        def termOfAnnotation = annotation.terms()
+        termOfAnnotation.each{ term ->
+            stats[term.name] = stats[term.name]+1
+        }
+      }
+
+      responseSuccess(convertHashToList(stats))
+
+    }
+    else responseNotFound("Project", params.id)
+  }
+
+  List convertHashToList(HashMap<String,Integer> map)
+  {
+    def list = []
+       map.each{
+         println "Item: $it"
+          list << ["key":it.key,"value":it.value]
+       }
+       list
+
+  }
+
   def add = {
     log.info "Add"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
