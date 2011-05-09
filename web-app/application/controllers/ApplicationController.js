@@ -67,6 +67,7 @@ var ApplicationController = Backbone.Controller.extend({
             this.view.render();
             this.controllers.image        = new ImageController();
             this.controllers.project      = new ProjectController();
+            this.controllers.dashboard    = new DashboardController();
             this.controllers.browse       = new BrowseController();
             this.controllers.term         = new TermController();
             this.controllers.ontology     = new OntologyController()

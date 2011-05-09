@@ -619,6 +619,7 @@
 <script type="text/javascript" src="application/controllers/ApplicationController.js" ></script>
 <script type="text/javascript" src="application/controllers/AuthController.js" ></script>
 <script type="text/javascript" src="application/controllers/ProjectController.js" ></script>
+<script type="text/javascript" src="application/controllers/DashboardController.js" ></script>
 <script type="text/javascript" src="application/controllers/ImageController.js" ></script>
 <script type="text/javascript" src="application/controllers/BrowseController.js" ></script>
 <script type="text/javascript" src="application/controllers/TermController.js" ></script>
