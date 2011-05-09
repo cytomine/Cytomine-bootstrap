@@ -128,7 +128,10 @@
 
 <script type="text/html" id="explorertpl">
     <div id="explorer">
-        <div class="main browser">
+        <div class="main browser" style="display:none">
+        </div>
+        <div class="main noProject">
+            Nothing to display
         </div>
     </div>
 </script>

@@ -538,6 +538,10 @@ a.checkbox-deselect {
     padding: 5px;
 /*cursor: pointer;*/
 }
+
+.noProject {
+    color : red;
+}
 /* panel left */
 #lCenter{
     padding:0em;

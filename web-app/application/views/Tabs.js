@@ -59,10 +59,14 @@ var Tabs = Backbone.View.extend({
         this.images.splice(index,1);
         var tabs = $(this.el).children('.tabs');
         tabs.tabs( "remove", index);
+        if (this.size() == 0) $(this.el).parent().find('.noProject').show();
     },
     showTab : function(idImage) {
+        $(this.el).parent().find('.noProject').hide();
+        $(this.el).show();
         var tabs = $(this.el).children('.tabs');
         tabs.tabs('select', '#tabs-' + idImage);
+
     },
     size : function() {
         return _.size(this.images);
@@ -72,5 +76,7 @@ var Tabs = Backbone.View.extend({
         while (this.size() > 0) {
             self.removeTab(0);
         }
+        $(self.el).hide();
+        $(self.el).parent().find('.noProject').show();
     }
 });
