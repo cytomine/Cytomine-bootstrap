@@ -15,12 +15,15 @@ var ProjectDashboardView = Backbone.View.extend({
     events: {
     },
     render: function() {
-        this.printProjectInfo();
+        var self = this;
+        self.printProjectInfo();
+
         return this;
     },
     refresh : function(model) {
+
         var self = this;
-        //$(this.projectElem+this.model.get('id')).empty();
+        $(this.projectElem+this.model.get('id')).empty();
         new ProjectModel({id : self.model.id}).fetch({
             success : function (model, response) {
                 console.log("refresh project panel");
@@ -31,6 +34,7 @@ var ProjectDashboardView = Backbone.View.extend({
 
     },
     printProjectInfo : function() {
+        console.log("print.........");
         var self = this;
         var json = self.model.toJSON();
         var idOntology = json.ontology;
@@ -109,40 +113,51 @@ var ProjectDashboardView = Backbone.View.extend({
 
             }});
 
-            new CommandCollection({project:self.model.get('id'),max:10}).fetch({success : function (collection, response) {
-                console.log("**************************************");
+
+            var commandCollection = new CommandCollection({project:self.model.get('id'),max:10});
+            var commandCallback = function(collection, response) {
+                $("#lastactionitem").empty();
                 collection.each(function(command) {
-                       console.log(command);
+                    console.log(command);
 
-                        var dateCreated = new Date();
-                        dateCreated.setTime(command.get('created'));
-                        var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString()
+                    var dateCreated = new Date();
+                    dateCreated.setTime(command.get('created'));
+                    var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString()
 
-                        var action = ""
-                        if(command.get("type")=="ADD") {
-                            action = ich.addlisttpl({text:command.get("action"),datestr:dateStr});
-                        }
-                        else if(command.get("type")=="EDIT") {
-                            action = ich.editlisttpl({text:command.get("action"),datestr:dateStr});
-                        }
-                        else if(command.get("type")=="DELETE") {
-                            action = ich.deletelisttpl({text:command.get("action"),datestr:dateStr});
-                        }
-                        $("#lastactionitem").append(action);
+                    var action = ""
+                    if(command.get("type")=="ADD") {
+                        action = ich.addlisttpl({text:command.get("action"),datestr:dateStr});
+                    }
+                    else if(command.get("type")=="EDIT") {
+                        action = ich.editlisttpl({text:command.get("action"),datestr:dateStr});
+                    }
+                    else if(command.get("type")=="DELETE") {
+                        action = ich.deletelisttpl({text:command.get("action"),datestr:dateStr});
+                    }
+                    $("#lastactionitem").append(action);
+                });
+            }
+            var fetchCommands = function() {
+                commandCollection.fetch({
+                    success : function(model, response) {
+                        commandCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+                    }
+                });
+            }
+
+            fetchCommands();
+            setInterval(function(){
+                fetchCommands();
+            }, 5000);
 
 
-                  });
-
-            }});
 
 
-
-
-            new StatsCollection({project:self.model.get('id')}).fetch({success : function (collection, response) {
-
+            var statsCollection = new StatsCollection({project:self.model.get('id')});
+            var statsCallback = function(collection, response) {
                 //console.log("**************************************");
                 console.log(collection);
-
+                $("#plotterms").empty();
 
                 var array = new Array();
                 collection.each(function(stat) {
@@ -153,10 +168,7 @@ var ProjectDashboardView = Backbone.View.extend({
                     //console.log("###" + stat.get('key'));
                 });
 
-                // $(document).ready(function(){
-                s1 = [['Sony',7], ['Samsumg',13.3], ['LG',14.7], ['Vizio',5.2], ['Insignia', 1.2]];
-
-                plot1 = $.jqplot('plotterms', [array], {
+                $.jqplot('plotterms', [array], {
                     height: 450,
                     width: 450,
                     grid: {
@@ -179,8 +191,19 @@ var ProjectDashboardView = Backbone.View.extend({
                         location: 'e'
                     }
                 });
+            }
+            var fetchStats = function() {
+                statsCollection.fetch({
+                    success : function(model, response) {
+                        statsCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+                    }
+                });
+            }
 
-            }});
+            fetchStats();
+            /*setInterval(function(){
+                fetchStats();
+            }, 5000);*/
 
 
 
