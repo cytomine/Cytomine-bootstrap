@@ -13,12 +13,14 @@ var Tabs = Backbone.View.extend({
             add: function(event, ui) {
                 tabs.tabs('select', '#' + ui.panel.id);
                 $("#"+ui.panel.id).parent().parent().css('height', "100%");
-                $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;');
-                $("a[href=#"+ui.panel.id+"]").parent().append("<span class='ui-icon ui-icon-close'>Remove Tab</span>");
-                $("a[href=#"+ui.panel.id+"]").parent().find("span.ui-icon-close" ).click(function() {
-                    var index = $( "li", tabs ).index( $( this ).parent() );
-                    self.removeTab(index);
-                });
+                if (ui.panel.id != "tabs-0") { //tab is not the dashboard
+                    $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;');
+                    $("a[href=#"+ui.panel.id+"]").parent().append("<span class='ui-icon ui-icon-close'>Remove Tab</span>");
+                    $("a[href=#"+ui.panel.id+"]").parent().find("span.ui-icon-close" ).click(function() {
+                        var index = $( "li", tabs ).index( $( this ).parent() );
+                        self.removeTab(index);
+                    });
+                }
             },
             show: function(event, ui){
 
@@ -59,11 +61,11 @@ var Tabs = Backbone.View.extend({
         this.images.splice(index,1);
         var tabs = $(this.el).children('.tabs');
         tabs.tabs( "remove", index);
-        if (this.size() == 0) $(this.el).parent().find('.noProject').show();
+        //if (this.size() == 0) $(this.el).parent().find('.noProject').show();
     },
     showTab : function(idImage) {
-        $(this.el).parent().find('.noProject').hide();
-        $(this.el).show();
+        //$(this.el).parent().find('.noProject').hide();
+        //$(this.el).show();
         var tabs = $(this.el).children('.tabs');
         tabs.tabs('select', '#tabs-' + idImage);
 
@@ -76,7 +78,19 @@ var Tabs = Backbone.View.extend({
         while (this.size() > 0) {
             self.removeTab(0);
         }
+        $(this.el).children('.tabs').empty();
         $(self.el).hide();
         $(self.el).parent().find('.noProject').show();
+    },
+    addDashboard : function(dashboard) {
+        console.log("add dashboard");
+        var tabs = $(this.el).children('.tabs');
+        tabs.tabs("add", "#tabs-0", 'Dashboard');
+        $("#explorer > .browser").show();
+        $("#explorer > .noProject").hide();
+        this.images.push({
+            idImage : 0,
+            browImageView : dashboard
+        });
     }
 });

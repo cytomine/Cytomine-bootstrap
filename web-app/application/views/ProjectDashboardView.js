@@ -62,8 +62,10 @@ var ProjectDashboardView = Backbone.View.extend({
                 console.log("addSlideDialog!=null");
                 $("#projectdashboardinfo"+json.id).replaceWith(proj);
             }
-            else
+            else {
                 $(self.el).append(proj);
+                window.app.controllers.browse.tabs.addDashboard(self);
+            }
 
 
             collection.each(function(user) {
@@ -202,8 +204,8 @@ var ProjectDashboardView = Backbone.View.extend({
 
             fetchStats();
             /*setInterval(function(){
-                fetchStats();
-            }, 5000);*/
+             fetchStats();
+             }, 5000);*/
 
 
 

@@ -168,7 +168,6 @@
             <!-- <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul> -->
             <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
             <ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
-            <ul class='menu fixed'><li class="handle"><a href="#dashboard" name="dashboard" class="title">Dashboard</a></li></ul>
             <ul class='menu libraries'></ul>
             <div class='buttons'>
                 <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
@@ -349,7 +348,8 @@
 
 
 <script type="text/html" id="projectdashboardviewtpl">
-  <div id='namedashboardinfo{{id}}' class="projectname"><h3></h3><div style="font-size: x-large; text-align : center">{{name}}</div></div>
+<div id="tabs-0" style="overflow : auto; height: 100%;">
+  <div id='namedashboardinfo{{id}}' class="projectname"><h3></h3><div style="font-size: x-large; text-align : center;">{{name}}</div></div>
 
 
    <div id="lLeft">
@@ -456,7 +456,7 @@
     </div>
     <br><br>
     </div>-->
-
+</div>
 </script>
 
 

@@ -26,12 +26,13 @@ var ProjectPanelView = Backbone.View.extend({
     events: {
         "click .addSlide": "showAddSlidesPanel",
         "click .seeSlide": "showSlidesPanel",
-        "click .changeProject": "changeProject",
-        "click .thumb" : "setCurrentProject"
+        "click .changeProject": "changeProject"
+        //"click .thumb" : "setCurrentProject"
     },
-    setCurrentProject : function () {
+    /*setCurrentProject : function () {
         window.app.status.currentProject = this.model.id;
-    },
+
+    },*/
     render: function() {
         this.printProjectInfo();
         return this;
@@ -130,7 +131,7 @@ var ProjectPanelView = Backbone.View.extend({
 
         if(idNewProject==idOldProject) return;
 
-        if(window.app.controllers.browse.imagesOpen.length>0)
+        if(window.app.controllers.browse.tabs != null)
         {
             //Some images are opene
             //Ask if close all or cancel
@@ -142,8 +143,9 @@ var ProjectPanelView = Backbone.View.extend({
                 buttons : {
                     "Close all" : function() {
                         //close all pictures and change current project id
-                        window.app.controllers.browse.tabs.closeAll();
+                        window.app.controllers.browse.closeAll();
                         window.app.status.currentProject = idNewProject;
+                        window.app.controllers.dashboard.dashboard();
                         $(self.projectChangeDialog+idNewProject).dialog("close");
 
                     },
@@ -159,7 +161,9 @@ var ProjectPanelView = Backbone.View.extend({
         else
         {
             //No image open
+            window.app.controllers.browse.closeAll();
             window.app.status.currentProject = idNewProject;
+            window.app.controllers.dashboard.dashboard();
         }
 
         console.log("New current project:"+window.app.status.currentProject);

@@ -2,7 +2,7 @@
 var BrowseController = Backbone.Controller.extend({
 
     tabs : null,
-    imagesOpen : new Array(), //keep id of open images
+
     routes: {
         "browse/:idImage"   :   "browse",
         "close"   :   "close"
@@ -12,7 +12,7 @@ var BrowseController = Backbone.Controller.extend({
         console.log("initBrowseController");
     },
 
-    browse : function (idImage) {
+    initTabs : function() { //SHOULD BE OUTSIDE OF THIS CONTROLLER
         //create tabs if not exist
         if (this.tabs == null) {
             this.tabs = new Tabs({
@@ -22,19 +22,24 @@ var BrowseController = Backbone.Controller.extend({
 
          //   this.tabs.container.views.tabs = this.tabs;
         }
+    },
 
+    browse : function (idImage) {
+        this.initTabs();
         this.tabs.addTab(idImage);
         this.tabs.showTab(idImage);
-        this.imagesOpen[this.imagesOpen.length] = idImage;
+
         window.app.view.showComponent(this.tabs.container);
+
     },
 
 
     closeAll : function () {
+        if (this.tabs == null) return;
 
         this.tabs.closeAll();
-        this.imagesOpen = new Array();
-        window.app.view.showComponent(this.tabs.container);
+
+        /*window.app.view.showComponent(this.tabs.container);*/
     }
 
 });

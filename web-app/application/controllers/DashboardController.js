@@ -5,19 +5,29 @@ var DashboardController = Backbone.Controller.extend({
         "dashboard"  : "dashboard"
     },
 
-    dashboard : function() {
-        if (!this.view) {
-             console.log("Dashboard controller");
-            this.view = new ProjectDashboardView({
-                model : window.app.models.projects.get(25),
-                el:$("#warehouse > .dashboard"),
-                container : window.app.view.components.warehouse
-            }).render();
 
-            this.view.container.views.project = this.view;
-        }
+
+    dashboard : function() {
+
+        window.app.controllers.browse.initTabs();
+        var tabs = $("#explorer > .browser").children(".tabs");
+
+
+        this.view = new ProjectDashboardView({
+            model : window.app.models.projects.get(window.app.status.currentProject),
+            el: tabs,
+            container : window.app.view.components.explorer
+        }).render();
+
+
+        $("#explorer > .browser").show();
+        $("#explorer > .noProject").hide();
+
+        this.view.container.views.project = this.view;
+
+
 
         this.view.container.show(this.view, "#warehouse > .sidebar", "dashboard");
-        window.app.view.showComponent(window.app.view.components.warehouse);
+        window.app.view.showComponent(window.app.view.components.explorer);
     }
 });

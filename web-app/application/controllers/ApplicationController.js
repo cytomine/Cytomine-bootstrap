@@ -52,8 +52,6 @@ var ApplicationController = Backbone.Controller.extend({
             });
         });
 
-        window.app.status.currentProject = 25;
-
     },
 
     modelFetched : function (cpt, expected) {
