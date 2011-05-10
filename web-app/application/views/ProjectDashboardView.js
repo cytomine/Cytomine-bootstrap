@@ -248,6 +248,7 @@ var ProjectDashboardView = Backbone.View.extend({
                 console.log(collection);
                 $("#plotterms").empty();
 
+                var empty = true;
                 var array = new Array();
                 collection.each(function(stat) {
                     console.log("###" + stat.cid);
@@ -255,7 +256,14 @@ var ProjectDashboardView = Backbone.View.extend({
                     var subArray = new Array(stat.get('key'),stat.get('value'));
                     array.push(subArray);
                     //console.log("###" + stat.get('key'));
+                    empty = empty && stat.get('value')=="0";
                 });
+                console.log("empty="+empty);
+
+                if(empty) {
+                    array.push(new Array("Nothing",100))
+                }
+
 
                 $.jqplot('plotterms', [array], {
                     height: 450,

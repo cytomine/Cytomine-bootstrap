@@ -560,6 +560,9 @@
 <script type="text/html" id="imageviewtpl">
 </script>
 
+<script type="text/html" id="annotationviewtpl">
+</script>
+
 
 <script type="text/html" id="termviewtpl">
 
