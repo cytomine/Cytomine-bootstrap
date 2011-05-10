@@ -56,6 +56,7 @@ class RestProjectController extends RestController {
       annotations.each{ annotation ->
         def termOfAnnotation = annotation.terms()
         termOfAnnotation.each{ term ->
+          if(term.ontology.id==project.ontology.id)
             stats[term.name] = stats[term.name]+1
         }
       }

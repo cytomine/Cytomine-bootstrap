@@ -16,7 +16,12 @@ var ProjectDashboardView = Backbone.View.extend({
     },
     render: function() {
         var self = this;
-        self.printProjectInfo();
+
+        new ProjectModel({id : self.model.id}).fetch({
+            success : function (model, response) {
+                self.model = model;
+                self.printProjectInfo();
+            }});
 
         return this;
     },
@@ -143,7 +148,7 @@ var ProjectDashboardView = Backbone.View.extend({
             fetchAnnotations();
             setInterval(function(){
                 fetchAnnotations();
-            },10000);
+            },10000000);
 
 
             var commandCollection = new CommandCollection({project:self.model.get('id'),max:10});
@@ -237,7 +242,7 @@ var ProjectDashboardView = Backbone.View.extend({
             fetchCommands();
             setInterval(function(){
                 fetchCommands();
-            },5000);
+            },5000000);
 
 
 
@@ -300,7 +305,7 @@ var ProjectDashboardView = Backbone.View.extend({
             fetchStats();
             setInterval(function(){
              fetchStats();
-             }, 10000);
+             }, 10000000);
 
 
 
