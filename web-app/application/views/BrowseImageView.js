@@ -18,7 +18,121 @@ var BrowseImageView = Backbone.View.extend({
     getUserLayer: function () {
         return this.userLayer;
     },
-    initMap: function () {
+    initBaseLayer : function () {
+
+    },
+    initMap : function () {
+        var mime = this.model.get('mime');
+        if (mime == "jp2") this.initDjatoka();
+        if (mime == "vms") this.initIIP();
+
+        $('#layerSwitchercontent' + this.model.get('id')).find('.slider').slider({
+            value: 100,
+            slide: function (e, ui) {
+                this.layers.baseLayer.setOpacity(ui.value / 100);
+            }
+        });
+
+        new DraggablePanelView({
+            el : $('#layerSwitcher' + this.model.get('id')),
+            template : ich.layerswitchercontenttpl({id : this.model.get('id')}, true)/*,
+             dialogAttr : {
+             dialogID : "#layerswitcherdialog" + this.model.get('id'),
+             width : 200,
+             height : 200,
+             css : {left: 'auto', right : '30px', top: 'auto', bottom : '100px'}
+             }*/
+        }).render();
+
+        new DraggablePanelView({
+            el : $('#overviewMap' + this.model.get('id')),
+            template : ich.overviewmapcontenttpl({id : this.model.get('id')}, true)/*,
+             dialogAttr : {
+             dialogID : "#overviewmapdialog" + this.model.get('id'),
+             width : 200,
+             height : 200,
+             css : {left: 'auto', right : '30px', top: '100px', bottom : 'auto'}
+             }*/
+        }).render();
+    },
+    initIIP : function () {
+        var self = this;
+        var parseIIPMetadaResponse = function(response) {
+            var metadata = null;
+            var respArray = response.split("\n");
+            _.each(respArray, function(it){
+                var arg = it.split(":");
+                if (arg[0] == "Max-size") {
+                    var value = arg[1].split(" ");
+                    metadata = {width : value[0], height : value[1]};
+                }
+
+            });
+            return metadata;
+        }
+
+        var initZoomifyLayer = function(metadata) {
+            /* First we initialize the zoomify pyramid (to get number of tiers) */
+            console.log("Init zoomify with (width, height) : " + metadata.width +","+ metadata.height);
+            var zoomify_url = "http://139.165.108.140:48/fcgi-bin/iipsrv.fcgi?zoomify=/media/datalvm/anapath/upload/vms/test.vms/";
+            self.layers.baseLayer = new OpenLayers.Layer.Zoomify( "Zoomify", zoomify_url,
+                    new OpenLayers.Size( metadata.width, metadata.height ) );
+
+            var layerSwitcher = new OpenLayers.Control.LayerSwitcher({
+                roundedCorner: false,
+                roundedCornerColor: false,
+                'div': document.getElementById('layerSwitcher' + self.model.get('id')),
+                mouseDown: function (evt) { //IF WE DON'T DO THAT, Mouse Up is not triggered if dragging or sliding
+                    this.isMouseDown = false; //CONTINUE
+                    /*this.ignoreEvent(evt);*/
+                }
+            });
+
+            var numZoomLevels =  self.layers.baseLayer.numberOfTiers;
+            /* Map with raster coordinates (pixels) from Zoomify image */
+            var options = {
+                maxExtent: new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
+                minResolution: 1,
+                maxResolution: Math.pow(2, self.layers.baseLayer.numberOfTiers-1 ),
+                numZoomLevels: numZoomLevels,
+                units: 'pixels',
+                controls: [
+                    //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),
+                    new OpenLayers.Control.Navigation(),
+                    new OpenLayers.Control.PanZoomBar(),
+                    layerSwitcher,
+                    new OpenLayers.Control.MousePosition(),
+                    /*new OpenLayers.Control.OverviewMap({
+                        bounds : new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
+                        size: new OpenLayers.Size(metadata.width / Math.pow(2, numZoomLevels), metadata.height / Math.pow(2, numZoomLevels)),
+                        div: document.getElementById('overviewMap' + self.model.get('id'))
+                    }),*/
+                    new OpenLayers.Control.KeyboardDefaults()]
+            };
+
+            self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
+            self.map.addLayer(self.layers.baseLayer);
+            self.map.setBaseLayer(self.layers.baseLayer);
+            self.map.zoomToMaxExtent();
+
+        }
+
+        $.ajax({
+            async: false,
+            processData : false,
+            dataType : 'text',
+            url: this.model.get('metadataUrl'),
+            success: function(response){
+                var metadata = parseIIPMetadaResponse(response);
+                initZoomifyLayer(metadata);
+            },
+            error: function(){
+                console.log("error");
+            }
+        });
+    },
+    initDjatoka: function () {
+        var self = this;
         this.layers.baseLayer = new OpenLayers.Layer.OpenURL(this.model.get('filename'), this.model.get('imageServerBaseURL'), {
             transitionEffect: 'resize',
             layername: 'basic',
@@ -27,7 +141,7 @@ var BrowseImageView = Backbone.View.extend({
             metadataUrl: this.model.get('metadataUrl')
         });
 
-        var self = this;
+
         var metadata = this.layers.baseLayer.getImageMetadata();
         var resolutions = this.layers.baseLayer.getResolutions();
         var maxExtent = new OpenLayers.Bounds(0, 0, metadata.width, metadata.height);
@@ -58,7 +172,8 @@ var BrowseImageView = Backbone.View.extend({
             tileSize: tileSize,
             controls: [
                 //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),
-                new OpenLayers.Control.Navigation(), new OpenLayers.Control.PanZoomBar(), layerSwitcher, new OpenLayers.Control.MousePosition(), new OpenLayers.Control.OverviewMap({
+                new OpenLayers.Control.Navigation(), new OpenLayers.Control.PanZoomBar(), layerSwitcher, new OpenLayers.Control.MousePosition(),
+                new OpenLayers.Control.OverviewMap({
                     div: document.getElementById('overviewMap' + this.model.get('id')),
                     //size: new OpenLayers.Size(metadata.width / Math.pow(2, openURLLayer.getViewerLevel()), metadata.height / Math.pow(2,(openURLLayer.getViewerLevel()))),
                     size: new OpenLayers.Size(metadata.width / Math.pow(2, this.layers.baseLayer.getViewerLevel()), metadata.height / Math.pow(2, (this.layers.baseLayer.getViewerLevel()))),
@@ -73,43 +188,6 @@ var BrowseImageView = Backbone.View.extend({
         this.map = new OpenLayers.Map("map" + this.model.get('id'), options);
         this.map.addLayer(this.layers.baseLayer);
         this.map.setCenter(new OpenLayers.LonLat(lon, lat), 2);
-
-
-        $('#layerSwitchercontent' + this.model.get('id')).find('.slider').slider({
-            value: 100,
-            slide: function (e, ui) {
-                self.layers.baseLayer.setOpacity(ui.value / 100);
-            }
-        });
-
-        new DraggablePanelView({
-            el : $('#layerSwitcher' + this.model.get('id')),
-            template : ich.layerswitchercontenttpl({id : this.model.get('id')}, true)/*,
-             dialogAttr : {
-             dialogID : "#layerswitcherdialog" + this.model.get('id'),
-             width : 200,
-             height : 200,
-             css : {left: 'auto', right : '30px', top: 'auto', bottom : '100px'}
-             }*/
-        }).render();
-
-        new DraggablePanelView({
-            el : $('#overviewMap' + this.model.get('id')),
-            template : ich.overviewmapcontenttpl({id : this.model.get('id')}, true)/*,
-             dialogAttr : {
-             dialogID : "#overviewmapdialog" + this.model.get('id'),
-             width : 200,
-             height : 200,
-             css : {left: 'auto', right : '30px', top: '100px', bottom : 'auto'}
-             }*/
-        }).render();
-        /*for (var i in layerSwitcher.baseLayers) {
-         var layer = layerSwitcher.baseLayers[i];
-         var switchName = layer['inputElem']['name'];
-         var elemName = 'input[name="' + switchName + '"]';
-
-         }*/
-
     },
     initToolbar: function () {
         var toolbar = $('#toolbar' + this.model.get('id'));

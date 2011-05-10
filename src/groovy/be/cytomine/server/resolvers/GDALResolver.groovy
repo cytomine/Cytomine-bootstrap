@@ -25,6 +25,12 @@ class GDALResolver extends Resolver {
     println "getMetaDataURL : " + url
     return toURL(baseUrl)
   }
+
+    public String getPreviewUrl(String baseUrl, String imagePath) {
+        return getThumbUrl(baeUrl, imagePath)
+
+    }
+
   public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int zoom) {
     return "http://suttonplace.mlblogs.com/photos/uncategorized/working_overtime.jpg"
   }

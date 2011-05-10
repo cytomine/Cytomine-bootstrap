@@ -96,6 +96,7 @@ class BootStrap {
             [extension : "jp2", mimeType : "image/jp2"],
             [extension : "tif", mimeType : "image/tiff"],
             [extension : "gdal", mimeType : "gdalType"],
+            [extension : "vms", mimeType : "openslide/vms"]
     ]
     createMimes(mimeSamples)
 
@@ -178,6 +179,13 @@ class BootStrap {
                     'service' : '/gdal',
                     'className' : 'GDALResolver',
                     'extension' : 'gdal'
+            ],
+            [
+                    'name' : 'IIP-Openslide',
+                    'url' : 'http://is10.cytomine.be:48',
+                    'service' : '/fcgi-bin/iipsrv.fcgi',
+                    'className' : 'IPPResolver',
+                    'extension' : 'vms'
             ]
 
     ]
@@ -235,6 +243,8 @@ class BootStrap {
     /* Scans */
     def scanSamples = [
             //[filename: 'ImageNEO13_CNS_5.10_5_4_01',path:'ImageNEO13_CNS_5.10_5_4_01', extension : 'gdal', slide : 0],
+            [filename: 'test.vms',path:'/media/datalvm/anapath/upload/vms/test.vms', extension : "vms", slide : 0],
+            //[filename: 'R215.mrxs',path:'/media/datalvm/maree/PAP/Slides/R215.mrxs', extension : "mrxs", slide : 0],
             [filename: 'Boyden - essai _10x_02',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Boyden/essai_10x_02.one.jp2',slide : 0],
             [filename: 'Aperio - 003',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Aperio/003.jp2',slide : 0 ],
             [filename: 'Aperio - 2005900969-2', path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Aperio/2005900969-2.jp2',slide : 0 ],

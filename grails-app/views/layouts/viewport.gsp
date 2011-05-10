@@ -548,7 +548,7 @@
 <script type="text/html" id="imagerowtpl">
     <!--<a href='#browse/{{ id }}'>-->
     <a href="{{preview}}">
-            	<img title="{{filename}}"
+            	<img  title="{{filename}}"
             	     alt="{{info}}"
             	     src="{{preview}}">
     </a>
@@ -556,7 +556,7 @@
 </script>
 
 <script type="text/html" id="imagethumbtpl">
-    <div class='thumb'><a href='#browse/{{ id }}'><img src='{{ thumb }}' alt='{{ filename }}' /></a></div>
+    <div class='thumb'><a href='#browse/{{ id }}'><img width="192" src='{{ thumb }}' alt='{{ filename }}' /></a></div>
     <div class='thumb-info'><a href='#browse/{{ id }}'>{{filename}}</a></div>
 </script>
 
