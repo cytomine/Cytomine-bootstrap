@@ -23,13 +23,16 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
       json.user = user.id
       Annotation annotation = Annotation.createAnnotationFromData(json)
 
-      actionMessage = "ADD ANNOTATION " + annotation
+
 
       if(annotation.validate() && annotation.save(flush : true)) {
         log.info("Save annotation with id:"+annotation.id)
         data = annotation.encodeAsJSON()
         def filename = annotation.getImage().getFilename()
         def message = messageSource.getMessage('be.cytomine.AddAnnotationCommand', [annotation.id, filename] as Object[], Locale.ENGLISH)
+
+        actionMessage = "ADD ANNOTATION " + annotation
+
         return [data : [success : true , message: message, annotation : annotation], status : 201]
       } else {
         log.error("Cannot save annotation:"+annotation.errors)

@@ -49,10 +49,10 @@ var OntologyTreeView = Backbone.View.extend({
         return this;
     },
     clear : function() {
-        activeEvent = false;
+        this.activeEvent = false;
         console.log("clear");
         this.tree.jstree('uncheck_all');
-        activeEvent = true;
+        this.activeEvent = true;
     },
     clearAnnotation : function() {
             this.idAnnotation = null;

@@ -25,7 +25,7 @@ var CommandModel = Backbone.Model.extend({
 
 // define our collection
 var CommandCollection = Backbone.Collection.extend({
-    model: ProjectModel,
+    model: CommandModel,
 
     url: function() {
         if (this.project != undefined) {
@@ -39,3 +39,7 @@ var CommandCollection = Backbone.Collection.extend({
         this.max = options.max;
     }
 });
+
+CommandCollection.comparator = function(command) {
+  return command.get("created");
+};

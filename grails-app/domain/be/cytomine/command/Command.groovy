@@ -31,7 +31,7 @@ class Command extends SequenceDomain {
 
       returnArray['class'] = it.class
       returnArray['action'] = it.getActionMessage()
-
+      returnArray['data'] = it.data
       returnArray['type'] = "UNKNOWN"
       if(it instanceof AddCommand) returnArray['type'] = "ADD"
       else if(it instanceof EditCommand) returnArray['type'] = "EDIT"

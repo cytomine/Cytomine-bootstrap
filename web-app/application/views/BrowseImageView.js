@@ -1,6 +1,7 @@
 var BrowseImageView = Backbone.View.extend({
     tagName: "div",
     layers: {},
+    map : null,
     initialize: function (options) {
 
     },
@@ -277,7 +278,9 @@ var BrowseImageView = Backbone.View.extend({
                     layerAnnotation.loadAnnotations(self.map);
                     //layerAnnotation.initHightlight(self.map);
                     var isOwner = user.get('id') == window.app.status.user.id;
+
                     if (isOwner) {
+                        console.log("user.get('id')="+user.get('id'));
                         self.userLayer = layerAnnotation;
                         layerAnnotation.initControls(self, isOwner);
                         layerAnnotation.registerEvents(self.map);
@@ -286,9 +289,9 @@ var BrowseImageView = Backbone.View.extend({
                         var toolbar = $('#toolbar' + self.model.get('id'));
                         toolbar.find('input[id=none' + self.model.get('id') + ']').click();
                     } else {
-                        layerAnnotation.initControls(self, isOwner);
+                        /*layerAnnotation.initControls(self, isOwner);
                         layerAnnotation.registerEvents(self.map);
-                        layerAnnotation.controls.select.activate();
+                        layerAnnotation.controls.select.activate();  */
                     }
                     colorIndex++;
 
@@ -376,12 +379,19 @@ AnnotationLayer.prototype = {
         var self = this;
 
         this.vectorsLayer.events.on({
+            clickFeature : function (evt) {
+                 console.log("clickFeature");
+            },
+            onSelect : function (evt) {
+                 console.log("onSelect");
+            },
             featureselected: function (evt) {
+                console.log("featureselected: self.deleteOnSelect="+self.deleteOnSelect);
                 self.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
                 console.log("self.deleteOnSelect =>" +self.deleteOnSelect );
                 if (self.deleteOnSelect == true) {
                     self.removeSelection();
-                };
+                }
                 self.showPopup(map, evt);
             },
             'featureunselected': function (evt) {
@@ -393,13 +403,17 @@ AnnotationLayer.prototype = {
                 //alias.ontologyTreeView.refresh(null);
             },
             'featureadded': function (evt) {
+                console.log("featureadded");
                 /* Check if feature must throw a listener when it is added
                  * true: annotation already in database (no new insert!)
                  * false: new annotation that just have been draw (need insert)
                  * */
+
                 if (evt.feature.attributes.listener != 'NO') {
+                    console.log("self.addAnnotation(evt.feature);");
                     self.addAnnotation(evt.feature);
                 }
+                console.log("SIZE:"+self.vectorsLayer.features.length);
             },
             'beforefeaturemodified': function (evt) {
                 console.log("Selected " + evt.feature.id + " for modification");
@@ -415,7 +429,7 @@ AnnotationLayer.prototype = {
         });
     },
     initControls: function (map, isOwner) {
-        if (isOwner) {
+        /*if (isOwner) { */
             this.controls = {
                 'point': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
                 'line': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
@@ -428,18 +442,19 @@ AnnotationLayer.prototype = {
                 'modify': new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
                 'select': new OpenLayers.Control.SelectFeature(this.vectorsLayer)
             }
-        } else {
+        /* else {
             console.log("no owner");
             this.controls = {
                 'select': new OpenLayers.Control.SelectFeature(this.vectorsLayer)
             }
-        }
+        }*/
         map.initTools(this.controls);
     },
 
 
     /*Load annotation from database on layer */
     loadAnnotations: function (map) {
+        console.log("loadAnnotations: function (map)");
         var alias = this;
         new AnnotationCollection({user : this.userID, image : this.imageID}).fetch({
             success : function (collection, response) {
@@ -459,8 +474,10 @@ AnnotationLayer.prototype = {
         map.addLayer(this.vectorsLayer);
     },
     addFeature: function (feature) {
-
+        console.log("addFeature: function (feature)");
+        console.log("feature.attributes.idAnnotation="+feature.attributes.idAnnotation);
         this.features[feature.attributes.idAnnotation] = feature;
+        console.log("this.vectorsLayer.addFeatures(feature)");
         this.vectorsLayer.addFeatures(feature);
     },
     selectFeature: function (feature) {
@@ -542,13 +559,14 @@ AnnotationLayer.prototype = {
 
     /*Add annotation in database*/
     addAnnotation: function (feature) {
+        console.log("addAnnotation");
         var newFeature = null;
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
         var alias = this;
         var annotation = new AnnotationModel({
             //"class": "be.cytomine.project.Annotation",
-            name: "we don't know yet",
+            name: "",
             location: geomwkt,
             image: this.imageID,
             parse: function(response) {
@@ -557,7 +575,7 @@ AnnotationLayer.prototype = {
                 return response.annotation;
             }});
 
-
+        console.log("annotation model");
         new BeginTransactionModel({}).save({}, {
             success: function (model, response) {
                 console.log(response.message);

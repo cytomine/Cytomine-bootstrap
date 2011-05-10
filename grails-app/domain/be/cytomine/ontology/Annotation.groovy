@@ -125,7 +125,7 @@ class Annotation extends SequenceDomain implements Serializable {
       def returnArray = [:]
       returnArray['class'] = it.class
       returnArray['id'] = it.id
-      returnArray['name'] = it.name
+      returnArray['name'] = it.name!=""? it.name : "Annotation " + it.id
       returnArray['location'] = it.location.toString()
       returnArray['image'] = it.image? it.image.id : null
       returnArray['zoomLevel'] = it.zoomLevel
@@ -135,10 +135,13 @@ class Annotation extends SequenceDomain implements Serializable {
       returnArray['area'] = it.getArea()
       returnArray['perimeter'] = it.getPerimeter()
 
+
       returnArray['created'] = it.created? it.created.time.toString() : null
       returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
       returnArray['term'] = UrlApi.getTermsURLWithAnnotationId(it.id)
+      returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
+
       return returnArray
     }
   }

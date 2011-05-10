@@ -22,6 +22,25 @@ var AnnotationModel = Backbone.Model.extend({
 });
 
 
+var AnnotationModel = Backbone.Model.extend({
+
+	url : function() {
+		var base = 'api/annotation';
+		var format = '.json';
+        if (this.isNew()) return base + format;
+		return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+	}
+});
+
+
+var AnnotationCropModel = Backbone.Model.extend({
+
+	url : null,
+    initialize: function (options) {
+        this.url = options.url;
+    }
+});
+
 // define our collection
 var AnnotationCollection = Backbone.Collection.extend({
     model: AnnotationModel,
@@ -40,4 +59,8 @@ var AnnotationCollection = Backbone.Collection.extend({
         this.project = options.project;
     }
 });
+
+AnnotationCollection.comparator = function(annotation) {
+  return annotation.get("created");
+};
 

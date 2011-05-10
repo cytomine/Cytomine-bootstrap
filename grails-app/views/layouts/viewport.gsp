@@ -334,6 +334,39 @@
 </script>
 
 
+
+ <script type="text/html" id="annotationcommandlisttpl">
+    <li>
+    <hr>
+      <div align="center">
+        <span class="ui-icon {{icon}}"></span>
+
+
+      {{datestr}} <br>
+      <label style="display: inline">{{text}}</label>
+      <img src="{{image}}" width=150></img>
+      </div>
+      <br>
+    </li>
+</script>
+
+ <script type="text/html" id="annotationtermcommandlisttpl">
+    <li>
+    <hr>
+      <div align="center">
+        <span class="ui-icon {{icon}}"></span>
+
+
+      {{datestr}} <br>
+      <label style="display: inline">{{text}}</label>
+      </div>
+      <br>
+    </li>
+</script>
+
+
+
+
 <script type="text/html" id="addlisttpl">
     <li><div align="center"><span class="ui-icon ui-icon-plus"></span></div>{{datestr}}<label style="display: inline">{{text}}</label></li>
 </script>
@@ -379,7 +412,7 @@
 	<div id="panelRight_1" class="navPanel">
 	    <h3>Last action...</h3>
 	    <div>
-		Panel's initial options:
+		Last actions:
                 <ul>
                     <div id="lastactionitem"></div>
                 </ul>
@@ -414,6 +447,20 @@
           <div id="panelCenter_2" class="centralPanel">
             <h3>Project images</h3>
             <div id="projectImageList">
+
+            </div>
+          </div>
+       </div>
+    </div>
+    </div>
+
+    <div id="lCenter3">
+      <div id="desktop3">
+          <p>
+          </p>
+          <div id="panelCenter_3" class="centralPanel">
+            <h3>Project annotations</h3>
+            <div id="projectAnnotationList">
 
             </div>
           </div>
@@ -556,8 +603,14 @@
 </script>
 
 <script type="text/html" id="imagethumbtpl">
-    <div class='thumb'><a href='#browse/{{ id }}'><img width="192" src='{{ thumb }}' alt='{{ filename }}' /></a></div>
+    <div class='thumb'><a href='#browse/{{ id }}'><img src='{{ thumb }}' alt='{{ filename }}'  /></a></div>
     <div class='thumb-info'><a href='#browse/{{ id }}'>{{filename}}</a></div>
+</script>
+
+
+<script type="text/html" id="annotationthumbtpl">
+    <div class='thumb'><img src='{{ cropURL }}' alt='{{ name }}' style="max-height:180px; max-width:180px; "  /></div>
+    <div class='thumb-info'>{{name}}</div>
 </script>
 
 <script type="text/html" id="taptpl">
@@ -654,6 +707,8 @@
 <script type="text/javascript" src="application/views/AddImageProjectDialog.js" ></script>
 <script type="text/javascript" src="application/views/AddProjectDialog.js" ></script>
 <script type="text/javascript" src="application/views/ProjectDashboardView.js" ></script>
+<script type="text/javascript" src="application/views/AnnotationThumbView.js" ></script>
+<script type="text/javascript" src="application/views/AnnotationView.js" ></script>
 
 
 <script type="text/javascript" src="application/views/Tabs.js" ></script>

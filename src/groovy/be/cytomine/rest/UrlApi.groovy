@@ -42,4 +42,8 @@ class UrlApi {
   static def getUsersURLWithProjectId(Long idProject) {
     return ConfigurationHolder.config.grails.serverURL + '/api/project/'+ idProject +'/user.json'
   }
+
+  static def getAnnotationCropWithAnnotationId(Long idAnnotation) {
+    return  ConfigurationHolder.config.grails.serverURL + '/api/annotation/' + idAnnotation +'/7/crop'
+  }
 }

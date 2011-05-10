@@ -33,6 +33,7 @@ var ProjectDashboardView = Backbone.View.extend({
             }});
 
     },
+
     printProjectInfo : function() {
         console.log("print.........");
         var self = this;
@@ -96,12 +97,16 @@ var ProjectDashboardView = Backbone.View.extend({
                 collapsed:true,
                 trueVerticalText:true,
                 vHeight:'237px',
-                width:'200px'
+                width:'300px'
             });
             $('#panelCenter_1').panel({
-                collapsible:true
+                collapsible:false
             });
             $('#panelCenter_2').panel({
+                collapsible:true
+            });
+
+            $('#panelCenter_3').panel({
                 collapsible:true
             });
 
@@ -115,9 +120,41 @@ var ProjectDashboardView = Backbone.View.extend({
 
             }});
 
+            var annotationCollection = new AnnotationCollection({project:self.model.get('id')});
+
+            var annotationCallback = function(collection,response) {
+                console.log("**** ANNOTATION SIZE:"+collection.length);
+                //$("#projectAnnotationList").empty();
+                var view = new AnnotationView({
+                    page : undefined,
+                    model : collection,
+                    el:$("#projectAnnotationList"),
+                    container : window.app.view.components.warehouse
+                }).render();
+            }
+            var fetchAnnotations = function() {
+                annotationCollection.fetch({
+                    success : function(model, response) {
+                        annotationCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+                    }
+                });
+            }
+
+            fetchAnnotations();
+            setInterval(function(){
+                fetchAnnotations();
+            },10000);
+
 
             var commandCollection = new CommandCollection({project:self.model.get('id'),max:10});
+
             var commandCallback = function(collection, response) {
+
+                collection.each(function(command) {
+
+                });
+
+
                 $("#lastactionitem").empty();
                 collection.each(function(command) {
                     console.log(command);
@@ -126,17 +163,67 @@ var ProjectDashboardView = Backbone.View.extend({
                     dateCreated.setTime(command.get('created'));
                     var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString()
 
+                    var json = $.parseJSON(command.get("data"));
                     var action = ""
-                    if(command.get("type")=="ADD") {
-                        action = ich.addlisttpl({text:command.get("action"),datestr:dateStr});
+
+                    var errorImage = "http://www.bmxforever.net/website/wp-content/uploads/2010/03/Error.jpg";
+
+                    if(command.get("class")=="be.cytomine.command.annotation.AddAnnotationCommand")
+                    {
+                        var action = ich.annotationcommandlisttpl({icon:"ui-icon-plus",text:command.get("action"),datestr:dateStr,image:json.cropURL});
+                        $("#lastactionitem").append(action);
+                        $.ajax({
+                            async : false,
+                            url: json.cropURL,
+                            success: function(data){},
+                            error: function(XMLHttpRequest, textStatus, errorThrown){ $(action).find("img").hide();}
+                        });
                     }
-                    else if(command.get("type")=="EDIT") {
-                        action = ich.editlisttpl({text:command.get("action"),datestr:dateStr});
+                    if(command.get("class")=="be.cytomine.command.annotation.EditAnnotationCommand")
+                    {
+                        var action = ich.annotationcommandlisttpl({icon:"ui-icon-pencil",text:command.get("action"),datestr:dateStr,image:json.cropURL});
+                        $("#lastactionitem").append(action);
+                        $.ajax({
+                            async : false,
+                            url: json.cropURL,
+                            success: function(data){},
+                            error: function(XMLHttpRequest, textStatus, errorThrown){ $(action).find("img").hide();}
+                        });
                     }
-                    else if(command.get("type")=="DELETE") {
-                        action = ich.deletelisttpl({text:command.get("action"),datestr:dateStr});
+                    if(command.get("class")=="be.cytomine.command.annotation.DeleteAnnotationCommand")
+                    {
+                        var action = ich.annotationcommandlisttpl({icon:"ui-icon-trash",text:command.get("action"),datestr:dateStr,image:json.cropURL});
+                        $("#lastactionitem").append(action);
+                        $.ajax({
+                            async : false,
+                            url: json.cropURL,
+                            success: function(data){},
+                            error: function(XMLHttpRequest, textStatus, errorThrown){ $(action).find("img").hide();}
+                        });
                     }
-                    $("#lastactionitem").append(action);
+
+
+                    if(command.get("class")=="be.cytomine.command.annotationterm.AddAnnotationTermCommand")
+                    {
+                        console.log(json);
+                        var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-plus",text:command.get("action"),datestr:dateStr,image:""});
+                        $("#lastactionitem").append(action);
+
+                    }
+                    if(command.get("class")=="be.cytomine.command.annotationterm.EditAnnotationTermCommand")
+                    {
+                        console.log(json);
+                        var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-pencil",text:command.get("action"),datestr:dateStr,image:""});
+                        $("#lastactionitem").append(action);
+
+                    }
+                    if(command.get("class")=="be.cytomine.command.annotationterm.DeleteAnnotationTermCommand")
+                    {
+                        console.log(json);
+                        var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-trash",text:command.get("action"),datestr:dateStr,image:""});
+                        $("#lastactionitem").append(action);
+
+                    }
                 });
             }
             var fetchCommands = function() {
@@ -150,7 +237,7 @@ var ProjectDashboardView = Backbone.View.extend({
             fetchCommands();
             setInterval(function(){
                 fetchCommands();
-            }, 5000);
+            },5000);
 
 
 
@@ -203,9 +290,9 @@ var ProjectDashboardView = Backbone.View.extend({
             }
 
             fetchStats();
-            /*setInterval(function(){
+            setInterval(function(){
              fetchStats();
-             }, 5000);*/
+             }, 10000);
 
 
 
