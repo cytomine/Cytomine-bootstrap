@@ -81,9 +81,9 @@ var ApplicationView = Backbone.View.extend({
             template : ich.warehousetpl({}, true),
             buttonAttr : {
                 elButton : "warehouse-button",
-                buttonText : "Manage",
+                buttonText : "Organize",
                 buttonWrapper : "#menu",
-                icon : "ui-icon-search",
+                icon : "ui-icon-wrench",
                 route : "#warehouse"
             },
             divId : "warehouse"

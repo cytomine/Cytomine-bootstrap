@@ -147,6 +147,21 @@ class Annotation extends SequenceDomain implements Serializable {
       returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
       returnArray['term'] = UrlApi.getTermsURLWithAnnotationId(it.id)
+
+
+      String termList = "";
+      if(it.terms()!=null)
+      {
+          def termName = []
+          it.terms().each{ term ->
+             termName << term.name
+          }
+        termList = termName.join(',')
+        if(termList.size()>28)
+          termList = termList.substring(0,25) + "..."
+      }
+      returnArray['termList'] =  termList
+
       returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
 
       return returnArray

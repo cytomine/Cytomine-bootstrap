@@ -127,7 +127,10 @@ var ProjectPanelView = Backbone.View.extend({
         var idProject = self.model.get('id');
         var cont = false;
 
-        if(idProject==window.app.status.currentProject) return;
+        console.log("old project="+window.app.status.currentProject);
+        console.log("new project="+idProject);
+
+        if(idProject==window.app.status.currentProject) return false;
 
         if(window.app.controllers.browse.tabs != null)
         {

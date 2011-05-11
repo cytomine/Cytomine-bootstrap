@@ -170,7 +170,7 @@
             <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
             <!-- <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul> -->
             <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
-            <ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
+            <!--<ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
             <ul class='menu libraries'></ul>
             <div class='buttons'>
                 <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
@@ -619,7 +619,7 @@
 
 <script type="text/html" id="annotationthumbtpl">
     <div class='thumb'><img src='{{ cropURL }}' alt='{{ name }}' style="max-height:180px; max-width:180px; "  /></div>
-    <div class='thumb-info'>{{name}}</div>
+    <div class='thumb-info'>{{name}} <br> {{termList}}</div>
 </script>
 
 <script type="text/html" id="taptpl">

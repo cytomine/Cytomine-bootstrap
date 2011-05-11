@@ -48,11 +48,15 @@ class RestProjectController extends RestController {
       def annotations = project.annotations()
       log.debug "There are " + terms.size() + " terms and " + annotations.size() + " annotations"
       def stats = [:]
+      def color = [:]
 
+      //init list
       terms.each{ term ->
             stats[term.name] = 0
+            color[term.name] = term.color
       }
 
+      //compute stat
       annotations.each{ annotation ->
         def termOfAnnotation = annotation.terms()
         termOfAnnotation.each{ term ->
@@ -61,18 +65,19 @@ class RestProjectController extends RestController {
         }
       }
 
-      responseSuccess(convertHashToList(stats))
+      //convert data map to list and merge term name and color
+      responseSuccess(convertHashToList(stats,color))
 
     }
     else responseNotFound("Project", params.id)
   }
 
-  List convertHashToList(HashMap<String,Integer> map)
+  List convertHashToList(HashMap<String,Integer> map,HashMap<String,Integer> color)
   {
     def list = []
        map.each{
          println "Item: $it"
-          list << ["key":it.key,"value":it.value]
+          list << ["key":it.key,"value":it.value,"color":color.get(it.key)]
        }
        list
 

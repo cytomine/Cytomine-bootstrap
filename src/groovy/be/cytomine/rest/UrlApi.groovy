@@ -44,6 +44,6 @@ class UrlApi {
   }
 
   static def getAnnotationCropWithAnnotationId(Long idAnnotation) {
-    return  ConfigurationHolder.config.grails.serverURL + '/api/annotation/' + idAnnotation +'/7/crop'
+    return  ConfigurationHolder.config.grails.serverURL + '/api/annotation/' + idAnnotation +'/crop'
   }
 }

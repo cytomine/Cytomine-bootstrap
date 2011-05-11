@@ -162,20 +162,26 @@ var ProjectDashboardView = Backbone.View.extend({
             $("#plotterms").empty();
 
             var empty = true;
-            var array = new Array();
+            var arrayData = new Array();
+            var arrayColor = new Array();
+
             collection.each(function(stat) {
                 var subArray = new Array(stat.get('key'),stat.get('value'));
-                array.push(subArray);
+                arrayData.push(subArray);
+                arrayColor.push(stat.get('color'));
                 empty = empty && stat.get('value')=="0";
             });
             console.log("empty="+empty);
 
+            //if empty, add "nothing" to the legend with 100%
             if(empty) {
-                array.push(new Array("Nothing",100))
+                arrayData.push(new Array("Nothing",100));
+                arrayColor.push("d5d5d5");
             }
 
 
-            $.jqplot('plotterms', [array], {
+            $.jqplot('plotterms', [arrayData], {
+                seriesColors: arrayColor,
                 height: 450,
                 width: 450,
                 grid: {
@@ -197,7 +203,11 @@ var ProjectDashboardView = Backbone.View.extend({
                     show: true,
                     location: 'e'
                 }
+
             });
+
+
+
         }
 
         statsCollection.fetch({
