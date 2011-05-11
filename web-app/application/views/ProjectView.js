@@ -113,21 +113,21 @@ var ProjectView = Backbone.View.extend({
     createSliderWithoutAmountPrint : function(sliderElem, labelElem,min,max) {
         var self = this;
         console.log("sliderElem="+sliderElem + " min="+min + " et max="+ max);
-                $(sliderElem).slider({
-                    range: true,
-                    min : min,
-                    max : max,
-                    values: [ min, max ],
-                    slide: function( event, ui ) {
-                        $(labelElem).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-                        self.searchProject();
-                    },
-                    change: function( event, ui ) {
-                        $(labelElem).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-                        self.searchProject();
-                    }
-                });
-                $(labelElem).val( "" + $(sliderElem).slider( "values", 0 ) +" - " + $(sliderElem).slider( "values", 1 ) );
+        $(sliderElem).slider({
+            range: true,
+            min : min,
+            max : max,
+            values: [ min, max ],
+            slide: function( event, ui ) {
+                $(labelElem).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+                self.searchProject();
+            },
+            change: function( event, ui ) {
+                $(labelElem).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+                self.searchProject();
+            }
+        });
+        $(labelElem).val( "" + $(sliderElem).slider( "values", 0 ) +" - " + $(sliderElem).slider( "values", 1 ) );
     },
     refresh : function() {
         console.log("refresh projects panel");
@@ -135,6 +135,7 @@ var ProjectView = Backbone.View.extend({
         this.render();
     },
     refreshSearchPanel : function() {
+
         //refresh item from search panel
         //ex: if a user add 1 slide to the project that have the hight number of slide, number of slides slider value must be change
         var self = this;
@@ -164,7 +165,6 @@ var ProjectView = Backbone.View.extend({
                 self.createSliderWithoutAmountPrint(self.sliderNumberOfImagesElem,self.labelNumberOfImagesElem,minNumberOfImage,maxNumberOfImage);
                 self.createSliderWithoutAmountPrint(self.sliderNumberOfSlidesElem,self.labelNumberOfSlidesElem,minNumberOfSlide,maxNumberOfSlide);
                 self.createSliderWithoutAmountPrint(self.sliderNumberOfAnnotationsElem,self.labelNumberOfAnnotationsElem,minNumberOfAnnotation,maxNumberOfAnnotation);
-
             }});
     },
     showAllProject:function() {
@@ -190,7 +190,7 @@ var ProjectView = Backbone.View.extend({
         $(sliderElem).slider( "values", [min,max] );
     },
     searchProject : function() {
-        console.log("searchProject");
+
         var self = this;
         var searchText = $(self.searchProjectTextBoxElem).val();
 
@@ -212,7 +212,7 @@ var ProjectView = Backbone.View.extend({
         var numberOfAnnotations = new Array();
         numberOfAnnotations.push($(self.sliderNumberOfAnnotationsElem).slider( "values", 0 ));
         numberOfAnnotations.push($(self.sliderNumberOfAnnotationsElem).slider( "values", 1 ));
-
+        console.log("filter project : " + numberOfImages);
         self.filterProjects(searchText==""?undefined:searchText,searchOntologies.length==0?undefined:searchOntologies,numberOfImages,numberOfSlides,numberOfAnnotations);
     },
     showAddProjectPanel : function() {
@@ -229,27 +229,29 @@ var ProjectView = Backbone.View.extend({
     //show only project that have searchText value in their name and a ontology from searchOntologies.
     filterProjects : function(searchText,searchOntologies,searchNumberOfImages,searchNumberOfSlides,searchNumberOfAnnotations) {
         var self = this;
+        self.projects = new ProjectCollection({user : self.userID}).fetch({
+            success : function (collection, response) {
+                var projects =  new ProjectCollection(collection.models);
 
-        var projects =  new ProjectCollection(self.projects.models);
-
-        //each search function takes a search data and a collection and it return a collection without elem that
-        //don't match with data search
-        projects = self.filterByProjectsByName(searchText,projects);
-        projects = self.filterProjectsByOntology(searchOntologies,projects);
-        projects = self.filterProjectsByNumberOfImages(searchNumberOfImages,projects);
-        projects = self.filterProjectsByNumberOfSlides(searchNumberOfSlides,projects);
-        projects = self.filterProjectsByNumberOfAnnotations(searchNumberOfAnnotations,projects);
-        //add here filter function
+                //each search function takes a search data and a collection and it return a collection without elem that
+                //don't match with data search
+                projects = self.filterByProjectsByName(searchText,projects);
+                projects = self.filterProjectsByOntology(searchOntologies,projects);
+                projects = self.filterProjectsByNumberOfImages(searchNumberOfImages,projects);
+                projects = self.filterProjectsByNumberOfSlides(searchNumberOfSlides,projects);
+                projects = self.filterProjectsByNumberOfAnnotations(searchNumberOfAnnotations,projects);
+                //add here filter function
 
 
-        self.projects.each(function(project) {
-            //if project is in project result list, show it
-            if(projects.get(project.id)!=null)
-                $(self.projectListElem+project.id).show();
-            else
-                $(self.projectListElem+project.id).hide();
+                collection.each(function(project) {
+                    //if project is in project result list, show it
+                    if(projects.get(project.id)!=null)
+                        $(self.projectListElem+project.id).show();
+                    else
+                        $(self.projectListElem+project.id).hide();
+                });
+            }
         });
-
     },
     filterByProjectsByName : function(searchText,projectOldList) {
 
@@ -264,7 +266,7 @@ var ProjectView = Backbone.View.extend({
 
         return projectNewList;
     },
-filterProjectsByOntology : function(searchOntologies,projectOldList) {
+    filterProjectsByOntology : function(searchOntologies,projectOldList) {
         var self = this;
         var projectNewList =  new ProjectCollection(projectOldList.models);
 
@@ -305,7 +307,7 @@ filterProjectsByOntology : function(searchOntologies,projectOldList) {
         });
         return projectNewList;
     },
-    //print project from collection
+//print project from collection
     printProjects : function(collection) {
         var self = this;
 

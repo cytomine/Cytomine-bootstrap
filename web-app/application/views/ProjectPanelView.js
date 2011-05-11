@@ -83,7 +83,7 @@ var ProjectPanelView = Backbone.View.extend({
             self.renderShowImageButton(json.numberOfImages);
 
             $(self.imageAddElem + self.model.id).button({
-                icons : {secondary : "ui-icon-image"}
+                icons : {secondary : "ui-icon-plus"}
             });
             $(self.projectElem+self.model.get('id')).panel({
                 collapsible:false
@@ -199,12 +199,12 @@ var ProjectPanelView = Backbone.View.extend({
         var isCurrentProject = window.app.status.currentProject==self.model.id
         //change button style for current project
         $(self.projectChangeElem + self.model.id).button({
-            icons : {secondary : "ui-icon-star"}
+            icons : {secondary : "ui-icon-image"}
         });
         if(isCurrentProject) $(self.projectChangeElem + self.model.id).click();
     },
     openImagesList: function(idProject) {
-
+        /*
         var self = this;
 
         if(!this.loadImages) {
@@ -253,6 +253,7 @@ var ProjectPanelView = Backbone.View.extend({
                 }
             }
         });
+        */
 
     }
 });

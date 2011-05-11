@@ -24,14 +24,13 @@ var Tabs = Backbone.View.extend({
                 tabs.tabs('select', '#' + ui.panel.id);
             },
             show: function(event, ui){
-
-                //$("#"+ui.panel.id).attr('style', 'width:100%;height:100%;');
+                $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;overflow:auto');
                 return true;
             },
             select: function(event, ui) {
-                /*if (ui.panel.id == "tabs-0") { //tab is  the dashboard
+                if (ui.panel.id == "tabs-0") { //tab is  the dashboard
                     self.refreshDashboard();
-                }*/
+                }
                 return true;
             }
         });

@@ -60,6 +60,7 @@ var ApplicationView = Backbone.View.extend({
             $('.file_upload_start button').click();
             return false;
         });
+        $("#noProjectDialog").panel({collapsible:false, height : "100%"});
         return this;
     },
     initComponents : function() {
@@ -100,6 +101,7 @@ var ApplicationView = Backbone.View.extend({
             },
             divId : "explorer"
         });
+
 
         /*this.components.admin = new Component({
          el : $("#content"),

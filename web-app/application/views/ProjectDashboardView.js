@@ -38,9 +38,9 @@ var ProjectDashboardView = Backbone.View.extend({
          }});
          */
         var self = this;
-        setTimeout(function(){self.fetchAnnotations()}, 500);
-        setTimeout(function(){self.fetchCommands()}, 1000);
-        setTimeout(function(){self.fetchStats()}, 15000);
+        self.fetchAnnotations();
+        self.fetchCommands();
+        self.fetchStats();
 
     },
     fetchAnnotations : function () {

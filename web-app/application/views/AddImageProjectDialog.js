@@ -39,7 +39,7 @@ var AddImageProjectDialog = Backbone.View.extend({
             autoOpen : false,
             buttons : {
                 "Close" : function() {
-                    console.log("close");
+                    self.projectPanel.refresh();
                     $(self.divDialog+self.model.get('id')).dialog("close");
                 }
             },
@@ -60,8 +60,15 @@ var AddImageProjectDialog = Backbone.View.extend({
         self.renderImageList();
         self.addSlideDialog.dialog("open") ;
     },
-    refresh : function() {
-        this.renderImageList();
+    refresh : function(slideID, selected) {
+        console.log("refresh...__");
+        var className = ".slide" + slideID;
+        var self = this;
+        if (selected)
+            $(self.ulElem+self.model.get('id')).find(className).addClass("selected");
+        else
+            $(self.ulElem+self.model.get('id')).find(className).removeClass("selected");
+        //this.renderImageList();
     },
     renderImageList : function() {
         var self = this;
@@ -79,7 +86,7 @@ var AddImageProjectDialog = Backbone.View.extend({
                 var nb_thumb_by_page = 200;
                 var inf = Math.abs(page) * nb_thumb_by_page;
                 var sup = (Math.abs(page) + 1) * nb_thumb_by_page;
-
+                var currentSlide = -1;
                 //Get images from project server
                 new ImageCollection({project:self.model.get('id')}).fetch({
                     success: function(projectImages,response){
@@ -90,7 +97,7 @@ var AddImageProjectDialog = Backbone.View.extend({
                         collection.each(function(image) {
 
 
-                            if ((cpt > inf) && (cpt <= sup)) {
+                            if ((cpt >= inf) && (cpt < sup)) {
 
                                 var thumb = new ImageSelectView({
                                     model : image
@@ -99,8 +106,11 @@ var AddImageProjectDialog = Backbone.View.extend({
                                 var filename = image.get("filename");
                                 if (filename.length > 15)
                                     filename = filename.substring(0,12) + "...";
-                                var item = ich.projectaddimageitem({id:image.id,name:filename});
-
+                                var item = ich.projectaddimageitem({id:image.id,name:filename, slide: image.get('slide'), info : image.get('info')});
+                                /*if (currentSlide != image.get('slide')) { //new slide
+                                    currentSlide = image.get('slide');
+                                    //organize a new list ?
+                                }*/
                                 $(thumb.el).css({"width":30}); //thumb must be smaller
 
                                 $(self.ulElem+self.model.get('id')).append(item);
@@ -110,8 +120,8 @@ var AddImageProjectDialog = Backbone.View.extend({
                                 if(projectImages.get(image.id))
                                 {
                                     //get the li elem (img id) which have this project as parent
-                                    $(self.ulElem+self.model.get('id') + " " +  "#"+ self.liElem+image.id).addClass(self.selectedClass);
-                                    $(self.ulElem+self.model.get('id') + +" " + "#"+self.liElem+image.id).find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
+                                    $(self.ulElem+self.model.get('id') + " " + "#"+ self.liElem+image.id).addClass(self.selectedClass);
+                                    $(self.ulElem+self.model.get('id') + " " + "#"+self.liElem+image.id).find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
                                 }
                             }
                             cpt++;
@@ -143,13 +153,17 @@ var AddImageProjectDialog = Backbone.View.extend({
 
         $(self.checklistSelected).click(
                 function(event) {
+
                     event.preventDefault();
+                    var slideID = $(this).parent().attr("class");
+                    console.log("CLASS="+slideID);
                     $(this).parent().addClass(self.selectedClass);
                     $(this).parent().find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
 
                     //Get the id of the selected image....
                     //TODO: a better way to do that?
                     var fullId = $(this).parent().attr("id");   //"projectaddimageitemliXXX"
+
                     var idImage = fullId.substring(self.liElem.length,fullId.length);  //XXX
 
                     //add slide to project
@@ -158,10 +172,7 @@ var AddImageProjectDialog = Backbone.View.extend({
                         console.log("Image id = " + idImage + " Slide id = " + slide + " Project id = " + self.model.get('id'));
                         new ProjectSlideModel({project : self.model.get('id'), slide : slide}).save({project : self.model.get('id'), slide : slide},{
                             success: function (model, response) {
-                                console.log(response);
-                                self.refresh();
-                                self.projectPanel.refresh();
-
+                                self.refresh(slide, true);
                             },
                             error: function (model, response) {
                                 console.log("ERROR:"+response);
@@ -192,8 +203,7 @@ var AddImageProjectDialog = Backbone.View.extend({
                         new ProjectSlideModel({project :self.model.get('id'), slide : slide}).destroy({
                             success: function (model, response) {
                                 console.log(response);
-                                self.refresh();
-                                self.projectPanel.refresh();
+                                self.refresh(slide, false);
 
                             },
                             error: function ( response) {
@@ -205,8 +215,5 @@ var AddImageProjectDialog = Backbone.View.extend({
                     });
 
                 });
-
-
-
     }
 });

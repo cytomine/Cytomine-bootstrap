@@ -28,7 +28,7 @@
   <script type="text/javascript" src="application/lib/jquery.isotope.js"></script>
   <script type="text/javascript" src="application/lib/mustache.js"></script>
   <script type="text/javascript" src="application/lib/ICanHaz.js"></script>
-  <script type="text/javascript" src="application/lib/galleria-1.2.3.min.js"></script>
+
 
     <script type="text/javascript" src="application/lib/jquery.jqplot.js"></script>
       <script type="text/javascript" src="application/lib/jqplot.pieRenderer.js"></script>
@@ -137,7 +137,13 @@
         <div class="main browser" style="display:none">
         </div>
         <div class="main noProject">
-            Nothing to display
+            <div id="noProjectDialog" class="centralPanel">
+                <h3>Explorer</h3>
+                <div>
+                   Please open a project
+                </div>
+            </div>
+
         </div>
     </div>
 </script>
@@ -174,8 +180,8 @@
             <ul class='menu libraries'></ul>
             <div class='buttons'>
                 <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
-            </div>
         </div>
+    </div>
 </script>
 
 <script type="text/html" id="admintpl">
@@ -317,14 +323,12 @@
       <td>
       <!--<button class="seeSlide" id='projectopenimages{{id}}' type="button">Preview</button>-->
       </td>
-      <td><button class="addSlide" id='projectaddimages{{id}}' type="button">Manage slides</button> </td>
+      <td><button class="addSlide" id='projectaddimages{{id}}' type="button">Manage samples</button> </td>
       <!--<td><input class="changeProject" id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Explore</label></input> </td>-->
       <td><a class="changeProject" id='radioprojectchange{{id}}' href="#dashboard/{{id}}">Explore</a></td>
       <tr>
          </table>
 
-         <div class="galleria">
-         </div>
     </div>
     <br><br>
     </div>
@@ -460,7 +464,7 @@
     </div>
     </div>
 
-    <div id="lCenter3">
+    <div id="lCenter3" style="margin-bottom:100px">
       <div id="desktop3">
           <p>
           </p>
@@ -474,7 +478,7 @@
     </div>
     </div>
 
-    <div style="height:50px"></div>
+
  <!-- <div id='projectdashboardinfo{{id}}' class="projectstat">
     <h3>{{name}}</h3>
     <div>
@@ -535,9 +539,9 @@
 </script>
 
 <script type="text/html" id="projectaddimageitem">
-  <li id="projectaddimageitemli{{id}}">
+  <li id="projectaddimageitemli{{id}}" class="slide{{slide}}">
     <input name="jqdemo" value="value1" type="checkbox" id="choice{{id}}"/>
-    <label for="choice{{id}}">{{name}}</label>
+    <label for="choice{{id}}"><b>{{name}}</b></label>
     <div id="projectaddimageitempict{{id}}" style="padding-left:20px;" alt=""/></div>
     <a class="checkbox-select" href="#">Select</a>
     <a class="checkbox-deselect" href="#">Cancel</a>
@@ -731,7 +735,7 @@
   $(function() {
     // Create the app.
     window.app = new ApplicationController();
-    Galleria.loadTheme('application/css/galleria.classic.min.js');
+
   });
 </script>
 
