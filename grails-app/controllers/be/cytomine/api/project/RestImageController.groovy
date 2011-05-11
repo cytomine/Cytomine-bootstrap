@@ -109,7 +109,10 @@ class RestImageController extends RestController{
     else
     {
       try {
-        responseImage(annotation.getCropURL(zoom))
+        if(params.zoom!=null)
+          responseImage(annotation.getCropURL(zoom))
+        else
+          responseImage(annotation.getCropURL(null))
       } catch ( Exception e) {
         log.error("GetThumb:"+e);
       }

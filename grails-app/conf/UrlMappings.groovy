@@ -97,6 +97,9 @@ class UrlMappings {
     "/api/annotation/$id/$zoom/crop"(controller: "restImage"){
       action = [GET:"crop"]
     }
+    "/api/annotation/$id/crop"(controller: "restImage"){
+      action = [GET:"crop"]
+    }
     "/api/annotation/$id/retrieval/$zoom/$maxsimilarpictures"(controller: "restImage") {
       action = [GET:"retrieval"]
     }
