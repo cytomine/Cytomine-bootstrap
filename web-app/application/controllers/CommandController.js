@@ -5,7 +5,8 @@ var CommandController = Backbone.Controller.extend({
             console.log("data:");
             console.log(data);
              _.each(data, function(undoElem){
-                  console.log(undoElem);
+                  console.log("undoElem" + undoElem);
+
                   window.app.view.message("Undo", undoElem.message, "");
                   self.dispatch(undoElem.callback);
              });
@@ -20,7 +21,7 @@ var CommandController = Backbone.Controller.extend({
                 console.log("data:");
                 console.log(data);
                  _.each(data, function(redoElem){
-                      console.log(redoElem);
+                      console.log("redoElem" + redoElem);
                       window.app.view.message("Redo", redoElem.message, "");
                       self.dispatch(redoElem.callback);
                  });
@@ -29,6 +30,7 @@ var CommandController = Backbone.Controller.extend({
     },
 
     dispatch : function(callback) {
+        console.log("callback method ? " + callback.method);
         if (!callback) return; //nothing to do
 
         //Annotations
@@ -36,35 +38,35 @@ var CommandController = Backbone.Controller.extend({
             var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {
                 return object.idImage == callback.imageID;
             });
-            var image = tab.browImageView;
+            var image = tab.view;
             if (image == undefined) return; //tab is closed
             image.getUserLayer().annotationAdded(callback.annotationID);
         } else if (callback.method == "be.cytomine.EditAnnotationCommand") {
             var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {
                 return object.idImage == callback.imageID;
             });
-            var image = tab.browImageView;
+            var image = tab.view;
             if (image == undefined) return; //tab is closed
             image.getUserLayer().annotationUpdated(callback.annotationID);
         } else if (callback.method == "be.cytomine.DeleteAnnotationCommand") {
             var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {
                 return object.idImage == callback.imageID;
             });
-            var image = tab.browImageView;
+            var image = tab.view;
             if (image == undefined) return; //tab is closed
             image.getUserLayer().annotationRemoved(callback.annotationID);
         } else if (callback.method == "be.cytomine.AddAnnotationTermCommand") {
             var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {
                 return object.idImage == callback.imageID;
             });
-            var image = tab.browImageView;
+            var image = tab.view;
             if (image == undefined) return; //tab is closed
             image.getUserLayer().termAdded(callback.annotationID,callback.termID);
         } else if (callback.method == "be.cytomine.DeleteAnnotationTermCommand") {
             var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {
                 return object.idImage == callback.imageID;
             });
-            var image = tab.browImageView;
+            var image = tab.view;
             if (image == undefined) return; //tab is closed
             image.getUserLayer().termRemoved(callback.annotationID,callback.termID);
         }
