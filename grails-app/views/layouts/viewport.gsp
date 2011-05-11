@@ -314,9 +314,12 @@
          </td>
       </tr>
       <tr>
-      <td><button class="seeSlide" id='projectopenimages{{id}}' type="button">Preview</button></td>
+      <td>
+      <!--<button class="seeSlide" id='projectopenimages{{id}}' type="button">Preview</button>-->
+      </td>
       <td><button class="addSlide" id='projectaddimages{{id}}' type="button">Manage slides</button> </td>
-      <td><input class="changeProject" id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Explore</label></input> </td>
+      <!--<td><input class="changeProject" id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Explore</label></input> </td>-->
+      <td><a class="changeProject" id='radioprojectchange{{id}}' href="#dashboard">Explore</a></td>
       <tr>
          </table>
 
@@ -609,7 +612,7 @@
 </script>
 
 <script type="text/html" id="imagethumbtpl">
-    <div class='thumb'><a href='#browse/{{ id }}'><img src='{{ thumb }}' alt='{{ filename }}'  /></a></div>
+    <div class='thumb'><a href='#browse/{{ id }}'><img src='{{ thumb }}' alt='{{ filename }}'  style="max-height:180px; max-width:180px; "  /></a></div>
     <div class='thumb-info'><a href='#browse/{{ id }}'>{{filename}}</a></div>
 </script>
 

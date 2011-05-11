@@ -65,7 +65,16 @@ var BrowseImageView = Backbone.View.extend({
                 var arg = it.split(":");
                 if (arg[0] == "Max-size") {
                     var value = arg[1].split(" ");
-                    metadata = {width : value[0], height : value[1]};
+                    var t_width  = value[0];
+                    var t_height = value[1];
+                    var nbZoom = 1;
+                    while (t_width >= 256 || t_height >= 256) {
+                        nbZoom++;
+                        t_width = t_width / 2;
+                        t_height = t_height / 2;
+                    }
+                    metadata = {width : value[0], height : value[1], nbZoom : nbZoom};
+
                 }
 
             });
@@ -75,7 +84,10 @@ var BrowseImageView = Backbone.View.extend({
         var initZoomifyLayer = function(metadata) {
             /* First we initialize the zoomify pyramid (to get number of tiers) */
             console.log("Init zoomify with (width, height) : " + metadata.width +","+ metadata.height);
-            var zoomify_url = "http://139.165.108.140:48/fcgi-bin/iipsrv.fcgi?zoomify=/media/datalvm/anapath/upload/vms/test.vms/";
+            var baseURLs = self.model.get('imageServerBaseURL');
+            console.log("baseURL : " + baseURLs.length);
+            console.log("nbZoom " + metadata.nbZoom);
+            var zoomify_url = baseURLs[0] + "/fcgi-bin/iipsrv.fcgi?zoomify=" + self.model.get('path') +"/";
             self.layers.baseLayer = new OpenLayers.Layer.Zoomify( "Zoomify", zoomify_url,
                     new OpenLayers.Size( metadata.width, metadata.height ) );
 
@@ -89,13 +101,12 @@ var BrowseImageView = Backbone.View.extend({
                 }
             });
 
-            var numZoomLevels =  self.layers.baseLayer.numberOfTiers;
+            //var numZoomLevels =  metadata.nbZoom;
             /* Map with raster coordinates (pixels) from Zoomify image */
             var options = {
                 maxExtent: new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
-                minResolution: 1,
-                maxResolution: Math.pow(2, self.layers.baseLayer.numberOfTiers-1 ),
-                numZoomLevels: numZoomLevels,
+                maxResolution: Math.pow(2,  metadata.nbZoom-1 ),
+                numZoomLevels:  metadata.nbZoom,
                 units: 'pixels',
                 controls: [
                     //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),

@@ -25,17 +25,186 @@ var ProjectDashboardView = Backbone.View.extend({
 
         return this;
     },
-    refresh : function(model) {
+    refresh : function() {
+        /*console.log("refresh db");
+         var self = this;
+         $(this.projectElem+this.model.get('id')).empty();
+         new ProjectModel({id : self.model.id}).fetch({
+         success : function (model, response) {
+         console.log("refresh project panel");
 
+         self.model = model;
+         self.printProjectInfo();
+         }});
+         */
         var self = this;
-        $(this.projectElem+this.model.get('id')).empty();
-        new ProjectModel({id : self.model.id}).fetch({
-            success : function (model, response) {
-                console.log("refresh project panel");
-                console.log(model.toJSON());
-                self.model = model;
-                self.printProjectInfo();
-            }});
+        setTimeout(function(){self.fetchAnnotations()}, 500);
+        setTimeout(function(){self.fetchCommands()}, 1000);
+        setTimeout(function(){self.fetchStats()}, 15000);
+
+    },
+    fetchAnnotations : function () {
+        var self = this;
+        var annotationCollection = new AnnotationCollection({project:self.model.get('id')});
+
+        var annotationCallback = function(collection,response) {
+
+            var view = new AnnotationView({
+                page : undefined,
+                model : collection,
+                el:$("#projectAnnotationList"),
+                container : window.app.view.components.warehouse
+            }).render();
+        }
+
+        annotationCollection.fetch({
+            success : function(model, response) {
+                annotationCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+            }
+        });
+
+    },
+    fetchCommands : function () {
+        var self = this;
+        var commandCollection = new CommandCollection({project:self.model.get('id'),max:10});
+
+        var commandCallback = function(collection, response) {
+
+            collection.each(function(command) {
+
+            });
+
+
+            $("#lastactionitem").empty();
+            collection.each(function(command) {
+
+                var dateCreated = new Date();
+                dateCreated.setTime(command.get('created'));
+                var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString()
+
+                var json = $.parseJSON(command.get("data"));
+                var action = ""
+
+                var errorImage = "http://www.bmxforever.net/website/wp-content/uploads/2010/03/Error.jpg";
+
+                if(command.get("class")=="be.cytomine.command.annotation.AddAnnotationCommand")
+                {
+                    var action = ich.annotationcommandlisttpl({icon:"ui-icon-plus",text:command.get("action"),datestr:dateStr,image:json.cropURL});
+                    $("#lastactionitem").append(action);
+                    $.ajax({
+                        async : false,
+                        url: json.cropURL,
+                        success: function(data){},
+                        error: function(XMLHttpRequest, textStatus, errorThrown){ $(action).find("img").hide();}
+                    });
+                }
+                if(command.get("class")=="be.cytomine.command.annotation.EditAnnotationCommand")
+                {
+                    var action = ich.annotationcommandlisttpl({icon:"ui-icon-pencil",text:command.get("action"),datestr:dateStr,image:json.cropURL});
+                    $("#lastactionitem").append(action);
+                    $.ajax({
+                        async : false,
+                        url: json.cropURL,
+                        success: function(data){},
+                        error: function(XMLHttpRequest, textStatus, errorThrown){ $(action).find("img").hide();}
+                    });
+                }
+                if(command.get("class")=="be.cytomine.command.annotation.DeleteAnnotationCommand")
+                {
+                    var action = ich.annotationcommandlisttpl({icon:"ui-icon-trash",text:command.get("action"),datestr:dateStr,image:json.cropURL});
+                    $("#lastactionitem").append(action);
+                    $.ajax({
+                        async : false,
+                        url: json.cropURL,
+                        success: function(data){},
+                        error: function(XMLHttpRequest, textStatus, errorThrown){ $(action).find("img").hide();}
+                    });
+                }
+
+
+                if(command.get("class")=="be.cytomine.command.annotationterm.AddAnnotationTermCommand")
+                {
+
+                    var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-plus",text:command.get("action"),datestr:dateStr,image:""});
+                    $("#lastactionitem").append(action);
+
+                }
+                if(command.get("class")=="be.cytomine.command.annotationterm.EditAnnotationTermCommand")
+                {
+
+                    var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-pencil",text:command.get("action"),datestr:dateStr,image:""});
+                    $("#lastactionitem").append(action);
+
+                }
+                if(command.get("class")=="be.cytomine.command.annotationterm.DeleteAnnotationTermCommand")
+                {
+
+                    var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-trash",text:command.get("action"),datestr:dateStr,image:""});
+                    $("#lastactionitem").append(action);
+
+                }
+            });
+        }
+
+        commandCollection.fetch({
+            success : function(model, response) {
+                commandCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+            }
+        });
+
+    },
+    fetchStats : function () {
+        var self = this;
+        var statsCollection = new StatsCollection({project:self.model.get('id')});
+        var statsCallback = function(collection, response) {
+
+            console.log(collection);
+            $("#plotterms").empty();
+
+            var empty = true;
+            var array = new Array();
+            collection.each(function(stat) {
+                var subArray = new Array(stat.get('key'),stat.get('value'));
+                array.push(subArray);
+                empty = empty && stat.get('value')=="0";
+            });
+            console.log("empty="+empty);
+
+            if(empty) {
+                array.push(new Array("Nothing",100))
+            }
+
+
+            $.jqplot('plotterms', [array], {
+                height: 450,
+                width: 450,
+                grid: {
+                    drawBorder: false,
+                    drawGridlines: false,
+                    background: '#ffffff',
+                    shadow:false
+                },
+                axesDefaults: {
+
+                },
+                seriesDefaults:{
+                    renderer:$.jqplot.PieRenderer,
+                    rendererOptions: {
+                        showDataLabels: true
+                    }
+                },
+                legend: {
+                    show: true,
+                    location: 'e'
+                }
+            });
+        }
+
+        statsCollection.fetch({
+            success : function(model, response) {
+                statsCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+            }
+        });
 
     },
 
@@ -125,177 +294,13 @@ var ProjectDashboardView = Backbone.View.extend({
 
             }});
 
-            var annotationCollection = new AnnotationCollection({project:self.model.get('id')});
-
-            var annotationCallback = function(collection,response) {
-                console.log("**** ANNOTATION SIZE:"+collection.length);
-                //$("#projectAnnotationList").empty();
-                var view = new AnnotationView({
-                    page : undefined,
-                    model : collection,
-                    el:$("#projectAnnotationList"),
-                    container : window.app.view.components.warehouse
-                }).render();
-            }
-            var fetchAnnotations = function() {
-                annotationCollection.fetch({
-                    success : function(model, response) {
-                        annotationCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-                    }
-                });
-            }
-
-            fetchAnnotations();
 
 
-            var commandCollection = new CommandCollection({project:self.model.get('id'),max:10});
+            self.fetchAnnotations();
 
-            var commandCallback = function(collection, response) {
+            self.fetchCommands();
 
-                collection.each(function(command) {
-
-                });
-
-
-                $("#lastactionitem").empty();
-                collection.each(function(command) {
-                    console.log(command);
-
-                    var dateCreated = new Date();
-                    dateCreated.setTime(command.get('created'));
-                    var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString()
-
-                    var json = $.parseJSON(command.get("data"));
-                    var action = ""
-
-                    var errorImage = "http://www.bmxforever.net/website/wp-content/uploads/2010/03/Error.jpg";
-
-                    if(command.get("class")=="be.cytomine.command.annotation.AddAnnotationCommand")
-                    {
-                        var action = ich.annotationcommandlisttpl({icon:"ui-icon-plus",text:command.get("action"),datestr:dateStr,image:json.cropURL});
-                        $("#lastactionitem").append(action);
-                        $.ajax({
-                            async : false,
-                            url: json.cropURL,
-                            success: function(data){},
-                            error: function(XMLHttpRequest, textStatus, errorThrown){ $(action).find("img").hide();}
-                        });
-                    }
-                    if(command.get("class")=="be.cytomine.command.annotation.EditAnnotationCommand")
-                    {
-                        var action = ich.annotationcommandlisttpl({icon:"ui-icon-pencil",text:command.get("action"),datestr:dateStr,image:json.cropURL});
-                        $("#lastactionitem").append(action);
-                        $.ajax({
-                            async : false,
-                            url: json.cropURL,
-                            success: function(data){},
-                            error: function(XMLHttpRequest, textStatus, errorThrown){ $(action).find("img").hide();}
-                        });
-                    }
-                    if(command.get("class")=="be.cytomine.command.annotation.DeleteAnnotationCommand")
-                    {
-                        var action = ich.annotationcommandlisttpl({icon:"ui-icon-trash",text:command.get("action"),datestr:dateStr,image:json.cropURL});
-                        $("#lastactionitem").append(action);
-                        $.ajax({
-                            async : false,
-                            url: json.cropURL,
-                            success: function(data){},
-                            error: function(XMLHttpRequest, textStatus, errorThrown){ $(action).find("img").hide();}
-                        });
-                    }
-
-
-                    if(command.get("class")=="be.cytomine.command.annotationterm.AddAnnotationTermCommand")
-                    {
-                        console.log(json);
-                        var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-plus",text:command.get("action"),datestr:dateStr,image:""});
-                        $("#lastactionitem").append(action);
-
-                    }
-                    if(command.get("class")=="be.cytomine.command.annotationterm.EditAnnotationTermCommand")
-                    {
-                        console.log(json);
-                        var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-pencil",text:command.get("action"),datestr:dateStr,image:""});
-                        $("#lastactionitem").append(action);
-
-                    }
-                    if(command.get("class")=="be.cytomine.command.annotationterm.DeleteAnnotationTermCommand")
-                    {
-                        console.log(json);
-                        var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-trash",text:command.get("action"),datestr:dateStr,image:""});
-                        $("#lastactionitem").append(action);
-
-                    }
-                });
-            }
-            var fetchCommands = function() {
-                commandCollection.fetch({
-                    success : function(model, response) {
-                        commandCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-                    }
-                });
-            }
-
-            fetchCommands();
-
-
-
-            var statsCollection = new StatsCollection({project:self.model.get('id')});
-            var statsCallback = function(collection, response) {
-                //console.log("**************************************");
-                console.log(collection);
-                $("#plotterms").empty();
-
-                var empty = true;
-                var array = new Array();
-                collection.each(function(stat) {
-                    console.log("###" + stat.cid);
-
-                    var subArray = new Array(stat.get('key'),stat.get('value'));
-                    array.push(subArray);
-                    //console.log("###" + stat.get('key'));
-                    empty = empty && stat.get('value')=="0";
-                });
-                console.log("empty="+empty);
-
-                if(empty) {
-                    array.push(new Array("Nothing",100))
-                }
-
-
-                $.jqplot('plotterms', [array], {
-                    height: 450,
-                    width: 450,
-                    grid: {
-                        drawBorder: false,
-                        drawGridlines: false,
-                        background: '#ffffff',
-                        shadow:false
-                    },
-                    axesDefaults: {
-
-                    },
-                    seriesDefaults:{
-                        renderer:$.jqplot.PieRenderer,
-                        rendererOptions: {
-                            showDataLabels: true
-                        }
-                    },
-                    legend: {
-                        show: true,
-                        location: 'e'
-                    }
-                });
-            }
-            var fetchStats = function() {
-                statsCollection.fetch({
-                    success : function(model, response) {
-                        statsCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-                    }
-                });
-            }
-
-            fetchStats();
+            self.fetchStats();
 
         }
         });

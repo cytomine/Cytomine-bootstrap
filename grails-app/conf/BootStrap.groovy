@@ -182,6 +182,69 @@ class BootStrap {
             ],
             [
                     'name' : 'IIP-Openslide',
+                    'url' : 'http://is1.cytomine.be:48',
+                    'service' : '/fcgi-bin/iipsrv.fcgi',
+                    'className' : 'IPPResolver',
+                    'extension' : 'vms'
+            ],
+            [
+                    'name' : 'IIP-Openslide',
+                    'url' : 'http://is2.cytomine.be:48',
+                    'service' : '/fcgi-bin/iipsrv.fcgi',
+                    'className' : 'IPPResolver',
+                    'extension' : 'vms'
+            ],
+            [
+                    'name' : 'IIP-Openslide',
+                    'url' : 'http://is3.cytomine.be:48',
+                    'service' : '/fcgi-bin/iipsrv.fcgi',
+                    'className' : 'IPPResolver',
+                    'extension' : 'vms'
+            ],
+            [
+                    'name' : 'IIP-Openslide',
+                    'url' : 'http://is4.cytomine.be:48',
+                    'service' : '/fcgi-bin/iipsrv.fcgi',
+                    'className' : 'IPPResolver',
+                    'extension' : 'vms'
+            ],
+            [
+                    'name' : 'IIP-Openslide',
+                    'url' : 'http://is5.cytomine.be:48',
+                    'service' : '/fcgi-bin/iipsrv.fcgi',
+                    'className' : 'IPPResolver',
+                    'extension' : 'vms'
+            ],
+            [
+                    'name' : 'IIP-Openslide',
+                    'url' : 'http://is6.cytomine.be:48',
+                    'service' : '/fcgi-bin/iipsrv.fcgi',
+                    'className' : 'IPPResolver',
+                    'extension' : 'vms'
+            ],
+            [
+                    'name' : 'IIP-Openslide',
+                    'url' : 'http://is7.cytomine.be:48',
+                    'service' : '/fcgi-bin/iipsrv.fcgi',
+                    'className' : 'IPPResolver',
+                    'extension' : 'vms'
+            ],
+            [
+                    'name' : 'IIP-Openslide',
+                    'url' : 'http://is8.cytomine.be:48',
+                    'service' : '/fcgi-bin/iipsrv.fcgi',
+                    'className' : 'IPPResolver',
+                    'extension' : 'vms'
+            ],
+            [
+                    'name' : 'IIP-Openslide',
+                    'url' : 'http://is9.cytomine.be:48',
+                    'service' : '/fcgi-bin/iipsrv.fcgi',
+                    'className' : 'IPPResolver',
+                    'extension' : 'vms'
+            ],
+            [
+                    'name' : 'IIP-Openslide',
                     'url' : 'http://is10.cytomine.be:48',
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
@@ -218,8 +281,8 @@ class BootStrap {
             [name : "GIGA-DEV2",  groups : [[ name :"GIGA"]],ontology: "LBA"],
             [name : "GIGA-DEV3 PROJECT",  groups : [[ name :"GIGA"]],ontology: "LBA"],
             [name : "GIGA-DEV4 PROJECT TEST AUTOCOMPLETION",  groups : [[ name :"GIGA"]],ontology: "LBA"],
-            [name : "STUDY NEO4",  groups : [[ name :"GIGA"]],ontology: "Tissus"],
-            [name : "STUDY NEO13",  groups : [[ name :"GIGA"]],ontology: "Cellules"],
+            [name : "LBTD NEO4",  groups : [[ name :"GIGA"]],ontology: "Tissus"],
+            [name : "LBTD NEO13",  groups : [[ name :"GIGA"]],ontology: "Cellules"],
             [name : "ANAPATH",  groups : [[ name :"GIGA"]],ontology: "ASP"],
             // [name : "NEO13", groups : [[ name :"GIGA"]]],
             // [name : "NEO4",  groups : [[ name :"GIGA"]]]
@@ -235,15 +298,17 @@ class BootStrap {
             [name : "testslide3", order : 8, projects : [[name : "GIGA-DEV"]]],
             [name : "testslide4", order : 8, projects : [[name : "GIGA-DEV2"]]],
             [name : "testslide5", order : 8, projects : [[name : "GIGA-DEV"]]],
-            [name : "testslide6", order : 8, projects : [[name : "GIGA-DEV"]]]
+            [name : "testslide6", order : 8, projects : [[name : "ANAPATH"]]]
     ]
     def slides = createSlides(slideSamples)
 
 
     /* Scans */
     def scanSamples = [
-            //[filename: 'ImageNEO13_CNS_5.10_5_4_01',path:'ImageNEO13_CNS_5.10_5_4_01', extension : 'gdal', slide : 0],
-            [filename: 'test.vms',path:'/media/datalvm/anapath/upload/vms/test.vms', extension : "vms", slide : 0],
+            /*[filename: 'test.vms',path:'/media/datalvm/anapath/upload/vms/test.vms', extension : "vms", slide : 0],*/
+            [filename: '01c02157_lba-2011-01-2523.21.42_clip.vms',path:'/media/datalvm/anapath/upload/vms/01c02157_lba-2011-01-2523.21.42_clip.vms', extension : "vms", slide : 5],
+            [filename: '10C12080-LBAPap-2010-12-0912.18.51_clip.vms',path:'/media/datalvm/anapath/upload/vms/10C12080-LBAPap-2010-12-0912.18.51_clip.vms', extension : "vms", slide : 5],
+            [filename: 'OVA17cyto-2010-11-1513.09.42_clip.vms',path:'/media/datalvm/anapath/upload/vms/OVA17cyto-2010-11-1513.09.42_clip.vms', extension : "vms", slide : 5],
             //[filename: 'R215.mrxs',path:'/media/datalvm/maree/PAP/Slides/R215.mrxs', extension : "mrxs", slide : 0],
             [filename: 'Boyden - essai _10x_02',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Boyden/essai_10x_02.one.jp2',slide : 0],
             [filename: 'Aperio - 003',path:'file:///media/datafast/tfeweb2010/BDs/WholeSlides/Aperio/003.jp2',slide : 0 ],

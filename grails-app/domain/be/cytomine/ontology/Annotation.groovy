@@ -69,15 +69,17 @@ class Annotation extends SequenceDomain implements Serializable {
   }
 
   private def getBoundaries () {
-    def metadata = JSON.parse(new URL(image.getMetadataURL()).text)
+    /*def metadata = JSON.parse(new URL(image.getMetadataURL()).text)
+    int zoom = Integer.parseInt(metadata.levels)*/
     Coordinate[] coordinates = location.getEnvelope().getCoordinates()
     int topLeftX = coordinates[3].x
-    int topLeftY = Integer.parseInt(metadata.height) - coordinates[3].y
+    int topLeftY = coordinates[3].y
+    //int topLeftY = Integer.parseInt(metadata.height) - coordinates[3].y
     int width =  coordinates[1].x - coordinates[0].x
     int height =  coordinates[3].y - coordinates[0].y
-    int zoom = Integer.parseInt(metadata.levels)
-    log.debug "topLeftX :"+ topLeftX + " topLeftY :" + topLeftY + " width :" +  width + " height :" + height + " zoom :" + zoom
-    return [topLeftX : topLeftX, topLeftY : topLeftY,width : width, height : height, zoom : zoom]
+
+    log.debug "topLeftX :"+ topLeftX + " topLeftY :" + topLeftY + " width :" +  width + " height :" + height
+    return [topLeftX : topLeftX, topLeftY : topLeftY,width : width, height : height]
   }
 
   def getCropURL(int zoom) {

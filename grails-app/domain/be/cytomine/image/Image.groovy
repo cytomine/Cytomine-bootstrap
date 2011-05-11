@@ -227,24 +227,18 @@ class Image extends SequenceDomain {
 
 
     def getCropURL(int topLeftX, int topLeftY, int width, int height, int zoom)  {
-        int deltaZoom = Math.pow(2, (getZoomLevels().max - zoom))
         Collection<ImageServer> imageServers = getMime().imageServers()
-        def urls = []
-        imageServers.each {
-            Resolver resolver = Resolver.getResolver(it.className)
-            String url = resolver.getCropURL(it.getBaseUrl(), getPath(),topLeftX,topLeftY, (int) (width / deltaZoom), (int) (height / deltaZoom),zoom)
-            urls << url
-        }
-        def index = (Integer) Math.round(Math.random()*(urls.size()-1)) //select an url randomly
-        return urls[index]
+        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
+        Resolver resolver = Resolver.getResolver(imageServers[index].className)
+        String url = resolver.getCropURL(imageServers[index].getBaseUrl(), getPath(),topLeftX,topLeftY, width, height ,zoom)
+        return url
     }
 
     def getZoomLevels () {
-        def metadata = JSON.parse(new URL(getMetadataURL()).text)
-        int max = Integer.parseInt(metadata.levels)
-        int min = 0
-        int middle = ((max - min) / 2)
-        return [min : 0, max : max, middle : middle]
+        Collection<ImageServer> imageServers = getMime().imageServers()
+        assert(imageServers.size() > 0)
+        Resolver resolver = Resolver.getResolver(imageServers[0].className)
+        return resolver.getZoomLevels(imageServers[0].getBaseUrl(), getPath())
     }
 
 

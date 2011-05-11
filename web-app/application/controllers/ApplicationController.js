@@ -118,6 +118,8 @@ var ApplicationController = Backbone.Controller.extend({
         this.status = new Status(pingURL, serverDown,
                 function () { //TO DO: HANDLE WHEN USER IS DISCONNECTED BY SERVER
                 }, 10000);
+
+
     },
 
     explorer: function() {

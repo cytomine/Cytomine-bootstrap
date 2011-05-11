@@ -30,9 +30,9 @@ var ProjectPanelView = Backbone.View.extend({
         //"click .thumb" : "setCurrentProject"
     },
     /*setCurrentProject : function () {
-        window.app.status.currentProject = this.model.id;
+     window.app.status.currentProject = this.model.id;
 
-    },*/
+     },*/
     render: function() {
         this.printProjectInfo();
         return this;
@@ -72,9 +72,8 @@ var ProjectPanelView = Backbone.View.extend({
             json.users = json.users.substring(0,json.users.length-2);
 
             var proj = ich.projectviewtpl(json);
-            console.log(proj);
+
             if(self.addSlideDialog!=null){
-                console.log("addSlideDialog!=null");
                 $("#projectlist"+json.id).replaceWith(proj);
             }
             else
@@ -122,53 +121,64 @@ var ProjectPanelView = Backbone.View.extend({
         $(self.imageOpenElem + self.model.id).button({icons : {secondary :self.imageOpened? "ui-icon-carat-1-n":"ui-icon-carat-1-s"}});
     },
     changeProject : function () {
+
+
         var self = this;
-        var idNewProject = self.model.get('id');
-        var idOldProject = window.app.status.currentProject;
+        var idProject = self.model.get('id');
+        var cont = false;
 
-        console.log("change for project:"+idNewProject);
-        console.log("current project:"+idOldProject);
-
-        if(idNewProject==idOldProject) return;
+        if(idProject==window.app.status.currentProject) return;
 
         if(window.app.controllers.browse.tabs != null)
         {
+
+            console.log("closeAll()");
+            window.app.controllers.browse.closeAll();
+            window.app.status.currentProject = idProject;
+            console.log("window.app.status.currentProject"+window.app.status.currentProject);
+            /*window.app.controllers.dashboard.dashboard();*/
+
+            /* DISABLED
             //Some images are opene
             //Ask if close all or cancel
-            var dialog = ich.projectchangedialog({id:idNewProject,name:self.model.get('name')});
+            var dialog = ich.projectchangedialog({id:idProject,name:self.model.get('name')});
             $(self.el).append(dialog);
 
             //Build dialog
-            $(self.projectChangeDialog+idNewProject).dialog({
+            $(self.projectChangeDialog+idProject).dialog({
                 buttons : {
                     "Close all" : function() {
                         //close all pictures and change current project id
                         console.log("closeAll()");
                         window.app.controllers.browse.closeAll();
-                        window.app.status.currentProject = idNewProject;
+                        window.app.status.currentProject = idProject;
                         console.log("window.app.status.currentProject"+window.app.status.currentProject);
-                        window.app.controllers.dashboard.dashboard();
-                        $(self.projectChangeDialog+idNewProject).dialog("close");
+
+                        $(self.projectChangeDialog+idProject).dialog("close");
+                        return true;
 
                     },
                     "Cancel" : function() {
-                        $(self.projectChangeDialog+idNewProject).dialog("close");
+                        $(self.projectChangeDialog+idProject).dialog("close");
                     }
                 }
             });
 
             //Open dialog
-            $(self.projectChangeDialog+idNewProject).dialog("open");
+            $(self.projectChangeDialog+idProject).dialog("open");*/
         }
         else
         {
             //No image open
             window.app.controllers.browse.closeAll();
-            window.app.status.currentProject = idNewProject;
-            window.app.controllers.dashboard.dashboard();
-        }
+            window.app.status.currentProject = idProject;
 
+            /*window.app.controllers.dashboard.dashboard();*/
+        }
         console.log("New current project:"+window.app.status.currentProject);
+        console.log("CONTINUE : " + cont);
+        return true;//go to dashboard
+
 
     },
     renderShowImageButton : function(imageNumber) {

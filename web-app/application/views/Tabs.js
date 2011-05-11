@@ -28,6 +28,9 @@ var Tabs = Backbone.View.extend({
                 return true;
             },
             select: function(event, ui) {
+                if (ui.panel.id == "tabs-0") { //tab is  the dashboard
+                    self.refreshDashboard();
+                }
                 return true;
             }
         });
@@ -52,7 +55,7 @@ var Tabs = Backbone.View.extend({
                 }).render();
                 self.images.push({
                     idImage : idImage,
-                    browImageView : view
+                    view : view
                 });
             }
         });
@@ -82,6 +85,14 @@ var Tabs = Backbone.View.extend({
         $(self.el).hide();
         $(self.el).parent().find('.noProject').show();
     },
+    refreshDashboard : function () {
+        var dashboardTab = _.detect(this.images, function(object) {
+            console.log("looking for db :" + object.idImage);
+            return object.idImage == 0;
+        });
+        console.log("refresh db...");
+        dashboardTab.view.refresh();
+    },
     addDashboard : function(dashboard) {
         console.log("add dashboard");
         var tabs = $(this.el).children('.tabs');
@@ -90,7 +101,7 @@ var Tabs = Backbone.View.extend({
         $("#explorer > .noProject").hide();
         this.images.push({
             idImage : 0,
-            browImageView : dashboard
+            view : dashboard
         });
     }
 });

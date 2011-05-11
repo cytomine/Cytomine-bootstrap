@@ -60,13 +60,28 @@ class DjatokaResolver extends Resolver {
     }
 
     public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int zoom) {
+        int deltaZoom = Math.pow(2, (getZoomLevels(baseUrl, imagePath).max - zoom))
+        def metadata = JSON.parse(new URL(getMetaDataURL(baseUrl, imagePath)).text)
+        println "crop url metadata" + metadata.height
+        def dw = (int) width / deltaZoom
+        def dh = (int) height / deltaZoom
+        def x = topLeftX
+        def y = Integer.parseInt(metadata.height) - topLeftY //Y is inverted between Djatoka & OpenLayers
         args.put("rft_id", imagePath)
         args.put("url_ver", "Z39.88-2004")
         args.put("svc_id", "info:lanl-repo/svc/getRegion")
         args.put("svc_val_fmt", "info:ofi/fmt:kev:mtx:jpeg2000")
         args.put("svc.format", "image/jpeg")
-        args.put("svc.region", topLeftY+ ","+topLeftX+","+height+","+width)
+        args.put("svc.region", y+ ","+x+","+dh+","+dw)
         args.put("svc.level",zoom)
         return toURL(baseUrl)
+    }
+
+    def getZoomLevels (baseUrl, imagePath) {
+        def metadata = JSON.parse(new URL(getMetaDataURL(baseUrl, imagePath)).text)
+        int max = Integer.parseInt(metadata.levels)
+        int min = 0
+        int middle = ((max - min) / 2)
+        return [min : 0, max : max, middle : middle]
     }
 }
