@@ -143,8 +143,10 @@ var ProjectPanelView = Backbone.View.extend({
                 buttons : {
                     "Close all" : function() {
                         //close all pictures and change current project id
+                        console.log("closeAll()");
                         window.app.controllers.browse.closeAll();
                         window.app.status.currentProject = idNewProject;
+                        console.log("window.app.status.currentProject"+window.app.status.currentProject);
                         window.app.controllers.dashboard.dashboard();
                         $(self.projectChangeDialog+idNewProject).dialog("close");
 
