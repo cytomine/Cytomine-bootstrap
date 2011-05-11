@@ -18,8 +18,11 @@
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"></script>
   <script type="text/javascript" src="application/lib/jquery.fileupload-ui.js"></script>
   <script type="text/javascript" src="application/lib/jquery.fileupload.js"></script>
-  <script type="text/javascript" src="https://github.com/documentcloud/underscore/raw/master/underscore.js"></script>
-  <script type="text/javascript" src="https://github.com/documentcloud/backbone/raw/master/backbone.js"></script>
+  <!--<script type="text/javascript" src="https://github.com/documentcloud/underscore/raw/master/underscore.js"></script>
+  <script type="text/javascript" src="https://github.com/documentcloud/backbone/raw/master/backbone.js"></script>  -->
+  <script type="text/javascript" src="application/lib/underscore.js"></script>
+  <script type="text/javascript" src="application/lib/backbone.js"></script>
+
   <script type="text/javascript" src="application/lib/json2.js" ></script>
   <script type="text/javascript" src="application/lib/jquery.pnotify.js" ></script>
   <script type="text/javascript" src="application/lib/jquery.isotope.js"></script>
@@ -432,7 +435,7 @@
           <div id="panelCenter_1" class="centralPanel">
             <h3>Project stats</h3>
             <div>
-                        Panel's initial options:
+                        Project stats by term on annotation:
                         <div id="plotterms"></div>
             </div>
           </div>

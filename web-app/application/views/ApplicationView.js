@@ -149,7 +149,12 @@ ApplicationView.prototype.message =  function(title, message, type, pnotify) {
 }
 ApplicationView.prototype.message =  function(title, message, type, pnotify,_history) {
     type = type || 'status';
-    message.responseText && (message = message.responseText);
+    console.log("ApplicationView.prototype.message");
+    if(message!=undefined)
+    {
+        message.responseText && (message = message.responseText);
+    }
+
     var stack_bottomright = {"dir1": "up", "dir2": "left", "firstpos1": 15, "firstpos2": 15};
     var opts = {
         pnotify_title: title,

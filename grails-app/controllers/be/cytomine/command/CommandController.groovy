@@ -17,13 +17,17 @@ class CommandController {
     def lastCommands = UndoStackItem.findAllByUser(user)
     log.debug "Lastcommands="+lastCommands
 
+    def results = []
     if (UndoStackItem.findAllByUser(user).size() == 0) {
       def message = messageSource.getMessage('be.cytomine.UndoCommand', [] as Object[], Locale.ENGLISH)
+
       def data = [success : true, message: message, callback : null]
+      results << data
+
       response.status = 200
       withFormat {
-        json { render data as JSON }
-        xml { render data as XML }
+        json { render results as JSON }
+        xml { render results as XML }
       }
       return
     }
@@ -35,7 +39,7 @@ class CommandController {
     log.debug "******* firstUndoStack ******* =" + firstUndoStack
     def transactionInProgress = firstUndoStack.transactionInProgress //backup
 
-    def results = []
+
     if (!transactionInProgress) {
       log.debug "******* TRANSACTION NOT IN PROGRESS *******"
       result = firstUndoStack.getCommand().undo()
@@ -72,13 +76,17 @@ class CommandController {
   def redo = {
     User user = User.read(springSecurityService.principal.id)
 
+    def results = []
     if (RedoStackItem.findAllByUser(user).size() == 0) {
       def message = messageSource.getMessage('be.cytomine.RedoCommand', [] as Object[], Locale.ENGLISH)
+
       def data = [success : true, message: message, callback : null]
+      results << data
+
       response.status = 200
        withFormat {
-        json { render data as JSON }
-        xml { render data as XML }
+        json { render results as JSON }
+        xml { render results as XML }
       }
       return
     }
@@ -89,7 +97,7 @@ class CommandController {
     def lastRedoStack = RedoStackItem.findAllByUser(user).last()
     def transactionInProgress = lastRedoStack.transactionInProgress //backup
 
-    def results = []
+
     if (!transactionInProgress) {
       result = lastRedoStack.getCommand().redo()
       new UndoStackItem(command : lastRedoStack.getCommand(), user : lastRedoStack.getUser(), transactionInProgress:  lastRedoStack.transactionInProgress).save(flush : true)

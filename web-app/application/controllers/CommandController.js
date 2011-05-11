@@ -2,6 +2,7 @@ var CommandController = Backbone.Controller.extend({
     undo : function() {
         var self = this;
         $.post('command/undo.json', {}, function(data) {
+            console.log("data:");
             console.log(data);
              _.each(data, function(undoElem){
                   console.log(undoElem);
@@ -16,6 +17,7 @@ var CommandController = Backbone.Controller.extend({
     redo : function () {
         var self = this;
         $.post('command/redo.json', {}, function(data) {
+                console.log("data:");
                 console.log(data);
                  _.each(data, function(redoElem){
                       console.log(redoElem);

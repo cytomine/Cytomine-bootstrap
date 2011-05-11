@@ -78,7 +78,7 @@ var Tabs = Backbone.View.extend({
         while (this.size() > 0) {
             self.removeTab(0);
         }
-        $(this.el).children('.tabs').empty();
+        //$(this.el).children('.tabs').empty();
         $(self.el).hide();
         $(self.el).parent().find('.noProject').show();
     },

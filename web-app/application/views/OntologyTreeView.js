@@ -49,8 +49,9 @@ var OntologyTreeView = Backbone.View.extend({
         return this;
     },
     clear : function() {
-        this.activeEvent = false;
         console.log("clear");
+        this.activeEvent = false;
+        console.log("uncheck all");
         this.tree.jstree('uncheck_all');
         this.activeEvent = true;
     },
@@ -86,11 +87,22 @@ var OntologyTreeView = Backbone.View.extend({
         this.idAnnotation = idAnnotation;
         console.log("refresh: idAnnotation="+self.idAnnotation);
         var refreshTree = function(model , response) {
+            console.log("refresh tree with:"+model.length + " elements");
+            self.clear();
             self.activeEvent = false;
             console.log("self.activeEvent f="+self.activeEvent);
-            self.clear();
+
+            console.log("check correct term");
+
+            model.each(function(term) {
+               console.log("term:" + term.get('name'));
+            });
+
+
             self.tree.jstree('get_unchecked',null,true).each(function () {
+
                 if (model.get(this.id) == undefined) return;
+                console.log("term check" + this.id);
                 self.tree.jstree('check_node',this);
             });
             self.activeEvent = true;
@@ -141,10 +153,5 @@ var OntologyTreeView = Backbone.View.extend({
             var idTerm = data.rslt.obj.attr("id");
             self.unlinkTerm(idTerm);
         });
-        this.tree.bind("click", function(event, data) {
-
-             this.tree.unbind("click",self.removeBindings);
-        });
-
     }
 });
