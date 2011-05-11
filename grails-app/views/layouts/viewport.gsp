@@ -319,7 +319,7 @@
       </td>
       <td><button class="addSlide" id='projectaddimages{{id}}' type="button">Manage slides</button> </td>
       <!--<td><input class="changeProject" id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Explore</label></input> </td>-->
-      <td><a class="changeProject" id='radioprojectchange{{id}}' href="#dashboard">Explore</a></td>
+      <td><a class="changeProject" id='radioprojectchange{{id}}' href="#dashboard/{{id}}">Explore</a></td>
       <tr>
          </table>
 
@@ -474,7 +474,7 @@
     </div>
     </div>
 
-
+    <div style="height:50px"></div>
  <!-- <div id='projectdashboardinfo{{id}}' class="projectstat">
     <h3>{{name}}</h3>
     <div>
@@ -537,8 +537,8 @@
 <script type="text/html" id="projectaddimageitem">
   <li id="projectaddimageitemli{{id}}">
     <input name="jqdemo" value="value1" type="checkbox" id="choice{{id}}"/>
-    <label for="choice{{id}}">..................... {{name}}</label>
-    <div id="projectaddimageitempict{{id}}" alt=""/>
+    <label for="choice{{id}}">{{name}}</label>
+    <div id="projectaddimageitempict{{id}}" style="padding-left:20px;" alt=""/></div>
     <a class="checkbox-select" href="#">Select</a>
     <a class="checkbox-deselect" href="#">Cancel</a>
   </li>
@@ -611,9 +611,13 @@
     <!--</a>-->
 </script>
 
+<script type="text/html" id="imageselecttpl">
+  <img src='{{ thumb }}' alt='{{ filename }}'  style="max-height:70px; max-width:70px; "  />
+</script>
+
 <script type="text/html" id="imagethumbtpl">
-    <div class='thumb'><a href='#browse/{{ id }}'><img src='{{ thumb }}' alt='{{ filename }}'  style="max-height:180px; max-width:180px; "  /></a></div>
-    <div class='thumb-info'><a href='#browse/{{ id }}'>{{filename}}</a></div>
+    <div class='thumb'><a href='#browse/{{project}}/{{ id }}'><img src='{{ thumb }}' alt='{{ filename }}'  style="max-height:180px; max-width:180px; "  /></a></div>
+    <div class='thumb-info'><a href='#browse/{{project}}/{{ id }}'>{{filename}}</a></div>
 </script>
 
 

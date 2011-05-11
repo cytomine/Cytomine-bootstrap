@@ -29,9 +29,9 @@ var AddImageProjectDialog = Backbone.View.extend({
 
         var dialog = ich.projectaddimagedialog({id:this.model.get('id'),name:this.model.get('name')});
         /*if($("#projectaddimagedialog"+this.model.id).length>0)
-            $("#projectaddimagedialog"+this.model.id).replaceWith(dialog);
-        else */
-            $(this.el).append(dialog);
+         $("#projectaddimagedialog"+this.model.id).replaceWith(dialog);
+         else */
+        $(this.el).append(dialog);
 
         //Build dialog
         self.addSlideDialog = $(self.divDialog+this.model.get('id')).dialog({
@@ -47,10 +47,10 @@ var AddImageProjectDialog = Backbone.View.extend({
             height: "600"
         });
         /*if(!$(self.divDialog+self.idProject).dialog("isOpen"))
-        {
-            self.renderImageList();
-            $(self.divDialog+self.idProject).dialog("open");
-        }*/
+         {
+         self.renderImageList();
+         $(self.divDialog+self.idProject).dialog("open");
+         }*/
         return this;
 
     },
@@ -76,7 +76,7 @@ var AddImageProjectDialog = Backbone.View.extend({
                 //TODO: multi-page print
                 var page = 0;
                 var cpt = 0;
-                var nb_thumb_by_page = 50;
+                var nb_thumb_by_page = 200;
                 var inf = Math.abs(page) * nb_thumb_by_page;
                 var sup = (Math.abs(page) + 1) * nb_thumb_by_page;
 
@@ -88,12 +88,18 @@ var AddImageProjectDialog = Backbone.View.extend({
                         console.log("projectImages size=" + projectImages.length);
 
                         collection.each(function(image) {
+
+
                             if ((cpt > inf) && (cpt <= sup)) {
-                                var thumb = new ImageThumbView({
+
+                                var thumb = new ImageSelectView({
                                     model : image
                                 }).render();
 
-                                var item = ich.projectaddimageitem({id:image.id,name:image.get('filename')});
+                                var filename = image.get("filename");
+                                if (filename.length > 15)
+                                    filename = filename.substring(0,12) + "...";
+                                var item = ich.projectaddimageitem({id:image.id,name:filename});
 
                                 $(thumb.el).css({"width":30}); //thumb must be smaller
 
@@ -136,69 +142,69 @@ var AddImageProjectDialog = Backbone.View.extend({
         $(self.checklistChecked).parent().addClass(self.selectedClass);
 
         $(self.checklistSelected).click(
-                                       function(event) {
-                                           event.preventDefault();
-                                           $(this).parent().addClass(self.selectedClass);
-                                           $(this).parent().find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
+                function(event) {
+                    event.preventDefault();
+                    $(this).parent().addClass(self.selectedClass);
+                    $(this).parent().find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
 
-                                           //Get the id of the selected image....
-                                           //TODO: a better way to do that?
-                                           var fullId = $(this).parent().attr("id");   //"projectaddimageitemliXXX"
-                                           var idImage = fullId.substring(self.liElem.length,fullId.length);  //XXX
+                    //Get the id of the selected image....
+                    //TODO: a better way to do that?
+                    var fullId = $(this).parent().attr("id");   //"projectaddimageitemliXXX"
+                    var idImage = fullId.substring(self.liElem.length,fullId.length);  //XXX
 
-                                           //add slide to project
-                                           new ImageModel({id:idImage}).fetch({success : function (image,response) {
-                                               var slide = image.get('slide');
-                                               console.log("Image id = " + idImage + " Slide id = " + slide + " Project id = " + self.model.get('id'));
-                                               new ProjectSlideModel({project : self.model.get('id'), slide : slide}).save({project : self.model.get('id'), slide : slide},{
-                                                   success: function (model, response) {
-                                                       console.log(response);
-                                                       self.refresh();
-                                                       self.projectPanel.refresh();
+                    //add slide to project
+                    new ImageModel({id:idImage}).fetch({success : function (image,response) {
+                        var slide = image.get('slide');
+                        console.log("Image id = " + idImage + " Slide id = " + slide + " Project id = " + self.model.get('id'));
+                        new ProjectSlideModel({project : self.model.get('id'), slide : slide}).save({project : self.model.get('id'), slide : slide},{
+                            success: function (model, response) {
+                                console.log(response);
+                                self.refresh();
+                                self.projectPanel.refresh();
 
-                                                   },
-                                                   error: function (model, response) {
-                                                       console.log("ERROR:"+response);
-                                                   }
-                                               });
+                            },
+                            error: function (model, response) {
+                                console.log("ERROR:"+response);
+                            }
+                        });
 
-                                           }
-                                           });
+                    }
+                    });
 
-                                       }
+                }
                 );
 
         $(self.checklistDeselected).click(
-                                         function(event) {
-                                             console.log("click b");
-                                             event.preventDefault();
-                                             $(this).parent().removeClass(self.selectedClass);
-                                             $(this).parent().find(":checkbox").removeAttr(self.checkedAttr);
+                function(event) {
+                    console.log("click b");
+                    event.preventDefault();
+                    $(this).parent().removeClass(self.selectedClass);
+                    $(this).parent().find(":checkbox").removeAttr(self.checkedAttr);
 
-                                             //Get the id of the selected image....a better way to do that?
-                                             var fullId = $(this).parent().attr("id");   //"projectaddimageitemliXXX"
-                                             var idImage = fullId.substring(self.liElem.length,fullId.length);  //XXX
+                    //Get the id of the selected image....a better way to do that?
+                    var fullId = $(this).parent().attr("id");   //"projectaddimageitemliXXX"
+                    var idImage = fullId.substring(self.liElem.length,fullId.length);  //XXX
 
-                                             //delete slide from project
-                                             new ImageModel({id:idImage}).fetch({success : function (image,response) {
-                                                 var slide = image.get('slide');
-                                                 console.log("Image id = " + idImage + " Slide id = " + slide + " Project id = " + self.model.get('id'));
-                                                 new ProjectSlideModel({project :self.model.get('id'), slide : slide}).destroy({
-                                                     success: function (model, response) {
-                                                         console.log(response);
-                                                       self.refresh();
-                                                       self.projectPanel.refresh();
+                    //delete slide from project
+                    new ImageModel({id:idImage}).fetch({success : function (image,response) {
+                        var slide = image.get('slide');
+                        console.log("Image id = " + idImage + " Slide id = " + slide + " Project id = " + self.model.get('id'));
+                        new ProjectSlideModel({project :self.model.get('id'), slide : slide}).destroy({
+                            success: function (model, response) {
+                                console.log(response);
+                                self.refresh();
+                                self.projectPanel.refresh();
 
-                                                     },
-                                                     error: function ( response) {
-                                                         console.log("ERROR:"+response);
-                                                     }
-                                                 });
+                            },
+                            error: function ( response) {
+                                console.log("ERROR:"+response);
+                            }
+                        });
 
-                                             }
-                                             });
+                    }
+                    });
 
-                                         });
+                });
 
 
 

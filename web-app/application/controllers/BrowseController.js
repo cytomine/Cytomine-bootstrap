@@ -4,7 +4,7 @@ var BrowseController = Backbone.Controller.extend({
     tabs : null,
 
     routes: {
-        "browse/:idImage"   :   "browse",
+        "browse/:idProject/:idImage"   :   "browse",
         "close"   :   "close"
     },
 
@@ -24,12 +24,13 @@ var BrowseController = Backbone.Controller.extend({
         }
     },
 
-    browse : function (idImage) {
+    browse : function (idProject, idImage) {
+        //window.app.controllers.dashboard.dashboard(idProject);
         this.initTabs();
         this.tabs.addTab(idImage);
         this.tabs.showTab(idImage);
-
         window.app.view.showComponent(this.tabs.container);
+        this.showView();
 
     },
 
@@ -40,6 +41,12 @@ var BrowseController = Backbone.Controller.extend({
         this.tabs.closeAll();
 
         /*window.app.view.showComponent(this.tabs.container);*/
+    },
+
+    showView : function() {
+        $("#explorer > .browser").show();
+        $("#explorer > .noProject").hide();
+        window.app.view.showComponent(window.app.view.components.explorer);
     }
 
 });

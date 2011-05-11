@@ -1,41 +1,54 @@
 
 var DashboardController = Backbone.Controller.extend({
 
+    view : null,
     routes: {
-        "dashboard"  : "dashboard"
+        "dashboard/:project"  : "dashboard"
     },
 
+    dashboard : function(project) {
+
+        if (window.app.status.currentProject != undefined && window.app.status.currentProject != project) {
+            console.log("close previous project");
+            this.destroyView();
+            window.app.controllers.browse.closeAll();
+            window.app.status.currentProject = project;
+        }
+
+        if (window.app.status.currentProject == project || window.app.status.currentProject == undefined) {
+            console.log("init dashboard view");
+            window.app.status.currentProject = project;
+            if (this.view == null) this.createView();
+            this.showView();
+        }
 
 
-    dashboard : function() {
+    },
 
-        console.log("initTabs");
+    createView : function () {
+        console.log("create view...");
         window.app.controllers.browse.initTabs();
-        console.log("tabs");
         var tabs = $("#explorer > .browser").children(".tabs");
-
-        console.log("DashboardController: id project"+window.app.status.currentProject);
-
+        var self = this
         new ProjectModel({id : window.app.status.currentProject}).fetch({
             success : function (model, response) {
-                this.view = new ProjectDashboardView({
+                self.view = new ProjectDashboardView({
                     model : model,
                     el: tabs,
                     container : window.app.view.components.explorer
                 }).render();
-                                console.log("show/hide");
-                $("#explorer > .browser").show();
-                $("#explorer > .noProject").hide();
-
-                this.view.container.views.project = this.view;
-
-                console.log("this.view.container.show()");
-                this.view.container.show(this.view, "#warehouse > .sidebar", "dashboard");
-
-                console.log("window.app.view.showComponent()");
-                window.app.view.showComponent(window.app.view.components.explorer);
-
             }});
 
+    },
+
+    destroyView : function() {
+         //if (this.view != null) this.view.remove();
+         this.view = null;
+    },
+
+    showView : function() {
+        $("#explorer > .browser").show();
+        $("#explorer > .noProject").hide();
+        window.app.view.showComponent(window.app.view.components.explorer);
     }
 });

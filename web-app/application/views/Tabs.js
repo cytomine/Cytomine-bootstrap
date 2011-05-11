@@ -11,7 +11,7 @@ var Tabs = Backbone.View.extend({
         var height = 0;
         tabs.tabs({
             add: function(event, ui) {
-                tabs.tabs('select', '#' + ui.panel.id);
+                console.log("select tabs " + ui.panel.id);
                 $("#"+ui.panel.id).parent().parent().css('height', "100%");
                 if (ui.panel.id != "tabs-0") { //tab is not the dashboard
                     $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;');
@@ -21,6 +21,7 @@ var Tabs = Backbone.View.extend({
                         self.removeTab(index);
                     });
                 }
+                tabs.tabs('select', '#' + ui.panel.id);
             },
             show: function(event, ui){
 
@@ -28,9 +29,9 @@ var Tabs = Backbone.View.extend({
                 return true;
             },
             select: function(event, ui) {
-                if (ui.panel.id == "tabs-0") { //tab is  the dashboard
+                /*if (ui.panel.id == "tabs-0") { //tab is  the dashboard
                     self.refreshDashboard();
-                }
+                }*/
                 return true;
             }
         });
@@ -46,6 +47,7 @@ var Tabs = Backbone.View.extend({
         if (alreadyOpen) {
             return;
         }
+        console.log("addTab : " + idImage);
         new ImageModel({id : idImage}).fetch({
             success : function(model, response) {
                 var tabs = $(self.el).children('.tabs');
@@ -69,6 +71,7 @@ var Tabs = Backbone.View.extend({
     showTab : function(idImage) {
         //$(this.el).parent().find('.noProject').hide();
         //$(this.el).show();
+        console.log("showTab : "+ idImage);
         var tabs = $(this.el).children('.tabs');
         tabs.tabs('select', '#tabs-' + idImage);
 
@@ -77,6 +80,7 @@ var Tabs = Backbone.View.extend({
         return _.size(this.images);
     },
     closeAll : function() {
+        console.log("close all");
         var self = this;
         while (this.size() > 0) {
             self.removeTab(0);

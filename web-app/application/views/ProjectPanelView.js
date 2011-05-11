@@ -25,8 +25,8 @@ var ProjectPanelView = Backbone.View.extend({
     },
     events: {
         "click .addSlide": "showAddSlidesPanel",
-        "click .seeSlide": "showSlidesPanel",
-        "click .changeProject": "changeProject"
+        "click .seeSlide": "showSlidesPanel"
+        //"click .changeProject": "changeProject"
         //"click .thumb" : "setCurrentProject"
     },
     /*setCurrentProject : function () {
@@ -127,10 +127,7 @@ var ProjectPanelView = Backbone.View.extend({
         var idProject = self.model.get('id');
         var cont = false;
 
-        console.log("old project="+window.app.status.currentProject);
-        console.log("new project="+idProject);
-
-        if(idProject==window.app.status.currentProject) return false;
+        if(idProject==window.app.status.currentProject) return true;
 
         if(window.app.controllers.browse.tabs != null)
         {

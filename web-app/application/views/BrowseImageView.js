@@ -227,6 +227,7 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('span[class=delete-toolbar]').buttonset();
 
         toolbar.find('input[id=none' + this.model.get('id') + ']').click(function () {
+            self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("none");
             self.getUserLayer().enableHightlight();
         });
@@ -235,16 +236,19 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('input[id=regular4' + this.model.get('id') + ']').click(function () {
+            self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().setSides(4);
             self.getUserLayer().toggleControl("regular");
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('input[id=regular30' + this.model.get('id') + ']').click(function () {
+            self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().setSides(15);
             self.getUserLayer().toggleControl("regular");
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('input[id=polygon' + this.model.get('id') + ']').click(function () {
+           self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("polygon");
             self.getUserLayer().disableHightlight();
         });
@@ -254,6 +258,7 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('input[id=delete' + this.model.get('id') + ']').click(function () {
+           self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("select");
             self.getUserLayer().deleteOnSelect = true;
             self.getUserLayer().disableHightlight();
@@ -285,7 +290,7 @@ var BrowseImageView = Backbone.View.extend({
         window.app.models.users.fetch({
             success: function () {
                 window.app.models.users.each(function (user) {
-                    var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), colors[colorIndex], self.ontologyTreeView );
+                    var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), colors[colorIndex], self.ontologyTreeView, self.map );
                     layerAnnotation.loadAnnotations(self.map);
                     //layerAnnotation.initHightlight(self.map);
                     var isOwner = user.get('id') == window.app.status.user.id;
@@ -355,7 +360,7 @@ var BrowseImageView = Backbone.View.extend({
 /* Annotation Layer */
 
 
-var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView) {
+var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, map) {
     var styleMap = new OpenLayers.StyleMap({
         "default" : OpenLayers.Util.applyDefaults({fillColor: color, fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
                 OpenLayers.Feature.Vector.style["default"]),
@@ -380,13 +385,18 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView) 
     this.drag = false;
     this.irregular = false;
     this.aspectRatio = false;
+    this.map = map;
+    this.popup = null;
+    this.hoverControl = null;
+    this.deleteOnSelect = false; //true if select tool checked
 }
 
 AnnotationLayer.prototype = {
-    hoverControl : null,
-    deleteOnSelect : false, //true if select tool checked
-    popup : false,
+
+
+
     registerEvents: function (map) {
+
         var self = this;
 
         this.vectorsLayer.events.on({
@@ -497,6 +507,12 @@ AnnotationLayer.prototype = {
     },
     removeFeature: function (idAnnotation) {
         var feature = this.features[idAnnotation];
+        if (feature != null && feature.popup) {
+            this.map.removePopup(feature.popup);
+            feature.popup.destroy();
+            feature.popup = null;
+            this.popup = null;
+        }
         this.vectorsLayer.removeFeatures(feature);
         this.ontologyTreeView.clearAnnotation();
         this.ontologyTreeView.clear();
@@ -552,7 +568,7 @@ AnnotationLayer.prototype = {
         //this.hoverControl.deactivate();
     },
     initHightlight : function (map) { //buggy :(
-        this.hoverControl = new OpenLayers.Control.SelectFeature(this.vectorsLayer, {
+        /*this.hoverControl = new OpenLayers.Control.SelectFeature(this.vectorsLayer, {
             hover: true,
             highlightOnly: true,
             renderIntent: "temporary",
@@ -565,7 +581,7 @@ AnnotationLayer.prototype = {
 
 
         map.addControl(this.hoverControl);
-        //this.hoverControl.activate();
+        //this.hoverControl.activate();   */
     },
 
     /*Add annotation in database*/

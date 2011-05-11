@@ -70,11 +70,6 @@ var ProjectDashboardView = Backbone.View.extend({
 
         var commandCallback = function(collection, response) {
 
-            collection.each(function(command) {
-
-            });
-
-
             $("#lastactionitem").empty();
             collection.each(function(command) {
 
@@ -91,33 +86,33 @@ var ProjectDashboardView = Backbone.View.extend({
                 {
                     var action = ich.annotationcommandlisttpl({icon:"ui-icon-plus",text:command.get("action"),datestr:dateStr,image:json.cropURL});
                     $("#lastactionitem").append(action);
+                    $(action).find("img").hide();
                     $.ajax({
-                        async : false,
                         url: json.cropURL,
-                        success: function(data){},
-                        error: function(XMLHttpRequest, textStatus, errorThrown){ $(action).find("img").hide();}
+                        success: function(data){$(action).find("img").show();},
+                        error: function(XMLHttpRequest, textStatus, errorThrown){ }
                     });
                 }
                 if(command.get("class")=="be.cytomine.command.annotation.EditAnnotationCommand")
                 {
                     var action = ich.annotationcommandlisttpl({icon:"ui-icon-pencil",text:command.get("action"),datestr:dateStr,image:json.cropURL});
                     $("#lastactionitem").append(action);
+                    $(action).find("img").hide();
                     $.ajax({
-                        async : false,
                         url: json.cropURL,
-                        success: function(data){},
-                        error: function(XMLHttpRequest, textStatus, errorThrown){ $(action).find("img").hide();}
+                        success: function(data){$(action).find("img").show();},
+                        error: function(XMLHttpRequest, textStatus, errorThrown){}
                     });
                 }
                 if(command.get("class")=="be.cytomine.command.annotation.DeleteAnnotationCommand")
                 {
                     var action = ich.annotationcommandlisttpl({icon:"ui-icon-trash",text:command.get("action"),datestr:dateStr,image:json.cropURL});
                     $("#lastactionitem").append(action);
+                    $(action).find("img").hide();
                     $.ajax({
-                        async : false,
                         url: json.cropURL,
-                        success: function(data){},
-                        error: function(XMLHttpRequest, textStatus, errorThrown){ $(action).find("img").hide();}
+                        success: function(data){$(action).find("img").show();},
+                        error: function(XMLHttpRequest, textStatus, errorThrown){}
                     });
                 }
 
@@ -152,6 +147,18 @@ var ProjectDashboardView = Backbone.View.extend({
             }
         });
 
+    },
+
+    fetchImages : function() {
+        var self = this;
+        new ImageCollection({project:self.model.get('id')}).fetch({success : function (collection, response) {
+            new ImageView({
+                page : undefined,
+                model : collection,
+                el:$("#projectImageList"),
+                container : window.app.view.components.warehouse
+            }).render();
+        }});
     },
     fetchStats : function () {
         var self = this;
@@ -242,15 +249,9 @@ var ProjectDashboardView = Backbone.View.extend({
 
 
             var proj = ich.projectdashboardviewtpl(json);
+            $(self.el).append(proj);
+            window.app.controllers.browse.tabs.addDashboard(self);
 
-            if(self.addSlideDialog!=null){
-                console.log("addSlideDialog!=null");
-                $("#projectdashboardinfo"+json.id).replaceWith(proj);
-            }
-            else {
-                $(self.el).append(proj);
-                window.app.controllers.browse.tabs.addDashboard(self);
-            }
 
 
             collection.each(function(user) {
@@ -294,17 +295,8 @@ var ProjectDashboardView = Backbone.View.extend({
                 collapsible:true
             });
 
-            new ImageCollection({project:self.model.get('id')}).fetch({success : function (collection, response) {
-                var view = new ImageView({
-                    page : undefined,
-                    model : collection,
-                    el:$("#projectImageList"),
-                    container : window.app.view.components.warehouse
-                }).render();
 
-            }});
-
-
+            self.fetchImages();
 
             self.fetchAnnotations();
 
