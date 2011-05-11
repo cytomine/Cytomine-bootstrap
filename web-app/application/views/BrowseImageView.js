@@ -67,7 +67,7 @@ var BrowseImageView = Backbone.View.extend({
                     var value = arg[1].split(" ");
                     var t_width  = value[0];
                     var t_height = value[1];
-                    var nbZoom = 1;
+                    var nbZoom = 0;
                     while (t_width >= 256 || t_height >= 256) {
                         nbZoom++;
                         t_width = t_width / 2;
@@ -105,8 +105,8 @@ var BrowseImageView = Backbone.View.extend({
             /* Map with raster coordinates (pixels) from Zoomify image */
             var options = {
                 maxExtent: new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
-                maxResolution: Math.pow(2,  metadata.nbZoom-1 ),
-                numZoomLevels:  metadata.nbZoom,
+                maxResolution: Math.pow(2,  metadata.nbZoom ),
+                numZoomLevels:  metadata.nbZoom+1,
                 units: 'pixels',
                 controls: [
                     //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),

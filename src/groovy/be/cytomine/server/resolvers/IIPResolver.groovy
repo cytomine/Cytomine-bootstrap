@@ -39,7 +39,7 @@ class IIPResolver extends Resolver{
     }
 
     public String getPreviewUrl(String baseUrl, String imagePath) {
-                //args.put("zoomify", imagePath + "/TileGroup0/0-0-0.jpg")
+        //args.put("zoomify", imagePath + "/TileGroup0/0-0-0.jpg")
         args.add("FIF" + ARGS_EQUAL + imagePath)
         args.add("SDS" + ARGS_EQUAL + "0,90")
         args.add("CNT" + ARGS_EQUAL + "1.0")
@@ -61,15 +61,15 @@ class IIPResolver extends Resolver{
 
     public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int zoom) {
         def dimensions = getWidthHeight(baseUrl, imagePath)
-        print "dimensions : "  + dimensions
+
         /*#Y is the down inset value (positive) from 0 on the y axis at the max image resolution.
-          #X is the right inset value (positive) from 0 on the x axis at the max image resolution.
-          #H is the height of the image provided as response.
-          #W is the width of the image provided as response.
-          X : 1/(34207/15000) = 0.4399859205
-          Y : 1/(34092/15100) = 0.4414301166
-          W : 1/(34092/400) = 0.01173295788
-          H : 1/(34207/600) = 0.01754026954*/
+    #X is the right inset value (positive) from 0 on the x axis at the max image resolution.
+    #H is the height of the image provided as response.
+    #W is the width of the image provided as response.
+    X : 1/(34207/15000) = 0.4399859205
+    Y : 1/(34092/15100) = 0.4414301166
+    W : 1/(34092/400) = 0.01173295788
+    H : 1/(34207/600) = 0.01754026954*/
         def x = 1/(dimensions.width / topLeftX)
         def y = 1/(dimensions.height / (dimensions.height - topLeftY))
         def w = 1/(dimensions.width / width)
@@ -81,6 +81,17 @@ class IIPResolver extends Resolver{
         println url
         //RGN=0.4399859205,0.4414301166,0.01173295788,0.01754026954&CVT=JPEG
         return url
+    }
+
+    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height) {
+        def maxZoom = getZoomLevels(baseUrl, imagePath).max
+        def widthTarget = 500
+        def tmpWidth = width
+        while (tmpWidth > widthTarget) {
+            maxZoom--
+            tmpWidth = tmpWidth / 2
+        }
+        getCropURL(baseUrl, imagePath, topLeftX, topLeftY, width, height, maxZoom)
     }
 
     def getWidthHeight(baseUrl, imagePath) {
@@ -100,11 +111,18 @@ class IIPResolver extends Resolver{
     }
 
     def getZoomLevels (baseUrl, imagePath) {
+        def dimensions = getWidthHeight(baseUrl, imagePath)
+        def tmpWidth = dimensions.width
+        def nbZoom = 0;
+        while (tmpWidth >= 256) {
+            nbZoom++;
+            tmpWidth = tmpWidth / 2;
+        }
         /*def metadata = JSON.parse(new URL(getMetaDataURL(baseUrl, imagePath)).text)
         int max = Integer.parseInt(metadata.levels)
         int min = 0
         int middle = ((max - min) / 2)
         return [min : 0, max : max, middle : middle]*/
-        return [min : 0, max : 8, middle : 4]
+        return [min : 0, max : nbZoom, middle : (nbZoom / 2)]
     }
 }

@@ -59,6 +59,17 @@ class DjatokaResolver extends Resolver {
         return toURL(baseUrl)
     }
 
+    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height) {
+        def maxZoom = getZoomLevels(baseUrl, imagePath).max
+        def widthTarget = 500
+        def tmpWidth = width
+        while (tmpWidth > widthTarget) {
+            maxZoom--
+            tmpWidth = tmpWidth / 2
+        }
+        getCropURL(baseUrl, imagePath, topLeftX, topLeftY, width, height, maxZoom)
+    }
+
     public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int zoom) {
         int deltaZoom = Math.pow(2, (getZoomLevels(baseUrl, imagePath).max - zoom))
         def metadata = JSON.parse(new URL(getMetaDataURL(baseUrl, imagePath)).text)
