@@ -98,11 +98,8 @@ class IIPResolver extends Resolver{
         def url = new URL(getMetaDataURL(baseUrl, imagePath))
         def dimensions = null
         url.eachLine { line ->
-            println "line : " + line
             def args = line.split(":")
-            println "args" + args[0] + " , " + args[1]
             if (args[0].equals("Max-size")) {
-                println "...ok"
                 def sizes = args[1].split(" ")
                 dimensions = [width : Integer.parseInt(sizes[0]), height : Integer.parseInt(sizes[1])]
             }
@@ -118,11 +115,6 @@ class IIPResolver extends Resolver{
             nbZoom++;
             tmpWidth = tmpWidth / 2;
         }
-        /*def metadata = JSON.parse(new URL(getMetaDataURL(baseUrl, imagePath)).text)
-        int max = Integer.parseInt(metadata.levels)
-        int min = 0
-        int middle = ((max - min) / 2)
-        return [min : 0, max : max, middle : middle]*/
         return [min : 0, max : nbZoom, middle : (nbZoom / 2)]
     }
 }

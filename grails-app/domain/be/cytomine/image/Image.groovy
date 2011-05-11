@@ -225,6 +225,13 @@ class Image extends SequenceDomain {
         return urls[index]
     }
 
+    def getCropURL(int topLeftX, int topLeftY, int width, int height)  {
+        Collection<ImageServer> imageServers = getMime().imageServers()
+        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
+        Resolver resolver = Resolver.getResolver(imageServers[index].className)
+        String url = resolver.getCropURL(imageServers[index].getBaseUrl(), getPath(),topLeftX,topLeftY, width, height)
+        return url
+    }
 
     def getCropURL(int topLeftX, int topLeftY, int width, int height, int zoom)  {
         Collection<ImageServer> imageServers = getMime().imageServers()

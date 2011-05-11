@@ -100,11 +100,11 @@ class RestImageController extends RestController{
   def crop = {
     log.info "Crop with id annotation: " + params.id
     Annotation annotation = Annotation.read(params.id)
-    int zoom = (params.zoom != null) ? Integer.parseInt(params.zoom) : annotation.getImage().getZoomLevels().middle
-
+    def zoom
+    if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
     if(annotation==null)
       responseNotFound("Crop","Annotation",params.id)
-    else if(zoom < annotation.getImage().getZoomLevels().min || zoom > annotation.getImage().getZoomLevels().max)
+    else if((params.zoom != null) && (zoom < annotation.getImage().getZoomLevels().min || zoom > annotation.getImage().getZoomLevels().max))
       responseNotFound("Crop","Zoom",zoom)
     else
     {
@@ -112,7 +112,7 @@ class RestImageController extends RestController{
         if(params.zoom!=null)
           responseImage(annotation.getCropURL(zoom))
         else
-          responseImage(annotation.getCropURL(null))
+          responseImage(annotation.getCropURL())
       } catch ( Exception e) {
         log.error("GetThumb:"+e);
       }
