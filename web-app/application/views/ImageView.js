@@ -30,7 +30,7 @@ var ImageView = Backbone.View.extend({
     appendThumbs : function(page) {
         var self = this;
         var cpt = 0;
-        var nb_thumb_by_page = 500;
+        var nb_thumb_by_page = 5000;
         var inf = Math.abs(page) * nb_thumb_by_page;
         var sup = (Math.abs(page) + 1) * nb_thumb_by_page;
         self.model.each(function(image) {

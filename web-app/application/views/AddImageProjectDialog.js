@@ -83,7 +83,7 @@ var AddImageProjectDialog = Backbone.View.extend({
                 //TODO: multi-page print
                 var page = 0;
                 var cpt = 0;
-                var nb_thumb_by_page = 200;
+                var nb_thumb_by_page = 2000;
                 var inf = Math.abs(page) * nb_thumb_by_page;
                 var sup = (Math.abs(page) + 1) * nb_thumb_by_page;
                 var currentSlide = -1;

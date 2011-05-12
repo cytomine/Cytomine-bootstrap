@@ -25,7 +25,7 @@ var BrowseImageView = Backbone.View.extend({
     initMap : function () {
         var mime = this.model.get('mime');
         if (mime == "jp2") this.initDjatoka();
-        if (mime == "vms") this.initIIP();
+        if (mime == "vms" || mime == "mrxs") this.initIIP();
 
         $('#layerSwitchercontent' + this.model.get('id')).find('.slider').slider({
             value: 100,
@@ -57,6 +57,7 @@ var BrowseImageView = Backbone.View.extend({
         }).render();
     },
     initIIP : function () {
+        console.log("initIIP");
         var self = this;
         var parseIIPMetadaResponse = function(response) {
             var metadata = null;

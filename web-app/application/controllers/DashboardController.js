@@ -27,6 +27,7 @@ var DashboardController = Backbone.Controller.extend({
 
     createView : function () {
         console.log("create view...");
+        window.app.controllers.browse.closeAll();
         window.app.controllers.browse.initTabs();
         var tabs = $("#explorer > .browser").children(".tabs");
         var self = this
