@@ -473,6 +473,7 @@
             <div id="projectAnnotationList">
 
             </div>
+            <br> <br><br><br><br><br><br><br><br><br><br><br><br><br>   <!-- Pour afficher l'ascenceur jusqu'en bas...c'ets bourrin...-->
           </div>
        </div>
     </div>
