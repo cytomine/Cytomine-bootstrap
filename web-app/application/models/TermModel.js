@@ -45,8 +45,17 @@ var AnnotationTermCollection = Backbone.Collection.extend({
 var TermCollection = Backbone.Collection.extend({
     model: TermModel,
     CLASS_NAME: "be.cytomine.ontology.Term",
-    url: 'api/term.json',
-    initialize: function () {
+	url : function() {
+        if(this.idOntology==undefined && this.idAnnotation==undefined)
+		    return 'api/term.json';
+        else if(this.idOntology!=undefined && this.idAnnotation==undefined)
+            return 'api/ontology/'+ this.idOntology + '/term.json';
+        else if(this.idOntology!=undefined && this.idAnnotation!=undefined)
+            return 'api/annotation/'+ this.idAnnotation + '/ontology/'+ this.idOntology + '/term.json';
+	},
+    initialize: function (options) {
+        this.idOntology = options.idOntology;
+        this.idAnnotation = options.idAnnotation;
         // something
     }
 });

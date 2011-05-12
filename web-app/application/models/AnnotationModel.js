@@ -49,6 +49,8 @@ var AnnotationCollection = Backbone.Collection.extend({
             return "api/user/" + this.user + "/image/" + this.image + "/annotation.json";
         } else if (this.project != undefined) {
             return "api/project/" + this.project + "/annotation.json";
+        } else if (this.term != undefined){
+            return "api/term/" + this.term + "/annotation.json";
         } else {
             return "api/image/" + this.image + "/annotation.json";
         }
@@ -57,6 +59,7 @@ var AnnotationCollection = Backbone.Collection.extend({
         this.image = options.image;
         this.user = options.user;
         this.project = options.project;
+        this.term = options.term;
     }
 });
 

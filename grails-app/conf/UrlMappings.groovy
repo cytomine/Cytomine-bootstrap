@@ -106,6 +106,9 @@ class UrlMappings {
     "/api/annotation/$idannotation/term"(controller:"restAnnotationTerm"){
       action = [GET: "listTermByAnnotation"]
     }
+    "/api/annotation/$idannotation/ontology/$idontology/term"(controller:"restAnnotationTerm"){
+      action = [GET: "listTermByAnnotationAndOntology"]
+    }
     "/api/annotation/$idannotation/term/$idterm"(controller:"restAnnotationTerm"){
       action = [GET:"show",DELETE:"delete",POST:"add"]
     }
@@ -116,6 +119,9 @@ class UrlMappings {
     }
     "/api/term/$id"(controller:"restTerm"){
       action = [GET:"show",PUT:"update", DELETE:"delete"]
+    }
+    "/api/term/$idterm/annotation"(controller:"restAnnotationTerm"){
+      action = [GET: "listAnnotationByTerm"]
     }
     "/api/term/$idterm/annotation"(controller:"restAnnotationTerm"){
       action = [GET: "listAnnotationByTerm"]

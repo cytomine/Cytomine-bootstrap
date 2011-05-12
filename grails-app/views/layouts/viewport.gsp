@@ -390,6 +390,7 @@
 
 
 
+
 <script type="text/html" id="projectdashboardviewtpl">
 <div id="tabs-0" style="overflow : auto; height: 100%;">
   <div id='namedashboardinfo{{id}}' class="projectname"><h3></h3><div style="font-size: x-large; text-align : center;">{{name}}</div></div>
@@ -468,11 +469,32 @@
       <div id="desktop3">
           <p>
           </p>
+
+
           <div id="panelCenter_3" class="centralPanel">
             <h3>Project annotations</h3>
+
+          <div id="tabsannotation">
+              <ul id="ultabsannotation">
+                  <!-- add a -->
+              </ul>
+              <!-- add div -->
+              <div id="listtabannotation"></div>
+          </div>
+
+
+
+
+
+
+
             <div id="projectAnnotationList">
 
             </div>
+
+
+
+
             <br> <br><br><br><br><br><br><br><br><br><br><br><br><br>   <!-- Pour afficher l'ascenceur jusqu'en bas...c'ets bourrin...-->
           </div>
        </div>
@@ -517,9 +539,13 @@
 </div>
 </script>
 
+<script type="text/html" id="termtitletabtpl">
+  <li><a href="#tabsterm-{{id}}">{{name}}</a></li>
+</script>
 
-
-
+<script type="text/html" id="termdivtabtpl">
+  <div id="tabsterm-{{id}}"></div>
+</script>
 
 
 
@@ -627,7 +653,7 @@
 
 
 <script type="text/html" id="annotationthumbtpl">
-    <div class='thumb'><img src='{{ cropURL }}' alt='{{ name }}' style="max-height:180px; max-width:180px; "  /></div>
+    <div class='thumb'><a href='#browse/{{project}}/{{ image }}/{{id}}'><img src='{{ cropURL }}' alt='{{ name }}' style="max-height:180px; max-width:180px; "  /></a></div>
     <div class='thumb-info'>{{name}} <br> {{termList}}</div>
 </script>
 

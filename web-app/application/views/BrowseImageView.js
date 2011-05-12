@@ -478,7 +478,7 @@ AnnotationLayer.prototype = {
     loadAnnotations: function (map) {
         console.log("loadAnnotations: function (map)");
         var alias = this;
-        new AnnotationCollection({user : this.userID, image : this.imageID}).fetch({
+        new AnnotationCollection({user : this.userID, image : this.imageID, term: undefined}).fetch({
             success : function (collection, response) {
                 collection.each(function(annotation) {
                     var format = new OpenLayers.Format.WKT();

@@ -8,6 +8,7 @@
 var ProjectDashboardView = Backbone.View.extend({
     tagName : "div",
     projectElem : "#projectdashboardinfo",  //div with project info
+    tabsAnnotation : null,
     initialize: function(options) {
         this.container = options.container;
         _.bindAll(this, 'render');
@@ -43,7 +44,123 @@ var ProjectDashboardView = Backbone.View.extend({
         self.fetchStats();
 
     },
+    initTabs : function(){
+        var self = this;
+        new TermCollection({idOntology:self.model.get('ontology')}).fetch({success : function (collection, response) {
+            console.log("TermCollection="+collection.length);
+            collection.each(function(term) {
+
+                var termelem = ich.termtitletabtpl({name:term.get("name"),id:term.get("id")});
+                console.log(termelem);
+                $("#ultabsannotation").append(termelem);
+                var contenttermelem = ich.termdivtabtpl({name:term.get("name"),id:term.get("id")});
+                console.log(contenttermelem);
+                $("#listtabannotation").append(contenttermelem);
+
+            });
+
+            if(self.tabsAnnotation==null)
+                self.tabsAnnotation = $("#tabsannotation").tabs();
+            self.fetchAnnotations();
+        }});
+    },
     fetchAnnotations : function () {
+        var self = this;
+
+        console.log("TERMECOLLECTION");
+
+        new TermCollection({idOntology:self.model.get('ontology')}).fetch({
+            success : function (collection, response) {
+                console.log("TermCollection="+collection.length);
+                collection.each(function(term) {
+                    $("#tabsterm-"+term.get("id")).empty();
+                    new AnnotationCollection({term:term.get("id")}).fetch({success : function (collection, response) {
+                        console.log("AnnotationCollection="+collection.length);
+                        var view = new AnnotationView({
+                            page : undefined,
+                            model : collection,
+                            el:$("#tabsterm-"+term.get("id")),
+                            container : window.app.view.components.warehouse
+                        }).render();
+
+                    }});
+
+                });
+            }
+        });
+
+
+
+
+
+
+
+       /* if(self.tabsAnnotation==null) {
+            //create tabs
+            new TermCollection({idOntology:self.model.get('ontology')}).fetch({success : function (collection, response) {
+                console.log("TermCollection="+collection.length);
+                collection.each(function(term) {
+
+                    var termelem = ich.termtitletabtpl({name:term.get("name"),id:term.get("id")});
+                    console.log(termelem);
+                    $("#ultabsannotation").append(termelem);
+                    var contenttermelem = ich.termdivtabtpl({name:term.get("name"),id:term.get("id")});
+                    console.log(contenttermelem);
+                    $("#listtabannotation").append(contenttermelem);
+
+                });
+                console.log("ANNOTATIONCOLLECTION");
+
+
+                if(self.tabsAnnotation==null)
+                    self.tabsAnnotation = $("#tabsannotation").tabs();
+
+            }});
+        }
+        else
+        {
+
+        }
+
+
+
+
+
+
+
+
+        console.log("TERMECOLLECTION");
+        new TermCollection({idOntology:self.model.get('ontology')}).fetch({success : function (collection, response) {
+            console.log("TermCollection="+collection.length);
+            collection.each(function(term) {
+
+                var termelem = ich.termtitletabtpl({name:term.get("name"),id:term.get("id")});
+                console.log(termelem);
+                $("#ultabsannotation").append(termelem);
+                var contenttermelem = ich.termdivtabtpl({name:term.get("name"),id:term.get("id")});
+                console.log(contenttermelem);
+                $("#listtabannotation").append(contenttermelem);
+
+                console.log("ANNOTATIONCOLLECTION");
+                new AnnotationCollection({term:term.get("id")}).fetch({success : function (collection, response) {
+                    console.log("AnnotationCollection="+collection.length);
+                    var view = new AnnotationView({
+                        page : undefined,
+                        model : collection,
+                        el:$("#tabsterm-"+term.get("id")),
+                        container : window.app.view.components.warehouse
+                    }).render();
+
+                }});
+
+            });
+            if(self.tabsAnnotation==null)
+                self.tabsAnnotation = $("#tabsannotation").tabs();
+
+        }});*/
+
+    },
+    fetchAnnotationsOld : function () {
         var self = this;
         var annotationCollection = new AnnotationCollection({project:self.model.get('id')});
 
@@ -295,14 +412,15 @@ var ProjectDashboardView = Backbone.View.extend({
                 collapsible:true
             });
 
+            self.initTabs();
 
             self.fetchImages();
-
-            self.fetchAnnotations();
 
             self.fetchCommands();
 
             self.fetchStats();
+
+
 
         }
         });

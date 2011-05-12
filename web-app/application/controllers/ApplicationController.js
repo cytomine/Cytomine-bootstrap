@@ -41,7 +41,7 @@ var ApplicationController = Backbone.Controller.extend({
 
         this.models.images = new ImageCollection({project:undefined});
         this.models.users = new UserCollection({project:undefined});
-        this.models.terms = new TermCollection();
+        this.models.terms = new TermCollection({project:undefined});
         this.models.ontologies = new OntologyCollection();
         this.models.projects = new ProjectCollection({user:undefined});
         _.each(this.models, function(model){

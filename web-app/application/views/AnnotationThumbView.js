@@ -10,8 +10,9 @@ var AnnotationThumbView = Backbone.View.extend({
     },
 
     render: function() {
-
-        $(this.el).html(ich.annotationthumbtpl(this.model.toJSON(), true));
+        var json = this.model.toJSON();
+        json.project = window.app.status.currentProject;
+        $(this.el).html(ich.annotationthumbtpl(json, true));
         return this;
     }
 });

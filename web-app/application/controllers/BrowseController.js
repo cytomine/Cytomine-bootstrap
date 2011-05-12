@@ -5,6 +5,7 @@ var BrowseController = Backbone.Controller.extend({
 
     routes: {
         "browse/:idProject/:idImage"   :   "browse",
+        "browse/:idProject/:idImage/:idAnnotation"   :   "browseAnnotation",
         "close"   :   "close"
     },
 
@@ -33,7 +34,13 @@ var BrowseController = Backbone.Controller.extend({
         this.showView();
 
     },
+    browseAnnotation : function (idProject, idImage,idAnnotation) {
+        //window.app.controllers.dashboard.dashboard(idProject);
+        console.log("browseAnnotation");
+        this.browse(idProject,idImage);
 
+
+    },
 
     closeAll : function () {
         if (this.tabs == null) return;
