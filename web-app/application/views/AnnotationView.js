@@ -9,22 +9,15 @@ var AnnotationView = Backbone.View.extend({
         var self = this;
         var tpl = ich.annotationviewtpl({page : (Math.abs(self.page)+1)}, true);
         $(this.el).html(tpl);
-        this.model.fetch({
-            success: function(){
-                self.appendThumbs(self.page);
 
-                $(window).scroll(function(){
-                    if  (($(window).scrollTop() + 100) >= $(document).height() - $(window).height()){
-                        self.appendThumbs(++self.page);
-                    }
-                });
-            },
-            error: function(error){
-                for (property in error) {
-                    console.log(property + ":" + error[property]);
-                }
+        self.appendThumbs(self.page);
+
+        $(window).scroll(function(){
+            if  (($(window).scrollTop() + 100) >= $(document).height() - $(window).height()){
+                self.appendThumbs(++self.page);
             }
         });
+
         return this;
     },
     appendThumbs : function(page) {

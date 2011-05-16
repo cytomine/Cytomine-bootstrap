@@ -91,6 +91,9 @@ class UrlMappings {
     "/api/annotation"(controller:"restAnnotation"){
       action = [GET: "list",POST:"add"]
     }
+    "/api/annotation/simplify"(controller:"restAnnotation"){
+      action = [GET: "simplify"]
+    }
     "/api/annotation/$id"(controller:"restAnnotation"){
       action = [GET:"show",PUT:"update", DELETE:"delete"]
     }
