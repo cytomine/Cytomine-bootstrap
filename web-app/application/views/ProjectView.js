@@ -80,16 +80,19 @@ var ProjectView = Backbone.View.extend({
             success : function (collection, response) {
                 //init slider to serach by slides number, images number...
                 var minNumberOfImage = Number.MAX_VALUE;
-                var maxNumberOfImage = Number.MIN_VALUE;
+                var maxNumberOfImage = 0;
                 var minNumberOfSlide = Number.MAX_VALUE;
-                var maxNumberOfSlide = Number.MIN_VALUE;
+                var maxNumberOfSlide = 0;
                 var minNumberOfAnnotation = Number.MAX_VALUE;
-                var maxNumberOfAnnotation = Number.MIN_VALUE;
+                var maxNumberOfAnnotation = 0;
+
+                console.log("maxNumberOfAnnotation="+maxNumberOfAnnotation);
+
                 //compute min/max value for slider
                 collection.each(function(project) {
-                    var numberOfImage = project.get('numberOfImages');
-                    var numberOfSlide = project.get('numberOfSlides');
-                    var numberOfAnnotation = project.get('numberOfAnnotations');
+                    var numberOfImage = parseInt(project.get('numberOfImages'));
+                    var numberOfSlide = parseInt(project.get('numberOfSlides'));
+                    var numberOfAnnotation = parseInt(project.get('numberOfAnnotations'));
 
                     if(numberOfImage<minNumberOfImage) minNumberOfImage =  numberOfImage;
                     if(numberOfImage>maxNumberOfImage) maxNumberOfImage =  numberOfImage;
@@ -97,6 +100,7 @@ var ProjectView = Backbone.View.extend({
                     if(numberOfSlide>maxNumberOfSlide) maxNumberOfSlide =  numberOfSlide;
                     if(numberOfAnnotation<minNumberOfAnnotation) minNumberOfAnnotation =  numberOfAnnotation;
                     if(numberOfAnnotation>maxNumberOfAnnotation) maxNumberOfAnnotation =  numberOfAnnotation;
+
                 });
                 //create slider
                 self.createSliderWithoutAmountPrint(self.sliderNumberOfImagesElem,self.labelNumberOfImagesElem,minNumberOfImage,maxNumberOfImage);
@@ -112,6 +116,7 @@ var ProjectView = Backbone.View.extend({
     },
     createSliderWithoutAmountPrint : function(sliderElem, labelElem,min,max) {
         var self = this;
+
         console.log("sliderElem="+sliderElem + " min="+min + " et max="+ max);
         $(sliderElem).slider({
             range: true,
