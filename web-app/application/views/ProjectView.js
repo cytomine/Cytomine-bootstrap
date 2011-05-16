@@ -118,10 +118,10 @@ var ProjectView = Backbone.View.extend({
             min : min,
             max : max,
             values: [ min, max ],
-            slide: function( event, ui ) {
+            /*slide: function( event, ui ) {
                 $(labelElem).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
                 self.searchProject();
-            },
+            },*/
             change: function( event, ui ) {
                 $(labelElem).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] );
                 self.searchProject();
