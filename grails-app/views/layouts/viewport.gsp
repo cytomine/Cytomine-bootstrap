@@ -39,12 +39,10 @@
 <script type="text/javascript" src="application/lib/ui.panel.min.js"></script>
 <link type="text/css" href="application/css/ui.panel.css" rel="stylesheet" />
 
-<!-- Libs JStree
-<script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/_docs/syntax/!script.js"></script>
-<script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.cookie.js"></script>
-<script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.hotkeys.js"></script>-->
-<!--<script type="text/javascript" src="http://static.jstree.com/v.1.0rc2/jquery.jstree.js"></script>-->
-<script type="text/javascript" src="application/lib/jquery.jstree.js"></script>
+
+<link href="application/lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css">
+<script src="application/lib/dynatree/jquery.dynatree.js" type="text/javascript"></script>
+
 
 <!-- Styles -->
 <link rel='stylesheet' href='application/css/reset.css' type='text/css'/>

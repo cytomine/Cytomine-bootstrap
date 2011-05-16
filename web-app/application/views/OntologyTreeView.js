@@ -9,13 +9,6 @@ var OntologyTreeView = Backbone.View.extend({
     tagName : "div",
     tree : null,
     activeEvent : true,
-    events : {
-        "click .jstree-checkbox":          "click"
-    },
-
-    click : function() {
-        console.log("click...");
-    },
 
     //template : _.template($('#project-view-tpl').html()),
     initialize: function(options) {
@@ -27,12 +20,40 @@ var OntologyTreeView = Backbone.View.extend({
         this.tree = $(this.el).find('.tree');
         var self = this;
 
-        $(this.el).find('.tree').jstree({
-            "json_data" : {
-                "data" :this.model.toJSON()
-            },
-            "plugins" : ["json_data", "ui","themes", "checkbox"]
+        $(this.el).find('.tree').dynatree({
+            checkbox: true,
+            selectMode: 3,
+            expand : true,
+            onExpand : function() { console.log("expanding/collapsing");},
+            children: this.model.toJSON(),
+            onSelect: function(select, node) {
 
+                if(!self.activeEvent) return;
+                if (self.idAnnotation == null) return; // nothing to do
+
+                if (node.isSelected()) {
+                    self.linkTerm(node.data.key);
+                    console.log("Link term with annotation " + node.data.key);
+                } else if (!node.isSelected()) {
+                    console.log("UnLink term with annotation " + node.data.key);
+                    self.unlinkTerm(node.data.key);
+                }
+
+
+            },
+            onDblClick: function(node, event) {
+                node.toggleSelect();
+            },
+
+            // The following options are only required, if we have more than one tree on one page:
+            initId: "treeData"+this.model.id,
+            cookieId: "dynatree-Cb"+this.model.id,
+            idPrefix: "dynatree-Cb"+this.model.id+"-"
+        });
+
+        //expand all nodes
+        $(this.el).find('.tree').dynatree("getRoot").visit(function(node){
+            node.expand(true);
         });
 
         var ontologyPanelWidth = $(this.el).width();
@@ -43,46 +64,37 @@ var OntologyTreeView = Backbone.View.extend({
                 $(this).css("height", ontologyPanelHeight);
             }
         });
-
-        this.initBindings();
-
         return this;
     },
     clear : function() {
-        console.log("clear");
         this.activeEvent = false;
-        console.log("uncheck all");
-        this.tree.jstree('uncheck_all');
+        $(this.el).find('.tree').dynatree("getRoot").visit(function(node){
+            node.select(false);
+        });
         this.activeEvent = true;
     },
     clearAnnotation : function() {
-            this.idAnnotation = null;
-        },
+        this.idAnnotation = null;
+    },
     check : function(idTerm) {
         var self = this;
         self.activeEvent = false;
-        self.tree.jstree('get_unchecked',null,true).each(function () {
-              var id = this.id;
-              if (id!=idTerm) return;
-              self.tree.jstree('check_node',this);
+        (this.el).find('.tree').dynatree("getRoot").visit(function(node){
+            if (node.data.key == idTerm) node.select(true);
         });
         self.activeEvent = true;
     },
     uncheck : function(idTerm) {
         var self = this;
         self.activeEvent = false;
-        self.tree.jstree('get_checked',null,true).each(function () {
-                console.log("check:"+this.id);
-              var id = this.id;
-              if (id!=idTerm) return;
-              self.tree.jstree('uncheck_node',this);
+        (this.el).find('.tree').dynatree("getRoot").visit(function(node){
+            if (node.data.key == idTerm) node.select(false);
         });
         self.activeEvent = true;
     },
     refresh: function(idAnnotation) {
 
         var self = this;
-
 
         this.idAnnotation = idAnnotation;
         console.log("refresh: idAnnotation="+self.idAnnotation);
@@ -95,16 +107,10 @@ var OntologyTreeView = Backbone.View.extend({
             console.log("check correct term");
 
             model.each(function(term) {
-               console.log("term:" + term.get('name'));
+                console.log("term:" + term.get('name'));
+                self.check(term.get("id"));
             });
 
-
-            self.tree.jstree('get_unchecked',null,true).each(function () {
-
-                if (model.get(this.id) == undefined) return;
-                console.log("term check" + this.id);
-                self.tree.jstree('check_node',this);
-            });
             self.activeEvent = true;
             console.log("self.activeEvent t="+self.activeEvent);
         }
@@ -113,12 +119,12 @@ var OntologyTreeView = Backbone.View.extend({
         new AnnotationTermCollection({idAnnotation:idAnnotation}).fetch({success:refreshTree});
     },
     getTermsChecked : function() {
-        //add annotation-term
         var terms = [];
-        this.tree.jstree('get_checked',null,true).each(function () {
-            if($(this).attr("type") != window.app.models.terms.CLASS_NAME) return; //not a term node
-            terms.push(this.id);
+        (this.el).find('.tree').dynatree("getRoot").visit(function(node){
+            if (node.isSelected()) terms.push(node.data.key);
         });
+        console.log("Selected terms ? : " + terms.length);
+
         return terms;
     },
     linkTerm : function(idTerm) {
@@ -128,30 +134,6 @@ var OntologyTreeView = Backbone.View.extend({
     unlinkTerm : function(idTerm) {
         console.log ("unlinkterm:" + idTerm);
         new AnnotationTermModel({annotation : this.idAnnotation, term : idTerm}).destroy({annotation : this.idAnnotation, term : idTerm});
-    },
-    removeBindings : function() {
-        this.tree.unbind("check_node.jstree");
-        this.tree.unbind("uncheck_node.jstree");
-    },
-    initBindings : function () {
-        var self = this;
-        this.tree.bind("check_node.jstree", function(event, data) {
-            console.log("check node: idAnnotation=" + self.idAnnotation + " activeEvent=" + self.activeEvent);
-            if (self.idAnnotation == null) return;
-            if(!self.activeEvent) return;
-
-            var idTerm = data.rslt.obj.attr("id");
-            self.linkTerm(idTerm);
-
-
-        });
-        this.tree.bind("uncheck_node.jstree", function(event, data) {
-
-            if (self.idAnnotation == null) return;
-            if(!self.activeEvent) return;
-
-            var idTerm = data.rslt.obj.attr("id");
-            self.unlinkTerm(idTerm);
-        });
     }
+
 });

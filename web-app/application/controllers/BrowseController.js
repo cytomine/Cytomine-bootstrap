@@ -21,25 +21,38 @@ var BrowseController = Backbone.Controller.extend({
                 container : window.app.view.components.explorer
             }).render();
 
-         //   this.tabs.container.views.tabs = this.tabs;
+            //   this.tabs.container.views.tabs = this.tabs;
         }
     },
 
     browse : function (idProject, idImage) {
-        //window.app.controllers.dashboard.dashboard(idProject);
+        var self = this;
         this.initTabs();
-        this.tabs.addTab(idImage);
-        this.tabs.showTab(idImage);
-        window.app.view.showComponent(this.tabs.container);
-        this.showView();
+
+        var initTab = function(){
+            self.tabs.addTab(idImage);
+            self.tabs.showTab(idImage);
+            window.app.view.showComponent(self.tabs.container);
+            self.showView();
+        }
+
+        if (window.app.status.currentProject == undefined) {//direct access -> create dashboard
+            window.app.controllers.dashboard.dashboard(idProject);
+            setTimeout(function(){initTab();}, 1500); //wait dashboard creation
+
+        } else {
+            initTab();
+        }
+
+
+
+
 
     },
     browseAnnotation : function (idProject, idImage,idAnnotation) {
         //window.app.controllers.dashboard.dashboard(idProject);
         console.log("browseAnnotation");
         this.browse(idProject,idImage);
-
-
     },
 
     closeAll : function () {

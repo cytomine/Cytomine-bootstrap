@@ -34,18 +34,23 @@ class Ontology {
     def t = [:]
     t.name = term.getName()
     t.id = term.getId()
-    t.text = term.getName()
+    t.title = term.getName()
     t.data = term.getName()
     t.class = term.class
     t.attr = [ "id" : term.id, "type" : term.class]
     t.checked = false
+    t.key = term.getId()
     t.children = []
+    boolean isFolder = false
     term.relationTerm1.each() { relationTerm->
       if (relationTerm.getRelation().getName() == RelationTerm.names.PARENT) {
+        isFolder = true
         def child = branch(relationTerm.getTerm2())
         t.children << child
       }
     }
+    t.isFolder = isFolder
+    t.hideCheckbox = isFolder
     return t
   }
 
@@ -56,10 +61,11 @@ class Ontology {
       returnArray['class'] = it.class
       returnArray['id'] = it.id
       returnArray['name'] = it.name
-
+      returnArray['title'] = it.name
       returnArray['attr'] = [ "id" : it.id, "type" : it.class]
       returnArray['data'] = it.name
-
+      returnArray['isFolder'] = true
+      returnArray['hideCheckbox'] = true
 
       returnArray['state'] = "open"
 
