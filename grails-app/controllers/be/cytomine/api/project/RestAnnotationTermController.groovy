@@ -10,6 +10,7 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.Term
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Ontology
+import be.cytomine.project.Project
 
 class RestAnnotationTermController extends RestController {
 
@@ -42,10 +43,10 @@ class RestAnnotationTermController extends RestController {
         def terms = annotation.terms()
 
         terms.each { term ->
-           if(term.ontology.id==ontology.id)
-           {
-             termsOntology << term
-           }
+          if(term.ontology.id==ontology.id)
+          {
+            termsOntology << term
+          }
         }
         responseSuccess(termsOntology)
       }
@@ -59,6 +60,24 @@ class RestAnnotationTermController extends RestController {
     Term term = Term.read(params.idterm)
     if(term!=null) responseSuccess(term.annotations())
     else responseNotFound("Annotation Term","Term", params.idterm)
+  }
+
+  def listAnnotationByProjectAndTerm = {
+    log.info "listByTerm with idTerm=" +  params.idterm
+    Term term = Term.read(params.idterm)
+    Project project = Project.read(params.idproject)
+    if(term==null) responseNotFound("Term", params.idterm)
+    if(project==null) responseNotFound("Project", params.idproject)
+
+    def annotationFromTermAndProject = []
+    def annotationFromTerm = term.annotations()
+    annotationFromTerm.each { annotation ->
+      if(annotation.project()!=null && annotation.project().contains(project))
+      {
+        annotationFromTermAndProject << annotation
+      }
+    }
+    responseSuccess(annotationFromTermAndProject)
   }
 
 

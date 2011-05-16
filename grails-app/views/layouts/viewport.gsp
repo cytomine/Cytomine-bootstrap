@@ -58,18 +58,18 @@
 
 <!-- Templates -->
 <script type="text/html" id="baselayouttpl">
-    <div id='header' class='header clearfix'>
-        <h1 class='breadcrumb'>
-            <a class='home' href='#'><span class='logo'></span>Cytomine</a>
-        </h1>
-        <div id="menu" class="ui-buttonset actions">
-            <a id="undo"  style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-w"></span><span class="ui-button-text">Undo</span></a>
-            <a id="redo" style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-e"></span><span class="ui-button-text">Redo</span></a>
-        </div>
+  <div id='header' class='header clearfix'>
+    <h1 class='breadcrumb'>
+      <a class='home' href='#'><span class='logo'></span>Cytomine</a>
+    </h1>
+    <div id="menu" class="ui-buttonset actions">
+      <a id="undo"  style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-w"></span><span class="ui-button-text">Undo</span></a>
+      <a id="redo" style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-e"></span><span class="ui-button-text">Redo</span></a>
     </div>
-    <div id="content">
-    </div>
-    <div id="popup-wrapper"></div>
+  </div>
+  <div id="content">
+  </div>
+  <div id="popup-wrapper"></div>
 </script>
 
 <script type="text/html" id="logindialogtpl">
@@ -90,15 +90,15 @@
 
 
 <script type="text/html" id="loadingdialogtpl">
-    <div id="loading-dialog" title="Loading">
-        <div align="center" style="margin:auto;">
-            <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
-        </div>
-        <div id="progress" style="text-align:center;padding-top:30px;">
-            <h1>Loading data...</h1>
-            <div id="login-progressbar" style="margin-top:10px;"></div>
-        </div>
+  <div id="loading-dialog" title="Loading">
+    <div align="center" style="margin:auto;">
+      <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
     </div>
+    <div id="progress" style="text-align:center;padding-top:30px;">
+      <h1>Loading data...</h1>
+      <div id="login-progressbar" style="margin-top:10px;"></div>
+    </div>
+  </div>
 </script>
 
 <script type="text/html" id="overviewmapcontenttpl">
@@ -108,22 +108,22 @@
 </script>
 
 <script type="text/html" id="layerswitchercontenttpl">
-    <!--<div id="layerswitcherdialog{{id}}" title="Layer Switcher">-->
-    <div id="layerswitchercontent{{id}}"></div>
-    <div class="slider"></div>
-    <!--</div>-->
+  <!--<div id="layerswitcherdialog{{id}}" title="Layer Switcher">-->
+  <div id="layerswitchercontent{{id}}"></div>
+  <div class="slider"></div>
+  <!--</div>-->
 </script>
 
 <script type="text/html" id="ontologytreecontenttpl">
-    <!--<div id="ontologytreedialog{{id}}" title="Ontology">-->
-    <div id="ontologytreecontent{{id}}"></div>
-    <!--</div>-->
+  <!--<div id="ontologytreedialog{{id}}" title="Ontology">-->
+  <div id="ontologytreecontent{{id}}"></div>
+  <!--</div>-->
 </script>
 
 <script type="text/html" id="serverdowntpl">
-    <div id="server-down" title="Server down">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />The Cytomine server could not be reached</p>
-    </div>
+  <div id="server-down" title="Server down">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />The Cytomine server could not be reached</p>
+  </div>
 </script>
 
 <script type="text/html" id="logoutdialogtpl">
@@ -133,19 +133,19 @@
 </script>
 
 <script type="text/html" id="explorertpl">
-    <div id="explorer">
-        <div class="main browser" style="display:none">
-        </div>
-        <div class="main noProject">
-            <div id="noProjectDialog" class="centralPanel">
-                <h3>Explorer</h3>
-                <div>
-                   Please open a project
-                </div>
-            </div>
-
-        </div>
+  <div id="explorer">
+    <div class="main browser" style="display:none">
     </div>
+    <div class="main noProject">
+      <div id="noProjectDialog" class="centralPanel">
+        <h3>Explorer</h3>
+        <div>
+          Please open a project
+        </div>
+      </div>
+
+    </div>
+  </div>
 </script>
 
 <script type="text/html" id="uploadtpl">
@@ -165,30 +165,30 @@
 
 
 <script type="text/html" id="warehousetpl">
-    <div id="warehouse">
-        <div class="main project"></div>
-        <div class="main image"></div>
-        <div class="main term"></div>
-        <div class="main ontology"></div>
-        <div class="main dashboard"></div>
+  <div id="warehouse">
+    <div class="main project"></div>
+    <div class="main image"></div>
+    <div class="main term"></div>
+    <div class="main ontology"></div>
+    <div class="main dashboard"></div>
 
-        <div class='sidebar'>
-            <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
-            <!-- <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul> -->
-            <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
-            <!--<ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
+    <div class='sidebar'>
+      <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
+      <!-- <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul> -->
+      <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
+      <!--<ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
             <ul class='menu libraries'></ul>
             <div class='buttons'>
                 <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
-        </div>
     </div>
+  </div>
 </script>
 
 <script type="text/html" id="admintpl">
-    <div id="admin">
-        <h1>admin</h1>
-        <div class='main'>admin</div>
-    </div>
+  <div id="admin">
+    <h1>admin</h1>
+    <div class='main'>admin</div>
+  </div>
 </script>
 
 <script type="text/html" id="logouttpl">
@@ -393,54 +393,53 @@
 
 <script type="text/html" id="projectdashboardviewtpl">
 <div id="tabs-0" style="overflow : auto; height: 100%;">
-  <div id='namedashboardinfo{{id}}' class="projectname"><h3></h3><div style="font-size: x-large; text-align : center;">{{name}}</div></div>
-
+  <div id='nameDashboardInfo{{id}}' class="projectname"><h3></h3><div style="font-size: x-large; text-align : center;">{{name}}</div></div>
 
    <div id="lLeft">
-	<div id="panelLeft_1" class="navPanel" style="text-align:center; ">
+	<div id="projectInfoPanel" class="navPanel" style="text-align:center; ">
 	    <h3>Project Info</h3>
 	    <div>
            <ul>
-              <li>Name: {{name}} </li>
-             <li>Ontology: {{ontology}} </li>
+              <li>Name: <label id="projectInfoName" style="display: inline;">{{name}}</label></li>
+             <li>Ontology: <label id="projectInfoOntology" style="display: inline;">{{ontology}}</label> </li>
               <br>
-             <li>{{numberOfSlides}} slides </li>
-              <li>{{numberOfImages}} images </li>
-              <li>{{numberOfAnnotations}} annotations </li>
+             <li><label id="projectInfoNumberOfSlides" style="display: inline;">{{numberOfSlides}}</label> slides </li>
+              <li><label id="projectInfoNumberOfImages" style="display: inline;">{{numberOfImages}}</label> images </li>
+              <li><label id="projectInfoNumberOfAnnotations" style="display: inline;">{{numberOfAnnotations}}</label> annotations </li>
                <br>
-              <li><div id="userlist"></div> </li>
+              <li><div id="projectInfoUserList"></div> </li>
                <br>
-              <li>Created {{created}} </li>
-              <li>Updated {{updated}} </li>
-
+              <li>Created <label id="projectInfoCreated" style="display: inline;">{{created}}</label> </li>
+              <li>Updated <label id="projectInfoUpdated" style="display: inline;">{{updated}}</label> </li>
            </ul>
 	    </div>
 	</div>
-    </div>
+   </div>
 
 
-<div id="lRight">
-	<div id="panelRight_1" class="navPanel">
-	    <h3>Last action...</h3>
-	    <div>
-		Last actions:
-                <ul>
-                    <div id="lastactionitem"></div>
-                </ul>
-                <b>Notes:</b>
-                <ul>
-                    <li>Not yet filter by project :-)</li>
-                </ul>
-	    </div>
-	</div>
-  </div>
+  <div id="lRight">
+      <div id="projectLastCommandPanel" class="navPanel">
+          <h3>Last action...</h3>
+          <div>
+          Last actions:
+                  <ul>
+                      <div id="lastactionitem"></div>
+                  </ul>
+                  <b>Notes:</b>
+                  <ul>
+                      <li>Not yet filter by project :-)</li>
+                  </ul>
+          </div>
+      </div>
+   </div>
+
    <div id="centerpanel">
     <div id="lCenter">
       <div id="desktop">
           <p>
 
           </p>
-          <div id="panelCenter_1" class="centralPanel">
+          <div id="projectStatsPanel" class="centralPanel">
             <h3>Project stats</h3>
             <div>
                         Project stats by term on annotation:
@@ -455,7 +454,7 @@
       <div id="desktop2">
           <p>
           </p>
-          <div id="panelCenter_2" class="centralPanel">
+          <div id="projectImagesPanel" class="centralPanel">
             <h3>Project images</h3>
             <div id="projectImageList">
 
@@ -471,7 +470,7 @@
           </p>
 
 
-          <div id="panelCenter_3" class="centralPanel">
+          <div id="projectAnnotationsPanel" class="centralPanel">
             <h3>Project annotations</h3>
 
           <div id="tabsannotation">

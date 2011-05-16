@@ -58,6 +58,10 @@ class Annotation extends SequenceDomain implements Serializable {
     }
   }
 
+  def project() {
+    return image?.slide?.projects()
+  }
+
   private def getArea() {
     //TODO: must be compute with zoom level
     return location.area

@@ -15,6 +15,9 @@ var ProjectDashboardView = Backbone.View.extend({
     },
     events: {
     },
+    /**
+     * Print all information for this project
+     */
     render: function() {
         var self = this;
 
@@ -26,28 +29,46 @@ var ProjectDashboardView = Backbone.View.extend({
 
         return this;
     },
+    /**
+     * Refresh all information for this project
+     */
     refresh : function() {
-        /*console.log("refresh db");
-         var self = this;
-         $(this.projectElem+this.model.get('id')).empty();
-         new ProjectModel({id : self.model.id}).fetch({
-         success : function (model, response) {
-         console.log("refresh project panel");
-
-         self.model = model;
-         self.printProjectInfo();
-         }});
-         */
         var self = this;
-        self.fetchAnnotations();
-        self.fetchCommands();
-        self.fetchStats();
+        var projectModel = new ProjectModel({id : self.model.id});
+        var projectCallback = function(model, response) {
+            console.log(model);
+            self.model = model;
+
+            self.fetchProjectInfo();
+            self.fetchAnnotations();
+            self.fetchCommands();
+            self.fetchStats();
+
+        }
+
+        projectModel.fetch({
+            success : function(model, response) {
+                projectCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+            }
+        });
 
     },
+    /**
+     * Init annotation tabs
+     */
     initTabs : function(){
         var self = this;
         new TermCollection({idOntology:self.model.get('ontology')}).fetch({success : function (collection, response) {
             console.log("TermCollection="+collection.length);
+
+            var termelem = ich.termtitletabtpl({name:"All",id:"all"});
+            console.log(termelem);
+            $("#ultabsannotation").append(termelem);
+            var contenttermelem = ich.termdivtabtpl({name:"All",id:"all"});
+            console.log(contenttermelem);
+            $("#listtabannotation").append(contenttermelem);
+
+
             collection.each(function(term) {
 
                 var termelem = ich.termtitletabtpl({name:term.get("name"),id:term.get("id")});
@@ -64,17 +85,40 @@ var ProjectDashboardView = Backbone.View.extend({
             self.fetchAnnotations();
         }});
     },
+    /**
+     * Load annotations on annotation tabs
+     * -'All' tab: all annotation for this project
+     * -'X' tab: all annotation for this project and the term X
+     */
     fetchAnnotations : function () {
         var self = this;
 
-        console.log("TERMECOLLECTION");
+        //init panel for all annotation (with or without term
+        new AnnotationCollection({project:self.model.id}).fetch({
+            success : function (collection, response) {
+                console.log("AnnotationCollection="+collection.length);
+                $("#tabsterm-all").empty();
 
+                console.log("AnnotationCollection="+collection.length);
+                var view = new AnnotationView({
+                    page : undefined,
+                    model : collection,
+                    el:$("#tabsterm-all"),
+                    container : window.app.view.components.warehouse
+                }).render();
+
+
+            }
+        });
+
+        //init specific panel for each term
         new TermCollection({idOntology:self.model.get('ontology')}).fetch({
             success : function (collection, response) {
                 console.log("TermCollection="+collection.length);
+                //init specific panel
                 collection.each(function(term) {
                     $("#tabsterm-"+term.get("id")).empty();
-                    new AnnotationCollection({term:term.get("id")}).fetch({success : function (collection, response) {
+                    new AnnotationCollection({term:term.get("id"),project:self.model.id}).fetch({success : function (collection, response) {
                         console.log("AnnotationCollection="+collection.length);
                         var view = new AnnotationView({
                             page : undefined,
@@ -86,97 +130,6 @@ var ProjectDashboardView = Backbone.View.extend({
                     }});
 
                 });
-            }
-        });
-
-
-
-
-
-
-
-       /* if(self.tabsAnnotation==null) {
-            //create tabs
-            new TermCollection({idOntology:self.model.get('ontology')}).fetch({success : function (collection, response) {
-                console.log("TermCollection="+collection.length);
-                collection.each(function(term) {
-
-                    var termelem = ich.termtitletabtpl({name:term.get("name"),id:term.get("id")});
-                    console.log(termelem);
-                    $("#ultabsannotation").append(termelem);
-                    var contenttermelem = ich.termdivtabtpl({name:term.get("name"),id:term.get("id")});
-                    console.log(contenttermelem);
-                    $("#listtabannotation").append(contenttermelem);
-
-                });
-                console.log("ANNOTATIONCOLLECTION");
-
-
-                if(self.tabsAnnotation==null)
-                    self.tabsAnnotation = $("#tabsannotation").tabs();
-
-            }});
-        }
-        else
-        {
-
-        }
-
-
-
-
-
-
-
-
-        console.log("TERMECOLLECTION");
-        new TermCollection({idOntology:self.model.get('ontology')}).fetch({success : function (collection, response) {
-            console.log("TermCollection="+collection.length);
-            collection.each(function(term) {
-
-                var termelem = ich.termtitletabtpl({name:term.get("name"),id:term.get("id")});
-                console.log(termelem);
-                $("#ultabsannotation").append(termelem);
-                var contenttermelem = ich.termdivtabtpl({name:term.get("name"),id:term.get("id")});
-                console.log(contenttermelem);
-                $("#listtabannotation").append(contenttermelem);
-
-                console.log("ANNOTATIONCOLLECTION");
-                new AnnotationCollection({term:term.get("id")}).fetch({success : function (collection, response) {
-                    console.log("AnnotationCollection="+collection.length);
-                    var view = new AnnotationView({
-                        page : undefined,
-                        model : collection,
-                        el:$("#tabsterm-"+term.get("id")),
-                        container : window.app.view.components.warehouse
-                    }).render();
-
-                }});
-
-            });
-            if(self.tabsAnnotation==null)
-                self.tabsAnnotation = $("#tabsannotation").tabs();
-
-        }});*/
-
-    },
-    fetchAnnotationsOld : function () {
-        var self = this;
-        var annotationCollection = new AnnotationCollection({project:self.model.get('id')});
-
-        var annotationCallback = function(collection,response) {
-
-            var view = new AnnotationView({
-                page : undefined,
-                model : collection,
-                el:$("#projectAnnotationList"),
-                container : window.app.view.components.warehouse
-            }).render();
-        }
-
-        annotationCollection.fetch({
-            success : function(model, response) {
-                annotationCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
             }
         });
 
@@ -342,8 +295,7 @@ var ProjectDashboardView = Backbone.View.extend({
 
     },
 
-    printProjectInfo : function() {
-        console.log("print.........");
+    fetchProjectInfo : function () {
         var self = this;
         var json = self.model.toJSON();
         var idOntology = json.ontology;
@@ -351,78 +303,105 @@ var ProjectDashboardView = Backbone.View.extend({
         //Get ontology name
         json.ontology = window.app.models.ontologies.get(idOntology).get('name');
 
-
+        //Get created/updated date
         var dateCreated = new Date();
         dateCreated.setTime(json.created);
         json.created = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
         var dateUpdated = new Date();
         dateUpdated.setTime(json.updated);
         json.updated = dateUpdated.toLocaleDateString() + " " + dateUpdated.toLocaleTimeString();
-        //json.created = new Date().setTime(json.created)
+
+        self.resetElem("#projectInfoName",json.name);
+        self.resetElem("#projectInfoOntology",json.ontology);
+        self.resetElem("#projectInfoNumberOfSlides",json.numberOfSlides);
+        self.resetElem("#projectInfoNumberOfImages",json.numberOfImages);
+        self.resetElem("#projectInfoNumberOfAnnotations",json.numberOfAnnotations);
+        self.resetElem("#projectInfoCreated",json.created);
+        self.resetElem("#projectInfoUpdated",json.updated);
+
+        $("#projectInfoUserList").empty();
 
         //Get users list
-        new UserCollection({project:self.model.get('id')}).fetch({success : function (collection, response) {
+        new UserCollection({project:self.model.get('id')}).fetch({
+            success : function (collection, response) {
+                collection.each(function(user) {
+                    var userelem = ich.userlisttpl({name:user.get("username")});
+                    $("#projectInfoUserList").append(userelem);
+                });
 
-
-
-            var proj = ich.projectdashboardviewtpl(json);
-            $(self.el).append(proj);
-            window.app.controllers.browse.tabs.addDashboard(self);
-
-
-
-            collection.each(function(user) {
-                var userelem = ich.userlisttpl({name:user.get("username")});
-                $("#userlist").append(userelem);
-            });
-
-            $(self.imageAddElem + self.model.id).button({
-                icons : {secondary : "ui-icon-image"}
-            });
-            $(self.projectElem+self.model.get('id')).panel({
-                collapsible:true,
-                width:'300px'
-            });
-
-            $("#namedashboardinfo"+self.model.get('id')).panel({
-                collapsible:false
-
-            });
-
-            $('#panelLeft_1').panel({
-                collapseType:'slide-left',
-                width:'300px'
-            });
-
-            $('#panelRight_1').panel({
-                collapseType:'slide-right',
-                collapsed:true,
-                trueVerticalText:true,
-                vHeight:'237px',
-                width:'300px'
-            });
-            $('#panelCenter_1').panel({
-                collapsible:false
-            });
-            $('#panelCenter_2').panel({
-                collapsible:true
-            });
-
-            $('#panelCenter_3').panel({
-                collapsible:true
-            });
-
-            self.initTabs();
-
-            self.fetchImages();
-
-            self.fetchCommands();
-
-            self.fetchStats();
-
-
-
-        }
+            }
         });
+    },
+    resetElem : function(elem,txt) {
+        console.log("find:"+$(this.el).find(elem).length);
+        $(this.el).find(elem).empty();
+        $(this.el).find(elem).append(txt);
+    },
+    printProjectInfo : function(model) {
+        console.log("ProjectDashboardView: printProjectInfo");
+        var self = this;
+        var json = self.model.toJSON();
+        var proj = ich.projectdashboardviewtpl(json);
+        $(self.el).append(proj);
+        window.app.controllers.browse.tabs.addDashboard(self);
+
+        //Get users list
+        new UserCollection({project:self.model.get('id')}).fetch({
+            success : function (collection, response) {
+
+                collection.each(function(user) {
+                    var userelem = ich.userlisttpl({name:user.get("username")});
+                    $("#projectInfoUserList").append(userelem);
+                });
+
+            }
+        });
+        /* $(self.imageAddElem + self.model.id).button({
+         icons : {secondary : "ui-icon-image"}
+         });
+         $(self.projectElem+self.model.get('id')).panel({
+         collapsible:true,
+         width:'300px'
+         });*/
+
+        $(proj).find("#nameDashboardInfo"+self.model.get('id')).panel({
+            collapsible:false
+
+        });
+
+        $(proj).find('#projectInfoPanel').panel({
+            collapseType:'slide-left',
+            width:'300px'
+        });
+
+        $(proj).find('#projectLastCommandPanel').panel({
+            collapseType:'slide-right',
+            collapsed:true,
+            trueVerticalText:true,
+            vHeight:'237px',
+            width:'300px'
+        });
+
+        $(proj).find('#projectStatsPanel').panel({
+            collapsible:false
+        });
+        $(proj).find('#projectImagesPanel').panel({
+            collapsible:true
+        });
+
+        $(proj).find('#projectAnnotationsPanel').panel({
+            collapsible:true
+        });
+
+
+
+        self.initTabs();
+
+        self.fetchImages();
+
+        self.fetchCommands();
+
+        self.fetchStats();
+
     }
 });

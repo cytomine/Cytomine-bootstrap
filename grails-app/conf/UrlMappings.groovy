@@ -126,6 +126,9 @@ class UrlMappings {
     "/api/term/$idterm/annotation"(controller:"restAnnotationTerm"){
       action = [GET: "listAnnotationByTerm"]
     }
+    "/api/term/$idterm/project/$idproject/annotation"(controller:"restAnnotationTerm"){
+      action = [GET: "listAnnotationByProjectAndTerm"]
+    }
     "/api/term/$id/ontology"(controller:"restOntology"){
       action = [GET:"listByTerm"]
     }
