@@ -38,7 +38,7 @@ var Tabs = Backbone.View.extend({
         $("ul.tabs a").css('height', $("ul.tabs").height())
         return this;
     },
-    addTab : function(idImage) {
+    addTab : function(idImage, options) {
         var self = this;
         var alreadyOpen = _.detect(self.images, function(object) {
             return object.idImage == idImage;
@@ -47,19 +47,27 @@ var Tabs = Backbone.View.extend({
             return;
         }
         console.log("addTab : " + idImage);
-        new ImageModel({id : idImage}).fetch({
-            success : function(model, response) {
+        /*new ImageModel({id : idImage}).fetch({
+            success : function(model, response) {*/
                 var tabs = $(self.el).children('.tabs');
                 var view = new BrowseImageView({
-                    model : model,
+                    model : window.app.models.images.get(idImage),
+                    initOptions : options,
                     el: tabs
                 }).render();
                 self.images.push({
                     idImage : idImage,
                     view : view
                 });
-            }
+            /*}
+        });   */
+    },
+    getBrowseImageView : function(idImage) {
+        var tab  = _.detect(this.images, function(object) {
+            console.log("looking for tab " + idImage  + " vs " + object.idImage);
+            return object.idImage == idImage;
         });
+        return tab.view;
     },
     removeTab : function (index) {
         this.images.splice(index,1);

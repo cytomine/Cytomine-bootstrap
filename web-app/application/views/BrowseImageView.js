@@ -1,9 +1,11 @@
 var BrowseImageView = Backbone.View.extend({
     tagName: "div",
-    layers: {},
+    layers: [],
+    baseLayer : null,
     map : null,
+    initOptions : null,
     initialize: function (options) {
-
+        this.initOptions = options.initOptions;
     },
     render: function () {
         var tpl = ich.browseimagetpl(this.model.toJSON(), true);
@@ -15,6 +17,38 @@ var BrowseImageView = Backbone.View.extend({
         this.initMap();
         this.initOntology();
         return this;
+    },
+    goToAnnotation : function(layer, idAnnotation) {
+        var feature = layer.getFeature(idAnnotation);
+        if (feature != undefined) {
+            var bounds = feature.geometry.bounds;
+            //Compute the ideal zoom to view the feature
+            var featureWidth = bounds.right  - bounds.left;
+            var featureHeight = bounds.top - bounds.bottom;
+            var windowWidth = $(window).width();
+            var windowHeight = $(window).height();
+            console.log("windowWidth="+windowWidth);
+            console.log("windowHeight="+windowHeight);
+            console.log("featureWidth="+featureWidth);
+            console.log("featureHeight="+featureHeight);
+            var zoom = this.map.getNumZoomLevels()-1;
+            console.log("initialZoom="+zoom);
+            var tmpWidth = featureWidth;
+            var tmpHeight = featureHeight;
+            while ((tmpWidth > windowWidth) || (tmpHeight > windowHeight)) {
+                tmpWidth /= 2;
+                tmpHeight /= 2;
+                console.log("zoom?="+zoom);
+                zoom--;
+
+            }
+            this.map.moveTo(new OpenLayers.LonLat(feature.geometry.getCentroid().x, feature.geometry.getCentroid().y), Math.max(0, zoom));
+        }
+    },
+    layerLoadedCallback : function (layer) {
+        if (this.initOptions.goToAnnotation != undefined) {
+            this.goToAnnotation(layer, this.initOptions.goToAnnotation.value);
+        }
     },
     getUserLayer: function () {
         return this.userLayer;
@@ -30,7 +64,7 @@ var BrowseImageView = Backbone.View.extend({
         $('#layerSwitchercontent' + this.model.get('id')).find('.slider').slider({
             value: 100,
             slide: function (e, ui) {
-                this.layers.baseLayer.setOpacity(ui.value / 100);
+                this.baseLayer.setOpacity(ui.value / 100);
             }
         });
 
@@ -89,7 +123,7 @@ var BrowseImageView = Backbone.View.extend({
             console.log("baseURL : " + baseURLs.length);
             console.log("nbZoom " + metadata.nbZoom);
             var zoomify_url = baseURLs[0] + "/fcgi-bin/iipsrv.fcgi?zoomify=" + self.model.get('path') +"/";
-            self.layers.baseLayer = new OpenLayers.Layer.Zoomify( "Zoomify", zoomify_url,
+            self.baseLayer = new OpenLayers.Layer.Zoomify( "Zoomify", zoomify_url,
                     new OpenLayers.Size( metadata.width, metadata.height ) );
 
             var layerSwitcher = new OpenLayers.Control.LayerSwitcher({
@@ -116,16 +150,16 @@ var BrowseImageView = Backbone.View.extend({
                     layerSwitcher,
                     new OpenLayers.Control.MousePosition(),
                     /*new OpenLayers.Control.OverviewMap({
-                        bounds : new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
-                        size: new OpenLayers.Size(metadata.width / Math.pow(2, numZoomLevels), metadata.height / Math.pow(2, numZoomLevels)),
-                        div: document.getElementById('overviewMap' + self.model.get('id'))
-                    }),*/
+                     bounds : new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
+                     size: new OpenLayers.Size(metadata.width / Math.pow(2, numZoomLevels), metadata.height / Math.pow(2, numZoomLevels)),
+                     div: document.getElementById('overviewMap' + self.model.get('id'))
+                     }),*/
                     new OpenLayers.Control.KeyboardDefaults()]
             };
 
             self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
-            self.map.addLayer(self.layers.baseLayer);
-            self.map.setBaseLayer(self.layers.baseLayer);
+            self.map.addLayer(self.baseLayer);
+            self.map.setBaseLayer(self.baseLayer);
             self.map.zoomToMaxExtent();
 
         }
@@ -146,7 +180,7 @@ var BrowseImageView = Backbone.View.extend({
     },
     initDjatoka: function () {
         var self = this;
-        this.layers.baseLayer = new OpenLayers.Layer.OpenURL(this.model.get('filename'), this.model.get('imageServerBaseURL'), {
+        this.baseLayer = new OpenLayers.Layer.OpenURL(this.model.get('filename'), this.model.get('imageServerBaseURL'), {
             transitionEffect: 'resize',
             layername: 'basic',
             format: 'image/jpeg',
@@ -155,10 +189,10 @@ var BrowseImageView = Backbone.View.extend({
         });
 
 
-        var metadata = this.layers.baseLayer.getImageMetadata();
-        var resolutions = this.layers.baseLayer.getResolutions();
+        var metadata = this.baseLayer.getImageMetadata();
+        var resolutions = this.baseLayer.getResolutions();
         var maxExtent = new OpenLayers.Bounds(0, 0, metadata.width, metadata.height);
-        var tileSize = this.layers.baseLayer.getTileSize();
+        var tileSize = this.baseLayer.getTileSize();
         var lon = metadata.width / 2;
         var lat = metadata.height / 2;
         var mapOptions = {
@@ -189,7 +223,7 @@ var BrowseImageView = Backbone.View.extend({
                 new OpenLayers.Control.OverviewMap({
                     div: document.getElementById('overviewMap' + this.model.get('id')),
                     //size: new OpenLayers.Size(metadata.width / Math.pow(2, openURLLayer.getViewerLevel()), metadata.height / Math.pow(2,(openURLLayer.getViewerLevel()))),
-                    size: new OpenLayers.Size(metadata.width / Math.pow(2, this.layers.baseLayer.getViewerLevel()), metadata.height / Math.pow(2, (this.layers.baseLayer.getViewerLevel()))),
+                    size: new OpenLayers.Size(metadata.width / Math.pow(2, this.baseLayer.getViewerLevel()), metadata.height / Math.pow(2, (this.baseLayer.getViewerLevel()))),
                     minRatio: 1,
                     maxRatio: 1024,
                     mapOptions: mapOptions
@@ -199,7 +233,7 @@ var BrowseImageView = Backbone.View.extend({
 
 
         this.map = new OpenLayers.Map("map" + this.model.get('id'), options);
-        this.map.addLayer(this.layers.baseLayer);
+        this.map.addLayer(this.baseLayer);
         this.map.setCenter(new OpenLayers.LonLat(lon, lat), 2);
     },
     initToolbar: function () {
@@ -249,7 +283,7 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('input[id=polygon' + this.model.get('id') + ']').click(function () {
-           self.getUserLayer().controls.select.unselectAll();
+            self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("polygon");
             self.getUserLayer().disableHightlight();
         });
@@ -259,7 +293,7 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('input[id=delete' + this.model.get('id') + ']').click(function () {
-           self.getUserLayer().controls.select.unselectAll();
+            self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("select");
             self.getUserLayer().deleteOnSelect = true;
             self.getUserLayer().disableHightlight();
@@ -292,7 +326,8 @@ var BrowseImageView = Backbone.View.extend({
             success: function () {
                 window.app.models.users.each(function (user) {
                     var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), colors[colorIndex], self.ontologyTreeView, self.map );
-                    layerAnnotation.loadAnnotations(self.map);
+                    layerAnnotation.loadAnnotations(self);
+                    self.layers.push(layerAnnotation);
                     //layerAnnotation.initHightlight(self.map);
                     var isOwner = user.get('id') == window.app.status.user.id;
 
@@ -307,12 +342,13 @@ var BrowseImageView = Backbone.View.extend({
                         toolbar.find('input[id=none' + self.model.get('id') + ']').click();
                     } else {
                         /*layerAnnotation.initControls(self, isOwner);
-                        layerAnnotation.registerEvents(self.map);
-                        layerAnnotation.controls.select.activate();  */
+                         layerAnnotation.registerEvents(self.map);
+                         layerAnnotation.controls.select.activate();  */
                     }
                     colorIndex++;
 
                 });
+
             }
         });
     },
@@ -402,10 +438,10 @@ AnnotationLayer.prototype = {
 
         this.vectorsLayer.events.on({
             clickFeature : function (evt) {
-                 console.log("clickFeature");
+                console.log("clickFeature");
             },
             onSelect : function (evt) {
-                 console.log("onSelect");
+                console.log("onSelect");
             },
             featureselected: function (evt) {
                 console.log("featureselected: self.deleteOnSelect="+self.deleteOnSelect);
@@ -452,32 +488,32 @@ AnnotationLayer.prototype = {
     },
     initControls: function (map, isOwner) {
         /*if (isOwner) { */
-            this.controls = {
-                'point': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
-                'line': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
-                'polygon': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon),
-                'regular': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.RegularPolygon, {
-                    handlerOptions: {
-                        sides: 5
-                    }
-                }),
-                'modify': new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
-                'select': new OpenLayers.Control.SelectFeature(this.vectorsLayer)
-            }
+        this.controls = {
+            'point': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
+            'line': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
+            'polygon': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon),
+            'regular': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.RegularPolygon, {
+                handlerOptions: {
+                    sides: 5
+                }
+            }),
+            'modify': new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
+            'select': new OpenLayers.Control.SelectFeature(this.vectorsLayer)
+        }
         /* else {
-            console.log("no owner");
-            this.controls = {
-                'select': new OpenLayers.Control.SelectFeature(this.vectorsLayer)
-            }
-        }*/
+         console.log("no owner");
+         this.controls = {
+         'select': new OpenLayers.Control.SelectFeature(this.vectorsLayer)
+         }
+         }*/
         map.initTools(this.controls);
     },
 
 
     /*Load annotation from database on layer */
-    loadAnnotations: function (map) {
+    loadAnnotations: function (browseImageView) {
         console.log("loadAnnotations: function (map)");
-        var alias = this;
+        var self = this;
         new AnnotationCollection({user : this.userID, image : this.imageID, term: undefined}).fetch({
             success : function (collection, response) {
                 collection.each(function(annotation) {
@@ -489,11 +525,12 @@ AnnotationLayer.prototype = {
                         listener: 'NO',
                         importance: 10
                     };
-                    alias.addFeature(feature);
+                    self.addFeature(feature);
                 });
+                browseImageView.layerLoadedCallback(self);
             }
         });
-        map.addLayer(this.vectorsLayer);
+        this.map.addLayer(this.vectorsLayer);
     },
     addFeature: function (feature) {
         console.log("addFeature: function (feature)");
@@ -519,6 +556,9 @@ AnnotationLayer.prototype = {
         this.ontologyTreeView.clear();
         this.features[idAnnotation] = null;
 
+    },
+    getFeature : function(idAnnotation) {
+        return this.features[idAnnotation];
     },
     removeSelection: function () {
         for (var i in this.vectorsLayer.selectedFeatures) {
@@ -570,19 +610,19 @@ AnnotationLayer.prototype = {
     },
     initHightlight : function (map) { //buggy :(
         /*this.hoverControl = new OpenLayers.Control.SelectFeature(this.vectorsLayer, {
-            hover: true,
-            highlightOnly: true,
-            renderIntent: "temporary",
-            eventListeners: {
+         hover: true,
+         highlightOnly: true,
+         renderIntent: "temporary",
+         eventListeners: {
 
-                featurehighlighted: this.showPopup,
-                featureunhighlighted: this.clearpopup
-            }
-        });
+         featurehighlighted: this.showPopup,
+         featureunhighlighted: this.clearpopup
+         }
+         });
 
 
-        map.addControl(this.hoverControl);
-        //this.hoverControl.activate();   */
+         map.addControl(this.hoverControl);
+         //this.hoverControl.activate();   */
     },
 
     /*Add annotation in database*/

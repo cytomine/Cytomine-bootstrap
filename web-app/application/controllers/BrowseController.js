@@ -5,7 +5,7 @@ var BrowseController = Backbone.Controller.extend({
 
     routes: {
         "browse/:idProject/:idImage"   :   "browse",
-        "browse/:idProject/:idImage/:idAnnotation"   :   "browseAnnotation",
+        "browse/:idProject/:idImage/:idAnnotation"   :   "browse",
         "close"   :   "close"
     },
 
@@ -25,36 +25,32 @@ var BrowseController = Backbone.Controller.extend({
         }
     },
 
-    browse : function (idProject, idImage) {
+    browse : function (idProject, idImage, idAnnotation) {
         var self = this;
         this.initTabs();
 
-        var initTab = function(){
-            self.tabs.addTab(idImage);
-            self.tabs.showTab(idImage);
-            window.app.view.showComponent(self.tabs.container);
-            self.showView();
-        }
-
         if (window.app.status.currentProject == undefined) {//direct access -> create dashboard
             window.app.controllers.dashboard.dashboard(idProject);
-            setTimeout(function(){initTab();}, 1500); //wait dashboard creation
-
-        } else {
-            initTab();
         }
 
+        var browseImageViewInitOptions = {};
+        if (idAnnotation != undefined) {
+            browseImageViewInitOptions.goToAnnotation = {value : idAnnotation};
+            console.log("idAnnotation !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + idAnnotation);
 
+            //var browseImageView = self.tabs.getB(idImage);
+            //browseImageView.goToAnnotation(idAnnotation);
+            //browseImageView.getUserLayer().goToAnnotation(idAnnotation);
 
+        }
 
+        self.tabs.addTab(idImage, browseImageViewInitOptions);
+        self.tabs.showTab(idImage);
+
+        window.app.view.showComponent(self.tabs.container);
+        self.showView();
 
     },
-    browseAnnotation : function (idProject, idImage,idAnnotation) {
-        //window.app.controllers.dashboard.dashboard(idProject);
-        console.log("browseAnnotation");
-        this.browse(idProject,idImage);
-    },
-
     closeAll : function () {
         if (this.tabs == null) return;
 

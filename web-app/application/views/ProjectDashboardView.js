@@ -20,13 +20,7 @@ var ProjectDashboardView = Backbone.View.extend({
      */
     render: function() {
         var self = this;
-
-        new ProjectModel({id : self.model.id}).fetch({
-            success : function (model, response) {
-                self.model = model;
-                self.printProjectInfo();
-            }});
-
+        self.printProjectInfo();
         return this;
     },
     /**

@@ -288,6 +288,7 @@ div .ontologypanel {
     -webkit-border-radius: 6px;
     border-radius: 6px;
     overflow : auto;
+    padding : 5px;
 }
 
 div .toolbar {

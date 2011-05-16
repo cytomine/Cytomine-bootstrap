@@ -18,6 +18,7 @@ var DashboardController = Backbone.Controller.extend({
         if (window.app.status.currentProject == project || window.app.status.currentProject == undefined) {
             console.log("init dashboard view");
             window.app.status.currentProject = project;
+            window.app.controllers.browse.initTabs();
             if (this.view == null) this.createView();
             this.showView();
         }
@@ -26,25 +27,18 @@ var DashboardController = Backbone.Controller.extend({
     },
 
     createView : function () {
-        console.log("create view...");
-        window.app.controllers.browse.closeAll();
-        window.app.controllers.browse.initTabs();
         var tabs = $("#explorer > .browser").children(".tabs");
-        var self = this
-        new ProjectModel({id : window.app.status.currentProject}).fetch({
-            success : function (model, response) {
-                self.view = new ProjectDashboardView({
-                    model : model,
-                    el: tabs,
-                    container : window.app.view.components.explorer
-                }).render();
-            }});
-
+        var self = this;
+        self.view = new ProjectDashboardView({
+            model : window.app.models.projects.get(window.app.status.currentProject),
+            el: tabs,
+            container : window.app.view.components.explorer
+        }).render();
     },
 
     destroyView : function() {
-         //if (this.view != null) this.view.remove();
-         this.view = null;
+        //if (this.view != null) this.view.remove();
+        this.view = null;
     },
 
     showView : function() {
