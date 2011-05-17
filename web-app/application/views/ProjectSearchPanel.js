@@ -2,6 +2,7 @@ var ProjectSearchPanel = Backbone.View.extend({
     ontologies : null,
     idUser : null,
     container : null,
+    projectsPanel : null,
     allProjectsButtonElem: "#projectallbutton",
     addProjectButtonElem : "#projectaddbutton",
     searchProjectOntolgiesListElem : "#ontologyChoiceList",
@@ -20,6 +21,7 @@ var ProjectSearchPanel = Backbone.View.extend({
         this.ontologies = options.ontologies;
         this.idUser = options.idUser;
         this.container = options.container;
+        this.projectsPanel = options.projectsPanel;
     },
     events: {
         "click .addProject": "showAddProjectPanel",
@@ -49,7 +51,7 @@ var ProjectSearchPanel = Backbone.View.extend({
         var self = this;
         //create search panel
         $(self.el).find("#searchProjectPanel").panel({
-                collapseSpeed:100
+            collapseSpeed:100
         });
 
         //configure "all projects" button
@@ -234,8 +236,8 @@ var ProjectSearchPanel = Backbone.View.extend({
     showAddProjectPanel : function() {
         console.log("ProjectSearchPanel: showAddProjectPanel");
         var self = this;
-        if(self.addProjectDialog==null)
-            self.addProjectDialog = new AddProjectDialog({projectsPanel:self,el:self.el}).render();
+        $('#addproject').remove();
+        self.addProjectDialog = new AddProjectDialog({projectsPanel:self.projectsPanel,el:self.el}).render();
         self.addProjectDialog.open();
     },
     /**
@@ -253,20 +255,20 @@ var ProjectSearchPanel = Backbone.View.extend({
             searchNumberOfSlides,
             searchNumberOfAnnotations) {
 
-                var self = this;
-                var projects =  new ProjectCollection(self.model.models);
+        var self = this;
+        var projects =  new ProjectCollection(self.model.models);
 
-                //each search function takes a search data and a collection and it return a collection without elem that
-                //don't match with data search
-                projects = self.filterByProjectsByName(searchText,projects);
-                projects = self.filterProjectsByOntology(searchOntologies,projects);
-                projects = self.filterProjectsByNumberOfImages(searchNumberOfImages,projects);
-                projects = self.filterProjectsByNumberOfSlides(searchNumberOfSlides,projects);
-                projects = self.filterProjectsByNumberOfAnnotations(searchNumberOfAnnotations,projects);
-                //add here filter function
+        //each search function takes a search data and a collection and it return a collection without elem that
+        //don't match with data search
+        projects = self.filterByProjectsByName(searchText,projects);
+        projects = self.filterProjectsByOntology(searchOntologies,projects);
+        projects = self.filterProjectsByNumberOfImages(searchNumberOfImages,projects);
+        projects = self.filterProjectsByNumberOfSlides(searchNumberOfSlides,projects);
+        projects = self.filterProjectsByNumberOfAnnotations(searchNumberOfAnnotations,projects);
+        //add here filter function
 
-                //show project from "projects" (and hide the other) in project view
-                self.container.showProjects(projects);
+        //show project from "projects" (and hide the other) in project view
+        self.container.showProjects(projects);
     },
     filterProjectsOLD : function(
             searchText,

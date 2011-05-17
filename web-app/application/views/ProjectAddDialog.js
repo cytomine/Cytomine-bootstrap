@@ -7,9 +7,9 @@ var AddProjectDialog = Backbone.View.extend({
         _.bindAll(this, 'render');
     },
     render : function() {
-        var self = this;
 
-        var dialog = ich.addprojectdialogtpl({});
+        var self = this;
+        var dialog = ich.addprojectdialogtpl({},true);
         $(self.el).append(dialog);
 
         $("#login-form-add-project").submit(function () {self.createProject(); return false;});
@@ -20,14 +20,11 @@ var AddProjectDialog = Backbone.View.extend({
             }
         });
 
-
         $("#projectontology").empty();
         window.app.models.ontologies.each(function(ontology){
             var choice = ich.ontologieschoiceradiotpl({id:ontology.id,name:ontology.get("name")}, true);
             $("#projectontology").append(choice);
         });
-
-
 
         $("#projectuser").empty();
         window.app.models.users.each(function(user){
@@ -36,6 +33,7 @@ var AddProjectDialog = Backbone.View.extend({
         });
 
         //Build dialog
+        console.log("AddProjectDialog: build dialog");
         self.addProjectDialog = $("#addproject").dialog({
             width: 500,
             autoOpen : false,
@@ -53,13 +51,10 @@ var AddProjectDialog = Backbone.View.extend({
 
     },
     refresh : function() {
-
     },
     open: function() {
         var self = this;
         self.clearAddProjectPanel();
-
-        console.log("open");
         self.addProjectDialog.dialog("open") ;
     },
     clearAddProjectPanel : function() {
@@ -72,11 +67,12 @@ var AddProjectDialog = Backbone.View.extend({
         $(self.addProjectCheckedUsersCheckboxElem).attr("checked", false);
     },
     createProject : function() {
-        console.log("createProject...");
+       console.log("createProject...");
+       var self = this;
+
         $("#errormessage").empty();
         $("#projecterrorlabel").hide();
 
-        var self = this;
         var name =  $("#project-name").val();
         var ontology = $('input[type=radio][name=ontologyradio]:checked').attr('value');
         var users = new Array();
@@ -85,17 +81,18 @@ var AddProjectDialog = Backbone.View.extend({
             users.push($(item).attr("value"))
         });
 
+        //create project
         new ProjectModel({name : name, ontology : ontology}).save({name : name, ontology : ontology},{
             success: function (model, response) {
                 console.log(response);
-                //var json = $.parseJSON(response);
                 var id = response.project.id;
-                console.log("project="+id + " user="+users[0])
+                console.log("project="+id);
+                //create user-project "link"
                 new ProjectUserModel({project: id}).save({project: id, user: users},{
                     success: function (model, response) {
                         new ProjectCollection({user : self.userID}).fetch({
                             success : function (collection, response) {
-                                self.projectsPanel.printProjects(collection);
+                                self.projectsPanel.refresh();
                                 $("#addproject").dialog("close") ;
                             }});
                     }});

@@ -32,12 +32,13 @@ var ProjectView = Backbone.View.extend({
      */
     refresh : function() {
         console.log("ProjectView: refresh");
+        var self = this;
         //TODO: project must be filter by user?
         var idUser =  undefined;
         new ProjectCollection({user : idUser}).fetch({
             success : function (collection, response) {
                 self.model = collection;
-                this.render();
+                self.render();
             }});
 
 
@@ -54,7 +55,8 @@ var ProjectView = Backbone.View.extend({
             model : self.model,
             ontologies : window.app.models.ontologies,
             el:$("#projectViewNorth"),
-            container : self
+            container : self,
+            projectsPanel : self
         }).render();
     },
     /**
