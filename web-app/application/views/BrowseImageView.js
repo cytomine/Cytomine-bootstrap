@@ -18,6 +18,15 @@ var BrowseImageView = Backbone.View.extend({
         this.initOntology();
         return this;
     },
+    show : function() {
+        var self = this;
+        if (this.initOptions.goToAnnotation != undefined) {
+            console.log("go to Annotation " + this.initOptions.goToAnnotation.value + " <<<<<<<<<<<<<");
+        }
+        _.each(this.layers, function(layer) {
+            self.goToAnnotation(layer,  self.initOptions.goToAnnotation.value);
+        });
+    },
     goToAnnotation : function(layer, idAnnotation) {
         var feature = layer.getFeature(idAnnotation);
         if (feature != undefined) {
@@ -27,20 +36,13 @@ var BrowseImageView = Backbone.View.extend({
             var featureHeight = bounds.top - bounds.bottom;
             var windowWidth = $(window).width();
             var windowHeight = $(window).height();
-            console.log("windowWidth="+windowWidth);
-            console.log("windowHeight="+windowHeight);
-            console.log("featureWidth="+featureWidth);
-            console.log("featureHeight="+featureHeight);
             var zoom = this.map.getNumZoomLevels()-1;
-            console.log("initialZoom="+zoom);
             var tmpWidth = featureWidth;
             var tmpHeight = featureHeight;
             while ((tmpWidth > windowWidth) || (tmpHeight > windowHeight)) {
                 tmpWidth /= 2;
                 tmpHeight /= 2;
-                console.log("zoom?="+zoom);
                 zoom--;
-
             }
             this.map.moveTo(new OpenLayers.LonLat(feature.geometry.getCentroid().x, feature.geometry.getCentroid().y), Math.max(0, zoom));
         }

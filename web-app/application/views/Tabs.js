@@ -40,10 +40,11 @@ var Tabs = Backbone.View.extend({
     },
     addTab : function(idImage, options) {
         var self = this;
-        var alreadyOpen = _.detect(self.images, function(object) {
+        var alreadyOpened = _.detect(self.images, function(object) {
             return object.idImage == idImage;
         });
-        if (alreadyOpen) {
+        if (alreadyOpened) {
+            alreadyOpened.view.initOptions = options;
             return;
         }
         console.log("addTab : " + idImage);
@@ -78,6 +79,11 @@ var Tabs = Backbone.View.extend({
     showTab : function(idImage) {
         //$(this.el).parent().find('.noProject').hide();
         //$(this.el).show();
+
+        var image = _.detect(this.images, function(object) {
+            return object.idImage == idImage;
+        });
+        image.view.show();
         console.log("showTab : "+ idImage);
         var tabs = $(this.el).children('.tabs');
         tabs.tabs('select', '#tabs-' + idImage);
