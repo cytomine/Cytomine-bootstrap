@@ -9,6 +9,9 @@ var ProjectDashboardView = Backbone.View.extend({
     tagName : "div",
     projectElem : "#projectdashboardinfo",  //div with project info
     tabsAnnotation : null,
+    images : null,
+    imagesView : null, //image view
+    annotationsViews : null, //array of annotation view
     initialize: function(options) {
         this.container = options.container;
         _.bindAll(this, 'render');
@@ -19,6 +22,7 @@ var ProjectDashboardView = Backbone.View.extend({
      * Print all information for this project
      */
     render: function() {
+        this.images = new Array();
         this.printProjectInfo();
         return this;
     },
@@ -34,7 +38,8 @@ var ProjectDashboardView = Backbone.View.extend({
             self.model = model;
 
             self.fetchProjectInfo();
-            self.fetchAnnotations();
+            self.refreshImages();
+            self.refreshAnnotations();
             self.fetchCommands();
             self.fetchStats();
 
@@ -91,6 +96,78 @@ var ProjectDashboardView = Backbone.View.extend({
         console.log("ProjectDashboardView: fetchAnnotations");
 
         var self = this;
+        self.annotationsViews = new Array();
+        //init panel for all annotation (with or without term
+        new AnnotationCollection({project:self.model.id}).fetch({
+            success : function (collection, response) {
+                $("#tabsterm-all").empty();
+
+                var view = new AnnotationView({
+                    page : undefined,
+                    model : collection,
+                    el:$("#tabsterm-all"),
+                    container : window.app.view.components.warehouse
+                }).render();
+                self.annotationsViews[0] = view;
+            }
+        });
+
+        //init specific panel for each term
+        new TermCollection({idOntology:self.model.get('ontology')}).fetch({
+            success : function (collection, response) {
+                //init specific panel
+                collection.each(function(term) {
+                    $("#tabsterm-"+term.get("id")).empty();
+                    new AnnotationCollection({term:term.get("id"),project:self.model.id}).fetch({
+                        success : function (collection, response) {
+                            var view = new AnnotationView({
+                                page : undefined,
+                                model : collection,
+                                el:$("#tabsterm-"+term.get("id")),
+                                container : window.app.view.components.warehouse
+                            }).render();
+                            self.annotationsViews[term.id] = view;
+                        }});
+
+                });
+            }
+        });
+
+    },
+    refreshAnnotations : function () {
+        console.log("ProjectDashboardView: fetchAnnotations");
+
+        var self = this;
+
+        //init panel for all annotation (with or without term
+        new AnnotationCollection({project:self.model.id}).fetch({
+            success : function (collection, response) {
+                $("#tabsterm-all").empty();
+                self.annotationsViews[term.id].refresh(collection);
+            }
+        });
+
+        //init specific panel for each term
+        new TermCollection({idOntology:self.model.get('ontology')}).fetch({
+            success : function (collection, response) {
+                //init specific panel
+                collection.each(function(term) {
+                    $("#tabsterm-"+term.get("id")).empty();
+                    new AnnotationCollection({term:term.get("id"),project:self.model.id}).fetch({
+                        success : function (collection, response) {
+                              self.annotationsViews[term.id].refresh(collection);
+
+                        }});
+
+                });
+            }
+        });
+
+    },
+    fetchAnnotationsOLD : function () {
+        console.log("ProjectDashboardView: fetchAnnotations");
+
+        var self = this;
 
         //init panel for all annotation (with or without term
         new AnnotationCollection({project:self.model.id}).fetch({
@@ -130,18 +207,32 @@ var ProjectDashboardView = Backbone.View.extend({
         });
 
     },
-
+    /**
+     * Get and Print ALL images (use for the first time)
+     */
     fetchImages : function() {
         console.log("ProjectDashboardView: fetchImages");
         var self = this;
         new ImageCollection({project:self.model.get('id')}).fetch({
             success : function (collection, response) {
-                new ImageView({
+                self.imagesView = new ImageView({
                     page : undefined,
                     model : collection,
                     el:$("#projectImageList"),
                     container : window.app.view.components.warehouse
                 }).render();
+            }});
+    },
+    /**
+     * Get and Print only new images and remove delted images
+     */
+    refreshImages : function() {
+        console.log("ProjectDashboardView: refreshImages");
+        var self = this;
+        if(self.imagesView==null) return; //imageView is not yet build
+        new ImageCollection({project:self.model.get('id')}).fetch({
+            success : function (collection, response) {
+                 self.imagesView.refresh(collection);
             }});
     },
     fetchStats : function () {
