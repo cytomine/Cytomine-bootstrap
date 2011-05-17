@@ -30,6 +30,7 @@ var ProjectSearchPanel = Backbone.View.extend({
 
         var self = this;
         var search = ich.projectviewsearchtpl({}, true);
+        $(this.el).empty();
         $(this.el).append(search);
 
 

@@ -37,9 +37,10 @@ var ProjectView = Backbone.View.extend({
         new ProjectCollection({user : idUser}).fetch({
             success : function (collection, response) {
                 self.model = collection;
+                this.render();
             }});
 
-        this.render();
+
     },
     /**
      * Create search project panel

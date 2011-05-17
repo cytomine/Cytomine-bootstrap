@@ -5,7 +5,7 @@
  * Time: 10:14
  * To change this template use File | Settings | File Templates.
  */
-var AddImageProjectDialog = Backbone.View.extend({
+var ProjectManageSlideDialog = Backbone.View.extend({
     checklistChecked : ".checklist input:checked",
     checklistSelected : ".checklist .checkbox-select",
     checklistDeselected : ".checklist .checkbox-deselect",
@@ -28,9 +28,6 @@ var AddImageProjectDialog = Backbone.View.extend({
         console.log("Id project="+this.model.id);
 
         var dialog = ich.projectaddimagedialog({id:this.model.get('id'),name:this.model.get('name')});
-        /*if($("#projectaddimagedialog"+this.model.id).length>0)
-         $("#projectaddimagedialog"+this.model.id).replaceWith(dialog);
-         else */
         $(this.el).append(dialog);
 
         //Build dialog
@@ -46,11 +43,6 @@ var AddImageProjectDialog = Backbone.View.extend({
             width : "85%",
             height: "600"
         });
-        /*if(!$(self.divDialog+self.idProject).dialog("isOpen"))
-         {
-         self.renderImageList();
-         $(self.divDialog+self.idProject).dialog("open");
-         }*/
         return this;
 
     },
@@ -61,14 +53,12 @@ var AddImageProjectDialog = Backbone.View.extend({
         self.addSlideDialog.dialog("open") ;
     },
     refresh : function(slideID, selected) {
-        console.log("refresh...__");
         var className = ".slide" + slideID;
         var self = this;
         if (selected)
             $(self.ulElem+self.model.get('id')).find(className).addClass("selected");
         else
             $(self.ulElem+self.model.get('id')).find(className).removeClass("selected");
-        //this.renderImageList();
     },
     renderImageList : function() {
         var self = this;
@@ -80,7 +70,7 @@ var AddImageProjectDialog = Backbone.View.extend({
         //TODO: filter by user right
         new ImageCollection({project:undefined}).fetch({
             success: function(collection,response){
-                //TODO: multi-page print
+                //TODO: multi-page print?
                 var page = 0;
                 var cpt = 0;
                 var nb_thumb_by_page = 2000;
@@ -107,10 +97,7 @@ var AddImageProjectDialog = Backbone.View.extend({
                                 if (filename.length > 15)
                                     filename = filename.substring(0,12) + "...";
                                 var item = ich.projectaddimageitem({id:image.id,name:filename, slide: image.get('slide'), info : image.get('info')});
-                                /*if (currentSlide != image.get('slide')) { //new slide
-                                    currentSlide = image.get('slide');
-                                    //organize a new list ?
-                                }*/
+
                                 $(thumb.el).css({"width":30}); //thumb must be smaller
 
                                 $(self.ulElem+self.model.get('id')).append(item);
@@ -129,7 +116,7 @@ var AddImageProjectDialog = Backbone.View.extend({
                         $(self.ulElem+self.model.get('id') + " img").addClass("thumbProject");
 
                         //build dialog and event
-                        self.buildAddImagedialog();
+                        self.buildAddImageDialog();
                     },
                     error: function(error){
                         for (property in error) {
@@ -145,7 +132,7 @@ var AddImageProjectDialog = Backbone.View.extend({
             }
         });
     },
-    buildAddImagedialog : function() {
+    buildAddImageDialog : function() {
         var self = this;
 
         /* see if anything is previously checked and reflect that in the view*/
