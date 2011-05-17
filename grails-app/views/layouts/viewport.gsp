@@ -34,6 +34,12 @@
       <script type="text/javascript" src="application/lib/jqplot.pieRenderer.js"></script>
 
 
+    <script type="text/javascript" src="application/lib/flot/jquery.flot.js"></script>
+      <script type="text/javascript" src="application/lib/flot/jquery.flot.pie.js"></script>
+
+
+
+
   <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenLayers.js')}" ></script>
 <script type="text/javascript" src="${resource(dir:'js',file:'openlayers/OpenURL.js')}" ></script>
 <script type="text/javascript" src="application/lib/ui.panel.min.js"></script>
@@ -248,48 +254,55 @@
 
 <script type="text/html" id="projectsviewtpl">
   <div>
-     <br><br>
-    <div id="searchProjectPanel" class="centralPanel">
-		<h3>Project Panel</h3>
-		<div>
-		    <table class='projecttable'>
-		      <tr>
-                <td colspan="1" width="25%"> Project Name: <input id="projectsearchtextbox" /></td>
-                <td colspan="1" width="25%"> Ontology type:<div id="ontologyChoiceList"></div></td>
-                <td colspan="1" width="25%">
-                  <label for="amountNumberOfSlides" style="display:inline">Slides:
-                    <input type="text" id="amountNumberOfSlides" style="display:inline;border:0; font-weight:bold;" />
-                  </label>
-                  <div id="numberofslideSlider"></div>
-                  <br>
-                  <label for="amountNumberOfImages" style="display:inline">Images:
-                  <input type="text" id="amountNumberOfImages" style="display:inline;border:0; font-weight:bold;" />
-                  </label>
-                  <div id="numberofimageSlider"></div>
-                  <br>
-                 <label for="amountNumberOfAnnotations" style="display:inline">Annotations:
-                 <input type="text" id="amountNumberOfAnnotations" style="display:inline;border:0; font-weight:bold;" />
-                 </label>
-                 <div id="numberofannotationSlider"></div>
-                 <br>
-               </td>
-                <td colspan="1" width="25%" align="right">
- <!--                 <button id='projectrefreshbutton' type="button">Refresh</button>  -->
-                  <button id='projectallbutton' type="button" class="showAllProject">Show All projects</button> <br><br>
-                  <button id='projectaddbutton' type="button" class="addProject">Add Project</button><br>
- <!--                  <button id='projectsearchbutton' type="button">Search</button>  -->
-                  </td>
-              </tr>
-             </table>
-		</div>
-	</div>
        <br><br>
-    </div>
-   <div id="lCenter">
-   <div class="projectlist" id="projectlist"><br></div>
-   </div>
-    <br /><br />
+          <div id="projectViewNorth"></div>
+        <br><br>
+      </div>
+     <div id="lCenter">
+       <div class="projectlist" id="projectlist"><br></div>
+     </div>
+      <br /><br />
   </div>
+
+</script>
+
+
+<script type="text/html" id="projectviewsearchtpl">
+
+<div id="searchProjectPanel" class="centralPanel">
+          <h3>Project Panel</h3>
+          <div>
+              <table class='projecttable'>
+                <tr>
+                  <td colspan="1" width="25%"> Project Name: <input id="projectsearchtextbox" /></td>
+                  <td colspan="1" width="25%"> Ontology type:<div id="ontologyChoiceList"></div></td>
+                  <td colspan="1" width="25%">
+                    <label for="amountNumberOfSlides" style="display:inline">Slides:
+                      <input type="text" id="amountNumberOfSlides" style="display:inline;border:0; font-weight:bold;" />
+                    </label>
+                    <div id="numberofslideSlider"></div>
+                    <br>
+                    <label for="amountNumberOfImages" style="display:inline">Images:
+                    <input type="text" id="amountNumberOfImages" style="display:inline;border:0; font-weight:bold;" />
+                    </label>
+                    <div id="numberofimageSlider"></div>
+                    <br>
+                   <label for="amountNumberOfAnnotations" style="display:inline">Annotations:
+                   <input type="text" id="amountNumberOfAnnotations" style="display:inline;border:0; font-weight:bold;" />
+                   </label>
+                   <div id="numberofannotationSlider"></div>
+                   <br>
+                 </td>
+                  <td colspan="1" width="25%" align="right">
+   <!--                 <button id='projectrefreshbutton' type="button">Refresh</button>  -->
+                    <button id='projectallbutton' type="button" class="showAllProject">Show All projects</button> <br><br>
+                    <button id='projectaddbutton' type="button" class="addProject">Add Project</button><br>
+   <!--                  <button id='projectsearchbutton' type="button">Search</button>  -->
+                    </td>
+                </tr>
+               </table>
+          </div>
+      </div>
 
 </script>
 
@@ -442,6 +455,8 @@
             <div>
                         Project stats by term on annotation:
                         <div id="plotterms"></div>
+                        <div id="flotterms" class="graph"></div>
+
             </div>
           </div>
        </div>
@@ -750,7 +765,7 @@
 <script type="text/javascript" src="application/views/ProjectDashboardView.js" ></script>
 <script type="text/javascript" src="application/views/AnnotationThumbView.js" ></script>
 <script type="text/javascript" src="application/views/AnnotationView.js" ></script>
-
+<script type="text/javascript" src="application/views/ProjectSearchPanel.js" ></script>
 
 <script type="text/javascript" src="application/views/Tabs.js" ></script>
 
