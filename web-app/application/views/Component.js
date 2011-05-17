@@ -6,6 +6,15 @@ var Component = Backbone.View.extend({
         this.el = options.el;
         this.template = options.template;
         this.buttonAttr = options.buttonAttr;
+        if (options.activate != undefined) {
+            this.activate = options.activate;
+        }
+        if (options.deactivate != undefined) {
+            this.deactivate = options.deactivate;
+        }
+        if (options.show != undefined) {
+            this.show = options.show;
+        }
     },
     render: function () {
         $(this.el).append(this.template);

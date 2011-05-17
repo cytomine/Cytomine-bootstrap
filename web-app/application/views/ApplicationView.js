@@ -99,7 +99,12 @@ var ApplicationView = Backbone.View.extend({
                 icon : "ui-icon-image",
                 route : "#explorer"
             },
-            divId : "explorer"
+            divId : "explorer",
+            activate: function () {
+                $("#" + this.divId).show();
+                $("#" + this.buttonAttr.elButton).addClass("ui-state-disabled");
+                window.app.controllers.dashboard.view.refresh(); //refresh dashboard
+            }
         });
 
 
@@ -133,10 +138,10 @@ var ApplicationView = Backbone.View.extend({
 
     showComponent : function (component) {
         /*for (var i in window.app.view.components) {
-            var c = window.app.view.components[i];
-            if (c == component) continue;
-            c.deactivate();
-        }*/
+         var c = window.app.view.components[i];
+         if (c == component) continue;
+         c.deactivate();
+         }*/
         _.each(this.components, function (c) {
             if (c != component) c.deactivate();
         });
@@ -147,7 +152,7 @@ var ApplicationView = Backbone.View.extend({
 });
 
 ApplicationView.prototype.message =  function(title, message, type, pnotify) {
-     ApplicationView.prototype.message(title, message, type, pnotify, true);
+    ApplicationView.prototype.message(title, message, type, pnotify, true);
 }
 ApplicationView.prototype.message =  function(title, message, type, pnotify,history) {
     type = type || 'status';

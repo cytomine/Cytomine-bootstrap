@@ -30,6 +30,7 @@ var ProjectDashboardView = Backbone.View.extend({
      * Refresh all information for this project
      */
     refresh : function() {
+        console.log("refresh....");
         var self = this;
 
         var projectModel = new ProjectModel({id : self.model.id});

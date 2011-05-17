@@ -63,16 +63,16 @@ var BrowseImageView = Backbone.View.extend({
         if (mime == "jp2") this.initDjatoka();
         if (mime == "vms" || mime == "mrxs") this.initIIP();
 
-        $('#layerSwitchercontent' + this.model.get('id')).find('.slider').slider({
-            value: 100,
-            slide: function (e, ui) {
-                this.baseLayer.setOpacity(ui.value / 100);
-            }
-        });
+        /*$('#layerSwitchercontent' + this.model.get('id')).find('.slider').slider({
+         value: 100,
+         slide: function (e, ui) {
+         this.baseLayer.setOpacity(ui.value / 100);
+         }
+         });*/
 
         new DraggablePanelView({
-            el : $('#layerSwitcher' + this.model.get('id')),
-            template : ich.layerswitchercontenttpl({id : this.model.get('id')}, true)/*,
+            el : $('#layerSwitcher' + this.model.get('id'))/*,
+             template : ich.layerswitchercontenttpl({id : this.model.get('id')}, true),
              dialogAttr : {
              dialogID : "#layerswitcherdialog" + this.model.get('id'),
              width : 200,
@@ -91,6 +91,31 @@ var BrowseImageView = Backbone.View.extend({
              css : {left: 'auto', right : '30px', top: '100px', bottom : 'auto'}
              }*/
         }).render();
+    },
+    addLayer : function(layer) {
+        this.map.addLayer(layer);
+        this.layers.push(layer);
+        var layerID = "layerSwitch" + (this.layers.length - 1); //index of the layer in this.layers array
+        console.log("layer ID : " + layerID);
+        if (layer.isBaseLayer) {
+            var liLayer = _.template("<li><input type='radio' id='{{id}}' name='baseLayerRadio' checked/><label for='radio1'>{{name}}</label></li>", {id : layerID, name : layer.name});
+            $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").append(liLayer);
+            $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").find("#"+layerID).click(function(){
+                console.log(">>"+layer.name);
+            });
+            $( "#radio" ).buttonset();
+        } else {
+            var liLayer = _.template("<li><input type='checkbox' id='{{id}}' name='annotationLayerRadio' checked/><label for='radio1'>{{name}}</label></li>", {id : layerID, name : layer.name});
+            $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").append(liLayer);
+            $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").find("#"+layerID).click(function(){
+                var checked = $(this).attr("checked");
+                layer.setVisibility(checked);
+            });
+        }
+    },
+    createLayerSwitcher : function() {
+        var content = ich.layerswitchercontenttpl({id : this.model.get("id")}, true);
+        $("#layerSwitcher"+this.model.get("id")).html(content);
     },
     initIIP : function () {
         console.log("initIIP");
@@ -125,18 +150,10 @@ var BrowseImageView = Backbone.View.extend({
             console.log("baseURL : " + baseURLs.length);
             console.log("nbZoom " + metadata.nbZoom);
             var zoomify_url = baseURLs[0] + "/fcgi-bin/iipsrv.fcgi?zoomify=" + self.model.get('path') +"/";
-            self.baseLayer = new OpenLayers.Layer.Zoomify( "Zoomify", zoomify_url,
+            self.baseLayer = new OpenLayers.Layer.Zoomify( self.model.get('filename'), zoomify_url,
                     new OpenLayers.Size( metadata.width, metadata.height ) );
 
-            var layerSwitcher = new OpenLayers.Control.LayerSwitcher({
-                roundedCorner: false,
-                roundedCornerColor: false,
-                'div': document.getElementById('layerSwitcher' + self.model.get('id')),
-                mouseDown: function (evt) { //IF WE DON'T DO THAT, Mouse Up is not triggered if dragging or sliding
-                    this.isMouseDown = false; //CONTINUE
-                    /*this.ignoreEvent(evt);*/
-                }
-            });
+            var layerSwitcher = self.createLayerSwitcher();
 
             //var numZoomLevels =  metadata.nbZoom;
             /* Map with raster coordinates (pixels) from Zoomify image */
@@ -149,8 +166,8 @@ var BrowseImageView = Backbone.View.extend({
                     //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),
                     new OpenLayers.Control.Navigation(),
                     new OpenLayers.Control.PanZoomBar(),
-                    layerSwitcher,
                     new OpenLayers.Control.MousePosition(),
+
                     /*new OpenLayers.Control.OverviewMap({
                      bounds : new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
                      size: new OpenLayers.Size(metadata.width / Math.pow(2, numZoomLevels), metadata.height / Math.pow(2, numZoomLevels)),
@@ -160,7 +177,7 @@ var BrowseImageView = Backbone.View.extend({
             };
 
             self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
-            self.map.addLayer(self.baseLayer);
+            self.addLayer(self.baseLayer);
             self.map.setBaseLayer(self.baseLayer);
             self.map.zoomToMaxExtent();
 
@@ -181,6 +198,7 @@ var BrowseImageView = Backbone.View.extend({
         });
     },
     initDjatoka: function () {
+        console.log("initDjatoka");
         var self = this;
         this.baseLayer = new OpenLayers.Layer.OpenURL(this.model.get('filename'), this.model.get('imageServerBaseURL'), {
             transitionEffect: 'resize',
@@ -204,15 +222,7 @@ var BrowseImageView = Backbone.View.extend({
 
 
 
-        var layerSwitcher = new OpenLayers.Control.LayerSwitcher({
-            roundedCorner: false,
-            roundedCornerColor: false,
-            'div': document.getElementById('layerSwitcher' + this.model.get('id')),
-            mouseDown: function (evt) { //IF WE DON'T DO THAT, Mouse Up is not triggered if dragging or sliding
-                this.isMouseDown = false; //CONTINUE
-                /*this.ignoreEvent(evt);*/
-            }
-        });
+        var layerSwitcher = this.createLayerSwitcher();
 
 
         var options = {
@@ -221,7 +231,7 @@ var BrowseImageView = Backbone.View.extend({
             tileSize: tileSize,
             controls: [
                 //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),
-                new OpenLayers.Control.Navigation(), new OpenLayers.Control.PanZoomBar(), layerSwitcher, new OpenLayers.Control.MousePosition(),
+                new OpenLayers.Control.Navigation(), new OpenLayers.Control.PanZoomBar(), new OpenLayers.Control.MousePosition(),
                 new OpenLayers.Control.OverviewMap({
                     div: document.getElementById('overviewMap' + this.model.get('id')),
                     //size: new OpenLayers.Size(metadata.width / Math.pow(2, openURLLayer.getViewerLevel()), metadata.height / Math.pow(2,(openURLLayer.getViewerLevel()))),
@@ -235,7 +245,8 @@ var BrowseImageView = Backbone.View.extend({
 
 
         this.map = new OpenLayers.Map("map" + this.model.get('id'), options);
-        this.map.addLayer(this.baseLayer);
+        console.log("MAP CREATED + " + this.map);
+        this.addLayer(this.baseLayer);
         this.map.setCenter(new OpenLayers.LonLat(lon, lat), 2);
     },
     initToolbar: function () {
@@ -329,7 +340,7 @@ var BrowseImageView = Backbone.View.extend({
                 window.app.models.users.each(function (user) {
                     var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), colors[colorIndex], self.ontologyTreeView, self.map );
                     layerAnnotation.loadAnnotations(self);
-                    self.layers.push(layerAnnotation);
+
                     //layerAnnotation.initHightlight(self.map);
                     var isOwner = user.get('id') == window.app.status.user.id;
 
@@ -532,7 +543,7 @@ AnnotationLayer.prototype = {
                 browseImageView.layerLoadedCallback(self);
             }
         });
-        this.map.addLayer(this.vectorsLayer);
+        browseImageView.addLayer(this.vectorsLayer);
     },
     addFeature: function (feature) {
         console.log("addFeature: function (feature)");

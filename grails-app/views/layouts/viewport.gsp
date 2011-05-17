@@ -62,18 +62,18 @@
 
 <!-- Templates -->
 <script type="text/html" id="baselayouttpl">
-  <div id='header' class='header clearfix'>
-    <h1 class='breadcrumb'>
-      <a class='home' href='#'><span class='logo'></span>Cytomine</a>
-    </h1>
-    <div id="menu" class="ui-buttonset actions">
-      <a id="undo"  style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-w"></span><span class="ui-button-text">Undo</span></a>
-      <a id="redo" style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-e"></span><span class="ui-button-text">Redo</span></a>
+    <div id='header' class='header clearfix'>
+        <h1 class='breadcrumb'>
+            <a class='home' href='#'><span class='logo'></span>Cytomine</a>
+        </h1>
+        <div id="menu" class="ui-buttonset actions">
+            <a id="undo"  style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-w"></span><span class="ui-button-text">Undo</span></a>
+            <a id="redo" style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-e"></span><span class="ui-button-text">Redo</span></a>
+        </div>
     </div>
-  </div>
-  <div id="content">
-  </div>
-  <div id="popup-wrapper"></div>
+    <div id="content">
+    </div>
+    <div id="popup-wrapper"></div>
 </script>
 
 <script type="text/html" id="logindialogtpl">
@@ -95,15 +95,15 @@
 
 
 <script type="text/html" id="loadingdialogtpl">
-  <div id="loading-dialog" title="Loading">
-    <div align="center" style="margin:auto;">
-      <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
+    <div id="loading-dialog" title="Loading">
+        <div align="center" style="margin:auto;">
+            <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
+        </div>
+        <div id="progress" style="text-align:center;padding-top:30px;">
+            <h1>Loading data...</h1>
+            <div id="login-progressbar" style="margin-top:10px;"></div>
+        </div>
     </div>
-    <div id="progress" style="text-align:center;padding-top:30px;">
-      <h1>Loading data...</h1>
-      <div id="login-progressbar" style="margin-top:10px;"></div>
-    </div>
-  </div>
 </script>
 
 <script type="text/html" id="overviewmapcontenttpl">
@@ -113,22 +113,22 @@
 </script>
 
 <script type="text/html" id="layerswitchercontenttpl">
-  <!--<div id="layerswitcherdialog{{id}}" title="Layer Switcher">-->
-  <div id="layerswitchercontent{{id}}"></div>
-  <div class="slider"></div>
-  <!--</div>-->
+    <div id="layerswitchercontent{{id}}">
+        <ul class="baseLayers"></ul>
+        <ul class="annotationLayers"></ul>
+    </div>
 </script>
 
 <script type="text/html" id="ontologytreecontenttpl">
-  <!--<div id="ontologytreedialog{{id}}" title="Ontology">-->
-  <div id="ontologytreecontent{{id}}"></div>
-  <!--</div>-->
+    <!--<div id="ontologytreedialog{{id}}" title="Ontology">-->
+    <div id="ontologytreecontent{{id}}"></div>
+    <!--</div>-->
 </script>
 
 <script type="text/html" id="serverdowntpl">
-  <div id="server-down" title="Server down">
-    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />The Cytomine server could not be reached</p>
-  </div>
+    <div id="server-down" title="Server down">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />The Cytomine server could not be reached</p>
+    </div>
 </script>
 
 <script type="text/html" id="logoutdialogtpl">
@@ -138,19 +138,19 @@
 </script>
 
 <script type="text/html" id="explorertpl">
-  <div id="explorer">
-    <div class="main browser" style="display:none">
-    </div>
-    <div class="main noProject">
-      <div id="noProjectDialog" class="centralPanel">
-        <h3>Explorer</h3>
-        <div>
-          Please open a project
+    <div id="explorer">
+        <div class="main browser" style="display:none">
         </div>
-      </div>
+        <div class="main noProject">
+            <div id="noProjectDialog" class="centralPanel">
+                <h3>Explorer</h3>
+                <div>
+                    Please open a project
+                </div>
+            </div>
 
+        </div>
     </div>
-  </div>
 </script>
 
 <script type="text/html" id="uploadtpl">
@@ -170,30 +170,30 @@
 
 
 <script type="text/html" id="warehousetpl">
-  <div id="warehouse">
-    <div class="main project"></div>
-    <div class="main image"></div>
-    <div class="main term"></div>
-    <div class="main ontology"></div>
-    <div class="main dashboard"></div>
+    <div id="warehouse">
+        <div class="main project"></div>
+        <div class="main image"></div>
+        <div class="main term"></div>
+        <div class="main ontology"></div>
+        <div class="main dashboard"></div>
 
-    <div class='sidebar'>
-      <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
-      <!-- <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul> -->
-      <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
-      <!--<ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
+        <div class='sidebar'>
+            <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
+            <!-- <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul> -->
+            <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
+            <!--<ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
             <ul class='menu libraries'></ul>
             <div class='buttons'>
                 <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
+        </div>
     </div>
-  </div>
 </script>
 
 <script type="text/html" id="admintpl">
-  <div id="admin">
-    <h1>admin</h1>
-    <div class='main'>admin</div>
-  </div>
+    <div id="admin">
+        <h1>admin</h1>
+        <div class='main'>admin</div>
+    </div>
 </script>
 
 <script type="text/html" id="logouttpl">
@@ -773,6 +773,9 @@
 
 <script type="text/javascript">
   $(function() {
+    _.templateSettings = {
+        interpolate : /\{\{(.+?)\}\}/g
+    };
     // Create the app.
     window.app = new ApplicationController();
 
