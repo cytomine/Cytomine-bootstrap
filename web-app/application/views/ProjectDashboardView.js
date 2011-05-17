@@ -142,7 +142,7 @@ var ProjectDashboardView = Backbone.View.extend({
         //init panel for all annotation (with or without term
         new AnnotationCollection({project:self.model.id}).fetch({
             success : function (collection, response) {
-                $("#tabsterm-all").empty();
+                //$("#tabsterm-all").empty();
                 self.annotationsViews[0].refresh(collection);
             }
         });
@@ -152,7 +152,7 @@ var ProjectDashboardView = Backbone.View.extend({
             success : function (collection, response) {
                 //init specific panel
                 collection.each(function(term) {
-                    $("#tabsterm-"+term.get("id")).empty();
+                    //$("#tabsterm-"+term.get("id")).empty();
                     new AnnotationCollection({term:term.get("id"),project:self.model.id}).fetch({
                         success : function (collection, response) {
                               self.annotationsViews[term.id].refresh(collection);

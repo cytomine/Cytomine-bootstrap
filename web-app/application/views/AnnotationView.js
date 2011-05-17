@@ -48,7 +48,7 @@ var AnnotationView = Backbone.View.extend({
      * @param annotation Annotation model
      */
     add : function(annotation) {
-        console.log("AnnotationView: add");
+        console.log("AnnotationView: add " + annotation.id);
         var self = this;
         var thumb = new AnnotationThumbView({
             model : annotation,
@@ -63,7 +63,7 @@ var AnnotationView = Backbone.View.extend({
      * @param idAnnotation  Annotation id
      */
     remove : function (idAnnotation) {
-        console.log("AnnotationView: remove");
+        console.log("AnnotationView: remove "+idAnnotation);
         $("#thumb"+idAnnotation).remove();
     },
     /**
@@ -73,9 +73,13 @@ var AnnotationView = Backbone.View.extend({
      * @param newAnnotations newAnnotations collection
      */
     refresh : function(newAnnotations) {
-        console.log("AnnotationView: refresh");
 
         var self = this;
+        console.log("AnnotationView: refresh");
+        console.log(self.annotations);
+        console.log(newAnnotations.models);
+
+
         var arrayDeletedAnnotations = self.annotations;
         newAnnotations.each(function(annotation) {
             //if annotation is not in table, add it
@@ -88,7 +92,9 @@ var AnnotationView = Backbone.View.extend({
              * At the end of the loop, element from arrayDeletedAnnotations must be deleted because they aren't
              * in the set of new annotations
              */
+            console.log("arrayDeletedAnnotations:"+arrayDeletedAnnotations);
             arrayDeletedAnnotations = _.without(arrayDeletedAnnotations,annotation.id);
+
         });
 
         arrayDeletedAnnotations.forEach(function(removeAnnotation) {
