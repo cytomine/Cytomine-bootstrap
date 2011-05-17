@@ -35,7 +35,7 @@ var AuthController = Backbone.Controller.extend({
         var dialog = new ConfirmDialogView({
             el:'#dialogs',
             //template : _.template($('#login-dialog-tpl').html()),
-            template : ich.logindialogtpl({}, true),
+            template : ich.logindialogtpl({version : window.app.status.version}, true),
             dialogAttr : {
                 dialogID : "#login-confirm",
                 width : 475,

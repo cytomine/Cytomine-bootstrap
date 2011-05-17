@@ -80,6 +80,7 @@
   <div id="login-confirm" title="Login">
   <div align="center" style="margin:auto;">
     <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
+    <p>Version {{version}}</p>
   </div>
   <form id="login-form">
     <fieldset>

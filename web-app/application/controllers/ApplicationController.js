@@ -18,7 +18,7 @@ var ApplicationController = Backbone.Controller.extend({
         var dialog = new ConfirmDialogView({
             el:'#dialogs',
             //template : _.template($('#login-dialog-tpl').html()),
-            template : ich.loadingdialogtpl({}, true),
+            template : ich.loadingdialogtpl({version : this.status.version}, true),
             dialogAttr : {
                 dialogID : "#loading-dialog",
                 width : 475,
@@ -97,6 +97,7 @@ var ApplicationController = Backbone.Controller.extend({
         }
 
         var successcallback =  function (data) {
+            self.status.version = data.version;
             self.status.user = {
                 id : data.user,
                 authenticated : data.authenticated

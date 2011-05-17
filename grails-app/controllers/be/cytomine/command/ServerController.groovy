@@ -3,15 +3,19 @@ package be.cytomine.command
 import grails.converters.JSON
 import grails.converters.XML
 
+
 class ServerController {
 
   def springSecurityService
+  def grailsApplication
 
   def ping = {
 
     def data = [:]
     data.alive = true
     data.authenticated = springSecurityService.isLoggedIn()
+    data.version = grailsApplication.metadata['app.version']
+
     if (data.authenticated)
       data.user = springSecurityService.principal.id
 
