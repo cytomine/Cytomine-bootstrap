@@ -27,6 +27,9 @@ var AnnotationView = Backbone.View.extend({
         var nb_thumb_by_page = 25;
         var inf = Math.abs(page) * nb_thumb_by_page;
         var sup = (Math.abs(page) + 1) * nb_thumb_by_page;
+
+        self.annotations = new Array();
+
         self.model.each(function(annotation) {
             if ((cpt >= inf) && (cpt < sup)) {
                 var thumb = new AnnotationThumbView({

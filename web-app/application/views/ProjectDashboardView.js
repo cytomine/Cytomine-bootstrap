@@ -143,7 +143,7 @@ var ProjectDashboardView = Backbone.View.extend({
         new AnnotationCollection({project:self.model.id}).fetch({
             success : function (collection, response) {
                 $("#tabsterm-all").empty();
-                self.annotationsViews[term.id].refresh(collection);
+                self.annotationsViews[0].refresh(collection);
             }
         });
 
