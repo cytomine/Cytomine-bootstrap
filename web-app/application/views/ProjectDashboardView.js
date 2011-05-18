@@ -165,56 +165,13 @@ var ProjectDashboardView = Backbone.View.extend({
         });
 
     },
-    fetchAnnotationsOLD : function () {
-        console.log("ProjectDashboardView: fetchAnnotations");
-
-        var self = this;
-
-        //init panel for all annotation (with or without term
-        new AnnotationCollection({project:self.model.id}).fetch({
-            success : function (collection, response) {
-                $("#tabsterm-all").empty();
-
-                var view = new AnnotationView({
-                    page : undefined,
-                    model : collection,
-                    el:$("#tabsterm-all"),
-                    container : window.app.view.components.warehouse
-                }).render();
-
-
-            }
-        });
-
-        //init specific panel for each term
-        new TermCollection({idOntology:self.model.get('ontology')}).fetch({
-            success : function (collection, response) {
-                //init specific panel
-                collection.each(function(term) {
-                    $("#tabsterm-"+term.get("id")).empty();
-                    new AnnotationCollection({term:term.get("id"),project:self.model.id}).fetch({
-                        success : function (collection, response) {
-                            var view = new AnnotationView({
-                                page : undefined,
-                                model : collection,
-                                el:$("#tabsterm-"+term.get("id")),
-                                container : window.app.view.components.warehouse
-                            }).render();
-
-                        }});
-
-                });
-            }
-        });
-
-    },
     /**
      * Get and Print ALL images (use for the first time)
      */
     fetchImages : function() {
         console.log("ProjectDashboardView: fetchImages");
         var self = this;
-        new ImageCollection({project:self.model.get('id')}).fetch({
+        new ImageInstanceCollection({project:self.model.get('id')}).fetch({
             success : function (collection, response) {
                 self.imagesView = new ImageView({
                     page : undefined,
@@ -231,7 +188,7 @@ var ProjectDashboardView = Backbone.View.extend({
         console.log("ProjectDashboardView: refreshImages");
         var self = this;
         if(self.imagesView==null) return; //imageView is not yet build
-        new ImageCollection({project:self.model.get('id')}).fetch({
+        new ImageInstanceCollection({project:self.model.get('id')}).fetch({
             success : function (collection, response) {
                  self.imagesView.refresh(collection);
             }});

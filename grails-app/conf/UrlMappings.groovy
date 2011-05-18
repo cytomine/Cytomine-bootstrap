@@ -27,10 +27,13 @@ class UrlMappings {
     "/api/user/$id/image"(controller:"restImage"){
       action = [GET:"listByUser"]
     }
+    "/api/user/$id/imageinstance"(controller:"restImageInstance"){
+      action = [GET:"listByUser"]
+    }
     "/api/user/$id/annotation/"(controller:"restAnnotation"){
       action = [GET:"listByUser"]
     }
-    "/api/user/$idUser/image/$idImage/annotation"(controller:"restAnnotation"){
+    "/api/user/$idUser/imageinstance/$idImage/annotation"(controller:"restAnnotation"){
       action = [GET:"listByImageAndUser"]
     }
     //TODO: /user/$id/project
@@ -46,6 +49,9 @@ class UrlMappings {
     "/api/project/$id/image"(controller: "restImage"){
       action = [GET:"listByProject"]
     }
+    "/api/project/$id/imageinstance"(controller: "restImageInstance"){
+      action = [GET:"listByProject"]
+    }
     "/api/project/$id/user"(controller: "restUser"){
       action = [GET:"showByProject",POST:"addUser"]
     }
@@ -58,6 +64,9 @@ class UrlMappings {
     "/api/project/$idproject/slide/$idslide"(controller:"restProjectSlide"){
       action = [GET:"show",DELETE:"delete",POST:"add"]
     }
+    "/api/project/$idproject/image/$idimage/imageinstance"(controller:"restImageInstance"){
+      action = [GET:"showByProjectAndImage",DELETE:"delete"]
+    }
     //TODO:  + add current user
     "/api/project/$id/term/stat"(controller:"restProject"){
       action = [GET:"statTerm"]
@@ -67,7 +76,7 @@ class UrlMappings {
     }
 
 
-    /* Image */
+    /* Abstract Image */
     "/api/image"(controller: "restImage"){
       action = [GET:"list", POST:"add"]
     }
@@ -80,12 +89,24 @@ class UrlMappings {
     "/api/image/$id/metadata"(controller: "restImage"){
       action = [GET:"metadata"]
     }
-    "/api/image/$id/annotation"(controller:"restAnnotation"){
+    "/api/imageinstance/$id/annotation"(controller:"restAnnotation"){
       action = [GET:"listByImage"]
     }
-    "/api/image/$id/term"(controller:"restTerm"){
+    "/api/imageinstance/$id/term"(controller:"restTerm"){
+      action = [GET:"listByImageInstance"]
+    }
+    "/api/image/$id/imageinstance"(controller: "restImageInstance"){
       action = [GET:"listByImage"]
     }
+
+    /* Image Instance */
+    "/api/imageinstance"(controller: "restImageInstance"){
+      action = [GET:"list", POST:"add"]
+    }
+    "/api/imageinstance/$id"(controller: "restImageInstance"){
+      action = [GET:"show", PUT:"update", DELETE:"delete"]
+    }
+
 
     /* Annotation */
     "/api/annotation"(controller:"restAnnotation"){

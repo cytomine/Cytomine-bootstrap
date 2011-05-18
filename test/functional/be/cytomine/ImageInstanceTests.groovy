@@ -1,7 +1,6 @@
 package be.cytomine
-
 import be.cytomine.test.BasicInstance
-import be.cytomine.image.Image
+import be.cytomine.image.AbstractImage
 import be.cytomine.image.acquisition.Scanner
 import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
@@ -12,22 +11,22 @@ import be.cytomine.project.Slide
 import be.cytomine.image.Mime
 import com.vividsolutions.jts.io.WKTReader
 import org.codehaus.groovy.grails.web.json.JSONArray
-
+import be.cytomine.image.ImageInstance
+import be.cytomine.project.Project
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
- * Date: 16/02/11
- * Time: 13:49
+ * Date: 18/05/11
+ * Time: 9:11
  * To change this template use File | Settings | File Templates.
  */
-class ImageTests extends functionaltestplugin.FunctionalTestCase{
+class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
 
-  void testGetImagesWithCredential() {
 
-    log.info("create annotation")
+  void testGetImagesInstanceWithCredential() {
 
-    log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/image.json"
+    log.info("get imageinstance")
+    String URL = Infos.CYTOMINEURL+"api/imageinstance.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -42,13 +41,13 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testGetImagesWithoutCredential() {
+  void testGetImagesInstanceWithoutCredential() {
 
-    log.info("create annotation")
-    Image image =  BasicInstance.createOrGetBasicImage()
+    log.info("create imageinstance")
+    ImageInstance image =  BasicInstance.createOrGetBasicImageInstance()
 
     log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/annotation.json"
+    String URL = Infos.CYTOMINEURL+"api/imageinstance.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.BADLOGIN,Infos.BADPASSWORD);
     client.get()
@@ -61,14 +60,14 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testListAnnotationsByUserWithCredential() {
+  void testListImagesInstanceByUserWithCredential() {
 
-    log.info("create annotation")
-    Image image =  BasicInstance.createOrGetBasicImage()
+    log.info("create imageinstance")
+    ImageInstance image =  BasicInstance.createOrGetBasicImageInstance()
     User user = BasicInstance.createOrGetBasicUser()
 
-    log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/user/"+user.id+"/image.json"
+    log.info("get imageinstance")
+    String URL = Infos.CYTOMINEURL+"api/user/"+user.id+"/imageinstance.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -83,13 +82,13 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testListAnnotationsByUserNoExistWithCredential() {
+  void testListImagesInstanceByUserNoExistWithCredential() {
 
-    log.info("create annotation")
-    Image image =  BasicInstance.createOrGetBasicImage()
+    log.info("create imageinstance")
+    ImageInstance image =  BasicInstance.createOrGetBasicImageInstance()
 
-    log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/user/-99/image.json"
+    log.info("get imageinstance")
+    String URL = Infos.CYTOMINEURL+"api/user/-99/imageinstance.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -102,13 +101,57 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testGetImageWithCredential() {
+  void testListImagesInstanceByImageWithCredential() {
 
-    log.info("create annotation")
-    Image image =  BasicInstance.createOrGetBasicImage()
+    log.info("create imageinstance")
+    ImageInstance image =  BasicInstance.createOrGetBasicImageInstance()
+    AbstractImage abstractImage = BasicInstance.createOrGetBasicAbstractImage()
 
-    log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/image/"+ image.id +".json"
+    log.info("get imageinstance")
+    String URL = Infos.CYTOMINEURL+"api/image/"+abstractImage.id+"/imageinstance.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONArray
+
+  }
+
+  void testListImagesInstanceByProjectWithCredential() {
+
+    log.info("create imageinstance")
+    ImageInstance image =  BasicInstance.createOrGetBasicImageInstance()
+    Project project = BasicInstance.createOrGetBasicProject()
+
+    log.info("get imageinstance")
+    String URL = Infos.CYTOMINEURL+"api/project/"+project.id+"/imageinstance.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONArray
+
+  }
+
+  void testGetImageInstanceWithCredential() {
+
+    log.info("create imageinstance")
+    ImageInstance image =  BasicInstance.createOrGetBasicImageInstance()
+
+    log.info("get imageinstance")
+    String URL = Infos.CYTOMINEURL+"api/imageinstance/"+ image.id +".json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -123,14 +166,14 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testAddImageCorrect() {
+  void testAddImageInstanceCorrect() {
 
-    log.info("create image")
-    def imageToAdd = BasicInstance.createOrGetBasicImage()
+    log.info("create imageinstance")
+    def imageToAdd = BasicInstance.createOrGetBasicImageInstance()
     String jsonImage = imageToAdd.encodeAsJSON()
 
-    log.info("post image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image.json"
+    log.info("post imageinstance:"+jsonImage.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/imageinstance.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.post(jsonImage)
@@ -143,11 +186,11 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(201,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
-    int idImage = json.image.id
+    int idImage = json.imageinstance.id
 
     log.info("check if object "+ idImage +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+idImage +".json"
+    URL = Infos.CYTOMINEURL+"api/imageinstance/"+idImage +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -202,17 +245,17 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testaddImageWithBadGeometry() {
+  void testaddImageInstanceWithUnexistingAbstractImage() {
 
-    log.info("create image")
-    def imageToAdd = BasicInstance.createOrGetBasicImage()
+    log.info("create imageinstance")
+    def imageToAdd = BasicInstance.createOrGetBasicImageInstance()
     String jsonImage = imageToAdd.encodeAsJSON()
     def updateImage = JSON.parse(jsonImage)
-    updateImage.roi = 'POINT(BAD GEOMETRY)'
+    updateImage.baseImage = -99
     jsonImage = updateImage.encodeAsJSON()
 
     log.info("post image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image.json"
+    String URL = Infos.CYTOMINEURL+"api/imageinstance.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.post(jsonImage)
@@ -227,17 +270,17 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testaddImageWithUnexistingScanner() {
+  void testaddImageInstanceWithUnexistingProject() {
 
     log.info("create image")
-    def imageToAdd = BasicInstance.createOrGetBasicImage()
+    def imageToAdd = BasicInstance.createOrGetBasicImageInstance()
     String jsonImage = imageToAdd.encodeAsJSON()
     def updateImage = JSON.parse(jsonImage)
-    updateImage.scanner = -99
+    updateImage.project = -99
     jsonImage = updateImage.encodeAsJSON()
 
     log.info("post image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image.json"
+    String URL = Infos.CYTOMINEURL+"api/imageinstance.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.post(jsonImage)
@@ -252,17 +295,17 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testaddImageWithUnexistingSlide() {
+ /* void testaddImageInstanceWithUnexistingUser() {
 
     log.info("create image")
-    def imageToAdd = BasicInstance.createOrGetBasicImage()
+    def imageToAdd = BasicInstance.createOrGetBasicImageInstance()
     String jsonImage = imageToAdd.encodeAsJSON()
     def updateImage = JSON.parse(jsonImage)
-    updateImage.slide = -99
+    updateImage.user = -99
     jsonImage = updateImage.encodeAsJSON()
 
     log.info("post image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image.json"
+    String URL = Infos.CYTOMINEURL+"api/imageinstance.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.post(jsonImage)
@@ -275,137 +318,48 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     def json = JSON.parse(response)
     assert json instanceof JSONObject
 
-  }
-
-  void testaddImageWithUnexistingMime() {
-
-    log.info("create image")
-    def imageToAdd = BasicInstance.createOrGetBasicImage()
-    String jsonImage = imageToAdd.encodeAsJSON()
-    def updateImage = JSON.parse(jsonImage)
-    updateImage.mime = -99
-    jsonImage = updateImage.encodeAsJSON()
-
-    log.info("post image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonImage)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-  }
-
-  void testaddImageWithUnexistingImageServer() {
-
-    log.info("create image")
-
-    def mimeToAdd = BasicInstance.getBasicMimeNotExist()
-
-    def imageToAdd = BasicInstance.createOrGetBasicImage()
+  }  */
 
 
-    String jsonImage = imageToAdd.encodeAsJSON()
-    def updateImage = JSON.parse(jsonImage)
-    updateImage.mime = mimeToAdd.id
-    jsonImage = updateImage.encodeAsJSON()
 
-    log.info("post image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonImage)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
+  void testEditImageInstance() {
 
-    log.info("check response")
-    assertEquals(400,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    Project oldProject = BasicInstance.createOrGetBasicProject()
+    Project newProject = BasicInstance.getBasicProjectNotExist()
+    newProject.save(flush:true)
 
-  }
+    AbstractImage oldImage = BasicInstance.createOrGetBasicAbstractImage()
+    AbstractImage newImage = BasicInstance.getBasicAbstractImageNotExist()
+    newImage.save(flush:true)
 
+    User oldUser = BasicInstance.createOrGetBasicUser()
+    User newUser = BasicInstance.getBasicUserNotExist()
+    newUser.save(flush:true)
 
-  void testEditImage() {
-
-    String oldFilename = "oldName"
-    String newFilename = "newName"
-
-    String oldGeom = "POINT (1111 1111)"
-    String newGeom = "POINT (9999 9999)"
-
-    User oldUser = BasicInstance.getOldUser()
-    User newUser = BasicInstance.getNewUser()
-
-    Scanner oldScanner = BasicInstance.createOrGetBasicScanner()
-    Scanner newScanner = BasicInstance.getNewScannerNotExist()
-
-    Slide oldSlide = BasicInstance.createOrGetBasicSlide()
-    Slide newSlide = BasicInstance.getBasicSlideNotExist()
-
-    String oldPath = "oldPath"
-    String newPath = "newPath"
-
-    Mime oldMime = BasicInstance.createOrGetBasicMime() //TODO: replace by a mime different with image server
-    Mime newMime = BasicInstance.createOrGetBasicMime()  //jp2
-
-    Integer oldWidth = 1000
-    Integer newWidth = 9000
-
-    Integer oldHeight = 10000
-    Integer newHeight = 900000
-
-    Double oldScale = 1
-    Double newScale = 9
-
-
-    def mapNew = ["filename":newFilename,"geom":newGeom,"user":newUser,"scanner":newScanner,"slide":newSlide,"path":newPath,"mime":newMime,"width":newWidth,"height":newHeight,"scale":newScale]
-    def mapOld = ["filename":oldFilename,"geom":oldGeom,"user":oldUser,"scanner":oldScanner,"slide":oldSlide,"path":oldPath,"mime":oldMime,"width":oldWidth,"height":oldHeight,"scale":oldScale]
-
-
+    def mapNew = ["project":newProject,"baseImage":newImage,"user":newUser]
+    def mapOld = ["project":oldProject,"baseImage":oldImage,"user":oldUser]
 
     /* Create a old image */
     log.info("create image")
-    Image imageToAdd = BasicInstance.createOrGetBasicImage()
-    imageToAdd.filename = oldFilename
-    imageToAdd.roi = new WKTReader().read(oldGeom)
-    imageToAdd.user = oldUser
-    imageToAdd.scanner = oldScanner
-    imageToAdd.slide = oldSlide
-    imageToAdd.path = oldPath
-    imageToAdd.mime = oldMime
-    imageToAdd.width = oldWidth
-    imageToAdd.height = oldHeight
-    imageToAdd.scale = oldScale
+    ImageInstance imageToAdd = BasicInstance.createOrGetBasicImageInstance()
+    imageToAdd.project =  oldProject;
+    imageToAdd.baseImage =  oldImage;
+    imageToAdd.user =  oldUser;
     imageToAdd.save(flush:true)
 
     /* Encode a new image to modify */
-    Image imageToEdit = Image.get(imageToAdd.id)
+    ImageInstance imageToEdit = ImageInstance.get(imageToAdd.id)
     def jsonImage = imageToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonImage)
 
-    jsonUpdate.filename = newFilename
-    jsonUpdate.roi = newGeom
+    jsonUpdate.project = newProject.id
+    jsonUpdate.baseImage = newImage.id
     jsonUpdate.user = newUser.id
-    jsonUpdate.scanner = newScanner.id
-    jsonUpdate.slide = newSlide.id
-    jsonUpdate.path = newPath
-    jsonUpdate.mime = newMime.extension
-    jsonUpdate.width = newWidth
-    jsonUpdate.height = newHeight
-    jsonUpdate.scale = newScale
 
     jsonImage = jsonUpdate.encodeAsJSON()
 
     log.info("put image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+imageToEdit.id+".json"
+    String URL = Infos.CYTOMINEURL+"api/imageinstance/"+imageToEdit.id+".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.put(jsonImage)
@@ -417,11 +371,11 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
-    int idImage = json.image.id
+    int idImage = json.imageinstance.id
 
     log.info("check if object "+ idImage +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+idImage +".json"
+    URL = Infos.CYTOMINEURL+"api/imageinstance/"+idImage +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -432,7 +386,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     json = JSON.parse(response)
     assert json instanceof JSONObject
 
-    BasicInstance.compareImage(mapNew,json)
+    BasicInstance.compareImageInstance(mapNew,json)
 
     /*log.info("test undo")
     client = new HttpClient()
@@ -499,27 +453,29 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testEditImageWithBadGeom()
+
+  void testEditImageInstanceWithBadProject()
   {
-    String oldGeom = "POINT (1111 1111)"
-    String newGeom = "BAD GEOMETRY"
+    Project oldProject = BasicInstance.createOrGetBasicProject()
+    Project newProject = BasicInstance.getBasicProjectNotExist()
 
     /* Create a old image */
-    log.info("create image")
-    Image imageToAdd = BasicInstance.createOrGetBasicImage()
-    imageToAdd.roi = new WKTReader().read(oldGeom)
+    log.info("create imageinstance")
+    ImageInstance imageToAdd = BasicInstance.createOrGetBasicImageInstance()
+    imageToAdd.project = oldProject
     imageToAdd.save(flush:true)
 
     /* Encode a new image to modify */
-    Image imageToEdit = Image.get(imageToAdd.id)
+    ImageInstance imageToEdit = ImageInstance.get(imageToAdd.id)
     def jsonImage = imageToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonImage)
-    jsonUpdate.roi = newGeom
+
+    jsonUpdate.project = -99
 
     jsonImage = jsonUpdate.encodeAsJSON()
 
     log.info("put image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+imageToEdit.id+".json"
+    String URL = Infos.CYTOMINEURL+"api/imageinstance/"+imageToEdit.id+".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.put(jsonImage)
@@ -531,28 +487,28 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(400,code)
   }
 
-  void testEditImageWithBadSlide()
+  void testEditImageInstanceWithBadUser()
   {
-    Slide oldSlide = BasicInstance.createOrGetBasicSlide()
-    Slide newSlide = BasicInstance.getBasicSlideNotExist()
+    User oldUser = BasicInstance.createOrGetBasicUser()
+    User newUser = BasicInstance.getBasicUserNotExist()
 
     /* Create a old image */
-    log.info("create image")
-    Image imageToAdd = BasicInstance.createOrGetBasicImage()
-    imageToAdd.slide = oldSlide
+    log.info("create imageinstance")
+    ImageInstance imageToAdd = BasicInstance.createOrGetBasicImageInstance()
+    imageToAdd.user = oldUser
     imageToAdd.save(flush:true)
 
     /* Encode a new image to modify */
-    Image imageToEdit = Image.get(imageToAdd.id)
+    ImageInstance imageToEdit = ImageInstance.get(imageToAdd.id)
     def jsonImage = imageToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonImage)
 
-    jsonUpdate.slide = -99
+    jsonUpdate.user = -99
 
     jsonImage = jsonUpdate.encodeAsJSON()
 
     log.info("put image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+imageToEdit.id+".json"
+    String URL = Infos.CYTOMINEURL+"api/imageinstance/"+imageToEdit.id+".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.put(jsonImage)
@@ -564,27 +520,28 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(400,code)
   }
 
-  void testEditImageWithBadMime()
+  void testEditImageInstanceWithBadImage()
   {
-    Mime oldMime = BasicInstance.createOrGetBasicMime() //TODO: replace by a mime different with image server
-    Mime newMime = BasicInstance.createOrGetBasicMime()  //jp2
+    AbstractImage oldImage = BasicInstance.createOrGetBasicAbstractImage()
+    AbstractImage newImage = BasicInstance.getBasicAbstractImageNotExist()
 
     /* Create a old image */
-    log.info("create image")
-    Image imageToAdd = BasicInstance.createOrGetBasicImage()
-    imageToAdd.mime = oldMime
+    log.info("create imageinstance")
+    ImageInstance imageToAdd = BasicInstance.createOrGetBasicImageInstance()
+    imageToAdd.baseImage = oldImage
     imageToAdd.save(flush:true)
 
     /* Encode a new image to modify */
-    Image imageToEdit = Image.get(imageToAdd.id)
+    ImageInstance imageToEdit = ImageInstance.get(imageToAdd.id)
     def jsonImage = imageToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonImage)
-    jsonUpdate.mime = -99
+
+    jsonUpdate.baseImage = -99
 
     jsonImage = jsonUpdate.encodeAsJSON()
 
     log.info("put image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+imageToEdit.id+".json"
+    String URL = Infos.CYTOMINEURL+"api/imageinstance/"+imageToEdit.id+".json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.put(jsonImage)
@@ -596,48 +553,26 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(400,code)
   }
 
-  void testEditImageWithBadScanner()
-  {
-    Scanner oldScanner = BasicInstance.createOrGetBasicScanner()
 
-    /* Create a old image */
-    log.info("create image")
-    Image imageToAdd = BasicInstance.createOrGetBasicImage()
-    imageToAdd.scanner = oldScanner
-    imageToAdd.save(flush:true)
-
-    /* Encode a new image to modify */
-    Image imageToEdit = Image.get(imageToAdd.id)
-    def jsonImage = imageToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonImage)
-
-    jsonUpdate.scanner = -99
-
-    jsonImage = jsonUpdate.encodeAsJSON()
-
-    log.info("put image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+imageToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonImage)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-  }
-
-  void testDeleteImage()
+  void testDeleteImageInstance()
   {
 
-    log.info("create image")
-    def imageToDelete = BasicInstance.getBasicImageNotExist()
+    log.info("create imageinstance")
+    def imageToDelete = BasicInstance.getBasicImageInstanceNotExist()
+    log.info  "imageToDelete.baseimage="+ imageToDelete.baseImage
+    log.info  "imageToDelete.project="+ imageToDelete.project
+    log.info  "imageToDelete.user="+ imageToDelete.user
+    log.info  "imageToDelete="+ imageToDelete
+    log.info  "validation="+ imageToDelete.validate()
+    log.info  "errors="+ imageToDelete.errors
+
+
+
     assert imageToDelete.save(flush:true)!=null
     String jsonImage = imageToDelete.encodeAsJSON()
     int idImage = imageToDelete.id
     log.info("delete image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+idImage+".json"
+    String URL = Infos.CYTOMINEURL+"api/project/"+imageToDelete.project.id + "/image/"+imageToDelete.baseImage.id + "/imageinstance.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.delete()
@@ -649,7 +584,7 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("check if object "+ idImage +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+idImage +".json"
+    URL = Infos.CYTOMINEURL+"api/imageinstance/"+idImage +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -708,17 +643,14 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testDeleteImageWithData()
+  void testDeleteImageInstanceNoExist()
   {
     log.info("create image")
-    def imageToDelete = BasicInstance.createOrGetBasicImage()
-    def annotation = BasicInstance.createOrGetBasicAnnotation()
-    annotation.image = imageToDelete
-    annotation.save(flush:true)
+    def imageToDelete = BasicInstance.createOrGetBasicImageInstance()
     String jsonImage = imageToDelete.encodeAsJSON()
 
     log.info("delete image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/-99.json"
+    String URL = Infos.CYTOMINEURL+"api/project/-99/image/-99/imageinstance.json"
     HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.delete()
@@ -728,24 +660,4 @@ class ImageTests extends functionaltestplugin.FunctionalTestCase{
     log.info("check response")
     assertEquals(404,code)
   }
-
-  void testDeleteImageNoExist()
-  {
-    log.info("create image")
-    def imageToDelete = BasicInstance.createOrGetBasicImage()
-    String jsonImage = imageToDelete.encodeAsJSON()
-
-    log.info("delete image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
-  }
-
-
 }

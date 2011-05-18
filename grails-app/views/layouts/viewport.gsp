@@ -579,7 +579,7 @@
 </script>
 
 <script type="text/html" id="projectaddimageitem">
-  <li id="projectaddimageitemli{{id}}" class="slide{{slide}}">
+  <li id="projectaddimageitemli{{id}}" class="slide{{slide}} image{{id}}">
     <input name="jqdemo" value="value1" type="checkbox" id="choice{{id}}"/>
     <label for="choice{{id}}"><b>{{name}}</b></label>
     <div id="projectaddimageitempict{{id}}" style="padding-left:20px;" alt=""/></div>

@@ -4,13 +4,16 @@ import grails.converters.JSON
 import be.cytomine.SequenceDomain
 import be.cytomine.rest.UrlApi
 import be.cytomine.ontology.Ontology
+import be.cytomine.image.ImageInstance
+import be.cytomine.image.AbstractImage
+import be.cytomine.ontology.Annotation
 
 class Project extends SequenceDomain {
 
   String name
   Ontology ontology
 
-  static hasMany = [projectSlide:ProjectSlide, projectGroup:ProjectGroup]
+  static hasMany = [projectGroup:ProjectGroup]
 
   static constraints = {
     name ( maxSize : 100, unique : true, blank : false)
@@ -20,25 +23,38 @@ class Project extends SequenceDomain {
     name
   }
 
-  def images() {
+  def imagesinstance() {
+    return ImageInstance.findAllByProject(this)
+  }
+
+  def abstractimages() {
     def images = []
-    this.projectSlide.each { ps ->
-              ps.slide.image.each { sc ->
-                images << sc
-       }
+    def imagesinstance = this.imagesinstance()
+    imagesinstance.each { imageinstance ->
+      images << imageinstance.baseImage
     }
     return images
   }
 
   def annotations() {
     def annotations = []
-    this.images().each { img ->
-              img.annotations.each { annotation ->
-             annotations << annotation
-       }
+    this.imagesinstance().each { img ->
+      def imageAnnotations = Annotation.findAllByImage(img)
+      imageAnnotations.each { annotation ->
+        annotations << annotation
+      }
     }
     return annotations
   }
+  def slides() {
+    def slides = []
+    this.abstractimages().each { img ->
+      if(!slides.contains(img.slide))
+          slides << img.slide
+    }
+    return slides
+  }
+
 
   def groups() {
     return projectGroup.collect{
@@ -46,11 +62,7 @@ class Project extends SequenceDomain {
     }
   }
 
-  def slides() {
-    return projectSlide.collect{
-      it.slide
-    }
-  }
+
 
   def users() {
     def users = []
@@ -86,7 +98,6 @@ class Project extends SequenceDomain {
     return project;
   }
 
-
   static void registerMarshaller() {
     println "Register custom JSON renderer for " + Project.class
     JSON.registerObjectMarshaller(Project) {
@@ -96,12 +107,16 @@ class Project extends SequenceDomain {
       returnArray['name'] = it.name
       returnArray['ontology'] = it.ontology? it.ontology.id : null
       returnArray['ontologyURL'] = UrlApi.getOntologyURLWithOntologyId(it.ontology?.id)
-      returnArray['imageURL'] = UrlApi.getImageURLWithProjectId(it.id)
+      returnArray['abstractimageURL'] = UrlApi.getAbstractImageURLWithProjectId(it.id)
+      returnArray['imageinstanceURL'] = UrlApi.getImageInstanceURLWithProjectId(it.id)
       returnArray['termURL'] = UrlApi.getTermsURLWithOntologyId(it.ontology?.id)
       returnArray['userURL'] = UrlApi.getUsersURLWithProjectId(it.id)
-      returnArray['numberOfSlides'] = it.slides().size();
-      returnArray['numberOfImages'] = it.images().size();
-      returnArray['numberOfAnnotations'] = it.annotations().size();
+
+
+
+      try {returnArray['numberOfSlides'] = it.slides().size()}catch(Exception e){returnArray['numberOfSlides']=-1}
+      try {returnArray['numberOfImages'] = it.imagesinstance().size()}catch(Exception e){returnArray['numberOfImages']=-1}
+      try {returnArray['numberOfAnnotations'] = it.annotations().size()}catch(Exception e){returnArray['numberOfAnnotations']=-1}
 
       returnArray['created'] = it.created? it.created.time.toString() : null
       returnArray['updated'] = it.updated? it.updated.time.toString() : null

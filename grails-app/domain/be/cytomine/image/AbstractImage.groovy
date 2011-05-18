@@ -15,7 +15,7 @@ import be.cytomine.project.Slide
 import be.cytomine.ontology.Annotation
 import be.cytomine.server.resolvers.Resolver
 
-class Image extends SequenceDomain {
+class AbstractImage extends SequenceDomain {
 
     String filename
 
@@ -60,30 +60,20 @@ class Image extends SequenceDomain {
         roi(nullable:true)
 
         user(nullable:true)
-
-
     }
 
     String toString() {
         filename
     }
 
-    def terms() {
-        def terms = []
-        annotations.each { annotation ->
-            annotation.terms().each { term ->
-                terms << term
-            }
-        }
-        terms
-    }
 
-    static Image createImageFromData(jsonImage) {
-        def image = new Image()
+
+    static AbstractImage createImageFromData(jsonImage) {
+        def image = new AbstractImage()
         getImageFromData(image,jsonImage)
     }
 
-    static Image getImageFromData(image,jsonImage) {
+    static AbstractImage getImageFromData(image,jsonImage) {
         println "getImageFromData:"+ jsonImage
         image.filename = jsonImage.filename
         image.path = jsonImage.path
@@ -132,7 +122,7 @@ class Image extends SequenceDomain {
 
         String userId = jsonImage.user.toString()
         if(!userId.equals("null")) {
-            image.user = User.get(userId)
+            image.user = User.get(Long.parseLong(userId))
             if(image.user==null) throw new IllegalArgumentException("User was not found with id:"+userId)
         }
         else image.user = null
@@ -145,15 +135,16 @@ class Image extends SequenceDomain {
     }
 
     static void registerMarshaller() {
-        println "Register custom JSON renderer for " + Image.class
-        JSON.registerObjectMarshaller(Image) {
+        println "Register custom JSON renderer for " + AbstractImage.class
+        JSON.registerObjectMarshaller(AbstractImage) {
             def returnArray = [:]
             returnArray['class'] = it.class
-            println "id"
+
             returnArray['id'] = it.id
             returnArray['filename'] = it.filename
             returnArray['scanner'] = it.scanner? it.scanner.id : null
             returnArray['slide'] = it.slide? it.slide.id : null
+          returnArray['user'] = it.user? it.user.id : null
             returnArray['path'] = it.path
             returnArray['mime'] = it.mime.extension
 
@@ -164,7 +155,6 @@ class Image extends SequenceDomain {
 
             returnArray['roi'] = it.roi.toString()
 
-            returnArray['user'] = it.user? it.user.id : null
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
             returnArray['info'] = it.slide?.name

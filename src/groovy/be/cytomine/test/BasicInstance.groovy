@@ -3,7 +3,7 @@ package be.cytomine.test
 import be.cytomine.image.Mime
 import be.cytomine.ontology.Annotation
 import com.vividsolutions.jts.io.WKTReader
-import be.cytomine.image.Image
+import be.cytomine.image.AbstractImage
 import be.cytomine.image.acquisition.Scanner
 import be.cytomine.ontology.Term
 import org.apache.commons.logging.Log
@@ -15,7 +15,7 @@ import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Ontology
-import be.cytomine.project.ProjectSlide
+import be.cytomine.image.ImageInstance
 
 /**
  * Created by IntelliJ IDEA.
@@ -90,7 +90,7 @@ class BasicInstance {
 
   static Annotation createOrGetBasicAnnotation() {
     log.debug  "createOrGetBasicAnnotation()"
-    def annotation = new Annotation(location:new WKTReader().read("POINT(17573.5 21853.5)"), name:"test",image:createOrGetBasicImage(), user:createOrGetBasicUser())
+    def annotation = new Annotation(location:new WKTReader().read("POINT(17573.5 21853.5)"), name:"test",image:createOrGetBasicImageInstance(), user:createOrGetBasicUser())
     annotation.validate()
     log.debug("annotation.errors="+annotation.errors)
     annotation.save(flush : true)
@@ -111,31 +111,59 @@ class BasicInstance {
       annotation = Annotation.findByName(randomInt+"")
    }
 
-    annotation =  new Annotation(location:new WKTReader().read("POINT(17573.5 21853.5)"), name:randomInt,image:createOrGetBasicImage(), user:createOrGetBasicUser())
+    annotation =  new Annotation(location:new WKTReader().read("POINT(17573.5 21853.5)"), name:randomInt,image:createOrGetBasicImageInstance(), user:createOrGetBasicUser())
     annotation.validate()
     annotation
   }
 
-  static Image getBasicImageNotExist() {
+  static ImageInstance getBasicImageInstanceNotExist() {
+
+    log.debug "getBasicImageNotExist()"
+
+    ImageInstance image =  new ImageInstance(
+            baseImage:BasicInstance.createOrGetBasicAbstractImage(),
+            project:BasicInstance.createOrGetBasicProject(),
+            user:BasicInstance.createOrGetBasicUser())
+    image.validate()
+    log.debug "ImageInstance.errors="+image.errors
+    image
+  }
+
+  static ImageInstance createOrGetBasicImageInstance() {
+    log.debug  "createOrGetBasicImage()"
+    ImageInstance image =  new ImageInstance(
+            baseImage:BasicInstance.createOrGetBasicAbstractImage(),
+            project:BasicInstance.createOrGetBasicProject(),
+            user:BasicInstance.createOrGetBasicUser())
+    image.validate()
+    log.debug "ImageInstance.errors="+image.errors
+    image.save(flush : true)
+    log.debug "ImageInstance.errors="+image.errors
+    assert image!=null
+    image
+  }
+
+  static AbstractImage getBasicAbstractImageNotExist() {
 
     log.debug "getBasicImageNotExist()"
     def random = new Random()
     def randomInt = random.nextInt()
-    def image = Image.findByFilename(randomInt+"")
+    def image = AbstractImage.findByFilename(randomInt+"")
 
     while(image){
       randomInt = random.nextInt()
-      image = Image.findByFilename(randomInt+"")
+      image = AbstractImage.findByFilename(randomInt+"")
    }
 
-    image =  new Image(filename: randomInt,scanner : createOrGetBasicScanner() ,slide : null,mime:BasicInstance.createOrGetBasicMime(),path:"pathpathpath")
+    image =  new AbstractImage(filename: randomInt,scanner : createOrGetBasicScanner() ,slide : null,mime:BasicInstance.createOrGetBasicMime(),path:"pathpathpath")
     image.validate()
+    log.debug "AbstractImage.errors="+image.errors
     image
   }
 
-  static Image createOrGetBasicImage() {
+  static AbstractImage createOrGetBasicAbstractImage() {
     log.debug  "createOrGetBasicImage()"
-    def image = new Image(filename: "filename",scanner : createOrGetBasicScanner() ,slide : null,mime:BasicInstance.createOrGetBasicMime(),path:"pathpathpath")
+    def image = new AbstractImage(filename: "filename",scanner : createOrGetBasicScanner() ,slide : null,mime:BasicInstance.createOrGetBasicMime(),path:"pathpathpath")
     image.validate()
     log.debug "image.errors="+image.errors
     image.save(flush : true)
@@ -296,7 +324,9 @@ log.debug  "createOrGetBasicUser()"
    }
 
     project =  new Project(name:randomInt+"",ontology:createOrGetBasicOntology())
-    project.validate()
+
+    log.debug "getBasicProjectNotExist() validate="+project.validate()
+    log.debug "getBasicProjectNotExist() project="+project
     project
   }
 
@@ -467,57 +497,6 @@ log.debug  "createOrGetBasicUser()"
     annotationTerm
   }
 
-  static ProjectSlide createOrGetBasicProjectSlide() {
-    log.debug  "createOrGetBasicProjectSlide()"
-
-    def project = getBasicProjectNotExist()
-    project.save(flush:true)
-    assert project!=null
-    def slide = getBasicSlideNotExist()
-    slide.save(flush:true)
-    assert slide!=null
-    def projectSlide =  ProjectSlide.findByProjectAndSlide(project,slide)
-    assert projectSlide==null
-
-    log.debug "project.id:" + project.id + " slide.id:" + slide.id
-    if(!projectSlide) {
-      log.debug "projectSlide link"
-
-      projectSlide = ProjectSlide.link(project,slide)
-      log.debug "ProjectSlide.errors="+projectSlide.errors
-    }
-    assert projectSlide!=null
-    projectSlide
-  }
-
-  static ProjectSlide getBasicProjectSlideNotExist(String method) {
-
-    log.debug "getBasicProjectSlideNotExist()"
-    def random = new Random()
-    def randomInt = random.nextInt()
-
-    def slide = getBasicSlideNotExist()
-
-    log.debug "slide:" + slide.id
-    log.debug "slide.name" + slide.name
-    log.debug "slide.created:" + slide.created
-     log.debug "slide.attached:" + slide.attached
-     log.debug "slide.dirty:" + slide.dirty
-
-    slide.save(flush:true)
-    assert slide!=null
-
-    def project = getBasicProjectNotExist()
-
-    log.debug "project:" + project.id
-    project.save(flush:true)
-    assert project!=null
-    def projectSlide =  new ProjectSlide(project:project,slide:slide)
-
-    log.debug "projectSlide.errors="+projectSlide.errors
-    projectSlide
-  }
-
   static void compareAnnotation(map, json)  {
 
     assert map.geom.replace(' ', '').equals(json.location.replace(' ',''))
@@ -526,18 +505,26 @@ log.debug  "createOrGetBasicUser()"
     assert toLong(map.user.id).equals(toLong(json.user))
   }
 
-  static void compareImage(map, json)  {
+  static void compareAbstractImage(map, json)  {
 
     assert map.filename.equals(json.filename)
     assert map.geom.replace(' ', '').equals(json.roi.replace(' ',''))
-    assert toLong(map.user.id).equals(toLong(json.user))
     assert toLong(map.scanner.id).equals(toLong(json.scanner))
     assert toLong(map.slide.id).equals(toLong(json.slide))
+    assert toLong(map.user.id).equals(toLong(json.user))
     assert map.path.equals(json.path)
     assert map.mime.extension.equals(json.mime)
     assert toInteger(map.width).equals(toInteger(json.width))
     assert toInteger(map.height).equals(toInteger(json.height))
     assert toDouble(map.scale).equals(toDouble(json.scale))
+
+  }
+
+  static void compareImageInstance(map, json)  {
+
+    assert toLong(map.baseImage.id).equals(toLong(json.baseImage))
+    assert toLong(map.project.id).equals(toLong(json.project))
+    assert toLong(map.user.id).equals(toLong(json.user))
 
   }
 

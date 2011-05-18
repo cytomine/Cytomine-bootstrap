@@ -480,7 +480,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
   void testDeleteUserWithData() {
     log.info("create user")
     def userToDelete = BasicInstance.createOrGetBasicUser()
-    def image =  BasicInstance.createOrGetBasicImage()
+    def image =  BasicInstance.createOrGetBasicImageInstance()
     image.user = userToDelete
     assert image.save(flush:true)!=null
 

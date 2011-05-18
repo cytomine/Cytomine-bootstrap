@@ -48,11 +48,13 @@ var Tabs = Backbone.View.extend({
             return;
         }
         console.log("addTab : " + idImage);
+        console.log("window.app.models.imagesinstance.get(idImage) : " + window.app.models.imagesinstance.get(idImage));
+        console.log("window.app.models.imagesinstance.lenght : " + window.app.models.imagesinstance.length);
         /*new ImageModel({id : idImage}).fetch({
             success : function(model, response) {*/
                 var tabs = $(self.el).children('.tabs');
                 var view = new BrowseImageView({
-                    model : window.app.models.images.get(idImage),
+                    model : window.app.models.imagesinstance.get(idImage),
                     initOptions : options,
                     el: tabs
                 }).render();

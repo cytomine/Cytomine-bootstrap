@@ -103,7 +103,8 @@ var ApplicationView = Backbone.View.extend({
             activate: function () {
                 $("#" + this.divId).show();
                 $("#" + this.buttonAttr.elButton).addClass("ui-state-disabled");
-                window.app.controllers.dashboard.view.refresh(); //refresh dashboard
+                if(window.app.controllers.dashboard.view!=null)
+                    window.app.controllers.dashboard.view.refresh(); //refresh dashboard
             }
         });
 

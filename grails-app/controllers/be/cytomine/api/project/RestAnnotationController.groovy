@@ -7,14 +7,15 @@ import be.cytomine.command.Command
 import be.cytomine.command.annotation.AddAnnotationCommand
 import be.cytomine.command.annotation.DeleteAnnotationCommand
 import be.cytomine.command.annotation.EditAnnotationCommand
-import be.cytomine.image.Image
+import be.cytomine.image.AbstractImage
 import be.cytomine.api.RestController
-import be.cytomine.ontology.AnnotationTerm
+
 import be.cytomine.project.Project
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
 import com.vividsolutions.jts.io.WKTWriter
+import be.cytomine.image.ImageInstance
 
 class RestAnnotationController extends RestController {
 
@@ -28,7 +29,7 @@ class RestAnnotationController extends RestController {
 
   def listByImage = {
     log.info "List with id image:"+params.id
-    Image image = Image.read(params.id)
+    ImageInstance image = ImageInstance.read(params.id)
 
     if(image!=null) responseSuccess(Annotation.findAllByImage(image))
     else responseNotFound("Image",params.id)
@@ -45,21 +46,13 @@ class RestAnnotationController extends RestController {
   def listByProject = {
     log.info "List with id user:"+params.id
     Project project = Project.read(params.id)
-    if(project)
-    {
-    def images = project.images()
-    def annotations = []
-    images.each() {
-        annotations.addAll(Annotation.findAllByImage(it))
-    }
-      responseSuccess(annotations)
-    }
+    if(project) responseSuccess(project.annotations())
     else responseNotFound("Project",params.id)
   }
 
   def listByImageAndUser = {
     log.info "List with id image:"+params.idImage + " and id user:" + params.idUser
-    def image = Image.read(params.idImage)
+    def image = ImageInstance.read(params.idImage)
     def user = User.read(params.idUser)
 
     if(image && user) responseSuccess(Annotation.findAllByImageAndUser(image,user))

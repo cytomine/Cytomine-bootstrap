@@ -11,8 +11,12 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
  */
 class UrlApi {
 
-  static def getImageURLWithProjectId(Long idProject) {
+  static def getAbstractImageURLWithProjectId(Long idProject) {
     return ConfigurationHolder.config.grails.serverURL + '/api/project/'+ idProject +'/image.json'
+  }
+
+  static def getImageInstanceURLWithProjectId(Long idProject) {
+    return ConfigurationHolder.config.grails.serverURL + '/api/project/'+ idProject +'/imageinstance.json'
   }
 
   static def getTermsURLWithOntologyId(Long idOntology) {

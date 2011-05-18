@@ -1,20 +1,20 @@
 package be.cytomine.api.project
 
 import be.cytomine.ontology.Term
-import grails.converters.XML
+
 import grails.converters.JSON
-import be.cytomine.ontology.Annotation
 
 import be.cytomine.security.User
 import be.cytomine.command.Command
 import be.cytomine.command.term.AddTermCommand
-import be.cytomine.command.UndoStackItem
+
 import be.cytomine.command.term.EditTermCommand
 import be.cytomine.command.term.DeleteTermCommand
-import be.cytomine.command.annotationterm.AddAnnotationTermCommand
+
 import be.cytomine.ontology.Ontology
-import be.cytomine.image.Image
+import be.cytomine.image.AbstractImage
 import be.cytomine.api.RestController
+import be.cytomine.image.ImageInstance
 
 class RestTermController extends RestController{
 
@@ -39,9 +39,9 @@ class RestTermController extends RestController{
     else responseNotFound("Term","Ontology",params.idontology)
   }
 
-  def listByImage = {
+  def listByImageInstance = {
     log.info "listByImage " + params.id
-    Image image = Image.read(params.id)
+    ImageInstance image = ImageInstance.read(params.id)
     if(image) responseSuccess(image.terms())
     else responseNotFound("Term","Image",params.id)
   }

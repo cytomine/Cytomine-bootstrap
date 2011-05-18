@@ -7,19 +7,20 @@ import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.security.User
 import be.cytomine.SequenceDomain
 import be.cytomine.rest.UrlApi
-import be.cytomine.image.Image
+
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
+import be.cytomine.image.ImageInstance
 
 class Annotation extends SequenceDomain implements Serializable {
 
   String name
   Geometry location
-  Image image
+  ImageInstance image
   Double zoomLevel
   String channels
   User user
 
-  static belongsTo = [image:Image]
+  static belongsTo = [ImageInstance]
   static hasMany = [ annotationTerm: AnnotationTerm ]
 
   static transients = ["cropURL", "boundaries"]
@@ -60,7 +61,7 @@ class Annotation extends SequenceDomain implements Serializable {
   }
 
   def project() {
-    return image?.slide?.projects()
+    return image?.project
   }
 
   private def getArea() {
@@ -89,12 +90,12 @@ class Annotation extends SequenceDomain implements Serializable {
 
   def getCropURL() {
     def boundaries = getBoundaries()
-    return image.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height)
+    return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height)
   }
 
   def getCropURL(int zoom) {
     def boundaries = getBoundaries()
-    return image.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, zoom)
+    return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, zoom)
   }
 
   /**
@@ -119,7 +120,7 @@ class Annotation extends SequenceDomain implements Serializable {
     annotation.name = jsonAnnotation.name
     annotation.location = new WKTReader().read(jsonAnnotation.location);
     annotation.location = DouglasPeuckerSimplifier.simplify(annotation.location,50)
-    annotation.image = Image.get(jsonAnnotation.image);
+    annotation.image = ImageInstance.get(jsonAnnotation.image);
     annotation.zoomLevel = (!jsonAnnotation.zoomLevel.toString().equals("null"))  ? ((String)jsonAnnotation.zoomLevel).toDouble() : -1
     annotation.channels =  jsonAnnotation.channels
     annotation.user =  User.get(jsonAnnotation.user);

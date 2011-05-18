@@ -5,7 +5,7 @@ import be.cytomine.SequenceDomain
 class ImageFile extends SequenceDomain {
 
     File file
-    Image image
+    AbstractImage image
 
     static constraints = {
     }

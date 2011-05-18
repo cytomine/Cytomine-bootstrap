@@ -36,14 +36,14 @@ var BrowseController = Backbone.Controller.extend({
         var browseImageViewInitOptions = {};
         if (idAnnotation != undefined) {
             browseImageViewInitOptions.goToAnnotation = {value : idAnnotation};
-            console.log("idAnnotation !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + idAnnotation);
+            console.log("idAnnotation !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + idAnnotation); //carrément ti toi?!?
 
             //var browseImageView = self.tabs.getB(idImage);
             //browseImageView.goToAnnotation(idAnnotation);
             //browseImageView.getUserLayer().goToAnnotation(idAnnotation);
 
         }
-
+        console.log("BrowseController: browse "+idImage);
         self.tabs.addTab(idImage, browseImageViewInitOptions);
         self.tabs.showTab(idImage);
 

@@ -72,7 +72,7 @@ class RestAnnotationTermController extends RestController {
     def annotationFromTermAndProject = []
     def annotationFromTerm = term.annotations()
     annotationFromTerm.each { annotation ->
-      if(annotation.project()!=null && annotation.project().contains(project))
+      if(annotation.project()!=null && annotation.project().id == project)
       {
         annotationFromTermAndProject << annotation
       }

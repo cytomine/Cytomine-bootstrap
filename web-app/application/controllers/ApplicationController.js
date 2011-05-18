@@ -40,6 +40,7 @@ var ApplicationController = Backbone.Controller.extend({
         });
 
         this.models.images = new ImageCollection({project:undefined});
+        this.models.imagesinstance = new ImageInstanceCollection({project:undefined});
         this.models.users = new UserCollection({project:undefined});
         this.models.terms = new TermCollection({project:undefined});
         this.models.ontologies = new OntologyCollection();

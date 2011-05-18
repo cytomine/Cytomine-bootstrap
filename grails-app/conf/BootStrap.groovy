@@ -1,7 +1,7 @@
 import be.cytomine.security.User
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUserSecRole
-import be.cytomine.image.Image
+import be.cytomine.image.AbstractImage
 import be.cytomine.image.Mime
 import be.cytomine.image.acquisition.Scanner
 import be.cytomine.image.server.ImageServer
@@ -11,7 +11,6 @@ import be.cytomine.security.UserGroup
 import be.cytomine.project.Project
 import be.cytomine.project.ProjectGroup
 import be.cytomine.project.Slide
-import be.cytomine.project.ProjectSlide
 import be.cytomine.ontology.Annotation
 import com.vividsolutions.jts.geom.Point
 import com.vividsolutions.jts.geom.GeometryFactory
@@ -32,6 +31,8 @@ import be.cytomine.ontology.Relation
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Annotation
+import be.cytomine.image.AbstractImage
+import be.cytomine.image.ImageInstance
 
 class BootStrap {
     def springSecurityService
@@ -1734,14 +1735,7 @@ class BootStrap {
 
                     slide.save(flush : true)
 
-                    /* Link to projects */
-                    println "item.study=" + item.study
-
-                    Project project = Project.findByName(item.study)
-                    println "project=" + project
-                    ProjectSlide.link(project, slide)
                 }
-
             }
             println "create slide OK"
             def extension = item.extension ?: "jp2"
@@ -1751,7 +1745,7 @@ class BootStrap {
 
             println "image OK"
 
-            def image = new Image(
+            AbstractImage image = new AbstractImage(
                     filename: item.name,
                     scanner : scanner,
                     slide : slide,
@@ -1762,7 +1756,19 @@ class BootStrap {
             if (image.validate()) {
                 println "Creating image : ${image.filename}..."
 
+                Project project = Project.findByName(item.study)
+                User user = User.findByUsername("demo")
                 image.save(flush : true)
+
+                    ImageInstance imageinstance = new ImageInstance(
+                      baseImage : image,
+                      user : user,
+                      project : project
+                    )
+                    imageinstance.save(flush:true)
+
+
+
             } else {
                 println("\n\n\n Errors in image boostrap for ${item.filename}!\n\n\n")
                 image.errors.each {
@@ -1992,10 +1998,10 @@ class BootStrap {
                     slide.save(flush : true)
 
                     /* Link to projects */
-                    item.projects.each { elem ->
+                    /*item.projects.each { elem ->
                         Project project = Project.findByName(elem.name)
                         ProjectSlide.link(project, slide)
-                    }
+                    }*/
 
                     slides << slide
 
@@ -2011,7 +2017,7 @@ class BootStrap {
     }
 
     def createScans(scanSamples, slides) {
-        def images = Image.list() ?: []
+        def images = AbstractImage.list() ?: []
         if (!images) {
             scanSamples.each { item ->
                 def extension = item.extension ?: "jp2"
@@ -2021,7 +2027,7 @@ class BootStrap {
                 def user = User.findByUsername("lrollus")
                 //  String path
                 //Mime mime
-                def image = new Image(
+                def image = new AbstractImage(
                         filename: item.filename,
                         path : item.path,
                         mime : mime,
@@ -2081,10 +2087,13 @@ class BootStrap {
                     }
                     geom = geometryFactory.createMultiPolygon(polygons)
                 }
-                def scanParent = Image.findByFilename(item.scan.filename)
+                def scanParent = AbstractImage.findByFilename(item.scan.filename)
+                def imageParent = ImageInstance.findByBaseImage(scanParent)
+
+
                 def user = User.findByUsername(item.user)
                 println "user " + item.user +"=" + user.username
-                annotation = new Annotation(name: item.name, location:geom, image:scanParent,user:user)
+                annotation = new Annotation(name: item.name, location:geom, image:imageParent,user:user)
 
 
                 /* Save annotation */

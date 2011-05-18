@@ -1,17 +1,18 @@
 package be.cytomine.api.project
 
-import be.cytomine.image.Image
+import be.cytomine.image.AbstractImage
 import grails.converters.*
 import be.cytomine.ontology.Annotation
 import be.cytomine.image.server.RetrievalServer
 import be.cytomine.security.User
 import be.cytomine.command.Command
 import be.cytomine.command.image.AddImageCommand
-import be.cytomine.command.UndoStackItem
+
 import be.cytomine.project.Project
 import be.cytomine.command.image.EditImageCommand
 import be.cytomine.command.image.DeleteImageCommand
 import be.cytomine.api.RestController
+import be.cytomine.image.ImageInstance
 
 class RestImageController extends RestController{
 
@@ -23,12 +24,12 @@ class RestImageController extends RestController{
   }
   def list = {
     log.info "list"
-    response(Image.list())
+    response(AbstractImage.list())
   }
 
   def show = {
     log.info "show " + params.id
-    Image image = Image.read(params.id)
+    AbstractImage image = AbstractImage.read(params.id)
     if(image!=null) responseSuccess(image)
     else responseNotFound("Image",params.id)
   }
@@ -36,14 +37,14 @@ class RestImageController extends RestController{
   def listByUser = {
     log.info "List with id user:"+params.id
     User user = User.read(params.id)
-    if(user!=null) responseSuccess(Image.findAllByUser(user))
+    if(user!=null) responseSuccess(AbstractImage.findAllByUser(user))
     else responseNotFound("Image","User",params.id)
   }
 
   def listByProject = {
     log.info "List with id user:"+params.id
     Project project = Project.read(params.id)
-    if(project!=null) responseSuccess(project.images())
+    if(project!=null) responseSuccess(project.abstractimages())
     else responseNotFound("Image","Project",params.id)
   }
 
@@ -77,7 +78,7 @@ class RestImageController extends RestController{
 
   def metadata = {
     //TODO; refactor me!
-    Image image = Image.read(params.id)
+    AbstractImage image = AbstractImage.read(params.id)
     def url = new URL(image.getMetadataURL())
     withFormat {
       json {
@@ -88,7 +89,7 @@ class RestImageController extends RestController{
 
   def thumb = {
     log.info "Thumb with id:" + params.id
-    Image image = Image.read(params.id)
+    AbstractImage image = AbstractImage.read(params.id)
     log.info "image.getThumbURL()="+image.getThumbURL()
     try {
       responseImage(image.getThumbURL())

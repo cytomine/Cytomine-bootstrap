@@ -30,7 +30,7 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand{
     log.info "Delete annotation " + postData.id
     try {
       annotation.delete(flush:true);
-      def filename = annotation.getImage().getFilename()
+      def filename = annotation.image?.baseImage?.getFilename()
       def message = messageSource.getMessage('be.cytomine.DeleteAnnotationCommand', [annotation.id, filename] as Object[], Locale.ENGLISH)
       return [data : [success : true, message : message, data : [annotation : postData.id]], status : 200]
     } catch(org.springframework.dao.DataIntegrityViolationException e)
@@ -47,7 +47,7 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand{
     annotation.id = annotationData.id;
     annotation.save()
     log.debug "annotation save with id " + annotation.id
-    def filename = annotation.getImage().getFilename()
+    def filename = annotation.image?.baseImage?.getFilename()
     def callback = [method : "be.cytomine.AddAnnotationCommand", annotationID : annotation.id , imageID : annotation.image.id ]
     def message = messageSource.getMessage('be.cytomine.AddAnnotationCommand', [annotation.id, filename] as Object[], Locale.ENGLISH)
     //save new id of the object that has been re-created
@@ -63,7 +63,7 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand{
     def postData = JSON.parse(postData)
     Annotation annotation = Annotation.findById(postData.id)
     annotation.delete(flush:true);
-    def filename = annotation.getImage().getFilename()
+    def filename = annotation.image?.baseImage?.getFilename()
     def callback = [method : "be.cytomine.DeleteAnnotationCommand", annotationID : annotation.id , imageID : annotation.image.id ]
     def message = messageSource.getMessage('be.cytomine.DeleteAnnotationCommand', [annotation.id, filename] as Object[], Locale.ENGLISH)
     return [data : [success : true, message : message, callback: callback], status : 200]

@@ -1,8 +1,8 @@
 package be.cytomine.command.image
 
-import be.cytomine.image.Image
+import be.cytomine.image.AbstractImage
 import grails.converters.JSON
-import be.cytomine.command.Command
+
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.command.AddCommand
 
@@ -21,7 +21,7 @@ class AddImageCommand extends AddCommand implements UndoRedoCommand {
       log.info("Execute")
       def json = JSON.parse(postData)
       json.user = user.id
-      Image newImage = Image.createImageFromData(json)
+      AbstractImage newImage = AbstractImage.createImageFromData(json)
       if(newImage.validate()) {
         newImage.save(flush:true)
         log.info("Save image with id:"+newImage.id)
@@ -41,7 +41,7 @@ class AddImageCommand extends AddCommand implements UndoRedoCommand {
   def undo() {
     log.info("Undo")
     def imageData = JSON.parse(data)
-    def image = Image.get(imageData.id)
+    def image = AbstractImage.get(imageData.id)
     image.delete(flush:true)
     log.debug("Delete image with id:"+imageData.id)
     return [data : [message : "Image successfuly deleted", annotation : imageData.id], status : 200]
@@ -52,7 +52,7 @@ class AddImageCommand extends AddCommand implements UndoRedoCommand {
     log.info("Redo:"+data.replace("\n",""))
     def imageData = JSON.parse(data)
     def json = JSON.parse(postData)
-    def image = Image.createImageFromData(json)
+    def image = AbstractImage.createImageFromData(json)
     image.id = imageData.id
     image.save(flush:true)
     log.debug("Save image:"+image.id)

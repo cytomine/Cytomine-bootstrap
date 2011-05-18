@@ -101,7 +101,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
 
     log.info("get by ontology")
-    String URL = Infos.CYTOMINEURL+"api/image/"+annotationTerm.annotation.image.id+"/term.json"
+    String URL = Infos.CYTOMINEURL+"api/imageinstance/"+annotationTerm.annotation.image.id+"/term.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()

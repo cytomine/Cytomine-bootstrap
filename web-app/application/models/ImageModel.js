@@ -1,18 +1,4 @@
 var ImageModel = Backbone.Model.extend({
-    /*initialize: function(spec) {
-        if (!spec || !spec.name || !spec.username) {
-            throw "InvalidConstructArgs";
-        }
-    },
-
-    validate: function(attrs) {
-        if (attrs.name) {
-            if (!_.isString(attrs.name) || attrs.name.length === 0) {
-                return "Name must be a string with a length";
-            }
-        }
-    },*/
-
 	url : function() {
 		var base = 'api/image';
 		var format = '.json';
@@ -20,7 +6,6 @@ var ImageModel = Backbone.Model.extend({
 		return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
 	}
 });
-
 
 // define our collection
 var ImageCollection = Backbone.Collection.extend({
@@ -30,6 +15,40 @@ var ImageCollection = Backbone.Collection.extend({
             return "api/project/" + this.project + "/image.json";
         } else {
             return "api/image.json";
+        }
+    },
+    initialize: function (options) {
+        this.project = options.project;
+    }
+});
+
+var ImageInstanceModel = Backbone.Model.extend({
+	url : function() {
+        if(this.project == undefined && this.baseImage == undefined) {
+            var base = 'api/imageinstance';
+            var format = '.json';
+            if (this.isNew()) return base + format;
+            return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+        }
+        else
+        {
+            return 'api/project/' + this.project +'/image/'+this.baseImage+'/imageinstance.json';
+        }
+	},
+    initialize: function (options) {
+        this.project = options.project;
+        this.baseImage = options.baseImage;
+    }
+});
+
+// define our collection
+var ImageInstanceCollection = Backbone.Collection.extend({
+    model: ImageModel,
+    url: function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/imageinstance.json";
+        } else {
+            return "api/imageinstance.json";
         }
     },
     initialize: function (options) {

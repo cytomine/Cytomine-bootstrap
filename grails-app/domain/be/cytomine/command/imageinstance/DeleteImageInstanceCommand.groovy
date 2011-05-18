@@ -1,4 +1,4 @@
-package be.cytomine.command.image
+package be.cytomine.command.imageinstance
 
 /**
  * Created by IntelliJ IDEA.
@@ -7,30 +7,31 @@ package be.cytomine.command.image
  * Time: 14:57
  * To change this template use File | Settings | File Templates.
  */
-import grails.converters.JSON
 
+import be.cytomine.command.DeleteCommand
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.image.AbstractImage
-import be.cytomine.command.DeleteCommand
+import grails.converters.JSON
+import be.cytomine.image.ImageInstance
 
-class DeleteImageCommand extends DeleteCommand implements UndoRedoCommand{
+class DeleteImageInstanceCommand extends DeleteCommand implements UndoRedoCommand{
 
   def execute() {
 
     log.info "Execute"
     def postData = JSON.parse(postData)
 
-    AbstractImage image = AbstractImage.findById(postData.id)
+    ImageInstance image = ImageInstance.findById(postData.id)
     data = image.encodeAsJSON()
 
     if (!image) {
-      log.error "Image not found with id: " + postData.id
-      return [data : [success : false, message : "Image not found with id: " + postData.id], status : 404]
+      log.error "Image instance not found with id: " + postData.id
+      return [data : [success : false, message : "Image instance not found with id: " + postData.id], status : 404]
     }
-    log.info "Delete image " + postData.id
+    log.info "Delete image instance" + postData.id
     try {
       image.delete(flush:true);
-      return [data : [success : true, message : "OK", data : [image : postData.id]], status : 200]
+      return [data : [success : true, message : "OK", data : [imageinstance : postData.id]], status : 200]
     } catch(org.springframework.dao.DataIntegrityViolationException e)
     {
       log.error(e)
@@ -41,7 +42,7 @@ class DeleteImageCommand extends DeleteCommand implements UndoRedoCommand{
   def undo() {
     log.info "Undo"
     def imageData = JSON.parse(data)
-    AbstractImage image = AbstractImage.createImageFromData(imageData)
+    ImageInstance image = ImageInstance.createImageInstanceFromData(imageData)
     image.save(flush:true)
 
     //save new id of the object that has been re-created
@@ -49,14 +50,14 @@ class DeleteImageCommand extends DeleteCommand implements UndoRedoCommand{
     postDataLocal.id =  image.id
     postData = postDataLocal.toString()
 
-    log.debug "image save with id " + image.id
-    return [data : [success : true, image : image, message : "OK"], status : 201]
+    log.debug "image instance save with id " + image.id
+    return [data : [success : true, imageinstance : image, message : "OK"], status : 201]
   }
 
   def redo() {
     log.info "Redo"
     def postData = JSON.parse(postData)
-    AbstractImage image = AbstractImage.findById(postData.id)
+    ImageInstance image = ImageInstance.findById(postData.id)
     image.delete(flush:true);
     return [data : [success : true, message : "OK"], status : 200]
 

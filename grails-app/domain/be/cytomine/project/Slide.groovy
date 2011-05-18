@@ -2,7 +2,7 @@ package be.cytomine.project
 
 import grails.converters.JSON
 import be.cytomine.SequenceDomain
-import be.cytomine.image.Image
+import be.cytomine.image.AbstractImage
 
 class Slide extends SequenceDomain {
 
@@ -19,15 +19,9 @@ class Slide extends SequenceDomain {
     name
   }
 
-  static hasMany = [projectSlide:ProjectSlide, image:Image]
+  static hasMany = [image:AbstractImage]
 
   static constraints = {
-  }
-
-  def projects() {
-    return projectSlide.collect{
-      it.project
-    }
   }
 
   static void registerMarshaller() {

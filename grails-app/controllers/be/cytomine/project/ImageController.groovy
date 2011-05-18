@@ -1,9 +1,9 @@
 package be.cytomine.project
 
-import be.cytomine.image.Image
+import be.cytomine.image.AbstractImage
 
 class ImageController {
 
-    def scaffold = Image
+    def scaffold = AbstractImage
 
 }

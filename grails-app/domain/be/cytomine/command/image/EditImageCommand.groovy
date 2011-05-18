@@ -1,9 +1,9 @@
 package be.cytomine.command.image
 
 import grails.converters.JSON
-import be.cytomine.command.Command
+
 import be.cytomine.command.UndoRedoCommand
-import be.cytomine.image.Image
+import be.cytomine.image.AbstractImage
 import be.cytomine.command.EditCommand
 
 /**
@@ -25,7 +25,7 @@ class EditImageCommand extends EditCommand implements UndoRedoCommand  {
       def postData = JSON.parse(postData)
 
       log.debug "Image id="+postData.id
-      def updatedImage = Image.get(postData.id)
+      def updatedImage = AbstractImage.get(postData.id)
       def backup = updatedImage.encodeAsJSON() //we encode as JSON otherwise hibernate will update its values
 
       if (!updatedImage ) {
@@ -33,7 +33,7 @@ class EditImageCommand extends EditCommand implements UndoRedoCommand  {
         return [data : [success : false, message : "Image not found with id: " + postData.id], status : 404]
       }
       log.info "getImageFromData:"+postData
-      updatedImage = Image.getImageFromData(updatedImage,postData)
+      updatedImage = AbstractImage.getImageFromData(updatedImage,postData)
       updatedImage.id = postData.id
 
       log.info "updatedImage.id=" + updatedImage.id
@@ -59,8 +59,8 @@ class EditImageCommand extends EditCommand implements UndoRedoCommand  {
   def undo() {
     log.info "Undo"
     def imageData = JSON.parse(data)
-    Image image = Image.findById(imageData.previousImage.id)
-    image = Image.getImageFromData(image,imageData.previousImage)
+    AbstractImage image = AbstractImage.findById(imageData.previousImage.id)
+    image = AbstractImage.getImageFromData(image,imageData.previousImage)
     image.save(flush:true)
     return [data : [success : true, message:"ok", image : image], status : 200]
   }
@@ -68,8 +68,8 @@ class EditImageCommand extends EditCommand implements UndoRedoCommand  {
   def redo() {
     log.info "Redo"
     def imageData = JSON.parse(data)
-    Image image = Image.findById(imageData.newImage.id)
-    image = Image.getImageFromData(image,imageData.newImage)
+    AbstractImage image = AbstractImage.findById(imageData.newImage.id)
+    image = AbstractImage.getImageFromData(image,imageData.newImage)
     image.save(flush:true)
     return [data : [success : true, message:"ok", image : image], status : 200]
   }

@@ -75,9 +75,9 @@ var AnnotationView = Backbone.View.extend({
     refresh : function(newAnnotations) {
 
         var self = this;
-        console.log("AnnotationView: refresh");
-        console.log(self.annotations);
-        console.log(newAnnotations.models);
+        //console.log("AnnotationView: refresh");
+        //console.log(self.annotations);
+        //console.log(newAnnotations.models);
 
 
         var arrayDeletedAnnotations = self.annotations;
@@ -92,7 +92,7 @@ var AnnotationView = Backbone.View.extend({
              * At the end of the loop, element from arrayDeletedAnnotations must be deleted because they aren't
              * in the set of new annotations
              */
-            console.log("arrayDeletedAnnotations:"+arrayDeletedAnnotations);
+            //console.log("arrayDeletedAnnotations:"+arrayDeletedAnnotations);
             arrayDeletedAnnotations = _.without(arrayDeletedAnnotations,annotation.id);
 
         });
