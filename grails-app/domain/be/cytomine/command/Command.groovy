@@ -12,6 +12,8 @@ class Command extends SequenceDomain {
 
   User user
 
+  static Integer MAXSIZEREQUEST = 10240
+
   //String actiontype //add, delete or update
   //String objectType = "Unknown"
   String actionMessage
@@ -19,8 +21,8 @@ class Command extends SequenceDomain {
   boolean saveOnUndoRedoStack = false //by default, don't save command on stack
 
   static constraints = {
-    data (type:'text', maxSize:10240, nullable : true)
-    postData (type:'text', maxSize:10240)
+    data (type:'text', maxSize:Command.MAXSIZEREQUEST, nullable : true)
+    postData (type:'text', maxSize:Command.MAXSIZEREQUEST)
     actionMessage(nullable : true)
   }
 

@@ -17,6 +17,7 @@ class RestController {
   static int SUCCESS_DELETE_CODE = 200
 
   static int NOT_FOUND_CODE = 404
+  static int TOO_LONG_REQUEST = 413
 
   User getCurrentUser(idUser) {
     log.info "User=" + idUser
@@ -39,7 +40,14 @@ class RestController {
   }
 
   def processCommand(Command c, User user, int successCode) {
-    def result = c.execute()
+    def result
+    log.info "c.postData.size()=" + c.postData.size() + " Command.MAXSIZEREQUEST=" + Command.MAXSIZEREQUEST
+    if(c.postData.size()>=Command.MAXSIZEREQUEST) {
+         response.status = TOO_LONG_REQUEST
+        log.error "Request too long: " +  c.postData.size() + "character (max="+ Command.MAXSIZEREQUEST+")"
+         return [object : null , errors : ["Request too long:"+c.postData.size() + "character"]]
+    }
+    result = c.execute()
     if (result.status == successCode) {
       c.save()
       if(c.saveOnUndoRedoStack)
