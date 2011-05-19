@@ -34,14 +34,18 @@ var ProjectManageSlideDialog = Backbone.View.extend({
         self.addSlideDialog = $(self.divDialog+this.model.get('id')).dialog({
             modal : true,
             autoOpen : false,
+            closeOnEscape: false,
             buttons : {
                 "Close" : function() {
-                    self.projectPanel.refresh();
                     $(self.divDialog+self.model.get('id')).dialog("close");
                 }
             },
             width : "85%",
             height: "600"
+        });
+
+        $(self.divDialog+this.model.get('id')).dialog({
+            beforeClose: function(event, ui) {self.projectPanel.refresh();}
         });
         return this;
 
@@ -163,7 +167,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
 
                                                    new ImageInstanceModel({}).save({project : self.model.get('id'), user : null, baseImage : idImage},{
                                                        success : function (image,response) {
-                                                            self.refresh(idImage, true);
+                                                           self.refresh(idImage, true);
                                                        },
                                                        error: function (model, response) {
                                                            console.log("ERROR:"+response);
@@ -187,22 +191,22 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                                              var idImage = fullId.substring(self.liElem.length,fullId.length);  //XXX
 
                                              //delete slide from project
-                                           new ImageModel({id:idImage}).fetch({
-                                               success : function (image,response) {
+                                             new ImageModel({id:idImage}).fetch({
+                                                 success : function (image,response) {
 
-                                                   console.log("Image id = " + idImage +  " Project id = " + self.model.get('id'));
+                                                     console.log("Image id = " + idImage +  " Project id = " + self.model.get('id'));
 
-                                                   new ImageInstanceModel({project : self.model.get('id'), user : null, baseImage : idImage}).destroy({
-                                                       success : function (image,response) {
-                                                            self.refresh(idImage, false);
-                                                       },
-                                                       error: function (model, response) {
-                                                           console.log("ERROR:"+response);
-                                                       }
-                                                   });
+                                                     new ImageInstanceModel({project : self.model.get('id'), user : null, baseImage : idImage}).destroy({
+                                                         success : function (image,response) {
+                                                             self.refresh(idImage, false);
+                                                         },
+                                                         error: function (model, response) {
+                                                             console.log("ERROR:"+response);
+                                                         }
+                                                     });
 
-                                               }
-                                           });
+                                                 }
+                                             });
 
 
                                          });
