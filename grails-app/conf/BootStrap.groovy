@@ -1595,7 +1595,7 @@ class BootStrap {
                 [name: "Cellule en prolifération",comment:"",ontology:[name:"Tissus"],color:"bd70c7"],
                 [name: "Alpha-smooth muscle actin",comment:"",ontology:[name:"Tissus"],color:"4bb2c5"],
                 [name: "Muscle",comment:"",ontology:[name:"Tissus"],color:"eaa228"],
-                [name: "Globule rouge",comment:"",ontology:[name:"Tissus"],color:"eaa228"],
+                [name: "Globule rouge",comment:"",ontology:[name:"Tissus"],color:"42426F"],
                 [name: "Cartilage",comment:"",ontology:[name:"Tissus"],color:"c5b47f"],
                 [name: "Artefact",comment:"",ontology:[name:"Tissus"],color:"579575"],
                 [name: "Unknown",comment:"",ontology:[name:"Tissus"],color:"839557"],

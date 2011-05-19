@@ -698,6 +698,10 @@
       <span class="delete-toolbar">
         <input type="radio" id="delete{{id}}" name="toolbar" /><label for="delete{{id}}">Delete</label>
       </span>
+
+      <span class="ruler-toolbar">
+        <input type="radio" id="ruler{{id}}" name="toolbar" /><label for="ruler{{id}}">Ruler</label>
+      </span>
       <!--<button id="delete{{id}}" name="delete">delete</button>
       <input type="checkbox" name="rotate" id="rotate{{id}}" /><label for="rotate{{id}}">Rotate</label>
       <input type="checkbox" name="resize" id="resize{{id}}" /><label for="resize{{id}}">Resize</label>
@@ -720,6 +724,14 @@
 <ul>
 <li>Area : {{area}}</li>
 <li>Perimeter : {{perimeter}}</li>
+</ul>
+</div>
+</script>
+
+<script type="text/html" id="popupmeasuretpl">
+<div class="popupPanel">
+<ul>
+<li>Length : {{length}}</li>
 </ul>
 </div>
 </script>

@@ -52,15 +52,18 @@ class RestProjectController extends RestController {
 
       //init list
       terms.each{ term ->
+        println "term=" + term.name
+        if(!term.hasChildren()) {
             stats[term.name] = 0
             color[term.name] = term.color
+        }
       }
 
       //compute stat
       annotations.each{ annotation ->
         def termOfAnnotation = annotation.terms()
         termOfAnnotation.each{ term ->
-          if(term.ontology.id==project.ontology.id)
+          if(term.ontology.id==project.ontology.id && !term.hasChildren())
             stats[term.name] = stats[term.name]+1
         }
       }

@@ -15,6 +15,15 @@ class Ontology {
     Term.findAllByOntology(this)
   }
 
+  def leafTerms() {
+    def leafTerms = []
+    def terms = Term.findAllByOntology(this)
+    terms.each { term ->
+       if(!term.hasChildren()) leafTerms << term
+    }
+    return leafTerms
+  }
+
   def termsParent() {
     Term.findAllByOntology(this)
     //TODO: Check RelationTerm to remove term which have parents

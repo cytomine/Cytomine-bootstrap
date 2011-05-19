@@ -40,6 +40,14 @@ class Term extends SequenceDomain implements Serializable {
     return relations
    }
 
+  def hasChildren() {
+    boolean hasChildren=false
+    this.relationTerm1.each {
+      if(it.getRelation().getName().equals(RelationTerm.names.PARENT)) hasChildren=true
+    }
+    return hasChildren
+  }
+
   def isRoot() {
     def isRoot = true;
     this.relationTerm2.each {

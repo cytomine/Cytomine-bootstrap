@@ -35,7 +35,7 @@ class RestTermController extends RestController{
   def listByOntology = {
     log.info "listByOntology " + params.idontology
     Ontology ontology = Ontology.read(params.idontology)
-    if(ontology) responseSuccess(ontology.terms())
+    if(ontology) responseSuccess(ontology.leafTerms())
     else responseNotFound("Term","Ontology",params.idontology)
   }
 
