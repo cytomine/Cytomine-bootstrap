@@ -86,6 +86,10 @@ class ImageInstance extends SequenceDomain {
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
+            //TODO: this code must be improve (redondance)
+           //1.overlap baseImage json (returnArray['image'] = it.baseImage) -> change need to be made in *.js
+           //2.in *.js, check the "Base Image" thanks to its id from  (returnArray['baseImage']) and get info from there
+           //3.stay like that...
             returnArray['thumb'] = it.baseImage? it.baseImage.getThumbURL() : null
             returnArray['filename'] = it.baseImage? it.baseImage.filename : null
 

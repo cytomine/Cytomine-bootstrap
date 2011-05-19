@@ -68,14 +68,11 @@ class RestAnnotationTermController extends RestController {
     Project project = Project.read(params.idproject)
     if(term==null) responseNotFound("Term", params.idterm)
     if(project==null) responseNotFound("Project", params.idproject)
-
     def annotationFromTermAndProject = []
     def annotationFromTerm = term.annotations()
     annotationFromTerm.each { annotation ->
-      if(annotation.project()!=null && annotation.project().id == project)
-      {
+      if(annotation.project()!=null && annotation.project().id == project.id)
         annotationFromTermAndProject << annotation
-      }
     }
     responseSuccess(annotationFromTermAndProject)
   }

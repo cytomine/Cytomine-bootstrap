@@ -121,6 +121,7 @@ var ProjectDashboardView = Backbone.View.extend({
                     $("#tabsterm-"+term.get("id")).empty();
                     new AnnotationCollection({term:term.get("id"),project:self.model.id}).fetch({
                         success : function (collection, response) {
+                            console.log("AnnotationCollection by term " + term.get("name") + " = "  + collection.length);
                             var view = new AnnotationView({
                                 page : undefined,
                                 model : collection,
@@ -440,6 +441,8 @@ var ProjectDashboardView = Backbone.View.extend({
         self.initTabs();
 
         self.fetchImages();
+
+        self.fetchAnnotations();
 
         self.fetchCommands();
 
