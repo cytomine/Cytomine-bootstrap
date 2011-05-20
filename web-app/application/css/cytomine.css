@@ -304,12 +304,17 @@ div .toolbar {
 
 }
 
-
-div .layerSwitcher label, input { 
-	display:inline; 
-	padding : 5px;
+label .layerSwitcher {
+	display:inline;
+    font-weight:bold;
+    color:#FFF;
+    padding:5px;
 }
 
+input .layerSwitcher{
+	display:inline;
+	padding : 5px;
+}
 
 
 div .layerSwitcherPanel {

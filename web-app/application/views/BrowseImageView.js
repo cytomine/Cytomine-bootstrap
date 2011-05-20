@@ -109,7 +109,7 @@ var BrowseImageView = Backbone.View.extend({
 		var layerID = "layerSwitch" + (this.layers.length - 1); //index of the layer in this.layers array
 		console.log("layer ID : " + layerID);
 		var color = window.app.models.users.get(userID).get('color');
-		var liLayer = _.template("<li><input type='checkbox' id='{{id}}' name='annotationLayerRadio' style='display:inline;' checked /><label style='display:inline;font-weight:bold;color:#FFF' for='{{id}}'>{{name}}</label><span style='display:inline;margin:3px;width:10px;height:10px;background-color:{{color}};'>&nbsp;&nbsp;&nbsp;&nbsp;</span></li>", {id : layerID, name : layer.name, color : color});
+		var liLayer = _.template("<li><input type='checkbox' id='{{id}}' name='annotationLayerRadio' class='layerSwitcher' checked /><label style='' for='{{id}}'>{{name}}</label><span style='display:inline;margin:3px;width:10px;height:10px;background-color:{{color}};'>&nbsp;&nbsp;&nbsp;&nbsp;</span></li>", {id : layerID, name : layer.name, color : color});
 		$("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").append(liLayer);
 		$("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").find("#"+layerID).click(function(){
 			var checked = $(this).attr("checked");

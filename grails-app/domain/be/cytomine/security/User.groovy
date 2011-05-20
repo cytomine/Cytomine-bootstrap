@@ -17,6 +17,7 @@ class User extends SecUser {
     firstname blank : false
     lastname blank : false
     email (blank : false , email : true)
+    color (blank : false, nullable : true)
   }
 
   String toString() {
