@@ -17,6 +17,7 @@ class RestAnnotationTermController extends RestController {
   def springSecurityService
 
   def listTermByAnnotation = {
+
     log.info "listByAnnotation with idAnnotation=" + params.idannotation
     if(params.idannotation=="undefined") responseNotFound("Annotation Term","Annotation", params.idannotation)
     else

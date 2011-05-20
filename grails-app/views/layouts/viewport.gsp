@@ -8,7 +8,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
-
+  <head>
   <title>Cytomine</title>
 
   <link rel="icon" type="image/png" href="favicon.ico">
@@ -59,7 +59,8 @@
 <link rel='stylesheet' href='application/css/cytomine.css' type='text/css'/>
 <link rel='stylesheet' href='application/css/jquery.jqplot.css' type='text/css'/>
 
-
+</head>
+<body>
 <!-- Templates -->
 <script type="text/html" id="baselayouttpl">
     <div id='header' class='header clearfix'>
@@ -113,9 +114,21 @@
 </script>
 
 <script type="text/html" id="layerswitchercontenttpl">
-    <div id="layerswitchercontent{{id}}">
-        <ul class="baseLayers"></ul>
-        <ul class="annotationLayers"></ul>
+    <div class="layerSwitcher" id="layerswitchercontent{{id}}">
+		<table>
+			<tr>
+				<td style="color:#FFF;padding-right:8px">Images</td>
+				<td><ul class="baseLayers"></ul></td>
+			</tr>
+			<tr><td colspan="2"><hr /></tr>
+			<tr>
+				<td style="color:#FFF;padding-right:8px;">Annotations</td>
+				<td><ul class="annotationLayers"></ul></td>
+			</tr>
+			</table>
+	    
+		
+        
     </div>
 </script>
 
@@ -795,8 +808,6 @@
 </script>
 
 
-
-<body>
 <div id='app'></div>
 <div id='dialogs'></div>
 

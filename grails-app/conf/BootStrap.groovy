@@ -884,10 +884,10 @@ class BootStrap {
 
         /* Users */
         def usersSamples = [
-                [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group : [[ name :"GIGA"]], password : 'password'],
-                [username : 'lrollus', firstname : 'Loic', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[ name :"GIGA"]], password : 'password'],
-                [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[ name :"GIGA"], [name : "ANAPATH"]], password : 'password'] ,
-                [username : 'demo', firstname : 'Jean', lastname : 'Dupont', email : 'mymail@ulg.ac.be', group : [[ name :"GIGA"], [name : "ANAPATH"]], password : 'demodemo']
+                [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group : [[ name :"GIGA"]], password : 'password', color : "#FF0000"],
+                [username : 'lrollus', firstname : 'Loic', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[ name :"GIGA"]], password : 'password', color : "#00FF00"],
+                [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[ name :"GIGA"], [name : "ANAPATH"]], password : 'password', color : "#0000FF"] ,
+                [username : 'demo', firstname : 'Jean', lastname : 'Dupont', email : 'mymail@ulg.ac.be', group : [[ name :"GIGA"], [name : "ANAPATH"]], password : 'demodemo', color : "#00FFFF"]
         ]
         createUsers(usersSamples)
 
@@ -1817,6 +1817,7 @@ class BootStrap {
                         firstname : item.firstname,
                         lastname : item.lastname,
                         email : item.email,
+						color : item.color,
                         password : springSecurityService.encodePassword(item.password),
                         enabled : true)
                 if (user.validate()) {

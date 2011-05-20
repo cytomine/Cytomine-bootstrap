@@ -45,6 +45,7 @@ class Ontology {
     t.id = term.getId()
     t.title = term.getName()
     t.data = term.getName()
+    t.color = term.getColor()
     t.class = term.class
     t.attr = [ "id" : term.id, "type" : term.class]
     t.checked = false

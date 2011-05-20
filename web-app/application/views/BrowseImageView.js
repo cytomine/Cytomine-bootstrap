@@ -1,62 +1,61 @@
 var BrowseImageView = Backbone.View.extend({
-    tagName: "div",
-    layers: [],
-    baseLayer : null,
-    map : null,
-    initOptions : null,
-    initialize: function (options) {
-        this.initOptions = options.initOptions;
-    },
-    render: function () {
-        var tpl = ich.browseimagetpl(this.model.toJSON(), true);
-        $(this.el).append(tpl);
-        var tabs = $(this.el).children('.tabs');
-        this.el.tabs("add", "#tabs-" + this.model.get('id'), this.model.get('filename'));
-        this.el.css("display", "block");
-        this.initToolbar();
-        this.initMap();
-        this.initOntology();
-        return this;
-    },
-    show : function() {
-        var self = this;
-        if (this.initOptions.goToAnnotation != undefined) {
-            console.log("go to Annotation " + this.initOptions.goToAnnotation.value + " <<<<<<<<<<<<<");
-        }
-        _.each(this.layers, function(layer) {
-            console.log(layer.name);
-            if(!layer.isBaseLayer)
-                self.goToAnnotation(layer,  self.initOptions.goToAnnotation.value);
-        });
-    },
-    goToAnnotation : function(layer, idAnnotation) {
-        var feature = layer.getFeature(idAnnotation);
-        if (feature == undefined) return;
-        var bounds = feature.geometry.bounds;
-        //Compute the ideal zoom to view the feature
-        var featureWidth = bounds.right  - bounds.left;
-        var featureHeight = bounds.top - bounds.bottom;
-        var windowWidth = $(window).width();
-        var windowHeight = $(window).height();
-        var zoom = this.map.getNumZoomLevels()-1;
-        var tmpWidth = featureWidth;
-        var tmpHeight = featureHeight;
-        while ((tmpWidth > windowWidth) || (tmpHeight > windowHeight)) {
-            tmpWidth /= 2;
-            tmpHeight /= 2;
-            zoom--;
-        }
-        this.map.moveTo(new OpenLayers.LonLat(feature.geometry.getCentroid().x, feature.geometry.getCentroid().y), Math.max(0, zoom));
-    },
-    layerLoadedCallback : function (layer) {
-        if (this.initOptions.goToAnnotation != undefined) {
-            this.goToAnnotation(layer, this.initOptions.goToAnnotation.value);
-        }
-    },
-    getUserLayer: function () {
-        return this.userLayer;
-    },
-    initBaseLayer : function () {
+	tagName: "div",
+	layers: [],
+	baseLayer : null,
+	map : null,
+	initOptions : null,
+	initialize: function (options) {
+		this.initOptions = options.initOptions;
+	},
+	render: function () {
+		var tpl = ich.browseimagetpl(this.model.toJSON(), true);
+		$(this.el).append(tpl);
+		var tabs = $(this.el).children('.tabs');
+		this.el.tabs("add", "#tabs-" + this.model.get('id'), this.model.get('filename'));
+		this.el.css("display", "block");
+		this.initToolbar();
+		this.initMap();
+		this.initOntology();
+		return this;
+	},
+	show : function() {
+		var self = this;
+		if (this.initOptions.goToAnnotation != undefined) {
+			console.log("go to Annotation " + this.initOptions.goToAnnotation.value + " <<<<<<<<<<<<<");
+		}
+		_.each(this.layers, function(layer) {
+			self.goToAnnotation(layer,  self.initOptions.goToAnnotation.value);
+		});
+	},
+	goToAnnotation : function(layer, idAnnotation) {
+		var feature = layer.getFeature(idAnnotation);
+		if (feature != undefined) {
+			var bounds = feature.geometry.bounds;
+			//Compute the ideal zoom to view the feature
+			var featureWidth = bounds.right  - bounds.left;
+			var featureHeight = bounds.top - bounds.bottom;
+			var windowWidth = $(window).width();
+			var windowHeight = $(window).height();
+			var zoom = this.map.getNumZoomLevels()-1;
+			var tmpWidth = featureWidth;
+			var tmpHeight = featureHeight;
+			while ((tmpWidth > windowWidth) || (tmpHeight > windowHeight)) {
+				tmpWidth /= 2;
+				tmpHeight /= 2;
+				zoom--;
+			}
+			this.map.moveTo(new OpenLayers.LonLat(feature.geometry.getCentroid().x, feature.geometry.getCentroid().y), Math.max(0, zoom));
+		}
+	},
+	layerLoadedCallback : function (layer) {
+		if (this.initOptions.goToAnnotation != undefined) {
+			this.goToAnnotation(layer, this.initOptions.goToAnnotation.value);
+		}
+	},
+	getUserLayer: function () {
+		return this.userLayer;
+	},
+	initBaseLayer : function () {
 
     },
     initMap : function () {
@@ -93,27 +92,34 @@ var BrowseImageView = Backbone.View.extend({
              }*/
         }).render();
     },
-    addLayer : function(layer) {
-        this.map.addLayer(layer);
-        this.layers.push(layer);
-        var layerID = "layerSwitch" + (this.layers.length - 1); //index of the layer in this.layers array
-        console.log("layer ID : " + layerID);
-        if (layer.isBaseLayer) {
-            var liLayer = _.template("<li><input type='radio' id='{{id}}' name='baseLayerRadio' checked/><label for='radio1'>{{name}}</label></li>", {id : layerID, name : layer.name});
-            $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").append(liLayer);
-            $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").find("#"+layerID).click(function(){
-                console.log(">>"+layer.name);
-            });
-            $( "#radio" ).buttonset();
-        } else {
-            var liLayer = _.template("<li><input type='checkbox' id='{{id}}' name='annotationLayerRadio' checked/><label for='radio1'>{{name}}</label></li>", {id : layerID, name : layer.name});
-            $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").append(liLayer);
-            $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").find("#"+layerID).click(function(){
-                var checked = $(this).attr("checked");
-                layer.setVisibility(checked);
-            });
-        }
-    },
+    addBaseLayer : function(layer) {
+		this.map.addLayer(layer);
+		this.map.setBaseLayer(this.baseLayer);
+		var layerID = "layerSwitch" + (this.layers.length - 1); //index of the layer in this.layers array
+		var liLayer = _.template("<li><input type='radio' id='{{id}}' name='baseLayerRadio' checked /><label style='font-weight:bold;color:#FFF' for='{{id}}'>{{name}}</label></li>", {id : layerID, name : layer.name.substr(0,15)+"..."});
+		$("#layerSwitcher"+this.model.get("id")).find(".baseLayers").append(liLayer);
+		$("#layerSwitcher"+this.model.get("id")).find(".baseLayers").find("#"+layerID).click(function(){
+			console.log(">>"+layer.name);
+		});
+
+	},
+	addVectorLayer : function(layer, userID) {
+		this.map.addLayer(layer);
+		this.layers.push(layer);
+		var layerID = "layerSwitch" + (this.layers.length - 1); //index of the layer in this.layers array
+		console.log("layer ID : " + layerID);
+		var color = window.app.models.users.get(userID).get('color');
+		var liLayer = _.template("<li><input type='checkbox' id='{{id}}' name='annotationLayerRadio' style='display:inline;' checked /><label style='display:inline;font-weight:bold;color:#FFF' for='{{id}}'>{{name}}</label><span style='display:inline;margin:3px;width:10px;height:10px;background-color:{{color}};'>&nbsp;&nbsp;&nbsp;&nbsp;</span></li>", {id : layerID, name : layer.name, color : color});
+		$("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").append(liLayer);
+		$("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").find("#"+layerID).click(function(){
+			var checked = $(this).attr("checked");
+			layer.setVisibility(checked);
+		});
+	},
+	createLayerSwitcher : function() {
+		var content = ich.layerswitchercontenttpl({id : this.model.get("id")}, true);
+		$("#layerSwitcher"+this.model.get("id")).html(content);
+	},
     createLayerSwitcher : function() {
         var content = ich.layerswitchercontenttpl({id : this.model.get("id")}, true);
         $("#layerSwitcher"+this.model.get("id")).html(content);
@@ -178,8 +184,7 @@ var BrowseImageView = Backbone.View.extend({
             };
 
             self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
-            self.addLayer(self.baseLayer);
-            self.map.setBaseLayer(self.baseLayer);
+            self.addBaseLayer(self.baseLayer);
             self.map.zoomToMaxExtent();
 
         }
@@ -247,121 +252,119 @@ var BrowseImageView = Backbone.View.extend({
 
         this.map = new OpenLayers.Map("map" + this.model.get('id'), options);
         console.log("MAP CREATED + " + this.map);
-        this.addLayer(this.baseLayer);
+        this.addBaseLayer(this.baseLayer);
         this.map.setCenter(new OpenLayers.LonLat(lon, lat), 2);
     },
-    initToolbar: function () {
-        var toolbar = $('#toolbar' + this.model.get('id'));
-        var self = this;
-        toolbar.find('input[name=select]').button({
-            /*text : false,
-             icons: {
-             primary: "ui-icon-seek-start"
-             }*/
-        });
-        toolbar.find('button[name=delete]').button({
-            text: false,
-            icons: {
-                primary: "ui-icon-trash"
+   	initToolbar: function () {
+	        var toolbar = $('#toolbar' + this.model.get('id'));
+	        var self = this;
+	        toolbar.find('input[name=select]').button({
+	            /*text : false,
+	             icons: {
+	             primary: "ui-icon-seek-start"
+	             }*/
+	        });
+	        toolbar.find('button[name=delete]').button({
+	            text: false,
+	            icons: {
+	                primary: "ui-icon-trash"
 
-            }
-        });
+	            }
+	        });
 
-        /*toolbar.find('button[name=ruler]').button({
-            text: false,
-            icons: {
-                secondary: "ui-icon-arrow-2-ne-sw"
+	        /*toolbar.find('button[name=ruler]').button({
+	            text: false,
+	            icons: {
+	                secondary: "ui-icon-arrow-2-ne-sw"
 
-            }
-        });  */
-        toolbar.find('input[id^=ruler]').button({
-            text: true,
-            icons: {
-                secondary: "ui-icon-arrow-2-ne-sw"
+	            }
+	        });  */
+	        toolbar.find('input[id^=ruler]').button({
+	            text: true,
+	            icons: {
+	                secondary: "ui-icon-arrow-2-ne-sw"
 
-            }
-        });
+	            }
+	        });
 
-        toolbar.find('input[name=rotate]').button();
-        toolbar.find('input[name=resize]').button();
-        toolbar.find('input[name=drag]').button();
-        toolbar.find('input[name=irregular]').button();
-        toolbar.find('span[class=nav-toolbar]').buttonset();
-        toolbar.find('span[class=draw-toolbar]').buttonset();
-        toolbar.find('span[class=edit-toolbar]').buttonset();
-        toolbar.find('span[class=delete-toolbar]').buttonset();
-        toolbar.find('span[class=ruler-toolbar]').buttonset();
+	        toolbar.find('input[name=rotate]').button();
+	        toolbar.find('input[name=resize]').button();
+	        toolbar.find('input[name=drag]').button();
+	        toolbar.find('input[name=irregular]').button();
+	        toolbar.find('span[class=nav-toolbar]').buttonset();
+	        toolbar.find('span[class=draw-toolbar]').buttonset();
+	        toolbar.find('span[class=edit-toolbar]').buttonset();
+	        toolbar.find('span[class=delete-toolbar]').buttonset();
+	        toolbar.find('span[class=ruler-toolbar]').buttonset();
 
-        toolbar.find('input[id=none' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().toggleControl("none");
-            self.getUserLayer().enableHightlight();
-        });
-        toolbar.find('input[id=select' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().toggleControl("select");
-            self.getUserLayer().disableHightlight();
-        });
-        toolbar.find('input[id=regular4' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().setSides(4);
-            self.getUserLayer().toggleControl("regular");
-            self.getUserLayer().disableHightlight();
-        });
-        toolbar.find('input[id=regular30' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().setSides(15);
-            self.getUserLayer().toggleControl("regular");
-            self.getUserLayer().disableHightlight();
-        });
-        toolbar.find('input[id=polygon' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().toggleControl("polygon");
-            self.getUserLayer().disableHightlight();
-        });
-        toolbar.find('input[id=modify' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().toggleEdit();
-            self.getUserLayer().toggleControl("modify");
-            self.getUserLayer().disableHightlight();
-        });
-        toolbar.find('input[id=delete' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().toggleControl("select");
-            self.getUserLayer().deleteOnSelect = true;
-            self.getUserLayer().disableHightlight();
-        });
-        toolbar.find('input[id=rotate' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().toggleRotate();
-            self.getUserLayer().disableHightlight();
-        });
-        toolbar.find('input[id=resize' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().toggleResize();
-            self.getUserLayer().disableHightlight();
+	        toolbar.find('input[id=none' + this.model.get('id') + ']').click(function () {
+	            self.getUserLayer().controls.select.unselectAll();
+	            self.getUserLayer().toggleControl("none");
+	            self.getUserLayer().enableHightlight();
+	        });
+	        toolbar.find('input[id=select' + this.model.get('id') + ']').click(function () {
+	            self.getUserLayer().toggleControl("select");
+	            self.getUserLayer().disableHightlight();
+	        });
+	        toolbar.find('input[id=regular4' + this.model.get('id') + ']').click(function () {
+	            self.getUserLayer().controls.select.unselectAll();
+	            self.getUserLayer().setSides(4);
+	            self.getUserLayer().toggleControl("regular");
+	            self.getUserLayer().disableHightlight();
+	        });
+	        toolbar.find('input[id=regular30' + this.model.get('id') + ']').click(function () {
+	            self.getUserLayer().controls.select.unselectAll();
+	            self.getUserLayer().setSides(15);
+	            self.getUserLayer().toggleControl("regular");
+	            self.getUserLayer().disableHightlight();
+	        });
+	        toolbar.find('input[id=polygon' + this.model.get('id') + ']').click(function () {
+	            self.getUserLayer().controls.select.unselectAll();
+	            self.getUserLayer().toggleControl("polygon");
+	            self.getUserLayer().disableHightlight();
+	        });
+	        toolbar.find('input[id=modify' + this.model.get('id') + ']').click(function () {
+	            self.getUserLayer().toggleEdit();
+	            self.getUserLayer().toggleControl("modify");
+	            self.getUserLayer().disableHightlight();
+	        });
+	        toolbar.find('input[id=delete' + this.model.get('id') + ']').click(function () {
+	            self.getUserLayer().controls.select.unselectAll();
+	            self.getUserLayer().toggleControl("select");
+	            self.getUserLayer().deleteOnSelect = true;
+	            self.getUserLayer().disableHightlight();
+	        });
+	        toolbar.find('input[id=rotate' + this.model.get('id') + ']').click(function () {
+	            self.getUserLayer().toggleRotate();
+	            self.getUserLayer().disableHightlight();
+	        });
+	        toolbar.find('input[id=resize' + this.model.get('id') + ']').click(function () {
+	            self.getUserLayer().toggleResize();
+	            self.getUserLayer().disableHightlight();
 
-        });
-        toolbar.find('input[id=drag' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().toggleDrag();
-            self.getUserLayer().disableHightlight();
-        });
-        toolbar.find('input[id=ruler' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().toggleControl("line");
-            self.getUserLayer().measureOnSelect = true;
-            self.getUserLayer().disableHightlight();
-        });
-        /*toolbar.find('input[id=irregular' + this.model.get('id') + ']').click(function () {
-         self.getUserLayer().toggleIrregular();
-         });
-         toolbar.find('input[id=irregular' + this.model.get('id') + ']').hide();*/
+	        });
+	        toolbar.find('input[id=drag' + this.model.get('id') + ']').click(function () {
+	            self.getUserLayer().toggleDrag();
+	            self.getUserLayer().disableHightlight();
+	        });
+	        toolbar.find('input[id=ruler' + this.model.get('id') + ']').click(function () {
+	            self.getUserLayer().controls.select.unselectAll();
+	            self.getUserLayer().toggleControl("line");
+	            self.getUserLayer().measureOnSelect = true;
+	            self.getUserLayer().disableHightlight();
+	        });
+	        /*toolbar.find('input[id=irregular' + this.model.get('id') + ']').click(function () {
+	         self.getUserLayer().toggleIrregular();
+	         });
+	         toolbar.find('input[id=irregular' + this.model.get('id') + ']').hide();*/
 
-    },
+	    },
     initVectorLayers: function () {
         var self = this;
-        var colors = ["#006b9a", "#a11323", "#b7913e", "#CCCCCC"];
-        var colorIndex = 0;
         window.app.models.users.fetch({
             success: function () {
                 window.app.models.users.each(function (user) {
-                    var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), colors[colorIndex], self.ontologyTreeView, self.map );
+                    var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), user.get('color'), self.ontologyTreeView, self.map );
                     layerAnnotation.loadAnnotations(self);
 
                     //layerAnnotation.initHightlight(self.map);
@@ -381,7 +384,6 @@ var BrowseImageView = Backbone.View.extend({
                          layerAnnotation.registerEvents(self.map);
                          layerAnnotation.controls.select.activate();  */
                     }
-                    colorIndex++;
 
                 });
 
@@ -580,7 +582,7 @@ AnnotationLayer.prototype = {
                 browseImageView.layerLoadedCallback(self);
             }
         });
-        browseImageView.addLayer(this.vectorsLayer);
+        browseImageView.addVectorLayer(this.vectorsLayer, this.userID);
     },
     addFeature: function (feature) {
         console.log("addFeature: function (feature)");

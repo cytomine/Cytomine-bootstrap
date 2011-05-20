@@ -15,6 +15,19 @@ var OntologyTreeView = Backbone.View.extend({
         this.idImage = options.idImage;
         this.idAnnotation  = null;
     },
+    showColors : function() {
+        $(this.el).find('.tree').dynatree("getRoot").visit(function(node){
+            console.log("NODE :" + node.data.title + " , CHILDREN ? :" + (node.data.children == null));
+            if (node.children != null) return; //title is ok
+
+            var title = node.data.title
+            var color = "#" + node.data.color
+            var htmlNode = "{{title}} <span style='background-color:{{color}}'>&nbsp;&nbsp;</span>"
+            var nodeTpl = _.template(htmlNode, {title : title, color : color});
+
+            node.setTitle(nodeTpl);
+        });
+    },
     render: function() {
         $(this.el).html(ich.imageontologyviewtpl({}, true));
         this.tree = $(this.el).find('.tree');

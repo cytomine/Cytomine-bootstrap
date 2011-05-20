@@ -1,5 +1,6 @@
 body {
     font-family: "Century Gothic", "Heiti TC", "Helvetica", "Arial", sans-serif;
+	font-size : 12px;
     background:#f8f8f8;
     color:#333;
 }
@@ -304,6 +305,13 @@ div .toolbar {
 }
 
 
+div .layerSwitcher label, input { 
+	display:inline; 
+	padding : 5px;
+}
+
+
+
 div .layerSwitcherPanel {
     position : absolute;
     right : 30px;
@@ -316,8 +324,8 @@ div .layerSwitcherPanel {
     -webkit-border-radius: 6px;
     border-radius: 6px;
     opacity: 0.7;
-    width : 200px;
-    height : 200px;
+    width : 230px;
+    height : 120px;	
 }
 
 div.olControlOverviewMapElement img {
@@ -410,32 +418,6 @@ div .projecttable {
     margin-left : 50px;
     border : 0;
 }
-table {
-    border: medium solid #666;
-    border-collapse: collapse;
-    width: 50%;
-}
-th {
-    font-family: monospace;
-    border: thin solid #666;
-    padding: 5px;
-    background-color: #666;
-    color: #fff;
-    border : 0;
-}
-td {
-    font-family: sans-serif;
-    border: thin solid #666;
-
-    padding: 5px;
-
-    background-color: #ffffff;
-    border : 0;
-}
-caption {
-    font-family: sans-serif;
-}
-
 
 
 /** Pretty Checkbox **/
@@ -582,20 +564,3 @@ a.checkbox-deselect {
 .searchProjectCriteria {display:inline; }
 .ontologyChoice {display:inline; }
 .userChoice {display:inline; }
-
-/* Carousel */
-.nivo-slider {
-    position:relative;
-    width:192px; /* Change this to your images width */
-    height:192px; /* Change this to your images height */
-}
-.nivo-slider  img {
-    position:absolute;
-    top:0px;
-    left:0px;
-    display:none;
-}
-.nivo-slider  a {
-    border:0;
-    display:block;
-}

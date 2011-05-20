@@ -69,7 +69,7 @@ var ApplicationController = Backbone.Controller.extend({
             this.controllers.dashboard    = new DashboardController();
             this.controllers.browse       = new BrowseController();
             this.controllers.term         = new TermController();
-            this.controllers.ontology     = new OntologyController()
+            this.controllers.ontology     = new OntologyController()			
             this.controllers.command      = new CommandController();
             Backbone.history.start();
         }

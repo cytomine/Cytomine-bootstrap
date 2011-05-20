@@ -9,6 +9,7 @@ class User extends SecUser {
   String firstname
   String lastname
   String email
+  String color
 
   int transaction
 
@@ -48,11 +49,12 @@ class User extends SecUser {
     JSON.registerObjectMarshaller(User) {
       def returnArray = [:]
       returnArray['id'] = it.id
-      returnArray['username'] = it.username
+      returnArray['username'] = it.username	
       returnArray['firstname'] = it.firstname
       returnArray['lastname'] = it.lastname
       returnArray['email'] = it.email
       returnArray['password'] = "******"
+	  returnArray['color'] = it.color
 
       returnArray['created'] = it.created? it.created.time.toString() : null
       returnArray['updated'] = it.updated? it.updated.time.toString() : null
