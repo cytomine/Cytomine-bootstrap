@@ -18,22 +18,19 @@
     <script type="text/javascript" src="application/lib/json2.js" ></script>
 
     <!-- Modules -->
-    <script type="text/javascript" src="application/lib/jquery.pnotify.js" ></script>
-    <link rel='stylesheet' href='application/css/jquery.pnotify.default.css' type='text/css'/>
+    <script type="text/javascript" src="application/lib/pnotify/jquery.pnotify.js" ></script>
+    <link rel='stylesheet' href='application/lib/pnotify/jquery.pnotify.default.css' type='text/css'/>
 
-    <script type="text/javascript" src="application/lib/jquery.fileupload-ui.js"></script>
-    <script type="text/javascript" src="application/lib/jquery.fileupload.js"></script>
-    <link rel='stylesheet' href='application/css/jquery.fileupload-ui.css' type='text/css'/>
+    <script type="text/javascript" src="application/lib/fileupload/jquery.fileupload-ui.js"></script>
+    <script type="text/javascript" src="application/lib/fileupload/jquery.fileupload.js"></script>
+    <link rel='stylesheet' href='application/lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
 
-    <script type="text/javascript" src="application/lib/jquery.jqplot.js"></script>
-    <script type="text/javascript" src="application/lib/jqplot.pieRenderer.js"></script>
+    <script type="text/javascript" src="application/lib/jqplot/jquery.jqplot.js"></script>
+    <script type="text/javascript" src="application/lib/jqplot/jqplot.pieRenderer.js"></script>
+    <link rel='stylesheet' href='application/lib/jqplot/jquery.jqplot.css' type='text/css'/>
 
-    <script type="text/javascript" src="application/lib/flot/jquery.flot.js"></script>
-    <script type="text/javascript" src="application/lib/flot/jquery.flot.pie.js"></script>
-    <link rel='stylesheet' href='application/css/jquery.jqplot.css' type='text/css'/>
-
-    <script type="text/javascript" src="application/lib/ui.panel.min.js"></script>
-    <link type="text/css" href="application/css/ui.panel.css" rel="stylesheet" />
+    <script type="text/javascript" src="application/lib/ui.panel/ui.panel.min.js"></script>
+    <link type="text/css" href="application/lib/ui.panel/ui.panel.css" rel="stylesheet" />
 
     <link href="application/lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css">
     <script src="application/lib/dynatree/jquery.dynatree.js" type="text/javascript"></script>
@@ -320,7 +317,7 @@
             </td>
     <td colspan="1" width="33%">
             <ul>
-            <li>{{numberOfSlides}} slides </li>
+            <li>{{numberOfSlides}} samples </li>
             <li>{{numberOfImages}} images </li>
             <li>{{numberOfAnnotations}} annotations </li>
             </ul>
