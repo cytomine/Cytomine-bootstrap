@@ -280,6 +280,7 @@ div .ontologypanel {
     position : absolute;
     left : 30px;
     bottom : 100px;
+    max-height: 300px;
     z-index : 2021;
     background-color: rgba(0, 0, 0, 0.6);
     color : #fff;
