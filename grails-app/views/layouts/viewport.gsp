@@ -779,9 +779,9 @@
 <script type="text/javascript" src="application/views/AnnotationThumbView.js" ></script>
 <script type="text/javascript" src="application/views/AnnotationView.js" ></script>
 <script type="text/javascript" src="application/views/ProjectSearchPanel.js" ></script>
-
+<script type="text/javascript" src="application/views/LoginDialogView.js" ></script>
+<script type="text/javascript" src="application/views/LogoutDialogView.js" ></script>
 <script type="text/javascript" src="application/views/Tabs.js" ></script>
-
 
 <script type="text/javascript">
   $(function() {
