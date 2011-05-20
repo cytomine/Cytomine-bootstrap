@@ -173,7 +173,6 @@ class AbstractImage extends SequenceDomain {
 
     def getPreviewURL()  {
         Collection<ImageServer> imageServers = getMime().imageServers()
-        log.debug "ImageServers="+imageServers
         def urls = []
         imageServers.each {
             Resolver resolver = Resolver.getResolver(it.className)
@@ -183,13 +182,12 @@ class AbstractImage extends SequenceDomain {
         if(urls.size()<1) return null //to do, send an url to a default blank image or error image
 
         def index = (Integer) Math.round(Math.random()*(urls.size()-1)) //select an url randomly
-        log.debug "index="+index
+
         return urls[index]
     }
 
     def getThumbURL()  {
         Collection<ImageServer> imageServers = getMime().imageServers()
-        log.debug "ImageServers="+imageServers
         def urls = []
         imageServers.each {
             Resolver resolver = Resolver.getResolver(it.className)
@@ -199,7 +197,7 @@ class AbstractImage extends SequenceDomain {
         if(urls.size()<1) return null //to do, send an url to a default blank image or error image
 
         def index = (Integer) Math.round(Math.random()*(urls.size()-1)) //select an url randomly
-        log.debug "index="+index
+
         return urls[index]
     }
 
