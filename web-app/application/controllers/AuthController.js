@@ -1,7 +1,6 @@
 var AuthController = Backbone.Controller.extend({
 
     routes: {
-        "logout"    :   "logout"
     },
 
     login : function () {
