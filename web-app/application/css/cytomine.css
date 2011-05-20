@@ -70,7 +70,7 @@ h3 { font-size:13px; }
     padding:0px 10px;
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
-    margin:0px 5px;
+    margin:0px 0px;
 }
 
 .header .actions {
@@ -80,12 +80,12 @@ h3 { font-size:13px; }
     background:#f8f8f8;
     height:25px;
     line-height:20px;
-    padding:5px 5px 10px 4px;
+    padding:5px 0px 10px 4px;
     border-width:1px 0px 0px 1px;
     border-style:solid;
     border-color:#fff;
-    -moz-border-radius:5px 0px 0px 0px;
-    -webkit-border-radius:5px 0px 0px 0px;
+    -moz-border-radius:5px 5px 0px 0px;
+    -webkit-border-radius:5px 5px 0px 0px;
 }
 
 
@@ -113,13 +113,11 @@ h3 { font-size:13px; }
 }
 
 .menu li a.title.active {
-    color:#fff;
-    background:#48a;
-    border-color:#268;
+    color:#000;
+    background:#A3CAE0;
+    border-color:#CCC;
 }
 
-
-.view { background:#f8f8f8; }
 
 /*.main {
     background: #eee;

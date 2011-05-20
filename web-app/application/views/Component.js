@@ -59,6 +59,6 @@ var Component = Backbone.View.extend({
                 $(v.el).hide();
             }
         }
-        $(view.el).fadeIn('fast');
+        $(view.el).show();
     }
 });
