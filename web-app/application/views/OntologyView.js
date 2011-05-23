@@ -10,6 +10,11 @@ var OntologyView = Backbone.View.extend({
     self : this,
     tabsOntologies : null,
     // template : _.template($('#image-view-tpl').html()),
+    events: {
+        "click .addTerm": "addTerm",
+        "click .renameTerm": "renameTerm",
+        "click .deleteTerm": "deleteTerm"
+    },
     initialize: function(options) {
         this.container = options.container;
         this.idOntology = options.idOntology;
@@ -26,6 +31,19 @@ var OntologyView = Backbone.View.extend({
 
         return this;
     },
+
+    addTerm : function() {
+        console.log("addTerm");
+
+    },
+    renameTerm : function() {
+        console.log("renameTerm");
+
+    },
+    deleteTerm : function() {
+        console.log("deleteTerm");
+
+    },
     initOntologyTabs : function(){
         var self = this;
         console.log("OntologyView: initOntologyTabs");
@@ -38,7 +56,6 @@ var OntologyView = Backbone.View.extend({
 
                 if(self.tabsOntologies==null)
                     self.tabsOntologies = $("#tabsontology").tabs();
-                self.fetchOntologies();
 
     },
     addOntologyToTab : function(id, name) {
@@ -55,14 +72,14 @@ var OntologyView = Backbone.View.extend({
         self.model.each(function(ontology) {
             //$("#tabsontology-"+ontology.get("id")).empty();
             self.buildOntologyTree(ontology);
-
+            self.initButton(ontology)
         });
 
 
     },
     buildOntologyTree : function(ontology) {
         console.log("buildOntologyTree for ontology " + ontology.id);
-        $("#tabsontology-"+ontology.id).prepend(ontology.get("name"));
+
         console.log(ontology.toJSON());
         console.log("#treeontology-"+ontology.id);
         $("#treeontology-"+ontology.id).dynatree({
@@ -95,6 +112,41 @@ var OntologyView = Backbone.View.extend({
             node.expand(true);
         });
 
-    }
+    },
+    initButton : function(ontology) {
 
+        $("#buttonExpanseOntology"+ontology.id).button({
+            icons : {secondary: "ui-icon-circle-arrow-s" }
+        });
+        $("#buttonCollapseOntology"+ontology.id).button({
+            icons : {secondary: "ui-icon-circle-arrow-n" }
+        });
+
+        $('#buttonAddTerm'+ontology.id).button({
+            icons : {secondary: "ui-icon-plus" }
+        });
+        $('#buttonRenameTerm'+ontology.id).button({
+            icons : {secondary: "ui-icon-pencil" }
+        });
+        $('#buttonDeleteTerm'+ontology.id).button({
+            icons : {secondary: "ui-icon-trash" }
+        });
+
+        $("#buttonExpanseOntology"+ontology.id).click(function(){
+          $("#treeontology-"+ontology.id).dynatree("getRoot").visit(function(node){
+            node.expand(true);
+          });
+          return false;
+        });
+        $("#buttonCollapseOntology"+ontology.id).click(function(){
+          $("#treeontology-"+ontology.id).dynatree("getRoot").visit(function(node){
+            node.expand(false);
+          });
+          return false;
+        });
+
+
+
+
+    }
 });

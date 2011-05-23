@@ -513,7 +513,20 @@
 
 <script type="text/html" id="ontologydivtabtpl">
 <div id="tabsontology-{{id}}">
+  <button class="expanseOntology" id='buttonExpanseOntology{{id}}' type="button">Expand all</button>
+  <button class="collapseOntology" id='buttonCollapseOntology{{id}}' type="button">Collapse all</button>
+
+  <button class="addTerm" id='buttonAddTerm{{id}}' type="button">Add Term</button>
+  <button class="renameTerm" id='buttonRenameTerm{{id}}' type="button">Rename Term</button>
+  <button class="deleteTerm" id='buttonDeleteTerm{{id}}' type="button">Delete Term</button>
+  <br>
   <div id="treeontology-{{id}}" style="background:black;"></div>
+
+
+
+
+
+
 </div>
 </script>
 
