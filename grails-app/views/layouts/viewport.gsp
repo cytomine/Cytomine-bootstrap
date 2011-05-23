@@ -5,6 +5,10 @@
 
   <link rel="icon" type="image/png" href="favicon.ico">
 
+  <!-- RequireJS -->
+  <script type="text/javascript" src="application/lib/requirejs/require.js"></script>
+
+
   <!-- JQuery & JQuery UI -->
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"></script>
@@ -44,50 +48,6 @@
   <link rel='stylesheet' href='application/css/cytomine.css' type='text/css'/>
 <body>
 <!-- Templates -->
-<script type="text/html" id="baselayouttpl">
-  <div id='header' class='header clearfix'>
-    <h1 class='breadcrumb'>
-      <a class='home' href='#'><span class='logo'></span>Cytomine</a>
-    </h1>
-    <div id="menu" class="ui-buttonset actions">
-      <a id="undo"  style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-w"></span><span class="ui-button-text">Undo</span></a>
-      <a id="redo" style="margin-right:5px;" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-state-hover" role="button"><span class="ui-icon ui-icon-circle-arrow-e"></span><span class="ui-button-text">Redo</span></a>
-    </div>
-  </div>
-  <div id="content">
-  </div>
-  <div id="popup-wrapper"></div>
-</script>
-
-  <script type="text/html" id="logindialogtpl">
-          <div id="login-confirm" title="Login">
-          <div align="center" style="margin:auto;">
-          <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
-          <p>Version {{version}}</p>
-          </div>
-  <form id="login-form">
-          <fieldset>
-          <input type="text" size="20" id="j_username" value="username" name="j_username"  class="text ui-widget-content ui-corner-all" >
-          <input type="password" size="20" id="j_password" value="password" name="j_password"  class="text ui-widget-content ui-corner-all">
-          <label for="remember_me" >Remember me</label>
-  <input type="checkbox" id="remember_me" name="remember_me"  class="text ui-widget-content ui-corner-all">
-          </fieldset>
-          </form>
-          </div>
-</script>
-
-
-<script type="text/html" id="loadingdialogtpl">
-  <div id="loading-dialog" title="Loading">
-    <div align="center" style="margin:auto;">
-      <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
-    </div>
-    <div id="progress" style="text-align:center;padding-top:30px;">
-      <h1>Loading data...</h1>
-      <div id="login-progressbar" style="margin-top:10px;"></div>
-    </div>
-  </div>
-</script>
 
   <script type="text/html" id="overviewmapcontenttpl">
     <!--<div id="overviewmapdialog{{id}}" title="Minimap">-->
@@ -118,86 +78,6 @@
     <!--<div id="ontologytreedialog{{id}}" title="Ontology">-->
           <div id="ontologytreecontent{{id}}"></div>
           <!--</div>-->
-</script>
-
-<script type="text/html" id="serverdowntpl">
-  <div id="server-down" title="Server down">
-    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />The Cytomine server could not be reached</p>
-  </div>
-</script>
-
-  <script type="text/html" id="logoutdialogtpl">
-          <div id="logout-confirm" title="Confirmation required">
-          <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;" />Do you want to leave ?</p>
-  </div>
-</script>
-
-<script type="text/html" id="explorertpl">
-  <div id="explorer">
-    <div class="main browser" style="display:none">
-    </div>
-    <div class="main noProject">
-      <div id="noProjectDialog" class="centralPanel">
-        <h3>Explorer</h3>
-        <div>
-          Please open a project
-        </div>
-      </div>
-
-    </div>
-  </div>
-</script>
-
-  <script type="text/html" id="uploadtpl">
-          <div id="upload">
-          <div class='main upload'>
-          <form id="file_upload" action="upload/image" method="POST" enctype="multipart/form-data">
-          <input type="file" name="file" multiple>
-          <button>Upload</button>
-          <div>Upload files</div>
-          </form>
-  <button id="start_uploads">Start uploads</button>
-  <table id="files"></table>
-          </div>
-          </div>
-</script>
-
-
-
-<script type="text/html" id="warehousetpl">
-  <div id="warehouse">
-    <div class="main project"></div>
-    <div class="main image"></div>
-    <div class="main term"></div>
-    <div class="main ontology"></div>
-    <div class="main dashboard"></div>
-
-    <div class='sidebar'>
-      <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
-
-      <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
-      <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul>
-      <!--<ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
-            <ul class='menu libraries'></ul>
-            <div class='buttons'>
-                <!--<a class='add button' href='#'><span class='icon reverse add'></span>Add library</a>-->
-    </div>
-  </div>
-</script>
-
-<script type="text/html" id="admintpl">
-  <div id="admin">
-    <h1>admin</h1>
-    <div class='main'>admin</div>
-  </div>
-</script>
-
-<script type="text/html" id="logouttpl">
-
-</script>
-
-<script type="text/html" id="logintpl">
-
 </script>
 
 <script type="text/html" id="ontologieschoicetpl">
@@ -753,6 +633,7 @@
 <script type="text/javascript" src="application/Utilities.js" ></script>
 <!-- controllers -->
 <script type="text/javascript" src="application/controllers/ApplicationController.js" ></script>
+<script type="text/javascript" src="application/controllers/UploadController.js" ></script>
 <script type="text/javascript" src="application/controllers/AuthController.js" ></script>
 <script type="text/javascript" src="application/controllers/ProjectController.js" ></script>
 <script type="text/javascript" src="application/controllers/DashboardController.js" ></script>
