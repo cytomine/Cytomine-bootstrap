@@ -322,11 +322,9 @@ var ProjectDashboardView = Backbone.View.extend({
                 console.log(jsonCommand.cropURL);
                 var action = ""
 
-                var errorImage = "http://www.bmxforever.net/website/wp-content/uploads/2010/03/Error.jpg";
-
-                if(json.command.class=="be.cytomine.command.annotation.AddAnnotationCommand")
+                if(json.command.CLASSNAME=="be.cytomine.command.annotation.AddAnnotationCommand")
                 {
-                    console.log("json.command.class="+json.command.class);
+                    console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
                     var action = ich.annotationcommandlisttpl({icon:"add.png",text:json.prefixAction+ " " + json.command.action,datestr:dateStr,image:jsonCommand.cropURL});
                     $("#lastactionitem").append(action);
                     $(action).find(".thumbcommand").hide();
@@ -336,9 +334,9 @@ var ProjectDashboardView = Backbone.View.extend({
                         error: function(XMLHttpRequest, textStatus, errorThrown){ }
                     });
                 }
-                if(json.command.class=="be.cytomine.command.annotation.EditAnnotationCommand")
+                if(json.command.CLASSNAME=="be.cytomine.command.annotation.EditAnnotationCommand")
                 {
-                    console.log("json.command.class="+json.command.class);
+                    console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
                     var action = ich.annotationcommandlisttpl({icon:"delete.gif",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:jsonCommand.cropURL});
                     $("#lastactionitem").append(action);
                     $(action).find(".thumbcommand").hide();
@@ -348,9 +346,9 @@ var ProjectDashboardView = Backbone.View.extend({
                         error: function(XMLHttpRequest, textStatus, errorThrown){}
                     });
                 }
-                if(json.command.class=="be.cytomine.command.annotation.DeleteAnnotationCommand")
+                if(json.command.CLASSNAME=="be.cytomine.command.annotation.DeleteAnnotationCommand")
                 {
-                    console.log("json.command.class="+json.command.class);
+                    console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
                     var action = ich.annotationcommandlisttpl({icon:"layer-edit.gif",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:jsonCommand.cropURL});
                     $("#lastactionitem").append(action);
                     $(action).find(".thumbcommand").hide();
@@ -362,23 +360,23 @@ var ProjectDashboardView = Backbone.View.extend({
                 }
 
 
-                if(json.command.class=="be.cytomine.command.annotationterm.AddAnnotationTermCommand")
+                if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.AddAnnotationTermCommand")
                 {
-                    console.log("json.command.class="+json.command.class);
+                    console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
                     var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-plus",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
                     $("#lastactionitem").append(action);
 
                 }
-                if(json.command.class=="be.cytomine.command.annotationterm.EditAnnotationTermCommand")
+                if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.EditAnnotationTermCommand")
                 {
-                    console.log("json.command.class="+json.command.class);
+                    console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
                     var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-pencil",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
                     $("#lastactionitem").append(action);
 
                 }
-                if(json.command.class=="be.cytomine.command.annotationterm.DeleteAnnotationTermCommand")
+                if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.DeleteAnnotationTermCommand")
                 {
-                    console.log("json.command.class="+json.command.class);
+                    console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
                     var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-trash",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
                     $("#lastactionitem").append(action);
 

@@ -174,8 +174,9 @@
 
     <div class='sidebar'>
       <!--<ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>-->
-      <!-- <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul> -->
+
       <ul class='menu fixed'><li class="handle"><a href="#project" name="project" class="title">Projects</a></li></ul>
+      <ul class='menu fixed'><li class="handle"><a href="#ontology" name="ontology" class="title">Ontologies</a></li></ul>
       <!--<ul class='menu fixed'><li class="handle"><a href="#image" name="image" class="title">Images</a></li></ul>
             <ul class='menu libraries'></ul>
             <div class='buttons'>
@@ -613,18 +614,11 @@
 
 </script>
 
+
 <script type="text/html" id="ontologyviewtpl">
   <div id='ontologytreepanel'>
-    <button id='ontologytreeaddontologybutton' type="button" >Add Ontology</button>
-    <button id='ontologytreeaddtermbutton' type="button" >Add Term</button>
-    <button id='ontologytreerenamebutton' type="button" >Rename</button>
-    <button id='ontologytreedeletebutton' type="button" >Remove</button>
-    <button id='ontologytreeprintselectbutton' type="button" >Print selected</button>
-    TODO: add ontology + add term
-  </div>
-  <div id='ontologytree'></div>
 
-  <div id='ontologytreedebug'></div>
+  </div>
 </script>
 
 <script type="text/html" id="imageontologyviewtpl">

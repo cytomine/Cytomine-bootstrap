@@ -11,27 +11,7 @@ var OntologyView = Backbone.View.extend({
     // template : _.template($('#image-view-tpl').html()),
     initialize: function(options) {
         this.container = options.container;
-    },
-    uncheckAll : function() {
-
-                     //$('#ontologytree').jstree('check_all');
-                     $('#ontologytree').jstree('unchecked_all');
-
-    },
-    checkItem : function(iditem) {
-
-                     //$('#ontologytree').jstree('check_all');
-                     $('#ontologytree').jstree('get_checked',null,true).each(function () {
-                             console.log("check:"+this.id);
-                             if(iditem==this.id) $('#ontologytree').jstree('check_node',this);
-                     });
-                     $('#ontologytree').jstree('get_unchecked',null,true).each(function () {
-                            console.log("uncheck:"+this.id);
-                            if(iditem==this.id) $('#ontologytree').jstree('check_node',this);
-                            //$('#ontologytree').jstree('check_node',this)
-                            //69
-                     });
-
+        this.idOntology = options.idOntology;
     },
     render: function() {
         console.log("OntologyView.render");

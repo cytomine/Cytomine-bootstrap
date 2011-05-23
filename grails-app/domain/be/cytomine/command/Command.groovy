@@ -29,7 +29,7 @@ class Command extends SequenceDomain {
     JSON.registerObjectMarshaller(Command) {
       def returnArray = [:]
 
-      returnArray['class'] = it.class
+      returnArray['CLASSNAME'] = it.class
       returnArray['action'] = it.getActionMessage()
       returnArray['data'] = it.data
       returnArray['type'] = "UNKNOWN"
