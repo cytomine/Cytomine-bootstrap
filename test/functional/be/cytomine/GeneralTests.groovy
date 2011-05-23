@@ -22,7 +22,7 @@ import be.cytomine.command.Command
  */
 class GeneralTests extends functionaltestplugin.FunctionalTestCase {
 
-    void testCommandMaxSizeTooLong() {
+  void testCommandMaxSizeTooLong() {
 
     log.info("create image")
     String jsonImage = "{\"text\" : \"*************************************************************************"
@@ -48,9 +48,9 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(413,code)
     def json = JSON.parse(response)
-    }
+  }
 
-    void testCommandMaxSizeOK() {
+  void testCommandMaxSizeOK() {
 
     log.info("create image")
     String jsonImage = "{\"text\" : \"*************************************************************************"
@@ -70,6 +70,90 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check response")
     assertEquals(true,code!=413)
     def json = JSON.parse(response)
-    }
+  }
 
+
+  void testLastAction() {
+
+    /*
+     * Add an annotation, undo and redo it
+     */
+    log.info("create annotation")
+    def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
+    String jsonAnnotation = annotationToAdd.encodeAsJSON()
+
+    log.info("post annotation:"+jsonAnnotation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/annotation.json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.post(jsonAnnotation)
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(201,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+    int idAnnotation = json.annotation.id
+
+    log.info("check if object "+ idAnnotation +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+    assertEquals(200,code)
+
+    log.info("test undo")
+    client = new HttpClient()
+    URL = Infos.CYTOMINEURL+Infos.UNDOURL
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+    assertEquals(200,code)
+
+    log.info("check if object "+ idAnnotation +" not exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+    assertEquals(404,code)
+
+    log.info("test redo")
+    client = new HttpClient()
+    URL = Infos.CYTOMINEURL+Infos.REDOURL
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+    assertEquals(201,code)
+
+    /*
+     * Get the last 3 commands: it must be "REDO ADD ANNOTATION", "UNDO ADD ANNOTATION" and "ADD ANNOTATION"
+     */
+    Long idProject =  annotationToAdd.image.project.id
+    Integer max = 3
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/project/"+idProject +"/last/"+ max +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+    assertEquals(200,code)
+    json = JSON.parse(response)
+    assert json instanceof JSONArray
+
+    log.info("response="+response);
+
+  }
 }

@@ -119,7 +119,7 @@ class Annotation extends SequenceDomain implements Serializable {
   static Annotation getAnnotationFromData(annotation,jsonAnnotation) {
     annotation.name = jsonAnnotation.name
     annotation.location = new WKTReader().read(jsonAnnotation.location);
-    annotation.location = DouglasPeuckerSimplifier.simplify(annotation.location,50)
+    //annotation.location = DouglasPeuckerSimplifier.simplify(annotation.location,50)
     annotation.image = ImageInstance.get(jsonAnnotation.image);
     annotation.zoomLevel = (!jsonAnnotation.zoomLevel.toString().equals("null"))  ? ((String)jsonAnnotation.zoomLevel).toDouble() : -1
     annotation.channels =  jsonAnnotation.channels

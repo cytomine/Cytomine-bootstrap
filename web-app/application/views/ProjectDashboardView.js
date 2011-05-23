@@ -303,72 +303,83 @@ var ProjectDashboardView = Backbone.View.extend({
         var commandCollection = new CommandCollection({project:self.model.get('id'),max:10});
 
         var commandCallback = function(collection, response) {
-
+            console.log("command.size()="+collection.length);
             $("#lastactionitem").empty();
             collection.each(function(command) {
 
-                var dateCreated = new Date();
-                dateCreated.setTime(command.get('created'));
-                var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString()
+                var json = command.toJSON()
 
-                var json = $.parseJSON(command.get("data"));
+
+                console.log("created="+json.created);
+                console.log(json);
+
+                var dateCreated = new Date();
+                dateCreated.setTime(json.created);
+                var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
+
+                var jsonCommand = $.parseJSON(json.command.data);
+                console.log(jsonCommand); //jsonCommand.cropURL
+                console.log(jsonCommand.cropURL);
                 var action = ""
 
                 var errorImage = "http://www.bmxforever.net/website/wp-content/uploads/2010/03/Error.jpg";
 
-                if(command.get("class")=="be.cytomine.command.annotation.AddAnnotationCommand")
+                if(json.command.class=="be.cytomine.command.annotation.AddAnnotationCommand")
                 {
-                    var action = ich.annotationcommandlisttpl({icon:"ui-icon-plus",text:command.get("action"),datestr:dateStr,image:json.cropURL});
+                    console.log("json.command.class="+json.command.class);
+                    var action = ich.annotationcommandlisttpl({icon:"add.png",text:json.prefixAction+ " " + json.command.action,datestr:dateStr,image:jsonCommand.cropURL});
                     $("#lastactionitem").append(action);
-                    $(action).find("img").hide();
+                    $(action).find(".thumbcommand").hide();
                     $.ajax({
-                        url: json.cropURL,
-                        success: function(data){$(action).find("img").show();},
+                        url: jsonCommand.cropURL,
+                        success: function(data){$(action).find(".thumbcommand").show();},
                         error: function(XMLHttpRequest, textStatus, errorThrown){ }
                     });
                 }
-                if(command.get("class")=="be.cytomine.command.annotation.EditAnnotationCommand")
+                if(json.command.class=="be.cytomine.command.annotation.EditAnnotationCommand")
                 {
-                    var action = ich.annotationcommandlisttpl({icon:"ui-icon-pencil",text:command.get("action"),datestr:dateStr,image:json.cropURL});
+                    console.log("json.command.class="+json.command.class);
+                    var action = ich.annotationcommandlisttpl({icon:"delete.gif",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:jsonCommand.cropURL});
                     $("#lastactionitem").append(action);
-                    $(action).find("img").hide();
+                    $(action).find(".thumbcommand").hide();
                     $.ajax({
-                        url: json.cropURL,
-                        success: function(data){$(action).find("img").show();},
+                        url: jsonCommand.cropURL,
+                        success: function(data){$(action).find(".thumbcommand").show();},
                         error: function(XMLHttpRequest, textStatus, errorThrown){}
                     });
                 }
-                if(command.get("class")=="be.cytomine.command.annotation.DeleteAnnotationCommand")
+                if(json.command.class=="be.cytomine.command.annotation.DeleteAnnotationCommand")
                 {
-                    var action = ich.annotationcommandlisttpl({icon:"ui-icon-trash",text:command.get("action"),datestr:dateStr,image:json.cropURL});
+                    console.log("json.command.class="+json.command.class);
+                    var action = ich.annotationcommandlisttpl({icon:"layer-edit.gif",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:jsonCommand.cropURL});
                     $("#lastactionitem").append(action);
-                    $(action).find("img").hide();
+                    $(action).find(".thumbcommand").hide();
                     $.ajax({
-                        url: json.cropURL,
-                        success: function(data){$(action).find("img").show();},
+                        url: jsonCommand.cropURL,
+                        success: function(data){$(action).find(".thumbcommand").show();},
                         error: function(XMLHttpRequest, textStatus, errorThrown){}
                     });
                 }
 
 
-                if(command.get("class")=="be.cytomine.command.annotationterm.AddAnnotationTermCommand")
+                if(json.command.class=="be.cytomine.command.annotationterm.AddAnnotationTermCommand")
                 {
-
-                    var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-plus",text:command.get("action"),datestr:dateStr,image:""});
+                    console.log("json.command.class="+json.command.class);
+                    var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-plus",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
                     $("#lastactionitem").append(action);
 
                 }
-                if(command.get("class")=="be.cytomine.command.annotationterm.EditAnnotationTermCommand")
+                if(json.command.class=="be.cytomine.command.annotationterm.EditAnnotationTermCommand")
                 {
-
-                    var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-pencil",text:command.get("action"),datestr:dateStr,image:""});
+                    console.log("json.command.class="+json.command.class);
+                    var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-pencil",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
                     $("#lastactionitem").append(action);
 
                 }
-                if(command.get("class")=="be.cytomine.command.annotationterm.DeleteAnnotationTermCommand")
+                if(json.command.class=="be.cytomine.command.annotationterm.DeleteAnnotationTermCommand")
                 {
-
-                    var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-trash",text:command.get("action"),datestr:dateStr,image:""});
+                    console.log("json.command.class="+json.command.class);
+                    var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-trash",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
                     $("#lastactionitem").append(action);
 
                 }

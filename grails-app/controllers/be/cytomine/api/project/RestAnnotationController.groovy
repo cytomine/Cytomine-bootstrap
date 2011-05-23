@@ -16,6 +16,7 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
 import com.vividsolutions.jts.io.WKTWriter
 import be.cytomine.image.ImageInstance
+import java.lang.*;
 
 class RestAnnotationController extends RestController {
 
@@ -94,8 +95,28 @@ class RestAnnotationController extends RestController {
   def add = {
     log.info "Add"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
-    log.info "User:" + currentUser.username + " transaction:" +  currentUser.transactionInProgress  + " request:" + request.JSON.toString()
-    Command addAnnotationCommand = new AddAnnotationCommand(postData : request.JSON.toString(), user: currentUser)
+    def json = request.JSON
+    println "json = " + json
+    println "json.location = " + json.location
+
+    try {
+      String form = json.location;
+
+      Geometry annotationFull = new WKTReader().read(form);
+      println "points=" + annotationFull.getNumPoints() + " " + annotationFull.getArea();
+
+      int i = 0;
+      while(annotationFull.getNumPoints()>50)
+      {
+        println "annotationFull:"+annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
+        annotationFull = DouglasPeuckerSimplifier.simplify(annotationFull,i)
+        i=i+25;
+      }
+      json.location =  new WKTWriter().write(annotationFull)
+    } catch(Exception e) {}
+
+    log.info "User:" + currentUser.username + " transaction:" +  currentUser.transactionInProgress  + " request:" +json.toString()
+    Command addAnnotationCommand = new AddAnnotationCommand(postData : json.toString(), user: currentUser)
     def result = processCommand(addAnnotationCommand, currentUser)
     response(result)
   }
@@ -117,10 +138,10 @@ class RestAnnotationController extends RestController {
         log.info "the annotation has " + annotationTerms.size() + " term mapped"
         annotationTerms*.delete()
       } */
-      def postData = ([id : params.id]) as JSON
-      Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData : postData.toString(), user: currentUser)
-      def result = processCommand(deleteAnnotationCommand, currentUser)
-      response(result)
+    def postData = ([id : params.id]) as JSON
+    Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData : postData.toString(), user: currentUser)
+    def result = processCommand(deleteAnnotationCommand, currentUser)
+    response(result)
 
     //}
 

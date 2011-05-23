@@ -12,6 +12,8 @@ import be.cytomine.api.RestController
 import be.cytomine.security.Group
 import be.cytomine.project.ProjectGroup
 import be.cytomine.security.UserGroup
+import be.cytomine.command.RedoStackItem
+import be.cytomine.command.CommandHistory
 
 class RestProjectController extends RestController {
 
@@ -33,7 +35,9 @@ class RestProjectController extends RestController {
      int max =  Integer.parseInt(params.max);
 
     if(project!=null) {
-      def commands = Command.list(sort:"created", order:"desc", max:max);
+      def commands = CommandHistory.list(sort:"created", order:"desc", max:max);
+      log.info "commands=" + commands
+      //merge
       responseSuccess(commands)
     }
      else responseNotFound("Project", params.id)

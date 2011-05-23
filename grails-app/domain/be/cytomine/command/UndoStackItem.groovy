@@ -8,6 +8,7 @@ class UndoStackItem extends SequenceDomain implements Comparable {
   Command command
   Boolean transactionInProgress
   int transaction
+  boolean isFromRedo = false //the undo item come from redo stack
 
   static belongsTo = [user:User, command:Command]
 
@@ -15,5 +16,9 @@ class UndoStackItem extends SequenceDomain implements Comparable {
     created.compareTo(obj.created)
   }
 
-  String toString() { return "|user="+user.id + " command="+command + " transaction="+transactionInProgress}
+  static constraints = {
+    isFromRedo(nullable : true)
+  }
+
+  String toString() { return "|user="+user.id + " command="+command + " transaction="+transactionInProgress + " isFromRedo="+isFromRedo}
 }

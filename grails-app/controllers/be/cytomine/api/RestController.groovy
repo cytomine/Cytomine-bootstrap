@@ -6,6 +6,7 @@ import be.cytomine.command.UndoStackItem
 import be.cytomine.command.EditCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Command
+import be.cytomine.command.CommandHistory
 
 class RestController {
 
@@ -47,9 +48,11 @@ class RestController {
         log.error "Request too long: " +  c.postData.size() + "character (max="+ Command.MAXSIZEREQUEST+")"
          return [object : null , errors : ["Request too long:"+c.postData.size() + "character"]]
     }
+
     result = c.execute()
     if (result.status == successCode) {
       c.save()
+      new CommandHistory(command:c,prefixAction:"").save();
       if(c.saveOnUndoRedoStack)
         new UndoStackItem(command : c, user: user, transactionInProgress:  user.transactionInProgress, transaction : user.transaction).save(flush:true)
     }

@@ -14,8 +14,6 @@ class Command extends SequenceDomain {
 
   static Integer MAXSIZEREQUEST = 10240
 
-  //String actiontype //add, delete or update
-  //String objectType = "Unknown"
   String actionMessage
 
   boolean saveOnUndoRedoStack = false //by default, don't save command on stack
@@ -39,7 +37,6 @@ class Command extends SequenceDomain {
       else if(it instanceof EditCommand) returnArray['type'] = "EDIT"
       else if(it instanceof DeleteCommand) returnArray['type'] = "DELETE"
 
-
       returnArray['created'] = it.created? it.created.time.toString() : null
       returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
@@ -50,6 +47,10 @@ class Command extends SequenceDomain {
  String getActionMessage()
   {
     return  actionMessage
+  }
+
+  public String toString() {
+    return this.id + "["+this.created+"]";
   }
 
 }

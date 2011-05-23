@@ -43,7 +43,13 @@ class CommandController {
     if (!transactionInProgress) {
       log.debug "******* TRANSACTION NOT IN PROGRESS *******"
       result = firstUndoStack.getCommand().undo()
-      new RedoStackItem(command : firstUndoStack.getCommand(), user : firstUndoStack.getUser(), transactionInProgress:  firstUndoStack.transactionInProgress).save(flush : true)
+      new RedoStackItem(
+              command : firstUndoStack.getCommand(),
+              user : firstUndoStack.getUser(),
+              transactionInProgress:  firstUndoStack.transactionInProgress
+      ).save(flush : true)
+      new CommandHistory(command:firstUndoStack.getCommand(),prefixAction:"UNDO").save();
+
       firstUndoStack.delete(flush : true)
       results << result.data
       response.status = result.status
@@ -61,7 +67,15 @@ class CommandController {
         result = undoStack.getCommand().undo()
         results << result.data
         noError = noError && (result.status==200 || result.status==201)
-        new RedoStackItem(command : undoStack.getCommand(), user : undoStack.getUser(), transactionInProgress:  undoStack.transactionInProgress, transaction : undoStack.transaction).save(flush : true)
+
+        new RedoStackItem(
+                command : undoStack.getCommand(),
+                user : undoStack.getUser(),
+                transactionInProgress:  undoStack.transactionInProgress,
+                transaction : undoStack.transaction
+        ).save(flush : true)
+        new CommandHistory(command:undoStack.getCommand(),prefixAction:"UNDO").save();
+
         undoStack.delete(flush:true)
       }
       response.status = noError?200:400
@@ -100,7 +114,14 @@ class CommandController {
 
     if (!transactionInProgress) {
       result = lastRedoStack.getCommand().redo()
-      new UndoStackItem(command : lastRedoStack.getCommand(), user : lastRedoStack.getUser(), transactionInProgress:  lastRedoStack.transactionInProgress).save(flush : true)
+      new UndoStackItem(
+              command : lastRedoStack.getCommand(),
+              user : lastRedoStack.getUser(),
+              transactionInProgress:  lastRedoStack.transactionInProgress,
+
+      ).save(flush : true)
+      new CommandHistory(command:lastRedoStack.getCommand(),prefixAction:"REDO").save();
+
       lastRedoStack.delete(flush : true)
       results << result.data
       response.status = result.status
@@ -119,7 +140,15 @@ class CommandController {
         result = redoStack.getCommand().redo()
         results << result.data
         noError = noError && (result.status==200 || result.status==201)
-        new UndoStackItem(command : redoStack.getCommand(), user : redoStack.getUser(), transactionInProgress:  redoStack.transactionInProgress,transaction : redoStack.transaction).save(flush : true)
+
+        new UndoStackItem(
+                command : redoStack.getCommand(),
+                user : redoStack.getUser(), transactionInProgress:
+                redoStack.transactionInProgress,transaction : redoStack.transaction,
+
+        ).save(flush : true)
+        new CommandHistory(command:redoStack.getCommand(),prefixAction:"REDO").save();
+
         redoStack.delete(flush:true)
       }
       response.status = noError?200:400
