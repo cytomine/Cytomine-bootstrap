@@ -47,7 +47,7 @@ var ApplicationView = Backbone.View.extend({
           require([
              "text!application/templates/UploadComponent.tpl.html",
              "text!application/templates/WarehouseComponent.tpl.html",
-             "text!application/templates/ExplorerComponent.tpl.html"
+             "text!application/templates/explorer/ExplorerComponent.tpl.html"
           ],
               function(upload, warehouse, explorer) {
                  self.components.upload = new Component({

@@ -14,6 +14,7 @@
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"></script>
   <link rel='stylesheet' href='application/css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
 
+
   <!-- Core Libs -->
   <script type="text/javascript" src="application/lib/underscore.js"></script>
   <script type="text/javascript" src="application/lib/backbone.js"></script>
@@ -48,38 +49,6 @@
   <link rel='stylesheet' href='application/css/cytomine.css' type='text/css'/>
 <body>
 <!-- Templates -->
-
-  <script type="text/html" id="overviewmapcontenttpl">
-    <!--<div id="overviewmapdialog{{id}}" title="Minimap">-->
-          <div id="overviewmapcontent{{id}}"></div>
-          <!--</div>-->
-</script>
-
-<script type="text/html" id="layerswitchercontenttpl">
-  <div class="layerSwitcher" id="layerswitchercontent{{id}}">
-    <table>
-      <tr>
-        <td style="color:#FFF;padding-right:8px">Images</td>
-        <td><ul class="baseLayers"></ul></td>
-      </tr>
-      <tr><td colspan="2"><hr /></tr>
-      <tr>
-        <td style="color:#FFF;padding-right:8px;">Annotations</td>
-        <td><ul class="annotationLayers"></ul></td>
-      </tr>
-    </table>
-
-
-
-  </div>
-</script>
-
-  <script type="text/html" id="ontologytreecontenttpl">
-    <!--<div id="ontologytreedialog{{id}}" title="Ontology">-->
-          <div id="ontologytreecontent{{id}}"></div>
-          <!--</div>-->
-</script>
-
 <script type="text/html" id="ontologieschoicetpl">
   <input type=checkbox name=ontology id=ontologies{{id}} class="searchProjectCriteria" style="display:inline;"><label for=ontologies{{id}} class="searchProjectCriteria">{{name}}</label><br></input>
 </script>
@@ -583,65 +552,8 @@
           </div>
 </script>
 
-<script type="text/html" id="browseimagetpl">
-  <div id="tabs-{{id}}">
-    <div class="toolbar" id="toolbar{{id}}" class="ui-widget-header ui-corner-all">
-
-      <span class="nav-toolbar">
-        <input type="radio" id="none{{id}}" name="toolbar" /><label for="none{{id}}">Navigate</label>
-        <input type="radio" id="select{{id}}" name="toolbar" /><label for="select{{id}}">Select</label>
-      </span>
-      <span class="draw-toolbar">
-        <input type="radio" id="regular4{{id}}" name="toolbar" /><label for="regular4{{id}}">Quadrilateral</label>
-        <input type="radio" id="regular30{{id}}" name="toolbar" /><label for="regular30{{id}}">Ellipse</label>
-        <input type="radio" id="polygon{{id}}" name="toolbar" /><label for="polygon{{id}}">Polygon</label>
-      </span>
-      <span class="edit-toolbar">
-        <input type="radio" id="modify{{id}}" name="toolbar" /><label for="modify{{id}}">Edit</label>
-        <input type="radio" id="rotate{{id}}" name="toolbar" /><label for="rotate{{id}}">Rotate</label>
-        <input type="radio" id="resize{{id}}" name="toolbar" /><label for="resize{{id}}">Resize</label>
-        <input type="radio" id="drag{{id}}"  name="toolbar" /><label for="drag{{id}}">Drag</label>
-      </span>
-      <span class="delete-toolbar">
-        <input type="radio" id="delete{{id}}" name="toolbar" /><label for="delete{{id}}">Delete</label>
-      </span>
-
-      <span class="ruler-toolbar">
-        <input type="radio" id="ruler{{id}}" name="toolbar" /><label for="ruler{{id}}">Ruler</label>
-      </span>
-      <!--<button id="delete{{id}}" name="delete">delete</button>
-      <input type="checkbox" name="rotate" id="rotate{{id}}" /><label for="rotate{{id}}">Rotate</label>
-      <input type="checkbox" name="resize" id="resize{{id}}" /><label for="resize{{id}}">Resize</label>
-      <input type="checkbox" name="drag" id="drag{{id}}" /><label for="drag{{id}}">Drag</label>
-      <input type="checkbox" name="irregular" id="irregular{{id}}" /><label for="irregular{{id}}">Irregular</label>-->
-
-    </div>
-    <div class="map" id="map{{id}}"></div>
-    <div>
-      <div class="overviewPanel" id="overviewMap{{id}}"></div>
-      <div class="layerSwitcherPanel" id="layerSwitcher{{id}}"></div>
-      <div class="ontologypanel" id="ontologyTree{{id}}"></div>
-    </div>
-  </div>
-</script>
 
 
-<script type="text/html" id="popupannotationtpl">
-  <div class="popupPanel">
-    <ul>
-      <li>Area : {{area}}</li>
-      <li>Perimeter : {{perimeter}}</li>
-    </ul>
-  </div>
-</script>
-
-<script type="text/html" id="popupmeasuretpl">
-  <div class="popupPanel">
-    <ul>
-      <li>Length : {{length}}</li>
-    </ul>
-  </div>
-</script>
 <!-- Application -->
 <script type="text/javascript" src="application/Utilities.js" ></script>
 <!-- controllers -->
