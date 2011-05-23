@@ -98,7 +98,6 @@ class RestAnnotationController extends RestController {
     def json = request.JSON
     println "json = " + json
     println "json.location = " + json.location
-
     try {
       String form = json.location;
 
@@ -106,7 +105,7 @@ class RestAnnotationController extends RestController {
       println "points=" + annotationFull.getNumPoints() + " " + annotationFull.getArea();
 
       int i = 0;
-      while(annotationFull.getNumPoints()>50)
+      while(annotationFull.getNumPoints()>100)
       {
         println "annotationFull:"+annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
         annotationFull = DouglasPeuckerSimplifier.simplify(annotationFull,i)
@@ -114,7 +113,6 @@ class RestAnnotationController extends RestController {
       }
       json.location =  new WKTWriter().write(annotationFull)
     } catch(Exception e) {}
-
     log.info "User:" + currentUser.username + " transaction:" +  currentUser.transactionInProgress  + " request:" +json.toString()
     Command addAnnotationCommand = new AddAnnotationCommand(postData : json.toString(), user: currentUser)
     def result = processCommand(addAnnotationCommand, currentUser)

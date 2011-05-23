@@ -617,9 +617,34 @@
 
 <script type="text/html" id="ontologyviewtpl">
   <div id='ontologytreepanel'>
-
+       <div id="tabsontology">
+            <ul id="ultabsontology">
+              <!-- add a -->
+            </ul>
+            <!-- add div -->
+            <div id="listtabontology"></div>
+          </div>
   </div>
 </script>
+
+<script type="text/html" id="ontologytitletabtpl">
+        <li><a href="#tabsontology-{{id}}">{{name}}</a></li>
+</script>
+
+<script type="text/html" id="ontologydivtabtpl">
+<div id="tabsontology-{{id}}">
+  <div id="treeontology-{{id}}" style="background:black;"></div>
+</div>
+</script>
+
+
+
+
+
+
+
+
+
 
 <script type="text/html" id="imageontologyviewtpl">
   <div class="tree"></div>

@@ -741,7 +741,7 @@ AnnotationLayer.prototype = {
                         var terms = alias.ontologyTreeView.getTermsChecked();
                         var counter = 0;
                         if (terms.length == 0) {
-                            alias.addTermCallback(0,0,feature, newFeature);
+                            alias.addTermCallback(0,0,feature, newFeature,response);
                         }
 
                         _.each(terms, function (id) {
@@ -749,13 +749,14 @@ AnnotationLayer.prototype = {
                                 term: id,
                                 annotation: response.annotation.id
                             }).save(null, {success : function (model, response) {
-                                alias.addTermCallback(terms.length, ++counter, feature, newFeature);
+                                alias.addTermCallback(terms.length, ++counter, feature, newFeature,response);
                             }});
                         });
 
                     },
                     error: function (model, response) {
-                        console.log("error new annotation id");
+                        var json = $.parseJSON(response.responseText);
+                        window.app.view.message("Add annotation", "error:"+json.errors, "");
                     }
                 });
 
@@ -766,12 +767,14 @@ AnnotationLayer.prototype = {
         });
 
     },
-    addTermCallback : function(total, counter, oldFeature, newFeature) {
+    addTermCallback : function(total, counter, oldFeature, newFeature,response) {
         if (counter < total) return;
         this.addFeature(newFeature);
         this.controls.select.unselectAll();
         this.controls.select.select(newFeature);
         this.vectorsLayer.removeFeatures([oldFeature]);
+        console.log(response);
+        window.app.view.message("Add annotation", response.message, "");
         new EndTransactionModel({}).save();
     },
     removeTermCallback : function(total, counter, feature,idAnnotation) {
