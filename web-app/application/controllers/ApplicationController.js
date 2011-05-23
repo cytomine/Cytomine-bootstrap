@@ -16,10 +16,10 @@ var ApplicationController = Backbone.Controller.extend({
 
        startup : function () {
           var self = this;
-          require(["text!application/templates/LoadingDialog.tpl.html"], function(html) {
+          require(["text!application/templates/auth/LoadingDialog.tpl.html"], function(tpl) {
              var dialog = new ConfirmDialogView({
                     el:'#dialogs',
-                    template : _.template(html, {}),
+                    template : _.template(tpl, {}),
                     dialogAttr : {
                        dialogID : "#loading-dialog",
                        width : 475,
@@ -70,7 +70,7 @@ var ApplicationController = Backbone.Controller.extend({
              this.controllers.image        = new ImageController();
              this.controllers.project      = new ProjectController();
              this.controllers.dashboard    = new DashboardController();
-             this.controllers.browse       = new BrowseController();
+             this.controllers.browse       = new ExplorerController();
              this.controllers.term         = new TermController();
              this.controllers.ontology     = new OntologyController();
              this.controllers.upload       = new UploadController();
@@ -81,7 +81,7 @@ var ApplicationController = Backbone.Controller.extend({
 
        initialize : function () {
           var self = this;
-          require(["text!application/templates/ServerDownDialog.tpl.html"], function(html) {
+          require(["text!application/templates/ServerDownDialog.tpl.html"], function(tpl) {
 
              self.view = new ApplicationView({
                     el: $('#app')
@@ -94,7 +94,7 @@ var ApplicationController = Backbone.Controller.extend({
                 $("#app").fadeOut('slow');
                 var dialog = new ConfirmDialogView({
                        el:'#dialogs',
-                       template : _.template(html, {}),
+                       template : _.template(tpl, {}),
                        dialogAttr : {
                           dialogID : "#server-down"
                        }

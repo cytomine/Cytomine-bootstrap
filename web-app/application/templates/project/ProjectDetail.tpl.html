@@ -1,0 +1,35 @@
+<div id='projectlist{{id}}' class="projectlist">
+    <h3>{{name}}</h3>
+    <div>
+        <table class='projecttable'>
+            <tr>
+                <td colspan="1" width="33%">
+                    <ul>
+                        <li>Name: {{name}} </li>
+                        <li>Ontology: {{ontology}} </li>
+                    </ul>
+                </td>
+                <td colspan="1" width="33%">
+                    <ul>
+                        <li class="numberOfSlides">{{numberOfSlides}} samples </li>
+                        <li class="numberOfImages">{{numberOfImages}} images </li>
+                        <li class="numberOfAnnotations">{{numberOfAnnotations}} annotations </li>
+                    </ul>
+                </td>
+                <td colspan="1" width="33%">
+                    <li>{{users}} </li>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <!--<button class="seeSlide" id='projectopenimages{{id}}' type="button">Preview</button>-->
+                </td>
+                <td><button class="addSlide" id='projectaddimages{{id}}' type="button">Manage samples</button> </td>
+                <!--<td><input class="changeProject" id='radioprojectchange{{id}}' type="radio" name="project"><label for='radioprojectchange{{id}}'>Explore</label></input> </td>-->
+                <td><a class="changeProject" id='radioprojectchange{{id}}' href="#dashboard/{{id}}">Explore</a></td>
+            <tr>
+        </table>
+
+    </div>
+    <br><br>
+</div>

@@ -1,5 +1,5 @@
 
-var BrowseController = Backbone.Controller.extend({
+var ExplorerController = Backbone.Controller.extend({
 
     tabs : null,
 

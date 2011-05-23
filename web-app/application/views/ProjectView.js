@@ -1,98 +1,109 @@
 var ProjectView = Backbone.View.extend({
-    tagName : "div",
-    model : null,
-    el : null,
-    container : null,
-    searchProjectPanel : null,
-    searchProjectPanelElem : "#searchProjectPanel",
-    projectListElem : "#projectlist",
-    addProjectDialog : null,
+       tagName : "div",
+       model : null,
+       el : null,
+       container : null,
+       searchProjectPanel : null,
+       searchProjectPanelElem : "#searchProjectPanel",
+       projectListElem : "#projectlist",
+       addProjectDialog : null,
 
-    initialize: function(options) {
-        this.container = options.container;
-        this.model = options.model;
-        this.el = options.el;
-    },
-    render: function() {
-        console.log("ProjectView: render");
+       initialize: function(options) {
+          this.container = options.container;
+          this.model = options.model;
+          this.el = options.el;
+       },
+       render : function () {
+          var self = this;
+          require([
+             "text!application/templates/project/ProjectList.tpl.html"
+          ],
+              function(tpl) {
+                 self.doLayout(tpl);
+              });
 
-        var self = this;
-        $(this.el).html(ich.projectsviewtpl({}, true));
+          return this;
+       },
+       doLayout: function(tpl) {
+          console.log("ProjectView: render");
 
-        //print search panel
-        self.loadSearchProjectPanel();
+          var self = this;
+          $(this.el).html(_.template(tpl, {}));
 
-        //print all project panel
-        self.loadProjectsListing();
+          //print search panel
+          self.loadSearchProjectPanel();
 
-        return this;
-    },
-    /**
-     * Refresh all project panel
-     */
-    refresh : function() {
-        console.log("ProjectView: refresh");
-        var self = this;
-        //TODO: project must be filter by user?
-        var idUser =  undefined;
-        new ProjectCollection({user : idUser}).fetch({
-            success : function (collection, response) {
-                self.model = collection;
-                self.render();
-            }});
+          //print all project panel
+          self.loadProjectsListing();
+
+          return this;
+       },
+       /**
+        * Refresh all project panel
+        */
+       refresh : function() {
+          console.log("ProjectView: refresh");
+          var self = this;
+          //TODO: project must be filter by user?
+          var idUser =  undefined;
+          new ProjectCollection({user : idUser}).fetch({
+                 success : function (collection, response) {
+                    self.model = collection;
+                    self.render();
+                 }});
 
 
-    },
-    /**
-     * Create search project panel
-     */
-    loadSearchProjectPanel : function() {
-        console.log("ProjectView: searchProjectPanel");
+       },
+       /**
+        * Create search project panel
+        */
+       loadSearchProjectPanel : function() {
+          console.log("ProjectView: searchProjectPanel");
 
-        var self = this;
-        //create project search panel
-        self.searchProjectPanel = new ProjectSearchPanel({
-            model : self.model,
-            ontologies : window.app.models.ontologies,
-            el:$("#projectViewNorth"),
-            container : self,
-            projectsPanel : self
-        }).render();
-    },
-    /**
-     * Print all project panel
-     */
-    loadProjectsListing : function() {
-        var self = this;
-        //clear de list
-        $(self.projectListElem).empty();
+          var self = this;
+          //create project search panel
+          self.searchProjectPanel = new ProjectSearchPanel({
+                 model : self.model,
+                 ontologies : window.app.models.ontologies,
+                 el:$("#projectViewNorth"),
+                 container : self,
+                 projectsPanel : self
+              }).render();
+       },
+       /**
+        * Print all project panel
+        */
+       loadProjectsListing : function() {
+          var self = this;
+          //clear de list
+          $(self.projectListElem).empty();
 
-        //print each project panel
-        self.model.each(function(project) {
-            var panel = new ProjectPanelView({
-                model : project,
-                projectsPanel : self
-            }).render();
+          //print each project panel
+          self.model.each(function(project) {
+             var panel = new ProjectPanelView({
+                    model : project,
+                    projectsPanel : self
+                 }).render();
 
-            $(self.projectListElem).append(panel.el);
+             $(self.projectListElem).append(panel.el);
 
-        });
-    },
-    /**
-     * Show all project from the collection and hide the other
-     * @param projectsShow  Project collection
-     */
-    showProjects : function(projectsShow) {
-        var self = this;
-        self.model.each(function(project) {
-            //if project is in project result list, show it
-            if(projectsShow.get(project.id)!=null)
+          });
+       },
+       /**
+        * Show all project from the collection and hide the other
+        * @param projectsShow  Project collection
+        */
+       showProjects : function(projectsShow) {
+          var self = this;
+          self.model.each(function(project) {
+             //if project is in project result list, show it
+             if(projectsShow.get(project.id)!=null)
 
                 $(self.projectListElem+project.id).show();
-            else
+             else
                 $(self.projectListElem+project.id).hide();
-        });
-    }
+          });
+       }
 
 
-});
+    });

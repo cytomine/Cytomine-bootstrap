@@ -24,8 +24,8 @@ var ApplicationView = Backbone.View.extend({
        initialize: function(options) {
           this.initComponents();
        },
-       doLayout: function(html) {
-          $(this.el).html(_.template(html, {}));
+       doLayout: function(tpl) {
+          $(this.el).html(_.template(tpl, {}));
           _.each(this.components, function (component) {
              component.render();
           });
@@ -38,8 +38,8 @@ var ApplicationView = Backbone.View.extend({
           require([
              "text!application/templates/BaseLayout.tpl.html"
           ],
-              function(html) {
-                 self.doLayout(html);
+              function(tpl) {
+                 self.doLayout(tpl);
               });
        },
        initComponents : function() {
@@ -49,10 +49,10 @@ var ApplicationView = Backbone.View.extend({
              "text!application/templates/WarehouseComponent.tpl.html",
              "text!application/templates/explorer/ExplorerComponent.tpl.html"
           ],
-              function(upload, warehouse, explorer) {
+              function(uploadTpl, warehouseTpl, explorerTpl) {
                  self.components.upload = new Component({
                         el : "#content",
-                        template : _.template(upload, {}),
+                        template : _.template(uploadTpl, {}),
                         buttonAttr : {
                            elButton : "upload-button",
                            buttonText : "Upload",
@@ -65,7 +65,7 @@ var ApplicationView = Backbone.View.extend({
 
                  self.components.warehouse = new Component({
                         el : "#content",
-                        template : _.template(warehouse, {}),
+                        template : _.template(warehouseTpl, {}),
                         buttonAttr : {
                            elButton : "warehouse-button",
                            buttonText : "Organize",
@@ -77,7 +77,7 @@ var ApplicationView = Backbone.View.extend({
                      });
                  self.components.explorer = new Component({
                         el : "#content",
-                        template : _.template(explorer, {}),
+                        template : _.template(explorerTpl, {}),
                         buttonAttr : {
                            elButton : "explorer-button",
                            buttonText : "Explore",
@@ -127,11 +127,6 @@ var ApplicationView = Backbone.View.extend({
        },
 
        showComponent : function (component) {
-          /*for (var i in window.app.view.components) {
-           var c = window.app.view.components[i];
-           if (c == component) continue;
-           c.deactivate();
-           }*/
           _.each(this.components, function (c) {
              if (c != component) c.deactivate();
           });
@@ -152,15 +147,12 @@ ApplicationView.prototype.message =  function(title, message, type, pnotify,hist
       message.responseText && (message = message.responseText);
    }
 
-   var stack_bottomright = {"dir1": "up", "dir2": "left", "firstpos1": 15, "firstpos2": 15};
    var opts = {
       pnotify_title: title,
       pnotify_text: message,
       pnotify_notice_icon: "ui-icon ui-icon-info",
       pnotify_type : type,
       pnotify_history: history
-      //pnotify_addclass: "stack-bottomright",
-      //pnotify_stack: stack_bottomright
    };
    $.pnotify(opts);
 

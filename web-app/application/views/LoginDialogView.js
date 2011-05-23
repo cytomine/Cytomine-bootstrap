@@ -2,10 +2,10 @@ var LoginDialogView = Backbone.View.extend({
        tagName : "div",
        initialize: function(options) {
        },
-       doLayout: function(html) {
+       doLayout: function(tpl) {
           var dialog = new ConfirmDialogView({
                  el:'#dialogs',
-                 template : _.template(html, {version : window.app.status.version}),
+                 template : _.template(tpl, {version : window.app.status.version}),
                  dialogAttr : {
                     dialogID : "#login-confirm",
                     width : 475,
@@ -39,8 +39,8 @@ var LoginDialogView = Backbone.View.extend({
        },
        render: function() {
           var self = this;
-          require(["text!application/templates/LoginDialog.tpl.html"], function(html) {
-             self.doLayout(html);
+          require(["text!application/templates/auth/LoginDialog.tpl.html"], function(tpl) {
+             self.doLayout(tpl);
           });
        },
        close : function() {

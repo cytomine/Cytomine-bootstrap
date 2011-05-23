@@ -8,8 +8,8 @@ var BrowseImageView = Backbone.View.extend({
           this.initOptions = options.initOptions;
        },
 
-       doLayout: function (html) {
-          var tpl = _.template(html, this.model.toJSON());
+       doLayout: function (tpl) {
+          var tpl = _.template(tpl, this.model.toJSON());
           $(this.el).append(tpl);
           var tabs = $(this.el).children('.tabs');
           this.el.tabs("add", "#tabs-" + this.model.get('id'), this.model.get('filename'));
@@ -23,8 +23,8 @@ var BrowseImageView = Backbone.View.extend({
           var self = this;
           require([
              "text!application/templates/explorer/BrowseImage.tpl.html"
-          ], function(html) {
-             self.doLayout(html);
+          ], function(tpl) {
+             self.doLayout(tpl);
           });
        },
        show : function() {
@@ -103,8 +103,8 @@ var BrowseImageView = Backbone.View.extend({
           var self = this;
           require([
              "text!application/templates/explorer/LayerSwitcher.tpl.html"
-          ], function(html) {
-             var content = _.template(html, {id : self.model.get("id")});
+          ], function(tpl) {
+             var content = _.template(tpl, {id : self.model.get("id")});
              $("#layerSwitcher"+self.model.get("id")).html(content);
              new DraggablePanelView({
                     el : $('#layerSwitcher' + self.model.get('id'))
@@ -115,10 +115,10 @@ var BrowseImageView = Backbone.View.extend({
           var self = this;
           require([
              "text!application/templates/explorer/OverviewMap.tpl.html"
-          ], function(html) {
+          ], function(tpl) {
              new DraggablePanelView({
                     el : $('#overviewMap' + self.model.get('id')),
-                    template : _.template(html, {id : self.model.get('id')})
+                    template : _.template(tpl, {id : self.model.get('id')})
                  }).render();
           });
 
@@ -394,10 +394,10 @@ var BrowseImageView = Backbone.View.extend({
           var self = this;
           require([
              "text!application/templates/explorer/OntologyTree.tpl.html"
-          ], function(html) {
+          ], function(tpl) {
              new DraggablePanelView({
                     el : $('#ontologyTree' + self.model.get('id')),
-                    template : _.template(html, {id : self.model.get('id')})
+                    template : _.template(tpl, {id : self.model.get('id')})
                  }).render();
           });
        },
@@ -636,14 +636,14 @@ AnnotationLayer.prototype = {
       var self = this;
       require([
          "text!application/templates/explorer/PopupAnnotation.tpl.html"
-      ], function(html) {
+      ], function(tpl) {
          //console.log(e.type, e.feature.id, e.feature.attributes.idAnnotation);
          if(evt.feature.popup != null){
             return;
          }
          new AnnotationModel({id : evt.feature.attributes.idAnnotation}).fetch({
                 success : function (model, response) {
-                   var content = _.template(html, model.toJSON());
+                   var content = _.template(tpl, model.toJSON());
                    self.popup = new OpenLayers.Popup("",
                        new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
                        new OpenLayers.Size(200,60),
@@ -665,11 +665,11 @@ AnnotationLayer.prototype = {
       var self = this;
       require([
          "text!application/templates/explorer/PopupMeasure.tpl.html"
-      ], function(html) {
+      ], function(tpl) {
          if(evt.feature.popup != null){
             return;
          }
-         var content = _.template(html, {length:evt.feature.geometry.getLength()});
+         var content = _.template(tpl, {length:evt.feature.geometry.getLength()});
          self.popup = new OpenLayers.Popup("chicken",
              new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
              new OpenLayers.Size(200,60),

@@ -1,0 +1,29 @@
+<div id="addproject" title="Create project">
+    <div align="center" style="margin:auto;">
+        <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
+    </div>
+    <form id="login-form-add-project">
+        <fieldset>
+            <div id="projecterrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                    <strong>Error:</strong><div id="errormessage"></div></p>
+            </div>
+            <label for="project-name" >Name:</label>
+            <input type="text" size="20" id="project-name" value="" class="text ui-widget-content ui-corner-all" >
+            <table class="projecttable">
+                <tr>
+                    <td>
+                        <label for="projectontology" >Ontology:</label>
+                        <div id="projectontology"></div>
+                    </td>
+                    <td>
+
+                        <label for="projectuser" >Users:</label>
+                        <div id="projectuser"></div>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+</div>
+<!--addprojectdialogtpl-->
