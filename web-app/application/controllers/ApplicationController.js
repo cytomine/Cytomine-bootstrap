@@ -66,16 +66,19 @@ var ApplicationController = Backbone.Controller.extend({
               });
           if (cpt == expected) {
              $("#loading-dialog").dialog("close");
-             this.view.render();
-             this.controllers.image        = new ImageController();
-             this.controllers.project      = new ProjectController();
-             this.controllers.dashboard    = new DashboardController();
-             this.controllers.browse       = new ExplorerController();
-             this.controllers.term         = new TermController();
-             this.controllers.ontology     = new OntologyController();
-             this.controllers.upload       = new UploadController();
-             this.controllers.command      = new CommandController();
-             Backbone.history.start();
+             var startupCallback = function() {
+                window.app.controllers.image        = new ImageController();
+                window.app.controllers.project      = new ProjectController();
+                window.app.controllers.dashboard    = new DashboardController();
+                window.app.controllers.browse       = new ExplorerController();
+                window.app.controllers.term         = new TermController();
+                window.app.controllers.ontology     = new OntologyController();
+                window.app.controllers.upload       = new UploadController();
+                window.app.controllers.command      = new CommandController();
+                Backbone.history.start();
+             }
+             this.view.render(startupCallback);
+
           }
        },
 
