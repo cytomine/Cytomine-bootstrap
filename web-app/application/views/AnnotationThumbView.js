@@ -1,18 +1,21 @@
 var AnnotationThumbView = Backbone.View.extend({
 
-    events: {
+       events: {
 
-    },
+       },
 
-    initialize: function(options) {
-        this.id = "annotationthumb"+this.model.get('id');
-        _.bindAll(this, 'render');
-    },
+       initialize: function(options) {
+          this.id = "annotationthumb"+this.model.get('id');
+          _.bindAll(this, 'render');
+       },
 
-    render: function() {
-        var json = this.model.toJSON();
-        json.project = window.app.status.currentProject;
-        $(this.el).html(ich.annotationthumbtpl(json, true));
-        return this;
-    }
-});
+       render: function() {
+          var json = this.model.toJSON();
+          json.project = window.app.status.currentProject;
+          var self = this;
+          require(["text!application/templates/dashboard/AnnotationThumb.tpl.html"], function(tpl) {
+             $(self.el).html(_.template(tpl, json));
+          });
+          return this;
+       }
+    });

@@ -67,22 +67,11 @@
 </script>
 
 <script type="text/html" id="projectaddimageitem">
-
 </script>
 
-    <script type="text/html" id="dashboardviewtpl">
+<script type="text/html" id="dashboardviewtpl">
 </script>
 
-
-<script type="text/html" id="imageviewtpl">
-</script>
-
-<script type="text/html" id="annotationviewtpl">
-</script>
-
-<script type="text/html" id="termviewtpl">
-
-</script>
 
 
 <script type="text/html" id="ontologyviewtpl">
@@ -114,51 +103,10 @@
     </div>
 </script>
 
- <script type="text/html" id="imageontologyviewtpl">
-            <div class="tree"></div>
-</script>
 
 <script type="text/html" id="termitemviewtpl">
     <div class='thumb-info'><a href='#browse/{{ id }}'>Hello</a></div>
 </script>
-
-<script type="text/html" id="menubuttontpl">
-    <a id="{{ id }}" href="{{ route }}" style="margin-right:5px;">{{ text }}</a>
-</script>
-
-
-    <script type="text/html" id="imagerowtpl">
-        <!--<a href='#browse/{{ id }}'>-->
-            <a href="{{preview}}">
-            <img  title="{{filename}}"
-    alt="{{info}}"
-    src="{{preview}}">
-            </a>
-            <!--</a>-->
-</script>
-
-<script type="text/html" id="imageselecttpl">
-    <img src='{{ thumb }}' alt='{{ filename }}'  style="max-height:70px; max-width:70px; "  />
-</script>
-
-    <script type="text/html" id="imagethumbtpl">
-            <div class='thumb'><a href='#browse/{{project}}/{{ id }}'><img src='{{ thumb }}' alt='{{ filename }}'  style="max-height:180px; max-width:180px; "  /></a></div>
-    <div class='thumb-info'><a href='#browse/{{project}}/{{ id }}'>{{filename}}</a></div>
-</script>
-
-
-<script type="text/html" id="annotationthumbtpl">
-    <div class='thumb'><a href='#browse/{{project}}/{{ image }}/{{id}}'><img src='{{ cropURL }}' alt='{{ name }}' style="max-height:180px; max-width:180px; "  /></a></div>
-    <div class='thumb-info'>{{name}} <br> {{termList}}</div>
-</script>
-
-    <script type="text/html" id="taptpl">
-            <div class="tabs">
-            <ul></ul>
-            </div>
-</script>
-
-
 
 <!-- Application -->
 <script type="text/javascript" src="application/Utilities.js" ></script>
@@ -193,7 +141,6 @@
 <script type="text/javascript" src="application/views/ImageView.js" ></script>
 <script type="text/javascript" src="application/views/BrowseImageView.js" ></script>
 <script type="text/javascript" src="application/views/ImageThumbView.js" ></script>
-<script type="text/javascript" src="application/views/ImageRowView.js" ></script>
 <script type="text/javascript" src="application/views/TermView.js" ></script>
 <script type="text/javascript" src="application/views/OntologyView.js" ></script>
 <script type="text/javascript" src="application/views/OntologyTreeView.js" ></script>

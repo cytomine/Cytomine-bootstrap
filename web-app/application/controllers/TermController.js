@@ -8,8 +8,6 @@
 
 var TermController = Backbone.Controller.extend({
 
-
-
 	routes: {
 		"term"            :   "term" ,
 		"term/o:ontology"            :   "term"

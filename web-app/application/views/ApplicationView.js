@@ -99,7 +99,7 @@ var ApplicationView = Backbone.View.extend({
                  /*this.components.admin = new Component({
                   el : $("#content"),
                   //template : _.template($('#admin-tpl').html()),
-                  template : ich.admintpl({}, true),
+                  template :_.template(adminTpl, {}),
                   buttonAttr : {
                   elButton : "admin-button",
                   buttonText : "Admin Area",

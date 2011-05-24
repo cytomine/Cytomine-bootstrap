@@ -8,8 +8,6 @@ var AnnotationView = Backbone.View.extend({
     },
     render: function() {
         var self = this;
-        var tpl = ich.annotationviewtpl({page : (Math.abs(self.page)+1)}, true);
-        $(this.el).html(tpl);
 
         self.appendThumbs(self.page);
 

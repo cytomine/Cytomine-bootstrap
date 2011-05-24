@@ -145,56 +145,5 @@ var ProjectPanelView = Backbone.View.extend({
           if(isCurrentProject) $(self.projectChangeElem + self.model.id).click();
        },
        openImagesList: function(idProject) {
-          /*
-           var self = this;
-
-           if(!this.loadImages) {
-           //images are already loaded
-           $(self.el).find('.galleria').toggle(); //toggle(1000) doesn't work with isotope?
-           return;
-           }
-
-
-           this.loadImages = false;//don't load again images
-
-           var page = 0;
-
-           new ImageCollection({project:idProject}).fetch({
-           success: function(collection,response){
-           var cpt = 0;
-           var nb_thumb_by_page = 21;
-           var inf = Math.abs(page) * nb_thumb_by_page;
-           var sup = (Math.abs(page) + 1) * nb_thumb_by_page;
-           console.log("Model size=" + collection.length);
-
-           collection.each(function(image) {
-           if ((cpt >= inf) && (cpt < sup)) {
-           var thumb = new ImageRowView({
-           model : image
-           }).render();
-           $(self.el).find('.galleria').append(thumb.el);
-           }
-           cpt++;
-           });
-           $(self.el).find('.galleria').galleria({
-           width: 650,
-           height: 500,
-           imageCrop : 'width',
-           imagePan : true,
-           showInfo : true,
-           _toggleInfo: false,
-           overlayOpacity : 0.50
-
-           });
-
-           },
-           error: function(error){
-           for (property in error) {
-           console.log(property + ":" + error[property]);
-           }
-           }
-           });
-           */
-
        }
     });

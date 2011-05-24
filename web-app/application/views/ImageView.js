@@ -8,8 +8,7 @@ var ImageView = Backbone.View.extend({
     },
     render: function() {
         var self = this;
-        var tpl = ich.imageviewtpl({page : (Math.abs(self.page)+1)}, true);
-        $(this.el).html(tpl);
+
         self.appendThumbs(self.page);
 
         $(window).scroll(function(){

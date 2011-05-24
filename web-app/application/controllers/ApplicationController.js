@@ -71,7 +71,6 @@ var ApplicationController = Backbone.Controller.extend({
                 window.app.controllers.project      = new ProjectController();
                 window.app.controllers.dashboard    = new DashboardController();
                 window.app.controllers.browse       = new ExplorerController();
-                window.app.controllers.term         = new TermController();
                 window.app.controllers.ontology     = new OntologyController();
                 window.app.controllers.upload       = new UploadController();
                 window.app.controllers.command      = new CommandController();

@@ -28,8 +28,14 @@ var OntologyTreeView = Backbone.View.extend({
             node.setTitle(nodeTpl);
         });
     },
-    render: function() {
-        $(this.el).html(ich.imageontologyviewtpl({}, true));
+    render : function () {
+       var self = this;
+         require(["text!application/templates/explorer/OntologyTreeWrapper.tpl.html"], function(tpl) {
+             self.doLayout(tpl);
+          });
+    },
+    doLayout: function(tpl) {
+        $(this.el).html(_.template(tpl,{}));
         this.tree = $(this.el).find('.tree');
         var self = this;
 
