@@ -38,6 +38,24 @@ class RestOntologyController extends RestController {
     else responseNotFound("Ontology",params.id)
   }
 
+  def showWithOnlyParentTerm = {
+    log.info "show with id:" + params.id
+    Ontology ontology = Ontology.read(params.id)
+    log.info ontology
+    def jsonOntology = ontology.encodeAsJSON()
+    def jsonShow = JSON.parse(jsonOntology)
+
+    jsonShow.children.each { child ->
+      log.info child.children;
+    }
+
+
+
+    if(ontology!=null) responseSuccess(ontology)
+    else responseNotFound("Ontology",params.id)
+  }
+
+
 
   def add = {
     log.info "Add"

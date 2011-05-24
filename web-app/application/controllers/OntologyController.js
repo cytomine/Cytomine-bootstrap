@@ -18,6 +18,7 @@ var OntologyController = Backbone.Controller.extend({
     ontology : function(idOntology) {
         console.log("OntologyController:"+idOntology)
         if (!this.view) {
+             console.log("Ontology controller");
 
             this.view = new OntologyView({
                 model : window.app.models.ontologies,

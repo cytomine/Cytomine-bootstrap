@@ -32,6 +32,13 @@ class RestTermController extends RestController{
     else responseNotFound("Term",params.id)
   }
 
+  def showFull = {
+    log.info "Show:"+ params.id
+    Term term = Term.read(params.id)
+    if(term) responseSuccess(term)
+    else responseNotFound("Term",params.id)
+  }
+
   def listByOntology = {
     log.info "listByOntology " + params.idontology
     Ontology ontology = Ontology.read(params.idontology)

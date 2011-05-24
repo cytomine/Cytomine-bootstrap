@@ -20,7 +20,7 @@
     <script type="text/javascript" src="application/lib/backbone.js"></script>
     <script type="text/javascript" src="application/lib/mustache.js"></script>
     <script type="text/javascript" src="application/lib/ICanHaz.js"></script>
-    <script type="text/javascript" src="application/lib/json2.js" ></script>
+
 
     <!-- Modules -->
     <script type="text/javascript" src="application/lib/pnotify/jquery.pnotify.js" ></script>
@@ -43,6 +43,7 @@
     <!-- OpenLayers -->
     <script type="text/javascript" src="application/lib/openlayers/OpenLayers.js"></script>
     <script type="text/javascript" src="application/lib/openlayers/OpenURL.js"></script>
+
 
     <!-- Styles -->
     <link rel='stylesheet' href='application/css/reset.css' type='text/css'/>
@@ -70,37 +71,6 @@
 </script>
 
 <script type="text/html" id="dashboardviewtpl">
-</script>
-
-
-
-<script type="text/html" id="ontologyviewtpl">
-    <div id='ontologytreepanel'>
-        <div id="tabsontology">
-            <ul id="ultabsontology">
-                <!-- add a -->
-            </ul>
-            <!-- add div -->
-            <div id="listtabontology"></div>
-        </div>
-    </div>
-</script>
-
-<script type="text/html" id="ontologytitletabtpl">
-    <li><a href="#tabsontology-{{id}}">{{name}}</a></li>
-</script>
-
-<script type="text/html" id="ontologydivtabtpl">
-    <div id="tabsontology-{{id}}">
-        <button class="expanseOntology" id='buttonExpanseOntology{{id}}' type="button">Expand all</button>
-        <button class="collapseOntology" id='buttonCollapseOntology{{id}}' type="button">Collapse all</button>
-
-        <button class="addTerm" id='buttonAddTerm{{id}}' type="button">Add Term</button>
-        <button class="renameTerm" id='buttonRenameTerm{{id}}' type="button">Rename Term</button>
-        <button class="deleteTerm" id='buttonDeleteTerm{{id}}' type="button">Delete Term</button>
-        <br>
-        <div id="treeontology-{{id}}" style="background:black;"></div>
-    </div>
 </script>
 
 
@@ -141,7 +111,6 @@
 <script type="text/javascript" src="application/views/ImageView.js" ></script>
 <script type="text/javascript" src="application/views/BrowseImageView.js" ></script>
 <script type="text/javascript" src="application/views/ImageThumbView.js" ></script>
-<script type="text/javascript" src="application/views/TermView.js" ></script>
 <script type="text/javascript" src="application/views/OntologyView.js" ></script>
 <script type="text/javascript" src="application/views/OntologyTreeView.js" ></script>
 <script type="text/javascript" src="application/views/ProjectView.js" ></script>
@@ -155,6 +124,9 @@
 <script type="text/javascript" src="application/views/LoginDialogView.js" ></script>
 <script type="text/javascript" src="application/views/LogoutDialogView.js" ></script>
 <script type="text/javascript" src="application/views/Tabs.js" ></script>
+<script type="text/javascript" src="application/views/OntologyPanelView.js" ></script>
+<script type="text/javascript" src="application/views/OntologyAddTermView.js" ></script>
+
 
 <script type="text/javascript">
     $(function() {

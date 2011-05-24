@@ -10,59 +10,63 @@ var OntologyView = Backbone.View.extend({
     self : this,
     tabsOntologies : null,
     // template : _.template($('#image-view-tpl').html()),
-    events: {
-        "click .addTerm": "addTerm",
-        "click .renameTerm": "renameTerm",
-        "click .deleteTerm": "deleteTerm"
-    },
+
     initialize: function(options) {
         this.container = options.container;
         this.idOntology = options.idOntology;
     },
-    render: function() {
+
+    render : function () {
+        var self = this;
+        require([
+            "text!application/templates/ontology/OntologyList.tpl.html"
+        ],
+               function(tpl) {
+                   self.doLayout(tpl);
+               });
+
+        return this;
+    },
+    doLayout: function(tpl) {
         console.log("OntologyView.render");
 
         var self = this;
-        var tpl = ich.ontologyviewtpl({}, true);
-        $(this.el).html(tpl);
+        $(this.el).html(_.template(tpl, {}));
 
         self.initOntologyTabs();
         self.fetchOntologies();
 
         return this;
     },
-
-    addTerm : function() {
-        console.log("addTerm");
-
-    },
-    renameTerm : function() {
-        console.log("renameTerm");
-
-    },
-    deleteTerm : function() {
-        console.log("deleteTerm");
-
-    },
+    /**
+     * Init annotation tabs
+     */
     initOntologyTabs : function(){
         var self = this;
-        console.log("OntologyView: initOntologyTabs");
-        console.log("OntologyView: initOntologyTabs create "+ self.model.length);
+        require(["text!application/templates/ontology/OntologyTab.tpl.html", "text!application/templates/ontology/OntologyTabContent.tpl.html"], function(ontologyTabTpl, ontologyTabContentTpl) {
+            console.log("OntologyView: initOntologyTabs");
+            console.log("OntologyView: initOntologyTabs create "+ self.model.length);
+            //add "All annotation from all term" tab
 
-                self.model.each(function(ontology) {
-                    //add x term tab
-                    self.addOntologyToTab(ontology.get("id"),ontology.get("name"));
-                });
 
-                if(self.tabsOntologies==null)
-                    self.tabsOntologies = $("#tabsontology").tabs();
+            self.model.each(function(ontology) {
+                //add x term tab
+                self.addOntologyToTab(ontologyTabTpl, ontologyTabContentTpl, { id : ontology.get("id"), name : ontology.get("name")});
+            });
 
+            if(self.tabsOntologies==null)
+                self.tabsOntologies = $("#tabsontology").tabs();
+
+        });
     },
-    addOntologyToTab : function(id, name) {
-        var ontologyelem = ich.ontologytitletabtpl({name:name,id:id});
-        $("#ultabsontology").append(ontologyelem);
-        var contentontologyelem = ich.ontologydivtabtpl({name:name,id:id});
-        $("#listtabontology").append(contentontologyelem);
+    /**
+     * Add the the tab with term info
+     * @param id  term id
+     * @param name term name
+     */
+    addOntologyToTab : function(ontologyTabTpl, ontologyTabContentTpl, data) {
+        $("#ultabsontology").append(_.template(ontologyTabTpl, data));
+        $("#listtabontology").append(_.template(ontologyTabContentTpl, data));
     },
     fetchOntologies : function () {
         console.log("OntologyView: fetchOntologies");
@@ -70,83 +74,17 @@ var OntologyView = Backbone.View.extend({
         var self = this;
         //init specific panel
         self.model.each(function(ontology) {
-            //$("#tabsontology-"+ontology.get("id")).empty();
-            self.buildOntologyTree(ontology);
-            self.initButton(ontology)
+            //create project search panel
+            new OntologyPanelView({
+                model : ontology,
+                el:$("#tabsontology-"+ontology.id),
+                container : self,
+                ontologiesPanel : self
+            }).render();
         });
-
-
-    },
-    buildOntologyTree : function(ontology) {
-        console.log("buildOntologyTree for ontology " + ontology.id);
-
-        console.log(ontology.toJSON());
-        console.log("#treeontology-"+ontology.id);
-        $("#treeontology-"+ontology.id).dynatree({
-            checkbox: true,
-            selectMode: 3,
-            expand : true,
-            onExpand : function() { console.log("expanding/collapsing");},
-            children: ontology.toJSON(),
-            onSelect: function(select, node) {
-
-                if (node.isSelected()) {
-                    console.log("Check");
-                } else if (!node.isSelected()) {
-                    console.log("Uncheck");
-                }
-
-
-            },
-            onDblClick: function(node, event) {
-                console.log("Double click");
-            },
-
-            // The following options are only required, if we have more than one tree on one page:
-            initId: "treeDataOntology"+this.model.id,
-            cookieId: "dynatree-CbOntology"+this.model.id,
-            idPrefix: "dynatree-CbOntology"+this.model.id+"-"
-        });
-         //expand all nodes
-        $("#treeontology-"+ontology.id).dynatree("getRoot").visit(function(node){
-            node.expand(true);
-        });
-
-    },
-    initButton : function(ontology) {
-
-        $("#buttonExpanseOntology"+ontology.id).button({
-            icons : {secondary: "ui-icon-circle-arrow-s" }
-        });
-        $("#buttonCollapseOntology"+ontology.id).button({
-            icons : {secondary: "ui-icon-circle-arrow-n" }
-        });
-
-        $('#buttonAddTerm'+ontology.id).button({
-            icons : {secondary: "ui-icon-plus" }
-        });
-        $('#buttonRenameTerm'+ontology.id).button({
-            icons : {secondary: "ui-icon-pencil" }
-        });
-        $('#buttonDeleteTerm'+ontology.id).button({
-            icons : {secondary: "ui-icon-trash" }
-        });
-
-        $("#buttonExpanseOntology"+ontology.id).click(function(){
-          $("#treeontology-"+ontology.id).dynatree("getRoot").visit(function(node){
-            node.expand(true);
-          });
-          return false;
-        });
-        $("#buttonCollapseOntology"+ontology.id).click(function(){
-          $("#treeontology-"+ontology.id).dynatree("getRoot").visit(function(node){
-            node.expand(false);
-          });
-          return false;
-        });
-
-
 
 
     }
+
+
 });

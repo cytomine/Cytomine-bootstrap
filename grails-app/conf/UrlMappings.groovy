@@ -161,6 +161,9 @@ class UrlMappings {
     "/api/ontology"(controller:"restOntology"){
       action = [GET: "list",POST:"add"]
     }
+    "/api/ontology/$id/node"(controller:"restOntology"){
+      action = [GET: "showWithOnlyParentTerm"]
+    }
     "/api/ontology/$id"(controller:"restOntology"){
       action = [GET:"show",PUT:"update", DELETE:"delete"]
     }

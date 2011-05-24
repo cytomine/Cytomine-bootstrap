@@ -1,0 +1,19 @@
+<div id="dialog-add-ontology-term" title="Add new term">
+	<p class="validateTips">All form fields are required.</p>
+
+	<form id="form-add-ontology-term">
+	<fieldset>
+        <div id="ontologytermerrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+            <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                <strong>Error:</strong><div id="ontologytermerrormessage"></div></p>
+        </div>
+		<label for="termname">Name</label>
+		<input type="text" name="name" id="termname" class="text ui-widget-content ui-corner-all" />
+		<label for="termparent">Parent</label>
+        <select name="parent" id="termparent">
+
+        </select>
+        <input type="color" value="#ff0667" data-hex="true" />
+	</fieldset>
+	</form>
+</div>
