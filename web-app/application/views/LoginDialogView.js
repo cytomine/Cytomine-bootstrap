@@ -46,7 +46,4 @@ var LoginDialogView = Backbone.View.extend({
        close : function() {
           $('#login-form').close();
        }
-
-
-
     });

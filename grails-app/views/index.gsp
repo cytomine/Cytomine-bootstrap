@@ -4,9 +4,5 @@
 </head>
 <body>
 <div id="header">
-
 </div>
-
-
-
 </body>

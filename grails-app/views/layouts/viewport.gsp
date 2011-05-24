@@ -49,43 +49,7 @@
     <link rel='stylesheet' href='application/css/cytomine.css' type='text/css'/>
 <body>
 <!-- Templates -->
-<script type="text/html" id="userlisttpl">
-    <li><div align="center"><span class="ui-icon ui-icon-person"></span></div><label style="display: inline">{{name}}</label></li>
-</script>
-
-    <script type="text/html" id="annotationcommandlisttpl">
-            <li>
-            <hr>
-            <div align="center">
-            <img src="images/icons/{{icon}}" style="display: inline"></img>
-            <br>
-    {{datestr}}
-    <br>
-    <label style="display: inline">{{text}}</label>
-    <img class="thumbcommand" src="{{image}}" width=150></img>
-            </div>
-            <br>
-            </li>
-</script>
-
-<script type="text/html" id="annotationtermcommandlisttpl">
-    <li>
-        <hr>
-        <div align="center">
-            <span class="ui-icon {{icon}}"></span>
-
-
-            {{datestr}} <br>
-            <label style="display: inline">{{text}}</label>
-        </div>
-        <br>
-    </li>
-</script>
-
-
-
-
-    <script type="text/html" id="addlisttpl">
+   <script type="text/html" id="addlisttpl">
             <li><div align="center"><span class="ui-icon ui-icon-plus"></span></div>{{datestr}}<label style="display: inline">{{text}}</label></li>
 </script>
 <script type="text/html" id="editlisttpl">
@@ -94,129 +58,6 @@
     <script type="text/html" id="deletelisttpl">
             <li><div align="center"><span class="ui-icon ui-icon-trash"></span></div>{{datestr}}<label style="display: inline">{{text}}</label></li>
 </script>
-
-<script type="text/html" id="projectdashboardviewtpl">
-    <div id="tabs-0" style="overflow : auto; height: 100%;">
-        <div id='nameDashboardInfo{{id}}' class="projectname"><h3></h3><div style="font-size: x-large; text-align : center;">{{name}}</div></div>
-
-        <div id="lLeft">
-            <div id="projectInfoPanel" class="navPanel" style="text-align:center; ">
-                <h3>Project Info</h3>
-                <div>
-                    <ul>
-                        <li>Name: <label id="projectInfoName" style="display: inline;">{{name}}</label></li>
-                        <li>Ontology: <label id="projectInfoOntology" style="display: inline;">{{ontology}}</label> </li>
-                        <br>
-                        <li><label id="projectInfoNumberOfSlides" style="display: inline;">{{numberOfSlides}}</label> slides </li>
-                        <li><label id="projectInfoNumberOfImages" style="display: inline;">{{numberOfImages}}</label> images </li>
-                        <li><label id="projectInfoNumberOfAnnotations" style="display: inline;">{{numberOfAnnotations}}</label> annotations </li>
-                        <br>
-                        <li><div id="projectInfoUserList"></div> </li>
-                        <br>
-                        <li>Created <label id="projectInfoCreated" style="display: inline;">{{created}}</label> </li>
-                        <li>Updated <label id="projectInfoUpdated" style="display: inline;">{{updated}}</label> </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-
-        <div id="lRight">
-            <div id="projectLastCommandPanel" class="navPanel">
-                <h3>Last action...</h3>
-                <div>
-                    Last actions:
-                    <ul>
-                        <div id="lastactionitem"></div>
-                    </ul>
-                    <b>Notes:</b>
-                    <ul>
-                        <li>Not yet filter by project :-)</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div id="centerpanel">
-            <div id="lCenter">
-                <div id="desktop">
-                    <p>
-
-                    </p>
-                    <div id="projectStatsPanel" class="centralPanel">
-                        <h3>Project stats</h3>
-                        <div>
-                            Project stats by term on annotation:
-                            <div id="plotterms"></div>
-                            <div id="flotterms" class="graph"></div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            <div id="lCenter2">
-                <div id="desktop2">
-                    <p>
-                    </p>
-                    <div id="projectImagesPanel" class="centralPanel">
-                        <h3>Project images</h3>
-                        <div id="projectImageList">
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="lCenter3" style="margin-bottom:100px">
-            <div id="desktop3">
-                <p>
-                </p>
-
-
-                <div id="projectAnnotationsPanel" class="centralPanel">
-                    <h3>Project annotations</h3>
-
-                    <div id="tabsannotation">
-                        <ul id="ultabsannotation">
-                            <!-- add a -->
-                        </ul>
-                        <!-- add div -->
-                        <div id="listtabannotation"></div>
-                    </div>
-
-
-
-
-
-
-
-                    <div id="projectAnnotationList">
-
-                    </div>
-
-
-
-
-                    <br> <br><br><br><br><br><br><br><br><br><br><br><br><br>   <!-- Pour afficher l'ascenceur jusqu'en bas...c'ets bourrin...-->
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
-</script>
-
-    <script type="text/html" id="termtitletabtpl">
-            <li><a href="#tabsterm-{{id}}">{{name}}</a></li>
-</script>
-
-<script type="text/html" id="termdivtabtpl">
-    <div id="tabsterm-{{id}}"></div>
-</script>
-
 
 <script type="text/html" id="projectchangedialog">
     <div id='projectchangedialog{{id}}' title="Change current project">
@@ -270,25 +111,10 @@
         <button class="deleteTerm" id='buttonDeleteTerm{{id}}' type="button">Delete Term</button>
         <br>
         <div id="treeontology-{{id}}" style="background:black;"></div>
-
-
-
-
-
-
     </div>
 </script>
 
-
-
-
-
-
-
-
-
-
-    <script type="text/html" id="imageontologyviewtpl">
+ <script type="text/html" id="imageontologyviewtpl">
             <div class="tree"></div>
 </script>
 

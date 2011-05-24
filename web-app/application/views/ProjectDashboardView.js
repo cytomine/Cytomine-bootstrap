@@ -6,456 +6,455 @@
  * To change this template use File | Settings | File Templates.
  */
 var ProjectDashboardView = Backbone.View.extend({
-    tagName : "div",
-    projectElem : "#projectdashboardinfo",  //div with project info
-    tabsAnnotation : null,
-    images : null,
-    imagesView : null, //image view
-    annotationsViews : null, //array of annotation view
-    initialize: function(options) {
-        this.container = options.container;
-        _.bindAll(this, 'render');
-    },
-    events: {
-    },
-    /**
-     * Print all information for this project
-     */
-    render: function() {
-        this.images = new Array();
-        this.printProjectInfo();
-        return this;
-    },
-    /**
-     * Refresh all information for this project
-     */
-    refresh : function() {
-        console.log("refresh....");
-        var self = this;
+       tagName : "div",
+       projectElem : "#projectdashboardinfo",  //div with project info
+       tabsAnnotation : null,
+       images : null,
+       imagesView : null, //image view
+       annotationsViews : null, //array of annotation view
+       rendered : false,
+       initialize: function(options) {
+          this.container = options.container;
+          _.bindAll(this, 'render');
+       },
+       events: {
+       },
+       /**
+        * Print all information for this project
+        */
+       render: function() {
+          var self = this;
+          require(["text!application/templates/dashboard/Dashboard.tpl.html"], function(tpl) {
+             self.images = new Array();
+             self.doLayout(tpl);
+             self.rendered = true;
+          });
+          return this;
+       },
+       /**
+        * Refresh all information for this project
+        */
+       refresh : function() {
+          var self = this;
+          if (!self.rendered) return;
 
-        var projectModel = new ProjectModel({id : self.model.id});
-        var projectCallback = function(model, response) {
-            console.log(model);
-            self.model = model;
+          var projectModel = new ProjectModel({id : self.model.id});
+          var projectCallback = function(model, response) {
+             console.log(model);
+             self.model = model;
 
-            self.fetchProjectInfo();
-            self.refreshImages();
-            self.refreshAnnotations();
-            self.fetchCommands();
-            self.fetchStats();
+             self.fetchProjectInfo();
+             self.refreshImages();
+             self.refreshAnnotations();
+             self.fetchCommands();
+             self.fetchStats();
 
-        }
+          }
 
-        projectModel.fetch({
-            success : function(model, response) {
-                projectCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-            }
-        });
+          projectModel.fetch({
+                 success : function(model, response) {
+                    projectCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+                 }
+              });
 
-    },
-    /**
-     * Init annotation tabs
-     */
-    initTabs : function(){
-        var self = this;
+       },
+       /**
+        * Init annotation tabs
+        */
+       initTabs : function(){
+          var self = this;
+          var idOntology = self.model.get('ontology');
+          require(["text!application/templates/dashboard/TermTab.tpl.html", "text!application/templates/dashboard/TermTabContent.tpl.html"], function(termTabTpl, termTabContentTpl) {
+             new TermCollection({idOntology:idOntology}).fetch({
+                    success : function (collection, response) {
+                       //add "All annotation from all term" tab
+                       self.addTermToTab(termTabTpl, termTabContentTpl, { id : "all", name : "All"});
 
-        var idOntology = self.model.get('ontology');
+                       collection.each(function(term) {
+                          //add x term tab
+                          self.addTermToTab(termTabTpl, termTabContentTpl, { id : term.get("id"), name : term.get("name")});
+                       });
 
-        new TermCollection({idOntology:idOntology}).fetch({
-            success : function (collection, response) {
+                       if(self.tabsAnnotation==null)
+                          self.tabsAnnotation = $("#tabsannotation").tabs();
+                       self.fetchAnnotations();
+                    }});
+          });
+       },
+       /**
+        * Add the the tab with term info
+        * @param id  term id
+        * @param name term name
+        */
+       addTermToTab : function(termTabTpl, termTabContentTpl, data) {
+          $("#ultabsannotation").append(_.template(termTabTpl, data));
+          $("#listtabannotation").append(_.template(termTabContentTpl, data));
+       },
+       /**
+        * Load annotations on annotation tabs
+        * -'All' tab: all annotation for this project
+        * -'X' tab: all annotation for this project and the term X
+        */
+       fetchAnnotations : function () {
+          console.log("ProjectDashboardView: fetchAnnotations");
 
-                //add "All annotation from all term" tab
-                self.addTermToTab("all","All");
+          var self = this;
+          self.annotationsViews = new Array();
+          //init panel for all annotation (with or without term
+          new AnnotationCollection({project:self.model.id}).fetch({
+                 success : function (collection, response) {
+                    $("#tabsterm-all").empty();
 
-                collection.each(function(term) {
-                    //add x term tab
-                    self.addTermToTab(term.get("id"),term.get("name"));
-                });
+                    var view = new AnnotationView({
+                           page : undefined,
+                           model : collection,
+                           el:$("#tabsterm-all"),
+                           container : window.app.view.components.warehouse
+                        }).render();
+                    self.annotationsViews[0] = view;
+                 }
+              });
 
-                if(self.tabsAnnotation==null)
-                    self.tabsAnnotation = $("#tabsannotation").tabs();
-                self.fetchAnnotations();
-            }});
-    },
-    /**
-     * Add the the tab with term info
-     * @param id  term id
-     * @param name term name
-     */
-    addTermToTab : function(id, name) {
-        var termelem = ich.termtitletabtpl({name:name,id:id});
-        $("#ultabsannotation").append(termelem);
-        var contenttermelem = ich.termdivtabtpl({name:name,id:id});
-        $("#listtabannotation").append(contenttermelem);
-    },
-    /**
-     * Load annotations on annotation tabs
-     * -'All' tab: all annotation for this project
-     * -'X' tab: all annotation for this project and the term X
-     */
-    fetchAnnotations : function () {
-        console.log("ProjectDashboardView: fetchAnnotations");
+          //init specific panel for each term
+          new TermCollection({idOntology:self.model.get('ontology')}).fetch({
+                 success : function (collection, response) {
+                    //init specific panel
+                    collection.each(function(term) {
+                       $("#tabsterm-"+term.get("id")).empty();
+                       new AnnotationCollection({term:term.get("id"),project:self.model.id}).fetch({
+                              success : function (collection, response) {
+                                 console.log("AnnotationCollection by term " + term.get("name") + " = "  + collection.length);
+                                 var view = new AnnotationView({
+                                        page : undefined,
+                                        model : collection,
+                                        el:$("#tabsterm-"+term.get("id")),
+                                        container : window.app.view.components.warehouse
+                                     }).render();
+                                 self.annotationsViews[term.id] = view;
+                              }});
 
-        var self = this;
-        self.annotationsViews = new Array();
-        //init panel for all annotation (with or without term
-        new AnnotationCollection({project:self.model.id}).fetch({
-            success : function (collection, response) {
-                $("#tabsterm-all").empty();
+                    });
+                 }
+              });
 
-                var view = new AnnotationView({
-                    page : undefined,
-                    model : collection,
-                    el:$("#tabsterm-all"),
-                    container : window.app.view.components.warehouse
-                }).render();
-                self.annotationsViews[0] = view;
-            }
-        });
+       },
+       refreshAnnotations : function () {
+          console.log("ProjectDashboardView: fetchAnnotations");
 
-        //init specific panel for each term
-        new TermCollection({idOntology:self.model.get('ontology')}).fetch({
-            success : function (collection, response) {
-                //init specific panel
-                collection.each(function(term) {
-                    $("#tabsterm-"+term.get("id")).empty();
-                    new AnnotationCollection({term:term.get("id"),project:self.model.id}).fetch({
-                        success : function (collection, response) {
-                            console.log("AnnotationCollection by term " + term.get("name") + " = "  + collection.length);
-                            var view = new AnnotationView({
-                                page : undefined,
-                                model : collection,
-                                el:$("#tabsterm-"+term.get("id")),
-                                container : window.app.view.components.warehouse
-                            }).render();
-                            self.annotationsViews[term.id] = view;
-                        }});
+          var self = this;
 
-                });
-            }
-        });
+          //init panel for all annotation (with or without term
+          new AnnotationCollection({project:self.model.id}).fetch({
+                 success : function (collection, response) {
+                    //$("#tabsterm-all").empty();
+                    self.annotationsViews[0].refresh(collection);
+                 }
+              });
 
-    },
-    refreshAnnotations : function () {
-        console.log("ProjectDashboardView: fetchAnnotations");
+          //init specific panel for each term
+          new TermCollection({idOntology:self.model.get('ontology')}).fetch({
+                 success : function (collection, response) {
+                    //init specific panel
+                    collection.each(function(term) {
+                       //$("#tabsterm-"+term.get("id")).empty();
+                       new AnnotationCollection({term:term.get("id"),project:self.model.id}).fetch({
+                              success : function (collection, response) {
+                                 self.annotationsViews[term.id].refresh(collection);
 
-        var self = this;
+                              }});
 
-        //init panel for all annotation (with or without term
-        new AnnotationCollection({project:self.model.id}).fetch({
-            success : function (collection, response) {
-                //$("#tabsterm-all").empty();
-                self.annotationsViews[0].refresh(collection);
-            }
-        });
+                    });
+                 }
+              });
 
-        //init specific panel for each term
-        new TermCollection({idOntology:self.model.get('ontology')}).fetch({
-            success : function (collection, response) {
-                //init specific panel
-                collection.each(function(term) {
-                    //$("#tabsterm-"+term.get("id")).empty();
-                    new AnnotationCollection({term:term.get("id"),project:self.model.id}).fetch({
-                        success : function (collection, response) {
-                              self.annotationsViews[term.id].refresh(collection);
+       },
+       /**
+        * Get and Print ALL images (use for the first time)
+        */
+       fetchImages : function() {
+          console.log("ProjectDashboardView: fetchImages");
+          var self = this;
+          new ImageInstanceCollection({project:self.model.get('id')}).fetch({
+                 success : function (collection, response) {
+                    self.imagesView = new ImageView({
+                           page : undefined,
+                           model : collection,
+                           el:$("#projectImageList"),
+                           container : window.app.view.components.warehouse
+                        }).render();
+                 }});
+       },
+       /**
+        * Get and Print only new images and remove delted images
+        */
+       refreshImages : function() {
+          console.log("ProjectDashboardView: refreshImages");
+          var self = this;
+          if(self.imagesView==null) return; //imageView is not yet build
+          new ImageInstanceCollection({project:self.model.get('id')}).fetch({
+                 success : function (collection, response) {
+                    self.imagesView.refresh(collection);
+                 }});
+       },
+       fetchStats : function () {
+          console.log("ProjectDashboardView: fetchStats");
+          var self = this;
+          var statsCollection = new StatsCollection({project:self.model.get('id')});
+          var statsCallback = function(collection, response) {
 
-                        }});
+             console.log(collection);
+             $("#plotterms").empty();
 
-                });
-            }
-        });
+             var empty = true;
+             var arrayData = new Array();
+             var arrayColor = new Array();
 
-    },
-    /**
-     * Get and Print ALL images (use for the first time)
-     */
-    fetchImages : function() {
-        console.log("ProjectDashboardView: fetchImages");
-        var self = this;
-        new ImageInstanceCollection({project:self.model.get('id')}).fetch({
-            success : function (collection, response) {
-                self.imagesView = new ImageView({
-                    page : undefined,
-                    model : collection,
-                    el:$("#projectImageList"),
-                    container : window.app.view.components.warehouse
-                }).render();
-            }});
-    },
-    /**
-     * Get and Print only new images and remove delted images
-     */
-    refreshImages : function() {
-        console.log("ProjectDashboardView: refreshImages");
-        var self = this;
-        if(self.imagesView==null) return; //imageView is not yet build
-        new ImageInstanceCollection({project:self.model.get('id')}).fetch({
-            success : function (collection, response) {
-                 self.imagesView.refresh(collection);
-            }});
-    },
-    fetchStats : function () {
-        console.log("ProjectDashboardView: fetchStats");
-        var self = this;
-        var statsCollection = new StatsCollection({project:self.model.get('id')});
-        var statsCallback = function(collection, response) {
-
-            console.log(collection);
-            $("#plotterms").empty();
-
-            var empty = true;
-            var arrayData = new Array();
-            var arrayColor = new Array();
-
-            collection.each(function(stat) {
+             collection.each(function(stat) {
                 var subArray = new Array(stat.get('key'),stat.get('value'));
                 arrayData.push(subArray);
                 arrayColor.push(stat.get('color'));
                 empty = empty && stat.get('value')=="0";
-            });
-            console.log("empty="+empty);
+             });
+             console.log("empty="+empty);
 
-            //if empty, add "nothing" to the legend with 100%
-            if(empty) {
+             //if empty, add "nothing" to the legend with 100%
+             if(empty) {
                 arrayData.push(new Array("Nothing",100));
                 arrayColor.push("d5d5d5");
-            }
+             }
 
 
-            $.jqplot('plotterms', [arrayData], {
-                seriesColors: arrayColor,
-                height: 450,
-                width: 450,
-                grid: {
-                    drawBorder: false,
-                    drawGridlines: false,
-                    background: '#ffffff',
-                    shadow:false
-                },
-                axesDefaults: {
+             $.jqplot('plotterms', [arrayData], {
+                    seriesColors: arrayColor,
+                    height: 450,
+                    width: 450,
+                    grid: {
+                       drawBorder: false,
+                       drawGridlines: false,
+                       background: '#ffffff',
+                       shadow:false
+                    },
+                    axesDefaults: {
 
-                },
-                seriesDefaults:{
-                    renderer:$.jqplot.PieRenderer,
-                    rendererOptions: {
-                        showDataLabels: true
+                    },
+                    seriesDefaults:{
+                       renderer:$.jqplot.PieRenderer,
+                       rendererOptions: {
+                          showDataLabels: true
+                       }
+                    },
+                    legend: {
+                       show: true,
+                       location: 'e'
                     }
-                },
-                legend: {
-                    show: true,
-                    location: 'e'
-                }
 
-            });
+                 });
 
 
 
-        }
+          }
 
-        statsCollection.fetch({
-            success : function(model, response) {
-                statsCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-            }
-        });
+          statsCollection.fetch({
+                 success : function(model, response) {
+                    statsCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+                 }
+              });
 
-    },
+       },
 
-    fetchProjectInfo : function () {
-        var self = this;
-        var json = self.model.toJSON();
-        var idOntology = json.ontology;
+       fetchProjectInfo : function () {
+          var self = this;
+          var json = self.model.toJSON();
+          var idOntology = json.ontology;
 
-        //Get ontology name
-        json.ontology = window.app.models.ontologies.get(idOntology).get('name');
+          //Get ontology name
+          json.ontology = window.app.models.ontologies.get(idOntology).get('name');
 
-        //Get created/updated date
-        var dateCreated = new Date();
-        dateCreated.setTime(json.created);
-        json.created = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
-        var dateUpdated = new Date();
-        dateUpdated.setTime(json.updated);
-        json.updated = dateUpdated.toLocaleDateString() + " " + dateUpdated.toLocaleTimeString();
+          //Get created/updated date
+          var dateCreated = new Date();
+          dateCreated.setTime(json.created);
+          json.created = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
+          var dateUpdated = new Date();
+          dateUpdated.setTime(json.updated);
+          json.updated = dateUpdated.toLocaleDateString() + " " + dateUpdated.toLocaleTimeString();
 
-        self.resetElem("#projectInfoName",json.name);
-        self.resetElem("#projectInfoOntology",json.ontology);
-        self.resetElem("#projectInfoNumberOfSlides",json.numberOfSlides);
-        self.resetElem("#projectInfoNumberOfImages",json.numberOfImages);
-        self.resetElem("#projectInfoNumberOfAnnotations",json.numberOfAnnotations);
-        self.resetElem("#projectInfoCreated",json.created);
-        self.resetElem("#projectInfoUpdated",json.updated);
+          self.resetElem("#projectInfoName",json.name);
+          self.resetElem("#projectInfoOntology",json.ontology);
+          self.resetElem("#projectInfoNumberOfSlides",json.numberOfSlides);
+          self.resetElem("#projectInfoNumberOfImages",json.numberOfImages);
+          self.resetElem("#projectInfoNumberOfAnnotations",json.numberOfAnnotations);
+          self.resetElem("#projectInfoCreated",json.created);
+          self.resetElem("#projectInfoUpdated",json.updated);
 
-        $("#projectInfoUserList").empty();
+          $("#projectInfoUserList").empty();
 
-        //Get users list
-        new UserCollection({project:self.model.get('id')}).fetch({
-            success : function (collection, response) {
-                collection.each(function(user) {
-                    var userelem = ich.userlisttpl({name:user.get("username")});
-                    $("#projectInfoUserList").append(userelem);
+          require(["text!application/templates/dashboard/UserInfo.tpl.html"], function(tpl) {
+             //Get users list
+             new UserCollection({project:self.model.get('id')}).fetch({
+                    success : function (collection, response) {
+                       collection.each(function(user) {
+                          var userelem = _.template(tpl, {name:user.get("username")});
+                          $("#projectInfoUserList").append(userelem);
+                       });
+
+                    }
+                 });
+          });
+
+       },
+       fetchCommands : function () {
+          console.log("ProjectDashboardView: fetchCommands");
+          var self = this;
+          require(["text!application/templates/dashboard/CommandAnnotation.tpl.html", "text!application/templates/dashboard/CommandAnnotationTerm.tpl.html"], function(commandAnnotationTpl,commandAnnotationTermTpl) {
+             var commandCollection = new CommandCollection({project:self.model.get('id'),max:10});
+
+             var commandCallback = function(collection, response) {
+                console.log("command.size()="+collection.length);
+                $("#lastactionitem").empty();
+                collection.each(function(command) {
+                   var json = command.toJSON()
+
+                   console.log("created="+json.created);
+                   console.log(json);
+
+                   var dateCreated = new Date();
+                   dateCreated.setTime(json.created);
+                   var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
+
+                   var jsonCommand = $.parseJSON(json.command.data);
+                   console.log(jsonCommand); //jsonCommand.cropURL
+                   console.log(jsonCommand.cropURL);
+                   var action = ""
+
+                   if(json.command.CLASSNAME=="be.cytomine.command.annotation.AddAnnotationCommand")
+                   {
+                      console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
+                      var action = _.template(commandAnnotationTpl, {icon:"add.png",text:json.prefixAction+ " " + json.command.action,datestr:dateStr,image:jsonCommand.cropURL});
+                      $("#lastactionitem").append(action);
+                      $(action).find(".thumbcommand").hide();
+                      $.ajax({
+                             url: jsonCommand.cropURL,
+                             success: function(data){$(action).find(".thumbcommand").show();},
+                             error: function(XMLHttpRequest, textStatus, errorThrown){ }
+                          });
+                   }
+                   if(json.command.CLASSNAME=="be.cytomine.command.annotation.EditAnnotationCommand")
+                   {
+                      console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
+                      var action = _.template(commandAnnotationTpl, {icon:"delete.gif",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:jsonCommand.cropURL});
+                      $("#lastactionitem").append(action);
+                      $(action).find(".thumbcommand").hide();
+                      $.ajax({
+                             url: jsonCommand.cropURL,
+                             success: function(data){$(action).find(".thumbcommand").show();},
+                             error: function(XMLHttpRequest, textStatus, errorThrown){}
+                          });
+                   }
+                   if(json.command.CLASSNAME=="be.cytomine.command.annotation.DeleteAnnotationCommand")
+                   {
+                      console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
+                      var action = _.template(commandAnnotationTpl, {icon:"layer-edit.gif",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:jsonCommand.cropURL});
+                      $("#lastactionitem").append(action);
+                      $(action).find(".thumbcommand").hide();
+                      $.ajax({
+                             url: jsonCommand.cropURL,
+                             success: function(data){$(action).find(".thumbcommand").show();},
+                             error: function(XMLHttpRequest, textStatus, errorThrown){}
+                          });
+                   }
+
+
+                   if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.AddAnnotationTermCommand")
+                   {
+                      console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
+                      var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-plus",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
+                      $("#lastactionitem").append(action);
+
+                   }
+                   if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.EditAnnotationTermCommand")
+                   {
+                      console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
+                      var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-pencil",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
+                      $("#lastactionitem").append(action);
+
+                   }
+                   if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.DeleteAnnotationTermCommand")
+                   {
+                      console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
+                      var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-trash",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
+                      $("#lastactionitem").append(action);
+
+                   }
                 });
+             }
 
-            }
-        });
-    },
-    fetchCommands : function () {
-        console.log("ProjectDashboardView: fetchCommands");
-        var self = this;
-        var commandCollection = new CommandCollection({project:self.model.get('id'),max:10});
-
-        var commandCallback = function(collection, response) {
-            console.log("command.size()="+collection.length);
-            $("#lastactionitem").empty();
-            collection.each(function(command) {
-
-                var json = command.toJSON()
+             commandCollection.fetch({
+                    success : function(model, response) {
+                       commandCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+                    }
+                 });
+          });
 
 
-                console.log("created="+json.created);
-                console.log(json);
+       },
+       resetElem : function(elem,txt) {
+          console.log("find:"+$(this.el).find(elem).length);
+          $(this.el).find(elem).empty();
+          $(this.el).find(elem).append(txt);
+       },
+       initPanels : function() {
+          var self = this;
+          $(self.el).find("#nameDashboardInfo"+self.model.get('id')).panel({
+                 collapsible:false
 
-                var dateCreated = new Date();
-                dateCreated.setTime(json.created);
-                var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
+              });
 
-                var jsonCommand = $.parseJSON(json.command.data);
-                console.log(jsonCommand); //jsonCommand.cropURL
-                console.log(jsonCommand.cropURL);
-                var action = ""
+          $(self.el).find('#projectInfoPanel').panel({
+                 collapseType:'slide-left',
+                 width:'300px'
+              });
 
-                if(json.command.CLASSNAME=="be.cytomine.command.annotation.AddAnnotationCommand")
-                {
-                    console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
-                    var action = ich.annotationcommandlisttpl({icon:"add.png",text:json.prefixAction+ " " + json.command.action,datestr:dateStr,image:jsonCommand.cropURL});
-                    $("#lastactionitem").append(action);
-                    $(action).find(".thumbcommand").hide();
-                    $.ajax({
-                        url: jsonCommand.cropURL,
-                        success: function(data){$(action).find(".thumbcommand").show();},
-                        error: function(XMLHttpRequest, textStatus, errorThrown){ }
-                    });
-                }
-                if(json.command.CLASSNAME=="be.cytomine.command.annotation.EditAnnotationCommand")
-                {
-                    console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
-                    var action = ich.annotationcommandlisttpl({icon:"delete.gif",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:jsonCommand.cropURL});
-                    $("#lastactionitem").append(action);
-                    $(action).find(".thumbcommand").hide();
-                    $.ajax({
-                        url: jsonCommand.cropURL,
-                        success: function(data){$(action).find(".thumbcommand").show();},
-                        error: function(XMLHttpRequest, textStatus, errorThrown){}
-                    });
-                }
-                if(json.command.CLASSNAME=="be.cytomine.command.annotation.DeleteAnnotationCommand")
-                {
-                    console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
-                    var action = ich.annotationcommandlisttpl({icon:"layer-edit.gif",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:jsonCommand.cropURL});
-                    $("#lastactionitem").append(action);
-                    $(action).find(".thumbcommand").hide();
-                    $.ajax({
-                        url: jsonCommand.cropURL,
-                        success: function(data){$(action).find(".thumbcommand").show();},
-                        error: function(XMLHttpRequest, textStatus, errorThrown){}
-                    });
-                }
+          $(self.el).find('#projectLastCommandPanel').panel({
+                 collapseType:'slide-right',
+                 collapsed:true,
+                 trueVerticalText:true,
+                 vHeight:'237px',
+                 width:'300px'
+              });
 
+          $(self.el).find('#projectStatsPanel').panel({
+                 collapsible:false
+              });
+          $(self.el).find('#projectImagesPanel').panel({
+                 collapsible:true
+              });
 
-                if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.AddAnnotationTermCommand")
-                {
-                    console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
-                    var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-plus",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
-                    $("#lastactionitem").append(action);
+          $(self.el).find('#projectAnnotationsPanel').panel({
+                 collapsible:true
+              });
+       },
+       doLayout : function(tpl) {
+          console.log("ProjectDashboardView: printProjectInfo");
 
-                }
-                if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.EditAnnotationTermCommand")
-                {
-                    console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
-                    var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-pencil",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
-                    $("#lastactionitem").append(action);
+          var self = this;
+          var html = _.template(tpl, self.model.toJSON());
 
-                }
-                if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.DeleteAnnotationTermCommand")
-                {
-                    console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
-                    var action = ich.annotationtermcommandlisttpl({icon:"ui-icon-trash",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
-                    $("#lastactionitem").append(action);
+          $(self.el).append(html);
 
-                }
-            });
-        }
+          window.app.controllers.browse.tabs.addDashboard(self);
 
-        commandCollection.fetch({
-            success : function(model, response) {
-                commandCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-            }
-        });
+          self.initPanels();
 
-    },
-    resetElem : function(elem,txt) {
-        console.log("find:"+$(this.el).find(elem).length);
-        $(this.el).find(elem).empty();
-        $(this.el).find(elem).append(txt);
-    },
-    printProjectInfo : function(model) {
-        console.log("ProjectDashboardView: printProjectInfo");
+          self.initTabs();
 
-        var self = this;
-        var json = self.model.toJSON();
-        var proj = ich.projectdashboardviewtpl(json);
-        $(self.el).append(proj);
-        window.app.controllers.browse.tabs.addDashboard(self);
+          self.fetchImages();
 
-        //Get users list
-        new UserCollection({project:self.model.get('id')}).fetch({
-            success : function (collection, response) {
+          self.fetchAnnotations();
 
-                collection.each(function(user) {
-                    var userelem = ich.userlisttpl({name:user.get("username")});
-                    $("#projectInfoUserList").append(userelem);
-                });
+          self.fetchCommands();
 
-            }
-        });
-        $(proj).find("#nameDashboardInfo"+self.model.get('id')).panel({
-            collapsible:false
+          self.fetchStats();
 
-        });
-
-        $(proj).find('#projectInfoPanel').panel({
-            collapseType:'slide-left',
-            width:'300px'
-        });
-
-        $(proj).find('#projectLastCommandPanel').panel({
-            collapseType:'slide-right',
-            collapsed:true,
-            trueVerticalText:true,
-            vHeight:'237px',
-            width:'300px'
-        });
-
-        $(proj).find('#projectStatsPanel').panel({
-            collapsible:false
-        });
-        $(proj).find('#projectImagesPanel').panel({
-            collapsible:true
-        });
-
-        $(proj).find('#projectAnnotationsPanel').panel({
-            collapsible:true
-        });
-
-
-
-        self.initTabs();
-
-        self.fetchImages();
-
-        self.fetchAnnotations();
-
-        self.fetchCommands();
-
-        self.fetchStats();
-
-    }
-});
+          self.fetchProjectInfo();
+       }
+    });
