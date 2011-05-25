@@ -33,14 +33,13 @@ var ApplicationView = Backbone.View.extend({
           $("#noProjectDialog").panel({collapsible:false, height : "100%"});
           return this;
        },
-       render : function(callback) {
+       render : function() {
           var self = this;
           require([
              "text!application/templates/BaseLayout.tpl.html"
           ],
               function(tpl) {
                  self.doLayout(tpl);
-                 callback.call();
               });
        },
        initComponents : function() {
