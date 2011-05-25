@@ -1,66 +1,67 @@
 
 var ExplorerController = Backbone.Controller.extend({
 
-    tabs : null,
+       tabs : null,
 
-    routes: {
-        "browse/:idProject/:idImage"   :   "browse",
-        "browse/:idProject/:idImage/:idAnnotation"   :   "browse",
-        "close"   :   "close"
-    },
+       routes: {
+          "browse/:idProject/:idImage"   :   "browse",
+          "browse/:idProject/:idImage/:idAnnotation"   :   "browse",
+          "close"   :   "close"
+       },
 
-    initialize: function() {
-        console.log("initBrowseController");
-    },
+       initialize: function() {
+          console.log("initBrowseController");
+       },
 
-    initTabs : function() { //SHOULD BE OUTSIDE OF THIS CONTROLLER
-        //create tabs if not exist
-        if (this.tabs == null) {
-            this.tabs = new Tabs({
-                el:$("#explorer > .browser"),
-                container : window.app.view.components.explorer
-            }).render();
+       initTabs : function() { //SHOULD BE OUTSIDE OF THIS CONTROLLER
+          //create tabs if not exist
 
-            //   this.tabs.container.views.tabs = this.tabs;
-        }
-    },
+          if (this.tabs == null) {
+             this.tabs = new ExplorerTabs({
+                    el:$("#explorer > .browser"),
+                    container : window.app.view.components.explorer
+                 }).render();
 
-    browse : function (idProject, idImage, idAnnotation) {
-        var self = this;
-        this.initTabs();
+             //   this.tabs.container.views.tabs = this.tabs;
+          }
+       },
 
-        if (window.app.status.currentProject == undefined) {//direct access -> create dashboard
-            window.app.controllers.dashboard.dashboard(idProject);
-        }
+       browse : function (idProject, idImage, idAnnotation) {
+          var self = this;
+          this.initTabs();
 
-        var browseImageViewInitOptions = {};
-        if (idAnnotation != undefined) {
-            browseImageViewInitOptions.goToAnnotation = {value : idAnnotation};
-            //var browseImageView = self.tabs.getB(idImage);
-            //browseImageView.goToAnnotation(idAnnotation);
-            //browseImageView.getUserLayer().goToAnnotation(idAnnotation);
+          if (window.app.status.currentProject == undefined) {//direct access -> create dashboard
+             window.app.controllers.dashboard.dashboard(idProject);
+          }
 
-        }
-        console.log("BrowseController: browse "+idImage);
-        self.tabs.addTab(idImage, browseImageViewInitOptions);
-        self.tabs.showTab(idImage);
+          var browseImageViewInitOptions = {};
+          if (idAnnotation != undefined) {
+             browseImageViewInitOptions.goToAnnotation = {value : idAnnotation};
+             //var browseImageView = self.tabs.getB(idImage);
+             //browseImageView.goToAnnotation(idAnnotation);
+             //browseImageView.getUserLayer().goToAnnotation(idAnnotation);
 
-        window.app.view.showComponent(self.tabs.container);
-        self.showView();
+          }
+          console.log("BrowseController: browse "+idImage);
+          self.tabs.addTab(idImage, browseImageViewInitOptions);
+          self.tabs.showTab(idImage);
 
-    },
-    closeAll : function () {
-        if (this.tabs == null) return;
+          window.app.view.showComponent(self.tabs.container);
+          self.showView();
 
-        this.tabs.closeAll();
+       },
+       closeAll : function () {
+          if (this.tabs == null) return;
 
-        /*window.app.view.showComponent(this.tabs.container);*/
-    },
+          this.tabs.closeAll();
 
-    showView : function() {
-        $("#explorer > .browser").show();
-        $("#explorer > .noProject").hide();
-        window.app.view.showComponent(window.app.view.components.explorer);
-    }
+          /*window.app.view.showComponent(this.tabs.container);*/
+       },
 
-});
+       showView : function() {
+          $("#explorer > .browser").show();
+          $("#explorer > .noProject").hide();
+          window.app.view.showComponent(window.app.view.components.explorer);
+       }
+
+    });

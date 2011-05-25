@@ -45,6 +45,7 @@ var ApplicationController = Backbone.Controller.extend({
           loadingView.progress(value);
           if (cpt == expected) {
              loadingView.close();
+             this.view.render();
              window.app.controllers.image        = new ImageController();
              window.app.controllers.project      = new ProjectController();
              window.app.controllers.dashboard    = new DashboardController();
@@ -53,14 +54,12 @@ var ApplicationController = Backbone.Controller.extend({
              window.app.controllers.upload       = new UploadController();
              window.app.controllers.command      = new CommandController();
              Backbone.history.start();
-             this.view.render();
+
           }
        },
 
        initialize : function () {
           var self = this;
-
-
           self.view = new ApplicationView({
                  el: $('#app')
               });

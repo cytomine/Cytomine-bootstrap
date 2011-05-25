@@ -25,7 +25,7 @@ var ImageView = Backbone.View.extend({
         var inf = Math.abs(page) * nb_thumb_by_page;
         var sup = (Math.abs(page) + 1) * nb_thumb_by_page;
 
-        self.images = new Array();
+        self.tabsContent = new Array();
 
         self.model.each(function(image) {
             if ((cpt >= inf) && (cpt < sup)) {
@@ -37,15 +37,14 @@ var ImageView = Backbone.View.extend({
                 $(self.el).append(thumb.el);
             }
             cpt++;
-            self.images.push(image.id);
+            self.tabsContent.push(image.id);
         });
     },
     /**
      * Add the thumb image
      * @param image Image model
      */
-    add : function(image) {
-        console.log("ImageView: add");
+    add : function(image) {s
         var self = this;
         var thumb = new ImageThumbView({
             model : image,
@@ -60,8 +59,7 @@ var ImageView = Backbone.View.extend({
      * @param idImage  Image id
      */
     remove : function (idImage) {
-        console.log("ImageView: remove");
-        $("#thumb"+idImage).remove();
+                $("#thumb"+idImage).remove();
     },
     /**
      * Refresh thumb with newImages collection:
@@ -70,15 +68,13 @@ var ImageView = Backbone.View.extend({
      * @param newImages newImages collection
      */
     refresh : function(newImages) {
-        console.log("ImageView: refresh");
-
         var self = this;
-        var arrayDeletedImages = self.images;
+        var arrayDeletedImages = self.tabsContent;
         newImages.each(function(image) {
             //if image is not in table, add it
-            if(_.indexOf(self.images, image.id)==-1){
+            if(_.indexOf(self.tabsContent, image.id)==-1){
                 self.add(image);
-                self.images.push(image.id);
+                self.tabsContent.push(image.id);
             }
             /*
              * We remove each "new" image from  arrayDeletedImage
@@ -90,7 +86,7 @@ var ImageView = Backbone.View.extend({
 
         arrayDeletedImages.forEach(function(removeImage) {
             self.remove(removeImage);
-            self.images = _.without(self.images,removeImage);
+            self.tabsContent = _.without(self.tabsContent,removeImage);
         }
                 );
 

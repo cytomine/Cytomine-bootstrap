@@ -40,6 +40,7 @@ var ApplicationView = Backbone.View.extend({
           ],
               function(tpl) {
                  self.doLayout(tpl);
+                 console.log("base layout rendered");
               });
        },
        initComponents : function() {

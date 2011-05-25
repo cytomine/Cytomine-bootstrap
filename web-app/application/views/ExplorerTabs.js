@@ -1,9 +1,11 @@
-var Tabs = Backbone.View.extend({
+var ExplorerTabs = Backbone.View.extend({
        tagName : "div",
        images : [], //that we are browsing
+       /* ExplorerTabs constructor */
        initialize: function(options) {
           this.container = options.container
        },
+       /* Grab the layout and call ask for render */
        render : function() {
           var self = this;
           require(["text!application/templates/explorer/Tabs.tpl.html"], function(tpl) {
@@ -11,6 +13,7 @@ var Tabs = Backbone.View.extend({
           });
           return this;
        },
+       /* Render the html into the DOM element associated to the view */
        doLayout: function(tpl) {
           var self = this;
           $(this.el).html(_.template(tpl, {}));
@@ -45,6 +48,7 @@ var Tabs = Backbone.View.extend({
           $("ul.tabs a").css('height', $("ul.tabs").height())
           return this;
        },
+       /* Add a tab */
        addTab : function(idImage, options) {
           var self = this;
           var alreadyOpened = _.detect(self.images, function(object) {
@@ -54,11 +58,7 @@ var Tabs = Backbone.View.extend({
              alreadyOpened.view.initOptions = options;
              return;
           }
-          console.log("addTab : " + idImage);
-          console.log("window.app.models.imagesinstance.get(idImage) : " + window.app.models.imagesinstance.get(idImage));
-          console.log("window.app.models.imagesinstance.lenght : " + window.app.models.imagesinstance.length);
-          /*new ImageModel({id : idImage}).fetch({
-           success : function(model, response) {*/
+
           var tabs = $(self.el).children('.tabs');
           var view = new BrowseImageView({
                  model : window.app.models.imagesinstance.get(idImage),
@@ -69,8 +69,7 @@ var Tabs = Backbone.View.extend({
                  idImage : idImage,
                  view : view
               });
-          /*}
-           });   */
+
        },
        getBrowseImageView : function(idImage) {
           var tab  = _.detect(this.images, function(object) {
@@ -83,12 +82,9 @@ var Tabs = Backbone.View.extend({
           this.images.splice(index,1);
           var tabs = $(this.el).children('.tabs');
           tabs.tabs( "remove", index);
-          //if (this.size() == 0) $(this.el).parent().find('.noProject').show();
+
        },
        showTab : function(idImage) {
-          //$(this.el).parent().find('.noProject').hide();
-          //$(this.el).show();
-
           var image = _.detect(this.images, function(object) {
              return object.idImage == idImage;
           });
@@ -107,7 +103,6 @@ var Tabs = Backbone.View.extend({
           while (this.size() > 0) {
              self.removeTab(0);
           }
-          //$(this.el).children('.tabs').empty();
           $(self.el).hide();
           $(self.el).parent().find('.noProject').show();
        },

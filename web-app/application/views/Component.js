@@ -1,6 +1,7 @@
 var Component = Backbone.View.extend({
        tagName: "div",
        views: {},
+       /* Component constructor */
        initialize: function (options) {
           this.divId = options.divId;
           this.el = options.el;
@@ -16,6 +17,9 @@ var Component = Backbone.View.extend({
              this.show = options.show;
           }
        },
+       /**
+        *  Render the component into it's DOM element and add it to the menu
+        */
        render: function () {
           $(this.el).append(this.template);
           if (this.buttonAttr.elButton) {
@@ -23,6 +27,9 @@ var Component = Backbone.View.extend({
           }
           return this;
        },
+       /**
+        * Add a button to the menu which activates the components when clicked
+        */
        addToMenu: function () {
           var self = this;
           require(["text!application/templates/MenuButton.tpl.html"], function(tpl) {
@@ -42,14 +49,26 @@ var Component = Backbone.View.extend({
              }
           });
        },
+       /**
+        * Show the DOM element and disable the button associated to the component
+        **/
        activate: function () {
           $("#" + this.divId).show();
           $("#" + this.buttonAttr.elButton).addClass("ui-state-disabled");
        },
+       /**
+        * Hide the DOM element and enable the button associated
+        */
        deactivate: function () {
           $("#" + this.divId).hide();
           $("#" + this.buttonAttr.elButton).removeClass("ui-state-disabled");
        },
+       /**
+        * Show a subpage of the component
+        * - view : the DOM element which contains the content of the page to activate
+        * - scope : the DOM element name which contains pages
+        * - name : the name of the page to activate
+        */
        show: function (view, scope, name) {
           $(scope).find(".title.active").each(function () {
              $(this).removeClass("active");
