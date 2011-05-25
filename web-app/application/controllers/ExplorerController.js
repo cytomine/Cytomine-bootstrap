@@ -43,7 +43,7 @@ var ExplorerController = Backbone.Controller.extend({
 
           }
           console.log("BrowseController: browse "+idImage);
-          self.tabs.addTab(idImage, browseImageViewInitOptions);
+          self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions);
           self.tabs.showTab(idImage);
 
           window.app.view.showComponent(self.tabs.container);

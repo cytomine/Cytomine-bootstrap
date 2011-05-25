@@ -1,11 +1,16 @@
 var ExplorerTabs = Backbone.View.extend({
        tagName : "div",
-       images : [], //that we are browsing
-       /* ExplorerTabs constructor */
+       tabs : [], //that we are browsing
+       /**
+        * ExplorerTabs constructor
+        * @param options
+        */
        initialize: function(options) {
           this.container = options.container
        },
-       /* Grab the layout and call ask for render */
+       /**
+        * Grab the layout and call ask for render
+        */
        render : function() {
           var self = this;
           require(["text!application/templates/explorer/Tabs.tpl.html"], function(tpl) {
@@ -13,7 +18,10 @@ var ExplorerTabs = Backbone.View.extend({
           });
           return this;
        },
-       /* Render the html into the DOM element associated to the view */
+       /**
+        * Render the html into the DOM element associated to the view
+        * @param tpl
+        */
        doLayout: function(tpl) {
           var self = this;
           $(this.el).html(_.template(tpl, {}));
@@ -48,10 +56,14 @@ var ExplorerTabs = Backbone.View.extend({
           $("ul.tabs a").css('height', $("ul.tabs").height())
           return this;
        },
-       /* Add a tab */
-       addTab : function(idImage, options) {
+       /**
+        *  Add a Tab containing a BrowseImageView instance
+        *  @idImage : the id of the Image we want to display
+        *  @options : some init options we want to pass the the BrowseImageView Instance
+        */
+       addBrowseImageView : function(idImage, options) {
           var self = this;
-          var alreadyOpened = _.detect(self.images, function(object) {
+          var alreadyOpened = _.detect(self.tabs, function(object) {
              return object.idImage == idImage;
           });
           if (alreadyOpened) {
@@ -65,38 +77,56 @@ var ExplorerTabs = Backbone.View.extend({
                  initOptions : options,
                  el: tabs
               }).render();
-          self.images.push({
+          self.tabs.push({
                  idImage : idImage,
                  view : view
               });
 
        },
+       /**
+        * Return the reference to a BrowseImageView instance
+        * contained in a tab
+        * @param idImage the ID of an Image contained in a BrowseImageView
+        */
        getBrowseImageView : function(idImage) {
-          var tab  = _.detect(this.images, function(object) {
+          var tab  = _.detect(this.tabs, function(object) {
              console.log("looking for tab " + idImage  + " vs " + object.idImage);
              return object.idImage == idImage;
           });
-          return tab.view;
+          return tab.view != null ? tab.view : null;
        },
+       /**
+        * Remove a Tab
+        * @param index the identifier of the Tab
+        */
        removeTab : function (index) {
-          this.images.splice(index,1);
+          this.tabs.splice(index,1);
           var tabs = $(this.el).children('.tabs');
           tabs.tabs( "remove", index);
 
        },
-       showTab : function(idImage) {
-          var image = _.detect(this.images, function(object) {
-             return object.idImage == idImage;
+       /**
+        * Show a tab
+        * @param index the identifier of the Tab
+        */
+       showTab : function(index) {
+          var image = _.detect(this.tabs, function(object) {
+             return object.idImage == index;
           });
           image.view.show();
-          console.log("showTab : "+ idImage);
           var tabs = $(this.el).children('.tabs');
-          tabs.tabs('select', '#tabs-' + idImage);
+          tabs.tabs('select', '#tabs-' + index);
 
        },
+       /**
+        * Return the number of opened tabs
+        */
        size : function() {
-          return _.size(this.images);
+          return _.size(this.tabs);
        },
+       /**
+        * Close all the Tabs
+        */
        closeAll : function() {
           console.log("close all");
           var self = this;
@@ -106,23 +136,30 @@ var ExplorerTabs = Backbone.View.extend({
           $(self.el).hide();
           $(self.el).parent().find('.noProject').show();
        },
-       refreshDashboard : function () {
-          var dashboardTab = _.detect(this.images, function(object) {
-             console.log("looking for db :" + object.idImage);
-             return object.idImage == 0;
-          });
-          console.log("refresh db...");
-          dashboardTab.view.refresh();
-       },
+       /**
+        * Add a ProjectDashBoardView instance in the first Tab
+        * @param dashboard the ProjectDashBoardView instance
+        */
        addDashboard : function(dashboard) {
           console.log("add dashboard");
           var tabs = $(this.el).children('.tabs');
           tabs.tabs("add", "#tabs-0", 'Dashboard');
           $("#explorer > .browser").show();
           $("#explorer > .noProject").hide();
-          this.images.push({
+          this.tabs.push({
                  idImage : 0,
                  view : dashboard
               });
+       },
+       /**
+        * Ask to the dashboard view to refresh
+        */
+       refreshDashboard : function () {
+          var dashboardTab = _.detect(this.tabs, function(object) {
+             console.log("looking for db :" + object.idImage);
+             return object.idImage == 0;
+          });
+          console.log("refresh db...");
+          dashboardTab.view.refresh();
        }
     });

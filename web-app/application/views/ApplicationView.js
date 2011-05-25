@@ -1,7 +1,3 @@
-// App
-// ---
-// View. Represents the entire application "viewport". Available in the global
-// namespace as `window.app` and contains various utility methods.
 var ApplicationView = Backbone.View.extend({
 
        tagName : "div",
@@ -13,17 +9,31 @@ var ApplicationView = Backbone.View.extend({
           "click #redo":          "redo"
        },
 
+       /**
+        *  UNDO the last command
+        */
        undo : function () {
           window.app.controllers.command.undo();
        },
 
+       /**
+        * REDO the last command
+        */
        redo : function () {
           window.app.controllers.command.redo();
        },
 
+       /**
+        * ApplicationView constructor. Call the initialization of its components
+        * @param options
+        */
        initialize: function(options) {
           this.initComponents();
        },
+       /**
+        * Render the html into the DOM element associated to the view
+        * @param tpl
+        */
        doLayout: function(tpl) {
           $(this.el).html(_.template(tpl, {}));
           _.each(this.components, function (component) {
@@ -33,6 +43,9 @@ var ApplicationView = Backbone.View.extend({
           $("#noProjectDialog").panel({collapsible:false, height : "100%"});
           return this;
        },
+       /**
+        * Grab the layout and call ask for render
+        */
        render : function() {
           var self = this;
           require([
@@ -40,9 +53,11 @@ var ApplicationView = Backbone.View.extend({
           ],
               function(tpl) {
                  self.doLayout(tpl);
-                 console.log("base layout rendered");
               });
        },
+       /**
+        * Initialize the components of the application
+        */
        initComponents : function() {
           var self = this;
           require([
@@ -94,21 +109,6 @@ var ApplicationView = Backbone.View.extend({
                               window.app.controllers.dashboard.view.refresh(); //refresh dashboard
                         }
                      });
-
-
-                 /*this.components.admin = new Component({
-                  el : $("#content"),
-                  //template : _.template($('#admin-tpl').html()),
-                  template :_.template(adminTpl, {}),
-                  buttonAttr : {
-                  elButton : "admin-button",
-                  buttonText : "Admin Area",
-                  buttonWrapper : $("#menu"),
-                  icon : "ui-icon-gear",
-                  route : "#admin"
-                  },
-                  divId : "admin"
-                  }).render();*/
                  self.components.logout = new Component({
                         el : "#content",
                         template : "",
@@ -126,7 +126,10 @@ var ApplicationView = Backbone.View.extend({
 
 
        },
-
+       /**
+        * Show a component
+        * @param Component the reference to the component
+        */
        showComponent : function (component) {
           _.each(this.components, function (c) {
              if (c != component) c.deactivate();
