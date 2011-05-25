@@ -18,11 +18,19 @@ var ProjectManageSlideDialog = Backbone.View.extend({
        divDialog : "div#projectaddimagedialog",
        projectPanel : null,
        addSlideDialog : null,
+
+       /**
+        * ProjectManageSlideDialog constructor
+        * @param options
+        */
        initialize: function(options) {
           this.container = options.container;
           this.projectPanel = options.projectPanel;
           _.bindAll(this, 'render');
        },
+       /**
+        * Grab the layout and call ask for render
+        */
        render : function() {
           var self = this;
           require([
@@ -32,6 +40,10 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                  self.doLayout(tpl);
               });
        },
+       /**
+        * Render the html into the DOM element associated to the view
+        * @param tpl
+        */
        doLayout : function(tpl) {
           var self = this;
           console.log("Id project="+this.model.id);
@@ -39,11 +51,12 @@ var ProjectManageSlideDialog = Backbone.View.extend({
           var dialog = _.template(tpl, {id:this.model.get('id'),name:this.model.get('name')});
           $(this.el).append(dialog);
 
+
           //Build dialog
           self.addSlideDialog = $(self.divDialog+this.model.get('id')).dialog({
                  modal : true,
                  autoOpen : false,
-                 closeOnEscape: false,
+                 closeOnEscape: true,
                  beforeClose: function(event, ui) {
                     self.projectPanel.refresh();
                  },
@@ -55,13 +68,16 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                        $(this).dialog("close");
                     }
                  },
-                 width : "85%",
-                 height: "600"
+                 width : ($(window).width()/100*90),
+                 height: ($(window).height()/100*90) //bug with %age ?
               });
           self.open();
           return this;
 
        },
+       /**
+        * Open and ask to render image thumbs
+        */
        open: function() {
           var self = this;
           console.log("open");
@@ -75,15 +91,9 @@ var ProjectManageSlideDialog = Backbone.View.extend({
               });
 
        },
-       refresh : function(idImage, selected) {
-          console.log("ProjectManageSlideDialog: refresh =" + idImage)
-          var className = ".image" + idImage;
-          var self = this;
-          if (selected)
-             $(self.ulElem+self.model.get('id')).find(className).addClass("selected");
-          else
-             $(self.ulElem+self.model.get('id')).find(className).removeClass("selected");
-       },
+       /**
+        * Render Image thumbs into the dialog
+        **/
        renderImageList : function(tpl) {
           var self = this;
           //Dialog is maybe already in document (but closed)...clear the all list elem
@@ -139,7 +149,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                               $(self.ulElem+self.model.get('id') + " img").addClass("thumbProject");
 
                               //build dialog and event
-                              self.buildAddImageDialog();
+                              self.initEvents();
                            },
                            error: function(error){
                               for (property in error) {
@@ -155,7 +165,14 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                  }
               });
        },
-       buildAddImageDialog : function() {
+       /**
+        * Init click events on Image thumbs
+        */
+       initEvents : function() {
+          /* TO DO
+           Recode this method : don't repeat yourself
+           Use Backbone view EVENTs to bind CLICK
+           */
           var self = this;
 
           /* see if anything is previously checked and reflect that in the view*/
@@ -166,7 +183,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
 
                  event.preventDefault();
                  var slideID = $(this).parent().attr("class");
-                 console.log("CLASS="+slideID);
+
                  $(this).parent().addClass(self.selectedClass);
                  $(this).parent().find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
 
@@ -181,11 +198,10 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                  new ImageModel({id:idImage}).fetch({
                         success : function (image,response) {
 
-                           console.log("Image id = " + idImage +  " Project id = " + self.model.get('id'));
+                           //console.log("Image id = " + idImage +  " Project id = " + self.model.get('id'));
 
                            new ImageInstanceModel({}).save({project : self.model.get('id'), user : null, baseImage : idImage},{
                                   success : function (image,response) {
-                                     self.refresh(idImage, true);
                                   },
                                   error: function (model, response) {
                                      console.log("ERROR:"+response);
@@ -199,7 +215,6 @@ var ProjectManageSlideDialog = Backbone.View.extend({
 
           $(self.checklistDeselected).click(
               function(event) {
-                 console.log("click b");
                  event.preventDefault();
                  $(this).parent().removeClass(self.selectedClass);
                  $(this).parent().find(":checkbox").removeAttr(self.checkedAttr);
@@ -212,11 +227,10 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                  new ImageModel({id:idImage}).fetch({
                         success : function (image,response) {
 
-                           console.log("Image id = " + idImage +  " Project id = " + self.model.get('id'));
+                           //console.log("Image id = " + idImage +  " Project id = " + self.model.get('id'));
 
                            new ImageInstanceModel({project : self.model.get('id'), user : null, baseImage : idImage}).destroy({
                                   success : function (image,response) {
-                                     self.refresh(idImage, false);
                                   },
                                   error: function (model, response) {
                                      console.log("ERROR:"+response);
