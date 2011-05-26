@@ -10,29 +10,37 @@ var OntologyController = Backbone.Controller.extend({
 
 
 
-    routes: {
-        "ontology"            :   "ontology",
-        "ontology/:idOntology"           :   "ontology"
-    },
+       routes: {
+          "ontology"            :   "ontology",
+          "ontology/:idOntology"           :   "ontology"
+       },
 
-    ontology : function(idOntology) {
-        console.log("OntologyController:"+idOntology)
-        if (!this.view) {
+       ontology : function(idOntology) {
+          var self = this;
+          console.log("OntologyController:"+idOntology)
+          if (!self.view) {
              console.log("Ontology controller");
+             window.app.models.ontologies.fetch({
+                    success : function (collection, response) {
+                       self.view = new OntologyView({
+                              model : collection,
+                              el:$("#warehouse > .ontology"),
+                              container : window.app.view.components.warehouse,
+                              idOntology : idOntology //selected ontology
+                           }).render();
+                       self.view.container.views.ontology = self.view;
 
-            this.view = new OntologyView({
-                model : window.app.models.ontologies,
-                el:$("#warehouse > .ontology"),
-                container : window.app.view.components.warehouse,
-                idOntology : idOntology //selected ontology
-            }).render();
-
-            this.view.container.views.ontology = this.view;
-        }
-
-        this.view.container.show(this.view, "#warehouse > .sidebar", "ontology");
-        window.app.view.showComponent(window.app.view.components.warehouse);
-    }
+                       self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
+                       window.app.view.showComponent(window.app.view.components.warehouse);
+                    }
+                 });
 
 
-});
+
+          }
+
+
+       }
+
+
+    });
