@@ -3,6 +3,7 @@
 
 
 var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, map) {
+   console.log("new annotation layer : " + (ontologyTreeView == null || ontologyTreeView == undefined));
    var styleMap = new OpenLayers.StyleMap({
           "default" : OpenLayers.Util.applyDefaults({fillColor: color, fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
               OpenLayers.Feature.Vector.style["default"]),

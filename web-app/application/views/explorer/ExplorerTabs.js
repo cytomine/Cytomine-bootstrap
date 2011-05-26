@@ -71,12 +71,18 @@ var ExplorerTabs = Backbone.View.extend({
           }
 
           var tabs = $(self.el).children('.tabs');
-          var view = new BrowseImageView({
-                 model : window.app.models.imagesinstance.get(idImage),
-                 initOptions : options,
-                 el: tabs
-              }).render();
-          self.tabs.push({idImage : idImage,view : view});
+          console.log("here we go....");
+          new ImageInstanceModel({id : idImage}).fetch({
+                 success : function(model, response) {
+                    var view = new BrowseImageView({
+                           model : model,
+                           initOptions : options,
+                           el: tabs
+                        }).render();
+                    self.tabs.push({idImage : idImage,view : view});
+                 }
+              });
+
 
        },
        /**
@@ -110,6 +116,7 @@ var ExplorerTabs = Backbone.View.extend({
           var object = _.detect(this.tabs, function(object) {
              return object.idImage == index;
           });
+          if (object == undefined ) return;
           object.view.show();
           var tabs = $(this.el).children('.tabs');
           tabs.tabs('select', '#tabs-' + index);

@@ -13,9 +13,8 @@ var ProjectController = Backbone.Controller.extend({
             var idUser =  undefined;
             new ProjectCollection({user : idUser}).fetch({
                 success : function (collection, response) {
-
                     self.view = new ProjectView({
-                        model : window.app.models.projects,
+                        model : collection,
                         el:$("#warehouse > .project"),
                         container : window.app.view.components.warehouse
                     }).render();

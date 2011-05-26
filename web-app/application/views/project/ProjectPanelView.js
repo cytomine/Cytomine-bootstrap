@@ -63,7 +63,7 @@ var ProjectPanelView = Backbone.View.extend({
 
           //Get ontology name
           var idOntology = json.ontology;
-          json.ontology = window.app.models.ontologies.get(idOntology).get('name');
+          //json.ontology = window.app.models.ontologies.get(idOntology).get('name');
 
           var users= [];
           _.each(self.model.get('users'), function (idUser) {

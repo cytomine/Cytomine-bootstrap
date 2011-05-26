@@ -33,6 +33,7 @@ var OntologyTreeView = Backbone.View.extend({
          require(["text!application/templates/explorer/OntologyTreeWrapper.tpl.html"], function(tpl) {
              self.doLayout(tpl);
           });
+       return this;
     },
     doLayout: function(tpl) {
         $(this.el).html(_.template(tpl,{}));

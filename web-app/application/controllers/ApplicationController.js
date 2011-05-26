@@ -17,10 +17,9 @@ var ApplicationController = Backbone.Controller.extend({
        startup : function () {
           var self = this;
 
-          var loadingView = new LoadingDialogView().render();
-          loadingView.initProgressBar();
-
-          //init models
+          var loadingView = new LoadingDialogView();
+          //loadingView.render();
+          //init collections
           self.models.images = new ImageCollection({project:undefined});
           self.models.imagesinstance = new ImageInstanceCollection({project:undefined});
           self.models.users = new UserCollection({project:undefined});
@@ -29,36 +28,41 @@ var ApplicationController = Backbone.Controller.extend({
           self.models.projects = new ProjectCollection({user:undefined});
 
           //fetch models
-          var modelsToPreload = [self.models.users, self.models.ontologies, self.models.projects];
-          var nbModelFetched = 0;
-          _.each(modelsToPreload, function(model){
-             model.fetch({
-                    success :  function(model, response) {
-                       self.modelFetched(++nbModelFetched, _.size(modelsToPreload), loadingView);
-                    }
-                 });
-          });
+          var modelsToPreload = [self.models.users];
+          if (_.size(modelsToPreload) == 0) {
+             self.modelFetched(0, 0, loadingView);
+          } else {
+             loadingView.initProgressBar();
+             var nbModelFetched = 0;
+             _.each(modelsToPreload, function(model){
+                model.fetch({
+                       success :  function(model, response) {
+                          self.modelFetched(++nbModelFetched, _.size(modelsToPreload), loadingView);
+                       }
+                    });
+             });
+          }
        },
 
        modelFetched : function (cpt, expected, loadingView) {
           var step = 100 / expected;
           var value = cpt * step;
-          loadingView.progress(value);
+          //loadingView.progress(value);
           if (cpt == expected) {
-             loadingView.close();
-             this.view.render();
-             window.app.controllers.image        = new ImageController();
-             window.app.controllers.project      = new ProjectController();
-             window.app.controllers.dashboard    = new DashboardController();
-             window.app.controllers.browse       = new ExplorerController();
-             window.app.controllers.ontology     = new OntologyController();
-             window.app.controllers.upload       = new UploadController();
-             window.app.controllers.command      = new CommandController();
-             Backbone.history.start();
-
+             //loadingView.close();
+             this.view.render(this.start);
           }
        },
-
+       start : function () {
+          window.app.controllers.image        = new ImageController();
+          window.app.controllers.project      = new ProjectController();
+          window.app.controllers.dashboard    = new DashboardController();
+          window.app.controllers.browse       = new ExplorerController();
+          window.app.controllers.ontology     = new OntologyController();
+          window.app.controllers.upload       = new UploadController();
+          window.app.controllers.command      = new CommandController();
+          Backbone.history.start();
+       },
        initialize : function () {
           var self = this;
           self.view = new ApplicationView({

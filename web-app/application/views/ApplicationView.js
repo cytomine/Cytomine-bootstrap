@@ -34,26 +34,29 @@ var ApplicationView = Backbone.View.extend({
         * Render the html into the DOM element associated to the view
         * @param tpl
         */
-       doLayout: function(tpl) {
+       doLayout: function(tpl, renderCallback) {
           $(this.el).html(_.template(tpl, {}));
           _.each(this.components, function (component) {
              component.render();
           });
 
-          $("#noProjectDialog").panel({collapsible:false, height : "100%"});
+          renderCallback.call();
+
+
           return this;
        },
        /**
         * Grab the layout and call ask for render
         */
-       render : function() {
+       render : function(renderCallback) {
           var self = this;
           require([
              "text!application/templates/BaseLayout.tpl.html"
           ],
               function(tpl) {
-                 self.doLayout(tpl);
+                 self.doLayout(tpl, renderCallback);
               });
+          return this;
        },
        /**
         * Initialize the components of the application
@@ -124,6 +127,8 @@ var ApplicationView = Backbone.View.extend({
                      });
               });
 
+          $("#noProjectDialog").panel({collapsible:false, height : "100%"});
+
 
        },
        /**
@@ -136,7 +141,6 @@ var ApplicationView = Backbone.View.extend({
           });
           $("#app").show();
           component.activate();
-
        }
     });
 
