@@ -26,20 +26,26 @@ var ExplorerController = Backbone.Controller.extend({
           var self = this;
           this.initTabs();
 
+          var createBrowseImageViewTab = function() {
+             var browseImageViewInitOptions = {};
+             if (idAnnotation != undefined) {
+                browseImageViewInitOptions.goToAnnotation = {value : idAnnotation};
+             }
+
+             self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions);
+             self.tabs.showTab(idImage);
+
+             window.app.view.showComponent(self.tabs.container);
+             self.showView();
+          };
+
           if (window.app.status.currentProject == undefined) {//direct access -> create dashboard
-             window.app.controllers.dashboard.dashboard(idProject);
+             window.app.controllers.dashboard.dashboard(idProject, createBrowseImageViewTab);
+             return;
           }
 
-          var browseImageViewInitOptions = {};
-          if (idAnnotation != undefined) {
-             browseImageViewInitOptions.goToAnnotation = {value : idAnnotation};
-          }
+          createBrowseImageViewTab();
 
-          self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions);
-          self.tabs.showTab(idImage);
-
-          window.app.view.showComponent(self.tabs.container);
-          self.showView();
 
        },
        closeAll : function () {
