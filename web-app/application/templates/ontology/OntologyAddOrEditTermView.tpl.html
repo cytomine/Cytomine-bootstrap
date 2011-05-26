@@ -1,11 +1,11 @@
-<div id="dialog-edit-ontology-term" title="Edit term">
+<div id="dialog-{{action}}-ontology-term" title="{{action}} term">
 	<p class="validateTips">All form fields are required.</p>
 
-	<form id="form-edit-ontology-term">
+	<form id="form-{{action}}-ontology-term">
 	<fieldset>
-        <div id="editontologytermerrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+        <div id="{{action}}ontologytermerrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
             <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                <strong>Error:</strong><div id="editontologytermerrormessage"></div></p>
+                <strong>Error:</strong><div id="{{action}}ontologytermerrormessage"></div></p>
         </div>
 
 
@@ -13,8 +13,8 @@
   <tr>
     <td width="40%">
 
-		<label for="edittermname">Name</label>
-		<input type="text" name="name" id="edittermname" class="text ui-widget-content ui-corner-all" />
+		<label for="{{action}}termname">Name</label>
+		<input type="text" name="name" id="{{action}}termname" class="text ui-widget-content ui-corner-all" />
 
 
         <label for="colorpicker1">Color</label>
@@ -29,7 +29,7 @@
                             <input type="text" id="oldcolor" value="{{oldColor}}"/>
                        </td>
                         <td>
-                            <label for="color1" style="display:inline;">New Color {{oldColor}}</label>
+                            <label for="color1" style="display:inline;">New Color</label>
                             <input type="text" id="color1"  value="{{oldColor}}"/>
                         </td>
                     </tr>
@@ -42,8 +42,8 @@
 
     </td>
     <td width="60%">
-		<label for="editontologytermtree">Parent (Drag & Drop)</label>
-        <div id="editontologytermtree" style="background:#666666;"></div>
+		<label for="{{action}}ontologytermtree">Parent (Drag & Drop)</label>
+        <div id="{{action}}ontologytermtree" style="background:#666666;"></div>
     </td>
   </tr>
 </table>

@@ -78,6 +78,7 @@ class Ontology {
       returnArray['attr'] = [ "id" : it.id, "type" : it.class]
       returnArray['data'] = it.name
       returnArray['isFolder'] = true
+      returnArray['key'] = it.id
       returnArray['hideCheckbox'] = true
 
       returnArray['state'] = "open"

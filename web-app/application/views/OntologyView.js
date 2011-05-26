@@ -48,19 +48,18 @@ var OntologyView = Backbone.View.extend({
             console.log("OntologyView: initOntologyTabs create "+ self.model.length);
             //add "All annotation from all term" tab
 
-            var first = true;
             self.model.each(function(ontology) {
                 //add x term tab
-                if(!first) return;
                 self.addOntologyToTab(ontologyTabTpl, ontologyTabContentTpl, { id : ontology.get("id"), name : ontology.get("name")});
-                first = false;
             });
              self.fetchOntologies();
             if(self.tabsOntologies==null)
-                self.tabsOntologies = $("#tabsontology").tabs({show: function(event, ui){
+                            self.tabsOntologies = $("#tabsontology").accordion();
+            //tabs;
+                /*self.tabsOntologies = $("#tabsontology").tabs({show: function(event, ui){
                     $(this).attr('style', 'width:100%;height:100%;overflow:auto');
                     return true;
-                 }});
+                 }});*/
         });
     },
     /**
@@ -69,10 +68,12 @@ var OntologyView = Backbone.View.extend({
      * @param name term name
      */
     addOntologyToTab : function(ontologyTabTpl, ontologyTabContentTpl, data) {
-        $("#ultabsontology").append(_.template(ontologyTabTpl, data));
-        $("#listtabontology").append(_.template(ontologyTabContentTpl, data));
+        $("#tabsontology").append("<h3><a href=\"#\">"+data.name+"</a></h3>");
+        $("#tabsontology").append(_.template(ontologyTabContentTpl, data));
 
-
+        //tabs;
+ /*         $("#ultabsontology").append(_.template(ontologyTabTpl, data));
+        $("#listtabontology").append(_.template(ontologyTabContentTpl, data)); */
 
 
     },
@@ -81,9 +82,8 @@ var OntologyView = Backbone.View.extend({
 
         var self = this;
         //init specific panel
-        var first = true;
+
         self.model.each(function(ontology) {
-            if(!first) return;
             //create project search panel
             new OntologyPanelView({
                 model : ontology,
@@ -91,7 +91,6 @@ var OntologyView = Backbone.View.extend({
                 container : self,
                 ontologiesPanel : self
             }).render();
-            first = false;
         });
 
 

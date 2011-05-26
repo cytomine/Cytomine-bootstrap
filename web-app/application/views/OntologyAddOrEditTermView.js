@@ -1,8 +1,9 @@
-var OntologyEditTermView = Backbone.View.extend({
-    ontologyPanel : null,
-    editOntologyDialog : null,
+var OntologyAddOrEditTermView = Backbone.View.extend({
+    ontologyPanel : null, //Ontology panel in ontology view
+    ontologyDialog : null, //dialog (add, edit)
     ontology : null,
     tree : null,
+    action : null,
     initialize: function(options) {
         this.container = options.container;
         this.ontologyPanel = options.ontologyPanel;
@@ -13,93 +14,108 @@ var OntologyEditTermView = Backbone.View.extend({
     render : function() {
         var self = this;
         require([
-            "text!application/templates/ontology/OntologyEditTermDialog.tpl.html"
+            "text!application/templates/ontology/OntologyAddOrEditTermView.tpl.html"
         ],
-               function(ontologyEditTermDialogTpl) {
-                   self.doLayout(ontologyEditTermDialogTpl);
+               function(ontologyAddOrEditTermViewTpl) {
+                   self.doLayout(ontologyAddOrEditTermViewTpl);
                });
         return this;
     },
-    doLayout : function(ontologyEditTermDialogTpl) {
+    doLayout : function(ontologyAddOrEditTermViewTpl) {
 
         var self = this;
-        var color = self.model.get('color');
-        if(!color.contains("#"))
-            color = "#" + color;
 
-        var dialog = _.template(ontologyEditTermDialogTpl, {oldColor : color});
+
+        if(self.model==null) {
+            //dialog to add
+            self.action = "Add";
+            self.createNewEmpty();
+        }
+        else {
+            //dialog to edit
+            self.action = "Edit";
+        }
+
+        var color = self.model.get('color');
+        if(!color.contains("#")) color = "#" + color;
+
+        var dialog = _.template(ontologyAddOrEditTermViewTpl, {oldColor : color,action : self.action});
         $(self.el).append(dialog);
-        self.tree = $("#editontologytermtree");
+        self.tree = $("#" + self.action +"ontologytermtree");
         console.log(self.model.id + " " + self.model.get('name'));
 
-        $("#form-edit-ontology-term").submit(function () {self.updatedOntologyTerm(); return false;});
-        $("#form-edit-ontology-term").find("input").keydown(function(e){
+        $("#form-" + self.action +"-ontology-term").submit(function () {
+            console.log(self.action);
+            if(self.action == "Edit")
+                self.updatedOntologyTerm();
+            else  self.createOntologyTerm();
+
+            return false;});
+        $("#form-" + self.action +"-ontology-term").find("input").keydown(function(e){
             if (e.keyCode == 13) { //ENTER_KEY
-                $("#form-edit-ontology-term").submit();
+                $("#form-" + self.action +"-ontology-term").submit();
                 return false;
             }
         });
 
         self.buildNameInfo();
         self.buildColorInfo();
-        $("#editontologytermtree").empty() ;
+        $("#" + self.action +"ontologytermtree").empty() ;
         self.buildParentInfo();
 
         //Build dialog
-        console.log("EditOntologyTermDialog: build dialog:"+$("#dialog-edit-ontology-term").length);
-        self.editOntologyDialog = $("#dialog-edit-ontology-term").dialog({
+        console.log("OntologyTermDialog: build dialog:"+$("#dialog-" + self.action +"-ontology-term").length);
+        self.ontologyDialog = $("#dialog-" + self.action +"-ontology-term").dialog({
             width: "1000",
             autoOpen : false,
             modal:true,
             buttons : {
                 "Save" : function() {
-                    $("#form-edit-ontology-term").submit();
+                    $("#form-" + self.action +"-ontology-term").submit();
                 },
                 "Cancel" : function() {
-                    $("#dialog-edit-ontology-term").dialog("close");
+                    $("#dialog-" + self.action +"-ontology-term").dialog("close");
                 }
             }
         });
 
         self.open();
-
-
         return this;
-
     },
+    createNewEmpty : function() {
+        var self = this;
+        console.log("createNewEmpty");
+        self.model = new TermModel({id:-1,name:"",color:"#ff0000"});
+    },
+
     buildNameInfo : function () {
         console.log("buildNameInfo");
         var self = this;
-        $("#edittermname").val(self.model.get("name"));
+        $("#" + self.action +"termname").val(self.model.get("name"));
 
 
-        $("#edittermname").bind('keyup mouseup change',function(e){
+        $("#" + self.action +"termname").bind('keyup mouseup change',function(e){
             var node = self.tree.dynatree("getTree").getNodeByKey(self.model.id);
             var color = "#9ac400"
             var htmlNode = "<label style='color:{{color}}'>{{title}}</label>"
-            var nodeTpl = _.template(htmlNode, {title : $("#edittermname").val(), color : color});
+            var nodeTpl = _.template(htmlNode, {title : $("#" + self.action +"termname").val(), color : color});
 
             node.setTitle(nodeTpl);
         });
-
     },
 
     buildColorInfo : function() {
         console.log("buildColorInfo");
         var self = this;
 
-
-
         console.log("$('#colorpicker1')="+$('#colorpicker1').length  + " ");
         var colorPicker = $('#colorpicker1').farbtastic('#color1');
         console.log(colorPicker);
 
         //$('#colorpicker1').setColor(self.model.get('color'));
-        var color = self.model.get('color')
+        var color = self.model.get('color');
         if(!color.contains("#"))
             color = "#" + color;
-
-
 
         $("#oldcolor").val(color);
         $("#color1").val(color);
@@ -108,6 +124,7 @@ var OntologyEditTermView = Backbone.View.extend({
         $("#color1").css("color", $("#oldcolor").css("color"));
 
     },
+
     buildParentInfo : function() {
         console.log("buildParentInfo");
         var self = this;
@@ -137,17 +154,13 @@ var OntologyEditTermView = Backbone.View.extend({
                 console.log("Double click");
             },
 
-
-
-
-
             dnd: {
                 onDragStart: function(node) {
                     /** This function MUST be defined to enable dragging for the tree.
                      *  Return false to cancel dragging of node.
                      */
                     logMsg("tree.onDragStart(%o)", node);
-                    if(node.data.id!=self.model.id) return false;
+                    if(node.data.key!=self.model.id) return false;
                     return true;
                 },
                 onDragStop: function(node) {
@@ -213,32 +226,46 @@ var OntologyEditTermView = Backbone.View.extend({
 
             generateIds: true,
             // The following options are only required, if we have more than one tree on one page:
-            initId: "edittreeDataOntology-"+self.model.id,
-            cookieId: "editdynatree-Ontology-"+self.model.id,
-            idPrefix: "editdynatree-Ontology-"+self.model.id+"-" ,
+            initId: "" + self.action +"treeDataOntology-"+self.model.id,
+            cookieId: "" + self.action +"dynatree-Ontology-"+self.model.id,
+            idPrefix: "" + self.action +"dynatree-Ontology-"+self.model.id+"-" ,
             debugLevel: 0
         });
-
-
-
-
         //expand all nodes
         self.tree.dynatree("getRoot").visit(function(node){
-            console.log("node="+node.data.title);
+            console.log("node="+node.data.id + " " + node.data.key + " " + node.data.title);
             node.expand(true);
         });
+        if(self.action=="Add") {
+            var node = self.tree.dynatree("getTree").getNodeByKey(self.ontology.id);
+            var childNode = node.addChild({
+                title: "",
+                key : -1,
+                tooltip: "This folder and all child nodes were added programmatically.",
+                isFolder: false
+            });
+        }
 
-         var node = self.tree.dynatree("getTree").getNodeByKey(self.model.id);
-            var title = node.data.title
-            var color = "#9ac400"
-            var htmlNode = "<label style='color:{{color}}'>{{title}}</label>"
-            var nodeTpl = _.template(htmlNode, {title : title, color : color});
 
-            node.setTitle(nodeTpl);
+
+
+
+        console.log("self.model.id="+self.model.id);
+        var node = self.tree.dynatree("getTree").getNodeByKey(self.model.id);
+        var title = node.data.title
+        var color = "#9ac400"
+        var htmlNode = "<label style='color:{{color}}'>{{title}}</label>"
+        var nodeTpl = _.template(htmlNode, {title : title, color : color});
+
+        node.setTitle(nodeTpl);
 
     },
+
     getNewName : function() {
-        return $("#edittermname").val();
+        var self = this;
+        console.log("getNewName size:"+$("#" + self.action +"termname").length);
+        console.log("getNewName: "+$("#" + self.action +"termname").val);
+        return $("#" + self.action +"termname").val();
     },
     getNewParent : function() {
         var self = this;
@@ -253,13 +280,13 @@ var OntologyEditTermView = Backbone.View.extend({
     },
     open: function() {
         var self = this;
-        self.clearEditOntologyTermPanel();
-        self.editOntologyDialog.dialog("open") ;
+        self.clearOntologyTermPanel();
+        self.ontologyDialog.dialog("open") ;
     },
-    clearEditOntologyTermPanel : function() {
+    clearOntologyTermPanel : function() {
         var self = this;
-        $("#editontologytermerrormessage").empty();
-        $("#editontologytermerrorlabel").hide();
+        $("#" + self.action +"ontologytermerrormessage").empty();
+        $("#" + self.action +"ontologytermerrorlabel").hide();
 
 
     },
@@ -267,8 +294,8 @@ var OntologyEditTermView = Backbone.View.extend({
         console.log("updatedOntologyTerm...");
         var self = this;
 
-        $("#editontologytermerrormessage").empty();
-        $("#editontologytermerrorlabel").hide();
+        $("#" + self.action +"ontologytermerrormessage").empty();
+        $("#" + self.action +"ontologytermerrorlabel").hide();
         var id = self.model.id;
         var name =  self.getNewName();
         var idOldParent = self.model.get("parent");
@@ -310,10 +337,52 @@ var OntologyEditTermView = Backbone.View.extend({
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 console.log("json.project="+json.errors);
-                $("#editontologytermerrorlabel").show();
-                console.log($("#editontologytermerrormessage").append(json.errors));
+                $("#" + self.action +"ontologytermerrorlabel").show();
+                $("#" + self.action +"ontologytermerrormessage").append(json.errors);
             }
         } ); //TODO: catch error
+    },
+
+    createOntologyTerm : function() {
+        console.log("createOntologyTerm...");
+
+        var self = this;
+        $("#" + self.action +"ontologytermerrormessage").empty();
+        $("#" + self.action +"ontologytermerrorlabel").hide();
+        var id = self.model.id;
+        var name =  self.getNewName();
+        var isParentOntology = true;
+        var idParent = self.getNewParent();
+        if(window.app.models.ontologies.get(idParent)==undefined) {
+            isParentOntology = false;
+        }
+        console.log("isParentOntology=" + isParentOntology);
+        var color = self.getNewColor();
+        console.log("create term "+ name + " with parent=" + idParent + " and color="+color);
+
+        self.model.set({name:name,color:color});
+        self.model = new TermModel({name:name,color:color,ontology:self.ontology.id}).save({name:name,color:color,ontology:self.ontology.id},{
+            success: function (model, response) {
+                console.log(response);
+                //TODO: check it relation/term is changed
+                console.log("isParentOntology=" + isParentOntology);
+
+                if(isParentOntology) {
+                    //no link "parent" with a term
+                    self.close();
+                }
+                else {
+                    self.addRelation(id,idParent);
+                }
+            },
+            error: function (model, response) {
+                var json = $.parseJSON(response.responseText);
+                console.log("json.project="+json.errors);
+                $("#" + self.action +"ontologytermerrorlabel").show();
+                $("#" + self.action +"ontologytermerrormessage").append(json.errors);
+            }
+        } ); //TODO: catch error
+
     },
     resetRelation : function(child,oldParent,newParent) {
         var self = this;
@@ -325,14 +394,14 @@ var OntologyEditTermView = Backbone.View.extend({
                     self.addRelation(child,newParent);
                 }
                 else {
-                     self.close();
+                    self.close();
                 }
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 console.log("json.project="+json.errors);
-                $("#editontologytermerrorlabel").show();
-                console.log($("#editontologytermerrormessage").append(json.errors));
+                $("#" + self.action +"ontologytermerrorlabel").show();
+                $("#" + self.action +"ontologytermerrormessage").append(json.errors);
             }});
     },
     addRelation : function(child,newParent) {
@@ -340,18 +409,18 @@ var OntologyEditTermView = Backbone.View.extend({
         new RelationTermModel({}).save({term1:newParent, term2:child},{
             success : function (model, response) {
                 console.log("create new relation");
-               self.close();
+                self.close();
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 console.log("json.project="+json.errors);
-                $("#editontologytermerrorlabel").show();
-                console.log($("#editontologytermerrormessage").append(json.errors));
+                $("#" + self.action +"ontologytermerrorlabel").show();
+                ("#" + self.action +"ontologytermerrormessage").append(json.errors);
             }});
     },
     close : function() {
         console.log("refresh");
-          this.ontologyPanel.refresh();
-       $("#dialog-edit-ontology-term").dialog("close") ;
+        this.ontologyPanel.refresh();
+        $("#dialog-" + self.action +"-ontology-term").dialog("close") ;
     }
 });

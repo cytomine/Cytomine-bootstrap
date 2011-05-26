@@ -26,9 +26,34 @@ var OntologyPanelView = Backbone.View.extend({
     },
     clear : function() {
         var self = this;
+        $("#tabsontology-"+self.model.id).empty();
+         self.rebuiltrender();
+
+
         // var rootNode = self.tree.dynatree("getRoot");
         // rootNode.removeChildren();
     },
+    rebuiltrender : function () {
+        var self = this;
+        require([
+            "text!application/templates/ontology/OntologyTabContent.tpl.html"
+        ],
+               function(tpl) {
+                   self.doLayout(tpl);
+               });
+
+        return this;
+    },
+    doLayout: function(tpl) {
+        console.log("OntologyPanelView.render");
+
+        var self = this;
+        $("#tabsontology-"+self.model.id).html(_.template(tpl, { id : self.model.get("id"), name : self.model.get("name")}));
+
+        return this;
+    },
+
+
     render: function() {
         console.log("OntologyPanelView.render");
         var self = this;
@@ -45,7 +70,7 @@ var OntologyPanelView = Backbone.View.extend({
         $('#dialog-add-ontology-term').remove();
         var nodeWithoutLeaf = self.getNodeWithoutLeaf();
 
-        self.addOntologyTermDialog = new OntologyAddTermView({ontologyPanel:self,el:self.el,parents:nodeWithoutLeaf,model:self.model}).render();
+        self.addOntologyTermDialog = new OntologyAddOrEditTermView({ontologyPanel:self,el:self.el,parents:nodeWithoutLeaf,ontology:self.model,model:null}).render();
 
 
     },
@@ -67,7 +92,7 @@ var OntologyPanelView = Backbone.View.extend({
 
         self.model.fetch({
             success : function (model, response) {
-                self.editOntologyTermDialog = new OntologyEditTermView({ontologyPanel:self,el:self.el,model:term,ontology:self.model}).render();
+                self.editOntologyTermDialog = new OntologyAddOrEditTermView({ontologyPanel:self,el:self.el,model:term,ontology:self.model}).render();
             }});
 
 
@@ -141,9 +166,9 @@ var OntologyPanelView = Backbone.View.extend({
     },
     initButton : function() {
         var self = this;
-        $("#buttonExpanseOntology"+self.model.id).button({
+        /*$("#buttonExpanseOntology"+self.model.id).button({
             icons : {secondary: "ui-icon-circle-arrow-n" }
-        });
+        }); */
 
         $('#buttonAddTerm'+self.model.id).button({
             icons : {secondary: "ui-icon-plus" }
@@ -155,7 +180,7 @@ var OntologyPanelView = Backbone.View.extend({
             icons : {secondary: "ui-icon-trash" }
         });
 
-        $("#buttonExpanseOntology"+self.model.id).click(function(){
+        /*$("#buttonExpanseOntology"+self.model.id).click(function(){
             self.tree.dynatree("getRoot").visit(function(node){
                 node.expand(self.expanse);
             });
@@ -169,7 +194,7 @@ var OntologyPanelView = Backbone.View.extend({
                 $("#buttonExpanseOntology"+self.model.id).find(".ui-button-text").empty().append("Collapse all");
             }
             return false;
-        });
+        }); */
         /*$("#buttonCollapseOntology"+self.model.id).click(function(){
          self.tree.dynatree("getRoot").visit(function(node){
          node.expand(false);

@@ -101,8 +101,7 @@
     <script type="text/javascript" src="application/views/LogoutDialogView.js" ></script>
     <script type="text/javascript" src="application/views/ExplorerTabs.js" ></script>
     <script type="text/javascript" src="application/views/OntologyPanelView.js" ></script>
-    <script type="text/javascript" src="application/views/OntologyAddTermView.js" ></script>
-    <script type="text/javascript" src="application/views/OntologyEditTermView.js" ></script>
+    <script type="text/javascript" src="application/views/OntologyAddOrEditTermView.js" ></script>
 
     <script type="text/javascript">
         $(function() {
