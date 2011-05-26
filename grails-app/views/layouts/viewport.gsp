@@ -6,54 +6,54 @@
     <link rel="icon" type="image/png" href="favicon.ico">
 
     <!-- RequireJS -->
-    <script type="text/javascript" src="application/lib/requirejs/require.js"></script>
+    <script type="text/javascript" src="lib/requirejs/require.js"></script>
 
 
     <!-- JQuery & JQuery UI-->
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"></script>
 
-    <!--<script type="text/javascript" src="application/lib/jquery/jquery-1.5.1.min.js"></script>
-    <script type="text/javascript" src="application/lib/jquery/jquery-ui-1.8.1.custom.min.js"></script> -->
+    <!--<script type="text/javascript" src="lib/jquery/jquery-1.5.1.min.js"></script>
+    <script type="text/javascript" src="lib/jquery/jquery-ui-1.8.1.custom.min.js"></script> -->
 
-    <link rel='stylesheet' href='application/css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
+    <link rel='stylesheet' href='css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
 
 
     <!-- Core Libs -->
-    <script type="text/javascript" src="application/lib/underscore.js"></script>
-    <script type="text/javascript" src="application/lib/backbone.js"></script>
+    <script type="text/javascript" src="lib/underscore.js"></script>
+    <script type="text/javascript" src="lib/backbone.js"></script>
 
     <!-- Modules -->
-    <script type="text/javascript" src="application/lib/pnotify/jquery.pnotify.js" ></script>
-    <link rel='stylesheet' href='application/lib/pnotify/jquery.pnotify.default.css' type='text/css'/>
+    <script type="text/javascript" src="lib/pnotify/jquery.pnotify.js" ></script>
+    <link rel='stylesheet' href='lib/pnotify/jquery.pnotify.default.css' type='text/css'/>
 
-    <script type="text/javascript" src="application/lib/fileupload/jquery.fileupload-ui.js"></script>
-    <script type="text/javascript" src="application/lib/fileupload/jquery.fileupload.js"></script>
-    <link rel='stylesheet' href='application/lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
+    <script type="text/javascript" src="lib/fileupload/jquery.fileupload-ui.js"></script>
+    <script type="text/javascript" src="lib/fileupload/jquery.fileupload.js"></script>
+    <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
 
-    <script type="text/javascript" src="application/lib/jqplot/jquery.jqplot.js"></script>
-    <script type="text/javascript" src="application/lib/jqplot/jqplot.pieRenderer.js"></script>
-    <link rel='stylesheet' href='application/lib/jqplot/jquery.jqplot.css' type='text/css'/>
+    <script type="text/javascript" src="lib/jqplot/jquery.jqplot.js"></script>
+    <script type="text/javascript" src="lib/jqplot/jqplot.pieRenderer.js"></script>
+    <link rel='stylesheet' href='lib/jqplot/jquery.jqplot.css' type='text/css'/>
 
-    <script type="text/javascript" src="application/lib/ui.panel/ui.panel.min.js"></script>
-    <link type="text/css" href="application/lib/ui.panel/ui.panel.css" rel="stylesheet" />
+    <script type="text/javascript" src="lib/ui.panel/ui.panel.min.js"></script>
+    <link type="text/css" href="lib/ui.panel/ui.panel.css" rel="stylesheet" />
 
-    <link href="application/lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css">
-    <script src="application/lib/dynatree/jquery.dynatree.js" type="text/javascript"></script>
+    <link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css">
+    <script src="lib/dynatree/jquery.dynatree.js" type="text/javascript"></script>
 
     <!-- OpenLayers -->
-    <script type="text/javascript" src="application/lib/openlayers/OpenLayers.js"></script>
-    <script type="text/javascript" src="application/lib/openlayers/OpenURL.js"></script>
+    <script type="text/javascript" src="lib/openlayers/OpenLayers.js"></script>
+    <script type="text/javascript" src="lib/openlayers/OpenURL.js"></script>
 
-    <script type="text/javascript" src="application/lib/farbtastic/farbtastic.js"></script>
+    <script type="text/javascript" src="lib/farbtastic/farbtastic.js"></script>
 
     <!-- Styles -->
-    <link rel='stylesheet' href='application/css/reset.css' type='text/css'/>
-    <link rel='stylesheet' href='application/css/cytomine.css' type='text/css'/>
+    <link rel='stylesheet' href='css/reset.css' type='text/css'/>
+    <link rel='stylesheet' href='css/cytomine.css' type='text/css'/>
 
     <!-- Application -->
     <script type="text/javascript" src="application/Utilities.js" ></script>
-    <script type="text/javascript" src="application/views/AnnotationLayer.js" ></script>
+
     <!-- controllers -->
     <script type="text/javascript" src="application/controllers/ApplicationController.js" ></script>
     <script type="text/javascript" src="application/controllers/UploadController.js" ></script>
@@ -78,31 +78,36 @@
     <script type="text/javascript" src="application/models/CommandModel.js" ></script>
     <script type="text/javascript" src="application/models/RelationModel.js" ></script>
     <!-- View -->
+    <script type="text/javascript" src="application/views/auth/LoginDialogView.js" ></script>
+    <script type="text/javascript" src="application/views/auth/LoadingDialogView.js" ></script>
+    <script type="text/javascript" src="application/views/auth/LogoutDialogView.js" ></script>
+
+    <script type="text/javascript" src="application/views/dashboard/AnnotationThumbView.js" ></script>
+    <script type="text/javascript" src="application/views/dashboard/AnnotationView.js" ></script>
+    <script type="text/javascript" src="application/views/dashboard/ProjectDashboardView.js" ></script>
+
+    <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
+    <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>
+    <script type="text/javascript" src="application/views/explorer/DraggablePanelView.js" ></script>
+    <script type="text/javascript" src="application/views/explorer/ExplorerTabs.js" ></script>
+
+    <script type="text/javascript" src="application/views/image/ImageThumbView.js" ></script>
+    <script type="text/javascript" src="application/views/image/ImageView.js" ></script>
+
+    <script type="text/javascript" src="application/views/ontology/OntologyPanelView.js" ></script>
+    <script type="text/javascript" src="application/views/ontology/OntologyView.js" ></script>
+    <script type="text/javascript" src="application/views/ontology/OntologyAddOrEditTermView.js" ></script>
+    <script type="text/javascript" src="application/views/ontology/OntologyTreeView.js" ></script>
+
+    <script type="text/javascript" src="application/views/project/ProjectView.js" ></script>
+    <script type="text/javascript" src="application/views/project/ProjectPanelView.js" ></script>
+    <script type="text/javascript" src="application/views/project/ProjectManageSlideDialog.js" ></script>
+    <script type="text/javascript" src="application/views/project/ProjectAddDialog.js" ></script>
+    <script type="text/javascript" src="application/views/project/ProjectSearchPanel.js" ></script>
+
+    <script type="text/javascript" src="application/views/Component.js" ></script>
     <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
     <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
-    <script type="text/javascript" src="application/views/DraggablePanelView.js" ></script>
-    <script type="text/javascript" src="application/views/Component.js" ></script>
-    <script type="text/javascript" src="application/views/ProjectView.js" ></script>
-    <script type="text/javascript" src="application/views/ImageView.js" ></script>
-    <script type="text/javascript" src="application/views/BrowseImageView.js" ></script>
-    <script type="text/javascript" src="application/views/ImageThumbView.js" ></script>
-    <script type="text/javascript" src="application/views/OntologyView.js" ></script>
-    <script type="text/javascript" src="application/views/OntologyTreeView.js" ></script>
-    <script type="text/javascript" src="application/views/ProjectView.js" ></script>
-    <script type="text/javascript" src="application/views/ProjectPanelView.js" ></script>
-    <script type="text/javascript" src="application/views/ProjectManageSlideDialog.js" ></script>
-    <script type="text/javascript" src="application/views/ProjectAddDialog.js" ></script>
-    <script type="text/javascript" src="application/views/ProjectDashboardView.js" ></script>
-    <script type="text/javascript" src="application/views/AnnotationThumbView.js" ></script>
-    <script type="text/javascript" src="application/views/AnnotationView.js" ></script>
-    <script type="text/javascript" src="application/views/ProjectSearchPanel.js" ></script>
-    <script type="text/javascript" src="application/views/LoginDialogView.js" ></script>
-    <script type="text/javascript" src="application/views/LoadingDialogView.js" ></script>
-    <script type="text/javascript" src="application/views/LogoutDialogView.js" ></script>
-    <script type="text/javascript" src="application/views/ExplorerTabs.js" ></script>
-    <script type="text/javascript" src="application/views/OntologyPanelView.js" ></script>
-    <script type="text/javascript" src="application/views/OntologyAddOrEditTermView.js" ></script>
-
     <script type="text/javascript">
         $(function() {
             //Change underscore _.template function delimiter
