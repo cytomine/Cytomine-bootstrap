@@ -1,0 +1,53 @@
+<div id="dialog-edit-ontology-term" title="Edit term">
+	<p class="validateTips">All form fields are required.</p>
+
+	<form id="form-edit-ontology-term">
+	<fieldset>
+        <div id="editontologytermerrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+            <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                <strong>Error:</strong><div id="editontologytermerrormessage"></div></p>
+        </div>
+
+
+<table width="90%">
+  <tr>
+    <td width="40%">
+
+		<label for="edittermname">Name</label>
+		<input type="text" name="name" id="edittermname" class="text ui-widget-content ui-corner-all" />
+
+
+        <label for="colorpicker1">Color</label>
+        <div class="colorpicker">
+            <div id="colorpicker1"></div>
+
+
+                <table width="10%">
+                    <tr>
+                       <td>
+                            <label for="oldcolor" style="display:inline;">Old color</label>
+                            <input type="text" id="oldcolor" value="{{oldColor}}"/>
+                       </td>
+                        <td>
+                            <label for="color1" style="display:inline;">New Color {{oldColor}}</label>
+                            <input type="text" id="color1"  value="{{oldColor}}"/>
+                        </td>
+                    </tr>
+                </table>
+
+
+
+        </div>
+
+
+    </td>
+    <td width="60%">
+		<label for="editontologytermtree">Parent (Drag & Drop)</label>
+        <div id="editontologytermtree" style="background:#666666;"></div>
+    </td>
+  </tr>
+</table>
+
+	</fieldset>
+	</form>
+</div>

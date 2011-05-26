@@ -47,6 +47,9 @@ class Ontology {
     t.data = term.getName()
     t.color = term.getColor()
     t.class = term.class
+    RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT),term)
+    t.parent = rt? rt.term1.id : null
+
     t.attr = [ "id" : term.id, "type" : term.class]
     t.checked = false
     t.key = term.getId()

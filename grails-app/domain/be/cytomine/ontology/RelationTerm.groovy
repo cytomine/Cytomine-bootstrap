@@ -65,9 +65,10 @@ class RelationTerm implements Serializable{
   }
 
   static RelationTerm getRelationTermFromData(relationTerm,jsonRelationTerm) {
-    relationTerm.relation = Relation.get(jsonRelationTerm.relation.id)
-    relationTerm.term1 = Term.get(jsonRelationTerm.term1.id)
-    relationTerm.term2 = Term.get(jsonRelationTerm.term2.id)
+    println "jsonRelationTerm="+jsonRelationTerm.toString()
+    relationTerm.relation = Relation.get(jsonRelationTerm.relation)
+    relationTerm.term1 = Term.get(jsonRelationTerm.term1)
+    relationTerm.term2 = Term.get(jsonRelationTerm.term2)
     return relationTerm;
   }
 

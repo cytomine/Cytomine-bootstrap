@@ -40,6 +40,23 @@ var OntologyAddTermView = Backbone.View.extend({
              }
           });
 
+        console.log("$('#colorSelector')="+$('#colorSelector').length);
+        $('#colorSelector').ColorPicker({
+            color: '#0000ff',
+            onShow: function (colpkr) {
+                $(colpkr).fadeIn(500);
+                return false;
+            },
+            onHide: function (colpkr) {
+                $(colpkr).fadeOut(500);
+                return false;
+            },
+            onChange: function (hsb, hex, rgb) {
+                $('#colorSelector div').css('backgroundColor', '#' + hex);
+            }
+        });
+
+
 
           //Build dialog
           console.log("AddOntologyTermDialog: build dialog:"+$("#dialog-add-ontology-term").length);

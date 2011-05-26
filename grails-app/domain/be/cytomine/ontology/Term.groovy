@@ -105,6 +105,10 @@ class Term extends SequenceDomain implements Serializable {
       returnArray['name'] = it.name
       returnArray['comment'] = it.comment
       returnArray['ontology'] = it.ontology? it.ontology.id : null
+
+      RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT),Term.get(it.id))
+
+      returnArray['parent'] = rt? rt.term1.id : null
       if(it.color) returnArray['color'] = it.color
 
       /*def children = [:]

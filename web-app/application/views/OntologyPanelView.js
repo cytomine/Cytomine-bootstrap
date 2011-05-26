@@ -3,14 +3,31 @@ var OntologyPanelView = Backbone.View.extend({
     info : null,
     expanse : false,
     addOntologyTermDialog : null,
+    editOntologyTermDialog : null,
+    deleteOntologyTermDialog : null,
     events: {
         "click .addTerm": "addTerm",
-        "click .renameTerm": "renameTerm",
+        "click .editTerm": "editTerm",
         "click .deleteTerm": "deleteTerm"
     },
     initialize: function(options) {
         this.container = options.container;
         this.ontologiesPanel = options.ontologiesPanel;
+    },
+    refresh : function() {
+        var self = this;
+        self.model.fetch({
+            success : function (model, response) {
+                console.log(self.model);
+                self.clear();
+                self.render();
+            }});
+
+    },
+    clear : function() {
+        var self = this;
+        // var rootNode = self.tree.dynatree("getRoot");
+        // rootNode.removeChildren();
     },
     render: function() {
         console.log("OntologyPanelView.render");
@@ -32,6 +49,30 @@ var OntologyPanelView = Backbone.View.extend({
 
 
     },
+    editTerm : function() {
+        console.log("editTerm");
+        var self = this;
+        $('#dialog-edit-ontology-term').remove();
+
+        var node = this.tree.dynatree("getActiveNode");
+
+        if(node==null) {
+            alert("click!");
+            return;
+        }
+
+        var term = window.app.models.terms.get(node.data.id);
+        console.log("edit term="+term.id);
+        console.log(term);
+
+        self.model.fetch({
+            success : function (model, response) {
+                self.editOntologyTermDialog = new OntologyEditTermView({ontologyPanel:self,el:self.el,model:term,ontology:self.model}).render();
+            }});
+
+
+
+    },
     getNodeWithoutLeaf : function() {
         var self = this;
         var nodeWithoutLeaf = new Array();
@@ -43,12 +84,7 @@ var OntologyPanelView = Backbone.View.extend({
         });
         return nodeWithoutLeaf;
     },
-    renameTerm : function() {
-        console.log("renameTerm");
-        var node = this.tree.dynatree("getActiveNode");
-        node.data.title = "My new title";
-        node.render();
-    },
+
     deleteTerm : function() {
         console.log("deleteTerm");
 
@@ -56,10 +92,13 @@ var OntologyPanelView = Backbone.View.extend({
     buildOntologyTree : function() {
         var self = this;
         console.log("buildOntologyTree for ontology " + self.model.id);
-
+        var currentTime = new Date()
         console.log(self.model.toJSON());
         console.log(self.tree.length);
-        self.tree.dynatree({
+        console.log("Empty:"+self.tree.length);
+        console.log("Build tree:"+self.tree.length);
+        self.tree.empty();
+        $(self.el).find("#treeontology-"+self.model.id).dynatree({
             children: self.model.toJSON(),
             onExpand : function() { console.log("expanding/collapsing");},
             onClick: function(node, event) {
@@ -84,28 +123,19 @@ var OntologyPanelView = Backbone.View.extend({
             onDblClick: function(node, event) {
                 console.log("Double click");
             },
-            generateIds: true,
+            //generateIds: true,
             // The following options are only required, if we have more than one tree on one page:
-            initId: "treeDataOntology-"+self.model.id,
-            cookieId: "dynatree-Ontology-"+self.model.id,
-            idPrefix: "dynatree-Ontology-"+self.model.id+"-" ,
+            initId: "treeDataOntology-"+self.model.id + currentTime.getTime(),
+            cookieId: "dynatree-Ontology-"+self.model.id+ currentTime.getTime(),
+            idPrefix: "dynatree-Ontology-"+self.model.id+ currentTime.getTime()+"-" ,
             debugLevel: 2
         });
         //expand all nodes
+
+        console.log("root="+self.tree.dynatree("getRoot"));
         self.tree.dynatree("getRoot").visit(function(node){
+            console.log("node="+node.data.title);
             node.expand(true);
-        });
-
-
-        //remove all node withouth children
-        self.tree.dynatree("getRoot").visit(function(node){
-            //console.log(node);
-
-            if(!node.data.isFolder)
-            {
-                console.log("node.deactivate()");
-                node.deactivate();
-            }
         });
 
     },
@@ -118,7 +148,7 @@ var OntologyPanelView = Backbone.View.extend({
         $('#buttonAddTerm'+self.model.id).button({
             icons : {secondary: "ui-icon-plus" }
         });
-        $('#buttonRenameTerm'+self.model.id).button({
+        $('#buttonEditTerm'+self.model.id).button({
             icons : {secondary: "ui-icon-pencil" }
         });
         $('#buttonDeleteTerm'+self.model.id).button({
