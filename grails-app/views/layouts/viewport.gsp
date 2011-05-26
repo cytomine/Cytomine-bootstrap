@@ -17,6 +17,8 @@
     <script type="text/javascript" src="lib/jquery/jquery-ui-1.8.1.custom.min.js"></script> -->
 
     <link rel='stylesheet' href='css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
+    <!--<link rel='stylesheet' href='css/absolution/jquery.ui.all.css' type='text/css'/>-->
+
 
 
     <!-- Core Libs -->

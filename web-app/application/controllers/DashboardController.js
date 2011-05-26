@@ -6,7 +6,7 @@ var DashboardController = Backbone.Controller.extend({
           "dashboard/:project"  : "dashboard"
        },
 
-       dashboard : function(project, callback) {
+       dashboard : function(project) {
 
           if (window.app.status.currentProject != undefined && window.app.status.currentProject != project) {
              console.log("close previous project");
@@ -19,12 +19,12 @@ var DashboardController = Backbone.Controller.extend({
              console.log("init dashboard view");
              window.app.status.currentProject = project;
              window.app.controllers.browse.initTabs();
-             if (this.view == null) this.createView(callback);
+             if (this.view == null) this.createView();
              this.showView();
           }
        },
 
-       createView : function (callback) {
+       createView : function () {
           var tabs = $("#explorer > .browser").children(".tabs");
           var self = this;
           new ProjectModel({id : window.app.status.currentProject}).fetch({
@@ -34,7 +34,6 @@ var DashboardController = Backbone.Controller.extend({
                            el: tabs,
                            container : window.app.view.components.explorer
                         }).render();
-                    callback.call();
                  }
               });
 

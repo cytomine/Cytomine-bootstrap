@@ -40,9 +40,12 @@ var ExplorerController = Backbone.Controller.extend({
           };
 
           if (window.app.status.currentProject == undefined) {//direct access -> create dashboard
-             window.app.controllers.dashboard.dashboard(idProject, createBrowseImageViewTab);
+             window.app.controllers.dashboard.dashboard(idProject);
+
+             setTimeout(createBrowseImageViewTab, 500);
              return;
           }
+
 
           createBrowseImageViewTab();
 
