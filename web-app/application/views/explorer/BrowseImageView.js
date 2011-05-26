@@ -73,6 +73,9 @@ var BrowseImageView = Backbone.View.extend({
                 tmpHeight /= 2;
                 zoom--;
              }
+             layer.controls.select.unselectAll();
+             layer.controls.select.select(feature);
+
              this.map.moveTo(new OpenLayers.LonLat(feature.geometry.getCentroid().x, feature.geometry.getCentroid().y), Math.max(0, zoom));
           }
        },
