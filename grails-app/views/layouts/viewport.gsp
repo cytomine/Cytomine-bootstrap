@@ -13,7 +13,7 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"></script>
 
-   <!--<script type="text/javascript" src="application/lib/jquery/jquery-1.5.1.min.js"></script>
+    <!--<script type="text/javascript" src="application/lib/jquery/jquery-1.5.1.min.js"></script>
     <script type="text/javascript" src="application/lib/jquery/jquery-ui-1.8.1.custom.min.js"></script> -->
 
     <link rel='stylesheet' href='application/css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
@@ -45,13 +45,6 @@
     <script type="text/javascript" src="application/lib/openlayers/OpenLayers.js"></script>
     <script type="text/javascript" src="application/lib/openlayers/OpenURL.js"></script>
 
-  <!-- Picker color
-  <script type="text/javascript" src="application/lib/colorpicker/colorpicker.js"></script>
-  <script type="text/javascript" src="application/lib/colorpicker/eye.js"></script>
-  <script type="text/javascript" src="application/lib/colorpicker/utils.js"></script>
-  <script type="text/javascript" src="application/lib/colorpicker/layout.js?ver=1.0.2"></script>
-  <link rel="stylesheet" media="screen" type="text/css" href="application/lib/colorpicker/css/colorpicker.css" />-->
-
     <script type="text/javascript" src="application/lib/farbtastic/farbtastic.js"></script>
 
     <!-- Styles -->
@@ -60,6 +53,7 @@
 
     <!-- Application -->
     <script type="text/javascript" src="application/Utilities.js" ></script>
+    <script type="text/javascript" src="application/views/AnnotationLayer.js" ></script>
     <!-- controllers -->
     <script type="text/javascript" src="application/controllers/ApplicationController.js" ></script>
     <script type="text/javascript" src="application/controllers/UploadController.js" ></script>

@@ -63,11 +63,10 @@ var ExplorerTabs = Backbone.View.extend({
         */
        addBrowseImageView : function(idImage, options) {
           var self = this;
-          var alreadyOpened = _.detect(self.tabs, function(object) {
-             return object.idImage == idImage;
-          });
-          if (alreadyOpened) {
-             alreadyOpened.view.initOptions = options;
+          var tab = this.getBrowseImageView(idImage);
+          if (tab != null) {
+             console.log("opened...");
+             /*alreadyOpened.view.initOptions = options;*/
              return;
           }
 
@@ -77,10 +76,7 @@ var ExplorerTabs = Backbone.View.extend({
                  initOptions : options,
                  el: tabs
               }).render();
-          self.tabs.push({
-                 idImage : idImage,
-                 view : view
-              });
+          self.tabs.push({idImage : idImage,view : view});
 
        },
        /**
@@ -89,11 +85,11 @@ var ExplorerTabs = Backbone.View.extend({
         * @param idImage the ID of an Image contained in a BrowseImageView
         */
        getBrowseImageView : function(idImage) {
-          var tab  = _.detect(this.tabs, function(object) {
+          var object  = _.detect(this.tabs, function(object) {
              console.log("looking for tab " + idImage  + " vs " + object.idImage);
              return object.idImage == idImage;
           });
-          return tab.view != null ? tab.view : null;
+          return object != null ? object : null;
        },
        /**
         * Remove a Tab
@@ -110,10 +106,11 @@ var ExplorerTabs = Backbone.View.extend({
         * @param index the identifier of the Tab
         */
        showTab : function(index) {
-          var image = _.detect(this.tabs, function(object) {
+          console.log("SHOW TAB " + index);
+          var object = _.detect(this.tabs, function(object) {
              return object.idImage == index;
           });
-          image.view.show();
+          object.view.show();
           var tabs = $(this.el).children('.tabs');
           tabs.tabs('select', '#tabs-' + index);
 

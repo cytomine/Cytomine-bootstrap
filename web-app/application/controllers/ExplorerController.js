@@ -10,19 +10,15 @@ var ExplorerController = Backbone.Controller.extend({
        },
 
        initialize: function() {
-          console.log("initBrowseController");
        },
 
        initTabs : function() { //SHOULD BE OUTSIDE OF THIS CONTROLLER
           //create tabs if not exist
-
           if (this.tabs == null) {
              this.tabs = new ExplorerTabs({
                     el:$("#explorer > .browser"),
                     container : window.app.view.components.explorer
                  }).render();
-
-             //   this.tabs.container.views.tabs = this.tabs;
           }
        },
 
@@ -37,12 +33,8 @@ var ExplorerController = Backbone.Controller.extend({
           var browseImageViewInitOptions = {};
           if (idAnnotation != undefined) {
              browseImageViewInitOptions.goToAnnotation = {value : idAnnotation};
-             //var browseImageView = self.tabs.getB(idImage);
-             //browseImageView.goToAnnotation(idAnnotation);
-             //browseImageView.getUserLayer().goToAnnotation(idAnnotation);
-
           }
-          console.log("BrowseController: browse "+idImage);
+
           self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions);
           self.tabs.showTab(idImage);
 
