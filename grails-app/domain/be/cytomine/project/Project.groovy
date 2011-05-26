@@ -111,7 +111,7 @@ class Project extends SequenceDomain {
       returnArray['imageinstanceURL'] = UrlApi.getImageInstanceURLWithProjectId(it.id)
       returnArray['termURL'] = UrlApi.getTermsURLWithOntologyId(it.ontology?.id)
       returnArray['userURL'] = UrlApi.getUsersURLWithProjectId(it.id)
-
+      returnArray['users'] = it.users().collect { it.id }
 
 
       try {returnArray['numberOfSlides'] = it.slides().size()}catch(Exception e){returnArray['numberOfSlides']=-1}

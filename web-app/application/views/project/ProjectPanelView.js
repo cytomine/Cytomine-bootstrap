@@ -65,32 +65,29 @@ var ProjectPanelView = Backbone.View.extend({
           var idOntology = json.ontology;
           json.ontology = window.app.models.ontologies.get(idOntology).get('name');
 
-          //Get users list
-          new UserCollection({project:self.model.get('id')}).fetch({success : function (collection, response) {
-                 var users=new Array();
-                 collection.each(function(user) {
-                    users.push(user.get('username'));
-                 });
-                 json.users = users.join(", ");
+          var users= [];
+          _.each(self.model.get('users'), function (idUser) {
+             users.push(window.app.models.users.get(idUser).get('username'));
+          });
+          json.users = users.join(", ");
 
-                 var html = _.template(tpl, json);
+          var html = _.template(tpl, json);
 
-                 if(replace) {
-                    $("#projectlist"+json.id).replaceWith(html);
-                 }
-                 else
-                    $(self.el).append(html);
+          if(replace) {
+             $("#projectlist"+json.id).replaceWith(html);
+          }
+          else
+             $(self.el).append(html);
 
-                 self.renderCurrentProjectButton();
-                 self.renderShowImageButton(json.numberOfImages);
+          self.renderCurrentProjectButton();
+          self.renderShowImageButton(json.numberOfImages);
 
-                 $(self.imageAddElem + self.model.id).button({
-                        icons : {secondary : "ui-icon-plus"}
-                     });
-                 $(self.projectElem+self.model.get('id')).panel({
-                        collapsible:false
-                     });
-              }
+          $(self.el).find(self.imageAddElem + self.model.id).button({
+                 icons : {secondary : "ui-icon-plus"}
+              });
+
+          $(self.el).find(self.projectElem+self.model.get('id')).panel({
+                 collapsible:false
               });
        },
 
@@ -139,7 +136,7 @@ var ProjectPanelView = Backbone.View.extend({
 
           var isCurrentProject = window.app.status.currentProject==self.model.id
           //change button style for current project
-          $(self.projectChangeElem + self.model.id).button({
+          $(self.el).find(self.projectChangeElem + self.model.id).button({
                  icons : {secondary : "ui-icon-image"}
               });
           if(isCurrentProject) $(self.projectChangeElem + self.model.id).click();

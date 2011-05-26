@@ -29,11 +29,12 @@ var ApplicationController = Backbone.Controller.extend({
           self.models.projects = new ProjectCollection({user:undefined});
 
           //fetch models
+          var modelsToPreload = [self.models.users, self.models.ontologies, self.models.projects];
           var nbModelFetched = 0;
-          _.each(self.models, function(model){
+          _.each(modelsToPreload, function(model){
              model.fetch({
                     success :  function(model, response) {
-                       self.modelFetched(++nbModelFetched, _.size(self.models), loadingView);
+                       self.modelFetched(++nbModelFetched, _.size(modelsToPreload), loadingView);
                     }
                  });
           });
