@@ -35,6 +35,11 @@ class Ontology {
       if (!it.isRoot()) return
       rootTerms << branch(it)
     }
+    rootTerms.sort { a, b ->
+      if(a.isFolder!=b.isFolder)
+        a.isFolder <=> b.isFolder
+      else a.name <=> b.name
+    }
     return rootTerms;
   }
 
@@ -61,6 +66,11 @@ class Ontology {
         def child = branch(relationTerm.getTerm2())
         t.children << child
       }
+    }
+    t.children.sort { a, b ->
+      if(a.isFolder!=b.isFolder)
+        a.isFolder <=> b.isFolder
+      else a.name <=> b.name
     }
     t.isFolder = isFolder
     t.hideCheckbox = isFolder

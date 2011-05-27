@@ -8,9 +8,8 @@
 var OntologyView = Backbone.View.extend({
     tagName : "div",
     self : this,
-    tabsOntologies : null,
-    // template : _.template($('#image-view-tpl').html()),
-
+    alreadyBuild : false,
+    $tabsOntologies : null,
     initialize: function(options) {
         this.container = options.container;
         this.idOntology = options.idOntology;
@@ -33,8 +32,9 @@ var OntologyView = Backbone.View.extend({
         var self = this;
         $(this.el).html(_.template(tpl, {}));
 
-        self.initOntologyTabs();
+        self.$tabsOntologies = $(self.el).find("#tabsontology");
 
+        self.initOntologyTabs();
 
         return this;
     },
@@ -51,50 +51,29 @@ var OntologyView = Backbone.View.extend({
             self.model.each(function(ontology) {
                 //add x term tab
                 self.addOntologyToTab(ontologyTabTpl, ontologyTabContentTpl, { id : ontology.get("id"), name : ontology.get("name")});
+                //create project search panel
+                new OntologyPanelView({
+                    model : ontology,
+                    el:$(self.el).find("#tabsontology-"+ontology.id),
+                    container : self,
+                    ontologiesPanel : self
+                }).render();
             });
-             self.fetchOntologies();
-            if(self.tabsOntologies==null)
-                            self.tabsOntologies = $("#tabsontology").accordion();
-            //tabs;
-                /*self.tabsOntologies = $("#tabsontology").tabs({show: function(event, ui){
-                    $(this).attr('style', 'width:100%;height:100%;overflow:auto');
-                    return true;
-                 }});*/
+            //self.fetchOntologies();
+            if(!self.alreadyBuild)
+                self.$tabsOntologies.accordion();
         });
     },
     /**
-     * Add the the tab with term info
-     * @param id  term id
-     * @param name term name
+     * Add the the tab with ontology info
+     * @param id  ontology id
+     * @param name ontology name
      */
     addOntologyToTab : function(ontologyTabTpl, ontologyTabContentTpl, data) {
-        $("#tabsontology").append("<h3><a href=\"#\">"+data.name+"</a></h3>");
-        $("#tabsontology").append(_.template(ontologyTabContentTpl, data));
-
+        this.$tabsOntologies.append("<h3><a href=\"#\">"+data.name+"</a></h3>");
+        this.$tabsOntologies.append(_.template(ontologyTabContentTpl, data));
         //tabs;
- /*         $("#ultabsontology").append(_.template(ontologyTabTpl, data));
-        $("#listtabontology").append(_.template(ontologyTabContentTpl, data)); */
-
-
-    },
-    fetchOntologies : function () {
-        console.log("OntologyView: fetchOntologies");
-
-        var self = this;
-        //init specific panel
-
-        self.model.each(function(ontology) {
-            //create project search panel
-            new OntologyPanelView({
-                model : ontology,
-                el:$("#tabsontology-"+ontology.id),
-                container : self,
-                ontologiesPanel : self
-            }).render();
-        });
-
-
+        /*         $("#ultabsontology").append(_.template(ontologyTabTpl, data));
+         $("#listtabontology").append(_.template(ontologyTabContentTpl, data)); */
     }
-
-
 });

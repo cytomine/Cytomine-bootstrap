@@ -15,6 +15,7 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.image.AbstractImage
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
+import be.cytomine.project.Project
 
 class RestTermController extends RestController{
 
@@ -52,6 +53,51 @@ class RestTermController extends RestController{
     if(image) responseSuccess(image.terms())
     else responseNotFound("Term","Image",params.id)
   }
+
+  def statProject = {
+    Term term = Term.read(params.id)
+
+    if(term!=null) {
+      log.debug "term=" + term.name
+      def projects = Project.findAllByOntology(term.ontology)
+
+      log.debug "There are " + projects.size() + " projects for this ontology "  + term.ontology.name
+      def count = [:]
+      def percentage = [:]
+
+      //init list
+      projects.each{ project ->
+        println "project=" + project.name
+            count[project.name] = 0
+            percentage[project.name] = 0
+      }
+
+      projects.each{ project ->
+        def annotations = project.annotations();
+        annotations.each { annotation ->
+          if(annotation.terms().contains(term)) {
+               count[project.name] = count[project.name] + 1;
+          }
+        }
+      }
+
+      //convert data map to list and merge term name and color
+      responseSuccess(convertHashToList(count))
+
+    }
+    else responseNotFound("Project", params.id)
+  }
+  List convertHashToList(HashMap<String,Integer> map)
+  {
+    def list = []
+       map.each{
+         println "Item: $it"
+          list << ["key":it.key,"value":it.value]
+       }
+       list
+  }
+
+
 
   def add = {
     log.info "Add"

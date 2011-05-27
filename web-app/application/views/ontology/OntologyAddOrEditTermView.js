@@ -2,12 +2,18 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
     ontologyPanel : null, //Ontology panel in ontology view
     ontologyDialog : null, //dialog (add, edit)
     ontology : null,
-    tree : null,
+    $tree : null,
+    $panel : null,
+    $textboxName : null,
+    $colorChooser : null,
+    $inputOldColor : null,
+    $inputNewColor : null,
+    $errorMessage : null,
+    $errorLabel : null,
     action : null,
     initialize: function(options) {
         this.container = options.container;
         this.ontologyPanel = options.ontologyPanel;
-        this.parents = options.parents;
         this.ontology = options.ontology;
         _.bindAll(this, 'render');
     },
@@ -25,63 +31,76 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
 
         var self = this;
 
-
         if(self.model==null) {
             //dialog to add
             self.action = "Add";
+            //create an empty model (not saved)
             self.createNewEmpty();
         }
-        else {
-            //dialog to edit
-            self.action = "Edit";
-        }
+        else self.action = "Edit"; //dialog to edit
 
-        var color = self.model.get('color');
-        if(!color.contains("#")) color = "#" + color;
+        //remove older dialog
+        self.$termDialog  = $(self.el).find("#dialog-"+self.action+"-ontology-term");
+        self.$termDialog.replaceWith("");
 
-        var dialog = _.template(ontologyAddOrEditTermViewTpl, {oldColor : color,action : self.action});
+        var dialog = _.template(ontologyAddOrEditTermViewTpl, {
+            oldColor : self.model.get('color'),
+            action : self.action
+        });
+        console.log(dialog);
         $(self.el).append(dialog);
-        self.tree = $("#" + self.action +"ontologytermtree");
-        console.log(self.model.id + " " + self.model.get('name'));
 
-        $("#form-" + self.action +"-ontology-term").submit(function () {
-            console.log(self.action);
+        self.$panel = $(self.el);
+        self.$termDialog  = $(self.el).find("#dialog-"+self.action+"-ontology-term");
+        self.$tree = self.$panel.find("#" + self.action +"ontologytermtree");
+        self.$from = self.$panel.find($("#form-" + self.action +"-ontology-term"));
+        self.$textboxName = self.$panel.find("#" + self.action +"termname");
+
+        self.$colorChooser = self.$panel.find('#colorpicker1');
+        self.$inputOldColor = self.$panel.find('#oldColor');
+        self.$inputNewColor = self.$panel.find('#color1');
+
+
+        self.$errorMessage =  self.$panel.find("#" + self.action +"ontologytermerrormessage");
+        self.$errorLabel =  self.$panel.find("#" + self.action +"ontologytermerrorlabel");
+
+        self.$from.submit(function () {
             if(self.action == "Edit")
                 self.updatedOntologyTerm();
             else  self.createOntologyTerm();
-
             return false;});
-        $("#form-" + self.action +"-ontology-term").find("input").keydown(function(e){
+        self.$from.find("input").keydown(function(e){
             if (e.keyCode == 13) { //ENTER_KEY
-                $("#form-" + self.action +"-ontology-term").submit();
+                self.$from.submit();
                 return false;
             }
         });
-
+        self.clearOntologyTermPanel();
         self.buildNameInfo();
         self.buildColorInfo();
-        $("#" + self.action +"ontologytermtree").empty() ;
         self.buildParentInfo();
 
         //Build dialog
-        console.log("OntologyTermDialog: build dialog:"+$("#dialog-" + self.action +"-ontology-term").length);
-        self.ontologyDialog = $("#dialog-" + self.action +"-ontology-term").dialog({
+        console.log("OntologyTermDialog: build dialog:"+self.$termDialog.length);
+        self.ontologyDialog = self.$termDialog.dialog({
             width: "1000",
             autoOpen : false,
             modal:true,
             buttons : {
                 "Save" : function() {
-                    $("#form-" + self.action +"-ontology-term").submit();
+                    self.$from.submit();
                 },
                 "Cancel" : function() {
-                    $("#dialog-" + self.action +"-ontology-term").dialog("close");
+                    self.$termDialog.dialog("close");
                 }
             }
         });
-
         self.open();
         return this;
     },
+    /**
+     * Create new empty model with default value
+     */
     createNewEmpty : function() {
         var self = this;
         console.log("createNewEmpty");
@@ -91,15 +110,13 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
     buildNameInfo : function () {
         console.log("buildNameInfo");
         var self = this;
-        $("#" + self.action +"termname").val(self.model.get("name"));
+        self.$textboxName.val(self.model.get("name"));
 
-
-        $("#" + self.action +"termname").bind('keyup mouseup change',function(e){
-            var node = self.tree.dynatree("getTree").getNodeByKey(self.model.id);
+        self.$textboxName.bind('keyup mouseup change',function(e){
+            var node = self.$tree.dynatree("getTree").getNodeByKey(self.model.id);
             var color = "#9ac400"
             var htmlNode = "<label style='color:{{color}}'>{{title}}</label>"
-            var nodeTpl = _.template(htmlNode, {title : $("#" + self.action +"termname").val(), color : color});
-
+            var nodeTpl = _.template(htmlNode, {title : self.$textboxName.val(), color : color});
             node.setTitle(nodeTpl);
         });
     },
@@ -108,21 +125,16 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         console.log("buildColorInfo");
         var self = this;
 
-        console.log("$('#colorpicker1')="+$('#colorpicker1').length  + " ");
-        var colorPicker = $('#colorpicker1').farbtastic('#color1');
-        console.log(colorPicker);
+        console.log(self.$inputNewColor.attr('id'));
+        var colorPicker = self.$colorChooser.farbtastic('#color1');
 
-        //$('#colorpicker1').setColor(self.model.get('color'));
         var color = self.model.get('color');
-        if(!color.contains("#"))
-            color = "#" + color;
 
-        $("#oldcolor").val(color);
-        $("#color1").val(color);
-        $("#oldcolor").css("background", color);
-        $("#color1").css("background", color);
-        $("#color1").css("color", $("#oldcolor").css("color"));
-
+        self.$inputOldColor.val(color);
+        self.$inputNewColor.val(color);
+        self.$inputOldColor.css("background", color);
+        self.$inputNewColor.css("background", color);
+        self.$inputNewColor.css("color", self.$inputOldColor.css("color"));
     },
 
     buildParentInfo : function() {
@@ -130,100 +142,47 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         var self = this;
         console.log("buildOntologyTree for ontology " + self.ontology.id);
 
-        console.log(self.model.toJSON());
-        console.log(self.tree.length);
-        self.tree.dynatree({
+        self.$tree.empty() ;
+        self.$tree.dynatree({
             children: self.ontology.toJSON(),
             onExpand : function() { console.log("expanding/collapsing");},
             onClick: function(node, event) {
-                console.log("onClick");
-                // Display list of selected nodes
-                console.log(node);
-                var s = node.data.title;
-
             },
             onSelect: function(select, node) {
-                console.log("onSelect");
-                // Display list of selected nodes
-
             },
             onCustomRender: function(node) {
-
             },
             onDblClick: function(node, event) {
-                console.log("Double click");
             },
-
             dnd: {
                 onDragStart: function(node) {
                     /** This function MUST be defined to enable dragging for the tree.
                      *  Return false to cancel dragging of node.
                      */
-                    logMsg("tree.onDragStart(%o)", node);
                     if(node.data.key!=self.model.id) return false;
                     return true;
                 },
                 onDragStop: function(node) {
-                    // This function is optional.
-                    logMsg("tree.onDragStop(%o)", node);
                 },
                 autoExpandMS: 1000,
                 preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
                 onDragEnter: function(node, sourceNode) {
-                    /** sourceNode may be null for non-dynatree droppables.
-                     *  Return false to disallow dropping on node. In this case
-                     *  onDragOver and onDragLeave are not called.
-                     *  Return 'over', 'before, or 'after' to force a hitMode.
-                     *  Return ['before', 'after'] to restrict available hitModes.
-                     *  Any other return value will calc the hitMode from the cursor position.
-                     */
                     logMsg("tree.onDragEnter(%o, %o)", node, sourceNode);
-                    // Prevent dropping a parent below it's own child
-//                if(node.isDescendantOf(sourceNode))
-//                    return false;
-                    // Prevent dropping a parent below another parent (only sort
-                    // nodes under the same parent)
-//                if(node.parent !== sourceNode.parent)
-//                    return false;
-//              if(node === sourceNode)
-//                  return false;
-                    // Don't allow dropping *over* a node (would create a child)
-//        return ["before", "after"];
                     return true;
                 },
                 onDragOver: function(node, sourceNode, hitMode) {
-                    /** Return false to disallow dropping this node.
-                     *
-                     */
-                    logMsg("tree.onDragOver(%o, %o, %o)", node, sourceNode, hitMode);
-                    // Prohibit creating childs in non-folders (only sorting allowed)
-
-                    /*if( !node.isFolder && hitMode == "over" )
-                     return "after"; */
                 },
                 onDrop: function(node, sourceNode, hitMode, ui, draggable) {
-                    /** This function MUST be defined to enable dropping of items on
-                     * the tree.
-                     */
-                    console.log(node);
-                    console.log(sourceNode);
-                    console.log(hitMode);
                     logMsg("tree.onDrop(%o, %o, %s)", node, sourceNode, hitMode);
                     if(!node.data.isFolder && hitMode=="over")
                     {
                         console.log("NOT A FOLDER");
                     }
                     else sourceNode.move(node, hitMode);
-                    // expand the drop target
-//        sourceNode.expand(true);
                 },
                 onDragLeave: function(node, sourceNode) {
-                    /** Always called if onDragEnter was called.
-                     */
-                    logMsg("tree.onDragLeave(%o, %o)", node, sourceNode);
                 }
             },
-
             generateIds: true,
             // The following options are only required, if we have more than one tree on one page:
             initId: "" + self.action +"treeDataOntology-"+self.model.id,
@@ -232,12 +191,13 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             debugLevel: 0
         });
         //expand all nodes
-        self.tree.dynatree("getRoot").visit(function(node){
-            console.log("node="+node.data.id + " " + node.data.key + " " + node.data.title);
+        self.$tree.dynatree("getRoot").visit(function(node){
             node.expand(true);
         });
+
+        //if add panel, add the "temp" model to the tree (event if it's not yet a part of the ontology)
         if(self.action=="Add") {
-            var node = self.tree.dynatree("getTree").getNodeByKey(self.ontology.id);
+            var node = self.$tree.dynatree("getTree").getNodeByKey(self.ontology.id);
             var childNode = node.addChild({
                 title: "",
                 key : -1,
@@ -246,37 +206,30 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             });
         }
 
-
-
-
-
-        console.log("self.model.id="+self.model.id);
-        var node = self.tree.dynatree("getTree").getNodeByKey(self.model.id);
+        //make the new term node visible
+        var node = self.$tree.dynatree("getTree").getNodeByKey(self.model.id);
         var title = node.data.title
         var color = "#9ac400"
         var htmlNode = "<label style='color:{{color}}'>{{title}}</label>"
         var nodeTpl = _.template(htmlNode, {title : title, color : color});
-
         node.setTitle(nodeTpl);
 
     },
 
     getNewName : function() {
         var self = this;
-        console.log("getNewName size:"+$("#" + self.action +"termname").length);
-        console.log("getNewName: "+$("#" + self.action +"termname").val);
-        return $("#" + self.action +"termname").val();
+        return self.$textboxName.val();
     },
     getNewParent : function() {
         var self = this;
-        var node = self.tree.dynatree("getTree").getNodeByKey(self.model.id);
-        console.log(node);
+        var node = self.$tree.dynatree("getTree").getNodeByKey(self.model.id);
         return node.parent.data.id;
     },
     getNewColor : function() {
-        return  $("#color1").val();
+        return  this.$inputNewColor.val();
     },
     refresh : function() {
+
     },
     open: function() {
         var self = this;
@@ -285,17 +238,16 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
     },
     clearOntologyTermPanel : function() {
         var self = this;
-        $("#" + self.action +"ontologytermerrormessage").empty();
-        $("#" + self.action +"ontologytermerrorlabel").hide();
-
-
+        self.$errorMessage.empty();
+        self.$errorLabel.hide();
     },
     updatedOntologyTerm : function() {
         console.log("updatedOntologyTerm...");
         var self = this;
 
-        $("#" + self.action +"ontologytermerrormessage").empty();
-        $("#" + self.action +"ontologytermerrorlabel").hide();
+        self.$errorMessage.empty();
+        self.$errorLabel.hide();
+
         var id = self.model.id;
         var name =  self.getNewName();
         var idOldParent = self.model.get("parent");
@@ -305,17 +257,13 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             isOldParentOntology = false;
         }
         var isParentOntology = true;
-        console.log(window.app.models.ontologies.get(idParent));
-        console.log(window.app.models.ontologies.get(idParent)==undefined);
+
         if(window.app.models.ontologies.get(idParent)==undefined) {
             isParentOntology = false;
         }
         console.log("isOldParentOntology="+isOldParentOntology + " isParentOntology=" + isParentOntology);
         var color = self.getNewColor();
         console.log("update term "+ name + " with parent=" + idParent + "(old parent =" + idOldParent+ ") and color="+color);
-
-        console.log(window.app.models.ontologies.get(47));
-        console.log(window.app.models.ontologies.get(470));
 
         self.model.set({name:name,color:color});
         self.model.save({name:name,color:color},{
@@ -337,8 +285,8 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 console.log("json.project="+json.errors);
-                $("#" + self.action +"ontologytermerrorlabel").show();
-                $("#" + self.action +"ontologytermerrormessage").append(json.errors);
+                self.$errorLabel.show();
+                self.$errorMessage.append(json.errors);
             }
         } ); //TODO: catch error
     },
@@ -347,8 +295,10 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         console.log("createOntologyTerm...");
 
         var self = this;
-        $("#" + self.action +"ontologytermerrormessage").empty();
-        $("#" + self.action +"ontologytermerrorlabel").hide();
+
+        self.$errorMessage.empty();
+        self.$errorLabel.hide();
+
         var id = self.model.id;
         var name =  self.getNewName();
         var isParentOntology = true;
@@ -378,8 +328,8 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 console.log("json.project="+json.errors);
-                $("#" + self.action +"ontologytermerrorlabel").show();
-                $("#" + self.action +"ontologytermerrormessage").append(json.errors);
+                self.$errorLabel.show();
+                self.$errorMessage.append(json.errors);
             }
         } ); //TODO: catch error
 
@@ -400,8 +350,8 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 console.log("json.project="+json.errors);
-                $("#" + self.action +"ontologytermerrorlabel").show();
-                $("#" + self.action +"ontologytermerrormessage").append(json.errors);
+                self.$errorLabel.show();
+                self.$errorMessage.append(json.errors);
             }});
     },
     addRelation : function(child,newParent) {
@@ -414,13 +364,14 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 console.log("json.project="+json.errors);
-                $("#" + self.action +"ontologytermerrorlabel").show();
-                ("#" + self.action +"ontologytermerrormessage").append(json.errors);
+                self.$errorLabel.show();
+                self.$errorMessage.append(json.errors);
             }});
     },
     close : function() {
-        console.log("refresh");
+        var self = this;
         this.ontologyPanel.refresh();
-        $("#dialog-" + self.action +"-ontology-term").dialog("close") ;
+        console.log(self.ontologyDialog.length);
+        self.$termDialog.dialog("close") ;
     }
 });

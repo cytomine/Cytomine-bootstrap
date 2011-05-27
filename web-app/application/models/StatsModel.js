@@ -10,12 +10,15 @@ var StatsModel = Backbone.Model.extend({
 	url : function() {
         if (this.project != undefined) {
             return "api/project/" + this.project + "/term/stat.json";
+        } else if (this.term != undefined) {
+            return "api/term/" + this.term + "/project/stat.json";
         } else {
             return "api/stat.json";
         }
 	},
     initialize: function (options) {
         this.project = options.project;
+        this.term = options.term;
     }
 });
 
@@ -26,11 +29,14 @@ var StatsCollection = Backbone.Collection.extend({
     url: function() {
         if (this.project != undefined) {
             return "api/project/" + this.project + "/term/stat.json";
+        } else if (this.term != undefined) {
+            return "api/term/" + this.term + "/project/stat.json";
         } else {
             return "api/stat.json";
         }
     },
     initialize: function (options) {
         this.project = options.project;
+        this.term = options.term;
     }
 });

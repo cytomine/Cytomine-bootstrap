@@ -156,6 +156,9 @@ class UrlMappings {
     "/api/term/$id/ontology"(controller:"restOntology"){
       action = [GET:"listByTerm"]
     }
+    "/api/term/$id/project/stat"(controller:"restTerm"){
+      action = [GET:"statProject"]
+    }
 
     /* Ontology */
     "/api/ontology"(controller:"restOntology"){
