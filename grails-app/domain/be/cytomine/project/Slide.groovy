@@ -3,36 +3,52 @@ package be.cytomine.project
 import grails.converters.JSON
 import be.cytomine.SequenceDomain
 import be.cytomine.image.AbstractImage
+import be.cytomine.image.ImageInstance
 
 class Slide extends SequenceDomain {
 
-  String name
-  int order
+    String name
+    int order
 
-  static mapping = {
-    columns {
-      order column:"`order`"  //otherwise there is a conflict with the word "ORDER" from the SQL SYNTAX
+    static mapping = {
+        columns {
+            order column:"`order`"  //otherwise there is a conflict with the word "ORDER" from the SQL SYNTAX
+        }
     }
-  }
 
-  String toString() {
-    name
-  }
-
-  static hasMany = [image:AbstractImage]
-
-  static constraints = {
-  }
-
-  static void registerMarshaller() {
-    println "Register custom JSON renderer for " + Slide.class
-    JSON.registerObjectMarshaller(Slide) {
-      def returnArray = [:]
-      returnArray['class'] = it.class
-      returnArray['id'] = it.id
-      returnArray['name'] = it.name
-      //returnArray['image'] = it.image
-      return returnArray
+    String toString() {
+        name
     }
-  }
+
+    static hasMany = [image:AbstractImage]
+
+    static constraints = {
+    }
+
+    static void registerMarshaller() {
+        println "Register custom JSON renderer for " + Slide.class
+        JSON.registerObjectMarshaller(Slide) {
+            def returnArray = [:]
+            returnArray['class'] = it.class
+            returnArray['id'] = it.id
+            returnArray['name'] = it.name
+            returnArray['images'] = it.getImages()
+            returnArray['projects'] = it.getProjects()
+            return returnArray
+        }
+    }
+
+    def getImages() {
+        AbstractImage.findAllBySlide(this).collect({
+            it.id
+        });
+    }
+
+    def getProjects() {
+        def projects = []
+        AbstractImage.findAllBySlide(this).each { aimg ->
+            projects << ImageInstance.findAllByBaseImage(aimg).collect({it.getProject().id})
+        }
+        return projects.flatten().unique()
+    }
 }

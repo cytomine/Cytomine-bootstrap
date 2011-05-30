@@ -18,7 +18,37 @@ var ProjectManageSlideDialog = Backbone.View.extend({
        divDialog : "div#projectaddimagedialog",
        projectPanel : null,
        addSlideDialog : null,
+       page : 0, //start at the first page
+       nb_thumb_by_page : 30,
+       /*events : {
+        "click .next" : "nextPage",
+        "click .previous" : "previousPage"
+        },*/      //not work because of jquery dialog wich move content outside of this.el ?
 
+       nextPage : function() {
+          var nb_pages = Math.round(_.size(window.app.models.images) / this.nb_thumb_by_page);
+          this.page = Math.min(this.page+1, nb_pages);
+          this.renderImageList();
+       },
+       previousPage : function() {
+          this.page = Math.max(this.page-1, 0);
+          if (this.page == 0) {
+             this.disablePrevious();
+          }
+          this.renderImageList();
+       },
+       disablePrevious : function() {
+          console.log("disable previous");
+       },
+       enablePrevious : function() {
+          console.log("enable previous");
+       },
+       disableNext : function() {
+
+       },
+       enableNext : function() {
+
+       },
        /**
         * ProjectManageSlideDialog constructor
         * @param options
@@ -27,6 +57,8 @@ var ProjectManageSlideDialog = Backbone.View.extend({
           this.container = options.container;
           this.projectPanel = options.projectPanel;
           _.bindAll(this, 'render');
+          _.bindAll(this, 'nextPage');
+          _.bindAll(this, 'previousPage');
        },
        /**
         * Grab the layout and call ask for render
@@ -50,7 +82,8 @@ var ProjectManageSlideDialog = Backbone.View.extend({
 
           var dialog = _.template(tpl, {id:this.model.get('id'),name:this.model.get('name')});
           $(this.el).append(dialog);
-
+          $(self.el).find("a.next").bind("click", self.nextPage);
+          $(self.el).find("a.previous").bind("click", self.previousPage);
 
           //Build dialog
           self.addSlideDialog = $(self.divDialog+this.model.get('id')).dialog({
@@ -71,6 +104,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                  width : ($(window).width()/100*90),
                  height: ($(window).height()/100*90) //bug with %age ?
               });
+          this.renderImageList();
           self.open();
           return this;
 
@@ -79,91 +113,84 @@ var ProjectManageSlideDialog = Backbone.View.extend({
         * Open and ask to render image thumbs
         */
        open: function() {
-          var self = this;
-          console.log("open");
-          var self = this;
-          require([
-             "text!application/templates/project/ProjectAddImageChoice.tpl.html"
-          ],
-              function(tpl) {
-                 self.renderImageList(tpl);
-                 self.addSlideDialog.dialog("open") ;
-              });
-
+          this.addSlideDialog.dialog("open") ;
        },
        /**
         * Render Image thumbs into the dialog
         **/
-       renderImageList : function(tpl) {
+       renderImageList : function() {
           var self = this;
-          //Dialog is maybe already in document (but closed)...clear the all list elem
-          $(self.ulElem+self.model.get('id')).empty();
+          require([
+             "text!application/templates/project/ProjectAddImageChoice.tpl.html"
+          ],   function(tpl) {
+             //Dialog is maybe already in document (but closed)...clear the all list elem
+             $(self.ulElem+self.model.get('id')).empty();
 
-          //Get all images from server
-          //TODO: filter by user right
-          new ImageCollection({project:undefined}).fetch({
-                 success: function(collection,response){
-                    //TODO: multi-page print?
-                    var page = 0;
-                    var cpt = 0;
-                    var nb_thumb_by_page = 2000;
-                    var inf = Math.abs(page) * nb_thumb_by_page;
-                    var sup = (Math.abs(page) + 1) * nb_thumb_by_page;
-                    var currentSlide = -1;
-                    //Get images from project server
-                    new ImageCollection({project:self.model.get('id')}).fetch({
-                           success: function(projectImages,response){
+             //Get all images from server
+             //TODO: filter by user right
+             window.app.models.images.fetch({
+                    success: function(collection,response){
+                       //TODO: multi-page print?
 
-                              console.log("collection size=" + collection.length);
-                              console.log("projectImages size=" + projectImages.length);
+                       var cpt = 0;
+                       var inf = Math.abs(self.page) * self.nb_thumb_by_page;
+                       var sup = (Math.abs(self.page) + 1) * self.nb_thumb_by_page;
+                       var currentSlide = -1;
+                       //Get images from project server
+                       new ImageCollection({project:self.model.get('id')}).fetch({
+                              success: function(projectImages,response){
 
-                              collection.each(function(image) {
+                                 console.log("collection size=" + collection.length);
+                                 console.log("projectImages size=" + projectImages.length);
+
+                                 collection.each(function(image) {
 
 
-                                 if ((cpt >= inf) && (cpt < sup)) {
+                                    if ((cpt >= inf) && (cpt < sup)) {
 
-                                    var thumb = new ImageSelectView({
-                                           model : image
-                                        }).render();
+                                       var thumb = new ImageSelectView({
+                                              model : image
+                                           }).render();
 
-                                    var filename = image.get("filename");
-                                    if (filename.length > 15)
-                                       filename = filename.substring(0,12) + "...";
-                                    var item = _.template(tpl, {id:image.id,name:filename, slide: image.get('slide'), info : image.get('info')});
+                                       var filename = image.get("filename");
+                                       if (filename.length > 15)
+                                          filename = filename.substring(0,12) + "...";
+                                       var item = _.template(tpl, {id:image.id,name:filename, slide: image.get('slide'), info : image.get('info')});
 
-                                    $(thumb.el).css({"width":30}); //thumb must be smaller
+                                       $(thumb.el).css({"width":30}); //thumb must be smaller
 
-                                    $(self.ulElem+self.model.get('id')).append(item);
-                                    $(self.ulElem+self.model.get('id') + " " + self.imageDivElem+image.id).append(thumb.el);  //get the div elem (img id) which have this project as parent
+                                       $(self.ulElem+self.model.get('id')).append(item);
+                                       $(self.ulElem+self.model.get('id') + " " + self.imageDivElem+image.id).append(thumb.el);  //get the div elem (img id) which have this project as parent
 
-                                    //if image is already in project, selected it
-                                    if(projectImages.get(image.id))
-                                    {
-                                       //get the li elem (img id) which have this project as parent
-                                       $(self.ulElem+self.model.get('id') + " " + "#"+ self.liElem+image.id).addClass(self.selectedClass);
-                                       $(self.ulElem+self.model.get('id') + " " + "#"+self.liElem+image.id).find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
+                                       //if image is already in project, selected it
+                                       if(projectImages.get(image.id))
+                                       {
+                                          //get the li elem (img id) which have this project as parent
+                                          $(self.ulElem+self.model.get('id') + " " + "#"+ self.liElem+image.id).addClass(self.selectedClass);
+                                          $(self.ulElem+self.model.get('id') + " " + "#"+self.liElem+image.id).find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
+                                       }
                                     }
-                                 }
-                                 cpt++;
-                              });
-                              $(self.ulElem+self.model.get('id') + " img").addClass("thumbProject");
+                                    cpt++;
+                                 });
+                                 $(self.ulElem+self.model.get('id') + " img").addClass("thumbProject");
 
-                              //build dialog and event
-                              self.initEvents();
-                           },
-                           error: function(error){
-                              for (property in error) {
-                                 console.log(property + ":" + error[property]);
+                                 //build dialog and event
+                                 self.initEvents();
+                              },
+                              error: function(error){
+                                 for (property in error) {
+                                    console.log(property + ":" + error[property]);
+                                 }
                               }
-                           }
-                        });
-                 },
-                 error: function(error){
-                    for (property in error) {
-                       console.log(property + ":" + error[property]);
+                           });
+                    },
+                    error: function(error){
+                       for (property in error) {
+                          console.log(property + ":" + error[property]);
+                       }
                     }
-                 }
-              });
+                 });
+          });
        },
        /**
         * Init click events on Image thumbs

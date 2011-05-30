@@ -46,6 +46,7 @@ class Project extends SequenceDomain {
         }
         return annotations
     }
+
     def slides() {
         def slides = []
         this.abstractimages().each { img ->
