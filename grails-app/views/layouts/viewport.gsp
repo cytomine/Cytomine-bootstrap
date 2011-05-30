@@ -117,6 +117,12 @@
                 interpolate : /\{\{(.+?)\}\}/g
             };
             // Create the app.
+            var dev = true; //should be assigned dynamically by grails
+            if (dev) {
+                require(
+                        { urlArgs: "bust=" + (new Date()).getTime() }
+                );
+            }
             window.app = new ApplicationController();
         });
     </script>
