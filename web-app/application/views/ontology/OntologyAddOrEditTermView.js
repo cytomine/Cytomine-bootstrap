@@ -114,7 +114,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
 
         self.$textboxName.bind('keyup mouseup change',function(e){
             var node = self.$tree.dynatree("getTree").getNodeByKey(self.model.id);
-            var color = "#9ac400"
+            var color = "#119b04"
             var htmlNode = "<label style='color:{{color}}'>{{title}}</label>"
             var nodeTpl = _.template(htmlNode, {title : self.$textboxName.val(), color : color});
             node.setTitle(nodeTpl);
@@ -146,6 +146,9 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         self.$tree.dynatree({
             children: self.ontology.toJSON(),
             onExpand : function() { console.log("expanding/collapsing");},
+            onRender: function(node, nodeSpan) {
+                self.$tree.find("a.dynatree-title").css("color", "black");
+            },
             onClick: function(node, event) {
             },
             onSelect: function(select, node) {

@@ -70,7 +70,7 @@ var ProjectPanelView = Backbone.View.extend({
              users.push(window.app.models.users.get(idUser).get('username'));
           });
           json.users = users.join(", ");
-
+          json.ontologyId = idOntology;
           var html = _.template(tpl, json);
 
           if(replace) {

@@ -18,16 +18,16 @@ class RestRelationTermController extends RestController {
 
   def list = {
     log.info "List"
-     responseSuccess(RelationTerm.list())
-    }
+    responseSuccess(RelationTerm.list())
+  }
 
   def listByRelation = {
     log.info "listByRelation"
     Relation relation
     if(params.id!=null)
-       relation = Relation.read(params.id)
+      relation = Relation.read(params.id)
     else
-       relation = Relation.findByName(RelationTerm.names.PARENT)
+      relation = Relation.findByName(RelationTerm.names.PARENT)
     log.info "Relation =" + relation.name
     if(relation)responseSuccess(RelationTerm.findAllByRelation(relation))
     else responseNotFound("RelationTerm","Relation",params.id)
@@ -44,14 +44,27 @@ class RestRelationTermController extends RestController {
     else responseNotFound("RelationTerm","Term"+position,params.id)
   }
 
+  def listByTermAll = {
+    log.info "listByTerm with term id:" + params.id
+    Term term = Term.read(params.id)
+
+    if(term) {
+      def relation1 = RelationTerm.findAllByTerm1(term);
+      def relation2 = RelationTerm.findAllByTerm2(term);
+      def all = (relation1 << relation2).flatten();
+      responseSuccess(all)
+    }
+    else responseNotFound("RelationTerm","Term",params.id)
+  }
+
 
   def show = {
     log.info "Show with relation id:" + params.idrelation + " term1:" + params.idterm1 + " term2:" + params.idterm2
     Relation relation
     if(params.idrelation!=null)
-       relation = Relation.read(params.idrelation)
+      relation = Relation.read(params.idrelation)
     else
-       relation = Relation.findByName(RelationTerm.names.PARENT)
+      relation = Relation.findByName(RelationTerm.names.PARENT)
 
     Term term1 = Term.read(params.idterm1)
     Term term2 = Term.read(params.idterm2)
@@ -73,9 +86,9 @@ class RestRelationTermController extends RestController {
 
     Relation relation
     if(json.relation!=null)
-       relation = Relation.read(params.id)
+      relation = Relation.read(params.id)
     else
-       relation = Relation.findByName(RelationTerm.names.PARENT)
+      relation = Relation.findByName(RelationTerm.names.PARENT)
     json.relation = relation? relation.id : -1
 
     Command addRelationTermCommand = new AddRelationTermCommand(postData : json.toString(), user: currentUser)
@@ -91,13 +104,14 @@ class RestRelationTermController extends RestController {
 
     Relation relation
     if(params.idrelation!=null)
-       relation = Relation.read(params.idrelation)
+      relation = Relation.read(params.idrelation)
     else
-       relation = Relation.findByName(RelationTerm.names.PARENT)
+      relation = Relation.findByName(RelationTerm.names.PARENT)
 
     def postData = ([relation :relation? relation.id:-1,term1: params.idterm1,term2: params.idterm2]) as JSON
     Command deleteRelationTermCommand = new DeleteRelationTermCommand(postData : postData.toString(),user: currentUser)
     def result = processCommand(deleteRelationTermCommand, currentUser)
     response(result)
   }
+
 }

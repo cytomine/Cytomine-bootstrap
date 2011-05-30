@@ -10,6 +10,7 @@ var OntologyView = Backbone.View.extend({
     self : this,
     alreadyBuild : false,
     $tabsOntologies : null,
+    idOntology : null,
     initialize: function(options) {
         this.container = options.container;
         this.idOntology = options.idOntology;
@@ -38,6 +39,21 @@ var OntologyView = Backbone.View.extend({
 
         return this;
     },
+    select : function(idOntology) {
+        console.log("select " + idOntology);
+        var self = this;
+        var selectedOntologyIndex = 0;
+        var index = 0;
+        self.model.each(function(ontology) {
+            //get index of selected ontology
+            if(idOntology== ontology.get("id")) {
+                selectedOntologyIndex = index;
+            }
+            index = index + 1;
+        });
+        console.log("activate = " + selectedOntologyIndex);
+        self.$tabsOntologies.accordion( "activate" , selectedOntologyIndex );
+    },
     /**
      * Init annotation tabs
      */
@@ -47,7 +63,8 @@ var OntologyView = Backbone.View.extend({
             console.log("OntologyView: initOntologyTabs");
             console.log("OntologyView: initOntologyTabs create "+ self.model.length);
             //add "All annotation from all term" tab
-
+            var selectedOntologyIndex = 0;
+            var index = 0;
             self.model.each(function(ontology) {
                 //add x term tab
                 self.addOntologyToTab(ontologyTabTpl, ontologyTabContentTpl, { id : ontology.get("id"), name : ontology.get("name")});
@@ -58,10 +75,18 @@ var OntologyView = Backbone.View.extend({
                     container : self,
                     ontologiesPanel : self
                 }).render();
+
+                //get index of selected ontology
+                if(self.idOntology== ontology.get("id")) {
+                    selectedOntologyIndex = index;
+                }
+                index = index + 1;
             });
             //self.fetchOntologies();
             if(!self.alreadyBuild)
                 self.$tabsOntologies.accordion();
+            console.log("activate = " + selectedOntologyIndex);
+            self.$tabsOntologies.accordion( "activate" , selectedOntologyIndex );
         });
     },
     /**

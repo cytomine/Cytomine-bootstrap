@@ -26,6 +26,7 @@ var ApplicationController = Backbone.Controller.extend({
           self.models.terms = new TermCollection({project:undefined});
           self.models.ontologies = new OntologyCollection();
           self.models.projects = new ProjectCollection({user:undefined});
+           self.models.annotations = new AnnotationCollection({});
 
           //fetch models
           var modelsToPreload = [self.models.users];
@@ -61,6 +62,7 @@ var ApplicationController = Backbone.Controller.extend({
           window.app.controllers.ontology     = new OntologyController();
           window.app.controllers.upload       = new UploadController();
           window.app.controllers.command      = new CommandController();
+          window.app.controllers.annotation   = new AnnotationController();
           Backbone.history.start();
        },
        initialize : function () {

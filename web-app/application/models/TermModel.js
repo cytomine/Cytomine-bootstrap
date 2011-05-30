@@ -39,6 +39,30 @@ var AnnotationTermCollection = Backbone.Collection.extend({
     }
 });
 
+var RelationTermModel = Backbone.Model.extend({
+	url : function() {
+        if (this.term == null)
+		    return 'api/annotation/' + this.annotation +'/term.json';
+        else
+            return 'api/annotation/' + this.annotation +'/term/'+this.term+'.json';
+	},
+    initialize: function (options) {
+        this.annotation = options.annotation;
+        this.term = options.term;
+    }
+});
+
+var RelationTermCollection = Backbone.Collection.extend({
+    model : TermModel,
+	url : function() {
+		return 'api/annotation/' + this.idAnnotation +'/term.json';
+	},
+    initialize: function (options) {
+        this.idAnnotation = options.idAnnotation;
+
+    }
+});
+
 
 
 // define our collection

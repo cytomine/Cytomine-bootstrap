@@ -13,7 +13,10 @@ var ConfirmDialogView = Backbone.View.extend({
           if (!options.dialogAttr.height) this.dialogAttr.height = 'auto';
        },
        doLayout : function(tpl)  {
+           console.log("ConfirmDialogView:doLayout");
+           console.log("ConfirmDialogView:"+tpl);
           $(this.el).html(tpl);
+            console.log("ConfirmDialogView:nbre " + this.dialogAttr.dialogID + " " +$(this.dialogAttr.dialogID).length);
           $(this.dialogAttr.dialogID).dialog({
                  resizable: false,
                  draggable : false,
@@ -26,6 +29,7 @@ var ConfirmDialogView = Backbone.View.extend({
               });
        },
        render: function() {
+           console.log("ConfirmDialogView:render");
           var self = this;
           if (this.template == null && this.templateURL != null && this.templateData != null) {
              console.log("require JS : " + this.templateURL);

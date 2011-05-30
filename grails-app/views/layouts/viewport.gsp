@@ -56,6 +56,12 @@
     <!-- Application -->
     <script type="text/javascript" src="application/Utilities.js" ></script>
 
+    <!-- Datatables -->
+    <script type="text/javascript" src="lib/datatables/jquery.dataTables.min.js" ></script>
+    <link rel='stylesheet' href='lib/datatables/demo_table.css' type='text/css'/>
+    <link rel='stylesheet' href='lib/datatables/demo_table_jui.css' type='text/css'/>
+
+
     <!-- controllers -->
     <script type="text/javascript" src="application/controllers/ApplicationController.js" ></script>
     <script type="text/javascript" src="application/controllers/UploadController.js" ></script>
@@ -67,6 +73,7 @@
     <script type="text/javascript" src="application/controllers/TermController.js" ></script>
     <script type="text/javascript" src="application/controllers/OntologyController.js" ></script>
     <script type="text/javascript" src="application/controllers/CommandController.js" ></script>
+    <script type="text/javascript" src="application/controllers/AnnotationController.js" ></script>
     <!-- Models -->
     <script type="text/javascript" src="application/models/ImageModel.js" ></script>
     <script type="text/javascript" src="application/models/TermModel.js" ></script>
@@ -106,6 +113,8 @@
     <script type="text/javascript" src="application/views/project/ProjectManageSlideDialog.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectAddDialog.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectSearchPanel.js" ></script>
+
+    <script type="text/javascript" src="application/views/annotation/AnnotationListView.js" ></script>
 
     <script type="text/javascript" src="application/views/Component.js" ></script>
     <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
