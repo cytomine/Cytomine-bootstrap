@@ -147,52 +147,48 @@ var ProjectDashboardView = Backbone.View.extend({
         var self = this;
         if(term==0) {
             //refresh all annotation
+            self.printAnnotationThumb(term,$("#tabsterm-all"));
 
-            new AnnotationCollection({project:self.model.id}).fetch({
+        } else {
+            //refresh  annotation for the term
+            self.printAnnotationThumb(term,$("#tabsterm-"+term));
+        }
+
+    },
+    /**
+     * Print annotation for the given term
+     * @param term term annotation term to be refresh (all = 0)
+     * @param $elem  elem that will keep all annotations
+     */
+    printAnnotationThumb : function(term,$elem){
+        var self = this;
+        if(self.annotationsViews[term]==null) {
+            var idTerm = 0
+            if(term==0) idTerm = undefined
+            else idTerm = term
+            new AnnotationCollection({project:self.model.id,term:idTerm}).fetch({
                 success : function (collection, response) {
-                    $("#tabsterm-all").empty();
+                    console.log("AnnotationCollection:"+collection.length);
+                    $elem.empty();
 
                     var view = new AnnotationView({
                         page : undefined,
                         model : collection,
-                        el:$("#tabsterm-all"),
+                        el:$elem,
                         container : window.app.view.components.warehouse
                     }).render();
-                    self.annotationsViews[0].refresh(collection);
+                    self.annotationsViews[term].refresh(collection);
                 }
             });
-
-        } else {
-            //refresh  annotation for the term
-            if(self.annotationsViews[term] == null) {
-
-                $("#tabsterm-"+term).empty();
-                new AnnotationCollection({term:term,project:self.model.id}).fetch({
-                    success : function (collection, response) {
-                        console.log("AnnotationCollection by term" + collection.length);
-                        var view = new AnnotationView({
-                            page : undefined,
-                            model : collection,
-                            el:$("#tabsterm-"+term),
-                            container : window.app.view.components.warehouse
-                        }).render();
-                        self.annotationsViews[term] = view;
-                    }});
-
-                //init the view
-            } else {
-                //refresh it
-                new AnnotationCollection({term:term,project:self.model.id}).fetch({
-                    success : function (collection, response) {
-                        self.annotationsViews[term].refresh(collection);
-                    }});
-            }
         }
-
+        else {
+            new AnnotationCollection({project:self.model.id}).fetch({
+                success : function (collection, response) {
+                    self.annotationsViews[term].refresh(collection);
+                }
+            });
+        }
     },
-
-
-
     refreshAnnotationsOLD : function (annotations) {
 
 
