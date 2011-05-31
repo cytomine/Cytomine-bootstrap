@@ -10,10 +10,12 @@ var OntologyView = Backbone.View.extend({
     self : this,
     alreadyBuild : false,
     $tabsOntologies : null,
+    ontologiesPanel : null,
     idOntology : null,
     initialize: function(options) {
         this.container = options.container;
         this.idOntology = options.idOntology;
+        this.idTerm =  options.idTerm;
     },
 
     render : function () {
@@ -39,9 +41,10 @@ var OntologyView = Backbone.View.extend({
 
         return this;
     },
-    select : function(idOntology) {
-        console.log("select " + idOntology);
+    select : function(idOntology,idTerm) {
+        console.log("select ontology " + idOntology + " term " + idTerm);
         var self = this;
+        //select ontology
         var selectedOntologyIndex = 0;
         var index = 0;
         self.model.each(function(ontology) {
@@ -51,6 +54,7 @@ var OntologyView = Backbone.View.extend({
             }
             index = index + 1;
         });
+        self.ontologiesPanel[selectedOntologyIndex].selectTerm(idTerm);
         console.log("activate = " + selectedOntologyIndex);
         self.$tabsOntologies.accordion( "activate" , selectedOntologyIndex );
     },
@@ -62,6 +66,7 @@ var OntologyView = Backbone.View.extend({
         require(["text!application/templates/ontology/OntologyTab.tpl.html", "text!application/templates/ontology/OntologyTabContent.tpl.html"], function(ontologyTabTpl, ontologyTabContentTpl) {
             console.log("OntologyView: initOntologyTabs");
             console.log("OntologyView: initOntologyTabs create "+ self.model.length);
+            self.ontologiesPanel = new Array();
             //add "All annotation from all term" tab
             var selectedOntologyIndex = 0;
             var index = 0;
@@ -69,13 +74,14 @@ var OntologyView = Backbone.View.extend({
                 //add x term tab
                 self.addOntologyToTab(ontologyTabTpl, ontologyTabContentTpl, { id : ontology.get("id"), name : ontology.get("name")});
                 //create project search panel
-                new OntologyPanelView({
+                var view = new OntologyPanelView({
                     model : ontology,
                     el:$(self.el).find("#tabsontology-"+ontology.id),
                     container : self,
                     ontologiesPanel : self
-                }).render();
-
+                });
+                view.render();
+                self.ontologiesPanel.push(view);
                 //get index of selected ontology
                 if(self.idOntology== ontology.get("id")) {
                     selectedOntologyIndex = index;
@@ -87,6 +93,7 @@ var OntologyView = Backbone.View.extend({
                 self.$tabsOntologies.accordion();
             console.log("activate = " + selectedOntologyIndex);
             self.$tabsOntologies.accordion( "activate" , selectedOntologyIndex );
+            self.ontologiesPanel[selectedOntologyIndex].selectTerm(self.idTerm);
         });
     },
     /**

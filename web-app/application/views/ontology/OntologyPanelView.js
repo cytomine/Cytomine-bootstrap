@@ -135,6 +135,12 @@ var OntologyPanelView = Backbone.View.extend({
             }});
     },
 
+    selectTerm : function(idTerm) {
+         var self = this;
+        console.log("OntologyPanelView: select " + idTerm) ;
+        self.$tree.dynatree("getTree").selectKey(idTerm);
+    },
+
     buildDeleteTermConfirmDialog : function(term) {
         console.log("term is not linked with annotations");
         var self = this;
@@ -339,17 +345,17 @@ var OntologyPanelView = Backbone.View.extend({
             onExpand : function() { console.log("expanding/collapsing");},
             onClick: function(node, event) {
 
-                var title = node.data.title;
+                /*var title = node.data.title;
                 var color = "black";
-                var htmlNode = "<label style='color:{{color}}'>{{title}}</label>" ;
+                var htmlNode = "<a href='#'><label style='color:{{color}}'>{{title}}</label></a>" ;
                 var nodeTpl = _.template(htmlNode, {title : title, color : color});
-                node.setTitle(nodeTpl);
+                node.setTitle(nodeTpl);  */
 
                 if(window.app.models.ontologies.get(node.data.id)==undefined)
                     self.updateInfoPanel(node.data.id,node.data.title);
             },
             onSelect: function(select, node) {
-                self.updateInfoPanel(node.data.id);
+                self.updateInfoPanel(node.data.id,node.data.title);
             },
             onDblClick: function(node, event) {
                 console.log("Double click");
