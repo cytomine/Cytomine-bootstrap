@@ -80,7 +80,7 @@ class CommandController {
       }
       response.status = noError?200:400
     }
-
+    log.debug results
     withFormat {
       json { render results as JSON }
       xml { render results as XML }

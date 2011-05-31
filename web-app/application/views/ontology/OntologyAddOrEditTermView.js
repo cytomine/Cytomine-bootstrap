@@ -322,6 +322,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
 
                 if(isParentOntology) {
                     //no link "parent" with a term
+                    window.app.view.message("Term", response.message, "");
                     self.close();
                 }
                 else {
@@ -347,6 +348,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
                     self.addRelation(child,newParent);
                 }
                 else {
+                    window.app.view.message("Term", response.message, "");
                     self.close();
                 }
             },
@@ -362,6 +364,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         new RelationTermModel({}).save({term1:newParent, term2:child},{
             success : function (model, response) {
                 console.log("create new relation");
+                window.app.view.message("Term", response.message, "");
                 self.close();
             },
             error: function (model, response) {

@@ -39,7 +39,7 @@ var AnnotationListView = Backbone.View.extend({
              //$("#tableImage").append("<tr><th>"+ name +"</th><th>" + area + "</th></tr>");
 
         });
-            $('#tableImage').dataTable();
+           // $('#tableImage').dataTable();
 
         return this;
     },

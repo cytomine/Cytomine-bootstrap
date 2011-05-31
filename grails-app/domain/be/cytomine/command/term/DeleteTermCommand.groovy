@@ -1,6 +1,5 @@
 package be.cytomine.command.term
 
-import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.ontology.Term
 import grails.converters.JSON
@@ -29,7 +28,7 @@ class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
 
   def undo() {
     def termData = JSON.parse(data)
-    Term term = Term.createTermFromData(termData)
+    Term term = Term.createFromData(termData)
     term.save(flush:true)
     log.error "Term errors = " + term.errors
 

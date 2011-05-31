@@ -49,11 +49,14 @@ var CommandController = Backbone.Controller.extend({
             if (image == undefined) return; //tab is closed
             image.getUserLayer().annotationUpdated(callback.annotationID);
         } else if (callback.method == "be.cytomine.DeleteAnnotationCommand") {
-            var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {
+            var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
                 return object.idImage == callback.imageID;
             });
             var image = tab.view;
+            console.log(tab);
+            console.log("tab.view="+tab.view);
             if (image == undefined) return; //tab is closed
+            console.log("callback.annotationID="+callback.annotationID);
             image.getUserLayer().annotationRemoved(callback.annotationID);
         } else if (callback.method == "be.cytomine.AddAnnotationTermCommand") {
             var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {

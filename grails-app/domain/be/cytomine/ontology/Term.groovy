@@ -74,12 +74,12 @@ class Term extends SequenceDomain implements Serializable {
     return relations
    }
 
-  static Term createTermFromData(jsonTerm) {
+  static Term createFromData(jsonTerm) {
     def term = new Term()
-    getTermFromData(term,jsonTerm)
+    getFromData(term,jsonTerm)
   }
 
-  static Term getTermFromData(term,jsonTerm) {
+  static Term getFromData(term,jsonTerm) {
     if(!jsonTerm.name.toString().equals("null"))
       term.name = jsonTerm.name
     else throw new IllegalArgumentException("Term name cannot be null")

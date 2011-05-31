@@ -58,10 +58,10 @@
     <!-- Application -->
     <script type="text/javascript" src="application/Utilities.js" ></script>
 
-    <!-- Datatables -->
+    <!-- Datatables
     <script type="text/javascript" src="lib/datatables/jquery.dataTables.min.js" ></script>
     <link rel='stylesheet' href='lib/datatables/demo_table.css' type='text/css'/>
-    <link rel='stylesheet' href='lib/datatables/demo_table_jui.css' type='text/css'/>
+    <link rel='stylesheet' href='lib/datatables/demo_table_jui.css' type='text/css'/> -->
 
 
     <!-- controllers -->

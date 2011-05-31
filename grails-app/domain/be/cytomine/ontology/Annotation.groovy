@@ -8,7 +8,6 @@ import be.cytomine.security.User
 import be.cytomine.SequenceDomain
 import be.cytomine.rest.UrlApi
 
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
 import be.cytomine.image.ImageInstance
 
 class Annotation extends SequenceDomain implements Serializable {
@@ -104,9 +103,9 @@ class Annotation extends SequenceDomain implements Serializable {
    * @param jsonAnnotation JSON
    * @return Annotation
    */
-  static Annotation createAnnotationFromData(jsonAnnotation) {
+  static Annotation createFromData(jsonAnnotation) {
     def annotation = new Annotation()
-    getAnnotationFromData(annotation,jsonAnnotation)
+    getFromData(annotation,jsonAnnotation)
   }
 
   /**
@@ -116,7 +115,7 @@ class Annotation extends SequenceDomain implements Serializable {
    * @param jsonAnnotation JSON
    * @return annotation with json attributes
    */
-  static Annotation getAnnotationFromData(annotation,jsonAnnotation) {
+  static Annotation getFromData(annotation,jsonAnnotation) {
     annotation.name = jsonAnnotation.name
     annotation.location = new WKTReader().read(jsonAnnotation.location);
     //annotation.location = DouglasPeuckerSimplifier.simplify(annotation.location,50)

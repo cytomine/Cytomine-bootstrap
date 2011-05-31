@@ -2,7 +2,7 @@ package be.cytomine.command.annotation
 
 import grails.converters.JSON
 import be.cytomine.ontology.Annotation
-import be.cytomine.command.Command
+
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.command.EditCommand
 
@@ -33,7 +33,7 @@ class EditAnnotationCommand extends EditCommand implements UndoRedoCommand  {
         return [data : [success : false, message : "Annotation not found with id: " + postData.id], status : 404]
       }
 
-      updatedAnnotation = Annotation.getAnnotationFromData(updatedAnnotation,postData)
+      updatedAnnotation = Annotation.getFromData(updatedAnnotation,postData)
       updatedAnnotation.id = postData.id
 
 
@@ -61,7 +61,7 @@ class EditAnnotationCommand extends EditCommand implements UndoRedoCommand  {
     log.info "Undo"
     def annotationsData = JSON.parse(data)
     Annotation annotation = Annotation.findById(annotationsData.previousAnnotation.id)
-    annotation = Annotation.getAnnotationFromData(annotation,annotationsData.previousAnnotation)
+    annotation = Annotation.getFromData(annotation,annotationsData.previousAnnotation)
     annotation.save(flush:true)
     def filename = annotation.image?.baseImage?.getFilename()
     def callback = [method : "be.cytomine.EditAnnotationCommand", annotationID : annotation.id , imageID : annotation.image.id ]
@@ -74,7 +74,7 @@ class EditAnnotationCommand extends EditCommand implements UndoRedoCommand  {
     log.info "Redo"
     def annotationsData = JSON.parse(data)
     Annotation annotation = Annotation.findById(annotationsData.newAnnotation.id)
-    annotation = Annotation.getAnnotationFromData(annotation,annotationsData.newAnnotation)
+    annotation = Annotation.getFromData(annotation,annotationsData.newAnnotation)
     annotation.save(flush:true)
     def filename = annotation.image?.baseImage?.getFilename()
     def callback = [method : "be.cytomine.EditAnnotationCommand", annotationID : annotation.id , imageID : annotation.image.id ]

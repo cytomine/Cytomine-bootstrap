@@ -1,6 +1,5 @@
 package be.cytomine.command.term
 
-import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
 import be.cytomine.ontology.Term
@@ -23,7 +22,7 @@ class EditTermCommand extends EditCommand implements UndoRedoCommand {
         return [data : [success : false, message : "Term not found with id: " + postData.id], status : 404]
       }
 
-      updatedTerm = Term.getTermFromData(updatedTerm,postData)
+      updatedTerm = Term.getFromData(updatedTerm,postData)
       updatedTerm.id = postData.id
 
       if ( updatedTerm.validate() && updatedTerm.save(flush:true)) {
@@ -48,7 +47,7 @@ class EditTermCommand extends EditCommand implements UndoRedoCommand {
     log.info "Undo"
     def termData = JSON.parse(data)
     Term term = Term.findById(termData.previousTerm.id)
-    term = Term.getTermFromData(term,termData.previousTerm)
+    term = Term.getFromData(term,termData.previousTerm)
     term.save(flush:true)
     return [data : [success : true, message:"ok", term : term], status : 200]
   }
@@ -57,7 +56,7 @@ class EditTermCommand extends EditCommand implements UndoRedoCommand {
     log.info "Redo"
     def termData = JSON.parse(data)
     Term term = Term.findById(termData.newTerm.id)
-    term = Term.getTermFromData(term,termData.newTerm)
+    term = Term.getFromData(term,termData.newTerm)
     term.save(flush:true)
     return [data : [success : true, message:"ok", term : term], status : 200]
   }

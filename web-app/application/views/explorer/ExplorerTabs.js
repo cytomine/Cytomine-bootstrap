@@ -79,6 +79,8 @@ var ExplorerTabs = Backbone.View.extend({
                            initOptions : options,
                            el: tabs
                         }).render();
+                     console.log("view:");
+                     console.log(view);
                     self.tabs.push({idImage : idImage,view : view});
                  }
               });

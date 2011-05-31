@@ -221,7 +221,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
     assertEquals(200,code)
 
-    /*log.info("test undo")
+    log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -253,8 +253,8 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
     //must be done because redo change id
     json = JSON.parse(response)
-    assert json instanceof JSONObject
-    idTerm = json.term.id
+    assert json instanceof JSONArray
+    idTerm = json[0].term.id
 
     log.info("check if object "+ idTerm +" exist in DB")
     client = new HttpClient();
@@ -264,7 +264,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(200,code) */
+    assertEquals(200,code)
 
   }
 

@@ -2,7 +2,7 @@ package be.cytomine.command.annotation
 
 import be.cytomine.ontology.Annotation
 import grails.converters.JSON
-import be.cytomine.command.Command
+
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.command.DeleteCommand
 
@@ -43,7 +43,7 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand{
   def undo() {
     log.debug "undo data:"+ data
     def annotationData = JSON.parse(data)
-    Annotation annotation = Annotation.createAnnotationFromData(annotationData)
+    Annotation annotation = Annotation.createFromData(annotationData)
     annotation.id = annotationData.id;
     annotation.save()
     log.debug "annotation save with id " + annotation.id

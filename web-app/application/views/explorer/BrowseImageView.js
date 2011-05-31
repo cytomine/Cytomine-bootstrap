@@ -37,6 +37,7 @@ var BrowseImageView = Backbone.View.extend({
           ], function(tpl) {
              self.doLayout(tpl);
           });
+          return this;
        },
        /**
         * Check init options and call appropriate methods
