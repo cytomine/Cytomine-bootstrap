@@ -1,8 +1,6 @@
 body {
-    /*font-family: "Century Gothic", "Heiti TC", "Helvetica", "Arial", sans-serif;
-	font-size : 12px;
-    background:#f8f8f8;
-    color:#333;      */
+    font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;;
+    font-size : 12px;
 }
 
 
@@ -169,7 +167,7 @@ h3 { font-size:13px; }
     z-index:1;
     position : fixed;
 }
-
+  /*
 .thumb{
 
     background:#EEE;
@@ -186,8 +184,8 @@ h3 { font-size:13px; }
     margin: 4px;
     margin-right: 0;
     padding: 5px;
-/*cursor: pointer;*/
-}
+
+}  */
 
 div.inline {
     float:left;
@@ -197,18 +195,19 @@ div.inline {
     clear:both;
 }
 
+/*
 .thumb-wrap span{
     display: block;
     overflow: hidden;
     text-align: center;
-}
+}*/
 
 
 
 .map {
     align : center;
     width : 100%;
-/*height : 700px;*/
+    /*height : 700px;*/
     border-bottom:1px solid #ccc;
 
 }
@@ -304,15 +303,15 @@ div .toolbar {
 }
 
 label .layerSwitcher {
-	display:inline;
+    display:inline;
     font-weight:bold;
     color:#FFF;
     padding:5px;
 }
 
 input .layerSwitcher{
-	display:inline;
-	padding : 5px;
+    display:inline;
+    padding : 5px;
 }
 
 
@@ -329,7 +328,7 @@ div .layerSwitcherPanel {
     border-radius: 6px;
     opacity: 0.7;
     width : 230px;
-    height : 120px;	
+    height : 120px;
 }
 
 div.olControlOverviewMapElement img {
@@ -344,7 +343,7 @@ div.olControlOverviewMapElement img {
 }
 
 .map .control {
-/*background:url(../images/palette.png);*/
+    /*background:url(../images/palette.png);*/
     height:20px;
     padding:5px;
     position:absolute;
@@ -392,8 +391,8 @@ div.olControlOverviewMapElement img {
     right : 30px;
     bottom : 100px;
     z-index : 2010; */
-  /*  background-color: black;*/
-/*color : #fff;*/
+    /*  background-color: black;*/
+    /*color : #fff;*/
     /* padding: 10px;
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
@@ -448,14 +447,13 @@ fieldset {
 }
 
 .checklist li {
-    float: left;
+    /*float: left;*/
     margin-right: 10px;
     background: url(../images/checkboxbg.gif) no-repeat 0 0;
     width: 105px;
     margin:20px;
     height: 150px;
     position: relative;
-    font: normal 11px/1.3 "Lucida Grande","Lucida","Arial",Sans-serif;
 }
 
 .checklist li.selected {
@@ -468,7 +466,7 @@ fieldset {
 
 .checkbox-select {
     display: block;
-    float: left;
+/*    float: left;*/
     position: absolute;
     top: 118px;
     left: 10px;
@@ -529,7 +527,7 @@ a.checkbox-deselect {
     margin: 4px;
     margin-right: 0;
     padding: 5px;
-/*cursor: pointer;*/
+    /*cursor: pointer;*/
 }
 
 .noProject {
@@ -570,3 +568,5 @@ a.checkbox-deselect {
 .userChoice {display:inline; }
 
 .treeOntology { color:black;}
+
+

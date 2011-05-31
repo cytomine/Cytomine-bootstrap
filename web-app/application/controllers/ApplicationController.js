@@ -22,11 +22,12 @@ var ApplicationController = Backbone.Controller.extend({
           //init collections
           self.models.images = new ImageCollection({project:undefined});
           self.models.imagesinstance = new ImageInstanceCollection({project:undefined});
+          self.models.slides = new SlideCollection({project:undefined});
           self.models.users = new UserCollection({project:undefined});
           self.models.terms = new TermCollection({project:undefined});
           self.models.ontologies = new OntologyCollection();
           self.models.projects = new ProjectCollection({user:undefined});
-           self.models.annotations = new AnnotationCollection({});
+          self.models.annotations = new AnnotationCollection({});
 
           //fetch models
           var modelsToPreload = [self.models.users];

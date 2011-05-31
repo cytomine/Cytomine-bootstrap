@@ -26,6 +26,8 @@
     <script type="text/javascript" src="lib/backbone.js"></script>
 
     <!-- Modules -->
+    <script type="text/javascript" src="lib/masonry/jquery.masonry.min.js" ></script>
+
     <script type="text/javascript" src="lib/pnotify/jquery.pnotify.js" ></script>
     <link rel='stylesheet' href='lib/pnotify/jquery.pnotify.default.css' type='text/css'/>
 

@@ -19,35 +19,29 @@ var ProjectManageSlideDialog = Backbone.View.extend({
        projectPanel : null,
        addSlideDialog : null,
        page : 0, //start at the first page
-       nb_thumb_by_page : 30,
+       nb_slide_by_page : 10,
+       imagesProject : null, //collection containing the images contained in the project
        /*events : {
         "click .next" : "nextPage",
         "click .previous" : "previousPage"
         },*/      //not work because of jquery dialog wich move content outside of this.el ?
 
        nextPage : function() {
-          var nb_pages = Math.round(_.size(window.app.models.images) / this.nb_thumb_by_page);
-          this.page = Math.min(this.page+1, nb_pages);
-          this.renderImageList();
+          var max_page = Math.round(_.size(window.app.models.slides) / this.nb_slide_by_page) - 1;
+          this.page = Math.min(this.page+1, max_page);
+          this.renderImageListLayout();
        },
        previousPage : function() {
           this.page = Math.max(this.page-1, 0);
-          if (this.page == 0) {
-             this.disablePrevious();
-          }
-          this.renderImageList();
+          this.renderImageListLayout();
        },
        disablePrevious : function() {
-          console.log("disable previous");
        },
        enablePrevious : function() {
-          console.log("enable previous");
        },
        disableNext : function() {
-
        },
        enableNext : function() {
-
        },
        /**
         * ProjectManageSlideDialog constructor
@@ -69,6 +63,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
              "text!application/templates/project/ProjectAddImageDialog.tpl.html"
           ],
               function(tpl) {
+                 self.imagesProject = new ImageCollection({project:self.model.get('id')});
                  self.doLayout(tpl);
               });
        },
@@ -83,11 +78,16 @@ var ProjectManageSlideDialog = Backbone.View.extend({
           var dialog = _.template(tpl, {id:this.model.get('id'),name:this.model.get('name')});
           $(this.el).append(dialog);
           $(self.el).find("a.next").bind("click", self.nextPage);
+          $(self.el).find("a.next").button();
           $(self.el).find("a.previous").bind("click", self.previousPage);
+          $(self.el).find("a.previous").button();
 
           //Build dialog
           self.addSlideDialog = $(self.divDialog+this.model.get('id')).dialog({
-                 modal : true,
+                 create: function (event, ui) {
+                    $(".ui-widget-header").hide();
+                 },
+                 modal : false,
                  autoOpen : false,
                  closeOnEscape: true,
                  beforeClose: function(event, ui) {
@@ -105,7 +105,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                  height: ($(window).height()/100*90) //bug with %age ?
               });
           this.renderImageList();
-          self.open();
+          this.open();
           return this;
 
        },
@@ -115,81 +115,106 @@ var ProjectManageSlideDialog = Backbone.View.extend({
        open: function() {
           this.addSlideDialog.dialog("open") ;
        },
-       /**
-        * Render Image thumbs into the dialog
-        **/
-       renderImageList : function() {
+       renderImageList: function() {
+          var self = this;
+
+          var fetchCallback = function(cpt, expected) {
+             if (cpt == expected)
+                self.renderImageListLayout();
+          };
+
+          var modelsToPreload = [window.app.models.slides, window.app.models.images, self.imagesProject];
+          var nbModelFetched = 0;
+          _.each(modelsToPreload, function(model){
+             model.fetch({
+                    success :  function(model, response) {
+                       fetchCallback(++nbModelFetched, _.size(modelsToPreload));
+                    }
+                 });
+          });
+
+       },
+       renderImage : function(projectImages, image, domTarget) {
           var self = this;
           require([
              "text!application/templates/project/ProjectAddImageChoice.tpl.html"
           ],   function(tpl) {
-             //Dialog is maybe already in document (but closed)...clear the all list elem
-             $(self.ulElem+self.model.get('id')).empty();
+             var thumb = new ImageSelectView({
+                    model : image
+                 }).render();
 
-             //Get all images from server
-             //TODO: filter by user right
-             window.app.models.images.fetch({
-                    success: function(collection,response){
-                       //TODO: multi-page print?
+             var filename = image.get("filename");
+             if (filename.length > 15)
+                filename = filename.substring(0,12) + "...";
+             var item = _.template(tpl, {id:image.id,name:filename, slide: image.get('slide'), info : image.get('info')});
 
-                       var cpt = 0;
-                       var inf = Math.abs(self.page) * self.nb_thumb_by_page;
-                       var sup = (Math.abs(self.page) + 1) * self.nb_thumb_by_page;
-                       var currentSlide = -1;
-                       //Get images from project server
-                       new ImageCollection({project:self.model.get('id')}).fetch({
-                              success: function(projectImages,response){
+             $(domTarget).append(item);
+             $(domTarget + " " + self.imageDivElem+image.id).append(thumb.el);  //get the div elem (img id) which have this project as parent
+             $(thumb.el).css({"width":30}); //thumb must be smaller
+             //if image is already in project, selected it
+             if(projectImages.get(image.id)){
+                //get the li elem (img id) which have this project as parent
+                $(domTarget + " " + "#"+ self.liElem+image.id).addClass(self.selectedClass);
+                $(domTarget + " " + "#"+self.liElem+image.id).find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
+             }
+          });
+       },
+       selectAllImages : function (slideID) {
+          $(".projectImageList" + slideID).find(".imageThumbChoice").each(function(){
+             $(this).find("a.checkbox-select").click();
+          });
+       },
+       unselectAllImages : function (slideID) {
+          $(".projectImageList" + slideID).find(".imageThumbChoice").each(function(){
+             $(this).find("a.checkbox-deselect").click();
+          });
+       },
+       renderSlide : function(slide) {
+          var self = this;
+          require([
+             "text!application/templates/project/ProjectSlideDetail.tpl.html"
+          ],   function(tpl) {
+             var item = _.template(tpl, { id : slide.get("id"), name : slide.get("name")});
+             var el = $(self.ulElem+self.model.get('id'));
+             el.append(item);
+             el.find(".slideItem"+slide.get("id")).panel({collapsible:false});
+             el.find("a[class=selectAll]").bind("click", function(){
+                self.selectAllImages(slide.get("id"));
+             });
+             el.find("a[class=unselectAll]").bind("click", function(){
+                self.unselectAllImages(slide.get("id"));
+             });
+             el.find("a[class=selectAll]").button();
+             el.find("a[class=unselectAll]").button();
+             var images = slide.get("images");
+             var domTarget = ".projectImageList" + slide.get("id");
+             _.each(images, function (imageID){
+                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
+             });
+             $(domTarget).append('<div style="clear:both;"></div>');
 
-                                 console.log("collection size=" + collection.length);
-                                 console.log("projectImages size=" + projectImages.length);
+          });
 
-                                 collection.each(function(image) {
+       },
+       /**
+        * Render Image thumbs into the dialog
+        **/
 
+       renderImageListLayout : function() {
+          var self = this;
+          var cpt = 0;
+          var inf = Math.abs(self.page) * self.nb_slide_by_page;
+          var sup = (Math.abs(self.page) + 1) * self.nb_slide_by_page;
+          $(self.ulElem+self.model.get('id')).empty();
 
-                                    if ((cpt >= inf) && (cpt < sup)) {
-
-                                       var thumb = new ImageSelectView({
-                                              model : image
-                                           }).render();
-
-                                       var filename = image.get("filename");
-                                       if (filename.length > 15)
-                                          filename = filename.substring(0,12) + "...";
-                                       var item = _.template(tpl, {id:image.id,name:filename, slide: image.get('slide'), info : image.get('info')});
-
-                                       $(thumb.el).css({"width":30}); //thumb must be smaller
-
-                                       $(self.ulElem+self.model.get('id')).append(item);
-                                       $(self.ulElem+self.model.get('id') + " " + self.imageDivElem+image.id).append(thumb.el);  //get the div elem (img id) which have this project as parent
-
-                                       //if image is already in project, selected it
-                                       if(projectImages.get(image.id))
-                                       {
-                                          //get the li elem (img id) which have this project as parent
-                                          $(self.ulElem+self.model.get('id') + " " + "#"+ self.liElem+image.id).addClass(self.selectedClass);
-                                          $(self.ulElem+self.model.get('id') + " " + "#"+self.liElem+image.id).find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
-                                       }
-                                    }
-                                    cpt++;
-                                 });
-                                 $(self.ulElem+self.model.get('id') + " img").addClass("thumbProject");
-
-                                 //build dialog and event
-                                 self.initEvents();
-                              },
-                              error: function(error){
-                                 for (property in error) {
-                                    console.log(property + ":" + error[property]);
-                                 }
-                              }
-                           });
-                    },
-                    error: function(error){
-                       for (property in error) {
-                          console.log(property + ":" + error[property]);
-                       }
-                    }
-                 });
+          window.app.models.slides.each(function(slide){
+             if ((cpt >= inf) && (cpt < sup)) {
+                self.renderSlide(slide);
+             }
+             cpt++;
+             if (cpt == sup) {
+                self.initEvents();
+             }
           });
        },
        /**
@@ -217,24 +242,14 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                  //Get the id of the selected image....
                  //TODO: a better way to do that?
                  var fullId = $(this).parent().attr("id");   //"projectaddimageitemliXXX"
-
                  var idImage = fullId.substring(self.liElem.length,fullId.length);  //XXX
 
                  //add slide to project
-
-                 new ImageModel({id:idImage}).fetch({
+                 new ImageInstanceModel({}).save({project : self.model.get('id'), user : null, baseImage : idImage},{
                         success : function (image,response) {
-
-                           //console.log("Image id = " + idImage +  " Project id = " + self.model.get('id'));
-
-                           new ImageInstanceModel({}).save({project : self.model.get('id'), user : null, baseImage : idImage},{
-                                  success : function (image,response) {
-                                  },
-                                  error: function (model, response) {
-                                     console.log("ERROR:"+response);
-                                  }
-                               });
-
+                        },
+                        error: function (model, response) {
+                           console.log("ERROR:"+response);
                         }
                      });
               }
@@ -251,23 +266,13 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                  var idImage = fullId.substring(self.liElem.length,fullId.length);  //XXX
 
                  //delete slide from project
-                 new ImageModel({id:idImage}).fetch({
+                 new ImageInstanceModel({project : self.model.get('id'), user : null, baseImage : idImage}).destroy({
                         success : function (image,response) {
-
-                           //console.log("Image id = " + idImage +  " Project id = " + self.model.get('id'));
-
-                           new ImageInstanceModel({project : self.model.get('id'), user : null, baseImage : idImage}).destroy({
-                                  success : function (image,response) {
-                                  },
-                                  error: function (model, response) {
-                                     console.log("ERROR:"+response);
-                                  }
-                               });
-
+                        },
+                        error: function (model, response) {
+                           console.log("ERROR:"+response);
                         }
                      });
-
-
               });
        }
     });
