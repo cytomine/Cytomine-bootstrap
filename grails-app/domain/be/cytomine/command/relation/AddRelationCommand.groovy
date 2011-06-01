@@ -8,7 +8,7 @@ import be.cytomine.command.AddCommand
 
 class AddRelationCommand extends AddCommand implements UndoRedoCommand {
 
-  def execute() {
+  def execute() {   //must be refactored with AddCommand
     log.info("Execute")
     try
     {
@@ -30,23 +30,10 @@ class AddRelationCommand extends AddCommand implements UndoRedoCommand {
   }
 
   def undo() {
-    log.info("Undo")
-    def relationData = JSON.parse(data)
-    def relation = Relation.findById(relationData.id)
-    relation.delete(flush:true)
-    log.debug("Delete relation with id:"+relationData.id)
-    return [data : ["Relation deleted"], status : 200]
+
   }
 
   def redo() {
-    log.info("Redo:"+data.replace("\n",""))
-    def relationData = JSON.parse(data)
-    def json = JSON.parse(postData)
-    log.debug("Redo json:"+ json.toString() )
-    def relation = Relation.createRelationFromData(json)
-    relation.id = relationData.id
-    relation.save(flush:true)
-    log.debug("Save relation:"+relation.id)
-    return [data : [relation : relation], status : 201]
+
   }
 }

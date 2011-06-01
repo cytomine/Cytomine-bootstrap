@@ -247,6 +247,8 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                  //add slide to project
                  new ImageInstanceModel({}).save({project : self.model.get('id'), user : null, baseImage : idImage},{
                         success : function (image,response) {
+                             console.log(response);
+                             window.app.view.message("ImageInstance", response.message, "");
                         },
                         error: function (model, response) {
                            console.log("ERROR:"+response);
@@ -268,6 +270,9 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                  //delete slide from project
                  new ImageInstanceModel({project : self.model.get('id'), user : null, baseImage : idImage}).destroy({
                         success : function (image,response) {
+                              console.log(response);
+                             window.app.view.message("ImageInstance", response.message, "");
+
                         },
                         error: function (model, response) {
                            console.log("ERROR:"+response);

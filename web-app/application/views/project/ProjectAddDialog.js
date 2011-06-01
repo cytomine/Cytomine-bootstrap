@@ -99,13 +99,17 @@ var AddProjectDialog = Backbone.View.extend({
           new ProjectModel({name : name, ontology : ontology}).save({name : name, ontology : ontology},{
                  success: function (model, response) {
                     console.log(response);
+                     window.app.view.message("Project", response.message, "");
                     var id = response.project.id;
                     console.log("project="+id);
                     //create user-project "link"
                     new ProjectUserModel({project: id}).save({project: id, user: users},{
                            success: function (model, response) {
+
                               new ProjectCollection({user : self.userID}).fetch({
                                      success : function (collection, response) {
+
+
                                         self.projectsPanel.refresh();
                                         $("#addproject").dialog("close") ;
                                      }});

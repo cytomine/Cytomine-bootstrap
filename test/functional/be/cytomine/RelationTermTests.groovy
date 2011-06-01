@@ -116,9 +116,9 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(201,code)
     json = JSON.parse(response)
     assert json instanceof JSONObject
-    int idRelation= json.relationTerm.relation.id
-    int idTerm1= json.relationTerm.term1.id
-    int idTerm2= json.relationTerm.term2.id
+    int idRelation= json.relationterm.relation.id
+    int idTerm1= json.relationterm.term1.id
+    int idTerm2= json.relationterm.term2.id
 
     log.info("check if object "+ idRelation +"/"+ idTerm1 +"/"+ idTerm2 +" exist in DB")
     client = new HttpClient();

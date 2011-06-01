@@ -5,7 +5,7 @@ import grails.converters.JSON
 import be.cytomine.ontology.Term
 import be.cytomine.command.AddCommand
 import be.cytomine.ontology.Ontology
-import grails.validation.ValidationException
+
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 
 class AddTermCommand extends AddCommand implements UndoRedoCommand {
@@ -27,16 +27,34 @@ class AddTermCommand extends AddCommand implements UndoRedoCommand {
   }
 
   def undo() {
-    log.info("Undo AddTermCommand")
+    log.info("Undo")
     def termData = JSON.parse(data)
-    return super.undo(termData,new Term(),'Term',[termData.id,termData.name,Ontology.read(termData.ontology)?.name] as Object[]);
+    Term term = Term.get(termData.id)
+    term.delete(flush:true)
+
+    log.info ("termData="+termData)
+
+   String id = termData.id
+
+    return super.createUndoMessage(
+            id,
+            'Term',
+            [termData.id,termData.name,Ontology.read(termData.ontology).name] as Object[]
+    );
   }
 
   def redo() {
-    log.info("Undo RedoTermCommand")
+    log.info("Undo")
     def termData = JSON.parse(data)
     def json = JSON.parse(postData)
-    return super.redo(termData,json,new Term(),'Term',[termData.id,termData.name,Ontology.read(termData.ontology)?.name] as Object[]);
+    def term = Term.createFromData(json)
+    term.id = termData.id
+    term.save(flush:true)
+    return super.createRedoMessage(
+            term,
+            'Term',
+            [termData.id,termData.name,Ontology.read(termData.ontology)?.name] as Object[]
+    );
   }
 
 }

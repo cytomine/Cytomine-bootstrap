@@ -34,11 +34,22 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
 
   def undo() {
     log.info("Undo")
+    log.info("data="+data)
     def annotationData = JSON.parse(data)
     String filename = ImageInstance.get(annotationData.image)?.baseImage?.filename
     HashMap<String,Object> callback = new HashMap<String,Object>();
     callback.put("imageID",annotationData.image)
-    return super.undo(annotationData,new Annotation(),'Annotation',[annotationData.id,filename] as Object[],callback);
+    Annotation annotation = Annotation.get(annotationData.id)
+    annotation.delete(flush:true)
+
+    log.info("annotationData.id="+annotationData.id + " filename="+filename)
+    String id = annotationData.id
+    return super.createUndoMessage(
+            id,
+            'Annotation',
+            [annotationData.id,filename] as Object[],
+            callback
+    );
   }
 
   def redo() {
@@ -48,7 +59,17 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
     String filename = ImageInstance.get(annotationData.image)?.baseImage?.filename
     HashMap<String,Object> callback = new HashMap<String,Object>();
     callback.put("imageID",annotationData.image)
-    return super.redo(annotationData,json,new Annotation(),'Annotation',[annotationData.id,filename] as Object[],callback);
+
+    def annotation = Annotation.createFromData(json)
+    annotation.id = annotationData.id
+    annotation.save(flush:true)
+
+    return super.createRedoMessage(
+            annotation,
+            'Annotation',
+            [annotationData.id,filename] as Object[],
+            callback
+    );
   }
 
 }

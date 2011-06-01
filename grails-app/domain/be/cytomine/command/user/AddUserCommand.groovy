@@ -5,42 +5,56 @@ import grails.converters.JSON
 import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.command.AddCommand
+import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 
 class AddUserCommand extends AddCommand implements UndoRedoCommand {
 
-  def execute() {
-    def userData = JSON.parse(postData)
-    def newUser = User.createUserFromData(userData)
 
-    if (newUser.validate()) {
-      newUser.save()
-      data = newUser.encodeAsJSON()
-      def callback = [method : "be.cytomine.AddUserCommand"]
-      def message = messageSource.getMessage('be.cytomine.AddUserCommand', [newUser.username] as Object[], Locale.ENGLISH)
-      return [data : [success : true, message: message, user : newUser, callback : callback], status : 201]
-    } else {
-      return [data : [user : newUser, errors : newUser.retrieveErrors()], status : 400]
+
+  def execute() {
+    log.info("Execute")
+    User newUser
+    try {
+      def json = JSON.parse(postData)
+      newUser = User.createUserFromData(json)
+      return super.validateAndSave(newUser,"User",["#ID#",newUser.username] as Object[])
+      //errors:
+    }catch(ConstraintException  ex){
+      return [data : [user:newUser,errors:newUser.retrieveErrors()], status : 400]
+    }catch(IllegalArgumentException ex){
+      return [data : [user:null,errors:["Cannot save user:"+ex.toString()]], status : 400]
     }
+
   }
 
   def undo() {
+    log.info("Undo")
     def userData = JSON.parse(data)
     def user = User.findById(userData.id)
     log.debug("Delete user with id:"+userData.id)
     user.delete(flush:true)
-    def callback = [method : "be.cytomine.DeleteUserCommand"]
-    def message = messageSource.getMessage('be.cytomine.DeleteUserCommand', [userData.username] as Object[], Locale.ENGLISH)
-    return [data : [callback : callback , message: message], status : 200]
+
+    log.info ("userData="+userData)
+
+   String id = userData.id
+
+    return super.createUndoMessage(
+            id,
+            'Term',
+            [userData.id,userData.username] as Object[]
+    );
   }
 
   def redo() {
+    log.info("Undo")
     def userData = JSON.parse(data)
     def user = User.createUserFromData(userData)
     user.id = userData.id
     user.save(flush:true)
-    def callback = [method : "be.cytomine.AddUserCommand"]
-    def message = messageSource.getMessage('be.cytomine.AddUserCommand', [user.username] as Object[], Locale.ENGLISH)
-    return [data : [user : user, callback : callback, message : message], status : 201]
+    return super.createRedoMessage(
+            user,
+            'User',
+            [userData.id,userData.username] as Object[]
+    );
   }
-
 }

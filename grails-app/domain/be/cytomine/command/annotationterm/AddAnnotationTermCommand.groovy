@@ -1,78 +1,81 @@
 package be.cytomine.command.annotationterm
 
-import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.Term
 import be.cytomine.command.AddCommand
+import be.cytomine.ontology.RelationTerm
+import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 
 class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
   boolean saveOnUndoRedoStack = true;
-  def execute() {
+  def execute() {   //must be refactored with AddCommand
     log.info("Execute")
-    try
-    {
+    AnnotationTerm newAnnotationTerm
+    try {
       def json = JSON.parse(postData)
-      AnnotationTerm newAnnotationTerm = AnnotationTerm.createAnnotationTermFromData(json)
+      newAnnotationTerm = AnnotationTerm.createAnnotationTermFromData(json)
+      AnnotationTerm.link(newAnnotationTerm.annotation,newAnnotationTerm.term)
+        return super.validateWithoutSave(
+                newAnnotationTerm,
+                "AnnotationTerm",
+                ["#ID#",newAnnotationTerm.annotation.name,newAnnotationTerm.term.name] as Object[])
 
-
-
-      if (newAnnotationTerm.validate()) {
-        newAnnotationTerm =  AnnotationTerm.link(newAnnotationTerm.annotation,newAnnotationTerm.term)
-        actionMessage = "ADD TERM " + newAnnotationTerm.term.name + " TO ANNOTATION " + newAnnotationTerm.annotation
-        log.info("Save AnnotationTerm with id:"+newAnnotationTerm.id)
-        data = newAnnotationTerm.encodeAsJSON()
-        return [data : [success : true, message:"ok", annotationTerm : newAnnotationTerm], status : 201]
-      } else {
-        return [data : [annotationTerm : newAnnotationTerm, errors : newAnnotationTerm.retrieveErrors()], status : 400]
-      }
-    }catch(IllegalArgumentException ex)
-    {
-      log.error("Cannot save annotationTerm:"+ex.toString())
-      return [data : [annotationTerm : null , errors : ["Cannot save annotationTerm:"+ex.toString()]], status : 400]
+      }catch(ConstraintException  ex){
+      return [data : [annotationterm:newAnnotationTerm,errors:newAnnotationTerm.retrieveErrors()], status : 400]
+    }catch(IllegalArgumentException ex){
+      return [data : [annotationterm:null,errors:["Cannot save annotation-term:"+ex.toString()]], status : 400]
     }
   }
 
   def undo() {
     log.info("Undo")
+    log.info("data="+data)
     def annotationTermData = JSON.parse(data)
     def annotation = Annotation.get(annotationTermData.annotation)
     def term = Term.get(annotationTermData.term)
     def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
     AnnotationTerm.unlink(annotationTerm.annotation,annotationTerm.term)
-    log.debug("Delete annotationTerm with id:"+annotationTermData.id)
+    HashMap<String,Object> callback = new HashMap<String,Object>();
+    callback.put("annotationID",annotation.id)
+    callback.put("termID",term.id)
+    callback.put("imageID",annotation.image.id)
 
-    def callback = [method : "be.cytomine.DeleteAnnotationTermCommand", annotationID : annotation.id , termID : term.id , imageID:annotation.image.id]
-    def message = messageSource.getMessage('be.cytomine.DeleteAnnotationTermCommand', [annotation.name,term.name] as Object[], Locale.ENGLISH)
-    //return [data : ["AnnotationTerm deleted"], status : 200]
-    return [data : [message : message, annotationTerm : annotationTerm.id, callback : callback], status : 200]
-   // [message : message, annotation : annotationData.id, callback : callback] <<<<=======
+    log.debug "AnnotationTerm=" + annotationTermData.id +" annotation.name=" + annotation.name  + " term.name=" + term.name
+    String id = annotationTermData.id
+    return super.createUndoMessage(
+            id,
+            'AnnotationTerm',
+            [annotation.name,term.name] as Object[],
+            callback);
   }
 
+
+
   def redo() {
-    log.info("Redo:"+data.replace("\n",""))
+    log.info("Redo")
     def annotationTermData = JSON.parse(data)
+    def json = JSON.parse(postData)
+
     def annotation = Annotation.get(annotationTermData.annotation)
     def term = Term.get(annotationTermData.term)
 
-    def json = JSON.parse(postData)
-    log.debug("Redo json:"+ json.toString() )
     def annotationTerm = AnnotationTerm.createAnnotationTermFromData(json)
-    annotationTerm = AnnotationTerm.link(annotationTermData.id,annotationTerm.annotation,annotationTerm.term)
-    //println "annotationTermData.id="+annotationTermData.id
 
-    log.debug("Save annotationTerm:"+annotationTerm.id)
-    /*def session = sessionFactory.getCurrentSession()
-    session.clear()     */
-    //hibSession.
-    def callback = [method : "be.cytomine.AddAnnotationTermCommand", annotationID : annotation.id , termID : term.id, imageID:annotation.image.id  ]
-    def message = messageSource.getMessage('be.cytomine.AddAnnotationTermCommand', [annotation.name,term.name] as Object[], Locale.ENGLISH)
-    log.debug("Add annotationTerm with id:"+annotationTermData.id)
+    AnnotationTerm.link(annotation,term)
 
-    return [data : [annotationTerm : annotationTerm, message : message, callback : callback], status : 201]
+    HashMap<String,Object> callback = new HashMap<String,Object>();
+    callback.put("annotationID",annotation.id)
+    callback.put("termID",term.id)
+    callback.put("imageID",annotation.image.id)
+
+    return super.createRedoMessage(
+            annotationTerm,
+            'AnnotationTerm',
+            [annotation.name,term.name] as Object[],
+            callback);
   }
-  //def sessionFactory
 
 }

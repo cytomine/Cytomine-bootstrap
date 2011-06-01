@@ -13,8 +13,10 @@ class AnnotationTerm implements Serializable{
   }
 
   static AnnotationTerm link(Annotation annotation,Term term) {
-
+    if(!annotation)  throw new IllegalArgumentException("Annotation cannot be null")
+    if(!term)  throw new IllegalArgumentException("Term cannot be null")
     def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation, term)
+    if(annotationTerm) throw new IllegalArgumentException("Annotation - term already exist")
     //Annotation.withTransaction {
       if (!annotationTerm) {
         annotationTerm = new AnnotationTerm()
@@ -31,7 +33,11 @@ class AnnotationTerm implements Serializable{
 
 
   static AnnotationTerm link(long id,Annotation annotation,Term term) {
+
+    if(!annotation)  throw new IllegalArgumentException("Annotation cannot be null")
+    if(!term)  throw new IllegalArgumentException("Term cannot be null")
     def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation, term)
+    if(annotationTerm) throw new IllegalArgumentException("Annotation - term already exist")
 
     if (!annotationTerm) {
       annotationTerm = new AnnotationTerm()
@@ -46,15 +52,25 @@ class AnnotationTerm implements Serializable{
   }
 
   static void unlink(Annotation annotation, Term term) {
-    def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation, term)
 
+    if(!annotation)  throw new IllegalArgumentException("Annotation cannot be null")
+    if(!term)  throw new IllegalArgumentException("Term cannot be null")
+    def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation, term)
+    if(!annotationTerm) throw new IllegalArgumentException("Annotation - term not exist")
+
+    AnnotationTerm.list().each {
+          println it.id + " annotation=" + it.annotation.id + " term=" + it.term.id
+    }
+
+    println "find annotationTerm="+AnnotationTerm.findAllByAnnotationAndTerm(annotation, term).size()
     println "unlink annotationTerm="+annotationTerm
     if (annotationTerm) {
         annotation?.removeFromAnnotationTerm(annotationTerm)
         term?.removeFromAnnotationTerm(annotationTerm)
         annotation.refresh()
         term.refresh()
-      annotationTerm.delete(flush : true)
+        println "delete annotationTerm="+annotationTerm
+        annotationTerm.delete(flush : true)
 
     }
   }

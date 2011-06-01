@@ -18,6 +18,12 @@ class RelationTerm implements Serializable{
 
 
   static RelationTerm link(long id,Relation relation,Term term1,Term term2) {
+    if(!relation)  throw new IllegalArgumentException("Relation cannot be null");
+    if(!term1)  throw new IllegalArgumentException("Term 1 cannot be null");
+    if(!term2)  throw new IllegalArgumentException("Term 2 cannot be null");
+
+
+
     println "Link Term " + term1.id + " with Term " + term2.id + " with relation " + relation.id
     def relationTerm = RelationTerm.findWhere('relation': relation,'term1':term1, 'term2':term2)
     if (!relationTerm) {

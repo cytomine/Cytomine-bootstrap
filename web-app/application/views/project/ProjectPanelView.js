@@ -71,6 +71,8 @@ var ProjectPanelView = Backbone.View.extend({
           });
           json.users = users.join(", ");
           json.ontologyId = idOntology;
+
+
           var html = _.template(tpl, json);
 
           if(replace) {

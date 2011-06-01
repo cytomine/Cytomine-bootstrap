@@ -12,48 +12,54 @@ import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
 import be.cytomine.ontology.Ontology
 import be.cytomine.command.AddCommand
+import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 
 class AddOntologyCommand extends AddCommand implements UndoRedoCommand {
 
   def execute() {
     log.info("Execute")
-    try
-    {
+    Ontology newOntology
+    try{
       def json = JSON.parse(postData)
-      Ontology newOntology = Ontology.createOntologyFromData(json)
-      if (newOntology.validate()) {
-        newOntology.save(flush:true)
-        log.info("Save ontology with id:"+newOntology.id)
-        data = newOntology.encodeAsJSON()
-        return [data : [success : true, message:"ok", ontology : newOntology], status : 201]
-      } else {
-        return [data : [ontology : newOntology, errors : newOntology.retrieveErrors()], status : 400]
-      }
-    }catch(IllegalArgumentException ex)
-    {
-      log.error("Cannot save ontology:"+ex.toString())
-      return [data : [ontology : null , errors : ["Cannot save ontology:"+ex.toString()]], status : 400]
+      newOntology = Ontology.createOntologyFromData(json)
+      return super.validateAndSave(newOntology,"Ontology",["#ID#",json.name] as Object[])
+      //errors:
+    }catch(ConstraintException  ex){
+      return [data : [ontology:newOntology,errors:newOntology.retrieveErrors()], status : 400]
+    }catch(IllegalArgumentException ex){
+      return [data : [ontology:null,errors:["Cannot save ontology:"+ex.toString()]], status : 400]
     }
   }
 
   def undo() {
     log.info("Undo")
     def ontologyData = JSON.parse(data)
-    def ontology = Ontology.findById(ontologyData.id)
+    Ontology ontology = Ontology.get(ontologyData.id)
     ontology.delete(flush:true)
-    log.debug("Delete ontology with id:"+ontologyData.id)
-    return [data : ["Ontology deleted"], status : 200]
+
+    log.info ("termData="+ontologyData)
+
+    String id = ontologyData.id
+
+    return super.createUndoMessage(
+            id,
+            'Ontology',
+            [ontologyData.id,ontologyData.name] as Object[]
+    );
   }
 
   def redo() {
-    log.info("Redo:"+data.replace("\n",""))
+    log.info("Undo")
     def ontologyData = JSON.parse(data)
     def json = JSON.parse(postData)
-    log.debug("Redo json:"+ json.toString() )
     def ontology = Ontology.createOntologyFromData(json)
     ontology.id = ontologyData.id
     ontology.save(flush:true)
-    log.debug("Save ontology:"+ontology.id)
-    return [data : [ontology : ontology], status : 201]
+    return super.createRedoMessage(
+            ontology,
+            'Ontology',
+            [ontologyData.id,ontologyData.name] as Object[]
+    );
   }
+
 }

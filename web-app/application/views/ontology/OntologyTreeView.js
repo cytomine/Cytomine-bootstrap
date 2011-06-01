@@ -29,11 +29,11 @@ var OntologyTreeView = Backbone.View.extend({
         });
     },
     render : function () {
-       var self = this;
-         require(["text!application/templates/explorer/OntologyTreeWrapper.tpl.html"], function(tpl) {
-             self.doLayout(tpl);
-          });
-       return this;
+        var self = this;
+        require(["text!application/templates/explorer/OntologyTreeWrapper.tpl.html"], function(tpl) {
+            self.doLayout(tpl);
+        });
+        return this;
     },
     doLayout: function(tpl) {
         $(this.el).html(_.template(tpl,{}));
@@ -149,11 +149,34 @@ var OntologyTreeView = Backbone.View.extend({
     },
     linkTerm : function(idTerm) {
         console.log ("linkterm:" + idTerm);
-        new AnnotationTermModel({annotation : this.idAnnotation, term : idTerm}).save({annotation : this.idAnnotation, term : idTerm});
+        new AnnotationTermModel({annotation : this.idAnnotation, term : idTerm}).save({annotation : this.idAnnotation, term : idTerm},
+        {
+            success: function (model, response) {
+                console.log(response);
+                window.app.view.message("Annotation Term", response.message, "");
+
+            },
+            error: function (model, response) {
+                console.log(response);
+            }
+        }
+                );
     },
     unlinkTerm : function(idTerm) {
         console.log ("unlinkterm:" + idTerm);
-        new AnnotationTermModel({annotation : this.idAnnotation, term : idTerm}).destroy({annotation : this.idAnnotation, term : idTerm});
+        new AnnotationTermModel({annotation : this.idAnnotation, term : idTerm}).destroy({annotation : this.idAnnotation, term : idTerm},
+        {
+            success: function (model, response) {
+                console.log(response);
+                window.app.view.message("Annotation Term", response.message, "");
+
+            },
+            error: function (model, response) {
+                console.log(response);
+            }
+        }
+
+       );
     }
 
 });
