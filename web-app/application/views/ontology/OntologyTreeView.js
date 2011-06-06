@@ -157,14 +157,15 @@ var OntologyTreeView = Backbone.View.extend({
 
             },
             error: function (model, response) {
-                console.log(response);
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Annotation-Term", json.errors, "");
             }
         }
                 );
     },
     unlinkTerm : function(idTerm) {
         console.log ("unlinkterm:" + idTerm);
-        new AnnotationTermModel({annotation : this.idAnnotation, term : idTerm}).destroy({annotation : this.idAnnotation, term : idTerm},
+        new AnnotationTermModel({annotation : this.idAnnotation, term : idTerm}).destroy(
         {
             success: function (model, response) {
                 console.log(response);
@@ -172,7 +173,8 @@ var OntologyTreeView = Backbone.View.extend({
 
             },
             error: function (model, response) {
-                console.log(response);
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Annotation-Term", json.errors, "");
             }
         }
 

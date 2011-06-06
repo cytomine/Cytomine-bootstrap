@@ -303,6 +303,7 @@ var OntologyPanelView = Backbone.View.extend({
         new TermModel({id:term.id}).destroy({
             success : function (model, response) {
                 new EndTransactionModel({}).save();
+                window.app.view.message("Term", response.message, "");
                 self.refresh();
                 $('#dialogsTerm').dialog( "close" ) ;
             },

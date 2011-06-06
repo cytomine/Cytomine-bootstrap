@@ -21,7 +21,7 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
         return super.validateWithoutSave(
                 newAnnotationTerm,
                 "AnnotationTerm",
-                ["#ID#",newAnnotationTerm.annotation.name,newAnnotationTerm.term.name] as Object[])
+                ["#ID#",newAnnotationTerm.annotation.id,newAnnotationTerm.term.name] as Object[])
 
       }catch(ConstraintException  ex){
       return [data : [annotationterm:newAnnotationTerm,errors:newAnnotationTerm.retrieveErrors()], status : 400]
