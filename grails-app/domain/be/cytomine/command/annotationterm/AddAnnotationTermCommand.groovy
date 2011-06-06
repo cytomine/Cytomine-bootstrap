@@ -48,7 +48,7 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
     return super.createUndoMessage(
             id,
             'AnnotationTerm',
-            [annotation.name,term.name] as Object[],
+            [id,annotation.id,term.name] as Object[],
             callback);
   }
 
@@ -62,7 +62,7 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
     def annotation = Annotation.get(annotationTermData.annotation)
     def term = Term.get(annotationTermData.term)
 
-    def annotationTerm = AnnotationTerm.createAnnotationTermFromData(json)
+    def annotationTerm = AnnotationTerm.createAnnotationTermFromData(annotationTermData)
 
     AnnotationTerm.link(annotation,term)
 
@@ -74,7 +74,7 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
     return super.createRedoMessage(
             annotationTerm,
             'AnnotationTerm',
-            [annotation.name,term.name] as Object[],
+            [id,annotation.id,term.name] as Object[],
             callback);
   }
 

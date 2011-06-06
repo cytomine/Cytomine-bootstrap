@@ -35,14 +35,17 @@ var CommandController = Backbone.Controller.extend({
 
         //Annotations
         if (callback.method == "be.cytomine.AddAnnotationCommand") {
-            var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {
+            var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
+                console.log("object.idImage="+object.idImage + " callback.imageID=" + callback.imageID);
                 return object.idImage == callback.imageID;
             });
             var image = tab.view;
+             console.log(tab);
             if (image == undefined) return; //tab is closed
+            console.log("callback.annotationID="+callback.annotationID);
             image.getUserLayer().annotationAdded(callback.annotationID);
         } else if (callback.method == "be.cytomine.EditAnnotationCommand") {
-            var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {
+            var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
                 return object.idImage == callback.imageID;
             });
             var image = tab.view;
@@ -59,14 +62,14 @@ var CommandController = Backbone.Controller.extend({
             console.log("callback.annotationID="+callback.annotationID);
             image.getUserLayer().annotationRemoved(callback.annotationID);
         } else if (callback.method == "be.cytomine.AddAnnotationTermCommand") {
-            var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {
+            var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
                 return object.idImage == callback.imageID;
             });
             var image = tab.view;
             if (image == undefined) return; //tab is closed
             image.getUserLayer().termAdded(callback.annotationID,callback.termID);
         } else if (callback.method == "be.cytomine.DeleteAnnotationTermCommand") {
-            var tab = _.detect(window.app.controllers.browse.tabs.images, function(object) {
+            var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
                 return object.idImage == callback.imageID;
             });
             var image = tab.view;

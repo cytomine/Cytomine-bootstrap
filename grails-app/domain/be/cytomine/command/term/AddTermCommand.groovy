@@ -45,7 +45,7 @@ class AddTermCommand extends AddCommand implements UndoRedoCommand {
     log.info("Undo")
     def termData = JSON.parse(data)
     def json = JSON.parse(postData)
-    def term = Term.createFromData(json)
+    def term = Term.createFromData(termData)
     term.id = termData.id
     term.save(flush:true)
 

@@ -24,7 +24,7 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
       log.info "Delete annotation-term with annotation=" + annotation + " term=" + term
       AnnotationTerm annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
       String id = annotationTerm.id
-      def response = super.createDeleteMessage(id,annotationTerm,"AnnotationTerm",[annotation.id,term.name] as Object[])
+      def response = super.createDeleteMessage(id,annotationTerm,"AnnotationTerm",[id,annotation.id,term.name] as Object[])
       AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term)
       return response
     } catch (NullPointerException e) {
@@ -47,10 +47,16 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
     AnnotationTerm annotationTerm = AnnotationTerm.createAnnotationTermFromData(annotationTermData)
     annotationTerm = AnnotationTerm.link(annotationTermData.id,annotation, term)
 
+    HashMap<String,Object> callback = new HashMap<String,Object>();
+    callback.put("annotationID",annotation.id)
+    callback.put("termID",term.id)
+    callback.put("imageID",annotation.image.id)
+
     return super.createUndoMessage(
             annotationTerm,
             'AnnotationTerm',
-            [annotation.id, term.name] as Object[]
+            [id,annotation.id,term.name] as Object[],
+            callback
     );
   }
 
@@ -66,10 +72,16 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
     String id =  annotationTerm.id
     AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term)
 
+    HashMap<String,Object> callback = new HashMap<String,Object>();
+    callback.put("annotationID",annotation.id)
+    callback.put("termID",term.id)
+    callback.put("imageID",annotation.image.id)
+
     return super.createRedoMessage(
             id,
             'AnnotationTerm',
-            [annotation.id, term.name] as Object[]
+            [id,annotation.id,term.name] as Object[],
+            callback
     );
   }
 

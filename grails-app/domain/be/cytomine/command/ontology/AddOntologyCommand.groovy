@@ -52,7 +52,7 @@ class AddOntologyCommand extends AddCommand implements UndoRedoCommand {
     log.info("Undo")
     def ontologyData = JSON.parse(data)
     def json = JSON.parse(postData)
-    def ontology = Ontology.createOntologyFromData(json)
+    def ontology = Ontology.createOntologyFromData(ontologyData)
     ontology.id = ontologyData.id
     ontology.save(flush:true)
     return super.createRedoMessage(

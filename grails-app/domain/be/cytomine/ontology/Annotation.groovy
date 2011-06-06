@@ -126,8 +126,9 @@ class Annotation extends SequenceDomain implements Serializable {
     annotation.image = ImageInstance.get(jsonAnnotation.image);
     annotation.zoomLevel = (!jsonAnnotation.zoomLevel.toString().equals("null"))  ? ((String)jsonAnnotation.zoomLevel).toDouble() : -1
     annotation.channels =  jsonAnnotation.channels
+    println "jsonAnnotation.user=" + jsonAnnotation.user
     annotation.user =  User.get(jsonAnnotation.user);
-
+    println "annotation.user=" + annotation.user
     annotation.created = (!jsonAnnotation.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonAnnotation.created)) : null
     annotation.updated = (!jsonAnnotation.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonAnnotation.updated)) : null
 

@@ -46,7 +46,7 @@ class AddProjectCommand extends AddCommand implements UndoRedoCommand {
     log.info("Undo")
     def projectData = JSON.parse(data)
     def json = JSON.parse(postData)
-    def project = Project.createProjectFromData(json)
+    def project = Project.createProjectFromData(projectData)
     project.id = projectData.id
     project.save(flush:true)
     return super.createRedoMessage(

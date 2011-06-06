@@ -59,7 +59,7 @@ class AddRelationTermCommand extends AddCommand implements UndoRedoCommand {
     def relationTermData = JSON.parse(data)
     def json = JSON.parse(postData)
     log.debug("Redo json:"+ json.toString() )
-    def relationTerm = RelationTerm.createRelationTermFromData(json)
+    def relationTerm = RelationTerm.createRelationTermFromData(relationTermData)
     relationTerm = RelationTerm.link(relationTermData.id,relationTerm.relation,relationTerm.term1,relationTerm.term2)
     relationTerm.id = relationTermData.id
     relationTerm.save(flush:true)

@@ -54,7 +54,7 @@ class AddImageCommand extends AddCommand implements UndoRedoCommand {
     log.info("Redo:"+data.replace("\n",""))
     def imageData = JSON.parse(data)
     def json = JSON.parse(postData)
-    AbstractImage image = AbstractImage.createImageFromData(json)
+    AbstractImage image = AbstractImage.createImageFromData(imageData)
     image.id = imageData.id
     image.save(flush:true)
     log.debug("Save image:"+image.id)

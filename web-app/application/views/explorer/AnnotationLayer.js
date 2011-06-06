@@ -535,6 +535,7 @@ AnnotationLayer.prototype = {
     /* Callbacks undo/redo */
     annotationAdded: function (idAnnotation) {
         var self = this;
+        console.log("annotationAdded="+idAnnotation);
         var deleteOnSelectBackup = self.deleteOnSelect;
         self.deleteOnSelect = false;
 

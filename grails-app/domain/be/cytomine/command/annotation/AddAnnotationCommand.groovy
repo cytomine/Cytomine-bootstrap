@@ -52,16 +52,19 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
   }
 
   def redo() {
-    log.info("Redo:"+data.replace("\n",""))
+    log.info("Redo data:"+data.replace("\n",""))
+    log.info("Redo postData:"+postData.replace("\n",""))
     def annotationData = JSON.parse(data)
     def json = JSON.parse(postData)
     String filename = ImageInstance.get(annotationData.image)?.baseImage?.filename
     HashMap<String,Object> callback = new HashMap<String,Object>();
     callback.put("imageID",annotationData.image)
 
-    def annotation = Annotation.createFromData(json)
+    def annotation = Annotation.createFromData(annotationData)
     annotation.id = annotationData.id
-    annotation.save(flush:true)
+    log.info "validate=" + annotation.validate()
+    log.info "errors=" + annotation.errors
+    log.info "save=" + annotation.save(flush:true)
 
     return super.createRedoMessage(
             annotation,
