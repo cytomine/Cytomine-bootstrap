@@ -5,50 +5,57 @@ import be.cytomine.command.UndoRedoCommand
 import be.cytomine.project.Project
 import grails.converters.JSON
 import be.cytomine.command.DeleteCommand
+import java.util.prefs.BackingStoreException
 
 class DeleteProjectCommand extends DeleteCommand implements UndoRedoCommand {
 
   def execute() {
-    def postData = JSON.parse(postData)
-
-    Project project = Project.findById(postData.id)
-    data = project.encodeAsJSON()
-
-    if (!project) {
-      return [data : [success : false, message : "Project not found with id: " + postData.id], status : 404]
-    }
+    log.info "Execute"
     try {
-      project.delete(flush:true);
-      return [data : [success : true, message : "OK", data : [project : postData.id]], status : 200]
-    } catch(org.springframework.dao.DataIntegrityViolationException e)
-    {
+      def postData = JSON.parse(postData)
+      Project project = Project.findById(postData.id)
+      return super.deleteAndCreateDeleteMessage(postData.id,project,"Project",[project.id,project.name] as Object[])
+    } catch(NullPointerException e) {
       log.error(e)
-      return [data : [success : false, errors : "Project is still map with data"], status : 400]
+      return [data : [success : false, errors : e.getMessage()], status : 404]
+    } catch(BackingStoreException e) {
+      log.error(e)
+      return [data : [success : false, errors : e.getMessage()], status : 400]
     }
   }
+
+
 
   def undo() {
+
+    log.info("Undo")
     def projectData = JSON.parse(data)
     Project project = Project.createProjectFromData(projectData)
+    project.id = projectData.id;
     project.save(flush:true)
+    log.error "Project errors = " + project.errors
 
-    //save new id of the object that has been re-created
-    def postDataLocal = JSON.parse(postData)
-    postDataLocal.id =  project.id
-    postData = postDataLocal.toString()
-
-    log.debug "image project with id " + project.id
-
-    return [data : [success : true, project : project, message : "OK"], status : 201]
+    return super.createUndoMessage(
+            project,
+            'Project',
+            [project.id,project.name] as Object[]
+    );
   }
+
+
 
   def redo() {
+    log.info("Redo")
     def postData = JSON.parse(postData)
     Project project = Project.findById(postData.id)
-    project.delete();
-    return [data : [success : true, message : "OK"], status : 200]
+    project.delete(flush:true);
+    String id = postData.id
 
+    return super.createRedoMessage(
+            id,
+            'Project',
+            [postData.id,postData.name] as Object[]
+    );
   }
-
 
 }

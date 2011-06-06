@@ -4,49 +4,56 @@ import be.cytomine.command.UndoRedoCommand
 import be.cytomine.ontology.Term
 import grails.converters.JSON
 import be.cytomine.command.DeleteCommand
+import java.util.prefs.BackingStoreException
+import be.cytomine.ontology.Ontology
 
 class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
 
   def execute() {
-    def postData = JSON.parse(postData)
-
-    Term term = Term.findById(postData.id)
-    data = term.encodeAsJSON()
-
-    if (!term) {
-      return [data : [success : false, message : "Term not found with id: " + postData.id], status : 404]
-    }
+    log.info "Execute"
     try {
-      term.delete(flush:true);
-      return [data : [success : true, message : "OK", data : [term : postData.id]], status : 200]
-    } catch(org.springframework.dao.DataIntegrityViolationException e)
-    {
+      def postData = JSON.parse(postData)
+      Term term = Term.findById(postData.id)
+
+      return super.deleteAndCreateDeleteMessage(postData.id,term,"Term",[term.id,term.name,term.ontology?.name] as Object[])
+
+    } catch(NullPointerException e) {
       log.error(e)
-      return [data : [success : false, errors : "Term is still map with data (relation, annotation...)"], status : 400]
+      return [data : [success : false, errors : e.getMessage()], status : 404]
+    } catch(BackingStoreException e) {
+      log.error(e)
+      return [data : [success : false, errors : e.getMessage()], status : 400]
     }
   }
 
   def undo() {
+
+    log.info("Undo")
     def termData = JSON.parse(data)
     Term term = Term.createFromData(termData)
+    term.id = termData.id;
     term.save(flush:true)
     log.error "Term errors = " + term.errors
 
-    //save new id of the object that has been re-created
-    def postDataLocal = JSON.parse(postData)
-    postDataLocal.id =  term.id
-    postData = postDataLocal.toString()
-
-    log.debug "term with id " + term.id
-
-    return [data : [success : true, term : term, message : "OK"], status : 201]
+    return super.createUndoMessage(
+            term,
+            'Term',
+            [term.id,term.name,term.ontology] as Object[]
+    );
   }
 
   def redo() {
+    log.info("Redo")
     def postData = JSON.parse(postData)
     Term term = Term.findById(postData.id)
     term.delete(flush:true);
-    return [data : [success : true, message : "OK"], status : 200]
+    String id = postData.id
 
+    return super.createRedoMessage(
+            id,
+            'Term',
+            [postData.id,postData.name,Ontology.read(postData.ontology).name] as Object[]
+    );
   }
+
 }

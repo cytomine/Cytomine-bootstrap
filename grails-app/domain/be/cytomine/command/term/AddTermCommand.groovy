@@ -32,9 +32,7 @@ class AddTermCommand extends AddCommand implements UndoRedoCommand {
     Term term = Term.get(termData.id)
     term.delete(flush:true)
 
-    log.info ("termData="+termData)
-
-   String id = termData.id
+    String id = termData.id
 
     return super.createUndoMessage(
             id,
@@ -50,6 +48,7 @@ class AddTermCommand extends AddCommand implements UndoRedoCommand {
     def term = Term.createFromData(json)
     term.id = termData.id
     term.save(flush:true)
+
     return super.createRedoMessage(
             term,
             'Term',

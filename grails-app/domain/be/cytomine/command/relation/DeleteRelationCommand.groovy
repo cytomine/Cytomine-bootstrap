@@ -8,7 +8,7 @@ import be.cytomine.command.DeleteCommand
 
 class DeleteRelationCommand extends DeleteCommand implements UndoRedoCommand {
 
-  def execute() {
+  def execute() {  //must be refactor with deleteCommand
     def postData = JSON.parse(postData)
 
     Relation relation = Relation.findById(postData.id)

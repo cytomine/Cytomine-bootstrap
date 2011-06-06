@@ -7,50 +7,69 @@ import be.cytomine.ontology.RelationTerm
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.Term
 import be.cytomine.command.DeleteCommand
+import java.util.prefs.BackingStoreException
 
 class DeleteRelationTermCommand extends DeleteCommand implements UndoRedoCommand {
 
   def execute() {
-    def postData = JSON.parse(postData)
+    log.info "Execute"
+    try {
+      def postData = JSON.parse(postData)
 
-    Relation relation = Relation.get(postData.relation)
-    Term term1 = Term.get(postData.term1)
-    Term term2 = Term.get(postData.term2)
+      Relation relation = Relation.get(postData.relation)
+      Term term1 = Term.get(postData.term1)
+      Term term2 = Term.get(postData.term2)
 
-    def relationTerm = RelationTerm.findWhere('relation': relation,'term1':term1, 'term2':term2)
+      def relationTerm = RelationTerm.findWhere('relation': relation,'term1':term1, 'term2':term2)
 
-    data = relationTerm.encodeAsJSON()
-
-    if (!relationTerm) {
-      return [data : [success : false, message : "RelationTerm not found with relation:" + postData.relation + " term1:" + postData.term1 +  "term2:" + postData.term2], status : 404]
+      String id = relationTerm.id
+      def response = super.createDeleteMessage(id,relationTerm,"RelationTerm",[relationTerm.id,relation.name,term1.name,term2.name] as Object[])
+      RelationTerm.unlink(relationTerm.relation, relationTerm.term1,relationTerm.term2)
+      return response
+    } catch (NullPointerException e) {
+      log.error(e)
+      return [data: [success: false, errors: e.getMessage()], status: 404]
+    } catch (BackingStoreException e) {
+      log.error(e)
+      return [data: [success: false, errors: e.getMessage()], status: 400]
     }
-    RelationTerm.unlink(relationTerm.relation, relationTerm.term1,relationTerm.term2)
-    return [data : [success : true, message : "OK", data : [relationTerm : postData.id]], status : 200]
   }
 
   def undo() {
+    log.info("Undo")
+
     def relationTermData = JSON.parse(data)
+
     RelationTerm relationTerm = RelationTerm.createRelationTermFromData(relationTermData)
     relationTerm = RelationTerm.link(relationTermData.id,relationTerm.relation, relationTerm.term1,relationTerm.term2)
-    //save new id of the object that has been re-created
-    def postDataLocal = JSON.parse(postData)
-    postDataLocal.id =  relationTerm.id
-    postData = postDataLocal.toString()
 
-    log.debug "RelationTerm with id " + relationTerm.id
 
-    return [data : [success : true, relationTerm : relationTerm, message : "OK"], status : 201]
+    return super.createUndoMessage(
+            relationTerm,
+            'RelationTerm',
+            [relationTerm.id, relationTerm.relation.name,relationTerm.term1.name,relationTerm.term2.name] as Object[]
+    );
   }
 
+
+
   def redo() {
+    log.info("Redo")
     def postData = JSON.parse(postData)
     Relation relation = Relation.get(postData.relation)
     Term term1 = Term.get(postData.term1)
     Term term2 = Term.get(postData.term2)
+
     RelationTerm relationTerm = RelationTerm.findWhere('relation': relation,'term1':term1, 'term2':term2)
+    String id =  relationTerm
     RelationTerm.unlink(relationTerm.relation, relationTerm.term1, relationTerm.term2)
-    return [data : [success : true, message : "OK"], status : 200]
 
+
+
+    return super.createRedoMessage(
+            id,
+            'RelationTerm',
+            [relationTerm.id, relation.name,term1.name,term2.name] as Object[]
+    );
   }
-
 }

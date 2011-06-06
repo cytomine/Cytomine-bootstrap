@@ -7,71 +7,70 @@ import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.Term
 import be.cytomine.command.DeleteCommand
+import java.util.prefs.BackingStoreException
 
 class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoCommand {
+
   boolean saveOnUndoRedoStack = true;
+
   def execute() {
-    def postData = JSON.parse(postData)
+    log.info "Execute"
 
 
+    try {
+      def postData = JSON.parse(postData)
       Annotation annotation = Annotation.get(postData.annotation)
       Term term = Term.get(postData.term)
-
-
-
-    log.info "execute with annotation=" + annotation + " term=" + term
-    AnnotationTerm annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
-    data = annotationTerm.encodeAsJSON()
-
-    if (!annotationTerm) {
-      return [data : [success : false, message : "AnnotationTerm not found with id: " + postData.id], status : 404]
+      log.info "Delete annotation-term with annotation=" + annotation + " term=" + term
+      AnnotationTerm annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
+      String id = annotationTerm.id
+      def response = super.createDeleteMessage(id,annotationTerm,"AnnotationTerm",[annotation.id,term.name] as Object[])
+      AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term)
+      return response
+    } catch (NullPointerException e) {
+      log.error(e)
+      return [data: [success: false, errors: e.getMessage()], status: 404]
+    } catch (BackingStoreException e) {
+      log.error(e)
+      return [data: [success: false, errors: e.getMessage()], status: 400]
     }
-    log.info "Unlink=" + annotationTerm.annotation +" " + annotationTerm.term
-    AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term)
-    actionMessage = "DELETE TERM " + term.name + " FROM ANNOTATION " + annotation
-
-    return [data : [success : true, message : "OK", data : [annotationTerm : postData.id]], status : 200]
   }
 
+
+
   def undo() {
-
-
+    log.info("Undo")
     def annotationTermData = JSON.parse(data)
     def annotation = Annotation.get(annotationTermData.annotation)
     def term = Term.get(annotationTermData.term)
 
     AnnotationTerm annotationTerm = AnnotationTerm.createAnnotationTermFromData(annotationTermData)
-
     annotationTerm = AnnotationTerm.link(annotationTermData.id,annotation, term)
 
-
-    //save new id of the object that has been re-created
-    def postDataLocal = JSON.parse(postData)
-    postDataLocal.id =  annotationTerm.id
-    postData = postDataLocal.toString()
-
-    log.debug "AnnotationTerm with id " + annotationTerm.id
-
-    def callback = [method : "be.cytomine.AddAnnotationTermCommand", annotationID : annotation.id , termID : term.id, imageID:annotation.image.id  ]
-    def message = messageSource.getMessage('be.cytomine.AddAnnotationTermCommand', [annotation.name,term.name] as Object[], Locale.ENGLISH)
-    log.debug("Add annotationTerm with id:"+annotationTermData.id)
-
-    return [data : [annotationTerm : annotationTerm, message : message, callback : callback], status : 201]
+    return super.createUndoMessage(
+            annotationTerm,
+            'AnnotationTerm',
+            [annotation.id, term.name] as Object[]
+    );
   }
 
-  def redo() {
-    def postData = JSON.parse(postData)
 
-      Annotation annotation = Annotation.get(postData.annotation)
-      Term term = Term.get(postData.term)
+
+  def redo() {
+    log.info("Redo")
+    def postData = JSON.parse(postData)
+    Annotation annotation = Annotation.get(postData.annotation)
+    Term term = Term.get(postData.term)
+
     AnnotationTerm annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
+    String id =  annotationTerm.id
     AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term)
 
-      def callback = [method : "be.cytomine.DeleteAnnotationTermCommand", annotationID : annotation.id , termID : term.id , imageID:annotation.image.id]
-      def message = messageSource.getMessage('be.cytomine.DeleteAnnotationTermCommand', [annotation.name,term.name] as Object[], Locale.ENGLISH)
-      //return [data : ["AnnotationTerm deleted"], status : 200]
-      return [data : [message : message, annotationTerm : annotationTerm.id, callback : callback], status : 200]
-
+    return super.createRedoMessage(
+            id,
+            'AnnotationTerm',
+            [annotation.id, term.name] as Object[]
+    );
   }
 
 }

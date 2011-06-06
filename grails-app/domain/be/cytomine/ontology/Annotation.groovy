@@ -63,6 +63,10 @@ class Annotation extends SequenceDomain implements Serializable {
     return image?.project
   }
 
+  String imageFileName() {
+    return this.image?.baseImage?.getFilename()
+  }
+
   private def getArea() {
     //TODO: must be compute with zoom level
     return location.area

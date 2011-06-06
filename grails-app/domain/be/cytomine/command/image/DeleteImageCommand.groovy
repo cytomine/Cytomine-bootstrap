@@ -12,54 +12,57 @@ import grails.converters.JSON
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.image.AbstractImage
 import be.cytomine.command.DeleteCommand
+import java.util.prefs.BackingStoreException
 
 class DeleteImageCommand extends DeleteCommand implements UndoRedoCommand{
 
   def execute() {
-
     log.info "Execute"
-    def postData = JSON.parse(postData)
 
-    AbstractImage image = AbstractImage.findById(postData.id)
-    data = image.encodeAsJSON()
-
-    if (!image) {
-      log.error "Image not found with id: " + postData.id
-      return [data : [success : false, message : "Image not found with id: " + postData.id], status : 404]
-    }
-    log.info "Delete image " + postData.id
     try {
-      image.delete(flush:true);
-      return [data : [success : true, message : "OK", data : [image : postData.id]], status : 200]
-    } catch(org.springframework.dao.DataIntegrityViolationException e)
-    {
+      def postData = JSON.parse(postData)
+      AbstractImage image = AbstractImage.findById(postData.id)
+      return super.deleteAndCreateDeleteMessage(postData.id, image, "Image", [image.id, image.filename] as Object[])
+
+    } catch (NullPointerException e) {
       log.error(e)
-      return [data : [success : false, errors : "Image has still data (annotation,...)"], status : 400]
+      return [data: [success: false, errors: e.getMessage()], status: 404]
+    } catch (BackingStoreException e) {
+      log.error(e)
+      return [data: [success: false, errors: e.getMessage()], status: 400]
     }
   }
+
 
   def undo() {
-    log.info "Undo"
+    log.info("Undo")
     def imageData = JSON.parse(data)
     AbstractImage image = AbstractImage.createImageFromData(imageData)
-    image.save(flush:true)
+    image.id = imageData.id;
+    image.save(flush: true)
+    log.error "Image errors = " + image.errors
 
-    //save new id of the object that has been re-created
-    def postDataLocal = JSON.parse(postData)
-    postDataLocal.id =  image.id
-    postData = postDataLocal.toString()
-
-    log.debug "image save with id " + image.id
-    return [data : [success : true, image : image, message : "OK"], status : 201]
+    return super.createUndoMessage(
+            image,
+            'Image',
+            [image.id, annotation.imageFileName()] as Object[]
+    );
   }
+
+
 
   def redo() {
-    log.info "Redo"
+    log.info("Redo")
     def postData = JSON.parse(postData)
     AbstractImage image = AbstractImage.findById(postData.id)
-    image.delete(flush:true);
-    return [data : [success : true, message : "OK"], status : 200]
+    String id = postData.id
+    String filename =  image.filename
+    image.delete(flush: true);
 
+    return super.createRedoMessage(
+            id,
+            'Image',
+            [postData.id, filename] as Object[]
+    );
   }
-
 }
