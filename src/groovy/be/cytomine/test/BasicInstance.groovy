@@ -16,6 +16,7 @@ import be.cytomine.ontology.RelationTerm
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Ontology
 import be.cytomine.image.ImageInstance
+import be.cytomine.security.Group
 
 /**
  * Created by IntelliJ IDEA.
@@ -294,6 +295,22 @@ log.debug  "createOrGetBasicUser()"
     log.debug "user.errors="+user.errors
     user
   }
+  static Group createOrGetBasicGroup() {
+    log.debug  "createOrGetBasicGroup()"
+    def name = "BasicGroup".toUpperCase()
+    def group = Group.findByName(name)
+    if(!group) {
+
+      group = new Group(name:name)
+      group.validate()
+      log.debug "group.errors="+group.errors
+      group.save(flush : true)
+      log.debug "group.errors="+group.errors
+    }
+    assert group!=null
+    group
+  }
+
 
   static Project createOrGetBasicProject() {
     log.debug  "createOrGetBasicProject()"

@@ -115,6 +115,7 @@
     <script type="text/javascript" src="application/views/project/ProjectPanelView.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectManageSlideDialog.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectAddDialog.js" ></script>
+  <script type="text/javascript" src="application/views/project/ProjectEditDialog.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectSearchPanel.js" ></script>
 
     <script type="text/javascript" src="application/views/annotation/AnnotationListView.js" ></script>

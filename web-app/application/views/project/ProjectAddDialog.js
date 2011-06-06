@@ -22,6 +22,8 @@ var AddProjectDialog = Backbone.View.extend({
 
           var self = this;
           var dialog = _.template(projectAddDialogTpl, {});
+        $("#editproject").replaceWith("");
+        $("#addproject").replaceWith("");
           $(self.el).append(dialog);
 
           $("#login-form-add-project").submit(function () {self.createProject(); return false;});
@@ -87,7 +89,7 @@ var AddProjectDialog = Backbone.View.extend({
           $("#errormessage").empty();
           $("#projecterrorlabel").hide();
 
-          var name =  $("#project-name").val();
+          var name =  $("#project-name").val().toUpperCase();
           var ontology = $('input[type=radio][name=ontologyradio]:checked').attr('value');
           var users = new Array();
 

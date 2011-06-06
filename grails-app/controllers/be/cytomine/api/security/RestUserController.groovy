@@ -36,8 +36,8 @@ class RestUserController extends RestController {
    */
   def show = {
     User user = User.read(params.id)
-    if(user) responseSuccess(user)
-    else responseNotFound("User",params.id)
+    if (user) responseSuccess(user)
+    else responseNotFound("User", params.id)
   }
 
   def showCurrent = {
@@ -46,9 +46,9 @@ class RestUserController extends RestController {
 
   def showByProject = {
     Project project = Project.read(params.id)
-    if(project)
+    if (project)
       responseSuccess(project.users())
-    else responseNotFound("User","Project",params.id)
+    else responseNotFound("User", "Project", params.id)
   }
 
   /**
@@ -60,7 +60,7 @@ class RestUserController extends RestController {
    */
   def save = {
     User currentUser = getCurrentUser(springSecurityService.principal.id)
-    Command addUserCommand = new AddUserCommand(postData : request.JSON.toString(),user: currentUser)
+    Command addUserCommand = new AddUserCommand(postData: request.JSON.toString(), user: currentUser)
     def result = processCommand(addUserCommand, currentUser)
     response(result)
   }
@@ -74,7 +74,7 @@ class RestUserController extends RestController {
    */
   def update = {
     User currentUser = getCurrentUser(springSecurityService.principal.id)
-    Command editUserCommand = new EditUserCommand(postData : request.JSON.toString(),user: currentUser)
+    Command editUserCommand = new EditUserCommand(postData: request.JSON.toString(), user: currentUser)
     def result = processCommand(editUserCommand, currentUser)
     response(result)
   }
@@ -84,20 +84,53 @@ class RestUserController extends RestController {
    * @param id the identifier of the user to delete
    * @return the identifier of the deleted user
    */
-  def delete =  {
+  def delete = {
     User currentUser = getCurrentUser(springSecurityService.principal.id)
 
     def result = null
     if (params.id == springSecurityService.principal.id) {
-      result = [data : [success : false, errors : "The user can't delete herself"], status : 403]
+      result = [data: [success: false, errors: "The user can't delete herself"], status: 403]
       response.status = result.status
     } else {
-      def postData = ([id : params.id]) as JSON
-      Command deleteUserCommand = new DeleteUserCommand(postData : postData.toString(),user: currentUser)
+      def postData = ([id: params.id]) as JSON
+      Command deleteUserCommand = new DeleteUserCommand(postData: postData.toString(), user: currentUser)
       result = processCommand(deleteUserCommand, currentUser)
     }
     response(result)
   }
+
+  def clearUser = {
+    log.info "ClearUser"
+    User currentUser = getCurrentUser(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " params.idProject=" + params.id
+
+    Project project = Project.get(params.id)
+    log.info "project= " + project
+    if (project) {
+      Group group = Group.findByName(project.name)
+      log.info "group= " + group
+      if (group) {
+        ProjectGroup.unlink(project, group)
+        def users = group.users();
+        log.info users.size()
+        users.each { user ->
+          log.info "remove " + user.username + " from " + group.name
+          UserGroup.unlink(user, group)
+        }
+        group.delete(flush:true)
+
+        log.info "Group and project are unlink"
+      }
+      else {
+        log.error "Cannot find group " + project.name
+      }
+    }
+    response.status = 201
+    def ret = [data: [message: "ok"], status: 201]
+    response(ret)
+
+  }
+
 
   def addUser = {
     log.info "AddUser"
@@ -109,23 +142,22 @@ class RestUserController extends RestController {
 
     Project project = Project.get(params.id)
     log.info "project= " + project
-    if(project)
-    {
+    if (project) {
       Group group = Group.findByName(project.name)
       log.info "group= " + group
-      if(!group) group = new Group(name:project.name)
+      if (!group) group = new Group(name: project.name)
       group.save()
-      ProjectGroup.link(project,group)
+      ProjectGroup.link(project, group)
 
       json.each {
         User user = User.get(it)
-        println "add user " +it
-        UserGroup.link(user,group);
+        println "add user " + it
+        UserGroup.link(user, group);
       }
 
     }
     response.status = 201
-    def ret = [data : [message : "ok"], status : 201]
+    def ret = [data: [message: "ok"], status: 201]
     response(ret)
 
   }

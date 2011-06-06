@@ -8,6 +8,7 @@ import grails.converters.JSON
 import be.cytomine.project.Project
 import be.cytomine.ontology.Ontology
 import org.codehaus.groovy.grails.web.json.JSONArray
+import be.cytomine.project.ProjectGroup
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -460,6 +461,37 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
     assertEquals(404,code) */
 
+  }
+
+  void testDeleteProjectWithGroup() {
+  log.info("create project")
+    def projectToDelete = BasicInstance.getBasicProjectNotExist()
+    def group = BasicInstance.createOrGetBasicGroup()
+
+    assert projectToDelete.save(flush:true)!=null
+    ProjectGroup.link(projectToDelete,group)
+    String jsonProject = projectToDelete.encodeAsJSON()
+    int idProject = projectToDelete.id
+    log.info("delete project:"+jsonProject.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/project/"+idProject+".json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.delete()
+    int code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+
+    log.info("check if object "+ idProject +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    client.disconnect();
+
+    assertEquals(404,code)
   }
 
   void testDeleteProjectWithData() {

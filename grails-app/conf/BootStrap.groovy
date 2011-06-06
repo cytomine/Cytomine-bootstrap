@@ -875,19 +875,19 @@ class BootStrap {
         println """add Data"""
         /* Groups */
         def groupsSamples = [
-                [name : "GIGA"],
-                [name : "LBTD"] ,
-                [name : "ANAPATH"]
+                [name : "LBTD NEO4"],
+                [name : "ANAPATH"] ,
+                [name : "OTHER"],
+                [name : "CEVIX"]
         ]
         createGroups(groupsSamples)
 
-
         /* Users */
         def usersSamples = [
-                [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group : [[ name :"GIGA"]], password : 'password', color : "#FF0000"],
-                [username : 'lrollus', firstname : 'Loic', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[ name :"GIGA"]], password : 'password', color : "#00FF00"],
-                [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[ name :"GIGA"], [name : "ANAPATH"]], password : 'password', color : "#0000FF"] ,
-                [username : 'demo', firstname : 'Jean', lastname : 'Dupont', email : 'mymail@ulg.ac.be', group : [[ name :"GIGA"], [name : "ANAPATH"]], password : 'demodemo', color : "#00FFFF"]
+                [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group :[[ name :"LBTD NEO4"], [name : "OTHER"],[name : "ANAPATH"],[name : "CEVIX"]], password : 'password', color : "#FF0000"],
+                [username : 'lrollus', firstname : 'Loïc', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[ name :"LBTD NEO4"], [name : "OTHER"],[name : "ANAPATH"],[name : "CEVIX"]], password : 'password', color : "#00FF00"],
+                [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[ name :"LBTD NEO4"], [name : "OTHER"],[name : "ANAPATH"],[name : "CEVIX"]], password : 'password', color : "#0000FF"] ,
+                [username : 'demo', firstname : 'Jean', lastname : 'Dupont', email : 'mymail@ulg.ac.be', group : [[ name :"LBTD NEO4"], [name : "OTHER"],[name : "ANAPATH"],[name : "CEVIX"]], password : 'demodemo', color : "#00FFFF"]
         ]
         createUsers(usersSamples)
 
@@ -1093,12 +1093,12 @@ class BootStrap {
 
         /* Projects */
         def projectSamples = [
-                [name : "LBTD NEO4",  groups : [[ name :"GIGA"]],ontology: "Tissus"],
+                [name : "LBTD NEO4",  groups : [[ name :"LBTD NEO4"]],ontology: "Tissus"],
                 //[name : "LBTD NEO13",  groups : [[ name :"GIGA"]],ontology: "Tissus"],
                 //[name : "LBTD",  groups : [[ name :"GIGA"]],ontology: "Tissus"],
-                [name : "ANAPATH",  groups : [[ name :"GIGA"]],ontology: "LBA"],
-                [name : "OTHER",  groups : [[ name :"GIGA"]],ontology: "Cellules"] ,
-                [name : "CERVIX",  groups : [[ name :"GIGA"]],ontology: "Cellules"]
+                [name : "ANAPATH",  groups : [[ name :"ANAPATH"]],ontology: "LBA"],
+                [name : "OTHER",  groups : [[ name :"OTHER"]],ontology: "Cellules"] ,
+                [name : "CERVIX",  groups : [[ name :"CERVIX"]],ontology: "Cellules"]
                 // [name : "NEO13", groups : [[ name :"GIGA"]]],
                 // [name : "NEO4",  groups : [[ name :"GIGA"]]]
 

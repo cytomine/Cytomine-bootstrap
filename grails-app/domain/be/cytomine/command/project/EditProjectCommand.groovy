@@ -5,6 +5,7 @@ import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
 import be.cytomine.project.Project
 import be.cytomine.command.EditCommand
+import be.cytomine.security.Group
 
 class EditProjectCommand extends EditCommand implements UndoRedoCommand {
 
@@ -22,11 +23,20 @@ class EditProjectCommand extends EditCommand implements UndoRedoCommand {
         log.error "Project not found with id: " + postData.id
         return [data : [success : false, message : "Project not found with id: " + postData.id], status : 404]
       }
-
+      Group group = Group.findByName(updatedProject.name)
+      log.info "rename group " + updatedProject.name + "("+group+") by " + postData.name
+      if(group)
+      {
+        group.name = postData.name
+        group.save(flush:true)
+      }
       updatedProject = Project.getProjectFromData(updatedProject,postData)
       updatedProject.id = postData.id
 
+
       if ( updatedProject.validate() && updatedProject.save(flush:true)) {
+
+
         log.info "New project is saved"
         data = ([ previousProject : (JSON.parse(backup)), newProject :  updatedProject]) as JSON
         return [data : [success : true, message:"ok", project :  updatedProject], status : 200]
