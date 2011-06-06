@@ -103,6 +103,7 @@
     <script type="text/javascript" src="application/views/explorer/ExplorerTabs.js" ></script>
 
     <script type="text/javascript" src="application/views/image/ImageThumbView.js" ></script>
+    <script type="text/javascript" src="application/views/image/ImageSelectView.js" ></script>
     <script type="text/javascript" src="application/views/image/ImageView.js" ></script>
 
     <script type="text/javascript" src="application/views/ontology/OntologyPanelView.js" ></script>

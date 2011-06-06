@@ -167,9 +167,9 @@ h3 { font-size:13px; }
     z-index:1;
     position : fixed;
 }
-  /*
-.thumb{
 
+.thumb{
+    float : left;
     background:#EEE;
     border:#CCC solid 1px;
     padding:3px;
@@ -185,7 +185,7 @@ h3 { font-size:13px; }
     margin-right: 0;
     padding: 5px;
 
-}  */
+}
 
 div.inline {
     float:left;
@@ -200,7 +200,7 @@ div.inline {
     display: block;
     overflow: hidden;
     text-align: center;
-}*/
+} */
 
 
 

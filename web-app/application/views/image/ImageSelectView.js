@@ -1,4 +1,5 @@
-var ImageThumbView = Backbone.View.extend({
+
+var ImageSelectView = Backbone.View.extend({
 
        events: {
 
@@ -10,12 +11,12 @@ var ImageThumbView = Backbone.View.extend({
        },
 
        render: function() {
+          var self = this;
           this.model.set({ project : window.app.status.currentProject });
           var self = this;
-          require(["text!application/templates/image/ImageThumb.tpl.html"], function(tpl) {
+          require(["text!application/templates/image/ImageChoice.tpl.html"], function(tpl) {
              $(self.el).html(_.template(tpl, self.model.toJSON()));
           });
           return this;
        }
     });
-
