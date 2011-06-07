@@ -16,31 +16,45 @@ class AddCommand extends Command {
   /**
    * Validate and save "newObject" and create message with messageParams
    * @param newObject Object that must be check and save (e.g. annotation)
-   * @param objectName Class name of the object (e.g. 'Annotation')
    * @param messageParams Params fo the message (i18n) (e.g. annotation name, filename of the image...)
    * @return Result message
    * @throws ConstraintException Validation fail
    */
   def validateAndSave(def newObject,Object[] messageParams) throws ConstraintException {
-      String objectName = getClassName(newObject)
       return checkConstraint(newObject,messageParams,true)
   }
 
+  /**
+   * Validate but don't save "newObject" and create message with messageParams
+   * @param newObject Object that must be check (e.g. annotation)
+   * @param messageParams Params fo the message (i18n) (e.g. annotation name, filename of the image...)
+   * @return Result message
+   * @throws ConstraintException Validation fail
+   */
   def validateWithoutSave(def newObject,Object[] messageParams) throws ConstraintException {
 
       return checkConstraint(newObject,messageParams,false)
   }
 
+  /**
+   * Check constraint for newObject and save it if save is true
+   * @param newObject Object that must be check
+   * @param messageParams Params fo the message (i18n) (e.g. annotation name, filename of the image...)
+   * @param save If true, newObject will be save
+   * @return  Result message
+   * @throws ConstraintException Validation fail
+   */
   def checkConstraint(def newObject,Object[] messageParams, boolean save) throws ConstraintException {
     log.info("validateAndSave")
-      String objectName = getClassName(newObject)
+    //get object class name (e.g. 'Annotation') and command name (e.g. 'be.cytomine.AddAnnotationCommand')
+    String objectName = getClassName(newObject)
     String command = "be.cytomine.Add" + objectName +"Command"
 
     if (newObject.validate()) {
       if(save) {
         if(!newObject.save(flush:true)) throw new ConstraintException(newObject.errors.toString())
+        log.info("Save object with id:"+newObject.id)
       }
-      log.info("Save object with id:"+newObject.id)
       data = newObject.encodeAsJSON()
 
       //replace id if its "#ID#" (not yet done because object is not save before this method
@@ -64,7 +78,7 @@ class AddCommand extends Command {
   /**
    * Create an Undo Message for an Add
    * @param id Id of the object that must be undo (e.g. annotation id)
-   * @param objectName Class name of the object (e.g. 'Annotation')
+   * @param object Object that must have the same type as the "undo-add" object
    * @param messageParams Params fo the message (i18n) (e.g. annotation name, filename of the image...)
    * @return Undo Message
    */
@@ -76,7 +90,7 @@ class AddCommand extends Command {
   /**
    * Create an Undo Message for an Add
    * @param id Id of the object that must be undo (e.g. annotation id)
-   * @param objectName Class name of the object (e.g. 'Annotation')
+   * @param object Object that must have the same type as the "undo-add" object
    * @param messageParams Params fo the message (i18n) (e.g. annotation name, filename of the image...)
    * @param additionalCallbackParams Additionnal params for the callbak part of the response (e.g. imageID for an annotation)
    * @return Undo Message
@@ -110,7 +124,6 @@ class AddCommand extends Command {
   /**
    * Create an Redo Message for an Add
    * @param object Object that must be redo (e.g. annotation)
-   * @param objectName Class name of the object (e.g. 'Annotation')
    * @param messageParams Params fo the message (i18n) (e.g. annotation name, filename of the image...)
    * @return Redo Message
    */
@@ -121,7 +134,6 @@ class AddCommand extends Command {
   /**
    * Create an Redo Message for an Add
    * @param object Object that must be redo (e.g. annotation)
-   * @param objectName Class name of the object (e.g. 'Annotation')
    * @param messageParams Params fo the message (i18n) (e.g. annotation name, filename of the image...)
    * @param additionalCallbackParams Additionnal params for the callbak part of the response (e.g. imageID for an annotation)
    * @return Redo Message

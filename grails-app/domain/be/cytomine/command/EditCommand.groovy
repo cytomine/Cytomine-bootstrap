@@ -11,8 +11,16 @@ import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
  * To change this template use File | Settings | File Templates.
  */
 class EditCommand extends Command {
-  // String actiontype = "EDIT"
 
+  /**
+   * Validate and save postData info in newObject
+   * @param postData New data for newObject
+   * @param newObject Old value of newObject
+   * @param messageParams Params for result message
+   * @return Result message
+   * @throws NullPointerException Object don't exists
+   * @throws ConstraintException Object is not correct
+   */
   def validateAndSave(def postData, def newObject, Object[] messageParams) throws NullPointerException, ConstraintException {
     log.info "validateAndSave: postdata="+postData
     String objectName = getClassName(newObject)
@@ -45,12 +53,26 @@ class EditCommand extends Command {
 
   }
 
-
+  /**
+   * Create undo message for an undo-edit on object
+   * @param data New json value of object
+   * @param object Undo-edit object
+   * @param messageParams Params for result message
+   * @return Result message
+   */
   def createUndoMessage(def data,def object,Object[] messageParams) {
     log.info "createUndoMessage"
       this.createUndoMessage(data,object,messageParams,null);
   }
 
+  /**
+   * Create undo message for an undo-edit on object
+   * @param data New json value of object
+   * @param object Undo-edit object
+   * @param messageParams Params for result message
+   * @param additionalCallbackParams Additional params for callback (like imageID for annotation)
+   * @return Result message
+   */
   def createUndoMessage(def data,def object,Object[] messageParams, HashMap<String,Object> additionalCallbackParams) {
     String objectName = getClassName(object)
     log.info("Undo EditCommand "+objectName)
@@ -76,12 +98,25 @@ class EditCommand extends Command {
   }
 
 
-
+  /**
+   * Create redo message for an redo-edit on object
+   * @param data New json value of object
+   * @param object Redo-edit object
+   * @param messageParams Params for result message
+   * @return Result message
+   */
   def createRedoMessage(def data,def object, Object[] messageParams) {
       this.createRedoMessage(data,object,messageParams,null)
   }
 
-
+  /**
+   * Create redo message for an redo-edit on object
+   * @param data New json value of object
+   * @param object Redo-edit object
+   * @param messageParams Params for result message
+   * @param additionalCallbackParams Additional params for callback (like imageID for annotation)
+   * @return Result message
+   */
   def createRedoMessage(def data, def object, Object[] messageParams,HashMap<String,Object> additionalCallbackParams) {
 
      String objectName = getClassName(object)
