@@ -14,6 +14,7 @@ import be.cytomine.rest.UrlApi
 import be.cytomine.project.Slide
 import be.cytomine.ontology.Annotation
 import be.cytomine.server.resolvers.Resolver
+import be.cytomine.image.server.Storage
 
 class AbstractImage extends SequenceDomain {
 
@@ -46,7 +47,7 @@ class AbstractImage extends SequenceDomain {
     static transients = ["zoomLevels"]
 
     static constraints = {
-        filename(blank : false)
+        filename(blank : false, unique : true)
 
         scanner(nullable : true)
         slide(nullable : true)
@@ -134,7 +135,9 @@ class AbstractImage extends SequenceDomain {
         return ConfigurationHolder.config.grails.serverURL + '/api/annotation/'+ this.id +'/term.json';
     }
 
+
     static void registerMarshaller() {
+
         println "Register custom JSON renderer for " + AbstractImage.class
         JSON.registerObjectMarshaller(AbstractImage) {
             def returnArray = [:]
@@ -144,7 +147,7 @@ class AbstractImage extends SequenceDomain {
             returnArray['filename'] = it.filename
             returnArray['scanner'] = it.scanner? it.scanner.id : null
             returnArray['slide'] = it.slide? it.slide.id : null
-          returnArray['user'] = it.user? it.user.id : null
+            returnArray['user'] = it.user? it.user.id : null
             returnArray['path'] = it.path
             returnArray['mime'] = it.mime.extension
 
@@ -166,6 +169,9 @@ class AbstractImage extends SequenceDomain {
             //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
 
             returnArray['imageServerBaseURL'] = it.getMime().imageServers().collect { it.getBaseUrl() }
+            Storage.list().each { storage->
+                println storage.generateRemotePath(it)
+            }
             return returnArray
         }
     }
