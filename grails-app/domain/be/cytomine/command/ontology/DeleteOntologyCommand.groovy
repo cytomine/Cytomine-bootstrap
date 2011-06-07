@@ -13,6 +13,8 @@ import be.cytomine.ontology.Ontology
 import grails.converters.JSON
 import be.cytomine.command.DeleteCommand
 import java.util.prefs.BackingStoreException
+import be.cytomine.ontology.RelationTerm
+import be.cytomine.project.Project
 
 class DeleteOntologyCommand extends DeleteCommand implements UndoRedoCommand {
 
@@ -21,6 +23,8 @@ class DeleteOntologyCommand extends DeleteCommand implements UndoRedoCommand {
     try {
       def postData = JSON.parse(postData)
       Ontology ontology = Ontology.findById(postData.id)
+      log.info "ontology="+ontology
+      if(ontology && Project.findAllByOntology(ontology).size()>0) throw new BackingStoreException("Ontology is still map with project")
       return super.deleteAndCreateDeleteMessage(postData.id,ontology,[ontology.id,ontology.name] as Object[])
     } catch(NullPointerException e) {
       log.error(e)

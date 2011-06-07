@@ -46,21 +46,11 @@ class RelationTerm implements Serializable{
   static void unlink(Relation relation, Term term1, Term term2) {
     println "Unlink Term " + term1.id + " with Term " + term2.id + " with relation " + relation.id
     def relationTerm = RelationTerm.findWhere('relation': relation,'term1':term1, 'term2':term2)
-    println "unlink relationTerm ="+ relationTerm
     if (relationTerm) {
       term1?.removeFromRelationTerm1(relationTerm)
       term2?.removeFromRelationTerm2(relationTerm)
       relation?.removeFromRelationTerm(relationTerm)
-      println "relationTerm delete"
-      println "***"
-      RelationTerm.list().each{println it}
-      println "***"
-      Term.list().each{println it}
       relationTerm.delete(flush : true)
-      println "***"
-      RelationTerm.list().each{println it}
-      println "***"
-      Term.list().each{println it}
     }
 
   }

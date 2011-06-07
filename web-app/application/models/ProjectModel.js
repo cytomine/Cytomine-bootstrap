@@ -30,12 +30,15 @@ var ProjectCollection = Backbone.Collection.extend({
     url: function() {
         if (this.user != undefined) {
             return "api/user/" + this.user + "/project.json";
+        }else if (this.ontology != undefined) {
+            return "api/ontology/" + this.ontology + "/project.json";
         } else {
             return "api/project.json";
         }
     },
     initialize: function (options) {
         this.user = options.user;
+        this.ontology = options.ontology;
     }
 });
 

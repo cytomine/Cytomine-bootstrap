@@ -8,14 +8,19 @@ var OntologyPanelView = Backbone.View.extend({
     $buttonAddTerm : null,
     $buttonEditTerm : null,
     $buttonDeleteTerm : null,
+    $buttonEditOntology : null,
+    $buttonDeleteOntology : null,
     addOntologyTermDialog : null,
     editOntologyTermDialog : null,
     deleteOntologyTermDialog : null,
+    ontologiesPanel : null,
     expanse : false,
     events: {
         "click .addTerm": "addTerm",
         "click .editTerm": "editTerm",
-        "click .deleteTerm": "deleteTerm"
+        "click .deleteTerm": "deleteTerm",
+        "click .editOntology": "editOntology",
+        "click .deleteOntology": "deleteOntology"
     },
     initialize: function(options) {
         this.container = options.container;
@@ -36,6 +41,9 @@ var OntologyPanelView = Backbone.View.extend({
         self.$buttonAddTerm = self.$panel.find($('#buttonAddTerm'+self.model.id));
         self.$buttonEditTerm = self.$panel.find($('#buttonEditTerm'+self.model.id));
         self.$buttonDeleteTerm = self.$panel.find($('#buttonDeleteTerm'+self.model.id));
+
+        self.$buttonEditOntology = self.$panel.find($('#buttonEditOntology'+self.model.id));
+        self.$buttonDeleteOntology = self.$panel.find($('#buttonDeleteOntology'+self.model.id));
 
         self.buildOntologyTree();
         self.buildButton();
@@ -134,9 +142,90 @@ var OntologyPanelView = Backbone.View.extend({
                 else self.buildDeleteTermWithAnnotationConfirmDialog(term,collection.length);
             }});
     },
+    editOntology : function() {
 
+    },
+    deleteOntology : function() {
+        var self = this;
+        console.log("deleteOntology") ;
+        //check if projects has this ontology
+        new ProjectCollection({ontology:self.model.id}).fetch({
+            success:function(collection,response) {
+                if(collection.length>0) self.refuseDeleteOntology(collection.length);
+                else self.acceptDeleteOntology();
+
+            }})
+    },
+    refuseDeleteOntology : function(numberOfProject) {
+        console.log("Ontology is linked with project");
+        var self = this;
+        require(["text!application/templates/ontology/OntologyDeleteRefuseDialog.tpl.html"], function(tpl) {
+            // $('#dialogsTerm').empty();
+            console.log("tpl=");
+            console.log(tpl);
+            var dialog =  new ConfirmDialogView({
+                el:'#dialogsDeleteOntology',
+                template : _.template(tpl, {name : self.model.get('name'),numberOfProject:numberOfProject}),
+                dialogAttr : {
+                    dialogID : '#dialogsDeleteOntology',
+                    width : 400,
+                    height : 200,
+                    buttons: {
+                        "Close": function() {
+                            console.log("no delete");
+                            //doesn't work! :-(
+                            $('#dialogsDeleteOntology').dialog( "close" ) ;
+                        }
+                    },
+                    close :function (event) {
+                    }
+                }
+            }).render();
+        });
+    },
+    acceptDeleteOntology : function() {
+        console.log("Ontology is not linked with project");
+        var self = this;
+        require(["text!application/templates/ontology/OntologyDeleteConfirmDialog.tpl.html"], function(tpl) {
+            // $('#dialogsTerm').empty();
+            console.log("tpl=");
+            console.log(tpl);
+            var dialog =  new ConfirmDialogView({
+                el:'#dialogsDeleteOntology',
+                template : _.template(tpl, {ontology : self.model.get('name')}),
+                dialogAttr : {
+                    dialogID : '#dialogsDeleteOntology',
+                    width : 400,
+                    height : 300,
+                    buttons: {
+                        "Delete ontology and all terms": function() {
+                            self.model.destroy({
+                                success : function (model, response) {
+                                    console.log("delete sucess");
+                                    $('#dialogsDeleteOntology').dialog( "close" ) ;
+                                    self.ontologiesPanel.refresh();
+                                },error: function (model, response) {
+
+                                    var json = $.parseJSON(response.responseText);
+                                    console.log("json.project="+json.errors);
+                                    //console.log();
+                                }});
+
+                        },
+                        "Cancel": function() {
+                            console.log("no delete");
+                            //doesn't work! :-(
+                            $('#dialogsDeleteOntology').dialog( "close" ) ;
+                        }
+                    },
+                    close :function (event) {
+                    }
+                }
+            }).render();
+        });
+    },
     selectTerm : function(idTerm) {
-         var self = this;
+        var self = this;
         console.log("OntologyPanelView: select " + idTerm) ;
         self.$tree.dynatree("getTree").selectKey(idTerm);
     },
@@ -311,10 +400,10 @@ var OntologyPanelView = Backbone.View.extend({
 
                 var json = $.parseJSON(response.responseText);
                 console.log("json.project="+json.errors);
-                    $("#delete-term-error-message").empty();
-                    $("#delete-term-error-label").show();
-                    $("#delete-term-error-message").append(json.errors)
-                    //console.log();
+                $("#delete-term-error-message").empty();
+                $("#delete-term-error-label").show();
+                $("#delete-term-error-message").append(json.errors)
+                //console.log();
             }});
     },
 
@@ -347,10 +436,10 @@ var OntologyPanelView = Backbone.View.extend({
             onClick: function(node, event) {
 
                 /*var title = node.data.title;
-                var color = "black";
-                var htmlNode = "<a href='#'><label style='color:{{color}}'>{{title}}</label></a>" ;
-                var nodeTpl = _.template(htmlNode, {title : title, color : color});
-                node.setTitle(nodeTpl);  */
+                 var color = "black";
+                 var htmlNode = "<a href='#'><label style='color:{{color}}'>{{title}}</label></a>" ;
+                 var nodeTpl = _.template(htmlNode, {title : title, color : color});
+                 node.setTitle(nodeTpl);  */
 
                 if(window.app.models.ontologies.get(node.data.id)==undefined)
                     self.updateInfoPanel(node.data.id,node.data.title);

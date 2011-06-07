@@ -12,6 +12,12 @@ import be.cytomine.command.ontology.DeleteOntologyCommand
 import be.cytomine.command.ontology.AddOntologyCommand
 
 import be.cytomine.api.RestController
+import be.cytomine.ontology.RelationTerm
+import be.cytomine.command.TransactionController
+import be.cytomine.command.term.DeleteTermCommand
+import be.cytomine.command.relationterm.DeleteRelationTermCommand
+import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.command.annotationterm.DeleteAnnotationTermCommand
 
 
 class RestOntologyController extends RestController {
@@ -80,8 +86,52 @@ class RestOntologyController extends RestController {
     User currentUser = getCurrentUser(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " params.id=" + params.id
     def postData = ([id : params.id]) as JSON
+
+
+    log.info "Start transaction"
+    TransactionController transaction = new TransactionController();
+    transaction.start()
+
+    Ontology ontology = Ontology.read(params.id)
+
+    if(ontology) {
+      def terms = ontology.terms()
+
+      terms.each { term ->
+        def relationTerm = RelationTerm.findAllByTerm1OrTerm2(term,term)
+        log.info "relationTerm= " +relationTerm.size()
+
+        relationTerm.each{ relterm ->
+          log.info "unlink relterm:" +relationTerm.id
+          def postDataRT = ([relation :relterm.relation.id,term1: relterm.term1.id,term2: relterm.term2.id]) as JSON
+          Command deleteRelationTermCommand = new DeleteRelationTermCommand(postData :postDataRT.toString() ,user: currentUser)
+          def result = processCommand(deleteRelationTermCommand, currentUser)
+        }
+
+        def annotationTerm = AnnotationTerm.findAllByTerm(term,term)
+        log.info "annotationTerm= " +relationTerm.size()
+
+        annotationTerm.each{ annotterm ->
+          log.info "unlink annotterm:" +annotterm.id
+          def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id]) as JSON
+          Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData :postDataRT.toString() ,user: currentUser)
+          def result = processCommand(deleteAnnotationTermCommand, currentUser)
+        }
+
+        Term termDeleted =  term
+        log.info "delete term " +termDeleted
+        def postDataTerm = ([id : termDeleted.id]) as JSON
+        Command deleteTermCommand = new DeleteTermCommand(postData :postDataTerm.toString() ,user: currentUser)
+        def result = processCommand(deleteTermCommand, currentUser)
+
+      }
+    }
+    log.info "delete ontology"
     Command deleteOntologyCommand = new DeleteOntologyCommand(postData : postData.toString(),user: currentUser)
     def result = processCommand(deleteOntologyCommand, currentUser)
+
+    log.info "End transaction"
+    transaction.stop()
     response(result)
   }
 

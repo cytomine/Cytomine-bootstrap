@@ -8,7 +8,7 @@ import java.util.prefs.BackingStoreException
 import be.cytomine.ontology.Ontology
 
 class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
-
+  boolean saveOnUndoRedoStack = true;
   def execute() {
     log.info "Execute"
     try {

@@ -2,6 +2,7 @@ package be.cytomine.command
 
 import java.util.prefs.BackingStoreException
 import grails.converters.JSON
+import be.cytomine.ontology.Ontology
 
 /**
  * Created by IntelliJ IDEA.
@@ -59,7 +60,12 @@ class DeleteCommand extends Command {
     data = objectToDelete.encodeAsJSON()
 
     try {
-      if (delete) objectToDelete.delete(flush: true);
+
+      log.info "delete:"+delete
+      log.info "objectToDelete:"+objectToDelete
+      if (delete) {
+        objectToDelete.delete(flush: true)
+      }
 
       def message = messageSource.getMessage(command, messageParams as Object[], Locale.ENGLISH)
       actionMessage = message
@@ -71,9 +77,12 @@ class DeleteCommand extends Command {
 
       return [data: params, status: 200]
 
-    } catch (org.springframework.dao.DataIntegrityViolationException e) {
+    } catch (org.hibernate.exception.ConstraintViolationException e) {
       log.error(e)
-      throw new BackingStoreException(objectName + " is still map with data (relation, annotation...):" + e.toString()) //400
+      throw new BackingStoreException(objectName + " is still map with data (project...):" + e.toString()) //400
+    }catch (org.springframework.dao.DataIntegrityViolationException e) {
+      log.error(e)
+      throw new BackingStoreException(objectName + " is still map with data (project...):" + e.toString()) //400
     } catch (Exception e) {
       log.error(e)
       throw new BackingStoreException("Unknow error:" + e.toString()) //400

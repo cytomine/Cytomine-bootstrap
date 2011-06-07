@@ -170,6 +170,9 @@ class UrlMappings {
         "/api/ontology/$id"(controller:"restOntology"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
+        "/api/ontology/$id/project"(controller:"restProject"){
+            action = [GET:"listByOntology"]
+        }
         "/api/ontology/$idontology/term"(controller:"restTerm"){
             action = [GET:"listByOntology"]
         }

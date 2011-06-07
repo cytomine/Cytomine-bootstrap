@@ -14,6 +14,7 @@ import be.cytomine.project.ProjectGroup
 import be.cytomine.security.UserGroup
 import be.cytomine.command.RedoStackItem
 import be.cytomine.command.CommandHistory
+import be.cytomine.ontology.Ontology
 
 class RestProjectController extends RestController {
 
@@ -21,6 +22,14 @@ class RestProjectController extends RestController {
 
   def list = {
     responseSuccess(Project.list(sort:"name"))
+  }
+
+  def listByOntology = {
+    log.info "listByOntology with ontology id:" + params.id
+    Ontology ontology = Ontology.read(params.id);
+
+    if(ontology != null) responseSuccess(Project.findAllByOntology(ontology))
+    else responseNotFound("Project","Ontology",params.id)
   }
 
   def show = {

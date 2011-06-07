@@ -7,7 +7,7 @@ import be.cytomine.command.EditCommand
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 
 class EditTermCommand extends EditCommand implements UndoRedoCommand {
-
+  boolean saveOnUndoRedoStack = true;
   def execute() {
     log.info "Execute"
     Term updatedTerm=null

@@ -1088,6 +1088,7 @@ class BootStrap {
         createRetrievalServers(retrievalServerSamples)
 
         def ontologySamples = [
+                [name: "ATEST"],
                 /* ANAPATH */
                 [name: "LBA"],
                 [name: "ASP"],
@@ -1547,11 +1548,12 @@ class BootStrap {
 
 
         def termSamples = [
+
                 /* Ontology 1 */
-                [name: "Cell in vivo",comment:"",ontology:[name:"Ontology1"],color:"#4b5de4"],
-                [name: "Cell ex vivo",comment:"",ontology:[name:"Ontology1"],color:"#d8b83f"],
-                [name: "Cell",comment:"A comment for cell",ontology:[name:"Ontology1"],color:"#ff5800"],
-                [name: "Cell within a living organism",comment:"",ontology:[name:"Ontology1"],color:"#0085cc"],
+                [name: "Cell in vivo",comment:"",ontology:[name:"ATEST"],color:"#4b5de4"],
+                [name: "Cell ex vivo",comment:"",ontology:[name:"ATEST"],color:"#d8b83f"],
+                [name: "Cell",comment:"A comment for cell",ontology:[name:"ATEST"],color:"#ff5800"],
+                [name: "Cell within a living organism",comment:"",ontology:[name:"ATEST"],color:"#0085cc"],
                 /* LBA */
                 [name: "Macrophage",comment:"",ontology:[name:"LBA"],color:"#c747a3"],
                 [name: "Polynucléaire neutrophile",comment:"",ontology:[name:"LBA"],color:"#cddf54"],
@@ -1628,7 +1630,7 @@ class BootStrap {
 
         def relationTermSamples = [
                 /* Ontology 1 */
-                //[relation: RelationTerm.names.SYNONYM, term1:"Cell within a living organism", term2: "Cell in vivo", ontology : "Ontology1"],
+                [relation: RelationTerm.names.PARENT, term1:"Cell within a living organism", term2: "Cell in vivo", ontology : "ATEST"],
                 /* LBA */
                 [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Bactérie", ontology : "LBA"],
                 [relation: RelationTerm.names.PARENT,term1:"Autre", term2: "Champignon", ontology : "LBA"],

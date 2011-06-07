@@ -10,7 +10,7 @@ import be.cytomine.command.AddCommand
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 
 class AddRelationTermCommand extends AddCommand implements UndoRedoCommand {
-
+  boolean saveOnUndoRedoStack = true;
   def execute() {
     log.info("Execute")
     RelationTerm newRelationTerm=null

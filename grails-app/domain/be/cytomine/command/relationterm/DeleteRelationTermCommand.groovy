@@ -10,7 +10,7 @@ import be.cytomine.command.DeleteCommand
 import java.util.prefs.BackingStoreException
 
 class DeleteRelationTermCommand extends DeleteCommand implements UndoRedoCommand {
-
+  boolean saveOnUndoRedoStack = true;
   def execute() {
     log.info "Execute"
     try {

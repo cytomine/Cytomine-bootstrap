@@ -21,6 +21,15 @@ class TransactionController {
       }
     }
 
+    def start = {
+      log.info "begin transaction:" + springSecurityService.principal.id
+      User user = User.get(springSecurityService.principal.id)
+      user.setTransactionInProgress(true)
+      user.transaction++;
+      user.save(flush:true)
+      log.info "save transac:" + user.transactionInProgress
+    }
+
     def end = {
       log.info "end transaction:" + springSecurityService.principal.id
       User user = User.get(springSecurityService.principal.id)
@@ -34,5 +43,13 @@ class TransactionController {
         xml { render data as XML}
       }
 
+    }
+
+    def stop = {
+      log.info "end transaction:" + springSecurityService.principal.id
+      User user = User.get(springSecurityService.principal.id)
+      user.setTransactionInProgress(false)
+      user.save(flush:true)
+      log.info "save transac:" + user.transactionInProgress
     }
 }

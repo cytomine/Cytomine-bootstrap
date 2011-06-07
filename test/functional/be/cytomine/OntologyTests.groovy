@@ -509,4 +509,27 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(400,code)
 
   }
+
+  void testDeleteOntologyWithTerms() {
+
+    log.info("create ontology")
+    //create project and try to delete his ontology
+    def relationTerm = BasicInstance.getBasicRelationTermNotExist()
+    relationTerm.save(flush:true)
+    def ontologyToDelete = relationTerm.term1.ontology
+    assert ontologyToDelete.save(flush:true)!=null
+    String jsonOntology = ontologyToDelete.encodeAsJSON()
+    int idOntology = ontologyToDelete.id
+    log.info("delete ontology:"+jsonOntology.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology+".json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.delete()
+    int code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+
+  }
 }

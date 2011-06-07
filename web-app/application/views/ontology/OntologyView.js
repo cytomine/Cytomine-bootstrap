@@ -17,6 +17,9 @@ var OntologyView = Backbone.View.extend({
         this.idOntology = options.idOntology;
         this.idTerm =  options.idTerm;
     },
+    refresh : function() {
+        this.render();
+    },
 
     render : function () {
         var self = this;
