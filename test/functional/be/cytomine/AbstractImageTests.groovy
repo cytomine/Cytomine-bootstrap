@@ -126,7 +126,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
   void testAddImageCorrect() {
 
     log.info("create image")
-    def imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
+    def imageToAdd = BasicInstance.getBasicAbstractImageNotExist()
     String jsonImage = imageToAdd.encodeAsJSON()
 
     log.info("post image:"+jsonImage.replace("\n",""))
@@ -544,7 +544,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
     /* Create a old image */
     log.info("create image")
-    AbstractImage imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
+    AbstractImage imageToAdd = BasicInstance.getBasicAbstractImageNotExist()
     imageToAdd.slide = oldSlide
     imageToAdd.save(flush:true)
 
@@ -608,7 +608,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
     /* Create a old image */
     log.info("create image")
-    AbstractImage imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
+    AbstractImage imageToAdd = BasicInstance.getBasicAbstractImageNotExist()
     imageToAdd.scanner = oldScanner
     imageToAdd.save(flush:true)
 

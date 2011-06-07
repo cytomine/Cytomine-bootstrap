@@ -169,9 +169,7 @@ class AbstractImage extends SequenceDomain {
             //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
 
             returnArray['imageServerBaseURL'] = it.getMime().imageServers().collect { it.getBaseUrl() }
-            Storage.list().each { storage->
-                println storage.generateRemotePath(it)
-            }
+
             return returnArray
         }
     }

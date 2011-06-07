@@ -122,9 +122,10 @@ class BasicInstance {
     log.debug "getBasicImageNotExist()"
 
     ImageInstance image =  new ImageInstance(
-            baseImage:BasicInstance.createOrGetBasicAbstractImage(),
+            baseImage:BasicInstance.getBasicAbstractImageNotExist(),
             project:BasicInstance.createOrGetBasicProject(),
             user:BasicInstance.createOrGetBasicUser())
+    image.baseImage.save(flush : true)
     image.validate()
     log.debug "ImageInstance.errors="+image.errors
     image
@@ -162,16 +163,21 @@ class BasicInstance {
     image
   }
 
-  static AbstractImage createOrGetBasicAbstractImage() {
-    log.debug  "createOrGetBasicImage()"
-    def image = new AbstractImage(filename: "filename",scanner : createOrGetBasicScanner() ,slide : null,mime:BasicInstance.createOrGetBasicMime(),path:"pathpathpath")
-    image.validate()
-    log.debug "image.errors="+image.errors
-    image.save(flush : true)
-    log.debug "image.errors="+image.errors
-    assert image!=null
-    image
-  }
+ static AbstractImage createOrGetBasicAbstractImage() {
+   log.debug  "createOrGetBasicImage()"
+   AbstractImage image = AbstractImage.findByFilename("filename")
+   if(!image)
+   {
+     image = new AbstractImage(filename: "filename",scanner : createOrGetBasicScanner() ,slide : null,mime:BasicInstance.createOrGetBasicMime(),path:"pathpathpath")
+     image.validate()
+     log.debug "image.errors="+image.errors
+     image.save(flush : true)
+     log.debug "image.errors="+image.errors
+     assert image!=null
+
+   }
+   image
+ }
 
   static Scanner createOrGetBasicScanner() {
 
