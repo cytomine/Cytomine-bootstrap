@@ -23,7 +23,7 @@ class DeleteRelationTermCommand extends DeleteCommand implements UndoRedoCommand
       def relationTerm = RelationTerm.findWhere('relation': relation,'term1':term1, 'term2':term2)
 
       String id = relationTerm.id
-      def response = super.createDeleteMessage(id,relationTerm,"RelationTerm",[relationTerm.id,relation.name,term1.name,term2.name] as Object[])
+      def response = super.createDeleteMessage(id,relationTerm,[relationTerm.id,relation.name,term1.name,term2.name] as Object[])
       RelationTerm.unlink(relationTerm.relation, relationTerm.term1,relationTerm.term2)
       return response
     } catch (NullPointerException e) {
@@ -37,18 +37,10 @@ class DeleteRelationTermCommand extends DeleteCommand implements UndoRedoCommand
 
   def undo() {
     log.info("Undo")
-
     def relationTermData = JSON.parse(data)
-
     RelationTerm relationTerm = RelationTerm.createRelationTermFromData(relationTermData)
     relationTerm = RelationTerm.link(relationTermData.id,relationTerm.relation, relationTerm.term1,relationTerm.term2)
-
-
-    return super.createUndoMessage(
-            relationTerm,
-            'RelationTerm',
-            [relationTerm.id, relationTerm.relation.name,relationTerm.term1.name,relationTerm.term2.name] as Object[]
-    );
+    return super.createUndoMessage(relationTerm,[relationTerm.id, relationTerm.relation.name,relationTerm.term1.name,relationTerm.term2.name] as Object[]);
   }
 
 
@@ -64,12 +56,6 @@ class DeleteRelationTermCommand extends DeleteCommand implements UndoRedoCommand
     String id =  relationTerm
     RelationTerm.unlink(relationTerm.relation, relationTerm.term1, relationTerm.term2)
 
-
-
-    return super.createRedoMessage(
-            id,
-            'RelationTerm',
-            [relationTerm.id, relation.name,term1.name,term2.name] as Object[]
-    );
+    return super.createRedoMessage(id,[relationTerm.id, relation.name,term1.name,term2.name] as Object[]);
   }
 }

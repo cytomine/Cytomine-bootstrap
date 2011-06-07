@@ -1,12 +1,11 @@
 package be.cytomine.command.project
 
-import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.project.Project
 import grails.converters.JSON
 import be.cytomine.command.DeleteCommand
 import java.util.prefs.BackingStoreException
-import be.cytomine.security.Group
+
 import be.cytomine.project.ProjectGroup
 import be.cytomine.security.UserGroup
 
@@ -15,20 +14,21 @@ class DeleteProjectCommand extends DeleteCommand implements UndoRedoCommand {
   def execute() {
     log.info "Execute"
     try {
-
       def postData = JSON.parse(postData)
       Project project = Project.findById(postData.id)
+      //delete groups link
       def groups = project.groups()
       groups.each { group ->
           ProjectGroup.unlink(project, group)
+          //for each group, delete user link
           def users = group.users()
           users.each { user ->
              UserGroup.unlink(user, group)
           }
+          //delete group
           group.delete(flush:true)
       }
-
-      return super.deleteAndCreateDeleteMessage(postData.id,project,"Project",[project.id,project.name] as Object[])
+      return super.deleteAndCreateDeleteMessage(postData.id,project,[project.id,project.name] as Object[])
     } catch(NullPointerException e) {
       log.error(e)
       return [data : [success : false, errors : e.getMessage()], status : 404]
@@ -38,25 +38,15 @@ class DeleteProjectCommand extends DeleteCommand implements UndoRedoCommand {
     }
   }
 
-
-
   def undo() {
-
     log.info("Undo")
     def projectData = JSON.parse(data)
-    Project project = Project.createProjectFromData(projectData)
+    Project project = Project.createFromData(projectData)
     project.id = projectData.id;
     project.save(flush:true)
     log.error "Project errors = " + project.errors
-
-    return super.createUndoMessage(
-            project,
-            'Project',
-            [project.id,project.name] as Object[]
-    );
+    return super.createUndoMessage(project,[project.id,project.name] as Object[]);
   }
-
-
 
   def redo() {
     log.info("Redo")
@@ -64,12 +54,7 @@ class DeleteProjectCommand extends DeleteCommand implements UndoRedoCommand {
     Project project = Project.findById(postData.id)
     project.delete(flush:true);
     String id = postData.id
-
-    return super.createRedoMessage(
-            id,
-            'Project',
-            [postData.id,postData.name] as Object[]
-    );
+    return super.createRedoMessage(id,project,[postData.id,postData.name] as Object[]);
   }
 
 }

@@ -17,13 +17,13 @@ import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 class AddImageInstanceCommand extends AddCommand implements UndoRedoCommand {
 
   def execute() {
-    ImageInstance newImage
+    log.info("Execute")
+    ImageInstance newImage=null
     try{
-      log.info("Execute")
       def json = JSON.parse(postData)
       json.user = user.id
-      newImage = ImageInstance.createImageInstanceFromData(json)
-      return super.validateAndSave(newImage,"ImageInstance",["#ID#",json.name,newImage.project.name] as Object[])
+      newImage = ImageInstance.createFromData(json)
+      return super.validateAndSave(newImage,["#ID#",newImage?.baseImage?.filename,newImage.project.name] as Object[])
     }catch(ConstraintException ex){
       return [data : [imageinstance:newImage,errors:newImage.retrieveErrors()], status : 400]
     }catch(IllegalArgumentException ex){
@@ -37,31 +37,20 @@ class AddImageInstanceCommand extends AddCommand implements UndoRedoCommand {
     def imageData = JSON.parse(data)
     ImageInstance image = ImageInstance.get(imageData.id)
     image.delete(flush:true)
-
     String id = imageData.id
-
-    return super.createUndoMessage(
-            id,
-            'ImageInstance',
-            [imageData.id,AbstractImage.read(imageData.baseImage).filename] as Object[]
-    );
+    return super.createUndoMessage(id,[imageData.id,AbstractImage.read(imageData.baseImage).filename] as Object[]);
   }
 
 
   def redo() {
-
     log.info("Redo:"+data.replace("\n",""))
     def imageData = JSON.parse(data)
     def json = JSON.parse(postData)
-    ImageInstance image = ImageInstance.createImageInstanceFromData(imageData)
+    ImageInstance image = ImageInstance.createFromData(imageData)
     image.id = imageData.id
     image.save(flush:true)
     log.debug("Save image:"+image.id)
-    return super.createRedoMessage(
-            image,
-            'ImageInstance',
-            [imageData.id,imageData.name] as Object[]
-    );
+    return super.createRedoMessage(image, [imageData.id,imageData.name] as Object[]);
   }
 
 

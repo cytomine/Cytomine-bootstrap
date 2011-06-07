@@ -13,16 +13,16 @@ import grails.converters.JSON
 class DeleteCommand extends Command{
  // String actiontype = "DELETE"
 
-  def createDeleteMessage(def id, def objectToDelete,String objectName,Object[] messageParams) throws NullPointerException,BackingStoreException {
-      return deleteAndCreateDeleteMessage(id,objectToDelete,objectName,messageParams,false)
+  def createDeleteMessage(def id, def objectToDelete,Object[] messageParams) throws NullPointerException,BackingStoreException {
+      return deleteAndCreateDeleteMessage(id,objectToDelete,messageParams,false)
   }
-  def deleteAndCreateDeleteMessage(def id, def objectToDelete,String objectName,Object[] messageParams) throws NullPointerException,BackingStoreException {
-      return deleteAndCreateDeleteMessage(id,objectToDelete,objectName,messageParams,true)
+  def deleteAndCreateDeleteMessage(def id, def objectToDelete,Object[] messageParams) throws NullPointerException,BackingStoreException {
+      return deleteAndCreateDeleteMessage(id,objectToDelete,messageParams,true)
   }
 
-  def deleteAndCreateDeleteMessage(def id, def objectToDelete,String objectName,Object[] messageParams, boolean delete) throws NullPointerException,BackingStoreException {
+  def deleteAndCreateDeleteMessage(def id, def objectToDelete,Object[] messageParams, boolean delete) throws NullPointerException,BackingStoreException {
     log.info("delete")
-
+    String objectName = getClassName(objectToDelete)
     String command = "be.cytomine.Delete" + objectName +"Command"
 
     if(!objectToDelete) throw new NullPointerException(objectName + " not found with id:"+id); //404
@@ -56,12 +56,13 @@ class DeleteCommand extends Command{
 
 
 
-  def createUndoMessage(def newObject,String objectName,Object[] messageParams) {
+  def createUndoMessage(def newObject,Object[] messageParams) {
     log.info "createUndoMessage"
-      this.createUndoMessage(newObject,objectName,messageParams,null);
+      this.createUndoMessage(newObject,messageParams,null);
   }
 
-  def createUndoMessage(def newObject,String objectName, Object[] messageParams, HashMap<String,Object> additionalCallbackParams) {
+  def createUndoMessage(def newObject, Object[] messageParams, HashMap<String,Object> additionalCallbackParams) {
+    String objectName = getClassName(newObject)
     log.info("Undo DeleteCommand "+objectName)
 
     //save new id of the object that has been re-created
@@ -93,13 +94,13 @@ class DeleteCommand extends Command{
 
 
 
-  def createRedoMessage(String id, String objectName, Object[] messageParams) {
-      this.createRedoMessage(id,objectName,messageParams,null)
+  def createRedoMessage(String id, def object,Object[] messageParams) {
+      this.createRedoMessage(id,object,messageParams,null)
   }
 
-  def createRedoMessage(String id, String objectName, Object[] messageParams,HashMap<String,Object> additionalCallbackParams) {
+  def createRedoMessage(String id,def object, Object[] messageParams,HashMap<String,Object> additionalCallbackParams) {
     log.info("Redo:"+data.replace("\n",""))
-
+    String objectName = getClassName(object)
     String command = "be.cytomine.Delete" + objectName +"Command"
 
     String idName = objectName.toLowerCase() + "ID" //termID, annotationID,...

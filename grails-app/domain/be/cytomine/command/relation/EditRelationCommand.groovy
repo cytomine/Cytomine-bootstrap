@@ -8,7 +8,7 @@ import be.cytomine.command.EditCommand
 
 class EditRelationCommand extends EditCommand implements UndoRedoCommand {
 
-  def execute() {
+  def execute() { //must be refactor with delete command
     log.info "Execute"
     log.debug "postData="+postData
 

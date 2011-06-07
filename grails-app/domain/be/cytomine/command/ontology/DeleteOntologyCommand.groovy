@@ -7,7 +7,7 @@ package be.cytomine.command.ontology
  * Time: 15:57
  * To change this template use File | Settings | File Templates.
  */
-import be.cytomine.command.Command
+
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.ontology.Ontology
 import grails.converters.JSON
@@ -21,7 +21,7 @@ class DeleteOntologyCommand extends DeleteCommand implements UndoRedoCommand {
     try {
       def postData = JSON.parse(postData)
       Ontology ontology = Ontology.findById(postData.id)
-      return super.deleteAndCreateDeleteMessage(postData.id,ontology,"Ontology",[ontology.id,ontology.name] as Object[])
+      return super.deleteAndCreateDeleteMessage(postData.id,ontology,[ontology.id,ontology.name] as Object[])
     } catch(NullPointerException e) {
       log.error(e)
       return [data : [success : false, errors : e.getMessage()], status : 404]
@@ -31,23 +31,15 @@ class DeleteOntologyCommand extends DeleteCommand implements UndoRedoCommand {
     }
   }
 
-
-
   def undo() {
     log.info("Undo")
     def ontologyData = JSON.parse(data)
-    Ontology ontology = Ontology.createOntologyFromData(ontologyData)
+    Ontology ontology = Ontology.createFromData(ontologyData)
     ontology.id = ontologyData.id;
     ontology.save(flush:true)
     log.error "Ontology errors = " + ontology.errors
-
-    return super.createUndoMessage(
-            ontology,
-            'Ontology',
-            [ontology.id,ontology.name] as Object[]
-    );
+    return super.createUndoMessage(ontology,[ontology.id,ontology.name] as Object[]);
   }
-
 
   def redo() {
     log.info("Redo")
@@ -55,11 +47,6 @@ class DeleteOntologyCommand extends DeleteCommand implements UndoRedoCommand {
     Ontology ontology = Ontology.findById(postData.id)
     ontology.delete(flush:true);
     String id = postData.id
-
-    return super.createRedoMessage(
-            id,
-            'Term',
-            [id,postData.name] as Object[]
-    );
+    return super.createRedoMessage(id, ontology[id,postData.name] as Object[]);
   }
 }

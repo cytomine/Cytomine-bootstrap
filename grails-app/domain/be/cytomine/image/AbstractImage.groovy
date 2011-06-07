@@ -68,13 +68,13 @@ class AbstractImage extends SequenceDomain {
 
 
 
-    static AbstractImage createImageFromData(jsonImage) {
+    static AbstractImage createFromData(jsonImage) {
         def image = new AbstractImage()
-        getImageFromData(image,jsonImage)
+        getFromData(image,jsonImage)
     }
 
-    static AbstractImage getImageFromData(image,jsonImage) {
-        println "getImageFromData:"+ jsonImage
+    static AbstractImage getFromData(image,jsonImage) {
+        println "getFromData:"+ jsonImage
         image.filename = jsonImage.filename
         image.path = jsonImage.path
 

@@ -18,7 +18,7 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand {
     try {
       def postData = JSON.parse(postData)
       Annotation annotation = Annotation.findById(postData.id)
-      return super.deleteAndCreateDeleteMessage(postData.id, annotation, "Annotation", [annotation.id, annotation.imageFileName()] as Object[])
+      return super.deleteAndCreateDeleteMessage(postData.id, annotation, [annotation.id, annotation.imageFileName()] as Object[])
 
     } catch (NullPointerException e) {
       log.error(e)
@@ -36,12 +36,8 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand {
     annotation.id = annotationData.id;
     annotation.save(flush: true)
     log.error "Annotation errors = " + annotation.errors
-
-    return super.createUndoMessage(
-            annotation,
-            'Annotation',
-            [annotation.id, annotation.imageFileName()] as Object[]
-    );
+    def callback = [annotationID : annotation.id , imageID : annotation.image.id ]
+    return super.createUndoMessage(annotation,[annotation.id, annotation.imageFileName()] as Object[],callback);
   }
 
   def redo() {
@@ -49,14 +45,11 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand {
     def postData = JSON.parse(postData)
     Annotation annotation = Annotation.findById(postData.id)
     String filename = annotation.imageFileName()
+    String idImage = annotation.image.id
     annotation.delete(flush: true);
     String id = postData.id
-
-    return super.createRedoMessage(
-            id,
-            'Annotation',
-            [postData.id, filename] as Object[]
-    );
+    def callback = [annotationID : id , imageID : idImage ]
+    return super.createRedoMessage(id,annotation,[postData.id, filename] as Object[],callback);
   }
 
 }

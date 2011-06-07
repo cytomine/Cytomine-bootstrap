@@ -25,24 +25,24 @@ class User extends SecUser {
   }
 
 
-  static User getUserFromData(User user, jsonUser) {
-    println "getUserFromData 1"
+  static User getFromData(User user, jsonUser) {
+    println "getFromData 1"
     user.username = jsonUser.username
     user.firstname = jsonUser.firstname
     user.lastname = jsonUser.lastname
-    println "getUserFromData 2"
+    println "getFromData 2"
     user.email = jsonUser.email
     user.password = user.springSecurityService.encodePassword(jsonUser.password)
     user.enabled = true
-    println "getUserFromData 3"
+    println "getFromData 3"
 //    user.created = (!jsonUser.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.created)) : null
 //    user.updated = (!jsonUser.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.updated)) : null
-    println "getUserFromData 4"
+    println "getFromData 4"
     return user;
   }
 
-  static User createUserFromData(data) {
-    getUserFromData(new User(), data)
+  static User createFromData(data) {
+    getFromData(new User(), data)
   }
 
   static void registerMarshaller() {

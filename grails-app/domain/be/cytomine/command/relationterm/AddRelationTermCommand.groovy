@@ -13,30 +13,32 @@ class AddRelationTermCommand extends AddCommand implements UndoRedoCommand {
 
   def execute() {
     log.info("Execute")
-     RelationTerm newRelationTerm
+    RelationTerm newRelationTerm=null
     try  {
       def json = JSON.parse(postData)
       newRelationTerm = RelationTerm.createRelationTermFromData(json)
       RelationTerm.link(newRelationTerm.relation,newRelationTerm.term1,newRelationTerm.term2)
-        return super.validateWithoutSave(
-                newRelationTerm,
-                "RelationTerm",
-                ["#ID#",newRelationTerm.relation.name,newRelationTerm.term1.name,newRelationTerm.term2.name] as Object[])
 
-      }catch(ConstraintException  ex){
+      return super.validateWithoutSave(
+              newRelationTerm,["#ID#",newRelationTerm.relation.name,newRelationTerm.term1.name,newRelationTerm.term2.name] as Object[]
+      )
+
+    }catch(ConstraintException  ex){
       return [data : [relationterm:newRelationTerm,errors:newRelationTerm.retrieveErrors()], status : 400]
     }catch(IllegalArgumentException ex){
       return [data : [relationterm:null,errors:["Cannot save relation-term:"+ex.toString()]], status : 400]
     }
   }
 
-
-
-
   def undo() {
     log.info("Undo")
     def relationTermData = JSON.parse(data)
-    def relationTerm = RelationTerm.findWhere('relation': Relation.get(relationTermData.relation.id),'term1':Term.get(relationTermData.term1.id), 'term2':Term.get(relationTermData.term2.id))
+    def relationTerm = RelationTerm.findWhere(
+            'relation': Relation.get(relationTermData.relation.id),
+            'term1':Term.get(relationTermData.term1.id),
+            'term2':Term.get(relationTermData.term2.id)
+    )
+
     Relation relation = relationTerm.relation
     Term term1 =   relationTerm.term1
     Term term2 = relationTerm.term2
@@ -45,29 +47,19 @@ class AddRelationTermCommand extends AddCommand implements UndoRedoCommand {
 
     log.info ("relationTermData="+relationTermData)
 
-   String id = relationTermData.id
+    String id = relationTermData.id
 
-    return super.createUndoMessage(
-            id,
-            'RelationTerm',
-            [relationTermData.id,relation.name,term1.name,term2.name] as Object[]
-    );
+    return super.createUndoMessage(id, relationTerm,[relationTermData.id,relation.name,term1.name,term2.name] as Object[]);
   }
 
   def redo() {
     log.info("Undo")
     def relationTermData = JSON.parse(data)
-    def json = JSON.parse(postData)
-    log.debug("Redo json:"+ json.toString() )
     def relationTerm = RelationTerm.createRelationTermFromData(relationTermData)
     relationTerm = RelationTerm.link(relationTermData.id,relationTerm.relation,relationTerm.term1,relationTerm.term2)
     relationTerm.id = relationTermData.id
     relationTerm.save(flush:true)
-    return super.createRedoMessage(
-            relationTerm,
-            'RelationTerm',
-            [relationTermData.id,relationTerm.relation.name,relationTerm.term1.name,relationTerm.term2.name] as Object[]
-    );
+    return super.createRedoMessage(relationTerm,[relationTermData.id,relationTerm.relation.name,relationTerm.term1.name,relationTerm.term2.name] as Object[]);
   }
 
 }

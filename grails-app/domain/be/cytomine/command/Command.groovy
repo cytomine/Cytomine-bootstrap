@@ -53,4 +53,17 @@ class Command extends SequenceDomain {
     return this.id + "["+this.created+"]";
   }
 
+  /**
+   * Get the class name of an object without package name
+   * @param o Object
+   * @return Class name (without package) of o
+   */
+  protected String getClassName(Object o) {
+    log.info("getClassName="+o.getClass());
+    String name = o.getClass()   //be.cytomine.image.Image
+    String[] array =  name.split("\\.")  //[be,cytomine,image,Image]
+    log.info array.length
+    return array[array.length-1] // Image
+  }
+
 }

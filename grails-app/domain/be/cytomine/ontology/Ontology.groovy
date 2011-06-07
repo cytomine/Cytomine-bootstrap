@@ -102,12 +102,12 @@ class Ontology {
     }
   }
 
-  static Ontology createOntologyFromData(jsonOntology) {
+  static Ontology createFromData(jsonOntology) {
     def ontology = new Ontology()
-    getOntologyFromData(ontology,jsonOntology)
+    getFromData(ontology,jsonOntology)
   }
 
-  static Ontology getOntologyFromData(ontology,jsonOntology) {
+  static Ontology getFromData(ontology,jsonOntology) {
     if(!jsonOntology.name.toString().equals("null"))
       ontology.name = jsonOntology.name
     else throw new IllegalArgumentException("Ontology name cannot be null")

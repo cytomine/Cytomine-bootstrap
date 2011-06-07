@@ -16,17 +16,21 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
   def execute() {
     log.info "Execute"
 
-
     try {
       def postData = JSON.parse(postData)
       Annotation annotation = Annotation.get(postData.annotation)
       Term term = Term.get(postData.term)
+
       log.info "Delete annotation-term with annotation=" + annotation + " term=" + term
+
       AnnotationTerm annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
       String id = annotationTerm.id
-      def response = super.createDeleteMessage(id,annotationTerm,"AnnotationTerm",[id,annotation.id,term.name] as Object[])
+
+      def response = super.createDeleteMessage(id,annotationTerm,[id,annotation.id,term.name] as Object[])
       AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term)
+
       return response
+
     } catch (NullPointerException e) {
       log.error(e)
       return [data: [success: false, errors: e.getMessage()], status: 404]
@@ -52,11 +56,7 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
     callback.put("termID",term.id)
     callback.put("imageID",annotation.image.id)
 
-    return super.createUndoMessage(
-            annotationTerm,
-            'AnnotationTerm',
-            [id,annotation.id,term.name] as Object[],
-            callback
+    return super.createUndoMessage(annotationTerm,[id,annotation.id,term.name] as Object[],callback
     );
   }
 
@@ -77,11 +77,7 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
     callback.put("termID",term.id)
     callback.put("imageID",annotation.image.id)
 
-    return super.createRedoMessage(
-            id,
-            'AnnotationTerm',
-            [id,annotation.id,term.name] as Object[],
-            callback
+    return super.createRedoMessage(id,annotationTerm,[id,annotation.id,term.name] as Object[],callback
     );
   }
 

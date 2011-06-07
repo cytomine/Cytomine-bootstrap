@@ -4,15 +4,11 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.security.User
 import be.cytomine.image.AbstractImage
 import grails.converters.*
-import be.cytomine.ontology.Annotation
-import be.cytomine.image.server.RetrievalServer
-import be.cytomine.security.User
+
 import be.cytomine.command.Command
-import be.cytomine.command.image.AddImageCommand
 
 import be.cytomine.project.Project
-import be.cytomine.command.image.EditImageCommand
-import be.cytomine.command.image.DeleteImageCommand
+
 import be.cytomine.api.RestController
 import be.cytomine.command.imageinstance.AddImageInstanceCommand
 import be.cytomine.command.imageinstance.EditImageInstanceCommand

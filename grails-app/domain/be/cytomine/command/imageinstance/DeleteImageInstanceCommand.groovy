@@ -10,17 +10,16 @@ package be.cytomine.command.imageinstance
 
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.UndoRedoCommand
-import be.cytomine.image.AbstractImage
+
 import grails.converters.JSON
 import be.cytomine.image.ImageInstance
-import be.cytomine.project.Project
+
 import java.util.prefs.BackingStoreException
 
 class DeleteImageInstanceCommand extends DeleteCommand implements UndoRedoCommand{
 
   def execute() {
     log.info "Execute"
-
     try {
       def postData = JSON.parse(postData)
       ImageInstance image = ImageInstance.findById(postData.id)
@@ -34,21 +33,14 @@ class DeleteImageInstanceCommand extends DeleteCommand implements UndoRedoComman
     }
   }
 
-
-
   def undo() {
     log.info("Undo")
     def imageData = JSON.parse(data)
-    ImageInstance image = ImageInstance.createImageInstanceFromData(imageData)
+    ImageInstance image = ImageInstance.createFromData(imageData)
     image.id = imageData.id;
     image.save(flush: true)
     log.error "Image errors = " + image.errors
-
-    return super.createUndoMessage(
-            image,
-            'ImageInstance',
-            [image.id, image?.baseImage,image?.project?.name] as Object[]
-    );
+    return super.createUndoMessage(image,[image.id, image?.baseImage,image?.project?.name] as Object[]);
   }
 
 
@@ -56,18 +48,11 @@ class DeleteImageInstanceCommand extends DeleteCommand implements UndoRedoComman
     log.info("Redo")
     def postData = JSON.parse(postData)
     ImageInstance image = ImageInstance.findById(postData.id)
-
     String id = image.id
     String filename = image?.baseImage?.filename
     String projectname = image.project.name
-
     image.delete(flush:true);
-
-    return super.createRedoMessage(
-            id,
-            'Annotation',
-            [id, filename,projectname] as Object[]
-    );
+    return super.createRedoMessage(id,[id, filename,projectname] as Object[]);
   }
 
 }

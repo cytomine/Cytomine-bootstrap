@@ -33,13 +33,13 @@ class ImageInstance extends SequenceDomain {
     }
 
 
-    static ImageInstance createImageInstanceFromData(jsonImage) {
+    static ImageInstance createFromData(jsonImage) {
         def image = new ImageInstance()
-        getImageInstanceFromData(image,jsonImage)
+        getFromData(image,jsonImage)
     }
 
-    static ImageInstance getImageInstanceFromData(image,jsonImage) {
-        println "getImageInstanceFromData:"+ jsonImage
+    static ImageInstance getFromData(image,jsonImage) {
+        println "getFromData:"+ jsonImage
 
         image.created = (!jsonImage.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonImage.created)) : null
         image.updated = (!jsonImage.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonImage.updated)) : null

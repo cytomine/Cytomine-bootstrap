@@ -6,13 +6,12 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.image.server.RetrievalServer
 import be.cytomine.security.User
 import be.cytomine.command.Command
-import be.cytomine.command.image.AddImageCommand
+import be.cytomine.command.abstractimage.AddAbstractImageCommand
 
 import be.cytomine.project.Project
-import be.cytomine.command.image.EditImageCommand
-import be.cytomine.command.image.DeleteImageCommand
+import be.cytomine.command.abstractimage.EditAbstractImageCommand
+import be.cytomine.command.abstractimage.DeleteAbstractImageCommand
 import be.cytomine.api.RestController
-import be.cytomine.image.ImageInstance
 
 class RestImageController extends RestController{
 
@@ -52,7 +51,7 @@ class RestImageController extends RestController{
     log.info "Add"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-    Command addImageCommand = new AddImageCommand(postData : request.JSON.toString(), user: currentUser)
+    Command addImageCommand = new AddAbstractImageCommand(postData : request.JSON.toString(), user: currentUser)
     def result = processCommand(addImageCommand, currentUser)
     response(result)
   }
@@ -61,7 +60,7 @@ class RestImageController extends RestController{
     log.info "Update"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-    Command editImageCommand = new EditImageCommand(postData : request.JSON.toString(), user: currentUser)
+    Command editImageCommand = new EditAbstractImageCommand(postData : request.JSON.toString(), user: currentUser)
     def result = processCommand(editImageCommand, currentUser)
     response(result)
   }
@@ -71,7 +70,7 @@ class RestImageController extends RestController{
     User currentUser = getCurrentUser(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " params.id=" + params.id
     def postData = ([id : params.id]) as JSON
-    Command deleteImageCommand = new DeleteImageCommand(postData : postData.toString(), user: currentUser)
+    Command deleteImageCommand = new DeleteAbstractImageCommand(postData : postData.toString(), user: currentUser)
     def result = processCommand(deleteImageCommand, currentUser)
     response(result)
   }

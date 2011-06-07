@@ -14,9 +14,7 @@ class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
     try {
       def postData = JSON.parse(postData)
       Term term = Term.findById(postData.id)
-
-      return super.deleteAndCreateDeleteMessage(postData.id,term,"Term",[term.id,term.name,term.ontology?.name] as Object[])
-
+      return super.deleteAndCreateDeleteMessage(postData.id,term,[term.id,term.name,term.ontology?.name] as Object[])
     } catch(NullPointerException e) {
       log.error(e)
       return [data : [success : false, errors : e.getMessage()], status : 404]
@@ -27,19 +25,13 @@ class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
   }
 
   def undo() {
-
     log.info("Undo")
     def termData = JSON.parse(data)
     Term term = Term.createFromData(termData)
     term.id = termData.id;
     term.save(flush:true)
     log.error "Term errors = " + term.errors
-
-    return super.createUndoMessage(
-            term,
-            'Term',
-            [term.id,term.name,term.ontology] as Object[]
-    );
+    return super.createUndoMessage(term,[term.id,term.name,term.ontology] as Object[]);
   }
 
   def redo() {
@@ -48,12 +40,7 @@ class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
     Term term = Term.findById(postData.id)
     term.delete(flush:true);
     String id = postData.id
-
-    return super.createRedoMessage(
-            id,
-            'Term',
-            [postData.id,postData.name,Ontology.read(postData.ontology).name] as Object[]
-    );
+    return super.createRedoMessage(id,[postData.id,postData.name,Ontology.read(postData.ontology).name] as Object[]);
   }
 
 }

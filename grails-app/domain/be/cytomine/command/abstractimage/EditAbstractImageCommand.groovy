@@ -1,10 +1,10 @@
-package be.cytomine.command.imageinstance
-
-import be.cytomine.command.EditCommand
-import be.cytomine.command.UndoRedoCommand
+package be.cytomine.command.abstractimage
 
 import grails.converters.JSON
-import be.cytomine.image.ImageInstance
+
+import be.cytomine.command.UndoRedoCommand
+import be.cytomine.image.AbstractImage
+import be.cytomine.command.EditCommand
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 
 /**
@@ -14,16 +14,17 @@ import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
  * Time: 14:56
  * To change this template use File | Settings | File Templates.
  */
-class EditImageInstanceCommand extends EditCommand implements UndoRedoCommand  {
+class EditAbstractImageCommand extends EditCommand implements UndoRedoCommand  {
+
 
   def execute() {
     log.info "Execute"
     log.debug "postData="+postData
-    ImageInstance updatedImage=null
+    AbstractImage updatedImage=null
     try {
       def postData = JSON.parse(postData)
-      updatedImage = ImageInstance.get(postData.id)
-      return super.validateAndSave(postData,updatedImage,[updatedImage.id, updatedImage?.baseImage?.filename,updatedImage.project.name] as Object[])
+      updatedImage = AbstractImage.get(postData.id)
+      return super.validateAndSave(postData,updatedImage,[updatedImage.id,updatedImage.filename] as Object[])
 
     } catch(NullPointerException e) {
       log.error(e)
@@ -41,18 +42,19 @@ class EditImageInstanceCommand extends EditCommand implements UndoRedoCommand  {
   def undo() {
     log.info "Undo"
     def imageData = JSON.parse(data)
-    ImageInstance image = ImageInstance.findById(imageData.previousImage.id)
-    image = ImageInstance.getFromData(image,imageData.previousImage)
+    AbstractImage image = AbstractImage.findById(imageData.previousImage.id)
+    image = AbstractImage.getFromData(image,imageData.previousImage)
     image.save(flush:true)
-    super.createUndoMessage(imageData, image, [image.id, image?.baseImage?.filename,image.project.name] as Object[])
+    super.createUndoMessage(imageData, image, [image.id,image.filename] as Object[])
   }
 
   def redo() {
     log.info "Redo"
     def imageData = JSON.parse(data)
-    ImageInstance image = ImageInstance.findById(imageData.newImage.id)
-    image = ImageInstance.getFromData(image,imageData.newImage)
+    AbstractImage image = AbstractImage.findById(imageData.newImage.id)
+    image = AbstractImage.getFromData(image,imageData.newImage)
     image.save(flush:true)
-    super.createRedoMessage(imageData, image, [image.id, image?.baseImage?.filename,image.project.name] as Object[])
+    super.createRedoMessage(imageData, image, [image.id,image.filename] as Object[])
   }
+
 }

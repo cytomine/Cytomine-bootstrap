@@ -16,7 +16,7 @@ class AddTermCommand extends AddCommand implements UndoRedoCommand {
     try {
       def json = JSON.parse(postData)
       newTerm = Term.createFromData(json)
-      return super.validateAndSave(newTerm,"Term",["#ID#",json.name,Ontology.read(json.ontology)?.name] as Object[])
+      return super.validateAndSave(newTerm,["#ID#",json.name,Ontology.read(json.ontology)?.name] as Object[])
       //errors:
     }catch(ConstraintException  ex){
       return [data : [term:newTerm,errors:newTerm.retrieveErrors()], status : 400]
@@ -31,28 +31,18 @@ class AddTermCommand extends AddCommand implements UndoRedoCommand {
     def termData = JSON.parse(data)
     Term term = Term.get(termData.id)
     term.delete(flush:true)
-
     String id = termData.id
-
-    return super.createUndoMessage(
-            id,
-            'Term',
-            [termData.id,termData.name,Ontology.read(termData.ontology).name] as Object[]
+    return super.createUndoMessage(id,term,[termData.id,termData.name,Ontology.read(termData.ontology).name] as Object[]
     );
   }
 
   def redo() {
     log.info("Undo")
     def termData = JSON.parse(data)
-    def json = JSON.parse(postData)
     def term = Term.createFromData(termData)
     term.id = termData.id
     term.save(flush:true)
-
-    return super.createRedoMessage(
-            term,
-            'Term',
-            [termData.id,termData.name,Ontology.read(termData.ontology)?.name] as Object[]
+    return super.createRedoMessage(term,[termData.id,termData.name,Ontology.read(termData.ontology)?.name] as Object[]
     );
   }
 

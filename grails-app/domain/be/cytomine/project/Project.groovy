@@ -5,7 +5,7 @@ import be.cytomine.SequenceDomain
 import be.cytomine.rest.UrlApi
 import be.cytomine.ontology.Ontology
 import be.cytomine.image.ImageInstance
-import be.cytomine.image.AbstractImage
+
 import be.cytomine.ontology.Annotation
 
 class Project extends SequenceDomain {
@@ -76,12 +76,12 @@ class Project extends SequenceDomain {
         users
     }
 
-    static Project createProjectFromData(jsonProject) {
+    static Project createFromData(jsonProject) {
         def project = new Project()
-        getProjectFromData(project,jsonProject)
+        getFromData(project,jsonProject)
     }
 
-    static Project getProjectFromData(project,jsonProject) {
+    static Project getFromData(project,jsonProject) {
         String name = jsonProject.name.toString()
         /*println "jsonProject.name=" + jsonProject.name
  println "jsonProject.name==null" + (jsonProject.name==null)

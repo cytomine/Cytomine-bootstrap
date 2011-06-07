@@ -11,18 +11,14 @@ import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 
 class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
   boolean saveOnUndoRedoStack = true;
-  def execute() {   //must be refactored with AddCommand
+  def execute() {
     log.info("Execute")
-    AnnotationTerm newAnnotationTerm
+    AnnotationTerm newAnnotationTerm=null
     try {
       def json = JSON.parse(postData)
       newAnnotationTerm = AnnotationTerm.createAnnotationTermFromData(json)
       AnnotationTerm.link(newAnnotationTerm.annotation,newAnnotationTerm.term)
-        return super.validateWithoutSave(
-                newAnnotationTerm,
-                "AnnotationTerm",
-                ["#ID#",newAnnotationTerm.annotation.id,newAnnotationTerm.term.name] as Object[])
-
+        return super.validateWithoutSave(newAnnotationTerm,["#ID#",newAnnotationTerm.annotation.id,newAnnotationTerm.term.name] as Object[])
       }catch(ConstraintException  ex){
       return [data : [annotationterm:newAnnotationTerm,errors:newAnnotationTerm.retrieveErrors()], status : 400]
     }catch(IllegalArgumentException ex){
@@ -37,7 +33,9 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
     def annotation = Annotation.get(annotationTermData.annotation)
     def term = Term.get(annotationTermData.term)
     def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
+
     AnnotationTerm.unlink(annotationTerm.annotation,annotationTerm.term)
+
     HashMap<String,Object> callback = new HashMap<String,Object>();
     callback.put("annotationID",annotation.id)
     callback.put("termID",term.id)
@@ -45,19 +43,14 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
 
     log.debug "AnnotationTerm=" + annotationTermData.id +" annotation.name=" + annotation.name  + " term.name=" + term.name
     String id = annotationTermData.id
-    return super.createUndoMessage(
-            id,
-            'AnnotationTerm',
-            [id,annotation.id,term.name] as Object[],
-            callback);
+    return super.createUndoMessage(id,annotationTerm,[id,annotation.id,term.name] as Object[],callback);
   }
 
 
 
   def redo() {
-    log.info("Redo")
+    log.info("Redo="+data)
     def annotationTermData = JSON.parse(data)
-    def json = JSON.parse(postData)
 
     def annotation = Annotation.get(annotationTermData.annotation)
     def term = Term.get(annotationTermData.term)
@@ -71,11 +64,7 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
     callback.put("termID",term.id)
     callback.put("imageID",annotation.image.id)
 
-    return super.createRedoMessage(
-            annotationTerm,
-            'AnnotationTerm',
-            [id,annotation.id,term.name] as Object[],
-            callback);
+    return super.createRedoMessage( annotationTerm,[id,annotation.id,term.name] as Object[],callback);
   }
 
 }

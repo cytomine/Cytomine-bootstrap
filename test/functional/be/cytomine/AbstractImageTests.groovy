@@ -143,7 +143,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(201,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
-    int idImage = json.image.id
+    int idImage = json.abstractimage.id
 
     log.info("check if object "+ idImage +" exist in DB")
     client = new HttpClient();
@@ -188,7 +188,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     //must be done because redo change id
     json = JSON.parse(response)
     assert json instanceof JSONObject
-    idImage = json.image.id
+    idImage = json.abstractimage.id
 
     log.info("check if object "+ idImage +" exist in DB")
     client = new HttpClient();
@@ -423,7 +423,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
-    int idImage = json.image.id
+    int idImage = json.abstractimage.id
 
     log.info("check if object "+ idImage +" exist in DB")
     client = new HttpClient();
@@ -675,7 +675,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(201,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
-    int newIdImage  = json.image.id
+    int newIdImage  = json.abstractimage.id
 
 
 
