@@ -102,7 +102,7 @@ var BrowseImageView = Backbone.View.extend({
           var self = this;
           var mime = this.model.get('mime');
           if (mime == "jp2") self.initDjatoka();
-          if (mime == "vms" || mime == "mrxs") self.initIIP();
+          if (mime == "vms" || mime == "mrxs" || mime == "tif") self.initIIP();
        },
        /**
         * Add a base layer (image) on the Map
@@ -189,7 +189,7 @@ var BrowseImageView = Backbone.View.extend({
                       t_width = t_width / 2;
                       t_height = t_height / 2;
                    }
-                   metadata = {width : value[0], height : value[1], nbZoom : nbZoom};
+                   metadata = {width : value[0], height : value[1], nbZoom : nbZoom, overviewWidth : t_width, overviewHeight : t_height};
 
                 }
 
@@ -221,18 +221,28 @@ var BrowseImageView = Backbone.View.extend({
                    new OpenLayers.Control.Navigation(),
                    new OpenLayers.Control.PanZoomBar(),
                    new OpenLayers.Control.MousePosition(),
-
-                   /*new OpenLayers.Control.OverviewMap({
-                    bounds : new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
-                    size: new OpenLayers.Size(metadata.width / Math.pow(2, numZoomLevels), metadata.height / Math.pow(2, numZoomLevels)),
-                    div: document.getElementById('overviewMap' + self.model.get('id'))
-                    }),*/
                    new OpenLayers.Control.KeyboardDefaults()]
              };
+
+             var overviewMap = new OpenLayers.Layer.Image(
+                 'NameOfOverviewMap',
+                 self.model.get("thumb"),
+                 new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
+                 new OpenLayers.Size(256,256)
+             );
+
+             var overviewMapControl = new OpenLayers.Control.OverviewMap({
+                    size: new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight),
+                    layers: [overviewMap],
+                    div: document.getElementById('overviewMap' + self.model.get('id')),
+                    minRatio: 1,
+                    maxRatio: 1024
+                 });
 
              self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
              self.addBaseLayer(self.baseLayer);
              self.map.zoomToMaxExtent();
+             self.map.addControl(overviewMapControl);
 
           }
 
