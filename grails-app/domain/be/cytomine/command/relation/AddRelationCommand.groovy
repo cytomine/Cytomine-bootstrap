@@ -18,7 +18,7 @@ class AddRelationCommand extends AddCommand implements UndoRedoCommand {
         newRelation.save(flush:true)
         log.info("Save relation with id:"+newRelation.id)
         data = newRelation.encodeAsJSON()
-        return [data : [success : true, message:"ok", relation : newRelation], status : 201]
+        return [data : [success : true, message:"ok", relation : newRelation], status : 200]
       } else {
         return [data : [relation : newRelation, errors : newRelation.retrieveErrors()], status : 400]
       }

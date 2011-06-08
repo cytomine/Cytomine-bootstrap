@@ -108,7 +108,7 @@ class RestOntologyController extends RestController {
           def result = processCommand(deleteRelationTermCommand, currentUser)
         }
 
-        def annotationTerm = AnnotationTerm.findAllByTerm(term,term)
+        def annotationTerm = AnnotationTerm.findAllByTerm(term)
         log.info "annotationTerm= " +relationTerm.size()
 
         annotationTerm.each{ annotterm ->

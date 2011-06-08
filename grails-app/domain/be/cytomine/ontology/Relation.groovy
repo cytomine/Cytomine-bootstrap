@@ -1,8 +1,9 @@
 package be.cytomine.ontology
 
 import grails.converters.JSON
+import be.cytomine.SequenceDomain
 
-class Relation {
+class Relation extends SequenceDomain implements Serializable{
 
   String name
 
@@ -11,7 +12,9 @@ class Relation {
     static constraints = {
       name (unique:true, nullable:false)
     }
-
+   static mapping = {
+    id (generator:'assigned', unique : true)
+  }
   String toString()
   {
     return name

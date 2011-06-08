@@ -18,9 +18,21 @@ var OntologyView = Backbone.View.extend({
         this.idTerm =  options.idTerm;
     },
     refresh : function() {
-        this.render();
+        var self = this;
+        window.app.models.ontologies.fetch({
+            success : function (collection, response) {
+                self.render();
+            }});
     },
-
+    refreshAndSelect : function(idOntology) {
+        var self = this;
+        console.log("refreshAndSelect:"+idOntology);
+        this.idOntology = idOntology;
+        window.app.models.ontologies.fetch({
+            success : function (collection, response) {
+                self.render();
+            }});
+    },
     render : function () {
         var self = this;
         require([
@@ -105,7 +117,7 @@ var OntologyView = Backbone.View.extend({
      * @param name ontology name
      */
     addOntologyToTab : function(ontologyTabTpl, ontologyTabContentTpl, data) {
-        this.$tabsOntologies.append("<h3><a href=\"#\">"+data.name+"</a></h3>");
+        this.$tabsOntologies.append("<h3><a id=\"ontologyTitle"+ data.id+"\" href=\"#\">"+data.name+"</a></h3>");
         this.$tabsOntologies.append(_.template(ontologyTabContentTpl, data));
         //tabs;
         /*         $("#ultabsontology").append(_.template(ontologyTabTpl, data));

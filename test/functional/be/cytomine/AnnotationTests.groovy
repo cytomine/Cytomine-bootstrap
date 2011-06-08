@@ -242,7 +242,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(201,code)
+    assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
     int idAnnotation = json.annotation.id
@@ -285,7 +285,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(201,code)
+    assertEquals(200,code)
 
     json = JSON.parse(response)
     //assert json instanceof JSONObject
@@ -334,7 +334,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(201,code)
+    assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
     idAnnotation = json.annotation.id
@@ -368,7 +368,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(201,code)
+    assertEquals(200,code)
     json = JSON.parse(response)
     assert json instanceof JSONObject
     int idTerm= json.annotationterm.term
@@ -403,7 +403,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(201,code)
+    assertEquals(200,code)
     json = JSON.parse(response)
     assert json instanceof JSONObject
     idTerm= json.annotationterm.term
@@ -833,7 +833,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     String response = client.getResponseData()
     client.disconnect();
-    assertEquals(201,code)
+    assertEquals(200,code)
     def json = JSON.parse(response)
     //assert json instanceof JSONObject
 

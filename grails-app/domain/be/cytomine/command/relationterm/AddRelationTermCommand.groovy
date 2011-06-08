@@ -1,6 +1,5 @@
 package be.cytomine.command.relationterm
 
-import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
 import be.cytomine.ontology.RelationTerm
@@ -16,8 +15,8 @@ class AddRelationTermCommand extends AddCommand implements UndoRedoCommand {
     RelationTerm newRelationTerm=null
     try  {
       def json = JSON.parse(postData)
-      newRelationTerm = RelationTerm.createRelationTermFromData(json)
-      RelationTerm.link(newRelationTerm.relation,newRelationTerm.term1,newRelationTerm.term2)
+      newRelationTerm = RelationTerm.createFromData(json)
+      newRelationTerm = RelationTerm.link(newRelationTerm.relation,newRelationTerm.term1,newRelationTerm.term2)
 
       return super.validateWithoutSave(
               newRelationTerm,["#ID#",newRelationTerm.relation.name,newRelationTerm.term1.name,newRelationTerm.term2.name] as Object[]
@@ -53,9 +52,9 @@ class AddRelationTermCommand extends AddCommand implements UndoRedoCommand {
   }
 
   def redo() {
-    log.info("Undo")
+    log.info("Undo data="+data)
     def relationTermData = JSON.parse(data)
-    def relationTerm = RelationTerm.createRelationTermFromData(relationTermData)
+    def relationTerm = RelationTerm.createFromData(relationTermData)
     relationTerm = RelationTerm.link(relationTermData.id,relationTerm.relation,relationTerm.term1,relationTerm.term2)
     relationTerm.id = relationTermData.id
     relationTerm.save(flush:true)

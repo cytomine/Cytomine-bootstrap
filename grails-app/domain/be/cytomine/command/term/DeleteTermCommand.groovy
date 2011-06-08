@@ -35,12 +35,15 @@ class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
   }
 
   def redo() {
-    log.info("Redo")
-    def postData = JSON.parse(postData)
-    Term term = Term.findById(postData.id)
+    log.info("Redo postData="+postData)
+    def termData = JSON.parse(postData)
+    Term term = Term.findById(termData.id)
+    String id = termData.id
+    String name = term.name
+    String ontologyName = term.ontology?.name
     term.delete(flush:true);
-    String id = postData.id
-    return super.createRedoMessage(id,[postData.id,postData.name,Ontology.read(postData.ontology).name] as Object[]);
+
+    return super.createRedoMessage(id,term,[id,name,ontologyName] as Object[]);
   }
 
 }

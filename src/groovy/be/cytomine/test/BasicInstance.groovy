@@ -427,7 +427,8 @@ log.debug  "createOrGetBasicUser()"
       term = Term.findByName(randomInt+"")
    }
 
-    term =  new Term(name:randomInt+"",ontology:createOrGetBasicOntology(),color:"0F00F0")
+    term =  new Term(name:randomInt+"",ontology:getBasicOntologyNotExist(),color:"0F00F0")
+    term.ontology.save(flush:true)
     term.validate()
     log.debug "getBasicTermNotExist() end"
     term

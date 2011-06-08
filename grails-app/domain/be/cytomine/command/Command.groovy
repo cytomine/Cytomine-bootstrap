@@ -12,7 +12,7 @@ class Command extends SequenceDomain {
 
   User user
 
-  static Integer MAXSIZEREQUEST = 10240
+  static Integer MAXSIZEREQUEST = 102400
 
   String actionMessage
 

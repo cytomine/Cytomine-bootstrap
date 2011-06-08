@@ -32,7 +32,7 @@ class EditTermCommand extends EditCommand implements UndoRedoCommand {
     log.info "Undo"
     def termData = JSON.parse(data)
     Term term = Term.findById(termData.previousTerm.id)
-    term = term.getFromData(term,data.previousTerm)
+    term = term.getFromData(term,termData.previousTerm)
     term.save(flush:true)
     super.createUndoMessage(termData, term, [term.id,term.name,term.ontology?.name] as Object[])
   }

@@ -13,7 +13,7 @@ class RestController {
   def springSecurityService
   int idUser
 
-  static int SUCCESS_ADD_CODE = 201
+  static int SUCCESS_ADD_CODE = 200
   static int SUCCESS_EDIT_CODE = 200
   static int SUCCESS_DELETE_CODE = 200
 
@@ -50,11 +50,24 @@ class RestController {
     }
 
     result = c.execute()
+    log.info "COMMAND:"+c
     if (result.status == successCode) {
+
+      log.info "COMMAND:"+c
+      log.info "COMMAND VALID:"+c.validate()
+      log.info "COMMAND VALID:"+c.errors
       c.save()
-      new CommandHistory(command:c,prefixAction:"").save();
-      if(c.saveOnUndoRedoStack)
+      log.info "COMMAND:"+c
+      log.info "COMMAND VALID:"+c.validate()
+      log.info "COMMAND VALID:"+c.validate()
+      CommandHistory ch = new CommandHistory(command:c,prefixAction:"")
+      log.info "COMMAND VALID:"+ch.validate()
+      log.info "COMMAND VALID:"+ch.errors
+
+      ch.save();
+      if(c.saveOnUndoRedoStack) {
         new UndoStackItem(command : c, user: user, transactionInProgress:  user.transactionInProgress, transaction : user.transaction).save(flush:true)
+      }
     }
     log.debug "Lastcommands="+UndoStackItem.findAllByUser(user)
     response.status = result.status

@@ -1,12 +1,15 @@
 package be.cytomine.ontology
 
 import grails.converters.JSON
+import be.cytomine.SequenceDomain
 
-class AnnotationTerm implements Serializable{
+class AnnotationTerm extends SequenceDomain implements Serializable{
 
   Annotation annotation
   Term term
-
+   static mapping = {
+    id (generator:'assigned', unique : true)
+  }
   String toString()
   {
     "[" + this.id + " <" + annotation + "," + term + ">]"

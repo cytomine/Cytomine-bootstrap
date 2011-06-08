@@ -56,9 +56,12 @@ var OntologyPanelView = Backbone.View.extend({
         var self = this;
         self.model.fetch({
             success : function (model, response) {
+                $('#ontologyTitle'+self.model.id).empty();
+                $('#ontologyTitle'+self.model.id).append(self.model.get('name'));
                 self.clear();
                 self.render();
             }});
+
 
     },
 
@@ -143,7 +146,10 @@ var OntologyPanelView = Backbone.View.extend({
             }});
     },
     editOntology : function() {
-
+           console.log("editOntology");
+          var self = this;
+          $('#editontology').remove();
+          self.editOntologyDialog = new EditOntologyDialog({ontologyPanel:self,el:self.el,model:self.model}).render();
     },
     deleteOntology : function() {
         var self = this;
@@ -164,17 +170,17 @@ var OntologyPanelView = Backbone.View.extend({
             console.log("tpl=");
             console.log(tpl);
             var dialog =  new ConfirmDialogView({
-                el:'#dialogsDeleteOntology',
+                el:'#dialogsDeleteOntologyRefuse',
                 template : _.template(tpl, {name : self.model.get('name'),numberOfProject:numberOfProject}),
                 dialogAttr : {
-                    dialogID : '#dialogsDeleteOntology',
+                    dialogID : '#dialogsDeleteOntologyRefuse',
                     width : 400,
                     height : 200,
                     buttons: {
                         "Close": function() {
                             console.log("no delete");
                             //doesn't work! :-(
-                            $('#dialogsDeleteOntology').dialog( "close" ) ;
+                            $('#dialogsDeleteOntologyRefuse').dialog( "close" ) ;
                         }
                     },
                     close :function (event) {
@@ -191,10 +197,10 @@ var OntologyPanelView = Backbone.View.extend({
             console.log("tpl=");
             console.log(tpl);
             var dialog =  new ConfirmDialogView({
-                el:'#dialogsDeleteOntology',
+                el:'#dialogsDeleteOntologyAccept',
                 template : _.template(tpl, {ontology : self.model.get('name')}),
                 dialogAttr : {
-                    dialogID : '#dialogsDeleteOntology',
+                    dialogID : '#dialogsDeleteOntologyAccept',
                     width : 400,
                     height : 300,
                     buttons: {
@@ -202,7 +208,7 @@ var OntologyPanelView = Backbone.View.extend({
                             self.model.destroy({
                                 success : function (model, response) {
                                     console.log("delete sucess");
-                                    $('#dialogsDeleteOntology').dialog( "close" ) ;
+                                    $('#dialogsDeleteOntologyAccept').dialog( "close" ) ;
                                     self.ontologiesPanel.refresh();
                                 },error: function (model, response) {
 
@@ -215,7 +221,7 @@ var OntologyPanelView = Backbone.View.extend({
                         "Cancel": function() {
                             console.log("no delete");
                             //doesn't work! :-(
-                            $('#dialogsDeleteOntology').dialog( "close" ) ;
+                            $('#dialogsDeleteOntologyAccept').dialog( "close" ) ;
                         }
                     },
                     close :function (event) {
@@ -419,6 +425,15 @@ var OntologyPanelView = Backbone.View.extend({
         self.$buttonDeleteTerm.button({
             icons : {secondary: "ui-icon-trash" }
         });
+
+        self.$buttonEditOntology.button({
+            icons : {secondary: "ui-icon-pencil" }
+        });
+        self.$buttonDeleteOntology.button({
+            icons : {secondary: "ui-icon-trash" }
+        });
+
+
     },
     buildInfoPanel : function() {
 

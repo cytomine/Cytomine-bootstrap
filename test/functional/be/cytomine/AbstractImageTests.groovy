@@ -140,7 +140,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
 
     log.info("check response")
-    assertEquals(201,code)
+    assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
     int idImage = json.abstractimage.id
@@ -183,7 +183,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(201,code)
+    assertEquals(200,code)
 
     //must be done because redo change id
     json = JSON.parse(response)
@@ -672,7 +672,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     code  = client.getResponseCode()
     String response = client.getResponseData()
     client.disconnect();
-    assertEquals(201,code)
+    assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
     int newIdImage  = json.abstractimage.id

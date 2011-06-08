@@ -59,8 +59,11 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
     callback.put("imageID",annotationData.image) */
     def annotation = Annotation.createFromData(annotationData)
     def callback = [annotationID : annotation.id , imageID : annotation.image.id ]
+    log.info "annotation.id=" + annotation.id
     annotation.id = annotationData.id
+    log.info "annotation.id=" + annotation.id
     annotation.save(flush:true)
+    log.info "annotation.id=" + annotation.id
     return super.createRedoMessage(annotation,[annotationData.id,filename] as Object[],callback);
   }
 

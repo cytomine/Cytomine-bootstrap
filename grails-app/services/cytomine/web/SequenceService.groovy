@@ -40,6 +40,7 @@ class SequenceService {
     //def seqName =  domain.getClass().getName().substring(classNameIndex) + SEQ_SUFFIX
     // sessionFactory.getCurrentSession().clear();
     def statement  = sessionFactory.currentSession.connection().createStatement()
+    println "select nextval('"+SEQ_NAME+"');"
     def res = statement.executeQuery("select nextval('"+SEQ_NAME+"');")
     res.next()
     Long nextVal = res.getLong("nextval")

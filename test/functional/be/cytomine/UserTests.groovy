@@ -83,7 +83,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(201,code)
+    assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
     int idUser = json.user.id
@@ -126,7 +126,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(201,code)
+    assertEquals(200,code)
 
     //must be done because redo change id
     json = JSON.parse(response)
@@ -439,7 +439,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     String response = client.getResponseData()
     client.disconnect();
-    assertEquals(201,code)
+    assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
 

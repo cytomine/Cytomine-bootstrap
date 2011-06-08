@@ -39,7 +39,7 @@ class DeleteRelationCommand extends DeleteCommand implements UndoRedoCommand {
 
     log.debug "relation with id " + relation.id
 
-    return [data : [success : true, relation : relation, message : "OK"], status : 201]
+    return [data : [success : true, relation : relation, message : "OK"], status : 200]
   }
 
   def redo() {

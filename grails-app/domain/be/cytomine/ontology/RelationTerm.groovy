@@ -1,19 +1,22 @@
 package be.cytomine.ontology
 
 import grails.converters.JSON
+import be.cytomine.SequenceDomain
 
-class RelationTerm implements Serializable{
+class RelationTerm extends SequenceDomain implements Serializable{
 
   static names = [PARENT : "parent", SYNONYM : "synonyme"]
 
   Relation relation
   Term term1
   Term term2
-
+  static mapping = {
+    id (generator:'assigned', unique : true)
+  }
 
   String toString()
   {
-    "[" + this.id + " <" + relation + ":[" + term1 + ","+ term2 +"]>]"
+    "[" + this.id + " <" + relation + '(' + relation?.name +')' + ":[" + term1 + '(' + term1?.name + ')'+ ","+ term2 + '(' + term2?.name + ')'+"]>]"
   }
 
 
@@ -29,18 +32,26 @@ class RelationTerm implements Serializable{
     if (!relationTerm) {
       println "LINKED"
       relationTerm = new RelationTerm()
-      relationTerm.id = id!=-1? id : null
+      if(id!=-1)
+        relationTerm.id = id
       term1?.addToRelationTerm1(relationTerm)
       term2?.addToRelationTerm2(relationTerm)
       relation?.addToRelationTerm(relationTerm)
-      println "save relationTerm"
+      println "1.save relationTerm:"+relationTerm
+
+      term1.refresh()
+      term2.refresh()
+      relation.refresh()
+
+
       relationTerm.save(flush : true)
+      println "2.save relationTerm:"+relationTerm
     } else throw new IllegalArgumentException("Term1 " + term1.id + " and " + term2.id + " are already mapped with relation " + relation.id)
     return relationTerm
   }
 
   static RelationTerm link(Relation relation, Term term1, Term term2) {
-       link(-1,relation,term1,term2)
+    link(-1,relation,term1,term2)
   }
 
   static void unlink(Relation relation, Term term1, Term term2) {
@@ -55,16 +66,26 @@ class RelationTerm implements Serializable{
 
   }
 
-  static RelationTerm createRelationTermFromData(jsonRelationTerm) {
+  static RelationTerm createFromData(jsonRelationTerm) {
     def relationTerm = new RelationTerm()
-    getRelationTermFromData(relationTerm,jsonRelationTerm)
+    getFromData(relationTerm,jsonRelationTerm)
   }
 
-  static RelationTerm getRelationTermFromData(relationTerm,jsonRelationTerm) {
+  static RelationTerm getFromData(relationTerm,jsonRelationTerm) {
     println "jsonRelationTerm="+jsonRelationTerm.toString()
-    relationTerm.relation = Relation.get(jsonRelationTerm.relation)
-    relationTerm.term1 = Term.get(jsonRelationTerm.term1)
-    relationTerm.term2 = Term.get(jsonRelationTerm.term2)
+    try {
+      println "jsonRelationTerm.xxx.id"
+      relationTerm.relation = Relation.get(jsonRelationTerm.relation.id)
+      relationTerm.term1 = Term.get(jsonRelationTerm.term1.id)
+      relationTerm.term2 = Term.get(jsonRelationTerm.term2.id)
+    }
+    catch(Exception e)
+    {
+      println "jsonRelationTerm.idXXX"
+      relationTerm.relation = Relation.get(jsonRelationTerm.relation)
+      relationTerm.term1 = Term.get(jsonRelationTerm.term1)
+      relationTerm.term2 = Term.get(jsonRelationTerm.term2)
+    }
     return relationTerm;
   }
 
@@ -82,18 +103,18 @@ class RelationTerm implements Serializable{
     }
   }
 
- /* static void unlink(long id) {
-    def relationTerm = RelationTerm.get(id)
-    def term1 = relationTerm.term1
-    def term2 = relationTerm.term2
-    def relation =relationTerm.relation
-    if (relationTerm) {
-      term1?.removeFromRelationTerm1(relationTerm)
-      term2?.removeFromRelationTerm2(relationTerm)
-      relation?.removeFromRelationTerm(relationTerm)
-      relationTerm.delete(flush : true)
-    }
+  /* static void unlink(long id) {
+  def relationTerm = RelationTerm.get(id)
+  def term1 = relationTerm.term1
+  def term2 = relationTerm.term2
+  def relation =relationTerm.relation
+  if (relationTerm) {
+    term1?.removeFromRelationTerm1(relationTerm)
+    term2?.removeFromRelationTerm2(relationTerm)
+    relation?.removeFromRelationTerm(relationTerm)
+    relationTerm.delete(flush : true)
+  }
 
-  }  */
+}  */
 
 }

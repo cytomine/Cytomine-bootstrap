@@ -35,15 +35,25 @@ class DeleteRelationTermCommand extends DeleteCommand implements UndoRedoCommand
     }
   }
 
+ /* def undo() {
+    log.info("Undo")
+    def relationTermData = JSON.parse(data)
+    RelationTerm relationTerm = RelationTerm.createFromData(relationTermData)
+    Relation relation =  Relation.get(relationTerm.relation)
+    Term term1 = Term.get(relationTerm.term1)
+    Term term2 = Term.get(relationTerm.term2)
+
+    relationTerm = RelationTerm.link(relationTermData.id,relation, term1,term2)
+    return super.createUndoMessage(relationTerm,[relationTerm.id, relation.name,term1.name,term2.name] as Object[]);
+  } */
   def undo() {
     log.info("Undo")
     def relationTermData = JSON.parse(data)
-    RelationTerm relationTerm = RelationTerm.createRelationTermFromData(relationTermData)
+    RelationTerm relationTerm = RelationTerm.createFromData(relationTermData)
+
     relationTerm = RelationTerm.link(relationTermData.id,relationTerm.relation, relationTerm.term1,relationTerm.term2)
     return super.createUndoMessage(relationTerm,[relationTerm.id, relationTerm.relation.name,relationTerm.term1.name,relationTerm.term2.name] as Object[]);
   }
-
-
 
   def redo() {
     log.info("Redo")
@@ -56,6 +66,6 @@ class DeleteRelationTermCommand extends DeleteCommand implements UndoRedoCommand
     String id =  relationTerm
     RelationTerm.unlink(relationTerm.relation, relationTerm.term1, relationTerm.term2)
 
-    return super.createRedoMessage(id,[relationTerm.id, relation.name,term1.name,term2.name] as Object[]);
+    return super.createRedoMessage(id,relationTerm,[relationTerm.id, relation.name,term1.name,term2.name] as Object[]);
   }
 }

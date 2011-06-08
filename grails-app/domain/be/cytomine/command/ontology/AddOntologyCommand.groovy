@@ -15,7 +15,7 @@ import be.cytomine.command.AddCommand
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 
 class AddOntologyCommand extends AddCommand implements UndoRedoCommand {
-
+  boolean saveOnUndoRedoStack = true;
   def execute() {
     log.info("Execute")
     Ontology newOntology=null
@@ -44,8 +44,17 @@ class AddOntologyCommand extends AddCommand implements UndoRedoCommand {
     def ontologyData = JSON.parse(data)
     def json = JSON.parse(postData)
     def ontology = Ontology.createFromData(ontologyData)
+    log.info "data=" + data
+    log.info "postData=" + postData
+    log.info "ontologyData.id=" + ontologyData.id
     ontology.id = ontologyData.id
+    Ontology.list().each{
+      println it.id
+    }
+    log.info "ontology.id=" + ontology.id
     ontology.save(flush:true)
+    log.info "ontology.id=" + ontology.id
+
     return super.createRedoMessage(ontology,[ontologyData.id,ontologyData.name] as Object[]);
   }
 

@@ -70,7 +70,7 @@ class AddCommand extends Command {
       params.put(objectName.toLowerCase(),newObject)
 
 
-      return [data : params, status : 201]
+      return [data : params, status : 200]
     } else throw new ConstraintException(newObject.errors.toString())
   }
 
@@ -161,7 +161,7 @@ class AddCommand extends Command {
     params.put('callback',paramsCallback)
     params.put(objectName.toLowerCase(),object)
 
-    def result = [data : params, status : 201];
+    def result = [data : params, status : 200];
 
     return result
   }

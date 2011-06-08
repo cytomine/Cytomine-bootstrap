@@ -16,12 +16,15 @@ var OntologyController = Backbone.Controller.extend({
         "ontology/:idOntology/:idTerm"           :   "ontology"
     },
     ontology : function() {
-        this.ontology(0,0);
+        this.ontology(0,0,false);
     },
     ontology : function(idOntology) {
-        this.ontology(idOntology,0);
+        this.ontology(idOntology,0,false);
     },
     ontology : function(idOntology,idTerm) {
+        this.ontology(idOntology,idTerm,false);
+    },
+    ontology : function(idOntology,idTerm,refresh) {
         var self = this;
         console.log("OntologyController:"+idOntology)
         if (!self.view) {
@@ -48,11 +51,11 @@ var OntologyController = Backbone.Controller.extend({
             });
         }
         else {
+            console.log("self.view!=null");
             self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
             window.app.view.showComponent(window.app.view.components.warehouse);
-            self.view.select(idOntology,idTerm);
+            if(refresh) self.view.refreshAndSelect(idOntology)
+            else self.view.select(idOntology,idTerm);
         }
     }
-
-
 });

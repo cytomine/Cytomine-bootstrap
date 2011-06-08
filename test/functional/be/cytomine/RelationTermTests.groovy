@@ -113,7 +113,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
 
     log.info("check response")
-    assertEquals(201,code)
+    assertEquals(200,code)
     json = JSON.parse(response)
     assert json instanceof JSONObject
     int idRelation= json.relationterm.relation.id
@@ -131,7 +131,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
     assertEquals(200,code)
 
-    /*log.info("test undo")
+    log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -159,11 +159,8 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(201,code)
+    assertEquals(200,code)
 
-    //must be done because redo change id
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
 
     log.info("check if object "+ idRelation +"/"+ idTerm1 +"/"+ idTerm2 +" exist in DB")
     client = new HttpClient();
@@ -173,7 +170,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(200,code) */
+    assertEquals(200,code)
 
   }
 
@@ -305,7 +302,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
 
     assertEquals(404,code)
 
-    /*log.info("test undo")
+    log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -313,9 +310,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     code  = client.getResponseCode()
     String response = client.getResponseData()
     client.disconnect();
-    assertEquals(201,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
+    assertEquals(200,code)
 
     log.info("check if object "+ idRelation +"/" + idTerm1 +" exist in DB")
     client = new HttpClient();
@@ -327,9 +322,6 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
 
     assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
 
     log.info("test redo")
     client = new HttpClient()
@@ -347,7 +339,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(404,code) */
+    assertEquals(404,code)
 
   }
 

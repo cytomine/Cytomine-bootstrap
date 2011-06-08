@@ -110,6 +110,7 @@
     <script type="text/javascript" src="application/views/ontology/OntologyView.js" ></script>
     <script type="text/javascript" src="application/views/ontology/OntologyAddOrEditTermView.js" ></script>
     <script type="text/javascript" src="application/views/ontology/OntologyTreeView.js" ></script>
+    <script type="text/javascript" src="application/views/ontology/OntologyEditDialog.js" ></script>
 
     <script type="text/javascript" src="application/views/project/ProjectView.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectPanelView.js" ></script>

@@ -6,9 +6,7 @@ var CommandController = Backbone.Controller.extend({
             console.log(data);
              _.each(data, function(undoElem){
                   console.log("undoElem" + undoElem);
-
-                  window.app.view.message("Undo", undoElem.message, "");
-                  self.dispatch(undoElem.callback);
+                  self.dispatch(undoElem.callback,undoElem.message,"Undo");
              });
 
         }, "json");
@@ -22,19 +20,21 @@ var CommandController = Backbone.Controller.extend({
                 console.log(data);
                  _.each(data, function(redoElem){
                       console.log("redoElem" + redoElem);
-                      window.app.view.message("Redo", redoElem.message, "");
-                      self.dispatch(redoElem.callback);
+                      self.dispatch(redoElem.callback,redoElem.message, "Redo");
                  });
         }, "json");
 
     },
 
-    dispatch : function(callback) {
+    dispatch : function(callback,message,operation) {
         console.log("callback method ? " + callback.method);
         if (!callback) return; //nothing to do
 
-        //Annotations
+        /**
+         * ANNOTATION
+         */
         if (callback.method == "be.cytomine.AddAnnotationCommand") {
+             window.app.view.message(operation, message, "");
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
                 console.log("object.idImage="+object.idImage + " callback.imageID=" + callback.imageID);
                 return object.idImage == callback.imageID;
@@ -45,6 +45,7 @@ var CommandController = Backbone.Controller.extend({
             console.log("callback.annotationID="+callback.annotationID);
             image.getUserLayer().annotationAdded(callback.annotationID);
         } else if (callback.method == "be.cytomine.EditAnnotationCommand") {
+            window.app.view.message(operation, message, "");
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
                 return object.idImage == callback.imageID;
             });
@@ -52,6 +53,7 @@ var CommandController = Backbone.Controller.extend({
             if (image == undefined) return; //tab is closed
             image.getUserLayer().annotationUpdated(callback.annotationID);
         } else if (callback.method == "be.cytomine.DeleteAnnotationCommand") {
+            window.app.view.message(operation, message, "");
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
                 return object.idImage == callback.imageID;
             });
@@ -61,7 +63,12 @@ var CommandController = Backbone.Controller.extend({
             if (image == undefined) return; //tab is closed
             console.log("callback.annotationID="+callback.annotationID);
             image.getUserLayer().annotationRemoved(callback.annotationID);
+
+            /**
+             * ANNOTATION TERM
+             */
         } else if (callback.method == "be.cytomine.AddAnnotationTermCommand") {
+            window.app.view.message(operation, message, "");
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
                 return object.idImage == callback.imageID;
             });
@@ -69,12 +76,27 @@ var CommandController = Backbone.Controller.extend({
             if (image == undefined) return; //tab is closed
             image.getUserLayer().termAdded(callback.annotationID,callback.termID);
         } else if (callback.method == "be.cytomine.DeleteAnnotationTermCommand") {
+            window.app.view.message(operation, message, "");
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
                 return object.idImage == callback.imageID;
             });
             var image = tab.view;
             if (image == undefined) return; //tab is closed
             image.getUserLayer().termRemoved(callback.annotationID,callback.termID);
+        }
+
+        /**
+         * ONTOLOGY
+         */
+        else if (callback.method == "be.cytomine.AddOntologyCommand") {
+            window.app.view.message(operation, message, "");
+            window.app.controllers.ontology.view.refreshAndSelect(callback.ontologyID);
+        } else if (callback.method == "be.cytomine.DeleteOntologyCommand") {
+            window.app.view.message(operation, message, "");
+            window.app.controllers.ontology.view.refresh();
+        } else if (callback.method == "be.cytomine.EditOntologyCommand") {
+            window.app.view.message(operation, message, "");
+            window.app.controllers.ontology.view.refreshAndSelect(callback.ontologyID);
         }
     }
 });

@@ -15,7 +15,7 @@ import be.cytomine.command.EditCommand
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 
 class EditOntologyCommand extends EditCommand implements UndoRedoCommand {
-
+  boolean saveOnUndoRedoStack = true;
   def execute() {
     log.info "Execute"
     log.debug "postData="+postData

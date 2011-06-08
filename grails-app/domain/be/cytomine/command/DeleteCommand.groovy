@@ -136,7 +136,7 @@ class DeleteCommand extends Command {
     params.put('callback', paramsCallback)
     params.put(objectName.toLowerCase(), id)
 
-    return [data: params, status: 201]
+    return [data: params, status: 200]
   }
 
   /**

@@ -1,14 +1,17 @@
 package be.cytomine.ontology
 import grails.converters.JSON
+import be.cytomine.SequenceDomain
 
-class Ontology {
+class Ontology extends SequenceDomain implements Serializable{
 
   String name
 
   static constraints = {
     name(blank:false, unique:true)
   }
-
+    static mapping = {
+    id (generator:'assigned', unique : true)
+  }
 
 
   def terms() {

@@ -90,7 +90,7 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(201,code)
+    assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
     int idOntology = json.ontology.id
@@ -105,7 +105,7 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
     assertEquals(200,code)
 
-    /*log.info("test undo")
+    log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -133,12 +133,11 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(201,code)
+    assertEquals(200,code)
 
     //must be done because redo change id
     json = JSON.parse(response)
-    assert json instanceof JSONObject
-    idOntology = json.ontology.id
+    assert json instanceof JSONArray
 
     log.info("check if object "+ idOntology +" exist in DB")
     client = new HttpClient();
@@ -148,7 +147,7 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(200,code)*/
+    assertEquals(200,code)
 
   }
 
@@ -247,7 +246,7 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
 
     BasicInstance.compareOntology(mapNew,json)
 
-    /*log.info("test undo")
+    log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL + ".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -309,7 +308,7 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
 
     assertEquals(200,code)
     json = JSON.parse(response)
-    assert json instanceof JSONObject  */
+    assert json instanceof JSONObject
 
   }
 
@@ -422,7 +421,7 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
 
     assertEquals(404,code)
 
-    /*log.info("test undo")
+    log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -430,14 +429,11 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     code  = client.getResponseCode()
     String response = client.getResponseData()
     client.disconnect();
-    assertEquals(201,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int newIdOntology  = json.ontology.id
+    assertEquals(200,code)
 
     log.info("check if object "+ idOntology +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+newIdOntology  +".json"
+    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology  +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -445,8 +441,6 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
 
 
     log.info("test redo")
@@ -458,14 +452,14 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
     assertEquals(200,code)
 
-    log.info("check if object "+ newIdOntology +" exist in DB")
+    log.info("check if object "+ idOntology +" exist in DB")
     client = new HttpClient();
     URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(404,code)*/
+    assertEquals(404,code)
 
   }
 
@@ -530,6 +524,57 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("check response")
     assertEquals(200,code)
+
+    log.info("check if object "+ idOntology +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    client.disconnect();
+
+    assertEquals(404,code)
+
+    log.info("test undo")
+    client = new HttpClient()
+    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.get()
+    code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+
+    log.info("check if object "+ idOntology +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology  +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    client.disconnect();
+
+    assertEquals(200,code)
+
+
+    log.info("test redo")
+    client = new HttpClient()
+    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.get()
+    code  = client.getResponseCode()
+    client.disconnect();
+    assertEquals(200,code)
+
+    log.info("check if object "+ idOntology +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    client.disconnect();
+    assertEquals(404,code)
 
   }
 }

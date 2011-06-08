@@ -17,7 +17,7 @@ import be.cytomine.ontology.RelationTerm
 import be.cytomine.project.Project
 
 class DeleteOntologyCommand extends DeleteCommand implements UndoRedoCommand {
-
+  boolean saveOnUndoRedoStack = true;
   def execute() {
     log.info "Execute"
     try {
@@ -49,8 +49,9 @@ class DeleteOntologyCommand extends DeleteCommand implements UndoRedoCommand {
     log.info("Redo")
     def postData = JSON.parse(postData)
     Ontology ontology = Ontology.findById(postData.id)
-    ontology.delete(flush:true);
     String id = postData.id
-    return super.createRedoMessage(id, ontology[id,postData.name] as Object[]);
+    String name = ontology.name
+    ontology.delete(flush:true);
+    return super.createRedoMessage(id, ontology,[id,name] as Object[]);
   }
 }

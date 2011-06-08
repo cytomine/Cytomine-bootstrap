@@ -24,3 +24,7 @@ var OntologyCollection = Backbone.Collection.extend({
         // something
     }
 });
+
+OntologyCollection.comparator = function(ontology) {
+  return ontology.get("name");
+};
