@@ -30,8 +30,9 @@ class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
     Term term = Term.createFromData(termData)
     term.id = termData.id;
     term.save(flush:true)
+    def callback = [ontologyID : term?.ontology?.id]
     log.error "Term errors = " + term.errors
-    return super.createUndoMessage(term,[term.id,term.name,term.ontology] as Object[]);
+    return super.createUndoMessage(term,[term.id,term.name,term.ontology] as Object[],callback);
   }
 
   def redo() {
@@ -41,9 +42,10 @@ class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
     String id = termData.id
     String name = term.name
     String ontologyName = term.ontology?.name
+    def callback = [ontologyID : term?.ontology?.id]
     term.delete(flush:true);
 
-    return super.createRedoMessage(id,term,[id,name,ontologyName] as Object[]);
+    return super.createRedoMessage(id,term,[id,name,ontologyName] as Object[],callback);
   }
 
 }

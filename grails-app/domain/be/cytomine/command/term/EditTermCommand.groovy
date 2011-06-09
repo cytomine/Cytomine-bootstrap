@@ -34,7 +34,8 @@ class EditTermCommand extends EditCommand implements UndoRedoCommand {
     Term term = Term.findById(termData.previousTerm.id)
     term = term.getFromData(term,termData.previousTerm)
     term.save(flush:true)
-    super.createUndoMessage(termData, term, [term.id,term.name,term.ontology?.name] as Object[])
+    def callback = [ontologyID : term?.ontology?.id]
+    super.createUndoMessage(termData, term, [term.id,term.name,term.ontology?.name] as Object[],callback)
   }
 
   def redo() {
@@ -43,6 +44,7 @@ class EditTermCommand extends EditCommand implements UndoRedoCommand {
     Term term = Term.findById(termData.newTerm.id)
     term = Term.getFromData(term,termData.newTerm)
     term.save(flush:true)
-    super.createRedoMessage(termData, term,[term.id,term.name,term.ontology?.name] as Object[])
+    def callback = [ontologyID : term?.ontology?.id]
+    super.createRedoMessage(termData, term,[term.id,term.name,term.ontology?.name] as Object[],callback)
   }
 }

@@ -59,10 +59,14 @@ var OntologyPanelView = Backbone.View.extend({
         var self = this;
         self.model.fetch({
             success : function (model, response) {
-                $('#ontologyTitle'+self.model.id).empty();
-                $('#ontologyTitle'+self.model.id).append(self.model.get('name'));
-                self.clear();
-                self.render();
+                window.app.models.terms.fetch({
+                    success : function (model, response) {
+
+                        $('#ontologyTitle'+self.model.id).empty();
+                        $('#ontologyTitle'+self.model.id).append(self.model.get('name'));
+                        self.clear();
+                        self.render();
+                    }});
             }});
 
 
@@ -149,10 +153,10 @@ var OntologyPanelView = Backbone.View.extend({
             }});
     },
     editOntology : function() {
-           console.log("editOntology");
-          var self = this;
-          $('#editontology').remove();
-          self.editOntologyDialog = new EditOntologyDialog({ontologyPanel:self,el:self.el,model:self.model}).render();
+        console.log("editOntology");
+        var self = this;
+        $('#editontology').remove();
+        self.editOntologyDialog = new EditOntologyDialog({ontologyPanel:self,el:self.el,model:self.model}).render();
     },
     deleteOntology : function() {
         var self = this;
@@ -452,17 +456,17 @@ var OntologyPanelView = Backbone.View.extend({
         $("#userontologyinfo-"+self.model.id).append("<b>Owner:</b><br>");
         $("#userontologyinfo-"+self.model.id).append(""+userOwner.get('username') + "<br>");
 
-       var jsonuser = self.model.get('users');
+        var jsonuser = self.model.get('users');
         $("#userontologyinfo-"+self.model.id).append("<b>User that use this ontology from a project:</b><br>");
         if(jsonuser.length) {
-       _.each(jsonuser,
-             function(idUser){
-                 var user = window.app.models.users.get(idUser);
-                 $("#userontologyinfo-"+self.model.id).append(""+user.get('username') + "<br>");
-             });
+            _.each(jsonuser,
+                  function(idUser){
+                      var user = window.app.models.users.get(idUser);
+                      $("#userontologyinfo-"+self.model.id).append(""+user.get('username') + "<br>");
+                  });
         }
         else {
-           $("#userontologyinfo-"+self.model.id).append("There are no project that use this ontology." + "<br>");
+            $("#userontologyinfo-"+self.model.id).append("There are no project that use this ontology." + "<br>");
         }
     },
     buildInfoTermPanel : function() {

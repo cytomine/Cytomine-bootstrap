@@ -30,10 +30,10 @@ class AddTermCommand extends AddCommand implements UndoRedoCommand {
     log.info("Undo")
     def termData = JSON.parse(data)
     Term term = Term.get(termData.id)
+    def callback = [ontologyID : term?.ontology?.id]
     term.delete(flush:true)
     String id = termData.id
-    return super.createUndoMessage(id,term,[termData.id,termData.name,Ontology.read(termData.ontology).name] as Object[]
-    );
+    return super.createUndoMessage(id,term,[termData.id,termData.name,Ontology.read(termData.ontology).name] as Object[],callback);
   }
 
   def redo() {
@@ -42,8 +42,8 @@ class AddTermCommand extends AddCommand implements UndoRedoCommand {
     def term = Term.createFromData(termData)
     term.id = termData.id
     term.save(flush:true)
-    return super.createRedoMessage(term,[termData.id,termData.name,Ontology.read(termData.ontology)?.name] as Object[]
-    );
+    def callback = [ontologyID : term?.ontology?.id]
+    return super.createRedoMessage(term,[termData.id,termData.name,Ontology.read(termData.ontology)?.name] as Object[],callback);
   }
 
 }
