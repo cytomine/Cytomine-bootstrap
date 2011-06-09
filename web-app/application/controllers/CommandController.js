@@ -96,7 +96,7 @@ var CommandController = Backbone.Controller.extend({
             window.app.controllers.ontology.view.refresh();
         } else if (callback.method == "be.cytomine.EditOntologyCommand") {
             window.app.view.message(operation, message, "");
-            window.app.controllers.ontology.view.refreshAndSelect(callback.ontologyID);
+            window.app.controllers.ontology.view.refresh(callback.ontologyID);
         }
         /**
          * PROJECT
@@ -111,5 +111,19 @@ var CommandController = Backbone.Controller.extend({
             window.app.view.message(operation, message, "");
             window.app.controllers.project.view.refresh();
         }
+        /**
+         * TERM
+         */
+        else if (callback.method == "be.cytomine.AddTermCommand") {
+            window.app.view.message(operation, message, "");
+            window.app.controllers.ontology.view.refresh(callback.ontologyID);
+        } else if (callback.method == "be.cytomine.DeleteTermCommand") {
+            window.app.view.message(operation, message, "");
+            window.app.controllers.ontology.view.refresh(callback.ontologyID);
+        } else if (callback.method == "be.cytomine.EditTermCommand") {
+            window.app.view.message(operation, message, "");
+            window.app.controllers.ontology.view.refresh(callback.ontologyID);
+        }
+
     }
 });
