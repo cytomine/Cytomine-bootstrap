@@ -193,11 +193,6 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             idPrefix: "" + self.action +"dynatree-Ontology-"+self.model.id+"-" ,
             debugLevel: 0
         });
-        //expand all nodes
-        self.$tree.dynatree("getRoot").visit(function(node){
-            node.expand(true);
-        });
-
         //if add panel, add the "temp" model to the tree (event if it's not yet a part of the ontology)
         if(self.action=="Add") {
             var node = self.$tree.dynatree("getTree").getNodeByKey(self.ontology.id);
@@ -209,13 +204,22 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             });
         }
 
-        //make the new term node visible
+         //make the new term node visible
         var node = self.$tree.dynatree("getTree").getNodeByKey(self.model.id);
         var title = node.data.title
         var color = "#9ac400"
         var htmlNode = "<label style='color:{{color}}'>{{title}}</label>"
         var nodeTpl = _.template(htmlNode, {title : title, color : color});
         node.setTitle(nodeTpl);
+
+        //expand all nodes
+        self.$tree.dynatree("getRoot").visit(function(node){
+            node.expand(true);
+        });
+
+
+
+
 
     },
 

@@ -90,7 +90,7 @@ var CommandController = Backbone.Controller.extend({
          */
         else if (callback.method == "be.cytomine.AddOntologyCommand") {
             window.app.view.message(operation, message, "");
-            window.app.controllers.ontology.view.refreshAndSelect(callback.ontologyID);
+            window.app.controllers.ontology.view.refresh(callback.ontologyID);
         } else if (callback.method == "be.cytomine.DeleteOntologyCommand") {
             window.app.view.message(operation, message, "");
             window.app.controllers.ontology.view.refresh();
