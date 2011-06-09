@@ -98,5 +98,18 @@ var CommandController = Backbone.Controller.extend({
             window.app.view.message(operation, message, "");
             window.app.controllers.ontology.view.refreshAndSelect(callback.ontologyID);
         }
+        /**
+         * PROJECT
+         */
+        else if (callback.method == "be.cytomine.AddProjectCommand") {
+            window.app.view.message(operation, message, "");
+            window.app.controllers.project.view.refresh();
+        } else if (callback.method == "be.cytomine.DeleteProjectCommand") {
+            window.app.view.message(operation, message, "");
+            window.app.controllers.project.view.refresh();
+        } else if (callback.method == "be.cytomine.EditProjectCommand") {
+            window.app.view.message(operation, message, "");
+            window.app.controllers.project.view.refresh();
+        }
     }
 });

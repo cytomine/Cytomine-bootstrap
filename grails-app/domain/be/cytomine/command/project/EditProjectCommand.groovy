@@ -8,7 +8,7 @@ import be.cytomine.security.Group
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 
 class EditProjectCommand extends EditCommand implements UndoRedoCommand {
-
+  boolean saveOnUndoRedoStack = true;
   def execute() {
     log.info "Execute"
     log.debug "postData="+postData
