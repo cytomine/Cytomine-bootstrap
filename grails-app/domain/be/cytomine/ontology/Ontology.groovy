@@ -1,10 +1,13 @@
 package be.cytomine.ontology
 import grails.converters.JSON
 import be.cytomine.SequenceDomain
+import be.cytomine.security.User
+import be.cytomine.project.Project
 
 class Ontology extends SequenceDomain implements Serializable{
 
   String name
+  User user
 
   static constraints = {
     name(blank:false, unique:true)
@@ -13,6 +16,20 @@ class Ontology extends SequenceDomain implements Serializable{
     id (generator:'assigned', unique : true)
   }
 
+  def users() {
+    def users = []
+    def projects = Project.findAllByOntology(this)
+    projects.each { project ->
+        users.addAll(project.users())
+    }
+    users
+  }
+  def usersId() {
+    def users = this.users()
+    def usersId = []
+    users.each{user-> usersId << user.id }
+    usersId
+  }
 
   def terms() {
     Term.findAllByOntology(this)
@@ -93,13 +110,17 @@ class Ontology extends SequenceDomain implements Serializable{
       returnArray['isFolder'] = true
       returnArray['key'] = it.id
       returnArray['hideCheckbox'] = true
-
+      returnArray['user'] = it.user.id
       returnArray['state'] = "open"
 
       if(it.version!=null){
         returnArray['children'] = it.tree()
+        returnArray['users'] = it.usersId()
       }
-      else returnArray['children'] = []
+      else {
+        returnArray['children'] = []
+        returnArray['users'] = []
+      }
 
       return returnArray
     }
@@ -114,6 +135,7 @@ class Ontology extends SequenceDomain implements Serializable{
     if(!jsonOntology.name.toString().equals("null"))
       ontology.name = jsonOntology.name
     else throw new IllegalArgumentException("Ontology name cannot be null")
+    ontology.user =  User.get(jsonOntology.user);
     println "jsonOntology.name=" + jsonOntology.name
     println "ontology.name=" +  ontology.name
     return ontology;

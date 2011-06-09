@@ -36,8 +36,15 @@ class UrlMappings {
         "/api/user/$idUser/imageinstance/$idImage/annotation"(controller:"restAnnotation"){
             action = [GET:"listByImageAndUser"]
         }
-        //TODO: /user/$id/project
-
+        "/api/user/$id/project/"(controller:"restProject"){
+            action = [GET:"listByUser"]
+        }
+        "/api/currentuser/project/"(controller:"restProject"){
+            action = [GET:"listByUser"]
+        }
+        "/api/currentuser/ontology/"(controller:"restOntology"){
+            action = [GET:"listByUser"]
+        }
 
         /* Project */
         "/api/project"(controller: "restProject"){

@@ -72,6 +72,26 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
 
   }
 
+  void testListOntologyByUser() {
+
+    log.info("create project")
+    Ontology ontology =  BasicInstance.createOrGetBasicOntology()
+
+    log.info("list project by user")
+    String URL = Infos.CYTOMINEURL+"api/currentuser/ontology.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response:"+response)
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONArray
+  }
+
   void testAddOntologyCorrect() {
 
    log.info("create ontology")

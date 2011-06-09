@@ -32,6 +32,19 @@ class RestProjectController extends RestController {
     else responseNotFound("Project","Ontology",params.id)
   }
 
+  def listByUser = {
+    log.info "List with id user:"+params.id
+    User user=null
+    if(params.id!=null) {
+      user = User.read(params.id)
+    } else {
+       user = getCurrentUser(springSecurityService.principal.id)
+    }
+
+    if(user!=null) responseSuccess(user.projects())
+    else responseNotFound("User",params.id)
+  }
+
   def show = {
     Project project = Project.read(params.id)
     if(project!=null) responseSuccess(project)

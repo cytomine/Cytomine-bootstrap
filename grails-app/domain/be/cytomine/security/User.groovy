@@ -1,6 +1,7 @@
 package be.cytomine.security
 
 import grails.converters.JSON
+import be.cytomine.ontology.Ontology
 
 class User extends SecUser {
 
@@ -24,6 +25,20 @@ class User extends SecUser {
     firstname + " " + lastname + " (" + username + ")"
   }
 
+   def ontologies() {
+    def ontologies = []
+    //add ontology created by this user
+    if(this.version!=null) ontologies.addAll(Ontology.findAllByUser(this))
+    //add ontology from project which can be view by this user
+    userGroup.each { userGroup ->
+      userGroup.group.projects().each { project ->
+        Ontology ontology = project.ontology
+        if(!ontologies.contains(ontology))
+          ontologies << ontology
+      }
+    }
+    ontologies
+  }
 
   static User getFromData(User user, jsonUser) {
     println "getFromData 1"

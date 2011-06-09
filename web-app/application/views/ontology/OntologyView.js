@@ -24,14 +24,12 @@ var OntologyView = Backbone.View.extend({
                 self.render();
             }});
     },
-    refreshAndSelect : function(idOntology) {
+    select : function(idOntology) {
         var self = this;
         console.log("refreshAndSelect:"+idOntology);
         this.idOntology = idOntology;
-        window.app.models.ontologies.fetch({
-            success : function (collection, response) {
+
                 self.render();
-            }});
     },
     render : function () {
         var self = this;

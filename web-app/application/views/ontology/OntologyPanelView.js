@@ -1,6 +1,7 @@
 var OntologyPanelView = Backbone.View.extend({
     $tree : null,
-    $info : null,
+    $infoOntology : null,
+    $infoTerm : null,
     $panel : null,
     $addTerm : null,
     $editTerm : null,
@@ -32,7 +33,8 @@ var OntologyPanelView = Backbone.View.extend({
 
         self.$panel = $(self.el);
         self.$tree = self.$panel.find("#treeontology-"+self.model.id);
-        self.$info = self.$panel.find("#infoontology-"+self.model.id);
+        self.$infoOntology = self.$panel.find("#infoontology-"+self.model.id);
+        self.$infoTerm = self.$panel.find("#infoterm-"+self.model.id);
 
         self.$addTerm = self.$panel.find('#dialog-add-ontology-term');
         self.$editTerm = self.$panel.find('#dialog-edit-ontology-term');
@@ -47,7 +49,8 @@ var OntologyPanelView = Backbone.View.extend({
 
         self.buildOntologyTree();
         self.buildButton();
-        self.buildInfoPanel();
+        self.buildInfoOntologyPanel();
+        self.buildInfoTermPanel();
 
         return this;
     },
@@ -435,7 +438,34 @@ var OntologyPanelView = Backbone.View.extend({
 
 
     },
-    buildInfoPanel : function() {
+    buildInfoOntologyPanel : function() {
+        var self = this;
+        console.log("buildInfoOntologyPanel");
+        //bad code with html but waiting to know what info is needed...
+        self.$infoOntology.empty();
+        console.log("append div");
+        self.$infoOntology.append("<div><br><div id=\"userontologyinfo-"+self.model.id +"\"></div>");
+
+        var idUserOwner = self.model.get('user');
+        var userOwner = window.app.models.users.get(idUserOwner);
+
+        $("#userontologyinfo-"+self.model.id).append("<b>Owner:</b><br>");
+        $("#userontologyinfo-"+self.model.id).append(""+userOwner.get('username') + "<br>");
+
+       var jsonuser = self.model.get('users');
+        $("#userontologyinfo-"+self.model.id).append("<b>User that use this ontology from a project:</b><br>");
+        if(jsonuser.length) {
+       _.each(jsonuser,
+             function(idUser){
+                 var user = window.app.models.users.get(idUser);
+                 $("#userontologyinfo-"+self.model.id).append(""+user.get('username') + "<br>");
+             });
+        }
+        else {
+           $("#userontologyinfo-"+self.model.id).append("There are no project that use this ontology." + "<br>");
+        }
+    },
+    buildInfoTermPanel : function() {
 
     },
 
@@ -485,9 +515,9 @@ var OntologyPanelView = Backbone.View.extend({
         var self = this;
         console.log("updateInfoPanel");
         //bad code with html but waiting to know what info is needed...
-        self.$info.empty();
+        self.$infoTerm.empty();
         console.log("append div");
-        self.$info.append("<div id=\"termchart-"+self.model.id +"\"><h3>"+name+"</h3><div id=\"terminfo-"+self.model.id +"\"></div>");
+        self.$infoTerm.append("<div id=\"termchart-"+self.model.id +"\"><h3>"+name+"</h3><div id=\"terminfo-"+self.model.id +"\"></div>");
         console.log("get term");
         $("#terminfo-"+self.model.id).append("<input type=\"color\" name=\"color\" id=\"color\" size=\"25\" />");
         $("#terminfo-"+self.model.id).append("<br>");

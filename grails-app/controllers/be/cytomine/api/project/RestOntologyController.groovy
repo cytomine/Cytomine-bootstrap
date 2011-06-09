@@ -37,6 +37,15 @@ class RestOntologyController extends RestController {
     else responseNotFound("Ontology","Term",params.id)
   }
 
+  def listByUser = {
+    log.info "List with id user:"+params.id
+    User user = getCurrentUser(springSecurityService.principal.id)
+
+    if(user!=null) responseSuccess(user.ontologies())
+    else responseNotFound("User",params.id)
+  }
+
+
   def show = {
     log.info "show with id:" + params.id
     Ontology ontology = Ontology.read(params.id)

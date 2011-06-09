@@ -26,4 +26,10 @@ class Group extends SequenceDomain {
     }
   }
 
+  def projects() {
+    return projectGroup.collect{
+      it.project
+    }
+  }
+
 }

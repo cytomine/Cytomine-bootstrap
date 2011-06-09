@@ -33,7 +33,7 @@ var ProjectCollection = Backbone.Collection.extend({
         }else if (this.ontology != undefined) {
             return "api/ontology/" + this.ontology + "/project.json";
         } else {
-            return "api/project.json";
+            return "api/currentuser/project.json";
         }
     },
     initialize: function (options) {

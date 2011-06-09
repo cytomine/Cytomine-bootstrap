@@ -19,7 +19,7 @@ var OntologyModel = Backbone.Model.extend({
 var OntologyCollection = Backbone.Collection.extend({
     model: OntologyModel,
     CLASS_NAME: "be.cytomine.ontology.Ontology",
-    url: 'api/ontology.json',
+    url: 'api/currentuser/ontology.json',
     initialize: function () {
         // something
     }

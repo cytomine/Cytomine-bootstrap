@@ -1,6 +1,7 @@
 package be.cytomine.security
 
 import be.cytomine.SequenceDomain
+import be.cytomine.ontology.Ontology
 
 class SecUser extends SequenceDomain {
 
@@ -26,6 +27,18 @@ class SecUser extends SequenceDomain {
     password column: '`password`'
     id (generator:'assigned', unique : true)
   }
+
+  def projects() {
+    def projects = []
+    userGroup.each { userGroup ->
+      userGroup.group.projects().each { project ->
+        if(!projects.contains(project))
+          projects << project
+      }
+    }
+    projects
+  }
+
 
   Set<SecRole> getAuthorities() {
     SecUserSecRole.findAllBySecUser(this).collect { it.secRole } as Set

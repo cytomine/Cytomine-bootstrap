@@ -26,9 +26,9 @@ var OntologyController = Backbone.Controller.extend({
     },
     ontology : function(idOntology,idTerm,refresh) {
         var self = this;
-        console.log("OntologyController:"+idOntology)
+        console.log("OntologyController:ontology"+idOntology);
         if (!self.view) {
-            console.log("Ontology controller");
+            console.log("self.view==null");
             window.app.models.ontologies.fetch({
                 success : function (collection, response) {
 
@@ -54,8 +54,18 @@ var OntologyController = Backbone.Controller.extend({
             console.log("self.view!=null");
             self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
             window.app.view.showComponent(window.app.view.components.warehouse);
-            if(refresh) self.view.refreshAndSelect(idOntology)
-            else self.view.select(idOntology,idTerm);
+
+            if(refresh) {
+               window.app.models.ontologies.fetch({
+                success : function (collection, response) {
+                     self.view.select(idOntology)
+                }});
+            }else {
+                self.view.select(idOntology,idTerm);
+            }
+
+
+
         }
     }
 });

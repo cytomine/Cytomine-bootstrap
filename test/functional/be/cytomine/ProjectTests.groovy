@@ -9,6 +9,7 @@ import be.cytomine.project.Project
 import be.cytomine.ontology.Ontology
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.project.ProjectGroup
+import be.cytomine.security.User
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -68,6 +69,27 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
+  }
+
+  void testListProjectByUser() {
+
+    log.info("create project")
+    Project project =  BasicInstance.createOrGetBasicProject()
+    User user =  BasicInstance.createOrGetBasicUser()
+
+    log.info("list project by user")
+    String URL = Infos.CYTOMINEURL+"api/user/"+ user.id +"/project.json"
+    HttpClient client = new HttpClient();
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response:"+response)
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONArray
   }
 
 

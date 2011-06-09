@@ -21,6 +21,7 @@ class AddOntologyCommand extends AddCommand implements UndoRedoCommand {
     Ontology newOntology=null
     try{
       def json = JSON.parse(postData)
+      json.user = user.id
       newOntology = Ontology.createFromData(json)
       return super.validateAndSave(newOntology,["#ID#",json.name] as Object[])
     }catch(ConstraintException  ex){

@@ -71,6 +71,10 @@ var EditProjectDialog = Backbone.View.extend({
              function(user){
                  console.log(user + " " + $('#users'+user).length);
                  $('#users'+user).attr('checked', true);
+                 //TODO: if user.id == currentuser, lock the checkbox (a user cannot delete himself from a project)
+                 if(window.app.status.user.id==user.id) {
+
+                 }
              });
 
     },

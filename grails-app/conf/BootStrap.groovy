@@ -1088,14 +1088,14 @@ class BootStrap {
         createRetrievalServers(retrievalServerSamples)
 
         def ontologySamples = [
-                [name: "ATEST"],
+                [name: "ATEST", user:'lrollus'],
                 /* ANAPATH */
-                [name: "LBA"],
-                [name: "ASP"],
-                [name: "Frottis"],
+                [name: "LBA",user:'lrollus'],
+                [name: "ASP",user:'lrollus'],
+                [name: "Frottis",user:'stevben'],
                 /* LBTD */
-                [name : "Tissus"],
-                [name : "Cellules"]
+                [name : "Tissus",user:'stevben'],
+                [name : "Cellules",user:'stevben']
 
         ]
         createOntology(ontologySamples)
@@ -2155,7 +2155,8 @@ class BootStrap {
         if(!ontologies) {
             def ontology = null
             ontologySamples.each { item ->
-                ontology = new Ontology(name:item.name)
+              User user = User.findByUsername(item.user)
+                ontology = new Ontology(name:item.name,user:user)
                 println "create ontology="+ ontology.name
 
                 if(ontology.validate()) {

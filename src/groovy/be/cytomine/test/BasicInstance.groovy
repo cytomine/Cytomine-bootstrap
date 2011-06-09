@@ -358,7 +358,7 @@ log.debug  "createOrGetBasicUser()"
     def ontology = Ontology.findByName("BasicOntology")
     if(!ontology) {
 
-      ontology = new Ontology(name:"BasicOntology")
+      ontology = new Ontology(name:"BasicOntology",user:createOrGetBasicUser())
       ontology.validate()
       log.debug "ontology.errors="+ontology.errors
       ontology.save(flush : true)
@@ -380,7 +380,7 @@ log.debug  "createOrGetBasicUser()"
       ontology = Ontology.findByName(randomInt+"")
    }
 
-    ontology =  new Ontology(name:randomInt+"")
+    ontology =  new Ontology(name:randomInt+"",user:createOrGetBasicUser())
     ontology.validate()
    ontology
   }
