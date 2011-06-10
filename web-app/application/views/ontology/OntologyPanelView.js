@@ -89,7 +89,7 @@ var OntologyPanelView = Backbone.View.extend({
 
     getCurrentTermId : function() {
         var node = this.$tree.dynatree("getActiveNode");
-        console.log("GetActiveNode="+node.data.id);
+        //console.log("GetActiveNode="+node.data.id);
         if(node==null) return null;
         else return node.data.id;
     },
@@ -172,6 +172,7 @@ var OntologyPanelView = Backbone.View.extend({
     refuseDeleteOntology : function(numberOfProject) {
         console.log("Ontology is linked with project");
         var self = this;
+        $("#delete-ontology-refuse").replaceWith("");
         require(["text!application/templates/ontology/OntologyDeleteRefuseDialog.tpl.html"], function(tpl) {
             // $('#dialogsTerm').empty();
             console.log("tpl=");
@@ -199,6 +200,7 @@ var OntologyPanelView = Backbone.View.extend({
     acceptDeleteOntology : function() {
         console.log("Ontology is not linked with project");
         var self = this;
+        $("#delete-ontology-confirm").replaceWith("");
         require(["text!application/templates/ontology/OntologyDeleteConfirmDialog.tpl.html"], function(tpl) {
             // $('#dialogsTerm').empty();
             console.log("tpl=");
