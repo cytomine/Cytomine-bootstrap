@@ -121,10 +121,14 @@ var OntologyView = Backbone.View.extend({
                 index = index + 1;
             });
             //self.fetchOntologies();
+            console.log(self.$tabsOntologies);
+
+
             if(!self.alreadyBuild)
                 self.$tabsOntologies.accordion();
             console.log("activate = " + selectedOntologyIndex);
             self.$tabsOntologies.accordion( "activate" , selectedOntologyIndex );
+             $(".accordeonOntology").css("height", "auto");
             self.ontologiesPanel[selectedOntologyIndex].selectTerm(self.idTerm);
         });
     },
