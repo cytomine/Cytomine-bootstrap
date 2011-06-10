@@ -10,7 +10,11 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
     $inputNewColor : null,
     $errorMessage : null,
     $errorLabel : null,
+    $addFolderButton : null,
     action : null,
+    events: {
+        "click .addFolder": "addFolder"
+    },
     initialize: function(options) {
         this.container = options.container;
         this.ontologyPanel = options.ontologyPanel;
@@ -41,7 +45,9 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
 
         //remove older dialog
         self.$termDialog  = $(self.el).find("#dialog-"+self.action+"-ontology-term");
-        self.$termDialog.replaceWith("");
+
+        $("#dialog-Edit-ontology-term").replaceWith("");
+        $("#dialog-Add-ontology-term").replaceWith("");
 
         var dialog = _.template(ontologyAddOrEditTermViewTpl, {
             oldColor : self.model.get('color'),
@@ -60,6 +66,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         self.$inputOldColor = self.$panel.find('#oldColor');
         self.$inputNewColor = self.$panel.find('#color1');
 
+        self.$addFolderButton  = self.$panel.find('.addFolder');
 
         self.$errorMessage =  self.$panel.find("#" + self.action +"ontologytermerrormessage");
         self.$errorLabel =  self.$panel.find("#" + self.action +"ontologytermerrorlabel");
@@ -112,6 +119,8 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         var self = this;
         self.$textboxName.val(self.model.get("name"));
 
+                console.log(self.$textboxName.length);
+
         self.$textboxName.bind('keyup mouseup change',function(e){
             var node = self.$tree.dynatree("getTree").getNodeByKey(self.model.id);
             var color = "#119b04"
@@ -136,11 +145,23 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         self.$inputNewColor.css("background", color);
         self.$inputNewColor.css("color", self.$inputOldColor.css("color"));
     },
+    addFolder : function() {
+        //create a new node as a folder
+
+        //automatically put the new term node under this folder
+
+        //MOVE IN ADD/UPDATED when you save it, check if the parent node is this new folder, if its true save the relation
+
+    },
 
     buildParentInfo : function() {
         console.log("buildParentInfo");
         var self = this;
         console.log("buildOntologyTree for ontology " + self.ontology.id);
+
+        self.$addFolderButton.button({
+            icons : {secondary: "ui-icon-folder-collapsed" }
+        });
 
         self.$tree.empty() ;
         self.$tree.dynatree({
@@ -193,6 +214,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             idPrefix: "" + self.action +"dynatree-Ontology-"+self.model.id+"-" ,
             debugLevel: 0
         });
+        console.log("STUFF FOR ADD");
         //if add panel, add the "temp" model to the tree (event if it's not yet a part of the ontology)
         if(self.action=="Add") {
             var node = self.$tree.dynatree("getTree").getNodeByKey(self.ontology.id);
@@ -203,15 +225,25 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
                 isFolder: false
             });
         }
-
+        console.log("CHANGE COLOR");
          //make the new term node visible
+      /*  console.log("1 self.model.id="+self.model.id);
         var node = self.$tree.dynatree("getTree").getNodeByKey(self.model.id);
+        console.log("2");
+        console.log(node);
         var title = node.data.title
+        console.log("3");
         var color = "#9ac400"
+        console.log("4");
         var htmlNode = "<label style='color:{{color}}'>{{title}}</label>"
+        console.log("5:"+htmlNode);
         var nodeTpl = _.template(htmlNode, {title : title, color : color});
+        console.log("6:");
+        console.log(nodeTpl);
         node.setTitle(nodeTpl);
+        console.log("7");     */
 
+        console.log("EXPAND ALL");
         //expand all nodes
         self.$tree.dynatree("getRoot").visit(function(node){
             node.expand(true);
