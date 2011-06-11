@@ -67,7 +67,7 @@ class BasicInstance {
   static Mime createOrGetBasicMime() {
 
     log.debug "createOrGetBasicMime1()"
-    def jp2mime = Mime.findByExtension("jp2")
+    def jp2mime = Mime.findByExtension("tif")
     jp2mime.refresh()
     jp2mime.imageServers()
     jp2mime
