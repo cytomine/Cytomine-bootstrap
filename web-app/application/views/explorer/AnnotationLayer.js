@@ -32,6 +32,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.hoverControl = null;
     this.deleteOnSelect = false; //true if select tool checked
     this.measureOnSelect = false;
+    this.magicOnClick = false;
 }
 
 AnnotationLayer.prototype = {
@@ -126,6 +127,7 @@ AnnotationLayer.prototype = {
          }
          }*/
         map.initTools(this.controls);
+        map.initAutoAnnoteTools();
     },
 
 
@@ -508,6 +510,7 @@ AnnotationLayer.prototype = {
         //Simulate an OpenLayers.Control.EraseFeature tool by using SelectFeature with the flag 'deleteOnSelect'
         this.deleteOnSelect = false;
         this.measureOnSelect = false;
+        this.magicOnClick = false;
         for (key in this.controls) {
             var control = this.controls[key];
             if (name == key) {

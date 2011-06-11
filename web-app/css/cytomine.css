@@ -277,7 +277,7 @@ div .ontologypanel {
     position : absolute;
     left : 30px;
     bottom : 100px;
-    max-height: 300px;
+    max-height: 500px;
     z-index : 2021;
     background-color: rgba(0, 0, 0, 0.6);
     color : #fff;
@@ -327,9 +327,11 @@ div .layerSwitcherPanel {
     -webkit-border-radius: 6px;
     border-radius: 6px;
     opacity: 0.7;
-    width : 230px;
-    height : 120px;
+    width : 250px;
+
 }
+
+div.layerSwitcherPanel label, input { display:inline; }
 
 div.olControlOverviewMapElement img {
     border:1px;
@@ -466,7 +468,7 @@ fieldset {
 
 .checkbox-select {
     display: block;
-/*    float: left;*/
+    /*    float: left;*/
     position: absolute;
     top: 118px;
     left: 10px;
@@ -550,7 +552,28 @@ a.checkbox-deselect {
 #lRight{
     float: right;
 }
-.navPanel { margin: 0 0.5em 0.5em 0.5em; }
+.widget {
+    margin: 10px; border:  1px solid; display: block; width : 500px; height : 400px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+}
+.widget-content {
+    margin-top : 3px;
+    padding: 10px;
+}
+.widget-header {
+    background-color: rgba(0, 0, 0, 0.5);
+    color : #fff;
+    text-align: left;
+    margin-left: 10px;
+    margin-top: 5px;
+    margin-right: 5px;
+    font-weight: bold;
+    padding: 0px;
+    margin : 0px;
+
+}
 .centralPanel { margin-bottom: 1em; }
 .fakeLink{ color:navy; cursor:pointer; }
 .ui-icon-dashboard { display: inline; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }

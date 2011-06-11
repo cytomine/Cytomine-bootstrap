@@ -15,9 +15,9 @@ import be.cytomine.project.Slide
 import be.cytomine.ontology.Annotation
 import be.cytomine.server.resolvers.Resolver
 import be.cytomine.image.server.Storage
+import be.cytomine.image.server.StorageAbstractImage
 
 class AbstractImage extends SequenceDomain {
-
     String filename
 
     Scanner scanner
@@ -42,7 +42,7 @@ class AbstractImage extends SequenceDomain {
     */
 
     static belongsTo = Slide
-    static hasMany = [ annotations : Annotation ]
+    static hasMany = [ annotations : Annotation, storageAbstractImages : StorageAbstractImage ]
 
     static transients = ["zoomLevels"]
 
@@ -162,10 +162,11 @@ class AbstractImage extends SequenceDomain {
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
             returnArray['info'] = it.slide?.name
             //returnArray['annotations'] = it.annotations
-            returnArray['thumb'] = it.getThumbURL()
-            returnArray['preview'] = it.getPreviewURL()
-            //returnArray['thumb'] = UrlApi.getThumbURLWithImageId(it.id)
+            /*returnArray['thumb'] = it.getThumbURL()*/
+
+            returnArray['thumb'] = UrlApi.getThumbURLWithImageId(it.id)
             returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.id)
+            returnArray['imageServerInfos'] = UrlApi.getImageServerInfosWithImageId(it.id)
             //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
 
             returnArray['imageServerBaseURL'] = it.getMime().imageServers().collect { it.getBaseUrl() }
@@ -192,29 +193,18 @@ class AbstractImage extends SequenceDomain {
 
     def getThumbURL()  {
         Collection<ImageServer> imageServers = getMime().imageServers()
-        def urls = []
-        imageServers.each {
-            Resolver resolver = Resolver.getResolver(it.className)
-            String url = resolver.getThumbUrl(it.getBaseUrl(), getPath())
-            urls << url
-        }
-        if(urls.size()<1) return null //to do, send an url to a default blank image or error image
-
-        def index = (Integer) Math.round(Math.random()*(urls.size()-1)) //select an url randomly
-
-        return urls[index]
+        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
+        Resolver resolver = Resolver.getResolver(imageServers[index].className)
+        String url = resolver.getThumbUrl(imageServers[index].getBaseUrl(), getPath())
+        return url
     }
 
     def getMetadataURL()  {
-        Set<ImageServer> imageServers = getMime().imageServers()
-        def urls = []
-        imageServers.each {
-            Resolver resolver = Resolver.getResolver(it.className)
-            String url = resolver.getMetaDataURL(it.getBaseUrl(), getPath())
-            urls << url
-        }
-        def index = (Integer) Math.round(Math.random()*(urls.size()-1)) //select an url randomly
-        return urls[index]
+        Collection<ImageServer> imageServers = getMime().imageServers()
+        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
+        Resolver resolver = Resolver.getResolver(imageServers[index].className)
+        String url = resolver.getMetaDataURL(imageServers[index].getBaseUrl(), getPath())
+        return url
     }
 
     def getCropURL(int topLeftX, int topLeftY, int width, int height)  {

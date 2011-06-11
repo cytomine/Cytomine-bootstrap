@@ -15,7 +15,7 @@ class IIPResolver extends Resolver{
     public IIPResolver() {
         super()
 
-        this.args = new LinkedList<String, String>()
+        this.args = new LinkedList<String>()
     }
 
     public String toURL(String base_url) {
@@ -30,27 +30,30 @@ class IIPResolver extends Resolver{
     }
 
     public String getThumbUrl(String baseUrl, String imagePath) {
-        args.add("zoomify" + ARGS_EQUAL + imagePath)
-        def url = toURL(baseUrl)
-        url += "/TileGroup0/0-0-0.jpg"
-        //http://is5.cytomine.be:48/fcgi-bin/iipsrv.fcgi/fcgi-bin/iipsrv.fcgi?zoomify=/media/datalvm/anapath/upload/vms/OVA17cyto-2010-11-1513.09.42_clip.vms/TileGroup0/0-0-0.jpg
-        return url
+        args.clear()
+        args.add("FIF" + ARGS_EQUAL + imagePath)
+        args.add("SDS" + ARGS_EQUAL +  "0,90")
+        args.add("CNT" + ARGS_EQUAL + "1.0")
+        args.add("WID" + ARGS_EQUAL + "200")
+        args.add("SQL" + ARGS_EQUAL + "99")
+        args.add("CVT" + ARGS_EQUAL + "jpeg")
+        return toURL(baseUrl)
 
     }
 
     public String getPreviewUrl(String baseUrl, String imagePath) {
-        //args.put("zoomify", imagePath + "/TileGroup0/0-0-0.jpg")
+        args.clear()
         args.add("FIF" + ARGS_EQUAL + imagePath)
         args.add("SDS" + ARGS_EQUAL + "0,90")
         args.add("CNT" + ARGS_EQUAL + "1.0")
         args.add("CVT" + ARGS_EQUAL + "jpeg")
-        /*args.add("WID" + ARGS_EQUAL + "233")*/
         args.add("QLT" + ARGS_EQUAL + "99")
         return toURL(baseUrl)
     }
 
     public String getMetaDataURL(String baseUrl, String imagePath) {
         //http://localhost/fcgi-bin/iipsrv.fcgi?FIF=/home/maree/CYTOMINE/WholeSlides/Aperio/o.tif&obj=IIP,1.0&obj=Max-size&obj=Tile-size&obj=Resolution-number
+        args.clear()
         args.add("FIF" + ARGS_EQUAL +  imagePath)
         args.add("obj" + ARGS_EQUAL +  "IIP,1.0")
         args.add("obj" + ARGS_EQUAL +  "Max-size")
@@ -74,11 +77,14 @@ class IIPResolver extends Resolver{
         def y = 1/(dimensions.height / (dimensions.height - topLeftY))
         def w = 1/(dimensions.width / width)
         def h = 1/(dimensions.height / height)
+        args.clear()
         args.add("FIF" + ARGS_EQUAL +  imagePath)
         args.add("RGN" + ARGS_EQUAL +  x + "," + y + "," + w + "," + h)
         args.add("CVT" + ARGS_EQUAL + "jpeg")
         def url = toURL(baseUrl)
-        println url
+        println "baseUrl " + baseUrl
+        println "imagePath " + imagePath
+        println ">>>>"  + url
         //RGN=0.4399859205,0.4414301166,0.01173295788,0.01754026954&CVT=JPEG
         return url
     }
@@ -110,11 +116,13 @@ class IIPResolver extends Resolver{
     def getZoomLevels (baseUrl, imagePath) {
         def dimensions = getWidthHeight(baseUrl, imagePath)
         def tmpWidth = dimensions.width
-        def nbZoom = 0;
-        while (tmpWidth >= 256) {
-            nbZoom++;
-            tmpWidth = tmpWidth / 2;
+        def tmpHeight = dimensions.height
+        def nbZoom = 0
+        while (tmpWidth >= 256 || tmpHeight >= 256) {
+            nbZoom++
+            tmpWidth = tmpWidth / 2
+            tmpHeight = tmpHeight / 2
         }
-        return [min : 0, max : nbZoom, middle : (nbZoom / 2)]
+        return [min : 0, max : nbZoom, middle : (nbZoom / 2), overviewWidth : Math.round(tmpWidth), overviewHeight : Math.round(tmpHeight), width : dimensions.width, height : dimensions.height]
     }
 }

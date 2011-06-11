@@ -10,62 +10,65 @@ var OntologyController = Backbone.Controller.extend({
 
 
 
-    routes: {
-        "ontology"            :   "ontology",
-        "ontology/:idOntology"           :   "ontology",
-        "ontology/:idOntology/:idTerm"           :   "ontology"
-    },
-    ontology : function() {
-        this.ontology(0,0,false);
-    },
-    ontology : function(idOntology) {
-        this.ontology(idOntology,0,false);
-    },
-    ontology : function(idOntology,idTerm) {
-        this.ontology(idOntology,idTerm,false);
-    },
-    ontology : function(idOntology,idTerm,refresh) {
-        var self = this;
-        console.log("OntologyController:ontology"+idOntology);
-        if (!self.view) {
-            console.log("self.view==null");
-            window.app.models.ontologies.fetch({
-                success : function (collection, response) {
+       routes: {
+          "ontology"            :   "ontology",
+          "ontology/:idOntology"           :   "ontology",
+          "ontology/:idOntology/:idTerm"           :   "ontology"
+       },
+       ontology : function() {
+          this.ontology(0,0,false);
+       },
+       ontology : function(idOntology) {
+          this.ontology(idOntology,0,false);
+       },
+       ontology : function(idOntology,idTerm) {
+          this.ontology(idOntology,idTerm,false);
+       },
+       ontology : function(idOntology,idTerm,refresh) {
+          var self = this;
+          console.log("OntologyController:ontology"+idOntology);
 
-                    window.app.models.terms.fetch({
-                        success : function (terms, response) {
-                            self.view = new OntologyView({
-                                model : collection,
-                                el:$("#warehouse > .ontology"),
-                                container : window.app.view.components.warehouse,
-                                idOntology : idOntology, //selected ontology
-                                idTerm : idTerm
-                            }).render();
-                            self.view.container.views.ontology = self.view;
+          if (!self.view) {
+             console.log("self.view==null");
+             window.app.models.ontologies.fetch({
+                    success : function (collection, response) {
 
-                            self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
-                            window.app.view.showComponent(window.app.view.components.warehouse);
-                        }
-                    });
-                }
-            });
-        }
-        else {
-            console.log("self.view!=null");
-            self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
-            window.app.view.showComponent(window.app.view.components.warehouse);
+                       window.app.models.terms.fetch({
+                              success : function (terms, response) {
+                                 self.view = new OntologyView({
+                                        model : collection,
+                                        el:$("#warehouse > .ontology"),
+                                        container : window.app.view.components.warehouse,
+                                        idOntology : idOntology, //selected ontology
+                                        idTerm : idTerm
+                                     }).render();
 
-            if(refresh) {
-               window.app.models.ontologies.fetch({
-                success : function (collection, response) {
-                     self.view.select(idOntology)
-                }});
-            }else {
+                                 self.view.container.views.ontology = self.view;
+
+                                 self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
+
+                              }
+                           });
+                    }
+                 });
+             window.app.view.showComponent(window.app.view.components.warehouse);
+          }
+          else {
+             console.log("self.view!=null");
+             self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
+             window.app.view.showComponent(window.app.view.components.warehouse);
+
+             if(refresh) {
+                window.app.models.ontologies.fetch({
+                       success : function (collection, response) {
+                          self.view.select(idOntology)
+                       }});
+             }else {
                 self.view.select(idOntology,idTerm);
-            }
+             }
 
 
 
-        }
-    }
-});
+          }
+       }
+    });

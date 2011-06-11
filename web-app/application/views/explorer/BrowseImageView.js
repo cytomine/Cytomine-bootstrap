@@ -1,7 +1,7 @@
 var BrowseImageView = Backbone.View.extend({
        tagName: "div",
        layers: [],
-       baseLayer : null,
+       baseLayers : [],
        map : null,
        initOptions : null,
        /**
@@ -109,13 +109,17 @@ var BrowseImageView = Backbone.View.extend({
         * @param layer the layer to add
         */
        addBaseLayer : function(layer) {
+          var self = this;
           this.map.addLayer(layer);
-          this.map.setBaseLayer(this.baseLayer);
-          var layerID = "layerSwitch" + (this.layers.length - 1); //index of the layer in this.layers array
-          var liLayer = _.template("<li><input type='radio' id='{{id}}' name='baseLayerRadio' checked /><label style='font-weight:bold;color:#FFF' for='{{id}}'>{{name}}</label></li>", {id : layerID, name : layer.name.substr(0,15)+"..."});
+          this.baseLayers.push(layer);
+          self.map.setBaseLayer(layer);
+          var radioName = "layerSwitch-" + this.model.get("id");
+          var layerID = "layerSwitch-" + this.model.get("id") + "-" + new Date().getTime(); //index of the layer in this.layers array
+          var liLayer = _.template("<li><input type='radio' id='{{id}}' name='{{radioName}}' checked/><label style='font-weight:bold;color:#FFF' for='{{id}}'> {{name}}</label></li>", {id : layerID, radioName:radioName, name : layer.name.substr(0,15)});
           $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").append(liLayer);
+          $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").find("#"+layerID);
           $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").find("#"+layerID).click(function(){
-             console.log(">>"+layer.name);
+             self.map.setBaseLayer(layer);
           });
 
        },
@@ -189,7 +193,7 @@ var BrowseImageView = Backbone.View.extend({
                       t_width = t_width / 2;
                       t_height = t_height / 2;
                    }
-                   metadata = {width : value[0], height : value[1], nbZoom : nbZoom, overviewWidth : t_width, overviewHeight : t_height};
+                   metadata = {width : value[0], height : value[1], nbZoom : nbZoom, overviewWidth : 200, overviewHeight : Math.round((200/value[0]*value[1]))};
 
                 }
 
@@ -204,7 +208,13 @@ var BrowseImageView = Backbone.View.extend({
              console.log("baseURL : " + baseURLs.length);
              console.log("nbZoom " + metadata.nbZoom);
              var zoomify_url = baseURLs[0] + "/fcgi-bin/iipsrv.fcgi?zoomify=" + self.model.get('path') +"/";
-             self.baseLayer = new OpenLayers.Layer.Zoomify( self.model.get('filename'), zoomify_url,
+             var baseLayer = new OpenLayers.Layer.Zoomify(
+                 "Original",
+                 zoomify_url,
+                 new OpenLayers.Size( metadata.width, metadata.height )
+                 , {transitionEffect: 'resize'}
+             );
+             var anotherLayer = new OpenLayers.Layer.Zoomify( "Otsu", "http://localhost:8080/cytomine-web/proxy/otsu?url="+zoomify_url,
                  new OpenLayers.Size( metadata.width, metadata.height ) );
 
              var layerSwitcher = self.createLayerSwitcher();
@@ -225,22 +235,29 @@ var BrowseImageView = Backbone.View.extend({
              };
 
              var overviewMap = new OpenLayers.Layer.Image(
-                 'NameOfOverviewMap',
+                 "Overview"+self.model.get("id"),
                  self.model.get("thumb"),
                  new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
-                 new OpenLayers.Size(256,256)
+                 new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight)
              );
 
+             console.log("metadata.overviewHeight = " + metadata.overviewHeight);
              var overviewMapControl = new OpenLayers.Control.OverviewMap({
                     size: new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight),
                     layers: [overviewMap],
                     div: document.getElementById('overviewMap' + self.model.get('id')),
                     minRatio: 1,
-                    maxRatio: 1024
+                    maxRatio: 1024,
+                    mapOptions : {
+                       maxExtent: new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
+                       maximized: true
+                    }
                  });
 
              self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
-             self.addBaseLayer(self.baseLayer);
+             self.addBaseLayer(anotherLayer);
+             self.addBaseLayer(baseLayer);
+
              self.map.zoomToMaxExtent();
              self.map.addControl(overviewMapControl);
 
@@ -266,7 +283,7 @@ var BrowseImageView = Backbone.View.extend({
        initDjatoka: function () {
           console.log("initDjatoka");
           var self = this;
-          this.baseLayer = new OpenLayers.Layer.OpenURL(this.model.get('filename'), this.model.get('imageServerBaseURL'), {
+          var baseLayer = new OpenLayers.Layer.OpenURL(this.model.get('filename'), this.model.get('imageServerBaseURL'), {
                  transitionEffect: 'resize',
                  layername: 'basic',
                  format: 'image/jpeg',
@@ -275,10 +292,10 @@ var BrowseImageView = Backbone.View.extend({
               });
 
 
-          var metadata = this.baseLayer.getImageMetadata();
-          var resolutions = this.baseLayer.getResolutions();
+          var metadata = baseLayer.getImageMetadata();
+          var resolutions = baseLayer.getResolutions();
           var maxExtent = new OpenLayers.Bounds(0, 0, metadata.width, metadata.height);
-          var tileSize = this.baseLayer.getTileSize();
+          var tileSize = baseLayer.getTileSize();
           var lon = metadata.width / 2;
           var lat = metadata.height / 2;
           var mapOptions = {
@@ -301,7 +318,7 @@ var BrowseImageView = Backbone.View.extend({
                 new OpenLayers.Control.OverviewMap({
                        div: document.getElementById('overviewMap' + this.model.get('id')),
                        //size: new OpenLayers.Size(metadata.width / Math.pow(2, openURLLayer.getViewerLevel()), metadata.height / Math.pow(2,(openURLLayer.getViewerLevel()))),
-                       size: new OpenLayers.Size(metadata.width / Math.pow(2, this.baseLayer.getViewerLevel()), metadata.height / Math.pow(2, (this.baseLayer.getViewerLevel()))),
+                       size: new OpenLayers.Size(metadata.width / Math.pow(2, baseLayer.getViewerLevel()), metadata.height / Math.pow(2, (baseLayer.getViewerLevel()))),
                        minRatio: 1,
                        maxRatio: 1024,
                        mapOptions: mapOptions
@@ -312,9 +329,31 @@ var BrowseImageView = Backbone.View.extend({
 
           this.map = new OpenLayers.Map("map" + this.model.get('id'), options);
           console.log("MAP CREATED + " + this.map);
-          this.addBaseLayer(this.baseLayer);
+          this.addBaseLayer(baseLayer);
           this.map.setCenter(new OpenLayers.LonLat(lon, lat), 2);
           self.createOverviewMap();
+       },
+       initAutoAnnoteTools : function () {
+
+          var self = this;
+
+          var handleMapClick = function handleMapClick(evt) {
+
+             if (!self.getUserLayer().magicOnClick) return;
+             // don't select the point, select a square around the click-point
+             var clickbuffer = 18; //how many pixels around should it look?
+             var sw = self.map.getLonLatFromViewPortPx(new
+                 OpenLayers.Pixel(evt.xy.x-clickbuffer , evt.xy.y+clickbuffer) );
+             var ne = self.map.getLonLatFromViewPortPx(new
+                 OpenLayers.Pixel(evt.xy.x+clickbuffer , evt.xy.y-clickbuffer) );
+
+             // open a popup window, supplying the coords in GET
+             var url =  sw.lon+','+sw.lat+','+ne.lon+','+ne.lat;
+             alert(url);
+          }
+          this.map.events.register('click', this.map, handleMapClick);
+
+
        },
        /**
         * Init the toolbar
@@ -387,6 +426,12 @@ var BrowseImageView = Backbone.View.extend({
              self.getUserLayer().toggleControl("polygon");
              self.getUserLayer().disableHightlight();
           });
+          toolbar.find('input[id=magic' + this.model.get('id') + ']').click(function () {
+             self.getUserLayer().controls.select.unselectAll();
+             self.getUserLayer().toggleControl("select");
+             self.getUserLayer().magicOnClick = true;
+             self.getUserLayer().disableHightlight();
+          });
           toolbar.find('input[id=modify' + this.model.get('id') + ']').click(function () {
              self.getUserLayer().toggleEdit();
              self.getUserLayer().toggleControl("modify");
@@ -428,6 +473,7 @@ var BrowseImageView = Backbone.View.extend({
         */
        initVectorLayers: function () {
           var self = this;
+
           window.app.models.users.fetch({
                  success: function () {
                     window.app.models.users.each(function (user) {

@@ -2,6 +2,7 @@ package ais
 
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.server.Storage
+import grails.converters.JSON
 
 class StorageService {
 
@@ -34,11 +35,11 @@ class StorageService {
         def proc = command.execute()                 // Call *execute* on the string
         proc.waitFor()                               // Wait for the command to finish
 
-        // Obtain status and output
-        println "return code: ${ proc.exitValue()}"
-        println "stderr: ${proc.err.text}"
-        println "stdout: ${proc.in.text}" // *out* from the external program is *in* for groovy
-        return proc.in.text
+        def exitValue = proc.exitValue()
+        def stdderr = proc.err.text
+        def stdout = proc.in.text
+
+        return JSON.parse(stdout)
     }
 
     def getRemotePath (Storage storage, AbstractImage image){

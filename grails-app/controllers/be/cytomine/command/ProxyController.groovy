@@ -17,7 +17,8 @@ import imagej.Multi_OtsuThreshold
 class ProxyController {
 
     def binary = {
-        def url = params.url
+        def split = request.queryString.split("http://")
+        def url = "http://" + split[1]
         def out = new ByteArrayOutputStream()
         out << new URL(url).openStream()
         InputStream inputStream = new ByteArrayInputStream(out.toByteArray());
@@ -45,14 +46,19 @@ class ProxyController {
     }
 
     def otsu = {
-        def url = params.url
+
+        def split = request.queryString.split("http://")
+        def url = "http://" + split[1]
         def out = new ByteArrayOutputStream()
         out << new URL(url).openStream()
-        println "streamed"
+
         InputStream inputStream = new ByteArrayInputStream(out.toByteArray());
-        BufferedImage bufferedImage = ImageIO.read(inputStream);
+        BufferedImage bufferedImage;
+
+        bufferedImage = ImageIO.read(inputStream);
         ImagePlus ip = new ImagePlus(url,bufferedImage)
         ImageConverter ic = new ImageConverter(ip)
+
         ic.convertToGray8()
         Multi_OtsuThreshold dt = new Multi_OtsuThreshold()
         dt.setup(url, ip)
@@ -61,15 +67,26 @@ class ProxyController {
         ImageIO.write(dt.getResult().getBufferedImage(), "jpg", baos);
         byte[] bytesOut = baos.toByteArray();
         response.contentLength = baos.size();
+        response.setHeader("Connection","Keep-Alive")
+                response.setHeader("Accept-Ranges","bytes")
+                response.setHeader("Content-Type", "image/jpeg")
+
         withFormat {
             jpg {
                 if (request.method == 'HEAD') {
                     render(text: "", contentType: "image/jpeg");
                 }
                 else {
-                    response.contentType = "image/jpeg"; response.getOutputStream() << bytesOut
+                    response.contentType = "image/jpeg";
+                    response.getOutputStream() << bytesOut
+                    out.flush()
+                    response.getOutputStream().flush()
                 }
             }
         }
+
+
+
+
     }
 }
