@@ -46,11 +46,11 @@ var ProjectDashboardView = Backbone.View.extend({
              self.model = model;
 
              self.fetchProjectInfo();
-             self.refreshImages();
+             /*self.refreshImages();*/
 
              //refresh selected tab
              console.log("selectedTermTab="+self.selectedTermTab);
-             self.refreshAnnotations(self.selectedTermTab);
+             /*self.refreshAnnotations(self.selectedTermTab);*/
 
              //TODO: must be improve!
              new AnnotationCollection({project:self.model.id}).fetch({
@@ -178,6 +178,7 @@ var ProjectDashboardView = Backbone.View.extend({
                               el:$elem,
                               container : window.app.view.components.warehouse
                            }).render();
+                       console.log("Looking for annotationsViews " + term);
                        self.annotationsViews[term].refresh(collection);
                     }
                  });
@@ -189,38 +190,6 @@ var ProjectDashboardView = Backbone.View.extend({
                     }
                  });
           }
-       },
-       refreshAnnotationsOLD : function (annotations) {
-
-
-          var self = this;
-
-          //init panel for all annotation (with or without term
-          /*self.annotations = new AnnotationCollection({project:self.model.id}).fetch({
-           success : function (collection, response) {
-           //$("#tabsterm-all").empty();
-
-           }
-           });*/
-
-          self.annotationsViews[0].refresh(annotations);
-
-          //init specific panel for each term
-          new TermCollection({idOntology:self.model.get('ontology')}).fetch({
-                 success : function (collection, response) {
-                    //init specific panel
-                    collection.each(function(term) {
-                       //$("#tabsterm-"+term.get("id")).empty();
-                       new AnnotationCollection({term:term.get("id"),project:self.model.id}).fetch({
-                              success : function (collection, response) {
-                                 self.annotationsViews[term.id].refresh(collection);
-
-                              }});
-
-                    });
-                 }
-              });
-
        },
        /**
         * Get and Print ALL images (use for the first time)
@@ -481,9 +450,9 @@ var ProjectDashboardView = Backbone.View.extend({
 
           setTimeout(function(){
              $(self.el).find(".widgets").masonry({
-                 itemSelector: '.widget'
-              });
+                    itemSelector: '.widget'
+                 });
              $(self.el).find(".widgets").fadeIn('slow');
-          }, 1000);
+          }, 2000);
        }
     });

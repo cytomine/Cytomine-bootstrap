@@ -553,7 +553,10 @@ a.checkbox-deselect {
     float: right;
 }
 .widget {
-    margin: 10px; border:  1px solid; display: block; width : 500px; height : 400px;
+    margin: 10px;
+    border:  1px solid;
+    display: block; width : 500px;
+    height : 400px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;

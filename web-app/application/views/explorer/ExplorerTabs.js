@@ -31,23 +31,31 @@ var ExplorerTabs = Backbone.View.extend({
                  add: function(event, ui) {
                     console.log("select tabs " + ui.panel.id);
                     $("#"+ui.panel.id).parent().parent().css('height', "100%");
-                    if (ui.panel.id != "tabs-0") { //tab is not the dashboard
+                    if (ui.panel.id != "tabs-0" && ui.panel.id != "tabs-1"  && ui.panel.id != "tabs-2") { //tab is not the dashboard
                        $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;');
                        $("a[href=#"+ui.panel.id+"]").parent().append("<span class='ui-icon ui-icon-close'>Remove Tab</span>");
                        $("a[href=#"+ui.panel.id+"]").parent().find("span.ui-icon-close" ).click(function() {
                           var index = $( "li", tabs ).index( $( this ).parent() );
                           self.removeTab(index);
                        });
+                       tabs.tabs('select', '#' + ui.panel.id);
                     }
-                    tabs.tabs('select', '#' + ui.panel.id);
+
                  },
                  show: function(event, ui){
                     $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;overflow:auto');
                     return true;
                  },
                  select: function(event, ui) {
+                    var dashboardTab = self.getDashboard();
                     if (ui.panel.id == "tabs-0") { //tab is  the dashboard
-                       self.refreshDashboard();
+                       dashboardTab.view.refresh();
+                    }
+                    if (ui.panel.id == "tabs-1") {
+                       dashboardTab.view.refresh();
+                    }
+                    if (ui.panel.id == "tabs-2") {
+                        dashboardTab.view.refreshAnnotations(dashboardTab.view.selectedTermTab);
                     }
                     return true;
                  }
@@ -79,8 +87,8 @@ var ExplorerTabs = Backbone.View.extend({
                            initOptions : options,
                            el: tabs
                         }).render();
-                     console.log("view:");
-                     console.log(view);
+                    console.log("view:");
+                    console.log(view);
                     self.tabs.push({idImage : idImage,view : view});
                  }
               });
@@ -150,6 +158,8 @@ var ExplorerTabs = Backbone.View.extend({
           console.log("add dashboard");
           var tabs = $(this.el).children('.tabs');
           tabs.tabs("add", "#tabs-0", 'Dashboard');
+          tabs.tabs("add", "#tabs-1", 'Images');
+          tabs.tabs("add", "#tabs-2", 'Annotations');
           $("#explorer > .browser").show();
           $("#explorer > .noProject").hide();
           this.tabs.push({
@@ -160,12 +170,10 @@ var ExplorerTabs = Backbone.View.extend({
        /**
         * Ask to the dashboard view to refresh
         */
-       refreshDashboard : function () {
+       getDashboard : function () {
           var dashboardTab = _.detect(this.tabs, function(object) {
-             console.log("looking for db :" + object.idImage);
              return object.idImage == 0;
           });
-          console.log("refresh db...");
-          dashboardTab.view.refresh();
+          return dashboardTab;
        }
     });
