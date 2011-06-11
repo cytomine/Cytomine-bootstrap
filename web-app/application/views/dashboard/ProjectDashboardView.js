@@ -448,28 +448,27 @@ var ProjectDashboardView = Backbone.View.extend({
 
           self.fetchProjectInfo();
 
-          setTimeout(function(){
-             /*$(self.el).find(".widgets").masonry({
-              itemSelector: '.widget'
+          self.initWidgets();
+
+
+       },
+       initWidgets : function() {
+          $( ".widgets" ).sortable({
+                 connectWith: ".widgets"
               });
-              $(self.el).find(".widgets").fadeIn('slow');*/
-             $( ".widgets" ).sortable({
-                    connectWith: ".widgets"
-                 });
 
-             $( ".widget" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-                 .find( ".widget-header" )
-                 .addClass( "ui-widget-header ui-corner-all" )
-                 .prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
-                 .end()
-                 .find( ".widget-content" );
+          $( ".widget" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+              .find( ".widget-header" )
+              .addClass( "ui-widget-header ui-corner-all" )
+              .prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
+              .end()
+              .find( ".widget-content" );
 
-             $( ".widget-header .ui-icon" ).click(function() {
-                $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
-                $( this ).parents( ".portlet:first" ).find( ".portlet-content" ).toggle();
-             });
+          $( ".widget-header .ui-icon" ).click(function() {
+             $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+             $( this ).parents( ".widget:first" ).find( ".widget-content" ).toggle();
+          });
 
-             $( ".widgets" ).disableSelection();
-          }, 2000);
+          $( ".widgets" ).disableSelection();
        }
     });

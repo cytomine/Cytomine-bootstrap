@@ -37,6 +37,9 @@ class BootStrap {
     def storageService
     def messageSource
 
+    static def development = "development"
+    static def production = "production"
+    static def test = "test"
 
 
     def init = { servletContext ->
@@ -60,7 +63,7 @@ class BootStrap {
             println inputArgs.get(i)
         }
 
-        switch(GrailsUtil.environment) {
+        /*switch(GrailsUtil.environment) {
             case "development":
                 initData(true)
                 break
@@ -70,11 +73,12 @@ class BootStrap {
             case "test":
                 initData(false)
                 break
-        }
+        }*/
+        initData(GrailsUtil.environment)
         //end of init
     }
 
-    private def initData(boolean full) {
+    private def initData(String env) {
         /* AIS Storages */
         def storages = [
                 [name : "cytomine", basePath : "/home/aisstorage/store", serviceUrl : "ais://"],
@@ -355,18 +359,18 @@ class BootStrap {
 
 
 
-        if (full) createSlidesAndAbstractImages(BootStrapData.ANAPATHScans)
+        if (env == BootStrap.development || env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.ANAPATHScans)
 
-        if (full) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans1)
-        /*if (full) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans2)
-        if (full) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans3)
-        if (full) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans4)
-        if (full) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans5)*/
+        if (env == BootStrap.development || env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans1)
+        if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans2)
+        if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans3)
+        if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans4)
+        if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans5)
 
-        if (full) createSlidesAndAbstractImages(BootStrapData.LBTDScans1)
-        /*if (full) createSlidesAndAbstractImages(BootStrapData.LBTDScans2)
-        if (full) createSlidesAndAbstractImages(BootStrapData.LBTDScans3)
-        if (full) createSlidesAndAbstractImages(BootStrapData.LBTDScans4)*/
+        if (env == BootStrap.development || env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans1)
+        if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans2)
+        if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans3)
+        if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans4)
 
         def termSamples = [
 
@@ -440,7 +444,7 @@ class BootStrap {
                 [name: "Artefacts",comment:"",ontology:[name:"Cellules"],color:"#cddf54"],
         ]
 
-        if(full) createTerms(termSamples)
+        if (env == BootStrap.development) createTerms(termSamples)
 
         def relationSamples = [
                 [name: RelationTerm.names.PARENT],
@@ -482,7 +486,7 @@ class BootStrap {
                 [relation: RelationTerm.names.PARENT,term1:"Marquage", term2: "Cellule en prolifération", ontology : "Tissus"],
                 [relation: RelationTerm.names.PARENT,term1:"Marquage", term2: "Alpha-smooth muscle actin", ontology : "Tissus"]
         ]
-        if(full) createRelationTerm(relationTermSamples)
+        if (env == BootStrap.development) createRelationTerm(relationTermSamples)
 
 
 
@@ -526,7 +530,7 @@ class BootStrap {
 
 
         ]
-        if(full) createAnnotations(annotationSamples)
+        if (env == BootStrap.development) createAnnotations(annotationSamples)
 
 
 
