@@ -554,8 +554,9 @@ a.checkbox-deselect {
 }
 .widget {
     margin: 10px;
-    border:  1px solid;
-    display: block; width : 500px;
+    /*border:  1px solid;*/
+    /*display: block;*/
+    /*width : 500px;*/
     height : 400px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
@@ -577,6 +578,18 @@ a.checkbox-deselect {
     margin : 0px;
 
 }
+
+
+	.widgets { width: 550px; float: left; padding-bottom: 100px; }
+	.portlet { margin: 0 1em 1em 0; }
+	.widget-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
+	.widget-header .ui-icon { float: right; }
+	.widget-content { padding: 0.4em; }
+	.ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
+	.ui-sortable-placeholder * { visibility: hidden; }
+
+
+
 .centralPanel { margin-bottom: 1em; }
 .fakeLink{ color:navy; cursor:pointer; }
 .ui-icon-dashboard { display: inline; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
