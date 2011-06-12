@@ -157,7 +157,7 @@ class Annotation extends SequenceDomain implements Serializable {
       returnArray['created'] = it.created? it.created.time.toString() : null
       returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
-      returnArray['term'] = UrlApi.getTermsURLWithAnnotationId(it.id)
+      returnArray['term'] = it.terms()
 
 
       String termList = "";

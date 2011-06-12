@@ -359,15 +359,15 @@ class BootStrap {
 
 
 
-        if (env == BootStrap.development || env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.ANAPATHScans)
+        if (env != BootStrap.test) createSlidesAndAbstractImages(BootStrapData.ANAPATHScans)
 
-        if (env == BootStrap.development || env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans1)
+        if (env != BootStrap.test) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans1)
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans2)
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans3)
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans4)
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans5)
 
-        if (env == BootStrap.development || env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans1)
+        if (env != BootStrap.test) createSlidesAndAbstractImages(BootStrapData.LBTDScans1)
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans2)
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans3)
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans4)
@@ -444,7 +444,7 @@ class BootStrap {
                 [name: "Artefacts",comment:"",ontology:[name:"Cellules"],color:"#cddf54"],
         ]
 
-        if (env == BootStrap.development) createTerms(termSamples)
+        if (env != BootStrap.test) createTerms(termSamples)
 
         def relationSamples = [
                 [name: RelationTerm.names.PARENT],
@@ -486,7 +486,7 @@ class BootStrap {
                 [relation: RelationTerm.names.PARENT,term1:"Marquage", term2: "Cellule en prolifération", ontology : "Tissus"],
                 [relation: RelationTerm.names.PARENT,term1:"Marquage", term2: "Alpha-smooth muscle actin", ontology : "Tissus"]
         ]
-        if (env == BootStrap.development) createRelationTerm(relationTermSamples)
+        if (env != BootStrap.test) createRelationTerm(relationTermSamples)
 
 
 
@@ -530,7 +530,7 @@ class BootStrap {
 
 
         ]
-        if (env == BootStrap.development) createAnnotations(annotationSamples)
+        if (env != BootStrap.test) createAnnotations(annotationSamples)
 
 
 

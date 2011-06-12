@@ -80,6 +80,14 @@ var BrowseImageView = Backbone.View.extend({
              this.map.moveTo(new OpenLayers.LonLat(feature.geometry.getCentroid().x, feature.geometry.getCentroid().y), Math.max(0, zoom));
           }
        },
+       getFeature : function (idAnnotation) {
+          console.log("USER LAYER : >>>" + this.userLayer);
+          return this.userLayer.getFeature(idAnnotation);
+       },
+       removeFeature : function (idAnnotation) {
+          console.log("USER LAYER : >>>" + this.userLayer);
+          return this.userLayer.removeFeature(idAnnotation);
+       },
        /**
         * Callback used by AnnotationLayer at the end of theirs initializations
         * @param layer
@@ -115,7 +123,7 @@ var BrowseImageView = Backbone.View.extend({
           self.map.setBaseLayer(layer);
           var radioName = "layerSwitch-" + this.model.get("id");
           var layerID = "layerSwitch-" + this.model.get("id") + "-" + new Date().getTime(); //index of the layer in this.layers array
-          var liLayer = _.template("<li><input type='radio' id='{{id}}' name='{{radioName}}' checked/><label style='font-weight:bold;color:#FFF' for='{{id}}'> {{name}}</label></li>", {id : layerID, radioName:radioName, name : layer.name.substr(0,15)});
+          var liLayer = _.template("<li><input type='radio' id='{{id}}' name='{{radioName}}' checked/><label style='font-weight:normal;color:#FFF' for='{{id}}'> {{name}}</label></li>", {id : layerID, radioName:radioName, name : layer.name.substr(0,15)});
           $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").append(liLayer);
           $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").find("#"+layerID);
           $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").find("#"+layerID).click(function(){
@@ -134,7 +142,7 @@ var BrowseImageView = Backbone.View.extend({
           var layerID = "layerSwitch" + (this.layers.length - 1); //index of the layer in this.layers array
           console.log("layer ID : " + layerID);
           var color = window.app.models.users.get(userID).get('color');
-          var liLayer = _.template("<li><input type='checkbox' id='{{id}}' name='annotationLayerRadio' style='display:inline;' checked /><label style='display:inline;font-weight:bold;color:#FFF;padding:5px;' for='{{id}}'>{{name}}</label><span style='display:inline;margin:3px;width:10px;height:10px;background-color:{{color}};'>&nbsp;&nbsp;&nbsp;&nbsp;</span></li>", {id : layerID, name : layer.name, color : color});
+          var liLayer = _.template("<li><input type='checkbox' id='{{id}}' name='annotationLayerRadio' style='display:inline;' checked /><label style='display:inline;font-weight:normal;color:#FFF;padding:5px;' for='{{id}}'>{{name}}</label></li>", {id : layerID, name : layer.name, color : color});
           $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").append(liLayer);
           $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").find("#"+layerID).click(function(){
              var checked = $(this).attr("checked");
@@ -280,6 +288,17 @@ var BrowseImageView = Backbone.View.extend({
        /**
         * Init the Map if ImageServer is Adore Djatoka
         */
+       reloadAnnotation : function(idAnnotation) {
+          var self = this;
+          self.removeFeature(idAnnotation);
+          new AnnotationModel({id:idAnnotation}).fetch({
+                 success: function(annotation, response) {
+                    var feature = self.userLayer.createFeatureFromAnnotation(annotation);
+                    self.userLayer.addFeature(feature);
+                    self.userLayer.selectFeature(feature);
+                 }
+              });
+       },
        initDjatoka: function () {
           console.log("initDjatoka");
           var self = this;
@@ -516,7 +535,7 @@ var BrowseImageView = Backbone.View.extend({
                            success : function(model, response) {
                               self.ontologyTreeView = new OntologyTreeView({
                                      el: $("#ontologyTree" + self.model.get("id")),
-                                     idImage: self.model.get("id"),
+                                     browseImageView : self,
                                      model: model
                                   }).render();
                               self.initVectorLayers();

@@ -228,8 +228,8 @@ var ProjectDashboardView = Backbone.View.extend({
              function drawVisualization() {
                 // Create and populate the data table.
                 var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Task');
-                data.addColumn('number', 'Hours per Day');
+                data.addColumn('string', 'Term');
+                data.addColumn('number', 'Number of annotations');
                 data.addRows(_.size(collection));
                 var i = 0;
                 var colors = [];
@@ -391,42 +391,6 @@ var ProjectDashboardView = Backbone.View.extend({
           $(this.el).find(elem).empty();
           $(this.el).find(elem).append(txt);
        },
-       initPanels : function() {
-          var self = this;
-          /*$(self.el).find("#nameDashboardInfo"+self.model.get('id')).panel({
-           collapsible:false,
-           width:'300px'
-           });
-
-           $(self.el).find('#projectInfoPanel').panel({
-           collapsible:false,
-           width:'500px',
-           height:'500px'
-           });
-
-           $(self.el).find('#projectLastCommandPanel').panel({
-           collapsible:false,
-           width:'500px',
-           height:'500px'
-           });
-
-           $(self.el).find('#projectStatsPanel').panel({
-           collapsible:false,
-           width:'500px',
-           height:'500px'
-           });
-           $(self.el).find('#projectImagesPanel').panel({
-           collapsible:false
-
-           });
-
-           $(self.el).find('#projectAnnotationsPanel').panel({
-           collapsible:false,
-
-           });*/
-
-
-       },
        doLayout : function(tpl) {
           console.log("ProjectDashboardView: printProjectInfo");
 
@@ -437,8 +401,6 @@ var ProjectDashboardView = Backbone.View.extend({
           $(self.el).append(html);
 
           window.app.controllers.browse.tabs.addDashboard(self);
-
-          self.initPanels();
 
           self.initTabs();
 
