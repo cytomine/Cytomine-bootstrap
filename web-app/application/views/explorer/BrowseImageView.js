@@ -494,7 +494,6 @@ var BrowseImageView = Backbone.View.extend({
        refreshAnnotationTabs : function (idTerm) {
           var self = this;
           if (idTerm != undefined) {
-             alert(_.size(self.refreshAnnotationsTabsFunc));
              var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object){
                 return (object.idTerm == idTerm);
              });
