@@ -10,8 +10,9 @@ var DraggablePanelView = Backbone.View.extend({
         if (!options.dialogAttr.height) this.dialogAttr.height = 'auto';*/
     },
     render: function() {
-        //$(this.el).html(this.template);
+        //
         var self = this;
+        $(this.el).html(this.template);
         var width = $(this.el).width();
         var height = $(this.el).height();
         $(this.el).draggable({

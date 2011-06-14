@@ -7,11 +7,11 @@
  */
 var OntologyTreeView = Backbone.View.extend({
        tagName : "div",
-       tree : null,
-       activeEvent : true,
 
        //template : _.template($('#project-view-tpl').html()),
        initialize: function(options) {
+          this.tree = null;
+          this.activeEvent = true;
           this.browseImageView = options.browseImageView;
           this.idAnnotation  = null;
        },
@@ -156,6 +156,7 @@ var OntologyTreeView = Backbone.View.extend({
                  success: function (model, response) {
                     window.app.view.message("Annotation Term", response.message, "");
                     self.browseImageView.reloadAnnotation(self.idAnnotation);
+                    self.browseImageView.refreshAnnotationTabs(idTerm);
                  },
                  error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
@@ -172,6 +173,7 @@ var OntologyTreeView = Backbone.View.extend({
                     console.log(response);
                     window.app.view.message("Annotation Term", response.message, "");
                     self.browseImageView.reloadAnnotation(self.idAnnotation);
+                    self.browseImageView.refreshAnnotationTabs(idTerm);
                  },
                  error: function (model, response) {
                     var json = $.parseJSON(response.responseText);

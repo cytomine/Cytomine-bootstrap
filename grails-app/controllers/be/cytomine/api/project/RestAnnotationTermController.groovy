@@ -11,6 +11,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
+import be.cytomine.image.ImageInstance
 
 class RestAnnotationTermController extends RestController {
 
@@ -78,7 +79,17 @@ class RestAnnotationTermController extends RestController {
     responseSuccess(annotationFromTermAndProject)
   }
 
-
+  def listAnnotationByProjectAndImageInstance = {
+      log.info "listByTerm with idTerm=" +  params.idterm + " and imageinstance=" +  params.idimageinstance
+      Term term = Term.read(params.idterm)
+      def annotations = []
+      Annotation.findAllByImage(ImageInstance.read(params.idimageinstance)).each { annotation ->
+        annotation.annotationTerm.each { annotationTerm->
+            if (annotationTerm.getTerm() == term) annotations << annotation
+        }
+      }
+      responseSuccess(annotations)
+  }
 
   def show = {
     log.info "listByTerm with idTerm=" +  params.idterm + " idAnnotation=" + params.idannotation

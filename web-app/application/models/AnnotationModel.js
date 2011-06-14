@@ -1,73 +1,75 @@
 var AnnotationModel = Backbone.Model.extend({
-    /*initialize: function(spec) {
+       /*initialize: function(spec) {
         if (!spec || !spec.name || !spec.username) {
-            throw "InvalidConstructArgs";
+        throw "InvalidConstructArgs";
         }
-    },
+        },
 
-    validate: function(attrs) {
+        validate: function(attrs) {
         if (attrs.name) {
-            if (!_.isString(attrs.name) || attrs.name.length === 0) {
-                return "Name must be a string with a length";
-            }
+        if (!_.isString(attrs.name) || attrs.name.length === 0) {
+        return "Name must be a string with a length";
         }
-    },*/
+        }
+        },*/
 
-	url : function() {
-		var base = 'api/annotation';
-		var format = '.json';
-        if (this.isNew()) return base + format;
-		return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
-	}
-});
+       url : function() {
+          var base = 'api/annotation';
+          var format = '.json';
+          if (this.isNew()) return base + format;
+          return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+       }
+    });
 
 
 var AnnotationModel = Backbone.Model.extend({
 
-	url : function() {
-		var base = 'api/annotation';
-		var format = '.json';
-        if (this.isNew()) return base + format;
-		return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
-	}
-});
+       url : function() {
+          var base = 'api/annotation';
+          var format = '.json';
+          if (this.isNew()) return base + format;
+          return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+       }
+    });
 
 
 var AnnotationCropModel = Backbone.Model.extend({
 
-	url : null,
-    initialize: function (options) {
-        this.url = options.url;
-    }
-});
+       url : null,
+       initialize: function (options) {
+          this.url = options.url;
+       }
+    });
 
 // define our collection
 var AnnotationCollection = Backbone.Collection.extend({
-    model: AnnotationModel,
-    url: function() {
-        if (this.user != undefined) {
-            return "api/user/" + this.user + "/imageinstance/" + this.image + "/annotation.json";
-        } else if (this.term != undefined && this.project !=undefined){
-            return "api/term/" + this.term + "/project/" + this.project +"/annotation.json";
-        }else if (this.project != undefined) {
-            return "api/project/" + this.project + "/annotation.json";
-        }  else if (this.term != undefined){
-            return "api/term/" + this.term + "/annotation.json";
-        } else  if(this.image != undefined) {
-            return "api/imageinstance/" + this.image + "/annotation.json";
-        } else  {
-            return "api/annotation.json";
-        }
-    },
-    initialize: function (options) {
-        this.image = options.image;
-        this.user = options.user;
-        this.project = options.project;
-        this.term = options.term;
-    }
-});
+       model: AnnotationModel,
+       url: function() {
+          if (this.user != undefined) {
+             return "api/user/" + this.user + "/imageinstance/" + this.image + "/annotation.json";
+          } else if (this.term != undefined && this.project !=undefined){
+             return "api/term/" + this.term + "/project/" + this.project +"/annotation.json";
+          } else if (this.project != undefined) {
+             return "api/project/" + this.project + "/annotation.json";
+          }  else if (this.image != undefined && this.term != undefined){
+             return "api/term/"+this.term+"/imageinstance/" + this.image + "/annotation.json";
+          }  else if (this.term != undefined){
+             return "api/term/" + this.term + "/annotation.json";
+          } else  if(this.image != undefined) {
+             return "api/imageinstance/" + this.image + "/annotation.json";
+          } else  {
+             return "api/annotation.json";
+          }
+       },
+       initialize: function (options) {
+          this.image = options.image;
+          this.user = options.user;
+          this.project = options.project;
+          this.term = options.term;
+       }
+    });
 
 AnnotationCollection.comparator = function(annotation) {
-  return annotation.get("created");
+   return annotation.get("created");
 };
 

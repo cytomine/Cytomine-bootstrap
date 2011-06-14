@@ -1,7 +1,7 @@
 /* Annotation Layer */
 
 
-var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, map) {
+var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView) {
    console.log("new annotation layer : " + (ontologyTreeView == null || ontologyTreeView == undefined));
    var styleMap = new OpenLayers.StyleMap({
           "default" : OpenLayers.Util.applyDefaults({fillColor: color, fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
@@ -27,7 +27,8 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
    this.drag = false;
    this.irregular = false;
    this.aspectRatio = false;
-   this.map = map;
+   this.browseImageView = browseImageView;
+   this.map = browseImageView.map;
    this.popup = null;
    this.hoverControl = null;
    this.deleteOnSelect = false; //true if select tool checked
@@ -299,16 +300,16 @@ AnnotationLayer.prototype = {
                           var terms = alias.ontologyTreeView.getTermsChecked();
 
                           if (terms.length == 0) {
-                             alias.addTermCallback(0, 0, feature, annotationID, message);
+                             alias.addTermCallback(0, 0, feature, annotationID, message, undefined);
                           }
 
                           var counter = 0;
-                          _.each(terms, function (id) {
+                          _.each(terms, function (idTerm) {
                              new AnnotationTermModel({
-                                    term: id,
+                                    term: idTerm,
                                     annotation: response.annotation.id
                                  }).save(null, {success : function (termModel, response) {
-                                    alias.addTermCallback(terms.length, ++counter, feature, annotationID, message);
+                                    alias.addTermCallback(terms.length, ++counter, feature, annotationID, message, idTerm);
                                  }});
                           });
 
@@ -326,7 +327,7 @@ AnnotationLayer.prototype = {
           });
 
    },
-   addTermCallback : function(total, counter, oldFeature, annotationID, message) {
+   addTermCallback : function(total, counter, oldFeature, annotationID, message, idTerm) {
       if (counter < total) return;
       var self = this;
       new AnnotationModel({id:annotationID}).fetch({
@@ -338,6 +339,8 @@ AnnotationLayer.prototype = {
                 self.controls.select.select(newFeature);
                 window.app.view.message("Add annotation", message, "");
                 new EndTransactionModel({}).save();
+                self.browseImageView.refreshAnnotationTabs(idTerm);
+                self.browseImageView.refreshAnnotationTabs(undefined);
              },
              error : function(model, response) {
                 console.log("ERROR FETCHING ANNOTATION");
@@ -374,19 +377,22 @@ AnnotationLayer.prototype = {
 
       return feature;
    },
-   removeTermCallback : function(total, counter, feature, idAnnotation) {
+   removeTermCallback : function(total, counter, feature, idAnnotation, idTerm) {
       console.log("counter " + counter + " vs " + total);
       if (counter < total) return;
       this.removeFeature(feature);
       this.controls.select.unselectAll();
       this.vectorsLayer.removeFeatures([feature]);
-
+      var self = this;
       new AnnotationModel({id:feature.attributes.idAnnotation}).destroy({
              success: function (model, response) {
                 console.log("Delete annotation");
                 console.log("End transaction");
                 window.app.view.message("Annotation", response.message, "");
                 new EndTransactionModel({}).save();
+                self.browseImageView.refreshAnnotationTabs(idTerm);
+                self.browseImageView.refreshAnnotationTabs(undefined);
+
              },
              error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -407,7 +413,7 @@ AnnotationLayer.prototype = {
 
                 new AnnotationTermCollection({idAnnotation:idAnnotation}).fetch({success:function (collection, response) {
                        if (collection.size() == 0) {
-                          alias.removeTermCallback(0, 0, feature, idAnnotation);
+                          alias.removeTermCallback(0, 0, feature, idAnnotation, undefined);
                           return;
                        }
                        collection.each(function(term) {
@@ -415,7 +421,7 @@ AnnotationLayer.prototype = {
                           console.log("annotationTerm=" + JSON.stringify(term));
 
                           new AnnotationTermModel({annotation:idAnnotation,term:term.id}).destroy({success : function (model, response) {
-                                 alias.removeTermCallback(collection.length, ++counter, feature, idAnnotation);
+                                 alias.removeTermCallback(collection.length, ++counter, feature, idAnnotation, term.id);
                               }});
 
                        });

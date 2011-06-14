@@ -9,6 +9,7 @@ var BrowseImageView = Backbone.View.extend({
           this.initCallback = options.initCallback;
           this.layers = [];
           this.baseLayers = [];
+          this.refreshAnnotationsTabsFunc = [];
           this.map = null;
        },
        /**
@@ -27,6 +28,7 @@ var BrowseImageView = Backbone.View.extend({
           this.initToolbar();
           this.initMap();
           this.initOntology();
+          this.initAnnotationsTabs();
           return this;
        },
        /**
@@ -381,7 +383,7 @@ var BrowseImageView = Backbone.View.extend({
        initToolbar: function () {
           var toolbar = $('#toolbar' + this.model.get('id'));
           var self = this;
-          /*toolbar.find('input[name=select]').button({
+          toolbar.find('input[name=select]').button({
                  //text : false,
                  // icons: {
                  // primary: "ui-icon-seek-start"
@@ -395,13 +397,13 @@ var BrowseImageView = Backbone.View.extend({
                  }
               });
 
-          /*toolbar.find('button[name=ruler]').button({
-           text: false,
-           icons: {
-           secondary: "ui-icon-arrow-2-ne-sw"
+          toolbar.find('button[name=ruler]').button({
+                 text: false,
+                 icons: {
+                    secondary: "ui-icon-arrow-2-ne-sw"
 
-           }
-           });
+                 }
+              });
           toolbar.find('input[id^=ruler]').button({
                  text: true,
                  icons: {
@@ -414,7 +416,7 @@ var BrowseImageView = Backbone.View.extend({
           toolbar.find('input[name=rotate]').button();
           toolbar.find('input[name=resize]').button();
           toolbar.find('input[name=drag]').button();
-          toolbar.find('input[name=irregular]').button();*/
+          toolbar.find('input[name=irregular]').button();
           toolbar.find('span[class=nav-toolbar]').buttonset();
           toolbar.find('span[class=draw-toolbar]').buttonset();
           toolbar.find('span[class=edit-toolbar]').buttonset();
@@ -489,16 +491,27 @@ var BrowseImageView = Backbone.View.extend({
            toolbar.find('input[id=irregular' + this.model.get('id') + ']').hide();*/
 
        },
+       refreshAnnotationTabs : function (idTerm) {
+          var self = this;
+          if (idTerm != undefined) {
+             alert(_.size(self.refreshAnnotationsTabsFunc));
+             var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object){
+                return (object.idTerm == idTerm);
+             });
+             obj.refresh.call();
+          } else { //refresh the "all tabs"
+            self.refreshAnnotationsTabsFunc[0].refresh.call();
+          }
+       },
        /**
         * Collect data and call appropriate methods in order to add Vector Layers on the Map
         */
        initVectorLayers: function () {
           var self = this;
-
           window.app.models.users.fetch({
                  success: function () {
                     window.app.models.users.each(function (user) {
-                       var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), user.get('color'), self.ontologyTreeView, self.map );
+                       var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), user.get('color'), self.ontologyTreeView, self );
                        layerAnnotation.loadAnnotations(self);
 
                        //layerAnnotation.initHightlight(self.map);
@@ -519,6 +532,141 @@ var BrowseImageView = Backbone.View.extend({
                        }
 
                     });
+                 }
+              });
+       },
+       refreshAnnotations : function(idTerm, el) {
+          new AnnotationCollection({image:this.model.id,term:idTerm}).fetch({
+                 success : function (collection, response) {
+                    el.empty();
+                    var view = new AnnotationView({
+                           page : undefined,
+                           model : collection,
+                           el:el
+                        }).render();
+                 }
+              });
+       },
+       initAnnotationsTabs : function(){
+          var self = this;
+          var createTabs = function(idOntology) {
+             require(["text!application/templates/explorer/TermTab.tpl.html", "text!application/templates/explorer/TermTabContent.tpl.html"], function(termTabTpl, termTabContentTpl) {
+
+                new TermCollection({idOntology:idOntology}).fetch({
+                       success : function (collection, response) {
+
+                          //add "All annotation from all term" tab
+                          self.addTermToTab(termTabTpl, termTabContentTpl, { id : "all", image : self.model.id, name : "All"});
+                          self.refreshAnnotationsTabsFunc.push({
+                                 index : 0,
+                                 idTerm : "all",
+                                 refresh : function() {self.refreshAnnotations(undefined,$("#tabsterm-"+self.model.id+"-all"))}
+                              });
+                          var i = 1;
+                          collection.each(function(term) {
+                             //add x term tab
+                             self.addTermToTab(termTabTpl, termTabContentTpl, { id : term.get("id"), image : self.model.id,name : term.get("name")});
+                             self.refreshAnnotationsTabsFunc.push({
+                                    index : i,
+                                    idTerm : term.get("id"),
+                                    refresh : function() {self.refreshAnnotations(term.get("id"),$("#tabsterm-"+self.model.id+"-"+term.get("id")))}
+                                 });
+                             i++;
+                          });
+
+
+                          $("#annotationsPanel"+self.model.id).find(".tabsAnnotation").tabs({
+                                 add : function (event, ui) {
+
+                                 },
+                                 select: function(event, ui) {
+                                    var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object){
+                                       return (object.index == ui.index);
+                                    });
+                                    obj.refresh.call();
+                                 }
+                              });
+                          $("#annotationsPanel"+self.model.id).find( ".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *" )
+                              .removeClass( "ui-corner-all ui-corner-top" )
+                              .addClass( "ui-corner-bottom" );
+                          self.initAnnotations();
+                       }});
+
+
+             });
+          }
+
+          require([
+             "text!application/templates/explorer/AnnotationsPanel.tpl.html"
+          ], function(tpl) {
+             var el = $('#annotationsPanel' + self.model.get('id'));
+             el.html(_.template(tpl, {id : self.model.get('id')}));
+             new ProjectModel({id : window.app.status.currentProject}).fetch({
+                    success : function (model, response) {
+                       createTabs(model.get("ontology"));
+                    }
+                 });
+
+             el.css("width", "20px");
+             el.css("height", "30px");
+             el.find("div.panel_button").click(function(){
+                el.find("div.panel_button").toggle();
+                el.css("bottom", "0px");
+                el.animate({
+                       height: "320px"
+                    }, "fast").animate({
+                       width: "100%"
+                    });
+                setTimeout(function(){el.find("div.panel_content").fadeIn();}, 1000);
+                return false;
+             });
+
+             el.find("div#refresh_annotations_button").click(function(){
+                var tabSelected = el.find(".tabsAnnotation").tabs('option', 'selected');
+                var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object){
+                   return (object.index == tabSelected);
+                });
+                obj.refresh.call();
+             });
+             el.find("div#hide_button").click(function(){
+                el.animate({
+                       height: "30px"
+                    }, "fast")
+                    .animate({
+                       width : "20px"
+                    }, "fast");
+
+                setTimeout(function(){el.find("div.panel_content").hide();el.css("bottom", "70px");}, 1000);
+
+                return false;
+
+             });
+
+
+          });
+
+
+       },
+       /**
+        * Add the the tab with term info
+        * @param id  term id
+        * @param name term name
+        */
+       addTermToTab : function(termTabTpl, termTabContentTpl, data) {
+          $("#annotationsPanel"+this.model.id).find(".ultabsannotation").append(_.template(termTabTpl, data));
+          $("#annotationsPanel"+this.model.id).find(".listtabannotation").append(_.template(termTabContentTpl, data));
+       },
+       initAnnotations : function () {
+          var self = this;
+
+
+          //init panel for all annotation (with or without term
+          new AnnotationCollection({image:self.model.id}).fetch({
+                 success : function (collection, response) {
+
+                    self.refreshAnnotations(undefined, $("#tabsterm-"+self.model.id+"-all"));
+                    /*self.annotationsViews[0] = view;*/
+
                  }
               });
        },

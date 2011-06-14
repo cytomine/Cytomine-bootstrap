@@ -173,8 +173,8 @@ h3 { font-size:13px; }
     background:#EEE;
     border:#CCC solid 1px;
     padding:3px;
-    height: 192px;
-    width: 192px;
+    height: 160px;
+    width: 160px;
 }
 
 .thumb-wrap{
@@ -272,11 +272,22 @@ div .popupPanel {
 
 }
 
+div .annotationsPanel {
+    position : absolute;
+    bottom : 68px;
+    left : 0px;
+    z-index : 2023;
+    background-color: rgba(0, 0, 0, 0.6);
+    color : #fff;
+    overflow : hidden;
+    padding : 5px;
+}
+
 div .ontologypanel {
     align : center;
     position : absolute;
     left : 30px;
-    bottom : 100px;
+    bottom : 250px;
     max-height: 500px;
     z-index : 2021;
     background-color: rgba(0, 0, 0, 0.6);
@@ -319,7 +330,7 @@ input .layerSwitcher{
 div .layerSwitcherPanel {
     position : absolute;
     right : 30px;
-    bottom : 100px;
+    bottom : 250px;
     z-index : 2010;
     background-color: black;
     color : #fff;
@@ -332,7 +343,9 @@ div .layerSwitcherPanel {
 
 }
 
-div.layerSwitcherPanel label, input { display:inline; }
+div.layerSwitcherPanel label, input {
+    display:inline;
+}
 
 
 div.olControlOverviewMapElement img {
@@ -582,13 +595,13 @@ a.checkbox-deselect {
 }
 
 
-	.widgets { width: 550px; float: left; padding-bottom: 100px; }
-	.portlet { margin: 0 1em 1em 0; }
-	.widget-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
-	.widget-header .ui-icon { float: right; }
-	.widget-content { padding: 0.4em; }
-	.ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
-	.ui-sortable-placeholder * { visibility: hidden; }
+.widgets { width: 550px; float: left; padding-bottom: 100px; }
+.portlet { margin: 0 1em 1em 0; }
+.widget-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
+.widget-header .ui-icon { float: right; }
+.widget-content { padding: 0.4em; }
+.ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
+.ui-sortable-placeholder * { visibility: hidden; }
 
 
 
@@ -617,3 +630,9 @@ a.checkbox-deselect {
 .ui-buttonset-single .fg-button,
 .ui-buttonset-multi .fg-button { margin-right: -1px;}
 
+
+.tabs-bottom { position: relative; background-color: transparent;}
+.tabs-bottom .ui-tabs-panel { height : 225px; overflow: auto; }
+.tabs-bottom .ui-tabs-nav { position: absolute !important; left: 0; bottom: 0; right:0; padding: 0 0.2em 0.2em 0; }
+.tabs-bottom .ui-tabs-nav li { margin-top: 0px !important; margin-bottom: 0px !important; border-top: none; border-bottom-width: 1px; }
+.ui-tabs-selected { margin-top: 0px !important; }
