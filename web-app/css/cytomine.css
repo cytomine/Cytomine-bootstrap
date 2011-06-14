@@ -293,8 +293,9 @@ div .ontologypanel {
 div .toolbar {
     position : absolute;
     left : 90px;
-    top : 40px;
+    top : 50px;
     z-index : 2010;
+    width : 1000px;
     background-color: transparent;
     color : #fff;
     padding: 0px;
@@ -332,6 +333,7 @@ div .layerSwitcherPanel {
 }
 
 div.layerSwitcherPanel label, input { display:inline; }
+
 
 div.olControlOverviewMapElement img {
     border:1px;
@@ -608,4 +610,10 @@ a.checkbox-deselect {
 
 .treeOntology { color:black;}
 
+
+
+.ui-buttonset { float:left; }
+.ui-buttonset .fg-button { float: left; }
+.ui-buttonset-single .fg-button,
+.ui-buttonset-multi .fg-button { margin-right: -1px;}
 

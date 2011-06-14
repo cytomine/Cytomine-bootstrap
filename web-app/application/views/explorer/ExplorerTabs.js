@@ -1,11 +1,12 @@
 var ExplorerTabs = Backbone.View.extend({
        tagName : "div",
-       tabs : [], //that we are browsing
+
        /**
         * ExplorerTabs constructor
         * @param options
         */
        initialize: function(options) {
+          this.tabs = [], //that we are browsing
           this.container = options.container
        },
        /**
@@ -26,38 +27,29 @@ var ExplorerTabs = Backbone.View.extend({
           var self = this;
           $(this.el).html(_.template(tpl, {}));
           var tabs = $(this.el).children('.tabs');
-          var height = 0;
+          /*tabs.tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });*/
           tabs.tabs({
                  add: function(event, ui) {
-                    console.log("select tabs " + ui.panel.id);
                     $("#"+ui.panel.id).parent().parent().css('height', "100%");
-                    if (ui.panel.id != "tabs-0" && ui.panel.id != "tabs-1"  && ui.panel.id != "tabs-2") { //tab is not the dashboard
-                       $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;');
-                       $("a[href=#"+ui.panel.id+"]").parent().append("<span class='ui-icon ui-icon-close'>Remove Tab</span>");
-                       $("a[href=#"+ui.panel.id+"]").parent().find("span.ui-icon-close" ).click(function() {
+                    if (ui.panel.id != ("tabs-dashboard-"+window.app.status.currentProject)
+                        && (ui.panel.id != "tabs-images-"+window.app.status.currentProject)
+                        && ui.panel.id != ("tabs-annotations-"+window.app.status.currentProject)) {
+                       tabs.find("ul").find("a[href=#"+ui.panel.id+"]").parent().append("<span class='ui-icon ui-icon-close'>Remove Tab</span>");
+                       tabs.find("ul").find("a[href=#"+ui.panel.id+"]").parent().find("span.ui-icon-close" ).click(function() {
                           var index = $( "li", tabs ).index( $( this ).parent() );
                           self.removeTab(index);
                        });
+                       console.log("add panel :" + ui.panel.id);
                        tabs.tabs('select', '#' + ui.panel.id);
                     }
-
+                    $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;');
                  },
                  show: function(event, ui){
                     $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;overflow:auto');
                     return true;
                  },
                  select: function(event, ui) {
-                    var dashboardTab = self.getDashboard();
-                    if (ui.panel.id == "tabs-0") { //tab is  the dashboard
-                       dashboardTab.view.refresh();
-                    }
-                    if (ui.panel.id == "tabs-1") {
-                       dashboardTab.view.refresh();
-                    }
-                    if (ui.panel.id == "tabs-2") {
-                        dashboardTab.view.refreshAnnotations(dashboardTab.view.selectedTermTab);
-                    }
-                    return true;
+                    location.href = ui.tab.href; //follow url
                  }
               });
 
@@ -73,27 +65,20 @@ var ExplorerTabs = Backbone.View.extend({
           var self = this;
           var tab = this.getBrowseImageView(idImage);
           if (tab != null) {
-             console.log("opened...");
-             /*alreadyOpened.view.initOptions = options;*/
+             tab.view.show(options);
              return;
           }
-
           var tabs = $(self.el).children('.tabs');
-          console.log("here we go....");
           new ImageInstanceModel({id : idImage}).fetch({
                  success : function(model, response) {
                     var view = new BrowseImageView({
                            model : model,
-                           initOptions : options,
+                           initCallback : function(){view.show(options)},
                            el: tabs
                         }).render();
-                    console.log("view:");
-                    console.log(view);
                     self.tabs.push({idImage : idImage,view : view});
                  }
               });
-
-
        },
        /**
         * Return the reference to a BrowseImageView instance
@@ -115,22 +100,15 @@ var ExplorerTabs = Backbone.View.extend({
           this.tabs.splice(index,1);
           var tabs = $(this.el).children('.tabs');
           tabs.tabs( "remove", index);
-
        },
        /**
         * Show a tab
         * @param index the identifier of the Tab
         */
        showTab : function(index) {
-          console.log("SHOW TAB " + index);
-          var object = _.detect(this.tabs, function(object) {
-             return object.idImage == index;
-          });
-          if (object == undefined ) return;
-          object.view.show();
-          var tabs = $(this.el).children('.tabs');
-          tabs.tabs('select', '#tabs-' + index);
-
+          var tabs = $("#explorer > .browser").children(".tabs");
+          tabs.tabs("select", "#tabs-image-"+window.app.status.currentProject+"-"+index+"-");
+          return;
        },
        /**
         * Return the number of opened tabs
@@ -142,13 +120,13 @@ var ExplorerTabs = Backbone.View.extend({
         * Close all the Tabs
         */
        closeAll : function() {
-          console.log("close all");
-          var self = this;
-          while (this.size() > 0) {
-             self.removeTab(0);
+          var tabs = $(this.el).children('.tabs');
+          for (var i = tabs.tabs('length') - 1; i >= 0; i--) {
+             tabs.tabs('remove', i);
           }
-          $(self.el).hide();
-          $(self.el).parent().find('.noProject').show();
+          this.tabs = [];
+          $(this.el).hide();
+          $(this.el).parent().find('.noProject').show();
        },
        /**
         * Add a ProjectDashBoardView instance in the first Tab
@@ -157,13 +135,21 @@ var ExplorerTabs = Backbone.View.extend({
        addDashboard : function(dashboard) {
           console.log("add dashboard");
           var tabs = $(this.el).children('.tabs');
-          tabs.tabs("add", "#tabs-0", 'Dashboard');
-          tabs.tabs("add", "#tabs-1", 'Images');
-          tabs.tabs("add", "#tabs-2", 'Annotations');
+          tabs.tabs("add", "#tabs-dashboard-"+window.app.status.currentProject, 'Dashboard');
+          tabs.tabs("add", "#tabs-images-"+window.app.status.currentProject, 'Images');
+          tabs.tabs("add", "#tabs-annotations-"+window.app.status.currentProject, 'Annotations');
           $("#explorer > .browser").show();
           $("#explorer > .noProject").hide();
           this.tabs.push({
                  idImage : 0,
+                 view : dashboard
+              });
+          this.tabs.push({
+                 idImage : 1,
+                 view : dashboard
+              });
+          this.tabs.push({
+                 idImage : 2,
                  view : dashboard
               });
        },

@@ -3,28 +3,62 @@ var DashboardController = Backbone.Controller.extend({
 
        view : null,
        routes: {
-          "dashboard/:project"  : "dashboard"
+          "tabs-images-:project"  : "images",
+          "tabs-annotations-:project"  : "annotations",
+          "tabs-dashboard-:project"  : "dashboard"
        },
 
-       dashboard : function(project) {
-
+       init : function (project, callback) {
           if (window.app.status.currentProject != undefined && window.app.status.currentProject != project) {
              console.log("close previous project");
              this.destroyView();
-             window.app.controllers.browse.closeAll();
-             window.app.status.currentProject = project;
+             window.app.status.currentProject = undefined;
           }
 
-          if (window.app.status.currentProject == project || window.app.status.currentProject == undefined) {
+          if (window.app.status.currentProject == undefined) {
              console.log("init dashboard view");
              window.app.status.currentProject = project;
              window.app.controllers.browse.initTabs();
-             if (this.view == null) this.createView();
+             if (this.view == null) this.createView(callback);
              this.showView();
+          } else {
+             callback.call();
           }
        },
+       images : function(project) {
+          var self = this;
+          var func = function() {
+             self.view.refreshImages();
+             var tabs = $("#explorer > .browser").children(".tabs");
+             tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
+          }
+          this.init(project, func);
 
-       createView : function () {
+       },
+       annotations : function(project) {
+          var self = this;
+          var func = function() {
+             self.view.refreshAnnotations(self.view.selectedTermTab);
+             var tabs = $("#explorer > .browser").children(".tabs");
+             tabs.tabs("select", "#tabs-annotations-"+window.app.status.currentProject);
+
+          }
+          this.init(project, func);
+       },
+       dashboard : function(project, callback) {
+          var self = this;
+          var func = function() {
+             self.view.refresh();
+             var tabs = $("#explorer > .browser").children(".tabs");
+             tabs.tabs("select", "#tabs-dashboard-"+window.app.status.currentProject);
+             if (callback != undefined) callback.call();
+          }
+          this.init(project, func);
+       },
+
+
+
+       createView : function (callback) {
           var tabs = $("#explorer > .browser").children(".tabs");
           var self = this;
           new ProjectModel({id : window.app.status.currentProject}).fetch({
@@ -34,13 +68,14 @@ var DashboardController = Backbone.Controller.extend({
                            el: tabs,
                            container : window.app.view.components.explorer
                         }).render();
+                    callback.call();
                  }
               });
 
        },
 
        destroyView : function() {
-          //if (this.view != null) this.view.remove();
+          window.app.controllers.browse.closeAll();
           this.view = null;
        },
 

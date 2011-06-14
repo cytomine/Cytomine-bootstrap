@@ -144,7 +144,7 @@ AnnotationLayer.prototype = {
                 browseImageView.layerLoadedCallback(self);
              }
           });
-      browseImageView.addVectorLayer(this.vectorsLayer, this.userID);
+      browseImageView.addVectorLayer(this, this.userID);
    },
    addFeature: function (feature) {
       this.features[feature.attributes.idAnnotation] = feature;

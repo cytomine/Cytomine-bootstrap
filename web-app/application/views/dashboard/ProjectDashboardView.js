@@ -100,6 +100,10 @@ var ProjectDashboardView = Backbone.View.extend({
                                  }
                               });
                        self.fetchAnnotations();
+                       self.fetchImages();
+                       self.fetchStats();
+                       self.fetchProjectInfo();
+                       self.initWidgets();
                     }});
           });
        },
@@ -404,13 +408,7 @@ var ProjectDashboardView = Backbone.View.extend({
 
           self.initTabs();
 
-          self.fetchImages();
 
-          self.fetchStats();
-
-          self.fetchProjectInfo();
-
-          self.initWidgets();
 
 
        },

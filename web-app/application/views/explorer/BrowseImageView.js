@@ -1,26 +1,28 @@
 var BrowseImageView = Backbone.View.extend({
        tagName: "div",
-       layers: [],
-       baseLayers : [],
-       map : null,
-       initOptions : null,
        /**
         * BrowseImageView constructor
         * Accept options used for initialization
         * @param options
         */
        initialize: function (options) {
-          this.initOptions = options.initOptions;
+          this.initCallback = options.initCallback;
+          this.layers = [];
+          this.baseLayers = [];
+          this.map = null;
        },
        /**
         * Render the html into the DOM element associated to the view
         * @param tpl
         */
        doLayout: function (tpl) {
-          var tpl = _.template(tpl, this.model.toJSON());
+          var self = this;
+          var templateData = this.model.toJSON();
+          templateData.project = window.app.status.currentProject;
+          var tpl = _.template(tpl, templateData);
           $(this.el).append(tpl);
           var tabs = $(this.el).children('.tabs');
-          this.el.tabs("add", "#tabs-" + this.model.get('id'), this.model.get('filename'));
+          this.el.tabs("add", "#tabs-image-" + window.app.status.currentProject + "-" + this.model.get('id') + "-", this.model.get('filename'));
           this.el.css("display", "block");
           this.initToolbar();
           this.initMap();
@@ -42,11 +44,12 @@ var BrowseImageView = Backbone.View.extend({
        /**
         * Check init options and call appropriate methods
         */
-       show : function() {
+       show : function(options) {
           var self = this;
-          if (this.initOptions.goToAnnotation != undefined) {
+          if (options.goToAnnotation != undefined) {
              _.each(this.layers, function(layer) {
-                self.goToAnnotation(layer,  self.initOptions.goToAnnotation.value);
+                console.log("layer : " + layer);
+                self.goToAnnotation(layer,  options.goToAnnotation.value);
              });
           }
 
@@ -93,9 +96,7 @@ var BrowseImageView = Backbone.View.extend({
         * @param layer
         */
        layerLoadedCallback : function (layer) {
-          if (this.initOptions.goToAnnotation != undefined) {
-             this.goToAnnotation(layer, this.initOptions.goToAnnotation.value);
-          }
+          if (_.isFunction(this.initCallback)) this.initCallback.call();
        },
        /**
         * Return the AnnotationLayer of the logged user
@@ -137,16 +138,16 @@ var BrowseImageView = Backbone.View.extend({
         * @param userID the id of the user associated to the layer
         */
        addVectorLayer : function(layer, userID) {
-          this.map.addLayer(layer);
+          this.map.addLayer(layer.vectorsLayer);
           this.layers.push(layer);
           var layerID = "layerSwitch" + (this.layers.length - 1); //index of the layer in this.layers array
           console.log("layer ID : " + layerID);
           var color = window.app.models.users.get(userID).get('color');
-          var liLayer = _.template("<li><input type='checkbox' id='{{id}}' name='annotationLayerRadio' style='display:inline;' checked /><label style='display:inline;font-weight:normal;color:#FFF;padding:5px;' for='{{id}}'>{{name}}</label></li>", {id : layerID, name : layer.name, color : color});
+          var liLayer = _.template("<li><input type='checkbox' id='{{id}}' name='annotationLayerRadio' style='display:inline;' checked /><label style='display:inline;font-weight:normal;color:#FFF;padding:5px;' for='{{id}}'>{{name}}</label></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
           $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").append(liLayer);
           $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").find("#"+layerID).click(function(){
              var checked = $(this).attr("checked");
-             layer.setVisibility(checked);
+             layer.vectorsLayer.setVisibility(checked);
           });
        },
        /**
@@ -380,11 +381,11 @@ var BrowseImageView = Backbone.View.extend({
        initToolbar: function () {
           var toolbar = $('#toolbar' + this.model.get('id'));
           var self = this;
-          toolbar.find('input[name=select]').button({
-                 /*text : false,
-                  icons: {
-                  primary: "ui-icon-seek-start"
-                  }*/
+          /*toolbar.find('input[name=select]').button({
+                 //text : false,
+                 // icons: {
+                 // primary: "ui-icon-seek-start"
+                 // }
               });
           toolbar.find('button[name=delete]').button({
                  text: false,
@@ -400,7 +401,7 @@ var BrowseImageView = Backbone.View.extend({
            secondary: "ui-icon-arrow-2-ne-sw"
 
            }
-           });  */
+           });
           toolbar.find('input[id^=ruler]').button({
                  text: true,
                  icons: {
@@ -409,10 +410,11 @@ var BrowseImageView = Backbone.View.extend({
                  }
               });
 
+
           toolbar.find('input[name=rotate]').button();
           toolbar.find('input[name=resize]').button();
           toolbar.find('input[name=drag]').button();
-          toolbar.find('input[name=irregular]').button();
+          toolbar.find('input[name=irregular]').button();*/
           toolbar.find('span[class=nav-toolbar]').buttonset();
           toolbar.find('span[class=draw-toolbar]').buttonset();
           toolbar.find('span[class=edit-toolbar]').buttonset();
@@ -503,7 +505,6 @@ var BrowseImageView = Backbone.View.extend({
                        var isOwner = user.get('id') == window.app.status.user.id;
 
                        if (isOwner) {
-                          console.log("user.get('id')="+user.get('id'));
                           self.userLayer = layerAnnotation;
                           layerAnnotation.initControls(self, isOwner);
                           layerAnnotation.registerEvents(self.map);
@@ -518,7 +519,6 @@ var BrowseImageView = Backbone.View.extend({
                        }
 
                     });
-
                  }
               });
        },

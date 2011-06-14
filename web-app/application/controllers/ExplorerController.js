@@ -4,8 +4,7 @@ var ExplorerController = Backbone.Controller.extend({
        tabs : null,
 
        routes: {
-          "browse/:idProject/:idImage"   :   "browse",
-          "browse/:idProject/:idImage/:idAnnotation"   :   "browse",
+          "tabs-image-:idProject-:idImage-:idAnnotation"   :   "browse",
           "close"   :   "close"
        },
 
@@ -21,28 +20,29 @@ var ExplorerController = Backbone.Controller.extend({
                  }).render();
           }
        },
-
        browse : function (idProject, idImage, idAnnotation) {
           var self = this;
           this.initTabs();
 
           var createBrowseImageViewTab = function() {
              var browseImageViewInitOptions = {};
-             if (idAnnotation != undefined) {
+             if (idAnnotation != "") {
                 browseImageViewInitOptions.goToAnnotation = {value : idAnnotation};
              }
 
              self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions);
-             self.tabs.showTab(idImage);
+             /*self.tabs.showTab(idImage);*/
+             var tabs = $("#explorer > .browser").children(".tabs");
+             tabs.tabs("select", "#tabs-image-"+window.app.status.currentProject+"-"+idImage+"-");
 
              window.app.view.showComponent(self.tabs.container);
              self.showView();
           };
 
           if (window.app.status.currentProject == undefined) {//direct access -> create dashboard
-             window.app.controllers.dashboard.dashboard(idProject);
+             window.app.controllers.dashboard.dashboard(idProject, createBrowseImageViewTab);
 
-             setTimeout(createBrowseImageViewTab, 500);
+             /*setTimeout(createBrowseImageViewTab, 0);*/
              return;
           }
 
