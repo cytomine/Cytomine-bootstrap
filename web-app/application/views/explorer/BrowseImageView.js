@@ -499,7 +499,7 @@ var BrowseImageView = Backbone.View.extend({
              });
              obj.refresh.call();
           } else { //refresh the "all tabs"
-            self.refreshAnnotationsTabsFunc[0].refresh.call();
+             self.refreshAnnotationsTabsFunc[0].refresh.call();
           }
        },
        /**
@@ -512,10 +512,7 @@ var BrowseImageView = Backbone.View.extend({
                     window.app.models.users.each(function (user) {
                        var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), user.get('color'), self.ontologyTreeView, self );
                        layerAnnotation.loadAnnotations(self);
-
-                       //layerAnnotation.initHightlight(self.map);
                        var isOwner = user.get('id') == window.app.status.user.id;
-
                        if (isOwner) {
                           self.userLayer = layerAnnotation;
                           layerAnnotation.initControls(self, isOwner);
@@ -525,9 +522,9 @@ var BrowseImageView = Backbone.View.extend({
                           var toolbar = $('#toolbar' + self.model.get('id'));
                           toolbar.find('input[id=none' + self.model.get('id') + ']').click();
                        } else {
-                          /*layerAnnotation.initControls(self, isOwner);
-                           layerAnnotation.registerEvents(self.map);
-                           layerAnnotation.controls.select.activate();  */
+                          layerAnnotation.initControls(self, isOwner);
+                          layerAnnotation.registerEvents(self.map);
+                          layerAnnotation.controls.select.activate();
                        }
 
                     });

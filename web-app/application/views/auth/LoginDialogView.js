@@ -8,8 +8,8 @@ var LoginDialogView = Backbone.View.extend({
                  template : _.template(tpl, {version : window.app.status.version}),
                  dialogAttr : {
                     dialogID : "#login-confirm",
-                    width : 475,
-                    height : 375,
+                    width : 350,
+                    height : 350,
                     buttons: {
                        "Login": function() {
                           $('#login-form').submit();

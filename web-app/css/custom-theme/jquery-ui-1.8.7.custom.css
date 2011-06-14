@@ -342,7 +342,7 @@
 .ui-corner-all { -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; }
 
 /* Overlays */
-.ui-widget-overlay { background: #262b33; opacity: .70;filter:Alpha(Opacity=70); }
+.ui-widget-overlay { background: #262b33; opacity: .20;filter:Alpha(Opacity=20); }
 .ui-widget-shadow { margin: -8px 0 0 -8px; padding: 8px; background: #000000; opacity: .30;filter:Alpha(Opacity=30); -moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px; }/*
  * jQuery UI Resizable 1.8.7
  *
