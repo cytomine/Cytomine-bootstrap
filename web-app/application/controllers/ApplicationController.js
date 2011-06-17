@@ -75,41 +75,44 @@ var ApplicationController = Backbone.Controller.extend({
           //init controllers
           self.controllers.auth         = new AuthController();
 
-          var serverDown = function(status) {
-             $("#app").fadeOut('slow');
-             var dialog = new ConfirmDialogView({
-                    el:'#dialogs',
-                    templateURL : "text!application/templates/ServerDownDialog.tpl.html",
-                    templateData : {},
-                    dialogAttr : {
-                       dialogID : "#server-down"
-                    }
-                 }).render();
-          }
-
-          var successcallback =  function (data) {
-             self.status.version = data.version;
-             self.status.user = {
-                id : data.user,
-                authenticated : data.authenticated
+          require(["text!application/templates/ServerDownDialog.tpl.html"], function (serverDownTpl) {
+             var serverDown = function(status) {
+                $("#app").fadeOut('slow');
+                var dialog = new ConfirmDialogView({
+                       el:'#dialogs',
+                       template : serverDownTpl,
+                       dialogAttr : {
+                          dialogID : "#server-down"
+                       }
+                    }).render();
              }
-             if (data.authenticated) {
-                self.startup();
-             } else {
-                self.controllers.auth.login();
+
+             var successcallback =  function (data) {
+                self.status.version = data.version;
+                self.status.user = {
+                   id : data.user,
+                   authenticated : data.authenticated
+                }
+                if (data.authenticated) {
+                   self.startup();
+                } else {
+                   self.controllers.auth.login();
+                }
              }
-          }
 
-          var pingURL = 'server/ping';
-          $.ajax({
-                 url: pingURL,
-                 type: 'GET',
-                 success : successcallback
-              });
+             var pingURL = 'server/ping';
+             $.ajax({
+                    url: pingURL,
+                    type: 'GET',
+                    success : successcallback
+                 });
 
-          self.status = new Status(pingURL, serverDown,
-              function () { //TO DO: HANDLE WHEN USER IS DISCONNECTED BY SERVER
-              }, 10000);
+
+             self.status = new Status(pingURL, serverDown,
+                 function () { //TO DO: HANDLE WHEN USER IS DISCONNECTED BY SERVER
+                 }, 10000);
+
+          });
 
 
 
