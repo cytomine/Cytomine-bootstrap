@@ -117,6 +117,7 @@ class BootStrap {
         def mimeSamples = [
                 /*[extension : "jp2", mimeType : "image/jp2"],*/
                 [extension : "tif", mimeType : "image/tiff"],
+                [extension : "tiff", mimeType : "image/tiff"],
                 /*[extension : "gdal", mimeType : "gdalType"],*/
                 [extension : "vms", mimeType : "openslide/vms"],
                 [extension : "mrxs", mimeType : "openslide/mrxs"],
@@ -301,7 +302,7 @@ class BootStrap {
                         'url' : 'http://139.165.108.140:888',
                         'service' : '/fcgi-bin/iipsrv.fcgi',
                         'className' : 'IPPResolver',
-                        'extension' : ['mrxs','vms', 'tif'],
+                        'extension' : ['mrxs','vms', 'tif', 'tiff'],
                         'storage' : 'cytomine'
                 ],
 
@@ -338,7 +339,8 @@ class BootStrap {
                 //[name : "LBTD",  groups : [[ name :"GIGA"]],ontology: "Tissus"],
                 [name : "ANAPATH",  groups : [[ name :"ANAPATH"]],ontology: "LBA"],
                 [name : "OTHER",  groups : [[ name :"OTHER"]],ontology: "Cellules"] ,
-                [name : "CERVIX",  groups : [[ name :"CERVIX"]],ontology: "Cellules"]
+                [name : "CERVIX",  groups : [[ name :"CERVIX"]],ontology: "Cellules"],
+                [name : "PHILIPS",  groups : [[ name :"CERVIX"]],ontology: "Cellules"]
                 // [name : "NEO13", groups : [[ name :"GIGA"]]],
                 // [name : "NEO4",  groups : [[ name :"GIGA"]]]
 
@@ -366,6 +368,7 @@ class BootStrap {
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans3)
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans4)
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData2.CERVIXScans5)
+        if (env != BootStrap.test) createSlidesAndAbstractImages(BootStrapData2.PhillipsScans)
 
         if (env != BootStrap.test) createSlidesAndAbstractImages(BootStrapData.LBTDScans1)
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans2)
@@ -1093,7 +1096,7 @@ class BootStrapData {
             //ANAPATH
             [filename: '/home/stevben/Slides/ANAPATH/vms/01c02157_lba-2011-01-2523.21.42_clip.vms',name: '01c02157_lba-2011-01-2523.21.42_clip.vms',study:'ANAPATH', extension:"vms"],
             [filename: '/home/stevben/Slides/ANAPATH/vms/10C12080-LBAPap-2010-12-0912.18.51_clip.vms', name: '10C12080-LBAPap-2010-12-0912.18.51_clip.vms',study:'ANAPATH', extension:"vms"],
-            [filename: '/home/stevben/Slides/ANAPATH/vms/OVA17cyto-2010-11-1513.09.42_clip.vms', name : 'OVA17cyto-2010-11-1513.09.42_clip.vms',study:'ANAPATH', extension:"vms"]
+            [filename: '/home/stevben/Slides/ANAPATH/vms/OVA17cyto-2010-11-1513.09.42_clip.vms', name : 'OVA17cyto-2010-11-1513.09.42_clip.vms',study:'ANAPATH', extension:"vms"],
     ]
 
     static def LBTDScans1 = [
@@ -2198,6 +2201,29 @@ class BootStrapData2 {
             [filename:'/home/stevben/Slides/CERVIX/R259.mrxs', name :'R259.mrxs', extension :'mrxs', order : 0,study : 'CERVIX'],
             [filename:'/home/stevben/Slides/CERVIX/R260.mrxs', name :'R260.mrxs', extension :'mrxs', order : 0,study : 'CERVIX'],
             [filename:'/home/stevben/Slides/CERVIX/R261.mrxs', name :'R261.mrxs', extension :'mrxs', order : 0,study : 'CERVIX']
+    ]
+
+
+    static def PhillipsScans = [
+            [filename:'/home/stevben/Slides/Philips/03258b99-4d38-4ca6-ba38-8dc4bf366482.isyntax.tiff.vips.tiff', name :'03258b99-4d38-4ca6-ba38-8dc4bf366482', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/03a7e50b-71a5-4998-9691-15bda142ee7f.isyntax.tiff.vips.tiff', name :'03a7e50b-71a5-4998-9691-15bda142ee7f', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/2c9958fe-a258-4cdf-a631-465840b275c7.isyntax.tiff.vips.tiff', name :'2c9958fe-a258-4cdf-a631-465840b275c7', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/2e5a4b75-65b3-4699-89dc-0a8756734507.isyntax.tiff.vips.tiff', name :'2e5a4b75-65b3-4699-89dc-0a8756734507', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/3edd7269-0e07-4151-b3f1-e5349dd27b30.isyntax.tiff.vips.tiff', name :'3edd7269-0e07-4151-b3f1-e5349dd27b30', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/431a1752-e139-4500-afa2-0823a86fbcb5.isyntax.tiff.vips.tiff', name :'431a1752-e139-4500-afa2-0823a86fbcb5', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/74bcee60-d7c2-43fe-a6a8-b53899babdbd.isyntax.tiff.vips.tiff', name :'74bcee60-d7c2-43fe-a6a8-b53899babdbd', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/75cc5e5a-966a-453f-93af-2a6b36091c06.isyntax.tiff.vips.tiff', name :'75cc5e5a-966a-453f-93af-2a6b36091c06', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/86909191-bf5e-4362-88b0-84d22a99f7a5.isyntax.tiff.vips.tiff', name :'86909191-bf5e-4362-88b0-84d22a99f7a5', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/92ad8cef-df28-41d1-9f25-aed464154153.isyntax.tiff.vips.tiff', name :'92ad8cef-df28-41d1-9f25-aed464154153', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/99969963-85b9-4f9a-beff-a4348e2bf704.isyntax.tiff.vips.tiff', name :'99969963-85b9-4f9a-beff-a4348e2bf704', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/a3e98e41-994d-4b15-90a6-2875289c25b6.isyntax.tiff.vips.tiff', name :'a3e98e41-994d-4b15-90a6-2875289c25b6', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/a4a71727-ed86-4350-aa06-80601843f334.isyntax.tiff.vips.tiff', name :'a4a71727-ed86-4350-aa06-80601843f334', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/a84d8dc8-d291-418d-a9f2-9c5ca99e30df.isyntax.tiff.vips.tiff', name :'a84d8dc8-d291-418d-a9f2-9c5ca99e30df', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/afa9be2c-26e8-4020-a8e4-6672894f7bfb.isyntax.tiff.vips.tiff', name :'afa9be2c-26e8-4020-a8e4-6672894f7bfb', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/ca60d7dd-bdcc-4ef2-a2b2-bcbbb5b2ff7c.isyntax.tiff.vips.tiff', name :'ca60d7dd-bdcc-4ef2-a2b2-bcbbb5b2ff7c', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/da92415a-9001-49d5-8d03-7832e4d2c8af.isyntax.tiff.vips.tiff', name :'da92415a-9001-49d5-8d03-7832e4d2c8af', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/ea7c15b1-c56c-4963-bfe1-b62f974ed050.isyntax.tiff.vips.tiff', name :'ea7c15b1-c56c-4963-bfe1-b62f974ed050', extension :'tiff', order : 0,study : 'PHILIPS'],
+            [filename:'/home/stevben/Slides/Philips/face3d70-d2f7-453a-8ea9-8baab569d02a.isyntax.tiff.vips.tiff', name :'face3d70-d2f7-453a-8ea9-8baab569d02a', extension :'tiff', order : 0,study : 'PHILIPS']
     ]
 }
 

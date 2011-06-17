@@ -12,8 +12,8 @@ class Mime {
   static hasMany = [mis:MimeImageServer]
 
   static constraints = {
-    extension (maxSize : 5, blank : false)
-    mimeType (blank : false, unique : true)
+    extension (maxSize : 5, blank : false, unique : true)
+    mimeType (blank : false, unique : false)
   }
 
   def imageServers() {
