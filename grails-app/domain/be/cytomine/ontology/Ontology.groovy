@@ -28,7 +28,7 @@ class Ontology extends SequenceDomain implements Serializable{
     def users = this.users()
     def usersId = []
     users.each{user-> usersId << user.id }
-    usersId
+    usersId.unique()
   }
 
   def terms() {

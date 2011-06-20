@@ -1,17 +1,14 @@
 var ProjectView = Backbone.View.extend({
        tagName : "div",
-       model : null,
-       el : null,
-       container : null,
-       searchProjectPanel : null,
        searchProjectPanelElem : "#searchProjectPanel",
        projectListElem : "#projectlist",
-       addProjectDialog : null,
 
        initialize: function(options) {
           this.container = options.container;
           this.model = options.model;
           this.el = options.el;
+          this.searchProjectPanel = null;
+          this.addProjectDialog = null;
        },
        render : function () {
           var self = this;
