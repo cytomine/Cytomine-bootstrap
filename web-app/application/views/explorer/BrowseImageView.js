@@ -166,6 +166,25 @@ var BrowseImageView = Backbone.View.extend({
              new DraggablePanelView({
                     el : $('#layerSwitcher' + self.model.get('id'))
                  }).render();
+             $("#layers-slider-"+self.model.id).slider({
+                    value: 100,
+                    min : 0,
+                    max : 100,
+                    slide: function(e, ui) {
+                       _.each(self.layers, function(annotationLayer) {
+                          annotationLayer.vectorsLayer.setOpacity(ui.value / 100);
+                       });
+
+                    }
+                 });
+              /*$("#image-slider-"+self.model.id).slider({
+                    value: 100,
+                    min : 0,
+                    max : 100,
+                    slide: function(e, ui) {
+                          self.map.baseLayer.setOpacity(ui.value / 100);
+                    }
+                 });*/
           });
        },
        /**

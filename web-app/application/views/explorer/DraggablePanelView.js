@@ -16,6 +16,7 @@ var DraggablePanelView = Backbone.View.extend({
         var width = $(this.el).width();
         var height = $(this.el).height();
         $(this.el).draggable({
+            cancel: '.slider',
             drag: function (event, ui) {
                 $(this).css("width", width);
                 $(this).css("height", height);
