@@ -110,6 +110,7 @@ AnnotationLayer.prototype = {
    initControls: function (map, isOwner) {
       /*if (isOwner) { */
       this.controls = {
+         'freehand': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
          'point': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
          'line': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
          'polygon': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon),
@@ -121,6 +122,8 @@ AnnotationLayer.prototype = {
          'modify': new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
          'select': new OpenLayers.Control.SelectFeature(this.vectorsLayer)
       }
+      this.controls.freehand.freehand = true;
+
       /* else {
        console.log("no owner");
        this.controls = {
@@ -362,6 +365,7 @@ AnnotationLayer.prototype = {
       };
       if (_.size(annotation.get("term")) > 1) { //multiple terms
          feature.style =  {
+            strokeColor :multipleTermColor,
             fillColor :  multipleTermColor,
             fillOpacity : 0.6
          }
@@ -369,6 +373,7 @@ AnnotationLayer.prototype = {
       } else {
          _.each(annotation.get("term"), function(term){
             feature.style =  {
+               strokeColor :term.color,
                fillColor :  term.color,
                fillOpacity : 0.6
             }

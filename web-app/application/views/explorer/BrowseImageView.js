@@ -451,6 +451,11 @@ var BrowseImageView = Backbone.View.extend({
              self.getUserLayer().toggleControl("select");
              self.getUserLayer().disableHightlight();
           });
+          toolbar.find('input[id=freehand' + this.model.get('id') + ']').click(function () {
+             self.getUserLayer().controls.select.unselectAll();
+             self.getUserLayer().toggleControl("freehand");
+             self.getUserLayer().disableHightlight();
+          });
           toolbar.find('input[id=regular4' + this.model.get('id') + ']').click(function () {
              self.getUserLayer().controls.select.unselectAll();
              self.getUserLayer().setSides(4);
