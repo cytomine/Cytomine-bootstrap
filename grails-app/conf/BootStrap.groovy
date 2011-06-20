@@ -299,12 +299,93 @@ class BootStrap {
                 ],*/
                 [
                         'name' : 'IIP-Openslide2',
-                        'url' : 'http://139.165.108.140:888',
+                        'url' : 'http://is1.cytomine.be:888',
                         'service' : '/fcgi-bin/iipsrv.fcgi',
                         'className' : 'IPPResolver',
-                        'extension' : ['mrxs','vms', 'tif', 'tiff'],
-                        'storage' : 'cytomine'
+                        'extension' : ['mrxs','vms', 'tif'],
+                        'storage' : 'cytomin0'
+
                 ],
+                [
+                        'name' : 'IIP-Openslide2',
+                        'url' : 'http://is2.cytomine.be:888',
+                        'service' : '/fcgi-bin/iipsrv.fcgi',
+                        'className' : 'IPPResolver',
+                        'extension' : ['mrxs','vms', 'tif'],
+                        'storage' : 'cytomin0'
+                ],
+                [
+                        'name' : 'IIP-Openslide2',
+                        'url' : 'http://is3.cytomine.be:888',
+                        'service' : '/fcgi-bin/iipsrv.fcgi',
+                        'className' : 'IPPResolver',
+                        'extension' : ['mrxs','vms', 'tif'],
+                        'storage' : 'cytomin0'
+                ],
+                [
+                        'name' : 'IIP-Openslide2',
+                        'url' : 'http://is4.cytomine.be:888',
+                        'service' : '/fcgi-bin/iipsrv.fcgi',
+                        'className' : 'IPPResolver',
+                        'extension' : ['mrxs','vms', 'tif'],
+                        'storage' : 'cytomin0'
+                ],
+                [
+                        'name' : 'IIP-Openslide2',
+                        'url' : 'http://is5.cytomine.be:888',
+                        'service' : '/fcgi-bin/iipsrv.fcgi',
+                        'className' : 'IPPResolver',
+                        'extension' : ['mrxs','vms', 'tif'],
+                        'storage' : 'cytomin0'
+                ],
+                [
+                        'name' : 'IIP-Openslide2',
+                        'url' : 'http://is6.cytomine.be:888',
+                        'service' : '/fcgi-bin/iipsrv.fcgi',
+                        'className' : 'IPPResolver',
+                        'extension' : ['mrxs','vms', 'tif'],
+                        'storage' : 'cytomin0'
+                ],
+                [
+                        'name' : 'IIP-Openslide2',
+                        'url' : 'http://is7.cytomine.be:888',
+                        'service' : '/fcgi-bin/iipsrv.fcgi',
+                        'className' : 'IPPResolver',
+                        'extension' : ['mrxs','vms', 'tif'],
+                        'storage' : 'cytomin0'
+                ],
+                [
+                        'name' : 'IIP-Openslide2',
+                        'url' : 'http://is8.cytomine.be:888',
+                        'service' : '/fcgi-bin/iipsrv.fcgi',
+                        'className' : 'IPPResolver',
+                        'extension' : ['mrxs','vms', 'tif'],
+                        'storage' : 'cytomin0'
+                ],
+                [
+                        'name' : 'IIP-Openslide2',
+                        'url' : 'http://is9.cytomine.be:888',
+                        'service' : '/fcgi-bin/iipsrv.fcgi',
+                        'className' : 'IPPResolver',
+                        'extension' : ['mrxs','vms', 'tif'],
+                        'storage' : 'cytomin0'
+                ],
+                [
+                        'name' : 'IIP-Openslide2',
+                        'url' : 'http://is10.cytomine.be:888',
+                        'service' : '/fcgi-bin/iipsrv.fcgi',
+                        'className' : 'IPPResolver',
+                        'extension' : ['mrxs','vms', 'tif'],
+                        'storage' : 'cytomin0'
+                ],
+                [
+                        'name' : 'IIP-Openslide2',
+                        'url' : 'http://is10.cytomine.be:888',
+                        'service' : '/fcgi-bin/iipsrv.fcgi',
+                        'className' : 'IPPResolver',
+                        'extension' : ['mrxs','vms', 'tif'],
+                        'storage' : 'cytomin0'
+                ]
 
 
         ]
@@ -327,7 +408,10 @@ class BootStrap {
                 [name: "Frottis",user:'stevben'],
                 /* LBTD */
                 [name : "Tissus",user:'stevben'],
-                [name : "Cellules",user:'stevben']
+                [name : "Cellules",user:'stevben'],
+                /* PAP*/
+                [name : "PAP", user : 'stevben']
+
 
         ]
         createOntology(ontologySamples)
@@ -339,8 +423,8 @@ class BootStrap {
                 //[name : "LBTD",  groups : [[ name :"GIGA"]],ontology: "Tissus"],
                 [name : "ANAPATH",  groups : [[ name :"ANAPATH"]],ontology: "LBA"],
                 [name : "OTHER",  groups : [[ name :"OTHER"]],ontology: "Cellules"] ,
-                [name : "CERVIX",  groups : [[ name :"CERVIX"]],ontology: "Cellules"],
-                [name : "PHILIPS",  groups : [[ name :"CERVIX"]],ontology: "Cellules"]
+                [name : "CERVIX",  groups : [[ name :"CERVIX"]],ontology: "PAP"],
+                [name : "PHILIPS",  groups : [[ name :"CERVIX"]],ontology: "Tissus"]
                 // [name : "NEO13", groups : [[ name :"GIGA"]]],
                 // [name : "NEO4",  groups : [[ name :"GIGA"]]]
 
@@ -445,6 +529,22 @@ class BootStrap {
                 [name: "Lymphocytes",comment:"",ontology:[name:"Cellules"],color:"#ff5800"],
                 [name: "Red Blood Cells",comment:"",ontology:[name:"Cellules"],color:"#0085cc"],
                 [name: "Artefacts",comment:"",ontology:[name:"Cellules"],color:"#cddf54"],
+                /* PAP */
+                [name: "Squamous",comment:"",ontology:[name:"PAP"],color:"#958c12"],
+                [name: "Intermediate/Superficial",comment:"Class 1",ontology:[name:"PAP"],color:"#953579"],
+                [name: "T-Zone",comment:"",ontology:[name:"PAP"],color:"#4bb2c5"],
+                [name: "Glandular endocervical",comment:"Class 8",ontology:[name:"PAP"],color:"#4b5de4"],
+                [name: "Parabasal",comment:"Class 7",ontology:[name:"PAP"],color:"#d8b83f"],
+                [name: "Atypical",comment:"Class26",ontology:[name:"PAP"],color:"#ff5800"],
+                [name: "Halos",comment:"Class 32",ontology:[name:"PAP"],color:"#0085cc"],
+                [name: "High N/C",comment:"Class 47",ontology:[name:"PAP"],color:"#c747a3"],
+                [name: "Elongated",comment:"Class 45",ontology:[name:"PAP"],color:"#cddf54"],
+                [name: "Clusters",comment:"Class 42",ontology:[name:"PAP"],color:"#fbd178"],
+                [name: "Organisms",comment:"",ontology:[name:"PAP"],color:"#26b4e3"],
+                [name: "Fungus",comment:"Class 51",ontology:[name:"PAP"],color:"#bd70c7"],
+
+
+
         ]
 
         if (env != BootStrap.test) createTerms(termSamples)
@@ -487,7 +587,12 @@ class BootStrap {
                 [relation: RelationTerm.names.PARENT,term1:"Vaisseaux", term2: "Vaisseau lymphatique", ontology : "Tissus"],
                 [relation: RelationTerm.names.PARENT,term1:"Marquage", term2: "Collagen", ontology : "Tissus"],
                 [relation: RelationTerm.names.PARENT,term1:"Marquage", term2: "Cellule en prolifération", ontology : "Tissus"],
-                [relation: RelationTerm.names.PARENT,term1:"Marquage", term2: "Alpha-smooth muscle actin", ontology : "Tissus"]
+                [relation: RelationTerm.names.PARENT,term1:"Marquage", term2: "Alpha-smooth muscle actin", ontology : "Tissus"],
+                /* PAP */
+                [relation: RelationTerm.names.PARENT,term1:"Squamous", term2: "Intermediate/Superficial", ontology : "PAP"],
+                [relation: RelationTerm.names.PARENT,term1:"T-Zone", term2: "Glandular endocervical", ontology : "PAP"],
+                [relation: RelationTerm.names.PARENT,term1:"T-Zone", term2: "Parabasal", ontology : "PAP"],
+                [relation: RelationTerm.names.PARENT,term1:"Organisms", term2: "Fungus", ontology : "PAP"]
         ]
         if (env != BootStrap.test) createRelationTerm(relationTermSamples)
 
