@@ -81,6 +81,10 @@ var OntologyTreeView = Backbone.View.extend({
           var ontologyPanelWidth = $(this.el).width();
           var ontologyPanelHeight = $(this.el).height();
           $(this.el).draggable({
+                 start: function(event, ui) {
+                    ontologyPanelWidth = $(self.el).width();
+                    ontologyPanelHeight = $(self.el).height();
+                 },
                  drag: function(event, ui) {
                     $(this).css("width", ontologyPanelWidth);
                     $(this).css("height", ontologyPanelHeight);

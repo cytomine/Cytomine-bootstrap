@@ -238,9 +238,9 @@ div.olControlOverviewMapElement {
     z-index : 2010;
 
     align : center;
-    padding: 0px;
+    padding: 10px;
     background-color: transparent;
-    margin : 8px;
+    /*margin : 12px;*/
 }
 
 div .overviewPanel {
@@ -249,7 +249,7 @@ div .overviewPanel {
     right : 30px;
     top : 100px;
     z-index : 2020;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.7);
     color : #fff;
     padding: 0px;
     margin : 0px;
@@ -265,7 +265,7 @@ div .popupPanel {
     padding: 0px;
     margin : 0px;
     z-index : 1;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.7);
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
@@ -277,7 +277,7 @@ div .annotationsPanel {
     bottom : 68px;
     left : 0px;
     z-index : 2023;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.7);
     color : #fff;
     overflow : hidden;
     padding : 5px;
@@ -290,7 +290,7 @@ div .ontologypanel {
     bottom : 250px;
     max-height: 500px;
     z-index : 2021;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.7);
     color : #fff;
     padding: 0px;
     margin : 0px;
@@ -298,7 +298,7 @@ div .ontologypanel {
     -webkit-border-radius: 6px;
     border-radius: 6px;
     overflow : auto;
-    padding : 5px;
+    padding : 10px;
 }
 
 div .toolbar {
@@ -318,7 +318,7 @@ label .layerSwitcher {
     display:inline;
     font-weight:bold;
     color:#FFF;
-    padding:5px;
+    padding:10px;
 }
 
 input .layerSwitcher{
@@ -401,23 +401,6 @@ div.olControlOverviewMapElement img {
 }
 
 .zoom-display .icon { float:left; }
-
-/* Tree stuff */
-.jstree {
-    /*position : absolute;
-    right : 30px;
-    bottom : 100px;
-    z-index : 2010; */
-    /*  background-color: black;*/
-    /*color : #fff;*/
-    /* padding: 10px;
-  -moz-border-radius: 6px;
-  -webkit-border-radius: 6px;
-  border-radius: 6px;
-  opacity: 0.7;
-  width : 200px;
-  height : 200px;*/
-}
 
 /* Project Panel stuff */
 
@@ -636,3 +619,49 @@ a.checkbox-deselect {
 .tabs-bottom .ui-tabs-nav { position: absolute !important; left: 0; bottom: 0; right:0; padding: 0 0.2em 0.2em 0; }
 .tabs-bottom .ui-tabs-nav li { margin-top: 0px !important; margin-bottom: 0px !important; border-top: none; border-bottom-width: 1px; }
 .ui-tabs-selected { margin-top: 0px !important; }
+
+/* dynatrees */
+
+
+div.ontologypanel > .tree > ul.dynatree-container
+{
+
+
+	font-size: 10pt; /* font size should not be too big */
+	white-space: nowrap;
+	padding: 3px;
+
+	background-color: transparent;
+	border: 0px dotted gray;
+
+	overflow: auto;
+}
+
+div.ontologypanel > .tree > ul.dynatree-container a
+/*, ul.dynatree-container a:visited*/
+{
+	color: white; /* inherit doesn't work on IE */
+	text-decoration: none;
+	vertical-align: top;
+	margin: 0px;
+	margin-left: 3px;
+/*	outline: 0; /* @ Firefox, prevent dotted border after click */
+}
+
+div.ontologypanel > .tree > ul.dynatree-container a:hover
+{
+    background: none;
+    border: 0px;
+/*	text-decoration: underline; */
+	/*background: #F2F7FD; /* light blue */
+	/*border-color: #B8D6FB; /* darker light blue */
+}
+
+
+div.ontologypanel > .tree > li > span.dynatree-selected a
+{
+    background-color : green;
+	color: white;
+	font-style: italic;
+}
+

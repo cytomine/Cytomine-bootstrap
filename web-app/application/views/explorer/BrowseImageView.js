@@ -177,14 +177,14 @@ var BrowseImageView = Backbone.View.extend({
 
                     }
                  });
-              /*$("#image-slider-"+self.model.id).slider({
-                    value: 100,
-                    min : 0,
-                    max : 100,
-                    slide: function(e, ui) {
-                          self.map.baseLayer.setOpacity(ui.value / 100);
-                    }
-                 });*/
+             /*$("#image-slider-"+self.model.id).slider({
+              value: 100,
+              min : 0,
+              max : 100,
+              slide: function(e, ui) {
+              self.map.baseLayer.setOpacity(ui.value / 100);
+              }
+              });*/
           });
        },
        /**
@@ -287,7 +287,7 @@ var BrowseImageView = Backbone.View.extend({
              self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
              self.addBaseLayer(anotherLayer);
              self.addBaseLayer(baseLayer);
-
+             self.createOverviewMap();
              self.map.zoomToMaxExtent();
              self.map.addControl(overviewMapControl);
 
