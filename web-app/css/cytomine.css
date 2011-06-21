@@ -177,6 +177,7 @@ h3 { font-size:13px; }
     width: 160px;
 }
 
+
 .thumb-wrap{
     text-align: center;
     vertical-align: middle;
@@ -186,6 +187,11 @@ h3 { font-size:13px; }
     padding: 5px;
 
 }
+
+.thumb-wrap-active {
+    border: 1px red solid;
+}
+
 
 div.inline {
     float:left;
@@ -246,8 +252,8 @@ div.olControlOverviewMapElement {
 div .overviewPanel {
     align : center;
     position : absolute;
-    right : 30px;
-    top : 100px;
+    right : 20px;
+    top : 40px;
     z-index : 2020;
     background-color: rgba(0, 0, 0, 0.7);
     color : #fff;
@@ -286,8 +292,8 @@ div .annotationsPanel {
 div .ontologypanel {
     align : center;
     position : absolute;
-    left : 30px;
-    bottom : 250px;
+    left : 20px;
+    top : 260px;
     max-height: 500px;
     z-index : 2021;
     background-color: rgba(0, 0, 0, 0.7);
@@ -329,8 +335,8 @@ input .layerSwitcher{
 
 div .layerSwitcherPanel {
     position : absolute;
-    right : 30px;
-    bottom : 250px;
+    right : 20px;
+    top : 260px;
     z-index : 2010;
     background-color: black;
     color : #fff;

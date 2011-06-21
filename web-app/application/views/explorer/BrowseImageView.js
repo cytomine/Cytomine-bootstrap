@@ -9,8 +9,10 @@ var BrowseImageView = Backbone.View.extend({
           this.initCallback = options.initCallback;
           this.layers = [];
           this.baseLayers = [];
-          this.refreshAnnotationsTabsFunc = [];
+          this.annotationsPanel = null;
           this.map = null;
+          this.currentAnnotation = null;
+          _.bindAll(this, "initVectorLayers");
        },
        /**
         * Render the html into the DOM element associated to the view
@@ -56,6 +58,9 @@ var BrowseImageView = Backbone.View.extend({
           }
 
        },
+       refreshAnnotationTabs : function (idTerm) {
+          this.annotationsPanel.refreshAnnotationTabs(idTerm);
+       },
        /**
         * Move the OpenLayers view to the Annotation, at the
         * optimal zoom
@@ -63,6 +68,7 @@ var BrowseImageView = Backbone.View.extend({
         * @param idAnnotation the annotation
         */
        goToAnnotation : function(layer, idAnnotation) {
+          var self = this;
           var feature = layer.getFeature(idAnnotation);
           if (feature != undefined) {
              var bounds = feature.geometry.bounds;
@@ -81,7 +87,7 @@ var BrowseImageView = Backbone.View.extend({
              }
              layer.controls.select.unselectAll();
              layer.controls.select.select(feature);
-
+             self.currentAnnotation = idAnnotation;
              this.map.moveTo(new OpenLayers.LonLat(feature.geometry.getCentroid().x, feature.geometry.getCentroid().y), Math.max(0, zoom));
           }
        },
@@ -132,7 +138,6 @@ var BrowseImageView = Backbone.View.extend({
           $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").find("#"+layerID).click(function(){
              self.map.setBaseLayer(layer);
           });
-
        },
        /**
         * Add a vector layer on the Map
@@ -157,50 +162,19 @@ var BrowseImageView = Backbone.View.extend({
         * and tools
         */
        createLayerSwitcher : function() {
-          var self = this;
-          require([
-             "text!application/templates/explorer/LayerSwitcher.tpl.html"
-          ], function(tpl) {
-             var content = _.template(tpl, {id : self.model.get("id")});
-             $("#layerSwitcher"+self.model.get("id")).html(content);
-             new DraggablePanelView({
-                    el : $('#layerSwitcher' + self.model.get('id'))
-                 }).render();
-             $("#layers-slider-"+self.model.id).slider({
-                    value: 100,
-                    min : 0,
-                    max : 100,
-                    slide: function(e, ui) {
-                       _.each(self.layers, function(annotationLayer) {
-                          annotationLayer.vectorsLayer.setOpacity(ui.value / 100);
-                       });
-
-                    }
-                 });
-             /*$("#image-slider-"+self.model.id).slider({
-              value: 100,
-              min : 0,
-              max : 100,
-              slide: function(e, ui) {
-              self.map.baseLayer.setOpacity(ui.value / 100);
-              }
-              });*/
-          });
+          new LayerSwitcherPanel({
+                 model : this.model,
+                 el : this.el
+              }).render();
        },
        /**
         * Create a draggable Panel containing a OverviewMap
         */
        createOverviewMap : function() {
-          var self = this;
-          require([
-             "text!application/templates/explorer/OverviewMap.tpl.html"
-          ], function(tpl) {
-             new DraggablePanelView({
-                    el : $('#overviewMap' + self.model.get('id')),
-                    template : _.template(tpl, {id : self.model.get('id')})
-                 }).render();
-          });
-
+          new OverviewMapPanel({
+                 model : this.model,
+                 el : this.el
+              }).render();
        },
        /**
         * Init the Map if ImageServer is IIPImage
@@ -515,26 +489,15 @@ var BrowseImageView = Backbone.View.extend({
            toolbar.find('input[id=irregular' + this.model.get('id') + ']').hide();*/
 
        },
-       refreshAnnotationTabs : function (idTerm) {
-          var self = this;
-          if (idTerm != undefined) {
-             var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object){
-                return (object.idTerm == idTerm);
-             });
-             obj.refresh.call();
-          } else { //refresh the "all tabs"
-             self.refreshAnnotationsTabsFunc[0].refresh.call();
-          }
-       },
        /**
         * Collect data and call appropriate methods in order to add Vector Layers on the Map
         */
-       initVectorLayers: function () {
+       initVectorLayers: function (ontologyTreeView) {
           var self = this;
           window.app.models.users.fetch({
                  success: function () {
                     window.app.models.users.each(function (user) {
-                       var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), user.get('color'), self.ontologyTreeView, self );
+                       var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self );
                        layerAnnotation.loadAnnotations(self);
                        var isOwner = user.get('id') == window.app.status.user.id;
                        if (isOwner) {
@@ -555,173 +518,26 @@ var BrowseImageView = Backbone.View.extend({
                  }
               });
        },
-       refreshAnnotations : function(idTerm, el) {
-          new AnnotationCollection({image:this.model.id,term:idTerm}).fetch({
-                 success : function (collection, response) {
-                    el.empty();
-                    var view = new AnnotationView({
-                           page : undefined,
-                           model : collection,
-                           el:el
-                        }).render();
-                 }
-              });
-       },
+
        initAnnotationsTabs : function(){
-          var self = this;
-          var createTabs = function(idOntology) {
-             require(["text!application/templates/explorer/TermTab.tpl.html", "text!application/templates/explorer/TermTabContent.tpl.html"], function(termTabTpl, termTabContentTpl) {
+          this.annotationsPanel = new AnnotationsPanel({
+                 el : this.el,
+                 model : this.model
+              }).render();
 
-                new TermCollection({idOntology:idOntology}).fetch({
-                       success : function (collection, response) {
-
-                          //add "All annotation from all term" tab
-                          self.addTermToTab(termTabTpl, termTabContentTpl, { id : "all", image : self.model.id, name : "All"});
-                          self.refreshAnnotationsTabsFunc.push({
-                                 index : 0,
-                                 idTerm : "all",
-                                 refresh : function() {self.refreshAnnotations(undefined,$("#tabsterm-"+self.model.id+"-all"))}
-                              });
-                          var i = 1;
-                          collection.each(function(term) {
-                             //add x term tab
-                             self.addTermToTab(termTabTpl, termTabContentTpl, { id : term.get("id"), image : self.model.id,name : term.get("name")});
-                             self.refreshAnnotationsTabsFunc.push({
-                                    index : i,
-                                    idTerm : term.get("id"),
-                                    refresh : function() {self.refreshAnnotations(term.get("id"),$("#tabsterm-"+self.model.id+"-"+term.get("id")))}
-                                 });
-                             i++;
-                          });
-
-
-                          $("#annotationsPanel"+self.model.id).find(".tabsAnnotation").tabs({
-                                 add : function (event, ui) {
-
-                                 },
-                                 select: function(event, ui) {
-                                    var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object){
-                                       return (object.index == ui.index);
-                                    });
-                                    obj.refresh.call();
-                                 }
-                              });
-                          $("#annotationsPanel"+self.model.id).find( ".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *" )
-                              .removeClass( "ui-corner-all ui-corner-top" )
-                              .addClass( "ui-corner-bottom" );
-                          self.initAnnotations();
-                       }});
-
-
-             });
-          }
-
-          require([
-             "text!application/templates/explorer/AnnotationsPanel.tpl.html"
-          ], function(tpl) {
-             var el = $('#annotationsPanel' + self.model.get('id'));
-             el.html(_.template(tpl, {id : self.model.get('id')}));
-             new ProjectModel({id : window.app.status.currentProject}).fetch({
-                    success : function (model, response) {
-                       createTabs(model.get("ontology"));
-                    }
-                 });
-
-             el.css("width", "20px");
-             el.css("height", "30px");
-             el.find("div.panel_button").click(function(){
-                el.find("div.panel_button").toggle();
-                el.css("bottom", "0px");
-                el.animate({
-                       height: "320px"
-                    }, "fast").animate({
-                       width: "100%"
-                    });
-                setTimeout(function(){el.find("div.panel_content").fadeIn();}, 1000);
-                return false;
-             });
-
-             el.find("div#refresh_annotations_button").click(function(){
-                var tabSelected = el.find(".tabsAnnotation").tabs('option', 'selected');
-                var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object){
-                   return (object.index == tabSelected);
-                });
-                obj.refresh.call();
-             });
-             el.find("div#hide_button").click(function(){
-                el.animate({
-                       height: "30px"
-                    }, "fast")
-                    .animate({
-                       width : "20px"
-                    }, "fast");
-
-                setTimeout(function(){el.find("div.panel_content").hide();el.css("bottom", "70px");}, 1000);
-
-                return false;
-
-             });
-
-
-          });
-
-
-       },
-       /**
-        * Add the the tab with term info
-        * @param id  term id
-        * @param name term name
-        */
-       addTermToTab : function(termTabTpl, termTabContentTpl, data) {
-          $("#annotationsPanel"+this.model.id).find(".ultabsannotation").append(_.template(termTabTpl, data));
-          $("#annotationsPanel"+this.model.id).find(".listtabannotation").append(_.template(termTabContentTpl, data));
-       },
-       initAnnotations : function () {
-          var self = this;
-
-
-          //init panel for all annotation (with or without term
-          new AnnotationCollection({image:self.model.id}).fetch({
-                 success : function (collection, response) {
-
-                    self.refreshAnnotations(undefined, $("#tabsterm-"+self.model.id+"-all"));
-                    /*self.annotationsViews[0] = view;*/
-
-                 }
-              });
        },
        /**
         * Create a draggable Panel containing a tree which represents the Ontology
         * associated to the Image
         */
        initOntology: function () {
-          var self =this;
-          var ontology = new ProjectModel({id:window.app.status.currentProject}).fetch({
-                 success : function(model, response) {
-                    var idOntology = model.get('ontology');
-                    var ontology = new OntologyModel({id:idOntology}).fetch({
-                           success : function(model, response) {
-                              self.ontologyTreeView = new OntologyTreeView({
-                                     el: $("#ontologyTree" + self.model.get("id")),
-                                     browseImageView : self,
-                                     model: model
-                                  }).render();
-                              self.initVectorLayers();
-                           }
-                        });
-
-                    require([
-                       "text!application/templates/explorer/OntologyTree.tpl.html"
-                    ], function(tpl) {
-                       new DraggablePanelView({
-                              el : $('#ontologyTree' + self.model.get('id')),
-                              template : _.template(tpl, {id : self.model.get('id')})
-                           }).render();
-                    });
-                 }
-              });
-
-
+          var self = this;
+          new OntologyPanel({
+                 el : this.el,
+                 model : this.model,
+                 callback : self.initVectorLayers,
+                 browseImageView : self
+              }).render();
 
        },
        /**
