@@ -4,6 +4,7 @@ var DashboardController = Backbone.Controller.extend({
        view : null,
        routes: {
           "tabs-images-:project"  : "images",
+          "tabs-imagestab-:project"  : "imagestab",
           "tabs-annotations-:project"  : "annotations",
           "tabs-dashboard-:project"  : "dashboard"
        },
@@ -31,9 +32,21 @@ var DashboardController = Backbone.Controller.extend({
              self.view.refreshImages();
              var tabs = $("#explorer > .browser").children(".tabs");
              tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
+             self.view.selectTab(0);
           }
           this.init(project, func);
 
+
+       },
+       imagestab : function(project) {
+          var self = this;
+          var func = function() {
+             self.view.refreshImagesTabs();
+             var tabs = $("#explorer > .browser").children(".tabs");
+             tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
+              self.view.selectTab(1);
+          }
+          this.init(project, func);
        },
        annotations : function(project) {
           var self = this;

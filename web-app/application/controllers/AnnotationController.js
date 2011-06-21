@@ -20,7 +20,7 @@ var AnnotationController = Backbone.Controller.extend({
         console.log("AnnotationController:"+idAnnotation);
         if (!self.view) {
             console.log("Annotation controller");
-            window.app.models.annotations.fetch({
+            window.app.models.images.fetch({
                 success : function (collection, response) {
 
 

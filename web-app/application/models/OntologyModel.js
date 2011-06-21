@@ -6,12 +6,12 @@
  * To change this template use File | Settings | File Templates.
  */
 var OntologyModel = Backbone.Model.extend({
-	url : function() {
-		var base = 'api/ontology';
-		var format = '.json';
+    url : function() {
+        var base = 'api/ontology';
+        var format = '.json';
         if (this.isNew()) return base + format;
-		return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
-	}
+        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+    }
 });
 
 
@@ -22,9 +22,7 @@ var OntologyCollection = Backbone.Collection.extend({
     url: 'api/currentuser/ontology.json',
     initialize: function () {
         // something
+    },comparator : function(ontology) {
+        return ontology.get("name");
     }
 });
-
-OntologyCollection.comparator = function(ontology) {
-  return ontology.get("name");
-};
