@@ -169,7 +169,7 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
   void testAddImageInstanceCorrect() {
 
     log.info("create imageinstance")
-    def imageToAdd = BasicInstance.createOrGetBasicImageInstance()
+    def imageToAdd = BasicInstance.getBasicImageInstanceNotExist()
     String jsonImage = imageToAdd.encodeAsJSON()
 
     log.info("post imageinstance:"+jsonImage.replace("\n",""))
@@ -244,6 +244,46 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(200,code)*/
 
   }
+
+  void testAddImageInstanceAlreadyExist() {
+
+    log.info("create imageinstance")
+    def imageToAdd = BasicInstance.getBasicImageInstanceNotExist()
+    String jsonImage = imageToAdd.encodeAsJSON()
+
+    log.info("post imageinstance:"+jsonImage.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/imageinstance.json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.post(jsonImage)
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    println response
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+    int idImage = json.imageinstance.id
+
+    log.info("post imageinstance:"+jsonImage.replace("\n",""))
+    URL = Infos.CYTOMINEURL+"api/imageinstance.json"
+    client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.post(jsonImage)
+    code  = client.getResponseCode()
+    response = client.getResponseData()
+    println response
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(400,code)
+
+  }
+
+
+
 
   void testaddImageInstanceWithUnexistingAbstractImage() {
 

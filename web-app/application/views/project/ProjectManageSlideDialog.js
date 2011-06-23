@@ -54,6 +54,15 @@ var ProjectManageSlideDialog = Backbone.View.extend({
     initialize: function(options) {
         this.container = options.container;
         this.projectPanel = options.projectPanel;
+
+        this.listmanageproject = "listmanageproject"+this.model.id;
+        this.pagemanageproject = "pagemanageproject"+this.model.id;
+        this.listmanageall = "listmanageall"+this.model.id;
+        this.pagemanageall = "pagemanageall"+this.model.id;
+        this.addImageButton = "addimageprojectbutton"+this.model.id;
+        this.delImageButton = "delimageprojectbutton"+this.model.id;
+
+
         _.bindAll(this, 'render');
         _.bindAll(this, 'nextPage');
         _.bindAll(this, 'previousPage');
@@ -128,54 +137,45 @@ var ProjectManageSlideDialog = Backbone.View.extend({
         var self = this;
         console.log("renderImageListing");
 
-        var listmanageproject = "listmanageproject"+this.model.id;
-        var pagemanageproject = "pagemanageproject"+this.model.id;
-        var listmanageall = "listmanageall"+this.model.id;
-        var pagemanageall = "pagemanageall"+this.model.id;
-        var add = "addimageprojectbutton"+this.model.id;
-        var del = "delimageprojectbutton"+this.model.id;
-
-        $("#"+add).button({
+        $("#"+self.addImageButton).button({
             icons : {primary: "ui-icon-circle-arrow-w" } ,
             text: false
         });
-        $("#"+del).button({
+        $("#"+self.delImageButton).button({
             icons : {primary: "ui-icon-circle-arrow-e"} ,
             text: false
         });
 
-        $('#'+add).click(function() {
-            self.addImageProjectFromTable(listmanageall,pagemanageall,listmanageproject,pagemanageproject);
+        $('#'+self.addImageButton).click(function() {
+            self.addImageProjectFromTable();
         });
 
+        $('#'+self.delImageButton).click(function() {
+            self.deleteImageProjectFromTable();
+        });
 
-        self.renderImageListProject(listmanageproject,pagemanageproject);
-        self.renderImageListAll(listmanageall,pagemanageall);
-        //      }, 1000);
-
-
-        // $("#list3").jqGrid('sortGrid','filename',true);
-
+        self.renderImageListProject();
+        self.renderImageListAll();
 
     },
-    refreshImageList : function(tabAll,pageAll,tabProject, pageProject) {
+    refreshImageList : function() {
         var self = this;
         console.log("refreshImageListProject");
         console.log("clear");
-        $("#"+tabAll).jqGrid("clearGridData", true);
-        $("#"+tabProject).jqGrid("clearGridData", true);
+        $("#"+self.listmanageall).jqGrid("clearGridData", true);
+        $("#"+self.listmanageproject).jqGrid("clearGridData", true);
         self.imagesProject.fetch({
             success : function (collection, response) {
-                self.loadDataImageListProject(collection,tabProject, pageProject);
+                self.loadDataImageListProject(collection);
 
                 //window.app.models.images.fetch({
                   //  success : function (collection, response) {
-                        self.loadDataImageListAll(window.app.models.images,tabAll,pageAll);
+                        self.loadDataImageListAll(window.app.models.images);
                     //}});
             }
         });
     },
-    loadDataImageListProject : function(collection,listmanage,pagemanage) {
+    loadDataImageListProject : function(collection) {
         //add image data
         console.log("loadDataImageListProject");
         var self = this;
@@ -199,29 +199,36 @@ var ProjectManageSlideDialog = Backbone.View.extend({
         });
         for(var j=0;j<data.length;j++) {
             console.log(data[j]);
-            $("#"+listmanage).jqGrid('addRowData',data[j].id,data[j]);
+            $("#"+self.listmanageproject).jqGrid('addRowData',data[j].id,data[j]);
         }
-        $("#"+listmanage).jqGrid('sortGrid','filename',false);
+        $("#"+self.listmanageproject).jqGrid('sortGrid','filename',false);
 
     },
-    renderImageListProject : function(listmanage,pagemanage) {
+    renderImageListProject : function() {
         var self = this;
         var lastsel;
-        console.log("JQGRID:"+$("#"+listmanage).length);
-        $("#"+listmanage).jqGrid({
+        console.log("JQGRID:"+$("#"+self.listmanageproject).length);
+        $("#"+self.listmanageproject).jqGrid({
             datatype: "local",
-            width: "400",
+            width: "450",
             height : "300",
             colNames:['id','filename','type','added'],
             colModel:[
                 {name:'id',index:'id', width:50, sorttype:"int"},
                 {name:'filename',index:'filename', width:250},
                 {name:'type',index:'type', width:50},
-                {name:'added',index:'added', width:70,sorttype:"date"}
+                {name:'added',index:'added', width:90,sorttype:"date"}
             ],
             onSelectRow: function(id){
+
+                var checked = $("#"+self.listmanageproject).find("#" + id).find(".cbox").attr('checked');
+                if(checked) $("#"+self.listmanageproject).find("#" + id).find("td").css("background-color", "CD661D");
+                else $("#"+self.listmanageproject).find("#" + id).find("td").css("background-color", "a0dc4f");
+
+
                 if(id && id!==lastsel){
-                    alert("Click on "+id);
+                    //alert("Click on "+id);
+
                     lastsel=id;
                 }
             },
@@ -229,157 +236,163 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                 //change color of already selected image
                 self.imagesProject.each(function(image) {
                     console.log("image project="+image.id);
-                    $("#"+listmanage).find("#" + image.id).find("td").css("background-color", "a0dc4f");
+                    $("#"+self.listmanageproject).find("#" + image.id).find("td").css("background-color", "a0dc4f");
                 });
             },
             //rowNum:10,
-            pager: '#'+pagemanage,
+            pager: '#'+self.pagemanageproject,
             sortname: 'id',
             viewrecords: true,
             sortorder: "asc",
-            caption:"Image add in " + self.model.get('name')
+            caption:"Image in " + self.model.get('name'),
+            multiselect: true
         });
-        $("#"+listmanage).jqGrid('navGrid','#'+pagemanage,{edit:false,add:false,del:false});
+        $("#"+self.listmanageproject).jqGrid('navGrid','#'+self.listmanageproject,{edit:false,add:false,del:false});
 
-        self.loadDataImageListProject(self.imagesProject,listmanage,pagemanage);
+        self.loadDataImageListProject(self.imagesProject);
     },
-    renderImageListAll : function(listmanage,pagemanage) {
+    renderImageListAll : function() {
         var self = this;
         var lastsel;
-        $("#"+listmanage).jqGrid({
+        $("#"+self.listmanageall).jqGrid({
             datatype: "local",
-            width: "900",
+            width: "700",
             height : "300",
-            colNames:['id','filename','type','added','See'],
+            colNames:['id','filename','type','added'],
             colModel:[
                 {name:'id',index:'id', width:30},
                 {name:'filename',index:'filename', width:300},
                 {name:'type',index:'type', width:40},
-                {name:'added',index:'added', width:70,sorttype:"date"},
-                {name:'See',index:'See', width:150,sortable:false}
+                {name:'added',index:'added', width:70,sorttype:"date"}
             ],
             onSelectRow: function(id){
-                if(id && id!==lastsel){
-                    //alert("Click on "+id);
-                    lastsel=id;
-                }
+                    if(self.imagesProject.get(id)!=null) {
+                        //if image in project, row cannot be checked
+                        $("#"+self.listmanageall).find("#" + id).find(".cbox").removeAttr('checked')
+                    }
             },
             loadComplete: function() {
                 //change color of already selected image
+
+                    console.log("**********************************");
+                    console.log($("#"+self.listmanageall).html());
+                    console.log("**********************************");
+
                 self.imagesProject.each(function(image) {
                     console.log("image project="+image.id);
-                    $("#"+listmanage).find("#" + image.id).find("td").css("background-color", "a0dc4f");
+                    $("#"+self.listmanageall).find("#" + image.id).find("td").css("background-color", "a0dc4f");
                     //$("#"+listmanage).find("#" + image.id).find(".cbox").attr('checked', 'checked')
-                    $("#"+listmanage).find("#" + image.id).find(".cbox").attr('disabled', true)
-                    $("#"+listmanage).find("#" + image.id).find(".cbox").css("visible", false);
+                    $("#"+self.listmanageall).find("#" + image.id).find(".cbox").attr('disabled', true)
+                    $("#"+self.listmanageall).find("#" + image.id).find(".cbox").css("visible", false);
+                   /* alert(" 1:"+$("#"+self.listmanageall).find("#" + image.id).find(".cbox").length +
+                          " 2:" + image.id + " " +$("#"+self.listmanageall).find("#" + image.id).length +
+                          " 3:"+$("#"+self.listmanageall).length); */
+
+
                 });
             },
             //rowNum:10,
-            pager: '#'+pagemanage,
+            pager: '#'+self.pagemanageall,
             sortname: 'id',
             viewrecords: true,
             sortorder: "asc",
-            caption:"Array Example",
+            caption:"Other images",
             multiselect: true
         });
-        $("#"+listmanage).jqGrid('navGrid','#'+pagemanage,{edit:false,add:false,del:false});
-        $("#"+listmanage).jqGrid('sortGrid','filename',false);
-        self.loadDataImageListAll(window.app.models.images,listmanage,pagemanage);
+        $("#"+self.listmanageall).jqGrid('navGrid','#'+self.pagemanageall,{edit:false,add:false,del:false});
+        $("#"+self.listmanageall).jqGrid('sortGrid','filename',false);
+        self.loadDataImageListAll(window.app.models.images);
     },
 
-    loadDataImageListAll : function(collection,listmanage,pagemanage) {
+    loadDataImageListAll : function(collection) {
         //add image data
-        console.log("loadDataImageListProject");
+        console.log("loadDataImageListAll");
         var self = this;
         var data = new Array();
         var i = 0;
 
         collection.each(function(image) {
-            console.log(image.get('created'));
 
-            if(self.imagesProject.get(image.id)==null) {
+            if(true) { //if(self.imagesProject.get(image.id)==null) => Image not in project
 
                 var createdDate = new Date();
                 createdDate.setTime(image.get('created'));
-                console.log("id="+image.id);
+
                 data[i] = {
                     id: image.id,
                     filename: image.get('filename'),
                     type : image.get('mime'),
-                    added : createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate(),
-                    See : ''
+                    added : createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate()
                 };
                 i++;
             }
         });
         for(var j=0;j<data.length;j++) {
-            console.log(data[j]);
-            $("#"+listmanage).jqGrid('addRowData',data[j].id,data[j]);
+            console.log("add row");
+            $("#"+self.listmanageall).jqGrid('addRowData',data[j].id,data[j]);
         }
-        //$("#"+listmanage).jqGrid('sortGrid','filename',false);
-        //$("#"+listmanage).jqGrid('sortGrid','filename',false);
+        $("#"+self.listmanageall).jqGrid('sortGrid','filename',false);
+        $("#"+self.listmanageall).jqGrid('sortGrid','filename',false);
 
     },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    addImageProjectFromTable : function(tabAll,pageAll,tabProject, pageProject) {
+    addImageProjectFromTable : function() {
         console.log("addImageProjectFromTable");
         var self = this;
-        var idSelectedArray = $("#"+tabAll).jqGrid('getGridParam','selarrrow');
-        if (idSelectedArray.length == 0) {
-            self.addImageProjectCallback(0, 0,tabAll,pageAll,tabProject,pageProject);
-        }
+        var idSelectedArray = $("#"+self.listmanageall).jqGrid('getGridParam','selarrrow');
+        if (idSelectedArray.length == 0) return;
         var counter = 0;
         _.each(idSelectedArray, function(idImage){
             new ImageInstanceModel({}).save({project : self.model.id, user : null, baseImage :idImage},{
                 success : function (image,response) {
                     console.log(response);
-                    window.app.view.message("ImageInstance", response.message, "");
-                    self.addImageProjectCallback(idSelectedArray.length, ++counter,tabAll,pageAll,tabProject,pageProject)
+                    window.app.view.message("Image", response.message, "");
+                    self.addImageProjectCallback(idSelectedArray.length, ++counter)
                 },
                 error: function (model, response) {
-                    console.log("ERROR:"+response);
+                    console.log(response);
+                    var json = $.parseJSON(response.responseText);
+                    window.app.view.message("Image", json.errors, "");
+                     self.addImageProjectCallback(idSelectedArray.length, ++counter)
                 }
             });
         });
     },
-    addImageProjectCallback : function(total, counter,tabAll,pageAll,tabProject, pageProject) {
+    addImageProjectCallback : function(total, counter) {
         if (counter < total) return;
         var self = this;
-        self.refreshImageList(tabAll,pageAll,tabProject, pageProject);
+        self.refreshImageList();
     },
 
 
-    deleteImageProjectFromTable : function(pagemanageall) {
-
+    deleteImageProjectFromTable : function() {
+        console.log("deleteImageProjectFromTable");
+        var self = this;
+        var idSelectedArray = $("#"+self.listmanageproject).jqGrid('getGridParam','selarrrow');
+        if (idSelectedArray.length == 0) return;
+        var counter = 0;
+        _.each(idSelectedArray, function(idImage){
+            new ImageInstanceModel({project : self.model.id, user : null, baseImage :idImage}).destroy({
+                success : function (image,response) {
+                    console.log(response);
+                    window.app.view.message("Image", response.message, "");
+                    self.deleteImageProjectCallback(idSelectedArray.length, ++counter)
+                },
+                error: function (model, response) {
+                    console.log(response);
+                    var json = $.parseJSON(response.responseText);
+                    window.app.view.message("Image", json.errors, "");
+                     self.deleteImageProjectCallback(idSelectedArray.length, ++counter)
+                }
+            });
+        });
     },
+    deleteImageProjectCallback : function(total, counter) {
+        if (counter < total) return;
+        var self = this;
+        self.refreshImageList();
+    },
+
 
 
 

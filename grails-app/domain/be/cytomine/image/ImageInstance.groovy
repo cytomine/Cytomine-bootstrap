@@ -90,7 +90,7 @@ class ImageInstance extends SequenceDomain {
            //1.overlap baseImage json (returnArray['image'] = it.baseImage) -> change need to be made in *.js
            //2.in *.js, check the "Base Image" thanks to its id from  (returnArray['baseImage']) and get info from there
            //3.stay like that...
-            returnArray['thumb'] = it.baseImage? it.baseImage.getThumbURL() : null
+          try {returnArray['thumb'] = it.baseImage? it.baseImage.getThumbURL() : null}catch(Exception e){returnArray['thumb']='NO THUMB:'+e.toString()}
             returnArray['filename'] = it.baseImage? it.baseImage.filename : null
 
             returnArray['slide'] = it.baseImage?.slide? it.baseImage.slide.id : null
@@ -107,7 +107,7 @@ class ImageInstance extends SequenceDomain {
 
             returnArray['info'] = it.baseImage.slide?.name
             //returnArray['annotations'] = it.annotations
-            returnArray['thumb'] = it.baseImage.getThumbURL()
+           // returnArray['thumb'] = it.baseImage.getThumbURL()
             returnArray['preview'] = it.baseImage.getPreviewURL()
             //returnArray['thumb'] = UrlApi.getThumbURLWithImageId(it.id)
             returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.baseImage.id)

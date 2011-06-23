@@ -23,6 +23,16 @@ class AddImageInstanceCommand extends AddCommand implements UndoRedoCommand {
       def json = JSON.parse(postData)
       json.user = user.id
       newImage = ImageInstance.createFromData(json)
+      def oldImageInstance = ImageInstance.findByBaseImageAndProject(newImage.baseImage,newImage.project)
+      log.debug "oldImageInstance=" + oldImageInstance
+       boolean alreadyExist = (oldImageInstance!=null)
+       log.debug "alreadyExist=" + alreadyExist
+       if(alreadyExist) {
+         log.debug "throw exception"
+         throw new IllegalArgumentException("Image "+newImage?.baseImage?.filename +" already map with project")
+       }
+
+     // if(alreadyExist) throw new ConstraintException("Image "+newImage?.baseImage?.filename +" already map with project")
       return super.validateAndSave(newImage,["#ID#",newImage?.baseImage?.filename,newImage.project.name] as Object[])
     }catch(ConstraintException ex){
       return [data : [imageinstance:newImage,errors:newImage.retrieveErrors()], status : 400]
