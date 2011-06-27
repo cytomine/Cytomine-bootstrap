@@ -95,6 +95,10 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                 });
                 $("#tabsProjectaddimagedialog"+self.model.get('id')).tabs();
                 console.log("dialog ok");
+
+                //bug,panel title are hidden (display:none)
+                $(".ui-panel-header").css("display","block");
+
                 self.open();
             }
         };

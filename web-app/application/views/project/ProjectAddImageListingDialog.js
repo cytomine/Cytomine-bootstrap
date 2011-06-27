@@ -41,6 +41,9 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
         this.renderImageList();
 
+
+$(".ui-panel-header").css("display","block");
+
         return this;
 
     },
@@ -76,6 +79,15 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             icons : {primary: "ui-icon-circle-arrow-e"} ,
             text: false
         });
+
+$("#searchImagetPanelup"+self.model.id).panel({
+                 collapseSpeed:100
+              });
+
+        $("#imagesallbutton"+self.model.id).button({
+            text: true
+        });
+
 
         $('#'+self.addImageButton).click(function() {
             self.addImageProjectFromTable();
