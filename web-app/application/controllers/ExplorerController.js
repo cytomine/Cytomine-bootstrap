@@ -54,9 +54,8 @@ var ExplorerController = Backbone.Controller.extend({
        closeAll : function () {
           if (this.tabs == null) return;
 
-          this.tabs.closeAll();
-
-          /*window.app.view.showComponent(this.tabs.container);*/
+          this.tabs = null;
+          $("#explorer > .browser").empty();
        },
 
        showView : function() {

@@ -10,10 +10,13 @@ var DashboardController = Backbone.Controller.extend({
        },
 
        init : function (project, callback) {
+
           if (window.app.status.currentProject != undefined && window.app.status.currentProject != project) {
              console.log("close previous project");
              this.destroyView();
+             window.app.controllers.browse.closeAll();
              window.app.status.currentProject = undefined;
+
           }
 
           if (window.app.status.currentProject == undefined) {
@@ -26,6 +29,7 @@ var DashboardController = Backbone.Controller.extend({
              callback.call();
           }
        },
+
        images : function(project) {
           var self = this;
           var func = function() {
@@ -88,7 +92,6 @@ var DashboardController = Backbone.Controller.extend({
        },
 
        destroyView : function() {
-          window.app.controllers.browse.closeAll();
           this.view = null;
        },
 

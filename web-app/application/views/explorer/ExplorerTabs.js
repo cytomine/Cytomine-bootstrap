@@ -125,6 +125,7 @@ var ExplorerTabs = Backbone.View.extend({
              tabs.tabs('remove', i);
           }
           this.tabs = [];
+          tabs.tabs("destroy");
           $(this.el).hide();
           $(this.el).parent().find('.noProject').show();
        },
