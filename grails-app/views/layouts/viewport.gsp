@@ -150,6 +150,9 @@
     <script type="text/javascript" src="application/views/project/ProjectEditDialog.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectSearchPanel.js" ></script>
 
+    <script type="text/javascript" src="application/views/project/ProjectAddImageListingDialog.js" ></script>
+    <script type="text/javascript" src="application/views/project/ProjectAddImageThumbDialog.js" ></script>
+
     <script type="text/javascript" src="application/views/annotation/AnnotationListView.js" ></script>
 
     <script type="text/javascript" src="application/views/Component.js" ></script>
