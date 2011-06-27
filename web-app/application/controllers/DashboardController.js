@@ -27,7 +27,9 @@ var DashboardController = Backbone.Controller.extend({
              this.showView();
           } else {
              callback.call();
+             this.showView();
           }
+
        },
 
        images : function(project) {
