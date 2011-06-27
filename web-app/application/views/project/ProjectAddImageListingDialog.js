@@ -8,8 +8,8 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         this.projectPanel = options.projectPanel;
         this.imagesProject = options.imagesProject;
         this.slides = options.slides,
-        this.images = options.images,
-        this.el = "#tabsProjectaddimagedialog"+self.model.id+"-2" ;
+                this.images = options.images,
+                this.el = "#tabsProjectaddimagedialog"+self.model.id+"-2" ;
 
         this.listmanageproject = "listmanageproject"+this.model.id;
         this.pagemanageproject = "pagemanageproject"+this.model.id;
@@ -41,30 +41,117 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
         this.renderImageList();
 
+        var imagesNameArray = new Array();
 
-$(".ui-panel-header").css("display","block");
+        //TODO: improve perf and fill it when browse in an other place?
+        self.images.each(function(image) {
+            imagesNameArray.push(image.get('filename'));
+        });
+
+
+        //autocomplete
+        $("#filenamesearchtextboxup"+self.model.id).autocomplete({
+            minLength : 0, //with min=0, if user erase its text, it will show all project withouth name constraint
+            source : imagesNameArray,
+            select : function (event,ui)
+            {
+                $("#filenamesearchtextboxup"+self.model.id).val(ui.item.label)
+                self.searchImages();
+
+            },
+            search : function(event)
+            {
+
+                console.log("TEXT:"+$("#filenamesearchtextboxup"+self.model.id).val());
+                self.searchImages();
+            }
+        });
 
         return this;
 
     },
+
+
+
+    searchImages : function() {
+        var self = this;
+        var searchText = $("#filenamesearchtextboxup"+self.model.id).val();
+        self.filterImages(searchText==""?undefined:searchText);
+    },
+
+    filterImages : function(searchText) {
+
+        var self = this;
+        var images =  new ImageCollection(self.images.models);
+
+        //each search function takes a search data and a collection and it return a collection without elem that
+        //don't match with data search
+        images = self.filterByImagesByName(searchText,images);
+
+        //add here filter function
+
+
+        $("#"+self.listmanageall).jqGrid("clearGridData", true);
+        self.loadDataImageListAll(images);
+
+    },
+
+
+
+
+
+
+
+
+
+
+
+    filterByImagesByName : function(searchText,imagesOldList) {
+
+        var imagesNewList =  new ImageCollection(imagesOldList.models);
+
+        imagesOldList.each(function(image) {
+            if(searchText!=undefined && !image.get('filename').toLowerCase().contains(searchText.toLowerCase()))
+                imagesNewList.remove(image);
+        });
+
+        return imagesNewList;
+    },
+
+    filterByFormat : function() {
+
+    },
+
+    filterByDateStart : function() {
+
+    },
+
+    filterByDateEnd : function() {
+
+    },
+
+
+
+
+
     renderImageList: function() {
         var self = this;
         self.renderImageListing();
         /*var fetchCallback = function(cpt, expected) {
-            if (cpt == expected) {
-                self.renderImageListing();
-            }
-        };
+         if (cpt == expected) {
+         self.renderImageListing();
+         }
+         };
 
-        var modelsToPreload = [window.app.models.slides, window.app.models.images, self.imagesProject];
-        var nbModelFetched = 0;
-        _.each(modelsToPreload, function(model){
-            model.fetch({
-                success :  function(model, response) {
-                    fetchCallback(++nbModelFetched, _.size(modelsToPreload));
-                }
-            });
-        });*/
+         var modelsToPreload = [window.app.models.slides, window.app.models.images, self.imagesProject];
+         var nbModelFetched = 0;
+         _.each(modelsToPreload, function(model){
+         model.fetch({
+         success :  function(model, response) {
+         fetchCallback(++nbModelFetched, _.size(modelsToPreload));
+         }
+         });
+         });*/
 
     },
     renderImageListing : function() {
@@ -80,14 +167,16 @@ $(".ui-panel-header").css("display","block");
             text: false
         });
 
-$("#searchImagetPanelup"+self.model.id).panel({
-                 collapseSpeed:100
-              });
+        $("#searchImagetPanelup"+self.model.id).panel({
+            collapseSpeed:100
+        });
 
         $("#imagesallbutton"+self.model.id).button({
             text: true
         });
 
+        $( "#datestartsearchup"+self.model.id ).datepicker();
+        $( "#dateendsearchup"+self.model.id ).datepicker();
 
         $('#'+self.addImageButton).click(function() {
             self.addImageProjectFromTable();
@@ -223,7 +312,7 @@ $("#searchImagetPanelup"+self.model.id).panel({
 
 
                 self.imagesProject.each(function(image) {
-                   // console.log("image project="+image.id);
+                    // console.log("image project="+image.id);
                     $("#"+self.listmanageall).find("#" + image.id).find("td").css("background-color", "a0dc4f");
                     //$("#"+listmanage).find("#" + image.id).find(".cbox").attr('checked', 'checked')
                     $("#"+self.listmanageall).find("#" + image.id).find(".cbox").attr('disabled', true)
