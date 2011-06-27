@@ -113,7 +113,7 @@ class RestOntologyController extends RestController {
         relationTerm.each{ relterm ->
           log.info "unlink relterm:" +relationTerm.id
           def postDataRT = ([relation :relterm.relation.id,term1: relterm.term1.id,term2: relterm.term2.id]) as JSON
-          Command deleteRelationTermCommand = new DeleteRelationTermCommand(postData :postDataRT.toString() ,user: currentUser)
+          Command deleteRelationTermCommand = new DeleteRelationTermCommand(postData :postDataRT.toString() ,user: currentUser,printMessage:false)
           def result = processCommand(deleteRelationTermCommand, currentUser)
         }
 
@@ -123,20 +123,20 @@ class RestOntologyController extends RestController {
         annotationTerm.each{ annotterm ->
           log.info "unlink annotterm:" +annotterm.id
           def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id]) as JSON
-          Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData :postDataRT.toString() ,user: currentUser)
+          Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData :postDataRT.toString() ,user: currentUser,printMessage:false)
           def result = processCommand(deleteAnnotationTermCommand, currentUser)
         }
 
         Term termDeleted =  term
         log.info "delete term " +termDeleted
         def postDataTerm = ([id : termDeleted.id]) as JSON
-        Command deleteTermCommand = new DeleteTermCommand(postData :postDataTerm.toString() ,user: currentUser)
+        Command deleteTermCommand = new DeleteTermCommand(postData :postDataTerm.toString() ,user: currentUser,printMessage:false)
         def result = processCommand(deleteTermCommand, currentUser)
 
       }
     }
     log.info "delete ontology"
-    Command deleteOntologyCommand = new DeleteOntologyCommand(postData : postData.toString(),user: currentUser)
+    Command deleteOntologyCommand = new DeleteOntologyCommand(postData : postData.toString(),user: currentUser,printMessage:true)
     def result = processCommand(deleteOntologyCommand, currentUser)
 
     log.info "End transaction"

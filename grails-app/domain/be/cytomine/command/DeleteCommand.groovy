@@ -73,6 +73,7 @@ class DeleteCommand extends Command {
       HashMap<String, Object> params = new HashMap<String, Object>()
       params.put('success', true)
       params.put('message', message)
+      params.put('printMessage', printMessage)
       params.put(objectName.toLowerCase(), objectToDelete)
 
       return [data: params, status: 200]
@@ -134,6 +135,7 @@ class DeleteCommand extends Command {
     HashMap<String, Object> params = new HashMap<String, Object>()
     params.put('message', message)
     params.put('callback', paramsCallback)
+    params.put('printMessage', printMessage)
     params.put(objectName.toLowerCase(), id)
 
     return [data: params, status: 200]
@@ -179,6 +181,7 @@ class DeleteCommand extends Command {
     HashMap<String, Object> params = new HashMap<String, Object>()
     params.put('message', message)
     params.put('callback', paramsCallback)
+    params.put('printMessage', printMessage)
     params.put(objectName.toLowerCase(), id)
 
     def result = [data: params, status: 200];

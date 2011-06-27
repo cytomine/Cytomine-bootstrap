@@ -45,6 +45,7 @@ class EditCommand extends Command {
       HashMap<String, Object> params = new HashMap<String, Object>()
       params.put('success', true)
       params.put('message', message)
+      params.put('printMessage', printMessage)
       params.put(objectName.toLowerCase(), newObject)
 
       return [data: params, status: 200]
@@ -92,6 +93,7 @@ class EditCommand extends Command {
     HashMap<String,Object> params = new HashMap<String,Object>()
     params.put('message',message)
     params.put('callback',paramsCallback)
+    params.put('printMessage', printMessage)
     params.put(objectName.toLowerCase(),id)
 
     return [data : params, status : 200]
@@ -137,6 +139,7 @@ class EditCommand extends Command {
     HashMap<String,Object> params = new HashMap<String,Object>()
     params.put('message',message)
     params.put('callback',paramsCallback)
+    params.put('printMessage', printMessage)
     params.put(objectName.toLowerCase(),object)
 
     def result = [data : params, status : 200];

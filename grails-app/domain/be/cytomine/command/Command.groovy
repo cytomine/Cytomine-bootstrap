@@ -12,6 +12,8 @@ class Command extends SequenceDomain {
 
   User user
 
+  boolean printMessage = true
+
   static Integer MAXSIZEREQUEST = 102400
 
   String actionMessage
