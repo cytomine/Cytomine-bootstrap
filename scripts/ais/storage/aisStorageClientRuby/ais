@@ -478,11 +478,19 @@ class App
         puts 'upload' if @options.verbose
         if (@localNamespace != nil) then
           destFolder = @localTmp+Etc.getlogin+"-"+DateTime.now.strftime("%Y%m%d%H%M%S")+"/"
-          
+          req = Net::HTTP::Get.new(@basePath+dest[6..-1]+"?metadata")
+          setHeaders req
+          response, data = @store.request(req)
+          processResponse  response, data
+          if (response.code != 200 )
+              #NODE ALREADY EXISTS TELL THE CLIENT
+              return
+            
+          end
           FileUtils.makedirs destFolder
           FileUtils.cp_r(source, destFolder)
-        
           copiedFile = destFolder + File.basename(source)
+          FileUtils.chmod_R 0770, destFolder
           FileUtils.chown_R nil, @localGroup , destFolder if @localGroup
           FileUtils.chmod_R 0770, destFolder
           
@@ -509,7 +517,9 @@ class App
           req.body = localFile.to_json
           setHeaders req
           response, data = @store.request(req)
-          processResponse(response, data) {}
+          processResponse(response, data) {
+            puts localFile.to_s
+          }
         else
           f = File.open(source)
           req = Net::HTTP::Put.new(@basePath+dest[6..-1])
@@ -559,7 +569,7 @@ class App
         req.add_field 'content-length', req.body.size
         req['content-type'] = @json
       else
-        ''
+        req.add_field 'content-length', 0
       end
 
       req['date'] = Time.now.httpdate
