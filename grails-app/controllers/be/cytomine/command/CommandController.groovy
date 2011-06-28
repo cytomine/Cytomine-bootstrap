@@ -21,7 +21,7 @@ class CommandController {
     if (UndoStackItem.findAllByUser(user).size() == 0) {
       def message = messageSource.getMessage('be.cytomine.UndoCommand', [] as Object[], Locale.ENGLISH)
 
-      def data = [success : true, message: message, callback : null]
+      def data = [success : true, message: message, callback : null,printMessage:true]
       results << data
 
       response.status = 200
@@ -94,7 +94,7 @@ class CommandController {
     if (RedoStackItem.findAllByUser(user).size() == 0) {
       def message = messageSource.getMessage('be.cytomine.RedoCommand', [] as Object[], Locale.ENGLISH)
 
-      def data = [success : true, message: message, callback : null]
+      def data = [success : true, message: message, callback : null,printMessage:true]
       results << data
 
       response.status = 200

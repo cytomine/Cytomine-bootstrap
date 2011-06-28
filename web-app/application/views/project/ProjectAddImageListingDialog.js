@@ -282,6 +282,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             //console.log("id="+image.id);
             data[i] = {
                 id: image.id,
+                thumb :  "<img src='"+image.get('thumb')+"' width=30/>",
                 filename: image.get('filename'),
                 type : image.get('mime'),
                 added : createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate(),
@@ -304,10 +305,11 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             datatype: "local",
             width: "450",
             height : "300",
-            colNames:['id','filename','type','added'],
+            colNames:['id','thumb','filename','type','added'],
             colModel:[
                 {name:'id',index:'id', width:50, sorttype:"int"},
-                {name:'filename',index:'filename', width:250},
+                {name:'thumb',index:'thumb', width:50},
+                {name:'filename',index:'filename', width:220},
                 {name:'type',index:'type', width:50},
                 {name:'added',index:'added', width:90,sorttype:"date"}
             ],
@@ -350,9 +352,10 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             datatype: "local",
             width: "700",
             height : "300",
-            colNames:['id','filename','type','added'],
+            colNames:['id','thumb','filename','type','added'],
             colModel:[
                 {name:'id',index:'id', width:30},
+                {name:'thumb',index:'thumb', width:50},
                 {name:'filename',index:'filename', width:300},
                 {name:'type',index:'type', width:40},
                 {name:'added',index:'added', width:70,sorttype:"date"}
@@ -410,6 +413,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
                 data[i] = {
                     id: image.id,
+                    thumb :  "<img src='"+image.get('thumb')+"' width=30/>",
                     filename: image.get('filename'),
                     type : image.get('mime'),
                     added : createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate()

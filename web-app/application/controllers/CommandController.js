@@ -4,16 +4,16 @@ var CommandController = Backbone.Controller.extend({
         $.post('command/undo.json', {}, function(data) {
             console.log("data:");
             console.log(data);
-             _.each(data, function(undoElem){
-                  console.log("undoElem" + undoElem);
-                 console.log(undoElem);
-                  self.dispatch(undoElem.callback,undoElem.message,"Undo");
-                 console.log("PRINT MESSAGE:"+undoElem.printMessage);
-                  if(undoElem.printMessage) {
-                      console.log("********PRINT*******");
-                      window.app.view.message("Undo", undoElem.message, "");
-                  }
-             });
+            _.each(data, function(undoElem){
+                console.log("undoElem" + undoElem);
+                console.log(undoElem);
+                self.dispatch(undoElem.callback,undoElem.message,"Undo");
+                console.log("PRINT MESSAGE:"+undoElem.printMessage);
+                if(undoElem.printMessage) {
+                    console.log("********PRINT*******");
+                    window.app.view.message("Undo", undoElem.message, "");
+                }
+            });
 
         }, "json");
 
@@ -22,21 +22,22 @@ var CommandController = Backbone.Controller.extend({
     redo : function () {
         var self = this;
         $.post('command/redo.json', {}, function(data) {
-                console.log("data:");
-                console.log(data);
-                 _.each(data, function(redoElem){
-                      console.log("redoElem" + redoElem);
-                      self.dispatch(redoElem.callback,redoElem.message, "Redo");
-                      if(redoElem.printMessage) window.app.view.message("Redo", redoElem.message, "");
-                 });
+            console.log("data:");
+            console.log(data);
+            _.each(data, function(redoElem){
+                console.log("redoElem" + redoElem);
+                self.dispatch(redoElem.callback,redoElem.message, "Redo");
+                if(redoElem.printMessage) window.app.view.message("Redo", redoElem.message, "");
+            });
         }, "json");
 
     },
 
     dispatch : function(callback,message,operation) {
-        console.log("callback method ? " + callback.method);
-        if (!callback) return; //nothing to do
+        console.log(callback);
 
+        if (!callback) return; //nothing to do
+        console.log("callback method ? " + callback.method);
         /**
          * ANNOTATION
          */
@@ -47,7 +48,7 @@ var CommandController = Backbone.Controller.extend({
                 return object.idImage == callback.imageID;
             });
             var image = tab.view;
-             console.log(tab);
+            console.log(tab);
             if (image == undefined) return; //tab is closed
             console.log("callback.annotationID="+callback.annotationID);
             image.getUserLayer().annotationAdded(callback.annotationID);

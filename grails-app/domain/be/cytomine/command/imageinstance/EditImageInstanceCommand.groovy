@@ -15,7 +15,7 @@ import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
  * To change this template use File | Settings | File Templates.
  */
 class EditImageInstanceCommand extends EditCommand implements UndoRedoCommand  {
-
+  boolean saveOnUndoRedoStack = true;
   def execute() {
     log.info "Execute"
     log.debug "postData="+postData
@@ -41,8 +41,8 @@ class EditImageInstanceCommand extends EditCommand implements UndoRedoCommand  {
   def undo() {
     log.info "Undo"
     def imageData = JSON.parse(data)
-    ImageInstance image = ImageInstance.findById(imageData.previousImage.id)
-    image = ImageInstance.getFromData(image,imageData.previousImage)
+    ImageInstance image = ImageInstance.findById(imageData.previousImageInstance.id)
+    image = ImageInstance.getFromData(image,imageData.previousImageInstance)
     image.save(flush:true)
     super.createUndoMessage(imageData, image, [image.id, image?.baseImage?.filename,image.project.name] as Object[])
   }
@@ -50,8 +50,8 @@ class EditImageInstanceCommand extends EditCommand implements UndoRedoCommand  {
   def redo() {
     log.info "Redo"
     def imageData = JSON.parse(data)
-    ImageInstance image = ImageInstance.findById(imageData.newImage.id)
-    image = ImageInstance.getFromData(image,imageData.newImage)
+    ImageInstance image = ImageInstance.findById(imageData.newImageInstance.id)
+    image = ImageInstance.getFromData(image,imageData.newImageInstance)
     image.save(flush:true)
     super.createRedoMessage(imageData, image, [image.id, image?.baseImage?.filename,image.project.name] as Object[])
   }

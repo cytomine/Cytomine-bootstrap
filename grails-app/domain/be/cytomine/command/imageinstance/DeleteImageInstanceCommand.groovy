@@ -17,7 +17,7 @@ import be.cytomine.image.ImageInstance
 import java.util.prefs.BackingStoreException
 
 class DeleteImageInstanceCommand extends DeleteCommand implements UndoRedoCommand{
-
+  boolean saveOnUndoRedoStack = true;
   def execute() {
     log.info "Execute"
     try {
@@ -52,7 +52,7 @@ class DeleteImageInstanceCommand extends DeleteCommand implements UndoRedoComman
     String filename = image?.baseImage?.filename
     String projectname = image.project.name
     image.delete(flush:true);
-    return super.createRedoMessage(id,[id, filename,projectname] as Object[]);
+    return super.createRedoMessage(id,image,[id, filename,projectname] as Object[]);
   }
 
 }

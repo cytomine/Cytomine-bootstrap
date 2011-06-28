@@ -198,7 +198,7 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
     assertEquals(200,code)
 
-    /*log.info("test undo")
+    log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -210,7 +210,7 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("check if object "+ idImage +" not exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+idImage +".json"
+    URL = Infos.CYTOMINEURL+"api/imageinstance/"+idImage +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -230,18 +230,16 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
 
     //must be done because redo change id
     json = JSON.parse(response)
-    assert json instanceof JSONObject
-    idImage = json.image.id
 
     log.info("check if object "+ idImage +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+idImage +".json"
+    URL = Infos.CYTOMINEURL+"api/imageinstance/"+idImage +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(200,code)*/
+    assertEquals(200,code)
 
   }
 
@@ -428,7 +426,7 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
 
     BasicInstance.compareImageInstance(mapNew,json)
 
-    /*log.info("test undo")
+    log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -440,7 +438,7 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("check if object "+ idImage +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+idImage +".json"
+    URL = Infos.CYTOMINEURL+"api/imageinstance/"+idImage +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -449,9 +447,8 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
 
     assertEquals(200,code)
     json = JSON.parse(response)
-    assert json instanceof JSONObject
 
-    BasicInstance.compareImage(mapOld,json)
+    BasicInstance.compareImageInstance(mapOld,json)
 
     log.info("test redo")
     client = new HttpClient()
@@ -465,7 +462,7 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("check if object "+ idImage +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+idImage +".json"
+    URL = Infos.CYTOMINEURL+"api/imageinstance/"+idImage +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -474,13 +471,12 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
 
     assertEquals(200,code)
     json = JSON.parse(response)
-    assert json instanceof JSONObject
 
-    BasicInstance.compareImage(mapNew,json)
+    BasicInstance.compareImageInstance(mapNew,json)
 
     log.info("check if object "+ idImage +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+idImage +".json"
+    URL = Infos.CYTOMINEURL+"api/imageinstance/"+idImage +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -489,7 +485,7 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
 
     assertEquals(200,code)
     json = JSON.parse(response)
-    assert json instanceof JSONObject  */
+
 
   }
 
@@ -633,7 +629,7 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(404,code)
 
 
-    /*log.info("test undo")
+    log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -643,14 +639,12 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
     assertEquals(200,code)
     def json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int newIdImage  = json.image.id
 
 
 
     log.info("check if object "+ idImage +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+newIdImage +".json"
+    URL = Infos.CYTOMINEURL+"api/imageinstance/"+idImage +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -659,7 +653,6 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
 
     assertEquals(200,code)
     json = JSON.parse(response)
-    assert json instanceof JSONObject
 
 
     log.info("test redo")
@@ -673,12 +666,12 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
 
     log.info("check if object "+ idImage +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+newIdImage +".json"
+    URL = Infos.CYTOMINEURL+"api/imageinstance/"+idImage +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(404,code) */
+    assertEquals(404,code)
 
 
   }

@@ -6,6 +6,7 @@ import be.cytomine.image.AbstractImage
 import grails.converters.JSON
 import be.cytomine.image.ImageInstance
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
+import be.cytomine.project.Project
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,7 +16,7 @@ import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
  * To change this template use File | Settings | File Templates.
  */
 class AddImageInstanceCommand extends AddCommand implements UndoRedoCommand {
-
+  boolean saveOnUndoRedoStack = true;
   def execute() {
     log.info("Execute")
     ImageInstance newImage=null
@@ -48,7 +49,7 @@ class AddImageInstanceCommand extends AddCommand implements UndoRedoCommand {
     ImageInstance image = ImageInstance.get(imageData.id)
     image.delete(flush:true)
     String id = imageData.id
-    return super.createUndoMessage(id,[imageData.id,AbstractImage.read(imageData.baseImage).filename] as Object[]);
+    return super.createUndoMessage(id,image,[imageData.id,AbstractImage.read(imageData.baseImage).filename,Project.read(imageData.project)] as Object[]);
   }
 
 
@@ -58,9 +59,10 @@ class AddImageInstanceCommand extends AddCommand implements UndoRedoCommand {
     def json = JSON.parse(postData)
     ImageInstance image = ImageInstance.createFromData(imageData)
     image.id = imageData.id
+    log.debug("Validate image:"+image.validate())
     image.save(flush:true)
     log.debug("Save image:"+image.id)
-    return super.createRedoMessage(image, [imageData.id,imageData.name] as Object[]);
+    return super.createRedoMessage(image, [imageData.id,imageData.name,image.project.name] as Object[]);
   }
 
 
