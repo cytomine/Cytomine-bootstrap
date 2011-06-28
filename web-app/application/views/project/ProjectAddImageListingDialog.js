@@ -33,7 +33,15 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         var self = this;
         console.log("Id project="+this.model.id);
 
-        var dialog = _.template(tpl, {id:this.model.get('id'),name:this.model.get('name')});
+        var json = self.model.toJSON();
+
+        //Get ontology name
+        var idOntology = json.ontology;
+        json.ontologyId = idOntology;
+
+
+
+        var dialog = _.template(tpl, json);
         $(self.el).append(dialog);
 
         console.log($(self.el).find("#tabsProjectaddimagedialog"+this.model.get('id')).length);
@@ -44,9 +52,9 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         var imagesNameArray = new Array();
 
         //TODO: improve perf and fill it when browse in an other place?
-        self.images.each(function(image) {
+        /*self.images.each(function(image) {
             imagesNameArray.push(image.get('filename'));
-        });
+        }); */
 
 
         //autocomplete
@@ -67,6 +75,9 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             }
         });
 
+        $("#datestartsearchup"+self.model.id).change(function() { self.searchImages(); });
+        $("#dateendsearchup"+self.model.id).change(function() { self.searchImages(); });
+
         return this;
 
     },
@@ -76,18 +87,29 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
     searchImages : function() {
         var self = this;
         var searchText = $("#filenamesearchtextboxup"+self.model.id).val();
-        self.filterImages(searchText==""?undefined:searchText);
+        var dateStart =  $("#datestartsearchup"+self.model.id).datepicker("getDate");
+        var dateEnd =  $("#dateendsearchup"+self.model.id).datepicker("getDate");
+
+
+
+        console.log("dateStart="+dateStart);
+        self.filterImages(searchText==""?undefined:searchText,dateStart,dateEnd);
     },
 
-    filterImages : function(searchText) {
+    filterImages : function(searchText,dateStart,dateEnd) {
 
         var self = this;
         var images =  new ImageCollection(self.images.models);
 
         //each search function takes a search data and a collection and it return a collection without elem that
         //don't match with data search
+        console.log("start images:"+images.length);
         images = self.filterByImagesByName(searchText,images);
-
+        console.log("filter by name '" + searchText + "' images:"+images.length);
+        images = self.filterByDateStart(dateStart,images);
+        console.log("filter by date start images:"+images.length);
+        images = self.filterByDateEnd(dateEnd,images);
+        console.log("filter by date end images:"+images.length);
         //add here filter function
 
 
@@ -118,16 +140,36 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         return imagesNewList;
     },
 
-    filterByFormat : function() {
+    filterByDateStart : function(dateStart,imagesOldList) {
+
+        var imagesNewList =  new ImageCollection(imagesOldList.models);
+
+        imagesOldList.each(function(image) {
+            var dateAdded = new Date()
+            dateAdded.setTime(image.get('created'));
+            console.log("dateAdded="+dateAdded + " dateStart=" + dateStart);
+            if(dateStart!=undefined && dateAdded<dateStart) {
+                imagesNewList.remove(image);
+            }
+        });
+
+        return imagesNewList;
 
     },
 
-    filterByDateStart : function() {
+    filterByDateEnd : function(dateEnd,imagesOldList) {
+        var imagesNewList =  new ImageCollection(imagesOldList.models);
 
-    },
+        imagesOldList.each(function(image) {
+            var dateAdded = new Date()
+            dateAdded.setTime(image.get('created'));
+            console.log("dateAdded="+dateAdded + " dateEnd=" + dateEnd);
+            if(dateEnd!=undefined && dateAdded>dateEnd) {
+                imagesNewList.remove(image);
+            }
+        });
 
-    filterByDateEnd : function() {
-
+        return imagesNewList;
     },
 
 
@@ -171,12 +213,28 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             collapseSpeed:100
         });
 
+        $("#infoProjectPanel"+self.model.id).panel({
+            collapseSpeed:100
+        });
+
         $("#imagesallbutton"+self.model.id).button({
             text: true
         });
 
-        $( "#datestartsearchup"+self.model.id ).datepicker();
-        $( "#dateendsearchup"+self.model.id ).datepicker();
+
+        $("#imagesallbutton"+self.model.id).click(function() {
+            $("#filenamesearchtextboxup"+self.model.id).val("");
+            $("#datestartsearchup"+self.model.id ).val("");
+            $("#dateendsearchup"+self.model.id).val("");
+            self.searchImages();
+        });
+
+        $( "#datestartsearchup"+self.model.id ).datepicker({
+            onSelect: function(dateText, inst) { self.searchImages(); }
+        });
+        $( "#dateendsearchup"+self.model.id ).datepicker({
+            onSelect: function(dateText, inst) { self.searchImages(); }
+        });
 
         $('#'+self.addImageButton).click(function() {
             self.addImageProjectFromTable();
@@ -204,10 +262,8 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             success : function (collection, response) {
                 self.loadDataImageListProject(collection);
 
-                //window.app.models.images.fetch({
-                //  success : function (collection, response) {
-                self.loadDataImageListAll(window.app.models.images);
-                //}});
+                //self.loadDataImageListAll(window.app.models.images);
+                self.searchImages();
             }
         });
     },
@@ -334,6 +390,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         });
         $("#"+self.listmanageall).jqGrid('navGrid','#'+self.pagemanageall,{edit:false,add:false,del:false});
         $("#"+self.listmanageall).jqGrid('sortGrid','filename',false);
+
         self.loadDataImageListAll(window.app.models.images);
     },
 

@@ -702,12 +702,24 @@ class BootStrap {
 
             println "image OK"
 
+
+              Long lo =  new Long("1309250380");
+              Long hi =  new Date().getTime()
+              Random random = new Random()
+              Long randomInt = ( Math.abs( random.nextLong() ) % ( hi.longValue() - lo.longValue() + 1 ) ) + lo.longValue();
+              println "lo=" + new Date(lo)+ " hi="+new Date(hi);
+              println "randomInt=" + randomInt
+              Date created = new Date(randomInt);
+
+
+
             AbstractImage image = new AbstractImage(
                     filename: item.name,
                     scanner : scanner,
                     slide : slide,
                     path : item.filename,
-                    mime : mime
+                    mime : mime,
+                    created : created
             )
 
             if (image.validate()) {
@@ -998,6 +1010,12 @@ class BootStrap {
 
                 def scanner = Scanner.findByBrand("gigascan")
                 def user = User.findByUsername("lrollus")
+
+
+              Random random = new Random()
+              Long randomInt = random.nextLong()
+              Date created = new Date(randomInt);
+
                 //  String path
                 //Mime mime
                 def image = new AbstractImage(
@@ -1006,7 +1024,8 @@ class BootStrap {
                         mime : mime,
                         scanner : scanner,
                         slide : slides[item.slide],
-                        user:user
+                        user:user,
+                        created :created
                 )
 
                 if (image.validate()) {
