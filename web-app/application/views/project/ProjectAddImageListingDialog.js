@@ -2,6 +2,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
     imagesProject : null, //collection containing the images contained in the project
     slides : null,
     images : null,
+    searchPanel : null,
     initialize: function(options) {
         var self = this;
         this.container = options.container;
@@ -47,134 +48,29 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         console.log($(self.el).find("#tabsProjectaddimagedialog"+this.model.get('id')).length);
         // $(self.el).find("#tabsProjectaddimagedialog"+this.model.get('id')).tabs();
 
+
+        //TODO: INIT searchPanel
+        self.searchPanel = new ProjectAddImageSearchPanel({
+                 model : self.model,
+                 images : self.images,
+                 el:$("#tdsearchpanel"+self.model.id),
+                 container : self,
+                 tab : 2
+              }).render();
+
+
         this.renderImageList();
-
-        var imagesNameArray = new Array();
-
-        //TODO: improve perf and fill it when browse in an other place?
-        /*self.images.each(function(image) {
-            imagesNameArray.push(image.get('filename'));
-        }); */
-
-
-        //autocomplete
-        $("#filenamesearchtextboxup"+self.model.id).autocomplete({
-            minLength : 0, //with min=0, if user erase its text, it will show all project withouth name constraint
-            source : imagesNameArray,
-            select : function (event,ui)
-            {
-                $("#filenamesearchtextboxup"+self.model.id).val(ui.item.label)
-                self.searchImages();
-
-            },
-            search : function(event)
-            {
-
-                console.log("TEXT:"+$("#filenamesearchtextboxup"+self.model.id).val());
-                self.searchImages();
-            }
-        });
-
-        $("#datestartsearchup"+self.model.id).change(function() { self.searchImages(); });
-        $("#dateendsearchup"+self.model.id).change(function() { self.searchImages(); });
 
         return this;
 
     },
-
-
-
     searchImages : function() {
         var self = this;
-        var searchText = $("#filenamesearchtextboxup"+self.model.id).val();
-        var dateStart =  $("#datestartsearchup"+self.model.id).datepicker("getDate");
-        var dateEnd =  $("#dateendsearchup"+self.model.id).datepicker("getDate");
-
-
-
-        console.log("dateStart="+dateStart);
-        self.filterImages(searchText==""?undefined:searchText,dateStart,dateEnd);
-    },
-
-    filterImages : function(searchText,dateStart,dateEnd) {
-
-        var self = this;
-        var images =  new ImageCollection(self.images.models);
-
-        //each search function takes a search data and a collection and it return a collection without elem that
-        //don't match with data search
-        console.log("start images:"+images.length);
-        images = self.filterByImagesByName(searchText,images);
-        console.log("filter by name '" + searchText + "' images:"+images.length);
-        images = self.filterByDateStart(dateStart,images);
-        console.log("filter by date start images:"+images.length);
-        images = self.filterByDateEnd(dateEnd,images);
-        console.log("filter by date end images:"+images.length);
-        //add here filter function
-
+        var images = self.searchPanel.search(self.images);
 
         $("#"+self.listmanageall).jqGrid("clearGridData", true);
         self.loadDataImageListAll(images);
-
     },
-
-
-
-
-
-
-
-
-
-
-
-    filterByImagesByName : function(searchText,imagesOldList) {
-
-        var imagesNewList =  new ImageCollection(imagesOldList.models);
-
-        imagesOldList.each(function(image) {
-            if(searchText!=undefined && !image.get('filename').toLowerCase().contains(searchText.toLowerCase()))
-                imagesNewList.remove(image);
-        });
-
-        return imagesNewList;
-    },
-
-    filterByDateStart : function(dateStart,imagesOldList) {
-
-        var imagesNewList =  new ImageCollection(imagesOldList.models);
-
-        imagesOldList.each(function(image) {
-            var dateAdded = new Date()
-            dateAdded.setTime(image.get('created'));
-            console.log("dateAdded="+dateAdded + " dateStart=" + dateStart);
-            if(dateStart!=undefined && dateAdded<dateStart) {
-                imagesNewList.remove(image);
-            }
-        });
-
-        return imagesNewList;
-
-    },
-
-    filterByDateEnd : function(dateEnd,imagesOldList) {
-        var imagesNewList =  new ImageCollection(imagesOldList.models);
-
-        imagesOldList.each(function(image) {
-            var dateAdded = new Date()
-            dateAdded.setTime(image.get('created'));
-            console.log("dateAdded="+dateAdded + " dateEnd=" + dateEnd);
-            if(dateEnd!=undefined && dateAdded>dateEnd) {
-                imagesNewList.remove(image);
-            }
-        });
-
-        return imagesNewList;
-    },
-
-
-
-
 
     renderImageList: function() {
         var self = this;
@@ -209,31 +105,8 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             text: false
         });
 
-        $("#searchImagetPanelup"+self.model.id).panel({
-            collapseSpeed:100
-        });
-
         $("#infoProjectPanel"+self.model.id).panel({
             collapseSpeed:100
-        });
-
-        $("#imagesallbutton"+self.model.id).button({
-            text: true
-        });
-
-
-        $("#imagesallbutton"+self.model.id).click(function() {
-            $("#filenamesearchtextboxup"+self.model.id).val("");
-            $("#datestartsearchup"+self.model.id ).val("");
-            $("#dateendsearchup"+self.model.id).val("");
-            self.searchImages();
-        });
-
-        $( "#datestartsearchup"+self.model.id ).datepicker({
-            onSelect: function(dateText, inst) { self.searchImages(); }
-        });
-        $( "#dateendsearchup"+self.model.id ).datepicker({
-            onSelect: function(dateText, inst) { self.searchImages(); }
         });
 
         $('#'+self.addImageButton).click(function() {
@@ -248,10 +121,6 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         self.renderImageListAll();
 
     },
-
-
-
-
     refreshImageList : function() {
         var self = this;
         console.log("refreshImageListProject");
@@ -282,7 +151,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             //console.log("id="+image.id);
             data[i] = {
                 id: image.id,
-                thumb :  "<img src='"+image.get('thumb')+"' width=30/>",
+                //thumb :  "<img src='"+image.get('thumb')+"' width=30/>",
                 filename: image.get('filename'),
                 type : image.get('mime'),
                 added : createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate(),
@@ -413,7 +282,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
                 data[i] = {
                     id: image.id,
-                    thumb :  "<img src='"+image.get('thumb')+"' width=30/>",
+                    //thumb :  "<img src='"+image.get('thumb')+"' width=30/>",
                     filename: image.get('filename'),
                     type : image.get('mime'),
                     added : createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate()

@@ -57,6 +57,9 @@
     <!-- Application -->
     <script type="text/javascript" src="application/Utilities.js" ></script>
 
+
+
+
     <!-- Datatables
     <script type="text/javascript" src="lib/datatables/jquery.dataTables.min.js" ></script>
     <link rel='stylesheet' href='lib/datatables/demo_table.css' type='text/css'/>
@@ -84,11 +87,17 @@
     <script src="lib/jqgrid/plugins/jquery.tablednd.js" type="text/javascript"></script>
     <script src="lib/jqgrid/plugins/jquery.contextmenu.js" type="text/javascript"></script>
 
+   <!-- jcarrousel -->
+    <script type="text/javascript" src="lib/jcarousel/jquery.carousel.min.js"></script>
+
 
     <script type="text/javascript" src="application/views/explorer/AnnotationsPanel.js" ></script>
     <script type="text/javascript" src="application/views/explorer/LayerSwitcherPanel.js" ></script>
     <script type="text/javascript" src="application/views/explorer/OverviewMapPanel.js" ></script>
     <script type="text/javascript" src="application/views/explorer/OntologyPanel.js" ></script>
+
+
+
 
 
 
@@ -152,6 +161,8 @@
 
     <script type="text/javascript" src="application/views/project/ProjectAddImageListingDialog.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectAddImageThumbDialog.js" ></script>
+    <script type="text/javascript" src="application/views/project/ProjectAddImageSearchPanel.js" ></script>
+
 
     <script type="text/javascript" src="application/views/annotation/AnnotationListView.js" ></script>
 

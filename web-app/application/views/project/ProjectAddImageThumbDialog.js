@@ -16,7 +16,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
 
 
     page : 0, //start at the first page
-    nb_slide_by_page : 10,
+    nb_slide_by_page : 20,
     nextPage : function() {
         var max_page = Math.round(_.size(window.app.models.slides) / this.nb_slide_by_page) - 1;
         this.page = Math.min(this.page+1, max_page);
@@ -45,8 +45,8 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         this.el = "#tabsProjectaddimagedialog"+this.model.id+"-1" ;
 
         this.slides = options.slides,
-        this.images = options.images,
-        _.bindAll(this, 'render');
+                this.images = options.images,
+                _.bindAll(this, 'render');
         _.bindAll(this, 'nextPage');
         _.bindAll(this, 'previousPage');
     },
@@ -74,6 +74,14 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         var view = _.template(tpl, {id:this.model.get('id'),name:this.model.get('name')});
         $(self.el).append(view);
 
+        //TODO: INIT searchPanel
+        self.searchPanel = new ProjectAddImageSearchPanel({
+            model : self.model,
+            images : self.images,
+            el:$("#tdsearchpanelthumb"+self.model.id),
+            container : self,
+            tab : 1
+        }).render();
 
         $(self.el).find("a.next").bind("click", self.nextPage);
         $(self.el).find("a.next").button();
@@ -87,27 +95,21 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         return this;
 
     },
+
+    searchImages : function() {
+        var self = this;
+        var images = self.searchPanel.search(self.images);
+
+        //clear
+        console.log("clear");
+
+        //reload
+        console.log("reload");
+    },
+
     renderImageList: function() {
         var self = this;
         self.renderImageListLayout();
-        /*var self = this;
-
-        var fetchCallback = function(cpt, expected) {
-            if (cpt == expected) {
-                self.renderImageListLayout();
-                //self.renderImageListing();
-            }
-        };
-
-        var modelsToPreload = [window.app.models.slides, window.app.models.images, self.imagesProject];
-        var nbModelFetched = 0;
-        _.each(modelsToPreload, function(model){
-            model.fetch({
-                success :  function(model, response) {
-                    fetchCallback(++nbModelFetched, _.size(modelsToPreload));
-                }
-            });
-        });*/
 
     },
     renderImage : function(projectImages, image, domTarget) {
@@ -133,6 +135,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
                 $(domTarget + " " + "#"+ self.liElem+image.id).addClass(self.selectedClass);
                 $(domTarget + " " + "#"+self.liElem+image.id).find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
             }
+            $(".carousel-wrap").css("height","200");
         });
     },
     selectAllImages : function (slideID) {
@@ -153,7 +156,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         ],   function(tpl) {
             var item = _.template(tpl, { id : slide.get("id"), name : slide.get("name")});
             var el = $(self.ulElem+self.model.get('id'));
-            el.append(item);
+            el.append("<td>"+item+"</td>");
             el.find(".slideItem"+slide.get("id")).panel({collapsible:false});
             el.find("a[class=selectAll]").bind("click", function(){
                 self.selectAllImages(slide.get("id"));
@@ -167,8 +170,23 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
             var domTarget = ".projectImageList" + slide.get("id");
             _.each(images, function (imageID){
                 self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
+                /*self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
+                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
+                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
+                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
+                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
+                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
+                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
+                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
+                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
+                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
+                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);*/
             });
-            $(domTarget).append('<div style="clear:both;"></div>');
+            console.log("*************** INIT CARROUSEL *****************");
+            console.log($('#projectImageList'+slide.get("id")).length);
+            //$('#projectImageList'+slide.get("id")).jcarousel();
+             $("#projectImageList"+slide.get("id")).carousel();
+$(domTarget).append('<div style="clear:both;"></div>');
 
         });
 
@@ -184,10 +202,21 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         var sup = (Math.abs(self.page) + 1) * self.nb_slide_by_page;
         $(self.ulElem+self.model.get('id')).empty();
 
+        var maxCol = 4
+        var col = 0
+
+        $(self.ulElem+self.model.get('id')).append("<table id=\"hello\"><tr width=\"600\">");
+
         window.app.models.slides.each(function(slide){
             if ((cpt >= inf) && (cpt < sup)) {
                 self.renderSlide(slide);
+                col++;
+                if(col==maxCol) {
+                    col=0;
+                    $(self.ulElem+self.model.get('id')).append("</tr><tr>");
+                }
             }
+            $(self.ulElem+self.model.get('id')).append("</tr></table>");
             cpt++;
             if (cpt == sup) {
                 self.initEvents();

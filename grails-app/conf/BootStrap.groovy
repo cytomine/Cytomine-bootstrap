@@ -302,7 +302,7 @@ class BootStrap {
                         'url' : 'http://is1.cytomine.be:888',
                         'service' : '/fcgi-bin/iipsrv.fcgi',
                         'className' : 'IPPResolver',
-                        'extension' : ['mrxs','vms', 'tif'],
+                        'extension' : ['mrxs','vms', 'tif', 'tiff'],
                         'storage' : 'cytomin0'
 
                 ],
@@ -311,7 +311,7 @@ class BootStrap {
                         'url' : 'http://is2.cytomine.be:888',
                         'service' : '/fcgi-bin/iipsrv.fcgi',
                         'className' : 'IPPResolver',
-                        'extension' : ['mrxs','vms', 'tif'],
+                        'extension' : ['mrxs','vms', 'tif', 'tiff'],
                         'storage' : 'cytomin0'
                 ],
                 [
@@ -319,7 +319,7 @@ class BootStrap {
                         'url' : 'http://is3.cytomine.be:888',
                         'service' : '/fcgi-bin/iipsrv.fcgi',
                         'className' : 'IPPResolver',
-                        'extension' : ['mrxs','vms', 'tif'],
+                        'extension' : ['mrxs','vms', 'tif', 'tiff'],
                         'storage' : 'cytomin0'
                 ],
                 [
@@ -327,7 +327,7 @@ class BootStrap {
                         'url' : 'http://is4.cytomine.be:888',
                         'service' : '/fcgi-bin/iipsrv.fcgi',
                         'className' : 'IPPResolver',
-                        'extension' : ['mrxs','vms', 'tif'],
+                        'extension' : ['mrxs','vms', 'tif', 'tiff'],
                         'storage' : 'cytomin0'
                 ],
                 [
@@ -335,7 +335,7 @@ class BootStrap {
                         'url' : 'http://is5.cytomine.be:888',
                         'service' : '/fcgi-bin/iipsrv.fcgi',
                         'className' : 'IPPResolver',
-                        'extension' : ['mrxs','vms', 'tif'],
+                        'extension' : ['mrxs','vms', 'tif', 'tiff'],
                         'storage' : 'cytomin0'
                 ],
                 [
@@ -343,7 +343,7 @@ class BootStrap {
                         'url' : 'http://is6.cytomine.be:888',
                         'service' : '/fcgi-bin/iipsrv.fcgi',
                         'className' : 'IPPResolver',
-                        'extension' : ['mrxs','vms', 'tif'],
+                        'extension' : ['mrxs','vms', 'tif', 'tiff'],
                         'storage' : 'cytomin0'
                 ],
                 [
@@ -351,7 +351,7 @@ class BootStrap {
                         'url' : 'http://is7.cytomine.be:888',
                         'service' : '/fcgi-bin/iipsrv.fcgi',
                         'className' : 'IPPResolver',
-                        'extension' : ['mrxs','vms', 'tif'],
+                        'extension' : ['mrxs','vms', 'tif', 'tiff'],
                         'storage' : 'cytomin0'
                 ],
                 [
@@ -359,7 +359,7 @@ class BootStrap {
                         'url' : 'http://is8.cytomine.be:888',
                         'service' : '/fcgi-bin/iipsrv.fcgi',
                         'className' : 'IPPResolver',
-                        'extension' : ['mrxs','vms', 'tif'],
+                        'extension' : ['mrxs','vms', 'tif', 'tiff'],
                         'storage' : 'cytomin0'
                 ],
                 [
@@ -367,7 +367,7 @@ class BootStrap {
                         'url' : 'http://is9.cytomine.be:888',
                         'service' : '/fcgi-bin/iipsrv.fcgi',
                         'className' : 'IPPResolver',
-                        'extension' : ['mrxs','vms', 'tif'],
+                        'extension' : ['mrxs','vms', 'tif', 'tiff'],
                         'storage' : 'cytomin0'
                 ],
                 [
@@ -375,7 +375,7 @@ class BootStrap {
                         'url' : 'http://is10.cytomine.be:888',
                         'service' : '/fcgi-bin/iipsrv.fcgi',
                         'className' : 'IPPResolver',
-                        'extension' : ['mrxs','vms', 'tif'],
+                        'extension' : ['mrxs','vms', 'tif', 'tiff'],
                         'storage' : 'cytomin0'
                 ],
                 [
@@ -383,7 +383,7 @@ class BootStrap {
                         'url' : 'http://is10.cytomine.be:888',
                         'service' : '/fcgi-bin/iipsrv.fcgi',
                         'className' : 'IPPResolver',
-                        'extension' : ['mrxs','vms', 'tif'],
+                        'extension' : ['mrxs','vms', 'tif', 'tiff'],
                         'storage' : 'cytomin0'
                 ]
 
