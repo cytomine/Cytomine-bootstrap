@@ -17,7 +17,7 @@ var ProjectPanelView = Backbone.View.extend({
     projectChangeDialog : "div#projectchangedialog",
     loadImagesInAddPanel: true,
     projectsPanel : null,
-    addSlideDialog : null,
+    container : null,
     initialize: function(options) {
         this.container = options.container;
         this.projectsPanel = options.projectsPanel;
@@ -41,6 +41,7 @@ var ProjectPanelView = Backbone.View.extend({
         return this;
     },
     refresh : function() {
+        console.log("refresh");
         var self = this;
         self.model.fetch({
             success : function (model, response) {
@@ -53,6 +54,7 @@ var ProjectPanelView = Backbone.View.extend({
                            self.doLayout(tpl, true);
                        });
                 self.projectsPanel.loadSearchProjectPanel();
+
             }
         });
 
@@ -217,7 +219,13 @@ var ProjectPanelView = Backbone.View.extend({
     showAddSlidesPanel : function () {
         var self = this;
         console.log("build dialog with project:" + this.model);
-        new ProjectManageSlideDialog({model:this.model,projectPanel:this,el:self.el}).render();
+        $("#projectdiv").hide();
+        $("#addimagediv").show();
+        console.log("##################################################");
+        console.log(self.container);
+        self.container.addSlideDialog = new ProjectManageSlideDialog({model:this.model,projectPanel:this,el:self.el}).render();
+        console.log("##################################################");
+        console.log("#################################################" + self.container.addSlideDialog);
     },
     showSlidesPanel : function () {
         var self = this;

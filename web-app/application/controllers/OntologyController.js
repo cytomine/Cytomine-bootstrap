@@ -55,7 +55,7 @@ var OntologyController = Backbone.Controller.extend({
           }
           else {
              console.log("self.view!=null");
-             self.view.container.show(self, "#warehouse > .sidebar", "ontology");
+             self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
              window.app.view.showComponent(window.app.view.components.warehouse);
 
              if(refresh) {

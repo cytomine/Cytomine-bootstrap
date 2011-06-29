@@ -23,13 +23,18 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                function(tpl) {
                    self.doLayout(tpl);
                });
+        return this;
     },
     initialize: function(options) {
         this.container = options.container;
         this.projectPanel = options.projectPanel;
         this.imagesProject = new ImageCollection({project:this.model.get('id')});
     },
-
+    refresh : function() {
+        console.log("333333333333333333333333333333333333333333333333333333333");
+        if(this.imageListing!=undefined) this.imageListing.refresh();
+        if(this.imageThumb!=undefined) this.imageThumb.refresh();
+    },
     /**
      * Render the html into the DOM element associated to the view
      * @param tpl
@@ -40,59 +45,69 @@ var ProjectManageSlideDialog = Backbone.View.extend({
 
         console.log(" _.template");
 
-
+         $("#addimagediv").empty();
 
 
         var fetchCallback = function(cpt, expected) {
             if (cpt == expected) {
 
-        var dialog = _.template(tpl, {id:self.model.get('id'),name:self.model.get('name')});
-        $(self.el).append(dialog);
+                var dialog = _.template(tpl, {id:self.model.get('id'),name:self.model.get('name')});
+                $(self.el).append(dialog);
+
+                $("#goBackToProject"+self.model.id).button({
+                    icons : {primary: "ui-icon-circle-triangle-w"}
+                });
+
+                $("#goBackToProject"+self.model.id).click(function() {
+                    $("#projectdiv").show();
+                    $("#addimagediv").hide();
+                });
 
                 console.log("ProjectAddImageThumbDialog");
-                self.imageListing = new ProjectAddImageThumbDialog({
-                            model : self.model,
-                            projectsPanel : self,
-                            imagesProject : self.imagesProject,
-                            slides : window.app.models.slides,
-                            images : window.app.models.images,
-                            el : "#tabsProjectaddimagedialog"+self.model.id+"-1"
+                self.imageThumb = new ProjectAddImageThumbDialog({
+                    model : self.model,
+                    projectsPanel : self,
+                    imagesProject : self.imagesProject,
+                    slides : window.app.models.slides,
+                    images : window.app.models.images,
+                    el : "#tabsProjectaddimagedialog"+self.model.id+"-1"
                 }).render();
                 console.log("render() 1 ok");
 
                 console.log("ProjectAddImageListingDialog");
                 self.imageListing = new ProjectAddImageListingDialog({
-                            model : self.model,
-                            projectsPanel : self,
-                            imagesProject : self.imagesProject,
-                            slides : window.app.models.slides,
-                            images : window.app.models.images,
-                            el : "#tabsProjectaddimagedialog"+self.model.id+"-2"
+                    model : self.model,
+                    projectsPanel : self,
+                    imagesProject : self.imagesProject,
+                    slides : window.app.models.slides,
+                    images : window.app.models.images,
+                    el : "#tabsProjectaddimagedialog"+self.model.id+"-2"
                 }).render();
-                 console.log("render() 2 ok");
+                console.log("render() 2 ok");
 
+                $("#addimagediv").append($(self.divDialog+self.model.get('id')));
                 //Build dialog
-                self.addSlideDialog = $(self.divDialog+self.model.get('id')).dialog({
-                    create: function (event, ui) {
-                        $(".ui-widget-header").hide();
-                    },
-                    modal : false,
-                    autoOpen : false,
-                    closeOnEscape: true,
-                    beforeClose: function(event, ui) {
-                        self.projectPanel.refresh();
-                    },
-                    close : function() {
-                        $(this).dialog("destroy").remove();
-                    },
-                    buttons : {
-                        "Close" : function() {
-                            $(this).dialog("close");
-                        }
-                    },
-                    width : ($(window).width()/100*90),
-                    height: ($(window).height()/100*90) //bug with %age ?
-                });
+                /*self.addSlideDialog = $(self.divDialog+self.model.get('id')).dialog({
+                 create: function (event, ui) {
+                 $(".ui-widget-header").hide();
+                 },
+                 modal : false,
+                 autoOpen : false,
+                 closeOnEscape: true,
+                 beforeClose: function(event, ui) {
+                 self.projectPanel.refresh();
+                 },
+                 close : function() {
+                 $(this).dialog("destroy").remove();
+                 },
+                 buttons : {
+                 "Close" : function() {
+                 $(this).dialog("close");
+                 }
+                 },
+                 width : ($(window).width()/100*90),
+                 height: ($(window).height()/100*90) //bug with %age ?
+                 });    */
                 $("#tabsProjectaddimagedialog"+self.model.get('id')).tabs();
                 console.log("dialog ok");
 
@@ -121,7 +136,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
      * Open and ask to render image thumbs
      */
     open: function() {
-        this.addSlideDialog.dialog("open") ;
+        //this.addSlideDialog.dialog("open") ;
     }
 
 

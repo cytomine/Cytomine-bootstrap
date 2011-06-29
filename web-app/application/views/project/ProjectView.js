@@ -2,7 +2,8 @@ var ProjectView = Backbone.View.extend({
        tagName : "div",
        searchProjectPanelElem : "#searchProjectPanel",
        projectListElem : "#projectlist",
-
+       projectList : null,
+       addSlideDialog : null,
        initialize: function(options) {
           this.container = options.container;
           this.model = options.model;
@@ -22,10 +23,10 @@ var ProjectView = Backbone.View.extend({
           return this;
        },
        doLayout: function(tpl) {
-          console.log("ProjectView: render");
+          console.log("ProjectView: render " + $(this.el).length);
 
           var self = this;
-          $(this.el).html(_.template(tpl, {}));
+          $(this.el).find("#projectdiv").html(_.template(tpl, {}));
 
           //print search panel
           self.loadSearchProjectPanel();
@@ -43,11 +44,18 @@ var ProjectView = Backbone.View.extend({
           var self = this;
           //TODO: project must be filter by user?
           var idUser =  undefined;
+
+          console.log("1111111111111111111111111111111111111111111111111111111");
+          //_.each(self.projectList, function(panel){ panel.refresh(); });
+          if(self.addSlideDialog!=null) self.addSlideDialog.refresh();
+
+
           new ProjectCollection({user : idUser}).fetch({
                  success : function (collection, response) {
                     self.model = collection;
                     self.render();
                  }});
+
 
 
        },
@@ -74,14 +82,16 @@ var ProjectView = Backbone.View.extend({
           var self = this;
           //clear de list
           $(self.projectListElem).empty();
+          self.projectList = new Array();
 
           //print each project panel
           self.model.each(function(project) {
              var panel = new ProjectPanelView({
                     model : project,
-                    projectsPanel : self
+                    projectsPanel : self,
+                    container : self
                  }).render();
-
+             self.projectList.push(panel);
              $(self.projectListElem).append(panel.el);
 
           });

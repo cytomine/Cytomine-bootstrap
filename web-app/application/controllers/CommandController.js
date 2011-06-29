@@ -133,5 +133,16 @@ var CommandController = Backbone.Controller.extend({
             window.app.controllers.ontology.view.refresh(callback.ontologyID);
         }
 
+        else if (callback.method == "be.cytomine.AddImageInstanceCommand") {
+
+            window.app.controllers.project.view.refresh();
+        } else if (callback.method == "be.cytomine.DeleteImageInstanceCommand") {
+            console.log("be.cytomine.DeleteImageInstanceCommand");
+            window.app.controllers.project.view.refresh();
+        } else if (callback.method == "be.cytomine.EditImageInstanceCommand") {
+
+            window.app.controllers.project.view.refresh();
+        }
+
     }
 });

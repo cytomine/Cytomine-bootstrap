@@ -28,6 +28,11 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
                function(tpl) {
                    self.doLayout(tpl);
                });
+        return this;
+    },
+    refresh : function() {
+       console.log("4444444444444444444444444444444444444444444444444");
+       this.refreshImageList();
     },
     //append to tabsProjectaddimagedialog{{id}}-2
     doLayout : function(tpl) {
@@ -151,7 +156,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             //console.log("id="+image.id);
             data[i] = {
                 id: image.id,
-                //thumb :  "<img src='"+image.get('thumb')+"' width=30/>",
+                thumb :  "<img src='"+image.get('thumb')+"' width=30/>",
                 filename: image.get('filename'),
                 type : image.get('mime'),
                 added : createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate(),
@@ -282,7 +287,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
                 data[i] = {
                     id: image.id,
-                    //thumb :  "<img src='"+image.get('thumb')+"' width=30/>",
+                    thumb :  "<img src='"+image.get('thumb')+"' width=30/>",
                     filename: image.get('filename'),
                     type : image.get('mime'),
                     added : createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate()

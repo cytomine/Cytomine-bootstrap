@@ -62,8 +62,12 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
                    //self.imagesProject = new ImageCollection({project:self.model.get('id')});
                    self.doLayout(tpl);
                });
+        return this;
     },
-
+    refresh : function() {
+        console.log("refresh");
+       this.renderImageList();
+    },
 
 
     doLayout : function(tpl) {
@@ -124,11 +128,15 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
             var filename = image.get("filename");
             if (filename.length > 15)
                 filename = filename.substring(0,12) + "...";
-            var item = _.template(tpl, {id:image.id,name:filename, slide: image.get('slide'), info : image.get('info')});
+            var item = _.template(tpl, {id:image.id,name:filename, namefull: image.get("filename"), slide: image.get('slide'), info : image.get('info')});
 
             $(domTarget).append(item);
             $(domTarget + " " + self.imageDivElem+image.id).append(thumb.el);  //get the div elem (img id) which have this project as parent
             $(thumb.el).css({"width":30}); //thumb must be smaller
+
+            //size of the filename text
+            $(domTarget).find("label  > b").css("font-size",10);
+
             //if image is already in project, selected it
 
             if(projectImages.get(image.id)){
@@ -136,7 +144,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
                 $(domTarget + " " + "#"+ self.liElem+image.id).addClass(self.selectedClass);
                 $(domTarget + " " + "#"+self.liElem+image.id).find(":checkbox").attr(self.checkedAttr,self.checkedAttr);
             }
-            $(".carousel-wrap").css("height","200");
+
         });
     },
     selectAllImages : function (slideID) {
@@ -218,6 +226,7 @@ $(domTarget).append('<div style="clear:both;"></div>');
                 }
             }
             $(self.ulElem+self.model.get('id')).append("</tr></table>");
+            $(".carousel-wrap").css("height","200");
             cpt++;
             if (cpt == sup) {
                 self.initEvents();
@@ -263,6 +272,7 @@ $(domTarget).append('<div style="clear:both;"></div>');
     },
 
     initEvents : function() {
+
         /* TO DO
          Recode this method : don't repeat yourself
          Use Backbone view EVENTs to bind CLICK
