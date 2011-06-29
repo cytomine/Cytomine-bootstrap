@@ -3,7 +3,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
     imageThumb : null,
     slides : null,
     images : null,
-
+    imagesProject : null,
     checklistChecked : ".checklist input:checked",
     checklistSelected : ".checklist .checkbox-select",
     checklistDeselected : ".checklist .checkbox-deselect",
@@ -59,7 +59,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
             "text!application/templates/project/ProjectAddImageThumbDialog.tpl.html"
         ],
                function(tpl) {
-                   self.imagesProject = new ImageCollection({project:self.model.get('id')});
+                   //self.imagesProject = new ImageCollection({project:self.model.get('id')});
                    self.doLayout(tpl);
                });
     },
@@ -130,6 +130,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
             $(domTarget + " " + self.imageDivElem+image.id).append(thumb.el);  //get the div elem (img id) which have this project as parent
             $(thumb.el).css({"width":30}); //thumb must be smaller
             //if image is already in project, selected it
+
             if(projectImages.get(image.id)){
                 //get the li elem (img id) which have this project as parent
                 $(domTarget + " " + "#"+ self.liElem+image.id).addClass(self.selectedClass);
