@@ -23,7 +23,6 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                function(tpl) {
                    self.doLayout(tpl);
                });
-        return this;
     },
     initialize: function(options) {
         this.container = options.container;
@@ -72,10 +71,8 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                 }).render();
                  console.log("render() 2 ok");
 
-                $("#addimagediv").append($(self.divDialog+self.model.get('id')));
-
                 //Build dialog
-               /* self.addSlideDialog = $(self.divDialog+self.model.get('id')).dialog({
+                self.addSlideDialog = $(self.divDialog+self.model.get('id')).dialog({
                     create: function (event, ui) {
                         $(".ui-widget-header").hide();
                     },
@@ -95,7 +92,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                     },
                     width : ($(window).width()/100*90),
                     height: ($(window).height()/100*90) //bug with %age ?
-                });     */
+                });
                 $("#tabsProjectaddimagedialog"+self.model.get('id')).tabs();
                 console.log("dialog ok");
 
@@ -124,7 +121,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
      * Open and ask to render image thumbs
      */
     open: function() {
-        //this.addSlideDialog.dialog("open") ;
+        this.addSlideDialog.dialog("open") ;
     }
 
 
