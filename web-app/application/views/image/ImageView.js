@@ -1,7 +1,7 @@
 var ImageView = Backbone.View.extend({
     tagName : "div",
-    images : null, //array of images that are printed
     initialize: function(options) {
+        this.images = null, //array of images that are printed
         this.container = options.container;
         this.page = options.page;
         if (this.page == undefined) this.page = 0;

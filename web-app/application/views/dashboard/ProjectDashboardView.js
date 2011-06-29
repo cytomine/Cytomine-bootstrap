@@ -181,7 +181,7 @@ var ProjectDashboardView = Backbone.View.extend({
                     console.log("AnnotationCollection:"+collection.length);
                     $elem.empty();
 
-                    var view = new AnnotationView({
+                    new AnnotationView({
                         page : undefined,
                         model : collection,
                         el:$elem,
@@ -204,6 +204,7 @@ var ProjectDashboardView = Backbone.View.extend({
      * Get and Print ALL images (use for the first time)
      */
     fetchImages : function() {
+
         console.log("ProjectDashboardView: fetchImages");
         var self = this;
         new ImageInstanceCollection({project:self.model.get('id')}).fetch({
@@ -212,14 +213,14 @@ var ProjectDashboardView = Backbone.View.extend({
                 console.log("self.imagesView:"+$("#projectImageThumb"+self.model.get('id')).length);
 
                 self.imagesView = new ImageView({
-                    page : undefined,
+                    page : 0,
                     model : collection,
                     el:$("#projectImageThumb"+self.model.get('id')),
                     container : window.app.view.components.warehouse
                 }).render();
                 console.log("self.imagesTabsView"+$("#projectImageListing"+self.model.get('id')).length);
                 self.imagesTabsView = new ImageTabsView({
-                    page : undefined,
+                    page : 0,
                     model : collection,
                     el:$("#projectImageListing"+self.model.get('id')),
                     container : window.app.view.components.warehouse,
