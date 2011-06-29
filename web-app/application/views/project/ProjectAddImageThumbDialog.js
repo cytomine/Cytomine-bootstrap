@@ -237,7 +237,9 @@ $(domTarget).append('<div style="clear:both;"></div>');
                 window.app.view.message("ImageInstance", response.message, "");
             },
             error: function (model, response) {
-                console.log("ERROR:"+response);
+                console.log(response);
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Image", json.errors[0], "");
             }
         });
     },
@@ -253,7 +255,9 @@ $(domTarget).append('<div style="clear:both;"></div>');
 
             },
             error: function (model, response) {
-                console.log("ERROR:"+response);
+                console.log(response);
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Image", json.errors[0], "");
             }
         });
     },
