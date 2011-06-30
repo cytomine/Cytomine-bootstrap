@@ -181,8 +181,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
             _.each(images, function (imageID){
                 self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
             });
-            //$('#projectImageList'+slide.get("id")).jcarousel();
-          //   $("#projectImageList"+slide.get("id")).carousel();
+             $("#projectImageList"+slide.get("id")).carousel();
             $(domTarget).append('<div style="clear:both;"></div>');
 
         });
