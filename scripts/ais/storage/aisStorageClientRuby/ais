@@ -482,7 +482,7 @@ class App
           setHeaders req
           response, data = @store.request(req)
           processResponse  response, data
-          if (response.code != 200 )
+          if (response.code != 404 )
               #NODE ALREADY EXISTS TELL THE CLIENT
               return
             
