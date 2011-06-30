@@ -8,13 +8,13 @@ import be.cytomine.image.ImageInstance
 class Slide extends SequenceDomain {
 
     String name
-    int order
+    int index
 
-    static mapping = {
+    /*static mapping = {
         columns {
             order column:"`order`"  //otherwise there is a conflict with the word "ORDER" from the SQL SYNTAX
         }
-    }
+    }*/
 
     String toString() {
         name
@@ -33,7 +33,6 @@ class Slide extends SequenceDomain {
             returnArray['id'] = it.id
             returnArray['name'] = it.name
             returnArray['images'] = it.getImages()
-            returnArray['projects'] = it.getProjects()
             return returnArray
         }
     }
@@ -42,13 +41,5 @@ class Slide extends SequenceDomain {
         AbstractImage.findAllBySlide(this).collect({
             it.id
         });
-    }
-
-    def getProjects() {
-        def projects = []
-        AbstractImage.findAllBySlide(this).each { aimg ->
-            projects << ImageInstance.findAllByBaseImage(aimg).collect({it.getProject().id})
-        }
-        return projects.flatten().unique()
     }
 }
