@@ -28,6 +28,7 @@ abstract class Resolver {
 
     public abstract String getThumbUrl(String baseUrl, String imagePath)
     public abstract String getMetaDataURL(String baseUrl, String imagePath)
+    public abstract String getPropertiesURL(String baseUrl, String imagePath)
     public abstract String getPreviewUrl(String baseUrl, String imagePath)
     public abstract String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height)
     public abstract String getCropURL(String baseUrl, String imagePath,int topLeftX, int topLeftY, int width, int height, int zoom)

@@ -90,6 +90,8 @@
    <!-- jcarrousel -->
     <script type="text/javascript" src="lib/jcarousel/jquery.carousel.min.js"></script>
 
+    <script type="text/javascript" src="lib/masonry/jquery.masonry.min.js"></script>
+
 
     <script type="text/javascript" src="application/views/explorer/AnnotationsPanel.js" ></script>
     <script type="text/javascript" src="application/views/explorer/LayerSwitcherPanel.js" ></script>

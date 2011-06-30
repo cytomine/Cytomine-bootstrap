@@ -51,6 +51,13 @@ class IIPResolver extends Resolver{
         return toURL(baseUrl)
     }
 
+    public String getPropertiesURL(String baseUrl, String imagePath) {
+        args.clear()
+        args.add("FIF" + ARGS_EQUAL +  imagePath)
+        args.add("obj" + ARGS_EQUAL +  "Image-Properties")
+        return toURL(baseUrl)
+    }
+
     public String getMetaDataURL(String baseUrl, String imagePath) {
         //http://localhost/fcgi-bin/iipsrv.fcgi?FIF=/home/maree/CYTOMINE/WholeSlides/Aperio/o.tif&obj=IIP,1.0&obj=Max-size&obj=Tile-size&obj=Resolution-number
         args.clear()

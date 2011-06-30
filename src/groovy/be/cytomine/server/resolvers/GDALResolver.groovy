@@ -26,6 +26,12 @@ class GDALResolver extends Resolver {
         return toURL(baseUrl)
     }
 
+    public String getPropertiesURL(String baseUrl, String imagePath) {
+        def url = baseUrl + "/" + imagePath + "/tilemapresource.xml"
+        println "getMetaDataURL : " + url
+        return toURL(baseUrl)
+    }
+
     public String getPreviewUrl(String baseUrl, String imagePath) {
         return getThumbUrl(baeUrl, imagePath)
 

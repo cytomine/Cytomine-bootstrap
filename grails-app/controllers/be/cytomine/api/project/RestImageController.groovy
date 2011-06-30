@@ -81,6 +81,18 @@ class RestImageController extends RestController{
         //TODO; refactor me!
         AbstractImage image = AbstractImage.read(params.id)
         def url = new URL(image.getMetadataURL())
+        println  image.getMetadataURL()
+        withFormat {
+            json {
+                render(contentType: "application/json", text: "${url.text}")
+            }
+        }
+    }
+
+    def imageProperties = {
+        //TODO; refactor me!
+        AbstractImage image = AbstractImage.read(params.id)
+        def url = new URL(image.getPropertiesURL())
         withFormat {
             json {
                 render(contentType: "application/json", text: "${url.text}")

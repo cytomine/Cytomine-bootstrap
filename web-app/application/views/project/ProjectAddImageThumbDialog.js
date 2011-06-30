@@ -59,22 +59,17 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
             "text!application/templates/project/ProjectAddImageThumbDialog.tpl.html"
         ],
                function(tpl) {
-                   //self.imagesProject = new ImageCollection({project:self.model.get('id')});
                    self.doLayout(tpl);
                });
         return this;
     },
     refresh : function() {
-        console.log("refresh");
        this.renderImageList();
     },
 
 
     doLayout : function(tpl) {
         var self = this;
-        console.log("Id project="+this.model.id);
-
-
         var view = _.template(tpl, {id:this.model.get('id'),name:this.model.get('name')});
         $(self.el).append(view);
 
@@ -148,12 +143,12 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         });
     },
     selectAllImages : function (slideID) {
-        $(".projectImageList" + slideID).find(".imageThumbChoice").each(function(){
+        $(".projectImageList" + slideID).find("li.imageThumbChoice").each(function(){
             $(this).find("a.checkbox-select").click();
         });
     },
     unselectAllImages : function (slideID) {
-        $(".projectImageList" + slideID).find(".imageThumbChoice").each(function(){
+        $(".projectImageList" + slideID).find("li.imageThumbChoice").each(function(){
             $(this).find("a.checkbox-deselect").click();
         });
     },
@@ -173,29 +168,22 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
             el.find("a[class=unselectAll]").bind("click", function(){
                 self.unselectAllImages(slide.get("id"));
             });
-            el.find("a[class=selectAll]").button();
-            el.find("a[class=unselectAll]").button();
+            el.find("a[class=selectAll]").button({text: false,
+                 icons: {
+                    secondary: "ui-icon-circle-plus"
+                 }});
+            el.find("a[class=unselectAll]").button({text: false,
+                 icons: {
+                    secondary: "ui-icon-circle-minus"
+                 }});
             var images = slide.get("images");
             var domTarget = ".projectImageList" + slide.get("id");
             _.each(images, function (imageID){
                 self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
-                /*self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
-                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
-                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
-                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
-                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
-                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
-                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
-                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
-                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
-                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
-                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);*/
             });
-            console.log("*************** INIT CARROUSEL *****************");
-            console.log($('#projectImageList'+slide.get("id")).length);
             //$('#projectImageList'+slide.get("id")).jcarousel();
-             $("#projectImageList"+slide.get("id")).carousel();
-$(domTarget).append('<div style="clear:both;"></div>');
+          //   $("#projectImageList"+slide.get("id")).carousel();
+            $(domTarget).append('<div style="clear:both;"></div>');
 
         });
 
@@ -214,7 +202,7 @@ $(domTarget).append('<div style="clear:both;"></div>');
         var maxCol = 4
         var col = 0
 
-        $(self.ulElem+self.model.get('id')).append("<table id=\"hello\"><tr width=\"600\">");
+        $(self.ulElem+self.model.get('id')).append("<table><tr width='25%'>");
 
         window.app.models.slides.each(function(slide){
             if ((cpt >= inf) && (cpt < sup)) {
@@ -222,7 +210,7 @@ $(domTarget).append('<div style="clear:both;"></div>');
                 col++;
                 if(col==maxCol) {
                     col=0;
-                    $(self.ulElem+self.model.get('id')).append("</tr><tr>");
+                    $(self.ulElem+self.model.get('id')).append("</tr><tr width='25%'>");
                 }
             }
             $(self.ulElem+self.model.get('id')).append("</tr></table>");
@@ -284,7 +272,6 @@ $(domTarget).append('<div style="clear:both;"></div>');
 
         $(self.checklistSelected).click(
                                        function(event) {
-
                                            event.preventDefault();
                                            var slideID = $(this).parent().attr("class");
 

@@ -49,6 +49,15 @@ class DjatokaResolver extends Resolver {
         return toURL(baseUrl)
     }
 
+     public String getPropertiesURL(String baseUrl, String imagePath) {
+        args.put("rft_id", imagePath)
+        args.put("url_ver", "Z39.88-2004")
+        args.put("svc_id", "info:lanl-repo/svc/getMetadata")
+        args.put("svc_val_fmt", "info:ofi/fmt:kev:mtx:jpeg2000")
+        args.put("svc.format", "image/jpeg")
+        return toURL(baseUrl)
+    }
+
     public String getPreviewUrl(String baseUrl, String imagePath) {
         args.put("rft_id", imagePath)
         args.put("url_ver", "Z39.88-2004")

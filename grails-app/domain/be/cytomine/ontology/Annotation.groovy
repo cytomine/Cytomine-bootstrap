@@ -173,7 +173,7 @@ class Annotation extends SequenceDomain implements Serializable {
       }
       returnArray['termList'] =  termList
 
-      returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
+      returnArray['cropURL'] = it.getCropURL()
 
       return returnArray
     }

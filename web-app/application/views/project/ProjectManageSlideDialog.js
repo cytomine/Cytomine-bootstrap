@@ -6,83 +6,111 @@
  * To change this template use File | Settings | File Templates.
  */
 var ProjectManageSlideDialog = Backbone.View.extend({
-    imageListing : null,
-    imageThumb : null,
-    projectPanel : null,
-    addSlideDialog : null,
-    imagesProject : null,
-    divDialog : "div#projectaddimagedialog",
-    /**
-     * Grab the layout and call ask for render
-     */
-    render : function() {
-        var self = this;
-        require([
-            "text!application/templates/project/ProjectAddImageDialog.tpl.html"
-        ],
-               function(tpl) {
-                   self.doLayout(tpl);
-               });
-        return this;
-    },
-    initialize: function(options) {
-        this.container = options.container;
-        this.projectPanel = options.projectPanel;
-        this.imagesProject = new ImageCollection({project:this.model.get('id')});
-    },
-    refresh : function() {
-        console.log("333333333333333333333333333333333333333333333333333333333");
-        if(this.imageListing!=undefined) this.imageListing.refresh();
-        if(this.imageThumb!=undefined) this.imageThumb.refresh();
-    },
-    /**
-     * Render the html into the DOM element associated to the view
-     * @param tpl
-     */
-    doLayout : function(tpl) {
-        var self = this;
-        console.log("Id project="+this.model.id);
+       imageListing : null,
+       imageThumb : null,
+       projectPanel : null,
+       addSlideDialog : null,
+       imagesProject : null,
+       divDialog : "div#projectaddimagedialog",
+       /**
+        * Grab the layout and call ask for render
+        */
+       render : function() {
+          var self = this;
+          require([
+             "text!application/templates/project/ProjectAddImageDialog.tpl.html"
+          ],
+              function(tpl) {
+                 self.doLayout(tpl);
+              });
+          return this;
+       },
+       initialize: function(options) {
+          this.container = options.container;
+          this.projectPanel = options.projectPanel;
+          this.imagesProject = new ImageCollection({project:this.model.get('id')});
+       },
+       refresh : function() {
+          console.log("333333333333333333333333333333333333333333333333333333333");
+          if(this.imageListing!=undefined) this.imageListing.refresh();
+          if(this.imageThumb!=undefined) this.imageThumb.refresh();
+       },
+       /**
+        * Render the html into the DOM element associated to the view
+        * @param tpl
+        */
+       doLayout : function(tpl) {
+          var self = this;
+          console.log("Id project="+this.model.id);
 
-        console.log(" _.template");
+          console.log(" _.template");
 
-         $("#addimagediv").empty();
+          $("#addimagediv").empty();
 
 
-        var fetchCallback = function(cpt, expected) {
-            if (cpt == expected) {
+          var fetchCallback = function(cpt, expected) {
+             if (cpt == expected) {
 
                 var dialog = _.template(tpl, {id:self.model.get('id'),name:self.model.get('name')});
                 $(self.el).append(dialog);
 
-                $("#goBackToProject"+self.model.id).button({
-                    icons : {primary: "ui-icon-circle-triangle-w"}
+                $("button[class=goBackToProject]").click(function() {
+                   self.projectPanel.refresh();
+                   $("#projectdiv").show();
+                   $("#addimagediv").hide();
                 });
 
-                $("#goBackToProject"+self.model.id).click(function() {
-                    $("#projectdiv").show();
-                    $("#addimagediv").hide();
+                $("button[class=goBackToProject]").button({
+                       icons : {primary: "ui-icon-circle-triangle-w"}
+                    });
+
+                $("input[class=showImageTable]").click(function() {
+
+                   $("#tabsProjectaddimagedialog"+self.model.id+"-2").show();
+                   $("#tabsProjectaddimagedialog"+self.model.id+"-1").hide();
                 });
+
+                $("input[class=showImageTable]").click();//START WITH TABLE
+
+                $("input[class=showImageTable]").button({
+                       icons : {primary: "ui-icon-document"}
+                    });
+
+
+
+                $("input[class=showImageThumbs]").click(function() {
+
+                   $("#tabsProjectaddimagedialog"+self.model.id+"-1").show();
+                   $("#tabsProjectaddimagedialog"+self.model.id+"-2").hide();
+                });
+
+                $("input[class=showImageThumbs]").button({
+                       icons : {primary: "ui-icon-image"}
+                    });
+
+
+
 
                 console.log("ProjectAddImageThumbDialog");
                 self.imageThumb = new ProjectAddImageThumbDialog({
-                    model : self.model,
-                    projectsPanel : self,
-                    imagesProject : self.imagesProject,
-                    slides : window.app.models.slides,
-                    images : window.app.models.images,
-                    el : "#tabsProjectaddimagedialog"+self.model.id+"-1"
-                }).render();
+                       model : self.model,
+                       projectsPanel : self,
+                       imagesProject : self.imagesProject,
+                       slides : window.app.models.slides,
+                       images : window.app.models.images,
+                       el : "#tabsProjectaddimagedialog"+self.model.id+"-1"
+                    }).render();
                 console.log("render() 1 ok");
 
                 console.log("ProjectAddImageListingDialog");
                 self.imageListing = new ProjectAddImageListingDialog({
-                    model : self.model,
-                    projectsPanel : self,
-                    imagesProject : self.imagesProject,
-                    slides : window.app.models.slides,
-                    images : window.app.models.images,
-                    el : "#tabsProjectaddimagedialog"+self.model.id+"-2"
-                }).render();
+                       model : self.model,
+                       projectsPanel : self,
+                       imagesProject : self.imagesProject,
+                       slides : window.app.models.slides,
+                       images : window.app.models.images,
+                       el : "#tabsProjectaddimagedialog"+self.model.id+"-2"
+                    }).render();
                 console.log("render() 2 ok");
 
                 $("#addimagediv").append($(self.divDialog+self.model.get('id')));
@@ -108,37 +136,37 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                  width : ($(window).width()/100*90),
                  height: ($(window).height()/100*90) //bug with %age ?
                  });    */
-                $("#tabsProjectaddimagedialog"+self.model.get('id')).tabs();
-                console.log("dialog ok");
+                /*$("#tabsProjectaddimagedialog"+self.model.get('id')).tabs();
+                 console.log("dialog ok");*/
 
                 //bug,panel title are hidden (display:none)
                 $(".ui-panel-header").css("display","block");
 
                 self.open();
-            }
-        };
+             }
+          };
 
-        var modelsToPreload = [window.app.models.slides, window.app.models.images, self.imagesProject];
-        var nbModelFetched = 0;
-        _.each(modelsToPreload, function(model){
-            model.fetch({
-                success :  function(model, response) {
-                    fetchCallback(++nbModelFetched, _.size(modelsToPreload));
-                }
-            });
-        });
+          var modelsToPreload = [window.app.models.slides, window.app.models.images, self.imagesProject];
+          var nbModelFetched = 0;
+          _.each(modelsToPreload, function(model){
+             model.fetch({
+                    success :  function(model, response) {
+                       fetchCallback(++nbModelFetched, _.size(modelsToPreload));
+                    }
+                 });
+          });
 
-        return this;
+          return this;
 
-    },
+       },
 
-    /**
-     * Open and ask to render image thumbs
-     */
-    open: function() {
-        //this.addSlideDialog.dialog("open") ;
-    }
+       /**
+        * Open and ask to render image thumbs
+        */
+       open: function() {
+          //this.addSlideDialog.dialog("open") ;
+       }
 
 
 
-});
+    });
