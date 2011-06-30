@@ -481,7 +481,6 @@ class App
           req = Net::HTTP::Get.new(@basePath+dest[6..-1]+"?metadata")
           setHeaders req
           response, data = @store.request(req)
-          processResponse  response, data
           if (response.code != 404 )
               #NODE ALREADY EXISTS TELL THE CLIENT
               return
