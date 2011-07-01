@@ -45,6 +45,18 @@ class UrlMappings {
         "/api/currentuser/ontology/"(controller:"restOntology"){
             action = [GET:"listByUser"]
         }
+        "/api/currentuser/image"(controller: "restImage"){
+          action = [GET:"listByUser"]
+        }
+        "/api/currentuser/slide"(controller: "restSlide"){
+          action = [GET:"listByUser"]
+        }
+
+
+        /* Group */
+        "/api/group/$idgroup/image"(controller:"restAbstractImageGroup"){
+            action = [GET: "listAbstractImageByGroup"]
+        }
 
         /* Project */
         "/api/project"(controller: "restProject"){
@@ -110,6 +122,12 @@ class UrlMappings {
         }
         "/api/image/$id/imageinstance"(controller: "restImageInstance"){
             action = [GET:"listByImage"]
+        }
+        "/api/image/$idabstractimage/group"(controller:"restAbstractImageGroup"){
+            action = [GET: "listGroupByAbstractImage"]
+        }
+        "/api/image/$idabstractimage/group/$idgroup"(controller:"restAbstractImageGroup"){
+            action = [GET:"show",DELETE:"delete",POST:"add"]
         }
 
         /* Image Instance */

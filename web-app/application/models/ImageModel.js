@@ -14,7 +14,7 @@ var ImageCollection = Backbone.Collection.extend({
         if (this.project != undefined) {
             return "api/project/" + this.project + "/image.json";
         } else {
-            return "api/image.json";
+            return "api/currentuser/image.json";
         }
     },
     initialize: function (options) {

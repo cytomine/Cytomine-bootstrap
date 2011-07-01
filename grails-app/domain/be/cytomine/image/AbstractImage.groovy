@@ -16,6 +16,7 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.server.resolvers.Resolver
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
+import be.cytomine.security.Group
 
 class AbstractImage extends SequenceDomain {
     String filename
@@ -32,8 +33,6 @@ class AbstractImage extends SequenceDomain {
     Double scale
     Geometry roi
 
-    User user
-
     /*
     * If you modify/add an attribute, don't forget to:
     * -Update getXXXXFromData
@@ -42,7 +41,7 @@ class AbstractImage extends SequenceDomain {
     */
 
     static belongsTo = Slide
-    static hasMany = [ annotations : Annotation, storageAbstractImages : StorageAbstractImage ]
+    static hasMany = [ abstractimagegroup : AbstractImageGroup, storageAbstractImages : StorageAbstractImage ]
 
     static transients = ["zoomLevels"]
 
@@ -60,13 +59,17 @@ class AbstractImage extends SequenceDomain {
         scale(nullable:true)
         roi(nullable:true)
 
-        user(nullable:true)
     }
 
     String toString() {
         filename
     }
 
+    def groups() {
+      return abstractimagegroup.collect{
+        it.group
+      }
+    }
 
 
     static AbstractImage createFromData(jsonImage) {
@@ -121,13 +124,6 @@ class AbstractImage extends SequenceDomain {
         }
         else image.roi = null
 
-        String userId = jsonImage.user.toString()
-        if(!userId.equals("null")) {
-            image.user = User.get(Long.parseLong(userId))
-            if(image.user==null) throw new IllegalArgumentException("User was not found with id:"+userId)
-        }
-        else image.user = null
-
         return image;
     }
 
@@ -147,7 +143,6 @@ class AbstractImage extends SequenceDomain {
             returnArray['filename'] = it.filename
             returnArray['scanner'] = it.scanner? it.scanner.id : null
             returnArray['slide'] = it.slide? it.slide.id : null
-            returnArray['user'] = it.user? it.user.id : null
             returnArray['path'] = it.path
             returnArray['mime'] = it.mime.extension
 

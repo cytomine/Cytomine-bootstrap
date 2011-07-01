@@ -17,6 +17,7 @@ import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Ontology
 import be.cytomine.image.ImageInstance
 import be.cytomine.security.Group
+import be.cytomine.image.AbstractImageGroup
 
 /**
  * Created by IntelliJ IDEA.
@@ -317,6 +318,24 @@ log.debug  "createOrGetBasicUser()"
     group
   }
 
+  static Group getBasicGroupNotExist() {
+
+    log.debug "getBasicGroupNotExist()"
+    def random = new Random()
+    def randomInt = random.nextInt()
+    def group = Group.findByName(randomInt+"")
+
+    while(group){
+      randomInt = random.nextInt()
+      group = Group.findByName(randomInt+"")
+   }
+
+    group = new Group(name:randomInt+"")
+    assert group.validate()
+    log.debug "user.errors="+group.errors
+    group
+  }
+
 
   static Project createOrGetBasicProject() {
     log.debug  "createOrGetBasicProject()"
@@ -520,6 +539,58 @@ log.debug  "createOrGetBasicUser()"
     log.debug "annotationTerm.errors="+annotationTerm.errors
     annotationTerm
   }
+  
+  
+  static AbstractImageGroup createOrGetBasicAbstractImageGroup() {
+    log.debug  "createOrGetBasicAbstractImageGroup()"
+
+    def abstractimage = getBasicAbstractImageNotExist()
+    abstractimage.save(flush:true)
+    assert abstractimage!=null
+    def group = getBasicGroupNotExist()
+    group.save(flush:true)
+    assert group!=null
+    def abstractimageGroup =  AbstractImageGroup.findByAbstractimageAndGroup(abstractimage,group)
+    assert abstractimageGroup==null
+
+    log.debug "abstractimage.id:" + abstractimage.id + " group.id:" + group.id
+    if(!abstractimageGroup) {
+      log.debug "abstractimageGroup link"
+
+      abstractimageGroup = AbstractImageGroup.link(abstractimage,group)
+      log.debug "AbstractImageGroup.errors="+abstractimageGroup.errors
+    }
+    assert abstractimageGroup!=null
+    abstractimageGroup
+  }
+
+  static AbstractImageGroup getBasicAbstractImageGroupNotExist(String method) {
+
+    log.debug "getBasicAbstractImageGroupNotExist()"
+    def random = new Random()
+    def randomInt = random.nextInt()
+
+    def group = getBasicGroupNotExist()
+
+    log.debug "group:" + group.id
+    log.debug "group.name" + group.name
+    log.debug "group.created:" + group.created
+     log.debug "group.attached:" + group.attached
+     log.debug "group.dirty:" + group.dirty
+
+    group.save(flush:true)
+    assert group!=null
+
+    def abstractimage = getBasicAbstractImageNotExist()
+
+    log.debug "abstractimage:" + abstractimage.id
+    abstractimage.save(flush:true)
+    assert abstractimage!=null
+    def abstractimageGroup =  new AbstractImageGroup(abstractimage:abstractimage,group:group)
+
+    log.debug "abstractimageGroup.errors="+abstractimageGroup.errors
+    abstractimageGroup
+  }  
 
   static void compareAnnotation(map, json)  {
 
@@ -535,7 +606,6 @@ log.debug  "createOrGetBasicUser()"
     assert map.geom.replace(' ', '').equals(json.roi.replace(' ',''))
     assert toLong(map.scanner.id).equals(toLong(json.scanner))
     assert toLong(map.slide.id).equals(toLong(json.slide))
-    assert toLong(map.user.id).equals(toLong(json.user))
     assert map.path.equals(json.path)
     assert map.mime.extension.equals(json.mime)
     assert toInteger(map.width).equals(toInteger(json.width))

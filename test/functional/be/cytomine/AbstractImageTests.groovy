@@ -387,7 +387,6 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     imageToAdd.width = oldWidth
     imageToAdd.height = oldHeight
     imageToAdd.scale = oldScale
-    imageToAdd.user = oldUser
     imageToAdd.save(flush:true)
 
     /* Encode a new image to modify */
@@ -404,11 +403,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     jsonUpdate.width = newWidth
     jsonUpdate.height = newHeight
     jsonUpdate.scale = newScale
-    jsonUpdate.user = newUser.id
     jsonImage = jsonUpdate.encodeAsJSON()
-
-    log.info "OLD USER FOR THIS IMAGE: "+imageToAdd.user
-    log.info "NEW USER FOR THIS IMAGE: "+jsonUpdate.user
 
     log.info("put image:"+jsonImage.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/image/"+imageToEdit.id+".json"

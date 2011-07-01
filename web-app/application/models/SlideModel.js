@@ -45,7 +45,7 @@ var ProjectSlideCollection = Backbone.Collection.extend({
 var SlideCollection = Backbone.Collection.extend({
     model: SlideModel,
     CLASS_NAME: "be.cytomine.image.Slide",
-    url: 'api/slide.json',
+    url: 'api/currentuser/slide.json',
     initialize: function () {
         // something
     }

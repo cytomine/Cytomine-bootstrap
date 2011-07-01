@@ -2,6 +2,8 @@ package be.cytomine.security
 
 import be.cytomine.SequenceDomain
 import be.cytomine.ontology.Ontology
+import be.cytomine.image.AbstractImage
+import be.cytomine.project.Slide
 
 class SecUser extends SequenceDomain {
 
@@ -39,6 +41,36 @@ class SecUser extends SequenceDomain {
     projects
   }
 
+  def abstractimages() {
+    def abstractimages = []
+    userGroup.each { userGroup ->
+      def imagesFromGroup =  userGroup.group.abstractimagegroup
+      imagesFromGroup.each { abstractImageGroup ->
+        AbstractImage image = abstractImageGroup.abstractimage
+        if(!abstractimages.contains(image)) {
+            abstractimages << image
+        }
+
+      }
+    }
+    abstractimages
+  }
+
+  def slides() {
+    def slides = []
+    userGroup.each { userGroup ->
+      def imagesFromGroup =  userGroup.group.abstractimagegroup
+      imagesFromGroup.each { abstractImageGroup ->
+        AbstractImage image = abstractImageGroup.abstractimage
+        Slide slide =  abstractImageGroup.abstractimage.slide
+        if(!slides.contains(slide)) {
+            slides << slide
+        }
+
+      }
+    }
+    slides
+  }
 
   Set<SecRole> getAuthorities() {
     SecUserSecRole.findAllBySecUser(this).collect { it.secRole } as Set

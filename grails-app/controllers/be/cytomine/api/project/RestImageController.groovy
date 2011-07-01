@@ -28,6 +28,19 @@ class RestImageController extends RestController{
         response(AbstractImage.list())
     }
 
+  def listByUser = {
+    log.info "List with id user:"+params.id
+    User user=null
+    if(params.id!=null) {
+      user = User.read(params.id)
+    } else {
+       user = getCurrentUser(springSecurityService.principal.id)
+    }
+
+    if(user!=null) responseSuccess(user.abstractimages())
+    else responseNotFound("User",params.id)
+  }
+
     def show = {
         log.info "show " + params.id
         AbstractImage image = AbstractImage.read(params.id)
@@ -35,12 +48,6 @@ class RestImageController extends RestController{
         else responseNotFound("Image",params.id)
     }
 
-    def listByUser = {
-        log.info "List with id user:"+params.id
-        User user = User.read(params.id)
-        if(user!=null) responseSuccess(AbstractImage.findAllByUser(user))
-        else responseNotFound("Image","User",params.id)
-    }
 
     def listByProject = {
         log.info "List with id user:"+params.id

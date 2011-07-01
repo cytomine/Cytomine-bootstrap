@@ -28,6 +28,7 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
+import be.cytomine.image.AbstractImageGroup
 
 class BootStrap {
     def springSecurityService
@@ -92,16 +93,20 @@ class BootStrap {
                 [name : "LBTD"],
                 [name : "ANAPATH"] ,
                 [name : "OTHER"],
-                [name : "CERVIX"]
+                [name : "CERVIX"],
+                [name : "GIGA"]
         ]
         createGroups(groupsSamples)
 
         /* Users */
         def usersSamples = [
-                [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group :[[ name :"LBTD"], [name : "OTHER"],[name : "ANAPATH"],[name : "CERVIX"]], password : 'password', color : "#FF0000"],
-                [username : 'lrollus', firstname : 'Loïc', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[ name :"LBTD"], [name : "OTHER"],[name : "ANAPATH"],[name : "CERVIX"]], password : 'password', color : "#00FF00"],
-                [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[ name :"LBTD"], [name : "OTHER"],[name : "ANAPATH"],[name : "CERVIX"]], password : 'password', color : "#0000FF"] ,
-                [username : 'demo', firstname : 'Jean', lastname : 'Dupont', email : 'mymail@ulg.ac.be', group : [[ name :"LBTD"], [name : "OTHER"],[name : "ANAPATH"],[name : "CERVIX"]], password : 'demodemo', color : "#00FFFF"]
+                [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group :[[ name :"GIGA"],[ name :"LBTD"], [name : "OTHER"],[name : "ANAPATH"],[name : "CERVIX"]], password : 'password', color : "#FF0000"],
+                [username : 'lrollus', firstname : 'Loïc', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[ name :"GIGA"],[ name :"LBTD"], [name : "OTHER"],[name : "ANAPATH"],[name : "CERVIX"]], password : 'password', color : "#00FF00"],
+                [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[ name :"GIGA"],[ name :"LBTD"], [name : "OTHER"],[name : "ANAPATH"],[name : "CERVIX"]], password : 'password', color : "#0000FF"] ,
+                [username : 'demo', firstname : 'Jean', lastname : 'Dupont', email : 'mymail@ulg.ac.be', group : [[ name :"GIGA"],[ name :"LBTD"], [name : "OTHER"],[name : "ANAPATH"],[name : "CERVIX"]], password : 'demodemo', color : "#00FFFF"],
+                [username : 'lbtd', firstname : 'LB', lastname : 'TD', email : 'mymail@ulg.ac.be', group : [[ name :"LBTD"]], password : 'lbtd', color : "#00FFFF"],
+                [username : 'anapath', firstname : 'Ana', lastname : 'Path', email : 'mymail@ulg.ac.be', group : [[ name :"ANAPATH"]], password : 'anapath', color : "#00FFFF"]
+
         ]
         createUsers(usersSamples)
 
@@ -457,7 +462,7 @@ class BootStrap {
         if (env != BootStrap.test) createSlidesAndAbstractImages(BootStrapData.LBTDScans1)
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans2)
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans3)
-        if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans4)
+        if (env != BootStrap.test) createSlidesAndAbstractImages(BootStrapData.LBTDScans4)
 
         def termSamples = [
 
@@ -728,6 +733,17 @@ class BootStrap {
                 Project project = Project.findByName(item.study)
                 User user = User.findByUsername("demo")
                 image.save(flush : true)
+
+                Group giga = Group.findByName('GIGA')
+                AbstractImageGroup.link(image,giga)
+
+
+
+                project.groups().each { group ->
+                    println "GROUP " + group.name + " IMAGE " + image.filename
+                    AbstractImageGroup.link(image,group)
+                }
+
 
                 /*Storage.list().each { storage->
                     storageService.metadata(storage, image)
@@ -1024,7 +1040,6 @@ class BootStrap {
                         mime : mime,
                         scanner : scanner,
                         slide : slides[item.slide],
-                        user:user,
                         created :created
                 )
 
