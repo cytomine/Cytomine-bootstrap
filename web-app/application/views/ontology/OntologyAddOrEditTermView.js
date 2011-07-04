@@ -203,12 +203,14 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
 //                        console.log("NOT A FOLDER");
 //                    }
 //                    else sourceNode.move(node, hitMode);
+                    console.log("onDrop "+ hitMode);
                     if(hitMode=="over") {
                         sourceNode.move(node, hitMode);
                         console.log(node);
                         node.data.isFolder = true;
                         node.render();
                     }
+                    else sourceNode.move(node, hitMode);
                 },
                 onDragLeave: function(node, sourceNode) {
                 }
