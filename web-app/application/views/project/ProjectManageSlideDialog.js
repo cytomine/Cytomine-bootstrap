@@ -31,7 +31,6 @@ var ProjectManageSlideDialog = Backbone.View.extend({
           this.imagesProject = new ImageCollection({project:this.model.get('id')});
        },
        refresh : function() {
-          console.log("333333333333333333333333333333333333333333333333333333333");
           if(this.imageListing!=undefined) this.imageListing.refresh();
           if(this.imageThumb!=undefined) this.imageThumb.refresh();
        },
@@ -60,33 +59,6 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                    $("#addimagediv").hide();
                 });
 
-                $("button[class=goBackToProject]").button({
-                       icons : {primary: "ui-icon-circle-triangle-w"}
-                    });
-
-                $("input[class=showImageTable]").click(function() {
-
-                   $("#tabsProjectaddimagedialog"+self.model.id+"-2").show();
-                   $("#tabsProjectaddimagedialog"+self.model.id+"-1").hide();
-                });
-
-                $("input[class=showImageTable]").click();//START WITH TABLE
-
-                $("input[class=showImageTable]").button({
-                       icons : {primary: "ui-icon-document"}
-                    });
-
-
-
-                $("input[class=showImageThumbs]").click(function() {
-
-                   $("#tabsProjectaddimagedialog"+self.model.id+"-1").show();
-                   $("#tabsProjectaddimagedialog"+self.model.id+"-2").hide();
-                });
-
-                $("input[class=showImageThumbs]").button({
-                       icons : {primary: "ui-icon-image"}
-                    });
 
 
 
@@ -112,6 +84,36 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                        el : "#tabsProjectaddimagedialog"+self.model.id+"-2"
                     }).render();
                 console.log("render() 2 ok");
+
+                 $("button[class=goBackToProject]").button({
+                        icons : {primary: "ui-icon-circle-triangle-w"}
+                     });
+
+                 $("input[class=showImageTable]").click(function() {
+                    self.imageListing.refresh();
+                    $("#tabsProjectaddimagedialog"+self.model.id+"-2").show();
+                    $("#tabsProjectaddimagedialog"+self.model.id+"-1").hide();
+                 });
+
+                 $("input[class=showImageTable]").click();//START WITH TABLE
+
+                 $("input[class=showImageTable]").button({
+                        icons : {primary: "ui-icon-document"}
+                     });
+
+
+
+                 $("input[class=showImageThumbs]").click(function() {
+                    self.imageThumb.refresh();
+                    $("#tabsProjectaddimagedialog"+self.model.id+"-1").show();
+                    $("#tabsProjectaddimagedialog"+self.model.id+"-2").hide();
+                 });
+
+                 $("input[class=showImageThumbs]").button({
+                        icons : {primary: "ui-icon-image"}
+                     });
+
+
 
                 $("#addimagediv").append($(self.divDialog+self.model.get('id')));
                 //Build dialog
