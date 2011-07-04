@@ -29,6 +29,8 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.image.AbstractImageGroup
+import org.perf4j.StopWatch
+import org.perf4j.LoggingStopWatch
 
 class BootStrap {
     def springSecurityService
@@ -64,6 +66,8 @@ class BootStrap {
             println inputArgs.get(i)
         }
 
+
+
         /*switch(GrailsUtil.environment) {
             case "development":
                 initData(true)
@@ -75,9 +79,13 @@ class BootStrap {
                 initData(false)
                 break
         }*/
+      StopWatch stopWatch = new LoggingStopWatch();
         initData(GrailsUtil.environment)
+      stopWatch.stop("initData");
         //end of init
     }
+
+
 
     private def initData(String env) {
         /* AIS Storages */
@@ -670,52 +678,52 @@ class BootStrap {
     }
 
     def createSlidesAndAbstractImages(LBTDScans) {
+
+      StopWatch stopWatch = new LoggingStopWatch();
+      Storage storage = Storage.findByName("cytomine")
+      Group giga = Group.findByName('GIGA')
+      User user = User.findByUsername("demo")
+        int nbreImage = 0
         LBTDScans.each { item ->
-            println "createSlidesAndAbstractImages"
+            nbreImage++;
+
+            println "image " +nbreImage + " / " +LBTDScans.size() + " image " + item.filename;
+
             def slide
             if(item.slidename!=null)
                 slide = Slide.findByName(item.slidename)
-            println "slide=" + slide
+
             if(!slide)
             {
                 String slideName;
                 if(item.slidename==null)
                 {
-                    println "item.slidename==null"
                     slideName = "SLIDE "  + item.name
                 }
                 else
                 {
-                    println "item.slidename!=null"
                     slideName = item.slidename
                 }
-                println "slideName=" + slideName + " item.order=" + item.order
+
                 //create one with slidename name
                 slide = new Slide(name : slideName, order : item.order?:1)
 
                 if (slide.validate()) {
-                    println "Creating slide  ${slideName}..."
 
                     slide.save(flush : true)
                 }
             }
-            println "create slide OK"
             def extension = item.extension ?: "jp2"
+
             def mime = Mime.findByExtension(extension)
 
             def scanner = Scanner.findByBrand("gigascan")
-
-            println "image OK"
-
 
               Long lo =  new Long("1309250380");
               Long hi =  new Date().getTime()
               Random random = new Random()
               Long randomInt = ( Math.abs( random.nextLong() ) % ( hi.longValue() - lo.longValue() + 1 ) ) + lo.longValue();
-              println "lo=" + new Date(lo)+ " hi="+new Date(hi);
-              println "randomInt=" + randomInt
               Date created = new Date(randomInt);
-
 
 
             AbstractImage image = new AbstractImage(
@@ -728,22 +736,17 @@ class BootStrap {
             )
 
             if (image.validate()) {
-                println "Creating image : ${image.filename}..."
+
 
                 Project project = Project.findByName(item.study)
-                User user = User.findByUsername("demo")
                 image.save(flush : true)
-
-                Group giga = Group.findByName('GIGA')
                 AbstractImageGroup.link(image,giga)
-
 
 
                 project.groups().each { group ->
                     println "GROUP " + group.name + " IMAGE " + image.filename
                     AbstractImageGroup.link(image,group)
                 }
-
 
                 /*Storage.list().each { storage->
                     storageService.metadata(storage, image)
@@ -754,15 +757,12 @@ class BootStrap {
                         user : user,
                         project : project
                 )
-                imageinstance.save(flush:true)
 
+                imageinstance.save(flush:true)
                 /*Storage.list().each {
                     StorageAbstractImage.link(it, image)
                 }*/
-
-                StorageAbstractImage.link(Storage.findByName("cytomine"), image)
-
-
+                StorageAbstractImage.link(storage, image)
 
             } else {
                 println("\n\n\n Errors in image boostrap for ${item.filename}!\n\n\n")

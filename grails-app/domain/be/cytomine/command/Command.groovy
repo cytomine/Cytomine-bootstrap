@@ -9,7 +9,7 @@ class Command extends SequenceDomain {
 
   String data
   String postData
-
+  def jsonTOREMOVE
   User user
 
   boolean printMessage = true
@@ -24,6 +24,7 @@ class Command extends SequenceDomain {
     data (type:'text', maxSize:Command.MAXSIZEREQUEST, nullable : true)
     postData (type:'text', maxSize:Command.MAXSIZEREQUEST)
     actionMessage(nullable : true)
+    jsonTOREMOVE(nullable : true)
   }
 
   static void registerMarshaller() {

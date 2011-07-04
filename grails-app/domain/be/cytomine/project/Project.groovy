@@ -7,6 +7,8 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.image.ImageInstance
 
 import be.cytomine.ontology.Annotation
+import org.perf4j.StopWatch
+import org.perf4j.LoggingStopWatch
 
 class Project extends SequenceDomain {
 
@@ -102,6 +104,7 @@ class Project extends SequenceDomain {
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + Project.class
         JSON.registerObjectMarshaller(Project) {
+            StopWatch stopWatch = new LoggingStopWatch();
             def returnArray = [:]
             returnArray['class'] = it.class
             returnArray['id'] = it.id
@@ -113,15 +116,25 @@ class Project extends SequenceDomain {
             returnArray['imageinstanceURL'] = UrlApi.getImageInstanceURLWithProjectId(it.id)
             returnArray['termURL'] = UrlApi.getTermsURLWithOntologyId(it.ontology?.id)
             returnArray['userURL'] = UrlApi.getUsersURLWithProjectId(it.id)
+
+
+
+             StopWatch stopWatchUsers = new LoggingStopWatch();
             returnArray['users'] = it.users().collect { it.id }
-
-
+             stopWatchUsers.stop("Project.registerMarshaller.users");
+            StopWatch stopWatchSlides = new LoggingStopWatch();
             try {returnArray['numberOfSlides'] = it.slides().size()}catch(Exception e){returnArray['numberOfSlides']=-1}
+          stopWatchSlides.stop("Project.registerMarshaller.slides");
+          StopWatch stopWatchImages = new LoggingStopWatch();
             try {returnArray['numberOfImages'] = it.imagesinstance().size()}catch(Exception e){returnArray['numberOfImages']=-1}
+          stopWatchImages.stop("Project.registerMarshaller.images");
+          StopWatch stopWatchAnnotations = new LoggingStopWatch();
             try {returnArray['numberOfAnnotations'] = it.annotations().size()}catch(Exception e){returnArray['numberOfAnnotations']=-1}
+          stopWatchAnnotations.stop("Project.registerMarshaller.annotations");
 
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
+            stopWatch.stop("Project.registerMarshaller");
             return returnArray
         }
     }

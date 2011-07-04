@@ -43,7 +43,7 @@ class SequenceService {
     def res = statement.executeQuery("select nextval('"+SEQ_NAME+"');")
     res.next()
     Long nextVal = res.getLong("nextval")
-    println "Get nextval for " +  domain.getClass().getName()    + " : " + nextVal
+    //println "Get nextval for " +  domain.getClass().getName()    + " : " + nextVal
     return nextVal
   }
 }

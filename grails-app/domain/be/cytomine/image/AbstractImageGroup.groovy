@@ -26,7 +26,6 @@ class AbstractImageGroup extends SequenceDomain implements Serializable{
         abstractimageGroup = new AbstractImageGroup()
         abstractimage?.addToAbstractimagegroup(abstractimageGroup)
         group?.addToAbstractimagegroup(abstractimageGroup)
-        println "save abstractimageGroup"
         abstractimage.refresh()
         group.refresh()
         abstractimageGroup.save(flush:true)
