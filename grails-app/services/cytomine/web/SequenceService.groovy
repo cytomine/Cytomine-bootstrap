@@ -26,7 +26,7 @@ class SequenceService {
     }*/
     try {
       def statement  = connection.createStatement()
-      def dropSequenceQuery = "DROP SEQUENCE IF EXISTS "+SEQ_NAME+";"
+      def dropSequenceQuery = ""//"DROP SEQUENCE IF EXISTS "+SEQ_NAME+";"
       def createSequenceQuery = "CREATE SEQUENCE "+SEQ_NAME+" START 1;"
       statement.execute(dropSequenceQuery + createSequenceQuery)
     } catch (org.postgresql.util.PSQLException e) {

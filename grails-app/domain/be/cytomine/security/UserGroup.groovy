@@ -24,7 +24,8 @@ class UserGroup {
     if (userGroup) {
       user?.removeFromUserGroup(userGroup)
       group?.removeFromUserGroup(userGroup)
+      userGroup.refresh()
       userGroup.delete(flush : true)
-    }
+    } else {println "no link between "+user?.username + " " + group?.name}
   }
 }

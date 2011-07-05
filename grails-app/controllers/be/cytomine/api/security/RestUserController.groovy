@@ -99,11 +99,11 @@ class RestUserController extends RestController {
     response(result)
   }
 
-  def clearUser = {
+  /*def clearUser = {
     log.info "ClearUser"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " params.idProject=" + params.id
-
+    ///ouh le vilain code!
     Project project = Project.get(params.id)
     log.info "project= " + project
     if (project) {
@@ -129,6 +129,40 @@ class RestUserController extends RestController {
     def ret = [data: [message: "ok"], status: 201]
     response(ret)
 
+  }   */
+
+  def deleteUser = {
+    log.info "DeleteUser"
+    User currentUser = getCurrentUser(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username + " params.idProject=" + params.id
+
+
+    Project project = Project.get(params.id)
+    User user = User.get(params.idUser)
+    log.info "Delete user " + user?.username + " in project " + project?.name
+
+    synchronized(this.getClass()) {
+
+
+      if (project) {
+        Group group = Group.findByName(project.name)
+        log.info "group= " + group
+        if (!group) {
+          group = new Group(name: project.name)
+          group.save()
+          ProjectGroup.link(project, group)
+        }
+
+        UserGroup.unlink(user, group);
+      }
+
+
+    }
+
+
+    response.status = 201
+    def ret = [data: [message: "OK"], status: 201]
+    response(ret)
   }
 
 
@@ -136,28 +170,28 @@ class RestUserController extends RestController {
     log.info "AddUser"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " params.idProject=" + params.id
-    log.info "Request= " + request.JSON.toString()
-    def json = request.JSON.user
 
 
     Project project = Project.get(params.id)
     log.info "project= " + project
-    if (project) {
-      Group group = Group.findByName(project.name)
-      log.info "group= " + group
-      if (!group) group = new Group(name: project.name)
-      group.save()
-      ProjectGroup.link(project, group)
 
-      json.each {
-        User user = User.get(it)
-        println "add user " + it
+    synchronized(this.getClass()) {
+      if (project) {
+        Group group = Group.findByName(project.name)
+        log.info "group= " + group
+        if (!group) {group = new Group(name: project.name)
+          group.save()
+          ProjectGroup.link(project, group)
+        }
+        User user = User.get(params.idUser)
         UserGroup.link(user, group);
       }
 
+
+
     }
     response.status = 201
-    def ret = [data: [message: "ok"], status: 201]
+    def ret = [data: [message: "OK"], status: 201]
     response(ret)
 
   }

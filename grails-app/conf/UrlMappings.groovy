@@ -72,7 +72,10 @@ class UrlMappings {
             action = [GET:"listByProject"]
         }
         "/api/project/$id/user"(controller: "restUser"){
-            action = [GET:"showByProject",POST:"addUser", DELETE:"clearUser"]
+            action = [GET:"showByProject",POST:"addUser"]
+        }
+        "/api/project/$id/user/$idUser"(controller: "restUser"){
+            action = [DELETE:"deleteUser",POST:"addUser"]
         }
         "/api/project/$id/annotation"(controller: "restAnnotation"){
             action = [GET:"listByProject"]
