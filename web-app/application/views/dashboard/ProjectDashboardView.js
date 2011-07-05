@@ -172,29 +172,32 @@ var ProjectDashboardView = Backbone.View.extend({
      */
     printAnnotationThumb : function(term,$elem){
         var self = this;
-        if(self.annotationsViews[term]==null) {
+        console.log("Refresh:"+term);
             var idTerm = 0
             if(term==0) idTerm = undefined
             else idTerm = term
+        if(self.annotationsViews[term]==null) {
+
             new AnnotationCollection({project:self.model.id,term:idTerm}).fetch({
                 success : function (collection, response) {
                     console.log("AnnotationCollection:"+collection.length);
                     $elem.empty();
 
-                    new AnnotationView({
+                    self.annotationsViews[term] = new AnnotationView({
                         page : undefined,
                         model : collection,
                         el:$elem,
                         container : window.app.view.components.warehouse
                     }).render();
-                    console.log("Looking for annotationsViews " + term);
+                    console.log("Looking for annotationsViews==null " + term);
                     self.annotationsViews[term].refresh(collection);
                 }
             });
         }
         else {
-            new AnnotationCollection({project:self.model.id}).fetch({
+            new AnnotationCollection({project:self.model.id,term:idTerm}).fetch({
                 success : function (collection, response) {
+                    console.log("Looking for annotationsViews!=null " + term);
                     self.annotationsViews[term].refresh(collection);
                 }
             });
