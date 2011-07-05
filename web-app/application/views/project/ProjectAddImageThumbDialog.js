@@ -90,7 +90,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
 
         console.log($(self.el).find("#tabsProjectaddimagedialog"+this.model.get('id')).length);
         // $(self.el).find("#tabsProjectaddimagedialog"+this.model.get('id')).tabs();
-        self.renderImageList();
+        //self.renderImageList();
         return this;
 
     },

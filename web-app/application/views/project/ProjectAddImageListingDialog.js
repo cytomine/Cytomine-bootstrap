@@ -31,7 +31,6 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
           return this;
        },
        refresh : function() {
-          console.log("4444444444444444444444444444444444444444444444444");
           this.refreshImageList();
        },
        //append to tabsProjectaddimagedialog{{id}}-2
@@ -72,9 +71,10 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
        searchImages : function() {
           var self = this;
           var images = self.searchPanel.search(self.images);
-
+          //if(self.images.length!=images.length) { //if search set and all set are equal, don't reload grid
           $("#"+self.listmanageall).jqGrid("clearGridData", true);
           self.loadDataImageListAll(images);
+          //}
        },
 
        renderImageList: function() {
@@ -156,7 +156,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
              //console.log("id="+image.id);
              data[i] = {
                 id: image.id,
-                thumb :  "<img src='"+image.get('thumb')+"' width=30/>",
+                thumb : '', //"<img src='"+image.get('thumb')+"' width=30/>",
                 filename: image.get('filename'),
                 type : image.get('mime'),
                 added : createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate(),
@@ -240,10 +240,48 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
                        $("#"+self.listmanageall).find("#" + id).find(".cbox").removeAttr('checked')
                     }
                  },
-                 loadComplete: function() {
+                 loadComplete: function(data) {
                     //change color of already selected image
 
 
+
+
+                     console.log("loadComplete: renderImageListAll");
+
+                     console.log($("tr #140").html());
+
+                     console.log($("#"+self.listmanageall).find("tr").length);
+
+
+
+                          $("#"+self.listmanageall).find("tr").each(function(index) {
+                              if(index!=0) {
+                                    //not a valid row
+
+                                console.log("id="+$(this).attr("id"));
+                                console.log(index + ': ' + $(this).text());
+                                console.log($(this).html());
+                                var image = self.images.get($(this).attr("id"));
+                             //   if($(this).find("#listmanageall40_thumb").find("div").length==0) {
+                                  console.log("div #thumbid"+image.id);
+                                  console.log($("div #thumbid"+image.id).length);
+                                  console.log($(this).find("div #thumbid"+image.id).length);
+
+                                    $("div #thumbid"+image.id).append("<img src='"+image.get('thumb')+"' width=30/>");
+                               // }
+                              }
+                            });
+         /*<td role="gridcell" style="text-align:center;" aria-describedby="listmanageall40_cb">
+            <input role="checkbox" type="checkbox" id="jqg_listmanageall40_65" class="cbox" name="jqg_listmanageall40_65"></td>
+            <td role="gridcell" style="" title="65" aria-describedby="listmanageall40_id">65</td>
+            <td role="gridcell" style="" title="" aria-describedby="listmanageall40_thumb"><div id="thumbid65"></div></td>
+            <td role="gridcell" style="" title="09-083151.mrxs" aria-describedby="listmanageall40_filename">09-083151.mrxs</td>
+            <td role="gridcell" style="" title="mrxs" aria-describedby="listmanageall40_type">mrxs</td>
+            <td role="gridcell" style="" title="2011-5-5" aria-describedby="listmanageall40_added">2011-5-5</td>*/
+
+
+
+                     console.log(data);
                     self.imagesProject.each(function(image) {
                        // console.log("image project="+image.id);
                        $("#"+self.listmanageall).find("#" + image.id).find("td").css("background-color", "a0dc4f");
@@ -268,7 +306,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
           $("#"+self.listmanageall).jqGrid('navGrid','#'+self.pagemanageall,{edit:false,add:false,del:false});
           $("#"+self.listmanageall).jqGrid('sortGrid','filename',false);
 
-          self.loadDataImageListAll(window.app.models.images);
+          //self.loadDataImageListAll(window.app.models.images);
        },
 
        loadDataImageListAll : function(collection) {
@@ -287,7 +325,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
                 data[i] = {
                    id: image.id,
-                   thumb :  "<img src='"+image.get('thumb')+"' width=30/>",
+                   thumb :  "<div id='thumbid"+image.id+"'></div>", //<img src='"+image.get('thumb')+"' width=30/>
                    filename: image.get('filename'),
                    type : image.get('mime'),
                    added : createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate()

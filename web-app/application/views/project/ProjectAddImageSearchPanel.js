@@ -76,7 +76,7 @@ var ProjectAddImageSearchPanel = Backbone.View.extend({
 
 
 
-        console.log("dateStart="+dateStart);
+        //console.log("dateStart="+dateStart);
         return self.filterImages(searchText==""?undefined:searchText,dateStart,dateEnd);
     },
     filterImages : function(searchText,dateStart,dateEnd) {
@@ -117,7 +117,7 @@ var ProjectAddImageSearchPanel = Backbone.View.extend({
         imagesOldList.each(function(image) {
             var dateAdded = new Date()
             dateAdded.setTime(image.get('created'));
-            console.log("dateAdded="+dateAdded + " dateStart=" + dateStart);
+            //console.log("dateAdded="+dateAdded + " dateStart=" + dateStart);
             if(dateStart!=undefined && dateAdded<dateStart) {
                 imagesNewList.remove(image);
             }
@@ -133,7 +133,7 @@ var ProjectAddImageSearchPanel = Backbone.View.extend({
         imagesOldList.each(function(image) {
             var dateAdded = new Date()
             dateAdded.setTime(image.get('created'));
-            console.log("dateAdded="+dateAdded + " dateEnd=" + dateEnd);
+            //console.log("dateAdded="+dateAdded + " dateEnd=" + dateEnd);
             if(dateEnd!=undefined && dateAdded>dateEnd) {
                 imagesNewList.remove(image);
             }
