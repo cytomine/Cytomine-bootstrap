@@ -51,12 +51,17 @@ class User extends SecUser {
     }
 
     def abstractimages() {
-        AbstractImageGroup.createCriteria().list {
-            inList("group.id", userGroup.collect{it.group.id})
-            projections {
-                groupProperty('abstractimage')
+        def abstractImages = []
+        if (userGroup.size() > 0) {
+            abstractImages = AbstractImageGroup.createCriteria().list {
+                inList("group.id", userGroup.collect{it.group.id})
+                projections {
+                    groupProperty('abstractimage')
+                }
             }
         }
+        abstractImages
+
     }
 
     def slides() {

@@ -545,8 +545,8 @@ log.debug  "createOrGetBasicUser()"
     log.debug "annotationTerm.errors="+annotationTerm.errors
     annotationTerm
   }
-  
-  
+
+
   static AbstractImageGroup createOrGetBasicAbstractImageGroup() {
     log.debug  "createOrGetBasicAbstractImageGroup()"
 
@@ -596,7 +596,7 @@ log.debug  "createOrGetBasicUser()"
 
     log.debug "abstractimageGroup.errors="+abstractimageGroup.errors
     abstractimageGroup
-  }  
+  }
 
   static void compareAnnotation(map, json)  {
 
