@@ -11,8 +11,8 @@ var OntologyController = Backbone.Controller.extend({
 
 
        routes: {
-          "ontology"            :   "ontology",
-          "ontology/:idOntology"           :   "ontology",
+          "ontology"                               :   "ontology",
+          "ontology/:idOntology"                   :   "ontology",
           "ontology/:idOntology/:idTerm"           :   "ontology"
        },
        ontology : function() {
@@ -30,28 +30,18 @@ var OntologyController = Backbone.Controller.extend({
 
           if (!self.view) {
              console.log("self.view==null");
-             window.app.models.ontologies.fetch({
-                    success : function (collection, response) {
-
-                       window.app.models.terms.fetch({
-                              success : function (terms, response) {
-                                 self.view = new OntologyView({
-                                        model : collection,
-                                        el:$("#warehouse > .ontology"),
-                                        container : window.app.view.components.warehouse,
-                                        idOntology : idOntology, //selected ontology
-                                        idTerm : idTerm
-                                     }).render();
-
-                                 self.view.container.views.ontology = self.view;
-
-                                 self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
-                              }
-                           });
-                    }
-                 });
-
+             self.view = new OntologyView({
+                    model : window.app.models.ontologies,
+                    el:$("#warehouse > .ontology"),
+                    container : window.app.view.components.warehouse,
+                    idOntology : idOntology, //selected ontology
+                    idTerm : idTerm
+                 }).render();
+             self.view.container.views.ontology = self.view;
+             self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
              window.app.view.showComponent(window.app.view.components.warehouse);
+             self.view.refresh();
+
           }
           else {
              console.log("self.view!=null");

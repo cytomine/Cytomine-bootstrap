@@ -14,7 +14,19 @@ var OntologyView = Backbone.View.extend({
        idOntology : null,
        addOntologyDialog : null,
        events: {
-          "click .addOntology": "showAddOntologyPanel"
+          "click .addOntology": "showAddOntologyPanel",
+          "click .refreshOntology" : "refresh"
+       },
+       initLoading: function() {
+         $(this.el).find("#ontologyLoading").html("Loading...");
+       },
+       showLoading : function() {
+          $(this.el).find("#ontologytreepanel").hide();
+          $(this.el).find("#ontologyLoading").show();
+       },
+       hideLoading : function() {
+          $(this.el).find("#ontologyLoading").hide();
+          $(this.el).find("#ontologytreepanel").show();
        },
        initialize: function(options) {
           this.container = options.container;
@@ -55,16 +67,19 @@ var OntologyView = Backbone.View.extend({
        },
        doLayout: function(tpl) {
           console.log("OntologyView.render");
-
           var self = this;
           $(this.el).html(_.template(tpl, {}));
-
+          self.initLoading();
+          self.showLoading();
           self.$tabsOntologies = $(self.el).find("#tabsontology");
           $(self.el).find(".addOntology").button({
                  icons : {secondary: "ui-icon-plus" }
               });
+          $(self.el).find(".refreshOntology").button({
+                 icons : {secondary: "ui-icon-refresh" }
+              });
           self.initOntologyTabs();
-
+          self.hideLoading();
           return this;
        },
        showAddOntologyPanel : function() {
@@ -129,7 +144,6 @@ var OntologyView = Backbone.View.extend({
              console.log("activate = " + selectedOntologyIndex);
              self.$tabsOntologies.accordion( "activate" , selectedOntologyIndex );
              $(".accordeonOntology").css("height", "auto");
-             self.ontologiesPanel[selectedOntologyIndex].selectTerm(self.idTerm);
           });
        },
        /**
