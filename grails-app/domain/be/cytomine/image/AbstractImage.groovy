@@ -49,7 +49,7 @@ class AbstractImage extends SequenceDomain {
         filename(blank : false, unique : true)
 
         scanner(nullable : true)
-        slide(nullable : false)
+        slide(nullable : true)
 
         path(nullable:false)
         mime(nullable:false)

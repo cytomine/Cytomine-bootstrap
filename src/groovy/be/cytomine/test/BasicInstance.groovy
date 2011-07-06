@@ -126,6 +126,7 @@ class BasicInstance {
     ImageInstance image =  new ImageInstance(
             baseImage:img,
             project:BasicInstance.createOrGetBasicProject(),
+            slide:BasicInstance.createOrGetBasicSlide(),
             user:BasicInstance.createOrGetBasicUser())
     image.baseImage.save(flush : true)
     image.validate()

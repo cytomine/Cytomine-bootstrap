@@ -23,6 +23,7 @@ class ImageInstance extends SequenceDomain {
 
   static constraints = {
     baseImage(unique:['project'])
+    slide (nullable: true)
   }
 
   static belongsTo = [AbstractImage, Project, User]
