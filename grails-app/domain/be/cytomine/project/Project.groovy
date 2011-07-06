@@ -9,6 +9,8 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Annotation
 import org.perf4j.StopWatch
 import org.perf4j.LoggingStopWatch
+import be.cytomine.image.AbstractImage
+import be.cytomine.security.UserGroup
 
 class Project extends SequenceDomain {
 
@@ -26,56 +28,53 @@ class Project extends SequenceDomain {
     }
 
     def imagesinstance() {
-        return ImageInstance.findAllByProject(this)
+        ImageInstance.findAllByProject(this)
+    }
+
+    def countImageInstance() {
+        ImageInstance.countByProject(this)
     }
 
     def abstractimages() {
-        def images = []
-        def imagesinstance = this.imagesinstance()
-        imagesinstance.each { imageinstance ->
-            images << imageinstance.baseImage
-        }
-        return images
+        ImageInstance.findAllByProject(this).collect{it.baseImage}
     }
 
     def annotations() {
-        def annotations = []
-        this.imagesinstance().each { img ->
-            def imageAnnotations = Annotation.findAllByImage(img)
-            imageAnnotations.each { annotation ->
-                annotations << annotation
-            }
-        }
-        return annotations
+        Annotation.findAllByImageInList(this.imagesinstance())
+    }
+
+    def countAnnotations() {
+        def images = this.imagesinstance()
+        images.size() > 0 ? Annotation.countByImageInList(images) : 0
     }
 
     def slides() {
-        def slides = []
-        this.abstractimages().each { img ->
-            if(!slides.contains(img.slide))
-                slides << img.slide
-        }
-        return slides
+        Slide.findAllByIdInList(
+                ImageInstance.createCriteria().list {
+                    join 'slide'
+                    projections {
+                        groupProperty('slide.id')
+                    }
+                    eq("project", this)
+                })
     }
 
+    def countSlides () {
+        ImageInstance.createCriteria().list {
+            join 'slide'
+            projections {
+                countDistinct('slide.id')
+            }
+            eq("project", this)
+        }
+    }
 
     def groups() {
-        return projectGroup.collect{
-            it.group
-        }
+        projectGroup.collect{ it.group }
     }
 
-
-
     def users() {
-        def users = []
-        projectGroup.each { projGroup ->
-            projGroup.group.users().each { user ->
-                if(!users.contains(user))
-                    users << user
-            }
-        }
-        users
+        UserGroup.findAllByGroupInList(this.groups()).collect { it.user }
     }
 
     static Project createFromData(jsonProject) {
@@ -119,19 +118,18 @@ class Project extends SequenceDomain {
 
 
 
-             StopWatch stopWatchUsers = new LoggingStopWatch();
+            StopWatch stopWatchUsers = new LoggingStopWatch();
             returnArray['users'] = it.users().collect { it.id }
-             stopWatchUsers.stop("Project.registerMarshaller.users");
+            stopWatchUsers.stop("Project.registerMarshaller.users");
             StopWatch stopWatchSlides = new LoggingStopWatch();
-            try {returnArray['numberOfSlides'] = it.slides().size()}catch(Exception e){returnArray['numberOfSlides']=-1}
-          stopWatchSlides.stop("Project.registerMarshaller.slides");
-          StopWatch stopWatchImages = new LoggingStopWatch();
-            try {returnArray['numberOfImages'] = it.imagesinstance().size()}catch(Exception e){returnArray['numberOfImages']=-1}
-          stopWatchImages.stop("Project.registerMarshaller.images");
-          StopWatch stopWatchAnnotations = new LoggingStopWatch();
-            try {returnArray['numberOfAnnotations'] = it.annotations().size()}catch(Exception e){returnArray['numberOfAnnotations']=-1}
-          stopWatchAnnotations.stop("Project.registerMarshaller.annotations");
-
+            try {returnArray['numberOfSlides'] = it.countSlides()}catch(Exception e){returnArray['numberOfSlides']=-1}
+            stopWatchSlides.stop("Project.registerMarshaller.slides");
+            StopWatch stopWatchImages = new LoggingStopWatch();
+            try {returnArray['numberOfImages'] = it.countImageInstance()}catch(Exception e){returnArray['numberOfImages']=-1}
+            stopWatchImages.stop("Project.registerMarshaller.images");
+            StopWatch stopWatchAnnotations = new LoggingStopWatch();
+            try {returnArray['numberOfAnnotations'] = it.countAnnotations()}catch(Exception e){e.printStackTrace();returnArray['numberOfAnnotations']=-1}
+            stopWatchAnnotations.stop("Project.registerMarshaller.annotations");
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
             stopWatch.stop("Project.registerMarshaller");
