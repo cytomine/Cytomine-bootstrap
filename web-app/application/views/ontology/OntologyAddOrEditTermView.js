@@ -117,17 +117,19 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
     buildNameInfo : function () {
         console.log("buildNameInfo");
         var self = this;
-        self.$textboxName.val(self.model.get("name"));
+
 
                 console.log(self.$textboxName.length);
 
-        self.$textboxName.bind('keyup mouseup change',function(e){
+        self.$textboxName.bind('keyup mouseup change click',function(e){
             var node = self.$tree.dynatree("getTree").getNodeByKey(self.model.id);
             var color = "#119b04"
             var htmlNode = "<label style='color:{{color}}'>{{title}}</label>"
             var nodeTpl = _.template(htmlNode, {title : self.$textboxName.val(), color : color});
             node.setTitle(nodeTpl);
         });
+        self.$textboxName.val(self.model.get("name"));
+
     },
 
     buildColorInfo : function() {
@@ -232,6 +234,8 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
                 tooltip: "This folder and all child nodes were added programmatically.",
                 isFolder: false
             });
+        } else {
+           self.$textboxName.click();
         }
         console.log("CHANGE COLOR");
          //make the new term node visible
