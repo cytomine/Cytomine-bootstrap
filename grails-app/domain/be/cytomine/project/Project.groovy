@@ -49,14 +49,13 @@ class Project extends SequenceDomain {
     }
 
     def slides() {
-        Slide.findAllByIdInList(
-                ImageInstance.createCriteria().list {
-                    join 'slide'
-                    projections {
-                        groupProperty('slide.id')
-                    }
-                    eq("project", this)
-                })
+        ImageInstance.createCriteria().list {
+            join 'slide'
+            projections {
+                groupProperty('slide')
+            }
+            eq("project", this)
+        }
     }
 
     def countSlides () {

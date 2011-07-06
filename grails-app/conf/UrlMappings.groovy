@@ -30,19 +30,19 @@ class UrlMappings {
         "/api/user/$id/imageinstance"(controller:"restImageInstance"){
             action = [GET:"listByUser"]
         }
-        "/api/user/$id/annotation/"(controller:"restAnnotation"){
+        "/api/user/$id/annotation"(controller:"restAnnotation"){
             action = [GET:"listByUser"]
         }
         "/api/user/$idUser/imageinstance/$idImage/annotation"(controller:"restAnnotation"){
             action = [GET:"listByImageAndUser"]
         }
-        "/api/user/$id/project/"(controller:"restProject"){
+        "/api/user/$id/project"(controller:"restProject"){
             action = [GET:"listByUser"]
         }
-        "/api/currentuser/project/"(controller:"restProject"){
+        "/api/currentuser/project"(controller:"restProject"){
             action = [GET:"listByUser"]
         }
-        "/api/currentuser/ontology/"(controller:"restOntology"){
+        "/api/currentuser/ontology"(controller:"restOntology"){
             action = [GET:"listByUser"]
         }
         "/api/currentuser/image"(controller: "restImage"){
