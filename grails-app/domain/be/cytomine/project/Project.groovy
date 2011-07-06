@@ -60,13 +60,14 @@ class Project extends SequenceDomain {
     }
 
     def countSlides () {
-        ImageInstance.createCriteria().list {
+        def query = ImageInstance.createCriteria().list {
             join 'slide'
             projections {
                 countDistinct('slide.id')
             }
             eq("project", this)
         }
+        query[0]
     }
 
     def groups() {

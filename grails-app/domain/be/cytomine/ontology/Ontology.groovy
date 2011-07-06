@@ -22,13 +22,10 @@ class Ontology extends SequenceDomain implements Serializable{
     projects.each { project ->
         users.addAll(project.users())
     }
-    users
+    users.unique()
   }
   def usersId() {
-    def users = this.users()
-    def usersId = []
-    users.each{user-> usersId << user.id }
-    usersId.unique()
+    users().collect{it.id}
   }
 
   def terms() {
