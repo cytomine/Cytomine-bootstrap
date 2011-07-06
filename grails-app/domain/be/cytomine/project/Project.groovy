@@ -36,7 +36,12 @@ class Project extends SequenceDomain {
     }
 
     def abstractimages() {
-        ImageInstance.findAllByProject(this).collect{it.baseImage}
+        ImageInstance.createCriteria().list {
+            eq("project", this)
+            projections {
+                groupProperty("baseImage")
+            }
+        }
     }
 
     def annotations() {
