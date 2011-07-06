@@ -121,9 +121,10 @@ class BasicInstance {
   static ImageInstance getBasicImageInstanceNotExist() {
 
     log.debug "getBasicImageNotExist()"
-
+    AbstractImage img = BasicInstance.getBasicAbstractImageNotExist()
+    img.save(flush:true)
     ImageInstance image =  new ImageInstance(
-            baseImage:BasicInstance.getBasicAbstractImageNotExist(),
+            baseImage:img,
             project:BasicInstance.createOrGetBasicProject(),
             user:BasicInstance.createOrGetBasicUser())
     image.baseImage.save(flush : true)
@@ -133,17 +134,21 @@ class BasicInstance {
   }
 
   static ImageInstance createOrGetBasicImageInstance() {
-    log.debug  "createOrGetBasicImage()"
-    ImageInstance image =  new ImageInstance(
-            baseImage:BasicInstance.createOrGetBasicAbstractImage(),
-            project:BasicInstance.createOrGetBasicProject(),
-            user:BasicInstance.createOrGetBasicUser())
-    image.validate()
-    log.debug "ImageInstance.errors="+image.errors
-    image.save(flush : true)
-    log.debug "ImageInstance.errors="+image.errors
-    assert image!=null
-    image
+//    log.debug  "createOrGetBasicImage()"
+//    ImageInstance image =  new ImageInstance(
+//            baseImage:BasicInstance.createOrGetBasicAbstractImage(),
+//            project:BasicInstance.createOrGetBasicProject(),
+//            user:BasicInstance.createOrGetBasicUser())
+//    image.validate()
+//    log.debug "ImageInstance.errors="+image.errors
+//    image.save(flush : true)
+//    log.debug "ImageInstance.errors="+image.errors
+//    assert image!=null
+//    image
+    ImageInstance img = getBasicImageInstanceNotExist();
+    log.info("imageinstance:" + img.save(flush:true))
+    assert img!=null
+    return  img
   }
 
   static AbstractImage getBasicAbstractImageNotExist() {

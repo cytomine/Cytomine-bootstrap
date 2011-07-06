@@ -249,6 +249,7 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase{
     def imageToAdd = BasicInstance.getBasicImageInstanceNotExist()
     String jsonImage = imageToAdd.encodeAsJSON()
 
+
     log.info("post imageinstance:"+jsonImage.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/imageinstance.json"
     HttpClient client = new HttpClient()

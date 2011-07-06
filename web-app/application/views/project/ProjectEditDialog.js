@@ -170,6 +170,7 @@ var EditProjectDialog = Backbone.View.extend({
                 _.each(projectDeleteUser,function(user){console.log(user)});
                 var total = projectAddUser.length+projectDeleteUser.length;
                 var counter = 0;
+                if(total==0) self.addDeleteUserProjectCallback(0,0);
                 _.each(projectAddUser,function(user){
                     console.log("projectAddUser="+user);
                     new ProjectUserModel({project: id,user:user}).save({}, {

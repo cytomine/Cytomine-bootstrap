@@ -19,6 +19,10 @@ class ImageInstance extends SequenceDomain {
   Project project
   User user
 
+  static constraints = {
+    baseImage(unique:['project'])
+  }
+
   static belongsTo = [AbstractImage, Project, User]
 
     def terms() {

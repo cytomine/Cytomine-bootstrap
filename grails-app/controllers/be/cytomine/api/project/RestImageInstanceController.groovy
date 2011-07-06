@@ -76,7 +76,10 @@ class RestImageInstanceController extends RestController {
     User currentUser = getCurrentUser(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
     Command addImageInstanceCommand = new AddImageInstanceCommand(postData : request.JSON.toString(), user: currentUser)
-    def result = processCommand(addImageInstanceCommand, currentUser)
+    def result
+    synchronized(this.getClass()) {
+      result = processCommand(addImageInstanceCommand, currentUser)
+    }
     response(result)
   }
 
