@@ -370,7 +370,8 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
                     self.close();
                 }
                 else {
-                    self.addRelation(id,idParent);
+                    console.log(response.term.id);
+                    self.addRelation(response.term.id,idParent);
                 }
             },
             error: function (model, response) {
@@ -404,6 +405,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             }});
     },
     addRelation : function(child,newParent) {
+        console.log("child="+child + " newParent="+newParent);
         var self = this;
         new RelationTermModel({}).save({term1:newParent, term2:child},{
             success : function (model, response) {

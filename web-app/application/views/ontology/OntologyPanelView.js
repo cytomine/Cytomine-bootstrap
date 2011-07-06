@@ -115,7 +115,7 @@ var OntologyPanelView = Backbone.View.extend({
           var node = self.$tree.dynatree("getActiveNode");
 
           if(node==null) {
-             alert("You must select a term (we must replace this message with a beautiful dialog)!");
+              window.app.view.message("Term", "You must select a term!", "");
              return;
           }
 
