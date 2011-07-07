@@ -77,6 +77,14 @@ class Annotation extends SequenceDomain implements Serializable {
     return location.getLength()
   }
 
+  private def getCentroid() {
+      def centroid = location.getCentroid()
+      def response = [:]
+      response.x = centroid.x
+      response.y = centroid.y
+      return response
+  }
+
   private def getBoundaries () {
     /*def metadata = JSON.parse(new URL(image.getMetadataURL()).text)
     int zoom = Integer.parseInt(metadata.levels)*/
@@ -152,7 +160,7 @@ class Annotation extends SequenceDomain implements Serializable {
 
       returnArray['area'] = it.getArea()
       returnArray['perimeter'] = it.getPerimeter()
-
+      returnArray['centroid'] = it.getCentroid()
 
       returnArray['created'] = it.created? it.created.time.toString() : null
       returnArray['updated'] = it.updated? it.updated.time.toString() : null

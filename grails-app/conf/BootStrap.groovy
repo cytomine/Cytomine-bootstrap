@@ -104,7 +104,8 @@ class BootStrap {
                 [name : "OTHER"],
                 [name : "CERVIX"],
                 [name : "GIGA"],
-                [name : "PHILIPS"]
+                [name : "PHILIPS"],
+                [name : "ZEBRA_CTL"]
 
         ]
         createGroups(groupsSamples)
@@ -116,7 +117,8 @@ class BootStrap {
                 [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[ name :"GIGA"],[ name :"LBTD NEO4"], [name : "OTHER"],[name : "ANAPATH"],[name : "CERVIX"]], password : 'password', color : "#0000FF"] ,
                 [username : 'demo', firstname : 'Jean', lastname : 'Dupont', email : 'mymail@ulg.ac.be', group : [[ name :"GIGA"],[ name :"LBTD NEO13"], [name : "OTHER"],[name : "ANAPATH"],[name : "CERVIX"]], password : 'demodemo', color : "#00FFFF"],
                 [username : 'lbtd', firstname : 'LB', lastname : 'TD', email : 'mymail@ulg.ac.be', group : [[ name :"LBTD NEO4"]], password : 'lbtd', color : "#00FFFF"],
-                [username : 'anapath', firstname : 'Ana', lastname : 'Path', email : 'mymail@ulg.ac.be', group : [[ name :"ANAPATH"]], password : 'anapath', color : "#00FFFF"]
+                [username : 'anapath', firstname : 'Ana', lastname : 'Path', email : 'mymail@ulg.ac.be', group : [[ name :"ANAPATH"]], password : 'anapath', color : "#00FFFF"],
+                [username : 'stern', firstname : 'Olivier', lastname : 'Stern', email : 'mymail@ulg.ac.be', group : [[ name :"ZEBRA_CTL"]], password : 'password', color : "#00FFFF"]
 
         ]
         createUsers(usersSamples)
@@ -426,8 +428,8 @@ class BootStrap {
                 [name : "Tissus",user:'stevben'],
                 [name : "Cellules",user:'stevben'],
                 /* PAP*/
-                [name : "PAP", user : 'stevben']
-
+                [name : "PAP", user : 'stevben'],
+                [name : "Cartilage", user : 'stern']
 
         ]
         createOntology(ontologySamples)
@@ -440,7 +442,8 @@ class BootStrap {
                 [name : "ANAPATH",  groups : [[ name :"ANAPATH"]],ontology: "LBA"],
                 [name : "OTHER",  groups : [[ name :"OTHER"]],ontology: "Cellules"] ,
                 [name : "CERVIX",  groups : [[ name :"CERVIX"]],ontology: "PAP"],
-                [name : "PHILIPS",  groups : [[ name :"PHILIPS"]],ontology: "Tissus"]
+                [name : "PHILIPS",  groups : [[ name :"PHILIPS"]],ontology: "Tissus"],
+                [name : "ZEBRA_CTL",  groups : [[ name :"ZEBRA_CTL"]],ontology: "Cartilage"]
                 // [name : "NEO13", groups : [[ name :"GIGA"]]],
                 // [name : "NEO4",  groups : [[ name :"GIGA"]]]
 
@@ -474,6 +477,7 @@ class BootStrap {
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans2)
         if (env == BootStrap.production) createSlidesAndAbstractImages(BootStrapData.LBTDScans3)
         if (env != BootStrap.test) createSlidesAndAbstractImages(BootStrapData.LBTDScans4)
+        if (env != BootStrap.test) createSlidesAndAbstractImages(BootStrapData2.ZEBRA_CTL_Scans)
 
         def termSamples = [
 
@@ -558,9 +562,6 @@ class BootStrap {
                 [name: "Clusters",comment:"Class 42",ontology:[name:"PAP"],color:"#fbd178"],
                 [name: "Organisms",comment:"",ontology:[name:"PAP"],color:"#26b4e3"],
                 [name: "Fungus",comment:"Class 51",ontology:[name:"PAP"],color:"#bd70c7"],
-
-
-
         ]
 
         if (env != BootStrap.test) createTerms(termSamples)
@@ -746,6 +747,7 @@ class BootStrap {
 
 
                     Project project = Project.findByName(item.study)
+                    assert(project != null)
                     image.save(flush : true)
                     AbstractImageGroup.link(image,giga)
 
@@ -2382,7 +2384,6 @@ class BootStrapData2 {
 
 
     static def PhillipsScans = [
-            [filename:'/home/stevben/Slides/Philips/03258b99-4d38-4ca6-ba38-8dc4bf366482.isyntax.tiff.vips.tiff', name :'03258b99-4d38-4ca6-ba38-8dc4bf366482', extension :'tiff', order : 0,study : 'PHILIPS'],
             [filename:'/home/stevben/Slides/Philips/03a7e50b-71a5-4998-9691-15bda142ee7f.isyntax.tiff.vips.tiff', name :'03a7e50b-71a5-4998-9691-15bda142ee7f', extension :'tiff', order : 0,study : 'PHILIPS'],
             [filename:'/home/stevben/Slides/Philips/2c9958fe-a258-4cdf-a631-465840b275c7.isyntax.tiff.vips.tiff', name :'2c9958fe-a258-4cdf-a631-465840b275c7', extension :'tiff', order : 0,study : 'PHILIPS'],
             [filename:'/home/stevben/Slides/Philips/2e5a4b75-65b3-4699-89dc-0a8756734507.isyntax.tiff.vips.tiff', name :'2e5a4b75-65b3-4699-89dc-0a8756734507', extension :'tiff', order : 0,study : 'PHILIPS'],
@@ -2401,6 +2402,10 @@ class BootStrapData2 {
             [filename:'/home/stevben/Slides/Philips/da92415a-9001-49d5-8d03-7832e4d2c8af.isyntax.tiff.vips.tiff', name :'da92415a-9001-49d5-8d03-7832e4d2c8af', extension :'tiff', order : 0,study : 'PHILIPS'],
             [filename:'/home/stevben/Slides/Philips/ea7c15b1-c56c-4963-bfe1-b62f974ed050.isyntax.tiff.vips.tiff', name :'ea7c15b1-c56c-4963-bfe1-b62f974ed050', extension :'tiff', order : 0,study : 'PHILIPS'],
             [filename:'/home/stevben/Slides/Philips/face3d70-d2f7-453a-8ea9-8baab569d02a.isyntax.tiff.vips.tiff', name :'face3d70-d2f7-453a-8ea9-8baab569d02a', extension :'tiff', order : 0,study : 'PHILIPS']
+    ]
+
+    static def ZEBRA_CTL_Scans = [
+            [filename : '/home/stevben/Slides/Stern/poisson1.vips.tif', name : 'poisson1', extension : 'tif', order : 0,study : 'ZEBRA_CTL']
     ]
 }
 
