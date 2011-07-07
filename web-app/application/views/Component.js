@@ -74,14 +74,12 @@ var Component = Backbone.View.extend({
              $(this).removeClass("active");
           });
           $(scope).find("a[name=" + name + "]").addClass("active");
-           console.log("hide all");
           for (var i in this.views) {
              var v = this.views[i];
              if (v != view) {
                 $(v.el).hide();
              }
           }
-           console.log("show " + view.el + " " + $(view.el).length);
           $(view.el).show();
        }
     });

@@ -50,7 +50,6 @@ var OntologyView = Backbone.View.extend({
        },
        select : function(idOntology) {
           var self = this;
-          console.log("refreshAndSelect:"+idOntology);
           this.idOntology = idOntology;
           self.render();
        },
@@ -66,7 +65,6 @@ var OntologyView = Backbone.View.extend({
           return this;
        },
        doLayout: function(tpl) {
-          console.log("OntologyView.render");
           var self = this;
           $(this.el).html(_.template(tpl, {}));
           self.initLoading();
@@ -83,13 +81,11 @@ var OntologyView = Backbone.View.extend({
           return this;
        },
        showAddOntologyPanel : function() {
-          console.log("OntologySearchPanel: showAddOntologyPanel");
           var self = this;
           $('#addontology').remove();
           self.addOntologyDialog = new AddOntologyDialog({ontologiesPanel:self,el:self.el}).render();
        },
        select : function(idOntology,idTerm) {
-          console.log("select ontology " + idOntology + " term " + idTerm);
           var self = this;
           //select ontology
           var selectedOntologyIndex = 0;
@@ -102,7 +98,6 @@ var OntologyView = Backbone.View.extend({
              index = index + 1;
           });
           self.ontologiesPanel[selectedOntologyIndex].selectTerm(idTerm);
-          console.log("activate = " + selectedOntologyIndex);
           self.$tabsOntologies.accordion( "activate" , selectedOntologyIndex );
        },
        /**
@@ -111,8 +106,6 @@ var OntologyView = Backbone.View.extend({
        initOntologyTabs : function(){
           var self = this;
           require(["text!application/templates/ontology/OntologyTab.tpl.html", "text!application/templates/ontology/OntologyTabContent.tpl.html"], function(ontologyTabTpl, ontologyTabContentTpl) {
-             console.log("OntologyView: initOntologyTabs");
-             console.log("OntologyView: initOntologyTabs create "+ self.model.length);
              self.ontologiesPanel = new Array();
              //add "All annotation from all term" tab
              var selectedOntologyIndex = 0;
@@ -135,13 +128,10 @@ var OntologyView = Backbone.View.extend({
                 }
                 index = index + 1;
              });
-             //self.fetchOntologies();
-             console.log(self.$tabsOntologies);
 
 
              if(!self.alreadyBuild)
                 self.$tabsOntologies.accordion();
-             console.log("activate = " + selectedOntologyIndex);
              self.$tabsOntologies.accordion( "activate" , selectedOntologyIndex );
              $(".accordeonOntology").css("height", "auto");
           });

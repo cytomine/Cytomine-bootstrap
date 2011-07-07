@@ -45,7 +45,7 @@ var OntologyTreeView = Backbone.View.extend({
                  checkbox: true,
                  selectMode: 3,
                  expand : true,
-                 onExpand : function() { console.log("expanding/collapsing");},
+                 onExpand : function() {},
                  children: this.model.toJSON(),
                  onSelect: function(select, node) {
 
@@ -54,13 +54,9 @@ var OntologyTreeView = Backbone.View.extend({
 
                     if (node.isSelected()) {
                        self.linkTerm(node.data.key);
-                       console.log("Link term with annotation " + node.data.key);
                     } else if (!node.isSelected()) {
-                       console.log("UnLink term with annotation " + node.data.key);
                        self.unlinkTerm(node.data.key);
                     }
-
-
                  },
                  onDblClick: function(node, event) {
                     node.toggleSelect();
@@ -123,22 +119,13 @@ var OntologyTreeView = Backbone.View.extend({
           var self = this;
 
           this.idAnnotation = idAnnotation;
-          console.log("refresh: idAnnotation="+self.idAnnotation);
           var refreshTree = function(model , response) {
-             console.log("refresh tree with:"+model.length + " elements");
              self.clear();
              self.activeEvent = false;
-             console.log("self.activeEvent f="+self.activeEvent);
-
-             console.log("check correct term");
-
              model.each(function(term) {
-                console.log("term:" + term.get('name'));
                 self.check(term.get("id"));
              });
-
              self.activeEvent = true;
-             console.log("self.activeEvent t="+self.activeEvent);
           }
 
 
@@ -149,8 +136,6 @@ var OntologyTreeView = Backbone.View.extend({
           (this.el).find('.tree').dynatree("getRoot").visit(function(node){
              if (node.isSelected()) terms.push(node.data.key);
           });
-          console.log("Selected terms ? : " + terms.length);
-
           return terms;
        },
        linkTerm : function(idTerm) {
@@ -174,7 +159,6 @@ var OntologyTreeView = Backbone.View.extend({
           new AnnotationTermModel({annotation : this.idAnnotation, term : idTerm}).destroy(
               {
                  success: function (model, response) {
-                    console.log(response);
                     window.app.view.message("Annotation Term", response.message, "");
                     self.browseImageView.reloadAnnotation(self.idAnnotation);
                     self.browseImageView.refreshAnnotationTabs(idTerm);

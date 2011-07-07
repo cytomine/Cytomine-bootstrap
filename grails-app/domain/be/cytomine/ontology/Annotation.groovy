@@ -78,6 +78,7 @@ class Annotation extends SequenceDomain implements Serializable {
   }
 
   private def getCentroid() {
+      if (location.area < 1) return null
       def centroid = location.getCentroid()
       def response = [:]
       response.x = centroid.x

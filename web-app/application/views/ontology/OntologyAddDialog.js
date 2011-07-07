@@ -20,21 +20,11 @@ var AddOntologyDialog = Backbone.View.extend({
 
           var self = this;
           var dialog = _.template(ontologyAddDialogTpl, {});
-        $("#editontology").replaceWith("");
-            console.log("1:" + $("#addontology").length);
-        $("#addontology").replaceWith("");
-            console.log("2:" + $("#addontology").length);
+          $("#editontology").replaceWith("");
+          $("#addontology").replaceWith("");
           $(self.el).append(dialog);
-           console.log("3:" + dialog);
-           console.log("4:" + $("#addontology").length);
-
-            console.log(window.app.status.user);
-           console.log(window.app.models.users.get(window.app.status.user));
-           var user = window.app.models.users.get(window.app.status.user);
-         $("#ontologyuser").append(user.get('username') + " ("+ user.get('firstname') + " " + user.get('lastname') +")");
-
-
-
+          var user = window.app.models.users.get(window.app.status.user);
+          $("#ontologyuser").append(user.get('username') + " ("+ user.get('firstname') + " " + user.get('lastname') +")");
           $("#login-form-add-ontology").submit(function () {self.createOntology(); return false;});
           $("#login-form-add-ontology").find("input").keydown(function(e){
              if (e.keyCode == 13) { //ENTER_KEY
@@ -44,7 +34,6 @@ var AddOntologyDialog = Backbone.View.extend({
           });
 
           //Build dialog
-          console.log("AddOntologyDialog: build dialog " + $("#addontology").length);
           self.addOntologyDialog = $("#addontology").dialog({
                  width: 500,
                  autoOpen : false,
@@ -66,19 +55,15 @@ var AddOntologyDialog = Backbone.View.extend({
        },
        open: function() {
           var self = this;
-          console.log("AddOntologyDialog: open");
           self.clearAddOntologyPanel();
           self.addOntologyDialog.dialog("open") ;
        },
        clearAddOntologyPanel : function() {
-          console.log("AddOntologyDialog: clearAddOntologyPanel");
-          var self = this;
           $("#errormessage").empty();
           $("#ontologyerrorlabel").hide();
           $("#ontology-name").val("");
        },
        createOntology : function() {
-          console.log("createOntology...");
           var self = this;
 
           $("#errormessage").empty();
@@ -95,20 +80,15 @@ var AddOntologyDialog = Backbone.View.extend({
           //create ontology
           new OntologyModel({name : name}).save({name : name},{
                  success: function (model, response) {
-                    console.log(response);
-                     window.app.view.message("Ontology", response.message, "");
+                    window.app.view.message("Ontology", response.message, "");
                     var id = response.ontology.id;
-                     self.ontologiesPanel.refresh(id);
+                    self.ontologiesPanel.refresh(id);
                     $("#addontology").dialog("close");
-                    console.log("ontology="+id);
                  },
                  error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
-                    console.log("json.ontology="+json.errors);
-
                     $("#ontologyerrorlabel").show();
-
-                    console.log($("#errormessage").append(json.errors));
+                    $("#errormessage").append(json.errors)
                  }
               }
           );
