@@ -113,7 +113,7 @@ h3 { font-size:13px; }
 
 .menu li a.title.active {
     color:#FFF;
-    background:#0073ea;
+    background:#9bc5dd;
     border-color:#CCC;
 }
 
@@ -337,7 +337,7 @@ input .layerSwitcher{
 div .layerSwitcherPanel {
     position : absolute;
     right : 20px;
-    top : 260px;
+    bottom : 200px;
     z-index : 2010;
     background-color: black;
     color : #fff;
