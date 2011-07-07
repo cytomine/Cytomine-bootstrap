@@ -1,6 +1,6 @@
 body {
-    font-family: 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;;
-    font-size : 12px;
+
+
 }
 
 
@@ -24,7 +24,8 @@ h2 { font-size:15px; }
 h3 { font-size:13px; }
 
 .header {
-    background:#666;
+    background:#666666;
+
     position:fixed;
     left:0px;
     right:0px;
@@ -40,14 +41,14 @@ h3 { font-size:13px; }
 }
 
 .header h1 {
-    color:#f8f8f8;
+    color:#ffffff;
     text-shadow:#333 0px 1px 0px;
     margin-right:20px;
 }
 
 .header h1 a {
     font-weight:bold;
-    color:#f8f8f8;
+    color:#ffffff;
 }
 
 .header h1 .logo {
@@ -75,7 +76,7 @@ h3 { font-size:13px; }
     position:absolute;
     right:0px;
     top:10px;
-    background:#f8f8f8;
+    background:#ffffff;
     height:25px;
     line-height:20px;
     padding:5px 0px 10px 4px;
@@ -111,8 +112,8 @@ h3 { font-size:13px; }
 }
 
 .menu li a.title.active {
-    color:#000;
-    background:#A3CAE0;
+    color:#FFF;
+    background:#0073ea;
     border-color:#CCC;
 }
 

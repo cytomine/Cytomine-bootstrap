@@ -10,19 +10,14 @@
     </script>
     <!-- RequireJS -->
     <script type="text/javascript" src="lib/requirejs/require.js"></script>
-
-
     <!-- JQuery & JQuery UI-->
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"></script>
-
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.js"></script>
     <!--<script type="text/javascript" src="lib/jquery/jquery-1.5.1.min.js"></script>
     <script type="text/javascript" src="lib/jquery/jquery-ui-1.8.1.custom.min.js"></script> -->
 
-    <link rel='stylesheet' href='css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
+    <link rel='stylesheet' href='css/custom-ben/css/custom-theme/jquery-ui-1.8.14.custom.css' type='text/css'/>
     <!--<link rel='stylesheet' href='css/absolution/jquery.ui.all.css' type='text/css'/>-->
-
-
 
     <!-- Core Libs -->
     <script type="text/javascript" src="lib/underscore.js"></script>
