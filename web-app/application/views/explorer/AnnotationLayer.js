@@ -208,10 +208,21 @@ AnnotationLayer.prototype = {
             }
             new AnnotationModel({id : evt.feature.attributes.idAnnotation}).fetch({
                 success : function (model, response) {
-                    var content = _.template(tpl, model.toJSON());
+                    var json = model.toJSON()
+                    //username
+                    json.username = window.app.models.users.get(json.user).get('username');
+                    //term
+                    var terms = new Array();
+                    _.each(json.term,function(term){
+                         terms.push(term.name);
+
+                    });
+                    json.terms = terms.join(", ");
+
+                    var content = _.template(tpl, json);
                     self.popup = new OpenLayers.Popup("",
                             new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
-                            new OpenLayers.Size(200, 60),
+                            new OpenLayers.Size(250, 100),
                             content,
                             false);
                     self.popup.setBackgroundColor("transparent");
