@@ -16,11 +16,15 @@ class Project extends SequenceDomain {
 
     String name
     Ontology ontology
+    long countAnnotations
+    long countImages
 
     static hasMany = [projectGroup:ProjectGroup]
 
     static constraints = {
         name ( maxSize : 100, unique : true, blank : false)
+        countAnnotations(nullable:true)
+        countImages(nullable:true)
     }
 
     String toString() {
@@ -32,7 +36,8 @@ class Project extends SequenceDomain {
     }
 
     def countImageInstance() {
-        ImageInstance.countByProject(this)
+      countImages
+        //ImageInstance.countByProject(this)
     }
 
     def abstractimages() {
@@ -49,8 +54,9 @@ class Project extends SequenceDomain {
     }
 
     def countAnnotations() {
-        def images = this.imagesinstance()
-        images.size() > 0 ? Annotation.countByImageInList(images) : 0
+      countAnnotations
+        //def images = this.imagesinstance()
+        //images.size() > 0 ? Annotation.countByImageInList(images) : 0
     }
 
     def slides() {
@@ -134,6 +140,7 @@ class Project extends SequenceDomain {
             stopWatchImages.stop("Project.registerMarshaller.images");
             StopWatch stopWatchAnnotations = new LoggingStopWatch();
             try {returnArray['numberOfAnnotations'] = it.countAnnotations()}catch(Exception e){e.printStackTrace();returnArray['numberOfAnnotations']=-1}
+            //try {returnArray['numberOfAnnotations'] = it.countAnnotations()}catch(Exception e){e.printStackTrace();returnArray['numberOfAnnotations']=-1}
             stopWatchAnnotations.stop("Project.registerMarshaller.annotations");
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null

@@ -41,6 +41,7 @@ class BootStrap {
     def grailsApplication
     def storageService
     def messageSource
+  def triggerService
 
     static def development = "development"
     static def production = "production"
@@ -51,6 +52,7 @@ class BootStrap {
 
         marshallersService.initMarshallers()
         sequenceService.initSequences()
+        triggerService.initTrigger()
 
         grailsApplication.domainClasses.each {domainClass ->//iterate over the domainClasses
             if (domainClass.clazz.name.contains("be.cytomine")) {//only add it to the domains in my plugin

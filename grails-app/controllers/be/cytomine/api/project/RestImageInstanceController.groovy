@@ -104,11 +104,12 @@ class RestImageInstanceController extends RestController {
       responseNotFound("ImageInstance","Project",params.idproject,"Image",params.idimage)
       return
     }
-
     def postData = ([id : imageInstance.id]) as JSON
     Command deleteImageInstanceCommand = new DeleteImageInstanceCommand(postData : postData.toString(), user: currentUser)
-    def result = processCommand(deleteImageInstanceCommand, currentUser)
+    def result
+    synchronized(this.getClass()) {
+      result = processCommand(deleteImageInstanceCommand, currentUser)
+    }
     response(result)
   }
-
 }

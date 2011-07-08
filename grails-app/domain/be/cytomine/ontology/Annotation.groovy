@@ -9,6 +9,7 @@ import be.cytomine.SequenceDomain
 import be.cytomine.rest.UrlApi
 
 import be.cytomine.image.ImageInstance
+import be.cytomine.project.Project
 
 class Annotation extends SequenceDomain implements Serializable {
 
@@ -48,7 +49,16 @@ class Annotation extends SequenceDomain implements Serializable {
     super.beforeInsert()
     name = name && !name.trim().equals("")? name : "Annotation " + id
   }
-
+  /*public afterInsert() {
+    println "Annotation.afterInsert"
+      Project project = image.project;
+      project.countAnnotations++
+  }
+  public def afterDelete()  {
+    println "Annotation.afterDelete"
+      Project project = image.project;
+      project.countAnnotations--
+  }*/
   /**
    * Get all terms map with the annotation
    * @return list of terms
@@ -172,10 +182,10 @@ class Annotation extends SequenceDomain implements Serializable {
       String termList = "";
       if(it.terms()!=null)
       {
-          def termName = []
-          it.terms().each{ term ->
-             termName << term.name
-          }
+        def termName = []
+        it.terms().each{ term ->
+          termName << term.name
+        }
         termList = termName.join(',')
         if(termList.size()>28)
           termList = termList.substring(0,25) + "..."

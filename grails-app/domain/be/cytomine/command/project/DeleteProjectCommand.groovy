@@ -8,6 +8,7 @@ import java.util.prefs.BackingStoreException
 
 import be.cytomine.project.ProjectGroup
 import be.cytomine.security.UserGroup
+import be.cytomine.security.Group
 
 class DeleteProjectCommand extends DeleteCommand implements UndoRedoCommand {
 
@@ -16,7 +17,14 @@ class DeleteProjectCommand extends DeleteCommand implements UndoRedoCommand {
     try {
       def postData = JSON.parse(postData)
       Project project = Project.findById(postData.id)
-      //delete groups link
+      log.info "project " + project +" " + project?.name + " will be deleted"
+      Group projectGroup = Group.findByName(project.name);
+      //TEMP CODE: group and project must have same name
+      if(projectGroup) {
+        projectGroup.name = "TO REMOVE " + project.id
+        log.info "group " + projectGroup + " will be renamed"
+        projectGroup.save(flush:true)
+      }
       def groups = project.groups()
       groups.each { group ->
           ProjectGroup.unlink(project, group)
@@ -25,6 +33,7 @@ class DeleteProjectCommand extends DeleteCommand implements UndoRedoCommand {
           users.each { user ->
              UserGroup.unlink(user, group)
           }
+
           //delete group
           group.delete(flush:true)
       }
