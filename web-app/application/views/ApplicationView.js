@@ -55,9 +55,7 @@ var ApplicationView = Backbone.View.extend({
           ],
               function(tpl) {
                  self.doLayout(tpl, renderCallback);
-
                   $('#file_upload').fileUploadUI({
-
                  uploadTable: $('#files'),
                  downloadTable: $('#files'),
                  buildUploadRow: function (files, index) {

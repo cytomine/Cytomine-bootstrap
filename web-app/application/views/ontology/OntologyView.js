@@ -18,7 +18,7 @@ var OntologyView = Backbone.View.extend({
           "click .refreshOntology" : "refresh"
        },
        initLoading: function() {
-         $(this.el).find("#ontologyLoading").html("Loading...");
+          $(this.el).find("#ontologyLoading").html("Loading...");
        },
        showLoading : function() {
           $(this.el).find("#ontologytreepanel").hide();
@@ -35,18 +35,27 @@ var OntologyView = Backbone.View.extend({
        },
        refresh : function() {
           var self = this;
-          window.app.models.ontologies.fetch({
+          window.app.models.terms.fetch({
                  success : function (collection, response) {
-                    self.render();
-                 }});
+                    window.app.models.ontologies.fetch({
+                           success : function (collection, response) {
+                              self.render();
+                           }});
+                 }
+              });
+
        },
        refresh : function(idOntology) {
           var self = this;
           this.idOntology = idOntology;
-          window.app.models.ontologies.fetch({
+          window.app.models.terms.fetch({
                  success : function (collection, response) {
-                    self.render();
-                 }});
+                    window.app.models.ontologies.fetch({
+                           success : function (collection, response) {
+                              self.render();
+                           }});
+                 }
+              });
        },
        select : function(idOntology) {
           var self = this;
@@ -131,7 +140,7 @@ var OntologyView = Backbone.View.extend({
 
 
              if(!self.alreadyBuild)
-                self.$tabsOntologies.accordion();
+                self.$tabsOntologies.accordion({ fillSpace: true });
              self.$tabsOntologies.accordion( "activate" , selectedOntologyIndex );
              $(".accordeonOntology").css("height", "auto");
           });
