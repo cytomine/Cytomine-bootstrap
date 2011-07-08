@@ -23,8 +23,8 @@ class Project extends SequenceDomain {
 
     static constraints = {
         name ( maxSize : 100, unique : true, blank : false)
-        countAnnotations(nullable:false)
-        countImages(nullable:false)
+        countAnnotations(nullable:true)
+        countImages(nullable:true)
     }
 
     String toString() {
