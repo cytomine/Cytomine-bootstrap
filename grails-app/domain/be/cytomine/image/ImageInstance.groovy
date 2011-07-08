@@ -20,6 +20,7 @@ class ImageInstance extends SequenceDomain {
   Project project
   Slide slide
   User user
+  long countImageAnnotations
 
   static constraints = {
     baseImage(unique:['project'])
@@ -130,6 +131,8 @@ class ImageInstance extends SequenceDomain {
       returnArray['preview'] = it.baseImage.getPreviewURL()
       //returnArray['thumb'] = UrlApi.getThumbURLWithImageId(it.id)
       returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.baseImage.id)
+
+      try {returnArray['numberOfAnnotations'] = it.countImageAnnotations}catch(Exception e){e.printStackTrace();returnArray['numberOfAnnotations']=-1}
       //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
 
       returnArray['imageServerBaseURL'] = it.baseImage.getMime().imageServers().collect { it.getBaseUrl() }

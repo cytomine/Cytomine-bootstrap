@@ -529,14 +529,14 @@ class BootStrapData {
                    scan: [filename: "NEO_4_Curcu_INH_1.70_3_8_01.tif"],
                    term:["Artefact"],
                    user:"demo"
-           ],
+           ],*/
            [
-                   name : "Annotation COMPRESS 500",
+                   name : "Annotation test",
                    location : ["POLYGON ((10864 6624, 11792 10048, 11312 11424, 13584 14592, 14160 16608, 15824 17472, 17488 17024, 19152 14496, 19664 10592, 18704 6400, 16432 2080, 15344 1696, 14416 2496, 12816 2336, 9776 608, 9104 3200, 10864 6624))"],
-                   scan: [filename: "NEO_4_Curcu_INH_1.70_3_8_01.tif"],
-                   term:["Collagen"],
-                   user:"rmaree"
-           ] */
+                   scan: [filename: "10C12080-LBAPap-2010-12-0912.18.51_clip.vms"],
+                   term:[],
+                   user:"lrollus"
+           ]
 
 
     ]

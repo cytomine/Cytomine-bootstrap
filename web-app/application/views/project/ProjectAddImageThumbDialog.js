@@ -4,6 +4,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
     slides : null,
     images : null,
     imagesProject : null,
+    imagesinstanceProject : null,
     checklistChecked : ".checklist input:checked",
     checklistSelected : ".checklist .checkbox-select",
     checklistDeselected : ".checklist .checkbox-deselect",
@@ -42,6 +43,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         this.container = options.container;
         this.projectPanel = options.projectPanel;
         this.imagesProject = options.imagesProject;
+        this.imagesinstanceProject = options.imagesinstanceProject;
         this.el = "#tabsProjectaddimagedialog"+this.model.id+"-1" ;
 
         this.slides = options.slides,
