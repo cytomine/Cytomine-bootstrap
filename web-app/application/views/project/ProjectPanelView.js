@@ -149,6 +149,7 @@ var ProjectPanelView = Backbone.View.extend({
             // $('#dialogsTerm').empty();
             console.log("tpl=");
             console.log(tpl);
+            $("dialogsDeleteProject").replaceWith('');
             var dialog =  new ConfirmDialogView({
                 el:'#dialogsDeleteProject',
                 template : _.template(tpl, {project : self.model.get('name'),numberOfImage:numberOfImage}),
