@@ -105,17 +105,21 @@ var AddProjectDialog = Backbone.View.extend({
                     var id = response.project.id;
                     console.log("project="+id);
                     //create user-project "link"
-                    new ProjectUserModel({project: id}).save({project: id, user: users},{
-                           success: function (model, response) {
+                var total = users.length;
+                var counter = 0;
+                if(total==0) self.addDeleteUserProjectCallback(0,0);
+                _.each(users,function(user){
+                    console.log("projectAddUser="+user);
+                    new ProjectUserModel({project: id,user:user}).save({}, {
+                        success: function (model, response) {
+                            self.addUserProjectCallback(total,++counter);
+                        },error: function (model, response) {
+                            console.log(response);
+                            var json = $.parseJSON(response.responseText);
+                            window.app.view.message("User", json.errors, "");
+                        }});
+                });
 
-                              new ProjectCollection({user : self.userID}).fetch({
-                                     success : function (collection, response) {
-
-
-                                        self.projectsPanel.refresh();
-                                        $("#addproject").dialog("close") ;
-                                     }});
-                           }});
                  },
                  error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
@@ -127,5 +131,11 @@ var AddProjectDialog = Backbone.View.extend({
                  }
               }
           );
-       }
+       },
+     addUserProjectCallback : function(total, counter) {
+        if (counter < total) return;
+        var self = this;
+        self.projectsPanel.refresh();
+        $("#addproject").dialog("close") ;
+    }
     });
