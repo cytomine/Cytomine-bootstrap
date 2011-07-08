@@ -28,6 +28,18 @@ var ProjectUserModel = Backbone.Model.extend({
         this.user = options.user;
     }
 });
+
+
+var OntologyProjectModel = Backbone.Collection.extend({
+       model: ProjectModel,
+       url : function() {
+          return "api/ontology/" + this.ontology + "/project.json";
+       },
+       initialize: function (options) {
+          this.ontology = options.ontology;
+       }
+    });
+
 // define our collection
 var ProjectCollection = Backbone.Collection.extend({
     model: ProjectModel,

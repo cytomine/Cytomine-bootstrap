@@ -118,7 +118,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
              var color = "#119b04"
              var htmlNode = "<label style='color:{{color}}'>{{title}}</label>"
              var nodeTpl = _.template(htmlNode, {title : self.$textboxName.val(), color : color});
-             node.setTitle(nodeTpl);
+             if (node != null) node.setTitle(nodeTpl);
           });
           self.$textboxName.val(self.model.get("name"));
 

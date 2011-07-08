@@ -72,11 +72,10 @@ class BootStrap {
 
         StopWatch stopWatch = new LoggingStopWatch();
         initData(GrailsUtil.environment)
+        updateCounters()
         stopWatch.stop("initData");
         //end of init
     }
-
-
 
     private def initData(String env) {
 
@@ -120,6 +119,21 @@ class BootStrap {
         def destroy = {
         }
         //end of init
+    }
+
+    private def updateCounters() {
+        Project.list().each { project ->
+            println "update counter for project " + project.name
+            def images = project.imagesinstance()
+            if (images.size() > 0) project.setCountAnnotations(Annotation.countByImageInList(images))
+            else project.setCountAnnotations(0L)
+            project.setCountImages(ImageInstance.countByProject(project))
+            project.save()
+        }
+        ImageInstance.list().each { image ->
+            image.setCountImageAnnotations(Annotation.countByImage(image))
+            image.save()
+        }
     }
 
     /* Methods */

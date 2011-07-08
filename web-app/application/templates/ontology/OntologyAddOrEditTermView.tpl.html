@@ -1,54 +1,54 @@
 <div id="dialog-{{action}}-ontology-term" title="{{action}} term">
-	<p class="validateTips">All form fields are required.</p>
+    <p class="validateTips">All form fields are required.</p>
 
-	<form id="form-{{action}}-ontology-term">
-	<fieldset>
-        <div id="{{action}}ontologytermerrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-            <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                <strong>Error:</strong><div id="{{action}}ontologytermerrormessage"></div></p>
-        </div>
-
-
-<table width="90%">
-  <tr>
-    <td width="40%">
-
-		<label for="{{action}}termname">Name</label>
-		<input type="text" name="name" id="{{action}}termname" class="text ui-widget-content ui-corner-all" />
+    <form id="form-{{action}}-ontology-term">
+        <fieldset>
+            <div id="{{action}}ontologytermerrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                    <strong>Error:</strong><div id="{{action}}ontologytermerrormessage"></div></p>
+            </div>
 
 
-        <label for="colorpicker1">Color</label>
-        <div class="colorpicker">
-            <div id="colorpicker1"></div>
+            <table width="90%">
+                <tr>
+                    <td width="40%">
+
+                        <label for="{{action}}termname">Name</label>
+                        <input type="text" name="name" id="{{action}}termname" class="text ui-widget-content ui-corner-all" />
 
 
-                <table width="10%">
-                    <tr>
-                       <td>
-                            <label for="oldcolor" style="display:inline;">Old color</label>
-                            <input type="text" id="oldcolor" value="{{oldColor}}"/>
-                       </td>
-                        <td>
-                            <label for="color1" style="display:inline;">New Color</label>
-                            <input type="text" id="color1"  value="{{oldColor}}"/>
-                        </td>
-                    </tr>
-                </table>
+                        <label for="colorpicker1">Color</label>
+                        <div class="colorpicker">
+                            <div id="colorpicker1"></div>
+
+
+                            <table width="10%">
+                                <tr>
+                                    <td>
+                                        <label for="oldcolor" style="display:inline;">Old color</label>
+                                        <input type="text" id="oldcolor" value="{{oldColor}}"/>
+                                    </td>
+                                    <td>
+                                        <label for="color1" style="display:inline;">New Color</label>
+                                        <input type="text" id="color1"  value="{{oldColor}}"/>
+                                    </td>
+                                </tr>
+                            </table>
 
 
 
-        </div>
+                        </div>
 
 
-    </td>
-    <td width="60%">
-		<label for="{{action}}ontologytermtree">Parent (Drag & Drop)</label>
-        <div id="{{action}}ontologytermtree"></div>
-         <!--<button class="addFolder" id='buttonAddFolderForTree' type="button">Add Folder</button>  -->
-    </td>
-  </tr>
-</table>
+                    </td>
+                    <td width="60%">
+                        <label for="{{action}}ontologytermtree">Parent (Drag & Drop)</label>
+                        <div id="{{action}}ontologytermtree"></div>
+                        <!--<button class="addFolder" id='buttonAddFolderForTree' type="button">Add Folder</button>  -->
+                    </td>
+                </tr>
+            </table>
 
-	</fieldset>
-	</form>
+        </fieldset>
+    </form>
 </div>

@@ -16,15 +16,15 @@ class Project extends SequenceDomain {
 
     String name
     Ontology ontology
-    long countAnnotations
-    long countImages
+    Long countAnnotations
+    Long countImages
 
     static hasMany = [projectGroup:ProjectGroup]
 
     static constraints = {
         name ( maxSize : 100, unique : true, blank : false)
-        countAnnotations(nullable:true)
-        countImages(nullable:true)
+        countAnnotations(nullable:false)
+        countImages(nullable:false)
     }
 
     String toString() {

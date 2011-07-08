@@ -9,7 +9,7 @@ input.text { margin-bottom:12px; width:95%; padding: .4em; }
 fieldset { padding:0; border:0; margin-top:25px; }
 
 a {
-    color:#333;
+    color: #B9E0F5;
     text-decoration:none;
 }
 
@@ -17,7 +17,10 @@ a {
     width : 800px;
     height : 800px;
 }
-a:hover { color:#333; }
+a:hover {
+    background-color: #B9E0F5;
+    color : black;
+}
 
 h1 { font-size:18px; }
 h2 { font-size:15px; }
@@ -100,6 +103,7 @@ h3 { font-size:13px; }
     display:block;
     padding:15px 10px 14px 60px;
     border-bottom:1px solid #ddd;
+    border-top:1px solid #ddd;
     font-size:15px;
     font-weight:bold;
     color:#666;
@@ -112,10 +116,17 @@ h3 { font-size:13px; }
 }
 
 .menu li a.title.active {
-    color:#FFF;
-    background:#9bc5dd;
-    border-color:#CCC;
+    color:#000000;
+    background-image: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#92BDD6), to(#B9E0F5));
+    border-color:#7096AB;
 }
+
+.menu li a:hover {
+    color:#000000;
+    background-image: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#92BDD6), to(#B9E0F5));
+    border-color:#7096AB;
+}
+
 
 
 /*.main {
@@ -281,7 +292,7 @@ div .popupPanel {
 
 div .annotationsPanel {
     position : absolute;
-    bottom : 68px;
+    bottom : 100px;
     left : 0px;
     z-index : 2023;
     background-color: rgba(0, 0, 0, 0.7);

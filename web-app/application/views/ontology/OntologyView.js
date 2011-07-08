@@ -143,6 +143,8 @@ var OntologyView = Backbone.View.extend({
                 self.$tabsOntologies.accordion({ fillSpace: true });
              self.$tabsOntologies.accordion( "activate" , selectedOntologyIndex );
              $(".accordeonOntology").css("height", "auto");
+             $(".accordeonOntology").css("width", "auto");
+
           });
        },
        /**

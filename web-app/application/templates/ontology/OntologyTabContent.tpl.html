@@ -1,22 +1,14 @@
-    <div id="tabsontology-{{id}}" class="accordeonOntology" style="width:100%;">
-        <!--<button class="expanseOntology" id='buttonExpanseOntology{{id}}' type="button">Collapse all</button>  -->
-        <button class="editOntology" id='buttonEditOntology{{id}}' type="button">Edit Ontology</button>
-        <button class="deleteOntology" id='buttonDeleteOntology{{id}}' type="button">Delete Ontology</button>
-        <button class="addTerm" id='buttonAddTerm{{id}}' type="button">Add Term</button>
-        <button class="editTerm" id='buttonEditTerm{{id}}' type="button">Edit Term</button>
-        <button class="deleteTerm" id='buttonDeleteTerm{{id}}' type="button">Delete Term</button>
-        <br>
-      <!--<div id="treeontology-{{id}}" style="background:#666666;" width="100%"></div>
-      <div id="infoontology-{{id}}"></div>   -->
-        <table width="85%">
-          <tr>
-              <td width="45%" ><br><div id="treeontology-{{id}}"  width="100%"></div></td>
-              <td width="10%" ><br><div id="space{{id}}"></div></td>
-              <td width="45%" ><br><div id="infoontology-{{id}}"></div><br><div id="infoterm-{{id}}"></div></td>
-
-          </tr>
-        </table>
-
-
-
+<div id="tabsontology-{{id}}" class="accordeonOntology">
+    <!--<button class="expanseOntology" id='buttonExpanseOntology{{id}}' type="button">Collapse all</button>  -->
+    <button class="editOntology" id='buttonEditOntology{{id}}' type="button">Edit Ontology</button>
+    <button class="deleteOntology" id='buttonDeleteOntology{{id}}' type="button">Delete Ontology</button>
+    <button class="addTerm" id='buttonAddTerm{{id}}' type="button">Add Term</button>
+    <button class="editTerm" id='buttonEditTerm{{id}}' type="button">Edit Term</button>
+    <button class="deleteTerm" id='buttonDeleteTerm{{id}}' type="button">Delete Term</button>
+    <div id="infoontology-{{id}}" style='border : 1px solid;margin-top: 20px;'></div>
+    <div style="padding-top: 20px;">
+        <div id="treeontology-{{id}}" style="border : 1px solid;max-width: 30%;min-height : 300px;float: left;display: inline-block;"></div>
+        <div id="infoterm-{{id}}" style="border : 1px solid;float : left;margin-left: 20px;display: inline-block;padding: 5px; display: none;"></div>
     </div>
+    </table>
+</div>

@@ -497,7 +497,7 @@ var BrowseImageView = Backbone.View.extend({
           window.app.models.users.fetch({
                  success: function () {
                     window.app.models.users.each(function (user) {
-                       var layerAnnotation = new AnnotationLayer(user.get('firstname'), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map );
+                       var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map );
                        layerAnnotation.loadAnnotations(self);
                        var isOwner = user.get('id') == window.app.status.user.id;
                        if (isOwner) {

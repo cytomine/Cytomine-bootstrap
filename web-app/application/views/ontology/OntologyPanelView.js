@@ -11,9 +11,6 @@ var OntologyPanelView = Backbone.View.extend({
        $buttonDeleteTerm : null,
        $buttonEditOntology : null,
        $buttonDeleteOntology : null,
-       addOntologyTermDialog : null,
-       editOntologyTermDialog : null,
-       deleteOntologyTermDialog : null,
        ontologiesPanel : null,
        expanse : false,
        events: {
@@ -94,7 +91,7 @@ var OntologyPanelView = Backbone.View.extend({
           var self = this;
           self.$addTerm.remove();
 
-          self.addOntologyTermDialog = new OntologyAddOrEditTermView({
+          new OntologyAddOrEditTermView({
                  ontologyPanel:self,
                  el:self.el,
                  ontology:self.model,
@@ -115,7 +112,7 @@ var OntologyPanelView = Backbone.View.extend({
 
           new TermModel({id:node.data.id}).fetch({
                  success : function (model, response) {
-                    self.editOntologyTermDialog = new OntologyAddOrEditTermView({
+                    new OntologyAddOrEditTermView({
                            ontologyPanel:self,
                            el:self.el,
                            model:model,
@@ -128,19 +125,10 @@ var OntologyPanelView = Backbone.View.extend({
 
        deleteTerm : function() {
           var self = this;
-
           var idTerm = self.getCurrentTermId();
-          console.log("idTerm="+idTerm);
-
           var term = window.app.models.terms.get(idTerm);
-          console.log("term.name="+term.get('name'));
-
           new AnnotationCollection({term:idTerm}).fetch({
-
                  success : function (collection, response) {
-
-                    console.log("term:" + idTerm + " is link with " + collection.length + " annotations");
-
                     if(collection.length==0) self.buildDeleteTermConfirmDialog(term);
                     else self.buildDeleteTermWithAnnotationConfirmDialog(term,collection.length);
                  }});
@@ -187,7 +175,7 @@ var OntologyPanelView = Backbone.View.extend({
           var self = this;
           $("#delete-ontology-confirm").replaceWith("");
           require(["text!application/templates/ontology/OntologyDeleteConfirmDialog.tpl.html"], function(tpl) {
-             var dialog =  new ConfirmDialogView({
+             new ConfirmDialogView({
                     el:'#dialogsDeleteOntologyAccept',
                     template : _.template(tpl, {ontology : self.model.get('name')}),
                     dialogAttr : {
@@ -196,9 +184,11 @@ var OntologyPanelView = Backbone.View.extend({
                        height : 300,
                        buttons: {
                           "Delete ontology and all terms": function() {
+                             var dialog = this;
                              self.model.destroy({
                                     success : function (model, response) {
-                                       $('#dialogsDeleteOntologyAccept').dialog( "close" ) ;
+                                       $(dialog).dialog( "close" ) ;
+                                       $(dialog).dialog("destroy");
                                        self.ontologiesPanel.refresh();
                                     },error: function (model, response) {
                                        var json = $.parseJSON(response.responseText);
@@ -206,8 +196,9 @@ var OntologyPanelView = Backbone.View.extend({
 
                           },
                           "cancel": function() {
-                             //doesn't work! :-(
-                             $('#dialogsDeleteOntologyAccept').dialog( "close" ) ;
+                             var dialog = this;
+                             $(dialog).dialog( "close" ) ;
+                             $(dialog).dialog("destroy");
                           }
                        },
                        close :function (event) {
@@ -397,26 +388,36 @@ var OntologyPanelView = Backbone.View.extend({
           var self = this;
           //bad code with html but waiting to know what info is needed...
           self.$infoOntology.empty();
-          self.$infoOntology.append("<div><br><div id=\"userontologyinfo-"+self.model.id +"\"></div>");
 
           var idUserOwner = self.model.get('user');
           var userOwner = window.app.models.users.get(idUserOwner);
-
-          $("#userontologyinfo-"+self.model.id).append("<b>Owner:</b><br>");
-          $("#userontologyinfo-"+self.model.id).append(""+userOwner.get('username') + "<br>");
-
-          var jsonuser = self.model.get('users');
-          $("#userontologyinfo-"+self.model.id).append("<b>User that use this ontology from a project:</b><br>");
-          if(jsonuser.length) {
-             _.each(jsonuser,
+          var sharedTo = "Nobody";
+          var users = self.model.get('users');
+          if (_.size(users) > 0) {
+             var userNames = []
+             _.each(users,
                  function(idUser){
-                    var user = window.app.models.users.get(idUser);
-                    $("#userontologyinfo-"+self.model.id).append(""+user.get('username') + "<br>");
+                    if (idUser == idUserOwner) return;
+                    userNames.push(window.app.models.users.get(idUser).prettyName());
                  });
+             sharedTo = userNames.join(', ');
           }
-          else {
-             $("#userontologyinfo-"+self.model.id).append("There are no project that use this ontology." + "<br>");
-          }
+          var tpl = _.template("<div id='userontologyinfo-{{id}}' style='padding:5px;'><ul><li><b>Ontology</b> : {{ontologyName}}.</li><li><b>Owner</b> : {{owner}}.</li><li><b>Shared to</b> : {{sharedTo}}.</li><li class='projectsLinked'></li></ul></div>", { id : self.model.id, ontologyName : self.model.get('name'), owner : userOwner.prettyName(), sharedTo :  sharedTo});
+          self.$infoOntology.html(tpl);
+
+          //Load project linked to the ontology async
+          new OntologyProjectModel({ontology : self.model.id}).fetch({
+                 success : function (collection, response )  {
+                    var projectsLinked = []
+                    collection.each(function (project) {
+                       var tpl = _.template("<a href='#tabs-dashboard-{{idProject}}'>{{projectName}}</a>", {idProject : project.get('id'), projectName : project.get('name')});
+                       projectsLinked.push(tpl);
+                    });
+                    var tpl = _.template("<b>Projects</b> : {{projects}}", {projects : projectsLinked.join(", ")});
+                    self.$infoOntology.find('.projectsLinked').html(tpl);
+                 }
+              });
+
        },
        buildInfoTermPanel : function() {
 
@@ -456,6 +457,16 @@ var OntologyPanelView = Backbone.View.extend({
                  idPrefix: "dynatree-Ontology-"+self.model.id+ currentTime.getTime()+"-" ,
                  debugLevel: 0
               });
+          self.$tree.dynatree("getRoot").visit(function(node){
+
+             if (node.children != null) return; //title is ok
+
+             var title = node.data.title
+             var color = node.data.color
+             var htmlNode = "{{title}} <span style='background-color:{{color}}'>&nbsp;&nbsp;&nbsp;&nbsp;</span>"
+             var nodeTpl = _.template(htmlNode, {title : title, color : color});
+             node.setTitle(nodeTpl);
+          });
           //expand all nodes
           self.$tree.dynatree("getRoot").visit(function(node){
              node.expand(true);
@@ -466,27 +477,71 @@ var OntologyPanelView = Backbone.View.extend({
           var self = this;
           //bad code with html but waiting to know what info is needed...
           self.$infoTerm.empty();
-          self.$infoTerm.append("<div id=\"termchart-"+self.model.id +"\"><h3>"+name+"</h3><div id=\"terminfo-"+self.model.id +"\"></div>");
 
-          new TermModel({id:idTerm}).fetch({
-                 success : function (model, response) {
-                    var tpl = _.template("<a href='#' class='editTerm'>Color : <span name='color' id='color' style='display:inline;background-color: {{color}};'>&nbsp;&nbsp;&nbsp;&nbsp;</span></a><br />", {color : model.get('color')});
-                    $("#terminfo-"+self.model.id).append(tpl);
-                    var statsCollection = new StatsCollection({term:idTerm});
-                    var statsCallback = function(collection, response) {
-                       collection.each(function(stat) {
-                          $("#terminfo-"+self.model.id).append("Project "+stat.get('key') + ": " + stat.get('value') + " annotations<br>");
-                       });
+          // Create and populate the data table.
+          var data = new google.visualization.DataTable();
+          data.addColumn('string', 'Project');
+          data.addColumn('number', 'Number of annotations');
 
-                       $("#termchart-"+self.model.id).panel({
-                              collapsible:false
-                           });
-                    }
-                    statsCollection.fetch({
-                           success : function(model, response) {
-                              statsCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-                           }
-                        });
-                 }});
+          var i = 0;
+          var colors = [];
+          var statsCollection = new StatsCollection({term:idTerm});
+          var dataToShow = false;
+          var statsCallback = function(collection, response) {
+             data.addRows(_.size(collection));
+             collection.each(function(stat) {
+                /*colors.push(stat.get('color'));*/
+                if (stat.get('value') > 0) dataToShow = true;
+                data.setValue(i,0, stat.get('key'));
+                data.setValue(i,1, stat.get('value'));
+                i++;
+             });
+
+             if (!dataToShow) {
+                self.$infoTerm.hide();
+                return
+             };
+             // Create and draw the visualization.
+             var divID = "infoterm-"+self.model.id;
+             /*new google.visualization.PieChart(self.$infoTerm);
+              draw(data, {width: 490, height: 345,title:"Annotation repartition"});*/
+
+             new google.visualization.PieChart(document.getElementById(divID)).
+                 draw(data, {width: 400, height: 300,title:"Annotation repartition"});
+             self.$infoTerm.show();
+          };
+          statsCollection.fetch({
+                 success : function(model, response) {
+                    statsCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+                 }
+              });
+
+
+
+
+          /*self.$infoTerm.append("<div id=\"termchart-"+self.model.id +"\"><h3>"+name+"</h3><div id=\"terminfo-"+self.model.id +"\"></div>");
+
+           new TermModel({id:idTerm}).fetch({
+           success : function (model, response) {
+           var tpl = _.template("<a href='#' class='editTerm'>Color : <span name='color' id='color' style='display:inline;background-color: {{color}};'>&nbsp;&nbsp;&nbsp;&nbsp;</span></a><br />", {color : model.get('color')});
+           $("#terminfo-"+self.model.id).append(tpl);
+           var statsCollection = new StatsCollection({term:idTerm});
+           var statsCallback = function(collection, response) {
+           collection.each(function(stat) {
+           $("#terminfo-"+self.model.id).append("Project "+stat.get('key') + ": " + stat.get('value') + " annotations<br>");
+           });
+
+           //$("#termchart-"+self.model.id).panel({
+           //       collapsible:false
+           //    });
+           }
+           statsCollection.fetch({
+           success : function(model, response) {
+           statsCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+           }
+           });
+           ;
+           }});  */
+
        }
     });

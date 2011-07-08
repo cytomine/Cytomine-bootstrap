@@ -60,7 +60,7 @@
 .ui-widget .ui-widget { font-size: 1em; }
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Arial,sans-serif; font-size: 1em; }
 .ui-widget-content { border: 1px solid #B6B6B6; background: #ffffff; color: #4F4F4F; }
-.ui-widget-content a { color: #4F4F4F; }
+.ui-widget-content a { color:  #6A92A8; }
 .ui-widget-header { border: 1px solid #B6B6B6; color: #4F4F4F; font-weight: bold; }
 .ui-widget-header {
 	background: url(images/bg_fallback.png) 0 0 repeat-x;
@@ -506,7 +506,7 @@ button.ui-button-icons-only { width: 3.7em; }
 }
  
 /*button text element */
-.ui-button .ui-button-text { display: block; line-height: 1.4; font-size: 14px; font-weight: bold; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); }
+.ui-button .ui-button-text { display: block; line-height: 1.4; font-size: 13px; font-weight: bold; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); }
 .ui-button-text-only .ui-button-text { padding: .4em 1em; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: .4em; text-indent: -9999999px; }
 .ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: .4em 1em .4em 2.1em; }

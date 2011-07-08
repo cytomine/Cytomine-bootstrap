@@ -210,7 +210,7 @@ AnnotationLayer.prototype = {
                 success : function (model, response) {
                     var json = model.toJSON()
                     //username
-                    json.username = window.app.models.users.get(json.user).get('username');
+                    json.username = window.app.models.users.get(json.user).prettyName();
                     //term
                     var terms = new Array();
                     _.each(json.term,function(term){

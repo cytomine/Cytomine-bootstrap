@@ -3,13 +3,12 @@
  */
 ul.dynatree-container
 {
-	font-family: tahoma, arial, helvetica;
 	font-size: 10pt; /* font size should not be too big */
 	white-space: nowrap;
 	padding: 3px;
 
-	background-color: white;
-	border: 1px dotted gray;
+	background-color: transparent;
+	border: 0px solid gray;
 
 	overflow: auto;
 }
@@ -225,17 +224,20 @@ span.dynatree-radio:hover
 span.dynatree-icon /* Default icon */
 {
 	margin-left: 3px;
-	background-position: 0px 0px;
+    background-image: url("../../../css/custom-theme/images/ui-icons_454545_256x240.png");
+	background-position: -32px -96px;
 }
 
 .dynatree-ico-cf span.dynatree-icon  /* Collapsed Folder */
 {
-	background-position: 0px -16px;
+    background-image: url("../../../css/custom-theme/images/ui-icons_454545_256x240.png");
+	background-position: 0 -96px;
 }
 
 .dynatree-ico-ef span.dynatree-icon  /* Expanded Folder */
 {
-	background-position: -64px -16px;
+    background-image: url("../../../css/custom-theme/images/ui-icons_454545_256x240.png");
+	background-position: -16px -96px;
 }
 
 /* Status node icons */
@@ -319,8 +321,8 @@ span.dynatree-selected a
 
 span.dynatree-active a
 {
-	background-color: #3169C6 !important;
-	color: white !important; /* @ IE6 */
+	background-image: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#92BDD6), to(#B9E0F5)) !important;
+	color: black !important; /* @ IE6 */
 }
 
 /*******************************************************************************

@@ -20,7 +20,7 @@ class ImageInstance extends SequenceDomain {
   Project project
   Slide slide
   User user
-  long countImageAnnotations
+  Long countImageAnnotations = 0L
 
   static constraints = {
     baseImage(unique:['project'])
@@ -39,19 +39,6 @@ class ImageInstance extends SequenceDomain {
     }
     terms
   }
-
-  /*public beforeInsert() {
-    super.beforeInsert()
-    println "ImageInstance.beforeInsert"
-    project.countImages++
-    project.save()
-  }
-  public def beforeDelete()  {
-    println "ImageInstance.beforeDelete"
-    project.countImages--
-    project.save()
-  } */
-
 
   static ImageInstance createFromData(jsonImage) {
     def image = new ImageInstance()
