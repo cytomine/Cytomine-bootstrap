@@ -30,6 +30,7 @@ var ConfirmDialogView = Backbone.View.extend({
                  /*close : this.dialogAttr.close,*/
                  buttons: this.dialogAttr.buttons
               });
+           $(".ui-panel-header").css("display","block");
        },
        render: function() {
            console.log("ConfirmDialogView:render");
