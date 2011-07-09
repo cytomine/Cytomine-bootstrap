@@ -501,7 +501,7 @@ var OntologyPanelView = Backbone.View.extend({
                 return
              };
              new google.visualization.PieChart(document.getElementById(divID)).
-                 draw(data, {width: 500, height: 300,title:"Annotation repartition"});
+                 draw(data, {width: 500, height: 300,title:"Annotations by projects"});
              $("#"+divID).show();
           };
           var drawColumnChart = function (collection, response) {
@@ -536,7 +536,7 @@ var OntologyPanelView = Backbone.View.extend({
              // Create and draw the visualization.
              new google.visualization.ColumnChart(document.getElementById(divID)).
                  draw(data,
-                 {title:"Annotations by project",
+                 {title:"Annotations by projects",
                     width:500, height:300,
                     vAxis: {title: "Number of annotations"},
                     hAxis: {title: "Project"}}
