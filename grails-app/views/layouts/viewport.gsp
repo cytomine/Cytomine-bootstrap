@@ -38,7 +38,7 @@
     <link type="text/css" href="lib/ui.panel/ui.panel.css" rel="stylesheet" />
 
     <link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css">
-    <script src="lib/dynatree/jquery.dynatree.min.js" type="text/javascript"></script>
+    <script src="lib/dynatree/jquery.dynatree.js" type="text/javascript"></script>
 
     <!-- OpenLayers -->
     <script type="text/javascript" src="lib/openlayers/OpenLayers.js"></script>

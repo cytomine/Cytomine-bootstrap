@@ -209,7 +209,7 @@ var OntologyPanelView = Backbone.View.extend({
        },
        selectTerm : function(idTerm) {
           var self = this;
-          self.$tree.dynatree("getTree").selectKey(idTerm);
+          self.$tree.dynatree("getTree").activateKey(idTerm);
        },
        buildDeleteTermConfirmDialog : function(term) {
           var self = this;
@@ -444,6 +444,9 @@ var OntologyPanelView = Backbone.View.extend({
                  onSelect: function(select, node) {
                     self.updateInfoPanel(node.data.id,node.data.title);
                  },
+                 onActivate : function(node) {
+                    self.updateInfoPanel(node.data.id,node.data.title);
+                 },
                  onDblClick: function(node, event) {
                  },
                  onRender: function(node, nodeSpan) {
@@ -462,8 +465,8 @@ var OntologyPanelView = Backbone.View.extend({
 
              var title = node.data.title
              var color = node.data.color
-             var htmlNode = "{{title}} <span style='background-color:{{color}}'>&nbsp;&nbsp;&nbsp;&nbsp;</span>"
-             var nodeTpl = _.template(htmlNode, {title : title, color : color});
+             var htmlNode = "<a href='#ontology/{{idOntology}}/{{idTerm}}' onClick='window.location.href = this.href;'>{{title}} <span style='background-color:{{color}}'>&nbsp;&nbsp;&nbsp;&nbsp;</span></a>"
+             var nodeTpl = _.template(htmlNode, {idOntology : self.model.id, idTerm : node.data.id, title : title, color : color});
              node.setTitle(nodeTpl);
           });
           //expand all nodes
