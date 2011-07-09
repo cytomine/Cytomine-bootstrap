@@ -45,9 +45,10 @@ var OntologyView = Backbone.View.extend({
               });
 
        },
-       refresh : function(idOntology) {
+       refresh : function(idOntology, idTerm) {
           var self = this;
           this.idOntology = idOntology;
+          this.idTerm = idTerm;
           window.app.models.terms.fetch({
                  success : function (collection, response) {
                     window.app.models.ontologies.fetch({
@@ -86,6 +87,7 @@ var OntologyView = Backbone.View.extend({
                  icons : {secondary: "ui-icon-refresh" }
               });
           self.initOntologyTabs();
+
           self.hideLoading();
           return this;
        },
@@ -95,6 +97,7 @@ var OntologyView = Backbone.View.extend({
           self.addOntologyDialog = new AddOntologyDialog({ontologiesPanel:self,el:self.el}).render();
        },
        select : function(idOntology,idTerm) {
+
           var self = this;
           //select ontology
           var selectedOntologyIndex = 0;
@@ -106,7 +109,7 @@ var OntologyView = Backbone.View.extend({
              }
              index = index + 1;
           });
-          self.ontologiesPanel[selectedOntologyIndex].selectTerm(idTerm);
+          if (idTerm != undefined) self.ontologiesPanel[selectedOntologyIndex].selectTerm(idTerm);
           self.$tabsOntologies.accordion( "activate" , selectedOntologyIndex );
        },
        /**
@@ -117,8 +120,6 @@ var OntologyView = Backbone.View.extend({
           require(["text!application/templates/ontology/OntologyTab.tpl.html", "text!application/templates/ontology/OntologyTabContent.tpl.html"], function(ontologyTabTpl, ontologyTabContentTpl) {
              self.ontologiesPanel = new Array();
              //add "All annotation from all term" tab
-             var selectedOntologyIndex = 0;
-             var index = 0;
              self.model.each(function(ontology) {
                 //add x term tab
                 self.addOntologyToTab(ontologyTabTpl, ontologyTabContentTpl, { id : ontology.get("id"), name : ontology.get("name")});
@@ -131,17 +132,19 @@ var OntologyView = Backbone.View.extend({
                     });
                 view.render();
                 self.ontologiesPanel.push(view);
-                //get index of selected ontology
-                if(self.idOntology== ontology.get("id")) {
-                   selectedOntologyIndex = index;
-                }
-                index = index + 1;
              });
 
 
-             if(!self.alreadyBuild)
+             if(!self.alreadyBuild) {
                 self.$tabsOntologies.accordion({ fillSpace: true });
-             self.$tabsOntologies.accordion( "activate" , selectedOntologyIndex );
+                $("#tabsontology h3 a").click(function() {
+                   window.location = $(this).attr('href'); //follow link
+                   return false;
+                });
+
+             }
+
+             self.select(self.idOntology,self.idTerm);
              $(".accordeonOntology").css("height", "auto");
              $(".accordeonOntology").css("width", "auto");
 
@@ -153,7 +156,8 @@ var OntologyView = Backbone.View.extend({
         * @param name ontology name
         */
        addOntologyToTab : function(ontologyTabTpl, ontologyTabContentTpl, data) {
-          this.$tabsOntologies.append("<h3><a id=\"ontologyTitle"+ data.id+"\" href=\"#\">"+data.name+"</a></h3>");
+          /*this.$tabsOntologies.append("<h3><a id='ontologyTitle'"+ data.id+ "href='#ontology/'>"+data.name+"</a></h3>");*/
+          this.$tabsOntologies.append(_.template("<h3><a id='ontologyTitle{{ontologyID}}' href='#ontology/{{ontologyID}}'>{{ontologyName}}</a></h3>", { ontologyID : data.id, ontologyName : data.name}));
           this.$tabsOntologies.append(_.template(ontologyTabContentTpl, data));
           //tabs;
           /*         $("#ultabsontology").append(_.template(ontologyTabTpl, data));

@@ -211,7 +211,6 @@ var OntologyPanelView = Backbone.View.extend({
           var self = this;
           self.$tree.dynatree("getTree").selectKey(idTerm);
        },
-
        buildDeleteTermConfirmDialog : function(term) {
           var self = this;
           require(["text!application/templates/ontology/OntologyDeleteTermConfirmDialog.tpl.html"], function(tpl) {

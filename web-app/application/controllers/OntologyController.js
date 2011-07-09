@@ -7,9 +7,6 @@
  */
 
 var OntologyController = Backbone.Controller.extend({
-
-
-
        routes: {
           "ontology"                               :   "ontology",
           "ontology/:idOntology"                   :   "ontology",
@@ -37,7 +34,7 @@ var OntologyController = Backbone.Controller.extend({
              self.view.container.views.ontology = self.view;
              self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
              window.app.view.showComponent(window.app.view.components.warehouse);
-             self.view.refresh();
+             self.view.refresh(idOntology, idTerm);
 
           }
           else {

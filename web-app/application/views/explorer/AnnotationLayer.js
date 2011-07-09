@@ -211,10 +211,13 @@ AnnotationLayer.prototype = {
                     var json = model.toJSON()
                     //username
                     json.username = window.app.models.users.get(json.user).prettyName();
+
+
                     //term
                     var terms = new Array();
                     _.each(json.term,function(term){
-                         terms.push(term.name);
+                         var tpl = _.template("<a href='#ontology/{{idOntology}}/{{idTerm}}'>{{termName}}</a>", {idOntology : term.ontology, idTerm : term.id, termName : term.name});
+                         terms.push(tpl);
 
                     });
                     json.terms = terms.join(", ");
