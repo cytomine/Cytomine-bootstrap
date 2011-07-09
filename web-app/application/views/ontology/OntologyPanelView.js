@@ -455,7 +455,7 @@ var OntologyPanelView = Backbone.View.extend({
                  initId: "treeDataOntology-"+self.model.id + currentTime.getTime(),
                  cookieId: "dynatree-Ontology-"+self.model.id+ currentTime.getTime(),
                  idPrefix: "dynatree-Ontology-"+self.model.id+ currentTime.getTime()+"-" ,
-                 debugLevel: 0
+                 debugLevel: 3
               });
           self.$tree.dynatree("getRoot").visit(function(node){
 
@@ -475,19 +475,18 @@ var OntologyPanelView = Backbone.View.extend({
 
        updateInfoPanel : function(idTerm,name) {
           var self = this;
-          //bad code with html but waiting to know what info is needed...
-          self.$infoTerm.empty();
-
           // Create and populate the data table.
           var data = new google.visualization.DataTable();
           data.addColumn('string', 'Project');
           data.addColumn('number', 'Number of annotations');
 
           var i = 0;
-          var colors = [];
           var statsCollection = new StatsCollection({term:idTerm});
-          var dataToShow = false;
-          var statsCallback = function(collection, response) {
+
+          var drawPieChart = function(collection, response) {
+             var divID = "piechart-"+self.model.id;
+             $("#"+divID).empty();
+             var dataToShow = false;
              data.addRows(_.size(collection));
              collection.each(function(stat) {
                 /*colors.push(stat.get('color'));*/
@@ -498,21 +497,56 @@ var OntologyPanelView = Backbone.View.extend({
              });
 
              if (!dataToShow) {
-                self.$infoTerm.hide();
+                $("#"+divID).hide();
                 return
              };
-             // Create and draw the visualization.
-             var divID = "infoterm-"+self.model.id;
-             /*new google.visualization.PieChart(self.$infoTerm);
-              draw(data, {width: 490, height: 345,title:"Annotation repartition"});*/
-
              new google.visualization.PieChart(document.getElementById(divID)).
-                 draw(data, {width: 400, height: 300,title:"Annotation repartition"});
-             self.$infoTerm.show();
+                 draw(data, {width: 500, height: 300,title:"Annotation repartition"});
+             $("#"+divID).show();
+          };
+          var drawColumnChart = function (collection, response) {
+             var divID = "columchart-"+self.model.id;
+             $("#"+divID).empty();
+             var dataToShow = false;
+             // Create and populate the data table.
+             var data = new google.visualization.DataTable();
+             var raw_data = [['Number of annotations', 1, 2]];
+
+             data.addRows(_.size(collection));
+
+             data.addColumn('string', '');
+             for (var i = 0; i  < raw_data.length; ++i) {
+                data.addColumn('number', raw_data[i][0]);
+             }
+
+             var j = 0;
+             collection.each(function(stat) {
+                if (stat.get('value') > 0) dataToShow = true;
+                data.setValue(j, 0, stat.get("key"));
+                data.setValue(j, 1, stat.get("value"));
+                j++;
+             });
+
+             if (!dataToShow) {
+                $("#"+divID).hide();
+                return
+             };
+
+
+             // Create and draw the visualization.
+             new google.visualization.ColumnChart(document.getElementById(divID)).
+                 draw(data,
+                 {title:"Annotations by project",
+                    width:500, height:300,
+                    vAxis: {title: "Number of annotations"},
+                    hAxis: {title: "Project"}}
+             );
+             $("#"+divID).show();
           };
           statsCollection.fetch({
                  success : function(model, response) {
-                    statsCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+                    drawColumnChart(model, response);
+                    drawPieChart(model, response);
                  }
               });
 

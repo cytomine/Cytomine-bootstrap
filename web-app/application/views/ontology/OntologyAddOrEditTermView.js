@@ -181,6 +181,8 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
                     },
                     onDragOver: function(node, sourceNode, hitMode) {
                     },
+                    onDragLeave: function(node, sourceNode) {
+                    },
                     onDrop: function(node, sourceNode, hitMode, ui, draggable) {
 //                    if(!node.data.isFolder && hitMode=="over")
 //                    {
@@ -193,8 +195,6 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
                           node.render();
                        }
                        else sourceNode.move(node, hitMode);
-                    },
-                    onDragLeave: function(node, sourceNode) {
                     }
                  },
                  generateIds: true,
