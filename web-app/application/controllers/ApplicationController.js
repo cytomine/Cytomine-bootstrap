@@ -133,12 +133,10 @@ var ApplicationController = Backbone.Controller.extend({
 
        warehouse : function () {
           this.view.showComponent(this.view.components.warehouse);
-          this.controllers.project.project();
        },
 
        initialRoute: function() {
           this.controllers.project.project();
-
        }
 
 
