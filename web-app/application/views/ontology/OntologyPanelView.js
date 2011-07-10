@@ -512,14 +512,11 @@ var OntologyPanelView = Backbone.View.extend({
              var dataToShow = false;
              // Create and populate the data table.
              var data = new google.visualization.DataTable();
-             var raw_data = [['Number of annotations', 1, 2]];
 
              data.addRows(_.size(collection));
 
              data.addColumn('string', '');
-             for (var i = 0; i  < raw_data.length; ++i) {
-                data.addColumn('number', raw_data[i][0]);
-             }
+             data.addColumn('number', 0);
 
              var j = 0;
              collection.each(function(stat) {

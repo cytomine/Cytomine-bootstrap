@@ -19,7 +19,7 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
       def json = JSON.parse(postData)
       json.user = user.id
       newAnnotation = Annotation.createFromData(json)
-      return super.validateAndSave(newAnnotation,["#ID#",newAnnotation?.imageFileName()] as Object[])
+      return super.validateAndSave(newAnnotation,["#ID#",newAnnotation?.imageFileName(), newAnnotation.image.project.id, newAnnotation.image.id] as Object[])
 
     }catch(ConstraintException  ex){
       return [data : [annotation:newAnnotation,errors:newAnnotation.retrieveErrors()], status : 400]

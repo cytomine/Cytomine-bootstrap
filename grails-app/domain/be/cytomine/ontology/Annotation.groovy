@@ -165,6 +165,7 @@ class Annotation extends SequenceDomain implements Serializable {
       returnArray['name'] = it.name!=""? it.name : "Annotation " + it.id
       returnArray['location'] = it.location.toString()
       returnArray['image'] = it.image? it.image.id : null
+      returnArray['imageFilename'] = it.image? it.image.baseImage.filename : null
       returnArray['zoomLevel'] = it.zoomLevel
       returnArray['channels'] = it.channels
       returnArray['user'] = it.user? it.user.id : null
