@@ -385,7 +385,7 @@ class BootStrap {
 
     def createImageServers(imageServerSamples) {
         imageServerSamples.each { item ->
-            if(ImageServer.findByName(item.name)) return
+            if(ImageServer.findByUrl(item.url)) return
             ImageServer imageServer = new ImageServer(
                     name : item.name,
                     url : item.url,

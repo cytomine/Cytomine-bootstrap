@@ -211,7 +211,12 @@ var BrowseImageView = Backbone.View.extend({
              var baseURLs = self.model.get('imageServerBaseURL');
              console.log("baseURL : " + baseURLs.length);
              console.log("nbZoom " + metadata.nbZoom);
-             var zoomify_url = baseURLs[0] + "/fcgi-bin/iipsrv.fcgi?zoomify=" + self.model.get('path') +"/";
+             var zoomify_url = []
+             _.each(baseURLs, function(baseURL) {
+                var url = baseURL + "/fcgi-bin/iipsrv.fcgi?zoomify=" + self.model.get('path') +"/";
+                zoomify_url.push(url);
+             });
+
              var baseLayer = new OpenLayers.Layer.Zoomify(
                  "Original",
                  zoomify_url,
