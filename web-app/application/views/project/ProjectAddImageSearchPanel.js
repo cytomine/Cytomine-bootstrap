@@ -70,9 +70,7 @@ var ProjectAddImageSearchPanel = Backbone.View.extend({
     },
     search : function(images) {
         var self = this;
-        var searchText = $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val();
-        var dateStart =  $("#datestartsearchup"+self.model.id+"-"+self.tab).datepicker("getDate");
-        var dateEnd =  $("#dateendsearchup"+self.model.id+"-"+self.tab).datepicker("getDate");
+
 
 
 
@@ -147,30 +145,6 @@ var ProjectAddImageSearchPanel = Backbone.View.extend({
         console.log("renderImageListing");
 
 
-        $("#searchImagetPanelup"+self.model.id+"-"+self.tab).panel({
-            collapseSpeed:100
-        });
-
-
-
-        $("#imagesallbutton"+self.model.id+"-"+self.tab).button({
-            text: true
-        });
-
-
-        $("#imagesallbutton"+self.model.id+"-"+self.tab).click(function() {
-            $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val("");
-            $("#datestartsearchup"+self.model.id+"-"+self.tab ).val("");
-            $("#dateendsearchup"+self.model.id+"-"+self.tab).val("");
-            self.container.searchImages();
-        });
-
-        $( "#datestartsearchup"+self.model.id+"-"+self.tab ).datepicker({
-            onSelect: function(dateText, inst) { self.container.searchImages(); }
-        });
-        $( "#dateendsearchup"+self.model.id+"-"+self.tab ).datepicker({
-            onSelect: function(dateText, inst) { self.container.searchImages(); }
-        });
 
 
     }

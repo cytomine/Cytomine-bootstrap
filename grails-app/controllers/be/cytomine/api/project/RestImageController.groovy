@@ -14,6 +14,7 @@ import be.cytomine.command.abstractimage.DeleteAbstractImageCommand
 import be.cytomine.api.RestController
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.Storage
+import grails.orm.PagedResultList
 
 class RestImageController extends RestController{
 
@@ -28,7 +29,7 @@ class RestImageController extends RestController{
         response(AbstractImage.list())
     }
 
-  def listByUser = {
+  /*def listByUser = {
     log.info "List with id user:"+params.id
     User user=null
     if(params.id!=null) {
@@ -39,7 +40,38 @@ class RestImageController extends RestController{
 
     if(user!=null) responseSuccess(user.abstractimages())
     else responseNotFound("User",params.id)
-  }
+  }*/
+
+      def listByUser = {
+        log.info "List with id user:"+params.id
+        User user=null
+        if(params.id!=null) {
+          user = User.read(params.id)
+        } else {
+           user = getCurrentUser(springSecurityService.principal.id)
+        }
+
+        String page = params.page
+        String limit = params.rows
+        String sortedRow = params.sidx
+        String sord = params.sord
+        log.info "page="+page + " limit="+limit+ " sortedRow="+sortedRow  +" sord="+sord
+
+        int pg = Integer.parseInt(page)
+        int max = Integer.parseInt(limit)
+        int offset = pg * max
+
+        def data = [:]
+        PagedResultList results = user.abstractimages(max,offset,sortedRow,sord)
+        data.page = pg+""
+        data.records = results.totalCount
+        data.total =  Math.ceil(results.totalCount/max)+"" //[100/10 => 10 page] [5/15
+
+        data.rows = results.list
+
+        if(user!=null) responseSuccess(data)
+        else responseNotFound("User",params.id)
+      }
 
     def show = {
         log.info "show " + params.id

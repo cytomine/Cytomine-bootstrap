@@ -7,6 +7,8 @@ import be.cytomine.project.Slide
 import be.cytomine.project.Project
 import be.cytomine.project.ProjectGroup
 import be.cytomine.image.AbstractImageGroup
+import org.perf4j.StopWatch
+import org.perf4j.LoggingStopWatch
 
 class User extends SecUser {
 
@@ -30,6 +32,12 @@ class User extends SecUser {
         firstname + " " + lastname + " (" + username + ")"
     }
 
+    def groups() {
+        return userGroup.collect{
+            it.group
+        }
+    }
+
     def ontologies() {
         def ontologies = []
         //add ontology created by this user
@@ -51,6 +59,7 @@ class User extends SecUser {
     }
 
     def abstractimages() {
+        StopWatch stopWatch = new LoggingStopWatch();
         def abstractImages = []
         if (userGroup.size() > 0) {
             abstractImages = AbstractImageGroup.createCriteria().list {
@@ -60,6 +69,80 @@ class User extends SecUser {
                 }
             }
         }
+        stopWatch.stop('abstractimages request');
+        abstractImages
+
+    }
+
+    /*def abstractimages(int max, int first, String col, String order) {
+        StopWatch stopWatch = new LoggingStopWatch();
+        def abstractImages = []
+        if (userGroup.size() > 0) {
+            abstractImages = AbstractImageGroup.createCriteria().list {
+                order("filename", "desc")
+                maxResults(max)
+
+                firstResult(first)
+               // order(col, order)
+                inList("group.id", userGroup.collect{it.group.id})
+                projections {
+                    groupProperty('abstractimage')
+
+                }
+
+            }
+        }
+        stopWatch.stop('abstractimages request');
+        abstractImages
+
+    }   */
+
+    def abstractimages(int max, int first, String col, String order) {
+
+        AbstractImage.createCriteria().list(offset:first, max:max ,sort:col, order:order){
+            inList("id", AbstractImageGroup.createCriteria().list {
+                inList("group.id", userGroup.collect{it.group.id})
+                projections {
+                    groupProperty('abstractimage.id')
+                }
+            })
+                projections {
+                    groupProperty('abstractimage')
+
+                }
+
+        }
+
+    }
+   /* def abstractimages(int max, int first, String col, String order) {
+        StopWatch stopWatch = new LoggingStopWatch();
+
+        def abstractImages = []
+
+        if (userGroup.size() > 0) {
+           def imagesgroups = AbstractImage.fin
+           imagesgroups.each { imagegroup ->
+               abstractImages << imagegroup.abstractimage
+           }
+        }
+        stopWatch.stop('abstractimages request');
+        abstractImages.unique()
+
+    }*/
+
+    def abstractimages2(int max, int first, String col, String order) {
+        StopWatch stopWatch = new LoggingStopWatch();
+        def abstractImages = []
+        if (userGroup.size() > 0) {
+            abstractImages = AbstractImageGroup.createCriteria(offset:first, max:max ).list {
+                //order(col, order)
+                inList("group.id", userGroup.collect{it.group.id})
+                projections {
+                    groupProperty('abstractimage')
+                }
+            }
+        }
+        stopWatch.stop('abstractimages request');
         abstractImages
 
     }

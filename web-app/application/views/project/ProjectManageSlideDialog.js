@@ -28,7 +28,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
        initialize: function(options) {
           this.container = options.container;
           this.projectPanel = options.projectPanel;
-          this.imagesProject = new ImageCollection({project:this.model.get('id')});
+          this.imagesProject = new ImageInstanceCollection({project:this.model.get('id')});
        },
        refresh : function() {
           if(this.imageListing!=undefined) this.imageListing.refresh();
@@ -80,7 +80,6 @@ var ProjectManageSlideDialog = Backbone.View.extend({
                        projectsPanel : self,
                        imagesProject : self.imagesProject,
                        slides : window.app.models.slides,
-                       images : window.app.models.images,
                        el : "#tabsProjectaddimagedialog"+self.model.id+"-2"
                     }).render();
                 console.log("render() 2 ok");
@@ -148,7 +147,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
              }
           };
 
-          var modelsToPreload = [window.app.models.slides, window.app.models.images, self.imagesProject];
+          var modelsToPreload = [window.app.models.slides, self.imagesProject];
           var nbModelFetched = 0;
           _.each(modelsToPreload, function(model){
              model.fetch({
