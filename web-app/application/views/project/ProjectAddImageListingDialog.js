@@ -99,9 +99,6 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             text: true
         });
 
-        console.log("########################"+$("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).length);
-         console.log("#filenamesearchtextboxup"+self.model.id+"-"+self.tab);
-
             $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).keyup(function () {
                  self.doSearch();
             }).keyup();

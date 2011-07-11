@@ -81,7 +81,7 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
 
 
 
-  void testListAbstractImageGroupByCurrentUser() {
+  /*void testListAbstractImageGroupByCurrentUser() {
 
     log.info("get by group")
     String URL = Infos.CYTOMINEURL+"api/currentuser/image.json"
@@ -96,7 +96,7 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONArray
-  }
+  }*/
 
 
   void testListAbstractImageGroupByGroupWithAbstractImageNotExist() {

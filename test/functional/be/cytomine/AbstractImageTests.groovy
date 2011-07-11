@@ -61,7 +61,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testListAnnotationsByUserWithCredential() {
+  /*void testListAnnotationsByUserWithCredential() {
 
     log.info("create annotation")
     AbstractImage image =  BasicInstance.createOrGetBasicAbstractImage()
@@ -81,9 +81,9 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     def json = JSON.parse(response)
     assert json instanceof JSONArray
 
-  }
+  } */
 
-  void testListAnnotationsByUserNoExistWithCredential() {
+  /*void testListAnnotationsByUserNoExistWithCredential() {
 
     log.info("create annotation")
     AbstractImage image =  BasicInstance.createOrGetBasicAbstractImage()
@@ -100,7 +100,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     log.info("check response")
     assertEquals(404,code)
 
-  }
+  } */
 
   void testGetImageWithCredential() {
 
