@@ -292,7 +292,7 @@ div .popupPanel {
 
 div .annotationsPanel {
     position : absolute;
-    bottom : 100px;
+    bottom : 70px;
     left : 0px;
     z-index : 2023;
     background-color: rgba(0, 0, 0, 0.7);

@@ -1,9 +1,10 @@
 var AnnotationView = Backbone.View.extend({
        tagName : "div",
-       annotations : null, //array of annotations that are printed
+
        initialize: function(options) {
           this.container = options.container;
           this.page = options.page;
+          this.annotations = null; //array of annotations that are printed
           if (this.page == undefined) this.page = 0;
        },
        render: function() {
@@ -11,11 +12,11 @@ var AnnotationView = Backbone.View.extend({
 
           self.appendThumbs(self.page);
 
-          $(window).scroll(function(){
+          /*$(window).scroll(function(){
              if  (($(window).scrollTop() + 100) >= $(document).height() - $(window).height()){
                 self.appendThumbs(++self.page);
              }
-          });
+          });*/
 
           return this;
        },
@@ -61,7 +62,6 @@ var AnnotationView = Backbone.View.extend({
         * @param idAnnotation  Annotation id
         */
        remove : function (idAnnotation) {
-          console.log("AnnotationView: remove "+idAnnotation);
           $("#thumb"+idAnnotation).remove();
        },
        /**
@@ -71,12 +71,7 @@ var AnnotationView = Backbone.View.extend({
         * @param newAnnotations newAnnotations collection
         */
        refresh : function(newAnnotations) {
-
           var self = this;
-          //console.log("AnnotationView: refresh");
-          //console.log(self.annotations);
-          //console.log(newAnnotations.models);
-
 
           var arrayDeletedAnnotations = self.annotations;
           newAnnotations.each(function(annotation) {

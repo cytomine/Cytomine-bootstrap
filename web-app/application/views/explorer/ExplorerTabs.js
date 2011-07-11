@@ -137,7 +137,7 @@ var ExplorerTabs = Backbone.View.extend({
           console.log("add dashboard");
           var tabs = $(this.el).children('.tabs');
           tabs.tabs("add", "#tabs-dashboard-"+window.app.status.currentProject, 'Dashboard');
-          tabs.tabs("add", "#tabs-images-"+window.app.status.currentProject, 'Images');
+             tabs.tabs("add", "#tabs-images-"+window.app.status.currentProject, 'Images');
           tabs.tabs("add", "#tabs-annotations-"+window.app.status.currentProject, 'Annotations');
           $("#explorer > .browser").show();
           $("#explorer > .noProject").hide();

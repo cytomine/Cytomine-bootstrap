@@ -99,6 +99,7 @@ var ProjectDashboardView = Backbone.View.extend({
                        });
 
                        if(self.tabsAnnotation==null)
+
                           self.tabsAnnotation = $("#tabsannotation").tabs({
                                  select: function(event, ui) {
                                     var tabsId = ui.panel.id.split('-');
@@ -106,13 +107,16 @@ var ProjectDashboardView = Backbone.View.extend({
                                     if(id=="all") id = 0;
                                     self.selectedTermTab = id;
                                     self.refreshAnnotations(id);
-
+                                 },
+                                 show: function(event, ui){
+                                    $("#"+ui.panel.id).attr('style', 'height:100%;overflow:auto;');
+                                    return true;
                                  }
                               });
-                       self.fetchAnnotations();
-                       self.fetchImages();
-                       self.fetchStats();
-                       self.fetchProjectInfo();
+                       /*self.fetchAnnotations();
+                        self.fetchImages();
+                        self.fetchStats();
+                        self.fetchProjectInfo();*/
                        self.initWidgets();
                     }});
           });
@@ -132,27 +136,6 @@ var ProjectDashboardView = Backbone.View.extend({
         * -'X' tab: all annotation for this project and the term X
         */
        fetchAnnotations : function () {
-          console.log("ProjectDashboardView: fetchAnnotations");
-
-          var self = this;
-
-          //init panel for all annotation (with or without term
-          new AnnotationCollection({project:self.model.id}).fetch({
-                 success : function (collection, response) {
-                    $("#tabsterm-all").empty();
-
-                    var view = new AnnotationView({
-                           page : undefined,
-                           model : collection,
-                           el:$("#tabsterm-all"),
-                           container : window.app.view.components.warehouse
-                        }).render();
-                    self.annotationsViews[0] = view;
-
-
-                    self.fetchCommands(collection);
-                 }
-              });
        },
        /**
         * Refresh all annotation dor the given term
@@ -162,11 +145,11 @@ var ProjectDashboardView = Backbone.View.extend({
           var self = this;
           if(term==0) {
              //refresh all annotation
-             self.printAnnotationThumb(term,$("#tabsterm-all"));
+             self.printAnnotationThumb(term,"#tabsterm-all");
 
           } else {
              //refresh  annotation for the term
-             self.printAnnotationThumb(term,$("#tabsterm-"+term));
+             self.printAnnotationThumb(term,"#tabsterm-"+term);
           }
 
        },
@@ -177,16 +160,16 @@ var ProjectDashboardView = Backbone.View.extend({
         */
        printAnnotationThumb : function(term,$elem){
           var self = this;
-          console.log("Refresh:"+term);
-          var idTerm = 0
-          if(term==0) idTerm = undefined
+
+          var idTerm = 0;
+          if(term==0) {idTerm = undefined;}
           else idTerm = term
           if(self.annotationsViews[term]==null) {
-
+             console.log("Create annotation view for term " + term);
              new AnnotationCollection({project:self.model.id,term:idTerm}).fetch({
                     success : function (collection, response) {
-                       console.log("AnnotationCollection:"+collection.length);
-                       $elem.empty();
+                       console.log("AnnotationCollection form term " + term + " : " +collection.length);
+                       $($elem).empty();
 
                        self.annotationsViews[term] = new AnnotationView({
                               page : undefined,
@@ -200,9 +183,10 @@ var ProjectDashboardView = Backbone.View.extend({
                  });
           }
           else {
+             console.log("refresh annotation view for term " + term);
              new AnnotationCollection({project:self.model.id,term:idTerm}).fetch({
                     success : function (collection, response) {
-                       console.log("Looking for annotationsViews!=null " + term);
+                       console.log("AnnotationCollection form term " + term + " : " +collection.length);
                        self.annotationsViews[term].refresh(collection);
                     }
                  });
@@ -212,9 +196,9 @@ var ProjectDashboardView = Backbone.View.extend({
         * Get and Print ALL images (use for the first time)
         */
        fetchImages : function() {
-
           console.log("ProjectDashboardView: fetchImages");
           var self = this;
+          $("#tabs-images-listing-"+ self.model.get('id')).hide();
           new ImageInstanceCollection({project:self.model.get('id')}).fetch({
                  success : function (collection, response) {
 
@@ -239,6 +223,7 @@ var ProjectDashboardView = Backbone.View.extend({
 
                     $("#tabs-images-listing-"+ self.model.get('id')).tabs();
                     self.selectTab(self.imagesThumbOrTab);
+                    $("#tabs-images-listing-"+ self.model.get('id')).show();
                  }});
 
        },
@@ -248,7 +233,10 @@ var ProjectDashboardView = Backbone.View.extend({
        refreshImages : function() {
           console.log("ProjectDashboardView: refreshImages");
           var self = this;
-          if(self.imagesView==null) return; //imageView is not yet build
+          if (self.imagesView == null || self.imagesTabsView == null) {
+             self.fetchImages();
+             return;
+          }
           new ImageInstanceCollection({project:self.model.get('id')}).fetch({
                  success : function (collection, response) {
                     self.imagesView.refresh(collection);
@@ -267,70 +255,69 @@ var ProjectDashboardView = Backbone.View.extend({
           var self = this;
           console.log("select tab for images index " + index);
           $("#tabs-images-listing-"+ self.model.get('id')).tabs( "select" , index );
-       } ,
+       },
+       drawPieChart : function (collection, response) {
+          $("#projectPieChart").empty();
+          // Create and populate the data table.
+          var data = new google.visualization.DataTable();
+          data.addColumn('string', 'Term');
+          data.addColumn('number', 'Number of annotations');
+          data.addRows(_.size(collection));
+          var i = 0;
+          var colors = [];
+          collection.each(function(stat) {
+             colors.push(stat.get('color'));
+             data.setValue(i,0, stat.get('key'));
+             data.setValue(i,1, stat.get('value'));
+             i++;
+          });
+
+          // Create and draw the visualization.
+          new google.visualization.PieChart(document.getElementById('projectPieChart')).
+              draw(data, {width: 500, height: 350,title:"", colors : colors});
+       },
+       drawColumnChart : function (collection, response) {
+          $("#projectColumnChart").empty();
+          var dataToShow = false;
+          // Create and populate the data table.
+          var data = new google.visualization.DataTable();
+
+          data.addRows(_.size(collection));
+
+          data.addColumn('string', 'Number');
+          data.addColumn('number', 0);
+          var colors = [];
+          var j = 0;
+          collection.each(function(stat) {
+             colors.push(stat.get('color'));
+             if (stat.get('value') > 0) dataToShow = true;
+             data.setValue(j, 0, stat.get("key"));
+             data.setValue(j, 1, stat.get("value"));
+             j++;
+          });
+
+          // Create and draw the visualization.
+          new google.visualization.ColumnChart(document.getElementById("projectColumnChart")).
+              draw(data,
+              {title:"",
+                 width:500, height:350,
+                 vAxis: {title: "Number of annotations"},
+                 hAxis: {title: "Terms"}}
+          );
+          $("#projectColumnChart").show();
+
+       },
        fetchStats : function () {
-          console.log("ProjectDashboardView: fetchStats");
           var self = this;
+          if (self.model.get('numberOfAnnotations') == 0) return;
+
+          console.log("ProjectDashboardView: fetchStats");
+
           var statsCollection = new StatsCollection({project:self.model.get('id')});
           var statsCallback = function(collection, response) {
-             $("#projectPieChart").empty();
-             var drawPieChart = function () {
-                // Create and populate the data table.
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Term');
-                data.addColumn('number', 'Number of annotations');
-                data.addRows(_.size(collection));
-                var i = 0;
-                var colors = [];
-                collection.each(function(stat) {
-                   colors.push(stat.get('color'));
-                   data.setValue(i,0, stat.get('key'));
-                   data.setValue(i,1, stat.get('value'));
-                   i++;
-                });
-
-                // Create and draw the visualization.
-                new google.visualization.PieChart(document.getElementById('projectPieChart')).
-                    draw(data, {width: 500, height: 350,title:"Annotation repartition", colors : colors});
-             }
-             var drawColumnChart = function () {
-                $("#projectColumnChart").empty();
-                var dataToShow = false;
-                // Create and populate the data table.
-                var data = new google.visualization.DataTable();
-
-                data.addRows(_.size(collection));
-
-                data.addColumn('string', 'Number');
-                data.addColumn('number', 0);
-                var colors = [];
-                var j = 0;
-                collection.each(function(stat) {
-                   colors.push(stat.get('color'));
-                   if (stat.get('value') > 0) dataToShow = true;
-                   data.setValue(j, 0, stat.get("key"));
-                   data.setValue(j, 1, stat.get("value"));
-                   j++;
-                });
-
-                // Create and draw the visualization.
-                new google.visualization.ColumnChart(document.getElementById("projectColumnChart")).
-                    draw(data,
-                    {title:"Annotations by projects",
-                       width:500, height:350,
-                       vAxis: {title: "Number of annotations"},
-                       hAxis: {title: "Terms"}}
-                );
-                $("#projectColumnChart").show();
-
-             };
-
-             drawPieChart();
-             drawColumnChart();
-             /*google.setOnLoadCallback(drawVisualization);*/
-
-
-
+             //Check if there is something to display
+             self.drawPieChart(collection, response);
+             self.drawColumnChart(collection, response);
           }
 
           statsCollection.fetch({
@@ -385,94 +372,94 @@ var ProjectDashboardView = Backbone.View.extend({
              "text!application/templates/dashboard/CommandAnnotation.tpl.html",
              "text!application/templates/dashboard/CommandAnnotationTerm.tpl.html"],
               function(commandAnnotationTpl, commandAnnotationTermTpl) {
-             var commandCollection = new CommandCollection({project:self.model.get('id'),max:self.maxCommandsView});
+                 var commandCollection = new CommandCollection({project:self.model.get('id'),max:self.maxCommandsView});
 
-             var commandCallback = function(collection, response) {
-                console.log("command.size()="+collection.length);
-                $("#lastactionitem").empty();
-                collection.each(function(command) {
-                   var json = command.toJSON()
+                 var commandCallback = function(collection, response) {
+                    console.log("command.size()="+collection.length);
+                    $("#lastactionitem").empty();
+                    collection.each(function(command) {
+                       var json = command.toJSON()
 
-                   console.log("created="+json.created);
-                   console.log(json);
+                       console.log("created="+json.created);
+                       console.log(json);
 
-                   var dateCreated = new Date();
-                   dateCreated.setTime(json.created);
-                   var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
+                       var dateCreated = new Date();
+                       dateCreated.setTime(json.created);
+                       var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
 
-                   var jsonCommand = $.parseJSON(json.command.data);
-                   console.log(jsonCommand); //jsonCommand.cropURL
-                   console.log(jsonCommand.cropURL);
-                   var action = ""
+                       var jsonCommand = $.parseJSON(json.command.data);
+                       console.log(jsonCommand); //jsonCommand.cropURL
+                       console.log(jsonCommand.cropURL);
+                       var action = ""
 
-                   if(json.command.CLASSNAME=="be.cytomine.command.annotation.AddAnnotationCommand")
-                   {
-                      var cropStyle = "block";
-                      var cropURL = jsonCommand.cropURL;
+                       if(json.command.CLASSNAME=="be.cytomine.command.annotation.AddAnnotationCommand")
+                       {
+                          var cropStyle = "block";
+                          var cropURL = jsonCommand.cropURL;
 
-                      if (annotations.get(jsonCommand.id) == undefined) {
-                         cropStyle = "none";
-                         cropURL = "";
-                      }
+                          if (annotations.get(jsonCommand.id) == undefined) {
+                             cropStyle = "none";
+                             cropURL = "";
+                          }
 
-                      var action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.id, idImage : jsonCommand.image,imageFilename : jsonCommand.imageFilename, icon:"add.png",text:json.prefixAction+ " " + json.command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
-                      $("#lastactionitem").append(action);
-                   }
-                   if(json.command.CLASSNAME=="be.cytomine.command.annotation.EditAnnotationCommand")
-                   {
-                      var cropStyle = "";
-                      var cropURL = jsonCommand.newAnnotation.cropURL;
-                      if (annotations.get(jsonCommand.newAnnotation.id) == undefined) {
-                         cropStyle = "display : none;";
-                         cropURL = "";
-                      }
+                          var action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.id, idImage : jsonCommand.image,imageFilename : jsonCommand.imageFilename, icon:"add.png",text:json.prefixAction+ " " + json.command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
+                          $("#lastactionitem").append(action);
+                       }
+                       if(json.command.CLASSNAME=="be.cytomine.command.annotation.EditAnnotationCommand")
+                       {
+                          var cropStyle = "";
+                          var cropURL = jsonCommand.newAnnotation.cropURL;
+                          if (annotations.get(jsonCommand.newAnnotation.id) == undefined) {
+                             cropStyle = "display : none;";
+                             cropURL = "";
+                          }
 
-                      var action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.newAnnotation.id, idImage : jsonCommand.newAnnotation.image,imageFilename : jsonCommand.newAnnotation.imageFilename,icon:"delete.gif",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
-                      $("#lastactionitem").append(action);
-                   }
-                   if(json.command.CLASSNAME=="be.cytomine.command.annotation.DeleteAnnotationCommand")
-                   {
-                      var cropStyle = "";
-                      var cropURL = jsonCommand.cropURL;
-                      if (annotations.get(jsonCommand.id) == undefined) {
-                         cropStyle = "display : none;";
-                         cropURL = "";
-                      }
-                      var action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.id, idImage : jsonCommand.image,imageFilename : jsonCommand.imageFilename,icon:"delete.gif",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
-                      $("#lastactionitem").append(action);
-                   }
+                          var action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.newAnnotation.id, idImage : jsonCommand.newAnnotation.image,imageFilename : jsonCommand.newAnnotation.imageFilename,icon:"delete.gif",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
+                          $("#lastactionitem").append(action);
+                       }
+                       if(json.command.CLASSNAME=="be.cytomine.command.annotation.DeleteAnnotationCommand")
+                       {
+                          var cropStyle = "";
+                          var cropURL = jsonCommand.cropURL;
+                          if (annotations.get(jsonCommand.id) == undefined) {
+                             cropStyle = "display : none;";
+                             cropURL = "";
+                          }
+                          var action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.id, idImage : jsonCommand.image,imageFilename : jsonCommand.imageFilename,icon:"delete.gif",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
+                          $("#lastactionitem").append(action);
+                       }
 
 
-                   if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.AddAnnotationTermCommand")
-                   {
-                      console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
-                      var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-plus",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
-                      $("#lastactionitem").append(action);
+                       if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.AddAnnotationTermCommand")
+                       {
+                          console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
+                          var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-plus",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
+                          $("#lastactionitem").append(action);
 
-                   }
-                   if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.EditAnnotationTermCommand")
-                   {
-                      console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
-                      var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-pencil",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
-                      $("#lastactionitem").append(action);
+                       }
+                       if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.EditAnnotationTermCommand")
+                       {
+                          console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
+                          var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-pencil",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
+                          $("#lastactionitem").append(action);
 
-                   }
-                   if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.DeleteAnnotationTermCommand")
-                   {
-                      console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
-                      var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-trash",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
-                      $("#lastactionitem").append(action);
+                       }
+                       if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.DeleteAnnotationTermCommand")
+                       {
+                          console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
+                          var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-trash",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
+                          $("#lastactionitem").append(action);
 
-                   }
-                });
-             }
+                       }
+                    });
+                 }
 
-             commandCollection.fetch({
-                    success : function(model, response) {
-                       commandCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-                    }
-                 });
-          });
+                 commandCollection.fetch({
+                        success : function(model, response) {
+                           commandCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+                        }
+                     });
+              });
 
 
        },
@@ -483,20 +470,11 @@ var ProjectDashboardView = Backbone.View.extend({
        },
        doLayout : function(tpl) {
           console.log("ProjectDashboardView: printProjectInfo");
-
           var self = this;
-
           var html = _.template(tpl, self.model.toJSON());
-
           $(self.el).append(html);
-
           window.app.controllers.browse.tabs.addDashboard(self);
-
           self.initTabs();
-
-
-
-
        },
        initWidgets : function() {
           $( ".widgets" ).sortable({

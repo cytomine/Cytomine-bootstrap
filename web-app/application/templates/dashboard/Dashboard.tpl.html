@@ -1,7 +1,5 @@
 <div id="tabs-dashboard-{{id}}" style="overflow : auto; height: 100%;">
     <div class="widgets">
-
-
         <div id="projectInfoPanel" style="margin:10px;">
             <div>Project Info</div>
             <div>
@@ -11,15 +9,6 @@
                     <li>Users : <div id="projectInfoUserList" style="display: inline;"></div></li>
                     <li>Number of images : <a href="#tabs-images-{{id}}"><label id="projectInfoNumberOfImages" style="display: inline;">{{numberOfImages}}</label></a></li>
                     <li>Number of annotations : <a href="#tabs-annotations-{{id}}"><label id="projectInfoNumberOfAnnotations" style="display: inline;">{{numberOfAnnotations}}</label></a></li>
-                    <br>
-                    <!--<li><label id="projectInfoNumberOfSlides" style="display: inline;">{{numberOfSlides}}</label> slides </li>-->
-
-
-                    <!--<br>
-
-               <br>
-               <li>Created <label id="projectInfoCreated" style="display: inline;">{{created}}</label> </li>
-               <li>Updated <label id="projectInfoUpdated" style="display: inline;">{{updated}}</label> </li>-->
                 </ul>
             </div>
         </div>
@@ -33,27 +22,22 @@
                 </div>
             </div>
         </div>
-
     </div>
     <div class="widgets">
-
-
         <div id="projectcolmunChartPanel" style="margin:10px;">
-            <div>Stats</div>
+            <div>Annotations (Column Chart)</div>
             <div>
-                <div id="projectColumnChart"></div>
+                <div id="projectColumnChart">Empty</div>
             </div>
         </div>
-
     </div>
     <div class="widgets">
         <div id="projectPieChartPanel" style="margin:10px;">
-            <div>Stats</div>
+            <div>Annotations (Pie Chart)</div>
             <div>
-                <div id="projectPieChart"></div>
+                <div id="projectPieChart">Empty</div>
             </div>
         </div>
-
     </div>
 </div>
 <div id="tabs-images-{{id}}" style="overflow : auto; height: 100%;">
@@ -62,32 +46,25 @@
     <div id="projectImageThumb" style="display:inline-block;width:95%;">    </div>
     <div id="projectImageListing" style="display:inline-block;width:95%;">    </div>-->
 
-    <div id="tabs-images-listing-{{id}}">
+    <div id="tabs-images-listing-{{id}}" style="display:none;">
         <ul>
             <li><a href="#tabs-projectImageThumb{{id}}">Image thumb</a></li>
             <li><a href="#tabs-projectImageListing{{id}}">Image listing</a></li>
         </ul>
         <div id="tabs-projectImageThumb{{id}}">
-            <div id="projectImageThumb{{id}}" style="display:inline-block;width:95%;">    </div>	</div>
+            <div id="projectImageThumb{{id}}" style="display:inline-block;width:95%;"></div>
         <div id="tabs-projectImageListing{{id}}">
-            <div id="projectImageListing{{id}}" style="display:inline-block;width:95%;">    </div>	</div>
+            <div id="projectImageListing{{id}}" style="display:inline-block;width:95%;"></div></div>
     </div>
 
 
 
 </div>
-<div id="tabs-annotations-{{id}}" style="overflow : auto; height: 100%;">
-    <div id="projectAnnotationsPanel">
-        <div id="tabsannotation" style="display:inline-block;">
-            <ul id="ultabsannotation">
-                <!-- add a -->
-            </ul>
-            <!-- add div -->
-            <div id="listtabannotation"></div>
-        </div>
-
-        <div id="projectAnnotationList">
-
-        </div>
+<div id="tabs-annotations-{{id}}" >
+    <div id="tabsannotation" >
+        <ul id="ultabsannotation"></ul>
+        <div id="listtabannotation"></div>
     </div>
-    <!--projectdashboardviewtpl-->
+    <div id="projectAnnotationList">
+    </div>
+</div>

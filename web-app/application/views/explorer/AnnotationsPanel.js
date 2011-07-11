@@ -163,7 +163,7 @@ var AnnotationsPanel = Backbone.View.extend({
                     width : "20px"
                  }, "fast");
 
-             setTimeout(function(){el.find("div.panel_content").hide();el.css("bottom", "100px");}, 1000);
+             setTimeout(function(){el.find("div.panel_content").hide();el.css("bottom", "70px");}, 1000);
 
              return false;
 

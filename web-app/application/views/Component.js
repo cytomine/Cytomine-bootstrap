@@ -1,6 +1,7 @@
 var Component = Backbone.View.extend({
        tagName: "div",
        views: {},
+       firstTimeActivated : true,
        /* Component constructor */
        initialize: function (options) {
           this.divId = options.divId;
@@ -53,6 +54,11 @@ var Component = Backbone.View.extend({
         * Show the DOM element and disable the button associated to the component
         **/
        activate: function () {
+          if (this.firstTimeActivated) {
+             //Init initial page
+             window.app.controllers.project.project();
+             this.firstTimeActivated = false;
+          }
           $("#" + this.divId).show();
           $("#" + this.buttonAttr.elButton).addClass("ui-state-disabled");
        },

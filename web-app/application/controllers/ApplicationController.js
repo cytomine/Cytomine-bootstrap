@@ -64,6 +64,7 @@ var ApplicationController = Backbone.Controller.extend({
           window.app.controllers.upload       = new UploadController();
           window.app.controllers.command      = new CommandController();
           window.app.controllers.annotation   = new AnnotationController();
+          //Start the history
           Backbone.history.start();
        },
        initialize : function () {
