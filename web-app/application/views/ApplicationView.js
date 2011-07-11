@@ -148,7 +148,7 @@ var ApplicationView = Backbone.View.extend({
                            buttonWrapper : "#menu",
                            icon : "ui-icon-power",
                            route : "#",
-                           click : function() {  window.app.controllers.auth.logout();}
+                           click : function() { window.app.controllers.auth.logout();return false; }
                         },
                         divId : "logout"
                      });

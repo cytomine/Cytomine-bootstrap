@@ -91,11 +91,11 @@ var ProjectDashboardView = Backbone.View.extend({
              new TermCollection({idOntology:idOntology}).fetch({
                     success : function (collection, response) {
                        //add "All annotation from all term" tab
-                       self.addTermToTab(termTabTpl, termTabContentTpl, { id : "all", name : "All"});
+                       self.addTermToTab(termTabTpl, termTabContentTpl, { project : self.model.id, id : "all", name : "All"});
 
                        collection.each(function(term) {
                           //add x term tab
-                          self.addTermToTab(termTabTpl, termTabContentTpl, { id : term.get("id"), name : term.get("name")});
+                          self.addTermToTab(termTabTpl, termTabContentTpl, { project : self.model.id, id : term.get("id"), name : term.get("name")});
                        });
 
                        if(self.tabsAnnotation==null)
@@ -103,7 +103,7 @@ var ProjectDashboardView = Backbone.View.extend({
                           self.tabsAnnotation = $("#tabsannotation").tabs({
                                  select: function(event, ui) {
                                     var tabsId = ui.panel.id.split('-');
-                                    var id = tabsId[1];
+                                    var id = tabsId[2];
                                     if(id=="all") id = 0;
                                     self.selectedTermTab = id;
                                     self.refreshAnnotations(id);
@@ -145,11 +145,11 @@ var ProjectDashboardView = Backbone.View.extend({
           var self = this;
           if(term==0) {
              //refresh all annotation
-             self.printAnnotationThumb(term,"#tabsterm-all");
+             self.printAnnotationThumb(term,"#tabsterm-"+self.model.id+"-all");
 
           } else {
              //refresh  annotation for the term
-             self.printAnnotationThumb(term,"#tabsterm-"+term);
+             self.printAnnotationThumb(term,"#tabsterm-"+self.model.id+"-"+term);
           }
 
        },

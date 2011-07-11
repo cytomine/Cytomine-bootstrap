@@ -231,6 +231,11 @@ var BrowseImageView = Backbone.View.extend({
                 numZoomLevels:  metadata.nbZoom+1,
                 units: 'pixels',
                 controls: [
+                   new OpenLayers.Control.TouchNavigation({
+                          dragPanOptions: {
+                             enableKinetic: true
+                          }
+                       }),
                    //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),
                    new OpenLayers.Control.Navigation(),
                    new OpenLayers.Control.PanZoomBar(),
@@ -425,11 +430,11 @@ var BrowseImageView = Backbone.View.extend({
              self.getUserLayer().toggleControl("select");
              self.getUserLayer().disableHightlight();
           });
-          toolbar.find('input[id=freehand' + this.model.get('id') + ']').click(function () {
-             self.getUserLayer().controls.select.unselectAll();
-             self.getUserLayer().toggleControl("freehand");
-             self.getUserLayer().disableHightlight();
-          });
+          /*toolbar.find('input[id=freehand' + this.model.get('id') + ']').click(function () {
+           self.getUserLayer().controls.select.unselectAll();
+           self.getUserLayer().toggleControl("freehand");
+           self.getUserLayer().disableHightlight();
+           });*/
           toolbar.find('input[id=regular4' + this.model.get('id') + ']').click(function () {
              self.getUserLayer().controls.select.unselectAll();
              self.getUserLayer().setSides(4);
