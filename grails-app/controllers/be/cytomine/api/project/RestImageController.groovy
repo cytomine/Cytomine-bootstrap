@@ -56,18 +56,23 @@ class RestImageController extends RestController{
         String sortedRow = params.sidx
         String sord = params.sord
         log.info "page="+page + " limit="+limit+ " sortedRow="+sortedRow  +" sord="+sord
-
-        int pg = Integer.parseInt(page)
-        int max = Integer.parseInt(limit)
-        int offset = pg * max
-
         def data = [:]
-        PagedResultList results = user.abstractimages(max,offset,sortedRow,sord)
-        data.page = pg+""
-        data.records = results.totalCount
-        data.total =  Math.ceil(results.totalCount/max)+"" //[100/10 => 10 page] [5/15
+        if(params.page || params.rows || params.sidx || params.sord) {
+          int pg = Integer.parseInt(page)
+          int max = Integer.parseInt(limit)
+          int offset = pg * max
 
-        data.rows = results.list
+
+          PagedResultList results = user.abstractimages(max,offset,sortedRow,sord)
+          data.page = pg+""
+          data.records = results.totalCount
+          data.total =  Math.ceil(results.totalCount/max)+"" //[100/10 => 10 page] [5/15
+
+          data.rows = results.list
+        }
+        else {
+           data = user?.abstractimages()
+        }
 
         if(user!=null) responseSuccess(data)
         else responseNotFound("User",params.id)

@@ -74,30 +74,7 @@ class User extends SecUser {
 
     }
 
-    /*def abstractimages(int max, int first, String col, String order) {
-        StopWatch stopWatch = new LoggingStopWatch();
-        def abstractImages = []
-        if (userGroup.size() > 0) {
-            abstractImages = AbstractImageGroup.createCriteria().list {
-                order("filename", "desc")
-                maxResults(max)
-
-                firstResult(first)
-               // order(col, order)
-                inList("group.id", userGroup.collect{it.group.id})
-                projections {
-                    groupProperty('abstractimage')
-
-                }
-
-            }
-        }
-        stopWatch.stop('abstractimages request');
-        abstractImages
-
-    }   */
-
-    def abstractimages(int max, int first, String col, String order) {
+    def abstractimage(int max, int first, String col, String order) {
 
         AbstractImage.createCriteria().list(offset:first, max:max ,sort:col, order:order){
             inList("id", AbstractImageGroup.createCriteria().list {
@@ -114,38 +91,8 @@ class User extends SecUser {
         }
 
     }
-   /* def abstractimages(int max, int first, String col, String order) {
-        StopWatch stopWatch = new LoggingStopWatch();
 
-        def abstractImages = []
 
-        if (userGroup.size() > 0) {
-           def imagesgroups = AbstractImage.fin
-           imagesgroups.each { imagegroup ->
-               abstractImages << imagegroup.abstractimage
-           }
-        }
-        stopWatch.stop('abstractimages request');
-        abstractImages.unique()
-
-    }*/
-
-    def abstractimages2(int max, int first, String col, String order) {
-        StopWatch stopWatch = new LoggingStopWatch();
-        def abstractImages = []
-        if (userGroup.size() > 0) {
-            abstractImages = AbstractImageGroup.createCriteria(offset:first, max:max ).list {
-                //order(col, order)
-                inList("group.id", userGroup.collect{it.group.id})
-                projections {
-                    groupProperty('abstractimage')
-                }
-            }
-        }
-        stopWatch.stop('abstractimages request');
-        abstractImages
-
-    }
 
     def slides() {
         AbstractImage.createCriteria().list{
