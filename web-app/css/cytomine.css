@@ -181,11 +181,12 @@ h3 { font-size:13px; }
 }
 
 .thumb{
-    float : left;
+
     background:#EEE;
     border:#CCC solid 1px;
     padding:3px;
     height: 160px;
+    display: inline-block;
     width: 160px;
 }
 
@@ -193,7 +194,8 @@ h3 { font-size:13px; }
 .thumb-wrap{
     text-align: center;
     vertical-align: middle;
-    float: left;
+
+    display: inline-block;
     margin: 4px;
     margin-right: 0;
     padding: 5px;

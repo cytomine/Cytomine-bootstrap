@@ -79,45 +79,80 @@ var ProjectDashboardView = Backbone.View.extend({
         * Init annotation tabs
         */
        initTabs : function(){
+          var self = this;
+          /* Init dashboard */
           $("#projectcolmunChartPanel").panel({collapsible: true});
           $("#projectPieChartPanel").panel({collapsible: true});
           $("#projectInfoPanel").panel({collapsible: true});
           $("#projectLastCommandPanel").panel({collapsible: true});
+          self.initWidgets();
 
-          var self = this;
-          var idOntology = self.model.get('ontology');
+          /* Init Annotations */
           require(["text!application/templates/dashboard/TermTab.tpl.html", "text!application/templates/dashboard/TermTabContent.tpl.html"], function(termTabTpl, termTabContentTpl) {
+             new OntologyModel({id:self.model.get('ontology')}).fetch({
+                    success : function(model, response) {
+                       $(self.el).find('.tree').dynatree({
+                              checkbox: true,
+                              selectMode: 3,
+                              expand : true,
+                              onExpand : function() {},
+                              children: model.toJSON(),
+                              onSelect: function(select, node) {
+                                 //if(!self.activeEvent) return;
 
-             new TermCollection({idOntology:idOntology}).fetch({
-                    success : function (collection, response) {
-                       //add "All annotation from all term" tab
-                       self.addTermToTab(termTabTpl, termTabContentTpl, { project : self.model.id, id : "all", name : "All"});
+                                 if (node.isSelected()) {
 
-                       collection.each(function(term) {
-                          //add x term tab
-                          self.addTermToTab(termTabTpl, termTabContentTpl, { project : self.model.id, id : term.get("id"), name : term.get("name")});
+                                    self.refreshAnnotations(node.data.key);
+                                    $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).show();
+                                 }
+                                 else {
+                                    $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).hide();
+
+
+                                 }
+
+                              },
+                              onDblClick: function(node, event) {
+                                 //node.toggleSelect();
+                              },
+
+                              // The following options are only required, if we have more than one tree on one page:
+                              initId: "treeData-annotations-"+self.model.get('ontology'),
+                              cookieId: "dynatree-Cb-annotations-"+self.model.get('ontology'),
+                              idPrefix: "dynatree-Cb-annotations-"+self.model.get('ontology')+"-"
+                           });
+                       //expand all nodes
+                       $(self.el).find('.tree').dynatree("getRoot").visit(function(node){
+                          node.expand(true);
+                       });
+                       $("#ontology-annotations-panel-"+self.model.id).panel();
+                       $(self.el).find("#hideAllAnnotations").button();
+                       $(self.el).find("#hideAllAnnotations").click(function(){
+                          self.selectAnnotations(false);
+                       });
+                       $(self.el).find("#showAllAnnotations").button();
+                       $(self.el).find("#showAllAnnotations").click(function(){
+                          self.selectAnnotations(true);
+                       });
+                       $(self.el).find("#refreshAnnotations").button();
+                       $(self.el).find("#refreshAnnotations").click(function(){
+                          self.refreshSelectedTerms();
                        });
 
-                       if(self.tabsAnnotation==null)
 
-                          self.tabsAnnotation = $("#tabsannotation").tabs({
-                                 select: function(event, ui) {
-                                    var tabsId = ui.panel.id.split('-');
-                                    var id = tabsId[2];
-                                    if(id=="all") id = 0;
-                                    self.selectedTermTab = id;
-                                    self.refreshAnnotations(id);
-                                 },
-                                 show: function(event, ui){
-                                    $("#"+ui.panel.id).attr('style', 'height:100%;overflow:auto;');
-                                    return true;
-                                 }
-                              });
-                       /*self.fetchAnnotations();
-                        self.fetchImages();
-                        self.fetchStats();
-                        self.fetchProjectInfo();*/
-                       self.initWidgets();
+                    }
+                 });
+             new TermCollection({idOntology:self.model.get('ontology')}).fetch({
+                    success : function (collection, response) {
+                       collection.each(function(term) {
+                          //add x term tab
+                          $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : term.get("id"), name : term.get("name")}));
+                          $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).panel();
+                          $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).hide();
+
+                       });
+
+
                     }});
           });
        },
@@ -127,30 +162,39 @@ var ProjectDashboardView = Backbone.View.extend({
         * @param name term name
         */
        addTermToTab : function(termTabTpl, termTabContentTpl, data) {
-          $("#ultabsannotation").append(_.template(termTabTpl, data));
+          //$("#ultabsannotation").append(_.template(termTabTpl, data));
           $("#listtabannotation").append(_.template(termTabContentTpl, data));
+
        },
-       /**
-        * Load annotations on annotation tabs
-        * -'All' tab: all annotation for this project
-        * -'X' tab: all annotation for this project and the term X
-        */
-       fetchAnnotations : function () {
+       selectAnnotations : function (selected) {
+          var self = this;
+          new TermCollection({idOntology:self.model.get('ontology')}).fetch({
+                 success : function (collection, response) {
+                    collection.each(function(term) {
+                       $(self.el).find('.tree').dynatree("getTree").selectKey(term.get("id"), selected);
+                    });
+                 }
+              });
+       },
+       refreshSelectedTerms : function () {
+          var self = this;
+          var tree = $(this.el).find('.tree').dynatree("getRoot");
+          tree.visit(function(node){
+             if (!node.isSelected()) return;
+
+             self.refreshAnnotations(node.data.key);
+          });
        },
        /**
         * Refresh all annotation dor the given term
         * @param term annotation term to be refresh (all = 0)
         */
        refreshAnnotations : function(term) {
+          this.printAnnotationThumb(term,"#tabsterm-"+this.model.id+"-"+term);
+       },
+       clearAnnotations : function (term) {
           var self = this;
-          if(term==0) {
-             //refresh all annotation
-             self.printAnnotationThumb(term,"#tabsterm-"+self.model.id+"-all");
-
-          } else {
-             //refresh  annotation for the term
-             self.printAnnotationThumb(term,"#tabsterm-"+self.model.id+"-"+term);
-          }
+          $("#tabsterm-"+self.model.id+"-"+term).empty();
 
        },
        /**
@@ -164,33 +208,24 @@ var ProjectDashboardView = Backbone.View.extend({
           var idTerm = 0;
           if(term==0) {idTerm = undefined;}
           else idTerm = term
-          if(self.annotationsViews[term]==null) {
-             console.log("Create annotation view for term " + term);
-             new AnnotationCollection({project:self.model.id,term:idTerm}).fetch({
-                    success : function (collection, response) {
-                       console.log("AnnotationCollection form term " + term + " : " +collection.length);
-                       $($elem).empty();
 
-                       self.annotationsViews[term] = new AnnotationView({
-                              page : undefined,
-                              model : collection,
-                              el:$elem,
-                              container : window.app.view.components.warehouse
-                           }).render();
-                       console.log("Looking for annotationsViews==null " + term);
-                       self.annotationsViews[term].refresh(collection);
+          new AnnotationCollection({project:self.model.id,term:idTerm}).fetch({
+                 success : function (collection, response) {
+                    console.log("AnnotationCollection form term " + term + " : " +collection.length);
+                    if (self.annotationsViews[idTerm] != null) { //only refresh
+                       self.annotationsViews[idTerm].refresh(collection);
+                       return;
                     }
-                 });
-          }
-          else {
-             console.log("refresh annotation view for term " + term);
-             new AnnotationCollection({project:self.model.id,term:idTerm}).fetch({
-                    success : function (collection, response) {
-                       console.log("AnnotationCollection form term " + term + " : " +collection.length);
-                       self.annotationsViews[term].refresh(collection);
-                    }
-                 });
-          }
+                    self.annotationsViews[idTerm] = new AnnotationView({
+                           page : undefined,
+                           model : collection,
+                           el:$($elem),
+                           container : window.app.view.components.warehouse
+                        }).render();
+                    console.log("Looking for annotationsViews==null " + term);
+                    //self.annotationsViews[term].refresh(collection);
+                 }
+              });
        },
        /**
         * Get and Print ALL images (use for the first time)

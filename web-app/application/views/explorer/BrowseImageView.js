@@ -92,11 +92,9 @@ var BrowseImageView = Backbone.View.extend({
           }
        },
        getFeature : function (idAnnotation) {
-          console.log("USER LAYER : >>>" + this.userLayer);
           return this.userLayer.getFeature(idAnnotation);
        },
        removeFeature : function (idAnnotation) {
-          console.log("USER LAYER : >>>" + this.userLayer);
           return this.userLayer.removeFeature(idAnnotation);
        },
        /**

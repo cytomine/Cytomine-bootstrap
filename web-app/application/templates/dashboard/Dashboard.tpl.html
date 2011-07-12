@@ -53,18 +53,22 @@
         </ul>
         <div id="tabs-projectImageThumb{{id}}">
             <div id="projectImageThumb{{id}}" style="display:inline-block;width:95%;"></div>
-        <div id="tabs-projectImageListing{{id}}">
-            <div id="projectImageListing{{id}}" style="display:inline-block;width:95%;"></div></div>
+            <div id="tabs-projectImageListing{{id}}">
+                <div id="projectImageListing{{id}}" style="display:inline-block;width:95%;"></div></div>
+        </div>
     </div>
-
-
-
 </div>
-<div id="tabs-annotations-{{id}}" >
-    <div id="tabsannotation" >
-        <ul id="ultabsannotation"></ul>
-        <div id="listtabannotation"></div>
+<div id="tabs-annotations-{{id}}" style="overflow : auto;">
+    <div style="margin-top:5px;">
+        <button id="refreshAnnotations" type="button">Refresh</button>
+        <button id="showAllAnnotations" type="button">Show all</button>
+        <button id="hideAllAnnotations" type="button">Reset</button>
     </div>
-    <div id="projectAnnotationList">
+    <div id="ontology-annotations-panel-{{id}}" style="width: 20%;margin-top:10px;margin-left : 5px;float: left;display: inline-block;">
+        <div>Ontology</div>
+        <div>
+            <div class="tree"></div>
+        </div>
     </div>
+    <div id="listtabannotation" style="float: left;display: inline-block;margin-top:10px;margin-left : 10px;width: 78%;"></div>
 </div>

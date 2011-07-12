@@ -42,7 +42,7 @@ var ExplorerTabs = Backbone.View.extend({
                        console.log("add panel :" + ui.panel.id);
                        tabs.tabs('select', '#' + ui.panel.id);
                     }
-                    $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;');
+                    $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;;overflow:auto;');
                  },
                  show: function(event, ui){
                     $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;overflow:auto;');
