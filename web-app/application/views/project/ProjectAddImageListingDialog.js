@@ -1,6 +1,5 @@
 var ProjectAddImageListingDialog = Backbone.View.extend({
     imagesProject : null, //collection containing the images contained in the project
-    slides : null,
     searchPanel : null,
     initialize: function(options) {
         var self = this;
@@ -8,7 +7,6 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         this.projectPanel = options.projectPanel;
         this.imagesProject = options.imagesProject;
         this.abstractImageProject = new Array();
-        this.slides = options.slides;
         this.el = "#tabsProjectaddimagedialog"+self.model.id+"-2" ;
         this.listmanageproject = "listmanageproject"+this.model.id;
         this.pagemanageproject = "pagemanageproject"+this.model.id;
@@ -22,7 +20,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
     },
     render : function() {
         var self = this;
-        self.fillAbstractImageProjectCollection(self.imagesProject);
+        //self.fillAbstractImageProjectCollection(self.imagesProject);
         require([
             "text!application/templates/project/ProjectAddImageListingDialog.tpl.html"
         ],
@@ -92,7 +90,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         $("#searchImagetPanelup"+self.model.id+"-"+self.tab).panel({
             collapseSpeed:100
         });
-
+         $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val("");
 
 
         $("#imagesallbutton"+self.model.id+"-"+self.tab).button({
@@ -119,6 +117,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
         self.renderImageListProject();
         self.renderImageListAll();
+
     },
 
     flAuto : true,
@@ -169,6 +168,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
                 //print data from all image table
                 //self.searchImages();
+                console.log("reloadgrid");
                 $("#"+self.listmanageall).trigger("reloadGrid");
             }
         });
@@ -186,7 +186,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         });
     },
     loadDataImageListProject : function(collection) {
-
+        console.log("loadDataImageListProject");
         var self = this;
         var data = new Array();
         var i = 0;
@@ -208,6 +208,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             };
             i++;
         });
+        console.log("addRow");
         for(var j=0;j<data.length;j++) {
             $("#"+self.listmanageproject).jqGrid('addRowData',data[j].id,data[j]);
         }
@@ -254,7 +255,6 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         $("#"+self.listmanageproject).jqGrid('navGrid','#'+self.listmanageproject,{edit:false,add:false,del:false});
         $("#"+self.listmanageproject).jqGrid('hideCol',"id");
         $("#"+self.listmanageproject).jqGrid('hideCol',"base");
-        self.loadDataImageListProject(self.imagesProject);
     },
     /**
      * Check if abstract image id is in project

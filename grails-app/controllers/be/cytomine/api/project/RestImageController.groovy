@@ -55,6 +55,7 @@ class RestImageController extends RestController{
         String limit = params.rows
         String sortedRow = params.sidx
         String sord = params.sord
+
         log.info "page="+page + " limit="+limit+ " sortedRow="+sortedRow  +" sord="+sord
         def data = [:]
         if(params.page || params.rows || params.sidx || params.sord) {
@@ -62,8 +63,13 @@ class RestImageController extends RestController{
           int max = Integer.parseInt(limit)
           int offset = pg * max
 
+          String filenameSearch = params.filename ?: ""
+          String dateAddedStart = params.createdStart
+          String dateAddedStop = params.createdStop
 
-          PagedResultList results = user.abstractimages(max,offset,sortedRow,sord)
+          log.info "filenameSearch="+filenameSearch + " dateAddedStart="+dateAddedStart+ " dateAddedStop="+dateAddedStop
+
+          PagedResultList results = user.abstractimage3(max,offset,sortedRow,sord,filenameSearch,dateAddedStart,dateAddedStop)
           data.page = pg+""
           data.records = results.totalCount
           data.total =  Math.ceil(results.totalCount/max)+"" //[100/10 => 10 page] [5/15
