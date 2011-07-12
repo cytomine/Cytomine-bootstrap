@@ -56,6 +56,9 @@ class User extends SecUser {
 
     def projects() {
         def c = ProjectGroup.createCriteria()
+      println this.username
+      println this.userGroup?.size()
+        if(userGroup==null || userGroup.size()==0) return []
         def projects = c {
             inList("group.id", userGroup.collect {it.group.id})
             projections {
