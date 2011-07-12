@@ -74,28 +74,8 @@ class User extends SecUser {
 
   }
 
-  def abstractimage(int max, int first, String col, String order, String filename, String dateAddedStart, String dateAddedStop) {
 
-    AbstractImage.createCriteria().list(offset:first, max:max ,sort:col, order:order){
-      inList("id", AbstractImageGroup.createCriteria().list {
-        inList("group.id", userGroup.collect{it.group.id})
-        projections {
-          groupProperty('abstractimage.id')
-        }
-      })
-      projections {
-        groupProperty('abstractimage')
-        and {
-          ilike("filename","%"+filename+"%")
-        }
-      }
-
-    }
-
-  }
-
-
-  def abstractimage3(int max, int first, String col, String order, String filename, String dateAddedStart, String dateAddedStop) {
+  def abstractimage(int max, int first, String col, String order, String filename, Date dateAddedStart, Date dateAddedStop) {
 
     AbstractImage.createCriteria().list(offset:first, max:max ,sort:col, order:order){
       inList("id", AbstractImageGroup.createCriteria().list {
@@ -108,12 +88,28 @@ class User extends SecUser {
         groupProperty('abstractimage')
       }
       ilike("filename","%"+filename+"%")
+      between('created',dateAddedStart, dateAddedStop)
+
     }
 
   }
 
   def slides() {
     AbstractImage.createCriteria().list{
+      inList("id", AbstractImageGroup.createCriteria().list {
+        inList("group.id", userGroup.collect{it.group.id})
+        projections {
+          groupProperty('abstractimage.id')
+        }
+      })
+      projections {
+        groupProperty('slide')
+      }
+    }
+  }
+
+  def slides(int max, int first, String col, String order) {
+    AbstractImage.createCriteria().list(offset:first, max:max ,sort:col, order:order){
       inList("id", AbstractImageGroup.createCriteria().list {
         inList("group.id", userGroup.collect{it.group.id})
         projections {

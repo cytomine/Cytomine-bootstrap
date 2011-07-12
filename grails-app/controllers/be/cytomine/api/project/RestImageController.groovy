@@ -44,6 +44,7 @@ class RestImageController extends RestController{
 
       def listByUser = {
         log.info "List with id user:"+params.id
+        def data = [:]
         User user=null
         if(params.id!=null) {
           user = User.read(params.id)
@@ -57,23 +58,24 @@ class RestImageController extends RestController{
         String sord = params.sord
 
         log.info "page="+page + " limit="+limit+ " sortedRow="+sortedRow  +" sord="+sord
-        def data = [:]
+
+
+
         if(params.page || params.rows || params.sidx || params.sord) {
-          int pg = Integer.parseInt(page)
+          int pg = Integer.parseInt(page)-1
           int max = Integer.parseInt(limit)
           int offset = pg * max
 
           String filenameSearch = params.filename ?: ""
-          String dateAddedStart = params.createdStart
-          String dateAddedStop = params.createdStop
+          Date dateAddedStart = params.createdstart ? new Date(Long.parseLong(params.createdstart)) : new Date(0)
+          Date dateAddedStop = params.createdstop ? new Date(Long.parseLong(params.createdstop)) : new Date(8099,11,31) //bad code...another way to keep the max date?
 
           log.info "filenameSearch="+filenameSearch + " dateAddedStart="+dateAddedStart+ " dateAddedStop="+dateAddedStop
 
-          PagedResultList results = user.abstractimage3(max,offset,sortedRow,sord,filenameSearch,dateAddedStart,dateAddedStop)
+          PagedResultList results = user.abstractimage(max,offset,sortedRow,sord,filenameSearch,dateAddedStart,dateAddedStop)
           data.page = pg+""
           data.records = results.totalCount
           data.total =  Math.ceil(results.totalCount/max)+"" //[100/10 => 10 page] [5/15
-
           data.rows = results.list
         }
         else {

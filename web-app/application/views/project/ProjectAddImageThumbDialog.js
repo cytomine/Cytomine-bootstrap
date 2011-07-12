@@ -2,7 +2,6 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
     imageListing : null,
     imageThumb : null,
     slides : null,
-    images : null,
     imagesProject : null,
     imagesinstanceProject : null,
     checklistChecked : ".checklist input:checked",
@@ -46,9 +45,8 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         this.imagesinstanceProject = options.imagesinstanceProject;
         this.el = "#tabsProjectaddimagedialog"+this.model.id+"-1" ;
 
-        this.slides = options.slides,
-                this.images = options.images,
-                _.bindAll(this, 'render');
+        this.slides = options.slides;
+        _.bindAll(this, 'render');
         _.bindAll(this, 'nextPage');
         _.bindAll(this, 'previousPage');
     },
@@ -66,7 +64,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         return this;
     },
     refresh : function() {
-       this.renderImageList();
+        this.renderImageList();
     },
 
 
@@ -74,15 +72,6 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         var self = this;
         var view = _.template(tpl, {id:this.model.get('id'),name:this.model.get('name')});
         $(self.el).append(view);
-
-        //TODO: INIT searchPanel
-        self.searchPanel = new ProjectAddImageSearchPanel({
-            model : self.model,
-            images : self.images,
-            el:$("#tdsearchpanelthumb"+self.model.id),
-            container : self,
-            tab : 1
-        }).render();
 
         $(self.el).find("a.next").bind("click", self.nextPage);
         $(self.el).find("a.next").button();
@@ -97,21 +86,13 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
 
     },
 
-    searchImages : function() {
-        var self = this;
-        var images = self.searchPanel.search(self.images);
-
-        //clear
-        console.log("clear");
-
-        //reload
-        console.log("reload");
-    },
-
     renderImageList: function() {
         var self = this;
-        self.renderImageListLayout();
-
+        window.app.models.slides.fetch({
+            success : function (collection, response) {
+                self.renderImageListLayout();
+            }
+        });
     },
     renderImage : function(projectImages, image, domTarget) {
         var self = this;
@@ -171,19 +152,20 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
                 self.unselectAllImages(slide.get("id"));
             });
             el.find("a[class=selectAll]").button({text: false,
-                 icons: {
+                icons: {
                     secondary: "ui-icon-circle-plus"
-                 }});
+                }});
             el.find("a[class=unselectAll]").button({text: false,
-                 icons: {
+                icons: {
                     secondary: "ui-icon-circle-minus"
-                 }});
+                }});
             var images = slide.get("images");
             var domTarget = ".projectImageList" + slide.get("id");
-            _.each(images, function (imageID){
-                self.renderImage(self.imagesProject, window.app.models.images.get(imageID), domTarget);
+            _.each(images, function (image){
+                var imagemodel = new ImageModel(image);
+                self.renderImage(self.imagesProject, imagemodel, domTarget);
             });
-             $("#projectImageList"+slide.get("id")).carousel();
+            $("#projectImageList"+slide.get("id")).carousel();
             $(domTarget).append('<div style="clear:both;"></div>');
 
         });

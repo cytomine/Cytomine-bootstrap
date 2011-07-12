@@ -119,35 +119,42 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         self.renderImageListAll();
 
     },
-
-    flAuto : true,
     doSearch : function(){
-        console.log("doSearch");
-        if(!this.flAuto)
-            return;
-    //	var elem = ev.target||ev.srcElement;
+        var self = this;
+        console.log("doSearch: "+$.data(this, 'timer'));
 
-        if(this.timeoutHnd) {
-            console.log("clearTimeout");
-           clearTimeout(this.timeoutHnd)
+        if($.data(this, 'timer')!=null) {
+            console.log("clearTimeout:"+$.data(this, 'timer'));
+           clearTimeout($.data(this, 'timer'));
         }
         console.log("setTimeout");
-        this.timeoutHnd = setTimeout(this.searchImages(this),5000);
+          var wait = setTimeout(function(){
+                 self.searchImages()}
+              ,500);
+          $(this).data('timer', wait);
+        //setTimeout("alert('foo');",5000);
         //this.searchImages();
+
     },
 
     /**
      * Look for search panel info and print result on grid
      */
-    searchImages : function(self) {
-        var self = self;
+    searchImages : function() {
+        var self = this;
         console.log("searchImages");
         //var images = self.searchPanel.search(self.images);
         var searchText = $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val();
         var dateStart =  $("#datestartsearchup"+self.model.id+"-"+self.tab).datepicker("getDate");
         var dateEnd =  $("#dateendsearchup"+self.model.id+"-"+self.tab).datepicker("getDate");
+
+        var dateTimestampStart="";
+        if(dateStart!=null) dateTimestampStart=dateStart.getTime();
+        var dateTimestampEnd="";
+        if(dateEnd!=null) dateTimestampEnd=dateEnd.getTime();
+
         console.log("searchText="+searchText);
-        $("#"+self.listmanageall).jqGrid('setGridParam',{url:"api/currentuser/image.json?filename="+searchText+"&createdstart="+dateStart+"&createdstop="+dateEnd,page:1}).trigger("reloadGrid");
+        $("#"+self.listmanageall).jqGrid('setGridParam',{url:"api/currentuser/image.json?filename="+searchText+"&createdstart="+dateTimestampStart+"&createdstop="+dateTimestampEnd,page:1}).trigger("reloadGrid");
 
 
     },

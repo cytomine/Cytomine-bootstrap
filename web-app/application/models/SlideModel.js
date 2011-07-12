@@ -45,8 +45,18 @@ var ProjectSlideCollection = Backbone.Collection.extend({
 var SlideCollection = Backbone.Collection.extend({
     model: SlideModel,
     CLASS_NAME: "be.cytomine.image.Slide",
-    url: 'api/currentuser/slide.json',
-    initialize: function () {
-        // something
+	url : function() {
+        if (this.page == null)
+		    return 'api/currentuser/slide.json';
+        else
+            return 'api/currentuser/slide.json?page='+this.page+'&limit=';
+
+        //Request URL:http://localhost:8080/cytomine-web/api/currentuser/image.json?_search=false&nd=1310463777413&rows=10&page=1&sidx=filename&sord=asc
+	},
+    initialize: function (options) {
+        this.page = options.page;
+        this.limit = options.limit;
+        this.sidx = options.sidx;
+        this.sord = options.sord;
     }
 });

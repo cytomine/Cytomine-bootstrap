@@ -32,14 +32,22 @@ class Slide extends SequenceDomain {
             returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['name'] = it.name
-            returnArray['images'] = it.getImages()
+            def images =[]
+
+            it.getImages().each {img ->
+               def imageinfo = [:]
+               imageinfo.id = img.id
+               imageinfo.filename = img.filename
+               imageinfo.thumb = img.getThumbURL()
+               imageinfo.info = it.name
+               images << imageinfo
+            }
+            returnArray['images'] = images
             return returnArray
         }
     }
 
     def getImages() {
-        AbstractImage.findAllBySlide(this).collect({
-            it.id
-        });
+        AbstractImage.findAllBySlide(this);
     }
 }

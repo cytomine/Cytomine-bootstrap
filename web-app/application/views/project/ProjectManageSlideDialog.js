@@ -56,16 +56,15 @@ var ProjectManageSlideDialog = Backbone.View.extend({
             $("#addimagediv").hide();
         });
 
-        /*console.log("ProjectAddImageThumbDialog");
+        console.log("ProjectAddImageThumbDialog");
         self.imageThumb = new ProjectAddImageThumbDialog({
             model : self.model,
             projectsPanel : self,
             imagesProject : self.imagesProject,
             slides : window.app.models.slides,
-            images : window.app.models.images,
             el : "#tabsProjectaddimagedialog"+self.model.id+"-1"
         }).render();
-        console.log("render() 1 ok");*/
+        console.log("render() 1 ok");
 
         console.log("ProjectAddImageListingDialog");
         self.imageListing = new ProjectAddImageListingDialog({
