@@ -16,15 +16,15 @@ class Project extends SequenceDomain {
 
     String name
     Ontology ontology
-    Long countAnnotations
-    Long countImages
+    long countAnnotations
+    long countImages
 
     static hasMany = [projectGroup:ProjectGroup]
 
     static constraints = {
         name ( maxSize : 100, unique : true, blank : false)
-        countAnnotations(nullable:true)
-        countImages(nullable:true)
+        //countAnnotations(nullable:true)
+        //countImages(nullable:true)
     }
 
     String toString() {
@@ -36,7 +36,7 @@ class Project extends SequenceDomain {
     }
 
     def countImageInstance() {
-      countImages
+      countImages//may return null
         //ImageInstance.countByProject(this)
     }
 
@@ -54,7 +54,7 @@ class Project extends SequenceDomain {
     }
 
     def countAnnotations() {
-      countAnnotations
+      countAnnotations  //may return null
         //def images = this.imagesinstance()
         //images.size() > 0 ? Annotation.countByImageInList(images) : 0
     }

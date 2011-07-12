@@ -73,7 +73,7 @@ class RestImageController extends RestController{
           log.info "filenameSearch="+filenameSearch + " dateAddedStart="+dateAddedStart+ " dateAddedStop="+dateAddedStop
 
           PagedResultList results = user.abstractimage(max,offset,sortedRow,sord,filenameSearch,dateAddedStart,dateAddedStop)
-          data.page = pg+""
+          data.page = page+""
           data.records = results.totalCount
           data.total =  Math.ceil(results.totalCount/max)+"" //[100/10 => 10 page] [5/15
           data.rows = results.list

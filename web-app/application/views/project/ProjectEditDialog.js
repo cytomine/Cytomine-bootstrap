@@ -41,6 +41,12 @@ var EditProjectDialog = Backbone.View.extend({
             var choice = _.template(usersChoicesTpl, {id:user.id,username:user.get("username")});
             $("#projectedituser").append(choice);
         });
+        //check current user
+        $("#projectedituser").find('#users'+window.app.status.user.id).attr('checked','checked');
+        $("#projectedituser").find('#users'+window.app.status.user.id).click(function() {
+            $("#projectedituser").find('#users'+window.app.status.user.id).attr('checked','checked');
+        });
+        $("#projectedituser").find('[for="users'+window.app.status.user.id+'"]').css("font-weight","bold");
 
         //Build dialog
         console.log("EditProjectDialog: build dialog");

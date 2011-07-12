@@ -47,6 +47,15 @@ var AddProjectDialog = Backbone.View.extend({
              $("#projectuser").append(choice);
           });
 
+          //check current user
+          $("#projectuser").find('#users'+window.app.status.user.id).attr('checked','checked');
+         $("#projectuser").find('#users'+window.app.status.user.id).click(function() {
+
+             $("#projectuser").find('#users'+window.app.status.user.id).attr('checked','checked');
+         });
+          $("#projectuser").find('[for="users'+window.app.status.user.id+'"]').css("font-weight","bold");
+
+
           //Build dialog
           console.log("AddProjectDialog: build dialog");
           self.addProjectDialog = $("#addproject").dialog({
@@ -63,6 +72,7 @@ var AddProjectDialog = Backbone.View.extend({
                  }
               });
           self.open();
+
           return this;
 
        },

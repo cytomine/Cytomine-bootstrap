@@ -155,7 +155,6 @@ class AbstractImage extends SequenceDomain {
 
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
-            returnArray['info'] = it.slide?.name
             //returnArray['annotations'] = it.annotations
             /*returnArray['thumb'] = it.getThumbURL()*/
 
