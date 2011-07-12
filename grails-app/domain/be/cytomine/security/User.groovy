@@ -12,150 +12,157 @@ import org.perf4j.LoggingStopWatch
 
 class User extends SecUser {
 
-  def springSecurityService
+    def springSecurityService
 
-  String firstname
-  String lastname
-  String email
-  String color
+    String firstname
+    String lastname
+    String email
+    String color
 
-  int transaction
+    int transaction
 
-  static constraints = {
-    firstname blank : false
-    lastname blank : false
-    email (blank : false , email : true)
-    color (blank : false, nullable : true)
-  }
-
-  String toString() {
-    firstname + " " + lastname + " (" + username + ")"
-  }
-
-  def groups() {
-    return userGroup.collect{
-      it.group
+    static constraints = {
+        firstname blank : false
+        lastname blank : false
+        email (blank : false , email : true)
+        color (blank : false, nullable : true)
     }
-  }
 
-  def ontologies() {
-    def ontologies = []
-    //add ontology created by this user
-    if(this.version!=null) ontologies.addAll(Ontology.findAllByUser(this))
-    //add ontology from project which can be view by this user
-    userGroup.each { userGroup ->
-      userGroup.group.projects().each { project ->
-        Ontology ontology = project.ontology
-        if(!ontologies.contains(ontology))
-          ontologies << ontology
-      }
+    String toString() {
+        firstname + " " + lastname + " (" + username + ")"
     }
-    ontologies
-  }
 
-
-  def projects() {
-    ProjectGroup.findAllByGroupInList(userGroup.collect{it.group}).collect{it.project}
-  }
-
-  def abstractimages() {
-    StopWatch stopWatch = new LoggingStopWatch();
-    def abstractImages = []
-    if (userGroup.size() > 0) {
-      abstractImages = AbstractImageGroup.createCriteria().list {
-        inList("group.id", userGroup.collect{it.group.id})
-        projections {
-          groupProperty('abstractimage')
+    def groups() {
+        return userGroup.collect{
+            it.group
         }
-      }
     }
-    stopWatch.stop('abstractimages request');
-    abstractImages
 
-  }
-
-
-  def abstractimage(int max, int first, String col, String order, String filename, Date dateAddedStart, Date dateAddedStop) {
-
-    AbstractImage.createCriteria().list(offset:first, max:max ,sort:col, order:order){
-      inList("id", AbstractImageGroup.createCriteria().list {
-        inList("group.id", userGroup.collect{it.group.id})
-        projections {
-          groupProperty('abstractimage.id')
+    def ontologies() {
+        def ontologies = []
+        //add ontology created by this user
+        if(this.version!=null) ontologies.addAll(Ontology.findAllByUser(this))
+        //add ontology from project which can be view by this user
+        userGroup.each { userGroup ->
+            userGroup.group.projects().each { project ->
+                Ontology ontology = project.ontology
+                if(!ontologies.contains(ontology))
+                    ontologies << ontology
+            }
         }
-      })
-      projections {
-        groupProperty('abstractimage')
-      }
-      ilike("filename","%"+filename+"%")
-      between('created',dateAddedStart, dateAddedStop)
-
+        ontologies
     }
 
-  }
 
-  def slides() {
-    AbstractImage.createCriteria().list{
-      inList("id", AbstractImageGroup.createCriteria().list {
-        inList("group.id", userGroup.collect{it.group.id})
-        projections {
-          groupProperty('abstractimage.id')
+    def projects() {
+        def c = ProjectGroup.createCriteria()
+        def projects = c {
+            inList("group.id", userGroup.collect {it.group.id})
+            projections {
+                groupProperty("project")
+            }
         }
-      })
-      projections {
-        groupProperty('slide')
-      }
+        projects
     }
-  }
 
-  def slides(int max, int first, String col, String order) {
-    AbstractImage.createCriteria().list(offset:first, max:max ,sort:col, order:order){
-      inList("id", AbstractImageGroup.createCriteria().list {
-        inList("group.id", userGroup.collect{it.group.id})
-        projections {
-          groupProperty('abstractimage.id')
+    def abstractimages() {
+        StopWatch stopWatch = new LoggingStopWatch();
+        def abstractImages = []
+        if (userGroup.size() > 0) {
+            abstractImages = AbstractImageGroup.createCriteria().list {
+                inList("group.id", userGroup.collect{it.group.id})
+                projections {
+                    groupProperty('abstractimage')
+                }
+            }
         }
-      })
-      projections {
-        groupProperty('slide')
-      }
-    }
-  }
+        stopWatch.stop('abstractimages request');
+        abstractImages
 
-  static User getFromData(User user, jsonUser) {
-    user.username = jsonUser.username
-    user.firstname = jsonUser.firstname
-    user.lastname = jsonUser.lastname
-    user.email = jsonUser.email
-    user.password = user.springSecurityService.encodePassword(jsonUser.password)
-    user.enabled = true
+    }
+
+
+    def abstractimage(int max, int first, String col, String order, String filename, Date dateAddedStart, Date dateAddedStop) {
+
+        AbstractImage.createCriteria().list(offset:first, max:max ,sort:col, order:order){
+            inList("id", AbstractImageGroup.createCriteria().list {
+                inList("group.id", userGroup.collect{it.group.id})
+                projections {
+                    groupProperty('abstractimage.id')
+                }
+            })
+            projections {
+                groupProperty('abstractimage')
+            }
+            ilike("filename","%"+filename+"%")
+            between('created',dateAddedStart, dateAddedStop)
+
+        }
+
+    }
+
+    def slides() {
+        AbstractImage.createCriteria().list{
+            inList("id", AbstractImageGroup.createCriteria().list {
+                inList("group.id", userGroup.collect{it.group.id})
+                projections {
+                    groupProperty('abstractimage.id')
+                }
+            })
+            projections {
+                groupProperty('slide')
+            }
+        }
+    }
+
+    def slides(int max, int first, String col, String order) {
+        AbstractImage.createCriteria().list(offset:first, max:max ,sort:col, order:order){
+            inList("id", AbstractImageGroup.createCriteria().list {
+                inList("group.id", userGroup.collect{it.group.id})
+                projections {
+                    groupProperty('abstractimage.id')
+                }
+            })
+            projections {
+                groupProperty('slide')
+            }
+        }
+    }
+
+    static User getFromData(User user, jsonUser) {
+        user.username = jsonUser.username
+        user.firstname = jsonUser.firstname
+        user.lastname = jsonUser.lastname
+        user.email = jsonUser.email
+        user.password = user.springSecurityService.encodePassword(jsonUser.password)
+        user.enabled = true
 //    user.created = (!jsonUser.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.created)) : null
-    //    user.updated = (!jsonUser.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.updated)) : null
-    return user;
-  }
-
-  static User createFromData(data) {
-    getFromData(new User(), data)
-  }
-
-  static void registerMarshaller() {
-    println "Register custom JSON renderer for " + User.class
-    JSON.registerObjectMarshaller(User) {
-      def returnArray = [:]
-      returnArray['id'] = it.id
-      returnArray['username'] = it.username
-      returnArray['firstname'] = it.firstname
-      returnArray['lastname'] = it.lastname
-      returnArray['email'] = it.email
-      returnArray['password'] = "******"
-      returnArray['color'] = it.color
-
-      returnArray['created'] = it.created? it.created.time.toString() : null
-      returnArray['updated'] = it.updated? it.updated.time.toString() : null
-
-      return returnArray
+        //    user.updated = (!jsonUser.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.updated)) : null
+        return user;
     }
-  }
+
+    static User createFromData(data) {
+        getFromData(new User(), data)
+    }
+
+    static void registerMarshaller() {
+        println "Register custom JSON renderer for " + User.class
+        JSON.registerObjectMarshaller(User) {
+            def returnArray = [:]
+            returnArray['id'] = it.id
+            returnArray['username'] = it.username
+            returnArray['firstname'] = it.firstname
+            returnArray['lastname'] = it.lastname
+            returnArray['email'] = it.email
+            returnArray['password'] = "******"
+            returnArray['color'] = it.color
+
+            returnArray['created'] = it.created? it.created.time.toString() : null
+            returnArray['updated'] = it.updated? it.updated.time.toString() : null
+
+            return returnArray
+        }
+    }
 
 
 }
