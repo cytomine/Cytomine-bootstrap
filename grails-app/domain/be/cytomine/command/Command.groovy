@@ -2,6 +2,7 @@ package be.cytomine.command
 import grails.converters.JSON
 import be.cytomine.SequenceDomain
 import be.cytomine.security.User
+import be.cytomine.project.Project
 
 class Command extends SequenceDomain {
 
@@ -9,8 +10,8 @@ class Command extends SequenceDomain {
 
   String data
   String postData
-  def jsonTOREMOVE
   User user
+  Project project
 
   boolean printMessage = true
 
@@ -24,7 +25,12 @@ class Command extends SequenceDomain {
     data (type:'text', maxSize:Command.MAXSIZEREQUEST, nullable : true)
     postData (type:'text', maxSize:Command.MAXSIZEREQUEST)
     actionMessage(nullable : true)
-    jsonTOREMOVE(nullable : true)
+    project(nullable : true)
+  }
+
+  void changeCurrentProject(Project project) { //setCur... doesn't work with spring
+    println "setCurrentProject=" +project
+       this.project = project;
   }
 
   static void registerMarshaller() {

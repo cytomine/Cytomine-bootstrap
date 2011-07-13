@@ -23,6 +23,7 @@ class EditImageInstanceCommand extends EditCommand implements UndoRedoCommand  {
     try {
       def postData = JSON.parse(postData)
       updatedImage = ImageInstance.get(postData.id)
+      super.changeCurrentProject(updatedImage.project)
       return super.validateAndSave(postData,updatedImage,[updatedImage.id, updatedImage?.baseImage?.filename,updatedImage.project.name] as Object[])
 
     } catch(NullPointerException e) {

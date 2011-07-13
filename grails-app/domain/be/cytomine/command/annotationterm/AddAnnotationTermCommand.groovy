@@ -18,6 +18,7 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
       def json = JSON.parse(postData)
       newAnnotationTerm = AnnotationTerm.createAnnotationTermFromData(json)
       AnnotationTerm.link(newAnnotationTerm.annotation,newAnnotationTerm.term)
+      super.changeCurrentProject(newAnnotationTerm.annotation.image.project)
         return super.validateWithoutSave(newAnnotationTerm,["#ID#",newAnnotationTerm.annotation.id,newAnnotationTerm.term.name] as Object[])
       }catch(ConstraintException  ex){
       return [data : [annotationterm:newAnnotationTerm,errors:newAnnotationTerm.retrieveErrors()], status : 400]

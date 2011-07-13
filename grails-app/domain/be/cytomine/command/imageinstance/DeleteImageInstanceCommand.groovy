@@ -23,6 +23,7 @@ class DeleteImageInstanceCommand extends DeleteCommand implements UndoRedoComman
     try {
       def postData = JSON.parse(postData)
       ImageInstance image = ImageInstance.findById(postData.id)
+      super.changeCurrentProject(image.project)
       return super.deleteAndCreateDeleteMessage(postData.id, image, [image.id, image?.baseImage?.filename,image.project.name] as Object[])
     } catch (NullPointerException e) {
       log.error(e)

@@ -25,6 +25,7 @@ class AddImageInstanceCommand extends AddCommand implements UndoRedoCommand {
       json.user = user.id
       newImage = ImageInstance.createFromData(json)
       newImage.slide = newImage.baseImage.slide
+      super.changeCurrentProject(newImage.project)
       def oldImageInstance = ImageInstance.findByBaseImageAndProject(newImage.baseImage,newImage.project)
       log.debug "oldImageInstance=" + oldImageInstance
        boolean alreadyExist = (oldImageInstance!=null)
@@ -63,7 +64,7 @@ class AddImageInstanceCommand extends AddCommand implements UndoRedoCommand {
     log.debug("Validate image:"+image.validate())
     image.save(flush:true)
     log.debug("Save image:"+image.id)
-    return super.createRedoMessage(image, [imageData.id,imageData.name,image.project.name] as Object[]);
+    return super.createRedoMessage(image, [imageData.id,image?.baseImage?.filename,image.project.name] as Object[]);
   }
 
 

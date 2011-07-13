@@ -2,6 +2,7 @@ package be.cytomine.command
 import grails.converters.JSON
 import be.cytomine.security.User
 import be.cytomine.SequenceDomain
+import be.cytomine.project.Project
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,7 +14,11 @@ import be.cytomine.SequenceDomain
 class CommandHistory extends SequenceDomain{
   Command command
   String prefixAction = "" //undo, redo or nothing
+  Project project
 
+  static constraints = {
+    project(nullable : true)
+  }
 
   static void registerMarshaller() {
     println "Register custom JSON renderer for " + CommandHistory.class

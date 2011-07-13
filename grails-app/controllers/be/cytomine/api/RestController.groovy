@@ -51,8 +51,9 @@ class RestController {
 
     result = c.execute()
     if (result.status == successCode) {
+      log.info "c.project=" +c.project
       c.save()
-      CommandHistory ch = new CommandHistory(command:c,prefixAction:"")
+      CommandHistory ch = new CommandHistory(command:c,prefixAction:"", project: c.project)
 
       ch.save();
       if(c.saveOnUndoRedoStack) {

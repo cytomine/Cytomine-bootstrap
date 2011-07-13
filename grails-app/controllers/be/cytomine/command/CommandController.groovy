@@ -74,7 +74,7 @@ class CommandController extends RestController{
             transactionInProgress:  firstUndoStack.transactionInProgress,
             transaction : firstUndoStack.transaction
     ).save(flush : true)
-    new CommandHistory(command:firstUndoStack.getCommand(),prefixAction:"UNDO").save();
+    new CommandHistory(command:firstUndoStack.getCommand(),prefixAction:"UNDO", project:firstUndoStack.getCommand().project).save();
     firstUndoStack.delete(flush : true)
   }
 
@@ -140,7 +140,7 @@ class CommandController extends RestController{
             transactionInProgress:  lastRedoStack.transactionInProgress,
             transaction : lastRedoStack.transaction,
     ).save(flush : true)
-    new CommandHistory(command:lastRedoStack.getCommand(),prefixAction:"REDO").save();
+    new CommandHistory(command:lastRedoStack.getCommand(),prefixAction:"REDO",project:lastRedoStack.getCommand().project).save();
 
     lastRedoStack.delete(flush : true)
   }

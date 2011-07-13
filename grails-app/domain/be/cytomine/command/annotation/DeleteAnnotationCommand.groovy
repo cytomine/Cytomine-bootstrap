@@ -18,6 +18,7 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand {
     try {
       def postData = JSON.parse(postData)
       Annotation annotation = Annotation.findById(postData.id)
+      super.changeCurrentProject(annotation.image.project)
       return super.deleteAndCreateDeleteMessage(postData.id, annotation, [annotation.id, annotation.imageFileName()] as Object[])
 
     } catch (NullPointerException e) {

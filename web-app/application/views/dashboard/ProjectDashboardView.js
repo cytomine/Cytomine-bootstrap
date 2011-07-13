@@ -405,8 +405,9 @@ var ProjectDashboardView = Backbone.View.extend({
           var self = this;
           require([
              "text!application/templates/dashboard/CommandAnnotation.tpl.html",
-             "text!application/templates/dashboard/CommandAnnotationTerm.tpl.html"],
-              function(commandAnnotationTpl, commandAnnotationTermTpl) {
+             "text!application/templates/dashboard/CommandAnnotationTerm.tpl.html",
+            "text!application/templates/dashboard/CommandImageInstance.tpl.html"],
+              function(commandAnnotationTpl, commandAnnotationTermTpl,commandImageInstanceTpl) {
                  var commandCollection = new CommandCollection({project:self.model.get('id'),max:self.maxCommandsView});
 
                  var commandCallback = function(collection, response) {
@@ -424,6 +425,7 @@ var ProjectDashboardView = Backbone.View.extend({
 
                        var jsonCommand = $.parseJSON(json.command.data);
                        console.log(jsonCommand); //jsonCommand.cropURL
+                       console.log(jsonCommand.command);
                        console.log(jsonCommand.cropURL);
                        var action = ""
 
@@ -486,6 +488,33 @@ var ProjectDashboardView = Backbone.View.extend({
                           $("#lastactionitem").append(action);
 
                        }
+
+
+                       if(json.command.CLASSNAME=="be.cytomine.command.imageinstance.AddImageInstanceCommand")
+                       {
+                          var cropStyle = "block";
+                          var cropURL = jsonCommand.thumb;
+                          console.log("be.cytomine.command.imageinstance.AddImageInstanceCommand");
+                           console.log(commandImageInstanceTpl);
+
+
+                          var action = _.template(commandImageInstanceTpl, {idProject : self.model.id, idImage : jsonCommand.id, imageFilename : jsonCommand.filename, icon:"add.png",text:json.prefixAction+ " " + json.command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
+                          $("#lastactionitem").append(action);
+                       }
+
+
+                       if(json.command.CLASSNAME=="be.cytomine.command.imageinstance.DeleteImageInstanceCommand")
+                       {
+                          var cropStyle = "block";
+                          var cropURL = jsonCommand.thumb;
+
+                          var action = _.template(commandImageInstanceTpl, {idProject : self.model.id, idImage : jsonCommand.id, imageFilename : jsonCommand.filename,icon:"delete.gif",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
+                          $("#lastactionitem").append(action);
+                       }
+
+
+
+
                     });
                  }
 

@@ -52,6 +52,8 @@ var CommandController = Backbone.Controller.extend({
             if (image == undefined) return; //tab is closed
             console.log("callback.annotationID="+callback.annotationID);
             image.getUserLayer().annotationAdded(callback.annotationID);
+            if(window.app.controllers.dashboard.view!=null)
+                window.app.controllers.dashboard.view.refresh();
         } else if (callback.method == "be.cytomine.EditAnnotationCommand") {
 
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
@@ -60,6 +62,8 @@ var CommandController = Backbone.Controller.extend({
             var image = tab.view;
             if (image == undefined) return; //tab is closed
             image.getUserLayer().annotationUpdated(callback.annotationID);
+            if(window.app.controllers.dashboard.view!=null)
+                window.app.controllers.dashboard.view.refresh();
         } else if (callback.method == "be.cytomine.DeleteAnnotationCommand") {
 
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
@@ -71,7 +75,8 @@ var CommandController = Backbone.Controller.extend({
             if (image == undefined) return; //tab is closed
             console.log("callback.annotationID="+callback.annotationID);
             image.getUserLayer().annotationRemoved(callback.annotationID);
-
+              if(window.app.controllers.dashboard.view!=null)
+                window.app.controllers.dashboard.view.refresh();
             /**
              * ANNOTATION TERM
              */
@@ -83,6 +88,8 @@ var CommandController = Backbone.Controller.extend({
             var image = tab.view;
             if (image == undefined) return; //tab is closed
             image.getUserLayer().termAdded(callback.annotationID,callback.termID);
+            if(window.app.controllers.dashboard.view!=null)
+                window.app.controllers.dashboard.view.refresh();
         } else if (callback.method == "be.cytomine.DeleteAnnotationTermCommand") {
 
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
@@ -91,6 +98,8 @@ var CommandController = Backbone.Controller.extend({
             var image = tab.view;
             if (image == undefined) return; //tab is closed
             image.getUserLayer().termRemoved(callback.annotationID,callback.termID);
+            if(window.app.controllers.dashboard.view!=null)
+                window.app.controllers.dashboard.view.refresh();
         }
 
         /**
@@ -134,14 +143,21 @@ var CommandController = Backbone.Controller.extend({
         }
 
         else if (callback.method == "be.cytomine.AddImageInstanceCommand") {
-
-            window.app.controllers.project.view.refresh();
+            if(window.app.controllers.project.view!=null)
+                window.app.controllers.project.view.refresh();
+            if(window.app.controllers.dashboard.view!=null)
+                window.app.controllers.dashboard.view.refresh();
         } else if (callback.method == "be.cytomine.DeleteImageInstanceCommand") {
             console.log("be.cytomine.DeleteImageInstanceCommand");
-            window.app.controllers.project.view.refresh();
+            if(window.app.controllers.project.view!=null)
+                window.app.controllers.project.view.refresh();
+            if(window.app.controllers.dashboard.view!=null)
+                window.app.controllers.dashboard.view.refresh();
         } else if (callback.method == "be.cytomine.EditImageInstanceCommand") {
-
-            window.app.controllers.project.view.refresh();
+            if(window.app.controllers.project.view!=null)
+                window.app.controllers.project.view.refresh();
+            if(window.app.controllers.dashboard.view!=null)
+                window.app.controllers.dashboard.view.refresh();
         }
 
     }

@@ -46,7 +46,9 @@ class AbstractImage extends SequenceDomain {
     static hasMany = [ abstractimagegroup : AbstractImageGroup, storageAbstractImages : StorageAbstractImage ]
 
     static transients = ["zoomLevels"]
-
+ static mapping = {
+      slide index:'image_slide_index'
+  }
     static constraints = {
         filename(blank : false, unique : true)
 

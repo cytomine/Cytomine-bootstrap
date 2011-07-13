@@ -12,6 +12,10 @@ class UndoStackItem extends SequenceDomain implements Comparable {
 
   static belongsTo = [user:User, command:Command]
 
+ static mapping = {
+      user index:'undostackitem_user_index'
+  }
+
   int compareTo(obj) {
     created.compareTo(obj.created)
   }

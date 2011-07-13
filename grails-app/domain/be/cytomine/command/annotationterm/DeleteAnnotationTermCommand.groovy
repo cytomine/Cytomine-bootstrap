@@ -25,7 +25,7 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
 
       AnnotationTerm annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation,term)
       String id = annotationTerm.id
-
+      super.changeCurrentProject(annotationTerm.annotation.image.project)
       def response = super.createDeleteMessage(id,annotationTerm,[id,annotation.id,term.name] as Object[])
       AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term)
 

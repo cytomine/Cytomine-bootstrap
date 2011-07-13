@@ -20,6 +20,7 @@ class EditAnnotationCommand extends EditCommand implements UndoRedoCommand  {
       postData.user = user.id
       updatedAnnotation = Annotation.get(postData.id)
       String filename = updatedAnnotation.image?.baseImage?.getFilename()
+      super.changeCurrentProject(updatedAnnotation.image.project)
       return super.validateAndSave(postData,updatedAnnotation,[updatedAnnotation.id,filename] as Object[])
 
     } catch(NullPointerException e) {

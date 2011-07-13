@@ -57,7 +57,8 @@ class RestProjectController extends RestController {
      int max =  Integer.parseInt(params.max);
 
     if(project!=null) {
-      def commands = CommandHistory.list(sort:"created", order:"desc", max:max);
+      //def commands = CommandHistory.list(sort:"created", order:"desc", max:max);
+      def commands = CommandHistory.findAllByProject(project,[sort:"created", order:"desc", max:max]);
       log.info "commands=" + commands
       //merge
       responseSuccess(commands)
