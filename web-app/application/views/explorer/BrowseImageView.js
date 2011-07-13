@@ -275,7 +275,8 @@ var BrowseImageView = Backbone.View.extend({
                  new OpenLayers.Size( metadata.width, metadata.height )
                  , {transitionEffect: 'resize'}
              );
-             var anotherLayer = new OpenLayers.Layer.Zoomify( "Otsu", "http://localhost:8080/cytomine-web/proxy/otsu?url="+zoomify_url,
+             var otsuURLS = _.map(zoomify_url, function (url){ return "http://localhost:8080/cytomine-web/proxy/otsu?url="+url;});
+             var anotherLayer = new OpenLayers.Layer.Zoomify( "Otsu", otsuURLS,
                  new OpenLayers.Size( metadata.width, metadata.height ) );
 
              var layerSwitcher = self.createLayerSwitcher();
