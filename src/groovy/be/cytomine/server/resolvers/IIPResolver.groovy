@@ -26,6 +26,7 @@ class IIPResolver extends Resolver{
             cpt++;
             if (cpt != args.size()) url += ARGS_DELIMITER;
         }
+        url = url.replace(" ", "%20")
         return url;
     }
 
@@ -89,12 +90,7 @@ class IIPResolver extends Resolver{
         args.add("RGN" + ARGS_EQUAL +  x + "," + y + "," + w + "," + h)
         args.add("CVT" + ARGS_EQUAL + "jpeg")
         args.add("WID" + ARGS_EQUAL + "200")
-        def url = toURL(baseUrl)
-        println "baseUrl " + baseUrl
-        println "imagePath " + imagePath
-        println ">>>>"  + url
-        //RGN=0.4399859205,0.4414301166,0.01173295788,0.01754026954&CVT=JPEG
-        return url
+        return toURL(baseUrl)
     }
 
     public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height) {

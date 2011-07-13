@@ -104,7 +104,7 @@ var BrowseImageView = Backbone.View.extend({
         */
        layerLoadedCallback : function (layer) {
           var self = this;
-          if (_.isFunction(this.initCallback)) this.initCallback.call();
+
           this.layersLoaded++;
           if (this.layersLoaded == _.size(window.app.models.users)) {
              //Init MultiSelected in LayerSwitcher
@@ -145,6 +145,7 @@ var BrowseImageView = Backbone.View.extend({
                    layer.vectorsLayer.setVisibility(false);
                 }
              });
+             if (_.isFunction(self.initCallback)) self.initCallback.call();
           }
 
        },
