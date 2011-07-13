@@ -167,13 +167,13 @@ var EditProjectDialog = Backbone.View.extend({
                 projectDeleteUser =  self.diffArray(projectOldUsers,projectNewUsers); //[c] must be deleted
 
                 
-                _.each(projectOldUsers,function(user){
+                /*_.each(projectOldUsers,function(user){
                 
                 _.each(projectNewUsers,function(user){
                 
                 _.each(projectAddUser,function(user){
                 
-                _.each(projectDeleteUser,function(user){
+                _.each(projectDeleteUser,function(user){*/
                 var total = projectAddUser.length+projectDeleteUser.length;
                 var counter = 0;
                 if(total==0) self.addDeleteUserProjectCallback(0,0);

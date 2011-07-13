@@ -650,4 +650,4 @@ AnnotationLayer.prototype = {
       
       this.ontologyTreeView.uncheck(idTerm);
    }
-}
+};
