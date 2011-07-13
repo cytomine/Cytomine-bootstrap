@@ -27,6 +27,10 @@ class Project extends SequenceDomain {
         //countImages(nullable:true)
     }
 
+    static mapping = {
+        ontology fetch:'join'
+    }
+
     String toString() {
         name
     }

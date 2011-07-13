@@ -59,8 +59,6 @@ class RestImageController extends RestController{
 
         log.info "page="+page + " limit="+limit+ " sortedRow="+sortedRow  +" sord="+sord
 
-
-
         if(params.page || params.rows || params.sidx || params.sord) {
           int pg = Integer.parseInt(page)-1
           int max = Integer.parseInt(limit)

@@ -8,13 +8,11 @@ class CommandController {
     def springSecurityService
     def messageSource
 
-    //static allowedMethods = [undo:'POST', redo:'POST']
-
     def undo = {
         log.info "Undo"
         User user = User.read(springSecurityService.principal.id)
         log.debug "User="+user.id
-        def lastCommands = UndoStackItem.findAllByUser(user)
+        def lastCommands = UndoStackItem.findAllByUser(user) //,[sort:"created", order:"desc", max:1000]
         log.debug "Lastcommands="+lastCommands
 
         def results = []

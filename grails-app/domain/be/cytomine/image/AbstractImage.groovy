@@ -17,6 +17,8 @@ import be.cytomine.server.resolvers.Resolver
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.security.Group
+import org.perf4j.StopWatch
+import org.perf4j.LoggingStopWatch
 
 class AbstractImage extends SequenceDomain {
     String filename
@@ -138,33 +140,25 @@ class AbstractImage extends SequenceDomain {
         JSON.registerObjectMarshaller(AbstractImage) {
             def returnArray = [:]
             returnArray['class'] = it.class
-
             returnArray['id'] = it.id
             returnArray['filename'] = it.filename
             returnArray['scanner'] = it.scanner? it.scanner.id : null
             returnArray['slide'] = it.slide? it.slide.id : null
             returnArray['path'] = it.path
             returnArray['mime'] = it.mime.extension
-
             returnArray['width'] = it.width
             returnArray['height'] = it.height
-
             returnArray['scale'] = it.scale
-
             returnArray['roi'] = it.roi.toString()
-
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
             //returnArray['annotations'] = it.annotations
             /*returnArray['thumb'] = it.getThumbURL()*/
-
             returnArray['thumb'] = it.getThumbURL()
             returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.id)
             returnArray['imageServerInfos'] = UrlApi.getImageServerInfosWithImageId(it.id)
             //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
-
             returnArray['imageServerBaseURL'] = it.getMime().imageServers().collect { it.getBaseUrl() }
-
             return returnArray
         }
     }

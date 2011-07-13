@@ -3,6 +3,8 @@ import grails.converters.JSON
 import be.cytomine.SequenceDomain
 import be.cytomine.security.User
 import be.cytomine.project.Project
+import org.perf4j.LoggingStopWatch
+import org.perf4j.StopWatch
 
 class Ontology extends SequenceDomain implements Serializable{
 
@@ -98,6 +100,7 @@ class Ontology extends SequenceDomain implements Serializable{
     println "Register custom JSON renderer for " + Ontology.class
     JSON.registerObjectMarshaller(Ontology) {
       def returnArray = [:]
+      StopWatch stopWatchfull = new LoggingStopWatch();
       returnArray['class'] = it.class
       returnArray['id'] = it.id
       returnArray['name'] = it.name
@@ -111,14 +114,18 @@ class Ontology extends SequenceDomain implements Serializable{
       returnArray['state'] = "open"
 
       if(it.version!=null){
+        StopWatch stopWatch = new LoggingStopWatch();
         returnArray['children'] = it.tree()
+         stopWatch.stop("registerMarshaller.tree");
+        stopWatch = new LoggingStopWatch();
         returnArray['users'] = it.usersId()
+        stopWatch.stop("registerMarshaller.usersId");
       }
       else {
         returnArray['children'] = []
         returnArray['users'] = []
       }
-
+       stopWatchfull.stop("registerMarshaller()");
       return returnArray
     }
   }
