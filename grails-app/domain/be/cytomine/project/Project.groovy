@@ -40,7 +40,7 @@ class Project extends SequenceDomain {
     }
 
     def countImageInstance() {
-      countImages//may return null
+        countImages//may return null
         //ImageInstance.countByProject(this)
     }
 
@@ -58,7 +58,7 @@ class Project extends SequenceDomain {
     }
 
     def countAnnotations() {
-      countAnnotations  //may return null
+        countAnnotations  //may return null
         //def images = this.imagesinstance()
         //images.size() > 0 ? Annotation.countByImageInList(images) : 0
     }
@@ -89,7 +89,7 @@ class Project extends SequenceDomain {
     }
 
     def users() {
-        UserGroup.findAllByGroupInList(this.groups()).collect { it.user }
+        UserGroup.findAllByGroupInList(this.groups()).collect { it.user }.unique() //not optimal but okay for users&groups
     }
 
     static Project createFromData(jsonProject) {

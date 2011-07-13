@@ -139,7 +139,15 @@ var ApplicationView = Backbone.View.extend({
                            icon : "ui-icon-image",
                            route : "#explorer"
                         },
-                        divId : "explorer"
+                        divId : "explorer",
+                        activate: function () {
+                           if (window.app.status.currentProject == undefined)
+                              $("#explorer > .noProject").show();
+                           else
+                              $("#explorer > .noProject").hide();
+                           $("#" + this.divId).show();
+                           $("#" + this.buttonAttr.elButton).addClass("ui-state-disabled");
+                        }
                      });
                  self.components.logout = new Component({
                         el : "#content",
@@ -155,10 +163,6 @@ var ApplicationView = Backbone.View.extend({
                         divId : "logout"
                      });
               });
-
-          $("#noProjectDialog").panel({collapsible:false, height : "100%"});
-
-
        },
        /**
         * Show a component
