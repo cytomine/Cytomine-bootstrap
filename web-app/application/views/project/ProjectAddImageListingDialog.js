@@ -85,7 +85,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
         //search panel
 
-        console.log($("#searchImagetPanelup"+self.model.id+"-"+self.tab).html());
+        
 
         $("#searchImagetPanelup"+self.model.id+"-"+self.tab).panel({
             collapseSpeed:100
@@ -121,13 +121,13 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
     },
     doSearch : function(){
         var self = this;
-        console.log("doSearch: "+$.data(this, 'timer'));
+        
 
         if($.data(this, 'timer')!=null) {
-            console.log("clearTimeout:"+$.data(this, 'timer'));
+            
            clearTimeout($.data(this, 'timer'));
         }
-        console.log("setTimeout");
+        
           var wait = setTimeout(function(){
                  self.searchImages()}
               ,500);
@@ -142,7 +142,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
      */
     searchImages : function() {
         var self = this;
-        console.log("searchImages");
+        
         //var images = self.searchPanel.search(self.images);
         var searchText = $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val();
         var dateStart =  $("#datestartsearchup"+self.model.id+"-"+self.tab).datepicker("getDate");
@@ -153,14 +153,14 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         var dateTimestampEnd="";
         if(dateEnd!=null) dateTimestampEnd=dateEnd.getTime();
 
-        console.log("searchText="+searchText);
+        
         $("#"+self.listmanageall).jqGrid('setGridParam',{url:"api/currentuser/image.json?filename="+searchText+"&createdstart="+dateTimestampStart+"&createdstop="+dateTimestampEnd,page:1}).trigger("reloadGrid");
 
 
     },
     refreshImageList : function() {
         var self = this;
-        console.log("refreshImageListProject");
+        
         //clear grid
         $("#"+self.listmanageproject).jqGrid("clearGridData", true);
         //get imagesproject on server
@@ -175,7 +175,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
                 //print data from all image table
                 //self.searchImages();
-                console.log("reloadgrid");
+                
                 $("#"+self.listmanageall).trigger("reloadGrid");
             }
         });
@@ -186,23 +186,23 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
      */
     fillAbstractImageProjectCollection : function(images) {
         var self = this;
-        console.log(self.abstractImageProject);
+        
         self.abstractImageProject = [];
         self.imagesProject.each(function(image) {
             self.abstractImageProject.push(image.get('baseImage'));
         });
     },
     loadDataImageListProject : function(collection) {
-        console.log("loadDataImageListProject");
+        
         var self = this;
         var data = new Array();
         var i = 0;
 
         collection.each(function(image) {
-            //console.log(image.get('created'));
+            //
             var createdDate = new Date();
             createdDate.setTime(image.get('created'));
-            //console.log("id="+image.id);
+            //
             data[i] = {
                 id: image.id,
                 base : image.get('baseImage'),
@@ -215,7 +215,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             };
             i++;
         });
-        console.log("addRow");
+        
         for(var j=0;j<data.length;j++) {
             $("#"+self.listmanageproject).jqGrid('addRowData',data[j].id,data[j]);
         }
@@ -247,7 +247,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             loadComplete: function() {
                 //change color of already selected image
                 self.imagesProject.each(function(image) {
-                    //console.log("image project="+image.id);
+                    //
                     $("#"+self.listmanageproject).find("#" + image.id).find("td").css("background-color", "a0dc4f");
                 });
             },
@@ -311,7 +311,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
                 //change color of already selected image
                 self.imagesProject.each(function(image) {
-                    // console.log("image project="+image.id);
+                    // 
                     $("#"+self.listmanageall).find("#" + image.get('baseImage')).find("td").css("background-color", "a0dc4f");
                     $("#"+self.listmanageall).find("#" + image.get('baseImage')).find(".cbox").attr('disabled', true)
                     $("#"+self.listmanageall).find("#" + image.get('baseImage')).find(".cbox").css("visible", false);
@@ -346,7 +346,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
     },
 
     addImageProjectFromTable : function() {
-        console.log("addImageProjectFromTable");
+        
         var self = this;
         var idSelectedArray = $("#"+self.listmanageall).jqGrid('getGridParam','selarrrow');
         if (idSelectedArray.length == 0) return;
@@ -354,12 +354,12 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         _.each(idSelectedArray, function(idImage){
             new ImageInstanceModel({}).save({project : self.model.id, user : null, baseImage :idImage},{
                 success : function (image,response) {
-                    console.log(response);
+                    
                     window.app.view.message("Image", response.message, "");
                     self.addImageProjectCallback(idSelectedArray.length, ++counter)
                 },
                 error: function (model, response) {
-                    console.log(response);
+                    
                     var json = $.parseJSON(response.responseText);
                     window.app.view.message("Image", json.errors, "");
                     self.addImageProjectCallback(idSelectedArray.length, ++counter)
@@ -374,7 +374,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
     },
 
     deleteImageProjectFromTable : function() {
-        console.log("deleteImageProjectFromTable");
+        
         var self = this;
         var idSelectedArray = $("#"+self.listmanageproject).jqGrid('getGridParam','selarrrow');
         if (idSelectedArray.length == 0) return;
@@ -383,12 +383,12 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             var idAsbtractImage = self.imagesProject.get(idImage).get('baseImage');
             new ImageInstanceModel({project : self.model.id, user : null, baseImage :idAsbtractImage}).destroy({
                 success : function (image,response) {
-                    console.log(response);
+                    
                     window.app.view.message("Image", response.message, "");
                     self.deleteImageProjectCallback(idSelectedArray.length, ++counter)
                 },
                 error: function (model, response) {
-                    console.log(response);
+                    
                     var json = $.parseJSON(response.responseText);
                     window.app.view.message("Image", json.errors, "");
                     self.deleteImageProjectCallback(idSelectedArray.length, ++counter)

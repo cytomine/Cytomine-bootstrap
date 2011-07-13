@@ -79,7 +79,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
 
         $(self.el).find("a.previous").button();
 
-        console.log($(self.el).find("#tabsProjectaddimagedialog"+this.model.get('id')).length);
+        
         // $(self.el).find("#tabsProjectaddimagedialog"+this.model.get('id')).tabs();
         //self.renderImageList();
         return this;
@@ -209,15 +209,15 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
      */
 
     addImageToProject: function(idImage,idProject ) {
-        console.log("addImageToProject: idImage="+idImage+" idProject="+idProject);
+        
         //add slide to project
         new ImageInstanceModel({}).save({project : idProject, user : null, baseImage :idImage},{
             success : function (image,response) {
-                console.log(response);
+                
                 window.app.view.message("ImageInstance", response.message, "");
             },
             error: function (model, response) {
-                console.log(response);
+                
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Image", json.errors[0], "");
             }
@@ -225,17 +225,17 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
     },
 
     deleteImageToProject: function(idImage,idProject ) {
-        console.log("addImageToProject: idImage="+idImage+" idProject="+idProject);
+        
         //add slide to project
         //delete slide from project
         new ImageInstanceModel({project : idProject, user : null, baseImage : idImage}).destroy({
             success : function (image,response) {
-                console.log(response);
+                
                 window.app.view.message("ImageInstance", response.message, "");
 
             },
             error: function (model, response) {
-                console.log(response);
+                
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Image", json.errors[0], "");
             }

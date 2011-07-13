@@ -45,9 +45,9 @@ var LayerSwitcherPanel = Backbone.View.extend({
                  min : 0,
                  max : 100,
                  slide: function(e, ui) {
-                    console.log("self.browseImageView.layers "  + _.size(self.browseImageView.layers));
+                    
                     _.each(self.browseImageView.layers, function(layer) {
-                       console.log("layer.vectorsLayer " + layer.vectorsLayer + " ui.value " + ui.value);
+                       
                        layer.vectorsLayer.setOpacity(ui.value / 100);
                     });
 

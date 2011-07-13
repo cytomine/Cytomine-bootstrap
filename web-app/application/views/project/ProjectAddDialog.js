@@ -57,7 +57,7 @@ var AddProjectDialog = Backbone.View.extend({
 
 
           //Build dialog
-          console.log("AddProjectDialog: build dialog");
+          
           self.addProjectDialog = $("#addproject").dialog({
                  width: 500,
                  autoOpen : false,
@@ -93,7 +93,7 @@ var AddProjectDialog = Backbone.View.extend({
           $(self.addProjectCheckedUsersCheckboxElem).attr("checked", false);
        },
        createProject : function() {
-          console.log("createProject...");
+          
           var self = this;
 
           $("#errormessage").empty();
@@ -110,21 +110,21 @@ var AddProjectDialog = Backbone.View.extend({
           //create project
           new ProjectModel({name : name, ontology : ontology}).save({name : name, ontology : ontology},{
                  success: function (model, response) {
-                    console.log(response);
+                    
                      window.app.view.message("Project", response.message, "");
                     var id = response.project.id;
-                    console.log("project="+id);
+                    
                     //create user-project "link"
                 var total = users.length;
                 var counter = 0;
                 if(total==0) self.addDeleteUserProjectCallback(0,0);
                 _.each(users,function(user){
-                    console.log("projectAddUser="+user);
+                    
                     new ProjectUserModel({project: id,user:user}).save({}, {
                         success: function (model, response) {
                             self.addUserProjectCallback(total,++counter);
                         },error: function (model, response) {
-                            console.log(response);
+                            
                             var json = $.parseJSON(response.responseText);
                             window.app.view.message("User", json.errors, "");
                         }});
@@ -133,11 +133,11 @@ var AddProjectDialog = Backbone.View.extend({
                  },
                  error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
-                    console.log("json.project="+json.errors);
+                    
 
                     $("#projecterrorlabel").show();
 
-                    console.log($("#errormessage").append(json.errors));
+                    
                  }
               }
           );

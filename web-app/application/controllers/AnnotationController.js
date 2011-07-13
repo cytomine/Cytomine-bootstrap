@@ -8,8 +8,6 @@
 
 var AnnotationController = Backbone.Controller.extend({
 
-
-
     routes: {
         "annotation"            :   "annotation",
         "annotation/:idAnnotation"           :   "annotation"
@@ -17,9 +15,9 @@ var AnnotationController = Backbone.Controller.extend({
 
     annotation : function(idAnnotation) {
         var self = this;
-        console.log("AnnotationController:"+idAnnotation);
+        
         if (!self.view) {
-            console.log("Annotation controller");
+            
             window.app.models.images.fetch({
                 success : function (collection, response) {
 

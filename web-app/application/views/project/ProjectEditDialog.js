@@ -49,7 +49,7 @@ var EditProjectDialog = Backbone.View.extend({
         $("#projectedituser").find('[for="users'+window.app.status.user.id+'"]').css("font-weight","bold");
 
         //Build dialog
-        console.log("EditProjectDialog: build dialog");
+        
         self.editProjectDialog = $("#editproject").dialog({
             width: 500,
             autoOpen : false,
@@ -69,13 +69,13 @@ var EditProjectDialog = Backbone.View.extend({
 
     },
     fillForm : function() {
-        console.log("fillForm");
+        
         var self = this;
         $("#project-edit-name").val(self.model.get('name'));
         var jsonuser = self.model.get('users');
         _.each(jsonuser,
               function(user){
-                  console.log(user + " " + $('#users'+user).length);
+                  
                   $('#users'+user).attr('checked', true);
                   //TODO: if user.id == currentuser, lock the checkbox (a user cannot delete himself from a project)
                   if(window.app.status.user.id==user.id) {
@@ -93,7 +93,7 @@ var EditProjectDialog = Backbone.View.extend({
     },
     clearEditProjectPanel : function() {
         var self = this;
-        console.log($(self.el).html());
+        
         $("#projectediterrormessage").empty();
         $("#projectediterrorlabel").hide();
         $("#project-edit-name").val("");
@@ -120,7 +120,7 @@ var EditProjectDialog = Backbone.View.extend({
 
 
     editProject : function() {
-        console.log("editProject...");
+        
         var self = this;
 
         $("#projectediterrormessage").empty();
@@ -139,12 +139,12 @@ var EditProjectDialog = Backbone.View.extend({
 
         project.save({name : name}, {
             success: function (model, response) {
-                console.log(response);
+                
 
                 window.app.view.message("Project", response.message, "");
 
                 var id = response.project.id;
-                console.log("project=" + id);
+                
                 //create user-project "link"
 
 
@@ -166,35 +166,35 @@ var EditProjectDialog = Backbone.View.extend({
                 projectAddUser = self.diffArray(projectNewUsers,projectOldUsers); //[x] must be added
                 projectDeleteUser =  self.diffArray(projectOldUsers,projectNewUsers); //[c] must be deleted
 
-                console.log("projectOldUsers");
-                _.each(projectOldUsers,function(user){console.log(user)});
-                console.log("projectNewUsers");
-                _.each(projectNewUsers,function(user){console.log(user)});
-                console.log("projectAddUser");
-                _.each(projectAddUser,function(user){console.log(user)});
-                console.log("projectDeleteUser");
-                _.each(projectDeleteUser,function(user){console.log(user)});
+                
+                _.each(projectOldUsers,function(user){
+                
+                _.each(projectNewUsers,function(user){
+                
+                _.each(projectAddUser,function(user){
+                
+                _.each(projectDeleteUser,function(user){
                 var total = projectAddUser.length+projectDeleteUser.length;
                 var counter = 0;
                 if(total==0) self.addDeleteUserProjectCallback(0,0);
                 _.each(projectAddUser,function(user){
-                    console.log("projectAddUser="+user);
+                    
                     new ProjectUserModel({project: id,user:user}).save({}, {
                         success: function (model, response) {
                             self.addDeleteUserProjectCallback(total,++counter);
                         },error: function (model, response) {
-                            console.log(response);
+                            
                             var json = $.parseJSON(response.responseText);
                             window.app.view.message("User", json.errors, "");
                         }});
                 });
                 _.each(projectDeleteUser,function(user){
-                    console.log("projectDeleteUser="+user);
+                    
                     new ProjectUserModel({project: id,user:user}).destroy({
                         success: function (model, response) {
                             self.addDeleteUserProjectCallback(total,++counter);
                         },error: function (model, response) {
-                            console.log(response);
+                            
                             var json = $.parseJSON(response.responseText);
                             window.app.view.message("User", json.errors, "");
                         }});
@@ -203,11 +203,11 @@ var EditProjectDialog = Backbone.View.extend({
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
-                console.log("json.project=" + json.errors);
+                
 
                 $("#projectediterrorlabel").show();
 
-                console.log($("#projectediterrormessage").append(json.errors));
+                
             }
         }
                 );

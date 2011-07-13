@@ -41,11 +41,11 @@ var ProjectPanelView = Backbone.View.extend({
         return this;
     },
     refresh : function() {
-        console.log("refresh");
+        
         var self = this;
         self.model.fetch({
             success : function (model, response) {
-                console.log("refresh project panel");
+                
                 self.loadImages = true;
                 require([
                     "text!application/templates/project/ProjectDetail.tpl.html"
@@ -94,8 +94,8 @@ var ProjectPanelView = Backbone.View.extend({
         self.renderCurrentProjectButton();
         self.renderShowImageButton(json.numberOfImages);
 
-        console.log("#projectedit" + self.model.id);
-        console.log($("#projectedit" + self.model.id).length + " button");
+        
+        
         $(self.el).find("#projectedit" + self.model.id).button({
             icons : {secondary : "ui-icon-pencil"}
         });
@@ -113,23 +113,23 @@ var ProjectPanelView = Backbone.View.extend({
         });
     },
     editProject : function(){
-           console.log("editProject");
+           
           var self = this;
           $('#editproject').remove();
           self.editProjectDialog = new EditProjectDialog({projectPanel:self,el:self.el,model:self.model}).render();
     },
     deleteProject : function() {
-        console.log("showDeleteProject");
+        
         var self = this;
         var idProject = self.model.id;
-        console.log("idProject="+idProject);
+        
 
         //check if project is empty
         new ImageInstanceCollection({project:idProject}).fetch({
 
             success : function (collection, response) {
 
-                console.log("project:" + idProject + " has " + collection.length + " images");
+                
 
                 if(collection.length==0) self.acceptDeleteProject();
                 else self.refuseDeleteProject(collection.length);
@@ -143,12 +143,12 @@ var ProjectPanelView = Backbone.View.extend({
 
     },
     refuseDeleteProject : function(numberOfImage) {
-       console.log("Project is linked with images");
+       
         var self = this;
         require(["text!application/templates/project/ProjectDeleteRefuseDialog.tpl.html"], function(tpl) {
             // $('#dialogsTerm').empty();
-            console.log("tpl=");
-            console.log(tpl);
+            
+            
             $("dialogsDeleteProject").replaceWith('');
             var dialog =  new ConfirmDialogView({
                 el:'#dialogsDeleteProject',
@@ -159,7 +159,7 @@ var ProjectPanelView = Backbone.View.extend({
                     height : 200,
                     buttons: {
                         "Close": function() {
-                            console.log("no delete");
+                            
                             //doesn't work! :-(
                             $('#dialogsDeleteProject').dialog( "close" ) ;
                         }
@@ -171,12 +171,12 @@ var ProjectPanelView = Backbone.View.extend({
         });
     },
     acceptDeleteProject : function() {
-        console.log("Project is not linked with images");
+        
         var self = this;
         require(["text!application/templates/project/ProjectDeleteConfirmDialog.tpl.html"], function(tpl) {
             // $('#dialogsTerm').empty();
-            console.log("tpl=");
-            console.log(tpl);
+            
+            
             var dialog =  new ConfirmDialogView({
                 el:'#dialogsDeleteProject',
                 template : _.template(tpl, {project : self.model.get('name')}),
@@ -186,11 +186,11 @@ var ProjectPanelView = Backbone.View.extend({
                     height : 300,
                     buttons: {
                         "Delete project": function() {
-                            console.log("delete:"+self.model.get('name'));
+                            
                             new ProjectModel({id : self.model.id}).destroy(
                             {
                                 success: function (model, response) {
-                                    console.log(response);
+                                    
                                     window.app.view.message("Project", response.message, "");
                                     self.clear();
                                     $('#dialogsDeleteProject').dialog( "close" ) ;
@@ -206,7 +206,7 @@ var ProjectPanelView = Backbone.View.extend({
                                     );
                         },
                         "Cancel": function() {
-                            console.log("no delete");
+                            
                             //doesn't work! :-(
                             $('#dialogsDeleteProject').dialog( "close" ) ;
                         }
@@ -219,7 +219,7 @@ var ProjectPanelView = Backbone.View.extend({
     },
     showAddSlidesPanel : function () {
         var self = this;
-        console.log("build dialog with project:" + this.model);
+        
         $("#projectdiv").hide();
         $("#addimagediv").show();
         self.container.addSlideDialog = new ProjectManageSlideDialog({model:this.model,projectPanel:this,el:self.el}).render();
@@ -243,7 +243,7 @@ var ProjectPanelView = Backbone.View.extend({
         window.app.controllers.browse.closeAll();
         window.app.status.currentProject = idProject;
 
-        console.log("New current project:" + window.app.status.currentProject);
+        
         return true;//go to dashboard
 
     },

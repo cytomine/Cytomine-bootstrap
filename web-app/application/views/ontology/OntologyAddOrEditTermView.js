@@ -148,7 +148,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         self.$addFolderButton.button({
             icons : {secondary: "ui-icon-folder-collapsed" }
         });
-        console.log("buildParentInfo");
+        
         self.$tree.empty() ;
         self.$tree.dynatree({
             children: self.ontology.toJSON(),
@@ -186,7 +186,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
                 onDrop: function(node, sourceNode, hitMode, ui, draggable) {
 //                    if(!node.data.isFolder && hitMode=="over")
 //                    {
-//                        console.log("NOT A FOLDER");
+//                        
 //                    }
 //                    else sourceNode.move(node, hitMode);
                     if(hitMode=="over") {
@@ -204,7 +204,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             idPrefix: "" + self.action +"dynatree-Ontology-"+self.model.id+"-" ,
             debugLevel: 0
         });
-        console.log("Action:"+self.action);
+        
         //if add panel, add the "temp" model to the tree (event if it's not yet a part of the ontology)
         if(self.action=="Add") {
             var node = self.$tree.dynatree("getTree").getNodeByKey(self.ontology.id);
@@ -215,7 +215,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
                 isFolder: false
             });
         }
-        console.log("expanse");
+        
         //expand all nodes
         self.$tree.dynatree("getRoot").visit(function(node){
             node.expand(true);

@@ -11,7 +11,7 @@ var ImageTabsView = Backbone.View.extend({
     render: function() {
         var self = this;
 
-        console.log("ImageTabsView:"+self.idProject);
+        
 
         $(self.el).append('<table id=\"tablegrid\"><tr><td  WIDTH=\"50%\"><table id=\"listimage'+self.idProject+'\"></table><div id=\"pagerimage'+this.idProject+'\"></div></td><td width=50></td><td WIDTH=\"40%\">info</td></tr></table>');
 
@@ -49,12 +49,12 @@ var ImageTabsView = Backbone.View.extend({
         var data = [];
 
         self.model.each(function(image) {
-            console.log(image.get('created'));
+            
             var createdDate = new Date();
             createdDate.setTime(image.get('created'));
 
             var url = '<a href=\"#tabs-image-'+self.idProject+'-' + image.id + '-\">Click here to see the image</a>'
-            console.log(url);
+            
             data[i] = {
                 id: image.id,
                 filename: image.get('filename'),
@@ -66,7 +66,7 @@ var ImageTabsView = Backbone.View.extend({
         });
 
         for(var j=0;j<=data.length;j++) {
-            console.log("addRowData");
+            
             $(self.el).find("#listimage"+self.idProject).jqGrid('addRowData',j+1,data[j]);
         }
 

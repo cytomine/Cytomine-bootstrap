@@ -23,7 +23,7 @@ var ProjectView = Backbone.View.extend({
           return this;
        },
        doLayout: function(tpl) {
-          console.log("ProjectView: render " + $(this.el).length);
+          
 
           var self = this;
           $(this.el).find("#projectdiv").html(_.template(tpl, {}));
@@ -40,12 +40,12 @@ var ProjectView = Backbone.View.extend({
         * Refresh all project panel
         */
        refresh : function() {
-          console.log("ProjectView: refresh");
+          
           var self = this;
           //TODO: project must be filter by user?
           var idUser =  undefined;
 
-          console.log("1111111111111111111111111111111111111111111111111111111");
+          
           //_.each(self.projectList, function(panel){ panel.refresh(); });
           if(self.addSlideDialog!=null) self.addSlideDialog.refresh();
 
@@ -63,7 +63,7 @@ var ProjectView = Backbone.View.extend({
         * Create search project panel
         */
        loadSearchProjectPanel : function() {
-          console.log("ProjectView: searchProjectPanel");
+          
 
           var self = this;
           //create project search panel

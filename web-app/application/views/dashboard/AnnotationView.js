@@ -47,7 +47,7 @@ var AnnotationView = Backbone.View.extend({
         * @param annotation Annotation model
         */
        add : function(annotation) {
-          console.log("AnnotationView: add " + annotation.id);
+          
           var self = this;
           var thumb = new AnnotationThumbView({
                  model : annotation,
@@ -85,7 +85,7 @@ var AnnotationView = Backbone.View.extend({
               * At the end of the loop, element from arrayDeletedAnnotations must be deleted because they aren't
               * in the set of new annotations
               */
-             //console.log("arrayDeletedAnnotations:"+arrayDeletedAnnotations);
+             //
              arrayDeletedAnnotations = _.without(arrayDeletedAnnotations,annotation.id);
 
           });

@@ -46,14 +46,14 @@ var ProjectDashboardView = Backbone.View.extend({
 
           var projectModel = new ProjectModel({id : self.model.id});
           var projectCallback = function(model, response) {
-             console.log(model);
+             
              self.model = model;
 
              self.fetchProjectInfo();
              /*self.refreshImages();*/
 
              //refresh selected tab
-             console.log("selectedTermTab="+self.selectedTermTab);
+             
              /*self.refreshAnnotations(self.selectedTermTab);*/
 
              //TODO: must be improve!
@@ -211,7 +211,7 @@ var ProjectDashboardView = Backbone.View.extend({
 
           new AnnotationCollection({project:self.model.id,term:idTerm}).fetch({
                  success : function (collection, response) {
-                    console.log("AnnotationCollection form term " + term + " : " +collection.length);
+                    
                     if (self.annotationsViews[idTerm] != null) { //only refresh
                        self.annotationsViews[idTerm].refresh(collection);
                        return;
@@ -222,7 +222,7 @@ var ProjectDashboardView = Backbone.View.extend({
                            el:$($elem),
                            container : window.app.view.components.warehouse
                         }).render();
-                    console.log("Looking for annotationsViews==null " + term);
+                    
                     //self.annotationsViews[term].refresh(collection);
                  }
               });
@@ -231,13 +231,13 @@ var ProjectDashboardView = Backbone.View.extend({
         * Get and Print ALL images (use for the first time)
         */
        fetchImages : function() {
-          console.log("ProjectDashboardView: fetchImages");
+          
           var self = this;
           $("#tabs-images-listing-"+ self.model.get('id')).hide();
           new ImageInstanceCollection({project:self.model.get('id')}).fetch({
                  success : function (collection, response) {
 
-                    console.log("self.imagesView:"+$("#projectImageThumb"+self.model.get('id')).length);
+                    
 
                     self.imagesView = new ImageView({
                            page : 0,
@@ -245,7 +245,7 @@ var ProjectDashboardView = Backbone.View.extend({
                            el:$("#projectImageThumb"+self.model.get('id')),
                            container : window.app.view.components.warehouse
                         }).render();
-                    console.log("self.imagesTabsView"+$("#projectImageListing"+self.model.get('id')).length);
+                    
                     self.imagesTabsView = new ImageTabsView({
                            page : 0,
                            model : collection,
@@ -266,7 +266,7 @@ var ProjectDashboardView = Backbone.View.extend({
         * Get and Print only new images and remove delted images
         */
        refreshImages : function() {
-          console.log("ProjectDashboardView: refreshImages");
+          
           var self = this;
           if (self.imagesView == null || self.imagesTabsView == null) {
              self.fetchImages();
@@ -278,7 +278,7 @@ var ProjectDashboardView = Backbone.View.extend({
                  }});
        },
        refreshImagesTabs : function() {
-          console.log("ProjectDashboardView: refreshImagesTabs");
+          
           var self = this;
           if(self.imagesTabsView==null) return; //imageView is not yet build
           new ImageInstanceCollection({project:self.model.get('id')}).fetch({
@@ -288,7 +288,7 @@ var ProjectDashboardView = Backbone.View.extend({
        },
        selectTab : function(index) {
           var self = this;
-          console.log("select tab for images index " + index);
+          
           $("#tabs-images-listing-"+ self.model.get('id')).tabs( "select" , index );
        },
        drawPieChart : function (collection, response) {
@@ -346,7 +346,7 @@ var ProjectDashboardView = Backbone.View.extend({
           var self = this;
           if (self.model.get('numberOfAnnotations') == 0) return;
 
-          console.log("ProjectDashboardView: fetchStats");
+          
 
           var statsCollection = new StatsCollection({project:self.model.get('id')});
           var statsCallback = function(collection, response) {
@@ -411,22 +411,22 @@ var ProjectDashboardView = Backbone.View.extend({
                  var commandCollection = new CommandCollection({project:self.model.get('id'),max:self.maxCommandsView});
 
                  var commandCallback = function(collection, response) {
-                    console.log("command.size()="+collection.length);
+                    
                     $("#lastactionitem").empty();
                     collection.each(function(command) {
                        var json = command.toJSON()
 
-                       console.log("created="+json.created);
-                       console.log(json);
+                       
+                       
 
                        var dateCreated = new Date();
                        dateCreated.setTime(json.created);
                        var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
 
                        var jsonCommand = $.parseJSON(json.command.data);
-                       console.log(jsonCommand); //jsonCommand.cropURL
-                       console.log(jsonCommand.command);
-                       console.log(jsonCommand.cropURL);
+                        //jsonCommand.cropURL
+                       
+                       
                        var action = ""
 
                        if(json.command.CLASSNAME=="be.cytomine.command.annotation.AddAnnotationCommand")
@@ -469,21 +469,21 @@ var ProjectDashboardView = Backbone.View.extend({
 
                        if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.AddAnnotationTermCommand")
                        {
-                          console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
+                          
                           var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-plus",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
                           $("#lastactionitem").append(action);
 
                        }
                        if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.EditAnnotationTermCommand")
                        {
-                          console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
+                          
                           var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-pencil",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
                           $("#lastactionitem").append(action);
 
                        }
                        if(json.command.CLASSNAME=="be.cytomine.command.annotationterm.DeleteAnnotationTermCommand")
                        {
-                          console.log("json.command.CLASSNAME="+json.command.CLASSNAME);
+                          
                           var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-trash",text:json.prefixAction+ " " +json.command.action,datestr:dateStr,image:""});
                           $("#lastactionitem").append(action);
 
@@ -494,8 +494,8 @@ var ProjectDashboardView = Backbone.View.extend({
                        {
                           var cropStyle = "block";
                           var cropURL = jsonCommand.thumb;
-                          console.log("be.cytomine.command.imageinstance.AddImageInstanceCommand");
-                           console.log(commandImageInstanceTpl);
+                          
+                           
 
 
                           var action = _.template(commandImageInstanceTpl, {idProject : self.model.id, idImage : jsonCommand.id, imageFilename : jsonCommand.filename, icon:"add.png",text:json.prefixAction+ " " + json.command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
@@ -528,12 +528,12 @@ var ProjectDashboardView = Backbone.View.extend({
 
        },
        resetElem : function(elem,txt) {
-          console.log("find:"+$(this.el).find(elem).length);
+          
           $(this.el).find(elem).empty();
           $(this.el).find(elem).append(txt);
        },
        doLayout : function(tpl) {
-          console.log("ProjectDashboardView: printProjectInfo");
+          
           var self = this;
           var html = _.template(tpl, self.model.toJSON());
           $(self.el).append(html);

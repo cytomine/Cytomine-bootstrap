@@ -39,7 +39,7 @@ var ExplorerTabs = Backbone.View.extend({
                           var index = $( "li", tabs ).index( $( this ).parent() );
                           self.removeTab(index);
                        });
-                       console.log("add panel :" + ui.panel.id);
+                       
                        tabs.tabs('select', '#' + ui.panel.id);
                     }
                     $("#"+ui.panel.id).attr('style', 'width:100%;height:100%;;overflow:auto;');
@@ -87,7 +87,7 @@ var ExplorerTabs = Backbone.View.extend({
         */
        getBrowseImageView : function(idImage) {
           var object  = _.detect(this.tabs, function(object) {
-             console.log("looking for tab " + idImage  + " vs " + object.idImage);
+             
              return object.idImage == idImage;
           });
           return object != null ? object : null;
@@ -134,7 +134,7 @@ var ExplorerTabs = Backbone.View.extend({
         * @param dashboard the ProjectDashBoardView instance
         */
        addDashboard : function(dashboard) {
-          console.log("add dashboard");
+          
           var tabs = $(this.el).children('.tabs');
           tabs.tabs("add", "#tabs-dashboard-"+window.app.status.currentProject, 'Dashboard');
              tabs.tabs("add", "#tabs-images-"+window.app.status.currentProject, 'Images');

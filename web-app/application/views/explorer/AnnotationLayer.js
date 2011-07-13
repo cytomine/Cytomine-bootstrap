@@ -2,7 +2,7 @@
 
 
 var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView, map) {
-   console.log("new annotation layer : " + (ontologyTreeView == null || ontologyTreeView == undefined));
+   
    var styleMap = new OpenLayers.StyleMap({
           "default" : OpenLayers.Util.applyDefaults({fillColor: color, fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
               OpenLayers.Feature.Vector.style["default"]),
@@ -49,17 +49,17 @@ AnnotationLayer.prototype = {
 
       this.vectorsLayer.events.on({
              clickFeature : function (evt) {
-                console.log("clickFeature");
+                
              },
              onSelect : function (evt) {
-                console.log("onSelect");
+                
              },
              featureselected: function (evt) {
-                console.log("featureselected: self.deleteOnSelect=" + self.deleteOnSelect + " self.measureOnSelect=" + self.measureOnSelect);
+                
 
                 if (!self.measureOnSelect) {
                    self.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
-                   console.log("self.deleteOnSelect =>" + self.deleteOnSelect);
+                   
                    if (self.deleteOnSelect == true) {
                       self.removeSelection();
                    }
@@ -69,25 +69,25 @@ AnnotationLayer.prototype = {
 
              },
              'featureunselected': function (evt) {
-                console.log("featureunselected:" + self.measureOnSelect);
+                
                 if (self.measureOnSelect) self.vectorsLayer.removeFeatures(evt.feature);
 
                 if (self.dialog != null) self.dialog.destroy();
-                console.log("featureunselected");
+                
                 self.ontologyTreeView.clear();
                 self.ontologyTreeView.clearAnnotation();
                 self.clearPopup(map, evt);
                 //alias.ontologyTreeView.refresh(null);
              },
              'featureadded': function (evt) {
-                console.log("featureadded");
+                
                 /* Check if feature must throw a listener when it is added
                  * true: annotation already in database (no new insert!)
                  * false: new annotation that just have been draw (need insert)
                  * */
                 if (!self.measureOnSelect) {
                    if (evt.feature.attributes.listener != 'NO') {
-                      console.log("self.addAnnotation(evt.feature);");
+                      
                       evt.feature.attributes.measure = 'YES';
                       self.addAnnotation(evt.feature);
                    }
@@ -99,7 +99,7 @@ AnnotationLayer.prototype = {
 
              },
              'beforefeaturemodified': function (evt) {
-                console.log("Selected " + evt.feature.id + " for modification");
+                
              },
              'afterfeaturemodified': function (evt) {
 
@@ -107,7 +107,7 @@ AnnotationLayer.prototype = {
 
              },
              'onDelete': function (feature) {
-                console.log("delete " + feature.id);
+                
              }
           });
    },
@@ -129,7 +129,7 @@ AnnotationLayer.prototype = {
       this.controls.freehand.freehand = true;
 
       /* else {
-       console.log("no owner");
+       
        this.controls = {
        'select': new OpenLayers.Control.SelectFeature(this.vectorsLayer)
        }
@@ -141,7 +141,7 @@ AnnotationLayer.prototype = {
 
    /*Load annotation from database on layer */
    loadAnnotations: function (browseImageView) {
-      console.log("loadAnnotations: function (map)");
+      
       var self = this;
       new AnnotationCollection({user : this.userID, image : this.imageID, term: undefined}).fetch({
              success : function (collection, response) {
@@ -156,7 +156,7 @@ AnnotationLayer.prototype = {
    },
    addFeature: function (feature) {
       this.features[feature.attributes.idAnnotation] = feature;
-      console.log("this.vectorsLayer.addFeatures(feature)");
+      
       this.vectorsLayer.addFeatures(feature);
    },
    selectFeature: function (feature) {
@@ -183,7 +183,7 @@ AnnotationLayer.prototype = {
    removeSelection: function () {
       for (var i in this.vectorsLayer.selectedFeatures) {
          var feature = this.vectorsLayer.selectedFeatures[i];
-         console.log(feature);
+         
          this.removeAnnotation(feature);
       }
    },
@@ -203,7 +203,7 @@ AnnotationLayer.prototype = {
       require([
          "text!application/templates/explorer/PopupAnnotation.tpl.html"
       ], function(tpl) {
-         //console.log(e.type, e.feature.id, e.feature.attributes.idAnnotation);
+         //
          if (evt.feature.popup != null) {
             return;
          }
@@ -291,7 +291,7 @@ AnnotationLayer.prototype = {
 
    /*Add annotation in database*/
    addAnnotation: function (feature) {
-      console.log("addAnnotation");
+      
       var format = new OpenLayers.Format.WKT();
       var geomwkt = format.write(feature);
       var alias = this;
@@ -301,16 +301,16 @@ AnnotationLayer.prototype = {
              location: geomwkt,
              image: this.imageID,
              parse: function(response) {
-                console.log("response : " + response);
+                
                 window.app.view.message("Annotation", response.message, "");
                 return response.annotation;
              }
           });
 
-      console.log("annotation model");
+      
       new BeginTransactionModel({}).save({}, {
              success: function (model, response) {
-                console.log(response.message);
+                
                 annotation.save(annotation.toJSON(), {
                        success: function (annotation, response) {
 
@@ -343,7 +343,7 @@ AnnotationLayer.prototype = {
 
              },
              error: function (model, response) {
-                console.log("ERROR: error transaction begin");
+                
              }
           });
 
@@ -364,7 +364,7 @@ AnnotationLayer.prototype = {
                 self.browseImageView.refreshAnnotationTabs(undefined);
              },
              error : function(model, response) {
-                console.log("ERROR FETCHING ANNOTATION");
+                
                 new EndTransactionModel({}).save();
              }
           });
@@ -402,7 +402,7 @@ AnnotationLayer.prototype = {
       return feature;
    },
    removeTermCallback : function(total, counter, feature, idAnnotation, idTerm) {
-      console.log("counter " + counter + " vs " + total);
+      
       if (counter < total) return;
       this.removeFeature(feature);
       this.controls.select.unselectAll();
@@ -410,8 +410,8 @@ AnnotationLayer.prototype = {
       var self = this;
       new AnnotationModel({id:feature.attributes.idAnnotation}).destroy({
              success: function (model, response) {
-                console.log("Delete annotation");
-                console.log("End transaction");
+                
+                
                 window.app.view.message("Annotation", response.message, "");
                 new EndTransactionModel({}).save();
                 self.browseImageView.refreshAnnotationTabs(idTerm);
@@ -429,7 +429,7 @@ AnnotationLayer.prototype = {
    removeAnnotation : function(feature) {
       var alias = this;
       var idAnnotation = feature.attributes.idAnnotation;
-      console.log("Delete annotation id =" + idAnnotation);
+      
       var annotation = new AnnotationModel({id:idAnnotation});
       var counter = 0;
       new BeginTransactionModel({}).save({}, {
@@ -441,8 +441,8 @@ AnnotationLayer.prototype = {
                           return;
                        }
                        collection.each(function(term) {
-                          console.log("delete term=" + term.id + " from annotation " + idAnnotation);
-                          console.log("annotationTerm=" + JSON.stringify(term));
+                          
+                          
 
                           new AnnotationTermModel({annotation:idAnnotation,term:term.id}).destroy({success : function (model, response) {
                                  alias.removeTermCallback(collection.length, ++counter, feature, idAnnotation, term.id);
@@ -454,7 +454,7 @@ AnnotationLayer.prototype = {
 
              },
              error: function (model, response) {
-                console.log("ERRORR: error transaction begin");
+                
              }
           });
 
@@ -473,21 +473,21 @@ AnnotationLayer.prototype = {
    },
    /** Triggered when add new feature **/
    /*onFeatureAdded : function (evt) {
-    console.log("onFeatureAdded start:"+evt.feature.attributes.idAnnotation);
+    
     // Check if feature must throw a listener when it is added
     // true: annotation already in database (no new insert!)
     // false: new annotation that just have been draw (need insert)
     //
     if(evt.feature.attributes.listener!='NO')
     {
-    console.log("add " + evt.feature);
+    
     alias.addAnnotation(evt.feature);
     }
     },*/
 
    /** Triggered when update feature **/
    /* onFeatureUpdate : function (evt) {
-    console.log("onFeatureUpdate start");
+    
 
     this.updateAnnotation(evt.feature);
     },*/
@@ -522,7 +522,7 @@ AnnotationLayer.prototype = {
 
    },
    toggleIrregular: function () {
-      console.log("toggleIrregular");
+      
       this.irregular = !this.irregular;
       this.updateControls();
    },
@@ -562,8 +562,8 @@ AnnotationLayer.prototype = {
       //browse measure on select
       for (var i in this.vectorsLayer.features) {
          var feature = this.vectorsLayer.features[i];
-         console.log(feature);
-         console.log(feature.attributes.measure);
+         
+         
          if(feature.attributes.measure==undefined || feature.attributes.measure == 'YES') {
             self.vectorsLayer.removeFeatures(feature);
             if (feature.popup) {
@@ -586,7 +586,7 @@ AnnotationLayer.prototype = {
          var control = this.controls[key];
          if (name == key) {
             control.activate();
-            console.log("activate " + name);
+            
             if (control == this.controls.modify) {
                for (var i in this.vectorsLayer.selectedFeatures) {
                   var feature = this.vectorsLayer.selectedFeatures[i];
@@ -609,7 +609,7 @@ AnnotationLayer.prototype = {
    /* Callbacks undo/redo */
    annotationAdded: function (idAnnotation) {
       var self = this;
-      console.log("annotationAdded="+idAnnotation);
+      
       var deleteOnSelectBackup = self.deleteOnSelect;
       self.deleteOnSelect = false;
 
@@ -643,11 +643,11 @@ AnnotationLayer.prototype = {
    },
    termAdded: function (idAnnotation, idTerm) {
       var self = this;
-      console.log("termAdded");
+      
       this.ontologyTreeView.check(idTerm);
    },
    termRemoved: function (idAnnotation, idTerm) {
-      console.log("termRemoved");
+      
       this.ontologyTreeView.uncheck(idTerm);
    }
 }

@@ -53,7 +53,7 @@ var BrowseImageView = Backbone.View.extend({
           var self = this;
           if (options.goToAnnotation != undefined) {
              _.each(this.layers, function(layer) {
-                console.log("layer : " + layer);
+                
                 self.goToAnnotation(layer,  options.goToAnnotation.value);
              });
           }
@@ -192,7 +192,7 @@ var BrowseImageView = Backbone.View.extend({
           this.layers.push(layer);
 
           var layerID = window.app.models.users.get(userID).prettyName();
-          console.log("layer ID : " + layerID);
+          
           var color = window.app.models.users.get(userID).get('color');
           var layerOptionTpl;
           if (layer.isOwner) {
@@ -233,7 +233,7 @@ var BrowseImageView = Backbone.View.extend({
         * Init the Map if ImageServer is IIPImage
         */
        initIIP : function () {
-          console.log("initIIP");
+          
           var self = this;
           var parseIIPMetadaResponse = function(response) {
              var metadata = null;
@@ -260,10 +260,10 @@ var BrowseImageView = Backbone.View.extend({
 
           var initZoomifyLayer = function(metadata) {
              /* First we initialize the zoomify pyramid (to get number of tiers) */
-             console.log("Init zoomify with (width, height) : " + metadata.width +","+ metadata.height);
+             
              var baseURLs = self.model.get('imageServerBaseURL');
-             console.log("baseURL : " + baseURLs.length);
-             console.log("nbZoom " + metadata.nbZoom);
+             
+             
              var zoomify_url = []
              _.each(baseURLs, function(baseURL) {
                 var url = baseURL + "/fcgi-bin/iipsrv.fcgi?zoomify=" + self.model.get('path') +"/";
@@ -309,7 +309,7 @@ var BrowseImageView = Backbone.View.extend({
                  new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight)
              );
 
-             console.log("metadata.overviewHeight = " + metadata.overviewHeight);
+             
              var overviewMapControl = new OpenLayers.Control.OverviewMap({
                     size: new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight),
                     layers: [overviewMap],
@@ -341,7 +341,7 @@ var BrowseImageView = Backbone.View.extend({
                     initZoomifyLayer(metadata);
                  },
                  error: function(){
-                    console.log("error");
+                    
                  }
               });
        },
@@ -360,7 +360,7 @@ var BrowseImageView = Backbone.View.extend({
               });
        },
        initDjatoka: function () {
-          console.log("initDjatoka");
+          
           var self = this;
           var baseLayer = new OpenLayers.Layer.OpenURL(this.model.get('filename'), this.model.get('imageServerBaseURL'), {
                  transitionEffect: 'resize',
@@ -407,7 +407,7 @@ var BrowseImageView = Backbone.View.extend({
 
 
           this.map = new OpenLayers.Map("map" + this.model.get('id'), options);
-          console.log("MAP CREATED + " + this.map);
+          
           this.addBaseLayer(baseLayer);
           this.map.setCenter(new OpenLayers.LonLat(lon, lat), 2);
           self.createOverviewMap();

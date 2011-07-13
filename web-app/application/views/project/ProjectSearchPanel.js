@@ -145,7 +145,7 @@ var ProjectSearchPanel = Backbone.View.extend({
                  search : function(event)
                  {
 
-                    console.log("TEXT:"+$(self.searchProjectTextBoxElem).val());
+                    
                     self.searchProject();
                  }
               });
@@ -160,7 +160,7 @@ var ProjectSearchPanel = Backbone.View.extend({
        createSliderWithoutAmountPrint : function(sliderElem, labelElem,min,max) {
           var self = this;
 
-          console.log("sliderElem="+sliderElem + " min="+min + " et max="+ max);
+          
           $(sliderElem).slider({
                  range: true,
                  min : min,
@@ -182,7 +182,7 @@ var ProjectSearchPanel = Backbone.View.extend({
           //refresh item from search panel
           //ex: if a user add 1 slide to the project that have the hight number of slide, number of slides slider value must be change
           var self = this;
-          console.log("refresh projects panel");
+          
           self.loadSlider();
           self.loadAutocomplete();
        },
@@ -243,14 +243,14 @@ var ProjectSearchPanel = Backbone.View.extend({
           var numberOfAnnotations = new Array();
           numberOfAnnotations.push($(self.sliderNumberOfAnnotationsElem).slider( "values", 0 ));
           numberOfAnnotations.push($(self.sliderNumberOfAnnotationsElem).slider( "values", 1 ));
-          console.log("filter project : " + numberOfImages);
+          
           self.filterProjects(searchText==""?undefined:searchText,searchOntologies.length==0?undefined:searchOntologies,numberOfImages,numberOfSlides,numberOfAnnotations);
        },
        /**
         * Show dialog to add a project
         */
        showAddProjectPanel : function() {
-          console.log("ProjectSearchPanel: showAddProjectPanel");
+          
           var self = this;
           $('#addproject').remove();
           self.addProjectDialog = new AddProjectDialog({projectsPanel:self.projectsPanel,el:self.el}).render();

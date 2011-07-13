@@ -26,12 +26,12 @@ var AnnotationListView = Backbone.View.extend({
         return this;
     },
     doLayout: function(tpl) {
-        console.log("AnnotationView.render");
+        
 
         var self = this;
         $(this.el).html(_.template(tpl, {name:"name",area : "area"}));
 
-        console.log("AnnotationView:"+self.model.length);
+        
         self.model.each(function(annotation) {
             //$("#annotationList").append(annotation.get('name') + " <br>");
             var name = annotation.get('name');
@@ -106,7 +106,7 @@ jQuery("#list3").jqGrid('navGrid','#pager3',{edit:false,add:false,del:false});
 
 
 for(var j=0;j<=data.length;j++) {
-    console.log("addRowData");
+    
 	jQuery("#list3").jqGrid('addRowData',j+1,data[j]);
 }
 

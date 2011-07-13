@@ -40,9 +40,9 @@ var ProjectManageSlideDialog = Backbone.View.extend({
      */
     doLayout : function(tpl) {
         var self = this;
-        console.log("Id project="+this.model.id);
+        
 
-        console.log(" _.template");
+        
 
         $("#addimagediv").empty();
 
@@ -56,7 +56,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
             $("#addimagediv").hide();
         });
 
-        console.log("ProjectAddImageThumbDialog");
+        
         self.imageThumb = new ProjectAddImageThumbDialog({
             model : self.model,
             projectsPanel : self,
@@ -64,16 +64,16 @@ var ProjectManageSlideDialog = Backbone.View.extend({
             slides : window.app.models.slides,
             el : "#tabsProjectaddimagedialog"+self.model.id+"-1"
         }).render();
-        console.log("render() 1 ok");
+        
 
-        console.log("ProjectAddImageListingDialog");
+        
         self.imageListing = new ProjectAddImageListingDialog({
             model : self.model,
             projectsPanel : self,
             imagesProject : self.imagesProject,
             el : "#tabsProjectaddimagedialog"+self.model.id+"-2"
         }).render();
-        console.log("render() 2 ok");
+        
 
         $("button[class=goBackToProject]").button({
             icons : {primary: "ui-icon-circle-triangle-w"}

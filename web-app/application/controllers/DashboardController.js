@@ -12,7 +12,7 @@ var DashboardController = Backbone.Controller.extend({
        init : function (project, callback) {
 
           if (window.app.status.currentProject != undefined && window.app.status.currentProject != project) {
-             console.log("close previous project");
+             
              this.destroyView();
              window.app.controllers.browse.closeAll();
              window.app.status.currentProject = undefined;
@@ -20,7 +20,7 @@ var DashboardController = Backbone.Controller.extend({
           }
 
           if (window.app.status.currentProject == undefined) {
-             console.log("init dashboard view");
+             
              window.app.status.currentProject = project;
              window.app.controllers.browse.initTabs();
              if (this.view == null) this.createView(callback);
