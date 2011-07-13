@@ -49,7 +49,7 @@ class BootStrap {
 
 
     def init = { servletContext ->
-
+        compileJS();
         marshallersService.initMarshallers()
         sequenceService.initSequences()
         triggerService.initTrigger()
@@ -75,6 +75,13 @@ class BootStrap {
         updateCounters()
         stopWatch.stop("initData");
         //end of init
+    }
+
+    private def compileJS() {
+        println "========= C O M P I L E == J S ========= "
+        def proc = "./scripts/yui-compressor-ant-task/doc/example/deploy.sh".execute()
+        proc.in.eachLine { line -> println line }
+        println "======================================== "
     }
 
     private def initData(String env) {
