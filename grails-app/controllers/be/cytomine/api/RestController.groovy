@@ -50,19 +50,9 @@ class RestController {
     }
 
     result = c.execute()
-    log.info "COMMAND:"+c
     if (result.status == successCode) {
-
-      log.info "COMMAND:"+c
-      log.info "COMMAND VALID:"+c.validate()
-      log.info "COMMAND VALID:"+c.errors
       c.save()
-      log.info "COMMAND:"+c
-      log.info "COMMAND VALID:"+c.validate()
-      log.info "COMMAND VALID:"+c.validate()
       CommandHistory ch = new CommandHistory(command:c,prefixAction:"")
-      log.info "COMMAND VALID:"+ch.validate()
-      log.info "COMMAND VALID:"+ch.errors
 
       ch.save();
       if(c.saveOnUndoRedoStack) {
@@ -79,6 +69,10 @@ class RestController {
       json { render data as JSON }
       xml { render data as XML}
     }
+  }
+  def responseSuccess(data, code) {
+    response.status = code
+    response(data)
   }
   def responseSuccess(data) {
     response(data)
