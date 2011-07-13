@@ -48,7 +48,7 @@
 
     <!-- MultiSelect -->
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.min.js"></script>
-    <link rel='stylesheet' href='css/reset.css' type='text/css'/>
+    <link rel='stylesheet' href="lib/multiselect/jquery.multiselect.css" type='text/css'/>
     <!-- Styles -->
     <link rel='stylesheet' href='css/reset.css' type='text/css'/>
     <link rel='stylesheet' href='css/cytomine.css' type='text/css'/>
