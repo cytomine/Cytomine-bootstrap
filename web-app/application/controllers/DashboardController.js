@@ -50,19 +50,21 @@ var DashboardController = Backbone.Controller.extend({
              self.view.refreshImagesTabs();
              var tabs = $("#explorer > .browser").children(".tabs");
              tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
-              self.view.selectTab(1);
+             self.view.selectTab(1);
           }
           this.init(project, func);
        },
        annotations : function(project) {
           var self = this;
           var func = function() {
+             self.view.refreshSelectedTerms();
              self.view.selectTab(2);
              var tabs = $("#explorer > .browser").children(".tabs");
              tabs.tabs("select", "#tabs-annotations-"+window.app.status.currentProject);
           }
           this.init(project, func);
        },
+
        dashboard : function(project, callback) {
           var self = this;
           var func = function() {
@@ -73,8 +75,6 @@ var DashboardController = Backbone.Controller.extend({
           }
           this.init(project, func);
        },
-
-
 
        createView : function (callback) {
           var tabs = $("#explorer > .browser").children(".tabs");
