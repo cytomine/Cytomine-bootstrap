@@ -48,36 +48,13 @@
 
     <!-- MultiSelect -->
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.min.js"></script>
-    <link rel='stylesheet' href='lib/multiselect/jquery.multiselect.css' type='text/css'/>
+    <link rel='stylesheet' href='css/reset.css' type='text/css'/>
     <!-- Styles -->
     <link rel='stylesheet' href='css/reset.css' type='text/css'/>
     <link rel='stylesheet' href='css/cytomine.css' type='text/css'/>
 
     <!-- Application -->
     <script type="text/javascript" src="application/Utilities.js" ></script>
-
-
-
-
-    <!-- Datatables
-    <script type="text/javascript" src="lib/datatables/jquery.dataTables.min.js" ></script>
-    <link rel='stylesheet' href='lib/datatables/demo_table.css' type='text/css'/>
-    <link rel='stylesheet' href='lib/datatables/demo_table_jui.css' type='text/css'/> -->
-
-    <!-- Slickgrid
-  <link rel='stylesheet' href='lib/slickgrid/slick.grid.css' type='text/css'/>
-  <!--  <script type="text/javascript" src="lib/slickgrid/jquery-ui-1.8.5.custom.js" ></script>
-  <script type="text/javascript" src="lib/slickgrid/jquery.event.drag-2.0.min.js" ></script>
-  <script type="text/javascript" src="lib/slickgrid/slick.core.js" ></script>
-  <script type="text/javascript" src="lib/slickgrid/slick.grid.js" ></script>
-  <script src="lib/slickgrid/firebugx.js"></script>
-  <script src="lib/slickgrid/slick.core.js"></script>
-  <script src="lib/slickgrid/slick.editors.js"></script>
-  <script src="lib/slickgrid/plugins/slick.rowselectionmodel.js"></script>
-  <script src="lib/slickgrid/slick.grid.js"></script>
-  <script src="lib/slickgrid/slick.dataview.js"></script>
-  <script src="lib/slickgrid/controls/slick.pager.js"></script>
-  <script src="lib/slickgrid/controls/slick.columnpicker.js"></script> -->
 
     <!--jqgrid -->
     <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
@@ -96,11 +73,6 @@
     <script type="text/javascript" src="application/views/explorer/LayerSwitcherPanel.js" ></script>
     <script type="text/javascript" src="application/views/explorer/OverviewMapPanel.js" ></script>
     <script type="text/javascript" src="application/views/explorer/OntologyPanel.js" ></script>
-
-
-
-
-
 
 
     <!-- controllers -->

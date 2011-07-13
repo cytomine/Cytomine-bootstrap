@@ -305,7 +305,8 @@ div .annotationsPanel {
 
 div .ontologypanel {
     align : center;
-    min-width: 180px;
+    width:auto;
+    max-width: 500px;
     position : absolute;
     left : 20px;
     top : 260px;
