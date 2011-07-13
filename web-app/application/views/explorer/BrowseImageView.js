@@ -8,6 +8,7 @@ var BrowseImageView = Backbone.View.extend({
        initialize: function (options) {
           this.initCallback = options.initCallback;
           this.layers = [];
+          this.layersLoaded = 0;
           this.baseLayers = [];
           this.annotationsPanel = null;
           this.map = null;
@@ -102,7 +103,50 @@ var BrowseImageView = Backbone.View.extend({
         * @param layer
         */
        layerLoadedCallback : function (layer) {
+          var self = this;
           if (_.isFunction(this.initCallback)) this.initCallback.call();
+          this.layersLoaded++;
+          if (this.layersLoaded == _.size(window.app.models.users)) {
+             //Init MultiSelected in LayerSwitcher
+             $("#layerSwitcher"+this.model.get("id")).find("select").multiselect({
+                    click: function(event, ui){
+                       _.each(self.layers, function(layer){
+                          if (layer.name != ui.value) return;
+                          layer.vectorsLayer.setVisibility(ui.checked);
+                       });
+                    },
+                    checkAll: function(){
+                       _.each(self.layers, function(layer){
+                          layer.vectorsLayer.setVisibility(true);
+                       });
+                    },
+                    uncheckAll: function(){
+                       _.each(self.layers, function(layer){
+                          layer.vectorsLayer.setVisibility(false);
+                       });
+                    }
+                 });
+
+             //Init Controls on Layers
+             var vectorLayers = _.map(this.layers, function(layer){ return layer.vectorsLayer;});
+             var selectFeature = new OpenLayers.Control.SelectFeature(vectorLayers);
+             _.each(this.layers, function(layer){
+                layer.initControls(self, selectFeature);
+                layer.registerEvents(self.map);
+                if (layer.isOwner) {
+                   self.userLayer = layer;
+                   layer.vectorsLayer.setVisibility(true);
+                   layer.toggleIrregular();
+                   //Simulate click on None toolbar
+                   var toolbar = $('#toolbar' + self.model.get('id'));
+                   toolbar.find('input[id=none' + self.model.get('id') + ']').click();
+                } else {
+                   layer.controls.select.activate();
+                   layer.vectorsLayer.setVisibility(false);
+                }
+             });
+          }
+
        },
        /**
         * Return the AnnotationLayer of the logged user
@@ -145,15 +189,24 @@ var BrowseImageView = Backbone.View.extend({
        addVectorLayer : function(layer, userID) {
           this.map.addLayer(layer.vectorsLayer);
           this.layers.push(layer);
-          var layerID = "layerSwitch" + (this.layers.length - 1); //index of the layer in this.layers array
+
+          var layerID = window.app.models.users.get(userID).prettyName();
           console.log("layer ID : " + layerID);
           var color = window.app.models.users.get(userID).get('color');
-          var liLayer = _.template("<li><input type='checkbox' id='{{id}}' name='annotationLayerRadio' style='display:inline;' checked /><label style='display:inline;font-weight:normal;color:#FFF;padding:5px;' for='{{id}}'>{{name}}</label></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
-          $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").append(liLayer);
-          $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").find("#"+layerID).click(function(){
-             var checked = $(this).attr("checked");
-             layer.vectorsLayer.setVisibility(checked);
-          });
+          var layerOptionTpl;
+          if (layer.isOwner) {
+             layerOptionTpl = _.template("<option value='{{id}}' selected='selected'>{{name}}</option>", {id : layerID, name : layer.vectorsLayer.name, color : color});
+          } else {
+             layerOptionTpl = _.template("<option value='{{id}}'>{{name}}</option>", {id : layerID, name : layer.vectorsLayer.name, color : color});
+          }
+
+          $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").append(layerOptionTpl);
+
+
+          /*  $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").find("#"+layerID).click(function(){
+           var checked = $(this).attr("checked");
+           layer.vectorsLayer.setVisibility(checked);
+           });*/
        },
        /**
         * Create a draggable Panel containing Layers names
@@ -161,6 +214,7 @@ var BrowseImageView = Backbone.View.extend({
         */
        createLayerSwitcher : function() {
           new LayerSwitcherPanel({
+                 browseImageView : this,
                  model : this.model,
                  el : this.el
               }).render();
@@ -506,22 +560,8 @@ var BrowseImageView = Backbone.View.extend({
                  success: function () {
                     window.app.models.users.each(function (user) {
                        var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map );
+                       layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
                        layerAnnotation.loadAnnotations(self);
-                       var isOwner = user.get('id') == window.app.status.user.id;
-                       if (isOwner) {
-                          self.userLayer = layerAnnotation;
-                          layerAnnotation.initControls(self, isOwner);
-                          layerAnnotation.registerEvents(self.map);
-                          self.userLayer.toggleIrregular();
-                          //simulate click on Navigate button
-                          var toolbar = $('#toolbar' + self.model.get('id'));
-                          toolbar.find('input[id=none' + self.model.get('id') + ']').click();
-                       } else {
-                          layerAnnotation.initControls(self, isOwner);
-                          layerAnnotation.registerEvents(self.map);
-                          layerAnnotation.controls.select.activate();
-                       }
-
                     });
                  }
               });

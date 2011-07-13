@@ -267,11 +267,11 @@ div .overviewPanel {
     align : center;
     position : absolute;
     right : 20px;
-    top : 40px;
+    top : 200px;
     z-index : 2020;
     background-color: rgba(0, 0, 0, 0.7);
     color : #fff;
-    padding: 0px;
+    padding: 2px;
     margin : 0px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
@@ -305,6 +305,7 @@ div .annotationsPanel {
 
 div .ontologypanel {
     align : center;
+    min-width: 180px;
     position : absolute;
     left : 20px;
     top : 260px;
@@ -312,13 +313,13 @@ div .ontologypanel {
     z-index : 2021;
     background-color: rgba(0, 0, 0, 0.7);
     color : #fff;
-    padding: 0px;
+    padding: 10px;
     margin : 0px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
     overflow : auto;
-    padding : 10px;
+
 }
 
 div .toolbar {
@@ -350,8 +351,8 @@ input .layerSwitcher{
 div .layerSwitcherPanel {
     position : absolute;
     right : 20px;
-    bottom : 200px;
-    z-index : 2010;
+    top : 40px;
+    z-index : 2030;
     background-color: black;
     color : #fff;
     padding: 10px;

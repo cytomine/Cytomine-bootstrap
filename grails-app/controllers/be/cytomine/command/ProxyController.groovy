@@ -48,7 +48,7 @@ class ProxyController {
     def otsu = {
 
         def split = request.queryString.split("http://")
-        def url = "http://" + split[1]
+        String url = "http://" + split[1]
         def out = new ByteArrayOutputStream()
         out << new URL(url).openStream()
 

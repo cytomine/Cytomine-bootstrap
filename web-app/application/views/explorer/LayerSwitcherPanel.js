@@ -14,7 +14,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
         * @param options
         */
        initialize: function(options) {
-
+          this.browseImageView = options.browseImageView;
        },
        /**
         * Grab the layout and call ask for render
@@ -40,17 +40,19 @@ var LayerSwitcherPanel = Backbone.View.extend({
           new DraggablePanelView({
                  el : $('#layerSwitcher' + self.model.get('id'))
               }).render();
-          $("#layers-slider-"+self.model.id).slider({
+          /*$("#layers-slider-"+self.model.id).slider({
                  value: 100,
                  min : 0,
                  max : 100,
                  slide: function(e, ui) {
-                    _.each(self.layers, function(annotationLayer) {
-                       annotationLayer.vectorsLayer.setOpacity(ui.value / 100);
+                    console.log("self.browseImageView.layers "  + _.size(self.browseImageView.layers));
+                    _.each(self.browseImageView.layers, function(layer) {
+                       console.log("layer.vectorsLayer " + layer.vectorsLayer + " ui.value " + ui.value);
+                       layer.vectorsLayer.setOpacity(ui.value / 100);
                     });
 
                  }
-              });
+              });*/
           /*$("#image-slider-"+self.model.id).slider({
            value: 100,
            min : 0,
