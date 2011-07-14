@@ -117,13 +117,35 @@ h3 { font-size:13px; }
 
 .menu li a.title.active {
     color:#000000;
-    background-image: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#92BDD6), to(#B9E0F5));
+     background: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(1, rgb(146,189,214)),
+        color-stop(0, rgb(185,224,245))
+    );
+    background: -moz-linear-gradient(
+        center top,
+        rgb(146,189,214),
+        rgb(185,224,245)
+    );
     border-color:#7096AB;
 }
 
 .menu li a:hover {
     color:#000000;
-    background-image: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#92BDD6), to(#B9E0F5));
+     background: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(1, rgb(146,189,214)),
+        color-stop(0, rgb(185,224,245))
+    );
+    background: -moz-linear-gradient(
+        center top,
+        rgb(146,189,214),
+        rgb(185,224,245)
+    );
     border-color:#7096AB;
 }
 
