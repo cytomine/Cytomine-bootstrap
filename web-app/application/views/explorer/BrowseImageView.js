@@ -53,7 +53,7 @@ var BrowseImageView = Backbone.View.extend({
           var self = this;
           if (options.goToAnnotation != undefined) {
              _.each(this.layers, function(layer) {
-                
+
                 self.goToAnnotation(layer,  options.goToAnnotation.value);
              });
           }
@@ -106,7 +106,8 @@ var BrowseImageView = Backbone.View.extend({
           var self = this;
 
           this.layersLoaded++;
-          if (this.layersLoaded == _.size(window.app.models.users)) {
+          var project = window.app.status.currentProjectModel;
+          if (this.layersLoaded == project.get("users").length) {
              //Init MultiSelected in LayerSwitcher
              $("#layerSwitcher"+this.model.get("id")).find("select").multiselect({
                     click: function(event, ui){
@@ -192,7 +193,7 @@ var BrowseImageView = Backbone.View.extend({
           this.layers.push(layer);
 
           var layerID = window.app.models.users.get(userID).prettyName();
-          
+
           var color = window.app.models.users.get(userID).get('color');
           var layerOptionTpl;
           if (layer.isOwner) {
@@ -233,7 +234,7 @@ var BrowseImageView = Backbone.View.extend({
         * Init the Map if ImageServer is IIPImage
         */
        initIIP : function () {
-          
+
           var self = this;
           var parseIIPMetadaResponse = function(response) {
              var metadata = null;
@@ -260,10 +261,10 @@ var BrowseImageView = Backbone.View.extend({
 
           var initZoomifyLayer = function(metadata) {
              /* First we initialize the zoomify pyramid (to get number of tiers) */
-             
+
              var baseURLs = self.model.get('imageServerBaseURL');
-             
-             
+
+
              var zoomify_url = []
              _.each(baseURLs, function(baseURL) {
                 var url = baseURL + "/fcgi-bin/iipsrv.fcgi?zoomify=" + self.model.get('path') +"/";
@@ -309,7 +310,7 @@ var BrowseImageView = Backbone.View.extend({
                  new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight)
              );
 
-             
+
              var overviewMapControl = new OpenLayers.Control.OverviewMap({
                     size: new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight),
                     layers: [overviewMap],
@@ -341,7 +342,7 @@ var BrowseImageView = Backbone.View.extend({
                     initZoomifyLayer(metadata);
                  },
                  error: function(){
-                    
+
                  }
               });
        },
@@ -360,7 +361,7 @@ var BrowseImageView = Backbone.View.extend({
               });
        },
        initDjatoka: function () {
-          
+
           var self = this;
           var baseLayer = new OpenLayers.Layer.OpenURL(this.model.get('filename'), this.model.get('imageServerBaseURL'), {
                  transitionEffect: 'resize',
@@ -407,7 +408,7 @@ var BrowseImageView = Backbone.View.extend({
 
 
           this.map = new OpenLayers.Map("map" + this.model.get('id'), options);
-          
+
           this.addBaseLayer(baseLayer);
           this.map.setCenter(new OpenLayers.LonLat(lon, lat), 2);
           self.createOverviewMap();
@@ -558,15 +559,25 @@ var BrowseImageView = Backbone.View.extend({
         */
        initVectorLayers: function (ontologyTreeView) {
           var self = this;
-          window.app.models.users.fetch({
-                 success: function () {
-                    window.app.models.users.each(function (user) {
-                       var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map );
-                       layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
-                       layerAnnotation.loadAnnotations(self);
-                    });
-                 }
-              });
+          var project = window.app.status.currentProjectModel;
+          var projectUsers = window.app.models.users.select(function(user){
+             return _.include(project.get("users"), user.id);
+          });
+
+          _.each(projectUsers, function (user) {
+             var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map );
+             layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
+             layerAnnotation.loadAnnotations(self);
+          });
+          /*window.app.models.users.fetch({
+           success: function () {
+           window.app.models.users.each(function (user) {
+           var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map );
+           layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
+           layerAnnotation.loadAnnotations(self);
+           });
+           }
+           });*/
        },
 
        initAnnotationsTabs : function(){

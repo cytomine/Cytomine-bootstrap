@@ -81,6 +81,7 @@ var DashboardController = Backbone.Controller.extend({
           var self = this;
           new ProjectModel({id : window.app.status.currentProject}).fetch({
                  success : function(model, response) {
+                    window.app.status.currentProjectModel = model;
                     self.view = new ProjectDashboardView({
                            model : model,
                            el: tabs,
