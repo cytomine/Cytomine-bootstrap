@@ -30,7 +30,7 @@ class Command extends SequenceDomain {
 
   void changeCurrentProject(Project project) { //setCur... doesn't work with spring
     println "setCurrentProject=" +project
-       this.project = project;
+    this.project = project;
   }
 
   static void registerMarshaller() {
@@ -53,7 +53,7 @@ class Command extends SequenceDomain {
     }
   }
 
- String getActionMessage()
+  String getActionMessage()
   {
     return  actionMessage
   }

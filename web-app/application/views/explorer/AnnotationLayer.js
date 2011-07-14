@@ -401,60 +401,26 @@ AnnotationLayer.prototype = {
 
       return feature;
    },
-   removeTermCallback : function(total, counter, feature, idAnnotation, idTerm) {
-      
-      if (counter < total) return;
-      this.removeFeature(feature);
-      this.controls.select.unselectAll();
-      this.vectorsLayer.removeFeatures([feature]);
-      var self = this;
-      new AnnotationModel({id:feature.attributes.idAnnotation}).destroy({
-             success: function (model, response) {
-                
-                
-                window.app.view.message("Annotation", response.message, "");
-                new EndTransactionModel({}).save();
-                self.browseImageView.refreshAnnotationTabs(idTerm);
-                self.browseImageView.refreshAnnotationTabs(undefined);
-
-             },
-             error: function (model, response) {
-                var json = $.parseJSON(response.responseText);
-                window.app.view.message("Annotation", json.errors, "");
-             }
-          });
-
-
-   },
    removeAnnotation : function(feature) {
       var alias = this;
       var idAnnotation = feature.attributes.idAnnotation;
       
       var annotation = new AnnotationModel({id:idAnnotation});
       var counter = 0;
-      new BeginTransactionModel({}).save({}, {
+
+      this.removeFeature(feature);
+      this.controls.select.unselectAll();
+      this.vectorsLayer.removeFeatures([feature]);
+      var self = this;
+      new AnnotationModel({id:feature.attributes.idAnnotation}).destroy({
              success: function (model, response) {
-
-                new AnnotationTermCollection({idAnnotation:idAnnotation}).fetch({success:function (collection, response) {
-                       if (collection.size() == 0) {
-                          alias.removeTermCallback(0, 0, feature, idAnnotation, undefined);
-                          return;
-                       }
-                       collection.each(function(term) {
-                          
-                          
-
-                          new AnnotationTermModel({annotation:idAnnotation,term:term.id}).destroy({success : function (model, response) {
-                                 alias.removeTermCallback(collection.length, ++counter, feature, idAnnotation, term.id);
-                              }});
-
-                       });
-
-                    }});
+                window.app.view.message("Annotation", response.message, "");
+                self.browseImageView.refreshAnnotationTabs(undefined);
 
              },
              error: function (model, response) {
-                
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Annotation", json.errors, "");
              }
           });
 

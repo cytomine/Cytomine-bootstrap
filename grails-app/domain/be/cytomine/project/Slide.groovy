@@ -15,15 +15,15 @@ class Slide extends SequenceDomain {
             order column:"`order`"  //otherwise there is a conflict with the word "ORDER" from the SQL SYNTAX
         }
     }*/
-
+    static constraints = {
+        name(blank:false, unique:true)
+    }
     String toString() {
         name
     }
 
     static hasMany = [image:AbstractImage]
 
-    static constraints = {
-    }
 
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + Slide.class

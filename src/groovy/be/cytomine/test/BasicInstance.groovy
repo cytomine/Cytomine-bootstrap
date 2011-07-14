@@ -213,29 +213,37 @@ class BasicInstance {
   }
 
   static Slide createOrGetBasicSlide() {
-
     log.debug  "createOrGetBasicSlide()"
-    def slide = new Slide(name:"slide",order:1)
-    slide.validate()
-    log.debug "slide.errors="+slide.errors
-    slide.save(flush : true)
-    log.debug "slide.errors="+slide.errors
+    def name = "BasicSlide".toUpperCase()
+    def slide = Slide.findByName(name)
+    if(!slide) {
+
+      slide = new Slide(name:name)
+      slide.validate()
+      log.debug "slide.errors="+slide.errors
+      slide.save(flush : true)
+      log.debug "slide.errors="+slide.errors
+    }
     assert slide!=null
     slide
-
   }
 
   static Slide getBasicSlideNotExist() {
 
-    log.debug  "getBasicSlideNotExist()"
-    def slide = new Slide(name:"newSlide",order:2)
-    slide.validate()
-    log.debug "slide.errors="+slide.errors
-    slide.save(flush : true)
-    log.debug "slide.errors="+slide.errors
-    assert slide!=null
-    slide
+    log.debug "getBasicSlideNotExist()"
+    def random = new Random()
+    def randomInt = random.nextInt()
+    def slide = Slide.findByName(randomInt+"")
 
+    while(slide){
+      randomInt = random.nextInt()
+      slide = Slide.findByName(randomInt+"")
+   }
+
+    slide = new Slide(name:randomInt+"")
+    assert slide.validate()
+    log.debug "slide.errors="+slide.errors
+    slide
   }
 
   static User getOldUser() {

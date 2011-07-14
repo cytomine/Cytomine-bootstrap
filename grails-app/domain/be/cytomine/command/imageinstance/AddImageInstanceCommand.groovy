@@ -60,6 +60,7 @@ class AddImageInstanceCommand extends AddCommand implements UndoRedoCommand {
     def imageData = JSON.parse(data)
     def json = JSON.parse(postData)
     ImageInstance image = ImageInstance.createFromData(imageData)
+      log.debug("Image.id:"+imageData.id)
     image.id = imageData.id
     log.debug("Validate image:"+image.validate())
     image.save(flush:true)

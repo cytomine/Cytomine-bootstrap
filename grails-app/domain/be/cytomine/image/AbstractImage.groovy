@@ -6,32 +6,22 @@ import be.cytomine.image.server.ImageServer
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import com.vividsolutions.jts.geom.Geometry
-
-import be.cytomine.security.User
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.SequenceDomain
 import be.cytomine.rest.UrlApi
 import be.cytomine.project.Slide
-import be.cytomine.ontology.Annotation
 import be.cytomine.server.resolvers.Resolver
-import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
-import be.cytomine.security.Group
-import org.perf4j.StopWatch
-import org.perf4j.LoggingStopWatch
 
 class AbstractImage extends SequenceDomain {
-    String filename
 
+    String filename
     Scanner scanner
     Slide slide
-
     String path
     Mime mime
-
     Integer width
     Integer height
-
     Double scale
     Geometry roi
 
@@ -43,12 +33,11 @@ class AbstractImage extends SequenceDomain {
     */
 
     static belongsTo = Slide
+
     static hasMany = [ abstractimagegroup : AbstractImageGroup, storageAbstractImages : StorageAbstractImage ]
 
     static transients = ["zoomLevels"]
- static mapping = {
-      slide index:'image_slide_index'
-  }
+
     static constraints = {
         filename(blank : false, unique : true)
 
@@ -70,9 +59,9 @@ class AbstractImage extends SequenceDomain {
     }
 
     def groups() {
-      return abstractimagegroup.collect{
-        it.group
-      }
+        return abstractimagegroup.collect{
+            it.group
+        }
     }
 
 
@@ -203,7 +192,7 @@ class AbstractImage extends SequenceDomain {
         return url
     }
 
-     def getPropertiesURL()  {
+    def getPropertiesURL()  {
         Collection<ImageServer> imageServers = getMime().imageServers()
         if (imageServers.size() == 0) {
             return [] as JSON

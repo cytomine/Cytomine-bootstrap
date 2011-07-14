@@ -28,6 +28,7 @@ class Project extends SequenceDomain {
     }
 
     static mapping = {
+        id generator : "assigned"
         ontology fetch:'join'
     }
 

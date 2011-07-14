@@ -22,13 +22,18 @@ class ImageInstance extends SequenceDomain {
     User user
     Long countImageAnnotations = 0L
 
+    static belongsTo = [AbstractImage, Project, User]
+
     static constraints = {
         baseImage(unique:['project'])
         slide (nullable: true)
         countImageAnnotations nullable: true
     }
 
-    static belongsTo = [AbstractImage, Project, User]
+    static mapping = {
+        id generator : "assigned"
+        baseImage fetch:'join'
+    }
 
     def terms() {
         def terms = []
@@ -52,8 +57,8 @@ class ImageInstance extends SequenceDomain {
         image.created = (!jsonImage.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonImage.created)) : null
         image.updated = (!jsonImage.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonImage.updated)) : null
 
-
         String userId = jsonImage.user.toString()
+        println "userId="+userId
         if(!userId.equals("null")) {
             image.user = User.get(Long.parseLong(userId))
             if(image.user==null) throw new IllegalArgumentException("User was not found with id:"+userId)
@@ -61,6 +66,7 @@ class ImageInstance extends SequenceDomain {
         else image.user = null
 
         String baseImageId = jsonImage.baseImage.toString()
+        println "baseImageId="+baseImageId
         if(!baseImageId.equals("null")) {
             image.baseImage = AbstractImage.get(Long.parseLong(baseImageId))
             if(image.baseImage==null) throw new IllegalArgumentException("BaseImage was not found with id:"+baseImageId)
@@ -69,11 +75,24 @@ class ImageInstance extends SequenceDomain {
 
 
         String projectId = jsonImage.project.toString()
+        println "projectId="+projectId
         if(!projectId.equals("null")) {
             image.project = Project.get(Long.parseLong(projectId))
             if(image.project==null) throw new IllegalArgumentException("Project was not found with id:"+projectId)
         }
         else image.project = null
+
+        String slideId = jsonImage.slide.toString()
+         println "slideId="+slideId
+        if(!slideId.equals("null")) {
+            image.slide = Slide.get(Long.parseLong(slideId))
+            if(image.slide==null) throw new IllegalArgumentException("Slide was not found with id:"+slideId)
+        }
+        else image.slide = null
+
+        try {image.countImageAnnotations = Long.parseLong(jsonImage.numberOfAnnotations.toString()) } catch(Exception e) {
+           image.countImageAnnotations=0
+        }
 
         return image;
     }
@@ -89,19 +108,13 @@ class ImageInstance extends SequenceDomain {
             returnArray['project'] = it.project? it.project.id : null
             returnArray['user'] = it.user? it.user.id : null
 
-            //returnArray['baseImageFull'] = it.baseImage?:null
-
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
-            //TODO: this code must be improve (redondance)
-            //1.overlap baseImage json (returnArray['image'] = it.baseImage) -> change need to be made in *.js
-            //2.in *.js, check the "Base Image" thanks to its id from  (returnArray['baseImage']) and get info from there
-            //3.stay like that...
             try {returnArray['thumb'] = it.baseImage? it.baseImage.getThumbURL() : null}catch(Exception e){returnArray['thumb']='NO THUMB:'+e.toString()}
             returnArray['filename'] = it.baseImage? it.baseImage.filename : null
 
-            returnArray['slide'] = it.baseImage?.slide? it.baseImage.slide.id : null
+            returnArray['slide'] = it.slide? it.slide.id : null
 
             returnArray['path'] = it.baseImage.path
             returnArray['mime'] = it.baseImage?.mime?.extension

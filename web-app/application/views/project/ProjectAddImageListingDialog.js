@@ -42,13 +42,13 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         $(self.el).append(dialog);
 
         /*
-        self.searchPanel = new ProjectAddImageSearchPanel({
-            model : self.model,
-            images : self.images,
-            el:$("#tdsearchpanel"+self.model.id),
-            container : self,
-            tab : 2
-        }).render(); */
+         self.searchPanel = new ProjectAddImageSearchPanel({
+         model : self.model,
+         images : self.images,
+         el:$("#tdsearchpanel"+self.model.id),
+         container : self,
+         tab : 2
+         }).render(); */
 
         //print listing
         this.renderImageList();
@@ -85,21 +85,21 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
         //search panel
 
-        
+
 
         $("#searchImagetPanelup"+self.model.id+"-"+self.tab).panel({
             collapseSpeed:100
         });
-         $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val("");
+        $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val("");
 
 
         $("#imagesallbutton"+self.model.id+"-"+self.tab).button({
             text: true
         });
 
-            $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).keyup(function () {
-                 self.doSearch();
-            }).keyup();
+        $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).keyup(function () {
+            self.doSearch();
+        }).keyup();
 
         $("#imagesallbutton"+self.model.id+"-"+self.tab).click(function() {
             $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val("");
@@ -121,17 +121,17 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
     },
     doSearch : function(){
         var self = this;
-        
+
 
         if($.data(this, 'timer')!=null) {
-            
-           clearTimeout($.data(this, 'timer'));
+
+            clearTimeout($.data(this, 'timer'));
         }
-        
-          var wait = setTimeout(function(){
-                 self.searchImages()}
-              ,500);
-          $(this).data('timer', wait);
+
+        var wait = setTimeout(function(){
+            self.searchImages()}
+                ,500);
+        $(this).data('timer', wait);
         //setTimeout("alert('foo');",5000);
         //this.searchImages();
 
@@ -142,7 +142,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
      */
     searchImages : function() {
         var self = this;
-        
+
         //var images = self.searchPanel.search(self.images);
         var searchText = $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val();
         var dateStart =  $("#datestartsearchup"+self.model.id+"-"+self.tab).datepicker("getDate");
@@ -153,14 +153,14 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         var dateTimestampEnd="";
         if(dateEnd!=null) dateTimestampEnd=dateEnd.getTime();
 
-        
+
         $("#"+self.listmanageall).jqGrid('setGridParam',{url:"api/currentuser/image.json?filename="+searchText+"&createdstart="+dateTimestampStart+"&createdstop="+dateTimestampEnd,page:1}).trigger("reloadGrid");
 
 
     },
     refreshImageList : function() {
         var self = this;
-        
+
         //clear grid
         $("#"+self.listmanageproject).jqGrid("clearGridData", true);
         //get imagesproject on server
@@ -175,7 +175,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
                 //print data from all image table
                 //self.searchImages();
-                
+
                 $("#"+self.listmanageall).trigger("reloadGrid");
             }
         });
@@ -186,14 +186,14 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
      */
     fillAbstractImageProjectCollection : function(images) {
         var self = this;
-        
+
         self.abstractImageProject = [];
         self.imagesProject.each(function(image) {
             self.abstractImageProject.push(image.get('baseImage'));
         });
     },
     loadDataImageListProject : function(collection) {
-        
+
         var self = this;
         var data = new Array();
         var i = 0;
@@ -215,7 +215,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             };
             i++;
         });
-        
+
         for(var j=0;j<data.length;j++) {
             $("#"+self.listmanageproject).jqGrid('addRowData',data[j].id,data[j]);
         }
@@ -338,15 +338,15 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
     },
     dateFormatter : function (cellvalue, options, rowObject)
     {
-       // do something here
-                var createdDate = new Date();
-                createdDate.setTime(cellvalue);
+        // do something here
+        var createdDate = new Date();
+        createdDate.setTime(cellvalue);
 
-       return createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate()
+        return createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate()
     },
 
     addImageProjectFromTable : function() {
-        
+
         var self = this;
         var idSelectedArray = $("#"+self.listmanageall).jqGrid('getGridParam','selarrrow');
         if (idSelectedArray.length == 0) return;
@@ -354,12 +354,12 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         _.each(idSelectedArray, function(idImage){
             new ImageInstanceModel({}).save({project : self.model.id, user : null, baseImage :idImage},{
                 success : function (image,response) {
-                    
+
                     window.app.view.message("Image", response.message, "");
                     self.addImageProjectCallback(idSelectedArray.length, ++counter)
                 },
                 error: function (model, response) {
-                    
+
                     var json = $.parseJSON(response.responseText);
                     window.app.view.message("Image", json.errors, "");
                     self.addImageProjectCallback(idSelectedArray.length, ++counter)
@@ -374,21 +374,30 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
     },
 
     deleteImageProjectFromTable : function() {
-        
+
         var self = this;
+
         var idSelectedArray = $("#"+self.listmanageproject).jqGrid('getGridParam','selarrrow');
         if (idSelectedArray.length == 0) return;
+
+        self.deleteImageWithcheckForAnnotation(idSelectedArray);
+
+    },
+    deleteImageProject : function(idSelectedArray) {
+        var self = this;
         var counter = 0;
+
         _.each(idSelectedArray, function(idImage){
+
             var idAsbtractImage = self.imagesProject.get(idImage).get('baseImage');
             new ImageInstanceModel({project : self.model.id, user : null, baseImage :idAsbtractImage}).destroy({
                 success : function (image,response) {
-                    
+
                     window.app.view.message("Image", response.message, "");
                     self.deleteImageProjectCallback(idSelectedArray.length, ++counter)
                 },
                 error: function (model, response) {
-                    
+
                     var json = $.parseJSON(response.responseText);
                     window.app.view.message("Image", json.errors, "");
                     self.deleteImageProjectCallback(idSelectedArray.length, ++counter)
@@ -400,5 +409,52 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         if (counter < total) return;
         var self = this;
         self.refreshImageList();
+    },
+    deleteImageWithcheckForAnnotation : function(idSelectedArray) {
+        var self = this;
+        var hasAnnotation = false;
+        _.each(idSelectedArray, function(idImage){
+            var numberOfAnnotation = self.imagesProject.get(idImage).get('numberOfAnnotations');
+            console.log("numberOfAnnotations="+numberOfAnnotation);
+            if(numberOfAnnotation>0) {
+                hasAnnotation = true;
+            }
+        });
+        console.log("hasAnnotation="+hasAnnotation);
+        if(hasAnnotation) {
+            //ask for confirmation
+            require(["text!application/templates/project/ProjectAddImageDeleteImageInstanceWithAnnotation.tpl.html"], function(tpl) {
+                // $('#dialogsTerm').empty();
+
+                //delete-image-with-annotation-confirm
+                var dialog =  new ConfirmDialogView({
+                    el:'#dialogDeleteImageWithAnnotation',
+                    template : _.template(tpl, {projectname : self.model.get('name')}),
+                    dialogAttr : {
+                        dialogID : '#dialogDeleteImageWithAnnotation',
+                        width : 400,
+                        height : 300,
+                        buttons: {
+                            "Delete all images and annotations": function() {
+                                self.deleteImageProject(idSelectedArray);
+                                $('#dialogDeleteImageWithAnnotation').dialog( "close" ) ;
+                            },
+                            "Cancel": function() {
+
+                                //doesn't work! :-(
+                                $('#dialogDeleteImageWithAnnotation').dialog( "close" ) ;
+                            }
+                        },
+                        close :function (event) {
+                        }
+                    }
+                }).render();
+            });
+
+
+        }
+        else {
+            self.deleteImageProject(idSelectedArray);
+        }
     }
 });
