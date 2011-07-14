@@ -29,12 +29,14 @@ var ExplorerTabs = Backbone.View.extend({
           var tabs = $(this.el).children('.tabs');
           /*tabs.tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });*/
           tabs.tabs({
+                 //tabTemplate: '<li><a href="#{href}"><span style="display:inline;">#{label}</span></a><span class="ui-icon ui-icon-close" style="display:inline;">&nbsp;&nbsp;&nbsp;&nbsp;</span></li>',
                  add: function(event, ui) {
                     $("#"+ui.panel.id).parent().parent().css('height', "100%");
                     if (ui.panel.id != ("tabs-dashboard-"+window.app.status.currentProject)
                         && (ui.panel.id != "tabs-images-"+window.app.status.currentProject)
                         && ui.panel.id != ("tabs-annotations-"+window.app.status.currentProject)) {
-                       tabs.find("ul").find("a[href=#"+ui.panel.id+"]").parent().append("<span class='ui-icon ui-icon-close'>Remove Tab</span>");
+                       tabs.find("ul").find("a[href=#"+ui.panel.id+"]").find("span").attr("style", "display:inline;");
+                       tabs.find("ul").find("a[href=#"+ui.panel.id+"]").parent().append("<span class='ui-icon ui-icon-close' style='display:inline;'>&nbsp;&nbsp;&nbsp;&nbsp;</span>");
                        tabs.find("ul").find("a[href=#"+ui.panel.id+"]").parent().find("span.ui-icon-close" ).click(function() {
                           var index = $( "li", tabs ).index( $( this ).parent() );
                           self.removeTab(index);

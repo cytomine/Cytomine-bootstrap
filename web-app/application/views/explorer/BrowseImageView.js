@@ -563,21 +563,11 @@ var BrowseImageView = Backbone.View.extend({
           var projectUsers = window.app.models.users.select(function(user){
              return _.include(project.get("users"), user.id);
           });
-
           _.each(projectUsers, function (user) {
              var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map );
              layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
              layerAnnotation.loadAnnotations(self);
           });
-          /*window.app.models.users.fetch({
-           success: function () {
-           window.app.models.users.each(function (user) {
-           var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map );
-           layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
-           layerAnnotation.loadAnnotations(self);
-           });
-           }
-           });*/
        },
 
        initAnnotationsTabs : function(){
