@@ -49,7 +49,11 @@ class BootStrap {
 
 
     def init = { servletContext ->
-        compileJS();
+
+        if (GrailsUtil.environment == BootStrap.production) {
+            compileJS();
+        }
+
         marshallersService.initMarshallers()
         sequenceService.initSequences()
         triggerService.initTrigger()
