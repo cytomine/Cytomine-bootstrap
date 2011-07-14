@@ -1606,7 +1606,7 @@ var ProjectDashboardView = Backbone.View.extend({
           $("#projectPieChartPanel").panel({collapsible: true});
           $("#projectInfoPanel").panel({collapsible: true});
           $("#projectLastCommandPanel").panel({collapsible: true});
-          self.initWidgets();
+
 
           /* Init Annotations */
           require(["text!application/templates/dashboard/TermTab.tpl.html", "text!application/templates/dashboard/TermTabContent.tpl.html"], function(termTabTpl, termTabContentTpl) {
@@ -2062,21 +2062,12 @@ var ProjectDashboardView = Backbone.View.extend({
           self.initTabs();
        },
        initWidgets : function() {
+          return; //do nothing actually. We have to keep positions in memory if we do that
+
           $( ".widgets" ).sortable({
                  connectWith: ".widgets"
+
               });
-
-          /*$( ".widget" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-           .find( ".widget-header" )
-           .addClass( "ui-widget-header ui-corner-all" )
-           .prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
-           .end()
-           .find( ".widget-content" );
-
-           $( ".widget-header .ui-icon" ).click(function() {
-           $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
-           $( this ).parents( ".widget:first" ).find( ".widget-content" ).toggle();
-           });   */
 
           $( ".widgets" ).disableSelection();
        }
