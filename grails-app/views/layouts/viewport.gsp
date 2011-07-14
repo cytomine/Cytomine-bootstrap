@@ -157,11 +157,10 @@
                 interpolate : /\{\{(.+?)\}\}/g
             };
             // Create the app.
-            <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
+
             require(
                     { urlArgs: "bust=" + (new Date()).getTime() }
             );
-            </g:if>
             window.app = new ApplicationController();
         });
     </script>

@@ -50,7 +50,7 @@ class BootStrap {
 
     def init = { servletContext ->
 
-        if (GrailsUtil.environment == BootStrap.production) {
+        if (GrailsUtil.environment == BootStrap.development) { //scripts are not present in productions mode
             compileJS();
         }
 

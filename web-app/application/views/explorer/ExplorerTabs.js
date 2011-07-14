@@ -29,7 +29,6 @@ var ExplorerTabs = Backbone.View.extend({
           var tabs = $(this.el).children('.tabs');
           /*tabs.tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });*/
           tabs.tabs({
-                 //tabTemplate: '<li><a href="#{href}"><span style="display:inline;">#{label}</span></a><span class="ui-icon ui-icon-close" style="display:inline;">&nbsp;&nbsp;&nbsp;&nbsp;</span></li>',
                  add: function(event, ui) {
                     $("#"+ui.panel.id).parent().parent().css('height', "100%");
                     if (ui.panel.id != ("tabs-dashboard-"+window.app.status.currentProject)

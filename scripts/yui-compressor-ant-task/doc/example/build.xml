@@ -65,6 +65,7 @@
         <echo message="Building ${result.file}" />
         <concat destfile="${result.file}" force="no">
             <!-- Order in which these files are concatenated _IS_ IMPORTANT! -->
+            <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationsPanel.js" />
             <fileset dir="${src.dir}" includes="application/controllers/ApplicationController.js" />
             <fileset dir="${src.dir}" includes="application/controllers/UploadController.js" />
             <fileset dir="${src.dir}" includes="application/controllers/AuthController.js" />
@@ -97,7 +98,7 @@
             <fileset dir="${src.dir}" includes="application/views/explorer/BrowseImageView.js" />
             <fileset dir="${src.dir}" includes="application/views/explorer/DraggablePanelView.js" />
             <fileset dir="${src.dir}" includes="application/views/explorer/ExplorerTabs.js" />
-            <fileset dir="${src.dir}" includes="application/views/explorer/OntologyPanel.js" />
+
             <fileset dir="${src.dir}" includes="application/views/explorer/LayerSwitcherPanel.js" />
             <fileset dir="${src.dir}" includes="application/views/explorer/OverviewMapPanel.js" />
             <fileset dir="${src.dir}" includes="application/views/explorer/OntologyPanel.js" />
