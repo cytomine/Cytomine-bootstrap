@@ -100,19 +100,19 @@ class Project extends SequenceDomain {
 
     static Project getFromData(project,jsonProject) {
         String name = jsonProject.name.toString()
-        /*println "jsonProject.name=" + jsonProject.name
- println "jsonProject.name==null" + (jsonProject.name==null)
- println "jsonProject.name.type" + jsonProject.name.class
- println "jsonProject.name.equals(null)" + jsonProject.name.equals("null")
- println "jsonProject.name.toString().equals(null)" + jsonProject.name.toString().equals("null")
- println "isNull(String key) " + jsonProject.isNull(jsonProject.name)
- println "isNull(String key) " + jsonProject.isNull(name)
- println "isNull(String key) " + jsonProject.isNull("name")  */
         if(!name.equals("null"))
             project.name = jsonProject.name.toUpperCase()
         else throw new IllegalArgumentException("Project name cannot be null")
         if (jsonProject.ontology)
             project.ontology = Ontology.read(jsonProject.ontology)
+
+         try {project.countAnnotations = Long.parseLong(jsonProject.numberOfAnnotations.toString()) } catch(Exception e) {
+           project.countAnnotations=0
+        }
+        try {project.countImages = Long.parseLong(jsonProject.numberOfImages.toString()) } catch(Exception e) {
+           project.countImages=0
+        }
+
         return project;
     }
 
