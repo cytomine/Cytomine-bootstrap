@@ -43,7 +43,7 @@ var OntologyTreeView = Backbone.View.extend({
 
           $(this.el).find('.tree').dynatree({
                  checkbox: true,
-                 selectMode: 3,
+                 selectMode: 2,
                  expand : true,
                  onExpand : function() {},
                  children: this.model.toJSON(),

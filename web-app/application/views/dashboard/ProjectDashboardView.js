@@ -93,7 +93,7 @@ var ProjectDashboardView = Backbone.View.extend({
                     success : function(model, response) {
                        $(self.el).find('.tree').dynatree({
                               checkbox: true,
-                              selectMode: 3,
+                              selectMode: 2,
                               expand : true,
                               onExpand : function() {},
                               children: model.toJSON(),
