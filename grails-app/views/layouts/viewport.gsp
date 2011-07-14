@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="org.codehaus.groovy.grails.commons.GrailsApplication" %>
+<%@ page import="grails.util.GrailsUtil" %>
 <html>
 <head>
     <title>Cytomine</title>
@@ -69,79 +71,85 @@
     <script type="text/javascript" src="lib/masonry/jquery.masonry.min.js"></script>
 
 
-    <!-- controllers -->
-    <script type="text/javascript" src="application/controllers/ApplicationController.js" ></script>
-    <script type="text/javascript" src="application/controllers/UploadController.js" ></script>
-    <script type="text/javascript" src="application/controllers/AuthController.js" ></script>
-    <script type="text/javascript" src="application/controllers/ProjectController.js" ></script>
-    <script type="text/javascript" src="application/controllers/DashboardController.js" ></script>
-    <script type="text/javascript" src="application/controllers/ImageController.js" ></script>
-    <script type="text/javascript" src="application/controllers/ExplorerController.js" ></script>
-    <script type="text/javascript" src="application/controllers/TermController.js" ></script>
-    <script type="text/javascript" src="application/controllers/OntologyController.js" ></script>
-    <script type="text/javascript" src="application/controllers/CommandController.js" ></script>
-    <script type="text/javascript" src="application/controllers/AnnotationController.js" ></script>
-    <!-- Models -->
-    <script type="text/javascript" src="application/models/ImageModel.js" ></script>
-    <script type="text/javascript" src="application/models/TermModel.js" ></script>
-    <script type="text/javascript" src="application/models/OntologyModel.js" ></script>
-    <script type="text/javascript" src="application/models/UserModel.js" ></script>
-    <script type="text/javascript" src="application/models/ProjectModel.js" ></script>
-    <script type="text/javascript" src="application/models/AnnotationModel.js" ></script>
-    <script type="text/javascript" src="application/models/SlideModel.js" ></script>
-    <script type="text/javascript" src="application/models/TransactionModel.js" ></script>
-    <script type="text/javascript" src="application/models/StatsModel.js" ></script>
-    <script type="text/javascript" src="application/models/CommandModel.js" ></script>
-    <script type="text/javascript" src="application/models/RelationModel.js" ></script>
-    <!-- View -->
-    <script type="text/javascript" src="application/views/auth/LoginDialogView.js" ></script>
-    <script type="text/javascript" src="application/views/auth/LoadingDialogView.js" ></script>
-    <script type="text/javascript" src="application/views/auth/LogoutDialogView.js" ></script>
+    <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
+        <!-- controllers -->
+        <script type="text/javascript" src="application/controllers/ApplicationController.js" ></script>
+        <script type="text/javascript" src="application/controllers/UploadController.js" ></script>
+        <script type="text/javascript" src="application/controllers/AuthController.js" ></script>
+        <script type="text/javascript" src="application/controllers/ProjectController.js" ></script>
+        <script type="text/javascript" src="application/controllers/DashboardController.js" ></script>
+        <script type="text/javascript" src="application/controllers/ImageController.js" ></script>
+        <script type="text/javascript" src="application/controllers/ExplorerController.js" ></script>
+        <script type="text/javascript" src="application/controllers/TermController.js" ></script>
+        <script type="text/javascript" src="application/controllers/OntologyController.js" ></script>
+        <script type="text/javascript" src="application/controllers/CommandController.js" ></script>
+        <script type="text/javascript" src="application/controllers/AnnotationController.js" ></script>
+        <!-- Models -->
+        <script type="text/javascript" src="application/models/ImageModel.js" ></script>
+        <script type="text/javascript" src="application/models/TermModel.js" ></script>
+        <script type="text/javascript" src="application/models/OntologyModel.js" ></script>
+        <script type="text/javascript" src="application/models/UserModel.js" ></script>
+        <script type="text/javascript" src="application/models/ProjectModel.js" ></script>
+        <script type="text/javascript" src="application/models/AnnotationModel.js" ></script>
+        <script type="text/javascript" src="application/models/SlideModel.js" ></script>
+        <script type="text/javascript" src="application/models/TransactionModel.js" ></script>
+        <script type="text/javascript" src="application/models/StatsModel.js" ></script>
+        <script type="text/javascript" src="application/models/CommandModel.js" ></script>
+        <script type="text/javascript" src="application/models/RelationModel.js" ></script>
+        <!-- View -->
+        <script type="text/javascript" src="application/views/auth/LoginDialogView.js" ></script>
+        <script type="text/javascript" src="application/views/auth/LoadingDialogView.js" ></script>
+        <script type="text/javascript" src="application/views/auth/LogoutDialogView.js" ></script>
 
-    <script type="text/javascript" src="application/views/dashboard/AnnotationThumbView.js" ></script>
-    <script type="text/javascript" src="application/views/dashboard/AnnotationView.js" ></script>
-    <script type="text/javascript" src="application/views/dashboard/ProjectDashboardView.js" ></script>
+        <script type="text/javascript" src="application/views/dashboard/AnnotationThumbView.js" ></script>
+        <script type="text/javascript" src="application/views/dashboard/AnnotationView.js" ></script>
+        <script type="text/javascript" src="application/views/dashboard/ProjectDashboardView.js" ></script>
 
-    <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/DraggablePanelView.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/ExplorerTabs.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/AnnotationsPanel.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/LayerSwitcherPanel.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/OverviewMapPanel.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/OntologyPanel.js" ></script>
-
-
-    <script type="text/javascript" src="application/views/image/ImageThumbView.js" ></script>
-    <script type="text/javascript" src="application/views/image/ImageSelectView.js" ></script>
-    <script type="text/javascript" src="application/views/image/ImageView.js" ></script>
-    <script type="text/javascript" src="application/views/image/ImageTabsView.js" ></script>
-
-    <script type="text/javascript" src="application/views/ontology/OntologyPanelView.js" ></script>
-    <script type="text/javascript" src="application/views/ontology/OntologyView.js" ></script>
-    <script type="text/javascript" src="application/views/ontology/OntologyAddOrEditTermView.js" ></script>
-    <script type="text/javascript" src="application/views/ontology/OntologyTreeView.js" ></script>
-    <script type="text/javascript" src="application/views/ontology/OntologyEditDialog.js" ></script>
-    <script type="text/javascript" src="application/views/ontology/OntologyAddDialog.js" ></script>
-
-    <script type="text/javascript" src="application/views/project/ProjectView.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectPanelView.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectManageSlideDialog.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectAddDialog.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectEditDialog.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectSearchPanel.js" ></script>
-
-    <script type="text/javascript" src="application/views/project/ProjectAddImageListingDialog.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectAddImageThumbDialog.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectAddImageSearchPanel.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/DraggablePanelView.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/ExplorerTabs.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/AnnotationsPanel.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/LayerSwitcherPanel.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/OverviewMapPanel.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/OntologyPanel.js" ></script>
 
 
-    <script type="text/javascript" src="application/views/annotation/AnnotationListView.js" ></script>
+        <script type="text/javascript" src="application/views/image/ImageThumbView.js" ></script>
+        <script type="text/javascript" src="application/views/image/ImageSelectView.js" ></script>
+        <script type="text/javascript" src="application/views/image/ImageView.js" ></script>
+        <script type="text/javascript" src="application/views/image/ImageTabsView.js" ></script>
 
-    <script type="text/javascript" src="application/views/Component.js" ></script>
-    <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
-    <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
-    <!--<script type="text/javascript" src="application.js" ></script>-->
+        <script type="text/javascript" src="application/views/ontology/OntologyPanelView.js" ></script>
+        <script type="text/javascript" src="application/views/ontology/OntologyView.js" ></script>
+        <script type="text/javascript" src="application/views/ontology/OntologyAddOrEditTermView.js" ></script>
+        <script type="text/javascript" src="application/views/ontology/OntologyTreeView.js" ></script>
+        <script type="text/javascript" src="application/views/ontology/OntologyEditDialog.js" ></script>
+        <script type="text/javascript" src="application/views/ontology/OntologyAddDialog.js" ></script>
+
+        <script type="text/javascript" src="application/views/project/ProjectView.js" ></script>
+        <script type="text/javascript" src="application/views/project/ProjectPanelView.js" ></script>
+        <script type="text/javascript" src="application/views/project/ProjectManageSlideDialog.js" ></script>
+        <script type="text/javascript" src="application/views/project/ProjectAddDialog.js" ></script>
+        <script type="text/javascript" src="application/views/project/ProjectEditDialog.js" ></script>
+        <script type="text/javascript" src="application/views/project/ProjectSearchPanel.js" ></script>
+
+        <script type="text/javascript" src="application/views/project/ProjectAddImageListingDialog.js" ></script>
+        <script type="text/javascript" src="application/views/project/ProjectAddImageThumbDialog.js" ></script>
+        <script type="text/javascript" src="application/views/project/ProjectAddImageSearchPanel.js" ></script>
+
+
+        <script type="text/javascript" src="application/views/annotation/AnnotationListView.js" ></script>
+
+        <script type="text/javascript" src="application/views/Component.js" ></script>
+        <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
+        <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
+
+    </g:if>
+    <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">
+        <script type="text/javascript" src="application.js" ></script>
+    </g:if>
+
     <script type="text/javascript">
         $(function() {
             //Change underscore _.template function delimiter
@@ -149,12 +157,11 @@
                 interpolate : /\{\{(.+?)\}\}/g
             };
             // Create the app.
-            var dev = false; //should be assigned dynamically by grails
-            if (dev) {
-                require(
-                        { urlArgs: "bust=" + (new Date()).getTime() }
-                );
-            }
+            <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
+            require(
+                    { urlArgs: "bust=" + (new Date()).getTime() }
+            );
+            </g:if>
             window.app = new ApplicationController();
         });
     </script>
