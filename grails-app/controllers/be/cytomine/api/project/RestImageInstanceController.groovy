@@ -113,6 +113,7 @@ class RestImageInstanceController extends RestController {
             responseNotFound("ImageInstance","Project",params.idproject,"Image",params.idimage)
             return
         }
+        synchronized(this.getClass()) {
         TransactionController transaction = new TransactionController();
         transaction.start()
 
@@ -146,10 +147,11 @@ class RestImageInstanceController extends RestController {
         def postData = ([id : imageInstance.id]) as JSON
         Command deleteImageInstanceCommand = new DeleteImageInstanceCommand(postData : postData.toString(), user: currentUser)
         def result
-        synchronized(this.getClass()) {
+
             result = processCommand(deleteImageInstanceCommand, currentUser)
-        }
+
         transaction.stop()
+        }
         response(result)
     }
 }
