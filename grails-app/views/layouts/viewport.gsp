@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="org.codehaus.groovy.grails.commons.GrailsApplication" %>
 <%@ page import="grails.util.GrailsUtil" %>
+
 <html>
 <head>
     <title>Cytomine</title>

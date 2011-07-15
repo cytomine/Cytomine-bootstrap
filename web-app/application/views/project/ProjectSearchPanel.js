@@ -67,7 +67,8 @@ var ProjectSearchPanel = Backbone.View.extend({
           var self = this;
           //create search panel
           $(self.el).find("#searchProjectPanel").panel({
-                 collapseSpeed:100
+                 collapseSpeed:100,
+				collapsed:true,
               });
 
           //configure "all projects" button

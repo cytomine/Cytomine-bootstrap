@@ -1,33 +1,28 @@
-<div id="searchProjectPanel" class="centralPanel">
-    <h3>Project Panel</h3>
+<button id='projectallbutton' type="button" class="showAllProject">Show All projects</button>
+<button id='projectaddbutton' type="button" class="addProject">Add Project</button>
+<div id="searchProjectPanel" class="centralPanel" style="margin-top:10px;">	
+    <h3>Search a project</h3>
     <div>
         <table class='projecttable'>
+			<h3></h3>
             <tr>
-                <td colspan="1" width="25%"> Project Name: <input id="projectsearchtextbox" /></td>
-                <td colspan="1" width="25%"> Ontology type:<div id="ontologyChoiceList"></div></td>
-                <td colspan="1" width="25%">
-                    <label for="amountNumberOfSlides" style="display:inline">Slides:
-                        <input type="text" id="amountNumberOfSlides" style="display:inline;border:0; font-weight:bold;" />
-                    </label>
-                    <div id="numberofslideSlider"></div>
+                <td colspan="1" width="35%">Filter by name : <input id="projectsearchtextbox" /><br /><br />Filter by ontology : <div id="ontologyChoiceList" style="display:inline;"></div></td>
+                <td colspan="1" width="10%"></td>
+               	<td colspan="1" width="45%">
+					<div style="width:200px;display:inline-block;"><label for="amountNumberOfSlides" style="display:inline;">By number of slides: </label></div>
+					<input type="text" id="amountNumberOfSlides" style="display:inline;border:0;width:100px; font-weight:bold;" />
+                    <div id="numberofslideSlider" style="display:inline-block;margin-left:10px;min-width:150px;"></div>
                     <br>
-                    <label for="amountNumberOfImages" style="display:inline">Images:
-                        <input type="text" id="amountNumberOfImages" style="display:inline;border:0; font-weight:bold;" />
-                    </label>
-                    <div id="numberofimageSlider"></div>
+                    <div style="width:200px;display:inline-block;"><label for="amountNumberOfImages" style="display:inline;">By number of images: </label></div>
+					<input type="text" id="amountNumberOfImages" style="display:inline;border:0;width:100px;font-weight:bold;" />
+                    <div id="numberofimageSlider" style="display:inline-block;margin-left:10px;min-width:150px;"></div>
                     <br>
-                    <label for="amountNumberOfAnnotations" style="display:inline">Annotations:
-                        <input type="text" id="amountNumberOfAnnotations" style="display:inline;border:0; font-weight:bold;" />
-                    </label>
-                    <div id="numberofannotationSlider"></div>
+                    <div style="width:200px;display:inline-block;"><label for="amountNumberOfAnnotations" style="display:inline;">By number of annotations: </label></div>
+					<input type="text" id="amountNumberOfAnnotations" style="display:inline;border:0;width:100px;font-weight:bold;" />
+                    <div id="numberofannotationSlider" style="display:inline-block;margin-left:10px;min-width:150px;"></div>
                     <br>
                 </td>
-                <td colspan="1" width="25%" align="right">
-                    <!--                 <button id='projectrefreshbutton' type="button">Refresh</button>  -->
-                    <button id='projectallbutton' type="button" class="showAllProject">Show All projects</button> <br><br>
-                    <button id='projectaddbutton' type="button" class="addProject">Add Project</button><br>
-                    <!--                  <button id='projectsearchbutton' type="button">Search</button>  -->
-                </td>
+				<td colspan="1" width="10%"></td>
             </tr>
         </table>
     </div>

@@ -133,16 +133,18 @@ var AnnotationsPanel = Backbone.View.extend({
                     self.createTabs(model.get("ontology"));
                  }
               });
-
+          el.css("padding", "1px");
+          el.css("margin", "0px");
           el.css("width", "20px");
-          el.css("height", "30px");
+          el.css("height", "20px");
+          el.css("bottom", "0px");
           el.find("div.panel_button").click(function(){
              el.find("div.panel_button").toggle();
              el.css("bottom", "0px");
              el.animate({
-                    height: "320px"
+                    height: "245px"
                  }, "fast").animate({
-                    width: "100%"
+                    width: "99%"
                  });
              setTimeout(function(){el.find("div.panel_content").fadeIn();}, 1000);
              return false;
@@ -157,13 +159,13 @@ var AnnotationsPanel = Backbone.View.extend({
           });
           el.find("div#hide_button").click(function(){
              el.animate({
-                    height: "30px"
+                    height: "20px"
                  }, "fast")
                  .animate({
                     width : "20px"
                  }, "fast");
 
-             setTimeout(function(){el.find("div.panel_content").hide();el.css("bottom", "70px");}, 1000);
+             setTimeout(function(){el.find("div.panel_content").hide();el.css("bottom", "0px");}, 1000);
 
              return false;
 

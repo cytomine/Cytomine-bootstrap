@@ -324,6 +324,9 @@ var BrowseImageView = Backbone.View.extend({
                  });
 
              self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
+
+             var height = $(self.el).height()-114 + "px";
+             $("#map"+self.model.get('id')).css("height",height);
              self.addBaseLayer(anotherLayer);
              self.addBaseLayer(baseLayer);
              self.createOverviewMap();

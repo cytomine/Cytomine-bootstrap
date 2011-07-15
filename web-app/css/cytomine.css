@@ -29,13 +29,10 @@ h3 { font-size:13px; }
 .header {
     background:#666666;
 
-    position:fixed;
-    left:0px;
-    right:0px;
-    top:0px;
+
     height:20px;
     padding:15px 10px;
-    z-index: 10;
+
 }
 
 .header a,
@@ -176,12 +173,10 @@ h3 { font-size:13px; }
 #warehouse .main {
     left:15%;
     width:85%;
-    top :50px;
-    z-index:1;
-    position : fixed;
-    display: block;
-    overflow-x: hidden;
-    overflow-y: auto;
+	height : auto;
+
+/*    overflow-x: hidden;
+    overflow-y: auto;*/
     position: relative;
 }
 
@@ -189,21 +184,18 @@ h3 { font-size:13px; }
 #upload .main {
     width:90%;
     left : 10px;
-    top :60px;
-    z-index:1;
+
     position : fixed;
 }
 
 #explorer .main {
     left:0%;
-    width:100%;
     top :50px;
-    z-index:1;
-    position : fixed;
+    width:100%;
+	height : auto
 }
 
 .thumb{
-
     background:#EEE;
     border:#CCC solid 1px;
     padding:3px;
@@ -245,37 +237,6 @@ div.inline {
 } */
 
 
-
-.map {
-    align : center;
-    width : 100%;
-    /*height : 700px;*/
-    border-bottom:1px solid #ccc;
-
-}
-
-
-.map .olMap {
-    position:absolute;
-    left:0px;
-    right:0px;
-    top:0px;
-    bottom:0px;
-}
-
-body.minimal .map,
-.map.fullscreen {
-    position:fixed;
-    top:50px;
-    left:0px;
-    right:0px;
-    bottom:0px;
-    width:auto;
-    height:auto;
-    border:0px;
-}
-
-
 div.olControlOverviewMapElement {
     z-index : 2010;
 
@@ -289,7 +250,7 @@ div .overviewPanel {
     align : center;
     position : absolute;
     right : 20px;
-    top : 200px;
+    top : 260px;
     z-index : 2020;
     background-color: rgba(0, 0, 0, 0.7);
     color : #fff;
@@ -321,7 +282,7 @@ div .annotationsPanel {
     z-index : 2023;
     background-color: rgba(0, 0, 0, 0.7);
     color : #fff;
-    overflow : hidden;
+    /*overflow : hidden;*/
     padding : 5px;
 }
 
@@ -374,7 +335,7 @@ input .layerSwitcher{
 div .layerSwitcherPanel {
     position : absolute;
     right : 20px;
-    top : 40px;
+    top : 100px;
     z-index : 2030;
     background-color: black;
     color : #fff;
@@ -398,7 +359,6 @@ div.olControlOverviewMapElement img {
 
 .map .olHandlerBoxZoomBox {
     position:absolute;
-//background:url(../images/palette.png);
     border:2px solid;
     font-size:1px;
 }
@@ -450,7 +410,7 @@ div.olControlOverviewMapElement img {
 
 
 div .projectlist {
-    width:95%;
+    width:97%;
     margin :auto;
 }
 
@@ -460,7 +420,7 @@ div .projectstat {
 }
 
 div .projecttable {
-    width:80%;
+    width:95%;
     align : center;
     margin-left : 50px;
     border : 0;
@@ -578,22 +538,6 @@ a.checkbox-deselect {
 
 }
 /* panel left */
-#lCenter{
-    padding:0em;
-    padding-top:0;
-    overflow:hidden;
-}
-#lCenter2{
-    padding:0em;
-    padding-top:0;
-    overflow:hidden;
-}
-#lLeft{
-    float: left;
-}
-#lRight{
-    float: right;
-}
 .widget {
     margin: 10px;
     /*border:  1px solid;*/
@@ -622,7 +566,7 @@ a.checkbox-deselect {
 }
 
 
-.widgets { width: 550px; float: left; padding-bottom: 100px; }
+.widgets { float: left; padding-bottom: 10px; }
 .portlet { margin: 0 1em 1em 0; }
 .widget-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
 .widget-header .ui-icon { float: right; }
