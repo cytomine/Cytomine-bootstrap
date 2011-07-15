@@ -62,8 +62,9 @@ AnnotationLayer.prototype = {
                    
                    if (self.deleteOnSelect == true) {
                       self.removeSelection();
+                   } else {
+                     self.showPopup(map, evt);
                    }
-                   self.showPopup(map, evt);
                 }
                 else self.showPopupMeasure(map, evt);
 
