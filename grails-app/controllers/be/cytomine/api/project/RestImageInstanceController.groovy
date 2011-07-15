@@ -114,44 +114,45 @@ class RestImageInstanceController extends RestController {
             return
         }
         synchronized(this.getClass()) {
-        TransactionController transaction = new TransactionController();
-        transaction.start()
+            TransactionController transaction = new TransactionController();
+            transaction.start()
 
-        def annotations = Annotation.findAllByImage(imageInstance)
-        log.debug "annotations.size=" +  annotations.size()
-        annotations.each { annotation ->
+            def annotations = Annotation.findAllByImage(imageInstance)
+            log.debug "annotations.size=" +  annotations.size()
+            annotations.each { annotation ->
 
-            def terms = annotation.terms()
-            log.debug "annotation.terms.size=" + terms.size()
-            terms.each { term ->
+                def terms = annotation.terms()
+                log.debug "annotation.terms.size=" + terms.size()
+                terms.each { term ->
 
-                def annotationTerm = AnnotationTerm.findAllByTermAndAnnotation(term,annotation)
-                log.info "annotationTerm= " +annotationTerm.size()
+                    def annotationTerm = AnnotationTerm.findAllByTermAndAnnotation(term,annotation)
+                    log.info "annotationTerm= " +annotationTerm.size()
 
-                annotationTerm.each{ annotterm ->
-                    log.info "unlink annotterm:" +annotterm.id
-                    def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id]) as JSON
-                    Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData :postDataRT.toString() ,user: currentUser,printMessage:false)
-                    def result = processCommand(deleteAnnotationTermCommand, currentUser)
+                    annotationTerm.each{ annotterm ->
+                        log.info "unlink annotterm:" +annotterm.id
+                        def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id]) as JSON
+                        Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData :postDataRT.toString() ,user: currentUser,printMessage:false)
+                        def result = processCommand(deleteAnnotationTermCommand, currentUser)
+                    }
                 }
+
+                Annotation annotationDeleted =  annotation
+                log.info "delete term " +annotationDeleted
+                def postDataAnnotation = ([id : annotationDeleted.id]) as JSON
+                Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData :postDataAnnotation.toString() ,user: currentUser,printMessage:false)
+                def result = processCommand(deleteAnnotationCommand, currentUser)
             }
+            log.info "delete image"
 
-            Annotation annotationDeleted =  annotation
-            log.info "delete term " +annotationDeleted
-            def postDataAnnotation = ([id : annotationDeleted.id]) as JSON
-            Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData :postDataAnnotation.toString() ,user: currentUser,printMessage:false)
-            def result = processCommand(deleteAnnotationCommand, currentUser)
-        }
-        log.info "delete image"
-
-        def postData = ([id : imageInstance.id]) as JSON
-        Command deleteImageInstanceCommand = new DeleteImageInstanceCommand(postData : postData.toString(), user: currentUser)
-        def result
+            def postData = ([id : imageInstance.id]) as JSON
+            Command deleteImageInstanceCommand = new DeleteImageInstanceCommand(postData : postData.toString(), user: currentUser)
+            def result
 
             result = processCommand(deleteImageInstanceCommand, currentUser)
 
-        transaction.stop()
+            transaction.stop()
+            response(result)
         }
-        response(result)
+
     }
 }
