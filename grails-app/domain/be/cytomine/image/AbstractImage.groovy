@@ -159,25 +159,21 @@ class AbstractImage extends SequenceDomain {
 
     def getPreviewURL()  {
         Collection<ImageServer> imageServers = getMime().imageServers()
-        def urls = []
-        imageServers.each {
-            Resolver resolver = Resolver.getResolver(it.className)
-            String url = resolver.getPreviewUrl(it.getBaseUrl(), it.getStorage().getBasePath() + getPath())
-            urls << url
+        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
+        if (imageServers.size() == 0 || !imageServers[index].getStorage())  {
+            return "images/cytomine.jpg"
         }
-        if(urls.size()<1) return null //to do, send an url to a default blank image or error image
-
-        def index = (Integer) Math.round(Math.random()*(urls.size()-1)) //select an url randomly
-
-        return urls[index]
+        Resolver resolver = Resolver.getResolver(imageServers[index].className)
+        String url = resolver.getPreviewUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath())
+        return url
     }
 
     def getThumbURL()  {
         Collection<ImageServer> imageServers = getMime().imageServers()
-        if (imageServers.size() == 0) {
+        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
+        if (imageServers.size() == 0 || !imageServers[index].getStorage())  {
             return "images/cytomine.jpg"
         }
-        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
         String url = resolver.getThumbUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath())
         return url
@@ -185,10 +181,10 @@ class AbstractImage extends SequenceDomain {
 
     def getMetadataURL()  {
         Collection<ImageServer> imageServers = getMime().imageServers()
-        if (imageServers.size() == 0) {
+        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
+        if (imageServers.size() == 0 || !imageServers[index].getStorage())  {
             return [] as JSON
         }
-        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
         String url = resolver.getMetaDataURL(imageServers[index].getBaseUrl(),imageServers[index].getStorage().getBasePath() + getPath())
         return url
@@ -196,10 +192,10 @@ class AbstractImage extends SequenceDomain {
 
     def getPropertiesURL()  {
         Collection<ImageServer> imageServers = getMime().imageServers()
-        if (imageServers.size() == 0) {
+        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
+        if (imageServers.size() == 0 || !imageServers[index].getStorage())  {
             return [] as JSON
         }
-        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
         String url = resolver.getPropertiesURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath())
         return url
@@ -207,10 +203,11 @@ class AbstractImage extends SequenceDomain {
 
     def getCropURL(int topLeftX, int topLeftY, int width, int height)  {
         Collection<ImageServer> imageServers = getMime().imageServers()
-        if (imageServers.size() == 0) {
+        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
+        if (imageServers.size() == 0 || !imageServers[index].getStorage())  {
             return "images/cytomine.jpg"
         }
-        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
+
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
         String url = resolver.getCropURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(),topLeftX,topLeftY, width, height)
         return url
@@ -218,10 +215,10 @@ class AbstractImage extends SequenceDomain {
 
     def getCropURL(int topLeftX, int topLeftY, int width, int height, int zoom)  {
         Collection<ImageServer> imageServers = getMime().imageServers()
-        if (imageServers.size() == 0) {
+        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
+        if (imageServers.size() == 0 || !imageServers[index].getStorage())  {
             return "images/cytomine.jpg"
         }
-        def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
         String url = resolver.getCropURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(),topLeftX,topLeftY, width, height ,zoom)
         return url

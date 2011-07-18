@@ -129,7 +129,7 @@ class ImageInstance extends SequenceDomain {
             returnArray['info'] = it.baseImage.slide?.name
             //returnArray['annotations'] = it.annotations
             // returnArray['thumb'] = it.baseImage.getThumbURL()
-            returnArray['preview'] = it.baseImage.getPreviewURL()
+            returnArray['preview'] = it.baseImage? it.baseImage.getPreviewURL() : null
             //returnArray['thumb'] = UrlApi.getThumbURLWithImageId(it.id)
             returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.baseImage.id)
 
