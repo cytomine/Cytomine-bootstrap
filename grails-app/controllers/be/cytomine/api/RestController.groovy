@@ -60,7 +60,7 @@ class RestController {
         new UndoStackItem(command : c, user: user, transactionInProgress:  user.transactionInProgress, transaction : user.transaction).save(flush:true)
       }
     }
-    log.debug "Lastcommands="+UndoStackItem.findAllByUser(user)
+    //log.debug "Lastcommands="+UndoStackItem.findAllByUser(user)
     response.status = result.status
     log.debug "result.status="+result.status+" result.data=" + result.data
     return result.data

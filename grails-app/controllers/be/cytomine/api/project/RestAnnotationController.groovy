@@ -112,7 +112,7 @@ class RestAnnotationController extends RestController {
             println "points=" + annotationFull.getNumPoints() + " " + annotationFull.getArea();
 
             int i = 0;
-            while(annotationFull.getNumPoints()>100)
+            while(annotationFull.getNumPoints()>500)
             {
                 println "annotationFull:"+annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
                 annotationFull = DouglasPeuckerSimplifier.simplify(annotationFull,i)

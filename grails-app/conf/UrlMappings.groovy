@@ -7,6 +7,7 @@ class UrlMappings {
             }
         }
 
+
         /* Home */
         "/"(view:"/index")
 
@@ -14,6 +15,9 @@ class UrlMappings {
         "/500" (view:'/error')
         "/403" (view:'/forbidden')
 
+        "/api/import"(controller:"restImportData") {
+              action = [GET:"annotations"]
+        }
         /* User */
         "/api/user"(controller:"restUser"){
             action = [GET:"list", POST:"save"]
