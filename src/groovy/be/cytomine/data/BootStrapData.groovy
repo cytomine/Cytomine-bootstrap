@@ -13,7 +13,7 @@ class BootStrapData {
     /* AIS Storages */
     static def storages = [
             [name : "cytomine", basePath : "/home/stevben/Slides/", serviceUrl : "ais://"],
-            [name : "cytomin0", basePath : "/home/maree/Slides/", serviceUrl : "ais://"]
+            [name : "cytomin0", basePath : "/media/datalvm/maree/Slides/", serviceUrl : "ais://"]
             //etc
     ]
 
@@ -140,12 +140,12 @@ class BootStrapData {
                     'extension' : ['jp2'],
                     'storage' : 'cytomin0'
             ],*/
-            /*[
+            [
                     'name' : 'IIP-Openslide',
                     'url' : 'http://is1.cytomine.be:48',
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
-                    'extension' : ['mrxs','vms', 'tif'],
+                    'extension' : ['mrxs','vms', 'tif', 'tiff'],
                     'storage' : 'cytomin0'
 
             ],
@@ -154,7 +154,7 @@ class BootStrapData {
                     'url' : 'http://is2.cytomine.be:48',
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
-                    'extension' : ['mrxs','vms', 'tif'],
+                    'extension' : ['mrxs','vms', 'tif', 'tiff'],
                     'storage' : 'cytomin0'
             ],
             [
@@ -170,7 +170,7 @@ class BootStrapData {
                     'url' : 'http://is4.cytomine.be:48',
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
-                    'extension' : ['mrxs','vms', 'tif'],
+                    'extension' : ['mrxs','vms', 'tif', 'tiff'],
                     'storage' : 'cytomin0'
             ],
             [
@@ -178,7 +178,7 @@ class BootStrapData {
                     'url' : 'http://is5.cytomine.be:48',
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
-                    'extension' : ['mrxs','vms', 'tif'],
+                    'extension' : ['mrxs','vms', 'tif', 'tiff'],
                     'storage' : 'cytomin0'
             ],
             [
@@ -186,7 +186,7 @@ class BootStrapData {
                     'url' : 'http://is6.cytomine.be:48',
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
-                    'extension' : ['mrxs','vms', 'tif'],
+                    'extension' : ['mrxs','vms', 'tif', 'tiff'],
                     'storage' : 'cytomin0'
             ],
             [
@@ -194,7 +194,7 @@ class BootStrapData {
                     'url' : 'http://is7.cytomine.be:48',
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
-                    'extension' : ['mrxs','vms', 'tif'],
+                    'extension' : ['mrxs','vms', 'tif', 'tiff'],
                     'storage' : 'cytomin0'
             ],
             [
@@ -202,7 +202,7 @@ class BootStrapData {
                     'url' : 'http://is8.cytomine.be:48',
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
-                    'extension' : ['mrxs','vms', 'tif'],
+                    'extension' : ['mrxs','vms', 'tif', 'tiff'],
                     'storage' : 'cytomin0'
             ],
             [
@@ -210,7 +210,7 @@ class BootStrapData {
                     'url' : 'http://is9.cytomine.be:48',
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
-                    'extension' : ['mrxs','vms', 'tif'],
+                    'extension' : ['mrxs','vms', 'tif', 'tiff'],
                     'storage' : 'cytomin0'
             ],
             [
@@ -218,7 +218,7 @@ class BootStrapData {
                     'url' : 'http://is10.cytomine.be:48',
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
-                    'extension' : ['mrxs','vms', 'tif'],
+                    'extension' : ['mrxs','vms', 'tif', 'tiff'],
                     'storage' : 'cytomin0'
             ],
             [
@@ -226,16 +226,16 @@ class BootStrapData {
                     'url' : 'http://is10.cytomine.be:48',
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
-                    'extension' : ['mrxs','vms', 'tif'],
+                    'extension' : ['mrxs','vms', 'tif', 'tiff'],
                     'storage' : 'cytomin0'
-            ],*/
+            ],
             [
                     'name' : 'IIP-Openslide2',
                     'url' : 'http://is1.cytomine.be:888',
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
                     'extension' : ['mrxs','vms', 'tif', 'tiff'],
-                    'storage' : 'cytomin0'
+                    'storage' : 'cytomine'
 
             ],
             [
@@ -244,7 +244,7 @@ class BootStrapData {
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
                     'extension' : ['mrxs','vms', 'tif', 'tiff'],
-                    'storage' : 'cytomin0'
+                    'storage' : 'cytomine'
             ],
             [
                     'name' : 'IIP-Openslide2',
@@ -252,7 +252,7 @@ class BootStrapData {
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
                     'extension' : ['mrxs','vms', 'tif', 'tiff'],
-                    'storage' : 'cytomin0'
+                    'storage' : 'cytomine'
             ],
             [
                     'name' : 'IIP-Openslide2',
@@ -260,7 +260,7 @@ class BootStrapData {
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
                     'extension' : ['mrxs','vms', 'tif', 'tiff'],
-                    'storage' : 'cytomin0'
+                    'storage' : 'cytomine'
             ],
             [
                     'name' : 'IIP-Openslide2',
@@ -268,7 +268,7 @@ class BootStrapData {
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
                     'extension' : ['mrxs','vms', 'tif', 'tiff'],
-                    'storage' : 'cytomin0'
+                    'storage' : 'cytomine'
             ],
             [
                     'name' : 'IIP-Openslide2',
@@ -276,7 +276,7 @@ class BootStrapData {
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
                     'extension' : ['mrxs','vms', 'tif', 'tiff'],
-                    'storage' : 'cytomin0'
+                    'storage' : 'cytomine'
             ],
             [
                     'name' : 'IIP-Openslide2',
@@ -284,7 +284,7 @@ class BootStrapData {
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
                     'extension' : ['mrxs','vms', 'tif', 'tiff'],
-                    'storage' : 'cytomin0'
+                    'storage' : 'cytomine'
             ],
             [
                     'name' : 'IIP-Openslide2',
@@ -292,7 +292,7 @@ class BootStrapData {
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
                     'extension' : ['mrxs','vms', 'tif', 'tiff'],
-                    'storage' : 'cytomin0'
+                    'storage' : 'cytomine'
             ],
             [
                     'name' : 'IIP-Openslide2',
@@ -300,7 +300,7 @@ class BootStrapData {
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
                     'extension' : ['mrxs','vms', 'tif', 'tiff'],
-                    'storage' : 'cytomin0'
+                    'storage' : 'cytomine'
             ],
             [
                     'name' : 'IIP-Openslide2',
@@ -308,7 +308,7 @@ class BootStrapData {
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
                     'extension' : ['mrxs','vms', 'tif', 'tiff'],
-                    'storage' : 'cytomin0'
+                    'storage' : 'cytomine'
             ],
             [
                     'name' : 'IIP-Openslide2',
@@ -316,7 +316,7 @@ class BootStrapData {
                     'service' : '/fcgi-bin/iipsrv.fcgi',
                     'className' : 'IPPResolver',
                     'extension' : ['mrxs','vms', 'tif', 'tiff'],
-                    'storage' : 'cytomin0'
+                    'storage' : 'cytomine'
             ]
 
 

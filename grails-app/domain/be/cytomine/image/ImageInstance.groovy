@@ -108,8 +108,8 @@ class ImageInstance extends SequenceDomain {
             returnArray['project'] = it.project? it.project.id : null
             returnArray['user'] = it.user? it.user.id : null
 
-            returnArray['created'] = it.created? it.created.time.toString() : null
-            returnArray['updated'] = it.updated? it.updated.time.toString() : null
+            /*returnArray['created'] = it.created? it.created.time.toString() : null
+            returnArray['updated'] = it.updated? it.updated.time.toString() : null*/
 
             try {returnArray['thumb'] = it.baseImage? it.baseImage.getThumbURL() : null}catch(Exception e){returnArray['thumb']='NO THUMB:'+e.toString()}
             returnArray['filename'] = it.baseImage? it.baseImage.filename : null
@@ -119,12 +119,12 @@ class ImageInstance extends SequenceDomain {
             returnArray['path'] = it.baseImage.path
             returnArray['mime'] = it.baseImage?.mime?.extension
 
-            returnArray['width'] = it.baseImage.width
+            /*returnArray['width'] = it.baseImage.width
             returnArray['height'] = it.baseImage.height
 
             returnArray['scale'] = it.baseImage.scale
 
-            returnArray['roi'] = it.baseImage.roi.toString()
+            returnArray['roi'] = it.baseImage.roi.toString()*/
 
             returnArray['info'] = it.baseImage.slide?.name
             //returnArray['annotations'] = it.annotations
@@ -136,8 +136,8 @@ class ImageInstance extends SequenceDomain {
             try {returnArray['numberOfAnnotations'] = it.countImageAnnotations}catch(Exception e){e.printStackTrace();returnArray['numberOfAnnotations']=-1}
             //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
 
-            returnArray['imageServerBaseURL'] = it.baseImage.getMime().imageServers().collect { it.getBaseUrl() }
-
+            //returnArray['imageServerBaseURL'] = it.baseImage.getMime().imageServers().collect { it.getZoomifyUrl() }
+            //returnArray['imageServerBaseURL'] = UrlApi.getImageServerInfosWithImageId(it.id)
             return returnArray
         }
     }

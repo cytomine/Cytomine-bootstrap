@@ -154,20 +154,10 @@ class RestImageController extends RestController{
 
     def imageservers = {
         AbstractImage image = AbstractImage.read(params.id)
-        def infos = []
-        image.storageAbstractImages.each { storageAbstractImage->
-            Storage storage = storageAbstractImage.getStorage()
-            ImageServer.findAllByStorage(storage).each { imageServer->
-                def remoteRealPath = storageService.metadata(storage, image)
-                println remoteRealPath
-                infos << [baseUrl : imageServer.getBaseUrl(), path : storage.getBasePath() + "/" + image.getFilename()]
-            }
-        }
-        withFormat {
-            json {
-                render(contentType: "application/json", text: "${infos}")
-            }
-        }
+        def urls = image.getMime().imageServers().collect { it.getZoomifyUrl() + image.getPath() + "/" }
+        def result = [:]
+        result.imageServersURLs =  urls
+        response(result)
     }
 
     def thumb = {

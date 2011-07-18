@@ -22,6 +22,12 @@ var ImageCollection = Backbone.Collection.extend({
     }
 });
 
+var ImageServerUrlsModel = Backbone.Model.extend({
+	url : function() {
+		return 'api/image/'+this.id+"/imageservers.json";
+	}
+});
+
 var ImageInstanceModel = Backbone.Model.extend({
 	url : function() {
         if(this.project == undefined && this.baseImage == undefined) {

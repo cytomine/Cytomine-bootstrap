@@ -89,7 +89,6 @@ class IIPResolver extends Resolver{
         args.add("FIF" + ARGS_EQUAL +  imagePath)
         args.add("RGN" + ARGS_EQUAL +  x + "," + y + "," + w + "," + h)
         args.add("CVT" + ARGS_EQUAL + "jpeg")
-        args.add("WID" + ARGS_EQUAL + "200")
         return toURL(baseUrl)
     }
 

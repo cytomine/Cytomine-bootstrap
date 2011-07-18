@@ -259,25 +259,26 @@ var BrowseImageView = Backbone.View.extend({
          return metadata;
       }
 
-      var initZoomifyLayer = function(metadata) {
-         /* First we initialize the zoomify pyramid (to get number of tiers) */
-
-         var baseURLs = self.model.get('imageServerBaseURL');
-
-
+      var initZoomifyLayer = function(metadata, zoomify_urls) {
+         _.each(zoomify_urls, function (url) {
+            console.log("URL > " + url);
+         });
+         /*var baseURLs = self.model.get('imageServerBaseURL');
          var zoomify_url = []
          _.each(baseURLs, function(baseURL) {
-            var url = baseURL + "/fcgi-bin/iipsrv.fcgi?zoomify=" + self.model.get('path') +"/";
+            console.log(baseURL);
+            var url = baseURL + self.model.get('path') +"/";
             zoomify_url.push(url);
-         });
+         });*/
 
          var baseLayer = new OpenLayers.Layer.Zoomify(
              "Original",
-             zoomify_url,
+             zoomify_urls,
              new OpenLayers.Size( metadata.width, metadata.height )
-             , {transitionEffect: 'resize'}
          );
-         var otsuURLS = _.map(zoomify_url, function (url){ return "http://localhost:8080/cytomine-web/proxy/otsu?url="+url;});
+         baseLayer.transitionEffect = 'resize';
+
+         var otsuURLS = _.map(zoomify_urls, function (url){ return "http://localhost:8080/cytomine-web/proxy/otsu?url="+url;});
          var anotherLayer = new OpenLayers.Layer.Zoomify( "Otsu", otsuURLS,
              new OpenLayers.Size( metadata.width, metadata.height ) );
 
@@ -348,7 +349,12 @@ var BrowseImageView = Backbone.View.extend({
          url: this.model.get('metadataUrl'),
          success: function(response){
             var metadata = parseIIPMetadaResponse(response);
-            initZoomifyLayer(metadata);
+            new ImageServerUrlsModel({id : self.model.get('baseImage')}).fetch({
+               success : function (model, response) {
+                  initZoomifyLayer(metadata, model.get('imageServersURLs'));
+               }
+            });
+
          },
          error: function(){
 

@@ -31,4 +31,8 @@ class ImageServer extends SequenceDomain {
     def getBaseUrl() {
         return url + service
     }
+
+    def getZoomifyUrl() {
+        return url + service + "/fcgi-bin/iipsrv.fcgi?zoomify=" + storage.getBasePath()
+    }
 }

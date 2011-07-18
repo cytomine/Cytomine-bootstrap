@@ -137,19 +137,21 @@ class AbstractImage extends SequenceDomain {
             returnArray['slide'] = it.slide? it.slide.id : null
             returnArray['path'] = it.path
             returnArray['mime'] = it.mime.extension
-            returnArray['width'] = it.width
+            /*returnArray['width'] = it.width
             returnArray['height'] = it.height
             returnArray['scale'] = it.scale
             returnArray['roi'] = it.roi.toString()
             returnArray['created'] = it.created? it.created.time.toString() : null
-            returnArray['updated'] = it.updated? it.updated.time.toString() : null
+            returnArray['updated'] = it.updated? it.updated.time.toString() : null*/
             //returnArray['annotations'] = it.annotations
             /*returnArray['thumb'] = it.getThumbURL()*/
             returnArray['thumb'] = it.getThumbURL()
             returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.id)
-            returnArray['imageServerInfos'] = UrlApi.getImageServerInfosWithImageId(it.id)
+            //returnArray['imageServerInfos'] = UrlApi.getImageServerInfosWithImageId(it.id)
             //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
-            returnArray['imageServerBaseURL'] = it.getMime().imageServers().collect { it.getBaseUrl() }
+            //returnArray['imageServerBaseURL'] = it.getMime().imageServers().collect { it.getZoomifyUrl() }
+            //returnArray['imageServerBaseURL'] = UrlApi.getImageServerInfosWithImageId(it.id)
+
             return returnArray
         }
     }
@@ -160,7 +162,7 @@ class AbstractImage extends SequenceDomain {
         def urls = []
         imageServers.each {
             Resolver resolver = Resolver.getResolver(it.className)
-            String url = resolver.getPreviewUrl(it.getBaseUrl(), getPath())
+            String url = resolver.getPreviewUrl(it.getBaseUrl(), it.getStorage().getBasePath() + getPath())
             urls << url
         }
         if(urls.size()<1) return null //to do, send an url to a default blank image or error image
@@ -177,7 +179,7 @@ class AbstractImage extends SequenceDomain {
         }
         def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getThumbUrl(imageServers[index].getBaseUrl(), getPath())
+        String url = resolver.getThumbUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath())
         return url
     }
 
@@ -188,7 +190,7 @@ class AbstractImage extends SequenceDomain {
         }
         def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getMetaDataURL(imageServers[index].getBaseUrl(), getPath())
+        String url = resolver.getMetaDataURL(imageServers[index].getBaseUrl(),imageServers[index].getStorage().getBasePath() + getPath())
         return url
     }
 
@@ -199,7 +201,7 @@ class AbstractImage extends SequenceDomain {
         }
         def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getPropertiesURL(imageServers[index].getBaseUrl(), getPath())
+        String url = resolver.getPropertiesURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath())
         return url
     }
 
@@ -210,7 +212,7 @@ class AbstractImage extends SequenceDomain {
         }
         def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getCropURL(imageServers[index].getBaseUrl(), getPath(),topLeftX,topLeftY, width, height)
+        String url = resolver.getCropURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(),topLeftX,topLeftY, width, height)
         return url
     }
 
@@ -221,7 +223,7 @@ class AbstractImage extends SequenceDomain {
         }
         def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getCropURL(imageServers[index].getBaseUrl(), getPath(),topLeftX,topLeftY, width, height ,zoom)
+        String url = resolver.getCropURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(),topLeftX,topLeftY, width, height ,zoom)
         return url
     }
 
@@ -229,7 +231,7 @@ class AbstractImage extends SequenceDomain {
         Collection<ImageServer> imageServers = getMime().imageServers()
         assert(imageServers.size() > 0)
         Resolver resolver = Resolver.getResolver(imageServers[0].className)
-        return resolver.getZoomLevels(imageServers[0].getBaseUrl(), getPath())
+        return resolver.getZoomLevels(imageServers[0].getBaseUrl(), imageServers[0].getStorage().getBasePath() + getPath())
     }
 
 
