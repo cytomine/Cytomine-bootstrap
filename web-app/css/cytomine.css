@@ -27,17 +27,28 @@ h2 { font-size:15px; }
 h3 { font-size:13px; }
 
 .header {
-    background:#666666;
-
-
-    height:20px;
-    padding:15px 10px;
-
+    background-color: #666666;
+    display: block;
+    height: 20px;
+    left: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    min-height: 20px;
+    overflow-x: visible;
+    overflow-y: visible;
+    padding: 15px 0px;
+    position: absolute;
+    text-decoration: none;
+    top: 0px;
+    width: 100%;
 }
 
 .header a,
 .header h1 {
     float:left;
+    padding-left : 10px;
 }
 
 .header h1 {
@@ -114,7 +125,7 @@ h3 { font-size:13px; }
 
 .menu li a.title.active {
     color:#000000;
-     background: -webkit-gradient(
+    background: -webkit-gradient(
         linear,
         left bottom,
         left top,
@@ -131,7 +142,7 @@ h3 { font-size:13px; }
 
 .menu li a:hover {
     color:#000000;
-     background: -webkit-gradient(
+    background: -webkit-gradient(
         linear,
         left bottom,
         left top,
@@ -157,13 +168,21 @@ h3 { font-size:13px; }
 }*/
 
 .sidebar {
-    position:fixed;
-    top:50px;
-    left:0px;
-    bottom:0px;
-    width:50%;
-    border-right:1px solid #ccc;
-    overflow:auto;
+    display: block;
+    left: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 50px;
+    overflow-x: visible;
+    overflow-y: visible;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    position: absolute;
+    top: 0px;
+    width: 250px;
 }
 
 #warehouse .sidebar {
@@ -171,28 +190,57 @@ h3 { font-size:13px; }
 }
 
 #warehouse .main {
-    left:15%;
-    width:85%;
-	height : auto;
-
-/*    overflow-x: hidden;
-    overflow-y: auto;*/
-    position: relative;
+    display: block;
+    left: 15%;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    overflow-x: auto;
+    overflow-y: auto;
+    padding-top: 0.5%;
+    padding-left: 0.5%;
+    padding-bottom: 1%;
+    position: absolute;
+    top: 50px;
+    width: 84.5%;
+    border-left: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
 }
 
 
 #upload .main {
-    width:90%;
-    left : 10px;
-
-    position : fixed;
+    display: block;
+    left: 0%;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    overflow-x: auto;
+    overflow-y: auto;
+    padding-top: 0.5%;
+    padding-left: 0.5%;
+    position: absolute;
+    text-decoration: none;
+    top: 50px;
+    width: 100%;
 }
 
 #explorer .main {
-    left:0%;
-    top :50px;
-    width:100%;
-	height : auto
+    display: block;
+    left: 0%;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    overflow-x: auto;
+    overflow-y: auto;
+    padding-top: 0%;
+    padding-left: 0%;
+    position: absolute;
+    text-decoration: none;
+    top: 50px;
+    width: 100%;
 }
 
 .thumb{
@@ -566,7 +614,7 @@ a.checkbox-deselect {
 }
 
 
-.widgets { float: left; padding-bottom: 10px; }
+.widgets { min-width:500px;float: left; padding-bottom: 10px; }
 .portlet { margin: 0 1em 1em 0; }
 .widget-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
 .widget-header .ui-icon { float: right; }
@@ -615,42 +663,42 @@ div.ontologypanel > .tree > ul.dynatree-container
 {
 
 
-	font-size: 10pt; /* font size should not be too big */
-	white-space: nowrap;
-	padding: 3px;
+    font-size: 10pt; /* font size should not be too big */
+    white-space: nowrap;
+    padding: 3px;
 
-	background-color: transparent;
-	border: 0px dotted gray;
+    background-color: transparent;
+    border: 0px dotted gray;
 
-	overflow: auto;
+    overflow: hidden;
 }
 
 div.ontologypanel > .tree > ul.dynatree-container a
-/*, ul.dynatree-container a:visited*/
+    /*, ul.dynatree-container a:visited*/
 {
-	color: white; /* inherit doesn't work on IE */
-	text-decoration: none;
-	vertical-align: top;
-	margin: 0px;
-	margin-left: 3px;
-/*	outline: 0; /* @ Firefox, prevent dotted border after click */
+    color: white; /* inherit doesn't work on IE */
+    text-decoration: none;
+    vertical-align: top;
+    margin: 0px;
+    margin-left: 3px;
+    /*	outline: 0; /* @ Firefox, prevent dotted border after click */
 }
 
 div.ontologypanel > .tree > ul.dynatree-container a:hover
 {
     background: none;
     border: 0px;
-/*	text-decoration: underline; */
-	/*background: #F2F7FD; /* light blue */
-	/*border-color: #B8D6FB; /* darker light blue */
+    /*	text-decoration: underline; */
+    /*background: #F2F7FD; /* light blue */
+    /*border-color: #B8D6FB; /* darker light blue */
 }
 
 
 div.ontologypanel > .tree > li > span.dynatree-selected a
 {
     background-color : green;
-	color: white;
-	font-style: italic;
+    color: white;
+    font-style: italic;
 }
 
 

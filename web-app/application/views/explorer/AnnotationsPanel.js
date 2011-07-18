@@ -142,9 +142,9 @@ var AnnotationsPanel = Backbone.View.extend({
              el.find("div.panel_button").toggle();
              el.css("bottom", "0px");
              el.animate({
-                    height: "245px"
+                    height: "250px"
                  }, "fast").animate({
-                    width: "99%"
+                    width: "100%"
                  });
              setTimeout(function(){el.find("div.panel_content").fadeIn();}, 1000);
              return false;

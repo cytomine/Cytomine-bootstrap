@@ -21,6 +21,7 @@ var Component = Backbone.View.extend({
         *  Render the component into it's DOM element and add it to the menu
         */
        render: function () {
+          var self = this;
           $(this.el).append(this.template);
           if (this.buttonAttr.elButton) {
              this.addToMenu();
