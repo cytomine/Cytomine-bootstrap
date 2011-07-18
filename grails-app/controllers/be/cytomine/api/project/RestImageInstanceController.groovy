@@ -114,6 +114,7 @@ class RestImageInstanceController extends RestController {
             return
         }
         synchronized(this.getClass()) {
+            log.info "TransactionController"
             TransactionController transaction = new TransactionController();
             transaction.start()
 

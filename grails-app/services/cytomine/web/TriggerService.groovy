@@ -45,6 +45,7 @@ class TriggerService {
 
     String createTrigger = "CREATE TRIGGER countImageProject AFTER INSERT ON image_instance FOR EACH ROW EXECUTE PROCEDURE incrementProjectImage();"
 
+
     println createFunction
     println dropTrigger
     println createTrigger
@@ -73,7 +74,7 @@ class TriggerService {
         BEGIN
         UPDATE project
         SET count_annotations = count_annotations + 1
-        FROM image_instance, annotation
+        FROM image_instance
         WHERE project.id = image_instance.project_id
         AND image_instance.id = NEW.image_id; RETURN NEW;
         END ;
@@ -95,7 +96,7 @@ class TriggerService {
         BEGIN
         UPDATE project
         SET count_annotations = count_annotations - 1
-        FROM image_instance, annotation
+        FROM image_instance
         WHERE project.id = image_instance.project_id
         AND image_instance.id = OLD.image_id; RETURN OLD;
         END ;
