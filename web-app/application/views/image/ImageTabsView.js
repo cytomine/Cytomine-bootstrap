@@ -54,7 +54,7 @@ var ImageTabsView = Backbone.View.extend({
             data[i] = {
                 id: image.id,
                 base : image.get('baseImage'),
-                thumb : "<img src='"+image.get('thumb')+"' width=30/>",
+                thumb : image.get('thumb'),
                 filename: image.get('filename'),
                 type : image.get('mime'),
                 annotations : image.get('numberOfAnnotations'),
@@ -72,6 +72,7 @@ var ImageTabsView = Backbone.View.extend({
     renderImageListProject : function() {
         var self = this;
          console.log("ImageTabsView.renderImageListProject:"+"#"+self.listproject +":"+$("#"+self.listproject).length);
+        var thumbColName = 'thumb';
         $("#"+self.listproject).jqGrid({
             datatype: "local",
             width: 900,
@@ -80,7 +81,7 @@ var ImageTabsView = Backbone.View.extend({
             colModel:[
                 {name:'id',index:'id', width:50, sorttype:"int"},
                 {name:'base',index:'base', width:50, sorttype:"int"},
-                {name:'thumb',index:'thumb', width:50},
+                {name:thumbColName,index:thumbColName, width:50},
                 {name:'filename',index:'filename', width:220},
                 {name:'type',index:'type', width:50},
                 {name:'annotations',index:'annotations', width:75},
@@ -95,7 +96,15 @@ var ImageTabsView = Backbone.View.extend({
                 else $("#"+self.listproject).find("#" + id).find("td").css("background-color", "a0dc4f");
             },
             loadComplete: function() {
+               $("#"+self.listproject).find("tr").each(function(index) {
+                   if(index!=0) {
+                       //0 is not a valid row
 
+                       //replace the text of the thumb by a <img element with its src value
+                       var thumbplace = $(this).find('[aria-describedby$="_'+thumbColName+'"]');
+                       $(thumbplace).html('<img src="'+$(thumbplace).text()+'" width=30/>');
+                   }
+               });
             },
             //rowNum:10,
             pager: '#'+self.pageproject,
@@ -110,7 +119,6 @@ var ImageTabsView = Backbone.View.extend({
     },
     dateFormatter : function (cellvalue, options, rowObject)
     {
-        console.log("dateFormatter="+cellvalue);
         // do something here
         var createdDate = new Date();
         createdDate.setTime(cellvalue);

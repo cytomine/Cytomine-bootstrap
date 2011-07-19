@@ -144,6 +144,7 @@ var ProjectDashboardView = Backbone.View.extend({
                  });
              new TermCollection({idOntology:self.model.get('ontology')}).fetch({
                     success : function (collection, response) {
+                        window.app.status.currentTermsCollection = collection;
                        collection.each(function(term) {
                           //add x term tab
                           $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : term.get("id"), name : term.get("name")}));
