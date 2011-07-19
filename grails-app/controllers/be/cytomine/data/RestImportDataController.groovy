@@ -15,24 +15,23 @@ import be.cytomine.ontology.AnnotationTerm
 class RestImportDataController {
 
 
-    def update = {
-
-    }
-
-    def terms = {
-
-       //refresh ontology
-    }
-
     def annotations = {
         log.info("get annotation")
 
-        String serverUrl = "http://139.165.108.140:48/cytomine-web/"
-        String idProject = 42 //from server
-        String projectName = "CERVIX" //from client because name is different between deploy / dev
+        String serverUrl = "http://139.165.108.140:48/cytomine-web"
+        String idProject = params.idProject //from server
 
-        def json = getAnnotationsFromServer(idProject,projectName,serverUrl)
+        def jsonProject = getProjectFromServer(idProject,serverUrl)
+        def jsonAnnotations = getAnnotationsFromServer(idProject,serverUrl)
         def jsonUsers = getUsersFromServer(serverUrl)
+
+
+
+        String projectName = jsonProject.name
+        log.info("project.name="+ projectName)
+        Project project = Project.findByName(projectName);
+        log.info("project="+ project)
+
 
         def users = [:]
         for(int i=0;i<jsonUsers.length();i++) {
@@ -43,21 +42,24 @@ class RestImportDataController {
         log.info "users="+ users
 
 
-        Project project = Project.findByName(projectName);
-        log.info("project="+ project.name)
 
-        for(int i=0;i<json.length();i++) {
-            def elem = json.get(i);
+
+        for(int i=0;i<jsonAnnotations.length();i++) {
+            def elem = jsonAnnotations.get(i);
+            log.info("****************** ANNOTATION "+ (i+1) + "/"+ jsonAnnotations.length() +" ******************************")
             log.info("elem="+ elem)
 
             //get image
             AbstractImage baseimage = AbstractImage.findByFilename(elem.imageFilename)
+            log.info("baseimage="+baseimage)
             ImageInstance image = ImageInstance.findByBaseImageAndProject(baseimage,project)
+            log.info("image="+image)
             //change id from other sever by id from current server
             elem.image = image.id
 
             User user = User.findByUsername(users[(elem.user)])
             //change id from other sever by id from current server
+            if(!user) user = User.findByUsername("rmaree")
             elem.user = user.id
 
             //create annotation
@@ -80,9 +82,9 @@ class RestImportDataController {
 
     }
 
-    def getAnnotationsFromServer(String idProjectFromServer, String projectNameFromClient, String url) {
+    def getAnnotationsFromServer(String idProjectFromServer,String url) {
 
-        String URL = url+"/api/project/"+idProject+"/annotation.json"
+        String URL = url+"/api/project/"+idProjectFromServer+"/annotation.json"
         HttpClient client = new HttpClient();
         client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
         client.get()
@@ -98,6 +100,21 @@ class RestImportDataController {
     def getUsersFromServer(String url) {
 
         String URL = url+"/api/user.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+        client.get()
+        int code  = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+
+        log.info("check response "+ code)
+        def json = JSON.parse(response)
+        json
+    }
+
+    def getProjectFromServer(String idProjectFromServer,String url) {
+
+        String URL = url+"/api/project/" + idProjectFromServer +".json"
         HttpClient client = new HttpClient();
         client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
         client.get()

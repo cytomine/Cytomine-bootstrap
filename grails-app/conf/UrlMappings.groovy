@@ -15,9 +15,6 @@ class UrlMappings {
         "/500" (view:'/error')
         "/403" (view:'/forbidden')
 
-        "/api/import"(controller:"restImportData") {
-              action = [GET:"annotations"]
-        }
         /* User */
         "/api/user"(controller:"restUser"){
             action = [GET:"list", POST:"save"]
@@ -100,7 +97,9 @@ class UrlMappings {
         "/api/project/$id/last/$max"(controller:"restProject"){
             action = [GET:"lastAction"]
         }
-
+        "/api/project/$idProject/term"(controller:"restTerm"){
+            action = [GET:"listAllByProject"]
+        }
 
         /* Abstract Image */
         "/api/image"(controller: "restImage"){
@@ -217,6 +216,9 @@ class UrlMappings {
         "/api/ontology/$idontology/term"(controller:"restTerm"){
             action = [GET:"listByOntology"]
         }
+        "/api/ontology/$idontology/term"(controller:"restTerm"){
+            action = [GET:"listAllByOntology"]
+        }
         "/api/ontology/$id/tree"(controller:"restOntology"){
             action = [GET:"tree"]
         }
@@ -262,6 +264,10 @@ class UrlMappings {
 
         "/api/slide/$idslide/project"(controller:"restProjectSlide"){
             action = [GET: "listProjectBySlide"]
+        }
+
+        "/api/import/annotations/$idProject"(controller:"restImportData") {
+              action = [GET:"annotations"]
         }
 
     }

@@ -69,6 +69,11 @@ class Annotation extends SequenceDomain implements Serializable {
             it.term
         }
     }
+    def termsId() {
+        return annotationTerm.collect{
+            it.term.id
+        }
+    }
 
     def project() {
         return image?.project
@@ -176,21 +181,7 @@ class Annotation extends SequenceDomain implements Serializable {
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
-            returnArray['term'] = it.terms()
-
-
-            String termList = "";
-            if(it.terms()!=null)
-            {
-                def termName = []
-                it.terms().each{ term ->
-                    termName << term.name
-                }
-                termList = termName.join(',')
-                if(termList.size()>28)
-                    termList = termList.substring(0,25) + "..."
-            }
-            returnArray['termList'] =  termList
+            returnArray['term'] = it.termsId()
 
             returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
 

@@ -208,7 +208,7 @@ class BootStrapData {
             [name: "Red Blood Cells",comment:"",ontology:[name:"ULG-LBTD-Cellules"],color:"#0085cc"],
             [name: "Artefacts",comment:"",ontology:[name:"ULG-LBTD-Cellules"],color:"#cddf54"],
             /* PAP */
-            [name: "Artefact",comment:"",ontology:[name:"CellSolutions-PAP"],color:"#000000"],
+            [name: "Artefacts",comment:"",ontology:[name:"CellSolutions-PAP"],color:"#000000"],
             [name: "Squamous",comment:"",ontology:[name:"CellSolutions-PAP"],color:"#958c12"],
             [name: "Inflammatory",comment:"",ontology:[name:"CellSolutions-PAP"],color:"#2e4e2b"],
             [name: "Intermediate/Superficial",comment:"Class 1",ontology:[name:"CellSolutions-PAP"],color:"#953579"],

@@ -47,6 +47,13 @@ class RestTermController extends RestController{
     else responseNotFound("Term","Ontology",params.idontology)
   }
 
+  def listAllByProject = {
+    log.info "listAllByProject " + params.idProject
+    Project project = Project.read(params.idProject)
+    if(project && project.ontology) responseSuccess(project.ontology.terms())
+    else responseNotFound("Term","Project",params.idProject)
+  }
+
   def listByImageInstance = {
     log.info "listByImage " + params.id
     ImageInstance image = ImageInstance.read(params.id)
