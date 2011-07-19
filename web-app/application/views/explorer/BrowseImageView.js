@@ -357,7 +357,7 @@ var BrowseImageView = Backbone.View.extend({
 
          },
          error: function(){
-
+            alert("oops");
          }
       });
    },

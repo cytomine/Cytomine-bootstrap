@@ -22,7 +22,7 @@ class Project extends SequenceDomain {
     static hasMany = [projectGroup:ProjectGroup]
 
     static constraints = {
-        name ( maxSize : 100, unique : true, blank : false)
+        name ( maxSize : 150, unique : true, blank : false)
         //countAnnotations(nullable:true)
         //countImages(nullable:true)
     }

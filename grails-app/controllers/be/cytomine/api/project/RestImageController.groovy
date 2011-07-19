@@ -130,8 +130,9 @@ class RestImageController extends RestController{
     def metadata = {
         //TODO; refactor me!
         AbstractImage image = AbstractImage.read(params.id)
+        println "URL : " +  image.getMetadataURL()
         def url = new URL(image.getMetadataURL())
-        println  image.getMetadataURL()
+
         withFormat {
             json {
                 render(contentType: "application/json", text: "${url.text}")

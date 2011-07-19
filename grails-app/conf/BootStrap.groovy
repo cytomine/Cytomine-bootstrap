@@ -33,6 +33,7 @@ import org.perf4j.StopWatch
 import org.perf4j.LoggingStopWatch
 import be.cytomine.data.BootStrapData
 import be.cytomine.data.BootStrapData2
+import be.cytomine.data.BootStrapData3
 
 class BootStrap {
     def springSecurityService
@@ -105,12 +106,13 @@ class BootStrap {
 
         /* Slides */
         if (env != BootStrap.test) {
-            createSlidesAndAbstractImages(BootStrapData.ANAPATHScans)
+            createSlidesAndAbstractImages(BootStrapData.ULGLBTDCells)
             createSlidesAndAbstractImages(BootStrapData2.CERVIXScans1)
             createSlidesAndAbstractImages(BootStrapData.PhillipsScans)
             createSlidesAndAbstractImages(BootStrapData.LBTDScans1)
             createSlidesAndAbstractImages(BootStrapData.LBTDScans4)
             createSlidesAndAbstractImages(BootStrapData.ZEBRA_CTL_Scans)
+            createSlidesAndAbstractImages(BootStrapData3.ANAPATHScans)
         }
 
         if (env == BootStrap.production) {
@@ -172,10 +174,13 @@ class BootStrap {
     def createSlidesAndAbstractImages(LBTDScans) {
 
         StopWatch stopWatch = new LoggingStopWatch();
-        Storage storage = Storage.findByName("cytomine")
+        //Storage storage = Storage.findByName("cytomine")
         Group giga = Group.findByName('GIGA')
-        User user = User.findByUsername("demo")
+        User user = User.findByUsername("rmaree")
         LBTDScans.each { item ->
+            if (!item.name) {
+                item.name = new File(item.filename).getName()
+            }
             if(AbstractImage.findByFilename(item.name)) return
 
             def slide
@@ -230,7 +235,7 @@ class BootStrap {
                 Project project = Project.findByName(item.study)
                 assert(project != null)
                 image.save(flush : true)
-                AbstractImageGroup.link(image,giga)
+                //AbstractImageGroup.link(image,giga)
 
 
                 project.groups().each { group ->
@@ -256,10 +261,10 @@ class BootStrap {
                 }
 
 
-                /*Storage.list().each {
+                Storage.list().each {
                     StorageAbstractImage.link(it, image)
-                }*/
-                StorageAbstractImage.link(storage, image)
+                }
+                //StorageAbstractImage.link(storage, image)
 
             } else {
                 println("\n\n\n Errors in image boostrap for ${item.filename}!\n\n\n")
