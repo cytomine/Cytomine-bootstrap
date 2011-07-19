@@ -137,12 +137,12 @@ class AbstractImage extends SequenceDomain {
             returnArray['slide'] = it.slide? it.slide.id : null
             returnArray['path'] = it.path
             returnArray['mime'] = it.mime.extension
+            returnArray['created'] = it.created? it.created.time.toString() : null
+            returnArray['updated'] = it.updated? it.updated.time.toString() : null
             /*returnArray['width'] = it.width
             returnArray['height'] = it.height
             returnArray['scale'] = it.scale
-            returnArray['roi'] = it.roi.toString()
-            returnArray['created'] = it.created? it.created.time.toString() : null
-            returnArray['updated'] = it.updated? it.updated.time.toString() : null*/
+            returnArray['roi'] = it.roi.toString()*/
             //returnArray['annotations'] = it.annotations
             /*returnArray['thumb'] = it.getThumbURL()*/
             returnArray['thumb'] = it.getThumbURL()

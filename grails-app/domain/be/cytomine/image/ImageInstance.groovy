@@ -108,8 +108,8 @@ class ImageInstance extends SequenceDomain {
             returnArray['project'] = it.project? it.project.id : null
             returnArray['user'] = it.user? it.user.id : null
 
-            /*returnArray['created'] = it.created? it.created.time.toString() : null
-            returnArray['updated'] = it.updated? it.updated.time.toString() : null*/
+            returnArray['created'] = it.created? it.created.time.toString() : null
+            returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
             try {returnArray['thumb'] = it.baseImage? it.baseImage.getThumbURL() : null}catch(Exception e){returnArray['thumb']='NO THUMB:'+e.toString()}
             returnArray['filename'] = it.baseImage? it.baseImage.filename : null
