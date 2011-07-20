@@ -7,6 +7,7 @@ import be.cytomine.command.UndoRedoCommand
 import be.cytomine.command.AddCommand
 import be.cytomine.image.ImageInstance
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
+import com.vividsolutions.jts.io.ParseException
 
 class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
 
@@ -19,6 +20,7 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
       def json = JSON.parse(postData)
       json.user = user.id
       newAnnotation = Annotation.createFromData(json)
+      if(newAnnotation.location.getNumPoints()<1) throw new ParseException("Gemo is empty:"+newAnnotation.location.getNumPoints() +" points")
       log.info "newAnnotation.project=" +newAnnotation?.image?.project
       super.changeCurrentProject(newAnnotation?.image?.project)
       return super.validateAndSave(newAnnotation,["#ID#",newAnnotation?.imageFileName()] as Object[])
@@ -27,7 +29,7 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
       return [data : [annotation:newAnnotation,errors:newAnnotation.retrieveErrors()], status : 400]
     }catch(IllegalArgumentException ex){
       return [data : [annotation:null,errors:["Cannot save object:"+ex.toString()]], status : 400]
-    }catch(com.vividsolutions.jts.io.ParseException e) {
+    }catch(ParseException e) {
       log.error("Cannot save annotation with bad geometry:"+e.toString())
       return [data : [annotation : null , errors : ["Geometry "+ JSON.parse(postData).location +" is not valid:"+e.toString()]], status : 400]
     }

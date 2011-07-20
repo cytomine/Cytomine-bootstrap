@@ -62,12 +62,6 @@ class AnnotationTerm extends SequenceDomain implements Serializable{
         def annotationTerm = AnnotationTerm.findByAnnotationAndTerm(annotation, term)
         if(!annotationTerm) throw new IllegalArgumentException("Annotation - term not exist")
 
-        AnnotationTerm.list().each {
-            println it.id + " annotation=" + it.annotation.id + " term=" + it.term.id
-        }
-
-        println "find annotationTerm="+AnnotationTerm.findAllByAnnotationAndTerm(annotation, term).size()
-        println "unlink annotationTerm="+annotationTerm
         if (annotationTerm) {
             annotation?.removeFromAnnotationTerm(annotationTerm)
             term?.removeFromAnnotationTerm(annotationTerm)

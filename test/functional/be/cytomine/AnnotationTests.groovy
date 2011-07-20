@@ -510,6 +510,31 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
   }
 
+  void testAddAnnotationBadGeomEmpty() {
+
+    log.info("create annotation")
+    def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
+    String jsonAnnotation = annotationToAdd.encodeAsJSON()
+    def updateAnnotation = JSON.parse(jsonAnnotation)
+    updateAnnotation.location = 'POLYGON EMPTY'
+    jsonAnnotation = updateAnnotation.encodeAsJSON()
+
+    log.info("post annotation:"+jsonAnnotation.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/annotation.json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.post(jsonAnnotation)
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(400,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+
+  }
+
   void testAddAnnotationScanNotExist() {
 
     log.info("create annotation")

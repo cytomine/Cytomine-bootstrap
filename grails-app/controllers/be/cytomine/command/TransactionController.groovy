@@ -52,10 +52,12 @@ class TransactionController {
     }
 
     def stop = {
-        log.info "end transaction:" + springSecurityService.principal.id
-        User user = User.get(springSecurityService.principal.id)
-        user.setTransactionInProgress(false)
-        user.save(flush:true)
-        log.info "save transac:" + user.transactionInProgress
+        synchronized(this.getClass()) {
+            log.info "end transaction:" + springSecurityService.principal.id
+            User user = User.get(springSecurityService.principal.id)
+            user.setTransactionInProgress(false)
+            user.save(flush:true)
+            log.info "save transac:" + user.transactionInProgress
+        }
     }
 }

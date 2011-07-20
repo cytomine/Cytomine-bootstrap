@@ -29,9 +29,18 @@ class RestImportDataController {
 
         String projectName = jsonProject.name
         log.info("project.name="+ projectName)
-        Project project = Project.findByName(projectName);
+        Project project = null
+        Project.list().each {
+           log.info("it="+ it)
+           if(it.name.toUpperCase().equals(projectName.toUpperCase())) {
+                 project = it
+           }
+        }
         log.info("project="+ project)
-
+        if(!project) {
+            log.error("Project is null");
+            return;
+        }
 
         def users = [:]
         for(int i=0;i<jsonUsers.length();i++) {
