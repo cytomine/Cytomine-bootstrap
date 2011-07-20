@@ -46,6 +46,7 @@ class BootStrap {
     def imagePropertiesService
     def countersService
     def triggerService
+    def grantService
 
     static def development = "development"
     static def production = "production"
@@ -62,6 +63,7 @@ class BootStrap {
         sequenceService.initSequences()
         triggerService.initTrigger()
         indexService.initIndex()
+        grantService.initGrant()
 
         grailsApplication.domainClasses.each {domainClass ->//iterate over the domainClasses
             if (domainClass.clazz.name.contains("be.cytomine")) {//only add it to the domains in my plugin
@@ -146,10 +148,10 @@ class BootStrap {
         AbstractImage.list().each { image->
             if (i % 10 == 0) { println i + "/" + nbImages }
             i++;
-            /*if (image.imageProperties == null || image.imageProperties.size() == 0) {
-                imagePropertiesService.populate(image)*/
+            if (image.imageProperties == null || image.imageProperties.size() == 0) {
+                imagePropertiesService.populate(image)
                 imagePropertiesService.extractUseful(image)
-            //}
+           }
         }
     }
 

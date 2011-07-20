@@ -26,7 +26,7 @@ class ImagePropertiesService {
         println image.getFilename()
         URL url = new URL(propertiesURL)
         URLConnection conn = url.openConnection();
-        conn.setReadTimeout(1000)
+        conn.setReadTimeout(1500)
         try {
             conn.getInputStream().eachLine { line ->
                 if (line.isEmpty()) return;
@@ -41,6 +41,8 @@ class ImagePropertiesService {
             image.save()
         } catch (java.net.SocketTimeoutException e) {
             println "Timeout reached to image : " + image.getFilename()
+        } catch (IOException e) {
+            println "IO Exception:"+e.toString()
         }
 
     }
@@ -71,7 +73,7 @@ class ImagePropertiesService {
         //def dimensions = null
 
         URLConnection conn = url.openConnection();
-        conn.setReadTimeout(1000)
+        conn.setReadTimeout(1500)
         try {
             conn.getInputStream().eachLine { line ->
                 def args = line.split(":")
@@ -84,6 +86,8 @@ class ImagePropertiesService {
             }
         } catch (java.net.SocketTimeoutException e) {
             println "Timeout reached to image : " + image.getFilename()
+        } catch (IOException e) {
+            println "IO Exception:"+e.toString()
         }
         image.setMagnification(10)
         image.setResolution(0.65)
