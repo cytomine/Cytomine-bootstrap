@@ -78,7 +78,7 @@ class AbstractImage extends SequenceDomain {
 
         image.height = (!jsonImage.height.toString().equals("null"))  ? ((String)jsonImage.height).toInteger() : -1
         image.width = (!jsonImage.width.toString().equals("null"))  ? ((String)jsonImage.width).toInteger() : -1
-        image.scale = (!jsonImage.scale.toString().equals("null"))  ? ((String)jsonImage.scale).toDouble() : -1
+        //image.scale = (!jsonImage.scale.toString().equals("null"))  ? ((String)jsonImage.scale).toDouble() : -1
 
         image.created = (!jsonImage.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonImage.created)) : null
         image.updated = (!jsonImage.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonImage.updated)) : null
@@ -106,7 +106,7 @@ class AbstractImage extends SequenceDomain {
             throw new IllegalArgumentException("Mime with id:"+ mimeId + " has not image server")
         }
 
-        String roi = jsonImage.roi.toString()
+        /*String roi = jsonImage.roi.toString()
         if(!roi.equals("null"))
         {
             try { image.roi = new WKTReader().read(roi)}
@@ -116,7 +116,7 @@ class AbstractImage extends SequenceDomain {
             }
 
         }
-        else image.roi = null
+        else image.roi = null*/
 
         return image;
     }

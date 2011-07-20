@@ -208,7 +208,6 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     def imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
     String jsonImage = imageToAdd.encodeAsJSON()
     def updateImage = JSON.parse(jsonImage)
-    updateImage.roi = 'POINT(BAD GEOMETRY)'
     jsonImage = updateImage.encodeAsJSON()
 
     log.info("post image:"+jsonImage.replace("\n",""))
@@ -366,12 +365,9 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     Integer oldHeight = 10000
     Integer newHeight = 900000
 
-    Double oldScale = 1
-    Double newScale = 9
 
-
-    def mapNew = ["filename":newFilename,"geom":newGeom,"scanner":newScanner,"slide":newSlide,"path":newPath,"mime":newMime,"width":newWidth,"height":newHeight,"scale":newScale,"user":newUser]
-    def mapOld = ["filename":oldFilename,"geom":oldGeom,"scanner":oldScanner,"slide":oldSlide,"path":oldPath,"mime":oldMime,"width":oldWidth,"height":oldHeight,"scale":oldScale,"user":oldUser]
+    def mapNew = ["filename":newFilename,"geom":newGeom,"scanner":newScanner,"slide":newSlide,"path":newPath,"mime":newMime,"width":newWidth,"height":newHeight,"user":newUser]
+    def mapOld = ["filename":oldFilename,"geom":oldGeom,"scanner":oldScanner,"slide":oldSlide,"path":oldPath,"mime":oldMime,"width":oldWidth,"height":oldHeight,"user":oldUser]
 
 
 
@@ -379,14 +375,12 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     log.info("create image")
     AbstractImage imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
     imageToAdd.filename = oldFilename
-    imageToAdd.roi = new WKTReader().read(oldGeom)
     imageToAdd.scanner = oldScanner
     imageToAdd.slide = oldSlide
     imageToAdd.path = oldPath
     imageToAdd.mime = oldMime
     imageToAdd.width = oldWidth
     imageToAdd.height = oldHeight
-    imageToAdd.scale = oldScale
     imageToAdd.save(flush:true)
 
     /* Encode a new image to modify */
@@ -395,14 +389,12 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     def jsonUpdate = JSON.parse(jsonImage)
 
     jsonUpdate.filename = newFilename
-    jsonUpdate.roi = newGeom
     jsonUpdate.scanner = newScanner.id
     jsonUpdate.slide = newSlide.id
     jsonUpdate.path = newPath
     jsonUpdate.mime = newMime.extension
     jsonUpdate.width = newWidth
     jsonUpdate.height = newHeight
-    jsonUpdate.scale = newScale
     jsonImage = jsonUpdate.encodeAsJSON()
 
     log.info("put image:"+jsonImage.replace("\n",""))
@@ -498,38 +490,6 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     json = JSON.parse(response)
     assert json instanceof JSONObject  */
 
-  }
-
-  void testEditImageWithBadGeom()
-  {
-    String oldGeom = "POINT (1111 1111)"
-    String newGeom = "BAD GEOMETRY"
-
-    /* Create a old image */
-    log.info("create image")
-    AbstractImage imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
-    imageToAdd.roi = new WKTReader().read(oldGeom)
-    imageToAdd.save(flush:true)
-
-    /* Encode a new image to modify */
-    AbstractImage imageToEdit = AbstractImage.get(imageToAdd.id)
-    def jsonImage = imageToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonImage)
-    jsonUpdate.roi = newGeom
-
-    jsonImage = jsonUpdate.encodeAsJSON()
-
-    log.info("put image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+imageToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonImage)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
   }
 
   void testEditImageWithBadSlide()
