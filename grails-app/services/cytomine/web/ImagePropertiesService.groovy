@@ -99,15 +99,19 @@ class ImagePropertiesService {
         //Magnificiation
         def magnificationProperty = ImageProperty.findByImageAndKey(image, "mirax.GENERAL.OBJECTIVE_MAGNIFICATION")
         if (magnificationProperty) image.setMagnification(Integer.parseInt(magnificationProperty.getValue()))
+        else println "magnificationProperty is null"
         //Width
         def widthProperty = ImageProperty.findByImageAndKey(image, "openslide.layer[0].width")
         if (widthProperty) image.setWidth(Integer.parseInt(widthProperty.getValue()))
+        else println "widthProperty is null"
         //Height
         def heightProperty = ImageProperty.findByImageAndKey(image, "openslide.layer[0].height")
         if (heightProperty) image.setHeight(Integer.parseInt(heightProperty.getValue()))
+        else println "heightProperty is null"
         //Resolution
         def resolutionProperty = ImageProperty.findByImageAndKey(image, "mirax.LAYER_0_LEVEL_0_SECTION.MICROMETER_PER_PIXEL_X")
         if (resolutionProperty) image.setResolution(Float.parseFloat(resolutionProperty.getValue()))
+        else println "resolutionProperty is null"
     }
 
     private def extractUsefulVms(AbstractImage image) {

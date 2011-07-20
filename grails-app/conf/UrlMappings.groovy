@@ -270,5 +270,9 @@ class UrlMappings {
               action = [GET:"annotations"]
         }
 
+        "/api/import/imageproperties"(controller:"restImportData") {
+              action = [GET:"imageproperties"]
+        }
+
     }
 }

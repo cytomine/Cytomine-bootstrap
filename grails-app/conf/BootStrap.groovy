@@ -34,6 +34,7 @@ import org.perf4j.LoggingStopWatch
 import be.cytomine.data.BootStrapData
 import be.cytomine.data.BootStrapData2
 import be.cytomine.data.BootStrapData3
+import be.cytomine.data.RestImportDataController
 
 class BootStrap {
     def springSecurityService
@@ -142,17 +143,8 @@ class BootStrap {
     }
 
     private def updateImageProperties() {
-        println "Extract images properties"
-        def nbImages = AbstractImage.count()
-        int i = 0;
-        AbstractImage.list().each { image->
-            if (i % 10 == 0) { println i + "/" + nbImages }
-            i++;
-            if (image.imageProperties == null || image.imageProperties.size() == 0) {
-                imagePropertiesService.populate(image)
-                imagePropertiesService.extractUseful(image)
-           }
-        }
+        def c = new  RestImportDataController()
+        c.imageproperties()
     }
 
     /* Methods */

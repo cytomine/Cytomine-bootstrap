@@ -41,23 +41,15 @@
         </div>
     </div>
 </div>
-<div id="tabs-images-{{id}}" style="overflow : auto;">
-    <!--<a href="#tabs-images-{{id}}">Image thumb</a>&nbsp;&nbsp;&nbsp;&nbsp;
-    <a href="#tabs-imagestabs-{{id}}">Image listing</a><br>
-    <div id="projectImageThumb" style="display:inline-block;width:95%;">    </div>
-    <div id="projectImageListing" style="display:inline-block;width:95%;">    </div>-->
-
-    <div id="tabs-images-listing-{{id}}" style="display:none;">
-        <ul>
-            <li><a href="#tabs-projectImageThumb{{id}}">Image thumb</a></li>
-            <li><a href="#tabs-projectImageListing{{id}}">Image listing</a></li>
-        </ul>
-        <div id="tabs-projectImageThumb{{id}}">
-            <div id="projectImageThumb{{id}}" style="display:inline-block;width:95%;"></div></div>
-        <div id="tabs-projectImageListing{{id}}" align="center"> <br><b>
-                <div id="projectImageListing{{id}}" style="display:inline-block;width:95%;" align="center"></div></div>
-        </div>
+<div id="tabs-images-{{id}}" style="overflow : auto;padding: 5px;">
+    <div align="right">
+        <a id="imageThumbs{{id}}" href="#tabs-images-{{id}}">Thumbs</a>
+        <a id="imageArray{{id}}" href="#tabs-imagesarray-{{id}}">Listing</a>
     </div>
+    <div id="tabs-projectImageThumb{{id}}" style="display: none;"><div id="projectImageThumb{{id}}" style="display:inline-block;width:95%;"></div></div>
+    <div id="tabs-projectImageListing{{id}}" style="display: none;"><div id="projectImageListing{{id}}" style="display:inline-block;width:95%;"></div></div>
+</div>
+
 </div>
 <div id="tabs-annotations-{{id}}" style="overflow : auto;">
     <div style="margin-top:5px;">

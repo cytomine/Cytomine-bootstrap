@@ -124,6 +124,6 @@ class IIPResolver extends Resolver{
             tmpWidth = tmpWidth / 2
             tmpHeight = tmpHeight / 2
         }
-        return [min : 0, max : nbZoom, middle : (nbZoom / 2), overviewWidth : Math.round(tmpWidth), overviewHeight : Math.round(tmpHeight), width : dimensions.width, height : dimensions.height]
+        return [min : 0, max : nbZoom, middle : (nbZoom / 2), overviewWidth : Math.round(tmpWidth), overviewHeight : Math.round(tmpHeight), width : width, height : height]
     }
 }

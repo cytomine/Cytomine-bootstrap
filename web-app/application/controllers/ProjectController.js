@@ -2,7 +2,8 @@
 var ProjectController = Backbone.Controller.extend({
 
    routes: {
-      "project"     :   "project"
+      "project"     :   "project",
+      "project-manage-:idProject" : "manage"
    },
 
    initView : function(callback) {
@@ -33,5 +34,14 @@ var ProjectController = Backbone.Controller.extend({
       }
       self.view.container.show(self.view, "#warehouse > .sidebar", "project");
       window.app.view.showComponent(window.app.view.components.warehouse);
+   },
+
+   manage : function(idProject) {
+      var self = this;
+      if (self.view == null) {
+         self.project();
+         return;
+      }
+      alert(idProject);
    }
 });

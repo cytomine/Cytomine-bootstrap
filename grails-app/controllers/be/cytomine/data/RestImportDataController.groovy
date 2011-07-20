@@ -15,6 +15,24 @@ import be.cytomine.ontology.AnnotationTerm
 class RestImportDataController {
 
     def countersService
+    def imagePropertiesService
+
+    def imageproperties = {
+        println "Extract images properties"
+        int i = 0;
+        AbstractImage.withCriteria {
+            isNull('width')
+        }.each { image->
+            if (i % 10 == 0) { println i }
+            i++;
+
+            if (image.imageProperties?.size() == 0) {
+                imagePropertiesService.populate(image)
+            }
+            imagePropertiesService.extractUseful(image)
+
+        }
+    }
 
     def annotations = {
         log.info("get annotation")
@@ -32,10 +50,10 @@ class RestImportDataController {
         log.info("project.name="+ projectName)
         Project project = null
         Project.list().each {
-           log.info("it="+ it)
-           if(it.name.toUpperCase().equals(projectName.toUpperCase())) {
-                 project = it
-           }
+            log.info("it="+ it)
+            if(it.name.toUpperCase().equals(projectName.toUpperCase())) {
+                project = it
+            }
         }
         log.info("project="+ project)
         if(!project) {

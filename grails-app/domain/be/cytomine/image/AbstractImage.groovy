@@ -216,7 +216,7 @@ class AbstractImage extends SequenceDomain {
         }
 
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getCropURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(),topLeftX,topLeftY, width, height)
+        String url = resolver.getCropURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(),topLeftX,topLeftY, width, height, this.getWidth(), this.getHeight())
         return url
     }
 
@@ -227,7 +227,7 @@ class AbstractImage extends SequenceDomain {
             return "images/cytomine.jpg"
         }
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getCropURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(),topLeftX,topLeftY, width, height ,zoom)
+        String url = resolver.getCropURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(),topLeftX,topLeftY, width, height ,zoom, this.getWidth(), this.getHeight())
         return url
     }
 

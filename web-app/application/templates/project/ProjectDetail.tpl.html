@@ -15,7 +15,9 @@
 				<li>Number of slides : <a href="#tabs-images-{{id}}"><label id="projectInfoNumberOfSlides" style="display: inline;">{{numberOfSlides}}</label></a></li>		                    				<li>Number of images : <a href="#tabs-images-{{id}}"><label id="projectInfoNumberOfImages" style="display: inline;">{{numberOfImages}}</label></a></li>
                     <li>Number of annotations : <a href="#tabs-annotations-{{id}}"><label id="projectInfoNumberOfAnnotations" style="display: inline;">{{numberOfAnnotations}}</label></a></li>
 				</td>
-                <td width="45%"><button class="addSlide" id='projectaddimages{{id}}' type="button">Manage samples</button> 
+                <td width="45%">
+                    <button class="addSlide" id='projectaddimages{{id}}' type="button">Manage samples</button>
+                    <!--<a class="addSlide" id='projectaddimages{{id}}' href="#project-manage-{{id}}">Manage samples</a>-->
                     <a class="changeProject" id='radioprojectchange{{id}}' href="#tabs-dashboard-{{id}}">Open</a>
 					<button class="editProject" id='projectedit{{id}}' type="button">Edit</button>
                     <button class="deleteProject" id='projectdelete{{id}}' type="button">Delete</button>					

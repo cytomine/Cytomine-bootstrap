@@ -123,7 +123,7 @@ class Annotation extends SequenceDomain implements Serializable {
 
     def getCropURL(int zoom) {
         def boundaries = getBoundaries()
-        return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, zoom)
+        return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height)
     }
 
     /**
