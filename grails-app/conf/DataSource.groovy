@@ -15,7 +15,7 @@ hibernate {
 environments {
   development {
     dataSource {
-      dbCreate = "update"
+      dbCreate = "create-drop"
       url="jdbc:postgresql://localhost:5432/cytomine"
     }
   }

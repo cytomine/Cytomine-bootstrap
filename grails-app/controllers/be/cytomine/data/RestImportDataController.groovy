@@ -14,6 +14,7 @@ import be.cytomine.ontology.AnnotationTerm
 
 class RestImportDataController {
 
+    def countersService
 
     def annotations = {
         log.info("get annotation")
@@ -88,6 +89,7 @@ class RestImportDataController {
             }
         }
 
+        countersService.updateCounters()
 
     }
 

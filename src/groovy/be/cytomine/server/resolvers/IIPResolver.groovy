@@ -30,12 +30,12 @@ class IIPResolver extends Resolver{
         return url;
     }
 
-    public String getThumbUrl(String baseUrl, String imagePath) {
+    public String getThumbUrl(String baseUrl, String imagePath, int width) {
         args.clear()
         args.add("FIF" + ARGS_EQUAL + imagePath)
         args.add("SDS" + ARGS_EQUAL +  "0,90")
         args.add("CNT" + ARGS_EQUAL + "1.0")
-        args.add("WID" + ARGS_EQUAL + "200")
+        args.add("WID" + ARGS_EQUAL + width)
         args.add("SQL" + ARGS_EQUAL + "99")
         args.add("CVT" + ARGS_EQUAL + "jpeg")
         return toURL(baseUrl)
@@ -70,21 +70,20 @@ class IIPResolver extends Resolver{
         return toURL(baseUrl)
     }
 
-    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int zoom) {
-        def dimensions = getWidthHeight(baseUrl, imagePath)
-
-        /*#Y is the down inset value (positive) from 0 on the y axis at the max image resolution.
-    #X is the right inset value (positive) from 0 on the x axis at the max image resolution.
-    #H is the height of the image provided as response.
-    #W is the width of the image provided as response.
-    X : 1/(34207/15000) = 0.4399859205
-    Y : 1/(34092/15100) = 0.4414301166
-    W : 1/(34092/400) = 0.01173295788
-    H : 1/(34207/600) = 0.01754026954*/
-        def x = 1/(dimensions.width / topLeftX)
-        def y = 1/(dimensions.height / (dimensions.height - topLeftY))
-        def w = 1/(dimensions.width / width)
-        def h = 1/(dimensions.height / height)
+    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int zoom, int baseImageWidth, int baseImageHeight) {
+        /*
+        #Y is the down inset value (positive) from 0 on the y axis at the max image resolution.
+        #X is the right inset value (positive) from 0 on the x axis at the max image resolution.
+        #H is the height of the image provided as response.
+        #W is the width of the image provided as response.
+        X : 1/(34207/15000) = 0.4399859205
+        Y : 1/(34092/15100) = 0.4414301166
+        W : 1/(34092/400) = 0.01173295788
+        H : 1/(34207/600) = 0.01754026954*/
+        def x = 1/(baseImageWidth / topLeftX)
+        def y = 1/(baseImageHeight / (baseImageHeight - topLeftY))
+        def w = 1/(baseImageWidth / width)
+        def h = 1/(baseImageHeight / height)
         args.clear()
         args.add("FIF" + ARGS_EQUAL +  imagePath)
         args.add("RGN" + ARGS_EQUAL +  x + "," + y + "," + w + "," + h)
@@ -92,18 +91,18 @@ class IIPResolver extends Resolver{
         return toURL(baseUrl)
     }
 
-    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height) {
-        def maxZoom = getZoomLevels(baseUrl, imagePath).max
+    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int baseImageWidth, int baseImageHeight) {
+        def maxZoom = getZoomLevels(baseUrl, imagePath, baseImageWidth, baseImageHeight).max
         def widthTarget = 500
         def tmpWidth = width
         while (tmpWidth > widthTarget) {
             maxZoom--
             tmpWidth = tmpWidth / 2
         }
-        getCropURL(baseUrl, imagePath, topLeftX, topLeftY, width, height, maxZoom)
+        getCropURL(baseUrl, imagePath, topLeftX, topLeftY, width, height, maxZoom, baseImageWidth, baseImageHeight)
     }
 
-    def getWidthHeight(baseUrl, imagePath) {
+    /*def getWidthHeight(baseUrl, imagePath) {
         def url = new URL(getMetaDataURL(baseUrl, imagePath))
         def dimensions = null
         url.eachLine { line ->
@@ -114,12 +113,11 @@ class IIPResolver extends Resolver{
             }
         }
         return dimensions
-    }
+    }*/
 
-    def getZoomLevels (baseUrl, imagePath) {
-        def dimensions = getWidthHeight(baseUrl, imagePath)
-        def tmpWidth = dimensions.width
-        def tmpHeight = dimensions.height
+    def getZoomLevels (baseUrl, imagePath, width, height) {
+        def tmpWidth = width
+        def tmpHeight = height
         def nbZoom = 0
         while (tmpWidth >= 256 || tmpHeight >= 256) {
             nbZoom++

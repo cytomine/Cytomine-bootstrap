@@ -12,6 +12,7 @@ import be.cytomine.rest.UrlApi
 import be.cytomine.project.Slide
 import be.cytomine.server.resolvers.Resolver
 import be.cytomine.image.server.StorageAbstractImage
+import be.cytomine.image.server.ImageProperty
 
 class AbstractImage extends SequenceDomain {
 
@@ -22,8 +23,9 @@ class AbstractImage extends SequenceDomain {
     Mime mime
     Integer width
     Integer height
-    Double scale
-    Geometry roi
+    Integer magnification
+    Double resolution
+
 
     /*
     * If you modify/add an attribute, don't forget to:
@@ -34,7 +36,7 @@ class AbstractImage extends SequenceDomain {
 
     static belongsTo = Slide
 
-    static hasMany = [ abstractimagegroup : AbstractImageGroup, storageAbstractImages : StorageAbstractImage ]
+    static hasMany = [ abstractimagegroup : AbstractImageGroup, storageAbstractImages : StorageAbstractImage, imageProperties : ImageProperty ]
 
     static transients = ["zoomLevels"]
 
@@ -49,9 +51,8 @@ class AbstractImage extends SequenceDomain {
 
         width(nullable:true)
         height(nullable:true)
-        scale(nullable:true)
-        roi(nullable:true)
-
+        resolution(nullable:true)
+        magnification(nullable:true)
     }
 
     String toString() {
@@ -139,9 +140,11 @@ class AbstractImage extends SequenceDomain {
             returnArray['mime'] = it.mime.extension
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
-            /*returnArray['width'] = it.width
+            returnArray['width'] = it.width
             returnArray['height'] = it.height
-            returnArray['scale'] = it.scale
+            returnArray['resolution'] = it.resolution
+            returnArray['magnification'] = it.magnification
+            /*returnArray['scale'] = it.scale
             returnArray['roi'] = it.roi.toString()*/
             //returnArray['annotations'] = it.annotations
             /*returnArray['thumb'] = it.getThumbURL()*/
@@ -171,11 +174,15 @@ class AbstractImage extends SequenceDomain {
     def getThumbURL()  {
         Collection<ImageServer> imageServers = getMime().imageServers()
         def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
-        if (imageServers.size() == 0 || !imageServers[index].getStorage())  {
+        if (imageServers.size() == 0 || !imageServers[index].getStorage() || getWidth() == null || getHeight() == null)  {
             return "images/cytomine.jpg"
         }
+        Integer desiredWidth = this.getWidth()
+        while (desiredWidth > 256) {
+            desiredWidth /=  2
+        }
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getThumbUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath())
+        String url = resolver.getThumbUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(), desiredWidth)
         return url
     }
 

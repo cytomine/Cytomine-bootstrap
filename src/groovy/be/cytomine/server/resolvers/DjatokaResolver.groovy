@@ -30,7 +30,7 @@ class DjatokaResolver extends Resolver {
         return url;
     }
 
-    public String getThumbUrl(String baseUrl, String imagePath) {
+    public String getThumbUrl(String baseUrl, String imagePath, int width) {
         args.put("rft_id", imagePath)
         args.put("url_ver", "Z39.88-2004")
         args.put("svc_id", "info:lanl-repo/svc/getRegion")
@@ -68,7 +68,7 @@ class DjatokaResolver extends Resolver {
         return toURL(baseUrl)
     }
 
-    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height) {
+    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int baseImageWidth, int baseImageHeight) {
         def maxZoom = getZoomLevels(baseUrl, imagePath).max
         def widthTarget = 500
         def tmpWidth = width
@@ -79,7 +79,7 @@ class DjatokaResolver extends Resolver {
         getCropURL(baseUrl, imagePath, topLeftX, topLeftY, width, height, maxZoom)
     }
 
-    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int zoom) {
+    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int zoom, int baseImageWidth, int baseImageHeight) {
         int deltaZoom = Math.pow(2, (getZoomLevels(baseUrl, imagePath).max - zoom))
         def metadata = JSON.parse(new URL(getMetaDataURL(baseUrl, imagePath)).text)
         println "crop url metadata" + metadata.height
@@ -97,7 +97,7 @@ class DjatokaResolver extends Resolver {
         return toURL(baseUrl)
     }
 
-    def getZoomLevels (baseUrl, imagePath) {
+    def getZoomLevels (baseUrl, imagePath, width, height) {
         def metadata = JSON.parse(new URL(getMetaDataURL(baseUrl, imagePath)).text)
         int max = Integer.parseInt(metadata.levels)
         int min = 0

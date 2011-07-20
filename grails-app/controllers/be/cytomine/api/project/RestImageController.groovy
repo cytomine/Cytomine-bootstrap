@@ -143,12 +143,7 @@ class RestImageController extends RestController{
     def imageProperties = {
         //TODO; refactor me!
         AbstractImage image = AbstractImage.read(params.id)
-        def url = new URL(image.getPropertiesURL())
-        withFormat {
-            json {
-                render(contentType: "application/json", text: "${url.text}")
-            }
-        }
+        response(image.imageProperties)
     }
 
     def storageService

@@ -43,7 +43,9 @@ class BootStrap {
     def grailsApplication
     def storageService
     def messageSource
-  def triggerService
+    def imagePropertiesService
+    def countersService
+    def triggerService
 
     static def development = "development"
     static def production = "production"
@@ -79,7 +81,8 @@ class BootStrap {
 
         StopWatch stopWatch = new LoggingStopWatch();
         initData(GrailsUtil.environment)
-        updateCounters()
+        countersService.updateCounters()
+        updateImageProperties()
         stopWatch.stop("initData");
         //end of init
     }
@@ -136,18 +139,17 @@ class BootStrap {
         //end of init
     }
 
-    private def updateCounters() {
-        Project.list().each { project ->
-            println "update counter for project " + project.name
-            def images = project.imagesinstance()
-            if (images.size() > 0) project.setCountAnnotations(Annotation.countByImageInList(images))
-            else project.setCountAnnotations(0L)
-            project.setCountImages(ImageInstance.countByProject(project))
-            project.save()
-        }
-        ImageInstance.list().each { image ->
-            image.setCountImageAnnotations(Annotation.countByImage(image))
-            image.save()
+    private def updateImageProperties() {
+        println "Extract images properties"
+        def nbImages = AbstractImage.count()
+        int i = 0;
+        AbstractImage.list().each { image->
+            if (i % 10 == 0) { println i + "/" + nbImages }
+            i++;
+            /*if (image.imageProperties == null || image.imageProperties.size() == 0) {
+                imagePropertiesService.populate(image)*/
+                imagePropertiesService.extractUseful(image)
+            //}
         }
     }
 
@@ -301,14 +303,14 @@ class BootStrap {
         usersSamples.each { item ->
             User user = User.findByUsername(item.username)
             if (!user) {
-             user = new User(
-                    username : item.username,
-                    firstname : item.firstname,
-                    lastname : item.lastname,
-                    email : item.email,
-                    color : item.color,
-                    password : springSecurityService.encodePassword(item.password),
-                    enabled : true)
+                user = new User(
+                        username : item.username,
+                        firstname : item.firstname,
+                        lastname : item.lastname,
+                        email : item.email,
+                        color : item.color,
+                        password : springSecurityService.encodePassword(item.password),
+                        enabled : true)
             } else {
                 user.username = item.username;
                 user.firstname = item.firstname;

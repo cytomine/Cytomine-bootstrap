@@ -119,10 +119,11 @@ class ImageInstance extends SequenceDomain {
             returnArray['path'] = it.baseImage.path
             returnArray['mime'] = it.baseImage?.mime?.extension
 
-            /*returnArray['width'] = it.baseImage.width
+            returnArray['width'] = it.baseImage.width
             returnArray['height'] = it.baseImage.height
-
-            returnArray['scale'] = it.baseImage.scale
+            returnArray['resolution'] = it.baseImage.resolution
+            returnArray['magnification'] = it.baseImage.magnification
+            /*returnArray['scale'] = it.baseImage.scale
 
             returnArray['roi'] = it.baseImage.roi.toString()*/
 

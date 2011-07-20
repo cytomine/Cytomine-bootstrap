@@ -21,7 +21,7 @@ class BootStrapData {
     static def groupsSamples = [
             [name : "ULG-LBTD-NEO04"],
             [name : "ULG-LBTD-NEO13"],
-            [name : "ULG-LBTD-CELLULES"],
+            [name : "ULG-LBTD-LBA"],
             [name : "CELLSOLUTIONS-BESTCYTE-CERVIX"],
             [name : "ULG-TEST-PHILIPS"],
             [name : "ULG-BMGG-ZEBRA_CTL"],
@@ -37,13 +37,13 @@ class BootStrapData {
     /* Users */
     static def usersSamples = [
             [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be',
-                    group : [[name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-CELLULES"], [name : "CELLSOLUTIONS-BESTCYTE-CERVIX"], [name : "ULG-TEST-PHILIPS"], [name : "ULG-BMGG-ZEBRA_CTL"], [name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'password', color : "#FF0000"],
+                    group : [[name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-LBA"], [name : "CELLSOLUTIONS-BESTCYTE-CERVIX"], [name : "ULG-TEST-PHILIPS"], [name : "ULG-BMGG-ZEBRA_CTL"], [name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'password', color : "#FF0000"],
             [username : 'lrollus', firstname : 'Loïc', lastname : 'Rollus', email : 'lrollus@ulg.ac.be',
-                    group : [[name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-CELLULES"], [name : "CELLSOLUTIONS-BESTCYTE-CERVIX"], [name : "ULG-TEST-PHILIPS"], [name : "ULG-BMGG-ZEBRA_CTL"], [name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'password', color : "#00FF00"],
+                    group : [[name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-LBA"], [name : "CELLSOLUTIONS-BESTCYTE-CERVIX"], [name : "ULG-TEST-PHILIPS"], [name : "ULG-BMGG-ZEBRA_CTL"], [name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'password', color : "#00FF00"],
             [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be',
-                    group : [[name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-CELLULES"], [name : "CELLSOLUTIONS-BESTCYTE-CERVIX"], [name : "ULG-TEST-PHILIPS"], [name : "ULG-BMGG-ZEBRA_CTL"], [name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'password', color : "#0000FF"] ,
+                    group : [[name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-LBA"], [name : "CELLSOLUTIONS-BESTCYTE-CERVIX"], [name : "ULG-TEST-PHILIPS"], [name : "ULG-BMGG-ZEBRA_CTL"], [name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'password', color : "#0000FF"] ,
             [username : 'lbtd', firstname : 'LB', lastname : 'TD', email : 'mymail@ulg.ac.be',
-                    group : [ [name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-CELLULES"], [name : "ULG-TEST-PHILIPS"]], password : 'lbtd', color : "#00FFFF"],
+                    group : [ [name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-LBA"], [name : "ULG-TEST-PHILIPS"]], password : 'lbtd', color : "#00FFFF"],
             [username : 'anapath', firstname : 'Ana', lastname : 'Path', email : 'mymail@ulg.ac.be',
                     group : [[name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'anapath', color : "#00FFFF"],
             [username : 'stern', firstname : 'Olivier', lastname : 'Stern', email : 'mymail@ulg.ac.be',
@@ -122,7 +122,7 @@ class BootStrapData {
     static def projectSamples = [
             [name : "ULG-LBTD-NEO04",  groups : [[ name :"ULG-LBTD-NEO04"]],ontology: "ULG-LBTD-Tissus"],
             [name : "ULG-LBTD-NEO13",  groups : [[ name :"ULG-LBTD-NEO13"]],ontology: "ULG-LBTD-Tissus"],
-            [name : "ULG-LBTD-CELLULES",  groups : [[ name :"ULG-LBTD-CELLULES"]],ontology: "ULG-LBTD-Cellules"],
+            [name : "ULG-LBTD-LBA",  groups : [[ name :"ULG-LBTD-LBA"]],ontology: "ULG-LBTD-Cellules"],
             [name : "CELLSOLUTIONS-BESTCYTE-CERVIX",  groups : [[ name :"CELLSOLUTIONS-BESTCYTE-CERVIX"]],ontology: "CellSolutions-PAP"],
             [name : "ULG-TEST-PHILIPS",  groups : [[ name :"ULG-TEST-PHILIPS"]],ontology: "ULG-LBTD-Tissus"],
             [name : "ULG-BMGG-ZEBRA_CTL",  groups : [[ name :"ULG-BMGG-ZEBRA_CTL"]],ontology: "ULG-BMGG-Cartilage"],
@@ -322,7 +322,7 @@ class BootStrapData {
     /* Images */
     static def ULGLBTDCells = [
             //ANAPATH
-            [filename: 'ANAPATH/vms/OVA17cyto-2010-11-1513.09.42_clip.vms', name : 'OVA17cyto-2010-11-1513.09.42_clip.vms',study:'ULG-LBTD-CELLULES', extension:"vms"],
+            [filename: 'ANAPATH/vms/OVA17cyto-2010-11-1513.09.42_clip.vms', name : 'OVA17cyto-2010-11-1513.09.42_clip.vms',study:'ULG-LBTD-LBA', extension:"vms"],
     ]
 
     static def LBTDScans1 = [
@@ -614,7 +614,7 @@ class BootStrapData {
             //NEO4
             [filename:'LBTD/Olympus/study_NEO4/grp_Curcu_INH/converti/NEO_4_Curcu_INH_1.10_3_2_01.tif.vips.tif',name:'NEO_4_Curcu_INH_1.10_3_2_01.tif.vips.tif',slidename:'NEO_4_Curcu_INH_1',order:10,study:'ULG-LBTD-NEO04', extension :'tif'],
             [filename:'LBTD/Olympus/study_NEO4/grp_Curcu_INH/converti/NEO_4_Curcu_INH_1.1_3_1_01.tif.vips.tif',name:'NEO_4_Curcu_INH_1.1_3_1_01.tif.vips.tif',slidename:'NEO_4_Curcu_INH_1',order:1,study:'ULG-LBTD-NEO04', extension :'tif'],
-            [filename:'LBTD/Olympus/study_NEO4/grp_Curcu_INH/converti/NEO_4_Curcu_INH_1.20_3_3_01.vips.tif.vips.tif',name:'NEO_4_Curcu_INH_1.20_3_3_01.tif.vips.tif',slidename:'NEO_4_Curcu_INH_1',order:20,study:'ULG-LBTD-NEO04', extension :'tif'],
+            [filename:'LBTD/Olympus/study_NEO4/grp_Curcu_INH/converti/NEO_4_Curcu_INH_1.20_3_3_01.tif.vips.tif',name:'NEO_4_Curcu_INH_1.20_3_3_01.tif.vips.tif',slidename:'NEO_4_Curcu_INH_1',order:20,study:'ULG-LBTD-NEO04', extension :'tif'],
             [filename:'LBTD/Olympus/study_NEO4/grp_Curcu_INH/converti/NEO_4_Curcu_INH_1.30_3_4_01.tif.vips.tif',name:'NEO_4_Curcu_INH_1.30_3_4_01.tif.vips.tif',slidename:'NEO_4_Curcu_INH_1',order:30,study:'ULG-LBTD-NEO04', extension :'tif'],
             [filename:'LBTD/Olympus/study_NEO4/grp_Curcu_INH/converti/NEO_4_Curcu_INH_1.40_3_5_01.tif.vips.tif',name:'NEO_4_Curcu_INH_1.40_3_5_01.tif.vips.tif',slidename:'NEO_4_Curcu_INH_1',order:40,study:'ULG-LBTD-NEO04', extension :'tif'],
             [filename:'LBTD/Olympus/study_NEO4/grp_Curcu_INH/converti/NEO_4_Curcu_INH_1.50_3_6_01.tif.vips.tif',name:'NEO_4_Curcu_INH_1.50_3_6_01.tif.vips.tif',slidename:'NEO_4_Curcu_INH_1',order:50,study:'ULG-LBTD-NEO04', extension :'tif'],
@@ -743,6 +743,7 @@ class BootStrapData {
 
 
     static def PhillipsScans = [
+            [filename:'Philips/03258b99-4d38-4ca6-ba38-8dc4bf366482.isyntax.tiff', name :'03258b99-4d38-4ca6-ba38-8dc4bf366482', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
             [filename:'Philips/03a7e50b-71a5-4998-9691-15bda142ee7f.isyntax.tiff.vips.tiff', name :'03a7e50b-71a5-4998-9691-15bda142ee7f', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
             [filename:'Philips/2c9958fe-a258-4cdf-a631-465840b275c7.isyntax.tiff.vips.tiff', name :'2c9958fe-a258-4cdf-a631-465840b275c7', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
             [filename:'Philips/2e5a4b75-65b3-4699-89dc-0a8756734507.isyntax.tiff.vips.tiff', name :'2e5a4b75-65b3-4699-89dc-0a8756734507', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
@@ -750,16 +751,16 @@ class BootStrapData {
             [filename:'Philips/431a1752-e139-4500-afa2-0823a86fbcb5.isyntax.tiff.vips.tiff', name :'431a1752-e139-4500-afa2-0823a86fbcb5', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
             [filename:'Philips/74bcee60-d7c2-43fe-a6a8-b53899babdbd.isyntax.tiff.vips.tiff', name :'74bcee60-d7c2-43fe-a6a8-b53899babdbd', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
             [filename:'Philips/75cc5e5a-966a-453f-93af-2a6b36091c06.isyntax.tiff.vips.tiff', name :'75cc5e5a-966a-453f-93af-2a6b36091c06', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
-            [filename:'Philips/86909191-bf5e-4362-88b0-84d22a99f7a5.isyntax.tiff.vips.tiff', name :'86909191-bf5e-4362-88b0-84d22a99f7a5', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
+            //[filename:'Philips/86909191-bf5e-4362-88b0-84d22a99f7a5.isyntax.tiff.vips.tiff', name :'86909191-bf5e-4362-88b0-84d22a99f7a5', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
             [filename:'Philips/92ad8cef-df28-41d1-9f25-aed464154153.isyntax.tiff.vips.tiff', name :'92ad8cef-df28-41d1-9f25-aed464154153', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
             [filename:'Philips/99969963-85b9-4f9a-beff-a4348e2bf704.isyntax.tiff.vips.tiff', name :'99969963-85b9-4f9a-beff-a4348e2bf704', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
-            [filename:'Philips/a3e98e41-994d-4b15-90a6-2875289c25b6.isyntax.tiff.vips.tiff', name :'a3e98e41-994d-4b15-90a6-2875289c25b6', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
-            [filename:'Philips/a4a71727-ed86-4350-aa06-80601843f334.isyntax.tiff.vips.tiff', name :'a4a71727-ed86-4350-aa06-80601843f334', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
+            //[filename:'Philips/a3e98e41-994d-4b15-90a6-2875289c25b6.isyntax.tiff.vips.tiff', name :'a3e98e41-994d-4b15-90a6-2875289c25b6', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
+            //[filename:'Philips/a4a71727-ed86-4350-aa06-80601843f334.isyntax.tiff.vips.tiff', name :'a4a71727-ed86-4350-aa06-80601843f334', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
             [filename:'Philips/a84d8dc8-d291-418d-a9f2-9c5ca99e30df.isyntax.tiff.vips.tiff', name :'a84d8dc8-d291-418d-a9f2-9c5ca99e30df', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
             [filename:'Philips/afa9be2c-26e8-4020-a8e4-6672894f7bfb.isyntax.tiff.vips.tiff', name :'afa9be2c-26e8-4020-a8e4-6672894f7bfb', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
             [filename:'Philips/ca60d7dd-bdcc-4ef2-a2b2-bcbbb5b2ff7c.isyntax.tiff.vips.tiff', name :'ca60d7dd-bdcc-4ef2-a2b2-bcbbb5b2ff7c', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
             [filename:'Philips/da92415a-9001-49d5-8d03-7832e4d2c8af.isyntax.tiff.vips.tiff', name :'da92415a-9001-49d5-8d03-7832e4d2c8af', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
-            [filename:'Philips/ea7c15b1-c56c-4963-bfe1-b62f974ed050.isyntax.tiff.vips.tiff', name :'ea7c15b1-c56c-4963-bfe1-b62f974ed050', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
+            //[filename:'Philips/ea7c15b1-c56c-4963-bfe1-b62f974ed050.isyntax.tiff.vips.tiff', name :'ea7c15b1-c56c-4963-bfe1-b62f974ed050', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS'],
             [filename:'Philips/face3d70-d2f7-453a-8ea9-8baab569d02a.isyntax.tiff.vips.tiff', name :'face3d70-d2f7-453a-8ea9-8baab569d02a', extension :'tiff', order : 0,study : 'ULG-TEST-PHILIPS']
     ]
 
@@ -819,7 +820,7 @@ class BootStrapData2 {
             [filename:'CERVIX/09-094476.mrxs', name :'09-094476.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
             [filename:'CERVIX/09-094494.mrxs', name :'09-094494.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
             [filename:'CERVIX/09-094594.mrxs', name :'09-094594.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
-            [filename:'CERVIX/09-094626.mrxs', name :'09-094626.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
+           // [filename:'CERVIX/09-094626.mrxs', name :'09-094626.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
             [filename:'CERVIX/09-094705.mrxs', name :'09-094705.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
             [filename:'CERVIX/09-094990.mrxs', name :'09-094990.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
             [filename:'CERVIX/09-095364.mrxs', name :'09-095364.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
@@ -1550,6 +1551,7 @@ class BootStrapData3 {
             [filename :'ANAPATH/LBA DQ/10H00456 LBA DQ - 2011-01-25 13.32.50_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-DQ'],
             [filename :'ANAPATH/LBA DQ/10H01279 LBA DQ - 2011-01-25 13.31.24_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-DQ'],
             [filename :'ANAPATH/LBA DQ/10h01677 LBA DQ - 2011-01-23 01.56.08_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-DQ'],
+            [filename :'ANAPATH/LBA DQ/10H02071 LBA DQ - 2011-01-23 01.51.06_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-DQ'],
             [filename :'ANAPATH/LBA DQ/10H04574 LBA DQ - 2011-01-25 13.25.33_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-DQ'],
             [filename :'ANAPATH/LBA DQ/10H12701 LBA DQ - 2011-01-25 11.33.50_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-DQ'],
             [filename :'ANAPATH/LBA DQ/10H13564 LBA DQ - 2011-01-25 13.22.48_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-DQ'],
@@ -1610,6 +1612,8 @@ class BootStrapData3 {
             [filename :'ANAPATH/LBA papa/10C12578 LBA papa - 2011-01-25 10.03.50_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-papa'],
             [filename :'ANAPATH/LBA papa/10C12579 LBA papa - 2011-01-22 18.31.02_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-papa'],
             [filename :'ANAPATH/LBA papa/10C12611 LBA papa - 2011-01-25 12.07.49_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-papa'],
+            [filename :'ANAPATH/LBA papa/10C12703 LBA papa - 2011-01-22 18.33.54_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-papa'],
+
             [filename :'ANAPATH/LBA papa/10C12778 LBA papa - 2011-01-23 00.43.16_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-papa'],
             [filename :'ANAPATH/LBA papa/10C12816 LBA papa - 2011-01-23 00.34.35_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-papa'],
             [filename :'ANAPATH/LBA papa/10C12828 LBA papa - 2011-01-25 12.47.55_clip.vms', extension : 'vms', order : 0, study : 'ULB-Anapath-LBA-papa'],

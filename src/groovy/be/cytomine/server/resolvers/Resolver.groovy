@@ -20,17 +20,16 @@ abstract class Resolver {
         /* Init resolvers, maybe we should load it dynamically with name but fails in grails */
         Map<String, Object> resolvers = new HashMap<String,Object>()
         resolvers.put("DjatokaResolver", new DjatokaResolver())
-        resolvers.put("GDALResolver", new GDALResolver())
         resolvers.put("IPPResolver", new IIPResolver())
         return resolvers.get(className)
 
     }
 
-    public abstract String getThumbUrl(String baseUrl, String imagePath)
+    public abstract String getThumbUrl(String baseUrl, String imagePath, int width)
     public abstract String getMetaDataURL(String baseUrl, String imagePath)
     public abstract String getPropertiesURL(String baseUrl, String imagePath)
     public abstract String getPreviewUrl(String baseUrl, String imagePath)
-    public abstract String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height)
-    public abstract String getCropURL(String baseUrl, String imagePath,int topLeftX, int topLeftY, int width, int height, int zoom)
-    public abstract Object getZoomLevels (baseUrl, imagePath)
+    public abstract String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int baseImageWidth, int baseImageHeight)
+    public abstract String getCropURL(String baseUrl, String imagePath,int topLeftX, int topLeftY, int width, int height, int zoom, int baseImageWidth, int baseImageHeight)
+    public abstract Object getZoomLevels (baseUrl, imagePath, width, height)
 }
