@@ -2,6 +2,8 @@ package be.cytomine.ontology
 
 import grails.converters.JSON
 import be.cytomine.SequenceDomain
+import org.perf4j.StopWatch
+import org.perf4j.LoggingStopWatch
 
 class Term extends SequenceDomain implements Serializable {
 
@@ -43,7 +45,10 @@ class Term extends SequenceDomain implements Serializable {
     def hasChildren() {
         boolean hasChildren=false
         this.relationTerm1.each {
-            if(it.getRelation().getName().equals(RelationTerm.names.PARENT)) hasChildren=true
+            if(it.getRelation().getName().equals(RelationTerm.names.PARENT)) {
+                hasChildren=true
+                return
+            }
         }
         return hasChildren
     }

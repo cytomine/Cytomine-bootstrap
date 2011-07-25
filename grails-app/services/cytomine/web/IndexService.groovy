@@ -82,7 +82,10 @@ class IndexService {
              */
             createIndex(statement,"command_history","project_id");
             createIndex(statement,"command_history","created");
-
+            /**
+             * Term
+             */
+            createIndex(statement,"term","ontology_id");
         } catch (org.postgresql.util.PSQLException e) {
             println e
         }
