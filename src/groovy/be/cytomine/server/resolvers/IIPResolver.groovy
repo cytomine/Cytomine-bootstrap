@@ -30,19 +30,17 @@ class IIPResolver extends Resolver{
         return url;
     }
 
-    public String getThumbUrl(String baseUrl, String imagePath, int width) {
-        while (width > 256) {
-            width /= 2
-        }
-        args.clear()
-        args.add("FIF" + ARGS_EQUAL + imagePath)
-        args.add("RGN=0,0,1,1")
-        args.add("WID" + ARGS_EQUAL + width)
-        args.add("CVT" + ARGS_EQUAL + "jpeg")
-        return toURL(baseUrl)
+ public String getThumbUrl(String baseUrl, String imagePath, int width) {
+       args.clear()
+       args.add("FIF" + ARGS_EQUAL + imagePath)
+       args.add("SDS" + ARGS_EQUAL +  "0,90")
+       args.add("CNT" + ARGS_EQUAL + "1.0")
+       args.add("WID" + ARGS_EQUAL + "200")
+       args.add("SQL" + ARGS_EQUAL + "99")
+       args.add("CVT" + ARGS_EQUAL + "jpeg")
+       return toURL(baseUrl)
 
-    }
-
+   }
     public String getPreviewUrl(String baseUrl, String imagePath) {
         args.clear()
         args.add("FIF" + ARGS_EQUAL + imagePath)
