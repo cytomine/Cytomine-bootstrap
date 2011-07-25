@@ -59,7 +59,7 @@ var AddProjectDialog = Backbone.View.extend({
           //Build dialog
           
           self.addProjectDialog = $("#addproject").dialog({
-                 width: 500,
+                 width: 600,
                  autoOpen : false,
                  modal:true,
                  buttons : {

@@ -8,7 +8,9 @@ var ImageView = Backbone.View.extend({
    },
    render: function() {
       var self = this;
-
+       $(self.el).html("");
+      $(self.el).prepend("<< previous | next >>");
+      $(self.el).append("<br>");
       self.appendThumbs(self.page);
 
       $(window).scroll(function(){
@@ -21,7 +23,7 @@ var ImageView = Backbone.View.extend({
    appendThumbs : function(page) {
       var self = this;
       var cpt = 0;
-      var nb_thumb_by_page = 5000;
+      var nb_thumb_by_page = 50;
       var inf = Math.abs(page) * nb_thumb_by_page;
       var sup = (Math.abs(page) + 1) * nb_thumb_by_page;
 
@@ -29,6 +31,7 @@ var ImageView = Backbone.View.extend({
 
       self.model.each(function(image) {
          if ((cpt >= inf) && (cpt < sup)) {
+             console.log(cpt);
             var thumb = new ImageThumbView({
                model : image,
                className : "thumb-wrap",

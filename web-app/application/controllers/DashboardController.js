@@ -4,6 +4,7 @@ var DashboardController = Backbone.Controller.extend({
        view : null,
        routes: {
           "tabs-images-:project"  : "images",
+          "tabs-images-:project/:page"  : "imagespage",
           "tabs-imagesarray-:project"  : "imagesarray",
           "tabs-annotations-:project"  : "annotations",
           "tabs-dashboard-:project"  : "dashboard"
@@ -31,7 +32,6 @@ var DashboardController = Backbone.Controller.extend({
           }
 
        },
-
        images : function(project) {
           var self = this;
           var func = function() {
@@ -41,8 +41,16 @@ var DashboardController = Backbone.Controller.extend({
              tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
           }
           this.init(project, func);
-
-
+       },
+       imagespage : function(project,page) {
+          var self = this;
+          var func = function() {
+             self.view.changeImagePage(page);
+             self.view.showImages();
+             var tabs = $("#explorer > .browser").children(".tabs");
+             tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
+          }
+          this.init(project, func);
        },
        imagesarray : function(project) {
           var self = this;
