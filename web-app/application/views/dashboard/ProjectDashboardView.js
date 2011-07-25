@@ -225,6 +225,7 @@ var ProjectDashboardView = Backbone.View.extend({
             }).render();
 
             //self.annotationsViews[term].refresh(collection);
+             $("#listtabannotation > div").tsort();
          }
       });
    },

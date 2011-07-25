@@ -71,6 +71,7 @@
 
     <script type="text/javascript" src="lib/masonry/jquery.masonry.min.js"></script>
 
+    <script type="text/javascript" src="lib/tinysort/jquery.tinysort.min.js"></script>
 
     <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
         <!-- controllers -->

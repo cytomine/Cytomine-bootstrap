@@ -54,7 +54,7 @@ var AnnotationView = Backbone.View.extend({
                  className : "thumb-wrap",
                  id : "thumb"+annotation.get('id')
               }).render();
-          $(self.el).append(thumb.el);
+          $(self.el).prepend(thumb.el);
 
        },
        /**
