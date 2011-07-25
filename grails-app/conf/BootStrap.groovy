@@ -116,42 +116,25 @@ class BootStrap {
         createProjects(BootStrapData.projectSamples)
 
         /* Slides */
-        createSlidesAndAbstractImages(ImageData.ULBAnapathASP_DATA)
-        createSlidesAndAbstractImages(ImageData.ULBAnapathFrottisEBUS_DATA)
-        createSlidesAndAbstractImages(ImageData.ULBAnapathFrottisPAPA_DATA)
-        createSlidesAndAbstractImages(ImageData.ULBAnapathLBACB_DATA)
-        createSlidesAndAbstractImages(ImageData.ULBAnapathLBADQ_DATA)
-        createSlidesAndAbstractImages(ImageData.ULBAnapathLBApapa_DATA)
-        createSlidesAndAbstractImages(ImageData.ULBAnapathTPP_DATA)
-
-        createSlidesAndAbstractImages(ImageData2.CELLSOLUTIONSBESTCYTECERVIX_DATA)
-        createSlidesAndAbstractImages(ImageData5.CELLSOLUTIONSBESTCYTECERVIX_DATA)
-
-        createSlidesAndAbstractImages(ImageData3.ULGLBTDNEO13_DATA)
-        createSlidesAndAbstractImages(ImageData3.ULGTESTPHILIPS_DATA)
-        createSlidesAndAbstractImages(ImageData3.ULGLBTDNEO04_DATA)
-        createSlidesAndAbstractImages(ImageData3.ULGLBTDLBA_DATA)
-
-        createSlidesAndAbstractImages(ImageData4.ULGBMGGZEBRACTL_DATA)
-
-        /*if (env != BootStrap.test) {
-            createSlidesAndAbstractImages(BootStrapData.ULGLBTDCells)
-            createSlidesAndAbstractImages(BootStrapData2.CERVIXScans1)
-            createSlidesAndAbstractImages(BootStrapData.PhillipsScans)
-            createSlidesAndAbstractImages(BootStrapData.LBTDScans1)
-            createSlidesAndAbstractImages(BootStrapData.LBTDScans4)
-            createSlidesAndAbstractImages(BootStrapData.ZEBRA_CTL_Scans)
-            createSlidesAndAbstractImages(BootStrapData3.ANAPATHScans)
+        if (env != BootStrap.test) {
+            createSlidesAndAbstractImages(ImageData.ULBAnapathASP_DATA)
+            createSlidesAndAbstractImages(ImageData.ULBAnapathFrottisEBUS_DATA)
+            createSlidesAndAbstractImages(ImageData.ULBAnapathFrottisPAPA_DATA)
+            createSlidesAndAbstractImages(ImageData.ULBAnapathLBACB_DATA)
+            createSlidesAndAbstractImages(ImageData.ULBAnapathLBADQ_DATA)
+            createSlidesAndAbstractImages(ImageData.ULBAnapathLBApapa_DATA)
+            createSlidesAndAbstractImages(ImageData.ULBAnapathTPP_DATA)
+            createSlidesAndAbstractImages(ImageData3.ULGLBTDNEO13_DATA)
+            createSlidesAndAbstractImages(ImageData3.ULGTESTPHILIPS_DATA)
+            createSlidesAndAbstractImages(ImageData3.ULGLBTDNEO04_DATA)
+            createSlidesAndAbstractImages(ImageData3.ULGLBTDLBA_DATA)
+            createSlidesAndAbstractImages(ImageData4.ULGBMGGZEBRACTL_DATA)
         }
 
         if (env == BootStrap.production) {
-            createSlidesAndAbstractImages(BootStrapData2.CERVIXScans2)
-            createSlidesAndAbstractImages(BootStrapData2.CERVIXScans3)
-            createSlidesAndAbstractImages(BootStrapData2.CERVIXScans4)
-            createSlidesAndAbstractImages(BootStrapData2.CERVIXScans5)
-            createSlidesAndAbstractImages(BootStrapData.LBTDScans2)
-            createSlidesAndAbstractImages(BootStrapData.LBTDScans3)
-        }*/
+            createSlidesAndAbstractImages(ImageData2.CELLSOLUTIONSBESTCYTECERVIX_DATA)
+            createSlidesAndAbstractImages(ImageData5.CELLSOLUTIONSBESTCYTECERVIX_DATA)
+        }
 
         if (env != BootStrap.test) {
             createTerms(BootStrapData.termSamples)
