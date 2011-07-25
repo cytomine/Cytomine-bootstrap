@@ -9,8 +9,8 @@ var ImageView = Backbone.View.extend({
    render: function() {
       var self = this;
        $(self.el).html("");
-      $(self.el).prepend("<< previous | next >>");
-      $(self.el).append("<br>");
+     // $(self.el).prepend("<< previous | next >>");
+     // $(self.el).append("<br>");
       self.appendThumbs(self.page);
 
       $(window).scroll(function(){
