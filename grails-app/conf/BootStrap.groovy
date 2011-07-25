@@ -35,6 +35,11 @@ import be.cytomine.data.BootStrapData
 import be.cytomine.data.BootStrapData2
 import be.cytomine.data.BootStrapData3
 import be.cytomine.data.RestImportDataController
+import be.cytomine.data.ImageData
+import be.cytomine.data.ImageData3
+import be.cytomine.data.ImageData2
+import be.cytomine.data.ImageData4
+import be.cytomine.data.ImageData5
 
 class BootStrap {
     def springSecurityService
@@ -85,7 +90,7 @@ class BootStrap {
         StopWatch stopWatch = new LoggingStopWatch();
         initData(GrailsUtil.environment)
         countersService.updateCounters()
-        updateImageProperties()
+        //updateImageProperties()
         stopWatch.stop("initData");
         //end of init
     }
@@ -111,7 +116,25 @@ class BootStrap {
         createProjects(BootStrapData.projectSamples)
 
         /* Slides */
-        if (env != BootStrap.test) {
+        createSlidesAndAbstractImages(ImageData.ULBAnapathASP_DATA)
+        createSlidesAndAbstractImages(ImageData.ULBAnapathFrottisEBUS_DATA)
+        createSlidesAndAbstractImages(ImageData.ULBAnapathFrottisPAPA_DATA)
+        createSlidesAndAbstractImages(ImageData.ULBAnapathLBACB_DATA)
+        createSlidesAndAbstractImages(ImageData.ULBAnapathLBADQ_DATA)
+        createSlidesAndAbstractImages(ImageData.ULBAnapathLBApapa_DATA)
+        createSlidesAndAbstractImages(ImageData.ULBAnapathTPP_DATA)
+
+        createSlidesAndAbstractImages(ImageData2.CELLSOLUTIONSBESTCYTECERVIX_DATA)
+        createSlidesAndAbstractImages(ImageData5.CELLSOLUTIONSBESTCYTECERVIX_DATA)
+
+        createSlidesAndAbstractImages(ImageData3.ULGLBTDNEO13_DATA)
+        createSlidesAndAbstractImages(ImageData3.ULGTESTPHILIPS_DATA)
+        createSlidesAndAbstractImages(ImageData3.ULGLBTDNEO04_DATA)
+        createSlidesAndAbstractImages(ImageData3.ULGLBTDLBA_DATA)
+
+        createSlidesAndAbstractImages(ImageData4.ULGBMGGZEBRACTL_DATA)
+
+        /*if (env != BootStrap.test) {
             createSlidesAndAbstractImages(BootStrapData.ULGLBTDCells)
             createSlidesAndAbstractImages(BootStrapData2.CERVIXScans1)
             createSlidesAndAbstractImages(BootStrapData.PhillipsScans)
@@ -128,7 +151,7 @@ class BootStrap {
             createSlidesAndAbstractImages(BootStrapData2.CERVIXScans5)
             createSlidesAndAbstractImages(BootStrapData.LBTDScans2)
             createSlidesAndAbstractImages(BootStrapData.LBTDScans3)
-        }
+        }*/
 
         if (env != BootStrap.test) {
             createTerms(BootStrapData.termSamples)
@@ -220,6 +243,10 @@ class BootStrap {
                     filename: item.name,
                     scanner : scanner,
                     slide : slide,
+                    width : item.width,
+                    height : item.height,
+                    magnification : item.magnification,
+                    resolution : item.resolution,
                     path : item.filename,
                     mime : mime,
                     created : created

@@ -390,10 +390,10 @@ AnnotationLayer.prototype = {
          }
 
       } else {
-         _.each(annotation.get("term"), function(term){
+         _.each(annotation.get("term"), function(idTerm){
             feature.style =  {
-               strokeColor :term.color,
-               fillColor :  term.color,
+               strokeColor : window.app.status.currentTermsCollection.get(idTerm).get('color'),
+               fillColor :  window.app.status.currentTermsCollection.get(idTerm).get('color'),
                fillOpacity : 0.6
             }
          });

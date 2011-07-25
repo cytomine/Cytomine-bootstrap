@@ -11,6 +11,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.security.User
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.image.AbstractImageGroup
 
 class RestImportDataController {
 
@@ -32,6 +33,33 @@ class RestImportDataController {
             imagePropertiesService.extractUseful(image)
 
         }
+    }
+
+    def exportimages = { //ouais ça na rien à faire ici ça... ;-)
+        def records = ""
+        def currentProject = null
+        AbstractImage.listOrderByPath().each { image ->
+            def project = ImageInstance.findByBaseImage(image).getProject()
+            if (currentProject != null && currentProject != project) records += "\n]"
+            if (currentProject != project) records += "\nstatic def " + project.getName().replace("-","").replace("_","") + "_DATA = ["
+            def record = "\n["
+            record += 'filename :"' + image.getPath() + '",'
+            record += 'name : "' + image.getFilename() + '",'
+            record += 'study : "' + project.getName() + '",'
+            record += 'extension : "' + image.getMime().getExtension() + '",'
+            record += 'width : "' + image.getWidth() + '",'
+            record += 'height : "' + image.getHeight() + '",'
+            record += 'magnification : "' + image.getMagnification() + '",'
+            record += 'resolution : "' + image.getResolution() + '",';
+            record += 'slidename : "' + image.getSlide().getName() + '"'
+            record += "]"
+            records += record
+            records += ","
+            currentProject = project
+        }
+        records += "\n]"
+        render(contentType: "application/json", text: "${records}")
+
     }
 
     def annotations = {
@@ -99,9 +127,9 @@ class RestImportDataController {
             def jsonTerms = elem.term
             for(int j=0;j<jsonTerms.length();j++) {
                 def jsonTerm =  jsonTerms.get(j)
-
-                Term term = Term.findByNameAndOntology(jsonTerm.name,project.ontology)
-                log.info("name="+jsonTerm.name +" and " + project.ontology.id)
+                def remoteTerm = getTermFromServer(jsonTerm,serverUrl)
+                Term term = Term.findByNameAndOntology(remoteTerm.name,project.ontology)
+                log.info("name="+remoteTerm.name +" and " + project.ontology.id)
                 log.info("term="+term)
                 AnnotationTerm.link(annotation,term)
             }
@@ -114,6 +142,21 @@ class RestImportDataController {
     def getAnnotationsFromServer(String idProjectFromServer,String url) {
 
         String URL = url+"/api/project/"+idProjectFromServer+"/annotation.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+        client.get()
+        int code  = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+
+        log.info("check response "+ code)
+        def json = JSON.parse(response)
+        json
+    }
+
+     def getTermFromServer(Integer idTermFromServer,String url) {
+
+        String URL = url+"/api/term/"+idTermFromServer+".json"
         HttpClient client = new HttpClient();
         client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
         client.get()

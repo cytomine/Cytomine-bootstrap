@@ -94,23 +94,13 @@ var ProjectPanelView = Backbone.View.extend({
         self.renderCurrentProjectButton();
         self.renderShowImageButton(json.numberOfImages);
 
-        
-        
-        $(self.el).find("#projectedit" + self.model.id).button({
-            icons : {secondary : "ui-icon-pencil"}
-        });
-        $(self.el).find("#projectdelete" + self.model.id).button({
-            icons : {secondary : "ui-icon-trash"}
-        });
-
-
         $(self.el).find(self.imageAddElem + self.model.id).button({
             icons : {secondary : "ui-icon-plus"}
         });
 
-        $(self.el).find(self.projectElem + self.model.get('id')).panel({
+        /*$(self.el).find(self.projectElem + self.model.get('id')).panel({
             collapsible:false
-        });
+        });*/
     },
     editProject : function(){
            

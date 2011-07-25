@@ -30,7 +30,7 @@ var AuthController = Backbone.Controller.extend({
             },
             error : function(data) {
                 var resp = $.parseJSON(data.responseText);
-
+                $('#login-confirm').parent().effect("shake", { times:2 }, 100);
                 app.message("Error", resp.message, "error");
             }
         });

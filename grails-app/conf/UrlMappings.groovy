@@ -274,5 +274,9 @@ class UrlMappings {
               action = [GET:"imageproperties"]
         }
 
+         "/api/import/exportimages"(controller:"restImportData") {
+              action = [GET:"exportimages"]
+        }
+
     }
 }

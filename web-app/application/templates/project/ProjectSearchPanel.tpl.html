@@ -1,30 +1,27 @@
 <button id='projectallbutton' type="button" class="showAllProject">Show All projects</button>
 <button id='projectaddbutton' type="button" class="addProject">Add Project</button>
-<div id="searchProjectPanel" class="centralPanel" style="margin-top:10px;">	
-    <h3>Search a project</h3>
-    <div>
-        <table class='projecttable'>
-			<h3></h3>
-            <tr>
-                <td colspan="1" width="35%">Filter by name : <input id="projectsearchtextbox" /><br /><br />Filter by ontology : <div id="ontologyChoiceList" style="display:inline;"></div></td>
-                <td colspan="1" width="10%"></td>
-               	<td colspan="1" width="45%">
-					<div style="width:200px;display:inline-block;"><label for="amountNumberOfSlides" style="display:inline;">By number of slides: </label></div>
-					<input type="text" id="amountNumberOfSlides" style="display:inline;border:0;width:100px; font-weight:bold;" />
-                    <div id="numberofslideSlider" style="display:inline-block;margin-left:10px;min-width:150px;"></div>
-                    <br>
-                    <div style="width:200px;display:inline-block;"><label for="amountNumberOfImages" style="display:inline;">By number of images: </label></div>
-					<input type="text" id="amountNumberOfImages" style="display:inline;border:0;width:100px;font-weight:bold;" />
-                    <div id="numberofimageSlider" style="display:inline-block;margin-left:10px;min-width:150px;"></div>
-                    <br>
-                    <div style="width:200px;display:inline-block;"><label for="amountNumberOfAnnotations" style="display:inline;">By number of annotations: </label></div>
-					<input type="text" id="amountNumberOfAnnotations" style="display:inline;border:0;width:100px;font-weight:bold;" />
-                    <div id="numberofannotationSlider" style="display:inline-block;margin-left:10px;min-width:150px;"></div>
-                    <br>
-                </td>
-				<td colspan="1" width="10%"></td>
-            </tr>
-        </table>
-    </div>
+<div class="projectlist" style="margin-top: 5px;margin-bottom: 5px;">
+    <h3>Filter by</h3>
+    <ul style="display: inline;">
+        <li style="display: inline;"><b>Name </b><input id="projectsearchtextbox" /></li>
+        <li style="display: inline;padding-left:20px;"><b>Ontology </b><div id="ontologyChoiceList" style="display:inline;"></div></li>
+    </ul>
+    <ul>
+        <li style="display: inline-block;">
+            <b>Slides</b>
+            <div id="numberofslideSlider" style="display:inline-block;margin-left:8px;min-width:150px;"></div>
+            <input type="text" id="amountNumberOfSlides" style="display:inline;margin-left:5px;border:0;width:100px; font-weight:bold;" />
+
+        </li>
+        <li style="display: inline-block;margin-left:50px;" >
+            <b>Images</b>
+            <div id="numberofimageSlider" style="display:inline-block;margin-left:8px;min-width:150px;"></div>
+            <input type="text" id="amountNumberOfImages" style="display:inline;margin-left:5px;border:0;width:100px; font-weight:bold;" />
+        </li>
+        <li style="display: inline-block;margin-left:50px;" >
+            <b>Annotations</b>
+            <div id="numberofannotationSlider" style="display:inline-block;margin-left:8px;min-width:150px;"></div>
+            <input type="text" id="amountNumberOfAnnotations" style="display:inline;margin-left:5px;border:0;width:100px; font-weight:bold;" />
+        </li>
+    </ul>
 </div>
-<!--projectviewsearchtpl-->

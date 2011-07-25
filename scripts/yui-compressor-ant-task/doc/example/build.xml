@@ -65,6 +65,7 @@
         <echo message="Building ${result.file}" />
         <concat destfile="${result.file}" force="no">
             <!-- Order in which these files are concatenated _IS_ IMPORTANT! -->
+            <fileset dir="${src.dir}" includes="application/Utilities.js" />
             <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationsPanel.js" />
             <fileset dir="${src.dir}" includes="application/controllers/ApplicationController.js" />
             <fileset dir="${src.dir}" includes="application/controllers/UploadController.js" />

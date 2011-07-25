@@ -63,19 +63,19 @@
 .ui-widget-content a { color:  #6A92A8; }
 .ui-widget-header { border: 1px solid #B6B6B6; color: #4F4F4F; font-weight: bold; }
 .ui-widget-header {
-    background: url(images/bg_fallback.png) 0 0 repeat-x;
-    background: -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(1, rgb(146,189,214)),
-        color-stop(0, rgb(185,224,245))
-    );
-    background: -moz-linear-gradient(
-        center top,
-        rgb(146,189,214),
-        rgb(185,224,245)
-    );
+	background: url(images/bg_fallback.png) 0 0 repeat-x;
+	background: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(1, rgb(237,237,237)),
+		color-stop(0, rgb(196,196,196))
+	);
+	background: -moz-linear-gradient(
+		center top,
+		rgb(237,237,237),
+		rgb(196,196,196)
+	);
 }
 .ui-widget-header a { color: #4F4F4F; }
 

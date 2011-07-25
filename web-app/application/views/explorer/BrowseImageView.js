@@ -39,9 +39,8 @@ var BrowseImageView = Backbone.View.extend({
     */
    render : function() {
       var self = this;
-      require([
-         "text!application/templates/explorer/BrowseImage.tpl.html"
-      ], function(tpl) {
+      require(["lib/openlayers/OpenLayers.js", "text!application/templates/explorer/BrowseImage.tpl.html"
+      ], function(openLayers,  tpl) {
          self.doLayout(tpl);
       });
       return this;
@@ -162,7 +161,7 @@ var BrowseImageView = Backbone.View.extend({
    initMap : function () {
       var self = this;
       var mime = this.model.get('mime');
-      if (mime == "jp2") self.initDjatoka();
+      //if (mime == "jp2") self.initDjatoka();
       if (mime == "vms" || mime == "mrxs" || mime == "tif" || mime == "tiff") self.initIIP();
    },
    /**
@@ -253,7 +252,7 @@ var BrowseImageView = Backbone.View.extend({
              zoomify_urls,
              new OpenLayers.Size( metadata.width, metadata.height )
          );
-         baseLayer.transitionEffect = 'resize';
+         //baseLayer.transitionEffect = 'resize';
 
          var otsuURLS = _.map(zoomify_urls, function (url){ return "http://localhost:8080/cytomine-web/proxy/otsu?url="+url;});
          var anotherLayer = new OpenLayers.Layer.Zoomify( "Otsu", otsuURLS,
@@ -268,7 +267,7 @@ var BrowseImageView = Backbone.View.extend({
             maxResolution: Math.pow(2,  metadata.nbZoom ),
             numZoomLevels:  metadata.nbZoom+1,
             units: 'pixels',
-            tileSize: new OpenLayers.Size(256,256),
+            //tileSize: new OpenLayers.Size(256,256),
             controls: [
                new OpenLayers.Control.TouchNavigation({
                   dragPanOptions: {
@@ -349,59 +348,7 @@ var BrowseImageView = Backbone.View.extend({
          }
       });
    },
-   initDjatoka: function () {
 
-      var self = this;
-      var baseLayer = new OpenLayers.Layer.OpenURL(this.model.get('filename'), this.model.get('imageServerBaseURL'), {
-         transitionEffect: 'resize',
-         layername: 'basic',
-         format: 'image/jpeg',
-         rft_id: this.model.get('path'),
-         metadataUrl: this.model.get('metadataUrl')
-      });
-
-
-      var metadata = baseLayer.getImageMetadata();
-      var resolutions = baseLayer.getResolutions();
-      var maxExtent = new OpenLayers.Bounds(0, 0, metadata.width, metadata.height);
-      var tileSize = baseLayer.getTileSize();
-      var lon = metadata.width / 2;
-      var lat = metadata.height / 2;
-      var mapOptions = {
-         maxExtent: maxExtent,
-         maximized: true
-      };
-
-
-
-      var layerSwitcher = this.createLayerSwitcher();
-
-
-      var options = {
-         resolutions: resolutions,
-         maxExtent: maxExtent,
-         tileSize: tileSize,
-         controls: [
-            //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),
-            new OpenLayers.Control.Navigation(), new OpenLayers.Control.PanZoomBar(), new OpenLayers.Control.MousePosition(),
-            new OpenLayers.Control.OverviewMap({
-               div: document.getElementById('overviewMap' + this.model.get('id')),
-               //size: new OpenLayers.Size(metadata.width / Math.pow(2, openURLLayer.getViewerLevel()), metadata.height / Math.pow(2,(openURLLayer.getViewerLevel()))),
-               size: new OpenLayers.Size(metadata.width / Math.pow(2, baseLayer.getViewerLevel()), metadata.height / Math.pow(2, (baseLayer.getViewerLevel()))),
-               minRatio: 1,
-               maxRatio: 1024,
-               mapOptions: mapOptions
-            }), new OpenLayers.Control.KeyboardDefaults()]
-      };
-
-
-
-      this.map = new OpenLayers.Map("map" + this.model.get('id'), options);
-
-      this.addBaseLayer(baseLayer);
-      this.map.setCenter(new OpenLayers.LonLat(lon, lat), 2);
-      self.createOverviewMap();
-   },
    initAutoAnnoteTools : function () {
 
       var self = this;

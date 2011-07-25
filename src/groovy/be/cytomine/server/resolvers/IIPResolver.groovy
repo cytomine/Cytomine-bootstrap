@@ -31,12 +31,13 @@ class IIPResolver extends Resolver{
     }
 
     public String getThumbUrl(String baseUrl, String imagePath, int width) {
+        while (width > 256) {
+            width /= 2
+        }
         args.clear()
         args.add("FIF" + ARGS_EQUAL + imagePath)
-        args.add("SDS" + ARGS_EQUAL +  "0,90")
-        args.add("CNT" + ARGS_EQUAL + "1.0")
+        args.add("RGN=0,0,1,1")
         args.add("WID" + ARGS_EQUAL + width)
-        args.add("SQL" + ARGS_EQUAL + "99")
         args.add("CVT" + ARGS_EQUAL + "jpeg")
         return toURL(baseUrl)
 
@@ -87,13 +88,14 @@ class IIPResolver extends Resolver{
         args.clear()
         args.add("FIF" + ARGS_EQUAL +  imagePath)
         args.add("RGN" + ARGS_EQUAL +  x + "," + y + "," + w + "," + h)
+        args.add("WID" + ARGS_EQUAL + width)
         args.add("CVT" + ARGS_EQUAL + "jpeg")
         return toURL(baseUrl)
     }
 
     public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int baseImageWidth, int baseImageHeight) {
         def maxZoom = getZoomLevels(baseUrl, imagePath, baseImageWidth, baseImageHeight).max
-        def widthTarget = 500
+        def widthTarget = 256
         def tmpWidth = width
         while (tmpWidth > widthTarget) {
             maxZoom--

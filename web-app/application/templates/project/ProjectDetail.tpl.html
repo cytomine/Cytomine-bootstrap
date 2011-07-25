@@ -1,27 +1,32 @@
 <div id='projectlist{{id}}' class="projectlist">
-    <h3>{{name}}</h3>
+    <h3 style="display:inline">{{name}}</h3>
+    <span class="editProject ui-icon ui-icon-pencil" style="display : inline-block;">&nbsp;</span>
+    <span class="deleteProject ui-icon ui-icon-trash" style="display : inline-block;">&nbsp;</span>
     <div>
         <table class='projecttable'>
             <tr>
                 <td width="25%">
                     <ul>
-					  <li>Name: <a href="#tabs-dashboard-{{id}}"><label id="projectInfoName" style="display: inline;">{{name}}</label></a></li>
-	                    <li>Ontology: <a href="#ontology/{{ontology}}"><label id="projectInfoOntology" style="display: inline;">{{ontologyName}}</label></a></li>
-	                    <li>Users : {{users}}</li>						
+                        <li>Name: <a class="dark" href="#tabs-dashboard-{{id}}"><label id="projectInfoName" style="display: inline;">{{name}}</label></a> </li>
+                        <li>Ontology: <a class="dark" href="#ontology/{{ontology}}"><label id="projectInfoOntology" style="display: inline;">{{ontologyName}}</label></a></li>
+                        <li>Users : {{users}}</li>
                     </ul>
-                </td>       
-         		<td width="5%"></td>
+                </td>
+                <td width="5%"></td>
                 <td width="25%">
-				<li>Number of slides : <a href="#tabs-images-{{id}}"><label id="projectInfoNumberOfSlides" style="display: inline;">{{numberOfSlides}}</label></a></li>		                    				<li>Number of images : <a href="#tabs-images-{{id}}"><label id="projectInfoNumberOfImages" style="display: inline;">{{numberOfImages}}</label></a></li>
-                    <li>Number of annotations : <a href="#tabs-annotations-{{id}}"><label id="projectInfoNumberOfAnnotations" style="display: inline;">{{numberOfAnnotations}}</label></a></li>
-				</td>
+                    <ul>
+                    <li>Number of slides : <a class="dark" href="#tabs-images-{{id}}"><label id="projectInfoNumberOfSlides" style="display: inline;">{{numberOfSlides}}</label></a></li>
+                    <li>Number of images : <a class="dark" href="#tabs-images-{{id}}"><label id="projectInfoNumberOfImages" style="display: inline;">{{numberOfImages}}</label></a></li>
+                    <li>Number of annotations : <a class="dark"  href="#tabs-annotations-{{id}}"><label id="projectInfoNumberOfAnnotations" style="display: inline;">{{numberOfAnnotations}}</label></a></li>
+                    </ul>
+                </td>
                 <td width="45%">
                     <button class="addSlide" id='projectaddimages{{id}}' type="button">Manage samples</button>
                     <!--<a class="addSlide" id='projectaddimages{{id}}' href="#project-manage-{{id}}">Manage samples</a>-->
-                    <a class="changeProject" id='radioprojectchange{{id}}' href="#tabs-dashboard-{{id}}">Open</a>
-					<button class="editProject" id='projectedit{{id}}' type="button">Edit</button>
-                    <button class="deleteProject" id='projectdelete{{id}}' type="button">Delete</button>					
-				</td>
+                    <a class="changeProject" id='radioprojectchange{{id}}' href="#tabs-dashboard-{{id}}">Explore</a>
+
+
+                </td>
             <tr>
         </table>
 

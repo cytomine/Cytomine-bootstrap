@@ -458,8 +458,14 @@ div.olControlOverviewMapElement img {
 
 
 div .projectlist {
-    width:97%;
+    padding-top : 5px;
+    width:100%;
+    border-top: 1px solid gray;
     margin :auto;
+}
+
+div .projectList a.dark {
+    color : rgb(90,140,165)
 }
 
 div .projectstat {
