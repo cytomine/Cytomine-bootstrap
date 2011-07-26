@@ -35,8 +35,8 @@ class IIPResolver extends Resolver{
        args.add("FIF" + ARGS_EQUAL + imagePath)
        args.add("SDS" + ARGS_EQUAL +  "0,90")
        args.add("CNT" + ARGS_EQUAL + "1.0")
-       args.add("WID" + ARGS_EQUAL + "200")
-       args.add("SQL" + ARGS_EQUAL + "99")
+       args.add("WID" + ARGS_EQUAL + width)
+       args.add("QLT" + ARGS_EQUAL + "99")
        args.add("CVT" + ARGS_EQUAL + "jpeg")
        return toURL(baseUrl)
 
@@ -79,6 +79,10 @@ class IIPResolver extends Resolver{
         Y : 1/(34092/15100) = 0.4414301166
         W : 1/(34092/400) = 0.01173295788
         H : 1/(34207/600) = 0.01754026954*/
+        def scaledWidth = width
+        while (scaledWidth > 256) {
+            scaledWidth = scaledWidth / 2
+        }
         def x = 1/(baseImageWidth / topLeftX)
         def y = 1/(baseImageHeight / (baseImageHeight - topLeftY))
         def w = 1/(baseImageWidth / width)
@@ -86,7 +90,7 @@ class IIPResolver extends Resolver{
         args.clear()
         args.add("FIF" + ARGS_EQUAL +  imagePath)
         args.add("RGN" + ARGS_EQUAL +  x + "," + y + "," + w + "," + h)
-        args.add("WID" + ARGS_EQUAL + width)
+        args.add("WID" + ARGS_EQUAL + scaledWidth)
         args.add("CVT" + ARGS_EQUAL + "jpeg")
         return toURL(baseUrl)
     }

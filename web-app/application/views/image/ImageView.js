@@ -1,47 +1,58 @@
 var ImageView = Backbone.View.extend({
    tagName : "div",
    initialize: function(options) {
-      this.images = null, //array of images that are printed
-          this.container = options.container;
+      this.images = null; //array of images that are printed
+      this.container = options.container;
       this.page = options.page;
+      this.nb_thumb_by_page = 50;
       if (this.page == undefined) this.page = 0;
    },
    render: function() {
       var self = this;
-       $(self.el).html("");
-     // $(self.el).prepend("<< previous | next >>");
-     // $(self.el).append("<br>");
+      $(self.el).html("");
       self.appendThumbs(self.page);
 
       $(window).scroll(function(){
-         if  (($(window).scrollTop() + 100) >= $(document).height() - $(window).height()){
+         if  (($(window).scrollTop() + 50) >= $(document).height() - $(window).height()){
             self.appendThumbs(++self.page);
          }
       });
       return this;
    },
+   showLoading : function() {
+      var opts = {
+         pnotify_title: "Loading...",
+         pnotify_text: "",
+         pnotify_notice_icon: "ui-icon ui-icon-info",
+         pnotify_hide : false,
+         pnotify_closer: false,
+         pnotify_history: false
+      };
+      var loadingMessage = $.pnotify(opts);
+      setTimeout(function(){loadingMessage.remove();}, 2000);
+   },
    appendThumbs : function(page) {
       var self = this;
-      var cpt = 0;
-      var nb_thumb_by_page = 50;
-      var inf = Math.abs(page) * nb_thumb_by_page;
-      var sup = (Math.abs(page) + 1) * nb_thumb_by_page;
 
+      var inf = Math.abs(page) * this.nb_thumb_by_page;
+      var sup = (Math.abs(page) + 1) * this.nb_thumb_by_page;
+
+      if (Math.abs(page) * this.nb_thumb_by_page < self.model.size() ) {
+         this.showLoading();
+      }
       self.tabsContent = new Array();
-
-      self.model.each(function(image) {
-         if ((cpt >= inf) && (cpt < sup)) {
-             console.log(cpt);
-            var thumb = new ImageThumbView({
-               model : image,
-               className : "thumb-wrap",
-               id : "thumb"+image.get('id')
-            }).render();
-            $(self.el).append(thumb.el);
-         }
+      var cpt = inf;
+      while (cpt < sup) {
+         var image  = this.model.at(cpt);
+         var thumb = new ImageThumbView({
+            model : image,
+            className : "thumb-wrap",
+            id : "thumb"+image.get('id')
+         }).render();
+         $(self.el).append(thumb.el);
          cpt++;
          self.tabsContent.push(image.id);
-      });
+      }
    },
    /**
     * Add the thumb image
