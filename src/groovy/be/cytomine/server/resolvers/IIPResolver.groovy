@@ -30,17 +30,17 @@ class IIPResolver extends Resolver{
         return url;
     }
 
- public String getThumbUrl(String baseUrl, String imagePath, int width) {
-       args.clear()
-       args.add("FIF" + ARGS_EQUAL + imagePath)
-       args.add("SDS" + ARGS_EQUAL +  "0,90")
-       args.add("CNT" + ARGS_EQUAL + "1.0")
-       args.add("WID" + ARGS_EQUAL + width)
-       args.add("QLT" + ARGS_EQUAL + "99")
-       args.add("CVT" + ARGS_EQUAL + "jpeg")
-       return toURL(baseUrl)
+    public String getThumbUrl(String baseUrl, String imagePath, int width) {
+        args.clear()
+        args.add("FIF" + ARGS_EQUAL + imagePath)
+        args.add("SDS" + ARGS_EQUAL +  "0,90")
+        args.add("CNT" + ARGS_EQUAL + "1.0")
+        args.add("WID" + ARGS_EQUAL + width)
+        args.add("QLT" + ARGS_EQUAL + "99")
+        args.add("CVT" + ARGS_EQUAL + "jpeg")
+        return toURL(baseUrl)
 
-   }
+    }
     public String getPreviewUrl(String baseUrl, String imagePath) {
         args.clear()
         args.add("FIF" + ARGS_EQUAL + imagePath)
@@ -80,17 +80,28 @@ class IIPResolver extends Resolver{
         W : 1/(34092/400) = 0.01173295788
         H : 1/(34207/600) = 0.01754026954*/
         def scaledWidth = width
-        while (scaledWidth > 256) {
-            scaledWidth = scaledWidth / 2
+        def targetWidth = 512
+        if (scaledWidth > targetWidth) {
+            def shouldScale = true
+            while (shouldScale) {
+                def newWidth = Math.round(scaledWidth / 2)
+                def currentDelta = (Math.abs(scaledWidth - targetWidth))
+                def newDelta = (Math.abs(newWidth - targetWidth))
+                if (newDelta < currentDelta && newWidth >= 256) scaledWidth = newWidth
+                else shouldScale = false
+            }
         }
+
+
         def x = 1/(baseImageWidth / topLeftX)
         def y = 1/(baseImageHeight / (baseImageHeight - topLeftY))
         def w = 1/(baseImageWidth / width)
         def h = 1/(baseImageHeight / height)
         args.clear()
         args.add("FIF" + ARGS_EQUAL +  imagePath)
+        if (width > targetWidth) args.add("WID" + ARGS_EQUAL + scaledWidth)
         args.add("RGN" + ARGS_EQUAL +  x + "," + y + "," + w + "," + h)
-        args.add("WID" + ARGS_EQUAL + scaledWidth)
+
         args.add("CVT" + ARGS_EQUAL + "jpeg")
         return toURL(baseUrl)
     }

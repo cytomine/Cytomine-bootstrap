@@ -126,6 +126,15 @@ class Annotation extends SequenceDomain implements Serializable {
         return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height)
     }
 
+    def computeArea() {
+        if (this.image.baseImage.resolution == null) return Math.round(this.getArea()) + " pixels"
+        else return Math.round(this.getArea() * this.image.baseImage.resolution)  + " µm"
+    }
+
+    def computePerimeter() {
+        if (this.image.baseImage.resolution == null) return Math.round(this.getPerimeter()) + " pixels"
+        else return Math.round(this.getPerimeter() * this.image.baseImage.resolution)  + " µm"
+    }
     /**
      * Create a new Annotation with jsonAnnotation attributes
      * So, jsonAnnotation must have jsonAnnotation.location, jsonAnnotation.name, ...
@@ -174,8 +183,8 @@ class Annotation extends SequenceDomain implements Serializable {
             returnArray['channels'] = it.channels
             returnArray['user'] = it.user? it.user.id : null
 
-            returnArray['area'] = it.getArea()
-            returnArray['perimeter'] = it.getPerimeter()
+            returnArray['area'] = it.computeArea()
+            returnArray['perimeter'] = it.computePerimeter()
             returnArray['centroid'] = it.getCentroid()
 
             returnArray['created'] = it.created? it.created.time.toString() : null
