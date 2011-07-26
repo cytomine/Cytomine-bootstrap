@@ -208,11 +208,7 @@ var ProjectPanelView = Backbone.View.extend({
         });
     },
     showAddSlidesPanel : function () {
-        var self = this;
-        
-        $("#projectdiv").hide();
-        $("#addimagediv").show();
-        self.container.addSlideDialog = new ProjectManageSlideDialog({model:this.model,projectPanel:this,el:self.el}).render();
+        window.location = "#project-manage-" + this.model.id;
     },
     showSlidesPanel : function () {
         var self = this;

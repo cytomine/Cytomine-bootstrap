@@ -51,9 +51,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
         $(self.el).append(dialog);
 
         $("button[class=goBackToProject]").click(function() {
-            self.projectPanel.refresh();
-            $("#projectdiv").show();
-            $("#addimagediv").hide();
+            window.location = "#project";
         });
 
         
