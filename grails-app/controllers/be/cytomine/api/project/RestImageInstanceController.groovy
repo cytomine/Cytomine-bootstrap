@@ -132,6 +132,7 @@ class RestImageInstanceController extends RestController {
                     def annotationTerm = AnnotationTerm.findAllByTermAndAnnotation(term,annotation)
                     log.info "annotationTerm= " +annotationTerm.size()
 
+
                     annotationTerm.each{ annotterm ->
                         log.info "unlink annotterm:" +annotterm.id
                         def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id]) as JSON
