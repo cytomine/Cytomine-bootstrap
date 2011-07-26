@@ -17,7 +17,7 @@ var ImagePropertiesView = Backbone.View.extend({
                }
             },
             close :function (event) {
-               $(this).remove();
+               $(this).dialog("destroy");
             }
          }
       }).render();

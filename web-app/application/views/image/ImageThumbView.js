@@ -18,6 +18,7 @@ var ImageThumbView = Backbone.View.extend({
          $(self.el).html(_.template(tpl, jsonModel));
          //$(self.el).find("#getImageProperties-"+self.model.id).click(function(){self.properties();return false;});
          $(self.el).find("#getImageProperties-"+self.model.id).click(function(){
+            $("#image-properties").remove();
             new ImagePropertiesView({model : self.model}).render();
             return false;
          });
