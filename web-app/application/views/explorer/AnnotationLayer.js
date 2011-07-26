@@ -368,7 +368,7 @@ AnnotationLayer.prototype = {
                 self.controls.select.select(newFeature);
                 window.app.view.message("Add annotation", message, "");
                 new EndTransactionModel({}).save();
-                self.browseImageView.refreshAnnotationTabs(idTerm);
+
                 self.browseImageView.refreshAnnotationTabs(undefined);
              },
              error : function(model, response) {
@@ -425,11 +425,12 @@ AnnotationLayer.prototype = {
                     window.app.view.message("Annotation", response.message, "");
                     self.browseImageView.refreshAnnotationTabs(undefined);
                     console.log("collection="+collection.length);
-                    collection.each(function(term) {
+                    /*collection.each(function(term) {
                         console.log("term="+term.id);
-                        self.browseImageView.refreshAnnotationTabs(term.id);
 
-                    });
+
+                    });*/
+                   self.browseImageView.refreshAnnotationTabs(undefined);
 
                 },
                 error: function (model, response) {
@@ -599,7 +600,8 @@ AnnotationLayer.prototype = {
              id: idAnnotation
           }).fetch({
              success: function (model) {
-                var format = new OpenLayers.Format.WKT();
+                var feature = self.createFeatureFromAnnotation(model);
+                /*var format = new OpenLayers.Format.WKT();
                 var location = format.read(model.get('location'));
                 var feature = new OpenLayers.Feature.Vector(location.geometry);
                 feature.attributes = {
@@ -607,17 +609,19 @@ AnnotationLayer.prototype = {
                    listener: 'NO',
                    measure : 'NO',
                    importance: 10
-                };
+                };*/
                 self.addFeature(feature);
                 self.selectFeature(feature);
                 self.controls.select.activate();
                 self.deleteOnSelect = deleteOnSelectBackup;
+                self.browseImageView.refreshAnnotationTabs(undefined);
              }
           });
 
    },
    annotationRemoved: function (idAnnotation) {
       this.removeFeature(idAnnotation);
+      this.browseImageView.refreshAnnotationTabs(undefined);
    },
    annotationUpdated: function (idAnnotation, idImage) {
       this.annotationRemoved(idAnnotation);

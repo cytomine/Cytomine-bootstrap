@@ -267,7 +267,7 @@ var BrowseImageView = Backbone.View.extend({
             maxResolution: Math.pow(2,  metadata.nbZoom ),
             numZoomLevels:  metadata.nbZoom+1,
             units: 'pixels',
-            //tileSize: new OpenLayers.Size(256,256),
+            tileSize: new OpenLayers.Size(256,256),
             controls: [
                new OpenLayers.Control.TouchNavigation({
                   dragPanOptions: {

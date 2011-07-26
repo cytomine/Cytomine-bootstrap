@@ -81,8 +81,9 @@ var AnnotationsPanel = Backbone.View.extend({
                 return (object.idTerm == idTerm);
              });
              obj.refresh.call();
-          } else { //refresh the "all tabs"
-             self.refreshAnnotationsTabsFunc[0].refresh.call();
+          } else { //refresh the current tab
+             var selected = $("#annotationsPanel"+self.model.id).find(".tabsAnnotation").tabs( "option", "selected" );
+             self.refreshAnnotationsTabsFunc[selected].refresh.call();
           }
        },
         refreshAnnotations : function(idTerm, el) {

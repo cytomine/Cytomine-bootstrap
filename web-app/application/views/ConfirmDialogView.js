@@ -18,9 +18,6 @@ var ConfirmDialogView = Backbone.View.extend({
           $(this.el).html(tpl);
 
           $(this.dialogAttr.dialogID).dialog({
-                 create: function (event, ui) {
-                    $(".ui-widget-header").hide();
-                 },
                  resizable: false,
                  autoOpen : this.dialogAttr.autoOpen,
                  draggable : false,
