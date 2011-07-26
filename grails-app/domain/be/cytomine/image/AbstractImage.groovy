@@ -125,6 +125,17 @@ class AbstractImage extends SequenceDomain {
         return ConfigurationHolder.config.grails.serverURL + '/api/annotation/'+ this.id +'/term.json';
     }
 
+    def getIdScanner() {
+             if(this.scannerId) return this.scannerId
+            else return this.scanner?.id
+
+    }
+
+    def getIdSlide() {
+            if(this.slideId) return this.slideId
+            else return this.slide?.id
+    }
+
 
     static void registerMarshaller() {
 
@@ -134,10 +145,8 @@ class AbstractImage extends SequenceDomain {
             returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['filename'] = it.filename
-            if(it.scannerId) returnArray['scanner'] = it.scannerId
-            else returnArray['scanner'] = it.scanner?.id
-            if(it.slideId) returnArray['slide'] = it.slideId
-            else returnArray['slide'] = it.slide?.id
+            returnArray['scanner'] = it.getIdScanner()
+            returnArray['slide'] = it.getIdSlide()
             returnArray['path'] = it.path
             returnArray['mime'] = it.mime.extension
             returnArray['created'] = it.created? it.created.time.toString() : null

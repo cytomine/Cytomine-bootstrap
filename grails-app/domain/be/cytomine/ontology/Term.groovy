@@ -101,6 +101,10 @@ class Term extends SequenceDomain implements Serializable {
         return term;
     }
 
+    def getIdOntology() {
+        if(this.ontologyId) return this.ontologyId
+        else return this.ontology?.id
+    }
 
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + Term.class
@@ -109,8 +113,7 @@ class Term extends SequenceDomain implements Serializable {
             returnArray['id'] = it.id
             returnArray['name'] = it.name
             returnArray['comment'] = it.comment
-            if(it.ontologyId) returnArray['ontology'] = it.ontologyId
-            else returnArray['ontology'] = it.ontology?.id
+            returnArray['ontology'] = it.getIdOntology()
 
             RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT),Term.get(it.id))
 

@@ -107,14 +107,19 @@ class Project extends SequenceDomain {
         if (jsonProject.ontology)
             project.ontology = Ontology.read(jsonProject.ontology)
 
-         try {project.countAnnotations = Long.parseLong(jsonProject.numberOfAnnotations.toString()) } catch(Exception e) {
-           project.countAnnotations=0
+        try {project.countAnnotations = Long.parseLong(jsonProject.numberOfAnnotations.toString()) } catch(Exception e) {
+            project.countAnnotations=0
         }
         try {project.countImages = Long.parseLong(jsonProject.numberOfImages.toString()) } catch(Exception e) {
-           project.countImages=0
+            project.countImages=0
         }
 
         return project;
+    }
+
+    def getIdOntology() {
+        if(this.ontologyId) return this.ontologyId
+        else return this.ontology?.id
     }
 
     static void registerMarshaller() {
@@ -124,8 +129,7 @@ class Project extends SequenceDomain {
             returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['name'] = it.name
-            if(it.ontologyId) returnArray['ontology'] = it.ontologyId
-            else returnArray['ontology'] = it.ontology?.id
+            returnArray['ontology'] = it.getIdOntology()
             returnArray['ontologyName'] = it.ontology? it.ontology.name : null
             returnArray['ontologyURL'] = UrlApi.getOntologyURLWithOntologyId(it.ontology?.id)
             returnArray['abstractimageURL'] = UrlApi.getAbstractImageURLWithProjectId(it.id)

@@ -167,7 +167,10 @@ class Annotation extends SequenceDomain implements Serializable {
         return annotation;
     }
 
-
+    def getIdImage() {
+         if(this.imageId) return this.imageId
+         else return this.image?.id
+    }
 
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + Annotation.class
@@ -177,8 +180,7 @@ class Annotation extends SequenceDomain implements Serializable {
             returnArray['id'] = it.id
             returnArray['name'] = it.name!=""? it.name : "Annotation " + it.id
             returnArray['location'] = it.location.toString()
-            if(it.imageId) returnArray['image'] = it.imageId
-            else returnArray['image'] = it.image?.id
+            returnArray['image'] = it.getIdImage()
             returnArray['imageFilename'] = it.image? it.image.baseImage.filename : null
             returnArray['zoomLevel'] = it.zoomLevel
             returnArray['channels'] = it.channels

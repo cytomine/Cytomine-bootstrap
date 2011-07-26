@@ -99,6 +99,23 @@ class ImageInstance extends SequenceDomain {
         return image;
     }
 
+    def getIdBaseImage() {
+            if(this.baseImageId) return this.baseImageId
+            else return this.baseImage?.id
+    }
+
+    def getIdProject() {
+            if(this.projectId) return this.projectId
+            else return this.project?.id
+    }
+
+    def getIdUser() {
+            if(this.userId) return this.userId
+            else return this.user?.id
+    }
+
+
+
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + ImageInstance.class
         JSON.registerObjectMarshaller(ImageInstance) {
@@ -107,12 +124,10 @@ class ImageInstance extends SequenceDomain {
             returnArray['class'] = it.class
 
             returnArray['id'] = it.id
-            if(it.baseImageId) returnArray['baseImage'] = it.baseImageId
-            else returnArray['baseImage'] = it.baseImage?.id
-            if(it.projectId) returnArray['project'] = it.projectId
-            else returnArray['project'] = it.project?.id
-            if(it.userId) returnArray['user'] = it.userId
-            else returnArray['user'] = it.user?.id
+            returnArray['baseImage'] = it.getIdBaseImage()
+            returnArray['project'] = it.getIdProject()
+            returnArray['user'] = it.getIdUser()
+
 
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
