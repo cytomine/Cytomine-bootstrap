@@ -72,6 +72,7 @@ environments {
     grails.serverURL = "http://localhost:8080"
   }
 
+
 }
 
 // log4j configuration
