@@ -66,10 +66,10 @@ environments {
     grails.serverURL = "http://beta.cytomine.be:48/"
   }
   development {
-    grails.serverURL = "http://localhost:8080/"
+    grails.serverURL = "http://localhost:8080"
   }
   test {
-    grails.serverURL = "http://localhost:8080/"
+    grails.serverURL = "http://localhost:8080"
   }
 
 }
