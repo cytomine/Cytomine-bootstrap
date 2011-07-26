@@ -76,17 +76,11 @@ class RestImageInstanceController extends RestController {
     }
 
     def listByProject = {
-        StopWatch stopWatch = new LoggingStopWatch();
         log.info "List with id project:"+params.id
         Project project = Project.read(params.id)
-        StopWatch stopWatchfind = new LoggingStopWatch();
         def images = ImageInstance.findAllByProject(project)
-        stopWatchfind.stop("RestImageInstanceController.findAllByProject");
-        stopWatchfind = new LoggingStopWatch();
         if(project!=null) responseSuccess(images)
         else responseNotFound("ImageInstance","Project",params.id)
-         stopWatchfind.stop("RestImageInstanceController.response");
-        stopWatch.stop("RestImageInstanceController.listByProject");
     }
 
     def add = {

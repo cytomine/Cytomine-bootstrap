@@ -39,7 +39,6 @@ class User extends SecUser {
   }
 
   def ontologies() {
-    StopWatch stopWatch = new LoggingStopWatch();
     def ontologies = []
     //add ontology created by this user
     if(this.version!=null) ontologies.addAll(Ontology.findAllByUser(this))
@@ -51,7 +50,6 @@ class User extends SecUser {
       if(!ontologies.contains(ontology))
         ontologies << ontology
     }
-    stopWatch.stop("ontologies sql()");
     ontologies
   }
 
@@ -70,7 +68,6 @@ class User extends SecUser {
   }
 
   def abstractimages() {
-    StopWatch stopWatch = new LoggingStopWatch();
     def abstractImages = []
     if (userGroup.size() > 0) {
       abstractImages = AbstractImageGroup.createCriteria().list {
@@ -80,7 +77,6 @@ class User extends SecUser {
         }
       }
     }
-    stopWatch.stop('abstractimages request');
     abstractImages
 
   }
