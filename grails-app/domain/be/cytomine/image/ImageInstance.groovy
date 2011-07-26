@@ -103,7 +103,7 @@ class ImageInstance extends SequenceDomain {
         println "Register custom JSON renderer for " + ImageInstance.class
         JSON.registerObjectMarshaller(ImageInstance) {
             def returnArray = [:]
-            StopWatch stopWatch = new LoggingStopWatch();
+
             returnArray['class'] = it.class
 
             returnArray['id'] = it.id
@@ -146,7 +146,7 @@ class ImageInstance extends SequenceDomain {
 
             //returnArray['imageServerBaseURL'] = it.baseImage.getMime().imageServers().collect { it.getZoomifyUrl() }
             //returnArray['imageServerBaseURL'] = UrlApi.getImageServerInfosWithImageId(it.id)
-            stopWatch.stop("registerMarshaller");
+
             return returnArray
         }
     }
