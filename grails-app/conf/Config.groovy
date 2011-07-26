@@ -60,7 +60,7 @@ grails.logging.jul.usebridge = true
 // packages to include in Spring bean scanning
 grails.spring.bean.packages = []
 
-// set per-environment serverURL stem for creating absolute links
+// set per-environment serverURL stem for creating absolute link
 environments {
   production {
     grails.serverURL = "http://beta.cytomine.be:48/"
