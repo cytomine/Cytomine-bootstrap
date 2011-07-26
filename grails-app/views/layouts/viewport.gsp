@@ -7,7 +7,7 @@
     <title>Cytomine</title>
 
     <link rel="icon" type="image/png" href="favicon.ico">
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
     <script type="text/javascript">
         google.load('visualization', '1', {packages: ['corechart']});
     </script>

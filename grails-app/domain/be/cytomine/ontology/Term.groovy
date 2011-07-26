@@ -109,7 +109,8 @@ class Term extends SequenceDomain implements Serializable {
             returnArray['id'] = it.id
             returnArray['name'] = it.name
             returnArray['comment'] = it.comment
-            returnArray['ontology'] = it.ontology? it.ontology.id : null
+            if(it.ontologyId) returnArray['ontology'] = it.ontologyId
+            else returnArray['ontology'] = it.ontology?.id
 
             RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT),Term.get(it.id))
 

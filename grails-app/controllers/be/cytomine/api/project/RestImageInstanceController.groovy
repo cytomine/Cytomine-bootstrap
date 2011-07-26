@@ -22,6 +22,8 @@ import be.cytomine.ontology.Term
 import be.cytomine.command.term.DeleteTermCommand
 import be.cytomine.command.TransactionController
 import be.cytomine.command.annotation.DeleteAnnotationCommand
+import org.perf4j.StopWatch
+import org.perf4j.LoggingStopWatch
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -74,10 +76,17 @@ class RestImageInstanceController extends RestController {
     }
 
     def listByProject = {
-        log.info "List with id user:"+params.id
+        StopWatch stopWatch = new LoggingStopWatch();
+        log.info "List with id project:"+params.id
         Project project = Project.read(params.id)
-        if(project!=null) responseSuccess(ImageInstance.findAllByProject(project))
+        StopWatch stopWatchfind = new LoggingStopWatch();
+        def images = ImageInstance.findAllByProject(project)
+        stopWatchfind.stop("RestImageInstanceController.findAllByProject");
+        stopWatchfind = new LoggingStopWatch();
+        if(project!=null) responseSuccess(images)
         else responseNotFound("ImageInstance","Project",params.id)
+         stopWatchfind.stop("RestImageInstanceController.response");
+        stopWatch.stop("RestImageInstanceController.listByProject");
     }
 
     def add = {

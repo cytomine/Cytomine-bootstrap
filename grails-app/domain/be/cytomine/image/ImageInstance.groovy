@@ -6,6 +6,8 @@ import be.cytomine.SequenceDomain
 import be.cytomine.ontology.Annotation
 import be.cytomine.rest.UrlApi
 import be.cytomine.project.Slide
+import org.perf4j.StopWatch
+import org.perf4j.LoggingStopWatch
 
 /**
  * Created by IntelliJ IDEA.
@@ -101,12 +103,16 @@ class ImageInstance extends SequenceDomain {
         println "Register custom JSON renderer for " + ImageInstance.class
         JSON.registerObjectMarshaller(ImageInstance) {
             def returnArray = [:]
+            StopWatch stopWatch = new LoggingStopWatch();
             returnArray['class'] = it.class
 
             returnArray['id'] = it.id
-            returnArray['baseImage'] = it.baseImage? it.baseImage.id : null
-            returnArray['project'] = it.project? it.project.id : null
-            returnArray['user'] = it.user? it.user.id : null
+            if(it.baseImageId) returnArray['baseImage'] = it.baseImageId
+            else returnArray['baseImage'] = it.baseImage?.id
+            if(it.projectId) returnArray['project'] = it.projectId
+            else returnArray['project'] = it.project?.id
+            if(it.userId) returnArray['user'] = it.userId
+            else returnArray['user'] = it.user?.id
 
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
@@ -114,7 +120,8 @@ class ImageInstance extends SequenceDomain {
             try {returnArray['thumb'] = it.baseImage? it.baseImage.getThumbURL() : null}catch(Exception e){returnArray['thumb']='NO THUMB:'+e.toString()}
             returnArray['filename'] = it.baseImage? it.baseImage.filename : null
 
-            returnArray['slide'] = it.slide? it.slide.id : null
+            if(it.slideId) returnArray['slide'] = it.slideId
+            else returnArray['slide'] = it.slide?.id
 
             returnArray['path'] = it.baseImage.path
             returnArray['mime'] = it.baseImage?.mime?.extension
@@ -127,7 +134,7 @@ class ImageInstance extends SequenceDomain {
 
             returnArray['roi'] = it.baseImage.roi.toString()*/
 
-            returnArray['info'] = it.baseImage.slide?.name
+            //returnArray['info'] = it.baseImage.slide?.name
             //returnArray['annotations'] = it.annotations
             // returnArray['thumb'] = it.baseImage.getThumbURL()
             returnArray['preview'] = it.baseImage? it.baseImage.getPreviewURL() : null
@@ -139,6 +146,7 @@ class ImageInstance extends SequenceDomain {
 
             //returnArray['imageServerBaseURL'] = it.baseImage.getMime().imageServers().collect { it.getZoomifyUrl() }
             //returnArray['imageServerBaseURL'] = UrlApi.getImageServerInfosWithImageId(it.id)
+            stopWatch.stop("registerMarshaller");
             return returnArray
         }
     }

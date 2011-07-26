@@ -134,8 +134,10 @@ class AbstractImage extends SequenceDomain {
             returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['filename'] = it.filename
-            returnArray['scanner'] = it.scanner? it.scanner.id : null
-            returnArray['slide'] = it.slide? it.slide.id : null
+            if(it.scannerId) returnArray['scanner'] = it.scannerId
+            else returnArray['scanner'] = it.scanner?.id
+            if(it.slideId) returnArray['slide'] = it.slideId
+            else returnArray['slide'] = it.slide?.id
             returnArray['path'] = it.path
             returnArray['mime'] = it.mime.extension
             returnArray['created'] = it.created? it.created.time.toString() : null

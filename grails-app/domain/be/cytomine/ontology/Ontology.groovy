@@ -109,7 +109,8 @@ class Ontology extends SequenceDomain implements Serializable{
             returnArray['isFolder'] = true
             returnArray['key'] = it.id
             returnArray['hideCheckbox'] = true
-            returnArray['user'] = it.user.id
+            if(it.userId) returnArray['user'] = it.userId
+            else returnArray['user'] = it.user?.id
             returnArray['state'] = "open"
 
             if(it.version!=null){
