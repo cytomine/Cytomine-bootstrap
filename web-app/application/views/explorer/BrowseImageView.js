@@ -317,6 +317,18 @@ var BrowseImageView = Backbone.View.extend({
          self.map.zoomToMaxExtent();
          self.map.addControl(overviewMapControl);
 
+         //Compute the ideal initial zoom
+         var windowWidth = $(window).width();
+         var windowHeight = $(window).height() - paddingTop;
+         var imageWidth = metadata.width;
+         var imageHeight = metadata.height;
+         var idealZoom = metadata.nbZoom-1;
+         while (imageWidth > windowWidth || imageHeight > windowHeight) {
+            imageWidth /= 2;
+            imageHeight /= 2;
+            idealZoom--;
+         }
+         self.map.zoomTo(idealZoom);
       }
 
       var t_width  = self.model.get("width");

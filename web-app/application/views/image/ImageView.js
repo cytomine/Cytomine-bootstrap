@@ -4,7 +4,7 @@ var ImageView = Backbone.View.extend({
       this.images = null; //array of images that are printed
       this.container = options.container;
       this.page = options.page;
-      this.nb_thumb_by_page = 50;
+      this.nb_thumb_by_page = 30;
       if (this.page == undefined) this.page = 0;
    },
    render: function() {
@@ -42,12 +42,11 @@ var ImageView = Backbone.View.extend({
       }
       self.tabsContent = new Array();
       var cpt = inf;
-      while (cpt < sup) {
+
+      while (cpt < sup && cpt < this.model.size()) {
          var image  = this.model.at(cpt);
          var thumb = new ImageThumbView({
-            model : image,
-            className : "thumb-wrap",
-            //id : "thumb"+image.get('id')
+            model : image
          }).render();
          $(self.el).append(thumb.el);
          cpt++;
@@ -58,7 +57,7 @@ var ImageView = Backbone.View.extend({
     * Add the thumb image
     * @param image Image model
     */
-   add : function(image) {s
+   add : function(image) {
       var self = this;
       var thumb = new ImageThumbView({
          model : image,

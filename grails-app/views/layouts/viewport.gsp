@@ -124,6 +124,7 @@
         <script type="text/javascript" src="application/views/image/ImageSelectView.js" ></script>
         <script type="text/javascript" src="application/views/image/ImageView.js" ></script>
         <script type="text/javascript" src="application/views/image/ImageTabsView.js" ></script>
+        <script type="text/javascript" src="application/views/image/ImagePropertiesView.js" ></script>
 
         <script type="text/javascript" src="application/views/ontology/OntologyPanelView.js" ></script>
         <script type="text/javascript" src="application/views/ontology/OntologyView.js" ></script>

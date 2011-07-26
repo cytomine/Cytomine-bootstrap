@@ -6,18 +6,23 @@ var ConfirmDialogView = Backbone.View.extend({
           this.el = options.el;
           this.template = options.template;
           this.templateURL = options.templateURL;
+          this.autoOpen = options.autoOpen;
           this.templateData = options.templateData;
           this.dialogAttr = options.dialogAttr;
+          this.dialogAttr.autoOpen =  options.dialogAttr.autoOpen;
+          if (options.dialogAttr.autoOpen == undefined) this.dialogAttr.autoOpen = true;
           if (!options.dialogAttr.width) this.dialogAttr.width = 'auto';
           if (!options.dialogAttr.height) this.dialogAttr.height = 'auto';
        },
        doLayout : function(tpl)  {
           $(this.el).html(tpl);
+
           $(this.dialogAttr.dialogID).dialog({
                  create: function (event, ui) {
                     $(".ui-widget-header").hide();
                  },
                  resizable: false,
+                 autoOpen : this.dialogAttr.autoOpen,
                  draggable : false,
                  width: this.dialogAttr.width,
                  height: this.dialogAttr.height,

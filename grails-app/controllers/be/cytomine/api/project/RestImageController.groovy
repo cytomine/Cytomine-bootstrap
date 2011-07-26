@@ -15,11 +15,13 @@ import be.cytomine.api.RestController
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.Storage
 import grails.orm.PagedResultList
+import be.cytomine.image.server.ImageProperty
 
 class RestImageController extends RestController{
 
     def springSecurityService
     def transactionService
+    def imagePropertiesService
 
     def index = {
         redirect(controller: "image")
@@ -143,9 +145,17 @@ class RestImageController extends RestController{
     def imageProperties = {
         //TODO; refactor me!
         AbstractImage image = AbstractImage.read(params.id)
+        if (image.imageProperties.size() == 0) {
+             imagePropertiesService.populate(image)
+        }
         response(image.imageProperties)
     }
 
+    def imageProperty = {
+        def imageProperty = ImageProperty.findById(params.imageproperty)
+        if(imageProperty!=null) responseSuccess(imageProperty)
+        else responseNotFound("ImageProperty",params.imageproperty)
+    }
     def storageService
 
     def imageservers = {

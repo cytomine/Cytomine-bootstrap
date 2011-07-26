@@ -107,6 +107,8 @@
             <fileset dir="${src.dir}" includes="application/views/image/ImageSelectView.js" />
             <fileset dir="${src.dir}" includes="application/views/image/ImageView.js" />
             <fileset dir="${src.dir}" includes="application/views/image/ImageTabsView.js" />
+            <fileset dir="${src.dir}" includes="application/views/image/ImagePropertiesView.js" />
+
             <fileset dir="${src.dir}" includes="application/views/ontology/OntologyPanelView.js" />
             <fileset dir="${src.dir}" includes="application/views/ontology/OntologyView.js" />
             <fileset dir="${src.dir}" includes="application/views/ontology/OntologyAddOrEditTermView.js" />

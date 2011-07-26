@@ -114,8 +114,11 @@ class UrlMappings {
         "/api/image/$id/metadata"(controller: "restImage"){
             action = [GET:"metadata"]
         }
-        "/api/image/$id/properties"(controller: "restImage"){
+        "/api/image/$id/property"(controller: "restImage"){
             action = [GET:"imageProperties"]
+        }
+        "/api/image/$id/property/$imageproperty"(controller: "restImage"){
+            action = [GET:"imageProperty"]
         }
         "/api/image/$id/imageservers"(controller: "restImage"){
             action = [GET:"imageservers"]

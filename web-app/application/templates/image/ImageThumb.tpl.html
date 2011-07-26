@@ -1,3 +1,18 @@
-<div class='thumb'><a href='#tabs-image-{{project}}-{{ id }}-'><img src='{{ thumb }}' alt='{{ filename }}'  style="max-height:160px; max-width:160px; "  /></a></div>
-<div class='thumb-info'><a href='#tabs-image-{{project}}-{{ id }}-'>{{filename}}</a></div>
-<!--imagethumbtpl-->
+<div style="height: 180px;padding: 5px;margin:5px;background-color: rgba(230,230,230, 0.4); border: 1px solid #000000; -moz-border-radius: 6px;-webkit-border-radius: 6px;border-radius: 6px;">
+    <table>
+        <thead>
+            <th colspan="2">{{filename}}</th>
+        </thead>
+        <tr>
+            <td><a href='#tabs-image-{{project}}-{{ id }}-'><img src='{{ thumb }}' alt='{{ filename }}'  style="max-height:160px; max-width:160px;border: 1px solid #FFFFFF;"  /></a></td>
+            <td style="vertical-align: top;padding-left: 10px;font-size: 12px;">
+                <ul>
+                    <li>Magnification : {{magnification}}</li>
+                    <li>Resolution : {{resolution}}</li>
+                    <li>Width : {{width}}</li>
+                    <li>Height : {{height}}</li>
+                    <li><a id="getImageProperties-{{id}}" href="#">More informations</a></li>
+                </ul></td>
+        </tr>
+    </table>
+</div>
