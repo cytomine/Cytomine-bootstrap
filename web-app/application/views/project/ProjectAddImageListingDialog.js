@@ -206,7 +206,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             data[i] = {
                 id: image.id,
                 base : image.get('baseImage'),
-                thumb : "<img src='"+image.get('thumb')+"' width=30/>",
+                thumb : "<img src='"+image.get('thumb')+"' width=50/>",
                 filename: image.get('filename'),
                 type : image.get('mime'),
                 annotations : image.get('numberOfAnnotations'),
@@ -224,19 +224,21 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
     renderImageListProject : function() {
         var self = this;
 
-        $("#"+self.listmanageproject).jqGrid({
+        var availableWidth = $(window).width()-250; //window - sidebar TO DO : remove this bad code !
+        var jqGridWidth = availableWidth * 0.45;
+       $("#"+self.listmanageproject).jqGrid({
             datatype: "local",
-            autowidth: true,
-            height:500,
+            autowidth: jqGridWidth,
+            autoHeight:true,
             colNames:['id','base','thumb','filename','type','annotations','added'],
             colModel:[
-                {name:'id',index:'id', width:50, sorttype:"int"},
-                {name:'base',index:'base', width:50, sorttype:"int"},
-                {name:'thumb',index:'thumb', width:50},
-                {name:'filename',index:'filename', width:220},
+                {name:'id',index:'id', width:1, sorttype:"int"},
+                {name:'base',index:'base', width:1, sorttype:"int"},
+                {name:'thumb',index:'thumb', width:100},
+                {name:'filename',index:'filename', width:250},
                 {name:'type',index:'type', width:50},
                 {name:'annotations',index:'annotations', width:50},
-                {name:'added',index:'added', width:90,sorttype:"date"}
+                {name:'added',index:'added', width:100,sorttype:"date"}
             ],
             onSelectRow: function(id){
 
@@ -282,9 +284,9 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             height:500,
             colNames:['id',thumbColName,'filename','mime','created'],
             colModel:[
-                {name:'id',index:'id', width:30},
-                {name:thumbColName,index:thumbColName, width:50},
-                {name:'filename',index:'filename', width:220},
+                {name:'id',index:'id', width:1},
+                {name:thumbColName,index:thumbColName, width:100},
+                {name:'filename',index:'filename', width:250},
                 {name:'mime',index:'mime', width:45},
                 {name:'created',index:'created', width:100,sorttype:"date", formatter:self.dateFormatter}
             ],
@@ -303,7 +305,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
                         //replace the text of the thumb by a <img element with its src value
                         var thumbplace = $(this).find('[aria-describedby$="_'+thumbColName+'"]');
-                        $(thumbplace).html('<img src="'+$(thumbplace).text()+'" width=30/>');
+                        $(thumbplace).html('<img src="'+$(thumbplace).text()+'" width=50/>');
                     }
                 });
 
