@@ -253,9 +253,9 @@ AnnotationLayer.prototype = {
          var length =  evt.feature.geometry.getLength();
          if (resolution != undefined && resolution != null) {
             length *= resolution;
-            resolution += " µm";
+            length += " µm";
          } else {
-            resolution += " pixels";
+            length += " pixels";
          }
          var content = _.template(tpl, {length:length});
          self.popup = new OpenLayers.Popup("chicken",

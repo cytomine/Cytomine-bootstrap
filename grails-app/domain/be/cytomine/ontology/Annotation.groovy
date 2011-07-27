@@ -128,7 +128,7 @@ class Annotation extends SequenceDomain implements Serializable {
 
     def computeArea() {
         if (this.image.baseImage.resolution == null) return Math.round(this.getArea()) + " pixels"
-        else return Math.round(this.getArea() * this.image.baseImage.resolution)  + " µm"
+        else return Math.round(this.getArea() * this.image.baseImage.resolution)  + " µm²"
     }
 
     def computePerimeter() {

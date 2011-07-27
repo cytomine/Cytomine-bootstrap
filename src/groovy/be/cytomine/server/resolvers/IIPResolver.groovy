@@ -87,7 +87,7 @@ class IIPResolver extends Resolver{
                 def newWidth = Math.round(scaledWidth / 2)
                 def currentDelta = (Math.abs(scaledWidth - targetWidth))
                 def newDelta = (Math.abs(newWidth - targetWidth))
-                if (newDelta < currentDelta && newWidth >= 256) scaledWidth = newWidth
+                if (newDelta < currentDelta && newWidth > 256) scaledWidth = newWidth
                 else shouldScale = false
             }
         }
