@@ -515,7 +515,78 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase{
   }
 
   void testDeleteProjectWithData() {
+    log.info("create project")
+    //create project
+    def projectToDelete = BasicInstance.getBasicProjectNotExist()
+    assert projectToDelete.save(flush:true)!=null
+    String jsonProject = projectToDelete.encodeAsJSON()
+    int idProject = projectToDelete.id
 
+
+    //add a image so that we have a command, commandhistory, ... for this project
+    log.info("create imageinstance")
+    def imageToAdd = BasicInstance.getBasicImageInstanceNotExist()
+      imageToAdd.project = projectToDelete
+      String jsonImage = imageToAdd.encodeAsJSON()
+
+    log.info("post imageinstance:"+jsonImage.replace("\n",""))
+    String URL = Infos.CYTOMINEURL+"api/imageinstance.json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.post(jsonImage)
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    println response
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+    def json = JSON.parse(response)
+    assert json instanceof JSONObject
+    int idImage = json.imageinstance.id
+
+      //delete the image so that we can delete project
+    URL = Infos.CYTOMINEURL+"api/project/"+idProject + "/image/"+imageToAdd.baseImage.id + "/imageinstance.json"
+    client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.delete()
+    code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+
+    log.info("check if object "+ idImage +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/imageinstance/"+idImage +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    client.disconnect();
+
+    assertEquals(404,code)
+
+    //delete project must be ok
+    log.info("delete project:"+jsonProject.replace("\n",""))
+    URL = Infos.CYTOMINEURL+"api/project/"+idProject+".json"
+    client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.delete()
+    code  = client.getResponseCode()
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+
+    log.info("check if object "+ idProject +" exist in DB")
+    client = new HttpClient();
+    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.get()
+    code  = client.getResponseCode()
+    client.disconnect();
+
+    assertEquals(404,code)
   }
 
   void testDeleteProjectNotExist() {
