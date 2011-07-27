@@ -11,6 +11,7 @@ import org.perf4j.StopWatch
 import org.perf4j.LoggingStopWatch
 import be.cytomine.image.AbstractImage
 import be.cytomine.security.UserGroup
+import be.cytomine.command.Command
 
 class Project extends SequenceDomain {
 
@@ -20,7 +21,8 @@ class Project extends SequenceDomain {
     long countImages
 
     static belongsTo = [ontology:Ontology]
-    static hasMany = [projectGroup:ProjectGroup]
+    static hasMany = [projectGroup:ProjectGroup,commands:Command]
+
 
     static constraints = {
         name ( maxSize : 150, unique : true, blank : false)

@@ -71,7 +71,7 @@ class Annotation extends SequenceDomain implements Serializable {
     }
     def termsId() {
         return annotationTerm.collect{
-            it.term.id
+            it.getIdTerm()
         }
     }
 

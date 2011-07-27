@@ -331,7 +331,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
                 id: "0"
             }
         });
-        $("#"+self.listmanageall).jqGrid('navGrid','#'+self.pagemanageall,{edit:false,add:false,del:false});
+        $("#"+self.listmanageall).jqGrid('navGrid','#'+self.pagemanageall,{edit:false,add:false,del:false},{},{},{},{multipleSearch:true});
         $("#"+self.listmanageall).jqGrid('sortGrid','filename',false);
         $("#"+self.listmanageall).jqGrid('hideCol',"id");
         //self.loadDataImageListAll(window.app.models.images);
