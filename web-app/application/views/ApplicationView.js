@@ -154,8 +154,8 @@ var ApplicationView = Backbone.View.extend({
                 el : "#content",
                 template : "",
                 buttonAttr : {
-                   elButton : "logout-button",
-                   buttonText : "Logout",
+                   elButton : "user-button",
+                   buttonText :window.app.status.user.model.prettyName(),
                    buttonWrapper : "#menu",
                    icon : "ui-icon-power",
                    route : "#",
@@ -163,6 +163,7 @@ var ApplicationView = Backbone.View.extend({
                 },
                 divId : "logout"
              });
+
           });
    },
    /**
