@@ -27,6 +27,7 @@ var ProjectController = Backbone.Controller.extend({
 
     project : function() {
         var self = this;
+        $("#warehouse-button").attr("href", "#project");
         $("#addimagediv").hide();
         $("#projectdiv").show();
         if (!this.view) {
@@ -35,7 +36,7 @@ var ProjectController = Backbone.Controller.extend({
         } else {
             self.view.refresh();
         }
-        self.view.container.show(self.view, "#warehoself.view.eluse > .sidebar", "project");
+        self.view.container.show(self.view, "#warehouse > .sidebar", "project");
         window.app.view.showComponent(window.app.view.components.warehouse);
     },
 

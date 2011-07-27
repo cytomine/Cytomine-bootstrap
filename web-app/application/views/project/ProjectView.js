@@ -40,7 +40,6 @@ var ProjectView = Backbone.View.extend({
         * Refresh all project panel
         */
        refresh : function() {
-          
           var self = this;
           //TODO: project must be filter by user?
           var idUser =  undefined;

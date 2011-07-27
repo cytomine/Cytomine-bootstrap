@@ -33,6 +33,7 @@ var OntologyController = Backbone.Controller.extend({
                  }).render();
              self.view.container.views.ontology = self.view;
              self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
+             $("#warehouse-button").attr("href", "#ontology");
              window.app.view.showComponent(window.app.view.components.warehouse);
              self.view.refresh(idOntology, idTerm);
 

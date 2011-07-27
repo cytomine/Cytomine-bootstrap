@@ -10,8 +10,7 @@ var ApplicationController = Backbone.Controller.extend({
       ""          :   "initialRoute",
       "explorer"  :   "explorer",
       "upload"    :   "upload",
-      "admin"     :   "admin",
-      "warehouse" :   "warehouse"
+      "admin"     :   "admin"
    },
 
    startup : function () {

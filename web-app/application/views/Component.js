@@ -81,6 +81,7 @@ var Component = Backbone.View.extend({
                 $(v.el).hide();
              }
           }
+
           $(view.el).show();
        }
     });

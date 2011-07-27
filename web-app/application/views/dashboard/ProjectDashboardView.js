@@ -181,9 +181,9 @@ var ProjectDashboardView = Backbone.View.extend({
     refreshSelectedTerms : function () {
         var self = this;
         var tree = $(this.el).find('.tree').dynatree("getRoot");
+        if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
         tree.visit(function(node){
             if (!node.isSelected()) return;
-
             self.refreshAnnotations(node.data.key);
         });
     },

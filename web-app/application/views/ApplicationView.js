@@ -126,7 +126,7 @@ var ApplicationView = Backbone.View.extend({
                    buttonText : "Organize",
                    buttonWrapper : "#menu",
                    icon : "ui-icon-wrench",
-                   route : "#warehouse"
+                   route : "#project"
                 },
                 divId : "warehouse"
              });
