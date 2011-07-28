@@ -456,8 +456,7 @@ var OntologyPanelView = Backbone.View.extend({
                  // The following options are only required, if we have more than one tree on one page:
                  initId: "treeDataOntology-"+self.model.id + currentTime.getTime(),
                  cookieId: "dynatree-Ontology-"+self.model.id+ currentTime.getTime(),
-                 idPrefix: "dynatree-Ontology-"+self.model.id+ currentTime.getTime()+"-" ,
-                 debugLevel: 3
+                 idPrefix: "dynatree-Ontology-"+self.model.id+ currentTime.getTime()+"-"
               });
           self.$tree.dynatree("getRoot").visit(function(node){
 

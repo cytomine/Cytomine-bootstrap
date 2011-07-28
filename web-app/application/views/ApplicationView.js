@@ -54,7 +54,6 @@ var ApplicationView = Backbone.View.extend({
       ],
           function(tpl) {
              self.doLayout(tpl, renderCallback);
-             window.app.controllers.project.initView();
           });
       return this;
    },

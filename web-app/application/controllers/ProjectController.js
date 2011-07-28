@@ -8,7 +8,6 @@ var ProjectController = Backbone.Controller.extend({
 
     initView : function(callback) {
         var self = this;
-        console.log("initView");
         new OntologyCollection({light:true}).fetch({
             success : function (ontologies, response) {
                 window.app.models.projects.fetch({
@@ -28,6 +27,7 @@ var ProjectController = Backbone.Controller.extend({
     },
 
     project : function() {
+
         var self = this;
         $("#warehouse-button").attr("href", "#project");
         $("#addimagediv").hide();

@@ -24,7 +24,7 @@
  *	Debug functions
  */
 
-var _canLog = true;
+var _canLog = false;
 
 function _log(mode, msg) {
 	/**

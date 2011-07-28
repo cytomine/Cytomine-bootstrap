@@ -75,31 +75,18 @@ class RestImageInstanceController extends RestController {
         else responseNotFound("ImageInstance","AbstractImage",params.id)
     }
 
-    def printMemory(String s) {
-        Runtime runtime = Runtime.getRuntime();
-        log.debug "printMemory:"+s
-        long maxMemory = runtime.maxMemory();
-        long allocatedMemory = runtime.totalMemory();
-        long freeMemory = runtime.freeMemory();
-
-        log.debug("free memory: " + freeMemory / 1024);
-        log.debug("allocated memory: " + allocatedMemory / 1024);
-        log.debug("max memory: " + maxMemory /1024);
-        log.debug("total free memory: " +
-                (freeMemory + (maxMemory - allocatedMemory)) / 1024);
-    }
-
     def listByProject = {
         log.info "List with id project:"+params.id
-        this.printMemory("before")
         Project project = Project.read(params.id)
-        printMemory("project")
-        def images = ImageInstance.findAllByProject(project)
-        printMemory("images")
-        if(project!=null) responseSuccess(images)
+        def images = ImageInstance.createCriteria().list {
+            createAlias("slide", "s")
+            eq("project", project)
+            order("slide")
+            order("s.index", "asc")
+        }
 
+        if(project!=null) responseSuccess(images)
         else responseNotFound("ImageInstance","Project",params.id)
-        printMemory("responss")
     }
 
     def add = {
