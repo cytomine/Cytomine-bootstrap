@@ -56,6 +56,7 @@ var ImageTabsView = Backbone.View.extend({
             base : image.get('baseImage'),
             thumb : image.get('thumb'),
             filename: image.get('filename'),
+            slide : image.get('slide'),
             type : image.get('mime'),
             width : image.get('width'),
             height : image.get('height'),
@@ -85,13 +86,14 @@ var ImageTabsView = Backbone.View.extend({
          datatype: "local",
          width: gridWidth,
          height:gridHeight,
-         colNames:['id','base','thumb','filename','type','width', 'height', 'magnification', 'resolution','annotations','added','see'],
+         colNames:['id','base','thumb','filename','type','slide','width', 'height', 'magnification', 'resolution','annotations','added','see'],
          colModel:[
             {name:'id',index:'id', width:1, sorttype:"int"},
             {name:'base',index:'base', width:1, sorttype:"int"},
             {name:thumbColName,index:thumbColName, width:50},
             {name:'filename',index:'filename', width:220},
             {name:'type',index:'type', width:50},
+            {name:'slide',index:'slide', width:50},
             {name:'width',index:'width', width:50},
             {name:'height',index:'height', width:50},
             {name:'magnification',index:'magnification', width:50},
@@ -123,6 +125,8 @@ var ImageTabsView = Backbone.View.extend({
          sortname: 'id',
          viewrecords: true,
          sortorder: "asc",
+         rowNum:30,
+         rowList:[10,30,50,100],
          caption:"Images from project"
       });
       $("#"+self.listproject).jqGrid('navGrid','#'+self.listproject,{edit:false,add:false,del:false});
