@@ -9,12 +9,13 @@ var ProjectController = Backbone.Controller.extend({
     initView : function(callback) {
         var self = this;
         console.log("initView");
-        window.app.models.ontologies.fetch({
+        new OntologyCollection({light:true}).fetch({
             success : function (ontologies, response) {
                 window.app.models.projects.fetch({
                     success : function (collection, response) {
                         self.view = new ProjectView({
                             model : collection,
+                            ontologies : ontologies,
                             el:$("#warehouse > .project"),
                             container : window.app.view.components.warehouse
                         }).render();

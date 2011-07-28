@@ -85,7 +85,6 @@ var ProjectSearchPanel = Backbone.View.extend({
       });
 
       //render ontologies choice
-      self.ontologies = window.app.models.ontologies;
       self.ontologies.each(function(ontology) {
          var choice = _.template(tpl, {id:ontology.id,name:ontology.get("name")});
          $(self.searchProjectOntolgiesListElem).append(choice);

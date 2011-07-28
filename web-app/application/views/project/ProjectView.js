@@ -4,9 +4,11 @@ var ProjectView = Backbone.View.extend({
        projectListElem : "#projectlist",
        projectList : null,
        addSlideDialog : null,
+        ontologies : null,
        initialize: function(options) {
           this.container = options.container;
           this.model = options.model;
+          this.ontologies = options.ontologies;
           this.el = options.el;
           this.searchProjectPanel = null;
           this.addProjectDialog = null;
@@ -68,7 +70,7 @@ var ProjectView = Backbone.View.extend({
           //create project search panel
           self.searchProjectPanel = new ProjectSearchPanel({
                  model : self.model,
-                 ontologies : window.app.models.ontologies,
+                 ontologies : self.ontologies,
                  el:$("#projectViewNorth"),
                  container : self,
                  projectsPanel : self

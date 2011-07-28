@@ -46,6 +46,9 @@ class UrlMappings {
         "/api/currentuser/ontology"(controller:"restOntology"){
             action = [GET:"listByUser"]
         }
+         "/api/currentuser/ontology/light"(controller:"restOntology"){  //TODO: merge with previous block
+            action = [GET: "listByUserLight"]
+        }
         "/api/currentuser/image"(controller: "restImage"){
           action = [GET:"listByUser"]
         }
@@ -206,6 +209,9 @@ class UrlMappings {
         /* Ontology */
         "/api/ontology"(controller:"restOntology"){
             action = [GET: "list",POST:"add"]
+        }
+        "/api/ontology/light"(controller:"restOntology"){  //TODO: merge with previous block
+            action = [GET: "listLight"]
         }
         "/api/ontology/$id/node"(controller:"restOntology"){
             action = [GET: "showWithOnlyParentTerm"]
