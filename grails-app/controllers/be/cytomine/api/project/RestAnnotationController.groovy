@@ -110,16 +110,18 @@ class RestAnnotationController extends RestController {
             Geometry lastAnnotationFull
             Geometry annotationFull = new WKTReader().read(form);
             println "points=" + annotationFull.getNumPoints() + " " + annotationFull.getArea();
-
+            println "annotationFull:"+annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
             int i = 0;
             while(annotationFull.getNumPoints()>500)
             {
-                println "annotationFull:"+annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
+
                 lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull,i)
-                if(lastAnnotationFull.getNumPoints()<1) break;
+                println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
+                if(lastAnnotationFull.getNumPoints()<250) break;
                 annotationFull = lastAnnotationFull
-                i=i+25;
+                i=i+5;
             }
+            println "annotationFull good=" + i + " "+annotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
             json.location =  new WKTWriter().write(annotationFull)
         } catch(Exception e) {}
         log.info "User:" + currentUser.username + " transaction:" +  currentUser.transactionInProgress  + " request:" +json.toString()
