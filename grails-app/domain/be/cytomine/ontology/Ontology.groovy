@@ -50,9 +50,10 @@ class Ontology extends SequenceDomain implements Serializable{
 
     def tree () {
         def rootTerms = []
+        Relation relation = Relation.findByName(RelationTerm.names.PARENT)
         this.terms().each {
             if (!it.isRoot()) return
-            rootTerms << branch(it)
+            rootTerms << branch(it,relation)
         }
         rootTerms.sort { a, b ->
             if(a.isFolder!=b.isFolder)
@@ -63,7 +64,7 @@ class Ontology extends SequenceDomain implements Serializable{
     }
 
 
-    def branch (Term term) {
+    def branch (Term term,Relation relation) {
         def t = [:]
         t.name = term.getName()
         t.id = term.getId()
@@ -71,7 +72,7 @@ class Ontology extends SequenceDomain implements Serializable{
         t.data = term.getName()
         t.color = term.getColor()
         t.class = term.class
-        RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT),term)
+        RelationTerm rt = RelationTerm.findByRelationAndTerm2(relation,term)
         t.parent = rt? rt.term1.id : null
 
         t.attr = [ "id" : term.id, "type" : term.class]
@@ -82,7 +83,7 @@ class Ontology extends SequenceDomain implements Serializable{
         term.relationTerm1.each() { relationTerm->
             if (relationTerm.getRelation().getName() == RelationTerm.names.PARENT) {
                 isFolder = true
-                def child = branch(relationTerm.getTerm2())
+                def child = branch(relationTerm.getTerm2(),relation)
                 t.children << child
             }
         }
@@ -94,6 +95,11 @@ class Ontology extends SequenceDomain implements Serializable{
         t.isFolder = isFolder
         t.hideCheckbox = isFolder
         return t
+    }
+
+    def getIdUser() {
+        if(this.userId) return this.userId
+        else return this.user?.id
     }
 
     static void registerMarshaller() {
@@ -109,8 +115,7 @@ class Ontology extends SequenceDomain implements Serializable{
             returnArray['isFolder'] = true
             returnArray['key'] = it.id
             returnArray['hideCheckbox'] = true
-            if(it.userId) returnArray['user'] = it.userId
-            else returnArray['user'] = it.user?.id
+            returnArray['user'] = it.getIdUser()
             returnArray['state'] = "open"
 
             if(it.version!=null){
