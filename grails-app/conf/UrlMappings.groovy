@@ -56,7 +56,6 @@ class UrlMappings {
           action = [GET:"listByUser"]
         }
 
-
         /* Group */
         "/api/group/$idgroup/image"(controller:"restAbstractImageGroup"){
             action = [GET: "listAbstractImageByGroup"]

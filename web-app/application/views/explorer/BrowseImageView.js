@@ -273,8 +273,11 @@ var BrowseImageView = Backbone.View.extend({
          );
          //baseLayer.transitionEffect = 'resize';
 
-         var otsuURLS = _.map(zoomify_urls, function (url){ return "http://localhost:8080/cytomine-web/proxy/otsu?url="+url;});
-         var anotherLayer = new OpenLayers.Layer.Zoomify( "Otsu", otsuURLS,
+         var otsuURLS = _.map(zoomify_urls, function (url){ return "proxy/otsu?url="+url;});
+         var otsuLayer = new OpenLayers.Layer.Zoomify( "Otsu", otsuURLS,
+             new OpenLayers.Size( metadata.width, metadata.height ) );
+         var binaryURLS = _.map(zoomify_urls, function (url){ return "proxy/binary?url="+url;});
+         var binaryLayer = new OpenLayers.Layer.Zoomify( "Binary", binaryURLS,
              new OpenLayers.Size( metadata.width, metadata.height ) );
 
          var layerSwitcher = self.createLayerSwitcher();
@@ -297,7 +300,16 @@ var BrowseImageView = Backbone.View.extend({
                new OpenLayers.Control.Navigation(),
                new OpenLayers.Control.PanZoomBar(),
                new OpenLayers.Control.MousePosition(),
-               new OpenLayers.Control.KeyboardDefaults()]
+               new OpenLayers.Control.KeyboardDefaults()],
+            eventListeners: {
+               //"moveend": mapEvent,
+               "zoomend": function (event) {
+                  var map = event.object;
+                  //alert(map.getZoom() + " - " + self.model.get("magnification"));
+               }
+               /*"changelayer": mapLayerChanged,
+               "changebaselayer": mapBaseLayerChanged*/
+            }
          };
 
          var overviewMap = new OpenLayers.Layer.Image(
@@ -330,7 +342,8 @@ var BrowseImageView = Backbone.View.extend({
             var height = $(window).height() - paddingTop;
             $("#map"+self.model.get('id')).css("height",height);
          });
-         self.addBaseLayer(anotherLayer);
+         self.addBaseLayer(binaryLayer);
+         self.addBaseLayer(otsuLayer);
          self.addBaseLayer(baseLayer);
          self.createOverviewMap();
          self.map.zoomToMaxExtent();
@@ -457,11 +470,6 @@ var BrowseImageView = Backbone.View.extend({
          self.getUserLayer().toggleControl("select");
          self.getUserLayer().disableHightlight();
       });
-      /*toolbar.find('input[id=freehand' + this.model.get('id') + ']').click(function () {
-       self.getUserLayer().controls.select.unselectAll();
-       self.getUserLayer().toggleControl("freehand");
-       self.getUserLayer().disableHightlight();
-       });*/
       toolbar.find('input[id=regular4' + this.model.get('id') + ']').click(function () {
          self.getUserLayer().controls.select.unselectAll();
          self.getUserLayer().setSides(4);
@@ -479,12 +487,17 @@ var BrowseImageView = Backbone.View.extend({
          self.getUserLayer().toggleControl("polygon");
          self.getUserLayer().disableHightlight();
       });
-      toolbar.find('input[id=magic' + this.model.get('id') + ']').click(function () {
+      toolbar.find('input[id=freehand' + this.model.get('id') + ']').click(function () {
          self.getUserLayer().controls.select.unselectAll();
-         self.getUserLayer().toggleControl("select");
-         self.getUserLayer().magicOnClick = true;
+         self.getUserLayer().toggleControl("freehand");
          self.getUserLayer().disableHightlight();
       });
+      /*toolbar.find('input[id=magic' + this.model.get('id') + ']').click(function () {
+       self.getUserLayer().controls.select.unselectAll();
+       self.getUserLayer().toggleControl("select");
+       self.getUserLayer().magicOnClick = true;
+       self.getUserLayer().disableHightlight();
+       });*/
       toolbar.find('input[id=modify' + this.model.get('id') + ']').click(function () {
          self.getUserLayer().toggleEdit();
          self.getUserLayer().toggleControl("modify");

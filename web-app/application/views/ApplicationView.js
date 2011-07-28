@@ -27,7 +27,7 @@ var ApplicationView = Backbone.View.extend({
     * @param options
     */
    initialize: function(options) {
-      this.initComponents();
+
    },
    /**
     * Render the html into the DOM element associated to the view
@@ -48,6 +48,7 @@ var ApplicationView = Backbone.View.extend({
     * Grab the layout and call ask for render
     */
    render : function(renderCallback) {
+      this.initComponents();
       var self = this;
       require([
          "text!application/templates/BaseLayout.tpl.html"

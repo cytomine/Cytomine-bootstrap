@@ -2,6 +2,7 @@ package be.cytomine.command
 
 import grails.converters.JSON
 import grails.converters.XML
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 
 class ServerController {
@@ -15,6 +16,7 @@ class ServerController {
     data.alive = true
     data.authenticated = springSecurityService.isLoggedIn()
     data.version = grailsApplication.metadata['app.version']
+    data.serverURL = ConfigurationHolder.config.grails.serverURL
 
     if (data.authenticated)
       data.user = springSecurityService.principal.id

@@ -225,11 +225,11 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         var self = this;
 
         var availableWidth = $(window).width()-250; //window - sidebar TO DO : remove this bad code !
-        var jqGridWidth = availableWidth * 0.45;
+        var jqGridWidth = availableWidth * 0.40;
        $("#"+self.listmanageproject).jqGrid({
             datatype: "local",
-            autowidth: jqGridWidth,
-            autoHeight:true,
+            width: jqGridWidth,
+            height:500,
             colNames:['id','base','thumb','filename','type','annotations','added'],
             colModel:[
                 {name:'id',index:'id', width:1, sorttype:"int"},
@@ -276,11 +276,14 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
     renderImageListAll : function() {
         var self = this;
         var lastsel;
+       var availableWidth = $(window).width()-250; //window - sidebar TO DO : remove this bad code !
+        var jqGridWidth = availableWidth * 0.40;
+
         var thumbColName = 'thumb';
         $("#"+self.listmanageall).jqGrid({
             datatype: "json",
             url : 'api/currentuser/image.json',
-            autowidth: true,
+            width: jqGridWidth,
             height:500,
             colNames:['id',thumbColName,'filename','mime','created'],
             colModel:[

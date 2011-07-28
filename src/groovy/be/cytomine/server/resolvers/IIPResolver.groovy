@@ -80,8 +80,8 @@ class IIPResolver extends Resolver{
         W : 1/(34092/400) = 0.01173295788
         H : 1/(34207/600) = 0.01754026954*/
         def scaledWidth = width
-        def targetWidth = 512
-        if (scaledWidth > targetWidth) {
+        def targetWidth = 1024
+        if (width > targetWidth) {
             def shouldScale = true
             while (shouldScale) {
                 def newWidth = Math.round(scaledWidth / 2)
@@ -91,8 +91,6 @@ class IIPResolver extends Resolver{
                 else shouldScale = false
             }
         }
-
-
         def x = 1/(baseImageWidth / topLeftX)
         def y = 1/(baseImageHeight / (baseImageHeight - topLeftY))
         def w = 1/(baseImageWidth / width)

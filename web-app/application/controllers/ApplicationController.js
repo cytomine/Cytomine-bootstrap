@@ -89,7 +89,7 @@ var ApplicationController = Backbone.Controller.extend({
 
          var successcallback =  function (data) {
             self.status.version = data.version;
-
+            self.status.serverURL = data.serverURL;
             if (data.authenticated) {
                new UserModel({id : data.user}).fetch({
                   success : function (model, response) {

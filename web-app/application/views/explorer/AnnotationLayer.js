@@ -4,22 +4,22 @@
 var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView, map) {
 
    var styleMap = new OpenLayers.StyleMap({
-          "default" : OpenLayers.Util.applyDefaults({fillColor: color, fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
-              OpenLayers.Feature.Vector.style["default"]),
-          "select" : OpenLayers.Util.applyDefaults({fillColor: "#25465D", fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
-              OpenLayers.Feature.Vector.style["default"])
-       });
+      "default" : OpenLayers.Util.applyDefaults({fillColor: color, fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
+          OpenLayers.Feature.Vector.style["default"]),
+      "select" : OpenLayers.Util.applyDefaults({fillColor: "#25465D", fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
+          OpenLayers.Feature.Vector.style["default"])
+   });
    this.ontologyTreeView = ontologyTreeView;
    this.name = name;
    this.map = map,
        this.imageID = imageID;
    this.userID = userID;
    this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
-          styleMap: styleMap,
-          rendererOptions: {
-             zIndexing: true
-          }
-       });
+      styleMap: styleMap,
+      rendererOptions: {
+         zIndexing: true
+      }
+   });
 
    this.features = [];
    this.controls = null;
@@ -48,82 +48,83 @@ AnnotationLayer.prototype = {
       var self = this;
 
       this.vectorsLayer.events.on({
-             clickFeature : function (evt) {
+         clickFeature : function (evt) {
 
-             },
-             onSelect : function (evt) {
+         },
+         onSelect : function (evt) {
 
-             },
-             featureselected: function (evt) {
+         },
+         featureselected: function (evt) {
 
 
-                if (!self.measureOnSelect) {
-                   self.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
+            if (!self.measureOnSelect) {
+               self.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
 
-                   if (self.deleteOnSelect == true) {
-                      self.removeSelection();
-                   } else {
-                     self.showPopup(map, evt);
-                   }
-                }
-                else self.showPopupMeasure(map, evt);
+               if (self.deleteOnSelect == true) {
+                  self.removeSelection();
+               } else {
+                  self.showPopup(map, evt);
+               }
+            }
+            else self.showPopupMeasure(map, evt);
 
-             },
-             'featureunselected': function (evt) {
+         },
+         'featureunselected': function (evt) {
 
-                if (self.measureOnSelect) self.vectorsLayer.removeFeatures(evt.feature);
+            if (self.measureOnSelect) self.vectorsLayer.removeFeatures(evt.feature);
 
-                if (self.dialog != null) self.dialog.destroy();
+            if (self.dialog != null) self.dialog.destroy();
 
-                self.ontologyTreeView.clear();
-                self.ontologyTreeView.clearAnnotation();
-                self.clearPopup(map, evt);
-                //alias.ontologyTreeView.refresh(null);
-             },
-             'featureadded': function (evt) {
+            self.ontologyTreeView.clear();
+            self.ontologyTreeView.clearAnnotation();
+            self.clearPopup(map, evt);
+            //alias.ontologyTreeView.refresh(null);
+         },
+         'featureadded': function (evt) {
 
-                /* Check if feature must throw a listener when it is added
-                 * true: annotation already in database (no new insert!)
-                 * false: new annotation that just have been draw (need insert)
-                 * */
-                if (!self.measureOnSelect) {
-                   if (evt.feature.attributes.listener != 'NO') {
+            /* Check if feature must throw a listener when it is added
+             * true: annotation already in database (no new insert!)
+             * false: new annotation that just have been draw (need insert)
+             * */
+            if (!self.measureOnSelect) {
+               if (evt.feature.attributes.listener != 'NO') {
 
-                      evt.feature.attributes.measure = 'YES';
-                      self.addAnnotation(evt.feature);
-                   }
-                }
-                else {
-                   self.controls.select.unselectAll();
-                   self.controls.select.select(evt.feature);
-                }
+                  evt.feature.attributes.measure = 'YES';
+                  self.addAnnotation(evt.feature);
+               }
+            }
+            else {
+               self.controls.select.unselectAll();
+               self.controls.select.select(evt.feature);
+            }
 
-             },
-             'beforefeaturemodified': function (evt) {
+         },
+         'beforefeaturemodified': function (evt) {
 
-             },
-             'afterfeaturemodified': function (evt) {
+         },
+         'afterfeaturemodified': function (evt) {
 
-                self.updateAnnotation(evt.feature);
+            self.updateAnnotation(evt.feature);
 
-             },
-             'onDelete': function (feature) {
+         },
+         'onDelete': function (feature) {
 
-             }
-          });
+         }
+      });
    },
    initControls: function (map, selectFeature) {
       /*if (isOwner) { */
+
       this.controls = {
-         'freehand': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
+         'freehand': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon, {handlerOptions: {freehand: true}}),
          'point': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
          'line': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
          'polygon': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon),
          'regular': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.RegularPolygon, {
-                handlerOptions: {
-                   sides: 5
-                }
-             }),
+            handlerOptions: {
+               sides: 5
+            }
+         }),
          'modify': new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
          'select': selectFeature
       }
@@ -145,14 +146,14 @@ AnnotationLayer.prototype = {
 
       var self = this;
       new AnnotationCollection({user : this.userID, image : this.imageID, term: undefined}).fetch({
-             success : function (collection, response) {
-                collection.each(function(annotation) {
-                   var feature = self.createFeatureFromAnnotation(annotation);
-                   self.addFeature(feature);
-                });
-                browseImageView.layerLoadedCallback(self);
-             }
-          });
+         success : function (collection, response) {
+            collection.each(function(annotation) {
+               var feature = self.createFeatureFromAnnotation(annotation);
+               self.addFeature(feature);
+            });
+            browseImageView.layerLoadedCallback(self);
+         }
+      });
       browseImageView.addVectorLayer(this, this.userID);
    },
    addFeature: function (feature) {
@@ -209,35 +210,35 @@ AnnotationLayer.prototype = {
             return;
          }
          new AnnotationModel({id : evt.feature.attributes.idAnnotation}).fetch({
-                success : function (model, response) {
-                   var json = model.toJSON()
-                   //username
-                   json.username = window.app.models.users.get(json.user).prettyName();
+            success : function (model, response) {
+               var json = model.toJSON()
+               //username
+               json.username = window.app.models.users.get(json.user).prettyName();
 
-                   //term
-                   var terms = new Array();
-                   _.each(json.term,function(idTerm){
-                      var tpl = _.template("<a href='#ontology/{{idOntology}}/{{idTerm}}'>{{termName}}</a>", {idOntology : window.app.status.currentProjectModel.get('ontology'), idTerm : idTerm, termName : window.app.status.currentTermsCollection.get(idTerm).get('name')});
-                      terms.push(tpl);
+               //term
+               var terms = new Array();
+               _.each(json.term,function(idTerm){
+                  var tpl = _.template("<a href='#ontology/{{idOntology}}/{{idTerm}}'>{{termName}}</a>", {idOntology : window.app.status.currentProjectModel.get('ontology'), idTerm : idTerm, termName : window.app.status.currentTermsCollection.get(idTerm).get('name')});
+                  terms.push(tpl);
 
-                   });
-                   json.terms = terms.join(", ");
+               });
+               json.terms = terms.join(", ");
 
-                   var content = _.template(tpl, json);
-                   self.popup = new OpenLayers.Popup("",
-                       new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
-                       new OpenLayers.Size(250, 100),
-                       content,
-                       false);
-                   self.popup.setBackgroundColor("transparent");
-                   self.popup.setBorder(0);
-                   self.popup.padding = 0;
+               var content = _.template(tpl, json);
+               self.popup = new OpenLayers.Popup("",
+                   new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
+                   new OpenLayers.Size(250, 100),
+                   content,
+                   false);
+               self.popup.setBackgroundColor("transparent");
+               self.popup.setBorder(0);
+               self.popup.padding = 0;
 
-                   evt.feature.popup = self.popup;
-                   self.popup.feature = evt.feature;
-                   map.addPopup(self.popup);
-                }
-             });
+               evt.feature.popup = self.popup;
+               self.popup.feature = evt.feature;
+               map.addPopup(self.popup);
+            }
+         });
       });
 
    },
@@ -304,82 +305,82 @@ AnnotationLayer.prototype = {
       var geomwkt = format.write(feature);
       var alias = this;
       var annotation = new AnnotationModel({
-             //"class": "be.cytomine.project.Annotation",
-             name: "",
-             location: geomwkt,
-             image: this.imageID,
-             parse: function(response) {
+         //"class": "be.cytomine.project.Annotation",
+         name: "",
+         location: geomwkt,
+         image: this.imageID,
+         parse: function(response) {
 
-                window.app.view.message("Annotation", response.message, "");
-                return response.annotation;
-             }
-          });
+            window.app.view.message("Annotation", response.message, "");
+            return response.annotation;
+         }
+      });
 
 
       new BeginTransactionModel({}).save({}, {
-             success: function (model, response) {
+         success: function (model, response) {
 
-                annotation.save(annotation.toJSON(), {
-                       success: function (annotation, response) {
+            annotation.save(annotation.toJSON(), {
+               success: function (annotation, response) {
 
 
-                          var annotationID = response.annotation.id;
-                          var message = response.message;
+                  var annotationID = response.annotation.id;
+                  var message = response.message;
 
-                          var terms = alias.ontologyTreeView.getTermsChecked();
+                  var terms = alias.ontologyTreeView.getTermsChecked();
 
-                          if (terms.length == 0) {
-                             alias.addTermCallback(0, 0, feature, annotationID, message, undefined);
-                          }
+                  if (terms.length == 0) {
+                     alias.addTermCallback(0, 0, feature, annotationID, message, undefined);
+                  }
 
-                          var counter = 0;
-                          _.each(terms, function (idTerm) {
-                             new AnnotationTermModel({
-                                    term: idTerm,
-                                    annotation: response.annotation.id
-                                 }).save(null, {success : function (termModel, response) {
-                                    alias.addTermCallback(terms.length, ++counter, feature, annotationID, message, idTerm);
-                                 }});
-                          });
+                  var counter = 0;
+                  _.each(terms, function (idTerm) {
+                     new AnnotationTermModel({
+                        term: idTerm,
+                        annotation: response.annotation.id
+                     }).save(null, {success : function (termModel, response) {
+                        alias.addTermCallback(terms.length, ++counter, feature, annotationID, message, idTerm);
+                     }});
+                  });
 
-                       },
-                       error: function (model, response) {
-                          var json = $.parseJSON(response.responseText);
-                          window.app.view.message("Add annotation", "error:" + json.errors, "");
-                       }
-                    });
+               },
+               error: function (model, response) {
+                  var json = $.parseJSON(response.responseText);
+                  window.app.view.message("Add annotation", "error:" + json.errors, "");
+               }
+            });
 
-             },
-             error: function (model, response) {
+         },
+         error: function (model, response) {
 
-             }
-          });
+         }
+      });
 
    },
    addTermCallback : function(total, counter, oldFeature, annotationID, message, idTerm) {
       if (counter < total) return;
       var self = this;
       new AnnotationModel({id:annotationID}).fetch({
-             success : function (annotation, response) {
-                self.vectorsLayer.removeFeatures([oldFeature]);
-                var newFeature = self.createFeatureFromAnnotation(annotation);
-                self.addFeature(newFeature);
-                self.controls.select.unselectAll();
-                self.controls.select.select(newFeature);
-                window.app.view.message("Add annotation", message, "");
-                new EndTransactionModel({}).save();
+         success : function (annotation, response) {
+            self.vectorsLayer.removeFeatures([oldFeature]);
+            var newFeature = self.createFeatureFromAnnotation(annotation);
+            self.addFeature(newFeature);
+            self.controls.select.unselectAll();
+            self.controls.select.select(newFeature);
+            window.app.view.message("Add annotation", message, "");
+            new EndTransactionModel({}).save();
 
-                self.browseImageView.refreshAnnotationTabs(undefined);
-             },
-             error : function(model, response) {
+            self.browseImageView.refreshAnnotationTabs(undefined);
+         },
+         error : function(model, response) {
 
-                new EndTransactionModel({}).save();
-             }
-          });
+            new EndTransactionModel({}).save();
+         }
+      });
 
    },
    createFeatureFromAnnotation :function (annotation) {
-      var multipleTermColor = "#eeeeee";
+      var multipleTermColor = "#000000";
       var format = new OpenLayers.Format.WKT();
       var point = format.read(annotation.get("location"));
       var geom = point.geometry;
@@ -396,7 +397,6 @@ AnnotationLayer.prototype = {
             fillColor :  multipleTermColor,
             fillOpacity : 0.6
          }
-
       } else {
          _.each(annotation.get("term"), function(idTerm){
             feature.style =  {
@@ -409,51 +409,51 @@ AnnotationLayer.prototype = {
 
       return feature;
    },
-    removeAnnotation : function(feature) {
-        var terms = this.ontologyTreeView.getTermsChecked();
-        var idAnnotation = feature.attributes.idAnnotation;
-        this.removeFeature(feature);
-        this.controls.select.unselectAll();
-        this.vectorsLayer.removeFeatures([feature]);
-        var self = this;
+   removeAnnotation : function(feature) {
+      var terms = this.ontologyTreeView.getTermsChecked();
+      var idAnnotation = feature.attributes.idAnnotation;
+      this.removeFeature(feature);
+      this.controls.select.unselectAll();
+      this.vectorsLayer.removeFeatures([feature]);
+      var self = this;
 
 
-        new AnnotationTermCollection({idAnnotation:idAnnotation}).fetch({success:function (collection, response) {
+      new AnnotationTermCollection({idAnnotation:idAnnotation}).fetch({success:function (collection, response) {
 
-            new AnnotationModel({id:feature.attributes.idAnnotation}).destroy({
-                success: function (model, response) {
-                    window.app.view.message("Annotation", response.message, "");
-                    self.browseImageView.refreshAnnotationTabs(undefined);
-                    console.log("collection="+collection.length);
-                    /*collection.each(function(term) {
-                        console.log("term="+term.id);
+         new AnnotationModel({id:feature.attributes.idAnnotation}).destroy({
+            success: function (model, response) {
+               window.app.view.message("Annotation", response.message, "");
+               self.browseImageView.refreshAnnotationTabs(undefined);
+               console.log("collection="+collection.length);
+               /*collection.each(function(term) {
+                console.log("term="+term.id);
 
 
-                    });*/
-                   self.browseImageView.refreshAnnotationTabs(undefined);
+                });*/
+               self.browseImageView.refreshAnnotationTabs(undefined);
 
-                },
-                error: function (model, response) {
-                    var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Annotation", json.errors, "");
-                }
-            });
-
-        }});
-
-    },
-
-    /*Modifiy annotation on database*/
-    updateAnnotation: function (feature) {
-        var format = new OpenLayers.Format.WKT();
-        var geomwkt = format.write(feature);
-        new AnnotationModel({id:feature.attributes.idAnnotation}).fetch({
-            success : function(model, response) {
-                model.set({location : geomwkt});
-                model.save();  //TODO : callback success-error
+            },
+            error: function (model, response) {
+               var json = $.parseJSON(response.responseText);
+               window.app.view.message("Annotation", json.errors, "");
             }
-        });
-    },
+         });
+
+      }});
+
+   },
+
+   /*Modifiy annotation on database*/
+   updateAnnotation: function (feature) {
+      var format = new OpenLayers.Format.WKT();
+      var geomwkt = format.write(feature);
+      new AnnotationModel({id:feature.attributes.idAnnotation}).fetch({
+         success : function(model, response) {
+            model.set({location : geomwkt});
+            model.save();  //TODO : callback success-error
+         }
+      });
+   },
    /** Triggered when add new feature **/
    /*onFeatureAdded : function (evt) {
 
@@ -597,26 +597,26 @@ AnnotationLayer.prototype = {
       self.deleteOnSelect = false;
 
       var annotation = new AnnotationModel({
-             id: idAnnotation
-          }).fetch({
-             success: function (model) {
-                var feature = self.createFeatureFromAnnotation(model);
-                /*var format = new OpenLayers.Format.WKT();
-                var location = format.read(model.get('location'));
-                var feature = new OpenLayers.Feature.Vector(location.geometry);
-                feature.attributes = {
-                   idAnnotation: model.get('id'),
-                   listener: 'NO',
-                   measure : 'NO',
-                   importance: 10
-                };*/
-                self.addFeature(feature);
-                self.selectFeature(feature);
-                self.controls.select.activate();
-                self.deleteOnSelect = deleteOnSelectBackup;
-                self.browseImageView.refreshAnnotationTabs(undefined);
-             }
-          });
+         id: idAnnotation
+      }).fetch({
+         success: function (model) {
+            var feature = self.createFeatureFromAnnotation(model);
+            /*var format = new OpenLayers.Format.WKT();
+             var location = format.read(model.get('location'));
+             var feature = new OpenLayers.Feature.Vector(location.geometry);
+             feature.attributes = {
+             idAnnotation: model.get('id'),
+             listener: 'NO',
+             measure : 'NO',
+             importance: 10
+             };*/
+            self.addFeature(feature);
+            self.selectFeature(feature);
+            self.controls.select.activate();
+            self.deleteOnSelect = deleteOnSelectBackup;
+            self.browseImageView.refreshAnnotationTabs(undefined);
+         }
+      });
 
    },
    annotationRemoved: function (idAnnotation) {
