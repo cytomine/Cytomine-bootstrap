@@ -45,7 +45,6 @@ var ProjectView = Backbone.View.extend({
           var self = this;
           //TODO: project must be filter by user?
           var idUser =  undefined;
-
           
           //_.each(self.projectList, function(panel){ panel.refresh(); });
           if(self.addSlideDialog!=null) self.addSlideDialog.refresh();

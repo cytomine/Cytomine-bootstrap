@@ -1,9 +1,11 @@
 var AddProjectDialog = Backbone.View.extend({
        projectsPanel : null,
        addProjectDialog : null,
+       ontologies : null,
        initialize: function(options) {
           this.container = options.container;
           this.projectsPanel = options.projectsPanel;
+          this.ontologies = options.ontologies;
           _.bindAll(this, 'render');
        },
        render : function() {
@@ -36,7 +38,7 @@ var AddProjectDialog = Backbone.View.extend({
 
 
           $("#projectontology").empty();
-          window.app.models.ontologies.each(function(ontology){
+          self.ontologies.each(function(ontology){
              var choice = _.template(ontologiesChoicesRadioTpl, {id:ontology.id,name:ontology.get("name")});
              $("#projectontology").append(choice);
           });

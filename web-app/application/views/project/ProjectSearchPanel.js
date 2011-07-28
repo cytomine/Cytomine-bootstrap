@@ -255,7 +255,7 @@ var ProjectSearchPanel = Backbone.View.extend({
 
       var self = this;
       $('#addproject').remove();
-      self.addProjectDialog = new AddProjectDialog({projectsPanel:self.projectsPanel,el:self.el}).render();
+      self.addProjectDialog = new AddProjectDialog({projectsPanel:self.projectsPanel,el:self.el,ontologies:self.ontologies}).render();
    },
    /**
     * Show only project that match with params
@@ -287,34 +287,6 @@ var ProjectSearchPanel = Backbone.View.extend({
 
       //show project from "projects" (and hide the other) in project view
       self.container.showProjects(projects);
-   },
-   filterProjectsOLD : function(
-       searchText,
-       searchOntologies,
-       searchNumberOfImages,
-       searchNumberOfSlides,
-       searchNumberOfAnnotations) {
-
-
-
-      var self = this;
-      self.projects = new ProjectCollection({user : self.userID}).fetch({
-         success : function (collection, response) {
-            var projects =  new ProjectCollection(collection.models);
-
-            //each search function takes a search data and a collection and it return a collection without elem that
-            //don't match with data search
-            projects = self.filterByProjectsByName(searchText,projects);
-            projects = self.filterProjectsByOntology(searchOntologies,projects);
-            projects = self.filterProjectsByNumberOfImages(searchNumberOfImages,projects);
-            projects = self.filterProjectsByNumberOfSlides(searchNumberOfSlides,projects);
-            projects = self.filterProjectsByNumberOfAnnotations(searchNumberOfAnnotations,projects);
-            //add here filter function
-
-            //show project from "projects" (and hide the other) in project view
-            self.container.showProjects(projects);
-         }
-      });
    },
    filterByProjectsByName : function(searchText,projectOldList) {
 

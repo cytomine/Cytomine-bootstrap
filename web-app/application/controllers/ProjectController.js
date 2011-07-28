@@ -19,6 +19,7 @@ var ProjectController = Backbone.Controller.extend({
                             el:$("#warehouse > .project"),
                             container : window.app.view.components.warehouse
                         }).render();
+
                         self.view.container.views.project = self.view;
 
                         if (_.isFunction(callback)) callback.call();
