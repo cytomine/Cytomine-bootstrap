@@ -37,18 +37,36 @@ class BootStrapData {
     /* Users */
     static def usersSamples = [
             [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be',
-                    group : [[name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-LBA"], [name : "CELLSOLUTIONS-BESTCYTE-CERVIX"], [name : "ULG-TEST-PHILIPS"], [name : "ULG-BMGG-ZEBRA_CTL"], [name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'password', color : "#FF0000"],
+                    group : [[name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-LBA"], [name : "CELLSOLUTIONS-BESTCYTE-CERVIX"], [name : "ULG-TEST-PHILIPS"], [name : "ULG-BMGG-ZEBRA_CTL"], [name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'rM$2011', color : "#FF0000"],
             [username : 'lrollus', firstname : 'Loïc', lastname : 'Rollus', email : 'lrollus@ulg.ac.be',
-                    group : [[name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-LBA"], [name : "CELLSOLUTIONS-BESTCYTE-CERVIX"], [name : "ULG-TEST-PHILIPS"], [name : "ULG-BMGG-ZEBRA_CTL"], [name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'password', color : "#00FF00"],
+                    group : [[name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-LBA"], [name : "CELLSOLUTIONS-BESTCYTE-CERVIX"], [name : "ULG-TEST-PHILIPS"], [name : "ULG-BMGG-ZEBRA_CTL"], [name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'sB$2011', color : "#00FF00"],
             [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be',
-                    group : [[name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-LBA"], [name : "CELLSOLUTIONS-BESTCYTE-CERVIX"], [name : "ULG-TEST-PHILIPS"], [name : "ULG-BMGG-ZEBRA_CTL"], [name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'password', color : "#0000FF"] ,
+                    group : [[name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-LBA"], [name : "CELLSOLUTIONS-BESTCYTE-CERVIX"], [name : "ULG-TEST-PHILIPS"], [name : "ULG-BMGG-ZEBRA_CTL"], [name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'lR$2011', color : "#0000FF"] ,
             [username : 'lbtd', firstname : 'LB', lastname : 'TD', email : 'mymail@ulg.ac.be',
                     group : [ [name : "ULG-LBTD-NEO04"], [name : "ULG-LBTD-NEO13"], [name : "ULG-LBTD-LBA"], [name : "ULG-TEST-PHILIPS"]], password : 'lbtd', color : "#00FFFF"],
             [username : 'anapath', firstname : 'Ana', lastname : 'Path', email : 'mymail@ulg.ac.be',
                     group : [[name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"], [name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"]], password : 'anapath', color : "#00FFFF"],
             [username : 'stern', firstname : 'Olivier', lastname : 'Stern', email : 'mymail@ulg.ac.be',
-                    group : [[ name :"ULG-BMGG-ZEBRA_CTL"]], password : 'password', color : "#00FFFF"]
+                    group : [[ name :"ULG-BMGG-ZEBRA_CTL"]], password : 'oS$2011', color : "#00FFFF"],
+            [username : 'dcataldo', firstname : 'Didier', lastname : 'Cataldo', email : 'didier.cataldo@ulg.ac.be',
+                    group : [[name : "ULG-LBTD-NEO04"],[name : "ULG-LBTD-NEO13"],[name : "ULG-LBTD-LBA"]], password : 'dC$2011', color : "#00FFFF"],
+            [username : 'fperin', firstname : 'Fabienne', lastname : 'Perin', email : 'fabienne.perin@gmail.com',
+                    group : [[name : "ULG-LBTD-NEO04"],[name : "ULG-LBTD-NEO13"],[name : "ULG-LBTD-LBA"]], password : 'fP$2011', color : "#00FFFF"],
+            [username : 'cfink', firstname : 'Christine', lastname : 'Fink', email : 'christine.fink@ulg.ac.be',
+                    group : [[name : "ULG-LBTD-NEO04"],[name : "ULG-LBTD-NEO13"],[name : "ULG-LBTD-LBA"]], password : 'cF$2011', color : "#00FFFF"],
+            [username : 'nrocks', firstname : 'Natacha', lastname : 'Rocks', email : 'nat.rocks@ulg.ac.be',
+                    group : [[name : "ULG-LBTD-NEO04"],[name : "ULG-LBTD-NEO13"],[name : "ULG-LBTD-LBA"]], password : 'nR$2011', color : "#00FFFF"],
 
+            [username : 'isalmon', firstname : 'Isabelle', lastname : 'Salmon', email : 'Isabelle.Salmon@erasme.ulb.ac.be',
+                    group : [[name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"],[name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"] ],
+                    password : 'iS$2011', color : "#00FFFF"],
+
+            [username : 'xmoleslopez', firstname : 'Xavier', lastname : 'Moles Lopez', email : 'xmoleslo@ulb.ac.be',
+                    group : [[name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"],[name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"] ],
+                    password : 'xL$2011', color : "#00FFFF"],
+            [username : 'iroland', firstname : 'Isabelle', lastname : 'Roland', email : 'Isabelle.Roland@erasme.ulb.ac.be',
+                    group : [[name : "ULB-Anapath-ASP"], [name : "ULB-Anapath-Frottis-EBUS"], [name : "ULB-Anapath-LBA-papa"], [name : "ULB-Anapath-LBA-CB"], [name : "ULB-Anapath-LBA-DQ"],[name : "ULB-Anapath-Frottis-PAPA"], [name : "ULB-Anapath-TPP"] ],
+                    password : 'iR$2011', color : "#00FFFF"]
     ]
 
     /* Scanners */
