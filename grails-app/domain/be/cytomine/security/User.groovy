@@ -59,7 +59,7 @@ class User extends SecUser {
 
     if(userGroup==null || userGroup.size()==0) return []
     def projects = c {
-      inList("group.id", userGroup.collect {it.group.id})
+      inList("group.id", userGroup.collect {it.groupId})
       projections {
         groupProperty("project")
       }
