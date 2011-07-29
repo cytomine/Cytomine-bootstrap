@@ -10,6 +10,7 @@ import be.cytomine.rest.UrlApi
 
 import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
+import be.cytomine.image.AbstractImage
 
 class Annotation extends SequenceDomain implements Serializable {
 
@@ -69,6 +70,14 @@ class Annotation extends SequenceDomain implements Serializable {
             it.term
         }
     }
+    private def getTermsname() {
+        return annotationTerm.collect{
+            it.term.name
+        }
+    }
+
+
+
     def termsId() {
         return annotationTerm.collect{
             it.getIdTerm()
@@ -80,6 +89,9 @@ class Annotation extends SequenceDomain implements Serializable {
     }
 
     String imageFileName() {
+        return this.image?.baseImage?.getFilename()
+    }
+    private def getFilename() {
         return this.image?.baseImage?.getFilename()
     }
 
@@ -120,6 +132,20 @@ class Annotation extends SequenceDomain implements Serializable {
         def boundaries = getBoundaries()
         return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height)
     }
+
+    def crop = { domain, value ->
+
+    }
+
+
+    def getURLForCrop() {
+        return UrlApi.getAnnotationCropWithAnnotationId(this.id)
+    }
+    def getURLForServerGoTo() {
+        return UrlApi.getAnnotationURL(this.image.getIdProject(),this.image.id,this.id)
+    }
+
+
 
     def getCropURL(int zoom) {
         def boundaries = getBoundaries()
@@ -168,20 +194,22 @@ class Annotation extends SequenceDomain implements Serializable {
     }
 
     def getIdImage() {
-         if(this.imageId) return this.imageId
-         else return this.image?.id
+        if(this.imageId) return this.imageId
+        else return this.image?.id
     }
 
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + Annotation.class
         JSON.registerObjectMarshaller(Annotation) {
             def returnArray = [:]
+            ImageInstance imageinstance = it.image
+            AbstractImage image = imageinstance?.baseImage
             returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['name'] = it.name!=""? it.name : "Annotation " + it.id
             returnArray['location'] = it.location.toString()
             returnArray['image'] = it.getIdImage()
-            returnArray['imageFilename'] = it.image? it.image.baseImage.filename : null
+            returnArray['imageFilename'] = image?.filename
             returnArray['zoomLevel'] = it.zoomLevel
             returnArray['channels'] = it.channels
             if(it.userId) returnArray['user'] = it.userId
@@ -197,8 +225,7 @@ class Annotation extends SequenceDomain implements Serializable {
             returnArray['term'] = it.termsId()
 
             returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
-            //returnArray['cropURL'] = it.getCropURL()
-
+            returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.getIdProject(),imageinstance.id,it.id)
             return returnArray
         }
     }

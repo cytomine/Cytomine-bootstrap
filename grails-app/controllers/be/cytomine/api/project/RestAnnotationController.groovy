@@ -23,12 +23,14 @@ import be.cytomine.command.relationterm.DeleteRelationTermCommand
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.command.annotationterm.DeleteAnnotationTermCommand
 import be.cytomine.ontology.Term
-import be.cytomine.command.term.DeleteTermCommand;
+import be.cytomine.command.term.DeleteTermCommand
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import be.cytomine.rest.UrlApi;
 
 class RestAnnotationController extends RestController {
 
     def springSecurityService
-
+    def exportService
 
     def list = {
         def data = Annotation.list()
@@ -66,6 +68,88 @@ class RestAnnotationController extends RestController {
         if(image && user) responseSuccess(Annotation.findAllByImageAndUser(image,user))
         else if(!user) responseNotFound("User",params.idUser)
         else if(!image) responseNotFound("Image",params.idImage)
+    }
+
+    def downloadDocumentByProject = {
+        // Export service provided by Export plugin
+
+        log.info "List with id project:"+params.id +" params.format="+params.format
+        Project project = Project.read(params.id)
+        if(project)
+        {
+            if(params?.format && params.format != "html"){
+                response.contentType = ConfigurationHolder.config.grails.mime.types[params.format]
+                response.setHeader("Content-disposition", "attachment; filename=annotations_project${project.id}.${params.format}")
+                log.info "List annotation size="+ project.annotations().size()
+
+
+
+                List fields = ["id","area","perimeter","centroid","image","filename","zoomLevel","user","created","updated","annotationTerm","URLForCrop","URLForServerGoTo",]
+                Map labels = [
+                        "id": "Id",
+                        "area":"Area",
+                        "perimeter" : "Perimeter",
+                        "centroid" : "Centroid",
+                        "image":"Image Id",
+                        "filename":"Image Filename",
+                        "zoomLevel":"Zoom Level",
+                        "user":"User",
+                        "created":"Created",
+                        "updated":"Last update",
+                        "annotationTerm":"Term list",
+                        "URLForCrop":"View annotation picture",
+                        "URLForServerGoTo":"View annotation on image"]
+
+                /* Formatter closure in previous releases
+                def upperCase = { value ->
+                    return value.toUpperCase()
+                }
+                */
+
+                // Formatter closure
+                def wkt = { domain, value ->
+                    return domain.location.toString()
+                }
+                def area = { domain, value ->
+                    return domain.computeArea()
+                }
+                def perim = { domain, value ->
+                    return domain.computePerimeter()
+                }
+                def centroid = { domain, value ->
+                    return domain.getCentroid()
+                }
+                def imageId = { domain, value ->
+                    return domain.image.id
+                }
+                def imageName = { domain, value ->
+                    return domain.getFilename()
+                }
+
+                def user = { domain, value ->
+                    return domain.user.username
+                }
+
+                def term = { domain, value ->
+                    //return domain.termsName()
+                    return domain.getTermsname()
+                }
+
+                def crop = { domain, value ->
+                    return UrlApi.getAnnotationCropWithAnnotationId(domain.id)
+                }
+
+                def server = { domain, value ->
+                    return UrlApi.getAnnotationURL(domain.image.getIdProject(),domain.image.id,domain.id)
+                }
+                Map formatters = [area : area,perimeter:perim, centroid:centroid,image:imageId,user:user,annotationTerm:term,URLForCrop:crop,URLForServerGoTo:server,filename:imageName]
+
+                exportService.export(params.format, response.outputStream,project.annotations(), fields, labels, formatters, ["csv.encoding":"UTF-8","separator":";"])
+            }
+            log.info "annotationInstanceList"
+            [ annotationInstanceList: project.annotations() ]
+        }
+        else responseNotFound("Project",params.id)
     }
 
     def show = {

@@ -54,4 +54,8 @@ class UrlApi {
     static def getAnnotationCropWithAnnotationId(Long idAnnotation) {
         return  ConfigurationHolder.config.grails.serverURL + '/api/annotation/' + idAnnotation +'/crop.jpg'
     }
+
+    static def getAnnotationURL(Long idProject, Long idImage, Long idAnnotation) {
+        return  ConfigurationHolder.config.grails.serverURL + '/#tabs-image-' + idProject + "-" + idImage + "-" +  idAnnotation
+    }
 }

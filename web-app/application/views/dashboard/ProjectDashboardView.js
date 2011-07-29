@@ -140,6 +140,14 @@ var ProjectDashboardView = Backbone.View.extend({
                         self.refreshSelectedTerms();
                     });
 
+                     $(self.el).find("#downloadAnnotationsCSV").button();
+                    $(self.el).find("#downloadAnnotationsCSV").click(function(){
+                       window.location = "/api/project/"+self.model.id+"/annotation/download?format=csv";
+                    });
+                     $(self.el).find("#downloadAnnotationsExcel").button();
+                    $(self.el).find("#downloadAnnotationsExcel").click(function(){
+                       window.location = "/api/project/"+self.model.id+"/annotation/download?format=excel";
+                    });
 
                 }
             });

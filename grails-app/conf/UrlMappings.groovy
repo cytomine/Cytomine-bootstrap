@@ -83,6 +83,9 @@ class UrlMappings {
         "/api/project/$id/annotation"(controller: "restAnnotation"){
             action = [GET:"listByProject"]
         }
+        "/api/project/$id/annotation/download"(controller: "restAnnotation"){
+            action = [GET:"downloadDocumentByProject"]
+        }
         "/api/project/$idproject/slide"(controller:"restProjectSlide"){
             action = [GET: "listSlideByProject"]
         }
