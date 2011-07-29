@@ -25,7 +25,9 @@ import be.cytomine.command.annotationterm.DeleteAnnotationTermCommand
 import be.cytomine.ontology.Term
 import be.cytomine.command.term.DeleteTermCommand
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import be.cytomine.rest.UrlApi;
+import be.cytomine.rest.UrlApi
+import org.perf4j.LoggingStopWatch
+import org.perf4j.StopWatch
 
 class RestAnnotationController extends RestController {
 
@@ -197,37 +199,38 @@ class RestAnnotationController extends RestController {
             Geometry annotationFull = new WKTReader().read(form);
             println "points=" + annotationFull.getNumPoints() + " " + annotationFull.getArea();
             println "annotationFull:"+annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
+             StopWatch stopWatch = new LoggingStopWatch();
             /**
              * Must be improve:
              * -Number of point depends on: size of annotation, times during the draw, ...
              * Sometimes bad perf because incrThreshold is too small (but too big: risk to have bad compression => recover (break;) => too many points)
              */
             float i = 0;
-            int max=200; //max loop
+            int max=500; //max loop (prevent infinite loop)
             float incrThreshold = 0.25f //increment threshold value
             if(annotationFull.getNumPoints()>500) {
                 while(annotationFull.getNumPoints()>75 && max>0)
                 {
                     lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull,i)
-                    println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
+                    println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints()
                     if(lastAnnotationFull.getNumPoints()<50) break;
                     annotationFull = lastAnnotationFull
-                    i=i+(incrThreshold*10); max--;
+                    i=i+(incrThreshold*5); max--;
                 }
             }else  if(annotationFull.getNumPoints()>250) {
                 while(annotationFull.getNumPoints()>50 && max>0)
                 {
                     lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull,i)
-                    println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
+                    println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints()
                     if(lastAnnotationFull.getNumPoints()<35) break;
                     annotationFull = lastAnnotationFull
-                    i=i+(incrThreshold*5); max--;
+                    i=i+(incrThreshold*2); max--;
                 }
             } else if(annotationFull.getNumPoints()>100) {
                 while(annotationFull.getNumPoints()>10 && max>0)
                 {
                     lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull,i)
-                    println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
+                    println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints()
                     if(lastAnnotationFull.getNumPoints()<6) break;
                     annotationFull = lastAnnotationFull
                     i=i+(incrThreshold); max--;
@@ -236,12 +239,13 @@ class RestAnnotationController extends RestController {
                 while(annotationFull.getNumPoints()>10 && max>0)
                 {
                     lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull,i)
-                    println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
+                    println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints()
                     if(lastAnnotationFull.getNumPoints()<6) break;
                     annotationFull = lastAnnotationFull
                     i=i+(incrThreshold); max--;
                 }
             }
+             stopWatch.stop("compress:");
             println "annotationFull good=" + i + " "+annotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
             json.location =  new WKTWriter().write(annotationFull)
         } catch(Exception e) {}
