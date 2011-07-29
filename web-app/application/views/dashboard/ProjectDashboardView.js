@@ -574,6 +574,7 @@ var ProjectDashboardView = Backbone.View.extend({
         $(self.el).append(html);
         window.app.controllers.browse.tabs.addDashboard(self);
         self.initTabs();
+        self.showImages();
     },
     initWidgets : function() {
         return; //do nothing actually. We have to keep positions in memory if we do that

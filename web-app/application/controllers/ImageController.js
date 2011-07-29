@@ -3,7 +3,7 @@ var ImageController = Backbone.Controller.extend({
 
    routes: {
       "image"            :   "image",
-      "image/p:page"     :   "image",
+      "image/p:page"     :   "image"
    },
 
    image : function(page) {
