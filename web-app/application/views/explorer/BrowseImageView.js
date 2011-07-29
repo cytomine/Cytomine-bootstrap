@@ -132,12 +132,24 @@ var BrowseImageView = Backbone.View.extend({
             click: function(event, ui){
                _.each(self.layers, function(layer){
                   if (layer.name != ui.value) return;
+                  if (ui.checked) {
+                     _.each(layer.vectorsLayer.features, function (feature) {
+                        if (feature.style.display != 'none') return;
+                        feature.style.display = undefined;
+                        layer.vectorsLayer.drawFeature(feature);
+                     });
+                  }
                   layer.vectorsLayer.setVisibility(ui.checked);
                });
             },
             checkAll: function(){
                _.each(self.layers, function(layer){
                   layer.vectorsLayer.setVisibility(true);
+                  _.each(layer.vectorsLayer.features, function (feature) {
+                     if (feature.style.display != 'none') return;
+                     feature.style.display = undefined;
+                     layer.vectorsLayer.drawFeature(feature);
+                  });
                });
             },
             uncheckAll: function(){
@@ -309,7 +321,7 @@ var BrowseImageView = Backbone.View.extend({
                   $("#zoomInfoPanel"+self.model.id).html(magnification + "X");
                }
                /*"changelayer": mapLayerChanged,
-               "changebaselayer": mapBaseLayerChanged*/
+                "changebaselayer": mapBaseLayerChanged*/
             }
          };
 

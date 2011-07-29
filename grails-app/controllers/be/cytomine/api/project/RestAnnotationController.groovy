@@ -78,6 +78,8 @@ class RestAnnotationController extends RestController {
         if(project)
         {
             if(params?.format && params.format != "html"){
+                def exporterIdentifier = params.format;
+                if (exporterIdentifier == "xls") exporterIdentifier = "excel"
                 response.contentType = ConfigurationHolder.config.grails.mime.types[params.format]
                 response.setHeader("Content-disposition", "attachment; filename=annotations_project${project.id}.${params.format}")
                 log.info "List annotation size="+ project.annotations().size()
@@ -142,9 +144,9 @@ class RestAnnotationController extends RestController {
                 def server = { domain, value ->
                     return UrlApi.getAnnotationURL(domain.image.getIdProject(),domain.image.id,domain.id)
                 }
-                Map formatters = [area : area,perimeter:perim, centroid:centroid,image:imageId,user:user,annotationTerm:term,URLForCrop:crop,URLForServerGoTo:server,filename:imageName]
+                Map formaters = [area : area,perimeter:perim, centroid:centroid,image:imageId,user:user,annotationTerm:term,URLForCrop:crop,URLForServerGoTo:server,filename:imageName]
 
-                exportService.export(params.format, response.outputStream,project.annotations(), fields, labels, formatters, ["csv.encoding":"UTF-8","separator":";"])
+                exportService.export(exporterIdentifier, response.outputStream,project.annotations(), fields, labels, formaters, ["csv.encoding":"UTF-8","separator":";"])
             }
             log.info "annotationInstanceList"
             [ annotationInstanceList: project.annotations() ]

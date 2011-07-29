@@ -203,8 +203,8 @@ AnnotationLayer.prototype = {
    hideAnnotation : function(idAnnotation) {
       var feature = this.getFeature(idAnnotation);
       this.controls.select.unselectAll();
-      this.vectorsLayer.drawFeature(feature, { display : 'none'});
-
+      feature.style.display = 'none';
+      this.vectorsLayer.drawFeature(feature);
       //alert("feature != null ? " + (feature.getVisibility()));
    },
    showPopup : function(map, evt) {

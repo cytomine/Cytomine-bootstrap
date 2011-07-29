@@ -56,9 +56,9 @@
         <button id="refreshAnnotations" type="button">Refresh</button>
         <button id="showAllAnnotations" type="button">Show all</button>
         <button id="hideAllAnnotations" type="button">Reset</button>
-        <button id="downloadAnnotationsCSV" type="button">Download CSV</button>
-        <button id="downloadAnnotationsExcel" type="button">Download Excel</button>
-        <button id="downloadAnnotationsPDF" type="button">Download PDF</button>
+        <a href="/api/project/{{id}}/annotation/download?format=csv"  id="downloadAnnotationsCSV" type="button">Download CSV</a>
+        <a href="/api/project/{{id}}/annotation/download?format=xls" id="downloadAnnotationsExcel" type="button">Download Excel</a>
+        <a href="/api/project/{{id}}/annotation/download?format=pdf" id="downloadAnnotationsPDF" type="button">Download PDF</a>
     </div>
     <div id="ontology-annotations-panel-{{id}}" style="width: 20%;margin-top:10px;margin-left : 5px;float: left;display: inline-block;">
         <div>Ontology</div>
