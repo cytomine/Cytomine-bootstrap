@@ -14,7 +14,7 @@ class Infos {
   public static String CYTOMINEURL = ConfigurationHolder.config.grails.serverURL + "/"
 
   public static String GOODLOGIN = "lrollus"
-  public static String GOODPASSWORD = 'password'
+  public static String GOODPASSWORD = 'lR$2011'
 
   public static String BADLOGIN = 'badlogin'
   public static String BADPASSWORD = 'badpassword'
