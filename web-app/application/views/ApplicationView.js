@@ -81,7 +81,7 @@ var ApplicationView = Backbone.View.extend({
                 },
                 divId : "upload"
              });
-             self.components.upload.render = function () {
+             /*self.components.upload.render = function () {
                 $(this.el).append(this.template);
                 if (this.buttonAttr.elButton) {
                    this.addToMenu();
@@ -117,7 +117,7 @@ var ApplicationView = Backbone.View.extend({
                    return false;
                 });
                 return this;
-             }
+             }*/
              self.components.warehouse = new Component({
                 el : "#content",
                 template : _.template(warehouseTpl, {}),

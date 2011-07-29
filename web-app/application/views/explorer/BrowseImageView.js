@@ -15,6 +15,7 @@ var BrowseImageView = Backbone.View.extend({
       this.currentAnnotation = null;
       _.bindAll(this, "initVectorLayers");
    },
+
    /**
     * Render the html into the DOM element associated to the view
     * @param tpl

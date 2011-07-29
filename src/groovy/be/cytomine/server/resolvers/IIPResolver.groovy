@@ -91,10 +91,10 @@ class IIPResolver extends Resolver{
                 else shouldScale = false
             }
         }
-        def x = 1/(baseImageWidth / topLeftX)
-        def y = 1/(baseImageHeight / (baseImageHeight - topLeftY))
-        def w = 1/(baseImageWidth / width)
-        def h = 1/(baseImageHeight / height)
+        def x = (topLeftX == 0) ? 0 : 1/(baseImageWidth / topLeftX)
+        def y = ((baseImageHeight - topLeftY) == 0) ? baseImageHeight : 1/(baseImageHeight / (baseImageHeight - topLeftY))
+        def w = (width == 0) ? 0 : 1/(baseImageWidth / width)
+        def h = (height == 0) ? 0 : 1/(baseImageHeight / height)
         args.clear()
         args.add("FIF" + ARGS_EQUAL +  imagePath)
         if (width > targetWidth) args.add("WID" + ARGS_EQUAL + scaledWidth)

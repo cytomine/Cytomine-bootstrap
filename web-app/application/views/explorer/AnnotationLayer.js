@@ -200,6 +200,13 @@ AnnotationLayer.prototype = {
          self.popup = null;
       }
    },
+   hideAnnotation : function(idAnnotation) {
+      var feature = this.getFeature(idAnnotation);
+      this.controls.select.unselectAll();
+      this.vectorsLayer.drawFeature(feature, { display : 'none'});
+
+      //alert("feature != null ? " + (feature.getVisibility()));
+   },
    showPopup : function(map, evt) {
       var self = this;
       require([
@@ -214,7 +221,6 @@ AnnotationLayer.prototype = {
                var json = model.toJSON()
                //username
                json.username = window.app.models.users.get(json.user).prettyName();
-
                //term
                var terms = new Array();
                _.each(json.term,function(idTerm){
@@ -237,6 +243,10 @@ AnnotationLayer.prototype = {
                evt.feature.popup = self.popup;
                self.popup.feature = evt.feature;
                map.addPopup(self.popup);
+               $("#annotationHide"+model.id).click(function(){
+                  self.hideAnnotation(model.id);
+                  return false;
+               });
             }
          });
       });
