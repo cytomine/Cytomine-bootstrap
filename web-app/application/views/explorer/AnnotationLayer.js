@@ -200,12 +200,15 @@ AnnotationLayer.prototype = {
          self.popup = null;
       }
    },
-   hideAnnotation : function(idAnnotation) {
-      var feature = this.getFeature(idAnnotation);
-      this.controls.select.unselectAll();
+   hideFeature : function(feature) {
+      if (feature.style == undefined) feature.style = {};
       feature.style.display = 'none';
       this.vectorsLayer.drawFeature(feature);
-      //alert("feature != null ? " + (feature.getVisibility()));
+   },
+   showFeature : function(feature) {
+      if (feature.style == undefined) feature.style = {};
+      feature.style.display = undefined;
+      this.vectorsLayer.drawFeature(feature);
    },
    showPopup : function(map, evt) {
       var self = this;
@@ -244,7 +247,10 @@ AnnotationLayer.prototype = {
                self.popup.feature = evt.feature;
                map.addPopup(self.popup);
                $("#annotationHide"+model.id).click(function(){
-                  self.hideAnnotation(model.id);
+                  self.controls.select.unselectAll();
+                  var feature = self.getFeature(model.id);
+                  if (feature == undefined || feature == null) return;
+                  self.hideFeature(feature);
                   return false;
                });
             }
@@ -264,6 +270,7 @@ AnnotationLayer.prototype = {
          var length =  evt.feature.geometry.getLength();
          if (resolution != undefined && resolution != null) {
             length *= resolution;
+            length = Math.round(length * 1000) / 1000;
             length += " µm";
          } else {
             length += " pixels";

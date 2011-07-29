@@ -87,6 +87,7 @@ var BrowseImageView = Backbone.View.extend({
       var self = this;
       var feature = layer.getFeature(idAnnotation);
       if (feature != undefined) {
+         layer.showFeature(feature);
          self.setLayerVisibility(layer, true);
          var bounds = feature.geometry.bounds;
          //Compute the ideal zoom to view the feature
@@ -134,9 +135,8 @@ var BrowseImageView = Backbone.View.extend({
                   if (layer.name != ui.value) return;
                   if (ui.checked) {
                      _.each(layer.vectorsLayer.features, function (feature) {
-                        if (feature.style.display != 'none') return;
-                        feature.style.display = undefined;
-                        layer.vectorsLayer.drawFeature(feature);
+                        if (feature.style != undefined && feature.style.display != 'none') return;
+                        layer.showFeature(feature);
                      });
                   }
                   layer.vectorsLayer.setVisibility(ui.checked);
@@ -146,9 +146,8 @@ var BrowseImageView = Backbone.View.extend({
                _.each(self.layers, function(layer){
                   layer.vectorsLayer.setVisibility(true);
                   _.each(layer.vectorsLayer.features, function (feature) {
-                     if (feature.style.display != 'none') return;
-                     feature.style.display = undefined;
-                     layer.vectorsLayer.drawFeature(feature);
+                     if (feature.style != undefined && feature.style.display != 'none') return;
+                     layer.showFeature(feature);
                   });
                });
             },
