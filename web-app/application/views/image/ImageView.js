@@ -5,16 +5,32 @@ var ImageView = Backbone.View.extend({
       this.container = options.container;
       this.page = options.page;
       this.nb_thumb_by_page = 30;
+      this.appendingThumbs = false;
       if (this.page == undefined) this.page = 0;
    },
    render: function() {
       var self = this;
-      $(self.el).html("");
+      $(self.el).empty();
       self.appendThumbs(self.page);
 
       $(window).scroll(function(){
-         if  (($(window).scrollTop() + 50) >= $(document).height() - $(window).height()){
+         //1. Look if we are already appending thumbs. If yes, return
+         if (self.appendingThumbs) return;
+         //2. Look if we are on the explore page. return if not
+         var inExplorer = ($("#explorer").css("display") != 'none');
+         if (!inExplorer) return;
+         //1. Look if the tabs is active. don't append thumbs if not
+         var classes = $(self.el).parent().attr("class").split(" ");
+         var shouldAppend = true;
+         _.each(classes, function (classe) {
+           if (classe == "ui-tabs-hide") {
+               shouldAppend = false;//don't happend thumbs this tabs is not visible
+           }
+         });
+         if  (shouldAppend && ($(window).scrollTop() + 50) >= $(document).height() - $(window).height()){
+            self.appendingThumbs = true;
             self.appendThumbs(++self.page);
+            self.appendingThumbs = false;
          }
       });
       return this;
@@ -52,6 +68,7 @@ var ImageView = Backbone.View.extend({
          cpt++;
          self.tabsContent.push(image.id);
       }
+
    },
    /**
     * Add the thumb image

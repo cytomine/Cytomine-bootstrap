@@ -434,7 +434,7 @@ AnnotationLayer.prototype = {
             success: function (model, response) {
                window.app.view.message("Annotation", response.message, "");
                self.browseImageView.refreshAnnotationTabs(undefined);
-               console.log("collection="+collection.length);
+
                /*collection.each(function(term) {
                 console.log("term="+term.id);
 

@@ -1,465 +1,462 @@
 var ProjectAddImageListingDialog = Backbone.View.extend({
-    imagesProject : null, //collection containing the images contained in the project
-    searchPanel : null,
-    initialize: function(options) {
-        var self = this;
-        this.container = options.container;
-        this.projectPanel = options.projectPanel;
-        this.imagesProject = options.imagesProject;
-        this.abstractImageProject = new Array();
-        this.el = "#tabsProjectaddimagedialog"+self.model.id+"-2" ;
-        this.listmanageproject = "listmanageproject"+this.model.id;
-        this.pagemanageproject = "pagemanageproject"+this.model.id;
-        this.listmanageall = "listmanageall"+this.model.id;
-        this.pagemanageall = "pagemanageall"+this.model.id;
-        this.addImageButton = "addimageprojectbutton"+this.model.id;
-        this.delImageButton = "delimageprojectbutton"+this.model.id;
-        this.tab = 2;
-        this.timeoutHnd = null
+   imagesProject : null, //collection containing the images contained in the project
+   searchPanel : null,
+   initialize: function(options) {
+      var self = this;
+      this.container = options.container;
+      this.projectPanel = options.projectPanel;
+      this.imagesProject = options.imagesProject;
+      this.abstractImageProject = new Array();
+      this.el = "#tabsProjectaddimagedialog"+self.model.id+"-2" ;
+      this.listmanageproject = "listmanageproject"+this.model.id;
+      this.pagemanageproject = "pagemanageproject"+this.model.id;
+      this.listmanageall = "listmanageall"+this.model.id;
+      this.pagemanageall = "pagemanageall"+this.model.id;
+      this.addImageButton = "addimageprojectbutton"+this.model.id;
+      this.delImageButton = "delimageprojectbutton"+this.model.id;
+      this.tab = 2;
+      this.timeoutHnd = null
 
-    },
-    render : function() {
-        var self = this;
-        //self.fillAbstractImageProjectCollection(self.imagesProject);
-        require([
-            "text!application/templates/project/ProjectAddImageListingDialog.tpl.html"
-        ],
-               function(tpl) {
-                   self.doLayout(tpl);
-               });
-        return this;
-    },
-    refresh : function() {
-        this.refreshImageList();
-    },
+   },
+   render : function() {
+      var self = this;
+      //self.fillAbstractImageProjectCollection(self.imagesProject);
+      require([
+         "text!application/templates/project/ProjectAddImageListingDialog.tpl.html"
+      ],
+          function(tpl) {
+             self.doLayout(tpl);
+          });
+      return this;
+   },
+   refresh : function() {
+      this.refreshImageList();
+   },
 
-    doLayout : function(tpl) {
-        var self = this;
+   doLayout : function(tpl) {
+      var self = this;
 
-        var json = self.model.toJSON();
-        json.tab = 2;
-        var dialog = _.template(tpl, json);
-        $(self.el).append(dialog);
+      var json = self.model.toJSON();
+      json.tab = 2;
+      var dialog = _.template(tpl, json);
+      $(self.el).append(dialog);
 
-        /*
-         self.searchPanel = new ProjectAddImageSearchPanel({
-         model : self.model,
-         images : self.images,
-         el:$("#tdsearchpanel"+self.model.id),
-         container : self,
-         tab : 2
-         }).render(); */
+      /*
+       self.searchPanel = new ProjectAddImageSearchPanel({
+       model : self.model,
+       images : self.images,
+       el:$("#tdsearchpanel"+self.model.id),
+       container : self,
+       tab : 2
+       }).render(); */
 
-        //print listing
-        this.renderImageList();
+      //print listing
+      this.renderImageList();
 
-        return this;
-    },
-    renderImageList: function() {
-        var self = this;
-        self.renderImageListing();
-    },
-    renderImageListing : function() {
-        var self = this;
+      return this;
+   },
+   renderImageList: function() {
+      var self = this;
+      self.renderImageListing();
+   },
+   renderImageListing : function() {
+      var self = this;
 
-        $("#"+self.addImageButton).button({
-            icons : {primary: "ui-icon-circle-arrow-w" } ,
-            text: false
-        });
-        $("#"+self.delImageButton).button({
-            icons : {primary: "ui-icon-circle-arrow-e"} ,
-            text: false
-        });
+      $("#"+self.addImageButton).button({
+         icons : {primary: "ui-icon-circle-arrow-w" } ,
+         text: false
+      });
+      $("#"+self.delImageButton).button({
+         icons : {primary: "ui-icon-circle-arrow-e"} ,
+         text: false
+      });
 
-        $("#infoProjectPanel"+self.model.id).panel({
-            collapseSpeed:100
-        });
+      $("#infoProjectPanel"+self.model.id).panel({
+         collapseSpeed:100
+      });
 
-        $('#'+self.addImageButton).click(function() {
-            self.addImageProjectFromTable();
-        });
+      $('#'+self.addImageButton).click(function() {
+         self.addImageProjectFromTable();
+      });
 
-        $('#'+self.delImageButton).click(function() {
-            self.deleteImageProjectFromTable();
-        });
+      $('#'+self.delImageButton).click(function() {
+         self.deleteImageProjectFromTable();
+      });
 
-        //search panel
-
-
-
-        $("#searchImagetPanelup"+self.model.id+"-"+self.tab).panel({
-            collapseSpeed:100
-        });
-        $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val("");
+      //search panel
 
 
-        $("#imagesallbutton"+self.model.id+"-"+self.tab).button({
-            text: true
-        });
 
-        $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).keyup(function () {
-            self.doSearch();
-        }).keyup();
-
-        $("#imagesallbutton"+self.model.id+"-"+self.tab).click(function() {
-            $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val("");
-            $("#datestartsearchup"+self.model.id+"-"+self.tab ).val("");
-            $("#dateendsearchup"+self.model.id+"-"+self.tab).val("");
-            self.doSearch();
-        });
-
-        $( "#datestartsearchup"+self.model.id+"-"+self.tab ).datepicker({
-            onSelect: function(dateText, inst) { self.doSearch(); }
-        });
-        $( "#dateendsearchup"+self.model.id+"-"+self.tab ).datepicker({
-            onSelect: function(dateText, inst) { self.doSearch(); }
-        });
-
-        self.renderImageListProject();
-        self.renderImageListAll();
-
-    },
-    doSearch : function(){
-        var self = this;
+      $("#searchImagetPanelup"+self.model.id+"-"+self.tab).panel({
+         collapseSpeed:100
+      });
+      $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val("");
 
 
-        if($.data(this, 'timer')!=null) {
+      $("#imagesallbutton"+self.model.id+"-"+self.tab).button({
+         text: true
+      });
 
-            clearTimeout($.data(this, 'timer'));
-        }
+      $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).keyup(function () {
+         self.doSearch();
+      }).keyup();
 
-        var wait = setTimeout(function(){
-            self.searchImages()}
-                ,500);
-        $(this).data('timer', wait);
-        //setTimeout("alert('foo');",5000);
-        //this.searchImages();
+      $("#imagesallbutton"+self.model.id+"-"+self.tab).click(function() {
+         $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val("");
+         $("#datestartsearchup"+self.model.id+"-"+self.tab ).val("");
+         $("#dateendsearchup"+self.model.id+"-"+self.tab).val("");
+         self.doSearch();
+      });
 
-    },
+      $( "#datestartsearchup"+self.model.id+"-"+self.tab ).datepicker({
+         onSelect: function(dateText, inst) { self.doSearch(); }
+      });
+      $( "#dateendsearchup"+self.model.id+"-"+self.tab ).datepicker({
+         onSelect: function(dateText, inst) { self.doSearch(); }
+      });
 
-    /**
-     * Look for search panel info and print result on grid
-     */
-    searchImages : function() {
-        var self = this;
+      self.renderImageListProject();
+      self.renderImageListAll();
 
-        //var images = self.searchPanel.search(self.images);
-        var searchText = $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val();
-        var dateStart =  $("#datestartsearchup"+self.model.id+"-"+self.tab).datepicker("getDate");
-        var dateEnd =  $("#dateendsearchup"+self.model.id+"-"+self.tab).datepicker("getDate");
-
-        var dateTimestampStart="";
-        if(dateStart!=null) dateTimestampStart=dateStart.getTime();
-        var dateTimestampEnd="";
-        if(dateEnd!=null) dateTimestampEnd=dateEnd.getTime();
-
-
-        $("#"+self.listmanageall).jqGrid('setGridParam',{url:"api/currentuser/image.json?filename="+searchText+"&createdstart="+dateTimestampStart+"&createdstop="+dateTimestampEnd,page:1}).trigger("reloadGrid");
+   },
+   doSearch : function(){
+      var self = this;
 
 
-    },
-    refreshImageList : function() {
-        var self = this;
+      if($.data(this, 'timer')!=null) {
 
-        //clear grid
-        $("#"+self.listmanageproject).jqGrid("clearGridData", true);
-        //get imagesproject on server
-        self.imagesProject.fetch({
-            success : function (collection, response) {
+         clearTimeout($.data(this, 'timer'));
+      }
 
-                //create abstractImagepProject collection
-                self.fillAbstractImageProjectCollection(collection);
+      var wait = setTimeout(function(){
+             self.searchImages()}
+          ,500);
+      $(this).data('timer', wait);
+      //setTimeout("alert('foo');",5000);
+      //this.searchImages();
 
-                //print data from project image table
-                self.loadDataImageListProject(collection);
+   },
 
-                //print data from all image table
-                //self.searchImages();
+   /**
+    * Look for search panel info and print result on grid
+    */
+   searchImages : function() {
+      var self = this;
 
-                $("#"+self.listmanageall).trigger("reloadGrid");
-            }
-        });
-    },
-    /**
-     * Fill collection of abstract image id from image project
-     * @param images Project Images
-     */
-    fillAbstractImageProjectCollection : function(images) {
-        var self = this;
+      //var images = self.searchPanel.search(self.images);
+      var searchText = $("#filenamesearchtextboxup"+self.model.id+"-"+self.tab).val();
+      var dateStart =  $("#datestartsearchup"+self.model.id+"-"+self.tab).datepicker("getDate");
+      var dateEnd =  $("#dateendsearchup"+self.model.id+"-"+self.tab).datepicker("getDate");
 
-        self.abstractImageProject = [];
-        self.imagesProject.each(function(image) {
-            self.abstractImageProject.push(image.get('baseImage'));
-        });
-    },
-    loadDataImageListProject : function(collection) {
+      var dateTimestampStart="";
+      if(dateStart!=null) dateTimestampStart=dateStart.getTime();
+      var dateTimestampEnd="";
+      if(dateEnd!=null) dateTimestampEnd=dateEnd.getTime();
 
-        var self = this;
-        var data = new Array();
-        var i = 0;
 
-        collection.each(function(image) {
-            //
-            var createdDate = new Date();
-            createdDate.setTime(image.get('created'));
-            //
-            data[i] = {
-                id: image.id,
-                base : image.get('baseImage'),
-                thumb : "<img src='"+image.get('thumb')+"' width=50/>",
-                filename: image.get('filename'),
-                type : image.get('mime'),
-                annotations : image.get('numberOfAnnotations'),
-                added : createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate(),
-                See : ''
-            };
-            i++;
-        });
+      $("#"+self.listmanageall).jqGrid('setGridParam',{url:"api/currentuser/image.json?filename="+searchText+"&createdstart="+dateTimestampStart+"&createdstop="+dateTimestampEnd,page:1}).trigger("reloadGrid");
 
-        for(var j=0;j<data.length;j++) {
-            $("#"+self.listmanageproject).jqGrid('addRowData',data[j].id,data[j]);
-        }
-        $("#"+self.listmanageproject).jqGrid('sortGrid','filename',false);
-    },
-    renderImageListProject : function() {
-        var self = this;
 
-        var availableWidth = $(window).width()-250; //window - sidebar TO DO : remove this bad code !
-        var jqGridWidth = availableWidth * 0.40;
-       $("#"+self.listmanageproject).jqGrid({
-            datatype: "local",
-            width: jqGridWidth,
-            height:500,
-            colNames:['id','base','thumb','filename','type','annotations','added'],
-            colModel:[
-                {name:'id',index:'id', width:1, sorttype:"int"},
-                {name:'base',index:'base', width:1, sorttype:"int"},
-                {name:'thumb',index:'thumb', width:100},
-                {name:'filename',index:'filename', width:250},
-                {name:'type',index:'type', width:50},
-                {name:'annotations',index:'annotations', width:50},
-                {name:'added',index:'added', width:100,sorttype:"date"}
-            ],
-            onSelectRow: function(id){
+   },
+   refreshImageList : function() {
+      var self = this;
 
-                var checked = $("#"+self.listmanageproject).find("#" + id).find(".cbox").attr('checked');
-                if(checked) $("#"+self.listmanageproject).find("#" + id).find("td").css("background-color", "CD661D");
-                else $("#"+self.listmanageproject).find("#" + id).find("td").css("background-color", "a0dc4f");
-            },
-            loadComplete: function() {
-                //change color of already selected image
-                self.imagesProject.each(function(image) {
-                    //
-                    $("#"+self.listmanageproject).find("#" + image.id).find("td").css("background-color", "a0dc4f");
-                });
-            },
-            //rowNum:10,
-            pager: '#'+self.pagemanageproject,
-            sortname: 'id',
-            viewrecords: true,
-            sortorder: "asc",
-            caption:"Images in " + self.model.get('name'),
-            multiselect: true
-        });
-        $("#"+self.listmanageproject).jqGrid('navGrid','#'+self.listmanageproject,{edit:false,add:false,del:false});
-        $("#"+self.listmanageproject).jqGrid('hideCol',"id");
-        $("#"+self.listmanageproject).jqGrid('hideCol',"base");
-    },
-    /**
-     * Check if abstract image id is in project
-     * @param id  Abstract Image id
-     */
-    isAbstractImageInProject : function(id) {
-        if(_.indexOf(this.abstractImageProject, id)!=-1) return true;
-        else return false;
-    },
-    renderImageListAll : function() {
-        var self = this;
-        var lastsel;
-       var availableWidth = $(window).width()-250; //window - sidebar TO DO : remove this bad code !
-        var jqGridWidth = availableWidth * 0.40;
+      //clear grid
+      $("#"+self.listmanageproject).jqGrid("clearGridData", true);
+      //get imagesproject on server
+      self.imagesProject.fetch({
+         success : function (collection, response) {
 
-        var thumbColName = 'thumb';
-        $("#"+self.listmanageall).jqGrid({
-            datatype: "json",
-            url : 'api/currentuser/image.json',
-            width: jqGridWidth,
-            height:500,
-            colNames:['id',thumbColName,'filename','mime','created'],
-            colModel:[
-                {name:'id',index:'id', width:1},
-                {name:thumbColName,index:thumbColName, width:100},
-                {name:'filename',index:'filename', width:250},
-                {name:'mime',index:'mime', width:45},
-                {name:'created',index:'created', width:100,sorttype:"date", formatter:self.dateFormatter}
-            ],
-            onSelectRow: function(id){
-                if(self.isAbstractImageInProject(id)) {
-                    //if image in project, row cannot be checked
-                    $("#"+self.listmanageall).find("#" + id).find(".cbox").removeAttr('checked')
-                }
-            },
-            loadComplete: function(data) {
+            //create abstractImagepProject collection
+            self.fillAbstractImageProjectCollection(collection);
 
-                //load thumb
-                $("#"+self.listmanageall).find("tr").each(function(index) {
-                    if(index!=0) {
-                        //0 is not a valid row
+            //print data from project image table
+            self.loadDataImageListProject(collection);
 
-                        //replace the text of the thumb by a <img element with its src value
-                        var thumbplace = $(this).find('[aria-describedby$="_'+thumbColName+'"]');
-                        $(thumbplace).html('<img src="'+$(thumbplace).text()+'" width=50/>');
-                    }
-                });
+            //print data from all image table
+            //self.searchImages();
 
-                //aria-describedby="listmanageall3069_thumb">http://is1.cytomine.be:888/fcgi-bin/iipsrv.fcgi?FIF=/home/stevben/Slides/CERVIX/09-087214.mrxs&amp;SDS=0,90&amp;CNT=1.0&amp;WID=200&amp;SQL=99&amp;CVT=jpeg</td>
+            $("#"+self.listmanageall).trigger("reloadGrid");
+         }
+      });
+   },
+   /**
+    * Fill collection of abstract image id from image project
+    * @param images Project Images
+    */
+   fillAbstractImageProjectCollection : function(images) {
+      var self = this;
 
-                //change color of already selected image
-                self.imagesProject.each(function(image) {
-                    // 
-                    $("#"+self.listmanageall).find("#" + image.get('baseImage')).find("td").css("background-color", "a0dc4f");
-                    $("#"+self.listmanageall).find("#" + image.get('baseImage')).find(".cbox").attr('disabled', true)
-                    $("#"+self.listmanageall).find("#" + image.get('baseImage')).find(".cbox").css("visible", false);
-                });
-            },
-            //rowNum:10,
-            pager: '#'+self.pagemanageall,
-            sortname: 'id',
-            viewrecords: true,
-            sortorder: "asc",
-            caption:"Available images",
-            multiselect: true,
-            rowNum:10,
-            rowList:[10,20,30],
-            jsonReader: {
-                repeatitems : false,
-                id: "0"
-            }
-        });
-        $("#"+self.listmanageall).jqGrid('navGrid','#'+self.pagemanageall,{edit:false,add:false,del:false},{},{},{},{multipleSearch:true});
-        $("#"+self.listmanageall).jqGrid('sortGrid','filename',false);
-        $("#"+self.listmanageall).jqGrid('hideCol',"id");
-        //self.loadDataImageListAll(window.app.models.images);
-    },
-    dateFormatter : function (cellvalue, options, rowObject)
-    {
-        // do something here
-        var createdDate = new Date();
-        createdDate.setTime(cellvalue);
+      self.abstractImageProject = [];
+      self.imagesProject.each(function(image) {
+         self.abstractImageProject.push(image.get('baseImage'));
+      });
+   },
+   loadDataImageListProject : function(collection) {
 
-        return createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate()
-    },
+      var self = this;
+      var data = new Array();
+      var i = 0;
 
-    addImageProjectFromTable : function() {
+      collection.each(function(image) {
+         //
+         var createdDate = new Date();
+         createdDate.setTime(image.get('created'));
+         //
+         data[i] = {
+            id: image.id,
+            base : image.get('baseImage'),
+            thumb : "<img src='"+image.get('thumb')+"' width=50/>",
+            filename: image.get('filename'),
+            type : image.get('mime'),
+            annotations : image.get('numberOfAnnotations'),
+            added : createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate(),
+            See : ''
+         };
+         i++;
+      });
 
-        var self = this;
-        var idSelectedArray = $("#"+self.listmanageall).jqGrid('getGridParam','selarrrow');
-        if (idSelectedArray.length == 0) return;
-        var counter = 0;
-        _.each(idSelectedArray, function(idImage){
-            new ImageInstanceModel({}).save({project : self.model.id, user : null, baseImage :idImage},{
-                success : function (image,response) {
+      for(var j=0;j<data.length;j++) {
+         $("#"+self.listmanageproject).jqGrid('addRowData',data[j].id,data[j]);
+      }
+      $("#"+self.listmanageproject).jqGrid('sortGrid','filename',false);
+   },
+   renderImageListProject : function() {
+      var self = this;
 
-                    window.app.view.message("Image", response.message, "");
-                    self.addImageProjectCallback(idSelectedArray.length, ++counter)
-                },
-                error: function (model, response) {
+      var availableWidth = $(window).width()-250; //window - sidebar TO DO : remove this bad code !
+      var jqGridWidth = availableWidth * 0.40;
+      $("#"+self.listmanageproject).jqGrid({
+         datatype: "local",
+         width: jqGridWidth,
+         height:500,
+         colNames:['id','base','thumb','filename','type','annotations','added'],
+         colModel:[
+            {name:'id',index:'id', width:1, sorttype:"int"},
+            {name:'base',index:'base', width:1, sorttype:"int"},
+            {name:'thumb',index:'thumb', width:100},
+            {name:'filename',index:'filename', width:250},
+            {name:'type',index:'type', width:50},
+            {name:'annotations',index:'annotations', width:50},
+            {name:'added',index:'added', width:100,sorttype:"date"}
+         ],
+         onSelectRow: function(id){
 
-                    var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Image", json.errors, "");
-                    self.addImageProjectCallback(idSelectedArray.length, ++counter)
-                }
+            var checked = $("#"+self.listmanageproject).find("#" + id).find(".cbox").attr('checked');
+            if(checked) $("#"+self.listmanageproject).find("#" + id).find("td").css("background-color", "CD661D");
+            else $("#"+self.listmanageproject).find("#" + id).find("td").css("background-color", "a0dc4f");
+         },
+         loadComplete: function() {
+            //change color of already selected image
+            self.imagesProject.each(function(image) {
+               //
+               $("#"+self.listmanageproject).find("#" + image.id).find("td").css("background-color", "a0dc4f");
             });
-        });
-    },
-    addImageProjectCallback : function(total, counter) {
-        if (counter < total) return;
-        var self = this;
-        self.refreshImageList();
-    },
+         },
+         //rowNum:10,
+         pager: '#'+self.pagemanageproject,
+         sortname: 'id',
+         viewrecords: true,
+         sortorder: "asc",
+         caption:"Images in " + self.model.get('name'),
+         multiselect: true
+      });
+      $("#"+self.listmanageproject).jqGrid('navGrid','#'+self.listmanageproject,{edit:false,add:false,del:false});
+      $("#"+self.listmanageproject).jqGrid('hideCol',"id");
+      $("#"+self.listmanageproject).jqGrid('hideCol',"base");
+   },
+   /**
+    * Check if abstract image id is in project
+    * @param id  Abstract Image id
+    */
+   isAbstractImageInProject : function(id) {
+      if(_.indexOf(this.abstractImageProject, id)!=-1) return true;
+      else return false;
+   },
+   renderImageListAll : function() {
+      var self = this;
+      var availableWidth = $(window).width()-250; //window - sidebar TO DO : remove this bad code !
+      var jqGridWidth = availableWidth * 0.40;
 
-    deleteImageProjectFromTable : function() {
-
-        var self = this;
-
-        var idSelectedArray = $("#"+self.listmanageproject).jqGrid('getGridParam','selarrrow');
-        if (idSelectedArray.length == 0) return;
-
-        self.deleteImageWithcheckForAnnotation(idSelectedArray);
-
-    },
-    deleteImageProject : function(idSelectedArray) {
-        var self = this;
-        var counter = 0;
-
-        _.each(idSelectedArray, function(idImage){
-
-            var idAsbtractImage = self.imagesProject.get(idImage).get('baseImage');
-            new ImageInstanceModel({project : self.model.id, user : null, baseImage :idAsbtractImage}).destroy({
-                success : function (image,response) {
-
-                    window.app.view.message("Image", response.message, "");
-                    self.deleteImageProjectCallback(idSelectedArray.length, ++counter)
-                },
-                error: function (model, response) {
-
-                    var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Image", json.errors, "");
-                    self.deleteImageProjectCallback(idSelectedArray.length, ++counter)
-                }
-            });
-        });
-    },
-    deleteImageProjectCallback : function(total, counter) {
-        if (counter < total) return;
-        var self = this;
-        self.refreshImageList();
-    },
-    deleteImageWithcheckForAnnotation : function(idSelectedArray) {
-        var self = this;
-        var hasAnnotation = false;
-        _.each(idSelectedArray, function(idImage){
-            var numberOfAnnotation = self.imagesProject.get(idImage).get('numberOfAnnotations');
-            console.log("numberOfAnnotations="+numberOfAnnotation);
-            if(numberOfAnnotation>0) {
-                hasAnnotation = true;
+      var thumbColName = 'thumb';
+      $("#"+self.listmanageall).jqGrid({
+         datatype: "json",
+         url : 'api/currentuser/image.json',
+         width: jqGridWidth,
+         height:500,
+         colNames:['id',thumbColName,'filename','mime','created'],
+         colModel:[
+            {name:'id',index:'id', width:1},
+            {name:thumbColName,index:thumbColName, width:100},
+            {name:'filename',index:'filename', width:250},
+            {name:'mime',index:'mime', width:45},
+            {name:'created',index:'created', width:100,sorttype:"date", formatter:self.dateFormatter}
+         ],
+         onSelectRow: function(id){
+            if(self.isAbstractImageInProject(id)) {
+               //if image in project, row cannot be checked
+               $("#"+self.listmanageall).find("#" + id).find(".cbox").removeAttr('checked')
             }
-        });
-        console.log("hasAnnotation="+hasAnnotation);
-        if(hasAnnotation) {
-            //ask for confirmation
-            require(["text!application/templates/project/ProjectAddImageDeleteImageInstanceWithAnnotation.tpl.html"], function(tpl) {
-                // $('#dialogsTerm').empty();
+         },
+         loadComplete: function(data) {
 
-                //delete-image-with-annotation-confirm
-                var dialog =  new ConfirmDialogView({
-                    el:'#dialogDeleteImageWithAnnotation',
-                    template : _.template(tpl, {projectname : self.model.get('name')}),
-                    dialogAttr : {
-                        dialogID : '#dialogDeleteImageWithAnnotation',
-                        width : 400,
-                        height : 300,
-                        buttons: {
-                            "Delete all images and annotations": function() {
-                                self.deleteImageProject(idSelectedArray);
-                                $('#dialogDeleteImageWithAnnotation').dialog( "close" ) ;
-                            },
-                            "Cancel": function() {
+            //load thumb
+            $("#"+self.listmanageall).find("tr").each(function(index) {
+               if(index!=0) {
+                  //0 is not a valid row
 
-                                //doesn't work! :-(
-                                $('#dialogDeleteImageWithAnnotation').dialog( "close" ) ;
-                            }
-                        },
-                        close :function (event) {
-                        }
-                    }
-                }).render();
+                  //replace the text of the thumb by a <img element with its src value
+                  var thumbplace = $(this).find('[aria-describedby$="_'+thumbColName+'"]');
+                  $(thumbplace).html('<img src="'+$(thumbplace).text()+'" width=50/>');
+               }
             });
 
+            //aria-describedby="listmanageall3069_thumb">http://is1.cytomine.be:888/fcgi-bin/iipsrv.fcgi?FIF=/home/stevben/Slides/CERVIX/09-087214.mrxs&amp;SDS=0,90&amp;CNT=1.0&amp;WID=200&amp;SQL=99&amp;CVT=jpeg</td>
 
-        }
-        else {
-            self.deleteImageProject(idSelectedArray);
-        }
-    }
+            //change color of already selected image
+            self.imagesProject.each(function(image) {
+               //
+               $("#"+self.listmanageall).find("#" + image.get('baseImage')).find("td").css("background-color", "a0dc4f");
+               $("#"+self.listmanageall).find("#" + image.get('baseImage')).find(".cbox").attr('disabled', true)
+               $("#"+self.listmanageall).find("#" + image.get('baseImage')).find(".cbox").css("visible", false);
+            });
+         },
+         //rowNum:10,
+         pager: '#'+self.pagemanageall,
+         sortname: 'id',
+         viewrecords: true,
+         sortorder: "asc",
+         caption:"Available images",
+         multiselect: true,
+         rowNum:10,
+         rowList:[10,20,30],
+         jsonReader: {
+            repeatitems : false,
+            id: "0"
+         }
+      });
+      $("#"+self.listmanageall).jqGrid('navGrid','#'+self.pagemanageall,{edit:false,add:false,del:false},{},{},{},{multipleSearch:true});
+      $("#"+self.listmanageall).jqGrid('sortGrid','filename',false);
+      $("#"+self.listmanageall).jqGrid('hideCol',"id");
+      //self.loadDataImageListAll(window.app.models.images);
+   },
+   dateFormatter : function (cellvalue, options, rowObject)
+   {
+      // do something here
+      var createdDate = new Date();
+      createdDate.setTime(cellvalue);
+
+      return createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate()
+   },
+
+   addImageProjectFromTable : function() {
+
+      var self = this;
+      var idSelectedArray = $("#"+self.listmanageall).jqGrid('getGridParam','selarrrow');
+      if (idSelectedArray.length == 0) return;
+      var counter = 0;
+      _.each(idSelectedArray, function(idImage){
+         new ImageInstanceModel({}).save({project : self.model.id, user : null, baseImage :idImage},{
+            success : function (image,response) {
+
+               window.app.view.message("Image", response.message, "");
+               self.addImageProjectCallback(idSelectedArray.length, ++counter)
+            },
+            error: function (model, response) {
+
+               var json = $.parseJSON(response.responseText);
+               window.app.view.message("Image", json.errors, "");
+               self.addImageProjectCallback(idSelectedArray.length, ++counter)
+            }
+         });
+      });
+   },
+   addImageProjectCallback : function(total, counter) {
+      if (counter < total) return;
+      var self = this;
+      self.refreshImageList();
+   },
+
+   deleteImageProjectFromTable : function() {
+
+      var self = this;
+
+      var idSelectedArray = $("#"+self.listmanageproject).jqGrid('getGridParam','selarrrow');
+      if (idSelectedArray.length == 0) return;
+
+      self.deleteImageWithcheckForAnnotation(idSelectedArray);
+
+   },
+   deleteImageProject : function(idSelectedArray) {
+      var self = this;
+      var counter = 0;
+
+      _.each(idSelectedArray, function(idImage){
+
+         var idAsbtractImage = self.imagesProject.get(idImage).get('baseImage');
+         new ImageInstanceModel({project : self.model.id, user : null, baseImage :idAsbtractImage}).destroy({
+            success : function (image,response) {
+
+               window.app.view.message("Image", response.message, "");
+               self.deleteImageProjectCallback(idSelectedArray.length, ++counter)
+            },
+            error: function (model, response) {
+
+               var json = $.parseJSON(response.responseText);
+               window.app.view.message("Image", json.errors, "");
+               self.deleteImageProjectCallback(idSelectedArray.length, ++counter)
+            }
+         });
+      });
+   },
+   deleteImageProjectCallback : function(total, counter) {
+      if (counter < total) return;
+      var self = this;
+      self.refreshImageList();
+   },
+   deleteImageWithcheckForAnnotation : function(idSelectedArray) {
+      var self = this;
+      var hasAnnotation = false;
+      _.each(idSelectedArray, function(idImage){
+         var numberOfAnnotation = self.imagesProject.get(idImage).get('numberOfAnnotations');
+         if(numberOfAnnotation>0) {
+            hasAnnotation = true;
+         }
+      });
+      if(hasAnnotation) {
+         //ask for confirmation
+         require(["text!application/templates/project/ProjectAddImageDeleteImageInstanceWithAnnotation.tpl.html"], function(tpl) {
+            // $('#dialogsTerm').empty();
+
+            //delete-image-with-annotation-confirm
+            var dialog =  new ConfirmDialogView({
+               el:'#dialogDeleteImageWithAnnotation',
+               template : _.template(tpl, {projectname : self.model.get('name')}),
+               dialogAttr : {
+                  dialogID : '#dialogDeleteImageWithAnnotation',
+                  width : 400,
+                  height : 300,
+                  buttons: {
+                     "Delete all images and annotations": function() {
+                        self.deleteImageProject(idSelectedArray);
+                        $('#dialogDeleteImageWithAnnotation').dialog( "close" ) ;
+                     },
+                     "Cancel": function() {
+
+                        //doesn't work! :-(
+                        $('#dialogDeleteImageWithAnnotation').dialog( "close" ) ;
+                     }
+                  },
+                  close :function (event) {
+                  }
+               }
+            }).render();
+         });
+
+
+      }
+      else {
+         self.deleteImageProject(idSelectedArray);
+      }
+   }
 });

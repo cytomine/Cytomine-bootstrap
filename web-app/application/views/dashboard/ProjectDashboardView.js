@@ -256,8 +256,6 @@ var ProjectDashboardView = Backbone.View.extend({
             success : function (collection, response) {
 
                 self.projectImages = collection;
-                console.log("self.projectImages="+self.projectImages.length);
-                console.log("ImageInstanceCollection create image thumb view:"+$("#tabs-projectImageThumb"+self.model.get('id')).length);
                 self.imagesView = new ImageView({
                     page : 0,
                     model : collection,
@@ -265,7 +263,7 @@ var ProjectDashboardView = Backbone.View.extend({
                     container : window.app.view.components.warehouse
                 }).render();
 
-                console.log("create image listing view:"+$("#tabs-projectImageListing"+self.model.get('id')).length);
+
                 self.imagesTabsView = new ImageTabsView({
                     model : collection,
                     el:$("#tabs-projectImageListing"+self.model.get('id')),
@@ -283,7 +281,6 @@ var ProjectDashboardView = Backbone.View.extend({
     },
     changeImagePage : function(page) {
       var self = this;
-        console.log("self.projectImages="+self.projectImages.length);
         //$("#tabs-projectImageThumb"+self.model.get('id')).empty();
         self.imagesView = new ImageView({
             page : page,

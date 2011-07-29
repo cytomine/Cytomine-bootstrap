@@ -368,7 +368,7 @@ var BrowseImageView = Backbone.View.extend({
          var windowHeight = $(window).height() - paddingTop;
          var imageWidth = metadata.width;
          var imageHeight = metadata.height;
-         var idealZoom = metadata.nbZoom-1;
+         var idealZoom = metadata.nbZoom;
          while (imageWidth > windowWidth || imageHeight > windowHeight) {
             imageWidth /= 2;
             imageHeight /= 2;

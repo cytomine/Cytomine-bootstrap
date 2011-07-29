@@ -16,7 +16,7 @@ var ImageTabsView = Backbone.View.extend({
    },
    render: function() {
       var self = this;
-      console.log("ImageTabsView.render");
+      $(self.el).empty();
 
 
       $(self.el).append('<table id=\"listimage'+self.idProject+'\" align=\"center\"></table><div id=\"pagerimage'+this.idProject+'\"></div>');
@@ -24,11 +24,9 @@ var ImageTabsView = Backbone.View.extend({
       self.loadDataImageListProject(self.model);
    },
    refresh : function() {
-      console.log("ImageTabsView.refresh");
       this.refreshImageList();
    },
    refreshImageList : function() {
-      console.log("ImageTabsView.refreshImageList");
       var self = this;
 
       //clear grid
@@ -43,7 +41,6 @@ var ImageTabsView = Backbone.View.extend({
       });
    },
    loadDataImageListProject : function(collection) {
-      console.log("ImageTabsView.loadDataImageListProject");
       var self = this;
       var data = new Array();
       var i = 0;
@@ -76,9 +73,10 @@ var ImageTabsView = Backbone.View.extend({
    },
    renderImageListProject : function() {
       var self = this;
-      console.log("ImageTabsView.renderImageListProject:"+"#"+self.listproject +":"+$("#"+self.listproject).length);
       var thumbColName = 'thumb';
+
       var container = $("#tabs-images-"+self.idProject);
+
       var gridWidth = container.width() ; //90% of the windows. JQGrid does not like % as width
 
       var gridHeight = $(window).height() * 0.7; //90% of the windows. JQGrid does not like % as width
@@ -86,7 +84,7 @@ var ImageTabsView = Backbone.View.extend({
          datatype: "local",
          width: gridWidth,
          height:gridHeight,
-         colNames:['id','base','thumb','filename','type','slide','width', 'height', 'magnification', 'resolution','annotations','added','see'],
+         colNames:['id','base','thumb','filename','type','sample','width', 'height', 'magnification', 'resolution','annotations','added','see'],
          colModel:[
             {name:'id',index:'id', width:1, sorttype:"int"},
             {name:'base',index:'base', width:1, sorttype:"int"},
