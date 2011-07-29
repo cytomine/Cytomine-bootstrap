@@ -299,7 +299,7 @@ div .overviewPanel {
     align : center;
     position : absolute;
     right : 20px;
-    top : 260px;
+    top : 300px;
     z-index : 2020;
     background-color: rgba(0, 0, 0, 0.7);
     color : #fff;
@@ -323,6 +323,27 @@ div .popupPanel {
     border-radius: 6px;
 
 }
+
+
+
+div .zoomInfoPanel {
+    position : absolute;
+    top : 150px;
+    left : 50px;
+    z-index : 2023;
+    background-color: rgba(0, 0, 0, 0.7);
+    color : #fff;
+    /*overflow : hidden;*/
+    font-weight: bold;
+    width : 40px;
+    text-align: center;
+    height : 20px;
+    padding : 2px;
+      -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+}
+
 
 div .annotationsPanel {
     position : absolute;

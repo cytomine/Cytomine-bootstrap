@@ -258,13 +258,7 @@ var BrowseImageView = Backbone.View.extend({
          _.each(zoomify_urls, function (url) {
             console.log("URL > " + url);
          });
-         /*var baseURLs = self.model.get('imageServerBaseURL');
-          var zoomify_url = []
-          _.each(baseURLs, function(baseURL) {
-          console.log(baseURL);
-          var url = baseURL + self.model.get('path') +"/";
-          zoomify_url.push(url);
-          });*/
+
 
          var baseLayer = new OpenLayers.Layer.Zoomify(
              "Original",
@@ -273,12 +267,12 @@ var BrowseImageView = Backbone.View.extend({
          );
          //baseLayer.transitionEffect = 'resize';
 
-         var otsuURLS = _.map(zoomify_urls, function (url){ return "proxy/otsu?url="+url;});
-         var otsuLayer = new OpenLayers.Layer.Zoomify( "Otsu", otsuURLS,
-             new OpenLayers.Size( metadata.width, metadata.height ) );
+         var haematoxylinURLS = _.map(zoomify_urls, function (url){ return "proxy/haematoxylin?url="+url;});
+         var haematoxylinLayer = new OpenLayers.Layer.Zoomify( "Haematoxylin", haematoxylinURLS, new OpenLayers.Size( metadata.width, metadata.height ) );
+         var eosinURLS = _.map(zoomify_urls, function (url){ return "proxy/eosin?url="+url;});
+         var eosinLayer = new OpenLayers.Layer.Zoomify( "Eosin", eosinURLS, new OpenLayers.Size( metadata.width, metadata.height ) );
          var binaryURLS = _.map(zoomify_urls, function (url){ return "proxy/binary?url="+url;});
-         var binaryLayer = new OpenLayers.Layer.Zoomify( "Binary", binaryURLS,
-             new OpenLayers.Size( metadata.width, metadata.height ) );
+         var binaryLayer = new OpenLayers.Layer.Zoomify( "Binary", binaryURLS, new OpenLayers.Size( metadata.width, metadata.height ) );
 
          var layerSwitcher = self.createLayerSwitcher();
 
@@ -305,7 +299,13 @@ var BrowseImageView = Backbone.View.extend({
                //"moveend": mapEvent,
                "zoomend": function (event) {
                   var map = event.object;
-                  //alert(map.getZoom() + " - " + self.model.get("magnification"));
+                  var maxMagnification = self.model.get("magnification");
+                  var deltaZoom = map.getNumZoomLevels() - map.getZoom() - 1;
+                  var magnification = maxMagnification;
+                  if (deltaZoom != 0)
+                     magnification = maxMagnification / (Math.pow(2,deltaZoom));
+                  magnification = Math.round(magnification * 100) / 100;
+                  $("#zoomInfoPanel"+self.model.id).html(magnification + "X");
                }
                /*"changelayer": mapLayerChanged,
                "changebaselayer": mapBaseLayerChanged*/
@@ -343,7 +343,8 @@ var BrowseImageView = Backbone.View.extend({
             $("#map"+self.model.get('id')).css("height",height);
          });
          self.addBaseLayer(binaryLayer);
-         self.addBaseLayer(otsuLayer);
+         self.addBaseLayer(haematoxylinLayer);
+         self.addBaseLayer(eosinLayer);
          self.addBaseLayer(baseLayer);
          self.createOverviewMap();
          self.map.zoomToMaxExtent();
