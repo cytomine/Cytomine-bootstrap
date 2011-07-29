@@ -148,7 +148,10 @@ var ProjectDashboardView = Backbone.View.extend({
                     $(self.el).find("#downloadAnnotationsExcel").click(function(){
                        window.location = "/api/project/"+self.model.id+"/annotation/download?format=excel";
                     });
-
+                     $(self.el).find("#downloadAnnotationsPDF").button();
+                    $(self.el).find("#downloadAnnotationsPDF").click(function(){
+                       window.location = "/api/project/"+self.model.id+"/annotation/download?format=pdf";
+                    });
                 }
             });
             new TermCollection({idOntology:self.model.get('ontology')}).fetch({
