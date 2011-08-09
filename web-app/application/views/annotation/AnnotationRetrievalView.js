@@ -1,6 +1,7 @@
 var AnnotationRetrievalView = Backbone.View.extend({
     tagName : "div",
     baseAnnotation : null,
+    terms : null,
     initialize: function(options) {
         this.container = options.container;
         this.page = options.page;
@@ -12,37 +13,110 @@ var AnnotationRetrievalView = Backbone.View.extend({
 
         var self = this;
         console.log("AnnotationRetrievalView: main elem "+$(self.el).length);
-        $(self.el).dialog({
-            width: 900,
-            height: 500,
-            autoOpen : true,
-            modal:true,
-            buttons : {
-                "Close" : function() {
-                    $(self.el).dialog("close");
-                }
+
+        new TermCollection({idOntology:window.app.status.currentProjectModel.get('ontology')}).fetch({
+            success : function (collection, response) {
+                window.app.status.currentTermsCollection = collection;
+                self.terms = collection;
+
+                $(self.el).dialog({
+                    title : self.createTitle(),
+                    width: 900,
+                    height: 500,
+                    autoOpen : true,
+                    modal:true,
+                    buttons : {
+                        "Close" : function() {
+                            $(self.el).dialog("close");
+                        }
+                    }
+                });
+
+                $(self.el).append("<ul><li><a href=\"#retrievalThumb\">Thumb view</a></li><li><a href=\"#retrievalPieChart\">Stats view</a></li></ul>");
+                $(self.el).append("<div id=\"retrievalThumb\"><div>");
+                $(self.el).append("<div id=\"retrievalPieChart\"><div>");
+
+                $(self.el).tabs();
+
+                self.createThumbView(self.page);
+                self.createStatsView();
+            }});
+        return this;
+
+    },
+    createTitle : function() {
+        var self = this;
+        var id = self.baseAnnotation.get('id');
+        var termsNameArray = new Array();
+        var termArray = self.baseAnnotation.get('term');
+        _.each(termArray, function(termid){
+            console.log(termid);
+            console.log(self.terms);
+            if(self.terms.get(termid)!=undefined) {
+                termsNameArray.push(self.terms.get(termid).get('name'));
             }
         });
+        return "Annotation " + id + " with term " +  termsNameArray.join(',');
 
-        self.model.each(function(annotation) {
-            console.log(annotation.get('similarity'));
-            var numValue = Number(annotation.get('similarity'));
-            console.log(numValue);
-        });
-
-
-        self.appendThumbs(self.page);
-
-
-
-        /*$(window).scroll(function(){
-         if  (($(window).scrollTop() + 100) >= $(document).height() - $(window).height()){
-         self.appendThumbs(++self.page);
-         }
-         });*/
-
-        return this;
     },
+    createThumbView : function(page) {
+        this.appendThumbs(page);
+    },
+    createStatsView : function() {
+        var self = this;
+        //extract as method
+
+
+
+        var data = new Object();
+        self.model.each(function(annotation) {
+            var termArray = annotation.get('term');
+            _.each(termArray, function(termid){
+                console.log(termid);
+                console.log(self.terms);
+                var isTermFromCurrentProject = self.terms.get(termid)!=undefined;
+                if(isTermFromCurrentProject) {
+                    if(data[termid] != null ) {
+                        data[termid] = data[termid] + Number(annotation.get('similarity'));
+                    } else {
+                        data[termid] = Number(annotation.get('similarity'));
+                    }
+                }
+            });
+        });
+        console.log("data:");
+        console.log(data);
+        self.drawPieChart(data);
+
+
+    },
+    drawPieChart : function (collection) {
+        var self = this;
+        $("#retrievalPieChart").empty();
+        // Create and populate the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Term');
+        data.addColumn('number', 'Similarity weighted sum');
+        data.addRows(_.size(collection));
+        var i = 0;
+        var colors = [];
+
+        for (var key in collection) {
+            if (collection.hasOwnProperty(key)) {
+                var value = collection[key];
+                var term = self.terms.get(key);
+                //colors.push(term.get('color'));
+                data.setValue(i,0, term.get('name'));
+                data.setValue(i,1, value);
+                i++;
+            }
+        }
+
+        // Create and draw the visualization.
+        new google.visualization.PieChart(document.getElementById('retrievalPieChart')).
+                draw(data, {width: 500, height: 350,title:""});
+    },
+
     appendThumbs : function(page) {
         var self = this;
         var cpt = 0;
@@ -60,8 +134,7 @@ var AnnotationRetrievalView = Backbone.View.extend({
         $(thumb.el).css("border","50px");
         $(thumb.el).css("color","green");
         $(thumb.el).css("background-color","green");
-        $(self.el).append(thumb.el);
-        console.log(thumb.el);
+        $("#retrievalThumb").append(thumb.el);
 
         self.model.each(function(annotation) {
             if ((cpt >= inf) && (cpt < sup)) {
@@ -70,11 +143,14 @@ var AnnotationRetrievalView = Backbone.View.extend({
                     className : "thumb-wrap",
                     id : "annotationthumb"+annotation.get('id')
                 }).render();
-                $(self.el).append(thumb.el);
+                $("#retrievalThumb").append(thumb.el);
             }
             cpt++;
             self.annotations.push(annotation.id);
         });
+
+
+
     },
     /**
      * Add the thumb annotation

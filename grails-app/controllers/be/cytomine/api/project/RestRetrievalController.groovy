@@ -11,6 +11,8 @@ class RestRetrievalController extends RestController {
     def search = {
         log.info "List with id annotation:"+params.idannotation
         def data = loadAnnotationSimilarities(params.idannotation)
+        //def stats = loadStatsSimilarities(data)
+        //data << stats
         responseSuccess(data)
     }
 
@@ -38,6 +40,23 @@ class RestRetrievalController extends RestController {
         }
         return data
     }
+
+    /*private def loadStatsSimilarities(def annotations) {
+        println "get stats"
+        def stats = [:]
+        annotations.each { annotation ->
+            stats = incrementTermStats(stats,annotation.terms(),annotation.similarity)
+        }
+        return stats;
+    }
+
+    private def incrementTermStats(def stats, def terms, double similarity) {
+        terms.each { term ->
+            if(stats[(term.id)]) stats[(term.id)]=stats[(term.id)]+similarity
+            else stats[(term.id)] = similarity
+        }
+        return stats;
+    } */
 
 
 }
