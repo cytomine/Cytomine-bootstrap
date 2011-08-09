@@ -72,7 +72,21 @@ var AnnotationCollection = Backbone.Collection.extend({
     }
 });
 
+
 AnnotationCollection.comparator = function(annotation) {
     return annotation.get("created");
 };
 
+// define our collection
+var AnnotationRetrievalCollection = Backbone.Collection.extend({
+    model: AnnotationModel,
+    url: function() {
+        return "api/annotation/" + this.annotation + "/retrieval.json";
+    },
+    initialize: function (options) {
+        this.annotation = options.annotation;
+    },
+    comparator : function (annotation) {
+        return -Number(annotation.get("similarity")); //id or created (chronology?)
+    }
+});

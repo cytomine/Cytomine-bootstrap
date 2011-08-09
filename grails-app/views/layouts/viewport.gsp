@@ -146,6 +146,7 @@
 
 
         <script type="text/javascript" src="application/views/annotation/AnnotationListView.js" ></script>
+        <script type="text/javascript" src="application/views/annotation/AnnotationRetrievalView.js" ></script>
 
         <script type="text/javascript" src="application/views/Component.js" ></script>
         <script type="text/javascript" src="application/views/ApplicationView.js" ></script>

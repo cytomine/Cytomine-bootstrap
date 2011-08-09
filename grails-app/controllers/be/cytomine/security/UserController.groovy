@@ -3,6 +3,7 @@ package be.cytomine.security
 class UserController {
 
     def springSecurityService
+    def scaffold = SecUser
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def index = {

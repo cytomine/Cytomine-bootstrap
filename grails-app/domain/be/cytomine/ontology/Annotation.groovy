@@ -20,11 +20,12 @@ class Annotation extends SequenceDomain implements Serializable {
     Double zoomLevel
     String channels
     User user
+    Double similarity
 
     static belongsTo = [ImageInstance]
     static hasMany = [ annotationTerm: AnnotationTerm ]
 
-    static transients = ["cropURL", "boundaries"]
+    static transients = ["cropURL", "boundaries","similarity"]
 
     static constraints = {
         name(blank:true)
@@ -32,6 +33,7 @@ class Annotation extends SequenceDomain implements Serializable {
         zoomLevel(nullable:true)
         channels(nullable:true)
         user(nullable:false)
+        similarity(nullable:true)
     }
 
     static mapping = {
@@ -40,6 +42,7 @@ class Annotation extends SequenceDomain implements Serializable {
             location type: org.hibernatespatial.GeometryUserType
         }
     }
+
 
     String toString() {return "Annotation " + id}
 
@@ -223,6 +226,9 @@ class Annotation extends SequenceDomain implements Serializable {
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
             returnArray['term'] = it.termsId()
+
+            //retrieval
+            try {if(it?.similarity) returnArray['similarity'] = it.similarity}catch(Exception e){}
 
             returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
             returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.getIdProject(),imageinstance.id,it.id)

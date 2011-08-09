@@ -181,6 +181,9 @@ class UrlMappings {
         "/api/annotation/$idannotation/term/$idterm"(controller:"restAnnotationTerm"){
             action = [GET:"show",DELETE:"delete",POST:"add"]
         }
+        "/api/annotation/$idannotation/retrieval"(controller:"restRetrieval"){
+            action = [GET:"search",DELETE:"delete",POST:"add"]
+        }
 
         /* Term */
         "/api/term"(controller:"restTerm"){

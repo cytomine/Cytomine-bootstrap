@@ -199,7 +199,7 @@ class RestAnnotationController extends RestController {
             Geometry annotationFull = new WKTReader().read(form);
             println "points=" + annotationFull.getNumPoints() + " " + annotationFull.getArea();
             println "annotationFull:"+annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
-             StopWatch stopWatch = new LoggingStopWatch();
+            StopWatch stopWatch = new LoggingStopWatch();
             /**
              * Must be improve:
              * -Number of point depends on: size of annotation, times during the draw, ...
@@ -245,7 +245,7 @@ class RestAnnotationController extends RestController {
                     i=i+(incrThreshold); max--;
                 }
             }
-             stopWatch.stop("compress:");
+            stopWatch.stop("compress:");
             println "annotationFull good=" + i + " "+annotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
             json.location =  new WKTWriter().write(annotationFull)
         } catch(Exception e) {}
