@@ -266,7 +266,8 @@ AnnotationLayer.prototype = {
                                     model : collection,
                                     projectsPanel : self,
                                     container : self,
-                                    el : "#annotationRetrieval"
+                                    el : "#annotationRetrieval",
+                                    baseAnnotation : model
                                 }).render();
 
                             }});
