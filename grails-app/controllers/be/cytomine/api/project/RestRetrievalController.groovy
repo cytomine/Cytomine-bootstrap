@@ -24,7 +24,7 @@ class RestRetrievalController extends RestController {
 
     private def loadAnnotationSimilarities(def idAnnotation) {
         println "get similarities"
-        String URL = "http://localhost:8090/retrieval-web/annotation/search.json"
+        String URL = "http://localhost:8090/retrieval-web/resource/search.json"
         HttpClient client = new HttpClient();
         client.connect(URL,"xxx","xxx");
         client.post(Annotation.read(idAnnotation).encodeAsJSON())
@@ -50,7 +50,7 @@ class RestRetrievalController extends RestController {
 
     public static def indexAnnotationSynchronous(Annotation annotation) {
         println "index annotation synchron"
-        String URL = "http://localhost:8090/retrieval-web/annotation.json"
+        String URL = "http://localhost:8090/retrieval-web/resource.json"
         HttpClient client = new HttpClient();
         client.connect(URL,"xxx","xxx");
         client.post(annotation.encodeAsJSON());

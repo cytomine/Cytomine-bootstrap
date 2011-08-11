@@ -231,6 +231,7 @@ class Annotation extends SequenceDomain implements Serializable {
             try {if(it?.similarity) returnArray['similarity'] = it.similarity}catch(Exception e){}
 
             returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
+            returnArray['url'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
             returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.getIdProject(),imageinstance.id,it.id)
             return returnArray
         }
