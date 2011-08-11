@@ -182,7 +182,7 @@ class UrlMappings {
             action = [GET:"show",DELETE:"delete",POST:"add"]
         }
         "/api/annotation/$idannotation/retrieval"(controller:"restRetrieval"){
-            action = [GET:"search",DELETE:"delete",POST:"add"]
+            action = [GET:"search",POST:"index"]
         }
 
         /* Term */

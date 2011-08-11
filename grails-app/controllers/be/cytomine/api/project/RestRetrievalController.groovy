@@ -5,23 +5,29 @@ import be.cytomine.test.HttpClient
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.ontology.Annotation
+import groovyx.gpars.Asynchronizer
+import java.util.concurrent.Future
 
 class RestRetrievalController extends RestController {
 
     def search = {
         log.info "List with id annotation:"+params.idannotation
         def data = loadAnnotationSimilarities(params.idannotation)
-        //def stats = loadStatsSimilarities(data)
-        //data << stats
         responseSuccess(data)
+    }
+
+    def index = {
+        log.info "index with id annotation:"+params.idannotation
+        indexAnnotationAsynchronous(Annotation.read(params.idannotation))
+        responseSuccess([])
     }
 
     private def loadAnnotationSimilarities(def idAnnotation) {
         println "get similarities"
-        String URL = "http://localhost:8090/retrieval-web/annotation/"+idAnnotation+".json"
+        String URL = "http://localhost:8090/retrieval-web/annotation/search.json"
         HttpClient client = new HttpClient();
         client.connect(URL,"xxx","xxx");
-        client.get()
+        client.post(Annotation.read(idAnnotation).encodeAsJSON())
         int code  = client.getResponseCode()
         String response = client.getResponseData()
         client.disconnect();
@@ -33,6 +39,7 @@ class RestRetrievalController extends RestController {
         def data = []
         for(int i=0;i<json.length();i++) {
             def annotationjson = json.get(i)  //{"id":6754,"url":"http://beta.cytomine.be:48/api/annotation/6754/crop.jpg","sim":6.922589484181173E-6},{"id":5135,"url":"http://beta.cytomine.be:48/api/annotation/5135/crop.jpg","sim":6.912057598973113E-6}]
+            println annotationjson
             Annotation annotation = Annotation.read(annotationjson.id)
             println "read annotation " + annotationjson.id + " = " + annotation
             annotation.similarity = new Double(annotationjson.sim)
@@ -41,22 +48,30 @@ class RestRetrievalController extends RestController {
         return data
     }
 
-    /*private def loadStatsSimilarities(def annotations) {
-        println "get stats"
-        def stats = [:]
-        annotations.each { annotation ->
-            stats = incrementTermStats(stats,annotation.terms(),annotation.similarity)
-        }
-        return stats;
+    public static def indexAnnotationSynchronous(Annotation annotation) {
+        println "index annotation synchron"
+        String URL = "http://localhost:8090/retrieval-web/annotation.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL,"xxx","xxx");
+        client.post(annotation.encodeAsJSON());
+        int code  = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
     }
 
-    private def incrementTermStats(def stats, def terms, double similarity) {
-        terms.each { term ->
-            if(stats[(term.id)]) stats[(term.id)]=stats[(term.id)]+similarity
-            else stats[(term.id)] = similarity
+    public static def indexAnnotationAsynchronous(Annotation annotation) {
+        println "index annotation asynchron"
+        Asynchronizer.doParallel() {
+            Closure indexAnnotation = {
+                try {
+                 indexAnnotationSynchronous(annotation)
+                } catch(Exception e) {e.printStackTrace()}
+            }
+            Closure annotationIndexing = indexAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
+            Future result=annotationIndexing()
         }
-        return stats;
-    } */
+    }
+
 
 
 }
