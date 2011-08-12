@@ -27,7 +27,9 @@ var AnnotationRetrievalView = Backbone.View.extend({
                     modal:true,
                     buttons : {
                         "Close" : function() {
-                            $(self.el).dialog("close");
+
+                            $(self.el).dialog("destroy");
+
                         }
                     }
                 });

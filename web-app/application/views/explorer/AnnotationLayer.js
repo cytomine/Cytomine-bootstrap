@@ -261,7 +261,6 @@ AnnotationLayer.prototype = {
                                 $('#annotationRetrieval').empty();
 
                                  console.log("load AnnotationRetrievalView "+$('#annotationRetrieval').length);
-                                 console.log($(self.el));
                                 var panel = new AnnotationRetrievalView({
                                     model : collection,
                                     projectsPanel : self,
