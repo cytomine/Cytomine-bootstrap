@@ -24,7 +24,7 @@ class RestRetrievalController extends RestController {
 
     private def loadAnnotationSimilarities(def idAnnotation) {
         println "get similarities"
-        String URL = "http://localhost:8090/retrieval-web/resource/search.json"
+        String URL = "http://localhost:8090/retrieval-web/api/resource/search.json"
         HttpClient client = new HttpClient();
         client.connect(URL,"xxx","xxx");
         client.post(Annotation.read(idAnnotation).encodeAsJSON())
@@ -37,6 +37,8 @@ class RestRetrievalController extends RestController {
         def json = JSON.parse(response)
         assert json instanceof JSONArray
         def data = []
+
+        //TODO: for perf => getAll(allID)?
         for(int i=0;i<json.length();i++) {
             def annotationjson = json.get(i)  //{"id":6754,"url":"http://beta.cytomine.be:48/api/annotation/6754/crop.jpg","sim":6.922589484181173E-6},{"id":5135,"url":"http://beta.cytomine.be:48/api/annotation/5135/crop.jpg","sim":6.912057598973113E-6}]
             println annotationjson
@@ -50,7 +52,7 @@ class RestRetrievalController extends RestController {
 
     public static def indexAnnotationSynchronous(Annotation annotation) {
         println "index annotation synchron"
-        String URL = "http://localhost:8090/retrieval-web/resource.json"
+        String URL = "http://localhost:8090/retrieval-web/api/resource.json"
         HttpClient client = new HttpClient();
         client.connect(URL,"xxx","xxx");
         client.post(annotation.encodeAsJSON());
