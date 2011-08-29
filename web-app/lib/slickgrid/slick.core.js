@@ -54,7 +54,7 @@
         };
 
         /***
-         * Prevents the rest of the handlers from being executed.
+         * Prevents the api of the handlers from being executed.
          * @method stopImmediatePropagation
          */
         this.stopImmediatePropagation = function() {

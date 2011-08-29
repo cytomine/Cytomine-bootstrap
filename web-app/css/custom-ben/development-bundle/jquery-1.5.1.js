@@ -132,7 +132,7 @@ jQuery.fn = jQuery.prototype = {
 					doc = (context ? context.ownerDocument || context : document);
 
 					// If a single string is passed in and it's a single tag
-					// just do a createElement and skip the rest
+					// just do a createElement and skip the api
 					ret = rsingleTag.exec( selector );
 
 					if ( ret ) {
@@ -2806,7 +2806,7 @@ var withinElement = function( event ) {
 },
 
 // In case of event delegation, we only need to rename the event.type,
-// liveHandler will take care of the rest.
+// liveHandler will take care of the api.
 delegate = function( event ) {
 	event.type = event.data;
 	jQuery.event.handle.apply( this, arguments );

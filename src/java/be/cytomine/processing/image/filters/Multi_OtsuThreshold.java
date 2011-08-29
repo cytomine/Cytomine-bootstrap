@@ -1,4 +1,4 @@
-package imagej;
+package be.cytomine.processing.image.filters;
 //
 // Multi_OtsuThreshold_.java
 //

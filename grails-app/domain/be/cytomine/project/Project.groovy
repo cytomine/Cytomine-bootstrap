@@ -2,14 +2,12 @@ package be.cytomine.project
 
 import grails.converters.JSON
 import be.cytomine.SequenceDomain
-import be.cytomine.rest.UrlApi
+import be.cytomine.api.UrlApi
 import be.cytomine.ontology.Ontology
 import be.cytomine.image.ImageInstance
 
 import be.cytomine.ontology.Annotation
-import org.perf4j.StopWatch
-import org.perf4j.LoggingStopWatch
-import be.cytomine.image.AbstractImage
+
 import be.cytomine.security.UserGroup
 import be.cytomine.command.Command
 

@@ -3,13 +3,11 @@ package be.cytomine.processing
 import ij.ImagePlus
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-import ij.plugin.filter.Binary
-import imagej.DynamicThreshold
+
 import ij.process.ImageConverter
-import imagej.Multi_OtsuThreshold
-import ij.IJ
-import ij.plugin.Thresholder
-import imagej.Colour_Deconvolution
+import be.cytomine.processing.image.filters.Multi_OtsuThreshold
+
+import be.cytomine.processing.image.filters.Colour_Deconvolution
 
 /**
  * Cytomine @ GIGA-ULG

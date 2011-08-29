@@ -47,7 +47,7 @@ function (lang,   logger,   file,          parse,    optimize,   pragma,
      * require.js contents (no plugins or jQuery).
      *
      * The object could also contain a "buildFile" property, which is a string
-     * that is the file path to a build profile that contains the rest
+     * that is the file path to a build profile that contains the api
      * of the build profile directives.
      *
      * This function does not return a status, it should throw an error if

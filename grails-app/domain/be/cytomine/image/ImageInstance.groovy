@@ -4,10 +4,8 @@ import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.SequenceDomain
 import be.cytomine.ontology.Annotation
-import be.cytomine.rest.UrlApi
+import be.cytomine.api.UrlApi
 import be.cytomine.project.Slide
-import org.perf4j.StopWatch
-import org.perf4j.LoggingStopWatch
 
 /**
  * Created by IntelliJ IDEA.

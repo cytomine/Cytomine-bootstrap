@@ -6,10 +6,10 @@ import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.security.User
 import be.cytomine.SequenceDomain
-import be.cytomine.rest.UrlApi
+import be.cytomine.api.UrlApi
 
 import be.cytomine.image.ImageInstance
-import be.cytomine.project.Project
+
 import be.cytomine.image.AbstractImage
 
 class Annotation extends SequenceDomain implements Serializable {

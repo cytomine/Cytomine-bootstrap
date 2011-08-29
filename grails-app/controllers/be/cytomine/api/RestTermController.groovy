@@ -1,4 +1,4 @@
-package be.cytomine.api.project
+package be.cytomine.api
 
 import be.cytomine.ontology.Term
 

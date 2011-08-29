@@ -549,7 +549,7 @@
       return resp;
     },
 
-    // Proxy to _'s chain. Can't be proxied the same way the rest of the
+    // Proxy to _'s chain. Can't be proxied the same way the api of the
     // underscore methods are proxied because it relies on the underscore
     // constructor.
     chain: function () {

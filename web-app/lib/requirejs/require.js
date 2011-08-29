@@ -777,7 +777,7 @@ var require, define;
 
             //Check for exit conditions.
             if (!hasLoadedProp && !context.waitCount) {
-                //If the loaded object had no items, then the rest of
+                //If the loaded object had no items, then the api of
                 //the work below does not need to be done.
                 return undefined;
             }
@@ -1739,7 +1739,7 @@ var require, define;
             //after page load where not getting initialized correctly.
             //Original approach suggested by Andrea Giammarchi:
             //http://webreflection.blogspot.com/2009/11/195-chars-to-help-lazy-loading.html
-            //see other setReadyState reference for the rest of the fix.
+            //see other setReadyState reference for the api of the fix.
             if (setReadyState) {
                 document.readyState = "complete";
             }

@@ -1,4 +1,4 @@
-package be.cytomine.rest
+package be.cytomine.api
 
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 

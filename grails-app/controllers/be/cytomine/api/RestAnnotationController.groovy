@@ -1,4 +1,4 @@
-package be.cytomine.api.project
+package be.cytomine.api
 
 import grails.converters.*
 import be.cytomine.ontology.Annotation
@@ -7,8 +7,6 @@ import be.cytomine.command.Command
 import be.cytomine.command.annotation.AddAnnotationCommand
 import be.cytomine.command.annotation.DeleteAnnotationCommand
 import be.cytomine.command.annotation.EditAnnotationCommand
-import be.cytomine.image.AbstractImage
-import be.cytomine.api.RestController
 
 import be.cytomine.project.Project
 import com.vividsolutions.jts.io.WKTReader
@@ -16,16 +14,14 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
 import com.vividsolutions.jts.io.WKTWriter
 import be.cytomine.image.ImageInstance
-import java.lang.*
+
 import be.cytomine.command.TransactionController
-import be.cytomine.ontology.RelationTerm
-import be.cytomine.command.relationterm.DeleteRelationTermCommand
+
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.command.annotationterm.DeleteAnnotationTermCommand
-import be.cytomine.ontology.Term
-import be.cytomine.command.term.DeleteTermCommand
+
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import be.cytomine.rest.UrlApi
+
 import org.perf4j.LoggingStopWatch
 import org.perf4j.StopWatch
 

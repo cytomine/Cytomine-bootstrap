@@ -1,4 +1,4 @@
-package imagej;
+package be.cytomine.processing.image.filters;
 
 import ij.*;
 import ij.plugin.*;

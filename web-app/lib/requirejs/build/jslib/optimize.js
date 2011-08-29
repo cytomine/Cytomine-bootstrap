@@ -65,7 +65,7 @@ function (lang,   logger,   envOptimize,        file,           uglify) {
                 return fullMatch;
             }
 
-            //Make sure we have a unix path for the rest of the operation.
+            //Make sure we have a unix path for the api of the operation.
             importFileName = importFileName.replace(lang.backSlashRegExp, "/");
 
             try {

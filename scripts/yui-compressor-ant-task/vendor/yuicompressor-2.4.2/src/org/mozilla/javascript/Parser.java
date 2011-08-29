@@ -829,7 +829,7 @@ public class Parser
                 exitLoop();
             }
             // Always auto-insert semicon to follow SpiderMonkey:
-            // It is required by EMAScript but is ignored by the rest of
+            // It is required by EMAScript but is ignored by the api of
             // world, see bug 238945
             matchToken(Token.SEMI);
             decompiler.addEOL(Token.SEMI);

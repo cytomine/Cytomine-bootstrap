@@ -1,4 +1,4 @@
-package be.cytomine.api.project
+package be.cytomine.api
 
 import be.cytomine.api.RestController
 import be.cytomine.project.Slide

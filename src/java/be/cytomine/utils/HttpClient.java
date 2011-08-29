@@ -1,8 +1,6 @@
-package be.cytomine;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+package be.cytomine.utils;
 import sun.misc.BASE64Encoder;
 
-import java.util.*;
 import java.io.*;
 import java.net.*;
 /**
