@@ -11,6 +11,7 @@ import ij.process.ImageConverter
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.algorithm.ConvexHull
 import com.vividsolutions.jts.geom.GeometryFactory
+import org.postgis.Geometry
 
 class ProcessingController extends RestController{
 
@@ -30,9 +31,12 @@ class ProcessingController extends RestController{
         println url
         ImagePlus ip = getImage(url)
         def coordinates = computeCoordinates(ip, shift, shift, x, y)
-        def convexHull = new ConvexHull(coordinates, new GeometryFactory())
-        def geometry = convexHull.getConvexHull()
-        println "geometry" + geometry.geometryType
+        def geometry = new GeometryFactory().buildGeometry(new LinkedList<Coordinate>()) //EMPTY GEOMETRY
+        if (coordinates != null) {
+            def convexHull = new ConvexHull(coordinates, new GeometryFactory())
+            geometry = convexHull.getConvexHull()
+            println "geometry" + geometry.geometryType
+        }
         def result = [:]
         result.geometry = geometry.toString()
         render result as JSON
@@ -95,87 +99,36 @@ class ProcessingController extends RestController{
         println "computeCoordinates " + x + " " + y + " " +  ip.getWidth() + " " + ip.getHeight()
         int[] firstPixel = ip.getPixel(x,y)
         if (firstPixel[0] == WHITE) { //pixel is white, nothing to do
-            return []
+            return null
         }
         Stack<Coordinate> toVisit = new Stack<Coordinate>()
         List<Coordinate> visited = new LinkedList<Coordinate>()
         toVisit.push(new Coordinate(x,y))
         ip.getProcessor().putPixel(x,y,255)
         assert(ip.getProcessor().getPixel( (int) x, (int) y) == WHITE)
-        def cpt = 0
         while (!toVisit.empty()) {
-
-            if (cpt > ROI_SIZE*ROI_SIZE) return [] //error..
             Coordinate point = toVisit.pop()
             visited.push(new Coordinate(topLeftX + point.x, topLeftY - point.y)) //compute the real coordinate, not relative to the crop
-            //if (ip.getProcessor().getPixel( (int) point.x, (int) point.y) == WHITE) continue
+
             int posX
             int posY
-            if (cpt % 10000 == 0 || cpt == 0) {
-                println "cpt " + cpt
-                println "toVisit " + toVisit.size()
-                println "visited " + visited.size()
-                println "posX " + point.x
-                println "posY " + point.y
-                println "#################é"
-            }
-            cpt++
-            /* 1 */
-            posX = (int) point.x - 1
-            posY = (int) point.y - 1
-            if (isInROI(ip, posX, posY) && ip.getProcessor().getPixel(posX,posY) != WHITE) {
-                ip.getProcessor().putPixel( posX, posY, WHITE)
-                toVisit.push(new Coordinate(posX, posY))
-            }
-            /* 2 */
-            posX = (int) point.x
-            posY = (int) point.y - 1
-            if (isInROI(ip, posX, posY) && ip.getProcessor().getPixel(posX,posY) != WHITE) {
-                ip.getProcessor().putPixel( posX, posY, WHITE)
-                toVisit.push(new Coordinate(posX, posY))
-            }
-            /* 3 */
-            posX = (int) point.x + 1
-            posY = (int) point.y - 1
-            if (isInROI(ip, posX, posY) && ip.getProcessor().getPixel(posX,posY) != WHITE) {
-                ip.getProcessor().putPixel( posX, posY, WHITE)
-                toVisit.push(new Coordinate(posX, posY))
-            }
-            /* 4 */
-            posX = (int) point.x - 1
-            posY = (int) point.y
-            if (isInROI(ip, posX, posY) && ip.getProcessor().getPixel(posX,posY) != WHITE) {
-                ip.getProcessor().putPixel( posX, posY, WHITE)
-                toVisit.push(new Coordinate(posX, posY))
-            }
-            /* 5 //Nothing to do, equal to start firstPixel
-            /* 6 */
-            posX = (int) point.x + 1
-            posY = (int) point.y
-            if (isInROI(ip, posX, posY) && ip.getProcessor().getPixel(posX,posY) != WHITE) {
-                ip.getProcessor().putPixel( posX, posY, WHITE)
-                toVisit.push(new Coordinate(posX, posY))
-            }
-            /* 7 */
-            posX = (int) point.x - 1
-            posY = (int) point.y + 1
-            if (isInROI(ip, posX, posY) && ip.getProcessor().getPixel(posX,posY) != WHITE) {
-                ip.getProcessor().putPixel( posX, posY, WHITE)
-                toVisit.push(new Coordinate(posX, posY))
-            }
-            /* 8 */
-            posX = (int) point.x
-            posY = (int) point.y + 1
-            if (isInROI(ip, posX, posY) && ip.getProcessor().getPixel(posX,posY) != WHITE) {
-                ip.getProcessor().putPixel( posX, posY, WHITE)
-                toVisit.push(new Coordinate(posX, posY))
-            }
-            /* 9 */
-            posX = (int) point.x + 1
-            posY = (int) point.y + 1
-            if (isInROI(ip, posX, posY) && ip.getProcessor().getPixel(posX,posY) != WHITE) {
-                ip.getProcessor().putPixel( posX, posY, WHITE)
-                toVisit.push(new Coordinate(posX, posY))
+
+            int[] xShifts = [-1, 0, 1,
+                    -1,    1,
+                    -1, 0, 1]
+
+            int[] yShifts = [-1, -1, -1,
+                    0,      0,
+                    1,  1,  1]
+
+            assert(xShifts.size() == yShifts.size())
+            for (int i = 0; i < xShifts.size(); i++) {
+                posX = (int) point.x + xShifts[i]
+                posY = (int) point.y + yShifts[i]
+                if (isInROI(ip, posX, posY) && ip.getProcessor().getPixel(posX,posY) != WHITE) {
+                    ip.getProcessor().putPixel( posX, posY, WHITE)
+                    toVisit.push(new Coordinate(posX, posY))
+                }
             }
         }
         /* Draw the detected region */
@@ -186,45 +139,7 @@ class ProcessingController extends RestController{
         visited.each { point ->
             ip.getProcessor().putPixel(point.x, point.y , 0)
         }*/
-        /* Simple ROI
-        def xmin = ip.getWidth();
-        def ymin = ip.getHeight();
-        def xmax = 0;
-        def ymax = 0;
-        visited.each { point ->
-            xmin = Math.min(xmin, point.x)
-            ymin = Math.min(ymin, point.y)
-            xmax = Math.max(xmax, point.x)
-            ymax = Math.max(ymax, point.y)
-        }
-        points.add([x : xmin, y  : ymin]) //topLeft
-        points.add([x : xmax, y  : ymin]) //topRight
-        points.add([x : xmax, y  : ymax]) //bottomRight
-        points.add([x : xmin, y  : ymax]) //bottomLeft
-        points.add([x : xmin, y  : ymin]) //topLeft
-        */
-        /* Contours */
-        /*Integer[] minx = new Integer[ip.getHeight()]
-        for (int i = 0; i < ip.getHeight(); i++ ) {
-            minx[i] = null
-        }
-        Integer[] maxx = new Integer[ip.getHeight()]
-        for (int i = 0; i < ip.getHeight(); i++ ) {
-            maxx[i] = null
-        }
-        visited.each { point ->
-            minx[point.y] = minx[point.y] == null ? point.x : Math.min(minx[point.y], point.x)
-            maxx[point.y] = maxx[point.y] == null ? point.x : Math.max(maxx[point.y], point.x)
-        }
-        for (int i = 0; i < ip.getHeight(); i++ ) {
-            if (!minx[i]) continue;
-            points.add([x : minx[i], y : i])
-        }
-        for (int i = ip.getHeight() - 1; i > 0; i-- ) {
-            if (!maxx[i]) continue;
-            points.add([x : maxx[i], y : i])
-        }*/
-        /* Convex HULL */
+        //return to coordinates array
         Coordinate[] coordinates = new Coordinate[visited.size()]
         visited.toArray(coordinates)
         coordinates
