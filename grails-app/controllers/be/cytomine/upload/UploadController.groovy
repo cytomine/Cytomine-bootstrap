@@ -1,4 +1,4 @@
-package be.cytomine.command
+package be.cytomine.upload
 
 import grails.converters.JSON
 import be.cytomine.image.server.Storage

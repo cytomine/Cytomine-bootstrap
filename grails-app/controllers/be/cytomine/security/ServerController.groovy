@@ -1,4 +1,4 @@
-package be.cytomine.command
+package be.cytomine.security
 
 import grails.converters.JSON
 import grails.converters.XML

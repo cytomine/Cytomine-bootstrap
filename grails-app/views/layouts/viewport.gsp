@@ -13,16 +13,11 @@
     </script>
     <!-- RequireJS -->
     <script type="text/javascript" src="lib/requirejs/require.min.js"></script>
+
     <!-- JQuery & JQuery UI-->
     <link rel='stylesheet' href='css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"></script>
-    <!--<script type="text/javascript" src="lib/jquery/jquery-1.5.1.min.js"></script>
-    <script type="text/javascript" src="lib/jquery/jquery-ui-1.8.1.custom.min.js"></script> -->
-
-
-    <!--<link rel='stylesheet' href='css/custom-ben/css/custom-theme/jquery-ui-1.8.14.custom.css' type='text/css'/>-->
-    <!--<link rel='stylesheet' href='css/absolution/jquery.ui.all.css' type='text/css'/>-->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js"></script>
 
     <!-- Core Libs -->
     <script type="text/javascript" src="lib/underscore.min.js"></script>
@@ -57,9 +52,6 @@
     <link rel='stylesheet' href='css/reset.css' type='text/css'/>
     <link rel='stylesheet' href='css/cytomine.css' type='text/css'/>
 
-
-
-
     <!--jqgrid -->
     <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
     <script src="lib/jqgrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
@@ -69,8 +61,6 @@
 
     <!-- jcarrousel -->
     <script type="text/javascript" src="lib/jcarousel/jquery.carousel.min.js"></script>
-
-
     <script type="text/javascript" src="lib/tinysort/jquery.tinysort.min.js"></script>
 
 
@@ -165,9 +155,11 @@
             };
             // Create the app.
 
+            <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
             require(
                     { urlArgs: "bust=" + (new Date()).getTime() }
             );
+            </g:if>
             window.app = new ApplicationController();
         });
     </script>

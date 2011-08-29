@@ -1,4 +1,4 @@
-package be.cytomine.command
+package be.cytomine.processing
 
 import ij.ImagePlus
 import javax.imageio.ImageIO
