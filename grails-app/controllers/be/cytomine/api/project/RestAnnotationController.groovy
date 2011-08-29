@@ -202,7 +202,7 @@ class RestAnnotationController extends RestController {
         Command addAnnotationCommand = new AddAnnotationCommand(postData : json.toString(), user: currentUser)
         def result = processCommand(addAnnotationCommand, currentUser)
         //index in retrieval (asynchronous)
-        if(result?.annotation?.id) RestRetrievalController.indexAnnotationAsynchronous(Annotation.read(result.annotation.id))
+        //if(result?.annotation?.id) RestRetrievalController.indexAnnotationAsynchronous(Annotation.read(result.annotation.id))
 
         response(result)
     }

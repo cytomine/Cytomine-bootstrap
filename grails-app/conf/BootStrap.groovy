@@ -34,7 +34,7 @@ import org.perf4j.LoggingStopWatch
 import be.cytomine.data.BootStrapData
 import be.cytomine.data.BootStrapData2
 import be.cytomine.data.BootStrapData3
-import be.cytomine.data.RestImportDataController
+import be.cytomine.data.ImportController
 import be.cytomine.data.ImageData
 import be.cytomine.data.ImageData3
 import be.cytomine.data.ImageData2
@@ -149,7 +149,7 @@ class BootStrap {
     }
 
     private def updateImageProperties() {
-        def c = new  RestImportDataController()
+        def c = new  ImportController()
         c.imageproperties()
     }
 

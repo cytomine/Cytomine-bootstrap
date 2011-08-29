@@ -12,8 +12,7 @@ import be.cytomine.project.Project
 import be.cytomine.command.abstractimage.EditAbstractImageCommand
 import be.cytomine.command.abstractimage.DeleteAbstractImageCommand
 import be.cytomine.api.RestController
-import be.cytomine.image.server.ImageServer
-import be.cytomine.image.server.Storage
+
 import grails.orm.PagedResultList
 import be.cytomine.image.server.ImageProperty
 

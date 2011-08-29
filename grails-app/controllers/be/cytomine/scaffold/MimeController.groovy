@@ -1,4 +1,4 @@
-package be.cytomine.image
+package be.cytomine.scaffold
 
 import be.cytomine.image.Mime
 

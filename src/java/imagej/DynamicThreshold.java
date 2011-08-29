@@ -48,6 +48,34 @@ public class DynamicThreshold implements PlugInFilter {
         return DOES_8G+NO_UNDO;
     }
 
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    public void setC(int c) {
+        this.c = c;
+    }
+
+    public void setMean(boolean mean) {
+        this.mean = mean;
+    }
+
+    public void setMedian(boolean median) {
+        this.median = median;
+    }
+
+    public void setMin(boolean min) {
+        this.min = min;
+    }
+
+    public void setMax(boolean max) {
+        this.max = max;
+    }
+
+    public void setMeanMaxMin(boolean meanMaxMin) {
+        this.meanMaxMin = meanMaxMin;
+    }
+
     private ImagePlus imMean;
     private ImagePlus imMedian;
     private ImagePlus imMin;
@@ -85,11 +113,11 @@ public class DynamicThreshold implements PlugInFilter {
         int mSize= (int)radius;
         radius = radius/2;
 
-        ImageStack imsMean = new ImageStack(w,h);
-        ImageStack imsMedian = new ImageStack(w,h);
-        ImageStack imsMax = new ImageStack(w,h);
-        ImageStack imsMin = new ImageStack(w,h);
-        ImageStack imsMeanMaxMin = new ImageStack(w,h);
+        ImageStack imsMean = null;
+        ImageStack imsMedian = null;
+        ImageStack imsMax = null;
+        ImageStack imsMin = null;
+        ImageStack imsMeanMaxMin = null;
 
         ByteProcessor bpSlice;
         ByteProcessor bpTemp = new ByteProcessor(w,h);
@@ -102,6 +130,7 @@ public class DynamicThreshold implements PlugInFilter {
             byte[] sliceArray = (byte[])bpSlice.getPixelsCopy();
 
             if (mean){
+                imsMean = new ImageStack(w,h);
                 bpTemp.setPixels(bpSlice.getPixelsCopy());
                 rf.rank(bpTemp,radius, MEAN);
                 bpTemp=getNewProcessor(bpTemp,bpSlice,c);
@@ -110,6 +139,7 @@ public class DynamicThreshold implements PlugInFilter {
                 imMean.setStack(null,imsMean);
             }
             if(median){
+                imsMedian = new ImageStack(w,h);
                 bpTemp.setPixels(bpSlice.getPixelsCopy());
                 rf.rank(bpTemp,radius, MEDIAN);
                 bpTemp=getNewProcessor(bpTemp,bpSlice,c);
@@ -118,6 +148,7 @@ public class DynamicThreshold implements PlugInFilter {
                 imMedian.setStack(null,imsMedian);
             }
             if(min){
+                imsMin = new ImageStack(w,h);
                 bpTemp.setPixels(bpSlice.getPixelsCopy());
                 rf.rank(bpTemp,radius, MIN);
                 bpTemp=getNewProcessor(bpTemp,bpSlice,c);
@@ -126,6 +157,7 @@ public class DynamicThreshold implements PlugInFilter {
                 imMin.setStack(null,imsMin);
             }
             if(max){
+                imsMax = new ImageStack(w,h);
                 bpTemp.setPixels(bpSlice.getPixelsCopy());
                 rf.rank(bpTemp,radius, MAX);
                 bpTemp=getNewProcessor(bpTemp,bpSlice,c);
@@ -134,6 +166,7 @@ public class DynamicThreshold implements PlugInFilter {
                 imMax.setStack(null,imsMax);
             }
             if(meanMaxMin){
+                imsMeanMaxMin = new ImageStack(w,h);
                 bpTemp.setPixels(bpSlice.getPixelsCopy());
                 bpTemp=dFilter(bpTemp,mSize);
                 bpTemp=getNewProcessor(bpTemp,bpSlice,c);

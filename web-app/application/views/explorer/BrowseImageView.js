@@ -176,7 +176,10 @@ var BrowseImageView = Backbone.View.extend({
                layer.vectorsLayer.setVisibility(false);
             }
          });
+
          if (_.isFunction(self.initCallback)) self.initCallback.call();
+
+         self.initAutoAnnoteTools();
       }
 
    },
@@ -411,22 +414,22 @@ var BrowseImageView = Backbone.View.extend({
       var self = this;
 
       var handleMapClick = function handleMapClick(evt) {
-
          if (!self.getUserLayer().magicOnClick) return;
-         // don't select the point, select a square around the click-point
-         var clickbuffer = 18; //how many pixels around should it look?
-         var sw = self.map.getLonLatFromViewPortPx(new
-             OpenLayers.Pixel(evt.xy.x-clickbuffer , evt.xy.y+clickbuffer) );
-         var ne = self.map.getLonLatFromViewPortPx(new
-             OpenLayers.Pixel(evt.xy.x+clickbuffer , evt.xy.y-clickbuffer) );
+         var lonlat = self.map.getLonLatFromViewPortPx(evt.xy);
 
-         // open a popup window, supplying the coords in GET
-         var url =  sw.lon+','+sw.lat+','+ne.lon+','+ne.lat;
-         alert(url);
+         var y = parseInt(self.model.get("height")) - lonlat.lat;
+         var x = lonlat.lon;
+         console.log(self.model.get("height"));
+         var url = "processing/detect/"+self.model.get("id")+"/"+x+"/"+y;
+         //alert(url);
+         $.getJSON(url,
+             function (response) {
+                   self.getUserLayer().addAnnotation(response.geometry);
+             }
+         );
+
       }
-      this.map.events.register('click', this.map, handleMapClick);
-
-
+      self.map.events.register("click", self.getUserLayer().vectorsLayer, handleMapClick);
    },
    /**
     * Init the toolbar
@@ -505,12 +508,12 @@ var BrowseImageView = Backbone.View.extend({
          self.getUserLayer().toggleControl("freehand");
          self.getUserLayer().disableHightlight();
       });
-      /*toolbar.find('input[id=magic' + this.model.get('id') + ']').click(function () {
-       self.getUserLayer().controls.select.unselectAll();
-       self.getUserLayer().toggleControl("select");
-       self.getUserLayer().magicOnClick = true;
-       self.getUserLayer().disableHightlight();
-       });*/
+      toolbar.find('input[id=magic' + this.model.get('id') + ']').click(function () {
+         self.getUserLayer().controls.select.unselectAll();
+         self.getUserLayer().toggleControl("select");
+         self.getUserLayer().magicOnClick = true;
+         self.getUserLayer().disableHightlight();
+      });
       toolbar.find('input[id=modify' + this.model.get('id') + ']').click(function () {
          self.getUserLayer().toggleEdit();
          self.getUserLayer().toggleControl("modify");

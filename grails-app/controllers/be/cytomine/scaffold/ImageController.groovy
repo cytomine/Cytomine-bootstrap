@@ -1,4 +1,4 @@
-package be.cytomine.project
+package be.cytomine.scaffold
 
 import be.cytomine.image.AbstractImage
 

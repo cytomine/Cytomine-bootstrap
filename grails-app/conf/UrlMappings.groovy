@@ -280,16 +280,24 @@ class UrlMappings {
             action = [GET: "listProjectBySlide"]
         }
 
-        "/api/import/annotations/$idProject"(controller:"restImportData") {
+        "/api/import/annotations/$idProject"(controller: "import") {
               action = [GET:"annotations"]
         }
 
-        "/api/import/imageproperties"(controller:"restImportData") {
+        "/api/import/imageproperties"(controller: "import") {
               action = [GET:"imageproperties"]
         }
 
-         "/api/import/exportimages"(controller:"restImportData") {
+         "/api/export/exportimages"(controller: "export") {
               action = [GET:"exportimages"]
+        }
+
+        "/processing/detect/$image/$x/$y"(controller:"processing") {
+            action = [GET : "detect"]
+        }
+
+        "/processing/show/$image/$x/$y"(controller:"processing") {
+            action = [GET : "show"]
         }
 
     }

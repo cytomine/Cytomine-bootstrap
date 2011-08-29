@@ -14,16 +14,13 @@ import be.cytomine.command.imageinstance.AddImageInstanceCommand
 import be.cytomine.command.imageinstance.EditImageInstanceCommand
 import be.cytomine.command.imageinstance.DeleteImageInstanceCommand
 import be.cytomine.ontology.Annotation
-import be.cytomine.ontology.RelationTerm
-import be.cytomine.command.relationterm.DeleteRelationTermCommand
+
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.command.annotationterm.DeleteAnnotationTermCommand
-import be.cytomine.ontology.Term
-import be.cytomine.command.term.DeleteTermCommand
+
 import be.cytomine.command.TransactionController
 import be.cytomine.command.annotation.DeleteAnnotationCommand
-import org.perf4j.StopWatch
-import org.perf4j.LoggingStopWatch
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
