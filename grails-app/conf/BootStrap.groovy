@@ -61,6 +61,7 @@ class BootStrap {
 
     def init = { servletContext ->
 
+        println "GrailsUtil.environment= " +GrailsUtil.environment + " BootStrap.development="+BootStrap.development
         if (GrailsUtil.environment == BootStrap.development) { //scripts are not present in productions mode
             compileJS();
         }
@@ -393,7 +394,7 @@ class BootStrap {
     def createRetrievalServers(retrievalServerSamples) {
         retrievalServerSamples.each { item->
             if(RetrievalServer.findByUrl(item.url)) return
-            RetrievalServer retrievalServer = new RetrievalServer( url : item.url, port : item.port, description : item.description)
+            RetrievalServer retrievalServer = new RetrievalServer( url : item.url, description : item.description)
             if (retrievalServer.validate()) {
                 println "Creating retrieval server ${item.description}... "
                 retrievalServer.save(flush:true)

@@ -111,9 +111,8 @@ class BootStrapData {
 
     static def retrievalServerSamples = [
             [
-                    'url' : '139.165.108.28',
-                    'port' : 1230,
-                    'description' : 'marée'
+                    'url' : 'http://139.165.117.25:8081/retrieval-web/api/resource',
+                    'description' : 'stevben-server'
             ]
     ]
 

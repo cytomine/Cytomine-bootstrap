@@ -260,9 +260,12 @@ AnnotationLayer.prototype = {
                         console.log("click similar");
                         new AnnotationRetrievalCollection({annotation : model.id}).fetch({
                             success : function (collection, response) {
-                                $('#annotationRetrieval').empty();
 
-                                 console.log("load AnnotationRetrievalView "+$('#annotationRetrieval').length);
+                                $('#annotationRetrieval').replaceWith("");
+                                $("#annotationRetrievalMain").empty();
+                                $("#annotationRetrievalMain").append("<div id=\"annotationRetrieval\"></div>");
+
+                                 console.log("load AnnotationRetrievalView = "+$('#annotationRetrieval').length);
                                 var panel = new AnnotationRetrievalView({
                                     model : collection,
                                     projectsPanel : self,

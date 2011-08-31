@@ -18,7 +18,11 @@ var AnnotationRetrievalView = Backbone.View.extend({
             success : function (collection, response) {
                 window.app.status.currentTermsCollection = collection;
                 self.terms = collection;
+                $(self.el).append("<ul><li><a href=\"#retrievalThumb\">Thumb view</a></li><li><a href=\"#retrievalPieChart\">Stats view</a></li></ul>");
+                $(self.el).append("<div id=\"retrievalThumb\"><div>");
+                $(self.el).append("<div id=\"retrievalPieChart\"><div>");
 
+                $("#annotationRetrieval").tabs();
                 $(self.el).dialog({
                     title : self.createTitle(),
                     width: 900,
@@ -27,18 +31,13 @@ var AnnotationRetrievalView = Backbone.View.extend({
                     modal:true,
                     buttons : {
                         "Close" : function() {
-                            $(self.el).empty()
-                            $(self.el).dialog("destroy");
+                            $(self.el).dialog("close");
 
                         }
                     }
                 });
 
-                $(self.el).append("<ul><li><a href=\"#retrievalThumb\">Thumb view</a></li><li><a href=\"#retrievalPieChart\">Stats view</a></li></ul>");
-                $(self.el).append("<div id=\"retrievalThumb\"><div>");
-                $(self.el).append("<div id=\"retrievalPieChart\"><div>");
 
-                $(self.el).tabs();
 
                 self.createThumbView(self.page);
                 self.createStatsView();
