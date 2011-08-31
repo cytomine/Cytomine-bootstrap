@@ -7,6 +7,8 @@ var AnnotationRetrievalView = Backbone.View.extend({
         this.page = options.page;
         this.annotations = null; //array of annotations that are printed
         this.baseAnnotation = options.baseAnnotation;
+        this.terms = options.terms;
+        window.app.status.currentTermsCollection = options.terms;
         if (this.page == undefined) this.page = 0;
     },
     render: function() {
@@ -14,10 +16,6 @@ var AnnotationRetrievalView = Backbone.View.extend({
         var self = this;
         console.log("AnnotationRetrievalView: main elem "+$(self.el).length);
 
-        new TermCollection({idOntology:window.app.status.currentProjectModel.get('ontology')}).fetch({
-            success : function (collection, response) {
-                window.app.status.currentTermsCollection = collection;
-                self.terms = collection;
                 $(self.el).append("<ul><li><a href=\"#retrievalThumb\">Thumb view</a></li><li><a href=\"#retrievalPieChart\">Stats view</a></li></ul>");
                 $(self.el).append("<div id=\"retrievalThumb\"><div>");
                 $(self.el).append("<div id=\"retrievalPieChart\"><div>");
@@ -41,7 +39,6 @@ var AnnotationRetrievalView = Backbone.View.extend({
 
                 self.createThumbView(self.page);
                 self.createStatsView();
-            }});
         return this;
 
     },
@@ -51,8 +48,8 @@ var AnnotationRetrievalView = Backbone.View.extend({
         var termsNameArray = new Array();
         var termArray = self.baseAnnotation.get('term');
         _.each(termArray, function(termid){
-            console.log(termid);
-            console.log(self.terms);
+            //console.log(termid);
+            //console.log(self.terms);
             if(self.terms.get(termid)!=undefined) {
                 termsNameArray.push(self.terms.get(termid).get('name'));
             }
@@ -75,7 +72,7 @@ var AnnotationRetrievalView = Backbone.View.extend({
             _.each(termArray, function(termid){
                 console.log(termid);
                 console.log(self.terms);
-                var isTermFromCurrentProject = self.terms.get(termid)!=undefined;
+                var isTermFromCurrentProject = self.terms!=undefined && self.terms.get(termid)!=undefined;
                 if(isTermFromCurrentProject) {
                     if(data[termid] != null ) {
                         data[termid] = data[termid] + Number(annotation.get('similarity'));

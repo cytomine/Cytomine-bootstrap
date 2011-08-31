@@ -228,7 +228,7 @@ AnnotationLayer.prototype = {
                     json.username = window.app.models.users.get(json.user).prettyName();
                     //term
                     var terms = new Array();
-                    _.each(json.term,function(idTerm){
+                    _.each(json.term, function(idTerm) {
                         var tpl = _.template("<a href='#ontology/{{idOntology}}/{{idTerm}}'>{{termName}}</a>", {idOntology : window.app.status.currentProjectModel.get('ontology'), idTerm : idTerm, termName : window.app.status.currentTermsCollection.get(idTerm).get('name')});
                         terms.push(tpl);
 
@@ -238,7 +238,7 @@ AnnotationLayer.prototype = {
                     var content = _.template(tpl, json);
                     self.popup = new OpenLayers.Popup("",
                             new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
-                            new OpenLayers.Size(250, 100),
+                            new OpenLayers.Size(250, 150),
                             content,
                             false);
                     self.popup.setBackgroundColor("transparent");
@@ -248,37 +248,79 @@ AnnotationLayer.prototype = {
                     evt.feature.popup = self.popup;
                     self.popup.feature = evt.feature;
                     map.addPopup(self.popup);
-                    $("#annotationHide"+model.id).click(function(){
+                    $("#annotationHide" + model.id).click(function() {
                         self.controls.select.unselectAll();
                         var feature = self.getFeature(model.id);
                         if (feature == undefined || feature == null) return;
                         self.hideFeature(feature);
                         return false;
                     });
+                    new TermCollection({idOntology:window.app.status.currentProjectModel.get('ontology')}).fetch({
+                        success : function (terms, response) {
+                            new AnnotationRetrievalCollection({annotation : model.id}).fetch({
+                                success : function (collection, response) {
 
-                    $("#annotationSimilar"+model.id).click(function(){
-                        console.log("click similar");
-                        new AnnotationRetrievalCollection({annotation : model.id}).fetch({
-                            success : function (collection, response) {
+                                    console.log("get AnnotationRetrievalCollection");
+                                    //make a hashtable with entry "idTerm = sumSimilaritiesForIdTerm"
+                                    var data = new Object();
+                                    collection.each(function(annotation) {
+                                        var termArray = annotation.get('term');
+                                        _.each(termArray, function(termid) {
+                                            console.log(termid);
+                                            var isTermFromCurrentProject = terms.get(termid) != undefined;
+                                            if (isTermFromCurrentProject) {
+                                                if (data[termid] != null) {
+                                                    data[termid] = data[termid] + Number(annotation.get('similarity'));
+                                                } else {
+                                                    data[termid] = Number(annotation.get('similarity'));
+                                                }
+                                            }
+                                        });
+                                    });
+                                    console.log("data:");
+                                    console.log(data);
 
-                                $('#annotationRetrieval').replaceWith("");
-                                $("#annotationRetrievalMain").empty();
-                                $("#annotationRetrievalMain").append("<div id=\"annotationRetrieval\"></div>");
+                                    //select the best term thanks to similarities
+                                    var bestTerm = "";
+                                    var max = 0;
+                                    for (var prop in data) {
+                                        if (data.hasOwnProperty(prop)) {
+                                            console.log("prop=" + prop + " value=" + data[prop]);
+                                            if (data[prop] > max) {
+                                                max = data[prop];
+                                                bestTerm = prop;
+                                            }
+                                        }
+                                    }
+                                    console.log("Best term =" + bestTerm + "width max =" + max);
+                                    console.log("Best term =" + terms.get(bestTerm).get('name'));
+                                    console.log($("#suggTerm").length);
+                                    //$("#suggTerm").replaceWith("IBIZAAAA");
+                                    //console.log($(content).find("#suggTerm").length);
+                                    //console.log($(content).html());
+                                    $("#suggTerm").replaceWith(terms.get(bestTerm).get('name'));
 
-                                 console.log("load AnnotationRetrievalView = "+$('#annotationRetrieval').length);
-                                var panel = new AnnotationRetrievalView({
-                                    model : collection,
-                                    projectsPanel : self,
-                                    container : self,
-                                    el : "#annotationRetrieval",
-                                    baseAnnotation : model
-                                }).render();
+                                    $("#annotationSimilar" + model.id).click(function() {
+                                        console.log("click similar");
 
-                            }});
+                                        $('#annotationRetrieval').replaceWith("");
+                                        $("#annotationRetrievalMain").empty();
+                                        $("#annotationRetrievalMain").append("<div id=\"annotationRetrieval\"></div>");
 
-                         return false;
+                                        console.log("load AnnotationRetrievalView = " + $('#annotationRetrieval').length);
+                                        var panel = new AnnotationRetrievalView({
+                                            model : collection,
+                                            projectsPanel : self,
+                                            container : self,
+                                            el : "#annotationRetrieval",
+                                            baseAnnotation : model,
+                                            terms : terms
+                                        }).render();
+                                        return false;
 
-                    });
+                                    });
+                                }});
+                        }});
                 }
             });
         });
@@ -293,7 +335,7 @@ AnnotationLayer.prototype = {
                 return;
             }
             var resolution = self.browseImageView.model.get("resolution");
-            var length =  evt.feature.geometry.getLength();
+            var length = evt.feature.geometry.getLength();
             if (resolution != undefined && resolution != null) {
                 length *= resolution;
                 length = Math.round(length * 1000) / 1000;
@@ -434,14 +476,14 @@ AnnotationLayer.prototype = {
             importance: 10
         };
         if (_.size(annotation.get("term")) > 1) { //multiple terms
-            feature.style =  {
+            feature.style = {
                 strokeColor :multipleTermColor,
                 fillColor :  multipleTermColor,
                 fillOpacity : 0.6
             }
         } else {
-            _.each(annotation.get("term"), function(idTerm){
-                feature.style =  {
+            _.each(annotation.get("term"), function(idTerm) {
+                feature.style = {
                     strokeColor : window.app.status.currentTermsCollection.get(idTerm).get('color'),
                     fillColor :  window.app.status.currentTermsCollection.get(idTerm).get('color'),
                     fillOpacity : 0.6
@@ -589,7 +631,7 @@ AnnotationLayer.prototype = {
             var feature = this.vectorsLayer.features[i];
 
 
-            if(feature.attributes.measure==undefined || feature.attributes.measure == 'YES') {
+            if (feature.attributes.measure == undefined || feature.attributes.measure == 'YES') {
                 self.vectorsLayer.removeFeatures(feature);
                 if (feature.popup) {
                     self.popup.feature = null;
