@@ -238,13 +238,12 @@ AnnotationLayer.prototype = {
                     var content = _.template(tpl, json);
                     self.popup = new OpenLayers.Popup("",
                             new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
-                            new OpenLayers.Size(250, 150),
+                            new OpenLayers.Size(300, 150),
                             content,
                             false);
                     self.popup.setBackgroundColor("transparent");
                     self.popup.setBorder(0);
                     self.popup.padding = 0;
-
                     evt.feature.popup = self.popup;
                     self.popup.feature = evt.feature;
                     map.addPopup(self.popup);
@@ -280,26 +279,61 @@ AnnotationLayer.prototype = {
                                     console.log("data:");
                                     console.log(data);
 
-                                    //select the best term thanks to similarities
-                                    var bestTerm = "";
-                                    var max = 0;
+                                    //select the 2 best term thanks to similarities
+                                    var bestTerm1 = "";
+                                    var bestTerm2 = "";
+                                    var bestTerm1Value = 0;
+                                    var bestTerm2Value = 0;
+                                    var max1 = 0;
+                                    var max2 = 0;
+                                    var sum = 0;
                                     for (var prop in data) {
                                         if (data.hasOwnProperty(prop)) {
+                                            sum = sum + data[prop]
                                             console.log("prop=" + prop + " value=" + data[prop]);
-                                            if (data[prop] > max) {
-                                                max = data[prop];
-                                                bestTerm = prop;
+
+                                              if (data[prop] > max1) {
+                                                  max2 = max1;
+                                                  bestTerm2 = bestTerm1;
+                                                  bestTerm2Value = bestTerm1Value;
+                                                  max1 = data[prop]
+                                                  bestTerm1 = prop;
+                                                  bestTerm1Value = data[prop]
+                                              } else if(data[prop] > max2) {
+                                                  max2 = data[prop]
+                                                  bestTerm2 = prop;
+                                                  bestTerm2Value = data[prop];
                                             }
                                         }
                                     }
-                                    console.log("Best term =" + bestTerm + "width max =" + max);
-                                    console.log("Best term =" + terms.get(bestTerm).get('name'));
-                                    console.log($("#suggTerm").length);
-                                    //$("#suggTerm").replaceWith("IBIZAAAA");
-                                    //console.log($(content).find("#suggTerm").length);
-                                    //console.log($(content).html());
-                                    $("#suggTerm").replaceWith(terms.get(bestTerm).get('name'));
 
+                                    bestTerm1Value = (bestTerm1Value / sum)*100;
+                                    bestTerm2Value = (bestTerm2Value / sum)*100;
+
+                                    var suggestedTerm = ""; var suggestedTerm2 = "";
+                                    if(terms.get(bestTerm1)!=undefined)
+                                        suggestedTerm+= "<span id=\"changeBySuggest"+terms.get(bestTerm1).id +"\" style=\"display : inline\"><u>"+terms.get(bestTerm1).get('name') + "</u> ("+Math.round(bestTerm1Value)+"%)<span>";
+                                    if(terms.get(bestTerm2)!=undefined)
+                                        suggestedTerm2+= " and " + "<span id=\"changeBySuggest"+terms.get(bestTerm2).id +"\" style=\"display : inline\"><u>"+terms.get(bestTerm2).get('name') + "</u> ("+Math.round(bestTerm2Value)+"%)<span>";
+
+                                    $("#suggTerm").empty();
+                                    $("#suggTerm").append(suggestedTerm);
+                                    $("#suggTerm").append(suggestedTerm2);
+                                    if(terms.get(bestTerm1)!=undefined) {
+                                    $("#changeBySuggest"+terms.get(bestTerm1).id).click(function() {
+                                               //TODO: delete all term for this annotation
+                                               //TODO: add rel between term and this annotation
+                                    });
+                                    }
+
+                                    if(terms.get(bestTerm2)!=undefined) {
+                                    $("#changeBySuggest"+terms.get(bestTerm2).id).click(function() {
+                                               //TODO: delete all term for this annotation
+                                               //TODO: add rel between term and this annotation
+                                    });
+                                    }
+
+                                    $("#loadSimilarAnnotation" + model.id).replaceWith("<a href=\"#\" id=\"annotationSimilar"+model.id+"\"> Search similar annotations</a>");
                                     $("#annotationSimilar" + model.id).click(function() {
                                         console.log("click similar");
 
