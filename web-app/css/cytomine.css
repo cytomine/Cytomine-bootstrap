@@ -208,6 +208,29 @@ h3 { font-size:13px; }
     border-bottom: 1px solid #ccc;
 }
 
+#admin .sidebar {
+    width:15%;
+}
+
+#admin .main {
+    display: block;
+    left: 15%;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    overflow-x: auto;
+    overflow-y: auto;
+    padding-top: 0.5%;
+    padding-left: 0.5%;
+    padding-bottom: 1%;
+    position: absolute;
+    top: 50px;
+    width: 84.5%;
+    border-left: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
 
 #upload .main {
     display: block;

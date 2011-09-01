@@ -12,12 +12,13 @@ import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.algorithm.ConvexHull
 import com.vividsolutions.jts.geom.GeometryFactory
 import org.postgis.Geometry
+import be.cytomine.processing.image.filters.Auto_Threshold
 
 class ProcessingController extends RestController{
 
     def sessionFactory
 
-    private static def ROI_SIZE = 1000 //MAX CVT IN IIP CONFIG FILE !
+    private static def ROI_SIZE = 500 //MAX CVT IN IIP CONFIG FILE !
     private static def BLACK = 0
     private static def WHITE = 255
 
@@ -77,9 +78,13 @@ class ProcessingController extends RestController{
         ImagePlus ip = new ImagePlus(url,bufferedImage)
         ImageConverter ic = new ImageConverter(ip)
         ic.convertToGray8()
-        ip.getProcessor().autoThreshold()
-        ip
+        //ip.getProcessor().autoThreshold()
+        def at = new Auto_Threshold()
+        Object[] result = at.exec(ip, "Triangle", false, false, true, false, false, false)
+        ImagePlus ip_thresholded = (ImagePlus) result[1]
+        ip_thresholded
     }
+
 
     private def getROI(idImage, x, y) {
         def shift = ProcessingController.ROI_SIZE / 2
@@ -96,7 +101,6 @@ class ProcessingController extends RestController{
     }
 
     private def computeCoordinates(ImagePlus ip, int x, int y, topLeftX, topLeftY) {
-        println "computeCoordinates " + x + " " + y + " " +  ip.getWidth() + " " + ip.getHeight()
         int[] firstPixel = ip.getPixel(x,y)
         if (firstPixel[0] == WHITE) { //pixel is white, nothing to do
             return null
@@ -137,7 +141,7 @@ class ProcessingController extends RestController{
                     ip.getProcessor().putPixel(i, j, 255)
         }
         visited.each { point ->
-            ip.getProcessor().putPixel(point.x, point.y , 0)
+            ip.getProcessor().putPixel(point.x, point.y , 125)
         }*/
         //return to coordinates array
         Coordinate[] coordinates = new Coordinate[visited.size()]

@@ -37,6 +37,11 @@ var LayerSwitcherPanel = Backbone.View.extend({
           var self = this;
           var content = _.template(tpl, {id : self.model.get("id")});
           $("#layerSwitcher"+self.model.get("id")).html(content);
+
+          $("#layerSwitcher"+self.model.get("id")).find(".showLayers").click(function () {
+             $("#layerSwitcher"+self.model.get("id")).find(".baseLayers").toggle(300);
+             return false;
+          });
           new DraggablePanelView({
                  el : $('#layerSwitcher' + self.model.get('id'))
               }).render();

@@ -78,6 +78,7 @@
             <fileset dir="${src.dir}" includes="application/controllers/OntologyController.js" />
             <fileset dir="${src.dir}" includes="application/controllers/CommandController.js" />
             <fileset dir="${src.dir}" includes="application/controllers/AnnotationController.js" />
+            <fileset dir="${src.dir}" includes="application/controllers/AdminController.js" />
             <fileset dir="${src.dir}" includes="application/models/ImageModel.js" />
             <fileset dir="${src.dir}" includes="application/models/TermModel.js" />
             <fileset dir="${src.dir}" includes="application/models/OntologyModel.js" />
@@ -124,6 +125,7 @@
             <fileset dir="${src.dir}" includes="application/views/project/ProjectAddImageListingDialog.js" />
             <fileset dir="${src.dir}" includes="application/views/project/ProjectAddImageThumbDialog.js" />
             <fileset dir="${src.dir}" includes="application/views/project/ProjectAddImageSearchPanel.js" />
+            <fileset dir="${src.dir}" includes="application/views/utils/CrudGridView.js" />
             <fileset dir="${src.dir}" includes="application/views/annotation/AnnotationListView.js" />
             <fileset dir="${src.dir}" includes="application/views/annotation/AnnotationRetrievalView.js" />
             <fileset dir="${src.dir}" includes="application/views/Component.js" />

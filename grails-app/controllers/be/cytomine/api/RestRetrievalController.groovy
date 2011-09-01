@@ -37,7 +37,7 @@ class RestRetrievalController extends RestController {
         for(int i=0;i<json.length();i++) {
             def annotationjson = json.get(i)  //{"id":6754,"url":"http://beta.cytomine.be:48/api/annotation/6754/crop.jpg","sim":6.922589484181173E-6},{"id":5135,"url":"http://beta.cytomine.be:48/api/annotation/5135/crop.jpg","sim":6.912057598973113E-6}]
             Annotation annotation = Annotation.read(annotationjson.id)
-            if(annotation) {
+            if(annotation && annotation.id!=Long.parseLong(idAnnotation)) {
                 annotation.similarity = new Double(annotationjson.sim)
                 data << annotation
             }

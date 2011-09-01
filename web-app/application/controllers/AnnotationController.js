@@ -1,11 +1,3 @@
-/**
- * Created by IntelliJ IDEA.
- * User: lrollus
- * Date: 7/04/11
- * Time: 10:05
- * To change this template use File | Settings | File Templates.
- */
-
 var AnnotationController = Backbone.Controller.extend({
 
     routes: {

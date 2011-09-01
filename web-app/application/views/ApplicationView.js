@@ -66,9 +66,10 @@ var ApplicationView = Backbone.View.extend({
       require([
          "text!application/templates/UploadComponent.tpl.html",
          "text!application/templates/WarehouseComponent.tpl.html",
-         "text!application/templates/explorer/ExplorerComponent.tpl.html"
+         "text!application/templates/explorer/ExplorerComponent.tpl.html",
+         "text!application/templates/AdminComponent.tpl.html"
       ],
-          function(uploadTpl, warehouseTpl, explorerTpl) {
+          function(uploadTpl, warehouseTpl, explorerTpl, adminTpl) {
              self.components.upload = new Component({
                 el : "#content",
                 template : _.template(uploadTpl, {}),
@@ -150,6 +151,18 @@ var ApplicationView = Backbone.View.extend({
                    $("#" + this.buttonAttr.elButton).addClass("ui-state-disabled");
                 }
              });
+             /*self.components.admin = new Component({
+                el : "#content",
+                template : _.template(adminTpl, {}),
+                buttonAttr : {
+                   elButton : "admin-button",
+                   buttonText : "Admin",
+                   buttonWrapper : "#menu",
+                   icon : "ui-icon-wrench",
+                   route : "#admin"
+                },
+                divId : "admin"
+             });*/
              self.components.logout = new Component({
                 el : "#content",
                 template : "",

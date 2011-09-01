@@ -154,7 +154,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
       if(dateEnd!=null) dateTimestampEnd=dateEnd.getTime();
 
 
-      $("#"+self.listmanageall).jqGrid('setGridParam',{url:"api/currentuser/image.json?filename="+searchText+"&createdstart="+dateTimestampStart+"&createdstop="+dateTimestampEnd,page:1}).trigger("reloadGrid");
+     $("#"+self.listmanageall).jqGrid('setGridParam',{url:"api/currentuser/image.json?filename="+searchText+"&createdstart="+dateTimestampStart+"&createdstop="+dateTimestampEnd,page:1}).trigger("reloadGrid");
 
 
    },

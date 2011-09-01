@@ -79,6 +79,7 @@
         <script type="text/javascript" src="application/controllers/OntologyController.js" ></script>
         <script type="text/javascript" src="application/controllers/CommandController.js" ></script>
         <script type="text/javascript" src="application/controllers/AnnotationController.js" ></script>
+        <script type="text/javascript" src="application/controllers/AdminController.js" ></script>
         <!-- Models -->
         <script type="text/javascript" src="application/models/ImageModel.js" ></script>
         <script type="text/javascript" src="application/models/TermModel.js" ></script>
@@ -138,6 +139,7 @@
         <script type="text/javascript" src="application/views/annotation/AnnotationListView.js" ></script>
         <script type="text/javascript" src="application/views/annotation/AnnotationRetrievalView.js" ></script>
 
+        <script type="text/javascript" src="application/views/utils/CrudGridView.js" ></script>
         <script type="text/javascript" src="application/views/Component.js" ></script>
         <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
         <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
@@ -155,11 +157,11 @@
             };
             // Create the app.
 
-            <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
+
             require(
                     { urlArgs: "bust=" + (new Date()).getTime() }
             );
-            </g:if>
+
             window.app = new ApplicationController();
         });
     </script>
