@@ -29,7 +29,7 @@ class EditCommand extends Command {
     def backup = newObject.encodeAsJSON()
 
     newObject = newObject.getFromData(newObject, postData)
-    newObject.id = Long.parseLong(postData.id)
+    newObject.id = postData.id
 
     if (newObject.validate() && newObject.save(flush: true)) {
       log.info "New " + objectName + " is saved"
