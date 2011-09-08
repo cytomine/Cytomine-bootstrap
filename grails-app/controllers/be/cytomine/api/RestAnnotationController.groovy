@@ -199,12 +199,12 @@ class RestAnnotationController extends RestController {
         Command addAnnotationCommand = new AddAnnotationCommand(postData : json.toString(), user: currentUser)
         def result = processCommand(addAnnotationCommand, currentUser)
         //index in retrieval (asynchronous)
-        RetrievalServer retrieval = RetrievalServer.findByDescription("stevben-server")
+        /*RetrievalServer retrieval = RetrievalServer.findByDescription("stevben-server")
         log.info "annotation.id="+result?.annotation?.id + " stevben-server="+ retrieval
         if(result?.annotation?.id && retrieval) {
             log.info "index annotation " + result?.annotation?.id + " on  " +  retrieval.url
             RestRetrievalController.indexAnnotationSynchronous(Annotation.read(result.annotation.id))
-        }
+        }*/
 
 
         response(result)
