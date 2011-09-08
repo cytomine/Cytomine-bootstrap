@@ -31,7 +31,7 @@ class AddUserCommand extends AddCommand implements UndoRedoCommand {
     def user = User.findById(userData.id)
     log.debug("Delete user with id:"+userData.id)
     user.delete(flush:true)
-    String id = userData.i
+    String id = userData.id
     return super.createUndoMessage(id,user,[userData.id,userData.username] as Object[]);
   }
 

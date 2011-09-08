@@ -7,38 +7,49 @@ import be.cytomine.image.AbstractImageGroup
 
 class Group extends SequenceDomain {
 
-  String name
+    String name
 
-  static belongsTo = Project
-  static hasMany = [userGroup:UserGroup, projectGroup:ProjectGroup, abstractimagegroup : AbstractImageGroup]
+    static belongsTo = Project
+    static hasMany = [userGroup:UserGroup, projectGroup:ProjectGroup, abstractimagegroup : AbstractImageGroup]
 
 
-  static mapping = {
-    table "`group`" //otherwise there is a conflict with the word "GROUP" from the SQL SYNTAX
-  }
+    static mapping = {
+        table "`group`" //otherwise there is a conflict with the word "GROUP" from the SQL SYNTAX
+    }
+
     static constraints = {
         name(blank:false, unique:true)
     }
-  String toString() {
-    name
-  }
 
-  def abstractimages() {
-    return abstractimagegroup.collect{
-      it.abstractimage
+    static Group getFromData(Group group, jsonGroup) {
+        group.name = jsonGroup.name
+        return group;
     }
-  }
 
-  def users() {
-    return userGroup.collect{
-      it.user
+    static Group createFromData(data) {
+        getFromData(new Group(), data)
     }
-  }
 
-  def projects() {
-    return projectGroup.collect{
-      it.project
+    String toString() {
+        name
     }
-  }
+
+    def abstractimages() {
+        return abstractimagegroup.collect{
+            it.abstractimage
+        }
+    }
+
+    def users() {
+        return userGroup.collect{
+            it.user
+        }
+    }
+
+    def projects() {
+        return projectGroup.collect{
+            it.project
+        }
+    }
 
 }

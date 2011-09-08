@@ -1285,4 +1285,24 @@ class ImageData4 {
             [filename :"Stern/15.jpg.tif",name : "CTL15",study : "ULG-BMGG-ZEBRA_CTL",extension : "tif",width : "2576",height : "1932",magnification : "10",resolution : "0.65",slidename : "SLIDE CTL15"],
             [filename :"Stern/15.jpg.tif",name : "CTL16",study : "ULG-BMGG-ZEBRA_CTL",extension : "tif",width : "2576",height : "1932",magnification : "10",resolution : "0.65",slidename : "SLIDE CTL16"],
     ]
+
+
+    static def BOTA = [
+            [filename :"Bota/245/0086245.vips.tif",name : "0086245",study : "MYCO",extension : "tif",width : "6964",height : "10218",magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/246/0086246.vips.tif",name : "0086246",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/250/0086250.vips.tif",name : "0086250",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/252/0086252.vips.tif",name : "0086252",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/258/810258_106.vips.tif",name : "810258_106",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/266/810266_109.vips.tif",name : "810266_109",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/327/810327_124.vips.tif",name : "810327_124",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/555/810555_118.vips.tif",name : "810555_118",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/556/810556_122.vips.tif",name : "810556_122",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/558/810558_120.vips.tif",name : "810558_120",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/561/810561_108.vips.tif",name : "810561_108",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/668/810668_117.vips.tif",name : "810668_117",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/672/810672_111.vips.tif",name : "810672_111",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/680/810680_112.vips.tif",name : "810680_112",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/692/810692_116.vips.tif",name : "810692_116",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+            [filename :"Bota/736/810736_115.vips.tif",name : "810736_115",study : "MYCO",extension : "tif",width : null,height :null,magnification : "10",resolution : "0.65",slidename : "MYCO01"],
+    ]
 }

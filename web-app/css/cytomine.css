@@ -27,6 +27,7 @@ h2 { font-size:15px; }
 h3 { font-size:13px; }
 
 .header {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: #666666;
     display: block;
     height: 20px;
@@ -362,7 +363,7 @@ div .zoomInfoPanel {
     text-align: center;
     height : 20px;
     padding : 2px;
-      -moz-border-radius: 6px;
+    -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
 }

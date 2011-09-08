@@ -23,7 +23,7 @@ class ImagePropertiesService {
         def imageServer= ImageServer.findByName("IIP-Openslide2");
         Resolver resolver = Resolver.getResolver(imageServer.className)
         def propertiesURL = resolver.getPropertiesURL(imageServer.getBaseUrl(), imageServer.getStorage().getBasePath() + image.getPath())
-        println image.getFilename()
+        println image.getFilename() + " : " + propertiesURL
         URL url = new URL(propertiesURL)
         URLConnection conn = url.openConnection();
         conn.setReadTimeout(1500)

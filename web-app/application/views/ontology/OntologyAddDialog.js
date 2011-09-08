@@ -78,11 +78,12 @@ var AddOntologyDialog = Backbone.View.extend({
           });
 
           //create ontology
-          new OntologyModel({name : name}).save({name : name},{
+          var ontology = new OntologyModel({name : name}).save({name : name},{
                  success: function (model, response) {
                     window.app.view.message("Ontology", response.message, "");
                     var id = response.ontology.id;
                     self.ontologiesPanel.refresh(id);
+                    window.app.models.ontologies.add(ontology);
                     $("#addontology").dialog("close");
                  },
                  error: function (model, response) {
@@ -92,5 +93,6 @@ var AddOntologyDialog = Backbone.View.extend({
                  }
               }
           );
+
        }
     });

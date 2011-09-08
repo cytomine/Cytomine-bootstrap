@@ -9,7 +9,7 @@ var ApplicationController = Backbone.Controller.extend({
    routes: {
       ""          :   "initialRoute",
       "explorer"  :   "explorer",
-      "upload"    :   "upload",
+      //"upload"    :   "upload",
       "admin"     :   "admin"
    },
 
@@ -65,7 +65,7 @@ var ApplicationController = Backbone.Controller.extend({
       window.app.controllers.upload       = new UploadController();
       window.app.controllers.command      = new CommandController();
       window.app.controllers.annotation   = new AnnotationController();
-      //window.app.controllers.admin        = new AdminController();
+      window.app.controllers.admin        = new AdminController();
       //Start the history
       Backbone.history.start();
    },
@@ -131,9 +131,9 @@ var ApplicationController = Backbone.Controller.extend({
       this.view.showComponent(this.view.components.explorer);
    },
 
-   upload: function() {
+   /*upload: function() {
       this.view.showComponent(this.view.components.upload);
-   },
+   },*/
 
    admin: function() {
       this.view.showComponent(this.view.components.admin);

@@ -104,6 +104,9 @@
             <fileset dir="${src.dir}" includes="application/views/explorer/LayerSwitcherPanel.js" />
             <fileset dir="${src.dir}" includes="application/views/explorer/OverviewMapPanel.js" />
             <fileset dir="${src.dir}" includes="application/views/explorer/OntologyPanel.js" />
+
+            <fileset dir="${src.dir}" includes="application/views/upload/UploadFormView.js" />
+
             <fileset dir="${src.dir}" includes="application/views/image/ImageThumbView.js" />
             <fileset dir="${src.dir}" includes="application/views/image/ImageSelectView.js" />
             <fileset dir="${src.dir}" includes="application/views/image/ImageView.js" />

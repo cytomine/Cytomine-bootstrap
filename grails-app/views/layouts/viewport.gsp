@@ -17,7 +17,7 @@
     <!-- JQuery & JQuery UI-->
     <link rel='stylesheet' href='css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 
     <!-- Core Libs -->
     <script type="text/javascript" src="lib/underscore.min.js"></script>
@@ -42,6 +42,9 @@
     <script type="text/javascript" src="lib/openlayers/OpenURL.min.js"></script>-->
 
     <script type="text/javascript" src="lib/farbtastic/farbtastic.min.js"></script>
+
+    <link href="lib/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>
 
     <!-- MultiSelect -->
     <link rel='stylesheet' href="lib/multiselect/jquery.multiselect.css" type='text/css'/>
@@ -110,6 +113,7 @@
         <script type="text/javascript" src="application/views/explorer/OverviewMapPanel.js" ></script>
         <script type="text/javascript" src="application/views/explorer/OntologyPanel.js" ></script>
 
+        <script type="text/javascript" src="application/views/upload/UploadFormView.js" ></script>
 
         <script type="text/javascript" src="application/views/image/ImageThumbView.js" ></script>
         <script type="text/javascript" src="application/views/image/ImageSelectView.js" ></script>
@@ -156,8 +160,6 @@
                 interpolate : /\{\{(.+?)\}\}/g
             };
             // Create the app.
-
-
             require(
                     { urlArgs: "bust=" + (new Date()).getTime() }
             );
@@ -168,6 +170,7 @@
     <script type="text/javascript" src="http://jqueryui.com/themeroller/themeswitchertool/"></script>
 
 <body>
+
 <div id='app'></div>
 <div id='dialogs'></div>
 <div id="switcher" style="position:absolute; top : 10px; left : 200px; z-index: 900;"></div>

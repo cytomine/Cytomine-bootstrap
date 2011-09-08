@@ -130,6 +130,7 @@ class BootStrap {
             createSlidesAndAbstractImages(ImageData3.ULGLBTDNEO04_DATA)
             createSlidesAndAbstractImages(ImageData3.ULGLBTDLBA_DATA)
             createSlidesAndAbstractImages(ImageData4.ULGBMGGZEBRACTL_DATA)
+            createSlidesAndAbstractImages(ImageData4.BOTA)
         }
 
         if (env == BootStrap.production) {
@@ -174,13 +175,13 @@ class BootStrap {
         }
     }
 
-    def createSlidesAndAbstractImages(LBTDScans) {
+    def createSlidesAndAbstractImages(abstractImages) {
 
         StopWatch stopWatch = new LoggingStopWatch();
         //Storage storage = Storage.findByName("cytomine")
         Group giga = Group.findByName('GIGA')
         User user = User.findByUsername("rmaree")
-        LBTDScans.each { item ->
+        abstractImages.each { item ->
             if (!item.name) {
                 item.name = new File(item.filename).getName()
             }
@@ -240,31 +241,36 @@ class BootStrap {
 
 
                 Project project = Project.findByName(item.study)
-                assert(project != null)
+                //assert(project != null)
                 image.save(flush : true)
                 //AbstractImageGroup.link(image,giga)
 
+                if (project != null) {
+                    project.groups().each { group ->
+                        println "GROUP " + group.name + " IMAGE " + image.filename
+                        AbstractImageGroup.link(image,group)
+                    }
 
-                project.groups().each { group ->
-                    println "GROUP " + group.name + " IMAGE " + image.filename
+                    /*Storage.list().each { storage->
+                        storageService.metadata(storage, image)
+                    }*/
+
+
+                    ImageInstance imageinstance = new ImageInstance(
+                            baseImage : image,
+                            user : user,
+                            project : project,
+                            slide : image.slide
+                    )
+                    if (imageinstance.validate()) {
+                        imageinstance.save(flush:true)
+                    } else {
+                        imageinstance.errors.each { println it }
+                    }
+
+                } else { //link with stevben by default
+                    Group group = Group.findByName("stevben")
                     AbstractImageGroup.link(image,group)
-                }
-
-                /*Storage.list().each { storage->
-                    storageService.metadata(storage, image)
-                }*/
-
-
-                ImageInstance imageinstance = new ImageInstance(
-                        baseImage : image,
-                        user : user,
-                        project : project,
-                        slide : image.slide
-                )
-                if (imageinstance.validate()) {
-                    imageinstance.save(flush:true)
-                } else {
-                    imageinstance.errors.each { println it }
                 }
 
 
@@ -345,8 +351,11 @@ class BootStrap {
                 }
 
                 /* Add Roles */
-                SecUserSecRole.create(user, userRole)
-                SecUserSecRole.create(user, adminRole)
+                item.roles.each { authority->
+                    println "Add SecRole " + authority + " for user " + user.username
+                    SecRole secRole = SecRole.findByAuthority(authority)
+                    if (secRole) SecUserSecRole.create(user, secRole)
+                }
 
             } else {
                 println("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")

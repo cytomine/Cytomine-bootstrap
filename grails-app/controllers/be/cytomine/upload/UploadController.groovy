@@ -12,12 +12,19 @@ class UploadController {
     def storageService
     static allowedMethods = [image:'POST']
 
+    private def getExtensionFromFilename(filename) {
+        def returned_value = ""
+        def m = (filename =~ /(\.[^\.]*)$/)
+        if (m.size()>0) returned_value = ((m[0][0].size()>0) ? m[0][0].substring(1).trim().toLowerCase() : "");
+        return returned_value
+    }
+
     def image = {
         def f = request.getFile('file')
-
         if(!f.empty) {
             println "not empty"
-            def tmpFile = File.createTempFile(f.originalFilename, ".svs")
+            def ext =  getExtensionFromFilename(f.originalFilename)
+            def tmpFile = File.createTempFile(f.originalFilename, ext)
             tmpFile.deleteOnExit()
             f.transferTo(tmpFile)
             println "Tmp file created " + tmpFile.getPath()
@@ -26,10 +33,11 @@ class UploadController {
                     scanner : Scanner.list().first(),
                     slide : Slide.list().first(),
                     path : tmpFile.getPath(),
-                    mime : Mime.findByExtension("svs"))
+                    mime : Mime.findByExtension(ext))
             if (aimage.validate()) {
                 aimage.save(flush : true)
                 Storage.list().each { storage->
+                    println "#################### " + storage
                     storageService.copy(storage, aimage)
                 }
             } else {

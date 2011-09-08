@@ -40,7 +40,7 @@ var ApplicationView = Backbone.View.extend({
       });
 
       renderCallback.call();
-
+      //$('#switcher').themeswitcher();
 
       return this;
    },
@@ -64,7 +64,7 @@ var ApplicationView = Backbone.View.extend({
    initComponents : function() {
       var self = this;
       require([
-         "text!application/templates/UploadComponent.tpl.html",
+         "text!application/templates/upload/UploadComponent.tpl.html",
          "text!application/templates/WarehouseComponent.tpl.html",
          "text!application/templates/explorer/ExplorerComponent.tpl.html",
          "text!application/templates/AdminComponent.tpl.html"
@@ -82,43 +82,6 @@ var ApplicationView = Backbone.View.extend({
                 },
                 divId : "upload"
              });
-             /*self.components.upload.render = function () {
-                $(this.el).append(this.template);
-                if (this.buttonAttr.elButton) {
-                   this.addToMenu();
-                }
-                $('#file_upload').fileUploadUI({
-                   uploadTable: $('#files'),
-                   downloadTable: $('#files'),
-                   buildUploadRow: function (files, index) {
-                      return $('<tr><td class="file_upload_preview"><\/td>' +
-                          '<td>' + files[index].name + '<\/td>' +
-                          '<td class="file_upload_progress"><div><\/div><\/td>' +
-                          '<td class="file_upload_start">' +
-                          '<button class="ui-state-default ui-corner-all" title="Start Upload">' +
-                          '<span class="ui-icon ui-icon-circle-arrow-e">Start Upload<\/span>' +
-                          '<\/button><\/td>' +
-                          '<td class="file_upload_cancel">' +
-                          '<button class="ui-state-default ui-corner-all" title="Cancel">' +
-                          '<span class="ui-icon ui-icon-cancel">Cancel<\/span>' +
-                          '<\/button><\/td><\/tr>');
-                   },
-                   buildDownloadRow: function (file) {
-                      return $('<tr><td>' + file.name + '<\/td><\/tr>');
-                   },
-                   beforeSend: function (event, files, index, xhr, handler, callBack) {
-                      handler.uploadRow.find('.file_upload_start button').click(function () {
-                         callBack();
-                         return false;
-                      });
-                   }
-                });
-                $('#start_uploads').click(function () {
-                   $('.file_upload_start button').click();
-                   return false;
-                });
-                return this;
-             }*/
              self.components.warehouse = new Component({
                 el : "#content",
                 template : _.template(warehouseTpl, {}),
@@ -151,7 +114,7 @@ var ApplicationView = Backbone.View.extend({
                    $("#" + this.buttonAttr.elButton).addClass("ui-state-disabled");
                 }
              });
-             /*self.components.admin = new Component({
+             self.components.admin = new Component({
                 el : "#content",
                 template : _.template(adminTpl, {}),
                 buttonAttr : {
@@ -159,10 +122,10 @@ var ApplicationView = Backbone.View.extend({
                    buttonText : "Admin",
                    buttonWrapper : "#menu",
                    icon : "ui-icon-wrench",
-                   route : "#admin"
+                   route : "#admin/users"
                 },
                 divId : "admin"
-             });*/
+             });
              self.components.logout = new Component({
                 el : "#content",
                 template : "",

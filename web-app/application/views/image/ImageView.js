@@ -14,20 +14,19 @@ var ImageView = Backbone.View.extend({
       self.appendThumbs(self.page);
 
       $(window).scroll(function(){
-         //1. Look if we are already appending thumbs. If yes, return
-         if (self.appendingThumbs) return;
-         //2. Look if we are on the explore page. return if not
-         var inExplorer = ($("#explorer").css("display") != 'none');
-         if (!inExplorer) return;
          //1. Look if the tabs is active. don't append thumbs if not
-         var classes = $(self.el).parent().attr("class").split(" ");
-         var shouldAppend = true;
-         _.each(classes, function (classe) {
-           if (classe == "ui-tabs-hide") {
-               shouldAppend = false;//don't happend thumbs this tabs is not visible
-           }
-         });
-         if  (shouldAppend && ($(window).scrollTop() + 50) >= $(document).height() - $(window).height()){
+         var currentUrl = "" + window.location;
+         if (currentUrl.search("#tabs-images-") == -1){
+            return;
+         }
+         //2. Look if we are already appending thumbs. If yes, return
+         if (self.appendingThumbs) return;
+
+         if  (($(window).scrollTop() + 50) >= $(document).height() - $(window).height()){
+            console.log("$(window).scrollTop() : " + $(window).scrollTop());
+            console.log("$(document).height()- $(window).height() " + ($(document).height() - $(window).height()));
+
+
             self.appendingThumbs = true;
             self.appendThumbs(++self.page);
             self.appendingThumbs = false;
@@ -48,6 +47,7 @@ var ImageView = Backbone.View.extend({
       setTimeout(function(){loadingMessage.remove();}, 2000);
    },
    appendThumbs : function(page) {
+
       var self = this;
 
       var inf = Math.abs(page) * this.nb_thumb_by_page;
@@ -98,6 +98,7 @@ var ImageView = Backbone.View.extend({
     * @param newImages newImages collection
     */
    refresh : function(newImages) {
+      return; //DESACTIVED, does not take into account the actual page & nb_thums_by_page
       var self = this;
       var arrayDeletedImages = self.tabsContent;
       newImages.each(function(image) {
@@ -119,6 +120,5 @@ var ImageView = Backbone.View.extend({
              self.tabsContent = _.without(self.tabsContent,removeImage);
           }
       );
-
    }
 });

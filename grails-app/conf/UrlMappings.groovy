@@ -22,6 +22,9 @@ class UrlMappings {
         "/api/user/$id"(controller:"restUser"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
+        "/api/user/grid"(controller:"restUser"){
+            action = [GET:"grid"]
+        }
         "/api/user/current"(controller:"restUser"){
             action = [GET:"showCurrent"]
         }
@@ -57,8 +60,17 @@ class UrlMappings {
         }
 
         /* Group */
+        "/api/group"(controller: "restGroup"){
+            action = [GET:"list", POST:"save"]
+        }
+        "/api/group/$id"(controller: "restGroup"){
+            action = [GET:"show", PUT:"update", DELETE:"delete"]
+        }
         "/api/group/$idgroup/image"(controller:"restAbstractImageGroup"){
             action = [GET: "listAbstractImageByGroup"]
+        }
+        "/api/group/grid"(controller:"restGroup"){
+            action = [GET:"grid"]
         }
 
         /* Project */

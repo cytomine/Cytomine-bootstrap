@@ -1,12 +1,20 @@
 var UploadController = Backbone.Controller.extend({
-       initialized  : true,
-       routes: {
-       },
-       upload : function() {
-          if (this.initialized) return;
-          /* init upload */
-
-          this.initialized = true;
-       }
-    });
+   initialized  : false,
+   routes: {
+      "upload" : "upload"
+   },
+   upload : function() {
+      if (!this.initialized) {
+         /* init upload */
+         this.initForm();
+         this.initialized = true;
+      }
+      window.app.view.showComponent(window.app.view.components.upload);
+   },
+   initForm : function() {
+      new UploadFormView({
+         el : $("#upload")
+      }).render();
+   }
+});
 

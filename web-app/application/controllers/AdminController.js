@@ -10,19 +10,25 @@ var AdminController = Backbone.Controller.extend({
    },
 
    users : function() {
+
       if (window.app.view.components.admin.views.usersGrid == undefined) {
          var usersGrid = new CrudGridView({
             el : "#admin > .admin-users",
-            model : window.app.models.users,
+            url : "api/user/grid",
+            restURL : "api/user",
             title : "Users",
             colName : ['id','username','firstname', 'email', 'password', 'color'],
             colModel : [
                {name:'id',index:'id', width:20},
-               {name:'username',index:'username', width:50},
-                {name:'firstname',index:'firstname', width:50},
-                {name:'email',index:'email', width:80},
-                {name:'password',index:'password', width:30},
-                {name:'color',index:'color', width:30}
+               {name:'username',index:'username',editable : true, width:50},
+               {name:'firstname',index:'firstname',editable : true, width:50},
+               {name:'lastname',index:'lastname',editable : true, width:50},
+               {name:'email',index:'email',editable : true, width:80},
+               {name:'password',index:'password', editable : true,width:30, edittype : 'password'},
+               {name:'color',index:'color',editable : true, width:30, edittype:'custom', editoptions:{
+                  custom_element: new CrudGridView({}).customFields.color.colorPickerElement,
+                  custom_value:new CrudGridView({}).customFields.color.colorPickerValue}
+               }
             ]
          });
          usersGrid.render();
@@ -35,16 +41,24 @@ var AdminController = Backbone.Controller.extend({
    },
 
    groups : function() {
-      /*if (window.app.view.components.admin.views.groupsGrid == undefined) {
-       var groupsGrid = new CrudGridView({
-       el : $("#admin > .admin-groups"),
-       title : "Groups"
-       });
-       groupsGrid.render();
-       window.app.view.components.admin.views.groupsGrid = groupsGrid;
-       }
-       window.app.view.components.admin.show(window.app.view.components.admin.views.groupsGrid, "#admin > .sidebar", "groups");
-       $("#admin-button").attr("href", "#admin/groups");
-       window.app.view.showComponent(window.app.view.components.admin);*/
+      if (window.app.view.components.admin.views.groupsGrid == undefined) {
+         var groupsGrid = new CrudGridView({
+            el : "#admin > .admin-groups",
+            url : "api/group/grid",
+            editurl : "api/group",
+            title : "Groups",
+            colName : ['id','name'],
+            colModel : [
+               {name:'id',index:'id', width:20},
+               {name:'name',index:'name',editable : true, width:50}
+            ]
+         });
+         groupsGrid.render();
+         window.app.view.components.admin.views.groupsGrid = groupsGrid;
+      }
+
+      window.app.view.components.admin.show(window.app.view.components.admin.views.groupsGrid, "#admin > .sidebar", "groups");
+      $("#admin-button").attr("href", "#admin/groups");
+      window.app.view.showComponent(window.app.view.components.admin);
    }
 });

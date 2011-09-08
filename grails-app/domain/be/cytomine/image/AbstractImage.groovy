@@ -15,6 +15,8 @@ import be.cytomine.image.server.ImageProperty
 
 class AbstractImage extends SequenceDomain {
 
+    def imagePropertiesService
+
     String filename
     Scanner scanner
     Slide slide
@@ -150,6 +152,10 @@ class AbstractImage extends SequenceDomain {
             returnArray['mime'] = it.mime.extension
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
+            if (it.width == null || it.height == null) {
+                println "POPULATE " + it.filename
+               it.imagePropertiesService.extractUseful(it)
+            }
             returnArray['width'] = it.width
             returnArray['height'] = it.height
             returnArray['resolution'] = it.resolution
