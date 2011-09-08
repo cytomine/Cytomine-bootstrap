@@ -14,7 +14,7 @@ class Storage {
         serviceUrl (nullable: false, blank : false)
     }
 
-    def toString() {
+    String toString() {
         name + "("  + serviceUrl + " : " + basePath + ")"
     }
 
