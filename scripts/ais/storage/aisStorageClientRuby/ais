@@ -2,7 +2,7 @@
 
 # == Synopsis
 #   This is a client to Ais Storage web interface
-#   Default config file : ~/config.yaml
+#   Default config file : ~/ais/config.yml
 #   This file must contains some informations for the program.
 #
 # == Examples
@@ -10,7 +10,7 @@
 #     ais ls
 #
 #   Other examples:
-#     ais -f config.yaml ls
+#     ais -f config.yml ls
 #     ais ls ais://bucketName
 #
 # == Usage
@@ -81,7 +81,7 @@ require 'base64'
 
 
 class App
-  VERSION = '0.0.8'
+  VERSION = '0.0.9'
 
   attr_reader :options
 
@@ -90,7 +90,7 @@ class App
     @stdin = stdin
     # Set defaults
     @options = OpenStruct.new
-    @options.configFile = ENV["HOME"]+"/.ais/config.yaml"
+    @options.configFile = ENV["HOME"]+"/.ais/config.yml"
     @options.verbose = false
     @options.quiet = false
     @options.local = false
@@ -141,8 +141,8 @@ class App
       opts.on('-l','--long')       { @options.long = true }
 
       opts.on("-f", "--config-file [FILE]") do |file|
-        @options.configFile = file || ENV["HOME"]+"/config.yaml"
-        
+        @options.configFile = file || ENV["HOME"]+"/config.yml"
+
       end
       opts.on("-s", "--store [storeNamespace]") do |store|
         @options.store = store
@@ -205,7 +205,7 @@ class App
     end
 
     def client_configured?
-      #read configuration file given by the user or the default one ~/config.yaml
+      #read configuration file given by the user or the default one ~/config.yml
       if !File.exists? @options.configFile then
         puts "File "+@options.configFile+ " doesn't exists"
         false
@@ -299,7 +299,7 @@ class App
         if @options.raw
           puts response
         else
-          yield 
+          yield
         end
       when '204' then
         puts 'No Content'
@@ -484,7 +484,7 @@ class App
             puts response.code
             puts 'file exists'
             return
-          
+
         end
         if (@localNamespace != nil) then
           destFolder = @localTmp+Etc.getlogin+"-"+DateTime.now.strftime("%Y%m%d%H%M%S")+"/"
@@ -494,7 +494,7 @@ class App
           FileUtils.chmod_R 0770, destFolder
           FileUtils.chown_R nil, @localGroup , destFolder if @localGroup
           FileUtils.chmod_R 0770, destFolder
-          
+
           incr_digest = Digest::MD5.new()
           md5 =''
 
