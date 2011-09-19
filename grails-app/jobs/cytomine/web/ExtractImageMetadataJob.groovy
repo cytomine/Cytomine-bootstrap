@@ -10,7 +10,7 @@ class ExtractImageMetadataJob {
     def timeout = 1000*60*10 //each 10 minutes
 
     def execute() {
-        Collection<AbstractImage> abstractImages = AbstractImage.findAllByWidth(null)
+        Collection<AbstractImage> abstractImages = AbstractImage.findAllByWidthIsNull()
         abstractImages.each { image ->
             imagePropertiesService.extractUseful(image)
         }
