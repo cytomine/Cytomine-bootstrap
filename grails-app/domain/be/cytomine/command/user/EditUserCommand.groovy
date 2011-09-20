@@ -16,7 +16,7 @@ class EditUserCommand extends EditCommand implements UndoRedoCommand {
       def postData = JSON.parse(postData)
       updatedUser = User.get(postData.id)
     if (updatedUser.password != postData.password)
-      postData.password = updatedUser.springSecurityService.encodePassword(postData.password)
+      //postData.password = updatedUser.springSecurityService.encodePassword(postData.password)
       return super.validateAndSave(postData,updatedUser,[updatedUser.id,updatedUser.username] as Object[])
     } catch(NullPointerException e) {
       log.error(e)

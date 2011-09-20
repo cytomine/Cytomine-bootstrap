@@ -90,6 +90,7 @@
             <fileset dir="${src.dir}" includes="application/models/StatsModel.js" />
             <fileset dir="${src.dir}" includes="application/models/CommandModel.js" />
             <fileset dir="${src.dir}" includes="application/models/RelationModel.js" />
+            <fileset dir="${src.dir}" includes="application/models/SecRoleModel.js" />
             <fileset dir="${src.dir}" includes="application/views/auth/LoginDialogView.js" />
             <fileset dir="${src.dir}" includes="application/views/auth/LoadingDialogView.js" />
             <fileset dir="${src.dir}" includes="application/views/auth/LogoutDialogView.js" />

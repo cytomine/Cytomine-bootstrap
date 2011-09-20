@@ -91,8 +91,8 @@ var CrudGridView = Backbone.View.extend({
 
    initToolbar : function() {
       var self = this;
-      var dialogWidth = 500;
-      var dialogHeight = 300;
+      var dialogWidth = 600;
+      var dialogHeight = 500;
       var left = $(window).width() / 2 - (dialogWidth / 2);
       var top = $(window).height() / 2 - (dialogHeight / 2);
       var grid = $(self.el).find(".grid");
@@ -116,7 +116,16 @@ var CrudGridView = Backbone.View.extend({
             modal : true,
             closeOnEscape: true,
             closeAfterAdd:true,
-            url : self.restURL
+            url : self.restURL,
+            afterSubmit : function(response, postdata)
+            {
+               //Add roles to the new user
+               var responseJSON = $.parseJSON(response.responseText);
+               _.each(postdata.authorities.split(","), function(authority) {
+                  new UserSecRole({ user : responseJSON.user.id, role : authority}).save();
+               });
+               return [true,"",null]
+            }
          });
       });
       //Edit button
@@ -167,6 +176,17 @@ var CrudGridView = Backbone.View.extend({
             height:dialogHeight,
             mtype : 'DELETE',
             reloadAfterSubmit:false,
+            beforeSubmit : function(postdata, formid) {
+               new UserModel({id:postdata}).fetch({success : function (model, response) {
+                  var authorities = model.get("authorities");
+                  _.each(authorities.split(","), function(authority) {
+                     alert(authority);
+                  });
+               }});
+
+               alert(postdata);
+               return[true,""];
+            },
             modal : true,
             closeOnEscape: true,
             closeAfterEdit:true,

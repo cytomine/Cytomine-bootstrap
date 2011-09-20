@@ -1,7 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="org.codehaus.groovy.grails.commons.GrailsApplication" %>
 <%@ page import="grails.util.GrailsUtil" %>
+<!DOCTYPE html>
+<!--
+ ______     __  __     ______   ______     __    __     __     __   __     ______
+/\  ___\   /\ \_\ \   /\__  _\ /\  __ \   /\ "-./  \   /\ \   /\ "-.\ \   /\  ___\
+\ \ \____  \ \____ \  \/_/\ \/ \ \ \/\ \  \ \ \-./\ \  \ \ \  \ \ \-.  \  \ \  __\
+ \ \_____\  \/\_____\    \ \_\  \ \_____\  \ \_\ \ \_\  \ \_\  \ \_\\"\_\  \ \_____\
+  \/_____/   \/_____/     \/_/   \/_____/   \/_/  \/_/   \/_/   \/_/ \/_/   \/_____/
 
+-->
 <html>
 <head>
     <title>Cytomine</title>
@@ -95,6 +103,7 @@
         <script type="text/javascript" src="application/models/StatsModel.js" ></script>
         <script type="text/javascript" src="application/models/CommandModel.js" ></script>
         <script type="text/javascript" src="application/models/RelationModel.js" ></script>
+        <script type="text/javascript" src="application/models/SecRoleModel.js" ></script>
         <!-- View -->
         <script type="text/javascript" src="application/views/auth/LoginDialogView.js" ></script>
         <script type="text/javascript" src="application/views/auth/LoadingDialogView.js" ></script>

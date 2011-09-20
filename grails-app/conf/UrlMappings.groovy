@@ -28,6 +28,11 @@ class UrlMappings {
         "/api/user/current"(controller:"restUser"){
             action = [GET:"showCurrent"]
         }
+
+        "/api/role"(controller:"restSecRole") {
+            action = [GET:"list", POST:"save"]
+        }
+
         "/api/user/$id/image"(controller:"restImage"){
             action = [GET:"listByUser"]
         }
@@ -43,20 +48,30 @@ class UrlMappings {
         "/api/user/$id/project"(controller:"restProject"){
             action = [GET:"listByUser"]
         }
+
+        /* SecUserSecRole */
+        "/api/user/$user/role"(controller: "restSecUserSecRole") {
+            action = [GET:"list", POST:"save"]
+        }
+
+        "/api/user/$user/role/$role"(controller: "restSecUserSecRole") {
+            action = [GET:"show", PUT:"update", DELETE:"delete"]
+        }
+
         "/api/currentuser/project"(controller:"restProject"){
             action = [GET:"listByUser"]
         }
         "/api/currentuser/ontology"(controller:"restOntology"){
             action = [GET:"listByUser"]
         }
-         "/api/currentuser/ontology/light"(controller:"restOntology"){  //TODO: merge with previous block
+        "/api/currentuser/ontology/light"(controller:"restOntology"){  //TODO: merge with previous block
             action = [GET: "listByUserLight"]
         }
         "/api/currentuser/image"(controller: "restImage"){
-          action = [GET:"listByUser"]
+            action = [GET:"listByUser"]
         }
         "/api/currentuser/slide"(controller: "restSlide"){
-          action = [GET:"listByUser"]
+            action = [GET:"listByUser"]
         }
 
         /* Group */
@@ -293,15 +308,15 @@ class UrlMappings {
         }
 
         "/api/import/annotations/$idProject"(controller: "import") {
-              action = [GET:"annotations"]
+            action = [GET:"annotations"]
         }
 
         "/api/import/imageproperties"(controller: "import") {
-              action = [GET:"imageproperties"]
+            action = [GET:"imageproperties"]
         }
 
-         "/api/export/exportimages"(controller: "export") {
-              action = [GET:"exportimages"]
+        "/api/export/exportimages"(controller: "export") {
+            action = [GET:"exportimages"]
         }
 
         "/processing/detect/$image/$x/$y"(controller:"processing") {
@@ -311,6 +326,9 @@ class UrlMappings {
         "/processing/show/$image/$x/$y"(controller:"processing") {
             action = [GET : "show"]
         }
+
+
+
 
     }
 }

@@ -227,20 +227,7 @@ class RestUserController extends RestController {
 
         def totalRows = users.totalCount
         def numberOfPages = Math.ceil(totalRows / maxRows)
-
-        def results = users?.collect {
-            [
-                    username : it.username,
-                    firstname : it.firstname,
-                    lastname : it.lastname,
-                    email : it.email,
-                    password : "*********",
-                    color : it.color,
-                    id: it.id
-            ]
-        }
-
-        def jsonData = [rows: results, page: currentPage, records: totalRows, total: numberOfPages]
+        def jsonData = [rows: users, page: currentPage, records: totalRows, total: numberOfPages]
         render jsonData as JSON
     }
 
