@@ -61,10 +61,10 @@ var AdminController = Backbone.Controller.extend({
                      {name:'lastname',index:'lastname',editable : true, width:50},
                      {name:'email',index:'email',editable : true, width:80},
                      {name:'password',index:'password', editable : true,width:30, edittype : 'password'},
-                     {name:'authorities',index:'authorities', editable : true,width:30, edittype:'custom', editoptions:{
+                     /*{name:'authorities',index:'authorities', editable : true,width:30, edittype:'custom', editoptions:{
                         custom_element: selectElement,
                         custom_value:selectValue}
-                     },
+                     },*/
                      {name:'color',index:'color',editable : true, width:30, edittype:'custom', editoptions:{
                         custom_element: new CrudGridView({}).customFields.color.colorPickerElement,
                         custom_value:new CrudGridView({}).customFields.color.colorPickerValue}

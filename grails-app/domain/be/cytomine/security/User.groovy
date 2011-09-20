@@ -159,7 +159,6 @@ class User extends SecUser {
             returnArray['color'] = it.color
             returnArray['created'] = it.created? it.created.time.toString() : null
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
-            returnArray['authorities'] = it.getAuthorities().collect{ it.authority }.join(",")
             return returnArray
         }
     }
