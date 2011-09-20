@@ -114,7 +114,7 @@ var ApplicationView = Backbone.View.extend({
                    $("#" + this.buttonAttr.elButton).addClass("ui-state-disabled");
                 }
              });
-             self.components.admin = new Component({
+             /*self.components.admin = new Component({
                 el : "#content",
                 template : _.template(adminTpl, {}),
                 buttonAttr : {
@@ -125,7 +125,7 @@ var ApplicationView = Backbone.View.extend({
                    route : "#admin/users"
                 },
                 divId : "admin"
-             });
+             });*/
              self.components.logout = new Component({
                 el : "#content",
                 template : "",
