@@ -8,13 +8,23 @@ import be.cytomine.command.secusersecrole.AddSecUserSecRoleCommand
 import be.cytomine.command.secusersecrole.DeleteSecUserSecRoleCommand
 import be.cytomine.command.secusersecrole.EditSecUserSecRoleCommand
 import grails.converters.JSON
+import be.cytomine.security.SecRole
 
 class RestSecUserSecRoleController extends RestController {
 
     @Secured(['ROLE_ADMIN'])
     def list = {
-        User user = User.read(params.idUser);
+        User user = User.read(params.user);
         responseSuccess(SecUserSecRole.findAllBySecUser(user))
+    }
+
+ 	@Secured(['ROLE_ADMIN'])
+    def show = {
+		User user = User.read(params.user);
+		SecRole role = SecRole.read(params.role);
+        SecUserSecRole secUserSecRole = SecUserSecRole.findBySecUserAndSecRole(user, role)
+        if (!secUserSecRole) responseNotFound("SecUserSecRole", params.user)
+        responseSuccess(secUserSecRole)
     }
 
     @Secured(['ROLE_ADMIN'])

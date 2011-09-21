@@ -16,7 +16,7 @@ class AddSecUserSecRoleCommand extends AddCommand implements UndoRedoCommand {
             return super.validateAndSave(userRole,["#ID#",userRole.secUser] as Object[])
             //errors:
         }catch(ConstraintException  ex){
-            return [data : [userRole:userRole,errors:userRole.retrieveErrors()], status : 400]
+            return [data : [role:userRole,errors:userRole.retrieveErrors()], status : 400]
         }catch(IllegalArgumentException ex){
             return [data : [user:null,errors:["Cannot save userRole:"+ex.toString()]], status : 400]
         }

@@ -50,9 +50,9 @@ class SecUserSecRole implements Serializable {
         println "Register custom JSON renderer for " + SecUserSecRole.class
         JSON.registerObjectMarshaller(SecUserSecRole) {
             def returnArray = [:]
-            returnArray['id'] = it.secUser //unique in the scope of the user
-            returnArray['secUser'] = it.secUser
-            returnArray['secRole'] = it.secRole
+            returnArray['id'] = it.secUser.id * it.secRole.id
+            returnArray['user'] = it.secUser.id
+            returnArray['role'] = it.secRole.id
             return returnArray
         }
     }
