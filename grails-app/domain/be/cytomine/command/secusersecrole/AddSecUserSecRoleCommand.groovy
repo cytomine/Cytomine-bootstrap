@@ -5,8 +5,9 @@ import be.cytomine.command.AddCommand
 import be.cytomine.security.SecUserSecRole
 import grails.converters.JSON
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
+import be.cytomine.command.SimpleCommand
 
-class AddSecUserSecRoleCommand extends AddCommand implements UndoRedoCommand {
+class AddSecUserSecRoleCommand extends AddCommand implements SimpleCommand {
 
     def execute() {
         SecUserSecRole userRole = null
@@ -22,11 +23,4 @@ class AddSecUserSecRoleCommand extends AddCommand implements UndoRedoCommand {
         }
     }
 
-    def undo() {
-
-    }
-
-    def redo() {
-
-    }
 }

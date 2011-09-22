@@ -3,9 +3,10 @@ package be.cytomine.api
 import be.cytomine.security.Group
 import be.cytomine.command.Command
 import be.cytomine.security.User
-import be.cytomine.command.user.AddUserCommand
 import be.cytomine.command.group.AddGroupCommand
 import grails.converters.JSON
+import be.cytomine.command.group.EditGroupCommand
+import be.cytomine.command.group.DeleteGroupCommand
 
 class RestGroupController extends  RestController {
 
@@ -23,6 +24,21 @@ class RestGroupController extends  RestController {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
         Command addGroupCommand = new AddGroupCommand(postData: request.JSON.toString(), user: currentUser)
         def result = processCommand(addGroupCommand, currentUser)
+        response(result)
+    }
+    
+    def update = {
+        User currentUser = getCurrentUser(springSecurityService.principal.id)
+        Command editGroupCommand = new EditGroupCommand(postData: request.JSON.toString(), user: currentUser)
+        def result = processCommand(editGroupCommand, currentUser)
+        response(result)
+    }
+
+    def delete = {
+        User currentUser = getCurrentUser(springSecurityService.principal.id)
+        def postData = ([id: params.id]) as JSON
+        Command deleteGroupCommand = new DeleteGroupCommand(postData: postData.toString(), user: currentUser)
+        def result = processCommand(deleteGroupCommand, currentUser)
         response(result)
     }
 

@@ -6,7 +6,6 @@ import be.cytomine.command.Command
 import be.cytomine.security.User
 import be.cytomine.command.secusersecrole.AddSecUserSecRoleCommand
 import be.cytomine.command.secusersecrole.DeleteSecUserSecRoleCommand
-import be.cytomine.command.secusersecrole.EditSecUserSecRoleCommand
 import grails.converters.JSON
 import be.cytomine.security.SecRole
 
@@ -32,14 +31,6 @@ class RestSecUserSecRoleController extends RestController {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
         Command addSecUserSecRoleCommand = new AddSecUserSecRoleCommand(postData: request.JSON.toString(), user: currentUser)
         def result = processCommand(addSecUserSecRoleCommand, currentUser)
-        response(result)
-    }
-
-    @Secured(['ROLE_ADMIN'])
-    def update = {
-        User currentUser = getCurrentUser(springSecurityService.principal.id)
-        Command editSecUserSecRoleCommand = new EditSecUserSecRoleCommand(postData: request.JSON.toString(), user: currentUser)
-        def result = processCommand(editSecUserSecRoleCommand, currentUser)
         response(result)
     }
 

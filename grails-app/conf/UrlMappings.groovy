@@ -55,7 +55,16 @@ class UrlMappings {
         }
 
         "/api/user/$user/role/$role"(controller: "restSecUserSecRole") {
-            action = [GET:"show", PUT:"update", DELETE:"delete"]
+            action = [GET:"show", DELETE:"delete"]
+        }
+
+        /* UserGroup */
+        "/api/user/$user/group"(controller: "restUserGroup") {
+            action = [GET:"list", POST:"save"]
+        }
+
+        "/api/user/$user/group/$group"(controller: "restUserGroup") {
+            action = [GET:"show",  DELETE:"delete"]
         }
 
         "/api/currentuser/project"(controller:"restProject"){

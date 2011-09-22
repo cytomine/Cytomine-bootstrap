@@ -13,7 +13,7 @@ import be.cytomine.image.AbstractImageGroup
 
 class DeleteAbstractImageGroupCommand extends DeleteCommand implements UndoRedoCommand {
 
-  boolean saveOnUndoRedoStack = true;
+  boolean saveOnUndoRedoStack = false;
 
   def execute() {
     log.info "Execute"

@@ -4,6 +4,7 @@ import be.cytomine.project.Project
 import be.cytomine.project.ProjectGroup
 import be.cytomine.SequenceDomain
 import be.cytomine.image.AbstractImageGroup
+import grails.converters.JSON
 
 class Group extends SequenceDomain {
 
@@ -49,6 +50,16 @@ class Group extends SequenceDomain {
     def projects() {
         return projectGroup.collect{
             it.project
+        }
+    }
+
+    static void registerMarshaller() {
+        println "Register custom JSON renderer for " + Group.class
+        JSON.registerObjectMarshaller(Group) {
+            def returnArray = [:]
+            returnArray['id'] = it.id
+            returnArray['name'] = it.name
+            return returnArray
         }
     }
 

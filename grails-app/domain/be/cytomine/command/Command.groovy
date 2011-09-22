@@ -21,6 +21,9 @@ class Command extends SequenceDomain {
 
     boolean saveOnUndoRedoStack = false //by default, don't save command on stack
 
+    static mapping = {
+        version : false
+    }
     static constraints = {
         data (type:'text', maxSize:Command.MAXSIZEREQUEST, nullable : true)
         postData (type:'text', maxSize:Command.MAXSIZEREQUEST)

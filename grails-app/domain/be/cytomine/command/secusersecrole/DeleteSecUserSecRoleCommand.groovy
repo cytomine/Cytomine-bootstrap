@@ -7,8 +7,9 @@ import grails.converters.JSON
 import java.util.prefs.BackingStoreException
 import be.cytomine.security.User
 import be.cytomine.security.SecRole
+import be.cytomine.command.SimpleCommand
 
-class DeleteSecUserSecRoleCommand extends DeleteCommand implements UndoRedoCommand {
+class DeleteSecUserSecRoleCommand extends DeleteCommand implements SimpleCommand {
 
     def execute() {
         try {
@@ -24,13 +25,5 @@ class DeleteSecUserSecRoleCommand extends DeleteCommand implements UndoRedoComma
             log.error(e)
             return [data : [success : false, errors : e.getMessage()], status : 400]
         }
-    }
-
-    def undo() {
-
-    }
-
-    def redo() {
-
     }
 }
