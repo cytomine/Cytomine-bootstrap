@@ -123,8 +123,14 @@ class UrlMappings {
             action = [GET:"showByProjectAndImage",DELETE:"delete"]
         }
         //TODO:  + add current user
-        "/api/project/$id/term/stat"(controller:"restProject"){
+        "/api/project/$id/stats/term"(controller:"stats"){
             action = [GET:"statTerm"]
+        }
+        "/api/project/$id/stats/user"(controller:"stats"){
+            action = [GET:"statUser"]
+        }
+        "/api/project/$id/stats/userannotations"(controller:"stats"){
+            action = [GET:"statUserAnnotations"]
         }
         "/api/project/$id/last/$max"(controller:"restProject"){
             action = [GET:"lastAction"]

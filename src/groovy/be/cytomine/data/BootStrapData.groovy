@@ -111,7 +111,7 @@ class BootStrapData {
 
     static def retrievalServerSamples = [
             [
-                    'url' : 'http://139.165.117.25:8081/retrieval-web/api/resource',
+                    'url' : 'http:/beta.cytomine.be:888/retrieval-web/api/resource',
                     'description' : 'stevben-server'
             ]
     ]

@@ -9,7 +9,7 @@ var StatsModel = Backbone.Model.extend({
 
 	url : function() {
         if (this.project != undefined) {
-            return "api/project/" + this.project + "/term/stat.json";
+            return "api/project/" + this.project + "/stats/term.json";
         } else if (this.term != undefined) {
             return "api/term/" + this.term + "/project/stat.json";
         } else {
@@ -23,12 +23,12 @@ var StatsModel = Backbone.Model.extend({
 });
 
 // define our collection
-var StatsCollection = Backbone.Collection.extend({
+var StatsTermCollection = Backbone.Collection.extend({
     model: StatsModel,
 
     url: function() {
         if (this.project != undefined) {
-            return "api/project/" + this.project + "/term/stat.json";
+            return "api/project/" + this.project + "/stats/term.json";
         } else if (this.term != undefined) {
             return "api/term/" + this.term + "/project/stat.json";
         } else {
@@ -38,5 +38,32 @@ var StatsCollection = Backbone.Collection.extend({
     initialize: function (options) {
         this.project = options.project;
         this.term = options.term;
+    }
+});
+
+// define our collection
+var StatsUserCollection = Backbone.Collection.extend({
+    model: StatsModel,
+
+    url: function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/stats/user.json";
+        }
+    },
+    initialize: function (options) {
+        this.project = options.project;
+    }
+});
+
+var StatsUserAnnotationCollection = Backbone.Collection.extend({
+    model: StatsModel,
+
+    url: function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/stats/userannotations.json";
+        }
+    },
+    initialize: function (options) {
+        this.project = options.project;
     }
 });

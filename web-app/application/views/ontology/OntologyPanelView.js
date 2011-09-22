@@ -483,7 +483,7 @@ var OntologyPanelView = Backbone.View.extend({
           data.addColumn('number', 'Number of annotations');
 
           var i = 0;
-          var statsCollection = new StatsCollection({term:idTerm});
+          var statsCollection = new StatsTermCollection({term:idTerm});
 
           var drawPieChart = function(collection, response) {
              var divID = "piechart-"+self.model.id;
