@@ -10,7 +10,7 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.security.Group
 
 class AddAbstractImageGroupCommand extends AddCommand implements UndoRedoCommand {
-  boolean saveOnUndoRedoStack = false;
+  boolean saveOnUndoRedoStack = true;
   def execute() {
     log.info("Execute")
     AbstractImageGroup newAbstractImageGroup=null
