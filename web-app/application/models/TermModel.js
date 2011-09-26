@@ -19,12 +19,16 @@ var AnnotationTermModel = Backbone.Model.extend({
 	url : function() {
         if (this.term == null)
 		    return 'api/annotation/' + this.annotation +'/term.json';
+        else if(this.clear != null) {
+            return 'api/annotation/' + this.annotation +'/term/'+this.term+'/clearBefore.json';
+        }
         else
             return 'api/annotation/' + this.annotation +'/term/'+this.term+'.json';
 	},
     initialize: function (options) {
         this.annotation = options.annotation;
         this.term = options.term;
+        this.clear = options.clear;
     }
 });
 
