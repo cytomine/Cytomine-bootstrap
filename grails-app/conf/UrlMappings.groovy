@@ -223,6 +223,10 @@ class UrlMappings {
         "/api/annotation/$idannotation/term/$idterm"(controller:"restAnnotationTerm"){
             action = [GET:"show",DELETE:"delete",POST:"add"]
         }
+        "/api/annotation/$idannotation/term/$idterm/clearBefore"(controller:"restAnnotationTerm"){
+            action = [POST:"addWithDeletingOldTerm"]
+        }
+
         "/api/annotation/$idannotation/retrieval"(controller:"restRetrieval"){
             action = [GET:"search",POST:"index"]
         }

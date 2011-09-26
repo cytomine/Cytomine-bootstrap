@@ -12,6 +12,7 @@ import be.cytomine.api.RestController
 import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import be.cytomine.image.ImageInstance
+import be.cytomine.command.TransactionController
 
 class RestAnnotationTermController extends RestController {
 
@@ -109,6 +110,47 @@ class RestAnnotationTermController extends RestController {
     def result = processCommand(addAnnotationTermCommand, currentUser)
     response(result)
   }
+
+
+  def addWithDeletingOldTerm = {
+    log.info "Add"
+    User currentUser = getCurrentUser(springSecurityService.principal.id)
+    log.info "User:" + currentUser.username +" transaction:" +  currentUser.transactionInProgress + " request:" + request.JSON.toString()
+
+    Annotation annotation = Annotation.get(params.idannotation)
+    if(annotation) {
+        log.info "Start transaction"
+        TransactionController transaction = new TransactionController();
+        transaction.start()
+
+
+        def annotationTerm = AnnotationTerm.findAllByAnnotation(annotation)
+        log.info "Delete old annotationTerm= " +annotationTerm.size()
+
+        annotationTerm.each{ annotterm ->
+            log.info "unlink annotterm:" +annotterm.id
+            def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id]) as JSON
+            Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData :postDataRT.toString() ,user: currentUser,printMessage:false)
+            def result = processCommand(deleteAnnotationTermCommand, currentUser)
+        }
+
+        log.info "Add new annotationTerm with Annotation="  + params.idannotation + " Term=" + params.idterm
+        def postData = ([annotation : params.idannotation,term :params.idterm]) as JSON
+        Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : postData.toString(),user: currentUser)
+        def result = processCommand(addAnnotationTermCommand, currentUser)
+        transaction.stop()
+        response(result)
+
+    }
+    else responseNotFound("Annotation",params.id)
+
+  }
+
+
+
+
+
+
 
   def delete =  {
     log.info "Delete"
