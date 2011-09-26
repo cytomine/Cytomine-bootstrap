@@ -27,7 +27,6 @@ class TransactionController {
             User user = User.get(springSecurityService.principal.id)
             user.setTransactionInProgress(true)
             user.transaction++;
-            user.refresh()
             user.save(flush:true)
             log.info "save transac:" + user.transactionInProgress
         }
@@ -38,7 +37,6 @@ class TransactionController {
             log.info "end transaction:" + springSecurityService.principal.id
             User user = User.get(springSecurityService.principal.id)
             user.setTransactionInProgress(false)
-            user.refresh()
             user.save(flush:true)
             log.info "save transac:" + user.transactionInProgress
             response.status = 200
