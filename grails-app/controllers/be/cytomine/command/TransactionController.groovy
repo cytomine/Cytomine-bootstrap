@@ -7,17 +7,18 @@ class TransactionController {
     def springSecurityService
 
     def begin = {
-        log.info "begin transaction:" + springSecurityService.principal.id
-        User user = User.get(springSecurityService.principal.id)
-        user.setTransactionInProgress(true)
-        user.transaction++;
-        user.save(flush:true)
-        log.info "save transac:" + user.transactionInProgress
-        response.status = 200
-        def data = [];
-        withFormat {
-            json { render data as JSON }
-            xml { render data as XML}
+        synchronized(this.getClass()) {
+            log.info "begin transaction:" + springSecurityService.principal.id
+            User user = User.get(springSecurityService.principal.id)
+            user.setTransactionInProgress(true)
+            user.transaction++;
+            user.save(flush:true)
+            response.status = 200
+            def data = [];
+            withFormat {
+                json { render data as JSON }
+                xml { render data as XML}
+            }
         }
     }
 
@@ -28,7 +29,6 @@ class TransactionController {
             user.setTransactionInProgress(true)
             user.transaction++;
             user.save(flush:true)
-            log.info "save transac:" + user.transactionInProgress
         }
     }
 
@@ -38,7 +38,6 @@ class TransactionController {
             User user = User.get(springSecurityService.principal.id)
             user.setTransactionInProgress(false)
             user.save(flush:true)
-            log.info "save transac:" + user.transactionInProgress
             response.status = 200
             def data = [];
             withFormat {
@@ -55,7 +54,6 @@ class TransactionController {
             User user = User.get(springSecurityService.principal.id)
             user.setTransactionInProgress(false)
             user.save(flush:true)
-            log.info "save transac:" + user.transactionInProgress
         }
     }
 }

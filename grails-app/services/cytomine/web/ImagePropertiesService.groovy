@@ -71,6 +71,7 @@ class ImagePropertiesService {
     private def extractUsefulTif(AbstractImage image) {
         println "extract properties from tiff : " + image.getFilename()
         def storages = StorageAbstractImage.findAllByAbstractImage(image).collect { it.storage }
+        if (storages.size() == 0) return
         def imageServer= ImageServer.findByStorage(storages.first())
         Resolver resolver = Resolver.getResolver(imageServer.className)
         def metadaURL = resolver.getMetaDataURL(imageServer.getBaseUrl(), imageServer.getStorage().getBasePath() + image.getPath())

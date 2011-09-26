@@ -1,34 +1,39 @@
 <div id="tabs-dashboard-{{id}}" style="overflow : auto;">
-    <div class="widgets" style="max-width:420px;">
+    <div class="widgets">
         <div id="projectInfoPanel" style="margin:10px;">
             <div>Project Info</div>
-            <div>
+            <div style="height: 200px;">
                 <ul>
                     <li>Name: <a href="#tabs-dashboard-{{id}}"><label id="projectInfoName" style="display: inline;">{{name}}</label></a></li>
                     <li>Ontology: <a href="#ontology/{{ontology}}"><label id="projectInfoOntology" style="display: inline;">{{ontology}}</label></a></li>
                     <li>Users : <div id="projectInfoUserList" style="display: inline;"></div></li>
+                </ul>
+                <br />
+                <ul>
                     <li>Number of samples : <a href="#tabs-images-{{id}}"><label id="projectInfoNumberOfSlides" style="display: inline;">{{numberOfSlides}}</label></a></li>
                     <li>Number of images : <a href="#tabs-images-{{id}}"><label id="projectInfoNumberOfImages" style="display: inline;">{{numberOfImages}}</label></a></li>
                     <li>Number of annotations : <a href="#tabs-annotations-{{id}}"><label id="projectInfoNumberOfAnnotations" style="display: inline;">{{numberOfAnnotations}}</label></a></li>
                 </ul>
             </div>
         </div>
+    </div>
+    <div class="widgets">
         <div id="projectLastCommandPanel" style="margin:10px;">
             <div>Last commands</div>
-            <div>
+            <div style="height: 200px;">
                 <div>
                     <ul>
-                        <div id="lastactionitem" style="height: 345px;overflow-y: auto;" ></div>
+                        <div id="lastactionitem" style="height: auto;overflow-y: auto;" ></div>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
     <div class="widgets">
-        <div id="projectcolmunChartPanel" style="margin:10px;">
-            <div>Annotations (Column Chart)</div>
+        <div id="userAnnotationsChartPanel" style="margin:10px;">
+            <div>Annotations (Pie Chart)</div>
             <div>
-                <div id="projectColumnChart">Empty</div>
+                <div id="userAnnotationsChart">Empty</div>
             </div>
         </div>
     </div>
@@ -41,10 +46,10 @@
         </div>
     </div>
     <div class="widgets">
-        <div id="userAnnotationsChartPanel" style="margin:10px;">
-            <div>Annotations (Pie Chart)</div>
+        <div id="projectcolmunChartPanel" style="margin:10px;">
+            <div>Annotations (Column Chart)</div>
             <div>
-                <div id="userAnnotationsChart">Empty</div>
+                <div id="projectColumnChart">Empty</div>
             </div>
         </div>
     </div>

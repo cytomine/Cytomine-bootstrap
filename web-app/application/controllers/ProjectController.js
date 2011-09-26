@@ -8,8 +8,10 @@ var ProjectController = Backbone.Controller.extend({
 
     initView : function(callback) {
         var self = this;
-        new OntologyCollection({light:true}).fetch({
+
+        window.app.models.ontologies.fetch({
             success : function (ontologies, response) {
+
                 window.app.models.projects.fetch({
                     success : function (collection, response) {
                         self.view = new ProjectView({

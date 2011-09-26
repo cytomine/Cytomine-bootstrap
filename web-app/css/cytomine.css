@@ -84,6 +84,21 @@ h3 { font-size:13px; }
     margin:0px 0px;
 }
 
+.header .undoredoactions {
+    position:absolute;
+    right:550px;
+    top:10px;
+    background:#ffffff;
+    height:25px;
+    line-height:20px;
+    padding:5px 0px 10px 4px;
+    border-width:1px 0px 0px 1px;
+    border-style:solid;
+    border-color:#fff;
+    -moz-border-radius:5px 5px 0px 0px;
+    -webkit-border-radius:5px 5px 0px 0px;
+}
+
 .header .actions {
     position:absolute;
     right:0px;

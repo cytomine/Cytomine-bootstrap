@@ -1,151 +1,150 @@
 var AddProjectDialog = Backbone.View.extend({
-       projectsPanel : null,
-       addProjectDialog : null,
-       initialize: function(options) {
-          this.container = options.container;
-          this.projectsPanel = options.projectsPanel;
-          _.bindAll(this, 'render');
-       },
-       render : function() {
-          var self = this;
-          require([
-             "text!application/templates/project/ProjectAddDialog.tpl.html",
-             "text!application/templates/project/OntologiesChoicesRadio.tpl.html",
-             "text!application/templates/project/UsersChoices.tpl.html"
-          ],
-              function(projectAddDialogTpl, ontologiesChoicesRadioTpl, usersChoicesTpl) {
-                 self.doLayout(projectAddDialogTpl, ontologiesChoicesRadioTpl, usersChoicesTpl);
-              });
-          return this;
-       },
-       doLayout : function(projectAddDialogTpl, ontologiesChoicesRadioTpl, usersChoicesTpl) {
-
-          var self = this;
-          var dialog = _.template(projectAddDialogTpl, {});
-        $("#editproject").replaceWith("");
-        $("#addproject").replaceWith("");
-          $(self.el).append(dialog);
-
-          $("#login-form-add-project").submit(function () {self.createProject(); return false;});
-          $("#login-form-add-project").find("input").keydown(function(e){
-             if (e.keyCode == 13) { //ENTER_KEY
-                $("#login-form-add-project").submit();
-                return false;
-             }
+   projectsPanel : null,
+   addProjectDialog : null,
+   initialize: function(options) {
+      this.container = options.container;
+      this.projectsPanel = options.projectsPanel;
+      _.bindAll(this, 'render');
+   },
+   render : function() {
+      var self = this;
+      require([
+         "text!application/templates/project/ProjectAddDialog.tpl.html",
+         "text!application/templates/project/OntologiesChoicesRadio.tpl.html",
+         "text!application/templates/project/UsersChoices.tpl.html"
+      ],
+          function(projectAddDialogTpl, ontologiesChoicesRadioTpl, usersChoicesTpl) {
+             self.doLayout(projectAddDialogTpl, ontologiesChoicesRadioTpl, usersChoicesTpl);
           });
+      return this;
+   },
+   doLayout : function(projectAddDialogTpl, ontologiesChoicesRadioTpl, usersChoicesTpl) {
+
+      var self = this;
+      var dialog = _.template(projectAddDialogTpl, {});
+      $("#editproject").replaceWith("");
+      $("#addproject").replaceWith("");
+      $(self.el).append(dialog);
+
+      $("#login-form-add-project").submit(function () {self.createProject(); return false;});
+      $("#login-form-add-project").find("input").keydown(function(e){
+         if (e.keyCode == 13) { //ENTER_KEY
+            $("#login-form-add-project").submit();
+            return false;
+         }
+      });
 
 
-          $("#projectontology").empty();
-          window.app.models.ontologies.each(function(ontology){
-             var choice = _.template(ontologiesChoicesRadioTpl, {id:ontology.id,name:ontology.get("name")});
-             $("#projectontology").append(choice);
-          });
+      $("#projectontology").empty();
+      window.app.models.ontologies.each(function(ontology){
+         var choice = _.template(ontologiesChoicesRadioTpl, {id:ontology.id,name:ontology.get("name")});
+         $("#projectontology").append(choice);
+      });
+      $("#projectuser").empty();
+      window.app.models.users.each(function(user){
+         var choice = _.template(usersChoicesTpl, {id:user.id,username:user.get("username")});
+         $("#projectuser").append(choice);
+      });
 
-          $("#projectuser").empty();
-          window.app.models.users.each(function(user){
-             var choice = _.template(usersChoicesTpl, {id:user.id,username:user.get("username")});
-             $("#projectuser").append(choice);
-          });
+      //check current user
+      $("#projectuser").find('#users'+window.app.status.user.id).attr('checked','checked');
+      $("#projectuser").find('#users'+window.app.status.user.id).click(function() {
 
-          //check current user
-          $("#projectuser").find('#users'+window.app.status.user.id).attr('checked','checked');
-         $("#projectuser").find('#users'+window.app.status.user.id).click(function() {
-
-             $("#projectuser").find('#users'+window.app.status.user.id).attr('checked','checked');
-         });
-          $("#projectuser").find('[for="users'+window.app.status.user.id+'"]').css("font-weight","bold");
+         $("#projectuser").find('#users'+window.app.status.user.id).attr('checked','checked');
+      });
+      $("#projectuser").find('[for="users'+window.app.status.user.id+'"]').css("font-weight","bold");
 
 
-          //Build dialog
-          
-          self.addProjectDialog = $("#addproject").dialog({
-                 width: 600,
-                 autoOpen : false,
-                 modal:true,
-                 buttons : {
-                    "Save" : function() {
-                       $("#login-form-add-project").submit();
-                    },
-                    "Cancel" : function() {
-                       $("#addproject").dialog("close");
-                    }
-                 }
-              });
-          self.open();
+      //Build dialog
 
-          return this;
+      self.addProjectDialog = $("#addproject").dialog({
+         width: 600,
+         autoOpen : false,
+         modal:true,
+         buttons : {
+            "Save" : function() {
+               $("#login-form-add-project").submit();
+            },
+            "Cancel" : function() {
+               $("#addproject").dialog("close");
+            }
+         }
+      });
+      self.open();
 
-       },
-       refresh : function() {
-       },
-       open: function() {
-          var self = this;
-          self.clearAddProjectPanel();
-          self.addProjectDialog.dialog("open") ;
-       },
-       clearAddProjectPanel : function() {
-          var self = this;
-          $("#errormessage").empty();
-          $("#projecterrorlabel").hide();
-          $("#project-name").val("");
+      return this;
 
-          $(self.addProjectCheckedOntologiesRadioElem).attr("checked", false);
-          $(self.addProjectCheckedUsersCheckboxElem).attr("checked", false);
-       },
-       createProject : function() {
-          
-          var self = this;
+   },
+   refresh : function() {
+   },
+   open: function() {
+      var self = this;
+      self.clearAddProjectPanel();
+      self.addProjectDialog.dialog("open") ;
+   },
+   clearAddProjectPanel : function() {
+      var self = this;
+      $("#errormessage").empty();
+      $("#projecterrorlabel").hide();
+      $("#project-name").val("");
 
-          $("#errormessage").empty();
-          $("#projecterrorlabel").hide();
+      $(self.addProjectCheckedOntologiesRadioElem).attr("checked", false);
+      $(self.addProjectCheckedUsersCheckboxElem).attr("checked", false);
+   },
+   createProject : function() {
 
-          var name =  $("#project-name").val().toUpperCase();
-          var ontology = $('input[type=radio][name=ontologyradio]:checked').attr('value');
-          var users = new Array();
+      var self = this;
 
-          $('input[type=checkbox][name=usercheckbox]:checked').each(function(i,item){
-             users.push($(item).attr("value"))
-          });
+      $("#errormessage").empty();
+      $("#projecterrorlabel").hide();
 
-          //create project
-          new ProjectModel({name : name, ontology : ontology}).save({name : name, ontology : ontology},{
-                 success: function (model, response) {
-                    
-                     window.app.view.message("Project", response.message, "");
-                    var id = response.project.id;
-                    
-                    //create user-project "link"
+      var name =  $("#project-name").val().toUpperCase();
+      var ontology = $('input[type=radio][name=ontologyradio]:checked').attr('value');
+      var users = new Array();
+
+      $('input[type=checkbox][name=usercheckbox]:checked').each(function(i,item){
+         users.push($(item).attr("value"))
+      });
+
+      //create project
+      new ProjectModel({name : name, ontology : ontology}).save({name : name, ontology : ontology},{
+             success: function (model, response) {
+
+                window.app.view.message("Project", response.message, "");
+                var id = response.project.id;
+
+                //create user-project "link"
                 var total = users.length;
                 var counter = 0;
                 if(total==0) self.addDeleteUserProjectCallback(0,0);
                 _.each(users,function(user){
-                    
-                    new ProjectUserModel({project: id,user:user}).save({}, {
-                        success: function (model, response) {
-                            self.addUserProjectCallback(total,++counter);
-                        },error: function (model, response) {
-                            
-                            var json = $.parseJSON(response.responseText);
-                            window.app.view.message("User", json.errors, "");
-                        }});
+
+                   new ProjectUserModel({project: id,user:user}).save({}, {
+                      success: function (model, response) {
+                         self.addUserProjectCallback(total,++counter);
+                      },error: function (model, response) {
+
+                         var json = $.parseJSON(response.responseText);
+                         window.app.view.message("User", json.errors, "");
+                      }});
                 });
 
-                 },
-                 error: function (model, response) {
-                    var json = $.parseJSON(response.responseText);
-                    
+             },
+             error: function (model, response) {
+                var json = $.parseJSON(response.responseText);
 
-                    $("#projecterrorlabel").show();
 
-                    
-                 }
-              }
-          );
-       },
-     addUserProjectCallback : function(total, counter) {
-        if (counter < total) return;
-        var self = this;
-        self.projectsPanel.refresh();
-        $("#addproject").dialog("close") ;
-    }
-    });
+                $("#projecterrorlabel").show();
+
+
+             }
+          }
+      );
+   },
+   addUserProjectCallback : function(total, counter) {
+      if (counter < total) return;
+      var self = this;
+      self.projectsPanel.refresh();
+      $("#addproject").dialog("close") ;
+   }
+});

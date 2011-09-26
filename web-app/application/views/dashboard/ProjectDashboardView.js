@@ -353,18 +353,21 @@ var ProjectDashboardView = Backbone.View.extend({
       var i = 0;
       collection.each(function (item){
          var j = 1;
+         console.log("key : " + item.get("key"));
          _.each(item.get("terms"), function (term){
+            console.log("term.name : " + term.value);
+            console.log("term.value : " + term.value);
             data.setValue(j-1, i+1, term.value);
             j++;
          });
          i++;
       });
-
-   // Create and draw the visualization.
+      var width = Math.round($(window).width()/2 - 50);
+      // Create and draw the visualization.
       new google.visualization.ColumnChart(document.getElementById('userAnnotationsChart')).
           draw(data,
           {title:"Term by users",
-             width:500, height:350,
+             width:width, height:350,
              hAxis: {title: "Users"}}
       );
    },
@@ -387,12 +390,12 @@ var ProjectDashboardView = Backbone.View.extend({
          data.setValue(j, 1, stat.get("value"));
          j++;
       });
-
+      var width = Math.round($(window).width()/2 - 50);
       // Create and draw the visualization.
       new google.visualization.ColumnChart(document.getElementById("userNbAnnotationsChart")).
           draw(data,
           {title:"",
-             width:500, height:350,
+             width:width, height:350,
              vAxis: {title: "Number of annotations"},
              hAxis: {title: "Users"}}
       );
@@ -413,10 +416,10 @@ var ProjectDashboardView = Backbone.View.extend({
          data.setValue(i,1, stat.get('value'));
          i++;
       });
-
+      var width = Math.round($(window).width()/2 - 50);
       // Create and draw the visualization.
       new google.visualization.PieChart(document.getElementById('projectPieChart')).
-          draw(data, {width: 500, height: 350,title:"", colors : colors});
+          draw(data, {width: width, height: 350,title:"", colors : colors});
    },
    drawColumnChart : function (collection, response) {
       $("#projectColumnChart").empty();
@@ -437,12 +440,12 @@ var ProjectDashboardView = Backbone.View.extend({
          data.setValue(j, 1, stat.get("value"));
          j++;
       });
-
+      var width = Math.round($(window).width()/2 - 50);
       // Create and draw the visualization.
       new google.visualization.ColumnChart(document.getElementById("projectColumnChart")).
           draw(data,
           {title:"",
-             width:500, height:350,
+             width:width, height:350,
              vAxis: {title: "Number of annotations"},
              hAxis: {title: "Terms"}}
       );
@@ -508,7 +511,8 @@ var ProjectDashboardView = Backbone.View.extend({
       self.resetElem("#projectInfoUpdated",json.updated);
 
       $("#projectInfoUserList").empty();
-
+      var width = Math.round($(window).width()/2 - 50);
+      $("#projectInfoPanel").css("width", width);
       require(["text!application/templates/dashboard/UserInfo.tpl.html"], function(tpl) {
          //Get users list
          var users = []
@@ -533,6 +537,8 @@ var ProjectDashboardView = Backbone.View.extend({
              var commandCallback = function(collection, response) {
 
                 $("#lastactionitem").empty();
+                var width = Math.round($(window).width()/2 - 50);
+                $("#projectLastCommandPanel").css("width", width);
                 collection.each(function(command) {
                    var json = command.toJSON()
 
