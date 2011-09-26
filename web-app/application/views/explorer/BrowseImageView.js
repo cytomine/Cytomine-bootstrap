@@ -196,7 +196,7 @@ var BrowseImageView = Backbone.View.extend({
       var self = this;
       var mime = this.model.get('mime');
       //if (mime == "jp2") self.initDjatoka();
-      if (mime == "vms" || mime == "mrxs" || mime == "tif" || mime == "tiff") self.initIIP();
+      if (mime == "vms" || mime == "mrxs" || mime == "tif" || mime == "tiff" || mime == "svs") self.initIIP();
    },
    /**
     * Add a base layer (image) on the Map

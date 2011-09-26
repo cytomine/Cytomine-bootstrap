@@ -4,6 +4,7 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
 import be.cytomine.server.resolvers.Resolver
+import be.cytomine.image.server.StorageAbstractImage
 
 /**
  * Cytomine @ GIGA-ULG
@@ -61,15 +62,20 @@ class ImagePropertiesService {
             case "tiff" :
                 extractUsefulTif(image)
                 break;
+            case "svs":
+                extractUsefulTif(image)
+                break;
         }
     }
 
     private def extractUsefulTif(AbstractImage image) {
         println "extract properties from tiff : " + image.getFilename()
-        def imageServer= ImageServer.findByName("IIP-Openslide2");
+        def storages = StorageAbstractImage.findAllByAbstractImage(image).collect { it.storage }
+        def imageServer= ImageServer.findByStorage(storages.first())
         Resolver resolver = Resolver.getResolver(imageServer.className)
         def metadaURL = resolver.getMetaDataURL(imageServer.getBaseUrl(), imageServer.getStorage().getBasePath() + image.getPath())
         def url = new URL(metadaURL)
+        print metadaURL
         //def dimensions = null
 
         URLConnection conn = url.openConnection();

@@ -15,12 +15,14 @@ import be.cytomine.api.RestController
 
 import grails.orm.PagedResultList
 import be.cytomine.image.server.ImageProperty
+import be.cytomine.image.server.ImageServer
 
 class RestImageController extends RestController{
 
     def springSecurityService
     def transactionService
     def imagePropertiesService
+    def storageService
 
     def index = {
         redirect(controller: "image")
@@ -155,11 +157,14 @@ class RestImageController extends RestController{
         if(imageProperty!=null) responseSuccess(imageProperty)
         else responseNotFound("ImageProperty",params.imageproperty)
     }
-    def storageService
+
 
     def imageservers = {
         AbstractImage image = AbstractImage.read(params.id)
-        def urls = image.getMime().imageServers().collect { it.getZoomifyUrl() + image.getPath() + "/" }
+        def imageServers = ImageServer.createCriteria().list {
+            inList("storage", image.storageAbstractImages.collect { it.storage })
+        }
+        def urls = imageServers.collect { it.getZoomifyUrl() + image.getPath() + "/" }
         def result = [:]
         result.imageServersURLs =  urls
         response(result)
@@ -215,9 +220,6 @@ class RestImageController extends RestController{
             responseSuccess(list)
         }
     }
-
-
-
 }
 
 

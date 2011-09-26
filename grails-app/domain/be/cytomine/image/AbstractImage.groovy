@@ -173,7 +173,9 @@ class AbstractImage extends SequenceDomain {
 
 
     def getPreviewURL()  {
-        Collection<ImageServer> imageServers = getMime().imageServers()
+        def imageServers = ImageServer.createCriteria().list {
+            inList("storage", this.storageAbstractImages.collect { it.storage })
+        }
         def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         if (imageServers.size() == 0 || !imageServers[index].getStorage())  {
             return "images/cytomine.jpg"
@@ -184,7 +186,9 @@ class AbstractImage extends SequenceDomain {
     }
 
     def getThumbURL()  {
-        Collection<ImageServer> imageServers = getMime().imageServers()
+        def imageServers = ImageServer.createCriteria().list {
+            inList("storage", this.storageAbstractImages.collect { it.storage })
+        }
         def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         if (imageServers.size() == 0 || !imageServers[index].getStorage() || getWidth() == null || getHeight() == null)  {
             return "images/cytomine.jpg"
@@ -199,7 +203,9 @@ class AbstractImage extends SequenceDomain {
     }
 
     def getMetadataURL()  {
-        Collection<ImageServer> imageServers = getMime().imageServers()
+        def imageServers = ImageServer.createCriteria().list {
+            inList("storage", this.storageAbstractImages.collect { it.storage })
+        }
         def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         if (imageServers.size() == 0 || !imageServers[index].getStorage())  {
             return [] as JSON
@@ -210,7 +216,9 @@ class AbstractImage extends SequenceDomain {
     }
 
     def getPropertiesURL()  {
-        Collection<ImageServer> imageServers = getMime().imageServers()
+        def imageServers = ImageServer.createCriteria().list {
+            inList("storage", this.storageAbstractImages.collect { it.storage })
+        }
         def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         if (imageServers.size() == 0 || !imageServers[index].getStorage())  {
             return [] as JSON
@@ -221,7 +229,9 @@ class AbstractImage extends SequenceDomain {
     }
 
     def getCropURL(int topLeftX, int topLeftY, int width, int height)  {
-        Collection<ImageServer> imageServers = getMime().imageServers()
+        def imageServers = ImageServer.createCriteria().list {
+            inList("storage", this.storageAbstractImages.collect { it.storage })
+        }
         def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         if (imageServers.size() == 0 || !imageServers[index].getStorage())  {
             return "images/cytomine.jpg"
@@ -233,7 +243,9 @@ class AbstractImage extends SequenceDomain {
     }
 
     def getCropURL(int topLeftX, int topLeftY, int width, int height, int zoom)  {
-        Collection<ImageServer> imageServers = getMime().imageServers()
+        def imageServers = ImageServer.createCriteria().list {
+            inList("storage", this.storageAbstractImages.collect { it.storage })
+        }
         def index = (Integer) Math.round(Math.random()*(imageServers.size()-1)) //select an url randomly
         if (imageServers.size() == 0 || !imageServers[index].getStorage())  {
             return "images/cytomine.jpg"
@@ -244,7 +256,9 @@ class AbstractImage extends SequenceDomain {
     }
 
     def getZoomLevels () {
-        Collection<ImageServer> imageServers = getMime().imageServers()
+        def imageServers = ImageServer.createCriteria().list {
+            inList("storage", this.storageAbstractImages.collect { it.storage })
+        }
         assert(imageServers.size() > 0)
         Resolver resolver = Resolver.getResolver(imageServers[0].className)
         return resolver.getZoomLevels(imageServers[0].getBaseUrl(), imageServers[0].getStorage().getBasePath() + getPath())

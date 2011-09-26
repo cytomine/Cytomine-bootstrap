@@ -5,6 +5,10 @@ class Storage {
     String name
     String basePath
     String serviceUrl
+    String ip
+    String username
+    String password
+    Integer port
 
     static hasMany = [storageAbstractImages : StorageAbstractImage]
 

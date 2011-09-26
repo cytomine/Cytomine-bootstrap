@@ -160,18 +160,27 @@ class BootStrap {
     def createStorage(storages) {
         println "createStorages"
         storages.each {
-            if(Storage.findByName(it.name)) return
-
-            def storage = new Storage(name : it.name, basePath : it.basePath, serviceUrl : it.serviceUrl)
-            if (storage.validate()) {
-                storage.save();
-            } else {
-                println("\n\n\n Errors in creating storage for ${it.name}!\n\n\n")
-                storage.errors.each {
-                    err -> println err
+            if(Storage.findByName(it.name)) {
+                def storage = Storage.findByName(it.name)
+                storage.basePath = it.basePath
+                storage.serviceUrl = it.serviceUrl
+                storage.username = it.username
+                storage.password = it.password
+                storage.ip = it.ip
+                storage.port = it.port
+                storage.save()
+            }
+            else {
+                def storage = new Storage(name : it.name, basePath : it.basePath, serviceUrl : it.serviceUrl, username : it.username, password : it.password, ip : it.ip, port : it.port)
+                if (storage.validate()) {
+                    storage.save();
+                } else {
+                    println("\n\n\n Errors in creating storage for ${it.name}!\n\n\n")
+                    storage.errors.each {
+                        err -> println err
+                    }
                 }
             }
-
         }
     }
 
@@ -419,28 +428,42 @@ class BootStrap {
 
     def createImageServers(imageServerSamples) {
         imageServerSamples.each { item ->
-            if(ImageServer.findByUrl(item.url)) return
-            ImageServer imageServer = new ImageServer(
-                    name : item.name,
-                    url : item.url,
-                    service : item.service,
-                    className : item.className,
-                    storage : Storage.findByName(item.storage))
-
-            if (imageServer.validate()) {
-                println "Creating image server ${imageServer.name}... : ${imageServer.url}"
-
-                imageServer.save(flush : true)
-
-                /* Link with MIME Types */
+            def imageServer = ImageServer.findByName(item.name)
+            if(imageServer) { //exist => update
+                imageServer.url = item.url
+                imageServer.service = item.service
+                imageServer.className = item.className
+                imageServer.storage = Storage.findByName(item.storage)
+                imageServer.save()
                 item.extension.each { ext->
                     Mime mime = Mime.findByExtension(ext)
-                    MimeImageServer.link(imageServer, mime)
+                    if (!MimeImageServer.findByImageServerAndMime(imageServer, mime)){
+                        MimeImageServer.link(imageServer, mime)
+                    }
                 }
             } else {
-                println("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
-                imageServer.errors.each {
-                    err -> println err
+                imageServer = new ImageServer(
+                        name : item.name,
+                        url : item.url,
+                        service : item.service,
+                        className : item.className,
+                        storage : Storage.findByName(item.storage))
+
+                if (imageServer.validate()) {
+                    println "Creating image server ${imageServer.name}... : ${imageServer.url}"
+
+                    imageServer.save(flush : true)
+
+                    /* Link with MIME Types */
+                    item.extension.each { ext->
+                        Mime mime = Mime.findByExtension(ext)
+                        MimeImageServer.link(imageServer, mime)
+                    }
+                } else {
+                    println("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
+                    imageServer.errors.each {
+                        err -> println err
+                    }
                 }
             }
         }

@@ -12,8 +12,8 @@ class BootStrapData {
 
     /* AIS Storages */
     static def storages = [
-            [name : "cytomine", basePath : "/home/stevben/Slides/", serviceUrl : "ais://"],
-            [name : "cytomin0", basePath : "/media/datalvm/maree/Slides/", serviceUrl : "ais://"]
+            [name : "cytomine", basePath : "/home/stevben/Slides/", serviceUrl : "ais://", ip : "139.165.117.165", port : 22, username : "aisstorage", password : "GsQ3DMdX"],
+            [name : "cytomin0", basePath : "/media/datalvm/maree/Slides/", serviceUrl : "ais://", ip : "139.165.108.28", port : 22, username : "aisstorage", password : "GsQ3DMdX"]
             //etc
     ]
 
@@ -86,26 +86,26 @@ class BootStrapData {
 
     /* Image Server */
     static def imageServerSamples =  [
-            ['name' : 'IIP-Openslide', 'url' : 'http://is1.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomin0'],
-            [ 'name' : 'IIP-Openslide', 'url' : 'http://is2.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomin0' ],
-            [ 'name' : 'IIP-Openslide', 'url' : 'http://is3.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif'], 'storage' : 'cytomin0' ],
-            [ 'name' : 'IIP-Openslide', 'url' : 'http://is4.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomin0' ],
-            [ 'name' : 'IIP-Openslide', 'url' : 'http://is5.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomin0' ],
-            [ 'name' : 'IIP-Openslide', 'url' : 'http://is6.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomin0' ],
-            [ 'name' : 'IIP-Openslide', 'url' : 'http://is7.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomin0' ],
-            [ 'name' : 'IIP-Openslide', 'url' : 'http://is8.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomin0' ],
-            [ 'name' : 'IIP-Openslide', 'url' : 'http://is9.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomin0' ],
-            [ 'name' : 'IIP-Openslide', 'url' : 'http://is10.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomin0' ],
-            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is1.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomine' ],
-            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is2.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomine' ],
-            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is3.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomine' ],
-            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is4.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomine' ],
-            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is5.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomine' ],
-            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is6.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomine' ],
-            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is7.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomine' ],
-            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is8.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomine' ],
-            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is9.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomine' ],
-            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is10.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff'], 'storage' : 'cytomine' ],
+            ['name' : 'IIP-Openslide', 'url' : 'http://is1.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomin0'],
+            [ 'name' : 'IIP-Openslide', 'url' : 'http://is2.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomin0' ],
+            [ 'name' : 'IIP-Openslide', 'url' : 'http://is3.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'svs', 'svs'], 'storage' : 'cytomin0' ],
+            [ 'name' : 'IIP-Openslide', 'url' : 'http://is4.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomin0' ],
+            [ 'name' : 'IIP-Openslide', 'url' : 'http://is5.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomin0' ],
+            [ 'name' : 'IIP-Openslide', 'url' : 'http://is6.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomin0' ],
+            [ 'name' : 'IIP-Openslide', 'url' : 'http://is7.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomin0' ],
+            [ 'name' : 'IIP-Openslide', 'url' : 'http://is8.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomin0' ],
+            [ 'name' : 'IIP-Openslide', 'url' : 'http://is9.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomin0' ],
+            [ 'name' : 'IIP-Openslide', 'url' : 'http://is10.cytomine.be:48', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomin0' ],
+            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is1.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomine' ],
+            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is2.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomine' ],
+            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is3.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomine' ],
+            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is4.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomine' ],
+            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is5.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomine' ],
+            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is6.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomine' ],
+            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is7.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomine' ],
+            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is8.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomine' ],
+            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is9.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomine' ],
+            [ 'name' : 'IIP-Openslide2', 'url' : 'http://is10.cytomine.be:888', 'service' : '/fcgi-bin/iipsrv.fcgi', 'className' : 'IPPResolver', 'extension' : ['mrxs','vms', 'tif', 'tiff', 'svs'], 'storage' : 'cytomine' ],
     ]
 
 
