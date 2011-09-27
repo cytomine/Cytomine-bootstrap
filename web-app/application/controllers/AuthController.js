@@ -28,6 +28,7 @@ var AuthController = Backbone.Controller.extend({
                      id : data.id,
                      model : model
                   }
+                  $("#loginFooter").fadeOut();
                   window.app.startup();
                }
             });

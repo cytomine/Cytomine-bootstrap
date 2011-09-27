@@ -53,6 +53,7 @@ var ApplicationController = Backbone.Controller.extend({
       //loadingView.progress(value);
       if (cpt == expected) {
          //loadingView.close();
+         $("#loginFooter").fadeOut();
          this.view.render(this.start);
       }
    },

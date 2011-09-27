@@ -253,7 +253,7 @@ var ProjectDashboardView = Backbone.View.extend({
          }
       });
       var self = this;
-      //$("#tabs-images-listing-"+ self.model.get('id')).hide();
+
       new ImageInstanceCollection({project:self.model.get('id')}).fetch({
          success : function (collection, response) {
 
@@ -327,16 +327,17 @@ var ProjectDashboardView = Backbone.View.extend({
       $('#imageThumbs'+this.model.id).button( "enable" );
       $('#imageArray'+this.model.id).button( "disable");
    },
-   drawUserAnnotationsChart : function (collection, response) {
+   drawUserAnnotationsChart : function (collection, currentUser, response) {
       // Create and populate the data table.
       var data = new google.visualization.DataTable();
-
+      var cpt = -1;
       var first = collection.at(0);
 
       //init users
       data.addColumn('string', 'Users');
       collection.each(function (item){
-         console.log("item.key " + item.key);
+         cpt++;
+         if (cpt != currentUser && currentUser != undefined) return;
          data.addColumn('number', item.get("key"));
       });
 
@@ -345,22 +346,21 @@ var ProjectDashboardView = Backbone.View.extend({
       //init terms
       var j = 0;
       _.each(first.get("terms"), function (term){
-         console.log("set value " + j + " ,  0 : " + term.name);
          data.setValue(j, 0, term.name);
          j++;
       });
-
+      cpt = -1;
       var i = 0;
       collection.each(function (item){
+         cpt++;
+         if (cpt != currentUser && currentUser != undefined) return;
          var j = 1;
-         console.log("key : " + item.get("key"));
          _.each(item.get("terms"), function (term){
-            console.log("term.name : " + term.value);
-            console.log("term.value : " + term.value);
             data.setValue(j-1, i+1, term.value);
             j++;
          });
          i++;
+
       });
       var width = Math.round($(window).width()/2 - 50);
       // Create and draw the visualization.
@@ -480,12 +480,16 @@ var ProjectDashboardView = Backbone.View.extend({
       });
       new StatsUserAnnotationCollection({project:self.model.get('id')}).fetch({
          success : function(collection, response) {
-            self.drawUserAnnotationsChart(collection, response);
+            var nbCharts = _.size(collection);
+            self.initChartNavigator(nbCharts);
+            self.drawUserAnnotationsChart(collection, undefined, response);
          }
       });
 
    },
+   initChartNavigator : function (nbCharts) {
 
+   },
    fetchProjectInfo : function () {
       var self = this;
       var json = self.model.toJSON();
