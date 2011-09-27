@@ -27,7 +27,6 @@ h2 { font-size:15px; }
 h3 { font-size:13px; }
 
 .header {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: #666666;
     display: block;
     height: 20px;
@@ -790,4 +789,20 @@ img.thumbcommand {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
+}
+
+#loginFooter {
+    position: absolute;
+    bottom : 0px;
+    margin: auto;
+    text-align :center;
+    width : 30%;
+    left : 35%;
+}
+span.version {
+    font-family: Verdana;
+    font-size: 8px;
+    display: inline-block;
+    color : #666666;
+
 }
