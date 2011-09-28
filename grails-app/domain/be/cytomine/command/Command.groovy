@@ -42,8 +42,9 @@ class Command extends SequenceDomain {
             def returnArray = [:]
 
             returnArray['CLASSNAME'] = it.class
-            returnArray['action'] = it.getActionMessage()
+            returnArray['action'] = it.getActionMessage() + " by " +  it?.user?.username
             returnArray['data'] = it.data
+            returnArray['user'] = it?.userId
             returnArray['type'] = "UNKNOWN"
             if(it instanceof AddCommand) returnArray['type'] = "ADD"
             else if(it instanceof EditCommand) returnArray['type'] = "EDIT"
