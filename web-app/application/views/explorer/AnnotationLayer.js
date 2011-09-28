@@ -229,7 +229,13 @@ AnnotationLayer.prototype = {
                     //term
                     var terms = new Array();
                     _.each(json.term, function(idTerm) {
-                        var tpl = _.template("<a href='#ontology/{{idOntology}}/{{idTerm}}'>{{termName}}</a>", {idOntology : window.app.status.currentProjectModel.get('ontology'), idTerm : idTerm, termName : window.app.status.currentTermsCollection.get(idTerm).get('name')});
+                        console.log(window.app.status.currentProjectModel);
+                        var idOntology = window.app.status.currentProjectModel.get('ontology');
+                        console.log("idTerm="+idTerm);
+                        console.log(window.app.status.currentTermsCollection);
+                        var termName = window.app.status.currentTermsCollection.get(idTerm).get('name');
+
+                        var tpl = _.template("<a href='#ontology/{{idOntology}}/{{idTerm}}'>{{termName}}</a>", {idOntology : idOntology, idTerm : idTerm, termName : termName});
                         terms.push(tpl);
 
                     });
@@ -238,7 +244,7 @@ AnnotationLayer.prototype = {
                     var content = _.template(tpl, json);
                     self.popup = new OpenLayers.Popup("",
                             new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
-                            new OpenLayers.Size(300, 150),
+                            new OpenLayers.Size(300, 200),
                             content,
                             false);
                     self.popup.setBackgroundColor("transparent");
@@ -315,10 +321,10 @@ AnnotationLayer.prototype = {
                                         suggestedTerm+= "<span id=\"changeBySuggest"+terms.get(bestTerm1).id +"\" style=\"display : inline\"><u>"+terms.get(bestTerm1).get('name') + "</u> ("+Math.round(bestTerm1Value)+"%)<span>";
                                     if(terms.get(bestTerm2)!=undefined)
                                         suggestedTerm2+= " and " + "<span id=\"changeBySuggest"+terms.get(bestTerm2).id +"\" style=\"display : inline\"><u>"+terms.get(bestTerm2).get('name') + "</u> ("+Math.round(bestTerm2Value)+"%)<span>";
-
-                                    $("#suggTerm").empty();
-                                    $("#suggTerm").append(suggestedTerm);
-                                    $("#suggTerm").append(suggestedTerm2);
+                                    console.log("suggestedTerm=" + suggestedTerm + " suggestedTerm2=" + suggestedTerm2);
+                                    $("#suggTerm"+model.id).empty();
+                                    $("#suggTerm"+model.id).append(suggestedTerm);
+                                    $("#suggTerm"+model.id).append(suggestedTerm2);
                                     if(terms.get(bestTerm1)!=undefined) {
                                         $("#changeBySuggest"+terms.get(bestTerm1).id).click(function() {
                                             new AnnotationTermModel({term: terms.get(bestTerm1).id,annotation: model.id,clear : true

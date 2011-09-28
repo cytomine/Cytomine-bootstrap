@@ -215,6 +215,7 @@ class Annotation extends SequenceDomain implements Serializable {
             returnArray['imageFilename'] = image?.filename
             returnArray['zoomLevel'] = it.zoomLevel
             returnArray['channels'] = it.channels
+            returnArray['project'] = imageinstance?.getIdProject()
             if(it.userId) returnArray['user'] = it.userId
             else returnArray['user'] = it.user?.id
 

@@ -11,7 +11,6 @@ var AnnotationThumbView = Backbone.View.extend({
 
        render: function() {
           var json = this.model.toJSON();
-          json.project = window.app.status.currentProject;
           var self = this;
           require(["text!application/templates/dashboard/AnnotationThumb.tpl.html"], function(tpl) {
              $(self.el).html(_.template(tpl, json));
