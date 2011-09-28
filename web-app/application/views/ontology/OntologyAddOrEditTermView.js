@@ -61,9 +61,9 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         self.$from = self.$panel.find($("#form-" + self.action +"-ontology-term"));
         self.$textboxName = self.$panel.find("#" + self.action +"termname");
 
-        self.$colorChooser = self.$panel.find('#colorpicker1');
-        self.$inputOldColor = self.$panel.find('#oldColor');
-        self.$inputNewColor = self.$panel.find('#color1');
+        self.$colorChooser = self.$panel.find('#colorpicker1AddOrEditTerm');
+        self.$inputOldColor = self.$panel.find('#oldColorAddOrEditTerm');
+        self.$inputNewColor = self.$panel.find('#color1AddOrEditTerm');
 
         self.$addFolderButton  = self.$panel.find('.addFolder');
 
@@ -126,7 +126,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
 
     buildColorInfo : function() {
         var self = this;
-        var colorPicker = self.$colorChooser.farbtastic('#color1');
+        var colorPicker = self.$colorChooser.farbtastic('#color1AddOrEditTerm');
         var color = self.model.get('color');
         self.$inputOldColor.val(color);
         self.$inputNewColor.val(color);
