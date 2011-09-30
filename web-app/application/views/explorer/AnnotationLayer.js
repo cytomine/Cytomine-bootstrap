@@ -320,7 +320,7 @@ AnnotationLayer.prototype = {
                                     if(terms.get(bestTerm1)!=undefined)
                                         suggestedTerm+= "<span id=\"changeBySuggest"+terms.get(bestTerm1).id +"\" style=\"display : inline\"><u>"+terms.get(bestTerm1).get('name') + "</u> ("+Math.round(bestTerm1Value)+"%)<span>";
                                     if(terms.get(bestTerm2)!=undefined)
-                                        suggestedTerm2+= " and " + "<span id=\"changeBySuggest"+terms.get(bestTerm2).id +"\" style=\"display : inline\"><u>"+terms.get(bestTerm2).get('name') + "</u> ("+Math.round(bestTerm2Value)+"%)<span>";
+                                        suggestedTerm2+= " or " + "<span id=\"changeBySuggest"+terms.get(bestTerm2).id +"\" style=\"display : inline\"><u>"+terms.get(bestTerm2).get('name') + "</u> ("+Math.round(bestTerm2Value)+"%)<span>";
                                     console.log("suggestedTerm=" + suggestedTerm + " suggestedTerm2=" + suggestedTerm2);
                                     $("#suggTerm"+model.id).empty();
                                     $("#suggTerm"+model.id).append(suggestedTerm);
