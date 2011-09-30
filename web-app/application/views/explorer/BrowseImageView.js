@@ -6,6 +6,7 @@ var BrowseImageView = Backbone.View.extend({
     * @param options
     */
    initialize: function (options) {
+      this.iPad = ( navigator.userAgent.match(/iPad/i) != null );
       this.initCallback = options.initCallback;
       this.layers = [];
       this.layersLoaded = 0;
@@ -33,14 +34,21 @@ var BrowseImageView = Backbone.View.extend({
       this.initMap();
       this.initOntology();
       this.initAnnotationsTabs();
+      if (this.iPad) this.initMobile();
       return this;
+   },
+   initMobile : function () {
+
+
    },
    /**
     * Grab the layout and call ask for render
     */
    render : function() {
       var self = this;
-      require(["lib/openlayers/OpenLayers.js", "text!application/templates/explorer/BrowseImage.tpl.html"
+      //var template = (this.iPad) ? "text!application/templates/explorer/BrowseImageMobile.tpl.html" : "text!application/templates/explorer/BrowseImage.tpl.html";
+
+      require(["lib/OpenLayers-2.11/OpenLayers.js", "text!application/templates/explorer/BrowseImage.tpl.html"
       ], function(openLayers,  tpl) {
          self.doLayout(tpl);
       });

@@ -16,9 +16,11 @@ class StatsController extends RestController {
             join("annotation")
             createAlias("annotation", "a")
             projections {
+                inList("a.image", project.imagesinstance())
                 groupProperty("a.user.id")
                 groupProperty("term.id")
                 count("term")
+
             }
         }
 

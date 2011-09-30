@@ -3,6 +3,7 @@ var DraggablePanelView = Backbone.View.extend({
        tagName : "div",
 
        initialize: function(options) {
+          this.iPad = ( navigator.userAgent.match(/iPad/i) != null );
           this.el = options.el;
           this.template = options.template;
           /*this.dialogAttr = options.dialogAttr;
@@ -10,9 +11,10 @@ var DraggablePanelView = Backbone.View.extend({
            if (!options.dialogAttr.height) this.dialogAttr.height = 'auto';*/
        },
        render: function() {
-          //
+
           var self = this;
           $(this.el).html(this.template);
+          if (this.iPad) return this;
           var width = $(this.el).width();
           var height = $(this.el).height();
           $(this.el).draggable({
