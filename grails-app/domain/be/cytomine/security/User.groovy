@@ -9,6 +9,8 @@ import be.cytomine.project.ProjectGroup
 import be.cytomine.image.AbstractImageGroup
 import org.perf4j.StopWatch
 import org.perf4j.LoggingStopWatch
+import be.cytomine.processing.Software
+import be.cytomine.processing.SoftwareProjects
 
 class User extends SecUser {
 
@@ -27,6 +29,8 @@ class User extends SecUser {
         email (blank : false , email : true)
         color (blank : false, nullable : true)
     }
+
+    static hasMany = [ softwareProjects : SoftwareProjects]
 
     String toString() {
         firstname + " " + lastname + " (" + username + ")"

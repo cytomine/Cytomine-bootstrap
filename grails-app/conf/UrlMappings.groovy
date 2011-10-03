@@ -338,6 +338,22 @@ class UrlMappings {
             action = [GET:"exportimages"]
         }
 
+        "/api/job"(controller:"restJob") {
+           action = [GET:"list", POST:"save"]
+        }
+
+        "/api/job/$id"(controller:"restJob"){
+            action = [GET:"show", PUT:"update", DELETE:"delete"]
+        }
+
+        "/api/software"(controller:"restSoftware") {
+            action = [GET:"list"]
+        }
+
+        "/api/software/$id"(controller:"restSoftware"){
+            action = [GET:"show"]
+        }
+
         "/processing/detect/$image/$x/$y"(controller:"processing") {
             action = [GET : "detect"]
         }

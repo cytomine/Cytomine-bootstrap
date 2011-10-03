@@ -10,6 +10,8 @@ import be.cytomine.ontology.Annotation
 
 import be.cytomine.security.UserGroup
 import be.cytomine.command.Command
+import be.cytomine.processing.Software
+import be.cytomine.processing.SoftwareProjects
 
 class Project extends SequenceDomain {
 
@@ -19,7 +21,7 @@ class Project extends SequenceDomain {
     long countImages
 
     static belongsTo = [ontology:Ontology]
-    static hasMany = [projectGroup:ProjectGroup,commands:Command]
+    static hasMany = [projectGroup:ProjectGroup,commands:Command, softwareProjects : SoftwareProjects]
 
 
     static constraints = {

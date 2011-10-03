@@ -3,6 +3,7 @@ package be.cytomine.api
 import grails.plugins.springsecurity.Secured
 import be.cytomine.security.SecRole
 import be.cytomine.security.User
+import grails.converters.JSON
 
 class RestSecRoleController extends RestController {
 
@@ -10,5 +11,4 @@ class RestSecRoleController extends RestController {
     def list = {
         responseSuccess(SecRole.list())
     }
-
 }
