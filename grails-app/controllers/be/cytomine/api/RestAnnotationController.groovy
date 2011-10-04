@@ -198,15 +198,9 @@ class RestAnnotationController extends RestController {
         log.info "User:" + currentUser.username + " transaction:" +  currentUser.transactionInProgress  + " request:" +json.toString()
         Command addAnnotationCommand = new AddAnnotationCommand(postData : json.toString(), user: currentUser)
         def result = processCommand(addAnnotationCommand, currentUser)
-        //index in retrieval (asynchronous)
-        /*RetrievalServer retrieval = RetrievalServer.findByDescription("stevben-server")
-        log.info "annotation.id="+result?.annotation?.id + " stevben-server="+ retrieval
-        if(result?.annotation?.id && retrieval) {
-            log.info "index annotation " + result?.annotation?.id + " on  " +  retrieval.url
-            RestRetrievalController.indexAnnotationSynchronous(Annotation.read(result.annotation.id))
-        }*/
-
-
+        log.info "Index annotation with id=" +result?.annotation?.id
+        Long id = result?.annotation?.id
+        if(id) indexRetrievalAnnotation(id)
         response(result)
     }
 
@@ -251,12 +245,38 @@ class RestAnnotationController extends RestController {
         Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData : postData.toString(), user: currentUser)
         def result = processCommand(deleteAnnotationCommand, currentUser)
         transaction.stop()
+        Long id = result?.annotation?.id
+        if(id) deleteRetrievalAnnotation(id)
         response(result)
-        //TODO: delete annotation from retrieval-web
-        //}
-
     }
 
+    private indexRetrievalAnnotation(Long id) {
+        //index in retrieval (asynchronous)
+        RetrievalServer retrieval = RetrievalServer.findByDescription("retrieval")
+        log.info "annotation.id="+id + " stevben-server="+ retrieval
+        if(id && retrieval) {
+            log.info "index annotation " + id + " on  " +  retrieval.url
+            RestRetrievalController.indexAnnotationSynchronous(Annotation.read(id))
+        }
+
+    }
+    private deleteRetrievalAnnotation(Long id) {
+        RetrievalServer retrieval = RetrievalServer.findByDescription("retrieval")
+        log.info "annotation.id="+id + " retrieval-server="+ retrieval
+        if(id && retrieval) {
+            log.info "delete annotation " + id + " on  " +  retrieval.url
+            RestRetrievalController.deleteAnnotationSynchronous(id)
+        }
+    }
+
+    private updateRetrievalAnnotation(Long id) {
+        RetrievalServer retrieval = RetrievalServer.findByDescription("retrieval")
+        log.info "annotation.id="+id + " retrieval-server="+ retrieval
+        if(id && retrieval) {
+            log.info "update annotation " + id + " on  " +  retrieval.url
+            RestRetrievalController.updateAnnotationSynchronous(id)
+        }
+    }
 
     def update = {
         log.info "Update"
@@ -264,6 +284,10 @@ class RestAnnotationController extends RestController {
         log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
         Command editAnnotationCommand = new EditAnnotationCommand(postData : request.JSON.toString(), user: currentUser)
         def result = processCommand(editAnnotationCommand, currentUser)
+        if(result.success) {
+            Long id = result.annotation.id
+            updateRetrievalAnnotation(id)
+        }
         response(result)
     }
 

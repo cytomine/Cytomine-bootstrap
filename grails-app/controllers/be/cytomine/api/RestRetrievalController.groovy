@@ -26,11 +26,11 @@ class RestRetrievalController extends RestController {
 
     private def loadAnnotationSimilarities(def idAnnotation) {
         log.info  "get similarities for annotation " +idAnnotation
-        RetrievalServer server = RetrievalServer.findByDescription("stevben-server")
+        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String URL = server.url + "/search.json"
 
         Annotation searchAnnotation = Annotation.read(idAnnotation);
-        def json = JSON.parse(getResponse(URL,searchAnnotation))
+        def json = JSON.parse(getPostResponse(URL,searchAnnotation))
 
         def data = []
 
@@ -46,7 +46,7 @@ class RestRetrievalController extends RestController {
         return data
     }
 
-    public static String getResponse(String URL, Annotation annotation) {
+    public static String getPostResponse(String URL, Annotation annotation) {
         HttpClient client = new HttpClient();
         client.connect(URL,"xxx","xxx");
         client.post(annotation.encodeAsJSON())
@@ -56,11 +56,41 @@ class RestRetrievalController extends RestController {
         return response
     }
 
+    public static String getDeleteResponse(String URL) {
+        HttpClient client = new HttpClient();
+        client.connect(URL,"xxx","xxx");
+        client.delete()
+        int code  = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return response
+    }
+
     public static def indexAnnotationSynchronous(Annotation annotation) {
         println "index synchronous"
-        RetrievalServer server = RetrievalServer.findByDescription("stevben-server")
+        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String URL = server.url + "/index.json"
-        getResponse(URL,annotation)
+        getPostResponse(URL,annotation)
+    }
+
+    public static def indexAnnotationSynchronous(Long id) {
+        println "index synchronous"
+        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+        String URL = server.url + "/index.json"
+        getPostResponse(URL,Annotation.read(id))
+    }
+
+     public static def deleteAnnotationSynchronous(Long id) {
+        println "delete synchronous"
+        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+        String URL = server.url + "/" + id + ".json"
+        getDeleteResponse(URL)
+    }
+
+     public static def updateAnnotationSynchronous(Long id) {
+        println "update synchronous"
+        deleteAnnotationSynchronous(id)
+        indexAnnotationSynchronous(id)
     }
 
     public static def indexAnnotationAsynchronous(Annotation annotation) {
@@ -72,10 +102,36 @@ class RestRetrievalController extends RestController {
                 } catch(Exception e) {e.printStackTrace()}
             }
             Closure annotationIndexing = indexAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
+            Future result=annotationIndexing()
+        }
+    }
+
+    public static def deleteAnnotationAsynchronous(Long id) {
+        println "delete asynchronous"
+        Asynchronizer.doParallel() {
+            Closure deleteAnnotation = {
+                try {
+                 deleteAnnotationSynchronous(id)
+                } catch(Exception e) {e.printStackTrace()}
+            }
+            Closure annotationIndexing = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
             //Future result=annotationIndexing()
         }
     }
 
 
+    public static def updateAnnotationAsynchronous(Long id) {
+        println "update asynchronous"
+        Asynchronizer.doParallel() {
+            Closure deleteAnnotation = {
+                try {
+                 deleteAnnotationSynchronous(id)
+                 indexAnnotationSynchronous(id)
+                } catch(Exception e) {e.printStackTrace()}
+            }
+            Closure annotationIndexing = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
+            //Future result=annotationIndexing()
+        }
+    }
 
 }
