@@ -4,7 +4,6 @@ class JobData {
 
     String key
     byte[] data
-    Job job
 
     static belongsTo = [ job : Job]
 
