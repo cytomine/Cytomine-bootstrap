@@ -411,7 +411,7 @@ class BootStrap {
 
     def createRetrievalServers(retrievalServerSamples) {
         retrievalServerSamples.each { item->
-            if(RetrievalServer.findByUrl(item.url)) return
+            if(RetrievalServer.findByDescription(item.description)) return
             RetrievalServer retrievalServer = new RetrievalServer( url : item.url, description : item.description)
             if (retrievalServer.validate()) {
                 println "Creating retrieval server ${item.description}... "
