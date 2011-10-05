@@ -106,7 +106,7 @@ var OntologyPanelView = Backbone.View.extend({
       var node = self.$tree.dynatree("getActiveNode");
 
       if(node==null) {
-         window.app.view.message("Term", "You must select a term!", "");
+         window.app.view.message("Term", "You must select a term!", "success");
          return;
       }
 
@@ -347,7 +347,7 @@ var OntologyPanelView = Backbone.View.extend({
       new TermModel({id:term.id}).destroy({
          success : function (model, response) {
             new EndTransactionModel({}).save();
-            window.app.view.message("Term", response.message, "");
+            window.app.view.message("Term", response.message, "success");
             self.refresh();
             $('#delete-term-confirm').modal('hide');
             $('#delete-term-confirm').remove();

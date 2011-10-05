@@ -156,7 +156,7 @@ var ProjectPanelView = Backbone.View.extend({
             new ProjectModel({id : self.model.id}).destroy(
                 {
                    success: function (model, response) {
-                      window.app.view.message("Project", response.message, "");
+                      window.app.view.message("Project", response.message, "success");
                       self.clear();
                       $('#delete-project-confirm').modal("hide");
                       $('#delete-project-confirm').remove();
@@ -164,7 +164,7 @@ var ProjectPanelView = Backbone.View.extend({
                    },
                    error: function (model, response) {
                       var json = $.parseJSON(response.responseText);
-                      window.app.view.message("Project", json.errors, "");
+                      window.app.view.message("Project", json.errors, "error");
                    }
                 }
             );

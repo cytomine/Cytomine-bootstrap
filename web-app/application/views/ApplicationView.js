@@ -175,25 +175,20 @@ var ApplicationView = Backbone.View.extend({
    }
 });
 
-ApplicationView.prototype.message =  function(title, message, type, pnotify) {
-   ApplicationView.prototype.message(title, message, type, pnotify, true);
-}
-ApplicationView.prototype.message =  function(title, message, type, pnotify,history) {
-   type = type || 'status';
-
-   if(message!=undefined)
-   {
+ApplicationView.prototype.message =  function(title, message, type) {
+   type = type || 'info';
+   if(message!=undefined) {
       message.responseText && (message = message.responseText);
    }
 
-   var opts = {
-      pnotify_title: title,
-      pnotify_text: message,
-      pnotify_notice_icon: "ui-icon ui-icon-info",
-      pnotify_type : type,
-      pnotify_history: history
-   };
-   $.pnotify(opts);
+   var tpl = '<div style="min-width: 200px" id="alert{{timestamp}}" class="alert-message {{type}} fade in" data-alert="alert"><a class="close" href="#">×</a><p><strong>{{alert}}</strong> {{message}}</p></div>';
+   var timestamp = new Date().getTime();
+   $("#alerts").append(_.template(tpl, { alert : title, message : message, timestamp : timestamp, type : type}));
+   $("#alert"+timestamp).alert();
+   setTimeout(function(){
+      $("#alert"+timestamp).alert('close');
+      $("#alert"+timestamp).remove();
+   }, 3000);
 
 }
 

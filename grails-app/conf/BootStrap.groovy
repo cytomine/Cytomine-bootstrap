@@ -430,7 +430,7 @@ class BootStrap {
         imageServerSamples.each { item ->
             def imageServer = ImageServer.findByName(item.name)
             if(imageServer) { //exist => update
-                imageServer.url = item.url
+                /*imageServer.url = item.url
                 imageServer.service = item.service
                 imageServer.className = item.className
                 imageServer.storage = Storage.findByName(item.storage)
@@ -440,7 +440,8 @@ class BootStrap {
                     if (!MimeImageServer.findByImageServerAndMime(imageServer, mime)){
                         MimeImageServer.link(imageServer, mime)
                     }
-                }
+                }*/
+                return
             } else {
                 imageServer = new ImageServer(
                         name : item.name,

@@ -359,13 +359,13 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
          new ImageInstanceModel({}).save({project : self.model.id, user : null, baseImage :idImage},{
             success : function (image,response) {
 
-               window.app.view.message("Image", response.message, "");
+               window.app.view.message("Image", response.message, "success");
                self.addImageProjectCallback(idSelectedArray.length, ++counter)
             },
             error: function (model, response) {
 
                var json = $.parseJSON(response.responseText);
-               window.app.view.message("Image", json.errors, "");
+               window.app.view.message("Image", json.errors, "error");
                self.addImageProjectCallback(idSelectedArray.length, ++counter)
             }
          });
@@ -397,13 +397,13 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
          new ImageInstanceModel({project : self.model.id, user : null, baseImage :idAsbtractImage}).destroy({
             success : function (image,response) {
 
-               window.app.view.message("Image", response.message, "");
+               window.app.view.message("Image", response.message, "success");
                self.deleteImageProjectCallback(idSelectedArray.length, ++counter)
             },
             error: function (model, response) {
 
                var json = $.parseJSON(response.responseText);
-               window.app.view.message("Image", json.errors, "");
+               window.app.view.message("Image", json.errors, "error");
                self.deleteImageProjectCallback(idSelectedArray.length, ++counter)
             }
          });

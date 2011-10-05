@@ -13,7 +13,7 @@ var CommandController = Backbone.Controller.extend({
          _.each(data, function(undoElem){
             self.dispatch(undoElem.callback,undoElem.message,"Undo");
             if(undoElem.printMessage) {
-               window.app.view.message("Undo", undoElem.message, "");
+               window.app.view.message("Undo", undoElem.message, "info");
             }
             self.commandInProgess = false;
          });
@@ -32,7 +32,7 @@ var CommandController = Backbone.Controller.extend({
       $.post('command/redo.json', {}, function(data) {
          _.each(data, function(redoElem){
             self.dispatch(redoElem.callback,redoElem.message, "Redo");
-            if(redoElem.printMessage) window.app.view.message("Redo", redoElem.message, "");
+            if(redoElem.printMessage) window.app.view.message("Redo", redoElem.message, "info");
          });
          self.commandInProgess = false;
       }, "json");

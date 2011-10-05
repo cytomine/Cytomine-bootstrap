@@ -35,16 +35,7 @@ var ImageView = Backbone.View.extend({
       return this;
    },
    showLoading : function() {
-      var opts = {
-         pnotify_title: "Loading...",
-         pnotify_text: "",
-         pnotify_notice_icon: "ui-icon ui-icon-info",
-         pnotify_hide : false,
-         pnotify_closer: false,
-         pnotify_history: false
-      };
-      var loadingMessage = $.pnotify(opts);
-      setTimeout(function(){loadingMessage.remove();}, 2000);
+      window.app.view.message("Loading...", "", "info");
    },
    appendThumbs : function(page) {
 

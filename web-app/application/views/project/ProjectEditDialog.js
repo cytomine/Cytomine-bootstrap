@@ -135,7 +135,7 @@ var EditProjectDialog = Backbone.View.extend({
             success: function (model, response) {
                 
 
-                window.app.view.message("Project", response.message, "");
+                window.app.view.message("Project", response.message, "success");
 
                 var id = response.project.id;
                 
@@ -179,7 +179,7 @@ var EditProjectDialog = Backbone.View.extend({
                         },error: function (model, response) {
                             
                             var json = $.parseJSON(response.responseText);
-                            window.app.view.message("User", json.errors, "");
+                            window.app.view.message("User", json.errors, "error");
                         }});
                 });
                 _.each(projectDeleteUser,function(user){
@@ -190,7 +190,7 @@ var EditProjectDialog = Backbone.View.extend({
                         },error: function (model, response) {
                             
                             var json = $.parseJSON(response.responseText);
-                            window.app.view.message("User", json.errors, "");
+                            window.app.view.message("User", json.errors, "error");
                         }});
                 });
 

@@ -214,12 +214,12 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         new ImageInstanceModel({}).save({project : idProject, user : null, baseImage :idImage},{
             success : function (image,response) {
                 
-                window.app.view.message("ImageInstance", response.message, "");
+                window.app.view.message("ImageInstance", response.message, "success");
             },
             error: function (model, response) {
                 
                 var json = $.parseJSON(response.responseText);
-                window.app.view.message("Image", json.errors[0], "");
+                window.app.view.message("Image", json.errors[0], "error");
             }
         });
     },
@@ -231,13 +231,13 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         new ImageInstanceModel({project : idProject, user : null, baseImage : idImage}).destroy({
             success : function (image,response) {
                 
-                window.app.view.message("ImageInstance", response.message, "");
+                window.app.view.message("ImageInstance", response.message, "success");
 
             },
             error: function (model, response) {
                 
                 var json = $.parseJSON(response.responseText);
-                window.app.view.message("Image", json.errors[0], "");
+                window.app.view.message("Image", json.errors[0], "error");
             }
         });
     },

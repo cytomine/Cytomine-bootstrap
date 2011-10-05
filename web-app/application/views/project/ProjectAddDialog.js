@@ -103,7 +103,7 @@ var AddProjectDialog = Backbone.View.extend({
       new ProjectModel({name : name, ontology : ontology}).save({name : name, ontology : ontology},{
              success: function (model, response) {
 
-                window.app.view.message("Project", response.message, "");
+                window.app.view.message("Project", response.message, "success");
                 var id = response.project.id;
 
                 //create user-project "link"
@@ -118,7 +118,7 @@ var AddProjectDialog = Backbone.View.extend({
                       },error: function (model, response) {
 
                          var json = $.parseJSON(response.responseText);
-                         window.app.view.message("User", json.errors, "");
+                         window.app.view.message("User", json.errors, "success");
                       }});
                 });
 

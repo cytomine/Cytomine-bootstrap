@@ -77,7 +77,7 @@ var EditOntologyDialog = Backbone.View.extend({
       ontology.unset('children'); //remove children (terms), they are not use by server
       ontology.save({name : name}, {
              success: function (model, response) {
-                window.app.view.message("Ontology", response.message, "");
+                window.app.view.message("Ontology", response.message, "success");
                 $("#editontology").modal("hide");
                 self.ontologyPanel.refresh();
              },

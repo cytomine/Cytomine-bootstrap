@@ -19,7 +19,7 @@ var AuthController = Backbone.Controller.extend({
          dataType : 'json',
          data : data,
          success : function(data){
-            app.message("Welcome", "You are logged as " + data.fullname, "");
+            app.message("Welcome", "You are logged as " + data.fullname, "", "success");
             $("#login-confirm").modal('hide');
             new UserModel({id : data.id}).fetch({
                success : function (model, response) {

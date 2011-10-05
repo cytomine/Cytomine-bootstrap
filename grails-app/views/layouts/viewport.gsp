@@ -49,8 +49,7 @@
     <script type="text/javascript" src="lib/backbone.min.js"></script>
 
     <!-- Modules -->
-    <script type="text/javascript" src="lib/pnotify/jquery.pnotify.min.js" ></script>
-    <link rel='stylesheet' href='lib/pnotify/jquery.pnotify.default.css' type='text/css'/>
+
 
     <script type="text/javascript" src="lib/fileupload/jquery.fileupload-ui.min.js"></script>
     <script type="text/javascript" src="lib/fileupload/jquery.fileupload.min.js"></script>
@@ -201,5 +200,6 @@
 <div id='app'></div>
 <div id='dialogs'></div>
 <div id="switcher" style="position:absolute; top : 10px; left : 200px; z-index: 900;"></div>
+<div id="alerts"></div>
 </body>
 </html>

@@ -231,3 +231,10 @@ div.olControlOverviewMapElement img {
     padding: 5px;
     /*cursor: pointer;*/
 }
+
+#alerts {
+    position: absolute;
+    right: 20px;
+    top : 50px;
+    z-index: 1000;
+}

@@ -130,13 +130,13 @@ var OntologyTreeView = Backbone.View.extend({
           new AnnotationTermModel({annotation : this.idAnnotation, term : idTerm}).save({annotation : this.idAnnotation, term : idTerm},
               {
                  success: function (model, response) {
-                    window.app.view.message("Annotation Term", response.message, "");
+                    window.app.view.message("Annotation Term", response.message, "success");
                     self.browseImageView.reloadAnnotation(self.idAnnotation);
                     self.browseImageView.refreshAnnotationTabs(idTerm);
                  },
                  error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Annotation-Term", json.errors, "");
+                    window.app.view.message("Annotation-Term", json.errors, "error");
                  }
               }
           );
@@ -146,13 +146,13 @@ var OntologyTreeView = Backbone.View.extend({
           new AnnotationTermModel({annotation : this.idAnnotation, term : idTerm}).destroy(
               {
                  success: function (model, response) {
-                    window.app.view.message("Annotation Term", response.message, "");
+                    window.app.view.message("Annotation Term", response.message, "success");
                     self.browseImageView.reloadAnnotation(self.idAnnotation);
                     self.browseImageView.refreshAnnotationTabs(idTerm);
                  },
                  error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Annotation-Term", json.errors, "");
+                    window.app.view.message("Annotation-Term", json.errors, "error");
                  }
               }
 
