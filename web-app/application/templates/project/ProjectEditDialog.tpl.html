@@ -1,25 +1,23 @@
-<div id="editproject" title="Edit project">
-    <div align="center" style="margin:auto;">
-        <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
+<div id="editproject" title="" class="modal hide">
+    <div class="modal-header">
+        <a href="#" class="close">&times;</a>
+        <h3>Edit a project</h3>
     </div>
-    <form id="login-form-edit-project">
-        <fieldset>
+    <div class="modal-body">
+        <form id="login-form-edit-project">
             <div id="projectediterrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
                 <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                    <strong>Error:</strong><div id="projectediterrormessage"></div></p>
+                    <strong>Error:</strong><div id="errormessage"></div></p>
             </div>
-            <label for="project-edit-name" >Name:</label>
-            <input type="text" size="20" id="project-edit-name" value="" class="text ui-widget-content ui-corner-all" >
-            <table class="projecttable">
-                <tr>
+            <legend style="font-weight: bold;padding-bottom: 3px;">Name</legend>
+            <input type="text" size="20" id="project-edit-name">
+            <legend style="font-weight: bold;padding-bottom: 3px;;padding-top: 5px;">Groups</legend>
+            <div id="projectedituser"></div>
 
-                    <td>
-
-                        <label for="projectedituser" >Users:</label>
-                        <div id="projectedituser"></div>
-                    </td>
-                </tr>
-            </table>
-        </fieldset>
-    </form>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="editProjectButton" class="btn primary">Update</a>
+        <a href="#" id="closeEditProjectDialog" class="btn">Cancel</a>
+    </div>
 </div>

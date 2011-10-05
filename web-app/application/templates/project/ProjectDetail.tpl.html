@@ -1,35 +1,25 @@
-<div id='projectlist{{id}}' class="projectlist">
-    <h3 style="display:inline">{{name}}</h3>
-    <span class="editProject ui-icon ui-icon-pencil" style="display : inline-block;">&nbsp;</span>
-    <span class="deleteProject ui-icon ui-icon-trash" style="display : inline-block;">&nbsp;</span>
-    <div>
-        <table class='projecttable'>
-            <tr>
-                <td width="25%">
-                    <ul>
-                        <li>Name: <a class="dark" href="#tabs-dashboard-{{id}}"><label id="projectInfoName" style="display: inline;">{{name}}</label></a> </li>
-                        <li>Ontology: <a class="dark" href="#ontology/{{ontology}}"><label id="projectInfoOntology" style="display: inline;">{{ontologyName}}</label></a></li>
-                        <li>Users : {{users}}</li>
-                    </ul>
-                </td>
-                <td width="5%"></td>
-                <td width="25%">
-                    <ul>
-                    <li>Number of samples : <a class="dark" href="#tabs-images-{{id}}"><label id="projectInfoNumberOfSlides" style="display: inline;">{{numberOfSlides}}</label></a></li>
-                    <li>Number of images : <a class="dark" href="#tabs-images-{{id}}"><label id="projectInfoNumberOfImages" style="display: inline;">{{numberOfImages}}</label></a></li>
-                    <li>Number of annotations : <a class="dark"  href="#tabs-annotations-{{id}}"><label id="projectInfoNumberOfAnnotations" style="display: inline;">{{numberOfAnnotations}}</label></a></li>
-                    </ul>
-                </td>
-                <td width="45%">
-                    <button class="addSlide" id='projectaddimages{{id}}' type="button">Manage images</button>
-                    <!--<a class="addSlide" id='projectaddimages{{id}}' href="#project-manage-{{id}}">Manage samples</a>-->
-                    <a class="changeProject" id='radioprojectchange{{id}}' href="#tabs-dashboard-{{id}}">Explore</a>
-
-
-                </td>
-            <tr>
-        </table>
-
+<div id='projectlist{{id}}' class="hero-unit span6" style="padding: 5px;">
+    <h3 style="padding-left : 10px;display:inline">{{name}}</h3>
+    <div class="row">
+        <div class="span6">
+            <ul>
+                <li>Name: <a href="#tabs-dashboard-{{id}}">{{name}}</a> </li>
+                <li>Ontology: <a href="#ontology/{{ontology}}">{{ontologyName}}</a></li>
+                <li>Users : <a  class="usersPopover" href="#" rel="popover" data-content="{{users}}" data-original-title="Users"> {{shortUsers}}</a></li>
+            </ul>
+        </div>
+        <div class="span6">
+            <ul>
+                <li>Number of samples : <a href="#tabs-images-{{id}}">{{numberOfSlides}}</a></li>
+                <li>Number of images : <a  href="#tabs-images-{{id}}">{{numberOfImages}}</a></li>
+                <li>Number of annotations : <a  href="#tabs-annotations-{{id}}">{{numberOfAnnotations}}</a></li>
+            </ul>
+        </div>
     </div>
-    <br>
+    <hr />
+    <a class="btn success" id='radioprojectchange{{id}}' href="#tabs-dashboard-{{id}}">Open</a>
+    <span class="editProject btn " style="display : inline-block;">Edit</span>
+    <span class="deleteProject btn " style="display : inline-block;">Delete</span>
+    <button class="addSlide btn" id='projectaddimages{{id}}' type="button">Manage images</button>
+    <!--<a class="addSlide" id='projectaddimages{{id}}' href="#project-manage-{{id}}">Manage samples</a>-->
 </div>

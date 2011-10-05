@@ -1,29 +1,25 @@
-<div id="addproject" title="Create project">
-    <div align="center" style="margin:auto;">
-        <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
+<div id="addproject" title="" class="modal hide">
+    <div class="modal-header">
+        <a href="#" class="close">&times;</a>
+        <h3>Create a new project</h3>
     </div>
-    <form id="login-form-add-project">
-        <fieldset>
-            <div id="projecterrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                    <strong>Error:</strong><div id="errormessage"></div></p>
-            </div>
-            <label for="project-name" >Name:</label>
-            <input type="text" size="20" id="project-name" value="" class="text ui-widget-content ui-corner-all" >
-            <table class="projecttable">
-                <tr>
-                    <td width="50%">
-                        <label for="projectontology" >Ontology:</label>
-                        <div id="projectontology"></div>
-                    </td>
-                    <td width="50%">
+    <div class="modal-body">
+        <form id="login-form-add-project">
+                <div id="projecterrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+                    <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                        <strong>Error:</strong><div id="errormessage"></div></p>
+                </div>
+                <legend style="font-weight: bold;padding-bottom: 3px;">Name</legend>
+                <input type="text" size="20" id="project-name" value="" >
+                <legend style="font-weight: bold;padding-bottom: 3px;padding-top: 5px;">Ontology</legend>
+                <select id="projectontology" />
+                <legend style="font-weight: bold;padding-bottom: 3px;;padding-top: 5px;">Groups</legend>
+                <div id="projectuser"></div>
 
-                        <label for="projectuser" >Users:</label>
-                        <div id="projectuser"></div>
-                    </td>
-                </tr>
-            </table>
-        </fieldset>
-    </form>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="saveProjectButton" class="btn primary">Save</a>
+        <a href="#" id="closeAddProjectDialog" class="btn">Cancel</a>
+    </div>
 </div>
-<!--addprojectdialogtpl-->

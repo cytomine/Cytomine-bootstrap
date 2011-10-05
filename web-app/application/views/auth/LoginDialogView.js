@@ -7,8 +7,8 @@ var LoginDialogView = Backbone.View.extend({
          el:'#dialogs',
          template : _.template(tpl, {version : window.app.status.version}),
          dialogAttr : {
-            dialogID : "#login-confirm",
-            width : 350,
+            dialogID : "#login-confirm"
+            /*width : 350,
             height : 350,
             buttons: {
                "Sign in": function() {
@@ -17,12 +17,11 @@ var LoginDialogView = Backbone.View.extend({
                }
             },
             close :function (event) {
-               /*window.location = "403";*/
-            }
+               //window.location = "403";
+            }*/
          }
       }).render();
-      $("#progress").hide();
-      $("#remember_me").button();
+
       $("#j_username").click(function() {
          $(this).select();
       });
@@ -35,6 +34,10 @@ var LoginDialogView = Backbone.View.extend({
             $('#login-form').submit();
             return false;
          }
+      });
+      $("#submit-login").click(function(){
+
+         $('#login-form').submit();
       });
       return this;
    },

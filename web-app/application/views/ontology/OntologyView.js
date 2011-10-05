@@ -80,12 +80,12 @@ var OntologyView = Backbone.View.extend({
           self.initLoading();
           self.showLoading();
           self.$tabsOntologies = $(self.el).find("#tabsontology");
-          $(self.el).find(".addOntology").button({
+          /*$(self.el).find(".addOntology").button({
                  icons : {secondary: "ui-icon-plus" }
               });
           $(self.el).find(".refreshOntology").button({
                  icons : {secondary: "ui-icon-refresh" }
-              });
+              });*/
           self.initOntologyTabs();
 
           self.hideLoading();

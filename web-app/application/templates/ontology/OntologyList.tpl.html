@@ -1,10 +1,21 @@
 <div id='ontologyLoading'><div class="loading"></div></div>
-<div id='ontologytreepanel' style="display:none;">
-    <button class="refreshOntology" id='refreshOntology' type="button">Refresh</button>
-    <button class="addOntology" id='buttonAddOntology' type="button">Add Ontology</button>
-    <div id="tabsontology"></div>
-    <div id="dialogsTerm"></div>
-    <div id="dialogsDeleteOntologyAccept"></div>
-    <div id="dialogsDeleteOntologyRefuse"></div>
+<div id='ontologytreepanel' style="display:none;padding-top: 60px;">
+    <div class="container-fluid">
+        <div class="sidebar">
+            <div class="well">
+                <h2>Ontologies</h2>
+                <button class="addOntology info btn" id='buttonAddOntology' type="button" style="margin-bottom: 10px;margin-top: 5px;">Add a new ontology</button>
+                <button class="refreshOntology btn" id='refreshOntology' type="button">Refresh</button>
+                <hr />
+            </div>
+        </div>
+        <div class="content">
+            <div class="hero-unit">
+                <div id="tabsontology"></div>
+            </div>
+        </div>
+    </div>
 </div>
-
+<div id="dialogsTerm"></div>
+<div id="dialogsDeleteOntologyAccept"></div>
+<div id="dialogsDeleteOntologyRefuse"></div>

@@ -83,12 +83,12 @@ var ProjectDashboardView = Backbone.View.extend({
       var self = this;
       /* Init dashboard */
       var width = Math.round($(window).width()/2 - 50);
-      $("#projectcolmunChartPanel").panel({collapsible: false, width : width});
-      $("#projectPieChartPanel").panel({collapsible: false, width : width});
-      $("#userAnnotationsChartPanel").panel({collapsible: false, width : width});
-      $("#userNbAnnotationsChartPanel").panel({collapsible: false, width : width});
-      $("#projectInfoPanel").panel({collapsible: false, width : width});
-      $("#projectLastCommandPanel").panel({collapsible: false, width : width});
+      /*$("#projectcolmunChartPanel").panel({collapsible: false, width : width});
+       $("#projectPieChartPanel").panel({collapsible: false, width : width});
+       $("#userAnnotationsChartPanel").panel({collapsible: false, width : width});
+       $("#userNbAnnotationsChartPanel").panel({collapsible: false, width : width});
+       $("#projectInfoPanel").panel({collapsible: false, width : width});
+       $("#projectLastCommandPanel").panel({collapsible: false, width : width});*/
 
       /* Init Annotations */
       require(["text!application/templates/dashboard/TermTab.tpl.html", "text!application/templates/dashboard/TermTabContent.tpl.html"], function(termTabTpl, termTabContentTpl) {
@@ -104,11 +104,12 @@ var ProjectDashboardView = Backbone.View.extend({
                      //if(!self.activeEvent) return;
 
                      if (node.isSelected()) {
-
+                        self.updateContentVisibility();
                         self.refreshAnnotations(node.data.key);
                         $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).show();
                      }
                      else {
+                        self.updateContentVisibility();
                         $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).hide();
 
 
@@ -129,22 +130,22 @@ var ProjectDashboardView = Backbone.View.extend({
                   node.expand(true);
                });
                $("#ontology-annotations-panel-"+self.model.id).panel();
-               $(self.el).find("#hideAllAnnotations").button();
+               /*$(self.el).find("#hideAllAnnotations").button();*/
                $(self.el).find("#hideAllAnnotations").click(function(){
                   self.selectAnnotations(false);
                });
-               $(self.el).find("#showAllAnnotations").button();
+               /*$(self.el).find("#showAllAnnotations").button();*/
                $(self.el).find("#showAllAnnotations").click(function(){
                   self.selectAnnotations(true);
                });
-               $(self.el).find("#refreshAnnotations").button();
+               /*$(self.el).find("#refreshAnnotations").button();*/
                $(self.el).find("#refreshAnnotations").click(function(){
                   self.refreshSelectedTerms();
                });
 
-               $(self.el).find("#downloadAnnotationsCSV").button();
-               $(self.el).find("#downloadAnnotationsExcel").button();
-               $(self.el).find("#downloadAnnotationsPDF").button();
+               /*$(self.el).find("#downloadAnnotationsCSV").button();
+                $(self.el).find("#downloadAnnotationsExcel").button();
+                $(self.el).find("#downloadAnnotationsPDF").button();*/
             }
          });
          new TermCollection({idOntology:self.model.get('ontology')}).fetch({
@@ -182,14 +183,35 @@ var ProjectDashboardView = Backbone.View.extend({
          }
       });
    },
+   updateContentVisibility : function () {
+      var tree = $(this.el).find('.tree').dynatree("getRoot");
+      if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
+      var nbTermSelected = 0;
+      tree.visit(function(node){
+         if (!node.isSelected()) return;
+         nbTermSelected++;
+      });
+      if (nbTermSelected > 0){
+         $("#listtabannotation").show();
+      } else {
+         $("#listtabannotation").hide();
+      }
+   },
    refreshSelectedTerms : function () {
       var self = this;
       var tree = $(this.el).find('.tree').dynatree("getRoot");
       if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
+      var nbTermSelected = 0;
       tree.visit(function(node){
          if (!node.isSelected()) return;
+         nbTermSelected++;
          self.refreshAnnotations(node.data.key);
       });
+      if (nbTermSelected > 0){
+         $("#listtabannotation").show();
+      } else {
+         $("#listtabannotation").hide();
+      }
    },
    /**
     * Refresh all annotation dor the given term
@@ -201,7 +223,6 @@ var ProjectDashboardView = Backbone.View.extend({
    clearAnnotations : function (term) {
       var self = this;
       $("#tabsterm-"+self.model.id+"-"+term).empty();
-
    },
    /**
     * Print annotation for the given term
@@ -362,7 +383,7 @@ var ProjectDashboardView = Backbone.View.extend({
          i++;
 
       });
-      var width = Math.round($(window).width()/2 - 100);
+      var width = Math.round($(window).width()/2 - 200);
       // Create and draw the visualization.
       new google.visualization.ColumnChart(document.getElementById('userAnnotationsChart')).
           draw(data,
@@ -390,7 +411,7 @@ var ProjectDashboardView = Backbone.View.extend({
          data.setValue(j, 1, stat.get("value"));
          j++;
       });
-      var width = Math.round($(window).width()/2 - 100);
+      var width = Math.round($(window).width()/2 - 200);
       // Create and draw the visualization.
       new google.visualization.ColumnChart(document.getElementById("userNbAnnotationsChart")).
           draw(data,
@@ -416,7 +437,7 @@ var ProjectDashboardView = Backbone.View.extend({
          data.setValue(i,1, stat.get('value'));
          i++;
       });
-      var width = Math.round($(window).width()/2 - 100);
+      var width = Math.round($(window).width()/2 - 200);
       // Create and draw the visualization.
       new google.visualization.PieChart(document.getElementById('projectPieChart')).
           draw(data, {width: width, height: 350,title:"", colors : colors});
@@ -440,7 +461,7 @@ var ProjectDashboardView = Backbone.View.extend({
          data.setValue(j, 1, stat.get("value"));
          j++;
       });
-      var width = Math.round($(window).width()/2 - 100);
+      var width = Math.round($(window).width()/2 - 200);
       // Create and draw the visualization.
       new google.visualization.ColumnChart(document.getElementById("projectColumnChart")).
           draw(data,
@@ -663,6 +684,8 @@ var ProjectDashboardView = Backbone.View.extend({
    doLayout : function(tpl) {
 
       var self = this;
+      var width = Math.round($(window).width()/2 - 200);
+      self.model.set({"width" : width+"px"});
       var html = _.template(tpl, self.model.toJSON());
       $(self.el).append(html);
       window.app.controllers.browse.tabs.addDashboard(self);

@@ -20,7 +20,7 @@ var AuthController = Backbone.Controller.extend({
          data : data,
          success : function(data){
             app.message("Welcome", "You are logged as " + data.fullname, "");
-            $("#login-confirm").dialog("close"); //should be in LoginDIalogView
+            $("#login-confirm").modal('hide');
             new UserModel({id : data.id}).fetch({
                success : function (model, response) {
                   window.app.status.user = {
@@ -28,7 +28,6 @@ var AuthController = Backbone.Controller.extend({
                      id : data.id,
                      model : model
                   }
-                  $("#loginFooter").fadeOut();
                   window.app.startup();
                }
             });
@@ -36,7 +35,7 @@ var AuthController = Backbone.Controller.extend({
          },
          error : function(data) {
             var resp = $.parseJSON(data.responseText);
-            $('#login-confirm').parent().effect("shake", { times:2 }, 100);
+            $('#login-confirm').effect("shake", { times:2 }, 100);
             app.message("Error", resp.message, "error");
          }
       });

@@ -1,54 +1,39 @@
-<div id="dialog-{{action}}-ontology-term" title="{{action}} term">
-    <p class="validateTips">All form fields are required.</p>
+<div id="dialog-{{action}}-ontology-term" title="{{action}} term" class="modal hide">
+    <div class="modal-header">
+        <a href="#" class="close">&times;</a>
+        <h3>{{action}} term</h3>
+    </div>
+    <div class="modal-body">
+        <form id="form-{{action}}-ontology-term">
+            <div class="row">
+                 <div class="span4" style="min-height: 400px;">
+                    <legend style="font-weight: bold;padding-bottom: 3px;">Parent (Drag & Drop)</legend>
+                    <div id="{{action}}ontologytermtree"></div>
+                </div>
+                <div class="span4" >
+                    <div id="{{action}}ontologytermerrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+                        <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                            <strong>Error:</strong><div id="{{action}}ontologytermerrormessage"></div></p>
+                    </div>
+                    <legend style="font-weight: bold;padding-bottom: 3px;">Name</legend>
+                    <input type="text"  id="{{action}}termname" name="name" />
+                    <legend style="font-weight: bold;padding-bottom: 3px;">Color</legend>
+                    <div class="colorpickerAddOrEditTerm">
+                        <div id="colorpicker1AddOrEditTerm"></div>
+                        <legend style="font-weight: bold;padding-bottom: 3px;">Old color</legend>
+                        <input type="text" id="oldcolorAddOrEditTerm"  value="{{oldColor}}"/>
+                        <legend style="font-weight: bold;padding-bottom: 3px;">New Color</legend>
+                        <input type="text" id="color1AddOrEditTerm" value="{{oldColor}}"/>
+                    </div>
+                </div>
 
-    <form id="form-{{action}}-ontology-term">
-        <fieldset>
-            <div id="{{action}}ontologytermerrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                    <strong>Error:</strong><div id="{{action}}ontologytermerrormessage"></div></p>
+
+                <!--<button class="addFolder" id='buttonAddFolderForTree' type="button">Add Folder</button>  -->
             </div>
-
-
-            <table width="90%">
-                <tr>
-                    <td width="40%">
-
-                        <label for="{{action}}termname">Name</label>
-                        <input type="text" name="name" id="{{action}}termname" class="text ui-widget-content ui-corner-all" />
-
-
-                        <label for="colorpicker1AddOrEditTerm">Color</label>
-                        <div class="colorpickerAddOrEditTerm">
-                            <div id="colorpicker1AddOrEditTerm"></div>
-
-
-                            <table width="10%">
-                                <tr>
-                                    <td>
-                                        <label for="oldcolorAddOrEditTerm" style="display:inline;">Old color</label>
-                                        <input type="text" id="oldcolorAddOrEditTerm" value="{{oldColor}}"/>
-                                    </td>
-                                    <td>
-                                        <label for="color1AddOrEditTerm" style="display:inline;">New Color</label>
-                                        <input type="text" id="color1AddOrEditTerm"  value="{{oldColor}}"/>
-                                    </td>
-                                </tr>
-                            </table>
-
-
-
-                        </div>
-
-
-                    </td>
-                    <td width="60%">
-                        <label for="{{action}}ontologytermtree">Parent (Drag & Drop)</label>
-                        <div id="{{action}}ontologytermtree"></div>
-                        <!--<button class="addFolder" id='buttonAddFolderForTree' type="button">Add Folder</button>  -->
-                    </td>
-                </tr>
-            </table>
-
-        </fieldset>
-    </form>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="AddOrEditTermButton" class="btn primary">Save</a>
+        <a href="#" id="closeAddOrEditTermDialog" class="btn">Cancel</a>
+    </div>
 </div>

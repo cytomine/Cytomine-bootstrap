@@ -34,19 +34,11 @@ var AddOntologyDialog = Backbone.View.extend({
           });
 
           //Build dialog
-          self.addOntologyDialog = $("#addontology").dialog({
-                 width: 500,
-                 autoOpen : false,
-                 modal:true,
-                 buttons : {
-                    "Save" : function() {
-                       $("#login-form-add-ontology").submit();
-                    },
-                    "Cancel" : function() {
-                       $("#addontology").dialog("close");
-                    }
-                 }
+          self.addOntologyDialog = $("#addontology").modal({
+                keyboard :true
               });
+          $('#saveOntologyButton').click(function(){$("#login-form-add-ontology").submit();return false;});
+          $('#closeAddOntologyDialog').click(function(){$("#addontology").modal("hide");$("#addontology").remove();return false;});
           self.open();
           return this;
 
@@ -56,7 +48,7 @@ var AddOntologyDialog = Backbone.View.extend({
        open: function() {
           var self = this;
           self.clearAddOntologyPanel();
-          self.addOntologyDialog.dialog("open") ;
+          $("#addontology").modal("show");
        },
        clearAddOntologyPanel : function() {
           $("#errormessage").empty();
@@ -84,7 +76,7 @@ var AddOntologyDialog = Backbone.View.extend({
                     var id = response.ontology.id;
                     self.ontologiesPanel.refresh(id);
                     window.app.models.ontologies.add(ontology);
-                    $("#addontology").dialog("close");
+                    $("#addontology").modal("hide");
                  },
                  error: function (model, response) {
                     var json = $.parseJSON(response.responseText);

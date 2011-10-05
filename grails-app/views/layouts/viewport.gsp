@@ -15,17 +15,34 @@
     <title>Cytomine</title>
 
     <link rel="icon" type="image/png" href="favicon.ico">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
     <script type="text/javascript" src="http://www.google.com/jsapi"></script>
     <script type="text/javascript">
         google.load('visualization', '1', {packages: ['corechart']});
     </script>
     <!-- RequireJS -->
     <script type="text/javascript" src="lib/requirejs/require.min.js"></script>
-
+    <link rel="stylesheet" href="lib/bootstrap-1.3/bootstrap.min.css">
     <!-- JQuery & JQuery UI-->
     <link rel='stylesheet' href='css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
+    <!--<link rel='stylesheet' href='css/custom-ben/css/custom-theme/jquery-ui-1.8.16.custom.css' type='text/css'/>-->
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+
+    <!-- Twitter bootstrap -->
+
+
+    <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-modal.js"></script>
+    <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-dropdown.js"></script>
+    <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-twipsy.js"></script>
+    <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-popover.js"></script>
+    <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-alerts.js"></script>
+
 
     <!-- Core Libs -->
     <script type="text/javascript" src="lib/underscore.min.js"></script>
@@ -60,8 +77,9 @@
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.min.js"></script>
 
     <!-- Styles -->
-    <link rel='stylesheet' href='css/reset.css' type='text/css'/>
-    <link rel='stylesheet' href='css/cytomine.css' type='text/css'/>
+    <!--<link rel='stylesheet' href='css/reset.css' type='text/css'/>-->
+    <!--<link rel='stylesheet' href='css/cytomine.css' type='text/css'/>-->
+    <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
 
     <!--jqgrid -->
     <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />

@@ -1,21 +1,46 @@
-<div id="login-confirm" title="Login" style="margin-top:20px;overflow: hidden;">
-    <div align="center" style="margin:auto;">
-        <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
+<div id="login-confirm" class="modal hide fade">
+    <div class="modal-header">
+        <h3>Cytomine Authentification</h3>
+    </div>
+    <div class="modal-body">
+        <form id="login-form" action="" class="form-stacked">
+            <fieldset>
+                <div class="clearfix">
+                    <label for="j_username">Your username</label>
+                    <div class="input">
+                        <input class="xlarge" id="j_username" name="j_username" size="30" type="text">
+                        <span class="help-inline">Forgot your username ?</span>
+                    </div>
+                </div><!-- /clearfix -->
+                <div class="clearfix">
+                    <label for="j_password">Your password</label>
+                    <div class="input">
+                        <input type="password" class="xlarge" id="j_password" name="j_password" size="30" type="text">
+                        <span class="help-inline">Forgot your password ?</span>
+                    </div>
+                </div><!-- /clearfix -->
+                <div class="clearfix">
+                    <div class="input">
+                        <ul class="inputs-list">
+                            <li>
+                                <label>
+                                    <input type="checkbox" name="remember_me" name="remember_me">
+                                    <span>Remember me</span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div><!-- /clearfix -->
+            </fieldset>
+        </form>
+        <br />
 
     </div>
-    <form id="login-form">
-        <fieldset>
-            <input type="text" size="20" id="j_username" value="username" name="j_username"  class="text ui-widget-content ui-corner-all" style="display:inline;" >
-            <input type="password" size="20" id="j_password" value="password" name="j_password"  class="text ui-widget-content ui-corner-all"  style="display:inline;" >
-            <label for="remember_me" >Remember me</label>
-            <input type="checkbox" id="remember_me" name="remember_me"  class="text ui-widget-content ui-corner-all" style="display:inline;" >
-        </fieldset>
-    </form>
-</div>
-<div id="loginFooter">
-    <img src="images/logoGIGA.gif" height="50px" style="margin-left: 2px;margin-right: 2px;" />
-    <img src="images/logoULG.gif" height="50px" style="margin-left: 2px;margin-right: 2px;" />
-    <img src="images/regionWallone.jpg" height="50px" style="margin-left: 2px;margin-right: 2px;" />
-    <br />
-    <span class="version">Version {{version}}</span>
+    <div class="modal-footer">
+        <a href="http://www.giga.ulg.ac.be"><img src="images/logoGIGA.png" height="35px" style="margin-left: 2px;margin-right: 2px;" /></a>
+        <a href="http://www.ulg.ac.be"><img src="images/logoULG.png" height="35px" style="margin-left: 2px;margin-right: 2px;" /></a>
+        <a href="http://www.wallonie.be/fr/index.html"><img src="images/regionWallone.png" height="35px" style="margin-left: 2px;margin-right: 2px;" /></a>
+        <!--<span class="version">Version {{version}}</span>-->
+        <a href="#" id="submit-login" class="btn primary">Sign in</a>
+    </div>
 </div>

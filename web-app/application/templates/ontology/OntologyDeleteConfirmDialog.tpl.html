@@ -1,13 +1,22 @@
-<div id="delete-ontology-confirm" title="Login">
-    <div align="center" style="margin:auto;">
-        Do you really want to delete ontology {{ontology}}?  <br>
-        There is no project with this ontology. <br>
-        <br>
+<div id="delete-ontology-confirm" title="" class="modal hide">
+    <div class="modal-header">
+        <a href="#" class="close">&times;</a>
+        <h3>Delete an ontology</h3>
     </div>
-    <div id="delete-ontology-error-label" class="ui-state-error ui-corner-all" style="padding: 0 .7em; display: none;">
-        <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-            <strong>Error:</strong><div id="delete-ontology-error-message"></div></p>
+    <div class="modal-body">
+        <p>
+            Do you really want to delete ontology {{ontology}}?  <br>
+            There is no project with this ontology. <br>
+        </p>
+        <div id="delete-ontology-error-label" class="ui-state-error ui-corner-all" style="padding: 0 .7em; display: none;">
+            <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                <strong>Error:</strong><div id="delete-ontology-error-message"></div></p>
+        </div>
+        <form id="delete-ontology-form">
+        </form>
     </div>
-    <form id="delete-ontology-form">
-    </form>
+    <div class="modal-footer">
+        <a href="#" id="deleteOntologyButton" class="btn primary">Confirm</a>
+        <a href="#" id="closeDeleteOntologyDialog" class="btn">Cancel</a>
+    </div>
 </div>

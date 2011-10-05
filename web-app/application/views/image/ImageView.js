@@ -78,7 +78,7 @@ var ImageView = Backbone.View.extend({
       var self = this;
       var thumb = new ImageThumbView({
          model : image,
-         className : "thumb-wrap",
+         className : "row",
          id : "thumb"+image.get('id')
       }).render();
       $(self.el).append(thumb.el);

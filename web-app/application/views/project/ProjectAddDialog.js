@@ -57,19 +57,12 @@ var AddProjectDialog = Backbone.View.extend({
 
       //Build dialog
 
-      self.addProjectDialog = $("#addproject").dialog({
-         width: 600,
-         autoOpen : false,
-         modal:true,
-         buttons : {
-            "Save" : function() {
-               $("#login-form-add-project").submit();
-            },
-            "Cancel" : function() {
-               $("#addproject").dialog("close");
-            }
-         }
+      self.addProjectDialog = $("#addproject").modal({
+         keyboard : true
       });
+
+      $("#saveProjectButton").click(function(){$("#login-form-add-project").submit();return false;});
+      $("#closeAddProjectDialog").click(function(){$("#addproject").modal('hide');$("#addproject").remove();return false;});
       self.open();
 
       return this;
@@ -80,7 +73,7 @@ var AddProjectDialog = Backbone.View.extend({
    open: function() {
       var self = this;
       self.clearAddProjectPanel();
-      self.addProjectDialog.dialog("open") ;
+      $("#addproject").modal('show');
    },
    clearAddProjectPanel : function() {
       var self = this;
@@ -99,7 +92,7 @@ var AddProjectDialog = Backbone.View.extend({
       $("#projecterrorlabel").hide();
 
       var name =  $("#project-name").val().toUpperCase();
-      var ontology = $('input[type=radio][name=ontologyradio]:checked').attr('value');
+      var ontology = $("#projectontology").attr('value');
       var users = new Array();
 
       $('input[type=checkbox][name=usercheckbox]:checked').each(function(i,item){
@@ -145,6 +138,7 @@ var AddProjectDialog = Backbone.View.extend({
       if (counter < total) return;
       var self = this;
       self.projectsPanel.refresh();
-      $("#addproject").dialog("close") ;
+      $("#addproject").modal("hide");
+      $("#addproject").remove();
    }
 });

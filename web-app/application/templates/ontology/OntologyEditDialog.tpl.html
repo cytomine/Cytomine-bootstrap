@@ -1,15 +1,20 @@
-<div id="editontology" title="Edit Ontology">
-    <div align="center" style="margin:auto;">
-        <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
+<div id="editontology" title="" class="modal hide">
+    <div class="modal-header">
+        <a href="#" class="close">&times;</a>
+        <h3>Edit an ontology</h3>
     </div>
-    <form id="login-form-edit-ontology">
-        <fieldset>
+    <div class="modal-body">
+        <form id="login-form-edit-ontology">
             <div id="ontologyediterrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
                 <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                    <strong>Error:</strong><div id="ontologyediterrormessage"></div></p>
+                    <strong>Error:</strong><div id="errormessage"></div></p>
             </div>
-            <label for="ontology-edit-name" >Name:</label>
-            <input type="text" size="20" id="ontology-edit-name" value="" class="text ui-widget-content ui-corner-all" >
-        </fieldset>
-    </form>
+            <legend style="font-weight: bold;padding-bottom: 3px;">Name</legend>
+            <input type="text" size="20" id="ontology-edit-name" value="" >
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="editOntologyButton" class="btn primary">Save</a>
+        <a href="#" id="closeEditOntologyDialog" class="btn">Cancel</a>
+    </div>
 </div>

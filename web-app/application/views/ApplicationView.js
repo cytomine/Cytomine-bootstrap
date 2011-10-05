@@ -58,6 +58,18 @@ var ApplicationView = Backbone.View.extend({
           });
       return this;
    },
+   initUserMenu : function () {
+
+     //Init user menu
+      require([
+         "text!application/templates/MenuDropDown.tpl.html"
+      ],function(tpl) {
+         $("#menu-right").append(tpl);
+         $("#logout").click(function() { window.app.controllers.auth.logout();return false; });
+         $("#loggedUser").html(window.app.status.user.model.prettyName());
+      });
+
+   },
    /**
     * Initialize the components of the application
     */
@@ -77,6 +89,8 @@ var ApplicationView = Backbone.View.extend({
                    elButton : "upload-button",
                    buttonText : "Upload",
                    buttonWrapper : "#menu",
+                   dataContent : "Send your data !",
+                   dataTitle : "Upload",
                    icon : "ui-icon-circle-arrow-s",
                    route : "#upload"
                 },
@@ -89,6 +103,8 @@ var ApplicationView = Backbone.View.extend({
                    elButton : "warehouse-button",
                    buttonText : "Organize",
                    buttonWrapper : "#menu",
+                   dataContent : "Organize your projects, images, etc...",
+                   dataTitle : "Organize",
                    icon : "ui-icon-wrench",
                    route : "#project"
                 },
@@ -101,6 +117,8 @@ var ApplicationView = Backbone.View.extend({
                    elButton : "explorer-button",
                    buttonText : "Explore",
                    buttonWrapper : "#menu",
+                   dataContent : "View your data",
+                   dataTitle : "Explore",
                    icon : "ui-icon-image",
                    route : "#explorer"
                 },
@@ -126,20 +144,22 @@ var ApplicationView = Backbone.View.extend({
                 },
                 divId : "admin"
              });*/
-             self.components.logout = new Component({
+
+             /*self.components.logout = new Component({
                 el : "#content",
                 template : "",
                 buttonAttr : {
                    elButton : "user-button",
-                   buttonText :window.app.status.user.model.prettyName(),
+                   buttonText :,
                    buttonWrapper : "#menu",
+                   dataContent : "we have to delete this popover for logout",
+                   dataTitle : "huhu",
                    icon : "ui-icon-power",
                    route : "#",
-                   click : function() { window.app.controllers.auth.logout();return false; }
+                   click :
                 },
                 divId : "logout"
-             });
-
+             });*/
           });
    },
    /**

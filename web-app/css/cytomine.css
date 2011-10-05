@@ -1,6 +1,5 @@
-body {
-
-
+html, body {
+    background-image: url(http://subtlepatterns.com/patterns/whitey.png);
 }
 
 
@@ -13,13 +12,10 @@ a {
     text-decoration:none;
 }
 
-#login-confirm  {
-    width : 800px;
-    height : 800px;
-}
+
 a:hover {
-    background-color: #B9E0F5;
-    color : black;
+    /*background-color: #B9E0F5;
+    color : black;              */
 }
 
 h1 { font-size:18px; }

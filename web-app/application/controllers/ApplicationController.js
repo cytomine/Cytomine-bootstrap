@@ -52,8 +52,6 @@ var ApplicationController = Backbone.Controller.extend({
       var value = cpt * step;
       //loadingView.progress(value);
       if (cpt == expected) {
-         //loadingView.close();
-         $("#loginFooter").fadeOut();
          this.view.render(this.start);
       }
    },
@@ -68,6 +66,9 @@ var ApplicationController = Backbone.Controller.extend({
       window.app.controllers.annotation   = new AnnotationController();
       //window.app.controllers.admin        = new AdminController();
       //Start the history
+
+      window.app.view.initUserMenu();
+
       Backbone.history.start();
    },
    initialize : function () {

@@ -1,12 +1,21 @@
-<div id="delete-term-confirm" title="Login">
-    <div align="center" style="margin:auto;">
-        Do you really want to delete term {{term}} from ontology {{ontology}}?  <br>
-        There is no annotation with this term. <br>
+<div id="delete-term-confirm" title="" class="modal hide">
+    <div class="modal-header">
+        <a href="#" class="close">&times;</a>
+        <h3>Delete an ontology</h3>
     </div>
-    <div id="delete-term-error-label" class="ui-state-error ui-corner-all" style="padding: 0 .7em; display: none;">
-        <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-            <strong>Error:</strong><div id="delete-term-error-message"></div></p>
+    <div class="modal-body">
+        <p>Do you really want to delete term {{term}} from ontology {{ontology}}?  <br>
+            There is no annotation with this term. <br>
+        </p>
+        <div id="delete-term-error-label" class="ui-state-error ui-corner-all" style="padding: 0 .7em; display: none;">
+            <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                <strong>Error:</strong><div id="delete-term-error-message"></div></p>
+        </div>
+        <form id="delete-term-form">
+        </form>
     </div>
-    <form id="delete-term-form">
-    </form>
+    <div class="modal-footer">
+        <a href="#" id="deleteTermButton" class="btn primary">Confirm</a>
+        <a href="#" id="closeDeleteTermDialog" class="btn">Cancel</a>
+    </div>
 </div>

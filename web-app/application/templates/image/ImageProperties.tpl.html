@@ -1,5 +1,13 @@
-<div id="image-properties" title="Image Properties" style="margin-top:20px;overflow: hidden;">
-    <h1>{{filename}}</h1>
-    <img src='{{ thumb }}' alt='{{ filename }}'  style="max-height:160px; max-width:160px;border: 1px solid #FFFFFF;"  />
-    <div style="max-height: 500px;overflow: auto;"><ul id="image-properties-content"></ul></div>
+<div id="image-properties" title="" class="modal hide">
+    <div class="modal-header">
+        <a href="#" class="close">&times;</a>
+        <h3>Image Properties ({{filename}})</h3>
+    </div>
+    <div class="modal-body">
+        <img src='{{ thumb }}' alt='{{ filename }}'  style="max-height:160px; max-width:160px;border: 1px solid #FFFFFF;"  />
+        <div style="max-height: 500px;overflow: auto;"><ul id="image-properties-content"></ul></div>
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="closeImagePropertiesDialog" class="btn primary">Close</a>
+    </div>
 </div>

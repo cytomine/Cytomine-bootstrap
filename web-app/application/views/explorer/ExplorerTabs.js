@@ -30,18 +30,20 @@ var ExplorerTabs = Backbone.View.extend({
       /*tabs.tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });*/
       tabs.tabs({
          add: function(event, ui) {
+
             /*$("#"+ui.panel.id).parent().parent().css('height', "100%");*/
             if (ui.panel.id != ("tabs-dashboard-"+window.app.status.currentProject)
                 && (ui.panel.id != "tabs-images-"+window.app.status.currentProject)
                 && ui.panel.id != ("tabs-annotations-"+window.app.status.currentProject)) {
                tabs.find("ul").find("a[href=#"+ui.panel.id+"]").find("span").attr("style", "display:inline;");
-               tabs.find("ul").find("a[href=#"+ui.panel.id+"]").parent().append("<span class='ui-icon ui-icon-close' style='display:inline;'>&nbsp;&nbsp;&nbsp;&nbsp;</span>");
+               tabs.find("ul").find("a[href=#"+ui.panel.id+"]").parent().append("<span class='ui-icon ui-icon-close' style='display:inline;cursor:pointer;'>&nbsp;&nbsp;&nbsp;&nbsp;</span>");
                tabs.find("ul").find("a[href=#"+ui.panel.id+"]").parent().find("span.ui-icon-close" ).click(function() {
                   var index = $( "li", tabs ).index( $( this ).parent() );
                   self.removeTab(index);
                });
-
                tabs.tabs('select', '#' + ui.panel.id);
+            } else {
+               $(ui.panel).css({ 'background-image': 'url(http://subtlepatterns.com/patterns/whitey.png)'});
             }
             /*$("#"+ui.panel.id).attr('style', 'width:100%;height:100%;overflow:hidden;');*/
          },

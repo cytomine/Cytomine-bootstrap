@@ -36,6 +36,9 @@ var EditProjectDialog = Backbone.View.extend({
             }
         });
 
+       $("#editProjectButton").click(function(){$("#login-form-edit-project").submit();return false;});
+         $("#closeEditProjectDialog").click(function(){$("#editproject").modal('hide');$("#editproject").remove();return false;});
+
         $("#projectedituser").empty();
         window.app.models.users.each(function(user) {
             var choice = _.template(usersChoicesTpl, {id:user.id,username:user.get("username")});
@@ -50,19 +53,10 @@ var EditProjectDialog = Backbone.View.extend({
 
         //Build dialog
         
-        self.editProjectDialog = $("#editproject").dialog({
-            width: 500,
-            autoOpen : false,
-            modal:true,
-            buttons : {
-                "Save" : function() {
-                    $("#login-form-edit-project").submit();
-                },
-                "Cancel" : function() {
-                    $("#editproject").dialog("close");
-                }
-            }
+        self.editProjectDialog = $("#editproject").modal({
+           keyboard : true
         });
+
         self.open();
         self.fillForm();
         return this;
@@ -89,7 +83,7 @@ var EditProjectDialog = Backbone.View.extend({
     open: function() {
         var self = this;
         self.clearEditProjectPanel();
-        self.editProjectDialog.dialog("open");
+        $("#editproject").modal('show');
     },
     clearEditProjectPanel : function() {
         var self = this;
@@ -216,6 +210,7 @@ var EditProjectDialog = Backbone.View.extend({
         if (counter < total) return;
         var self = this;
         self.projectPanel.refresh();
-        $("#editproject").dialog("close");
+        $("#editproject").modal('hide');
+       $("#editproject").remove();
     }
 });

@@ -1,11 +1,17 @@
-<div class='main upload'>
-    <div style="padding: 10px;">
-        <form id="file_upload" action="upload/image" method="POST" enctype="multipart/form-data">
-            <input type="file" name="file" multiple>
-            <button>Upload</button>
-            <div>Upload files</div>
-        </form>
-        <button id="start_uploads">Start uploads</button>
-        <table id="files"></table>
+<div class="container-fluid">
+    <div class="hero-unit">
+        <h2>Upload</h2>
+        <div class='main upload'>
+            <div style="padding: 10px;">
+                <form id="file_upload" action="upload/image" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="file" multiple>
+                    <button>Upload</button>
+                    <div>Select files</div>
+                </form>
+                <button id="start_uploads"  class="btn">Start uploads</button>
+                <hr />
+                <ul id="files"></ul>
+            </div>
+        </div>
     </div>
 </div>

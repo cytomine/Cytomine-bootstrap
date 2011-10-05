@@ -1,25 +1,23 @@
-<div id="tabs-dashboard-{{id}}" style="overflow : auto;">
-    <div class="widgets">
-        <div id="projectInfoPanel" style="margin:10px;">
-            <div>Project Info</div>
-            <div style="height: 200px;">
-                <ul>
-                    <li>Name: <a href="#tabs-dashboard-{{id}}"><label id="projectInfoName" style="display: inline;">{{name}}</label></a></li>
-                    <li>Ontology: <a href="#ontology/{{ontology}}"><label id="projectInfoOntology" style="display: inline;">{{ontology}}</label></a></li>
-                    <li>Users : <div id="projectInfoUserList" style="display: inline;"></div></li>
-                </ul>
-                <br />
-                <ul>
-                    <li>Number of samples : <a href="#tabs-images-{{id}}"><label id="projectInfoNumberOfSlides" style="display: inline;">{{numberOfSlides}}</label></a></li>
-                    <li>Number of images : <a href="#tabs-images-{{id}}"><label id="projectInfoNumberOfImages" style="display: inline;">{{numberOfImages}}</label></a></li>
-                    <li>Number of annotations : <a href="#tabs-annotations-{{id}}"><label id="projectInfoNumberOfAnnotations" style="display: inline;">{{numberOfAnnotations}}</label></a></li>
-                </ul>
-            </div>
+<div id="tabs-dashboard-{{id}}" style="overflow : auto;padding : 20px;">
+    <div class="row">
+        <div id="projectInfoPanel" style="margin-right:30px;min-width: {{width}};min-height: 250px;" class="span6 hero-unit">
+            <h3>Project Info</h3>
+            <ul>
+                <li>Name: <a href="#tabs-dashboard-{{id}}">{{name}}</a></li>
+                <li>Ontology: <a href="#ontology/{{ontology}}">{{ontology}}</a></li>
+                <li>Users : <div id="projectInfoUserList" style="display: inline;"></div></li>
+            </ul>
+            <br />
+            <ul>
+                <li>Number of samples : <a href="#tabs-images-{{id}}">{{numberOfSlides}}</a></li>
+                <li>Number of images : <a href="#tabs-images-{{id}}">{{numberOfImages}}</a></li>
+                <li>Number of annotations : <a href="#tabs-annotations-{{id}}">{{numberOfAnnotations}}</a></li>
+            </ul>
+
         </div>
-    </div>
-    <div class="widgets">
-        <div id="projectLastCommandPanel" style="margin:10px;">
-            <div>Last commands</div>
+
+        <div id="projectLastCommandPanel" style="margin-right:30px;min-width: {{width}};min-height: 250px;"  class="span6 hero-unit">
+            <h3>Last commands</h3>
             <div style="max-height: 200px;">
                 <div>
                     <ul>
@@ -28,66 +26,84 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="widgets">
-        <div id="projectcolmunChartPanel" style="margin:10px;">
-            <div>Number of annotations by term (column)</div>
+
+        <div id="projectcolmunChartPanel" style="margin-right:30px;min-width: {{width}};"  class="span6 hero-unit">
+            <h3>Number of annotations by term (column)</h3>
             <div>
                 <div id="projectColumnChart">No data to display</div>
             </div>
         </div>
-    </div>
-    <div class="widgets">
-        <div id="projectPieChartPanel" style="margin:10px;">
-            <div>Number of annotations by term (pie)</div>
+
+        <div id="projectPieChartPanel" style="margin-right:30px;min-width: {{width}};"  class="span6 hero-unit">
+            <h3>Number of annotations by term (pie)</h3>
             <div>
                 <div id="projectPieChart">No data to display</div>
             </div>
         </div>
-    </div>
-    <div class="widgets">
-        <div id="userAnnotationsChartPanel" style="margin:10px;">
-            <div>Number of annotations by term & user</div>
+
+        <div id="userAnnotationsChartPanel" style="margin : 10px;margin-right:30px;min-width: {{width}};"  class="span6 hero-unit">
+            <h3>Number of annotations by term & user</h3>
             <div>
                 <div id="userAnnotationsChart">No data to display</div>
             </div>
         </div>
-    </div>
-    <div class="widgets">
-        <div id="userNbAnnotationsChartPanel" style="margin:10px;">
-            <div>Number of annotation by user</div>
+
+        <div id="userNbAnnotationsChartPanel" style="margin : 10px;margin-right:30px;min-width: {{width}};"  class="span6 hero-unit">
+            <h3>Number of annotation by user</h3>
             <div>
                 <div id="userNbAnnotationsChart">No data to display</div>
             </div>
         </div>
+
     </div>
-</div>
-<div id="tabs-images-{{id}}" style="overflow : auto;padding: 5px;">
-    <div align="right">
-        <a id="imageThumbs{{id}}" href="#tabs-thumbs-{{id}}">Thumbs</a>
-        <a id="imageArray{{id}}" href="#tabs-imagesarray-{{id}}">Listing</a>
+    <div id="tabs-images-{{id}}" style="overflow : auto;padding: 5px;">
+        <div align="right" style="margin-bottom: 10px;">
+            <a id="imageThumbs{{id}}" href="#tabs-thumbs-{{id}}">Thumbs</a>
+            <a id="imageArray{{id}}" href="#tabs-imagesarray-{{id}}">Listing</a>
+        </div>
+        <div id="tabs-projectImageThumb{{id}}">
+            <div id="projectImageThumb{{id}}" style="display:inline-block;width:95%;">
+                <span class="label notice">Loading...</span>
+            </div>
+        </div>
+        <div id="tabs-projectImageListing{{id}}">
+            <div id="projectImageListing{{id}}" style="display:inline-block;width:95%;">
+                <span class="label notice">Loading...</span>
+            </div>
+        </div>
     </div>
-    <div id="tabs-projectImageThumb{{id}}"><div id="projectImageThumb{{id}}" style="display:inline-block;width:95%;">Loading...</div></div>
-    <div id="tabs-projectImageListing{{id}}"><div id="projectImageListing{{id}}" style="display:inline-block;width:95%;">Loading...</div></div>
-</div>
 
 </div>
 <div id="tabs-annotations-{{id}}" style="overflow : auto;">
-    <div style="margin-top:5px;">
-        <button id="refreshAnnotations" type="button">Refresh</button>
-        <button id="showAllAnnotations" type="button">Show all</button>
-        <button id="hideAllAnnotations" type="button">Reset</button>
-        <a href="/api/project/{{id}}/annotation/download?format=csv"  id="downloadAnnotationsCSV" type="button">Download CSV</a>
-        <a href="/api/project/{{id}}/annotation/download?format=xls" id="downloadAnnotationsExcel" type="button">Download Excel</a>
-        <a href="/api/project/{{id}}/annotation/download?format=pdf" id="downloadAnnotationsPDF" type="button">Download PDF</a>
-    </div>
-    <div id="ontology-annotations-panel-{{id}}" style="width: 20%;margin-top:10px;margin-left : 5px;float: left;display: inline-block;">
-        <div>Ontology</div>
-        <div>
-            <div class="tree"></div>
+    <div class="container-fluid" style="padding-top: 10px;">
+        <div class="sidebar">
+            <div class="well" style="padding: 10px;width: 350px;">
+                <h4>Ontology</h4>
+                <div class="tree"></div>
+                <hr/>
+                <h4>Actions</h4>
+                <ul style="display : inline;">
+                    <li style="display : inline;"><button id="showAllAnnotations" class="btn">Show all</button></li>
+                    <li style="display : inline;"><button id="hideAllAnnotations" class="btn">Hide all</button></li>
+                    <li style="display : inline;"><button id="refreshAnnotations" class="btn">Refresh</button></li>
+                </ul>
+            </div>
+            <div class="well" style="padding: 10px;width: 350px;">
+                <h4>Download</h4>
+                <ul>
+                    <li style="padding-bottom: 5px;"><a href="/api/project/{{id}}/annotation/download?format=csv"  id="downloadAnnotationsCSV" class="btn">Download CSV</a></li>
+                    <li style="padding-bottom: 5px;"><a href="/api/project/{{id}}/annotation/download?format=xls" id="downloadAnnotationsExcel" class="btn">Download Excel</a></li>
+                    <li style="padding-bottom: 5px;"><a href="/api/project/{{id}}/annotation/download?format=pdf" id="downloadAnnotationsPDF" class="btn">Download PDF</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="content" style="padding-left: 150px;">
+            <div id="listtabannotation" class="hero-unit" style="float: left;display: none;margin-left : 10px;padding-top : 40px;min-width: 78%"></div>
+            <div id="annotationRetrievalMain"><div id="annotationRetrieval"></div></div>
         </div>
     </div>
-    <div id="listtabannotation" style="float: left;display: inline-block;margin-top:10px;margin-left : 10px;width: 78%;"></div>
-    <div id="annotationRetrievalMain"><div id="annotationRetrieval"></div></div>
+</div>
+
+</div>
 </div>
 

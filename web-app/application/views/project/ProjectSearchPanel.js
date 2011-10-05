@@ -25,7 +25,7 @@ var ProjectSearchPanel = Backbone.View.extend({
    },
    events: {
       "click .addProject": "showAddProjectPanel",
-      "click .searchProjectCriteria": "searchProject",
+      "change .searchProjectCriteria": "searchProject",
       "click .showAllProject": "showAllProject"
    },
    render : function() {
@@ -59,6 +59,10 @@ var ProjectSearchPanel = Backbone.View.extend({
 
       self.loadAutocomplete();
 
+      /*$("#projectallbutton").click(self.showAllProject);
+      $("#projectaddbutton").click(self.showAddProjectPanel);*/
+
+
    },
    /**
     * Load panel and all buttons/checkbox
@@ -74,15 +78,15 @@ var ProjectSearchPanel = Backbone.View.extend({
 
 
       //configure "all projects" button
-      $(self.el).find(self.allProjectsButtonElem).button({
+      /*$(self.el).find(self.allProjectsButtonElem).button({
          icons : {secondary: "ui-icon-refresh" }
 
-      });
+      });*/
 
       //configure "add projects" button
-      $(self.el).find(self.addProjectButtonElem).button({
+      /*$(self.el).find(self.addProjectButtonElem).button({
          icons : {secondary: "ui-icon-plus" }
-      });
+      });*/
 
       //render ontologies choice
       self.ontologies.each(function(ontology) {
@@ -197,7 +201,7 @@ var ProjectSearchPanel = Backbone.View.extend({
 
       //reset every element
       $(self.searchProjectTextBoxElem).val("");
-      $(self.searchProjectCheckedOntologiesElem).attr("checked", false);
+      $("#ontologyChoiceList").val(-1);
       self.resetSlider(self.sliderNumberOfImagesElem);
       self.resetSlider(self.sliderNumberOfSlidesElem);
       self.resetSlider(self.sliderNumberOfAnnotationsElem);
@@ -219,17 +223,17 @@ var ProjectSearchPanel = Backbone.View.extend({
     * Search project with all info from the form
     */
    searchProject : function() {
-
       var self = this;
-
-      //get name
       var searchText = $(self.searchProjectTextBoxElem).val();
-      //get ontologies
       var searchOntologies = new Array();
-      $.each($(self.searchProjectCheckedOntologiesElem), function(index, value) {
+      var selectedOntology = $("#ontologyChoiceList").val();
+      if (selectedOntology != -1) {
+         searchOntologies.push(selectedOntology);
+      }
+      /*$.each($(self.searchProjectCheckedOntologiesElem), function(index, value) {
          var idOntology =  $(value).attr('id').replace("ontologies","");
          searchOntologies.push(idOntology);
-      });
+      });*/
 
       //get number of images [min,max]
       var numberOfImages = new Array();

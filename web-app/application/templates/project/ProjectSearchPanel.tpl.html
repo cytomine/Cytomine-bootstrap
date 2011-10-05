@@ -1,27 +1,24 @@
-<button id='projectallbutton' type="button" class="showAllProject">Show All projects</button>
-<button id='projectaddbutton' type="button" class="addProject">Add Project</button>
-<div class="projectlist" style="margin-top: 5px;margin-bottom: 5px;">
-    <h3>Filter by</h3>
-    <ul style="display: inline;">
-        <li style="display: inline;"><b>Name </b><input id="projectsearchtextbox" /></li>
-        <li style="display: inline;padding-left:20px;"><b>Ontology </b><div id="ontologyChoiceList" style="display:inline;"></div></li>
-    </ul>
-    <ul>
-        <li style="display: inline-block;">
-            <b>Slides</b>
-            <div id="numberofslideSlider" style="display:inline-block;margin-left:8px;min-width:150px;"></div>
-            <input type="text" id="amountNumberOfSlides" style="display:inline;margin-left:5px;border:0;width:100px; font-weight:bold;" />
+<h3>Project</h3>
+<button id='projectaddbutton' type="button" class="btn info addProject">Add a new project</button>
+<hr />
+<h3>Filters</h3>
+<legend style="font-weight : bold;margin-bottom: 3px;padding-top: 10px;">By name</legend>
+<input id="projectsearchtextbox" style="max-width: 120px;" />
+<legend style="font-weight : bold;margin-bottom: 3px;;padding-top: 10px;">By ontology</legend>
+<select id="ontologyChoiceList" class="searchProjectCriteria" style="max-width: 100px;">
+    <option value="-1">All</option>
+</select>
+<legend style="font-weight : bold;margin-bottom: 3px;;padding-top: 10px;">Slides</legend>
+<input type="text" id="amountNumberOfSlides" style="max-width: 50px;display: inline-block;" />
+<div id="numberofslideSlider" style="margin-left: 10px;display: inline-block;min-width: 100px;" />
+<legend style="font-weight : bold;margin-bottom: 3px;;padding-top: 10px;">Images</legend>
+<input type="text" id="amountNumberOfImages" style="max-width: 50px;display: inline-block;" />
+<div id="numberofimageSlider" style="margin-left: 10px;display: inline-block;min-width: 100px;" />
 
-        </li>
-        <li style="display: inline-block;margin-left:50px;" >
-            <b>Images</b>
-            <div id="numberofimageSlider" style="display:inline-block;margin-left:8px;min-width:150px;"></div>
-            <input type="text" id="amountNumberOfImages" style="display:inline;margin-left:5px;border:0;width:100px; font-weight:bold;" />
-        </li>
-        <li style="display: inline-block;margin-left:50px;" >
-            <b>Annotations</b>
-            <div id="numberofannotationSlider" style="display:inline-block;margin-left:8px;min-width:150px;"></div>
-            <input type="text" id="amountNumberOfAnnotations" style="display:inline;margin-left:5px;border:0;width:100px; font-weight:bold;" />
-        </li>
-    </ul>
-</div>
+<legend style="font-weight : bold;margin-bottom: 3px;;padding-top: 10px;">Annotations</legend>
+<input type="text" id="amountNumberOfAnnotations"  style="max-width: 50px;display: inline-block;" />
+<div id="numberofannotationSlider" style="margin-left: 10px;display: inline-block;min-width: 100px;" />
+<hr />
+<button id='projectallbutton' type="button" class="btn showAllProject">Reset</button>
+
+

@@ -1,31 +1,22 @@
-<div id="addontology" title="Create ontology">
-    <div align="center" style="margin:auto;">
-        <img src="images/cytomine.jpg" width="200" alt="Cytomine" />
+<div id="addontology" title="" class="modal hide">
+    <div class="modal-header">
+        <a href="#" class="close">&times;</a>
+        <h3>Create a new ontology</h3>
     </div>
-    <form id="login-form-add-ontology">
-        <fieldset>
+    <div class="modal-body">
+        <form id="login-form-add-ontology">
             <div id="ontologyerrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
                 <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
                     <strong>Error:</strong><div id="errormessage"></div></p>
             </div>
-            <label for="ontology-name" >Name:</label>
-            <input type="text" size="20" id="ontology-name" value="" class="text ui-widget-content ui-corner-all" >
-            <table class="ontologytable">
-                <tr>
-                    <td>
-                        <table>
-                            <tr>
-                                <td>
-                                    <label for="ontologyuser" >Owner:&nbsp;</label>
-                                </td>
-                                <td>
-                                    <div id="ontologyuser"></div>
-                                </td>
-                            <tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </fieldset>
-    </form>
+            <legend style="font-weight: bold;padding-bottom: 3px;">Name</legend>
+            <input type="text" size="20" id="ontology-name" value="" >
+            <legend style="font-weight: bold;padding-bottom: 3px;padding-top: 5px;">User</legend>
+            <div id="ontologyuser"></div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="saveOntologyButton" class="btn primary">Save</a>
+        <a href="#" id="closeAddOntologyDialog" class="btn">Cancel</a>
+    </div>
 </div>
