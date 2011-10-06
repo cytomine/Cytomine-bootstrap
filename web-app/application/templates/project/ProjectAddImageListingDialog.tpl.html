@@ -1,50 +1,24 @@
-<table border="2" cellpadding="1" cellspacing="1">
-    <tr>
-        <td COLSPAN=5 WIDTH="100%">
-            <!--<td WIDTH="100%" align="center" id="tdsearchpanel{{id}}" COLSPAN=5> -->
-            <div WIDTH="100%" id="searchImagetPanelup{{id}}-{{tab}}" class="centralPanel" >
-                <h3>Search Image Panel for project {{name}} ({{ontologyName}})</h3>
-                <div>
-                    <table class='searchimagetable'>
+<div class="hero-unit" style="padding-top: 20px;padding-bottom: 20px;">
+    <h3>Search Image Panel for project {{name}} ({{ontologyName}})</h3>
+    Filename: <input id="filenamesearchtextboxup{{id}}-{{tab}}" type="text" />
+    Between : <input id="datestartsearchup{{id}}-{{tab}}" style="display:inline;"/>
+    and : <input id="dateendsearchup{{id}}-{{tab}}" style="display:inline;"/>
+    <button id='imagesallbutton{{id}}-{{tab}}' type="button" style="display:inline;" class="showAllProject">Show All Images</button>
+</div>
+<div class="row">
+    <div id="imagesProjectContainer" class="span6">
+        <table id="listmanageproject{{id}}"></table>
+        <div id="pagemanageproject{{id}}"></div>
+    </div>
+    <div id="imageTableSeparator" class="span1">
+        <div id="button">
+            <button class="addImageProject" id="addimageprojectbutton{{id}}" type="button">Create</button><br>
+            <button class="delImageProject" id="delimageprojectbutton{{id}}" type="button">Delete</button><br>
+        </div>
+    </div>
 
-                        <tr>
-                            <td colspan="1" width="25%"> Filename: <input id="filenamesearchtextboxup{{id}}-{{tab}}" type="text" colspan=2/></td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" width="25%">
-                                <table>
-                                    <tr>
-                                        <td>Between&nbsp; </td><td> <input id="datestartsearchup{{id}}-{{tab}}" style="display:inline;"/></td> <td> &nbsp;and&nbsp; </td> <td> <input id="dateendsearchup{{id}}-{{tab}}" style="display:inline;"/></td>
-                                    </tr>
-                                </table>
-                            </td>
-                            <td colspan="1" width="25%">
-                                <button id='imagesallbutton{{id}}-{{tab}}' type="button" style="display:inline;" class="showAllProject">Show All Images</button> <br><br>
-
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </td>
-    </tr></table>
-
-    <table width="100%">
-    <tr>
-        <td align="left">
-            <table id="listmanageproject{{id}}"></table>
-            <div id="pagemanageproject{{id}}"></div>
-        </td>
-        <td align="center">
-            <div id="button">
-                <button class="addImageProject" id="addimageprojectbutton{{id}}" type="button">Create</button><br>
-                <button class="delImageProject" id="delimageprojectbutton{{id}}" type="button">Delete</button><br>
-            </div>
-        </td>
-        <td align="right">
-            <table id="listmanageall{{id}}"></table>
-            <div id="pagemanageall{{id}}"></div>
-        </td>
-    </tr>
-    <div id="dialogDeleteImageWithAnnotation"></div>
-</table>
+    <div id="allImagesContainer" class="span9">
+        <table id="listmanageall{{id}}"></table>
+        <div id="pagemanageall{{id}}"></div>
+    </div>
+</div>

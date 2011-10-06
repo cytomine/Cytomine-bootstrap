@@ -52,7 +52,9 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
       //print listing
       this.renderImageList();
-
+      var availableWidth = $(window).width() -80; //window - sidebar TO DO : remove this bad code !
+      var separatorWidth = availableWidth * 0.05;
+       $('#imageTableSeparator').css({"width" : separatorWidth+"px"});
       return this;
    },
    renderImageList: function() {
@@ -224,8 +226,9 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
    renderImageListProject : function() {
       var self = this;
 
-      var availableWidth = $(window).width()-250; //window - sidebar TO DO : remove this bad code !
-      var jqGridWidth = availableWidth * 0.40;
+      var availableWidth = $(window).width() -80; //window - sidebar TO DO : remove this bad code !
+      var jqGridWidth = availableWidth * 0.45;
+      $("#imagesProjectContainer").css({"width" : jqGridWidth+"px"});
       $("#"+self.listmanageproject).jqGrid({
          datatype: "local",
          width: jqGridWidth,
@@ -275,9 +278,9 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
    },
    renderImageListAll : function() {
       var self = this;
-      var availableWidth = $(window).width()-250; //window - sidebar TO DO : remove this bad code !
-      var jqGridWidth = availableWidth * 0.40;
-
+      var availableWidth = $(window).width() -80; //window - sidebar TO DO : remove this bad code !
+      var jqGridWidth = availableWidth * 0.45;
+      $("#allImagesContainer").css({"width" : jqGridWidth+"px"});
       var thumbColName = 'thumb';
       $("#"+self.listmanageall).jqGrid({
          datatype: "json",

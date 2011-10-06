@@ -72,7 +72,7 @@ var BrowseImageView = Backbone.View.extend({
    },
    setLayerVisibility : function(layer, visibility) {
       // manually check (or uncheck) the third checkbox in the menu:
-      $("#layerSwitcher"+this.model.get("id")).find("select").multiselect("widget").find(":checkbox").each(function(){
+      $("#layerSwitcher"+this.model.get("id")).find("ul.annotationLayers").find(":checkbox").each(function(){
          if (layer.name != $(this).attr("value")) return;
          if (visibility) {
             if ($(this).attr("checked") != "checked") {
@@ -137,7 +137,7 @@ var BrowseImageView = Backbone.View.extend({
       var project = window.app.status.currentProjectModel;
       if (this.layersLoaded == project.get("users").length) {
          //Init MultiSelected in LayerSwitcher
-         $("#layerSwitcher"+this.model.get("id")).find("select").multiselect({
+         /*$("#layerSwitcher"+this.model.get("id")).find("select").multiselect({
             click: function(event, ui){
                _.each(self.layers, function(layer){
                   if (layer.name != ui.value) return;
@@ -164,7 +164,7 @@ var BrowseImageView = Backbone.View.extend({
                   layer.vectorsLayer.setVisibility(false);
                });
             }
-         });
+         });*/
 
          //Init Controls on Layers
          var vectorLayers = _.map(this.layers, function(layer){ return layer.vectorsLayer;});
@@ -215,15 +215,9 @@ var BrowseImageView = Backbone.View.extend({
       this.map.addLayer(layer);
       this.baseLayers.push(layer);
       self.map.setBaseLayer(layer);
-      var radioName = "layerSwitch-" + this.model.get("id");
-      var layerID = "layerSwitch-" + this.model.get("id") + "-" + new Date().getTime(); //index of the layer in this.layers array
-      var liLayer = _.template("<li><input type='radio' id='{{id}}' name='{{radioName}}' checked/><label style='font-weight:normal;color:#FFF' for='{{id}}'> {{name}}</label></li>", {id : layerID, radioName:radioName, name : layer.name.substr(0,15)});
-      $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").append(liLayer);
-      $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").find("#"+layerID);
-      $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").find("#"+layerID).click(function(){
-         self.map.setBaseLayer(layer);
-      });
+      this.layerSwitcherPanel.addBaseLayer(layer, this.model);
    },
+
    /**
     * Add a vector layer on the Map
     * @param layer the layer to add
@@ -232,31 +226,14 @@ var BrowseImageView = Backbone.View.extend({
    addVectorLayer : function(layer, userID) {
       this.map.addLayer(layer.vectorsLayer);
       this.layers.push(layer);
-
-      var layerID = window.app.models.users.get(userID).prettyName();
-
-      var color = window.app.models.users.get(userID).get('color');
-      var layerOptionTpl;
-      if (layer.isOwner) {
-         layerOptionTpl = _.template("<option value='{{id}}' selected='selected'>{{name}}</option>", {id : layerID, name : layer.vectorsLayer.name, color : color});
-      } else {
-         layerOptionTpl = _.template("<option value='{{id}}'>{{name}}</option>", {id : layerID, name : layer.vectorsLayer.name, color : color});
-      }
-
-      $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").append(layerOptionTpl);
-
-
-      /*  $("#layerSwitcher"+this.model.get("id")).find(".annotationLayers").find("#"+layerID).click(function(){
-       var checked = $(this).attr("checked");
-       layer.vectorsLayer.setVisibility(checked);
-       });*/
+      this.layerSwitcherPanel.addVectorLayer(layer, this.model, userID);
    },
    /**
     * Create a draggable Panel containing Layers names
     * and tools
     */
    createLayerSwitcher : function() {
-      new LayerSwitcherPanel({
+      this.layerSwitcherPanel = new LayerSwitcherPanel({
          browseImageView : this,
          model : this.model,
          el : this.el
@@ -381,7 +358,7 @@ var BrowseImageView = Backbone.View.extend({
          self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
 
          //Set the height of the map manually
-         var paddingTop = 81;
+         var paddingTop = 71;
          var height = $(window).height() - paddingTop;
          $("#map"+self.model.get('id')).css("height",height);
          $(window).resize(function() {

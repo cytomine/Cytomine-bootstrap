@@ -108,6 +108,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
       $("#closeAddOrEditTermDialog").click(function(){
          self.$termDialog.modal('hide');
          self.$termDialog.remove();
+         return false;
       });
       self.open();
       return this;

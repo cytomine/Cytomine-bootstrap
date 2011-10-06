@@ -75,11 +75,6 @@
     <link rel='stylesheet' href="lib/multiselect/jquery.multiselect.css" type='text/css'/>
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.min.js"></script>
 
-    <!-- Styles -->
-    <!--<link rel='stylesheet' href='css/reset.css' type='text/css'/>-->
-    <!--<link rel='stylesheet' href='css/cytomine.css' type='text/css'/>-->
-    <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
-
     <!--jqgrid -->
     <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
     <script src="lib/jqgrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
@@ -91,6 +86,9 @@
     <script type="text/javascript" src="lib/jcarousel/jquery.carousel.min.js"></script>
     <script type="text/javascript" src="lib/tinysort/jquery.tinysort.min.js"></script>
 
+
+    <!-- Styles -->
+    <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
 
     <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
         <!-- Application -->
