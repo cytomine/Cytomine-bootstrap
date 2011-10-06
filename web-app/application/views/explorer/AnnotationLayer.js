@@ -375,6 +375,11 @@ AnnotationLayer.prototype = {
                                         return false;
 
                                     });
+                                },error: function (bad, response) {
+                                      $("#loadSimilarAnnotation" + model.id).replaceWith("Error: cannot reach retrieval");
+
+
+
                                 }});
                         }});
                 }

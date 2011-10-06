@@ -200,7 +200,9 @@ class RestAnnotationController extends RestController {
         def result = processCommand(addAnnotationCommand, currentUser)
         log.info "Index annotation with id=" +result?.annotation?.id
         Long id = result?.annotation?.id
-        if(id) indexRetrievalAnnotation(id)
+
+        try {if(id) indexRetrievalAnnotation(id) } catch(Exception e) { log.error "Cannot index in retrieval:"+e.toString()}
+
         response(result)
     }
 
@@ -246,7 +248,7 @@ class RestAnnotationController extends RestController {
         def result = processCommand(deleteAnnotationCommand, currentUser)
         transaction.stop()
         Long id = result?.annotation?.id
-        if(id) deleteRetrievalAnnotation(id)
+        try {if(id) deleteRetrievalAnnotation(id) } catch(Exception e) { log.error "Cannot delete in retrieval:"+e.toString()}
         response(result)
     }
 
@@ -286,7 +288,7 @@ class RestAnnotationController extends RestController {
         def result = processCommand(editAnnotationCommand, currentUser)
         if(result.success) {
             Long id = result.annotation.id
-            updateRetrievalAnnotation(id)
+            try {updateRetrievalAnnotation(id)} catch(Exception e) { log.error "Cannot update in retrieval:"+e.toString()}
         }
         response(result)
     }
