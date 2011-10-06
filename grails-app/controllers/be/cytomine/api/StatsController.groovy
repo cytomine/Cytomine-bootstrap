@@ -20,7 +20,6 @@ class StatsController extends RestController {
                 groupProperty("a.user.id")
                 groupProperty("term.id")
                 count("term")
-
             }
         }
 

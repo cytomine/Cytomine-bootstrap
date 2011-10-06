@@ -150,6 +150,48 @@ div .ontologypanel {
 }
 
 
+div.ontologypanel > .tree > ul.dynatree-container
+{
+
+
+    font-size: 10pt; /* font size should not be too big */
+    white-space: nowrap;
+    padding: 3px;
+
+    background-color: transparent;
+    border: 0px dotted gray;
+
+    overflow: hidden;
+}
+
+div.ontologypanel > .tree > ul.dynatree-container a
+    /*, ul.dynatree-container a:visited*/
+{
+    color: white; /* inherit doesn't work on IE */
+    text-decoration: none;
+    vertical-align: top;
+    margin: 0px;
+    margin-left: 3px;
+    /*	outline: 0; /* @ Firefox, prevent dotted border after click */
+}
+
+div.ontologypanel > .tree > ul.dynatree-container a:hover
+{
+    background: none;
+    border: 0px;
+    /*	text-decoration: underline; */
+    /*background: #F2F7FD; /* light blue */
+    /*border-color: #B8D6FB; /* darker light blue */
+}
+
+
+div.ontologypanel > .tree > li > span.dynatree-selected a
+{
+    background-color : green;
+    color: white;
+    font-style: italic;
+}
+
 
 .tabs-bottom { position: relative; background-color: transparent;}
 .tabs-bottom .ui-tabs-panel { height : 225px; overflow: auto; }
@@ -165,7 +207,7 @@ div .toolbar {
     position : absolute;
     left : 120px;
     top : 100px;
-    z-index : 5;
+    z-index : 2021;
     width : 1100px;
     background-color: transparent;
     color : #fff;
@@ -266,5 +308,5 @@ div.olControlOverviewMapElement img {
     position: absolute;
     right: 20px;
     top : 50px;
-    z-index: 1000;
+    z-index: 2200;
 }

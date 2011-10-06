@@ -25,6 +25,7 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.perf4j.LoggingStopWatch
 import org.perf4j.StopWatch
 import be.cytomine.image.server.RetrievalServer
+import be.cytomine.ontology.Term
 
 class RestAnnotationController extends RestController {
 
@@ -53,10 +54,32 @@ class RestAnnotationController extends RestController {
     }
 
     def listByProject = {
-        log.info "List with id user:"+params.id
-        Project project = Project.read(params.id)
-        if(project) responseSuccess(project.annotations())
-        else responseNotFound("Project",params.id)
+        if (params.noTerm == "true") {
+            Project project = Project.read(params.id)
+            def terms = Term.findAllByOntology(project.getOntology())
+            def annotationsWithTerms = AnnotationTerm.createCriteria().list {
+                inList("term", terms)
+                join("annotation")
+                createAlias("annotation", "a")
+                projections {
+                    inList("a.image", project.imagesinstance())
+                    groupProperty("annotation.id")
+                }
+            }
+            def annotations = Annotation.createCriteria().list {
+                inList("image", project.imagesinstance())
+                not {
+                    inList("id", annotationsWithTerms)
+                }
+            }
+            if(project) responseSuccess(annotations)
+            else responseNotFound("Project",params.id)
+        } else {
+            Project project = Project.read(params.id)
+            def annotations = Annotation.findAllByImageInList(project.imagesinstance())
+            if(project) responseSuccess(annotations)
+            else responseNotFound("Project",params.id)
+        }
     }
 
     def listByImageAndUser = {

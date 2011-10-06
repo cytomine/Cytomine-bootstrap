@@ -30,9 +30,9 @@ var AnnotationView = Backbone.View.extend({
           self.annotations = new Array();
 
           //check if it exist annotations
-          if (_.size(self.model) == 0) {
+          /*if (_.size(self.model) == 0) {
              (self.el).html("No annotation with this term");
-          }
+          } */
 
           self.model.each(function(annotation) {
              if ((cpt >= inf) && (cpt < sup)) {

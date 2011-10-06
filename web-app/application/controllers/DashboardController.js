@@ -72,11 +72,11 @@ var DashboardController = Backbone.Controller.extend({
       }
       this.init(project, func);
    },
+
    annotations : function(project) {
       var self = this;
       var func = function() {
          self.view.refreshSelectedTerms();
-
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-annotations-"+window.app.status.currentProject);
       }

@@ -94,6 +94,16 @@ var ProjectDashboardView = Backbone.View.extend({
       require(["text!application/templates/dashboard/TermTab.tpl.html", "text!application/templates/dashboard/TermTabContent.tpl.html"], function(termTabTpl, termTabContentTpl) {
          new OntologyModel({id:self.model.get('ontology')}).fetch({
             success : function(model, response) {
+               $(self.el).find("input.undefinedAnnotationsCheckbox").click(function(){
+                  if ($(this).attr("checked") == "checked") {
+                     self.updateContentVisibility();
+                     self.refreshAnnotations(0);
+                     $("#tabsterm-panel-"+self.model.id+"-0").show();
+                  } else {
+                     self.updateContentVisibility();
+                     $("#tabsterm-panel-"+self.model.id+"-0").hide();
+                  }
+               });
                $(self.el).find('.tree').dynatree({
                   checkbox: true,
                   selectMode: 2,
@@ -151,12 +161,14 @@ var ProjectDashboardView = Backbone.View.extend({
          new TermCollection({idOntology:self.model.get('ontology')}).fetch({
             success : function (collection, response) {
                window.app.status.currentTermsCollection = collection;
+               $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : 0, name : "Undefined"}));
+               $("#tabsterm-panel-"+self.model.id+"-0").panel();
+               $("#tabsterm-panel-"+self.model.id+"-0").hide();
                collection.each(function(term) {
                   //add x term tab
                   $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : term.get("id"), name : term.get("name")}));
                   $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).panel();
                   $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).hide();
-
                });
 
 
@@ -191,6 +203,7 @@ var ProjectDashboardView = Backbone.View.extend({
          if (!node.isSelected()) return;
          nbTermSelected++;
       });
+      nbTermSelected += ($(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked") == "checked") ? 1 : 0;
       if (nbTermSelected > 0){
          $("#listtabannotation").show();
       } else {
@@ -201,17 +214,14 @@ var ProjectDashboardView = Backbone.View.extend({
       var self = this;
       var tree = $(this.el).find('.tree').dynatree("getRoot");
       if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
-      var nbTermSelected = 0;
       tree.visit(function(node){
          if (!node.isSelected()) return;
-         nbTermSelected++;
          self.refreshAnnotations(node.data.key);
       });
-      if (nbTermSelected > 0){
-         $("#listtabannotation").show();
-      } else {
-         $("#listtabannotation").hide();
+      if ($(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked") == "checked") {
+         self.refreshAnnotations(0);
       }
+      self.updateContentVisibility();
    },
    /**
     * Refresh all annotation dor the given term
@@ -229,12 +239,12 @@ var ProjectDashboardView = Backbone.View.extend({
     * @param term term annotation term to be refresh (all = 0)
     * @param $elem  elem that will keep all annotations
     */
-   printAnnotationThumb : function(term,$elem){
+   printAnnotationThumb : function(idTerm,$elem){
       var self = this;
 
-      var idTerm = 0;
+      /*var idTerm = 0;
       if(term==0) {idTerm = undefined;}
-      else idTerm = term
+      else idTerm = term*/
 
       new AnnotationCollection({project:self.model.id,term:idTerm}).fetch({
          success : function (collection, response) {
