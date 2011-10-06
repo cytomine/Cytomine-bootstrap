@@ -70,11 +70,6 @@
     <link href="lib/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>
 
-    <!-- MultiSelect -->
-    <link rel='stylesheet' href="lib/multiselect/jquery.multiselect.css" type='text/css'/>
-    <link rel='stylesheet' href="lib/multiselect/jquery.multiselect.css" type='text/css'/>
-    <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.min.js"></script>
-
     <!--jqgrid -->
     <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
     <script src="lib/jqgrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>

@@ -29,18 +29,18 @@ var AdminController = Backbone.Controller.extend({
                var el = _.template('<select class="{{selectClass}}" title="" multiple="multiple" name="example-basic" size="5" style="display:none;">' +
                    '{{authorities}}</select>',{ selectClass:selectClass, authorities : authorities });
                setTimeout(function(){
-                  $("#authorities").multiselect({});
+                  /*$("#authorities").multiselect({});*/
                }, 200);
                return el;
             }
             var selectValue = function(elem, operation, value) {
                if(operation === 'get') {
                   var values = []
-                  $("#authorities").multiselect("widget").find(":checkbox").each(function(){
+                  /*$("#authorities").multiselect("widget").find(":checkbox").each(function(){
                      if ($(this).attr("checked") == "checked") {
                         values.push($(this).attr("value"));
                      }
-                  });
+                  });*/
                   return values.join(",");
                } else if(operation === 'set') {
                   //nothing to do
