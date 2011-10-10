@@ -7,7 +7,7 @@ import be.cytomine.processing.algorithms.myDetection.MyDetectionLearnJob
 import be.cytomine.processing.algorithms.myDetection.MyDetectionPredictJob
 import be.cytomine.project.Project
 
-class Job extends SequenceDomain implements CytomineJob {   //TO DO : SHOULD BE ABSTRACT with GRAILS2.0
+class Job extends SequenceDomain implements CytomineJob {   //TODO : SHOULD BE ABSTRACT with GRAILS2.0
 
     User user
     Boolean running = false

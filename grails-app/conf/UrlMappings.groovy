@@ -231,6 +231,16 @@ class UrlMappings {
             action = [GET:"search",POST:"index"]
         }
 
+        "/api/annotation/term/suggest"(controller:"restSuggestedTerm"){
+            action = [GET:"list"]
+        }
+        "/api/annotation/$idannotation/term/suggest"(controller:"restSuggestedTerm"){
+            action = [GET:"list",POST:"add"]
+        }
+        "/api/annotation/$idannotation/term/$idterm/job/$idjob/suggest"(controller:"restSuggestedTerm"){
+            action = [GET:"show", DELETE:"delete"]
+        }
+
         /* Term */
         "/api/term"(controller:"restTerm"){
             action = [GET: "list",POST:"add"]
