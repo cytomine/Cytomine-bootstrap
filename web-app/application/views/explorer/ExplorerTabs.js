@@ -34,7 +34,8 @@ var ExplorerTabs = Backbone.View.extend({
             /*$("#"+ui.panel.id).parent().parent().css('height', "100%");*/
             if (ui.panel.id != ("tabs-dashboard-"+window.app.status.currentProject)
                 && (ui.panel.id != "tabs-images-"+window.app.status.currentProject)
-                && ui.panel.id != ("tabs-annotations-"+window.app.status.currentProject)) {
+                && ui.panel.id != ("tabs-annotations-"+window.app.status.currentProject)
+                && ui.panel.id != ("tabs-algos-"+window.app.status.currentProject)) {
                tabs.find("ul").find("a[href=#"+ui.panel.id+"]").find("span").attr("style", "display:inline;");
                tabs.find("ul").find("a[href=#"+ui.panel.id+"]").parent().append("<span class='ui-icon ui-icon-close' style='display:inline;cursor:pointer;'>&nbsp;&nbsp;&nbsp;&nbsp;</span>");
                tabs.find("ul").find("a[href=#"+ui.panel.id+"]").parent().find("span.ui-icon-close" ).click(function() {
@@ -142,6 +143,7 @@ var ExplorerTabs = Backbone.View.extend({
       tabs.tabs("add", "#tabs-dashboard-"+window.app.status.currentProject, 'Dashboard');
       tabs.tabs("add", "#tabs-images-"+window.app.status.currentProject, 'Images');
       tabs.tabs("add", "#tabs-annotations-"+window.app.status.currentProject, 'Annotations');
+      tabs.tabs("add", "#tabs-algos-"+window.app.status.currentProject, 'Algorithms');
       $("#explorer > .browser").show();
       $("#explorer > .noProject").hide();
       this.tabs.push({

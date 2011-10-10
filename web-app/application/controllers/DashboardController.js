@@ -8,7 +8,8 @@ var DashboardController = Backbone.Controller.extend({
       "tabs-thumbs-:project"  : "imagesthumbs",
       "tabs-imagesarray-:project"  : "imagesarray",
       "tabs-annotations-:project"  : "annotations",
-      "tabs-dashboard-:project"  : "dashboard"
+      "tabs-dashboard-:project"  : "dashboard",
+      "tabs-algos-:project"  : "algos"
    },
 
    init : function (project, callback) {
@@ -79,6 +80,16 @@ var DashboardController = Backbone.Controller.extend({
          self.view.refreshAnnotations();
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-annotations-"+window.app.status.currentProject);
+      }
+      this.init(project, func);
+   },
+
+   algos : function(project) {
+      var self = this;
+      var func = function() {
+         self.view.refreshAlgos();
+         var tabs = $("#explorer > .browser").children(".tabs");
+         tabs.tabs("select", "#tabs-algos-"+window.app.status.currentProject);
       }
       this.init(project, func);
    },
