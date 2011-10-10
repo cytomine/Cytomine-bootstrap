@@ -18,7 +18,7 @@ class ProcessingController extends RestController{
 
     def sessionFactory
 
-    private static def ROI_SIZE = 500 //MAX CVT IN IIP CONFIG FILE !
+    private static def ROI_SIZE = 250 //MAX CVT IN IIP CONFIG FILE !
     private static def BLACK = 0
     private static def WHITE = 255
 

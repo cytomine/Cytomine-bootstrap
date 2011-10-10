@@ -40,6 +40,28 @@ class BootStrapData {
             [name : "ULB-Anapath-TPP"]
     ]
 
+    /* Image Filters */
+    static def imageFiltersSamples = [
+            [ name : "Haematoxylin", baseUrl : "proxy/haematoxylin?url=" ],
+            [ name : "Eosin", baseUrl : "proxy/eosin?url=" ],
+            [ name : "Binary", baseUrl : "proxy/binary?url=" ],
+            [ name : "Huang Threshold", baseUrl : "proxy/huang?url=" ],
+            [ name : "Intermodes Threshold", baseUrl : "proxy/intermodes?url=" ],
+            [ name : "IsoData Threshold", baseUrl : "proxy/isodata?url=" ],
+            [ name : "Li Threshold", baseUrl : "proxy/li?url=" ],
+            [ name : "MaxEntropy Threshold", baseUrl : "proxy/maxentropy?url=" ],
+            [ name : "Mean Threshold", baseUrl : "proxy/mean?url=" ],
+            [ name : "MinError(I) Threshold", baseUrl : "proxy/minerror?url=" ],
+            [ name : "Minimum Threshold", baseUrl : "proxy/minimum?url=" ],
+            [ name : "Moments Threshold", baseUrl : "proxy/moments?url=" ],
+            [ name : "Otsu Threshold", baseUrl : "proxy/otsu?url=" ],
+            [ name : "Percentile Threshold", baseUrl : "proxy/percentile?url=" ],
+            [ name : "RenyiEntropy Threshold", baseUrl : "proxy/renyientropy?url=" ],
+            [ name : "Shanbhag Threshold", baseUrl : "proxy/shanbhag?url=" ],
+            [ name : "Triangle Threshold", baseUrl : "proxy/triangle?url=" ],
+            [ name : "Yen Threshold", baseUrl : "proxy/yen?url=" ]
+    ]
+
     /* Users */
     static def usersSamples = [
             [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be',
@@ -831,7 +853,7 @@ class BootStrapData2 {
             [filename:'CERVIX/09-094476.mrxs', name :'09-094476.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
             [filename:'CERVIX/09-094494.mrxs', name :'09-094494.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
             [filename:'CERVIX/09-094594.mrxs', name :'09-094594.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
-           // [filename:'CERVIX/09-094626.mrxs', name :'09-094626.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
+            // [filename:'CERVIX/09-094626.mrxs', name :'09-094626.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
             [filename:'CERVIX/09-094705.mrxs', name :'09-094705.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
             [filename:'CERVIX/09-094990.mrxs', name :'09-094990.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],
             [filename:'CERVIX/09-095364.mrxs', name :'09-095364.mrxs', extension :'mrxs', order : 0,study : 'CELLSOLUTIONS-BESTCYTE-CERVIX'],

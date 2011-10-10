@@ -49,6 +49,18 @@ class UrlMappings {
         "/api/project/$id/image"(controller: "restImage"){
             action = [GET:"listByProject"]
         }
+        "/api/project/imagefilter"(controller: "restImageFilter"){
+            action = [GET:"list"]
+        }
+        "/api/project/imagefilter/$id"(controller: "restImageFilter"){
+            action = [GET:"show"]
+        }
+        "/api/project/$idProject/imagefilter"(controller: "restImageFilterProject"){
+            action = [GET:"list", POST : "add"]
+        }
+        "/api/project/$idProject/imagefilter/$idImageFilter"(controller: "restImageFilterProject"){
+            action = [DELETE : "delete"]
+        }
         "/api/project/$id/imageinstance"(controller: "restImageInstance"){
             action = [GET:"listByProject"]
         }
@@ -61,7 +73,7 @@ class UrlMappings {
         "/api/project/$idProject/term"(controller:"restTerm"){
             action = [GET:"listAllByProject"]
         }
-       "/api/imageinstance/$id/annotation"(controller:"restAnnotation"){
+        "/api/imageinstance/$id/annotation"(controller:"restAnnotation"){
             action = [GET:"listByImage"]
         }
         "/api/imageinstance/$id/term"(controller:"restTerm"){
@@ -205,7 +217,7 @@ class UrlMappings {
         }
 
         "/api/job"(controller:"restJob") {
-           action = [GET:"list", POST:"save"]
+            action = [GET:"list", POST:"save"]
         }
 
         "/api/job/$id"(controller:"restJob"){
@@ -228,7 +240,7 @@ class UrlMappings {
             action = [GET : "show"]
         }
 
-         "/api/project/$id/user"(controller: "restUser"){
+        "/api/project/$id/user"(controller: "restUser"){
             action = [GET:"showByProject",POST:"addUser"]
         }
         "/api/project/$id/user/$idUser"(controller: "restUser"){

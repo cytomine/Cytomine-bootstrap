@@ -11,12 +11,12 @@ class ImageFilterProject {
         version false
     }
 
-    static ImageFilterProject link(ImageFilter imageFilter, Project user) {
-        def imageFilterProject = ImageFilterProject.findByImageFilterAndProject(imageFilter, user)
+    static ImageFilterProject link(ImageFilter imageFilter, Project project) {
+        def imageFilterProject = ImageFilterProject.findByImageFilterAndProject(imageFilter, project)
         if (!imageFilterProject) {
-            imageFilterProject = new SoftwareProjects()
+            imageFilterProject = new ImageFilterProject()
             imageFilter?.addToImageFilterProjects(imageFilterProject)
-            user?.addToImageFilterProjects(imageFilterProject)
+            project?.addToImageFilterProjects(imageFilterProject)
             imageFilterProject.save(flush : true)
         }
     }

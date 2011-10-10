@@ -40,6 +40,7 @@ import be.cytomine.data.ImageData3
 import be.cytomine.data.ImageData2
 import be.cytomine.data.ImageData4
 import be.cytomine.data.ImageData5
+import be.cytomine.processing.ImageFilter
 import be.cytomine.processing.Software
 import be.cytomine.processing.Job
 
@@ -109,6 +110,7 @@ class BootStrap {
 
 
         createStorage(BootStrapData.storages)
+        createImageFilters(BootStrapData.imageFiltersSamples)
         createGroups(BootStrapData.groupsSamples)
         createUsers(BootStrapData.usersSamples)
         createScanners(BootStrapData.scannersSamples)
@@ -159,6 +161,20 @@ class BootStrap {
     }
 
     /* Methods */
+    def createImageFilters(imageFilters) {
+        imageFilters.each { item ->
+            if (ImageFilter.findByName(item.name) != null) return
+            ImageFilter imageFilter = new ImageFilter( name : item.name , baseUrl : item.baseUrl)
+            if (imageFilter.validate()) {
+                imageFilter.save();
+            } else {
+                println("\n\n\n Errors in creating imageFilter for ${it.name}!\n\n\n")
+                imageFilter.errors.each {
+                    err -> println err
+                }
+            }
+        }
+    }
 
     def createStorage(storages) {
         println "createStorages"

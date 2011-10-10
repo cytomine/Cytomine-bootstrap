@@ -1,6 +1,18 @@
 package be.cytomine.api
 
-class RestImageFilterController {
+import be.cytomine.processing.ImageFilter
 
-    def index = { }
+class RestImageFilterController extends RestController {
+
+    def list = {
+        responseSuccess(ImageFilter.list())
+    }
+
+    def show = {
+        ImageFilter imageFilter = ImageFilter.read(params.id)
+        if (imageFilter) responseSuccess(imageFilter)
+        else responseNotFound("ImageFilter", params.id)
+    }
+
+
 }

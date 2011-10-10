@@ -7,7 +7,7 @@
 class ImageInstanceUrlMappings {
 
     static mappings = {
-           /* Image Instance */
+        /* Image Instance */
         "/api/imageinstance"(controller: "restImageInstance"){
             action = [GET:"list", POST:"add"]
         }

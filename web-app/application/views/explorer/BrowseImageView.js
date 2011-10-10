@@ -138,33 +138,33 @@ var BrowseImageView = Backbone.View.extend({
       if (this.layersLoaded == project.get("users").length) {
          //Init MultiSelected in LayerSwitcher
          /*$("#layerSwitcher"+this.model.get("id")).find("select").multiselect({
-            click: function(event, ui){
-               _.each(self.layers, function(layer){
-                  if (layer.name != ui.value) return;
-                  if (ui.checked) {
-                     _.each(layer.vectorsLayer.features, function (feature) {
-                        if (feature.style != undefined && feature.style.display != 'none') return;
-                        layer.showFeature(feature);
-                     });
-                  }
-                  layer.vectorsLayer.setVisibility(ui.checked);
-               });
-            },
-            checkAll: function(){
-               _.each(self.layers, function(layer){
-                  layer.vectorsLayer.setVisibility(true);
-                  _.each(layer.vectorsLayer.features, function (feature) {
-                     if (feature.style != undefined && feature.style.display != 'none') return;
-                     layer.showFeature(feature);
-                  });
-               });
-            },
-            uncheckAll: function(){
-               _.each(self.layers, function(layer){
-                  layer.vectorsLayer.setVisibility(false);
-               });
-            }
-         });*/
+          click: function(event, ui){
+          _.each(self.layers, function(layer){
+          if (layer.name != ui.value) return;
+          if (ui.checked) {
+          _.each(layer.vectorsLayer.features, function (feature) {
+          if (feature.style != undefined && feature.style.display != 'none') return;
+          layer.showFeature(feature);
+          });
+          }
+          layer.vectorsLayer.setVisibility(ui.checked);
+          });
+          },
+          checkAll: function(){
+          _.each(self.layers, function(layer){
+          layer.vectorsLayer.setVisibility(true);
+          _.each(layer.vectorsLayer.features, function (feature) {
+          if (feature.style != undefined && feature.style.display != 'none') return;
+          layer.showFeature(feature);
+          });
+          });
+          },
+          uncheckAll: function(){
+          _.each(self.layers, function(layer){
+          layer.vectorsLayer.setVisibility(false);
+          });
+          }
+          });*/
 
          //Init Controls on Layers
          var vectorLayers = _.map(this.layers, function(layer){ return layer.vectorsLayer;});
@@ -275,6 +275,9 @@ var BrowseImageView = Backbone.View.extend({
          var binaryLayer = new OpenLayers.Layer.Zoomify( "Binary", binaryURLS, new OpenLayers.Size( metadata.width, metadata.height ) );
          //String [] methods={" "Li", "MaxEntropy","Mean", "MinError(I)", "Minimum", "Moments", "Otsu", "Percentile", "RenyiEntropy", "Shanbhag" , "Triangle", "Yen"};
          var thresholdLayersParameters = [
+            { name : "Haematoxylin", baseUrl : "proxy/haematoxylin?url=" },
+            { name : "Eosin", baseUrl : "proxy/eosin?url=" },
+            { name : "Binary", baseUrl : "proxy/binary?url=" },
             { name : "Huang Threshold", baseUrl : "proxy/huang?url=" },
             { name : "Intermodes Threshold", baseUrl : "proxy/intermodes?url=" },
             { name : "IsoData Threshold", baseUrl : "proxy/isodata?url=" },
@@ -365,12 +368,12 @@ var BrowseImageView = Backbone.View.extend({
             var height = $(window).height() - paddingTop;
             $("#map"+self.model.get('id')).css("height",height);
          });
-         self.addBaseLayer(binaryLayer);
+         /*self.addBaseLayer(binaryLayer);*/
          _.each (thresholdLayers , function  (layer) {
             self.addBaseLayer(layer);
          });
-         self.addBaseLayer(haematoxylinLayer);
-         self.addBaseLayer(eosinLayer);
+         /*self.addBaseLayer(haematoxylinLayer);
+          self.addBaseLayer(eosinLayer);*/
          self.addBaseLayer(baseLayer);
          self.createOverviewMap();
          self.map.zoomToMaxExtent();
