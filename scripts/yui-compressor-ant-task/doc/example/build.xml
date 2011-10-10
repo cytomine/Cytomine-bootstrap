@@ -97,6 +97,11 @@
             <fileset dir="${src.dir}" includes="application/views/dashboard/AnnotationThumbView.js" />
             <fileset dir="${src.dir}" includes="application/views/dashboard/AnnotationView.js" />
             <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardView.js" />
+            <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardStats.js" />
+            <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardImages.js" />
+            <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAnnotations.js" />
+            <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAlgos.js" />
+
             <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationLayer.js" />
             <fileset dir="${src.dir}" includes="application/views/explorer/BrowseImageView.js" />
             <fileset dir="${src.dir}" includes="application/views/explorer/DraggablePanelView.js" />

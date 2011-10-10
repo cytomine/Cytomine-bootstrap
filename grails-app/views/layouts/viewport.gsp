@@ -122,6 +122,11 @@
         <script type="text/javascript" src="application/views/dashboard/AnnotationThumbView.js" ></script>
         <script type="text/javascript" src="application/views/dashboard/AnnotationView.js" ></script>
         <script type="text/javascript" src="application/views/dashboard/ProjectDashboardView.js" ></script>
+        <script type="text/javascript" src="application/views/dashboard/ProjectDashboardStats.js" ></script>
+        <script type="text/javascript" src="application/views/dashboard/ProjectDashboardImages.js" ></script>
+        <script type="text/javascript" src="application/views/dashboard/ProjectDashboardAnnotations.js" ></script>
+        <script type="text/javascript" src="application/views/dashboard/ProjectDashboardAlgos.js" ></script>
+
 
         <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
         <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>
@@ -187,7 +192,7 @@
         });
     </script>
     <script type="text/javascript" src="http://jqueryui.com/themeroller/themeswitchertool/"></script>
-
+</head>
 <body>
 
 <div id='app'></div>

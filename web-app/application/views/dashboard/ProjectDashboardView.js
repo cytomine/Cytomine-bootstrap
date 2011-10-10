@@ -8,19 +8,11 @@
 var ProjectDashboardView = Backbone.View.extend({
    tagName : "div",
    projectElem : "#projectdashboardinfo",  //div with project info
-   tabsAnnotation : null,
-   images : null,
-   imagesView : null, //image view
-   imagesTabsView : null,
-   imagesThumbOrTab : null, //0=thumb, 1=tab
-   annotationsViews : [], //array of annotation view
-   maxCommandsView : 10,
-   selectedTermTab : 0,
+   maxCommandsView : 20,
+   projectDashboardAnnotations : null,
+   projectDashboardImages : null,
    rendered : false,
-   projectImages : null,
    initialize: function(options) {
-      this.container = options.container;
-      this.imagesThumbOrTab = options.imagesThumbOrTab;
       _.bindAll(this, 'render');
    },
    events: {
@@ -31,496 +23,68 @@ var ProjectDashboardView = Backbone.View.extend({
    render: function() {
       var self = this;
       require(["text!application/templates/dashboard/Dashboard.tpl.html"], function(tpl) {
-
-         self.images = new Array();
          self.doLayout(tpl);
          self.rendered = true;
       });
       return this;
    },
+   doLayout : function(tpl) {
+      var self = this;
+      var width = Math.round($(window).width()/2 - 200);
+      self.model.set({"width" : width+"px"});
+      var html = _.template(tpl, self.model.toJSON());
+      $(self.el).append(html);
+      window.app.controllers.browse.tabs.addDashboard(self);
+      /*self.initTabs();*/
+      self.showImagesThumbs();
+   },
+   refreshImagesThumbs : function() {
+      if (this.projectDashboardImages == null)
+         this.projectDashboardImages = new ProjectDashboardImages({ model : this.model});
+
+      this.projectDashboardImages.refreshImagesThumbs();
+
+   },
+   refreshImagesTable : function() {
+      if (this.projectDashboardImages == null)
+         this.projectDashboardImages = new ProjectDashboardImages({ model : this.model});
+
+      this.projectDashboardImages.refreshImagesTable();
+   },
+   refreshAnnotations : function() {
+      if (this.projectDashboardAnnotations == null) {
+         this.projectDashboardAnnotations = new ProjectDashboardAnnotations({ model : this.model, el : this.el});
+         this.projectDashboardAnnotations.render();
+         return;
+      }
+      this.projectDashboardAnnotations.refreshSelectedTerms();
+   },
    /**
     * Refresh all information for this project
     */
-   refresh : function() {
+   refreshDashboard : function() {
       var self = this;
       if (!self.rendered) return;
 
-      var projectModel = new ProjectModel({id : self.model.id});
-      var projectCallback = function(model, response) {
-
-         self.model = model;
-
+      var refreshDashboard = function(model, response) {
          self.fetchProjectInfo();
-         /*self.refreshImages();*/
-
-         //refresh selected tab
-
-         /*self.refreshAnnotations(self.selectedTermTab);*/
-
+         self.model = model;
          //TODO: must be improve!
          new AnnotationCollection({project:self.model.id}).fetch({
             success : function (collection, response) {
                self.fetchCommands(collection);
             }
          });
-
-
-         self.fetchStats();
-
+         new ProjectDashboardStats({model : self.model}).fetchStats();
       }
 
-      projectModel.fetch({
+      self.model.fetch({
          success : function(model, response) {
-            projectCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-         }
-      });
-
-   },
-   /**
-    * Init annotation tabs
-    */
-   initTabs : function(){
-      var self = this;
-      /* Init dashboard */
-      var width = Math.round($(window).width()/2 - 50);
-      /*$("#projectcolmunChartPanel").panel({collapsible: false, width : width});
-       $("#projectPieChartPanel").panel({collapsible: false, width : width});
-       $("#userAnnotationsChartPanel").panel({collapsible: false, width : width});
-       $("#userNbAnnotationsChartPanel").panel({collapsible: false, width : width});
-       $("#projectInfoPanel").panel({collapsible: false, width : width});
-       $("#projectLastCommandPanel").panel({collapsible: false, width : width});*/
-
-      /* Init Annotations */
-      require(["text!application/templates/dashboard/TermTab.tpl.html", "text!application/templates/dashboard/TermTabContent.tpl.html"], function(termTabTpl, termTabContentTpl) {
-         new OntologyModel({id:self.model.get('ontology')}).fetch({
-            success : function(model, response) {
-               $(self.el).find("input.undefinedAnnotationsCheckbox").click(function(){
-                  if ($(this).attr("checked") == "checked") {
-                     self.updateContentVisibility();
-                     self.refreshAnnotations(0);
-                     $("#tabsterm-panel-"+self.model.id+"-0").show();
-                  } else {
-                     self.updateContentVisibility();
-                     $("#tabsterm-panel-"+self.model.id+"-0").hide();
-                  }
-               });
-               $(self.el).find('.tree').dynatree({
-                  checkbox: true,
-                  selectMode: 2,
-                  expand : true,
-                  onExpand : function() {},
-                  children: model.toJSON(),
-                  onSelect: function(select, node) {
-                     //if(!self.activeEvent) return;
-
-                     if (node.isSelected()) {
-                        self.updateContentVisibility();
-                        self.refreshAnnotations(node.data.key);
-                        $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).show();
-                     }
-                     else {
-                        self.updateContentVisibility();
-                        $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).hide();
-
-
-                     }
-
-                  },
-                  onDblClick: function(node, event) {
-                     //node.toggleSelect();
-                  },
-
-                  // The following options are only required, if we have more than one tree on one page:
-                  initId: "treeData-annotations-"+self.model.get('ontology'),
-                  cookieId: "dynatree-Cb-annotations-"+self.model.get('ontology'),
-                  idPrefix: "dynatree-Cb-annotations-"+self.model.get('ontology')+"-"
-               });
-               //expand all nodes
-               $(self.el).find('.tree').dynatree("getRoot").visit(function(node){
-                  node.expand(true);
-               });
-               $("#ontology-annotations-panel-"+self.model.id).panel();
-               /*$(self.el).find("#hideAllAnnotations").button();*/
-               $(self.el).find("#hideAllAnnotations").click(function(){
-                  self.selectAnnotations(false);
-               });
-               /*$(self.el).find("#showAllAnnotations").button();*/
-               $(self.el).find("#showAllAnnotations").click(function(){
-                  self.selectAnnotations(true);
-               });
-               /*$(self.el).find("#refreshAnnotations").button();*/
-               $(self.el).find("#refreshAnnotations").click(function(){
-                  self.refreshSelectedTerms();
-               });
-
-               /*$(self.el).find("#downloadAnnotationsCSV").button();
-                $(self.el).find("#downloadAnnotationsExcel").button();
-                $(self.el).find("#downloadAnnotationsPDF").button();*/
-            }
-         });
-         new TermCollection({idOntology:self.model.get('ontology')}).fetch({
-            success : function (collection, response) {
-               window.app.status.currentTermsCollection = collection;
-               $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : 0, name : "Undefined"}));
-               $("#tabsterm-panel-"+self.model.id+"-0").panel();
-               $("#tabsterm-panel-"+self.model.id+"-0").hide();
-               collection.each(function(term) {
-                  //add x term tab
-                  $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : term.get("id"), name : term.get("name")}));
-                  $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).panel();
-                  $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).hide();
-               });
-
-
-            }});
-      });
-   },
-   /**
-    * Add the the tab with term info
-    * @param id  term id
-    * @param name term name
-    */
-   addTermToTab : function(termTabTpl, termTabContentTpl, data) {
-      //$("#ultabsannotation").append(_.template(termTabTpl, data));
-      $("#listtabannotation").append(_.template(termTabContentTpl, data));
-
-   },
-   selectAnnotations : function (selected) {
-      var self = this;
-      new TermCollection({idOntology:self.model.get('ontology')}).fetch({
-         success : function (collection, response) {
-            collection.each(function(term) {
-               $(self.el).find('.tree').dynatree("getTree").selectKey(term.get("id"), selected);
-            });
+            refreshDashboard(model, response);
          }
       });
    },
-   updateContentVisibility : function () {
-      var tree = $(this.el).find('.tree').dynatree("getRoot");
-      if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
-      var nbTermSelected = 0;
-      tree.visit(function(node){
-         if (!node.isSelected()) return;
-         nbTermSelected++;
-      });
-      nbTermSelected += ($(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked") == "checked") ? 1 : 0;
-      if (nbTermSelected > 0){
-         $("#listtabannotation").show();
-      } else {
-         $("#listtabannotation").hide();
-      }
-   },
-   refreshSelectedTerms : function () {
-      var self = this;
-      var tree = $(this.el).find('.tree').dynatree("getRoot");
-      if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
-      tree.visit(function(node){
-         if (!node.isSelected()) return;
-         self.refreshAnnotations(node.data.key);
-      });
-      if ($(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked") == "checked") {
-         self.refreshAnnotations(0);
-      }
-      self.updateContentVisibility();
-   },
-   /**
-    * Refresh all annotation dor the given term
-    * @param term annotation term to be refresh (all = 0)
-    */
-   refreshAnnotations : function(term) {
-      this.printAnnotationThumb(term,"#tabsterm-"+this.model.id+"-"+term);
-   },
-   clearAnnotations : function (term) {
-      var self = this;
-      $("#tabsterm-"+self.model.id+"-"+term).empty();
-   },
-   /**
-    * Print annotation for the given term
-    * @param term term annotation term to be refresh (all = 0)
-    * @param $elem  elem that will keep all annotations
-    */
-   printAnnotationThumb : function(idTerm,$elem){
-      var self = this;
 
-      /*var idTerm = 0;
-      if(term==0) {idTerm = undefined;}
-      else idTerm = term*/
-
-      new AnnotationCollection({project:self.model.id,term:idTerm}).fetch({
-         success : function (collection, response) {
-
-            if (self.annotationsViews[idTerm] != null) { //only refresh
-               self.annotationsViews[idTerm].refresh(collection);
-               return;
-            }
-            self.annotationsViews[idTerm] = new AnnotationView({
-               page : undefined,
-               model : collection,
-               el:$($elem),
-               container : window.app.view.components.warehouse
-            }).render();
-
-            //self.annotationsViews[term].refresh(collection);
-            $("#listtabannotation > div").tsort();
-         }
-      });
-   },
-   /**
-    * Get and Print ALL images (use for the first time)
-    */
-   fetchImages : function() {
-      $('#imageThumbs'+this.model.id).button({
-         text: false,
-         icons: {
-            primary: "ui-icon-image"
-
-         }
-      });
-      $('#imageArray'+this.model.id).button({
-         text: false,
-         icons: {
-            primary: "ui-icon-calculator"
-
-         }
-      });
-      var self = this;
-
-      new ImageInstanceCollection({project:self.model.get('id')}).fetch({
-         success : function (collection, response) {
-
-            self.projectImages = collection;
-            self.imagesView = new ImageView({
-               page : 0,
-               model : collection,
-               el:$("#tabs-projectImageThumb"+self.model.get('id')),
-               container : window.app.view.components.warehouse
-            }).render();
-
-
-            self.imagesTabsView = new ImageTabsView({
-               model : collection,
-               el:$("#tabs-projectImageListing"+self.model.get('id')),
-               container : window.app.view.components.warehouse,
-               idProject : self.model.id
-            }).render();
-
-
-
-            /*$("#tabs-images-listing-"+ self.model.get('id')).tabs();
-             self.selectTab(1);                                      */
-            //$("#tabs-images-listing-"+ self.model.get('id')).show();
-         }});
-
-   },
-   changeImagePage : function(page) {
-      var self = this;
-      //$("#tabs-projectImageThumb"+self.model.get('id')).empty();
-      self.imagesView = new ImageView({
-         page : page,
-         model : self.projectImages,
-         el:$("#tabs-projectImageThumb"+self.model.get('id')),
-         container : window.app.view.components.warehouse
-      }).render();
-   },
-
-   /**
-    * Get and Print only new images and remove delted images
-    */
-   refreshImages : function() {
-      var self = this;
-      if (self.imagesView == null) {
-         self.fetchImages();
-         return;
-      }
-      new ImageInstanceCollection({project:self.model.get('id')}).fetch({
-         success : function (collection, response) {
-            self.imagesView.refresh(collection);
-         }});
-   },
-   refreshImagesTabs : function() {
-
-      var self = this;
-      if(self.imagesTabsView==null) return; //imageView is not yet build
-      new ImageInstanceCollection({project:self.model.get('id')}).fetch({
-         success : function (collection, response) {
-            self.imagesTabsView.refresh(collection);
-         }});
-   },
-   showImages : function() {
-      $("#tabs-projectImageThumb"+this.model.id).show();
-      $("#tabs-projectImageListing"+this.model.id).hide();
-      $('#imageThumbs'+this.model.id).button( "disable" );
-      $('#imageArray'+this.model.id).button( "enable");
-   },
-   showImagesArray : function() {
-      $("#tabs-projectImageThumb"+this.model.id).hide();
-      $("#tabs-projectImageListing"+this.model.id).show();
-      $('#imageThumbs'+this.model.id).button( "enable" );
-      $('#imageArray'+this.model.id).button( "disable");
-   },
-   drawUserAnnotationsChart : function (collection, currentUser, response) {
-      // Create and populate the data table.
-      var data = new google.visualization.DataTable();
-      var cpt = -1;
-      var first = collection.at(0);
-
-      //init users
-      data.addColumn('string', 'Users');
-      collection.each(function (item){
-         cpt++;
-         if (cpt != currentUser && currentUser != undefined) return;
-         data.addColumn('number', item.get("key"));
-      });
-
-      data.addRows(_.size(first.get("terms")));
-
-      //init terms
-      var j = 0;
-      _.each(first.get("terms"), function (term){
-         data.setValue(j, 0, term.name);
-         j++;
-      });
-      cpt = -1;
-      var i = 0;
-      collection.each(function (item){
-         cpt++;
-         if (cpt != currentUser && currentUser != undefined) return;
-         var j = 1;
-         _.each(item.get("terms"), function (term){
-            data.setValue(j-1, i+1, term.value);
-            j++;
-         });
-         i++;
-
-      });
-      var width = Math.round($(window).width()/2 - 200);
-      // Create and draw the visualization.
-      new google.visualization.ColumnChart(document.getElementById('userAnnotationsChart')).
-          draw(data,
-          {title:"Term by users",
-             width:width, height:350,
-             hAxis: {title: "Users"}}
-      );
-   },
-   drawUserNbAnnotationsChart : function (collection, response) {
-      $("#userNbAnnotationsChart").empty();
-      var dataToShow = false;
-      // Create and populate the data table.
-      var data = new google.visualization.DataTable();
-
-      data.addRows(_.size(collection));
-
-      data.addColumn('string', 'Number');
-      data.addColumn('number', 0);
-      //var colors = [];
-      var j = 0;
-      collection.each(function(stat) {
-         //colors.push(stat.get('color'));
-         if (stat.get('value') > 0) dataToShow = true;
-         data.setValue(j, 0, stat.get("key"));
-         data.setValue(j, 1, stat.get("value"));
-         j++;
-      });
-      var width = Math.round($(window).width()/2 - 200);
-      // Create and draw the visualization.
-      new google.visualization.ColumnChart(document.getElementById("userNbAnnotationsChart")).
-          draw(data,
-          {title:"",
-             width:width, height:350,
-             vAxis: {title: "Number of annotations"},
-             hAxis: {title: "Users"}}
-      );
-      $("#userNbAnnotationsChart").show();
-   },
-   drawPieChart : function (collection, response) {
-      $("#projectPieChart").empty();
-      // Create and populate the data table.
-      var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Term');
-      data.addColumn('number', 'Number of annotations');
-      data.addRows(_.size(collection));
-      var i = 0;
-      var colors = [];
-      collection.each(function(stat) {
-         colors.push(stat.get('color'));
-         data.setValue(i,0, stat.get('key'));
-         data.setValue(i,1, stat.get('value'));
-         i++;
-      });
-      var width = Math.round($(window).width()/2 - 200);
-      // Create and draw the visualization.
-      new google.visualization.PieChart(document.getElementById('projectPieChart')).
-          draw(data, {width: width, height: 350,title:"", colors : colors});
-   },
-   drawColumnChart : function (collection, response) {
-      $("#projectColumnChart").empty();
-      var dataToShow = false;
-      // Create and populate the data table.
-      var data = new google.visualization.DataTable();
-
-      data.addRows(_.size(collection));
-
-      data.addColumn('string', 'Number');
-      data.addColumn('number', 0);
-      var colors = [];
-      var j = 0;
-      collection.each(function(stat) {
-         colors.push(stat.get('color'));
-         if (stat.get('value') > 0) dataToShow = true;
-         data.setValue(j, 0, stat.get("key"));
-         data.setValue(j, 1, stat.get("value"));
-         j++;
-      });
-      var width = Math.round($(window).width()/2 - 200);
-      // Create and draw the visualization.
-      new google.visualization.ColumnChart(document.getElementById("projectColumnChart")).
-          draw(data,
-          {title:"",
-             width:width, height:350,
-             vAxis: {title: "Number of annotations"},
-             hAxis: {title: "Terms"}}
-      );
-      $("#projectColumnChart").show();
-
-   },
-   fetchStats : function () {
-      var self = this;
-      if (self.model.get('numberOfAnnotations') == 0) return;
-
-
-
-      //Annotations by terms
-      var statsCollection = new StatsTermCollection({project:self.model.get('id')});
-      var statsCallback = function(collection, response) {
-         //Check if there is something to display
-         self.drawPieChart(collection, response);
-         self.drawColumnChart(collection, response);
-      }
-      statsCollection.fetch({
-         success : function(model, response) {
-            statsCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-         }
-      });
-
-      //Annotations by user
-      new StatsUserCollection({project:self.model.get('id')}).fetch({
-         success : function(collection, response) {
-            self.drawUserNbAnnotationsChart(collection, response);
-
-         }
-      });
-      new StatsUserAnnotationCollection({project:self.model.get('id')}).fetch({
-         success : function(collection, response) {
-            var nbCharts = _.size(collection);
-            self.initChartNavigator(nbCharts);
-            self.drawUserAnnotationsChart(collection, undefined, response);
-         }
-      });
-
-   },
-   initChartNavigator : function (nbCharts) {
-
-   },
    fetchProjectInfo : function () {
       var self = this;
       var json = self.model.toJSON();
@@ -537,13 +101,18 @@ var ProjectDashboardView = Backbone.View.extend({
       dateUpdated.setTime(json.updated);
       json.updated = dateUpdated.toLocaleDateString() + " " + dateUpdated.toLocaleTimeString();
 
-      self.resetElem("#projectInfoName",json.name);
-      self.resetElem("#projectInfoOntology",json.ontologyName);
-      self.resetElem("#projectInfoNumberOfSlides",json.numberOfSlides);
-      self.resetElem("#projectInfoNumberOfImages",json.numberOfImages);
-      self.resetElem("#projectInfoNumberOfAnnotations",json.numberOfAnnotations);
-      self.resetElem("#projectInfoCreated",json.created);
-      self.resetElem("#projectInfoUpdated",json.updated);
+      var resetElem = function(elem,txt) {
+         $(this.el).find(elem).empty();
+         $(this.el).find(elem).append(txt);
+      };
+
+      resetElem("#projectInfoName",json.name);
+      resetElem("#projectInfoOntology",json.ontologyName);
+      resetElem("#projectInfoNumberOfSlides",json.numberOfSlides);
+      resetElem("#projectInfoNumberOfImages",json.numberOfImages);
+      resetElem("#projectInfoNumberOfAnnotations",json.numberOfAnnotations);
+      resetElem("#projectInfoCreated",json.created);
+      resetElem("#projectInfoUpdated",json.updated);
 
       $("#projectInfoUserList").empty();
 
@@ -555,9 +124,6 @@ var ProjectDashboardView = Backbone.View.extend({
          });
          $("#projectInfoUserList").html(users.join(", "));
       });
-
-
-
    },
    fetchCommands : function (annotations) {
       var self = this;
@@ -686,30 +252,17 @@ var ProjectDashboardView = Backbone.View.extend({
 
 
    },
-   resetElem : function(elem,txt) {
-
-      $(this.el).find(elem).empty();
-      $(this.el).find(elem).append(txt);
+   showImagesThumbs : function() {
+      $("#tabs-projectImageThumb"+this.model.id).show();
+      $("#tabs-projectImageListing"+this.model.id).hide();
+      $('#imageThumbs'+this.model.id).button( "disable" );
+      $('#imageArray'+this.model.id).button( "enable");
    },
-   doLayout : function(tpl) {
-
-      var self = this;
-      var width = Math.round($(window).width()/2 - 200);
-      self.model.set({"width" : width+"px"});
-      var html = _.template(tpl, self.model.toJSON());
-      $(self.el).append(html);
-      window.app.controllers.browse.tabs.addDashboard(self);
-      self.initTabs();
-      self.showImages();
-   },
-   initWidgets : function() {
-      //return; //do nothing actually. We have to keep positions in memory if we do that
-
-      $( ".widgets" ).sortable({
-         connectWith: ".widgets"
-
-      });
-
-      $( ".widgets" ).disableSelection();
+   showImagesTable : function() {
+      $("#tabs-projectImageThumb"+this.model.id).hide();
+      $("#tabs-projectImageListing"+this.model.id).show();
+      $('#imageThumbs'+this.model.id).button( "enable" );
+      $('#imageArray'+this.model.id).button( "disable");
    }
+
 });

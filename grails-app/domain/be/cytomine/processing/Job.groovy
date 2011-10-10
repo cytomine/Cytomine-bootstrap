@@ -21,9 +21,15 @@ class Job extends SequenceDomain implements CytomineJob {   //TODO : SHOULD BE A
 
     static hasMany = [ jobData : JobData]
 
+
     static constraints = {
         user nullable : false
         progress(min : 0, max : 100)
+    }
+
+    public afterInsert() {
+        print "afterInsert"
+        execute()
     }
 
     static mapping = {

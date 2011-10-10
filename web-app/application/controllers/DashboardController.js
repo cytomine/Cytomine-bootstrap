@@ -36,7 +36,7 @@ var DashboardController = Backbone.Controller.extend({
    images : function(project) {
       var self = this;
       var func = function() {
-         self.view.refreshImages();
+         self.view.refreshImagesThumbs();
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
       }
@@ -46,7 +46,7 @@ var DashboardController = Backbone.Controller.extend({
       var self = this;
       var func = function() {
          self.view.changeImagePage(page);
-         self.view.showImages();
+         self.view.showImagesThumbs();
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
       }
@@ -55,8 +55,8 @@ var DashboardController = Backbone.Controller.extend({
    imagesthumbs :  function(project) {
       var self = this;
       var func = function() {
-         self.view.refreshImagesTabs();
-         self.view.showImages();
+         self.view.refreshImagesTable();
+         self.view.showImagesThumbs();
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
       }
@@ -65,8 +65,8 @@ var DashboardController = Backbone.Controller.extend({
    imagesarray : function(project) {
       var self = this;
       var func = function() {
-         self.view.refreshImagesTabs();
-         self.view.showImagesArray();
+         self.view.refreshImagesTable();
+         self.view.showImagesTable();
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
       }
@@ -76,7 +76,7 @@ var DashboardController = Backbone.Controller.extend({
    annotations : function(project) {
       var self = this;
       var func = function() {
-         self.view.refreshSelectedTerms();
+         self.view.refreshAnnotations();
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-annotations-"+window.app.status.currentProject);
       }
@@ -86,7 +86,7 @@ var DashboardController = Backbone.Controller.extend({
    dashboard : function(project, callback) {
       var self = this;
       var func = function() {
-         self.view.refresh();
+         self.view.refreshDashboard();
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-dashboard-"+window.app.status.currentProject);
          if (callback != undefined) callback.call();
@@ -102,8 +102,7 @@ var DashboardController = Backbone.Controller.extend({
             window.app.status.currentProjectModel = model;
             self.view = new ProjectDashboardView({
                model : model,
-               el: tabs,
-               container : window.app.view.components.explorer
+               el: tabs
             }).render();
             callback.call();
          }
