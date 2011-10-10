@@ -88,18 +88,14 @@ var ProjectDashboardView = Backbone.View.extend({
    fetchProjectInfo : function () {
       var self = this;
       var json = self.model.toJSON();
-      var idOntology = json.ontology;
-
-      //Get ontology name
-      //json.ontology = window.app.models.ontologies.get(idOntology).get('name');
 
       //Get created/updated date
-      var dateCreated = new Date();
-      dateCreated.setTime(json.created);
-      json.created = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
-      var dateUpdated = new Date();
-      dateUpdated.setTime(json.updated);
-      json.updated = dateUpdated.toLocaleDateString() + " " + dateUpdated.toLocaleTimeString();
+      /*var dateCreated = new Date();
+       dateCreated.setTime(json.created);
+       json.created = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
+       var dateUpdated = new Date();
+       dateUpdated.setTime(json.updated);
+       json.updated = dateUpdated.toLocaleDateString() + " " + dateUpdated.toLocaleTimeString();*/
 
       var resetElem = function(elem,txt) {
          $(this.el).find(elem).empty();
@@ -114,16 +110,14 @@ var ProjectDashboardView = Backbone.View.extend({
       resetElem("#projectInfoCreated",json.created);
       resetElem("#projectInfoUpdated",json.updated);
 
-      $("#projectInfoUserList").empty();
 
-      require(["text!application/templates/dashboard/UserInfo.tpl.html"], function(tpl) {
-         //Get users list
-         var users = []
-         _.each(self.model.get('users'), function (idUser) {
-            users.push(window.app.models.users.get(idUser).prettyName());
-         });
-         $("#projectInfoUserList").html(users.join(", "));
+      //Get users list
+      $("#projectInfoUserList").empty();
+      var users = []
+      _.each(self.model.get('users'), function (idUser) {
+         users.push(window.app.models.users.get(idUser).prettyName());
       });
+      $("#projectInfoUserList").html(users.join(", "));
    },
    fetchCommands : function (annotations) {
       var self = this;
