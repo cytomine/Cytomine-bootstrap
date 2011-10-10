@@ -41,7 +41,7 @@ class Job extends SequenceDomain implements CytomineJob {   //TODO : SHOULD BE A
     }
 
     def execute() {
-        throw "Method job.execute() not overridden"
+        //throw "Method job.execute() not overridden"
     }
 
     static Job createFromData(data) {
