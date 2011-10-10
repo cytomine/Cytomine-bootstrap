@@ -18,6 +18,9 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.image.ImageInstance
 import be.cytomine.security.Group
 import be.cytomine.image.AbstractImageGroup
+import be.cytomine.ontology.SuggestedTerm
+import be.cytomine.processing.Software
+import be.cytomine.processing.Job
 
 /**
  * Created by IntelliJ IDEA.
@@ -467,6 +470,193 @@ log.debug  "createOrGetBasicUser()"
     term
   }
 
+
+
+
+
+
+  static SuggestedTerm createOrGetBasicSuggestedTerm() {
+    log.debug  "createOrGetBasicSuggestedTerm()"
+
+    def annotation = getBasicAnnotationNotExist()
+    annotation.save(flush:true)
+    assert annotation!=null
+    def term = getBasicTermNotExist()
+    term.save(flush:true)
+    assert term!=null
+    def job = getBasicJobNotExist()
+    job.save(flush:true)
+    assert job!=null
+    def suggestedTerm = SuggestedTerm.findWhere('annotation':annotation,'term':term,'job':job)
+
+    log.debug "annotation.id:" + annotation.id + " term.id:" + term.id  + " job.id:" + job.id
+    if(!suggestedTerm) {
+      log.debug "suggestedTerm link"
+
+      suggestedTerm = new SuggestedTerm(annotation:annotation,term:term,job:job,rate:0d)
+        suggestedTerm.save(flush:true)
+      log.debug "AnnotationTerm.errors="+suggestedTerm.errors
+    }
+    assert suggestedTerm!=null
+    suggestedTerm
+  }
+
+  static SuggestedTerm getBasicSuggestedTermNotExist(String method) {
+
+    log.debug "getBasicAnnotationTermNotExist()"
+
+    def term = getBasicTermNotExist()
+    term.save(flush:true)
+    assert term!=null
+
+    def annotation = getBasicAnnotationNotExist()
+    annotation.save(flush:true)
+    assert annotation!=null
+
+    def job = getBasicJobNotExist()
+    job.save(flush:true)
+    assert job!=null
+
+    def suggestedTerm =  new SuggestedTerm(annotation:annotation,term:term,job:job,rate:0d)
+
+    log.debug "annotationTerm.errors="+suggestedTerm.errors
+    assert suggestedTerm!=null
+    suggestedTerm
+  }
+
+
+
+    
+    
+    static Job createOrGetBasicJob() {
+      log.debug  "createOrGetBasicJob()"
+      def job = Job.findAll()?.first()
+      if(!job) {
+
+        job = new Job(user:createOrGetBasicUser(),software:createOrGetBasicSoftware())
+        job.validate()
+        log.debug "job.errors="+job.errors
+        job.save(flush : true)
+        log.debug "job.errors="+job.errors
+      }
+      assert job!=null
+      job
+    }
+
+    static Job getBasicJobNotExist() {
+
+      log.debug "getBasicJobNotExist() start"
+      Software software = getBasicSoftwareNotExist()
+      User user = getBasicUserNotExist()
+      software.save(flush:true)
+      user.save(flush:true)
+      Job job =  new Job(user:user,software:software)
+      job.validate()
+      log.debug "getBasicJobNotExist() end"
+      job
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    static Software createOrGetBasicSoftware() {
+      log.debug  "createOrGetBasicSoftware()"
+      def software = Software.findByName("AnotherBasicSoftware")
+      if(!software) {
+
+        software = new Software(name:"AnotherBasicSoftware")
+        software.validate()
+        log.debug "software.errors="+software.errors
+        software.save(flush : true)
+        log.debug "software.errors="+software.errors
+      }
+      assert software!=null
+      software
+    }
+
+    static Software getBasicSoftwareNotExist() {
+
+      log.debug "getBasicSoftwareNotExist() start"
+      def random = new Random()
+      def randomInt = random.nextInt()
+      def software = Software.findByName(randomInt+"")
+
+      while(software){
+        randomInt = random.nextInt()
+        software = Software.findByName(randomInt+"")
+     }
+
+      software =  new Software(name:randomInt+"")
+      software.validate()
+      log.debug "getBasicSoftwareNotExist() end"
+      software
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
   static RelationTerm createOrGetBasicRelationTerm() {
     log.debug  "createOrGetBasicRelationTerm()"
     def relation = createOrGetBasicRelation()
@@ -533,12 +723,6 @@ log.debug  "createOrGetBasicUser()"
     def randomInt = random.nextInt()
 
     def term = getBasicTermNotExist()
-
-    log.debug "term:" + term.id
-    log.debug "term.name" + term.name
-    log.debug "term.created:" + term.created
-     log.debug "term.attached:" + term.attached
-     log.debug "term.dirty:" + term.dirty
 
     term.save(flush:true)
     assert term!=null

@@ -10,6 +10,12 @@ import be.cytomine.ontology.RelationTerm
  */
 class BootStrapData {
 
+
+
+    static def softwareSamples = [
+            [name:"ValidateAnnotation"]
+    ]
+
     /* AIS Storages */
     static def storages = [
             [name : "cytomine", basePath : "/home/stevben/Slides/", serviceUrl : "ais://", ip : "139.165.117.165", port : 22, username : "aisstorage", password : "GsQ3DMdX"],
@@ -102,7 +108,7 @@ class BootStrapData {
     static def retrievalServerSamples = [
             [
                     'url' : 'http://beta.cytomine.be/retrieval-web/api/resource',
-                    'description' : 'stevben-server'
+                    'description' : 'retrieval'
             ]
     ]
 

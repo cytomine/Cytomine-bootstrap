@@ -15,6 +15,6 @@ class RetrievalServer extends SequenceDomain {
   String url
   int port = 0
 
-
+  String toString() { return url; }
 
 }

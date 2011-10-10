@@ -40,6 +40,8 @@ import be.cytomine.data.ImageData3
 import be.cytomine.data.ImageData2
 import be.cytomine.data.ImageData4
 import be.cytomine.data.ImageData5
+import be.cytomine.processing.Software
+import be.cytomine.processing.Job
 
 class BootStrap {
     def springSecurityService
@@ -115,6 +117,7 @@ class BootStrap {
         createRetrievalServers(BootStrapData.retrievalServerSamples)
         createOntology(BootStrapData.ontologySamples)
         createProjects(BootStrapData.projectSamples)
+        createSoftware(BootStrapData.softwareSamples)
 
         /* Slides */
         if (env != BootStrap.test) {
@@ -715,6 +718,32 @@ class BootStrap {
                 RelationTerm.link(relation, term1, term2)
             }
 
+        }
+    }
+
+    def createSoftware(softwareSamples) {
+        println "createRelation"
+        softwareSamples.each { item ->
+            if(Software.findByName(item.name)) return
+            Software software = new Software(name:item.name)
+            println "create software="+ software.name
+
+            if(software.validate()) {
+                println "Creating software : ${software.name}..."
+                software.save(flush : true)
+
+                if(Job.findAllBySoftware(software).isEmpty()) {
+                    Job job = new Job(user:User.findByUsername("lrollus"),software:software)
+                    job.save(flush:true)
+                }
+
+            } else {
+                println("\n\n\n Errors in account boostrap for ${software.name}!\n\n\n")
+                software.errors.each {
+                    err -> println err
+                }
+
+            }
         }
     }
 
