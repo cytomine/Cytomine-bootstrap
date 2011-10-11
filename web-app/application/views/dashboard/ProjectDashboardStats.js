@@ -27,6 +27,12 @@ var ProjectDashboardStats = Backbone.View.extend({
             self.drawUserAnnotationsChart(collection, undefined, response);
          }
       });
+      new SuggestedTermCollection({project:self.model.get('id')}).fetch({
+         success : function(collection, response) {
+            self.drawWorstTermPieChart(collection, response);
+         }
+      });
+
    },
    drawUserAnnotationsChart : function (collection, currentUser, response) {
       // Create and populate the data table.
@@ -152,5 +158,26 @@ var ProjectDashboardStats = Backbone.View.extend({
       );
       $("#projectColumnChart").show();
 
+   },
+   drawWorstTermPieChart : function (collection, response) {
+      $("#worstTermprojectPieChart").empty();
+      console.log("drawWorstTermPieChart:"+_.size(collection));
+      // Create and populate the data table.
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Term');
+      data.addColumn('number', 'Number of questionable annotations');
+      data.addRows(_.size(collection));
+      var i = 0;
+      var colors = [];
+      collection.each(function(stat) {
+         colors.push(stat.get('color'));
+         data.setValue(i,0, stat.get('name'));
+         data.setValue(i,1, stat.get('rate'));
+         i++;
+      });
+      var width = Math.round($(window).width()/2 - 200);
+      // Create and draw the visualization.
+      new google.visualization.PieChart(document.getElementById('worstTermprojectPieChart')).
+          draw(data, {width: width, height: 350,title:"", colors : colors});
    }
 });

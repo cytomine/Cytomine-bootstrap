@@ -555,6 +555,7 @@ AnnotationLayer.prototype = {
          }
       } else {
          _.each(annotation.get("term"), function(idTerm) {
+
             var term = window.app.status.currentTermsCollection.get(idTerm);
             if (term == undefined) return;
             feature.style = {

@@ -41,6 +41,49 @@ class RestSuggestedTermController extends RestController{
     else responseNotFound("SuggestedTerm","Term",params.idterm,"Annotation",params.idannotation,"Job",params.idjob)
   }
 
+  def worstAnnotation = {
+      log.info "List suggested annotation-term for project " + params.idproject +" max="+ params.max
+      List<SuggestedTerm> results = new ArrayList<SuggestedTerm>()
+      Project project = Project.read(params.idproject)
+      int max = params.max ? Integer.parseInt(params.max) : 20
+
+      List<SuggestedTerm> suggest = SuggestedTerm.findAllByProject(project,[sort:"rate", order:"desc"])
+
+      for(int i=0;i<suggest.size() && max>results.size();i++) {
+          if(suggest.get(i).annotationMapWithBadTerm())
+              results.add(suggest.get(i));
+      }
+
+      responseSuccess(results)
+  }
+
+  def worstTerm = {
+      log.info "List worst term for project " + params.idproject
+
+      Map<Term,Integer> termMap = new HashMap<Term,Integer>()
+      Project project = Project.read(params.idproject)
+      int max = params.max ? Integer.parseInt(params.max) : 20
+
+      List<Term> termList = Term.findAllByOntology(project.ontology)
+      termList.each {termMap.put(it,0)}
+
+      List<SuggestedTerm> suggest = SuggestedTerm.findAllByProject(project,[sort:"rate", order:"desc"])
+
+      for(int i=0;i<suggest.size();i++) {
+          if(suggest.get(i).annotationMapWithBadTerm()) {
+             Term term = suggest.get(i).term
+             termMap.put(term,termMap.get(term)+1);
+          }
+      }
+      termList.clear()
+      termMap.each {  key, value ->
+          key.rate = value
+          termList.add(key)
+      }
+
+      responseSuccess(termList)
+  }
+
 
   def add = {
     log.info "Add"

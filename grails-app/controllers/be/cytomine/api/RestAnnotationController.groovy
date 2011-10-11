@@ -26,6 +26,8 @@ import org.perf4j.LoggingStopWatch
 import org.perf4j.StopWatch
 import be.cytomine.image.server.RetrievalServer
 import be.cytomine.ontology.Term
+import be.cytomine.ontology.SuggestedTerm
+import be.cytomine.command.suggestedTerm.DeleteSuggestedTermCommand
 
 class RestAnnotationController extends RestController {
 
@@ -239,6 +241,16 @@ class RestAnnotationController extends RestController {
                     def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id]) as JSON
                     Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData :postDataRT.toString() ,user: currentUser,printMessage:false)
                     def result = processCommand(deleteAnnotationTermCommand, currentUser)
+                }
+
+                def suggestTerm = SuggestedTerm.findAllByAnnotation(annotation)
+                log.info "suggestTerm= " +suggestTerm.size()
+
+                suggestTerm.each{ suggestterm ->
+                    log.info "unlink suggestterm:" +suggestterm.id
+                    def postDataRT = ([term: suggestterm.term.id,annotation: suggestterm.annotation.id, job:suggestterm.job.id]) as JSON
+                    Command deleteSuggestedTermCommand = new DeleteSuggestedTermCommand(postData :postDataRT.toString() ,user: currentUser,printMessage:false)
+                    def result = processCommand(deleteSuggestedTermCommand, currentUser)
                 }
             }
         }

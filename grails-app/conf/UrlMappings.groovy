@@ -138,6 +138,12 @@ class UrlMappings {
             action = [GET:"show", DELETE:"delete"]
         }
 
+        "/api/project/$idproject/annotation/term/suggest"(controller:"restSuggestedTerm"){
+            action = [GET:"worstAnnotation"]
+        }
+        "/api/project/$idproject/term/suggest"(controller:"restSuggestedTerm"){
+            action = [GET:"worstTerm"]
+        }
 
         "/api/term/$idterm/annotation"(controller:"restAnnotationTerm"){
             action = [GET: "listAnnotationByTerm"]

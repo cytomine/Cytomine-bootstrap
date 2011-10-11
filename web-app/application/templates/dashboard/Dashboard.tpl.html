@@ -18,10 +18,10 @@
 
         <div id="projectLastCommandPanel" style="margin-right:30px;min-width: {{width}};min-height: 250px;"  class="span6 hero-unit">
             <h3>Activity</h3>
-            <div style="max-height: 200px;">
+            <div style="height: 200px;">
                 <div>
                     <ul>
-                        <div id="lastactionitem" style="height: 180px;overflow-y: auto;" ></div>
+                        <div id="lastactionitem" style="max-height: 200px;overflow-y: auto;" ></div>
                     </ul>
                 </div>
             </div>
@@ -52,6 +52,22 @@
             <h3>Number of annotations by user</h3>
             <div>
                 <div id="userNbAnnotationsChart">No data to display</div>
+            </div>
+        </div>
+        <div id="worstAnnotationPanel" style="margin-right:30px;min-width: {{width}};min-height: 250px;"  class="span6 hero-unit">
+            <h3>Most Questionable Annotation Term</h3>
+            <div style="height: 200px;">
+                <div>
+                    <ul>
+                        <div id="worstannotationitem" style="max-height: 300px;overflow-y: auto;" ></div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="worstTermPieChartPanel" style="margin-right:30px;min-width: {{width}};"  class="span6 hero-unit">
+            <h3>Most Questionable Terms (pie)</h3>
+            <div>
+                <div id="worstTermprojectPieChart">No data to display</div>
             </div>
         </div>
 
