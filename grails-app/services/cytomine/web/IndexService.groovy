@@ -86,6 +86,15 @@ class IndexService {
              * Term
              */
             createIndex(statement,"term","ontology_id");
+            /**
+             * Suggested Term
+             */
+            createIndex(statement,"suggested_term","project_id");
+            createIndex(statement,"suggested_term","annotation_id");
+            createIndex(statement,"suggested_term","term_id");
+            createIndex(statement,"suggested_term","job_id");
+            createIndex(statement,"suggested_term","rate");
+
         } catch (org.postgresql.util.PSQLException e) {
             println e
         }
