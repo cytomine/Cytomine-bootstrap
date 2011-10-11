@@ -13,8 +13,10 @@ class Term extends SequenceDomain implements Serializable {
     Ontology ontology
     String color
 
-    static belongsTo = [ontology:Ontology]
+    Integer rate
 
+    static belongsTo = [ontology:Ontology]
+    static transients = ["rate"]
     //static belongsTo = Annotation
     static hasMany = [annotationTerm:AnnotationTerm,relationTerm1:RelationTerm, relationTerm2:RelationTerm]
 
@@ -114,7 +116,7 @@ class Term extends SequenceDomain implements Serializable {
             returnArray['name'] = it.name
             returnArray['comment'] = it.comment
             returnArray['ontology'] = it.getIdOntology()
-
+            try {returnArray['rate'] = it.rate}catch(Exception e){println e}
             RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT),Term.get(it.id))
 
             returnArray['parent'] = rt?.getIdTerm1()
@@ -130,5 +132,11 @@ class Term extends SequenceDomain implements Serializable {
             return returnArray
         }
     }
+     public boolean equals(Object o) {
+        if(!o) return false
+        if (!o instanceof Term) return false
+        try {return ((Term) o).getId() == this.getId()}catch(Exception e) { return false}
+         //if no try/catch, when getting term from ontology => GroovyCastException: Cannot cast object 'null' with class 'org.codehaus.groovy.grails.web.json.JSONObject$Null' to class 'be.cytomine.ontology.Term'
 
+    }
 }

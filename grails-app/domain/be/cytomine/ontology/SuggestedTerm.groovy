@@ -3,6 +3,7 @@ package be.cytomine.ontology
 import be.cytomine.SequenceDomain
 import be.cytomine.processing.Job
 import grails.converters.JSON
+import be.cytomine.project.Project
 
 class SuggestedTerm extends SequenceDomain implements Serializable{
 
@@ -10,17 +11,30 @@ class SuggestedTerm extends SequenceDomain implements Serializable{
     Term term
     Double rate
     Job job
+    Project project
 
     static constraints = {
         annotation nullable : false
         term nullable : false
         rate(min : 0d, max : 1d)
         job nullable : false
+        project nullable : true
+    }
+
+    public beforeInsert() {
+        super.beforeInsert()
+        project = annotation?.image?.project;
     }
 
     static SuggestedTerm createFromData(jsonSuggestedTerm) {
         def suggestedTerm = new SuggestedTerm()
         getFromData(suggestedTerm,jsonSuggestedTerm)
+    }
+
+    public boolean annotationMapWithBadTerm() {
+        List<Term> terms = annotation.terms()
+        return !terms.isEmpty() && !terms.contains(term);
+
     }
 
     static SuggestedTerm getFromData(suggestedTerm,jsonSuggestedTerm) {
