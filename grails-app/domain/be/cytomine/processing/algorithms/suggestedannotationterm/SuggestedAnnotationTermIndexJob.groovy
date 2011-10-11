@@ -7,11 +7,14 @@ import be.cytomine.security.User
 
 class SuggestedAnnotationTermIndexJob extends Job {
 
-    Project project
+
     int N = 500
     int indexCompressThreshold = 0
     int maxPercentageSimilarWord = 0
-    String kyotoCacheGiga = 3
+    String kyotoCacheGiga = "3G"
+
+    //We can index annotation from multiple project (from same ontology)
+    static hasMany = [projects : Project ]
 
     static constraints = {
     }

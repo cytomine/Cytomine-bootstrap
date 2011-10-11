@@ -5,10 +5,10 @@ import be.cytomine.project.Project
 
 class SuggestedAnnotationTermSearchJob extends Job {
 
+    //We can only check one project
     Project project
     int N = 500
-    int indexCompressThreshold = 0
-    int maxPercentageSimilarWord = 0
+    int k = 30
     String kyotoCacheGiga = "3G"
 
     be.cytomine.processing.algorithms.suggestedannotationterm.SuggestedAnnotationTermIndexJob suggestedAnnotationTermIndexJob
