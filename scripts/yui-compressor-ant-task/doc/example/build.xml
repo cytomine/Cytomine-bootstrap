@@ -83,6 +83,7 @@
             <fileset dir="${src.dir}" includes="application/models/TermModel.js" />
             <fileset dir="${src.dir}" includes="application/models/OntologyModel.js" />
             <fileset dir="${src.dir}" includes="application/models/UserModel.js" />
+            <fileset dir="${src.dir}" includes="application/models/ImageFilter.js" />
             <fileset dir="${src.dir}" includes="application/models/ProjectModel.js" />
             <fileset dir="${src.dir}" includes="application/models/AnnotationModel.js" />
             <fileset dir="${src.dir}" includes="application/models/SlideModel.js" />

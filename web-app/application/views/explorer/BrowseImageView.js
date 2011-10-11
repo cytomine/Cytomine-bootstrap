@@ -254,53 +254,8 @@ var BrowseImageView = Backbone.View.extend({
    initIIP : function () {
 
       var self = this;
-      var initZoomifyLayer = function(metadata, zoomify_urls) {
-         _.each(zoomify_urls, function (url) {
-            console.log("URL > " + url);
-         });
-
-
-         var baseLayer = new OpenLayers.Layer.Zoomify(
-             "Original",
-             zoomify_urls,
-             new OpenLayers.Size( metadata.width, metadata.height )
-         );
-         //baseLayer.transitionEffect = 'resize';
-
-         var haematoxylinURLS = _.map(zoomify_urls, function (url){ return "proxy/haematoxylin?url="+url;});
-         var haematoxylinLayer = new OpenLayers.Layer.Zoomify( "Haematoxylin", haematoxylinURLS, new OpenLayers.Size( metadata.width, metadata.height ) );
-         var eosinURLS = _.map(zoomify_urls, function (url){ return "proxy/eosin?url="+url;});
-         var eosinLayer = new OpenLayers.Layer.Zoomify( "Eosin", eosinURLS, new OpenLayers.Size( metadata.width, metadata.height ) );
-         var binaryURLS = _.map(zoomify_urls, function (url){ return "proxy/binary?url="+url;});
-         var binaryLayer = new OpenLayers.Layer.Zoomify( "Binary", binaryURLS, new OpenLayers.Size( metadata.width, metadata.height ) );
-         //String [] methods={" "Li", "MaxEntropy","Mean", "MinError(I)", "Minimum", "Moments", "Otsu", "Percentile", "RenyiEntropy", "Shanbhag" , "Triangle", "Yen"};
-         var thresholdLayersParameters = [
-            { name : "Haematoxylin", baseUrl : "proxy/haematoxylin?url=" },
-            { name : "Eosin", baseUrl : "proxy/eosin?url=" },
-            { name : "Binary", baseUrl : "proxy/binary?url=" },
-            { name : "Huang Threshold", baseUrl : "proxy/huang?url=" },
-            { name : "Intermodes Threshold", baseUrl : "proxy/intermodes?url=" },
-            { name : "IsoData Threshold", baseUrl : "proxy/isodata?url=" },
-            { name : "Li Threshold", baseUrl : "proxy/li?url=" },
-            { name : "MaxEntropy Threshold", baseUrl : "proxy/maxentropy?url=" },
-            { name : "Mean Threshold", baseUrl : "proxy/mean?url=" },
-            { name : "MinError(I) Threshold", baseUrl : "proxy/minerror?url=" },
-            { name : "Minimum Threshold", baseUrl : "proxy/minimum?url=" },
-            { name : "Moments Threshold", baseUrl : "proxy/moments?url=" },
-            { name : "Otsu Threshold", baseUrl : "proxy/otsu?url=" },
-            { name : "Percentile Threshold", baseUrl : "proxy/percentile?url=" },
-            { name : "RenyiEntropy Threshold", baseUrl : "proxy/renyientropy?url=" },
-            { name : "Shanbhag Threshold", baseUrl : "proxy/shanbhag?url=" },
-            { name : "Triangle Threshold", baseUrl : "proxy/triangle?url=" },
-            { name : "Yen Threshold", baseUrl : "proxy/yen?url=" }
-         ]
-         var thresholdLayers = []
-         _.each(thresholdLayersParameters, function (parameters) {
-            var url = _.map(zoomify_urls, function (url){ return parameters.baseUrl+url;});
-            var layer =   new OpenLayers.Layer.Zoomify( parameters.name, url, new OpenLayers.Size( metadata.width, metadata.height ) );
-            thresholdLayers.push(layer);
-         });
-         var layerSwitcher = self.createLayerSwitcher();
+      var initZoomifyLayer = function(metadata, zoomify_urls, imageFilters) {
+         self.createLayerSwitcher();
 
          //var numZoomLevels =  metadata.nbZoom;
          /* Map with raster coordinates (pixels) from Zoomify image */
@@ -321,7 +276,7 @@ var BrowseImageView = Backbone.View.extend({
                new OpenLayers.Control.PanZoomBar(),
                new OpenLayers.Control.MousePosition(),
                new OpenLayers.Control.KeyboardDefaults()],
-            eventListeners: {
+               eventListeners: {
                //"moveend": mapEvent,
                "zoomend": function (event) {
                   var map = event.object;
@@ -368,12 +323,20 @@ var BrowseImageView = Backbone.View.extend({
             var height = $(window).height() - paddingTop;
             $("#map"+self.model.get('id')).css("height",height);
          });
-         /*self.addBaseLayer(binaryLayer);*/
-         _.each (thresholdLayers , function  (layer) {
+
+         var baseLayer = new OpenLayers.Layer.Zoomify(
+             "Original",
+             zoomify_urls,
+             new OpenLayers.Size( metadata.width, metadata.height )
+         );
+         imageFilters.each(function (imageFilter) {
+            var url = _.map(zoomify_urls, function (url){
+               return imageFilter.get("baseUrl")+url;
+            });
+            var layer =   new OpenLayers.Layer.Zoomify( imageFilter.get("name"), url, new OpenLayers.Size( metadata.width, metadata.height ) );
             self.addBaseLayer(layer);
          });
-         /*self.addBaseLayer(haematoxylinLayer);
-          self.addBaseLayer(eosinLayer);*/
+
          self.addBaseLayer(baseLayer);
          self.createOverviewMap();
          self.map.zoomToMaxExtent();
@@ -391,6 +354,8 @@ var BrowseImageView = Backbone.View.extend({
             idealZoom--;
          }
          self.map.zoomTo(idealZoom);
+
+
       }
 
       var t_width  = self.model.get("width");
@@ -404,7 +369,12 @@ var BrowseImageView = Backbone.View.extend({
       var metadata = {width : self.model.get("width"), height : self.model.get("height"), nbZoom : nbZoom, overviewWidth : 200, overviewHeight : Math.round((200/self.model.get("width")*self.model.get("height")))};
       new ImageServerUrlsModel({id : self.model.get('baseImage')}).fetch({
          success : function (model, response) {
-            initZoomifyLayer(metadata, model.get('imageServersURLs'));
+            new ProjectImageFilterCollection({ project : self.model.get("project")}).fetch({
+               success : function (imageFilters, response) {
+                  initZoomifyLayer(metadata, model.get('imageServersURLs'), imageFilters);
+               }
+            });
+
          }
       });
    },

@@ -55,7 +55,7 @@ class Job extends SequenceDomain implements CytomineJob {   //TODO : SHOULD BE A
             if (data.doRGB) job.doRGB = Boolean.parseBoolean(data.doRGB)
             if (data.doEDGE) job.doEDGE = Boolean.parseBoolean(data.doEDGE)
             if (data.doHSV) job.doHSV = Boolean.parseBoolean(data.doHSV)
-            if (data.doGRAY) job.doGRAY = Boolean.parseBoolean(data.doGRAY)
+                if (data.doGRAY) job.doGRAY = Boolean.parseBoolean(data.doGRAY)
             if (data.doLBP) job.doLBP = Boolean.parseBoolean(data.doLBP)
             if (data.ratio) job.ratio = Integer.parseInt(data.ratio)
             if (data.split) job.split = Integer.parseInt(data.split)

@@ -143,7 +143,7 @@ var ExplorerTabs = Backbone.View.extend({
       tabs.tabs("add", "#tabs-dashboard-"+window.app.status.currentProject, 'Dashboard');
       tabs.tabs("add", "#tabs-images-"+window.app.status.currentProject, 'Images');
       tabs.tabs("add", "#tabs-annotations-"+window.app.status.currentProject, 'Annotations');
-      tabs.tabs("add", "#tabs-algos-"+window.app.status.currentProject, 'Algorithms');
+      tabs.tabs("add", "#tabs-algos-"+window.app.status.currentProject, 'Expert');
       $("#explorer > .browser").show();
       $("#explorer > .noProject").hide();
       this.tabs.push({

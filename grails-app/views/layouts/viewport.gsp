@@ -104,6 +104,7 @@
         <!-- Models -->
         <script type="text/javascript" src="application/models/ImageModel.js" ></script>
         <script type="text/javascript" src="application/models/TermModel.js" ></script>
+        <script type="text/javascript" src="application/models/ImageFilter.js" ></script>
         <script type="text/javascript" src="application/models/OntologyModel.js" ></script>
         <script type="text/javascript" src="application/models/UserModel.js" ></script>
         <script type="text/javascript" src="application/models/ProjectModel.js" ></script>
