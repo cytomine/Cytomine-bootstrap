@@ -26,9 +26,9 @@ class Project extends SequenceDomain {
 
 
     static constraints = {
-        name ( maxSize : 150, unique : true, blank : false)
-        //countAnnotations(nullable:true)
-        //countImages(nullable:true)
+           name(maxSize : 150, unique : true, blank : false, validator: {
+              return !Project.findByNameIlike(it)
+            })
     }
 
     static mapping = {

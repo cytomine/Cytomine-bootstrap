@@ -491,10 +491,10 @@ class BootStrap {
 
     def createProjects(projectSamples) {
         projectSamples.each { item->
-            if(Project.findByName(item.name)) return
+            if(Project.findByNameIlike(item.name)) return
             def ontology = Ontology.findByName(item.ontology)
             def project = new Project(
-                    name : item.name,
+                    name : item.name.toString().toUpperCase(),
                     ontology : ontology,
                     created : new Date(),
                     updated : item.updated,
