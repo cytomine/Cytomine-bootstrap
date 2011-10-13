@@ -81,6 +81,9 @@
     <script type="text/javascript" src="lib/jcarousel/jquery.carousel.min.js"></script>
     <script type="text/javascript" src="lib/tinysort/jquery.tinysort.min.js"></script>
 
+    <!-- multiselect -->
+    <script type="text/javascript" src="lib/multisel/jquery.multiselect.min.js"></script>
+    <link href="lib/multisel/jquery.multiselect.css" rel="stylesheet" type="text/css">
 
     <!-- Styles -->
     <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>

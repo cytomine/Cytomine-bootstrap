@@ -48,10 +48,18 @@ var AnnotationCollection = Backbone.Collection.extend({
         if (this.user != undefined) {
             return "api/user/" + this.user + "/imageinstance/" + this.image + "/annotation.json";
         } else if (this.term != undefined && this.project !=undefined){
-           if (this.term == "0") { //annotations without terms
-               return "api/project/" + this.project + "/annotation.json?noTerm=true";
-           }
-           return "api/term/" + this.term + "/project/" + this.project +"/annotation.json";
+
+            if (this.term == "0" && this.users==undefined) return "api/project/" + this.project + "/annotation.json?noTerm=true";
+            if (this.term == "0" && this.users!=undefined) return "api/project/" + this.project + "/annotation.json?noTerm=true&users="+this.users.join('_');
+            if (this.term != "0" && this.users==undefined) return "api/term/" + this.term + "/project/" + this.project + "/annotation.json";
+            if (this.term != "0" && this.users!=undefined) {
+                console.log("good url");
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users="+this.users.join('_');
+            }
+
+            return "error";
+
+
         } else if (this.project != undefined) {
             return "api/project/" + this.project + "/annotation.json";
         }  else if (this.image != undefined && this.term != undefined){
@@ -69,6 +77,7 @@ var AnnotationCollection = Backbone.Collection.extend({
         this.user = options.user;
         this.project = options.project;
         this.term = options.term;
+        this.users = options.users;
     },
     comparator : function (annotation) {
         return -annotation.get("id"); //id or created (chronology?)

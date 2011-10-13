@@ -19,8 +19,14 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
     try {
       def json = JSON.parse(postData)
       json.user = user.id
+
       newAnnotation = Annotation.createFromData(json)
-      if(newAnnotation.location == null || newAnnotation.location.getNumPoints()<1) throw new ParseException("Gemo is empty:"+newAnnotation.location.getNumPoints() +" points")
+      log.info "newAnnotation.location=" +newAnnotation.location
+      log.info "newAnnotation.location null:" +(newAnnotation.location==null) + " blank:" + newAnnotation.location.toString().equals("")
+
+      if(!newAnnotation.location) throw new ParseException("Geo is null: 0 points")
+      if(newAnnotation.location.getNumPoints()<1) throw new ParseException("Geo is empty:"+newAnnotation.location.getNumPoints() +" points")
+
       log.info "newAnnotation.project=" +newAnnotation?.image?.project
       super.changeCurrentProject(newAnnotation?.image?.project)
       return super.validateAndSave(newAnnotation,["#ID#",newAnnotation?.imageFileName()] as Object[])

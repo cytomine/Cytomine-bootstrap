@@ -61,7 +61,10 @@ class RestAnnotationTermController extends RestController {
   def listAnnotationByTerm = {
     log.info "listByTerm with idTerm=" +  params.idterm
     Term term = Term.read(params.idterm)
-    if(term!=null) responseSuccess(term.annotations())
+
+    if(term!=null) {
+        responseSuccess(term.annotations())
+    }
     else responseNotFound("Annotation Term","Term", params.idterm)
   }
 
@@ -69,12 +72,25 @@ class RestAnnotationTermController extends RestController {
     log.info "listByTerm with idTerm=" +  params.idterm
     Term term = Term.read(params.idterm)
     Project project = Project.read(params.idproject)
+    List<User> userList = project.users()
+
+      if(params.users) {
+            String[] paramsIdUser = params.users.split("_")
+            List<User> userListTemp = new ArrayList<User>()
+            userList.each { user ->
+                if(Arrays.asList(paramsIdUser).contains(user.id+"")) userListTemp.push(user);
+            }
+            userList = userListTemp;
+        }
+      log.info "List by idTerm " + term.id + " with user:"+ userList
+
+
     if(term==null) responseNotFound("Term", params.idterm)
     if(project==null) responseNotFound("Project", params.idproject)
     def annotationFromTermAndProject = []
     def annotationFromTerm = term.annotations()
     annotationFromTerm.each { annotation ->
-      if(annotation.project()!=null && annotation.project().id == project.id)
+      if(annotation.project()!=null && annotation.project().id == project.id && userList.contains(annotation.user))
         annotationFromTermAndProject << annotation
     }
     responseSuccess(annotationFromTermAndProject)

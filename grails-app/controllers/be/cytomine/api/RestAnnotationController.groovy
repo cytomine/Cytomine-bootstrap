@@ -56,8 +56,22 @@ class RestAnnotationController extends RestController {
     }
 
     def listByProject = {
-        if (params.noTerm == "true") {
-            Project project = Project.read(params.id)
+        Project project = Project.read(params.id)
+        List<User> userList = project.users()
+
+        if(params.users) {
+            String[] paramsIdUser = params.users.split("_")
+            List<User> userListTemp = new ArrayList<User>()
+            userList.each { user ->
+                if(Arrays.asList(paramsIdUser).contains(user.id+"")) userListTemp.push(user);
+            }
+            userList = userListTemp;
+        }
+        log.info "List by project " + project.id + " with user:"+ userList
+
+        if(userList.isEmpty()) responseSuccess([])
+        else if (params.noTerm == "true") {
+
             def terms = Term.findAllByOntology(project.getOntology())
             def annotationsWithTerms = AnnotationTerm.createCriteria().list {
                 inList("term", terms)
@@ -70,6 +84,7 @@ class RestAnnotationController extends RestController {
             }
             def annotations = Annotation.createCriteria().list {
                 inList("image", project.imagesinstance())
+                inList("user",userList)
                 not {
                     inList("id", annotationsWithTerms)
                 }
@@ -77,8 +92,7 @@ class RestAnnotationController extends RestController {
             if(project) responseSuccess(annotations)
             else responseNotFound("Project",params.id)
         } else {
-            Project project = Project.read(params.id)
-            def annotations = Annotation.findAllByImageInList(project.imagesinstance())
+            def annotations = Annotation.findAllByImageInListAndUserInList(project.imagesinstance(),userList)
             if(project) responseSuccess(annotations)
             else responseNotFound("Project",params.id)
         }
