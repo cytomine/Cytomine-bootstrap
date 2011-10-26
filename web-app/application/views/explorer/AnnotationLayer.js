@@ -90,9 +90,7 @@ AnnotationLayer.prototype = {
                if (evt.feature.attributes.listener != 'NO') {
 
                   evt.feature.attributes.measure = 'YES';
-                  var format = new OpenLayers.Format.WKT();
-                  var geomwkt = format.write(evt.feature);
-                  self.addAnnotation(geomwkt);
+                  self.addAnnotation(evt.feature);
                }
             }
             else {
@@ -445,10 +443,11 @@ AnnotationLayer.prototype = {
    },
 
    /*Add annotation in database*/
-   addAnnotation: function (geomwkt) {
-
-
+   addAnnotation: function (feature) {
       var alias = this;
+      var format = new OpenLayers.Format.WKT();
+      var geomwkt = format.write(feature);
+
       var annotation = new AnnotationModel({
          //"class": "be.cytomine.project.Annotation",
          name: "",
@@ -474,7 +473,7 @@ AnnotationLayer.prototype = {
                   var terms = alias.ontologyTreeView.getTermsChecked();
 
                   if (terms.length == 0) {
-                     alias.addTermCallback(0, 0, geomwkt, annotationID, message, undefined);
+                     alias.addTermCallback(0, 0, feature, annotationID, message, undefined);
                   }
 
                   var counter = 0;
@@ -483,7 +482,7 @@ AnnotationLayer.prototype = {
                         term: idTerm,
                         annotation: response.annotation.id
                      }).save(null, {success : function (termModel, response) {
-                        alias.addTermCallback(terms.length, ++counter, geomwkt, annotationID, message, idTerm);
+                        alias.addTermCallback(terms.length, ++counter, feature, annotationID, message, idTerm);
                      }});
                   });
 

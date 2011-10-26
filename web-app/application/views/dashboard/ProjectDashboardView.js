@@ -84,15 +84,15 @@ var ProjectDashboardView = Backbone.View.extend({
          new AnnotationCollection({project:self.model.id}).fetch({
             success : function (collection, response) {
                self.fetchCommands(collection);
-                       console.log("AnnotationCollection ok");
-                       new TermCollection({idOntology:self.model.get("ontology")}).fetch({
+               console.log("AnnotationCollection ok");
+               new TermCollection({idOntology:self.model.get("ontology")}).fetch({
+                  success : function (terms, response) {
+                     console.log("TermCollection ok:"+terms.length);
+                     window.app.status.currentTermsCollection = terms;
+                     self.fetchWorstAnnotations(collection,terms);
 
-                        success : function (terms, response) {
-                                    console.log("TermCollection ok:"+terms.length);
-                           self.fetchWorstAnnotations(collection,terms);
-
-                        }
-                     });
+                  }
+               });
             }
          });
          new ProjectDashboardStats({model : self.model}).fetchStats();
@@ -221,7 +221,7 @@ var ProjectDashboardView = Backbone.View.extend({
    },
 
    fetchWorstAnnotations : function (annotations, terms) {
-       console.log("fetchWorstAnnotations");
+      console.log("fetchWorstAnnotations");
       var self = this;
       require([
          "text!application/templates/dashboard/SuggestedAnnotationTerm.tpl.html"],
@@ -231,9 +231,9 @@ var ProjectDashboardView = Backbone.View.extend({
              var suggestedCallback = function(collection, response) {
                 $("#worstannotationitem").empty();
 
-                 if(collection.length==0) {
-                     $("#worstannotationitem").append("You must run Retrieval Validate Algo for this project...");
-                 }
+                if(collection.length==0) {
+                   $("#worstannotationitem").append("You must run Retrieval Validate Algo for this project...");
+                }
 
                 collection.each(function(suggest) {
                    var json = suggest.toJSON()
@@ -241,15 +241,15 @@ var ProjectDashboardView = Backbone.View.extend({
                    var annotation = annotations.get(json.annotation);
                    var suggestedTerm =  terms.get(json.term).get('name');
                    var realTerms = new Array();
-                    _.each(annotation.get('term'), function(idTerm){ realTerms.push(terms.get(idTerm).get('name')); });
+                   _.each(annotation.get('term'), function(idTerm){ realTerms.push(terms.get(idTerm).get('name')); });
                    var termsAnnotation =  realTerms.join();
                    var text = "<b>" + suggestedTerm +"</b> for annotation " + annotation.id + " instead of <b>" + termsAnnotation +"</b>";
 
-                      var cropStyle = "block";
-                      var cropURL = annotation.get("cropURL");
+                   var cropStyle = "block";
+                   var cropURL = annotation.get("cropURL");
 
-                      var action = _.template(suggestedAnnotationTermTpl, {idProject : self.model.id, idAnnotation : annotation.id, idImage : annotation.get('image'), icon:"add.png",text:text,rate:rate,cropURL:cropURL, cropStyle:cropStyle});
-                      $("#worstannotationitem").append(action);
+                   var action = _.template(suggestedAnnotationTermTpl, {idProject : self.model.id, idAnnotation : annotation.id, idImage : annotation.get('image'), icon:"add.png",text:text,rate:rate,cropURL:cropURL, cropStyle:cropStyle});
+                   $("#worstannotationitem").append(action);
 
 
                 });

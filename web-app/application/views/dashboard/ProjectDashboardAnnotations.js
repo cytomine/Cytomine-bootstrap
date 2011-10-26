@@ -77,6 +77,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
       });
       new TermCollection({idOntology:self.model.get('ontology')}).fetch({
          success : function (collection, response) {
+            alert("-");
             window.app.status.currentTermsCollection = collection;
             $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : 0, name : "Undefined"}));
             $("#tabsterm-panel-"+self.model.id+"-0").panel();
