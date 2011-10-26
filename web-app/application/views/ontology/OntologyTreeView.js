@@ -58,7 +58,7 @@ var OntologyTreeView = Backbone.View.extend({
                self.unlinkTerm(node.data.key);
             }
          },
-         onDblClick: function(node, event) {
+         onClick: function(node, event) {
             node.toggleSelect();
          },
          onRender: function(node, nodeSpan) {
