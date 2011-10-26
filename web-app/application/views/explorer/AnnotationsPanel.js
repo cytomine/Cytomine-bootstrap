@@ -95,6 +95,7 @@ var AnnotationsPanel = Backbone.View.extend({
                            model : collection,
                            el:el
                         }).render();
+
                  }
               });
        },
