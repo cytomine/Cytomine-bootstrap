@@ -109,4 +109,68 @@ class StatsController extends RestController {
         }
         responseSuccess(list)
     }
+
+    /* Pour chaque terme, le nombre de slides dans lesquels ils ont été annotés. */
+    def statTermSlide =  {
+        Project project = Project.read(params.id)
+        if(project == null) responseNotFound("Project", params.id)
+        def terms = Term.findAllByOntology(project.getOntology())
+        def annotations = AnnotationTerm.createCriteria().list {
+            inList("term", terms)
+            join("annotation")
+            createAlias("annotation", "a")
+            projections {
+                inList("a.image", project.imagesinstance())
+                groupProperty("a.image.id")
+                groupProperty("term.id")
+                count("term.id")
+            }
+        }
+        Map<Long, Object> result = new HashMap<Long, Object>()
+        terms.each { term->
+            def item = [:]
+            item.id = term.id
+            item.key = term.name
+            item.value = 0
+            result.put(item.id, item)
+        }
+        annotations.each { item ->
+            def term = item[1]
+            result.get(term).value++;
+        }
+
+        responseSuccess(result.values())
+    }
+
+    /*Pour chaque user, le nombre de slides dans lesquels ils ont fait des annotations.*/
+    def statUserSlide =  {
+        Project project = Project.read(params.id)
+        if(project == null) responseNotFound("Project", params.id)
+        def terms = Term.findAllByOntology(project.getOntology())
+        def annotations = AnnotationTerm.createCriteria().list {
+            inList("term", terms)
+            join("annotation")
+            createAlias("annotation", "a")
+            projections {
+                inList("a.image", project.imagesinstance())
+                groupProperty("a.image.id")
+                groupProperty("a.user")
+                count("a.user")
+            }
+        }
+        Map<Long, Object> result = new HashMap<Long, Object>()
+        project.users().each { user->
+            def item = [:]
+            item.id = user.id
+            item.key = user.firstname + " " + user.lastname
+            item.value = 0
+            result.put(item.id, item)
+        }
+        annotations.each { item ->
+            def user = item[1].id
+            result.get(user).value++;
+        }
+
+        responseSuccess(result.values())
+    }
 }

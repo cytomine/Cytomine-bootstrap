@@ -32,6 +32,17 @@ var ProjectDashboardStats = Backbone.View.extend({
             self.drawWorstTermPieChart(collection, response);
          }
       });
+      new StatsTermSlideCollection({project:self.model.get('id')}).fetch({
+         success : function(collection, response) {
+            self.drawTermSlideChart(collection, response);
+         }
+      });
+
+      new StatsUserSlideCollection({project:self.model.get('id')}).fetch({
+         success : function(collection, response) {
+            self.drawUserSlideChart(collection, response);
+         }
+      });
 
    },
    drawUserAnnotationsChart : function (collection, currentUser, response) {
@@ -69,7 +80,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          i++;
 
       });
-      var width = Math.round($(window).width()/2 - 200);
+      var width = Math.round($(window).width()/2 - 75);
       // Create and draw the visualization.
       new google.visualization.ColumnChart(document.getElementById('userAnnotationsChart')).
           draw(data,
@@ -97,12 +108,14 @@ var ProjectDashboardStats = Backbone.View.extend({
          data.setValue(j, 1, stat.get("value"));
          j++;
       });
-      var width = Math.round($(window).width()/2 - 200);
+      var width = Math.round($(window).width()/2 - 75);
       // Create and draw the visualization.
       new google.visualization.ColumnChart(document.getElementById("userNbAnnotationsChart")).
           draw(data,
           {title:"",
-             width:width, height:350,
+             legend : "none",
+             width:width,
+             height:350,
              vAxis: {title: "Number of annotations"},
              hAxis: {title: "Users"}}
       );
@@ -123,7 +136,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          data.setValue(i,1, stat.get('value'));
          i++;
       });
-      var width = Math.round($(window).width()/2 - 200);
+      var width = Math.round($(window).width()/2 - 75);
       // Create and draw the visualization.
       new google.visualization.PieChart(document.getElementById('projectPieChart')).
           draw(data, {width: width, height: 350,title:"", colors : colors});
@@ -147,11 +160,12 @@ var ProjectDashboardStats = Backbone.View.extend({
          data.setValue(j, 1, stat.get("value"));
          j++;
       });
-      var width = Math.round($(window).width()/2 - 200);
+      var width = Math.round($(window).width()/2 - 75);
       // Create and draw the visualization.
       new google.visualization.ColumnChart(document.getElementById("projectColumnChart")).
           draw(data,
           {title:"",
+             legend : "none",
              width:width, height:350,
              vAxis: {title: "Number of annotations"},
              hAxis: {title: "Terms"}}
@@ -175,9 +189,64 @@ var ProjectDashboardStats = Backbone.View.extend({
          data.setValue(i,1, stat.get('rate'));
          i++;
       });
-      var width = Math.round($(window).width()/2 - 200);
+      var width = Math.round($(window).width()/2 - 75);
       // Create and draw the visualization.
       new google.visualization.PieChart(document.getElementById('worstTermprojectPieChart')).
           draw(data, {width: width, height: 350,title:"", colors : colors});
+   },
+
+   drawTermSlideChart : function(collection, response){
+      var dataToShow = false;
+      // Create and populate the data table.
+      var data = new google.visualization.DataTable();
+
+      data.addRows(_.size(collection));
+
+      data.addColumn('string', 'Term');
+      data.addColumn('number', 0);
+      var colors = [];
+      var j = 0;
+      collection.each(function(stat) {
+         data.setValue(j, 0, stat.get("key"));
+         data.setValue(j, 1, stat.get("value"));
+         j++;
+      });
+      var width = Math.round($(window).width()/2 - 75);
+      // Create and draw the visualization.
+      new google.visualization.ColumnChart(document.getElementById("termSlideAnnotationsChart")).
+          draw(data,
+          {title:"",
+             legend : "none",
+             width:width, height:350,
+             vAxis: {title: "Slides"},
+             hAxis: {title: "Terms"}}
+      );
+   },
+   drawUserSlideChart : function(collection, response){
+      var dataToShow = false;
+      // Create and populate the data table.
+      var data = new google.visualization.DataTable();
+
+      data.addRows(_.size(collection));
+
+      data.addColumn('string', 'User');
+      data.addColumn('number', 0);
+      var colors = [];
+      var j = 0;
+      collection.each(function(stat) {
+         data.setValue(j, 0, stat.get("key"));
+         data.setValue(j, 1, stat.get("value"));
+         j++;
+      });
+      var width = Math.round($(window).width()/2 - 75);
+      // Create and draw the visualization.
+      new google.visualization.ColumnChart(document.getElementById("userSlideAnnotationsChart")).
+          draw(data,
+          {title:"",
+             legend : "none",
+             width:width, height:350,
+             vAxis: {title: "Slides"},
+             hAxis: {title: "Users"}}
+      );
    }
 });

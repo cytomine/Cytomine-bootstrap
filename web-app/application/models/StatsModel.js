@@ -67,3 +67,29 @@ var StatsUserAnnotationCollection = Backbone.Collection.extend({
         this.project = options.project;
     }
 });
+
+var StatsTermSlideCollection = Backbone.Collection.extend({
+    model: StatsModel,
+
+    url: function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/stats/termslide.json";
+        }
+    },
+    initialize: function (options) {
+        this.project = options.project;
+    }
+});
+
+var StatsUserSlideCollection = Backbone.Collection.extend({
+    model: StatsModel,
+
+    url: function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/stats/userslide.json";
+        }
+    },
+    initialize: function (options) {
+        this.project = options.project;
+    }
+});

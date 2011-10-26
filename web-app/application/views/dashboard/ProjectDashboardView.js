@@ -31,7 +31,7 @@ var ProjectDashboardView = Backbone.View.extend({
    },
    doLayout : function(tpl) {
       var self = this;
-      var width = Math.round($(window).width()/2 - 200);
+      var width = Math.round($(window).width()/2 - 75);
       self.model.set({"width" : width+"px"});
       var html = _.template(tpl, self.model.toJSON());
       $(self.el).append(html);

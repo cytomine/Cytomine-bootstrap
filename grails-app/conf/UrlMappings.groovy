@@ -97,6 +97,12 @@ class UrlMappings {
         "/api/project/$id/stats/user"(controller:"stats"){
             action = [GET:"statUser"]
         }
+        "/api/project/$id/stats/termslide"(controller:"stats"){
+            action = [GET:"statTermSlide"]
+        }
+        "/api/project/$id/stats/userslide"(controller:"stats"){
+            action = [GET:"statUserSlide"]
+        }
         "/api/project/$id/stats/userannotations"(controller:"stats"){
             action = [GET:"statUserAnnotations"]
         }
