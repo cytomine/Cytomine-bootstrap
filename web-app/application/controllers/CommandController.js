@@ -59,7 +59,7 @@ var CommandController = Backbone.Controller.extend({
          var image = tab.view;
          image.getUserLayer().annotationAdded(callback.annotationID);
          if(window.app.controllers.dashboard.view!=null)
-            window.app.controllers.dashboard.view.refresh();
+            window.app.controllers.dashboard.view.refreshAnnotations();
       } else if (callback.method == "be.cytomine.EditAnnotationCommand") {
 
          var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
@@ -70,7 +70,7 @@ var CommandController = Backbone.Controller.extend({
          var image = tab.view;
          image.getUserLayer().annotationUpdated(callback.annotationID);
          if(window.app.controllers.dashboard.view!=null)
-            window.app.controllers.dashboard.view.refresh();
+            window.app.controllers.dashboard.view.refreshAnnotations();
       } else if (callback.method == "be.cytomine.DeleteAnnotationCommand") {
 
          var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
@@ -82,7 +82,7 @@ var CommandController = Backbone.Controller.extend({
 
          image.getUserLayer().annotationRemoved(callback.annotationID);
          if(window.app.controllers.dashboard.view!=null)
-            window.app.controllers.dashboard.view.refresh();
+            window.app.controllers.dashboard.view.refreshAnnotations();
          /**
           * ANNOTATION TERM
           */
@@ -96,7 +96,7 @@ var CommandController = Backbone.Controller.extend({
          var image = tab.view;
          image.getUserLayer().termAdded(callback.annotationID,callback.termID);
          if(window.app.controllers.dashboard.view!=null)
-            window.app.controllers.dashboard.view.refresh();
+            window.app.controllers.dashboard.view.refreshAnnotations();
       } else if (callback.method == "be.cytomine.DeleteAnnotationTermCommand") {
 
          var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
@@ -107,7 +107,7 @@ var CommandController = Backbone.Controller.extend({
          var image = tab.view;
          image.getUserLayer().termRemoved(callback.annotationID,callback.termID);
          if(window.app.controllers.dashboard.view!=null)
-            window.app.controllers.dashboard.view.refresh();
+            window.app.controllers.dashboard.view.refreshAnnotations();
       }
 
       /**
