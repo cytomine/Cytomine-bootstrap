@@ -35,10 +35,15 @@ var AnnotationTermModel = Backbone.Model.extend({
 var AnnotationTermCollection = Backbone.Collection.extend({
     model : TermModel,
 	url : function() {
-		return 'api/annotation/' + this.idAnnotation +'/term.json';
+        console.log("this.idUser=" + this.idUser + " this.idNotThisUser=" + this.idNotThisUser);
+		if(this.idUser==null)
+            return 'api/annotation/' + this.idAnnotation +'/term.json';
+		else if (this.idUser!=undefined)
+            return 'api/annotation/' + this.idAnnotation +'/user/'+ this.idUser +'/term.json';
 	},
     initialize: function (options) {
         this.idAnnotation = options.idAnnotation;
+        this.idUser = options.idUser;
 
     }
 });

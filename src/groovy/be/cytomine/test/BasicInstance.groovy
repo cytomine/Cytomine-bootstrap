@@ -702,14 +702,17 @@ log.debug  "createOrGetBasicUser()"
     def term = getBasicTermNotExist()
     term.save(flush:true)
     assert term!=null
-    def annotationTerm =  AnnotationTerm.findByAnnotationAndTerm(annotation,term)
+    def user = User.findByUsername(Infos.GOODLOGIN)
+    assert user!=null
+
+    def annotationTerm =  AnnotationTerm.findWhere('annotation':annotation,'term':term,'user':user)
     assert annotationTerm==null
 
-    log.debug "annotation.id:" + annotation.id + " term.id:" + term.id
+    log.debug "annotation.id:" + annotation.id + " term.id:" + term.id + " user.id:" + user.id
     if(!annotationTerm) {
       log.debug "annotationTerm link"
 
-      annotationTerm = AnnotationTerm.link(annotation,term)
+      annotationTerm = AnnotationTerm.link(annotation,term,user)
       log.debug "AnnotationTerm.errors="+annotationTerm.errors
     }
     assert annotationTerm!=null
@@ -719,20 +722,19 @@ log.debug  "createOrGetBasicUser()"
   static AnnotationTerm getBasicAnnotationTermNotExist(String method) {
 
     log.debug "getBasicAnnotationTermNotExist()"
-    def random = new Random()
-    def randomInt = random.nextInt()
 
     def term = getBasicTermNotExist()
-
     term.save(flush:true)
     assert term!=null
 
     def annotation = getBasicAnnotationNotExist()
-
-    log.debug "annotation:" + annotation.id
     annotation.save(flush:true)
     assert annotation!=null
-    def annotationTerm =  new AnnotationTerm(annotation:annotation,term:term)
+
+    def user = User.findByUsername(Infos.GOODLOGIN)
+    assert user!=null
+
+    def annotationTerm =  new AnnotationTerm(annotation:annotation,term:term,user:user)
 
     log.debug "annotationTerm.errors="+annotationTerm.errors
     annotationTerm

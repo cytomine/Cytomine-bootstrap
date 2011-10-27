@@ -24,13 +24,37 @@ class RestAnnotationTermController extends RestController {
     if(params.idannotation=="undefined") responseNotFound("Annotation Term","Annotation", params.idannotation)
     else
     {
-      Annotation annotation =  Annotation.read(params.idannotation)
-      if(annotation!=null) responseSuccess(annotation.terms())
-      else responseNotFound("Annotation Term","Annotation", params.idannotation)
+        Annotation annotation =  Annotation.read(params.idannotation)
+        if(annotation!=null && !params.idUser) responseSuccess(annotation.usersIdByTerm())
+        else if(annotation!=null && params.idUser) {
+            User user = User.read(params.idUser)
+            if(user)  {
+                responseSuccess(AnnotationTerm.findAllByUserAndAnnotation(user,annotation).collect{it.term.id})
+            }
+            else responseNotFound("Annotation Term","User", params.idUser)
+        }
+        else responseNotFound("Annotation Term","Annotation", params.idannotation)
     }
 
   }
 
+
+  def listAnnotationTermByUser = {
+    log.info "listByAnnotation with idAnnotation=" + params.idannotation + " idNotUser=" + params.idNotUser
+    if(params.idannotation=="undefined") responseNotFound("Annotation Term","Annotation", params.idannotation)
+    else
+    {
+        Annotation annotation =  Annotation.read(params.idannotation)
+        if(annotation!=null && params.idNotUser) {
+            User user = User.read(params.idNotUser)
+            if(user)  {
+                def annotationterms = AnnotationTerm.findAllByAnnotationAndUserNotEqual(annotation,user)
+                responseSuccess(annotationterms)
+            }
+            else responseNotFound("Annotation Term","User", params.idUser)
+        }
+    }
+  }
 
 
   def listTermByAnnotationAndOntology = {
@@ -108,13 +132,25 @@ class RestAnnotationTermController extends RestController {
       responseSuccess(annotations)
   }
 
+
+
+    //idUser
   def show = {
-    log.info "listByTerm with idTerm=" +  params.idterm + " idAnnotation=" + params.idannotation
+    log.info "listByTerm with idTerm=" +  params.idterm + " idAnnotation=" + params.idannotation + " idUser="+params.idUser
+
     Annotation annotation = Annotation.read(params.idannotation)
     Term term = Term.read(params.idterm)
-    if(annotation!=null && term!=null && AnnotationTerm.findByAnnotationAndTerm(annotation,term)!=null)
-      responseSuccess(AnnotationTerm.findByAnnotationAndTerm(annotation,term))
-    else  responseNotFound("Annotation Term","Term","Annotation", params.idterm,  params.idannotation)
+
+    if(params.idUser) {
+        User user = User.read(params.idUser)
+        if(annotation!=null && term!=null && user!=null && AnnotationTerm.findWhere('annotation':annotation,'term':term,'user':user)!=null)
+            responseSuccess(AnnotationTerm.findWhere('annotation':annotation,'term':term,'user':user))
+        else  responseNotFound("Annotation Term","Term","Annotation","User", params.idterm,  params.idannotation,params.idUser)
+    } else {
+        if(annotation!=null && term!=null && AnnotationTerm.findByAnnotationAndTerm(annotation,term)!=null)
+            responseSuccess(AnnotationTerm.findByAnnotationAndTerm(annotation,term))
+        else  responseNotFound("Annotation Term","Term","Annotation", params.idterm,  params.idannotation)
+    }
   }
 
 
@@ -122,12 +158,16 @@ class RestAnnotationTermController extends RestController {
     log.info "Add"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
     log.info "User:" + currentUser.username +" transaction:" +  currentUser.transactionInProgress + " request:" + request.JSON.toString()
-    Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : request.JSON.toString(),user: currentUser)
+
+    def json = JSON.parse(request.JSON.toString())
+    json.user = currentUser.id
+
+    Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : json.toString(),user: currentUser)
     def result = processCommand(addAnnotationTermCommand, currentUser)
     response(result)
   }
 
-
+  //Add annotation-term for an annotation and delete all annotation-term that where already map with this annotation by this user
   def addWithDeletingOldTerm = {
     log.info "Add"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
@@ -140,12 +180,12 @@ class RestAnnotationTermController extends RestController {
         transaction.start()
 
 
-        def annotationTerm = AnnotationTerm.findAllByAnnotation(annotation)
+        def annotationTerm = AnnotationTerm.findAllByAnnotationAndUser(annotation,currentUser)
         log.info "Delete old annotationTerm= " +annotationTerm.size()
 
         annotationTerm.each{ annotterm ->
             log.info "unlink annotterm:" +annotterm.id
-            def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id]) as JSON
+            def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id,user:annotterm.user.id]) as JSON
             Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData :postDataRT.toString() ,user: currentUser,printMessage:false)
             def result = processCommand(deleteAnnotationTermCommand, currentUser)
         }
@@ -172,7 +212,7 @@ class RestAnnotationTermController extends RestController {
     log.info "Delete"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
     log.info "User:" + currentUser.username + " params.idannotation=" + params.idannotation
-    def postData = ([annotation : params.idannotation,term :params.idterm]) as JSON
+    def postData = ([annotation : params.idannotation,term :params.idterm, user:currentUser.id]) as JSON
     Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData : postData.toString(),user: currentUser)
     def result = processCommand(deleteAnnotationTermCommand, currentUser)
     response(result)

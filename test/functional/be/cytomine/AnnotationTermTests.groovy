@@ -8,6 +8,7 @@ import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import be.cytomine.ontology.Term
 import org.codehaus.groovy.grails.web.json.JSONArray
+import be.cytomine.security.User
 
 /**
  * Created by IntelliJ IDEA.
@@ -103,7 +104,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     def annotationTermToAdd = BasicInstance.createOrGetBasicAnnotationTerm()
 
     log.info("get annotation")
-    String URL = Infos.CYTOMINEURL+"api/annotation/"+ annotationTermToAdd.annotation.id +"/term/"+annotationTermToAdd.term.id +".json"
+    String URL = Infos.CYTOMINEURL+"api/annotation/"+ annotationTermToAdd.annotation.id +"/term/"+annotationTermToAdd.term.id +"/user/" + annotationTermToAdd.user.id + ".json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
@@ -120,6 +121,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
 
   void testAddAnnotationTermCorrect() {
+     User currentUser = User.findByUsername(Infos.GOODLOGIN)
 
     log.info("create AnnotationTerm")
     def annotationTermToAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermCorrect")
@@ -146,7 +148,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check if object "+ idAnnotation +"/"+ idTerm +"exist in DB")
     client = new HttpClient();
 
-    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation+"/term/"+idTerm +".json"
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation+"/term/"+idTerm +"/user/" +currentUser.id + ".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -166,7 +168,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("check if object "+ idAnnotation +"/"+ idTerm +" not exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/annotation/"+ idAnnotation +"/term/"+idTerm +".json"
+    URL = Infos.CYTOMINEURL+"api/annotation/"+ idAnnotation +"/term/"+idTerm +"/user/" +currentUser.id + ".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -190,7 +192,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("check if object "+ idAnnotation +"/"+ idTerm +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/annotation/"+ idAnnotation +"/term/"+idTerm +".json"
+    URL = Infos.CYTOMINEURL+"api/annotation/"+ idAnnotation +"/term/"+idTerm +"/user/" +currentUser.id + ".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -272,6 +274,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
   }
 
   void testDeleteAnnotationTerm() {
+    User currentUser = User.findByUsername(Infos.GOODLOGIN)
 
     log.info("create annotationTerm")
     def annotationTermToDelete = BasicInstance.createOrGetBasicAnnotationTerm()
@@ -292,7 +295,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("check if object "+ idAnnotation +"/" + idTerm + " exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation + "/term/"+idTerm+".json"
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation + "/term/"+idTerm+"/user/" +currentUser.id + ".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -315,7 +318,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("check if object "+ idAnnotation +"/" + idTerm +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation + "/term/"+idTerm+".json"
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation + "/term/"+idTerm+"/user/" +currentUser.id + ".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
@@ -338,7 +341,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
     log.info("check if object "+ idAnnotation +"/" + idTerm +" exist in DB")
     client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation + "/term/"+idTerm+".json"
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation + "/term/"+idTerm+"/user/" +currentUser.id + ".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()

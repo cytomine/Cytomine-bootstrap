@@ -82,6 +82,7 @@ var OntologyTreeView = Backbone.View.extend({
    },
    clear : function() {
       this.activeEvent = false;
+       $(this.el).find('.otherUsersTerms').empty();
       $(this.el).find('.tree').dynatree("getRoot").visit(function(node){
          node.select(false);
       });
@@ -107,19 +108,27 @@ var OntologyTreeView = Backbone.View.extend({
       self.activeEvent = true;
    },
    refresh: function(idAnnotation) {
-
       var self = this;
+      console.log("refresh term for annotation " + idAnnotation);
 
       this.idAnnotation = idAnnotation;
       var refreshTree = function(model , response) {
          self.clear();
          self.activeEvent = false;
+         //check term for this user
          model.each(function(term) {
-            self.check(term.get("id"));
+             var idTerm = term.get('term').id;
+             var users = term.get('user');
+             _.each(users,function(user) {
+                 if(user.id==window.app.status.user.id){
+                      self.check(idTerm);
+                 }
+
+              });
          });
          self.activeEvent = true;
-      }
 
+      }
 
       new AnnotationTermCollection({idAnnotation:idAnnotation}).fetch({success:refreshTree});
    },

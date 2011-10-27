@@ -10,8 +10,12 @@ class AnnotationTermUrlMappings {
         "/api/annotation/$idannotation/ontology/$idontology/term"(controller:"restAnnotationTerm"){
             action = [GET: "listTermByAnnotationAndOntology"]
         }
+
         "/api/annotation/$idannotation/term/$idterm"(controller:"restAnnotationTerm"){
-            action = [GET:"show",DELETE:"delete",POST:"add"]
+            action = [POST:"add",DELETE:"delete", GET:"show"]
+        }
+        "/api/annotation/$idannotation/term/$idterm/user/$idUser"(controller:"restAnnotationTerm"){
+            action = [GET:"show"]
         }
     }
 }

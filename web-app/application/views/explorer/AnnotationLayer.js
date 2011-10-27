@@ -270,6 +270,8 @@ AnnotationLayer.prototype = {
                            var data = new Object();
                            collection.each(function(annotation) {
                               var termArray = annotation.get('term');
+                               console.log("####");
+                                console.log(termArray);
                               _.each(termArray, function(termid) {
                                  console.log(termid);
                                  var isTermFromCurrentProject = terms.get(termid) != undefined;

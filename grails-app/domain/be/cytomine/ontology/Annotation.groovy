@@ -11,6 +11,7 @@ import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
 
 import be.cytomine.image.AbstractImage
+import java.util.Map.Entry
 
 class Annotation extends SequenceDomain implements Serializable {
 
@@ -79,12 +80,63 @@ class Annotation extends SequenceDomain implements Serializable {
         }
     }
 
+   def termsId() {
+       return annotationTerm.collect{
+           it.getIdTerm()
+       }
+   }
 
-
-    def termsId() {
-        return annotationTerm.collect{
-            it.getIdTerm()
+    def termsIdByUser() {
+        Map<Long,List<Long>> usersAnnotation = [:]
+        annotationTerm.each{ annotationTerm ->
+            if(usersAnnotation.containsKey(annotationTerm.user.id)) {
+                //if user is already there, add term to the list
+               List<Long> terms = usersAnnotation.get(annotationTerm.user.id)
+               terms.add(annotationTerm.term.id)
+               usersAnnotation.put(annotationTerm.user.id,terms)
+            } else {
+                //if user is not there create list with term id
+               List<Long> terms = new ArrayList<Long>();
+               terms.add(annotationTerm.term.id)
+               usersAnnotation.put(annotationTerm.user.id,terms)
+            }
         }
+        usersAnnotation
+    }
+
+    def usersIdByTerm() {
+        Map<Term,List<User>> termsAnnotation = new HashMap<Term,List<User>>()
+
+        annotationTerm.each{ annotationTerm ->
+            if(termsAnnotation.containsKey(annotationTerm.term)) {
+                //if user is already there, add term to the list
+               List<User> users = termsAnnotation.get(annotationTerm.term)
+               users.add(annotationTerm.user)
+               termsAnnotation.put(annotationTerm.term,users)
+            } else {
+                //if user is not there create list with term id
+               List<User> users = new ArrayList<User>();
+               users.add(annotationTerm.user)
+               termsAnnotation.put(annotationTerm.term,users)
+            }
+        }
+        //if termsAnnotation is converte in marshalled  => ["idterm1": [user1, user2...],...] BAD FORMAT
+          def results = []
+            Iterator<Entry<Term, List<User>>> it = termsAnnotation.entrySet().iterator();
+            while (it.hasNext()) {
+                def subresult = [:]
+                Entry<Term, List<User>> pairs = it.next();
+
+                subresult.term = pairs.getKey()
+                subresult.user = pairs.getValue()
+
+                results << subresult
+
+
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        results
+
     }
 
     def project() {
@@ -227,7 +279,8 @@ class Annotation extends SequenceDomain implements Serializable {
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
             returnArray['term'] = it.termsId()
-
+            returnArray['termByUser'] = it.termsIdByUser()
+            returnArray['userByTerm'] = it.usersIdByTerm()
             //retrieval
             try {if(it?.similarity) returnArray['similarity'] = it.similarity}catch(Exception e){}
 
