@@ -31,7 +31,12 @@ class Term extends SequenceDomain implements Serializable {
     }
 
     def annotations() {
-        return annotationTerm.collect{it.annotation}
+        def annotations = []
+        annotationTerm.each{
+            if(!annotations.contains(it.annotation))
+                annotations <<  it.annotation
+        }
+        annotations
     }
 
     def relationAsTerm1() {
