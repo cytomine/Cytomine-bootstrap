@@ -10,7 +10,7 @@ import be.cytomine.ontology.Annotation
  * Time: 10:35
  * To change this template use File | Settings | File Templates.
  */
-class correctDataController {
+class CorrectDataController {
 
     def addUserInAnnotationTerm = {
          List<AnnotationTerm> list =  AnnotationTerm.findAll()
