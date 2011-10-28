@@ -22,7 +22,8 @@ var OntologyTreeView = Backbone.View.extend({
 
          var title = node.data.title
          var color = node.data.color
-         var htmlNode = "{{title}} <span style='background-color:{{color}}'>&nbsp;&nbsp;</span>"
+         var htmlNode = "{{title}} <span style='background-color:{{color}}'>&nbsp;&nbsp;</span> ";
+         if(!node.data.isFolder) htmlNode = htmlNode + "(<span id='usercount"+node.data.key+"'>0</span>)";
          var nodeTpl = _.template(htmlNode, {title : title, color : color});
 
 
@@ -58,9 +59,9 @@ var OntologyTreeView = Backbone.View.extend({
                self.unlinkTerm(node.data.key);
             }
          },
-         onClick: function(node, event) {
-            node.toggleSelect();
-         },
+//         onClick: function(node, event) {
+//            node.toggleSelect();
+//         },
          onRender: function(node, nodeSpan) {
             $(nodeSpan).find("span.dynatree-icon").css({"background-image":"url(css/custom-theme/images/ui-icons_ffffff_256x240.png)"});
          },
@@ -81,10 +82,12 @@ var OntologyTreeView = Backbone.View.extend({
       return this;
    },
    clear : function() {
+       var self = this;
       this.activeEvent = false;
        $(this.el).find('.otherUsersTerms').empty();
       $(this.el).find('.tree').dynatree("getRoot").visit(function(node){
          node.select(false);
+          $("#usercount"+node.data.key).text("0")
       });
       this.activeEvent = true;
    },
@@ -95,7 +98,9 @@ var OntologyTreeView = Backbone.View.extend({
       var self = this;
       self.activeEvent = false;
       (this.el).find('.tree').dynatree("getRoot").visit(function(node){
-         if (node.data.key == idTerm) node.select(true);
+         if (node.data.key == idTerm) {
+             node.select(true);
+         }
       });
       self.activeEvent = true;
    },
@@ -103,7 +108,9 @@ var OntologyTreeView = Backbone.View.extend({
       var self = this;
       self.activeEvent = false;
       (this.el).find('.tree').dynatree("getRoot").visit(function(node){
-         if (node.data.key == idTerm) node.select(false);
+         if (node.data.key == idTerm) {
+             node.select(false);
+         }
       });
       self.activeEvent = true;
    },
@@ -117,17 +124,15 @@ var OntologyTreeView = Backbone.View.extend({
          self.activeEvent = false;
          //check term for this user
          model.each(function(term) {
-             var idTerm = term.get('term').id;
+             var idTerm = term.get('term');
              var users = term.get('user');
              _.each(users,function(user) {
-                 if(user.id==window.app.status.user.id){
-                      self.check(idTerm);
-                 }
-
+                 if(user==window.app.status.user.id)
+                     self.check(idTerm);
               });
+               $("#usercount"+idTerm).text(users.length);
          });
          self.activeEvent = true;
-
       }
 
       new AnnotationTermCollection({idAnnotation:idAnnotation}).fetch({success:refreshTree});

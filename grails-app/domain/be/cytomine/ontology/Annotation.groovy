@@ -105,38 +105,29 @@ class Annotation extends SequenceDomain implements Serializable {
     }
 
     def usersIdByTerm() {
-        Map<Term,List<User>> termsAnnotation = new HashMap<Term,List<User>>()
+
+        def results = []
 
         annotationTerm.each{ annotationTerm ->
-            if(termsAnnotation.containsKey(annotationTerm.term)) {
-                //if user is already there, add term to the list
-               List<User> users = termsAnnotation.get(annotationTerm.term)
-               users.add(annotationTerm.user)
-               termsAnnotation.put(annotationTerm.term,users)
-            } else {
-                //if user is not there create list with term id
-               List<User> users = new ArrayList<User>();
-               users.add(annotationTerm.user)
-               termsAnnotation.put(annotationTerm.term,users)
-            }
+             def subsresults = [:]
+             subsresults.term = annotationTerm.getIdTerm()
+             subsresults.user = [annotationTerm.userId]
+             results = addEntry(results,subsresults)
         }
-        //if termsAnnotation is converte in marshalled  => ["idterm1": [user1, user2...],...] BAD FORMAT
-          def results = []
-            Iterator<Entry<Term, List<User>>> it = termsAnnotation.entrySet().iterator();
-            while (it.hasNext()) {
-                def subresult = [:]
-                Entry<Term, List<User>> pairs = it.next();
 
-                subresult.term = pairs.getKey()
-                subresult.user = pairs.getValue()
-
-                results << subresult
-
-
-                it.remove(); // avoids a ConcurrentModificationException
-            }
         results
+    }
 
+    def addEntry(def all, def item) {
+        boolean found = false
+        all.each {
+             if(it.term==item.term) {
+                 it.user.add(item.user.first())
+                 found = true
+             }
+         }
+        if(!found) all << item
+        return all
     }
 
     def project() {
@@ -279,7 +270,6 @@ class Annotation extends SequenceDomain implements Serializable {
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
             returnArray['term'] = it.termsId()
-            returnArray['termByUser'] = it.termsIdByUser()
             returnArray['userByTerm'] = it.usersIdByTerm()
             //retrieval
             try {if(it?.similarity) returnArray['similarity'] = it.similarity}catch(Exception e){}

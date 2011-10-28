@@ -20,7 +20,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                    self.selectedTerm = _.without(self.selectedTerm, 0);
                }
             });
-            $(self.el).find('.tree').dynatree({
+            $(self.el).find('#treeAnnotationListing').dynatree({
                checkbox: true,
                selectMode: 2,
                expand : true,
@@ -53,7 +53,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                idPrefix: "dynatree-Cb-annotations-"+self.model.get('ontology')+"-"
             });
             //expand all nodes
-            $(self.el).find('.tree').dynatree("getRoot").visit(function(node){
+            $(self.el).find('#treeAnnotationListing').dynatree("getRoot").visit(function(node){
                node.expand(true);
             });
             $("#ontology-annotations-panel-"+self.model.id).panel();
@@ -168,13 +168,13 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
       new TermCollection({idOntology:self.model.get('ontology')}).fetch({
          success : function (collection, response) {
             collection.each(function(term) {
-               $(self.el).find('.tree').dynatree("getTree").selectKey(term.get("id"), selected);
+               $(self.el).find('#treeAnnotationListing').dynatree("getTree").selectKey(term.get("id"), selected);
             });
          }
       });
    },
    updateContentVisibility : function () {
-      var tree = $(this.el).find('.tree').dynatree("getRoot");
+      var tree = $(this.el).find('#treeAnnotationListing').dynatree("getRoot");
       if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
       var nbTermSelected = 0;
       tree.visit(function(node){
@@ -190,7 +190,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
    },
    refreshSelectedTerms : function () {
       var self = this;
-      var tree = $(this.el).find('.tree').dynatree("getRoot");
+      var tree = $(this.el).find('#treeAnnotationListing').dynatree("getRoot");
       if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
       tree.visit(function(node){
          if (!node.isSelected()) return;
@@ -203,7 +203,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
    },
    refreshSelectedTermsWithUserFilter : function (users) {
       var self = this;
-      var tree = $(this.el).find('.tree').dynatree("getRoot");
+      var tree = $(this.el).find('#treeAnnotationListing').dynatree("getRoot");
       if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
       tree.visit(function(node){
          if (!node.isSelected()) return;

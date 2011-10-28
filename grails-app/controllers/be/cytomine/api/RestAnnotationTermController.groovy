@@ -13,6 +13,7 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import be.cytomine.image.ImageInstance
 import be.cytomine.command.TransactionController
+import java.util.Map.Entry
 
 class RestAnnotationTermController extends RestController {
 
@@ -37,6 +38,46 @@ class RestAnnotationTermController extends RestController {
     }
 
   }
+
+
+
+
+//  def usersIdByTerm(Annotation annotation) {
+//
+//        Map<Term,List<User>> termsAnnotation = new HashMap<Term,List<User>>()
+//
+//        annotation.annotationTerm.each{ annotationTerm ->
+//            if(termsAnnotation.containsKey(annotationTerm.term)) {
+//                //if user is already there, add term to the list
+//               List<User> users = termsAnnotation.get(annotationTerm.term)
+//               users.add(annotationTerm.user)
+//               termsAnnotation.put(annotationTerm.term,users)
+//            } else {
+//                //if user is not there create list with term id
+//               List<User> users = new ArrayList<User>();
+//               users.add(annotationTerm.user)
+//               termsAnnotation.put(annotationTerm.term,users)
+//            }
+//        }
+//        //if termsAnnotation is converte in marshalled  => ["idterm1": [user1, user2...],...] BAD FORMAT
+//          def results = []
+//            Iterator<Entry<Term, List<User>>> it = termsAnnotation.entrySet().iterator();
+//            while (it.hasNext()) {
+//                def subresult = [:]
+//                Entry<Term, List<User>> pairs = it.next();
+//
+//                subresult.term = pairs.getKey()
+//                subresult.user = pairs.getValue().collect{it.id}
+//
+//                results << subresult
+//
+//
+//                it.remove(); // avoids a ConcurrentModificationException
+//            }
+//        results
+//  }
+
+
 
 
   def listAnnotationTermByUser = {

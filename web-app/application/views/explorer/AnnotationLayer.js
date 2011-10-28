@@ -224,20 +224,22 @@ AnnotationLayer.prototype = {
                var json = model.toJSON()
                //username
                json.username = window.app.models.users.get(json.user).prettyName();
-               //term
-               var terms = new Array();
-               _.each(json.term, function(idTerm) {
-                  console.log(window.app.status.currentProjectModel);
-                  var idOntology = window.app.status.currentProjectModel.get('ontology');
-                  console.log("idTerm="+idTerm);
-                  console.log(window.app.status.currentTermsCollection);
-                  var termName = window.app.status.currentTermsCollection.get(idTerm).get('name');
 
-                  var tpl = _.template("<a href='#ontology/{{idOntology}}/{{idTerm}}'>{{termName}}</a>", {idOntology : idOntology, idTerm : idTerm, termName : termName});
-                  terms.push(tpl);
+                var terms = new Array();
+                //browse all term and compute the number of user who add this term
+                _.each(json.userByTerm, function(termuser) {
+                      var idTerm =  termuser.term;
+                      var termName =window.app.status.currentTermsCollection.get(idTerm).get('name');
+                      var userCount = termuser.user.length;
+                      var idOntology = window.app.status.currentProjectModel.get('ontology');
 
-               });
-               json.terms = terms.join(", ");
+                      var tpl = _.template("<a href='#ontology/{{idOntology}}/{{idTerm}}'>{{termName}}</a> ({{userCount}})", {idOntology : idOntology, idTerm : idTerm, termName : termName, userCount: userCount});
+                      terms.push(tpl);
+
+                });
+                json.terms = terms.join(", ")
+
+
 
                var content = _.template(tpl, json);
                self.popup = new OpenLayers.Popup("",
