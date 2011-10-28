@@ -87,7 +87,7 @@ var OntologyTreeView = Backbone.View.extend({
        $(this.el).find('.otherUsersTerms').empty();
       $(this.el).find('.tree').dynatree("getRoot").visit(function(node){
          node.select(false);
-          $("#usercount"+node.data.key).text("0")
+          $("#usercount"+node.data.key).text("0");
       });
       this.activeEvent = true;
    },
