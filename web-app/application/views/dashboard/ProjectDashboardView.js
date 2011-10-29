@@ -68,7 +68,7 @@ var ProjectDashboardView = Backbone.View.extend({
          this.projectDashboardAnnotations.render();
          return;
       }
-      this.projectDashboardAnnotations.refreshSelectedTerms();
+      this.projectDashboardAnnotations.refreshSelectedTermsWithUserFilter();
    },
    /**
     * Refresh all information for this project

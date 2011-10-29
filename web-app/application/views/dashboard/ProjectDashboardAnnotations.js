@@ -12,12 +12,12 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                if ($(this).attr("checked") == "checked") {
                   self.updateContentVisibility();
                   self.refreshAnnotations(0,self.getSelectedUser());
-                   self.selectedTerm.push(0);
+                  self.selectedTerm.push(0);
                   $("#tabsterm-panel-"+self.model.id+"-0").show();
                } else {
                   self.updateContentVisibility();
                   $("#tabsterm-panel-"+self.model.id+"-0").hide();
-                   self.selectedTerm = _.without(self.selectedTerm, 0);
+                  self.selectedTerm = _.without(self.selectedTerm, 0);
                }
             });
             $(self.el).find('#treeAnnotationListing').dynatree({
@@ -32,14 +32,14 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                      self.updateContentVisibility();
                      self.refreshAnnotations(node.data.key,self.getSelectedUser());
                      $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).show();
-                      console.log("select term "+node.data.key);
-                      self.selectedTerm.push(node.data.key);
-                      console.log("select term "+self.selectedTerm);
+                     console.log("select term "+node.data.key);
+                     self.selectedTerm.push(node.data.key);
+                     console.log("select term "+self.selectedTerm);
                   }
                   else {
                      self.updateContentVisibility();
                      $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).hide();
-                      console.log("unselect term "+node.data.key);
+                     console.log("unselect term "+node.data.key);
                      self.selectedTerm = _.without(self.selectedTerm, node.data.key);
                   }
                },
@@ -71,7 +71,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             });
 
             $(self.el).find("#refreshAnnotations").click(function(){
-               self.refreshSelectedTermsWithUserFilter(self.getSelectedUser());
+               self.refreshSelectedTermsWithUserFilter();
             });
          }
       });
@@ -96,61 +96,61 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
       });
    },
    initSelectUser : function () {
-        var self = this;
-        $(self.selectUser).empty();
-        $(self.selectUser).multiselect({
-          selectedText: "# of # users selected",
-          noneSelectedText : "No user are selected",
-          checkAll: function(){
-                console.log("click on user :"+self.selectedTerm + " users="+self.getSelectedUser());
-                self.printAnnotationThumbAllTerms(self.selectedTerm,self.getSelectedUser());
-          },
-            uncheckAll: function(){
-                console.log("click on user :"+self.selectedTerm + " users="+self.getSelectedUser());
-                self.printAnnotationThumbAllTerms(self.selectedTerm,self.getSelectedUser());
-          }
-        });
+      var self = this;
+      $(self.selectUser).empty();
+      $(self.selectUser).multiselect({
+         selectedText: "# of # users selected",
+         noneSelectedText : "No user are selected",
+         checkAll: function(){
+            console.log("click on user :"+self.selectedTerm + " users="+self.getSelectedUser());
+            self.printAnnotationThumbAllTerms(self.selectedTerm,self.getSelectedUser());
+         },
+         uncheckAll: function(){
+            console.log("click on user :"+self.selectedTerm + " users="+self.getSelectedUser());
+            self.printAnnotationThumbAllTerms(self.selectedTerm,self.getSelectedUser());
+         }
+      });
 
 
-        new UserCollection({project:self.model.id}).fetch({
+      new UserCollection({project:self.model.id}).fetch({
          success : function (collection, response) {
             window.app.status.currentUsersCollection = collection;
 
             collection.each(function(user) {
-                console.log('<option value="'+user.id+'">'+user.get("username")+'</option>');
-                $(self.selectUser).append('<option value="'+user.id+'">'+user.get("username")+'</option>');
+               console.log('<option value="'+user.id+'">'+user.get("username")+'</option>');
+               $(self.selectUser).append('<option value="'+user.id+'">'+user.get("username")+'</option>');
             });
-             $(self.selectUser).multiselect("refresh");
-             $(self.selectUser).multiselect("checkAll");
+            $(self.selectUser).multiselect("refresh");
+            $(self.selectUser).multiselect("checkAll");
 
             $(self.selectUser).bind("multiselectclick", function(event, ui){
-                console.log("click on "+ui.value);
-                //self.refreshAnnotations(undefined,self.getSelectedUser());
-                console.log("click on user :"+self.selectedTerm + " users="+self.getSelectedUser());
-                self.printAnnotationThumbAllTerms(self.selectedTerm,self.getSelectedUser());
+               console.log("click on "+ui.value);
+               //self.refreshAnnotations(undefined,self.getSelectedUser());
+               console.log("click on user :"+self.selectedTerm + " users="+self.getSelectedUser());
+               self.printAnnotationThumbAllTerms(self.selectedTerm,self.getSelectedUser());
 
-                /*
+               /*
                 event: the original event object
 
                 ui.value: value of the checkbox
                 ui.text: text of the checkbox
                 ui.checked: whether or not the input was checked
-                    or unchecked (boolean)
+                or unchecked (boolean)
                 */
             });
          }});
 
 //                    <option value="5">Option 5</option>
-       //filterAnnotationByUser{{id}}
+      //filterAnnotationByUser{{id}}
    },
    getSelectedUser : function() {
-        var userArray = $(this.selectUser).multiselect("getChecked");
-        var userId = new Array();
-         _.each(userArray,function(user) {
-             userId.push($(user).attr("value"));
-         });
-         if(userId.length==0)userId.push(-1);
-         return userId;
+      var userArray = $(this.selectUser).multiselect("getChecked");
+      var userId = new Array();
+      _.each(userArray,function(user) {
+         userId.push($(user).attr("value"));
+      });
+      if(userId.length==0)userId.push(-1); //WHY ?
+      return userId;
    },
 
    /**
@@ -201,8 +201,9 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
       }
       self.updateContentVisibility();
    },
-   refreshSelectedTermsWithUserFilter : function (users) {
+   refreshSelectedTermsWithUserFilter : function () {
       var self = this;
+      var user = self.getSelectedUser();
       var tree = $(this.el).find('#treeAnnotationListing').dynatree("getRoot");
       if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
       tree.visit(function(node){
@@ -231,32 +232,32 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     * @param $elem  elem that will keep all annotations
     */
    printAnnotationThumbAllTerms : function(terms,users) {
-       console.log("printAnnotationThumb="+users);
-       var self = this;
+      console.log("printAnnotationThumb="+users);
+      var self = this;
       for(var i=0;i<terms.length;i++) {
-            console.log("printAnnotationThumb loop="+users);
-            self.printAnnotationThumb(terms[i],"#tabsterm-"+self.model.id+"-"+terms[i],users);
-       }
+         console.log("printAnnotationThumb loop="+users);
+         self.printAnnotationThumb(terms[i],"#tabsterm-"+self.model.id+"-"+terms[i],users);
+      }
    },
    printAnnotationThumb : function(idTerm,$elem,users){
       var self = this;
-       console.log("users="+users);
+      console.log("users="+users);
       /*var idTerm = 0;
-      if(term==0) {idTerm = undefined;}
-      else idTerm = term*/
+       if(term==0) {idTerm = undefined;}
+       else idTerm = term*/
       console.log("AnnotationCollection: project="+self.model.id + " term="+idTerm + " users="+users);
       new AnnotationCollection({project:self.model.id,term:idTerm,users:users}).fetch({
          success : function (collection, response) {
-             console.log("success");
+            console.log("success");
             if (self.annotationsViews[idTerm] != null && users==undefined) { //only refresh
                self.annotationsViews[idTerm].refresh(collection,users);
                return;
             }
-             console.log($elem);
-             console.log($($elem).children().length);
+            console.log($elem);
+            console.log($($elem).children().length);
             $($elem).empty();
-             console.log($($elem).children().length);
-             console.log("annotation size="+collection.length);
+            console.log($($elem).children().length);
+            console.log("annotation size="+collection.length);
             self.annotationsViews[idTerm] = new AnnotationView({
                page : undefined,
                model : collection,

@@ -91,7 +91,6 @@ var ExplorerTabs = Backbone.View.extend({
     */
    getBrowseImageView : function(idImage) {
       var object  = _.detect(this.tabs, function(object) {
-
          return object.idImage == idImage;
       });
       return object != null ? object : null;
@@ -156,6 +155,10 @@ var ExplorerTabs = Backbone.View.extend({
       });
       this.tabs.push({
          idImage : 2,
+         view : dashboard
+      });
+      this.tabs.push({
+         idImage : 3,
          view : dashboard
       });
    },

@@ -35,7 +35,7 @@ var AnnotationsPanel = Backbone.View.extend({
 
              new TermCollection({idOntology:idOntology}).fetch({
                     success : function (collection, response) {
-
+                       window.app.status.currentTermsCollection = collection;
                        //add "All annotation from all term" tab
                        self.addTermToTab(termTabTpl, termTabContentTpl, { id : "all", image : self.model.id, name : "All"});
                        self.refreshAnnotationsTabsFunc.push({

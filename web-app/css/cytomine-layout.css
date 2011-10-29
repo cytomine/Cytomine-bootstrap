@@ -20,6 +20,13 @@ ul,
     width: 160px;
 }
 
+span.version {
+    font-family: Verdana;
+    font-size: 7px;
+    display: inline-block;
+    color : #666666;
+
+}
 
 
 .thumb-wrap{
@@ -141,13 +148,18 @@ div .ontologypanel {
     z-index : 2021;
     background-color: rgba(0, 0, 0, 0.7);
     color : #fff;
-    padding: 10px;
+    padding-left: 0px;
+    padding-right : 10px;
+    padding-top : 10px;
+    padding-bottom : 10px;
     margin : 0px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
     overflow : auto;
 }
+
+
 
 
 div.ontologypanel > .tree > ul.dynatree-container
@@ -309,4 +321,9 @@ div.olControlOverviewMapElement img {
     right: 20px;
     top : 50px;
     z-index: 2200;
+}
+
+/*Fix align in multiselect, text-align right introduced by twitter bootstrap*/
+label.ui-corner-all {
+    text-align : left;
 }

@@ -85,6 +85,7 @@ var ProjectDashboardStats = Backbone.View.extend({
       new google.visualization.ColumnChart(document.getElementById('userAnnotationsChart')).
           draw(data,
           {title:"Term by users",
+             backgroundColor : "whiteSmoke",
              width:width, height:350,
              hAxis: {title: "Users"}}
       );
@@ -116,6 +117,7 @@ var ProjectDashboardStats = Backbone.View.extend({
              legend : "none",
              width:width,
              height:350,
+             backgroundColor : "whiteSmoke",
              vAxis: {title: "Number of annotations"},
              hAxis: {title: "Users"}}
       );
@@ -139,7 +141,7 @@ var ProjectDashboardStats = Backbone.View.extend({
       var width = Math.round($(window).width()/2 - 75);
       // Create and draw the visualization.
       new google.visualization.PieChart(document.getElementById('projectPieChart')).
-          draw(data, {width: width, height: 350,title:"", colors : colors});
+          draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
    },
    drawColumnChart : function (collection, response) {
       $("#projectColumnChart").empty();
@@ -166,6 +168,7 @@ var ProjectDashboardStats = Backbone.View.extend({
           draw(data,
           {title:"",
              legend : "none",
+             backgroundColor : "whiteSmoke",
              width:width, height:350,
              vAxis: {title: "Number of annotations"},
              hAxis: {title: "Terms"}}
@@ -192,7 +195,7 @@ var ProjectDashboardStats = Backbone.View.extend({
       var width = Math.round($(window).width()/2 - 75);
       // Create and draw the visualization.
       new google.visualization.PieChart(document.getElementById('worstTermprojectPieChart')).
-          draw(data, {width: width, height: 350,title:"", colors : colors});
+          draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
    },
 
    drawTermSlideChart : function(collection, response){
@@ -217,6 +220,7 @@ var ProjectDashboardStats = Backbone.View.extend({
           draw(data,
           {title:"",
              legend : "none",
+             backgroundColor : "whiteSmoke",
              width:width, height:350,
              vAxis: {title: "Slides"},
              hAxis: {title: "Terms"}}
@@ -240,13 +244,24 @@ var ProjectDashboardStats = Backbone.View.extend({
       });
       var width = Math.round($(window).width()/2 - 75);
       // Create and draw the visualization.
-      new google.visualization.ColumnChart(document.getElementById("userSlideAnnotationsChart")).
-          draw(data,
+      var chart = new google.visualization.ColumnChart(document.getElementById("userSlideAnnotationsChart"));
+      chart.draw(data,
           {title:"",
              legend : "none",
+             backgroundColor : "whiteSmoke",
+             enableInteractivity : true,
              width:width, height:350,
              vAxis: {title: "Slides"},
-             hAxis: {title: "Users"}}
+             hAxis: {title: "Users"}
+          }
       );
+      var handleClick = function(){
+         //alert(chart.getSelection());
+         for (property in chart.getSelection()[0]) {
+            console.log(property + " => " + chart.getSelection()[0][property]);
+         }
+      }
+      google.visualization.events.addListener(chart,'select', handleClick);
+
    }
 });
