@@ -1,5 +1,5 @@
 
-var DashboardController = Backbone.Controller.extend({
+var DashboardController = Backbone.Router.extend({
 
    view : null,
    routes: {
@@ -7,6 +7,7 @@ var DashboardController = Backbone.Controller.extend({
       "tabs-images-:project/:page"  : "imagespage",
       "tabs-thumbs-:project"  : "imagesthumbs",
       "tabs-imagesarray-:project"  : "imagesarray",
+      "tabs-annotations-:project-:terms-:users"  : "annotations",
       "tabs-annotations-:project"  : "annotations",
       "tabs-dashboard-:project"  : "dashboard",
       "tabs-algos-:project"  : "algos"
@@ -40,7 +41,7 @@ var DashboardController = Backbone.Controller.extend({
          self.view.refreshImagesThumbs();
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
-      }
+      };
       this.init(project, func);
    },
    imagespage : function(project,page) {
@@ -50,7 +51,7 @@ var DashboardController = Backbone.Controller.extend({
          self.view.showImagesThumbs();
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
-      }
+      };
       this.init(project, func);
    },
    imagesthumbs :  function(project) {
@@ -60,7 +61,7 @@ var DashboardController = Backbone.Controller.extend({
          self.view.showImagesThumbs();
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
-      }
+      };
       this.init(project, func);
    },
    imagesarray : function(project) {
@@ -70,17 +71,18 @@ var DashboardController = Backbone.Controller.extend({
          self.view.showImagesTable();
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
-      }
+      };
       this.init(project, func);
    },
-
-   annotations : function(project) {
+   annotations : function(project, terms, users) {
       var self = this;
       var func = function() {
-         self.view.refreshAnnotations();
          var tabs = $("#explorer > .browser").children(".tabs");
+         window.app.controllers.browse.tabs.triggerRoute = false;
          tabs.tabs("select", "#tabs-annotations-"+window.app.status.currentProject);
-      }
+         window.app.controllers.browse.tabs.triggerRoute = true;
+         self.view.refreshAnnotations(terms, users);
+      };
       this.init(project, func);
    },
 
@@ -90,7 +92,7 @@ var DashboardController = Backbone.Controller.extend({
          self.view.refreshAlgos();
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-algos-"+window.app.status.currentProject);
-      }
+      };
       this.init(project, func);
    },
 
@@ -101,7 +103,7 @@ var DashboardController = Backbone.Controller.extend({
          var tabs = $("#explorer > .browser").children(".tabs");
          tabs.tabs("select", "#tabs-dashboard-"+window.app.status.currentProject);
          if (callback != undefined) callback.call();
-      }
+      };
       this.init(project, func);
    },
 

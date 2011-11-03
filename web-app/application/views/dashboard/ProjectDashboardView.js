@@ -32,7 +32,9 @@ var ProjectDashboardView = Backbone.View.extend({
    doLayout : function(tpl) {
       var self = this;
       var width = Math.round($(window).width()/2 - 75);
+      var width2 = Math.round($(window).width() - 75);
       self.model.set({"width" : width+"px"});
+      self.model.set({"width2" : width2+"px"});
       var html = _.template(tpl, self.model.toJSON());
       $(self.el).append(html);
       window.app.controllers.browse.tabs.addDashboard(self);
@@ -62,13 +64,18 @@ var ProjectDashboardView = Backbone.View.extend({
 
       this.projectDashboardImages.refreshImagesTable();
    },
-   refreshAnnotations : function() {
+   refreshAnnotations : function(terms, users) {
+      var self = this;
+
       if (this.projectDashboardAnnotations == null) {
          this.projectDashboardAnnotations = new ProjectDashboardAnnotations({ model : this.model, el : this.el});
-         this.projectDashboardAnnotations.render();
-         return;
+         this.projectDashboardAnnotations.render(function(){
+            self.projectDashboardAnnotations.checkTermsAndUsers(terms, users);
+         });
+      } else {
+         this.projectDashboardAnnotations.checkTermsAndUsers(terms, users);
       }
-      this.projectDashboardAnnotations.refreshSelectedTermsWithUserFilter();
+
    },
    /**
     * Refresh all information for this project

@@ -1,5 +1,5 @@
 
-var ImageController = Backbone.Controller.extend({
+var ImageController = Backbone.Router.extend({
 
    routes: {
       "image"            :   "image",

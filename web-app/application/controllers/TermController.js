@@ -6,7 +6,7 @@
 * To change this template use File | Settings | File Templates.
 */
 
-var TermController = Backbone.Controller.extend({
+var TermController = Backbone.Router.extend({
 
 	routes: {
 		"term"            :   "term" ,

@@ -1,4 +1,4 @@
-var AuthController = Backbone.Controller.extend({
+var AuthController = Backbone.Router.extend({
 
    routes: {
    },

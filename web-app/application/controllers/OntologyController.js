@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-var OntologyController = Backbone.Controller.extend({
+var OntologyController = Backbone.Router.extend({
        routes: {
           "ontology"                               :   "ontology",
           "ontology/:idOntology"                   :   "ontology",

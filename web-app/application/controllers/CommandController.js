@@ -1,4 +1,4 @@
-var CommandController = Backbone.Controller.extend({
+var CommandController = Backbone.Router.extend({
    initialize : function() {
       this.commandInProgess = false;
    },

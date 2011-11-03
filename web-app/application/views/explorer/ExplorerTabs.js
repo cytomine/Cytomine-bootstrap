@@ -1,6 +1,6 @@
 var ExplorerTabs = Backbone.View.extend({
    tagName : "div",
-
+   triggerRoute : true,
    /**
     * ExplorerTabs constructor
     * @param options
@@ -53,11 +53,12 @@ var ExplorerTabs = Backbone.View.extend({
             return true;
          },
          select: function(event, ui) {
-            document.location = $(document).attr('location').pathname + "#" + ui.panel.id;
+            window.app.controllers.browse.navigate("#"+ui.panel.id, self.triggerRoute);
+
          }
       });
 
-      $("ul.tabs a").css('height', $("ul.tabs").height())
+      $("ul.tabs a").css('height', $("ul.tabs").height());
       return this;
    },
    /**

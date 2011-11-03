@@ -259,7 +259,7 @@ AnnotationLayer.prototype = {
                   if (feature == undefined || feature == null) return;
                   self.hideFeature(feature);
                   var url = "tabs-image-"+window.app.status.currentProjectModel.get("id")+"-"+self.browseImageView.model.get("id")+"-";
-                  window.app.controllers.browse.saveLocation(url);
+                  window.app.controllers.browse.navigate(url, false);
                   return false;
                });
                new TermCollection({idOntology:window.app.status.currentProjectModel.get('ontology')}).fetch({

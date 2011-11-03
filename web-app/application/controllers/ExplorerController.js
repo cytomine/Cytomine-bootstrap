@@ -1,5 +1,5 @@
 
-var ExplorerController = Backbone.Controller.extend({
+var ExplorerController = Backbone.Router.extend({
 
        tabs : null,
 

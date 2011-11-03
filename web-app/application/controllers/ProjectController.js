@@ -1,5 +1,5 @@
 
-var ProjectController = Backbone.Controller.extend({
+var ProjectController = Backbone.Router.extend({
     manageView : null,
     routes: {
         "project"     :   "project",

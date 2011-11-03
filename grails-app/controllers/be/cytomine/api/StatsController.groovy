@@ -85,6 +85,7 @@ class StatsController extends RestController {
         def annotations = project.annotations()
         def stats = [:]
         def color = [:]
+        def ids = [:]
         def list = []
 
         //init list
@@ -92,6 +93,7 @@ class StatsController extends RestController {
             if(!term.hasChildren()) {
                 stats[term.name] = 0
                 color[term.name] = term.color
+                ids[term.name] = term.id
             }
         }
 
@@ -105,7 +107,7 @@ class StatsController extends RestController {
         }
         stats.each{
             println "Item: $it"
-            list << ["key":it.key,"value":it.value,"color":color.get(it.key)]
+            list << ["id": ids.get(it.key), "key":it.key,"value":it.value,"color":color.get(it.key)]
         }
         responseSuccess(list)
     }

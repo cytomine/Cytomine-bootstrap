@@ -89,6 +89,7 @@
             <fileset dir="${src.dir}" includes="application/models/SlideModel.js" />
             <fileset dir="${src.dir}" includes="application/models/SoftwareModel.js" />
             <fileset dir="${src.dir}" includes="application/models/TransactionModel.js" />
+            <fileset dir="${src.dir}" includes="application/models/SuggestedAnnotationTermModel.js" />
             <fileset dir="${src.dir}" includes="application/models/StatsModel.js" />
             <fileset dir="${src.dir}" includes="application/models/CommandModel.js" />
             <fileset dir="${src.dir}" includes="application/models/RelationModel.js" />

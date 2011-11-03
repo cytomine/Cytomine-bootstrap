@@ -1,5 +1,5 @@
 
-var AdminController = Backbone.Controller.extend({
+var AdminController = Backbone.Router.extend({
 
    initialize : function () {
    },

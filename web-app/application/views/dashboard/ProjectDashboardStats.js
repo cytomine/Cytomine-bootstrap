@@ -46,13 +46,14 @@ var ProjectDashboardStats = Backbone.View.extend({
 
    },
    drawUserAnnotationsChart : function (collection, currentUser, response) {
+      var self = this;
       // Create and populate the data table.
       var data = new google.visualization.DataTable();
       var cpt = -1;
       var first = collection.at(0);
 
       //init users
-      data.addColumn('string', 'Users');
+      data.addColumn('string', 'Terms');
       collection.each(function (item){
          cpt++;
          if (cpt != currentUser && currentUser != undefined) return;
@@ -68,29 +69,41 @@ var ProjectDashboardStats = Backbone.View.extend({
          j++;
       });
       cpt = -1;
-      var i = 0;
+      var i = 1;
       collection.each(function (item){
          cpt++;
          if (cpt != currentUser && currentUser != undefined) return;
-         var j = 1;
+         var j = 0;
          _.each(item.get("terms"), function (term){
-            data.setValue(j-1, i+1, term.value);
+            data.setValue(j, i, term.value);
             j++;
          });
          i++;
 
       });
-      var width = Math.round($(window).width()/2 - 75);
+      var width = Math.round($(window).width() - 75);
       // Create and draw the visualization.
-      new google.visualization.ColumnChart(document.getElementById('userAnnotationsChart')).
-          draw(data,
+      var chart = new google.visualization.ColumnChart(document.getElementById('userAnnotationsChart'));
+      chart.draw(data,
           {title:"Term by users",
              backgroundColor : "whiteSmoke",
              width:width, height:350,
-             hAxis: {title: "Users"}}
+             hAxis: {title: "Terms"}}
       );
+      var handleClick = function(){
+         var row = chart.getSelection()[0]['row'];
+         var col = chart.getSelection()[0]['column'];
+         var user = collection.at(col-1).get('id');
+         var term = collection.at(col-1).get('terms')[row].id;
+         var url = "#tabs-annotations-"+self.model.get("id")+"-"+term+"-"+user;
+         window.app.controllers.browse.tabs.triggerRoute = false;
+         window.app.controllers.browse.navigate(url, true);
+         window.app.controllers.browse.tabs.triggerRoute = true;
+      };
+      google.visualization.events.addListener(chart,'select', handleClick);
    },
    drawUserNbAnnotationsChart : function (collection, response) {
+      var self = this;
       $("#userNbAnnotationsChart").empty();
       var dataToShow = false;
       // Create and populate the data table.
@@ -111,8 +124,8 @@ var ProjectDashboardStats = Backbone.View.extend({
       });
       var width = Math.round($(window).width()/2 - 75);
       // Create and draw the visualization.
-      new google.visualization.ColumnChart(document.getElementById("userNbAnnotationsChart")).
-          draw(data,
+      var chart = new google.visualization.ColumnChart(document.getElementById("userNbAnnotationsChart"));
+      chart.draw(data,
           {title:"",
              legend : "none",
              width:width,
@@ -121,10 +134,27 @@ var ProjectDashboardStats = Backbone.View.extend({
              vAxis: {title: "Number of annotations"},
              hAxis: {title: "Users"}}
       );
+
+      var handleClick = function(){
+         var row = chart.getSelection()[0]['row'];
+         var column = chart.getSelection()[0]['column'];
+         var key = data.getValue(row, 0);
+         collection.each(function(stat) {
+            if (stat.get("key") == key) {
+               var user = stat.get("id");
+               var url = "#tabs-annotations-"+self.model.get("id")+"--"+user;
+               window.app.controllers.browse.tabs.triggerRoute = false;
+               window.app.controllers.browse.navigate(url, true);
+               window.app.controllers.browse.tabs.triggerRoute = true;
+            }
+         });
+      };
+      google.visualization.events.addListener(chart,'select', handleClick);
       $("#userNbAnnotationsChart").show();
    },
    drawPieChart : function (collection, response) {
       $("#projectPieChart").empty();
+      var self = this;
       // Create and populate the data table.
       var data = new google.visualization.DataTable();
       data.addColumn('string', 'Term');
@@ -140,10 +170,26 @@ var ProjectDashboardStats = Backbone.View.extend({
       });
       var width = Math.round($(window).width()/2 - 75);
       // Create and draw the visualization.
-      new google.visualization.PieChart(document.getElementById('projectPieChart')).
-          draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
+      var chart = new google.visualization.PieChart(document.getElementById('projectPieChart'));
+      chart.draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
+      var handleClick = function(){
+         var row = chart.getSelection()[0]['row'];
+         var column = chart.getSelection()[0]['column'];
+         var key = data.getValue(row, 0);
+         collection.each(function(stat) {
+            if (stat.get("key") == key) {
+               var term = stat.get("id");
+               var url = "#tabs-annotations-"+self.model.get("id")+"-"+term+"-";
+               window.app.controllers.browse.tabs.triggerRoute = false;
+               window.app.controllers.browse.navigate(url, true);
+               window.app.controllers.browse.tabs.triggerRoute = true;
+            }
+         });
+      };
+      google.visualization.events.addListener(chart,'select', handleClick);
    },
    drawColumnChart : function (collection, response) {
+      var self = this;
       $("#projectColumnChart").empty();
       var dataToShow = false;
       // Create and populate the data table.
@@ -164,8 +210,8 @@ var ProjectDashboardStats = Backbone.View.extend({
       });
       var width = Math.round($(window).width()/2 - 75);
       // Create and draw the visualization.
-      new google.visualization.ColumnChart(document.getElementById("projectColumnChart")).
-          draw(data,
+      var chart = new google.visualization.ColumnChart(document.getElementById("projectColumnChart"));
+      chart.draw(data,
           {title:"",
              legend : "none",
              backgroundColor : "whiteSmoke",
@@ -173,6 +219,21 @@ var ProjectDashboardStats = Backbone.View.extend({
              vAxis: {title: "Number of annotations"},
              hAxis: {title: "Terms"}}
       );
+      var handleClick = function(){
+         var row = chart.getSelection()[0]['row'];
+         var column = chart.getSelection()[0]['column'];
+         var key = data.getValue(row, 0);
+         collection.each(function(stat) {
+            if (stat.get("key") == key) {
+               var term = stat.get("id");
+               var url = "#tabs-annotations-"+self.model.get("id")+"-"+term+"-";
+               window.app.controllers.browse.tabs.triggerRoute = false;
+               window.app.controllers.browse.navigate(url, true);
+               window.app.controllers.browse.tabs.triggerRoute = true;
+            }
+         });
+      };
+      google.visualization.events.addListener(chart,'select', handleClick);
       $("#projectColumnChart").show();
 
    },
@@ -199,6 +260,7 @@ var ProjectDashboardStats = Backbone.View.extend({
    },
 
    drawTermSlideChart : function(collection, response){
+      var self = this;
       var dataToShow = false;
       // Create and populate the data table.
       var data = new google.visualization.DataTable();
@@ -216,8 +278,8 @@ var ProjectDashboardStats = Backbone.View.extend({
       });
       var width = Math.round($(window).width()/2 - 75);
       // Create and draw the visualization.
-      new google.visualization.ColumnChart(document.getElementById("termSlideAnnotationsChart")).
-          draw(data,
+      var chart = new google.visualization.ColumnChart(document.getElementById("termSlideAnnotationsChart"));
+      chart.draw(data,
           {title:"",
              legend : "none",
              backgroundColor : "whiteSmoke",
@@ -225,9 +287,25 @@ var ProjectDashboardStats = Backbone.View.extend({
              vAxis: {title: "Slides"},
              hAxis: {title: "Terms"}}
       );
+      var handleClick = function(){
+         var row = chart.getSelection()[0]['row'];
+         var column = chart.getSelection()[0]['column'];
+         var key = data.getValue(row, 0);
+         collection.each(function(stat) {
+            if (stat.get("key") == key) {
+               var term = stat.get("id");
+               var url = "#tabs-annotations-"+self.model.get("id")+"-"+term+"-";
+               window.app.controllers.browse.tabs.triggerRoute = false;
+               window.app.controllers.browse.navigate(url, true);
+               window.app.controllers.browse.tabs.triggerRoute = true;
+            }
+         });
+      };
+      google.visualization.events.addListener(chart,'select', handleClick);
    },
    drawUserSlideChart : function(collection, response){
-      var dataToShow = false;
+      var self = this;
+
       // Create and populate the data table.
       var data = new google.visualization.DataTable();
 
@@ -256,11 +334,19 @@ var ProjectDashboardStats = Backbone.View.extend({
           }
       );
       var handleClick = function(){
-         //alert(chart.getSelection());
-         for (property in chart.getSelection()[0]) {
-            console.log(property + " => " + chart.getSelection()[0][property]);
-         }
-      }
+         var row = chart.getSelection()[0]['row'];
+         var column = chart.getSelection()[0]['column'];
+         var key = data.getValue(row, 0);
+         collection.each(function(stat) {
+            if (stat.get("key") == key) {
+               var user = stat.get("id");
+               var url = "#tabs-annotations-"+self.model.get("id")+"--"+user;
+               window.app.controllers.browse.tabs.triggerRoute = false;
+               window.app.controllers.browse.navigate(url, true);
+               window.app.controllers.browse.tabs.triggerRoute = true;
+            }
+         });
+      };
       google.visualization.events.addListener(chart,'select', handleClick);
 
    }

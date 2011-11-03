@@ -3,12 +3,15 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
    annotationsViews : [], //array of annotation view
    selectedTerm: new Array(),
    selectUser : null,
-   doLayout : function (termTabTpl, termTabContentTpl) {
+   terms : null,
+   ontology : null,
+   doLayout : function (termTabTpl, termTabContentTpl, callback) {
       var self = this;
       this.selectUser =  "#filterAnnotationByUser"+self.model.id;
       new OntologyModel({id:self.model.get('ontology')}).fetch({
          success : function(model, response) {
-            $(self.el).find("input.undefinedAnnotationsCheckbox").click(function(){
+            self.ontology = model;
+            $(self.el).find("input.undefinedAnnotationsCheckbox").change(function(){
                if ($(this).attr("checked") == "checked") {
                   self.updateContentVisibility();
                   self.refreshAnnotations(0,self.getSelectedUser());
@@ -61,38 +64,78 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             self.initSelectUser();
 
             $(self.el).find("#hideAllAnnotations").click(function(){
-               self.selectAnnotations(false);
-               $(self.selectUser).multiselect("uncheckAll");
+               self.hideAllUsers();
+               self.hideAllTerms();
             });
 
             $(self.el).find("#showAllAnnotations").click(function(){
-               self.selectAnnotations(true);
-               $(self.selectUser).multiselect("checkAll");
+               self.showAllUsers();
+               self.showAllTerms();
             });
 
             $(self.el).find("#refreshAnnotations").click(function(){
                self.refreshSelectedTermsWithUserFilter();
             });
+            new TermCollection({idOntology:self.model.get('ontology')}).fetch({
+               success : function (collection, response) {
+                  self.terms = collection;
+                  window.app.status.currentTermsCollection = collection;
+                  $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : 0, name : "Undefined"}));
+                  $("#tabsterm-panel-"+self.model.id+"-0").panel();
+                  $("#tabsterm-panel-"+self.model.id+"-0").hide();
+                  collection.each(function(term) {
+                     //add x term tab
+                     $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : term.get("id"), name : term.get("name")}));
+                     $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).panel();
+                     $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).hide();
+                  });
+                  callback.call();
+               }});
          }
       });
-      new TermCollection({idOntology:self.model.get('ontology')}).fetch({
-         success : function (collection, response) {
-            window.app.status.currentTermsCollection = collection;
-            $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : 0, name : "Undefined"}));
-            $("#tabsterm-panel-"+self.model.id+"-0").panel();
-            $("#tabsterm-panel-"+self.model.id+"-0").hide();
-            collection.each(function(term) {
-               //add x term tab
-               $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : term.get("id"), name : term.get("name")}));
-               $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).panel();
-               $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).hide();
-            });
-         }});
+
    },
-   render : function() {
+   checkTermsAndUsers : function(terms, users) {
+
+      this.hideAllTerms();
+      this.hideAllUsers();
+      var _terms = (terms !="" && terms!= undefined);
+      var _users = (users != "" && users != undefined);
+      if (_users && !_terms) {
+         this.selectUsers(users);
+         this.showAllTerms();
+      } else if (_users && _terms) {
+         this.selectUsers(users);
+         this.selectTerms(terms);
+
+      } else if (!_users && _terms) {
+         this.showAllUsers();
+         this.selectTerms(terms);
+      } else if (!_users && !_terms) {
+         //nothing to do
+      }
+      //self.projectDashboardAnnotations.refreshSelectedTermsWithUserFilter();
+   },
+   showAllTerms : function() {
+      $(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked", "checked");
+      $(this.el).find("input.undefinedAnnotationsCheckbox").trigger("change");
+      this.selectAnnotations(true);
+   },
+   showAllUsers : function() {
+      $(this.selectUser).multiselect("checkAll");
+   },
+   hideAllTerms : function() {
+      $(this.el).find("input.undefinedAnnotationsCheckbox").removeAttr("checked");
+      $(this.el).find("input.undefinedAnnotationsCheckbox").trigger("change");
+      this.selectAnnotations(false);
+   },
+   hideAllUsers : function() {
+      $(this.selectUser).multiselect("uncheckAll");
+   },
+   render : function(callback) {
       var self = this;
       require(["text!application/templates/dashboard/TermTab.tpl.html", "text!application/templates/dashboard/TermTabContent.tpl.html"], function(termTabTpl, termTabContentTpl) {
-         self.doLayout(termTabTpl, termTabContentTpl);
+         self.doLayout(termTabTpl, termTabContentTpl, callback);
       });
    },
    initSelectUser : function () {
@@ -165,12 +208,8 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
    },
    selectAnnotations : function (selected) {
       var self = this;
-      new TermCollection({idOntology:self.model.get('ontology')}).fetch({
-         success : function (collection, response) {
-            collection.each(function(term) {
-               $(self.el).find('#treeAnnotationListing').dynatree("getTree").selectKey(term.get("id"), selected);
-            });
-         }
+      this.terms.each(function(term) {
+         $(self.el).find('#treeAnnotationListing').dynatree("getTree").selectKey(term.get("id"), selected);
       });
    },
    updateContentVisibility : function () {
@@ -201,9 +240,25 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
       }
       self.updateContentVisibility();
    },
+   selectTerms : function(terms) {
+      terms = terms.split(",");
+      var tree = $(this.el).find('#treeAnnotationListing').dynatree("getTree");
+      _.each(terms, function (term) {
+         var node = tree.getNodeByKey(term);
+         node.select(true);
+      });
+
+   },
+   selectUsers : function(users) {
+      users = users.split(",");
+      _.each(users, function (user) {
+         $(".ui-multiselect-menu").find("input[value='"+user+"']").click();
+      });
+   },
    refreshSelectedTermsWithUserFilter : function () {
+      return;
       var self = this;
-      var user = self.getSelectedUser();
+      var users = self.getSelectedUser();
       var tree = $(this.el).find('#treeAnnotationListing').dynatree("getRoot");
       if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
       tree.visit(function(node){
@@ -220,9 +275,11 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     * @param term annotation term to be refresh (all = 0)
     */
    refreshAnnotations : function(term,users) {
+      console.log("refreshAnnotations");
       this.printAnnotationThumb(term,"#tabsterm-"+this.model.id+"-"+term,users);
    },
    clearAnnotations : function (term) {
+      console.log("clearAnnotations");
       var self = this;
       $("#tabsterm-"+self.model.id+"-"+term).empty();
    },

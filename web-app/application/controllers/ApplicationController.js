@@ -1,5 +1,5 @@
 
-var ApplicationController = Backbone.Controller.extend({
+var ApplicationController = Backbone.Router.extend({
 
    models : {},
    controllers : {},

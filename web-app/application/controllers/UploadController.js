@@ -1,4 +1,4 @@
-var UploadController = Backbone.Controller.extend({
+var UploadController = Backbone.Router.extend({
    initialized  : false,
    routes: {
       "upload" : "upload"

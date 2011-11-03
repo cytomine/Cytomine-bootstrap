@@ -1,4 +1,4 @@
-var AnnotationController = Backbone.Controller.extend({
+var AnnotationController = Backbone.Router.extend({
 
     routes: {
         "annotation"            :   "annotation",
