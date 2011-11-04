@@ -275,7 +275,7 @@ var BrowseImageView = Backbone.View.extend({
                new OpenLayers.Control.PanZoomBar(),
                new OpenLayers.Control.MousePosition(),
                new OpenLayers.Control.KeyboardDefaults()],
-               eventListeners: {
+            eventListeners: {
                //"moveend": mapEvent,
                "zoomend": function (event) {
                   var map = event.object;
@@ -404,10 +404,12 @@ var BrowseImageView = Backbone.View.extend({
          var x = lonlat.lon;
          console.log(self.model.get("height"));
          var url = "processing/detect/"+self.model.get("id")+"/"+x+"/"+y;
-         //alert(url);
          $.getJSON(url,
              function (response) {
-                self.getUserLayer().addAnnotation(response.geometry);
+                var format = new OpenLayers.Format.WKT();
+                var point = format.read(response.geometry);
+                var geom = point.geometry;
+                self.getUserLayer().addAnnotation(new OpenLayers.Feature.Vector(geom));
              }
          );
 
