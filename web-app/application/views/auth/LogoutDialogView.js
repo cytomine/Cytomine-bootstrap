@@ -14,6 +14,7 @@ var LogoutDialogView = Backbone.View.extend({
 
       $("#submit-logout").click(function(){
          window.location = "logout";
+         return false;
       });
 
       return this;

@@ -97,10 +97,14 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
    },
    checkTermsAndUsers : function(terms, users) {
 
-      this.hideAllTerms();
-      this.hideAllUsers();
+
       var _terms = (terms !="" && terms!= undefined);
       var _users = (users != "" && users != undefined);
+      if (!_users && !_terms) {
+         return;
+      }
+      this.hideAllTerms();
+      this.hideAllUsers();
       if (_users && !_terms) {
          this.selectUsers(users);
          this.showAllTerms();
@@ -111,8 +115,6 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
       } else if (!_users && _terms) {
          this.showAllUsers();
          this.selectTerms(terms);
-      } else if (!_users && !_terms) {
-         //nothing to do
       }
       //self.projectDashboardAnnotations.refreshSelectedTermsWithUserFilter();
    },

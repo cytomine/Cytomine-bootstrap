@@ -25,8 +25,7 @@ var BrowseImageView = Backbone.View.extend({
       var self = this;
       var templateData = this.model.toJSON();
       templateData.project = window.app.status.currentProject;
-      var tpl = _.template(tpl, templateData);
-      $(this.el).append(tpl);
+      $(this.el).append(_.template(tpl, templateData));
       var tabs = $(this.el).children('.tabs');
       this.el.tabs("add", "#tabs-image-" + window.app.status.currentProject + "-" + this.model.get('id') + "-", this.model.get('filename'));
       this.el.css("display", "block");

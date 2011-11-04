@@ -23,7 +23,6 @@ var ExplorerController = Backbone.Router.extend({
        browse : function (idProject, idImage, idAnnotation) {
           var self = this;
           this.initTabs();
-
           var createBrowseImageViewTab = function() {
              var browseImageViewInitOptions = {};
              if (idAnnotation != "") {
@@ -32,9 +31,10 @@ var ExplorerController = Backbone.Router.extend({
 
              self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions);
              /*self.tabs.showTab(idImage);*/
+             self.tabs.triggerRoute = false;
              var tabs = $("#explorer > .browser").children(".tabs");
              tabs.tabs("select", "#tabs-image-"+window.app.status.currentProject+"-"+idImage+"-");
-
+             self.tabs.triggerRoute = true;
              window.app.view.showComponent(self.tabs.container);
              self.showView();
           };

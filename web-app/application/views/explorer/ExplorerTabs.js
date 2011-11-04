@@ -42,7 +42,9 @@ var ExplorerTabs = Backbone.View.extend({
                   var index = $( "li", tabs ).index( $( this ).parent() );
                   self.removeTab(index);
                });
+               self.triggerRoute = false;
                tabs.tabs('select', '#' + ui.panel.id);
+               self.triggerRoute = true;
             } else {
                $(ui.panel).css({ 'background-image': 'url(http://subtlepatterns.com/patterns/whitey.png)'});
             }
