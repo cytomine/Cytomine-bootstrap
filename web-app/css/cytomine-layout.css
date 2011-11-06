@@ -3,6 +3,10 @@ html, body {
 }
 
 
+label {
+    text-align: left;
+}
+
 ol,
 ul,
 .item-list ul,
@@ -257,21 +261,21 @@ div .layerSwitcherPanel {
 
 }
 
-/*
+
 div .imageFiltersPanel {
     position : absolute;
-    right : 20px;
-    bottom : 100px;
+    right : 10px;
+    bottom : 15px;
     z-index : 2030;
-    background-color: white;
-    color : #000000;
+    background-color: black;
+    color : #fff;
     padding: 10px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
     opacity: 0.7;
     width : 250px;
-} */
+}
 
 div.layerSwitcherPanel label, input {
     display:inline;
