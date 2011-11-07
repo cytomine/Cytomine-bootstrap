@@ -490,36 +490,40 @@ class BootStrap {
     }
 
     def createProjects(projectSamples) {
-        projectSamples.each { item->
-            if(Project.findByNameIlike(item.name)) return
-            def ontology = Ontology.findByName(item.ontology)
-            def project = new Project(
-                    name : item.name.toString().toUpperCase(),
-                    ontology : ontology,
-                    created : new Date(),
-                    updated : item.updated,
-                    deleted : item.deleted
-            )
-            if (project.validate()){
-                println "Creating project  ${project.name}..."
 
-                project.save(flush : true)
+        //Comment: DON'T ADD AGAIN A PROJECT A USER RENAME IT
+        //=> What should we do with bootsrap data?
 
-                /* Handle groups */
-                item.groups.each { elem ->
-                    Group group = Group.findByName(elem.name)
-                    ProjectGroup.link(project, group)
-                }
-
-
-
-            } else {
-                println("\n\n\n Errors in project boostrap for ${item.name}!\n\n\n")
-                project.errors.each {
-                    err -> println err
-                }
-            }
-        }
+//        projectSamples.each { item->
+//            if(Project.findByNameIlike(item.name)) return
+//            def ontology = Ontology.findByName(item.ontology)
+//            def project = new Project(
+//                    name : item.name.toString().toUpperCase(),
+//                    ontology : ontology,
+//                    created : new Date(),
+//                    updated : item.updated,
+//                    deleted : item.deleted
+//            )
+//            if (project.validate()){
+//                println "Creating project  ${project.name}..."
+//
+//                project.save(flush : true)
+//
+//                /* Handle groups */
+//                item.groups.each { elem ->
+//                    Group group = Group.findByName(elem.name)
+//                    ProjectGroup.link(project, group)
+//                }
+//
+//
+//
+//            } else {
+//                println("\n\n\n Errors in project boostrap for ${item.name}!\n\n\n")
+//                project.errors.each {
+//                    err -> println err
+//                }
+//            }
+//        }
     }
 
     def createSlides(slideSamples) {
