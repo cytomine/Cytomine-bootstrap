@@ -15,6 +15,7 @@ class RestProjectController extends RestController {
     def springSecurityService
 
     def list = {
+
         responseSuccess(Project.list(sort:"name"))
     }
 

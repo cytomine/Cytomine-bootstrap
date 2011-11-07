@@ -223,12 +223,6 @@ class RestAnnotationController extends RestController {
     }
 
 
-
-
-
-
-
-
     def delete = {
         log.info "Delete"
         User currentUser = getCurrentUser(springSecurityService.principal.id)
