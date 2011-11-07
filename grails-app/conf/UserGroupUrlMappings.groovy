@@ -4,7 +4,7 @@
  * Date: 10/10/11
  * Time: 13:49
  */
-class UserGroupUrlMappingsd {
+class UserGroupUrlMappings {
 
     static mappings = {
         /* UserGroup */
