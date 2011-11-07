@@ -73,6 +73,7 @@ var ImageFiltersPanel = Backbone.View.extend({
          var path = "TileGroup" + Math.floor( (tileIndex) / 256 ) +
              "/" + z + "-" + x + "-" + y + ".jpg";
          var url = this.url;
+
          var updatedUrl = _.map(url, function(url){
             var parametersSTR = "";
             _.each(self.parameters, function(parameter) {
@@ -82,7 +83,12 @@ var ImageFiltersPanel = Backbone.View.extend({
                parametersSTR += "&";
             });
             var index = url.indexOf("method=");
+            if (index == -1) { //Original layer
+                url = "vision/process?method=none&url="+url;
+            }
             return url.substring(0, index) + parametersSTR + url.substring(index, url.length);
+
+
          });
          if (OpenLayers.Util.isArray(updatedUrl)) {
             url = this.selectUrl(path, updatedUrl);

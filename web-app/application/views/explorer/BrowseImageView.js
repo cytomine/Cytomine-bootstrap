@@ -32,7 +32,7 @@ var BrowseImageView = Backbone.View.extend({
       this.initToolbar();
       this.initMap();
       this.initOntology();
-      setTimeout(function(){self.initImageFiltersPanel();}, 500);
+      self.initImageFiltersPanel();
       this.initAnnotationsTabs();
       if (this.iPad) this.initMobile();
       return this;
@@ -288,7 +288,9 @@ var BrowseImageView = Backbone.View.extend({
                   magnification = Math.round(magnification * 100) / 100;
                   $("#zoomInfoPanel"+self.model.id).html(magnification + "X");
                },
-               "moveend": function() {console.log("moveend");self.imageFiltersPanel.redraw();}
+               "moveend": function() {
+                   console.log("moveend");self.imageFiltersPanel.redraw();
+               }
 
                /*"changelayer": mapLayerChanged,
                 "changebaselayer": mapBaseLayerChanged*/
@@ -328,7 +330,7 @@ var BrowseImageView = Backbone.View.extend({
 
          var baseLayer = new OpenLayers.Layer.Zoomify(
              "Original",
-             _.map(zoomify_urls, function(url) { return "vision/process?method=none&url="+url}),
+             zoomify_urls,
              new OpenLayers.Size( metadata.width, metadata.height )
          );
          imageFilters.each(function (imageFilter) {

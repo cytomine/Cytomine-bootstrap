@@ -25,16 +25,16 @@ var Component = Backbone.View.extend({
       $(this.el).append(this.template);
 
       //Init menu
-      $("#project-button").popover({
+      $("#project-button").twipsy({
          placement : "below"
       });
-       $("#ontology-button").popover({
+       $("#ontology-button").twipsy({
          placement : "below"
       });
-      $("#upload-button").popover({
+      $("#upload-button").twipsy({
          placement : "below"
       });
-      $("#explorer-button").popover({
+      $("#explorer-button").twipsy({
          placement : "below"
       });
       return this;
