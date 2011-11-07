@@ -9,6 +9,9 @@ import groovyx.gpars.Asynchronizer
 import java.util.concurrent.Future
 import be.cytomine.image.server.RetrievalServer
 import org.codehaus.groovy.grails.web.json.JSONElement
+import be.cytomine.ontology.Term
+import be.cytomine.project.Project
+import be.cytomine.utils.ValueComparator
 
 class RestRetrievalController extends RestController {
 
@@ -17,6 +20,62 @@ class RestRetrievalController extends RestController {
         def data = loadAnnotationSimilarities(params.idannotation)
         responseSuccess(data)
     }
+
+    def listSimilarAnnotationAndBestTerm = {
+        log.info "List with id annotation:"+params.idannotation
+        def data = [:]
+
+        //Get similar annotation
+        def similarAnnotation = loadAnnotationSimilarities(params.idannotation)
+        data.annotation = similarAnnotation
+
+        //Get project terms ordered map
+        Project project = Annotation.read(params.idannotation).project();
+        def bestTermNotOrdered =  getTermMap(project)
+        ValueComparator bvc =  new ValueComparator(bestTermNotOrdered);
+        //browse annotation
+        similarAnnotation.each { annotation ->
+            //for each annotation, browse annotation terms
+            def terms = annotation.terms()
+            terms.each { term ->
+               if(isTermInProject(term, project)) {
+                   Double oldValue = bestTermNotOrdered.get(term)
+                   //for each term, add similarity value
+                   bestTermNotOrdered.put(term,oldValue+annotation.similarity)
+               }
+            }
+        }
+
+        //Sort [term:rate] by rate (desc)
+        TreeMap<Term,Double> bestTerm = new TreeMap(bvc);
+        bestTerm.putAll(bestTermNotOrdered)
+        def bestTermList = []
+
+        //Put them in a list
+         for (Map.Entry<Term, Double> entry : bestTerm.entrySet()){
+           Term term = entry.getKey()
+           term.rate = entry.getValue()
+           bestTermList << term
+        }
+        data.term = bestTermList
+        responseSuccess(data)
+    }
+
+    def getTermMap(Project projet) {
+        def map = [:]
+        def termList = projet.ontology.terms()
+        termList.each {
+            map.put(it,0d)
+        }
+        map
+    }
+
+    boolean isTermInProject(Term term, Project project) {
+        def terms = project.ontology.terms()
+        return terms.contains(term)
+    }
+
+
 
     def index = {
         log.info "index with id annotation:"+params.idannotation

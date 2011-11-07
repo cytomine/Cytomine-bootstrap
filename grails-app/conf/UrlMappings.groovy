@@ -137,7 +137,7 @@ class UrlMappings {
         }
 
         "/api/annotation/$idannotation/retrieval"(controller:"restRetrieval"){
-            action = [GET:"search",POST:"index"]
+            action = [GET:"listSimilarAnnotationAndBestTerm",POST:"index"]
         }
 
         "/api/annotation/term/suggest"(controller:"restSuggestedTerm"){

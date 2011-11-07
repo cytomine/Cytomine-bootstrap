@@ -270,56 +270,46 @@ AnnotationLayer.prototype = {
         var self = this;
         new TermCollection({idOntology:window.app.status.currentProjectModel.get('ontology')}).fetch({
             success : function (terms, response) {
-                new AnnotationRetrievalCollection({annotation : model.id}).fetch({
+                new AnnotationRetrievalModel({annotation : model.id}).fetch({
                     success : function (collection, response) {
-                        //make a hashtable with entry "idTerm = sumSimilaritiesForIdTerm"
-                        var data = new Object();
-                        collection.each(function(annotation) {
-                            var termArray = annotation.get('term');
-                            _.each(termArray, function(termid) {
-                                var isTermFromCurrentProject = terms.get(termid) != undefined;
-                                if (isTermFromCurrentProject) {
-                                    if (data[termid] != null) {
-                                        data[termid] = data[termid] + Number(annotation.get('similarity'));
-                                    } else {
-                                        data[termid] = Number(annotation.get('similarity'));
-                                    }
-                                }
-                            });
+
+                        var termsList = collection.get('term');
+
+                        var termsCollection = new TermCollection(termsList);
+
+                        var bestTerm1Object;
+                        var bestTerm2Object;
+
+                        var sum = 0;
+                        var i = 0;
+
+                        termsCollection.each(function(term) {
+                            sum = sum + term.get('rate');
+                            if(i==0) bestTerm1Object = term;
+                            if(i==1) bestTerm2Object = term;
+                            i++;
                         });
 
-                        //select the 2 best term thanks to similarities
-                        var bestTerm1 = "";
-                        var bestTerm2 = "";
+                        var bestTerm1;
+                        var bestTerm2;
                         var bestTerm1Value = 0;
                         var bestTerm2Value = 0;
-                        var max1 = 0;
-                        var max2 = 0;
-                        var sum = 0;
-                        for (var prop in data) {
-                            if (data.hasOwnProperty(prop)) {
-                                sum = sum + data[prop]
-                                if (data[prop] > max1) {
-                                    max2 = max1;
-                                    bestTerm2 = bestTerm1;
-                                    bestTerm2Value = bestTerm1Value;
-                                    max1 = data[prop]
-                                    bestTerm1 = prop;
-                                    bestTerm1Value = data[prop]
-                                } else if (data[prop] > max2) {
-                                    max2 = data[prop]
-                                    bestTerm2 = prop;
-                                    bestTerm2Value = data[prop];
-                                }
-                            }
+                        if(bestTerm1Object!=undefined) {
+                            bestTerm1 = bestTerm1Object.id
+                            bestTerm1Value = bestTerm1Object.get('rate');
+                            if(bestTerm1Value==0) bestTerm1 = undefined;
+                        }
+                        if(bestTerm2Object!=undefined) {
+                            bestTerm2 = bestTerm2Object.id
+                            bestTerm2Value = bestTerm2Object.get('rate');
+                            if(bestTerm2Value==0) bestTerm2 = undefined;
                         }
 
                         bestTerm1Value = (bestTerm1Value / sum) * 100;
                         bestTerm2Value = (bestTerm2Value / sum) * 100;
 
-
                         //Print suggested Term
-                        self.printSuggestedTerm(model, terms.get(bestTerm1), terms.get(bestTerm2), bestTerm1Value, bestTerm2Value, terms, collection);
+                        self.printSuggestedTerm(model, terms.get(bestTerm1), terms.get(bestTerm2), bestTerm1Value, bestTerm2Value, terms, collection.get('annotation'));
                     },error: function (bad, response) {
                         $("#loadSimilarAnnotation" + model.id).replaceWith("Error: cannot reach retrieval");
 
@@ -357,7 +347,7 @@ AnnotationLayer.prototype = {
 
             console.log("load AnnotationRetrievalView = " + $('#annotationRetrieval').length);
             var panel = new AnnotationRetrievalView({
-                model : similarAnnotation,
+                model : new AnnotationRetrievalCollection(similarAnnotation),
                 projectsPanel : self,
                 container : self,
                 el : "#annotationRetrieval",

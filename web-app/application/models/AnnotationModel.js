@@ -90,15 +90,21 @@ AnnotationCollection.comparator = function(annotation) {
 };
 
 // define our collection
-var AnnotationRetrievalCollection = Backbone.Collection.extend({
-    model: AnnotationModel,
+var AnnotationRetrievalModel = Backbone.Model.extend({
     url: function() {
         return "api/annotation/" + this.annotation + "/retrieval.json";
     },
     initialize: function (options) {
         this.annotation = options.annotation;
+    }
+});
+
+var AnnotationRetrievalCollection = Backbone.Collection.extend({
+    model: AnnotationModel,
+    initialize: function (options) {
+        this.annotation = options.annotation;
     },
     comparator : function (annotation) {
-        return -Number(annotation.get("similarity")); //id or created (chronology?)
+        return -annotation.get("similarity");
     }
 });

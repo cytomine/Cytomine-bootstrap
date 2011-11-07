@@ -34,9 +34,6 @@ var AnnotationRetrievalView = Backbone.View.extend({
                         }
                     }
                 });
-
-
-
                 self.createThumbView(self.page);
                 self.createStatsView();
         return this;
@@ -63,9 +60,6 @@ var AnnotationRetrievalView = Backbone.View.extend({
     createStatsView : function() {
         var self = this;
         //extract as method
-
-
-
         var data = new Object();
         self.model.each(function(annotation) {
             var termArray = annotation.get('term');
@@ -135,11 +129,15 @@ var AnnotationRetrievalView = Backbone.View.extend({
         $("#retrievalThumb").append(thumb.el);
 
         self.model.each(function(annotation) {
+
             if ((cpt >= inf) && (cpt < sup)) {
-                var thumb = new AnnotationThumbView({
-                    model : annotation,
+                annotation.set({name:annotation.get('similarity')});
+                var annotationModel = new AnnotationModel(annotation);
+
+                  var thumb = new AnnotationThumbView({
+                    model : annotationModel,
                     className : "thumb-wrap",
-                    id : "annotationthumb"+annotation.get('id')
+                    id : "annotationthumb"+annotationModel.id
                 }).render();
                 $("#retrievalThumb").append(thumb.el);
             }

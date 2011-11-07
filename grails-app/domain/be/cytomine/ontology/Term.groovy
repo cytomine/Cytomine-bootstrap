@@ -13,7 +13,7 @@ class Term extends SequenceDomain implements Serializable {
     Ontology ontology
     String color
 
-    Integer rate
+    Double rate
 
     static belongsTo = [ontology:Ontology]
     static transients = ["rate"]
