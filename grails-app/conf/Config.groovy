@@ -1,7 +1,9 @@
 import grails.converters.JSON
 import org.apache.log4j.RollingFileAppender
 import org.apache.log4j.DailyRollingFileAppender
-
+import org.apache.log4j.Level
+import org.apache.log4j.net.SMTPAppender
+import javax.mail.*
 // locations to search for config files that get merged into the main config
 // config files can either be Java properties files or ConfigSlurper scripts
 
@@ -60,6 +62,16 @@ grails.logging.jul.usebridge = true
 // packages to include in Spring bean scanning
 grails.spring.bean.packages = []
 
+mail.error.server = 'smtp.gmail.com'
+mail.error.port = 587
+mail.error.username = 'cytomine.ulg@gmail.com'
+mail.error.password = 'C3=8wj9R'
+mail.error.to = 'cytomine.ulg@gmail.com'
+mail.error.from = 'cytomine.ulg@gmail.com'
+mail.error.subject = '[Application Error]'
+mail.error.starttls = true
+mail.error.debug = false
+
 // set per-environment serverURL stem for creating absolute links
 environments {
   production {
@@ -82,15 +94,19 @@ log4j = {
   //appenders {
   //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
   //}
+   System.setProperty('mail.smtp.port', mail.error.port.toString())
+   System.setProperty('mail.smtp.starttls.enable',  mail.error.starttls.toString())
 
   println "Log4j consoleLevel"
 
   appenders {
-    rollingFile name:"appLog",
-            file:"/tmp/cyto.log",
-            maxFileSize:'300kB',
-            maxBackupIndex:1,
-            layout:pattern(conversionPattern: '%d{[EEE, dd-MMM-yyyy @ HH:mm:ss.SSS]} [%t] %-5p %c %x - %m%n')
+     rollingFile name:"logfile", maxFileSize:'300kB',
+            layout:pattern(conversionPattern: "%d{[ dd.MM.yy HH:mm:ss.SSS]} [%t] %-5p %c %x - %m%n"),
+            file:"/tmp/cytomine.log"
+    appender new org.apache.log4j.net.SMTPAppender(name:'mail', to:'cytomine.ulg@gmail.com', from:'cytomine.ulg@gmail.com', subject:'[Application Error]',
+            SMTPHost:'smtp.gmail.com', SMTPUsername:'cytomine.ulg@gmail.com', SMTPPassword: 'C3=8wj9R',
+            layout: pattern(conversionPattern: '%d{[ dd.MM.yy HH:mm:ss.SSS]} [%t] %n%-5p %n%c %n%C %n %x %n %m%n %n'),
+            threshold:org.apache.log4j.Level.ERROR)
   }
 
   error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
@@ -109,7 +125,8 @@ log4j = {
 
 
   root {
-    info 'stdout','appLog'
+    info 'stdout','appLog',"logfile"
+    error  'mail'
     additivity = true
   }
   //debug "org.hibernate.SQL"
