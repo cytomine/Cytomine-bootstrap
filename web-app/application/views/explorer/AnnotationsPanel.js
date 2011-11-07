@@ -129,13 +129,14 @@ var AnnotationsPanel = Backbone.View.extend({
        doLayout: function(tpl) {
           var self = this;
           var el = $('#annotationsPanel' + self.model.get('id'));
+          var width = parseInt($(window).width());
           el.html(_.template(tpl, {id : self.model.get('id')}));
           new ProjectModel({id : window.app.status.currentProject}).fetch({
                  success : function (model, response) {
                     self.createTabs(model.get("ontology"));
                  }
               });
-          el.css("padding", "1px");
+          el.css("padding", "0px");
           el.css("margin", "0px");
           el.css("width", "20px");
           el.css("height", "20px");
@@ -146,7 +147,7 @@ var AnnotationsPanel = Backbone.View.extend({
              el.animate({
                     height: "250px"
                  }, "fast").animate({
-                    width: "100%"
+                    width: width
                  });
              setTimeout(function(){el.find("div.panel_content").fadeIn();}, 1000);
              return false;

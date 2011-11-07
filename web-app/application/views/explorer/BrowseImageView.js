@@ -32,7 +32,6 @@ var BrowseImageView = Backbone.View.extend({
       this.initToolbar();
       this.initMap();
       this.initOntology();
-      self.initImageFiltersPanel();
       this.initAnnotationsTabs();
       if (this.iPad) this.initMobile();
       return this;
@@ -256,7 +255,7 @@ var BrowseImageView = Backbone.View.extend({
       var self = this;
       var initZoomifyLayer = function(metadata, zoomify_urls, imageFilters) {
          self.createLayerSwitcher();
-
+         self.initImageFiltersPanel();
          //var numZoomLevels =  metadata.nbZoom;
          /* Map with raster coordinates (pixels) from Zoomify image */
          var options = {
@@ -289,7 +288,7 @@ var BrowseImageView = Backbone.View.extend({
                   $("#zoomInfoPanel"+self.model.id).html(magnification + "X");
                },
                "moveend": function() {
-                   console.log("moveend");self.imageFiltersPanel.redraw();
+                   self.imageFiltersPanel.redraw();
                }
 
                /*"changelayer": mapLayerChanged,

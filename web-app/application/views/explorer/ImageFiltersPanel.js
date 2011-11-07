@@ -85,6 +85,7 @@ var ImageFiltersPanel = Backbone.View.extend({
             var index = url.indexOf("method=");
             if (index == -1) { //Original layer
                 url = "vision/process?method=none&url="+url;
+                index = url.indexOf("method=");
             }
             return url.substring(0, index) + parametersSTR + url.substring(index, url.length);
 
