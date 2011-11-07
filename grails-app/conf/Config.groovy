@@ -62,15 +62,8 @@ grails.logging.jul.usebridge = true
 // packages to include in Spring bean scanning
 grails.spring.bean.packages = []
 
-mail.error.server = 'smtp.gmail.com'
 mail.error.port = 587
-mail.error.username = 'cytomine.ulg@gmail.com'
-mail.error.password = 'C3=8wj9R'
-mail.error.to = 'cytomine.ulg@gmail.com'
-mail.error.from = 'cytomine.ulg@gmail.com'
-mail.error.subject = '[Application Error]'
 mail.error.starttls = true
-mail.error.debug = false
 
 // set per-environment serverURL stem for creating absolute links
 environments {
