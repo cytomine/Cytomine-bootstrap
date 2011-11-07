@@ -124,11 +124,28 @@ log4j = {
 
 
 
-  root {
-    info 'stdout','appLog',"logfile"
-    error  'mail'
-    additivity = true
-  }
+
+    environments {
+      production {
+          root {
+            info 'stdout','appLog',"logfile"
+            error  'mail'
+            additivity = true
+          }
+      }
+      development {
+          root {
+            info 'stdout','appLog',"logfile"
+            additivity = true
+          }
+      }
+      test {
+          root {
+            info 'stdout','appLog',"logfile"
+            additivity = true
+          }
+      }
+    }
   //debug "org.hibernate.SQL"
   debug 'be.cytomine'
   debug 'grails.app'
