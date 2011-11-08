@@ -302,42 +302,35 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(200,code)
   }
 
-  void testAddAnnotationWithAnnotationTermTransactionCorrect() {
-    int idAnnotation;
-    int idAnnotationTerm1;
-    int idAnnotationTerm2;
-    //START TRANSACTION
 
-    log.info("begin transact")
-    HttpClient client = new HttpClient()
-    String URL = Infos.CYTOMINEURL+Infos.BEGINTRANSACT
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-
+  void testAddAnnotationCorrectWithTerm() {
 
     log.info("create annotation")
     def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
     String jsonAnnotation = annotationToAdd.encodeAsJSON()
 
+    def annotationWithTerm = JSON.parse(jsonAnnotation)
+
+    Long idTerm1 = BasicInstance.createOrGetBasicTerm().id
+    Long idTerm2 = BasicInstance.createOrGetAnotherBasicTerm().id
+
+    annotationWithTerm.term = [idTerm1,idTerm2]
+    jsonAnnotation = annotationWithTerm.encodeAsJSON()
+
     log.info("post annotation:"+jsonAnnotation.replace("\n",""))
-    URL = Infos.CYTOMINEURL+"api/annotation.json"
-    client = new HttpClient()
+    String URL = Infos.CYTOMINEURL+"api/annotation.json"
+    HttpClient client = new HttpClient()
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     client.post(jsonAnnotation)
-    code  = client.getResponseCode()
-    response = client.getResponseData()
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
     client.disconnect();
 
     log.info("check response")
     assertEquals(200,code)
     def json = JSON.parse(response)
     assert json instanceof JSONObject
-    idAnnotation = json.annotation.id
+    int idAnnotation = json.annotation.id
 
     log.info("check if object "+ idAnnotation +" exist in DB")
     client = new HttpClient();
@@ -349,90 +342,26 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
     assertEquals(200,code)
 
-
-    //ADD ANNOTATION 1 TERM
-    log.info("create AnnotationTerm")
-    def annotationTermToAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationWithAnnotationTermTransactionCorrect")
-    annotationTermToAdd.discard()
-    annotationTermToAdd.annotation = Annotation.get(idAnnotation);
-    String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
-
-    log.info("post annotationTerm:"+jsonAnnotationTerm.replace("\n",""))
-    URL = Infos.CYTOMINEURL+"api/annotation/"+ annotationTermToAdd.annotation.id +"/term/"+ annotationTermToAdd.term.id +".json"
-    client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonAnnotationTerm)
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int idTerm= json.annotationterm.term
-
-    log.info("check if object "+ idAnnotation +"/"+ idTerm +"exist in DB")
+      //check term1
+    log.info("check if object "+ idAnnotation +" exist in DB")
     client = new HttpClient();
-
-    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation+"/term/"+idTerm +".json"
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +"/term/" + idTerm1 + ".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
     assertEquals(200,code)
-
-
-    //ADD ANNOTATION 2 TERM
-    log.info("create AnnotationTerm")
-    annotationTermToAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationWithAnnotationTermTransactionCorrect")
-    annotationTermToAdd.discard()
-    annotationTermToAdd.annotation = Annotation.get(idAnnotation);
-    jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
-
-    log.info("post annotationTerm:"+jsonAnnotationTerm.replace("\n",""))
-    URL = Infos.CYTOMINEURL+"api/annotation/"+ annotationTermToAdd.annotation.id +"/term/"+ annotationTermToAdd.term.id +".json"
-    client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonAnnotationTerm)
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-    idTerm= json.annotationterm.term
-
-    log.info("check if object "+ idAnnotation +"/"+ idTerm +"exist in DB")
+     //check term2
+    log.info("check if object "+ idAnnotation +" exist in DB")
     client = new HttpClient();
-
-    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation+"/term/"+idTerm +".json"
+    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +"/term/" + idTerm2 + ".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
     client.get()
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
     assertEquals(200,code)
-
-
-
-    //END TRANSACTION
-    log.info("end transact")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.ENDTRANSACT
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    // UNDO
 
     log.info("test undo")
     client = new HttpClient()
@@ -464,8 +393,6 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
     assertEquals(200,code)
 
-    println json
-    //must be done because redo change id
     json = JSON.parse(response)
     //assert json instanceof JSONObject
     idAnnotation = json[0].annotation.id
@@ -479,6 +406,185 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     response = client.getResponseData()
     client.disconnect();
     assertEquals(200,code)
+  }
+
+  void testAddAnnotationWithAnnotationTermTransactionCorrect() {
+//    int idAnnotation;
+//    int idAnnotationTerm1;
+//    int idAnnotationTerm2;
+//    //START TRANSACTION
+//
+//    log.info("begin transact")
+//    HttpClient client = new HttpClient()
+//    String URL = Infos.CYTOMINEURL+Infos.BEGINTRANSACT
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+//    client.get()
+//    int code  = client.getResponseCode()
+//    String response = client.getResponseData()
+//    client.disconnect();
+//    assertEquals(200,code)
+//
+//
+//
+//    log.info("create annotation")
+//    def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
+//    String jsonAnnotation = annotationToAdd.encodeAsJSON()
+//
+//    log.info("post annotation:"+jsonAnnotation.replace("\n",""))
+//    URL = Infos.CYTOMINEURL+"api/annotation.json"
+//    client = new HttpClient()
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+//    client.post(jsonAnnotation)
+//    code  = client.getResponseCode()
+//    response = client.getResponseData()
+//    client.disconnect();
+//
+//    log.info("check response")
+//    assertEquals(200,code)
+//    def json = JSON.parse(response)
+//    assert json instanceof JSONObject
+//    idAnnotation = json.annotation.id
+//
+//    log.info("check if object "+ idAnnotation +" exist in DB")
+//    client = new HttpClient();
+//    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +".json"
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+//    client.get()
+//    code  = client.getResponseCode()
+//    response = client.getResponseData()
+//    client.disconnect();
+//    assertEquals(200,code)
+//
+//
+//    //ADD ANNOTATION 1 TERM
+//    log.info("create AnnotationTerm")
+//    def annotationTermToAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationWithAnnotationTermTransactionCorrect")
+//    annotationTermToAdd.discard()
+//    annotationTermToAdd.annotation = Annotation.get(idAnnotation);
+//    String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
+//
+//    log.info("post annotationTerm:"+jsonAnnotationTerm.replace("\n",""))
+//    URL = Infos.CYTOMINEURL+"api/annotation/"+ annotationTermToAdd.annotation.id +"/term/"+ annotationTermToAdd.term.id +".json"
+//    client = new HttpClient()
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+//    client.post(jsonAnnotationTerm)
+//    code  = client.getResponseCode()
+//    response = client.getResponseData()
+//    println response
+//    client.disconnect();
+//
+//    log.info("check response")
+//    assertEquals(200,code)
+//    json = JSON.parse(response)
+//    assert json instanceof JSONObject
+//    int idTerm= json.annotationterm.term
+//
+//    log.info("check if object "+ idAnnotation +"/"+ idTerm +"exist in DB")
+//    client = new HttpClient();
+//
+//    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation+"/term/"+idTerm +".json"
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+//    client.get()
+//    code  = client.getResponseCode()
+//    response = client.getResponseData()
+//    client.disconnect();
+//    assertEquals(200,code)
+//
+//
+//    //ADD ANNOTATION 2 TERM
+//    log.info("create AnnotationTerm")
+//    annotationTermToAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationWithAnnotationTermTransactionCorrect")
+//    annotationTermToAdd.discard()
+//    annotationTermToAdd.annotation = Annotation.get(idAnnotation);
+//    jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
+//
+//    log.info("post annotationTerm:"+jsonAnnotationTerm.replace("\n",""))
+//    URL = Infos.CYTOMINEURL+"api/annotation/"+ annotationTermToAdd.annotation.id +"/term/"+ annotationTermToAdd.term.id +".json"
+//    client = new HttpClient()
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+//    client.post(jsonAnnotationTerm)
+//    code  = client.getResponseCode()
+//    response = client.getResponseData()
+//    println response
+//    client.disconnect();
+//
+//    log.info("check response")
+//    assertEquals(200,code)
+//    json = JSON.parse(response)
+//    assert json instanceof JSONObject
+//    idTerm= json.annotationterm.term
+//
+//    log.info("check if object "+ idAnnotation +"/"+ idTerm +"exist in DB")
+//    client = new HttpClient();
+//
+//    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation+"/term/"+idTerm +".json"
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+//    client.get()
+//    code  = client.getResponseCode()
+//    response = client.getResponseData()
+//    client.disconnect();
+//    assertEquals(200,code)
+//
+//
+//
+//    //END TRANSACTION
+//    log.info("end transact")
+//    client = new HttpClient()
+//    URL = Infos.CYTOMINEURL+Infos.ENDTRANSACT
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+//    client.get()
+//    code  = client.getResponseCode()
+//    response = client.getResponseData()
+//    client.disconnect();
+//    assertEquals(200,code)
+//
+//    // UNDO
+//
+//    log.info("test undo")
+//    client = new HttpClient()
+//    URL = Infos.CYTOMINEURL+Infos.UNDOURL
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+//    client.get()
+//    code  = client.getResponseCode()
+//    response = client.getResponseData()
+//    client.disconnect();
+//    assertEquals(200,code)
+//
+//    log.info("check if object "+ idAnnotation +" not exist in DB")
+//    client = new HttpClient();
+//    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +".json"
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+//    client.get()
+//    code  = client.getResponseCode()
+//    response = client.getResponseData()
+//    client.disconnect();
+//    assertEquals(404,code)
+//
+//    log.info("test redo")
+//    client = new HttpClient()
+//    URL = Infos.CYTOMINEURL+Infos.REDOURL
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+//    client.get()
+//    code  = client.getResponseCode()
+//    response = client.getResponseData()
+//    client.disconnect();
+//    assertEquals(200,code)
+//
+//    println json
+//    //must be done because redo change id
+//    json = JSON.parse(response)
+//    //assert json instanceof JSONObject
+//    idAnnotation = json[0].annotation.id
+//
+//    log.info("check if object "+ idAnnotation +" exist in DB")
+//    client = new HttpClient();
+//    URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation +".json"
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+//    client.get()
+//    code  = client.getResponseCode()
+//    response = client.getResponseData()
+//    client.disconnect();
+//    assertEquals(200,code)
 
 
 
@@ -492,6 +598,10 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     String jsonAnnotation = annotationToAdd.encodeAsJSON()
     def updateAnnotation = JSON.parse(jsonAnnotation)
     updateAnnotation.location = 'POINT(BAD GEOMETRY)'
+    Long idTerm1 = BasicInstance.createOrGetBasicTerm().id
+    Long idTerm2 = BasicInstance.createOrGetAnotherBasicTerm().id
+    updateAnnotation.term = [idTerm1,idTerm2]
+
     jsonAnnotation = updateAnnotation.encodeAsJSON()
 
     log.info("post annotation:"+jsonAnnotation.replace("\n",""))

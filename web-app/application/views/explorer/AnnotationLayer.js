@@ -430,85 +430,53 @@ AnnotationLayer.prototype = {
     /*Add annotation in database*/
     addAnnotation: function (feature) {
         var alias = this;
+        var self = this;
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
-
+        var terms = alias.ontologyTreeView.getTermsChecked();
         var annotation = new AnnotationModel({
             //"class": "be.cytomine.project.Annotation",
             name: "",
             location: geomwkt,
-            image: this.imageID
+            image: this.imageID,
+            term:terms
             /*parse: function(response) {
              window.app.view.message("Annotation", response.message, "");
              return response.annotation;
              }*/
         });
 
+        console.log(annotation.toJSON());
+        annotation.save(annotation.toJSON(), {
+            success: function (annotation, response) {
 
-        new BeginTransactionModel({}).save({}, {
-            success: function (model, response) {
+                var annotationID = response.annotation.id;
+                var message = response.message;
+                 new AnnotationModel({id:annotationID}).fetch({
+                    success : function (annotation, response) {
+                        self.vectorsLayer.removeFeatures([feature]);
+                        var newFeature = self.createFeatureFromAnnotation(annotation);
+                        self.addFeature(newFeature);
+                        self.controls.select.unselectAll();
+                        self.controls.select.select(newFeature);
 
-                annotation.save(annotation.toJSON(), {
-                    success: function (annotation, response) {
+                        var cropURL = annotation.get('cropURL');
+                        var cropImage = _.template("<img src='{{url}}' alt='{{alt}}' style='max-width: 175px;max-height: 175px;' />", { url : cropURL, alt : cropURL});
+                        var alertMessage = _.template("<p>{{message}}</p><div>{{cropImage}}</div>", { message : message, cropImage : cropImage});
+                        window.app.view.message("Annotation added", alertMessage, "success");
 
-
-                        var annotationID = response.annotation.id;
-                        var message = response.message;
-
-                        var terms = alias.ontologyTreeView.getTermsChecked();
-
-                        if (terms.length == 0) {
-                            alias.addTermCallback(0, 0, feature, annotationID, message, undefined);
-                        }
-
-                        var counter = 0;
-                        _.each(terms, function (idTerm) {
-                            new AnnotationTermModel({
-                                term: idTerm,
-                                annotation: response.annotation.id
-                            }).save(null, {success : function (termModel, response) {
-                                alias.addTermCallback(terms.length, ++counter, feature, annotationID, message, idTerm);
-                            }});
-                        });
-
+                        self.browseImageView.refreshAnnotationTabs(undefined);
                     },
-                    error: function (model, response) {
-                        var json = $.parseJSON(response.responseText);
-                        window.app.view.message("Add annotation", "error:" + json.errors, "");
+                    error : function(model, response) {
                     }
                 });
-
             },
             error: function (model, response) {
-
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Add annotation", "error:" + json.errors, "");
             }
         });
 
-    },
-    addTermCallback : function(total, counter, oldFeature, annotationID, message, idTerm) {
-        if (counter < total) return;
-        var self = this;
-        new AnnotationModel({id:annotationID}).fetch({
-            success : function (annotation, response) {
-                self.vectorsLayer.removeFeatures([oldFeature]);
-                var newFeature = self.createFeatureFromAnnotation(annotation);
-                self.addFeature(newFeature);
-                self.controls.select.unselectAll();
-                self.controls.select.select(newFeature);
-
-                var cropURL = annotation.get('cropURL');
-                var cropImage = _.template("<img src='{{url}}' alt='{{alt}}' style='max-width: 175px;max-height: 175px;' />", { url : cropURL, alt : cropURL});
-                var alertMessage = _.template("<p>{{message}}</p><div>{{cropImage}}</div>", { message : message, cropImage : cropImage});
-                window.app.view.message("Annotation added", alertMessage, "success");
-                new EndTransactionModel({}).save();
-
-                self.browseImageView.refreshAnnotationTabs(undefined);
-            },
-            error : function(model, response) {
-
-                new EndTransactionModel({}).save();
-            }
-        });
 
     },
     createFeatureFromAnnotation :function (annotation) {

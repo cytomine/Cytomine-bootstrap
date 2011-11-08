@@ -126,4 +126,8 @@ class RestController {
       }
   }
 
+    boolean isSuccess() {
+        return response.status==SUCCESS_ADD_CODE || response.status==SUCCESS_EDIT_CODE || response.status==SUCCESS_DELETE_CODE;
+    }
+
 }

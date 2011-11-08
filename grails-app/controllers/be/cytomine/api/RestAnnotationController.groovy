@@ -28,6 +28,7 @@ import be.cytomine.image.server.RetrievalServer
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.SuggestedTerm
 import be.cytomine.command.suggestedTerm.DeleteSuggestedTermCommand
+import be.cytomine.command.annotationterm.AddAnnotationTermCommand
 
 class RestAnnotationController extends RestController {
 
@@ -205,18 +206,38 @@ class RestAnnotationController extends RestController {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
         def json = request.JSON
         println "json = " + json
-        println "json.location = " + json.location
+        //simplify annotation
         try {
             String form = json.location;
             Geometry annotation = simplifyPolygon(form)
             json.location =  new WKTWriter().write(annotation)
         } catch(Exception e) {}
         log.info "User:" + currentUser.username + " transaction:" +  currentUser.transactionInProgress  + " request:" +json.toString()
+        //add annotation
+
+        log.info "Start transaction"
+        TransactionController transaction = new TransactionController();
+        transaction.start()
+
         Command addAnnotationCommand = new AddAnnotationCommand(postData : json.toString(), user: currentUser)
         def result = processCommand(addAnnotationCommand, currentUser)
         log.info "Index annotation with id=" +result?.annotation?.id
         Long id = result?.annotation?.id
 
+        //add annotation-term
+         if(id) {
+             def term = json.term;
+             if(term)  {
+                 term.each { idTerm ->
+                        def postDataAnnotationTerm = ([user : currentUser.id, annotation : id, term : idTerm]) as JSON
+                        Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : postDataAnnotationTerm.toString(),user: currentUser)
+                        def resultTerm = processCommand(addAnnotationTermCommand, currentUser)
+                 }
+             }
+         }
+
+        transaction.stop()
+        //add annotation on the retrieval
         try {if(id) indexRetrievalAnnotation(id) } catch(Exception e) { log.error "Cannot index in retrieval:"+e.toString()}
 
         response(result)
