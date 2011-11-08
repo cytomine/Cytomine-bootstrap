@@ -161,10 +161,7 @@ class RestImageController extends RestController{
 
     def imageservers = {
         AbstractImage image = AbstractImage.read(params.id)
-        def imageServers = ImageServer.createCriteria().list {
-            inList("storage", image.storageAbstractImages.collect { it.storage })
-        }
-        def urls = imageServers.collect { it.getZoomifyUrl() + image.getPath() + "/" }
+        def urls = image.getImageServers().collect { it.getZoomifyUrl() + image.getPath() + "/" }
         def result = [:]
         result.imageServersURLs =  urls
         response(result)

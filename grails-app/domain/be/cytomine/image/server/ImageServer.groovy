@@ -10,6 +10,7 @@ class ImageServer extends SequenceDomain {
     String service
     String className
     Storage storage
+    Boolean available
 
     static hasMany = [mimes:Mime, mis:MimeImageServer]
 
@@ -18,6 +19,7 @@ class ImageServer extends SequenceDomain {
         url  blank : false
         mimes nullable : true
         storage nullable : true
+        available nullable : false
     }
 
     String toString() {

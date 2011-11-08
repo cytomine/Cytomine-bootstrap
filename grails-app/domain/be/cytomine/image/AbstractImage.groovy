@@ -174,6 +174,7 @@ class AbstractImage extends SequenceDomain {
     def getImageServers() {
         if (this.storageAbstractImages != null && this.storageAbstractImages.size() > 0) {
             def imageServers = ImageServer.createCriteria().list {
+                eq("available", true)
                 inList("storage", this.storageAbstractImages.collect { it.storage })
             }
             return imageServers
