@@ -1,6 +1,4 @@
 /* Annotation Layer */
-
-
 var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView, map) {
 
     var styleMap = new OpenLayers.StyleMap({
@@ -40,8 +38,6 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 }
 
 AnnotationLayer.prototype = {
-
-
 
     registerEvents: function (map) {
 

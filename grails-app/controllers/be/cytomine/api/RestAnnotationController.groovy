@@ -315,56 +315,34 @@ class RestAnnotationController extends RestController {
 
 
     private Geometry simplifyPolygon(String form) {
-        Geometry lastAnnotationFull
+
         Geometry annotationFull = new WKTReader().read(form);
+        Geometry lastAnnotationFull = annotationFull
         println "points=" + annotationFull.getNumPoints() + " " + annotationFull.getArea();
         println "annotationFull:"+annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
         StopWatch stopWatch = new LoggingStopWatch();
-        /**
-         * Must be improve:
-         * -Number of point depends on: size of annotation, times during the draw, ...
-         * Sometimes bad perf because incrThreshold is too small (but too big: risk to have bad compression => recover (break;) => too many points)
-         */
+        /* Number of point (ex: 500 points) */
+        double numberOfPoint = annotationFull.getNumPoints()
+        /* Maximum number of point that we would have (500/5 (max 150)=max 100 points)*/
+        double rateLimitMax = Math.min(numberOfPoint/7.5d,150)
+        /* Minimum number of point that we would have (500/10 (min 10 max 100)=min 50 points)*/
+        double rateLimitMin = Math.min(Math.max(numberOfPoint/10d,10),100)
+        /* Increase value for the increment (allow to converge faster) */
+        float incrThreshold = 0.25f
+        double increaseIncrThreshold = numberOfPoint/100d
         float i = 0;
-        int max=500; //max loop (prevent infinite loop)
-        float incrThreshold = 0.25f //increment threshold value
-        if(annotationFull.getNumPoints()>500) {
-            while(annotationFull.getNumPoints()>75 && max>0)
-            {
-                lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull,i)
-                println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints()
-                if(lastAnnotationFull.getNumPoints()<50) break;
-                annotationFull = lastAnnotationFull
-                i=i+(incrThreshold*5); max--;
-            }
-        }else  if(annotationFull.getNumPoints()>250) {
-            while(annotationFull.getNumPoints()>50 && max>0)
-            {
-                lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull,i)
-                println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints()
-                if(lastAnnotationFull.getNumPoints()<35) break;
-                annotationFull = lastAnnotationFull
-                i=i+(incrThreshold*2); max--;
-            }
-        } else if(annotationFull.getNumPoints()>100) {
-            while(annotationFull.getNumPoints()>10 && max>0)
-            {
-                lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull,i)
-                println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints()
-                if(lastAnnotationFull.getNumPoints()<6) break;
-                annotationFull = lastAnnotationFull
-                i=i+(incrThreshold); max--;
-            }
-        }else {
-            while(annotationFull.getNumPoints()>10 && max>0)
-            {
-                lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull,i)
-                println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints()
-                if(lastAnnotationFull.getNumPoints()<6) break;
-                annotationFull = lastAnnotationFull
-                i=i+(incrThreshold); max--;
-            }
+        /* Max number of loop (prevent infinite loop) */
+        int maxLoop = 500
+
+        while(numberOfPoint>rateLimitMax && maxLoop>0)
+        {
+            lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull,i)
+            println "annotationFull=" + i + " "+lastAnnotationFull.getNumPoints()
+            if(lastAnnotationFull.getNumPoints()<rateLimitMin) break;
+            annotationFull = lastAnnotationFull
+            i=i+(incrThreshold*increaseIncrThreshold); maxLoop--;
         }
+
         stopWatch.stop("compress:");
         println "annotationFull good=" + i + " "+annotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
         return lastAnnotationFull
