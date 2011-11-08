@@ -459,15 +459,16 @@ class BootStrap {
                     if (!MimeImageServer.findByImageServerAndMime(imageServer, mime)){
                         MimeImageServer.link(imageServer, mime)
                     }
-                }*/
-                return
+                }
+                return*/
             } else {
                 imageServer = new ImageServer(
                         name : item.name,
                         url : item.url,
                         service : item.service,
                         className : item.className,
-                        storage : Storage.findByName(item.storage))
+                        storage : Storage.findByName(item.storage),
+                        available:true)
 
                 if (imageServer.validate()) {
                     println "Creating image server ${imageServer.name}... : ${imageServer.url}"
