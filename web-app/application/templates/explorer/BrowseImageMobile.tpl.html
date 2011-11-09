@@ -1,39 +1,39 @@
-<div id="tabs-image-{{project}}-{{id}}-">
-    <div class="toolbar" id="toolbar{{id}}" >
+<div id="tabs-image-<%= project %>-<%= id %>-">
+    <div class="toolbar" id="toolbar<%= id %>" >
       <span class="nav-toolbar">
-        <input type="radio" id="none{{id}}" name="toolbar" /><label for="none{{id}}">Navigate</label>
-        <input type="radio" id="select{{id}}" name="toolbar" /><label for="select{{id}}">Select</label>
+        <input type="radio" id="none<%= id %>" name="toolbar" /><label for="none<%= id %>">Navigate</label>
+        <input type="radio" id="select<%= id %>" name="toolbar" /><label for="select<%= id %>">Select</label>
       </span>
       <span class="draw-toolbar">
-        <!--<input type="radio" id="freehand{{id}}" name="toolbar" /><label for="freehand{{id}}">Freehand</label>-->
-        <input type="radio" id="regular4{{id}}" name="toolbar" /><label for="regular4{{id}}">Quadrilateral</label>
-        <input type="radio" id="regular30{{id}}" name="toolbar" /><label for="regular30{{id}}">Ellipse</label>
-        <input type="radio" id="polygon{{id}}" name="toolbar" /><label for="polygon{{id}}">Polygon</label>
-        <input type="radio" id="freehand{{id}}" name="toolbar" /><label for="freehand{{id}}">Freehand</label>
-        <input type="radio" id="magic{{id}}" name="toolbar" style="display:none;"/><label for="magic{{id}}">Auto</label>
+        <!--<input type="radio" id="freehand<%= id %>" name="toolbar" /><label for="freehand<%= id %>">Freehand</label>-->
+        <input type="radio" id="regular4<%= id %>" name="toolbar" /><label for="regular4<%= id %>">Quadrilateral</label>
+        <input type="radio" id="regular30<%= id %>" name="toolbar" /><label for="regular30<%= id %>">Ellipse</label>
+        <input type="radio" id="polygon<%= id %>" name="toolbar" /><label for="polygon<%= id %>">Polygon</label>
+        <input type="radio" id="freehand<%= id %>" name="toolbar" /><label for="freehand<%= id %>">Freehand</label>
+        <input type="radio" id="magic<%= id %>" name="toolbar" style="display:none;"/><label for="magic<%= id %>">Auto</label>
       </span>
       <span class="edit-toolbar">
-        <input type="radio" id="modify{{id}}" name="toolbar" /><label for="modify{{id}}">Edit</label>
-        <input type="radio" id="rotate{{id}}" name="toolbar" /><label for="rotate{{id}}">Rotate</label>
-        <input type="radio" id="resize{{id}}" name="toolbar" /><label for="resize{{id}}">Resize</label>
-        <input type="radio" id="drag{{id}}"  name="toolbar" /><label for="drag{{id}}">Drag</label>
+        <input type="radio" id="modify<%= id %>" name="toolbar" /><label for="modify<%= id %>">Edit</label>
+        <input type="radio" id="rotate<%= id %>" name="toolbar" /><label for="rotate<%= id %>">Rotate</label>
+        <input type="radio" id="resize<%= id %>" name="toolbar" /><label for="resize<%= id %>">Resize</label>
+        <input type="radio" id="drag<%= id %>"  name="toolbar" /><label for="drag<%= id %>">Drag</label>
       </span>
       <span class="delete-toolbar">
-        <input type="radio" id="delete{{id}}" name="toolbar" /><label for="delete{{id}}">Delete</label>
+        <input type="radio" id="delete<%= id %>" name="toolbar" /><label for="delete<%= id %>">Delete</label>
       </span>
 
       <span class="ruler-toolbar">
-        <input type="radio" id="ruler{{id}}" name="toolbar" /><label for="ruler{{id}}">Ruler</label>
+        <input type="radio" id="ruler<%= id %>" name="toolbar" /><label for="ruler<%= id %>">Ruler</label>
       </span>
     </div>
-    <div class="mapMobile" id="map{{id}}"></div>
+    <div class="mapMobile" id="map<%= id %>"></div>
     <div class="controlPanelsMobile">
-        <div class="overviewPanelMobile" id="overviewMap{{id}}"></div>
-        <div class="layerSwitcherPanelMobile" id="layerSwitcher{{id}}"></div>
-        <div class="ontologypanelMobile" id="ontologyTree{{id}}"></div>
-        <div class="imageFiltersPanelMobile" id="imageFiltersPanel{{id}}"></div>
+        <div class="overviewPanelMobile" id="overviewMap<%= id %>"></div>
+        <div class="layerSwitcherPanelMobile" id="layerSwitcher<%= id %>"></div>
+        <div class="ontologypanelMobile" id="ontologyTree<%= id %>"></div>
+        <div class="imageFiltersPanelMobile" id="imageFiltersPanel<%= id %>"></div>
     </div>
-    <div class="annotationsPanel" id="annotationsPanel{{id}}"></div>
-    <div class="zoomInfoPanel" id="zoomInfoPanel{{id}}"></div>
+    <div class="annotationsPanel" id="annotationsPanel<%= id %>"></div>
+    <div class="zoomInfoPanel" id="zoomInfoPanel<%= id %>"></div>
 
 </div>

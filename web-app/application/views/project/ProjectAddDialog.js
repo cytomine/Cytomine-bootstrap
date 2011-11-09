@@ -119,7 +119,7 @@ var AddProjectDialog = Backbone.View.extend({
 
                          var json = $.parseJSON(response.responseText);
                          window.app.view.message("User", json.errors, "success");
-                      }});
+                       }});
                 });
 
              },

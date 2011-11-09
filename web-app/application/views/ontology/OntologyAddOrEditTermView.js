@@ -126,7 +126,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
       self.$textboxName.bind('keyup mouseup change click',function(e){
          var node = self.$tree.dynatree("getTree").getNodeByKey(self.model.id);
          var color = "#119b04"
-         var htmlNode = "<span style='color:{{color}}'>{{title}}</span>"
+         var htmlNode = "<span style='color:<%=   color %>'><%=   title %></span>"
          var nodeTpl = _.template(htmlNode, {title : self.$textboxName.val(), color : color});
          if (node != null) node.setTitle(nodeTpl);
       });

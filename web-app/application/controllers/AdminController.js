@@ -19,15 +19,15 @@ var AdminController = Backbone.Router.extend({
 
                collection.each(function (model) {
                   if (_.contains(userAuthorities, model.get("authority"))) {
-                     authorities += _.template("<option value='{{id}}' selected>{{authority}}</option>",
+                     authorities += _.template("<option value='<%=   id %>' selected><%=   authority %></option>",
                          {id : model.get("id"), authority: model.get("authority")});
                   } else {
-                     authorities += _.template("<option value='{{id}}' >{{authority}}</option>",
+                     authorities += _.template("<option value='<%=   id %>' ><%=   authority %></option>",
                          {id : model.get("id"), authority: model.get("authority")});
                   }
                });
-               var el = _.template('<select class="{{selectClass}}" title="" multiple="multiple" name="example-basic" size="5" style="display:none;">' +
-                   '{{authorities}}</select>',{ selectClass:selectClass, authorities : authorities });
+               var el = _.template('<select class="<%=   selectClass %>" title="" multiple="multiple" name="example-basic" size="5" style="display:none;">' +
+                   '<%=   authorities %></select>',{ selectClass:selectClass, authorities : authorities });
                setTimeout(function(){
                   /*$("#authorities").multiselect({});*/
                }, 200);

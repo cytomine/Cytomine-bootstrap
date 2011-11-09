@@ -32,7 +32,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
       var self = this;
       var radioName = "layerSwitch-" + model.get("id");
       var layerID = "layerSwitch-" + model.get("id") + "-" + new Date().getTime(); //index of the layer in this.layers array
-      var liLayer = _.template("<li><input type='radio' id='{{id}}' name='{{radioName}}' checked/><span style='color : #ffffff;'> {{name}}</span></li>", {id : layerID, radioName:radioName, name : layer.name.substr(0,15)});
+      var liLayer = _.template("<li><input type='radio' id='<%=   id %>' name='<%=   radioName %>' checked/><span style='color : #ffffff;'> <%=   name %></span></li>", {id : layerID, radioName:radioName, name : layer.name.substr(0,15)});
       $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").append(liLayer);
       $("#layerSwitcher"+this.model.get("id")).find(".baseLayers").find("#"+layerID);
       $("#"+layerID).change(function(){
@@ -45,9 +45,9 @@ var LayerSwitcherPanel = Backbone.View.extend({
       var color = window.app.models.users.get(userID).get('color');
       var layerOptionTpl;
       if (layer.isOwner) {
-         layerOptionTpl = _.template("<li><input id='{{id}}' type='checkbox' value='{{name}}' checked /><span style='color : #ffffff;'> {{name}}</span></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
+         layerOptionTpl = _.template("<li><input id='<%=   id %>' type='checkbox' value='<%=   name %>' checked /><span style='color : #ffffff;'> <%=   name %></span></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
       } else {
-         layerOptionTpl = _.template("<li><input id='{{id}}' type='checkbox' value='{{name}}' /> <span style='color : #ffffff;'>{{name}}</span></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
+         layerOptionTpl = _.template("<li><input id='<%=   id %>' type='checkbox' value='<%=   name %>' /> <span style='color : #ffffff;'><%=   name %></span></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
       }
       $("#layerSwitcher"+model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
 

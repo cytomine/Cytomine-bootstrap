@@ -1,6 +1,7 @@
 package be.cytomine.security
 
 import grails.converters.JSON
+import org.apache.commons.lang.builder.HashCodeBuilder
 
 class UserGroup {
 
@@ -10,6 +11,13 @@ class UserGroup {
     static mapping = {
         version false
     }
+
+    int hashCode() {
+		def builder = new HashCodeBuilder()
+		if (user) builder.append(user.id)
+		if (group) builder.append(group.id)
+		builder.toHashCode()
+	}
 
     static UserGroup link(User user, Group group) {
         def userGroup = UserGroup.findByUserAndGroup(user, group)
@@ -45,7 +53,7 @@ class UserGroup {
         println "Register custom JSON renderer for " + UserGroup.class
         JSON.registerObjectMarshaller(UserGroup) {
             def returnArray = [:]
-            returnArray['id'] = it.user.id * it.group.id
+            returnArray['id'] = it.hashCode()
             returnArray['user'] = it.user.id
             returnArray['group'] = it.group.id
             return returnArray

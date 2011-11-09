@@ -88,7 +88,8 @@ var ProjectDashboardStats = Backbone.View.extend({
           {title:"Term by users",
              backgroundColor : "whiteSmoke",
              width:width, height:350,
-             hAxis: {title: "Terms"}}
+             hAxis: {title: "Terms" }
+          }
       );
       var handleClick = function(){
          var row = chart.getSelection()[0]['row'];
@@ -132,7 +133,8 @@ var ProjectDashboardStats = Backbone.View.extend({
              height:350,
              backgroundColor : "whiteSmoke",
              vAxis: {title: "Number of annotations"},
-             hAxis: {title: "Users"}}
+             hAxis: {title: "Users" }
+          }
       );
 
       var handleClick = function(){
@@ -217,7 +219,8 @@ var ProjectDashboardStats = Backbone.View.extend({
              backgroundColor : "whiteSmoke",
              width:width, height:350,
              vAxis: {title: "Number of annotations"},
-             hAxis: {title: "Terms"}}
+             hAxis: {title: "Terms" }
+          }
       );
       var handleClick = function(){
          var row = chart.getSelection()[0]['row'];
@@ -285,7 +288,8 @@ var ProjectDashboardStats = Backbone.View.extend({
              backgroundColor : "whiteSmoke",
              width:width, height:350,
              vAxis: {title: "Slides"},
-             hAxis: {title: "Terms"}}
+             hAxis: {title: "Terms" }
+          }
       );
       var handleClick = function(){
          var row = chart.getSelection()[0]['row'];

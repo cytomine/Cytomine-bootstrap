@@ -181,7 +181,7 @@ var ProjectPanelView = Backbone.View.extend({
 
       //change the icon
       self.imageOpened = !self.imageOpened;
-      $(self.imageOpenElem + self.model.id).button({icons : {secondary :self.imageOpened ? "ui-icon-carat-1-n" : "ui-icon-carat-1-s"}});
+      $(self.imageOpenElem + self.model.id).button({icons : {secondary :self.imageOpened ? "ui-icon-carat-1-n" : "ui-icon-carat-1-s" }});
    },
    changeProject : function () {
 

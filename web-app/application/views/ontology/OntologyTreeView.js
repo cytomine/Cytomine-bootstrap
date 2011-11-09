@@ -22,7 +22,7 @@ var OntologyTreeView = Backbone.View.extend({
 
          var title = node.data.title
          var color = node.data.color
-         var htmlNode = "{{title}} <span style='background-color:{{color}}'>&nbsp;&nbsp;</span> ";
+         var htmlNode = "<%=   title %> <span style='background-color:<%=   color %>'>&nbsp;&nbsp;</span> ";
          if(!node.data.isFolder) htmlNode = htmlNode + "(<span id='usercount"+node.data.key+"'>0</span>)";
          var nodeTpl = _.template(htmlNode, {title : title, color : color});
 

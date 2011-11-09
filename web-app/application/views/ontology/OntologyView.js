@@ -157,7 +157,7 @@ var OntologyView = Backbone.View.extend({
         */
        addOntologyToTab : function(ontologyTabTpl, ontologyTabContentTpl, data) {
           /*this.$tabsOntologies.append("<h3><a id='ontologyTitle'"+ data.id+ "href='#ontology/'>"+data.name+"</a></h3>");*/
-          this.$tabsOntologies.append(_.template("<h3><a id='ontologyTitle{{ontologyID}}' href='#ontology/{{ontologyID}}'>{{ontologyName}}</a></h3>", { ontologyID : data.id, ontologyName : data.name}));
+          this.$tabsOntologies.append(_.template("<h3><a id='ontologyTitle<%=   ontologyID %>' href='#ontology/<%=   ontologyID %>'><%=   ontologyName %></a></h3>", { ontologyID : data.id, ontologyName : data.name}));
           this.$tabsOntologies.append(_.template(ontologyTabContentTpl, data));
           //tabs;
           /*         $("#ultabsontology").append(_.template(ontologyTabTpl, data));

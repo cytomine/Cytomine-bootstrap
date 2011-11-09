@@ -181,7 +181,7 @@ ApplicationView.prototype.message =  function(title, message, type) {
         message.responseText && (message = message.responseText);
     }
 
-    var tpl = '<div style="min-width: 200px" id="alert{{timestamp}}" class="alert-message {{type}} fade in" data-alert="alert"><a class="close" href="#">×</a><p><strong>{{alert}}</strong> {{message}}</p></div>';
+    var tpl = '<div style="min-width: 200px" id="alert<%=   timestamp %>" class="alert-message <%=   type %> fade in" data-alert="alert"><a class="close" href="#">×</a><p><strong><%=   alert %></strong> <%=   message %></p></div>';
     var timestamp = new Date().getTime();
     $("#alerts").append(_.template(tpl, { alert : title, message : message, timestamp : timestamp, type : type}));
     $("#alert"+timestamp).alert();

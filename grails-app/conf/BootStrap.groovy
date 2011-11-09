@@ -97,6 +97,8 @@ class BootStrap {
         //updateImageProperties()
         stopWatch.stop("initData");
         //end of init
+
+
     }
 
     private def compileJS() {

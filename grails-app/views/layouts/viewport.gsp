@@ -31,7 +31,7 @@
     <!-- JQuery & JQuery UI-->
     <link rel='stylesheet' href='css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
     <!--<link rel='stylesheet' href='css/custom-ben/css/custom-theme/jquery-ui-1.8.16.custom.css' type='text/css'/>-->
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script>
+    <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 
     <!-- Twitter bootstrap -->
@@ -186,9 +186,9 @@
     <script type="text/javascript">
         $(function() {
             //Change underscore _.template function delimiter
-            _.templateSettings = {
+            /*_.templateSettings = {
                 interpolate : /\{\{(.+?)\}\}/g
-            };
+            };*/
             // Create the app.
             require(
                     { urlArgs: "bust=" + (new Date()).getTime() }

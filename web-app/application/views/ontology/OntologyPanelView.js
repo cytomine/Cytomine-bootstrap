@@ -182,7 +182,7 @@ var OntologyPanelView = Backbone.View.extend({
                   $('#delete-ontology-confirm').remove();
                },error: function (model, response) {
                   var json = $.parseJSON(response.responseText);
-               }});
+                }});
             return false;
          });
          $('#closeDeleteOntologyDialog').click(function(){$('#dialogsDeleteOntologyAccept').modal('hide');$('#dialogsDeleteOntologyAccept').modal('remove');return false;});
@@ -400,7 +400,7 @@ var OntologyPanelView = Backbone.View.extend({
              });
          sharedTo = userNames.join(', ');
       }
-      var tpl = _.template("<div id='userontologyinfo-{{id}}' style='padding:5px;'><ul><li><b>Ontology</b> : {{ontologyName}}.</li><li><b>Owner</b> : {{owner}}.</li><li><b>Shared to</b> : {{sharedTo}}.</li><li class='projectsLinked'></li></ul></div>", { id : self.model.id, ontologyName : self.model.get('name'), owner : userOwner.prettyName(), sharedTo :  sharedTo});
+      var tpl = _.template("<div id='userontologyinfo-<%=   id %>' style='padding:5px;'><ul><li><b>Ontology</b> : <%=   ontologyName %>.</li><li><b>Owner</b> : <%=   owner %>.</li><li><b>Shared to</b> : <%=   sharedTo %>.</li><li class='projectsLinked'></li></ul></div>", { id : self.model.id, ontologyName : self.model.get('name'), owner : userOwner.prettyName(), sharedTo :  sharedTo});
       self.$infoOntology.html(tpl);
 
       //Load project linked to the ontology async
@@ -408,10 +408,10 @@ var OntologyPanelView = Backbone.View.extend({
          success : function (collection, response )  {
             var projectsLinked = []
             collection.each(function (project) {
-               var tpl = _.template("<a href='#tabs-dashboard-{{idProject}}'>{{projectName}}</a>", {idProject : project.get('id'), projectName : project.get('name')});
+               var tpl = _.template("<a href='#tabs-dashboard-<%=   idProject %>'><%=   projectName %></a>", {idProject : project.get('id'), projectName : project.get('name')});
                projectsLinked.push(tpl);
             });
-            var tpl = _.template("<b>Projects</b> : {{projects}}", {projects : projectsLinked.join(", ")});
+            var tpl = _.template("<b>Projects</b> : <%=   projects %>", {projects : projectsLinked.join(", ")});
             self.$infoOntology.find('.projectsLinked').html(tpl);
          }
       });
@@ -433,7 +433,7 @@ var OntologyPanelView = Backbone.View.extend({
 
             /*var title = node.data.title;
              var color = "black";
-             var htmlNode = "<a href='#'><label style='color:{{color}}'>{{title}}</label></a>" ;
+             var htmlNode = "<a href='#'><label style='color:<%=   color %>'><%=   title %></label></a>" ;
              var nodeTpl = _.template(htmlNode, {title : title, color : color});
              node.setTitle(nodeTpl);  */
 
@@ -464,7 +464,7 @@ var OntologyPanelView = Backbone.View.extend({
 
          var title = node.data.title
          var color = node.data.color
-         var htmlNode = "<a href='#ontology/{{idOntology}}/{{idTerm}}' onClick='window.location.href = this.href;'>{{title}} <span style='background-color:{{color}}'>&nbsp;&nbsp;&nbsp;&nbsp;</span></a>"
+         var htmlNode = "<a href='#ontology/<%=   idOntology %>/<%=   idTerm %>' onClick='window.location.href = this.href;'><%=   title %> <span style='background-color:<%=   color %>'>&nbsp;&nbsp;&nbsp;&nbsp;</span></a>"
          var nodeTpl = _.template(htmlNode, {idOntology : self.model.id, idTerm : node.data.id, title : title, color : color});
          node.setTitle(nodeTpl);
       });
@@ -537,7 +537,8 @@ var OntologyPanelView = Backbone.View.extend({
              {title:"Annotations by projects",
                 width:400, height:270,
                 vAxis: {title: "Number of annotations"},
-                hAxis: {title: "Project"}}
+                hAxis: {title: "Project" }
+             }
          );
          $("#"+divID).show();
       };
@@ -555,7 +556,7 @@ var OntologyPanelView = Backbone.View.extend({
 
        new TermModel({id:idTerm}).fetch({
        success : function (model, response) {
-       var tpl = _.template("<a href='#' class='editTerm'>Color : <span name='color' id='color' style='display:inline;background-color: {{color}};'>&nbsp;&nbsp;&nbsp;&nbsp;</span></a><br />", {color : model.get('color')});
+       var tpl = _.template("<a href='#' class='editTerm'>Color : <span name='color' id='color' style='display:inline;background-color: <%=   color %>;'>&nbsp;&nbsp;&nbsp;&nbsp;</span></a><br />", {color : model.get('color')});
        $("#terminfo-"+self.model.id).append(tpl);
        var statsCollection = new StatsCollection({term:idTerm});
        var statsCallback = function(collection, response) {
@@ -573,7 +574,7 @@ var OntologyPanelView = Backbone.View.extend({
        }
        });
        ;
-       }});  */
+        %>);  */
 
    }
 });

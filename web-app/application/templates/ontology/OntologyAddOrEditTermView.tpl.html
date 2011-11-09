@@ -1,29 +1,29 @@
-<div id="dialog-{{action}}-ontology-term" title="{{action}} term" class="modal hide">
+<div id="dialog-<%= action %>-ontology-term" title="<%= action %> term" class="modal hide">
     <div class="modal-header">
         <a href="#" class="close">&times;</a>
-        <h3>{{action}} term</h3>
+        <h3><%= action %> term</h3>
     </div>
     <div class="modal-body">
-        <form id="form-{{action}}-ontology-term">
+        <form id="form-<%= action %>-ontology-term">
             <div class="row">
                  <div class="span4" style="min-height: 400px;">
                     <legend style="font-weight: bold;padding-bottom: 3px;">Parent (Drag & Drop)</legend>
-                    <div id="{{action}}ontologytermtree"></div>
+                    <div id="<%= action %>ontologytermtree"></div>
                 </div>
                 <div class="span4" >
-                    <div id="{{action}}ontologytermerrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+                    <div id="<%= action %>ontologytermerrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
                         <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                            <strong>Error:</strong><div id="{{action}}ontologytermerrormessage"></div></p>
+                            <strong>Error:</strong><div id="<%= action %>ontologytermerrormessage"></div></p>
                     </div>
                     <legend style="font-weight: bold;padding-bottom: 3px;">Name</legend>
-                    <input type="text"  id="{{action}}termname" name="name" />
+                    <input type="text"  id="<%= action %>termname" name="name" />
                     <legend style="font-weight: bold;padding-bottom: 3px;">Color</legend>
                     <div class="colorpickerAddOrEditTerm">
                         <div id="colorpicker1AddOrEditTerm"></div>
                         <legend style="font-weight: bold;padding-bottom: 3px;">Old color</legend>
-                        <input type="text" id="oldcolorAddOrEditTerm"  value="{{oldColor}}"/>
+                        <input type="text" id="oldcolorAddOrEditTerm"  value="<%= oldColor %>"/>
                         <legend style="font-weight: bold;padding-bottom: 3px;">New Color</legend>
-                        <input type="text" id="color1AddOrEditTerm" value="{{oldColor}}"/>
+                        <input type="text" id="color1AddOrEditTerm" value="<%= oldColor %>"/>
                     </div>
                 </div>
 

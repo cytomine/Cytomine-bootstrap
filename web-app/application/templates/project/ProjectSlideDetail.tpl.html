@@ -1,12 +1,12 @@
-<div class="slideItem{{id}} slideBox" style="margin: 15px;display: inline-block;">
-    <h3>{{name}}</h3>
+<div class="slideItem<%= id %> slideBox" style="margin: 15px;display: inline-block;">
+    <h3><%= name %></h3>
     <div>
         <!<ul >
             <li style="display:inline"><a href="#" class="selectAll">Select all</a></li>
             <li style="display:inline"><a href="#" class="unselectAll">Unselect all</a></li>
         </ul>
-        <div id="projectImageList{{id}}">
-            <ul class="checklist projectImageList{{id}}" style="display:inline-block;"></ul>
+        <div id="projectImageList<%= id %>">
+            <ul class="checklist projectImageList<%= id %>" style="display:inline-block;"></ul>
         </div>
     </div>
 </div>

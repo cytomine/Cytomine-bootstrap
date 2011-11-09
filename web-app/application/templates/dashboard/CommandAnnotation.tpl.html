@@ -1,5 +1,5 @@
 <li>
-    - <b>{{datestr}}</b> : <a href="#tabs-image-{{idProject}}-{{idImage}}-{{idAnnotation}}" onmouseout="$('#thumbcommand{{idAnnotation}}').hide();" onMouseOver="$('#thumbcommand{{idAnnotation}}').css('display','{{cropStyle}}');"><img class="thumbcommand" id="thumbcommand{{idAnnotation}}" src="{{cropURL}}" style="display:none;position: absolute;z-index: 100;max-width: 300px;" />{{text}}</a>
-    <!--An annotation ({{idAnnotation}})</a> was added in <a href="#tabs-image-{{idProject}}-{{idImage}}-">{{imageFilename}}</a>-->
+    - <b><%= datestr %></b> : <a href="#tabs-image-<%= idProject %>-<%= idImage %>-<%= idAnnotation %>" onmouseout="$('#thumbcommand<%= idAnnotation %>').hide();" onMouseOver="$('#thumbcommand<%= idAnnotation %>').css('display','<%= cropStyle %>');"><img class="thumbcommand" id="thumbcommand<%= idAnnotation %>" src="<%= cropURL %>" style="display:none;position: absolute;z-index: 100;max-width: 300px;" /><%= text %></a>
+    <!--An annotation (<%= idAnnotation %>)</a> was added in <a href="#tabs-image-<%= idProject %>-<%= idImage %>-"><%= imageFilename %></a>-->
 
 </li>

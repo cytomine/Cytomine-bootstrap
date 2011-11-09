@@ -4,7 +4,7 @@ var CrudGridView = Backbone.View.extend({
    customFields : {
       color : {
          colorPickerElement : function(value, options) {
-            var el = _.template('<input type="text" name="color" value="{{value}}">',{ value : value});
+            var el = _.template('<input type="text" name="color" value="<%=   value %>">',{ value : value});
             setTimeout(function(){$("#color").ColorPicker({
                color: value,
                onShow: function (colorPicker) {

@@ -186,7 +186,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
          }});
 
 //                    <option value="5">Option 5</option>
-      //filterAnnotationByUser{{id}}
+      //filterAnnotationByUser<%=   id %>
    },
    getSelectedUser : function() {
       var userArray = $(this.selectUser).multiselect("getChecked");

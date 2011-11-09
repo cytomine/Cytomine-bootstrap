@@ -1,22 +1,22 @@
-<div id="tabs-dashboard-{{id}}" style="overflow : auto;padding : 20px;">
+<div id="tabs-dashboard-<%= id %>" style="overflow : auto;padding : 20px;">
     <div class="row">
-        <div id="projectInfoPanel" style="padding : 15px;margin-right:10px;min-width: {{width}};min-height: 250px;" class="span6 hero-unit">
+        <div id="projectInfoPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;min-height: 250px;" class="span6 hero-unit">
             <h3>Project Info</h3>
             <ul>
-                <li>Name: <a href="#tabs-dashboard-{{id}}">{{name}}</a></li>
-                <li>Ontology: <a href="#ontology/{{ontology}}">{{ontologyName}}</a></li>
+                <li>Name: <a href="#tabs-dashboard-<%= id %>"><%= name %></a></li>
+                <li>Ontology: <a href="#ontology/<%= ontology %>"><%= ontologyName %></a></li>
                 <li>Users : <div id="projectInfoUserList" style="display: inline;"></div></li>
             </ul>
             <br />
             <ul>
-                <li>Number of samples : <a href="#tabs-images-{{id}}">{{numberOfSlides}}</a></li>
-                <li>Number of images : <a href="#tabs-images-{{id}}">{{numberOfImages}}</a></li>
-                <li>Number of annotations : <a href="#tabs-annotations-{{id}}">{{numberOfAnnotations}}</a></li>
+                <li>Number of samples : <a href="#tabs-images-<%= id %>"><%= numberOfSlides %></a></li>
+                <li>Number of images : <a href="#tabs-images-<%= id %>"><%= numberOfImages %></a></li>
+                <li>Number of annotations : <a href="#tabs-annotations-<%= id %>"><%= numberOfAnnotations %></a></li>
             </ul>
 
         </div>
 
-        <div id="projectLastCommandPanel" style="padding : 15px;margin-right:10px;min-width: {{width}};min-height: 250px;"  class="span6 hero-unit">
+        <div id="projectLastCommandPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;min-height: 250px;"  class="span6 hero-unit">
             <h3>Activity</h3>
             <div style="height: 200px;">
                 <div>
@@ -27,46 +27,46 @@
             </div>
         </div>
 
-        <div id="projectcolmunChartPanel" style="padding : 15px; margin-right:10px;min-width: {{width}};"  class="span6 hero-unit">
+        <div id="projectcolmunChartPanel" style="padding : 15px; margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
             <h3>Number of annotations by term (column)</h3>
             <div>
                 <div id="projectColumnChart">No data to display</div>
             </div>
         </div>
 
-        <div id="projectPieChartPanel" style="padding : 15px;margin-right:10px;min-width: {{width}};"  class="span6 hero-unit">
+        <div id="projectPieChartPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
             <h3>Number of annotations by term (pie)</h3>
             <div>
                 <div id="projectPieChart">No data to display</div>
             </div>
         </div>
 
-        <div id="userAnnotationsChartPanel" style="padding : 15px;margin-right:10px;min-width: {{width2}};"  class="span6 hero-unit">
+        <div id="userAnnotationsChartPanel" style="padding : 15px;margin-right:10px;min-width: <%= width2 %>;"  class="span6 hero-unit">
             <h3>Number of annotations by term & user</h3>
             <div>
                 <div id="userAnnotationsChart">No data to display</div>
             </div>
         </div>
 
-        <div id="userNbAnnotationsChartPanel" style="padding : 15px;margin-right:10px;min-width: {{width}};"  class="span6 hero-unit">
+        <div id="userNbAnnotationsChartPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
             <h3>Number of annotations by user</h3>
             <div>
                 <div id="userNbAnnotationsChart">No data to display</div>
             </div>
         </div>
-        <div id="termSlideAnnotationsChartPanel" style="padding : 15px;margin-right:10px;min-width: {{width}};"  class="span6 hero-unit">
+        <div id="termSlideAnnotationsChartPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
             <h3>Number of annotated slides by term</h3>
             <div>
                 <div id="termSlideAnnotationsChart">No data to display</div>
             </div>
         </div>
-        <div id="userSlideAnnotationsChartPanel" style="padding : 15px;margin-right:10px;min-width: {{width}};"  class="span6 hero-unit">
+        <div id="userSlideAnnotationsChartPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
             <h3>Number of annotated slides by users</h3>
             <div>
                 <div id="userSlideAnnotationsChart">No data to display</div>
             </div>
         </div>
-        <div id="worstAnnotationPanel" style="padding : 15px;margin-right:10px;min-width: {{width}};min-height: 250px;display:none;"  class="span6 hero-unit">
+        <div id="worstAnnotationPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;min-height: 250px;display:none;"  class="span6 hero-unit">
             <h3>Most Questionable Annotation Term</h3>
             <div style="height: 200px;">
                 <div>
@@ -76,7 +76,7 @@
                 </div>
             </div>
         </div>
-        <div id="worstTermPieChartPanel" style="padding : 15px;margin-right:10px;min-width: {{width}};display:none;"  class="span6 hero-unit">
+        <div id="worstTermPieChartPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;display:none;"  class="span6 hero-unit">
             <h3>Most Questionable Terms (pie)</h3>
             <div>
                 <div id="worstTermprojectPieChart">No data to display</div>
@@ -84,25 +84,25 @@
         </div>
 
     </div>
-    <div id="tabs-images-{{id}}" style="overflow : auto;padding: 5px;">
+    <div id="tabs-images-<%= id %>" style="overflow : auto;padding: 5px;">
         <div align="right" style="margin-bottom: 10px;">
-            <a id="imageThumbs{{id}}" href="#tabs-thumbs-{{id}}">Thumbs</a>
-            <a id="imageArray{{id}}" href="#tabs-imagesarray-{{id}}">Listing</a>
+            <a id="imageThumbs<%= id %>" href="#tabs-thumbs-<%= id %>">Thumbs</a>
+            <a id="imageArray<%= id %>" href="#tabs-imagesarray-<%= id %>">Listing</a>
         </div>
-        <div id="tabs-projectImageThumb{{id}}">
-            <div id="projectImageThumb{{id}}" style="display:inline-block;width:95%;">
+        <div id="tabs-projectImageThumb<%= id %>">
+            <div id="projectImageThumb<%= id %>" style="display:inline-block;width:95%;">
                 <span class="label notice">Loading...</span>
             </div>
         </div>
-        <div id="tabs-projectImageListing{{id}}">
-            <div id="projectImageListing{{id}}" style="display:inline-block;width:95%;">
+        <div id="tabs-projectImageListing<%= id %>">
+            <div id="projectImageListing<%= id %>" style="display:inline-block;width:95%;">
                 <span class="label notice">Loading...</span>
             </div>
         </div>
     </div>
 
 </div>
-<div id="tabs-annotations-{{id}}" style="overflow : auto;">
+<div id="tabs-annotations-<%= id %>" style="overflow : auto;">
     <div class="container-fluid" style="padding-top: 10px;">
         <div class="sidebar">
             <div class="well" style="padding: 10px;width: 350px;">
@@ -110,7 +110,7 @@
                 <div style="padding-left: 30px;"><input class="undefinedAnnotationsCheckbox" type="checkbox"> <span class="label important">Annotations without terms</span></div>
                 <div id="treeAnnotationListing" class="tree"></div>
                 <h4>User</h4>
-                <select id="filterAnnotationByUser{{id}}" name="User" multiple="multiple" >
+                <select id="filterAnnotationByUser<%= id %>" name="User" multiple="multiple" >
                 </select>
                 <hr/>
                 <h4>Actions</h4>
@@ -123,9 +123,9 @@
             <div class="well" style="padding: 10px;width: 350px;">
                 <h4>Download</h4>
                 <ul>
-                    <li style="padding-bottom: 5px;"><a href="/api/project/{{id}}/annotation/download?format=csv"  id="downloadAnnotationsCSV" class="btn">Download CSV</a></li>
-                    <li style="padding-bottom: 5px;"><a href="/api/project/{{id}}/annotation/download?format=xls" id="downloadAnnotationsExcel" class="btn">Download Excel</a></li>
-                    <li style="padding-bottom: 5px;"><a href="/api/project/{{id}}/annotation/download?format=pdf" id="downloadAnnotationsPDF" class="btn">Download PDF</a></li>
+                    <li style="padding-bottom: 5px;"><a href="/api/project/<%= id %>/annotation/download?format=csv"  id="downloadAnnotationsCSV" class="btn">Download CSV</a></li>
+                    <li style="padding-bottom: 5px;"><a href="/api/project/<%= id %>/annotation/download?format=xls" id="downloadAnnotationsExcel" class="btn">Download Excel</a></li>
+                    <li style="padding-bottom: 5px;"><a href="/api/project/<%= id %>/annotation/download?format=pdf" id="downloadAnnotationsPDF" class="btn">Download PDF</a></li>
                 </ul>
             </div>
         </div>
@@ -135,7 +135,7 @@
         </div>
     </div>
 </div>
-<div id="tabs-algos-{{id}}" style="overflow : auto;padding: 20px;">
+<div id="tabs-algos-<%= id %>" style="overflow : auto;padding: 20px;">
     <div class="container-fluid">
         <div class="hero-unit">
             <h3>Image filters</h3>

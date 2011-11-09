@@ -112,7 +112,7 @@ AnnotationLayer.prototype = {
         /*if (isOwner) { */
 
         this.controls = {
-            'freehand': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon, {handlerOptions: {freehand: true}}),
+            'freehand': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon, {handlerOptions: {freehand: true }}),
             'point': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
             'line': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
             'polygon': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon),
@@ -229,7 +229,7 @@ AnnotationLayer.prototype = {
                         var userCount = termuser.user.length;
                         var idOntology = window.app.status.currentProjectModel.get('ontology');
 
-                        var tpl = _.template("<a href='#ontology/{{idOntology}}/{{idTerm}}'>{{termName}}</a> ({{userCount}})", {idOntology : idOntology, idTerm : idTerm, termName : termName, userCount: userCount});
+                        var tpl = _.template("<a href='#ontology/<%=   idOntology %>/<%=   idTerm %>'><%=   termName %></a> (<%=   userCount %>)", {idOntology : idOntology, idTerm : idTerm, termName : termName, userCount: userCount});
                         terms.push(tpl);
 
                     });
@@ -461,8 +461,8 @@ AnnotationLayer.prototype = {
                         self.controls.select.select(newFeature);
 
                         var cropURL = annotation.get('cropURL');
-                        var cropImage = _.template("<img src='{{url}}' alt='{{alt}}' style='max-width: 175px;max-height: 175px;' />", { url : cropURL, alt : cropURL});
-                        var alertMessage = _.template("<p>{{message}}</p><div>{{cropImage}}</div>", { message : message, cropImage : cropImage});
+                        var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url : cropURL, alt : cropURL});
+                        var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message : message, cropImage : cropImage});
                         window.app.view.message("Annotation added", alertMessage, "success");
 
                         self.browseImageView.refreshAnnotationTabs(undefined);

@@ -34,7 +34,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
    },
    renderImageFilter : function (imageFilter, el) {
       var self = this;
-      var tpl = _.template("<li class='imageFilter{{id}}'>{{name}} <a class='removeImageFilter{{id}}' href='#'><span class='label important'>Remove</span></a></li>", imageFilter.toJSON());
+      var tpl = _.template("<li class='imageFilter<%=   id %>'><%=   name %> <a class='removeImageFilter<%=   id %>' href='#'><span class='label important'>Remove</span></a></li>", imageFilter.toJSON());
       $(el).append(tpl);
       $(this.el).find("a.removeImageFilter"+imageFilter.get("id")).click(function() {
          self.removeImageFilter(imageFilter);
@@ -48,7 +48,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
       new ImageFilterCollection().fetch({
          success : function (imageFilters, response) {
             imageFilters.each(function (imageFilter) {
-               var option = _.template("<option value='{{id}}'>{{name}}</option>", imageFilter.toJSON());
+               var option = _.template("<option value='<%=   id %>'><%=   name %></option>", imageFilter.toJSON());
                $(self.el).find("#addImageFilter").append(option);
 
             });
