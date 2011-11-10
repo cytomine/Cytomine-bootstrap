@@ -87,7 +87,9 @@ var ProjectPanelView = Backbone.View.extend({
 
       json.users = users.join(", ");
 
-
+      if(json.disciplineName==undefined) {
+          json.disciplineName="";
+      }
 
       json.ontologyId = idOntology;
 

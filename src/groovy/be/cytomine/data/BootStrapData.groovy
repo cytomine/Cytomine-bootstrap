@@ -150,7 +150,11 @@ class BootStrapData {
 
     ]
 
-
+    static def disciplineSamples = [
+          [name : "IMMUNOHISTOCHEMISTRY"],
+          [name : "CYTOLOGY"],
+          [name : "HISTOLOGY"]
+    ]
     /* Projects */
     static def projectSamples = [
             [name : "ULG-LBTD-NEO04",  groups : [[ name :"ULG-LBTD-NEO04"]],ontology: "ULG-LBTD-Tissus"],
@@ -167,8 +171,6 @@ class BootStrapData {
             [name : "ULB-Anapath-Frottis-PAPA",  groups : [[ name :"ULB-Anapath-Frottis-PAPA"]],ontology: "ULB-Anapath-Frottis"],
             [name : "ULB-Anapath-TPP",  groups : [[ name :"ULB-Anapath-TPP"]],ontology: "ULB-Anapath-TPP"],
     ]
-
-
 
     static def termSamples = [
 

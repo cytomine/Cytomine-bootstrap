@@ -27,6 +27,7 @@ var ApplicationController = Backbone.Router.extend({
       self.models.users = new UserCollection({project:undefined});
       self.models.terms = new TermCollection({project:undefined});
       self.models.ontologies = new OntologyCollection();
+      self.models.disciplines = new DisciplineCollection();
       self.models.projects = new ProjectCollection({user:undefined});
       self.models.annotations = new AnnotationCollection({});
 

@@ -43,6 +43,7 @@ import be.cytomine.data.ImageData5
 import be.cytomine.processing.ImageFilter
 import be.cytomine.processing.Software
 import be.cytomine.processing.Job
+import be.cytomine.project.Discipline
 
 class BootStrap {
     def springSecurityService
@@ -122,6 +123,7 @@ class BootStrap {
         createOntology(BootStrapData.ontologySamples)
         createProjects(BootStrapData.projectSamples)
         createSoftware(BootStrapData.softwareSamples)
+        createDiscipline(BootStrapData.disciplineSamples)
 
         /* Slides */
         if (env != BootStrap.test) {
@@ -769,5 +771,59 @@ class BootStrap {
             }
         }
     }
+       static def disciplineSamples = [
+          [name : "IMMUNOHISTOCHEMISTRY"],
+          [name : "CYTOLOGY"],
+          [name : "HISTOLOGY"]
+    ]
+    def createDiscipline(disciplineSamples) {
+        println "createDiscipline"
+        disciplineSamples.each { item ->
+            if(Discipline.findByName(item.name)) return
+            Discipline discipline = new Discipline(name:item.name)
+            println "create discipline="+ discipline.name
+
+            if(discipline.validate()) {
+                println "Creating discipline : ${discipline.name}..."
+                discipline.save(flush : true)
+
+            } else {
+                println("\n\n\n Errors in account boostrap for ${discipline.name}!\n\n\n")
+                discipline.errors.each {
+                    err -> println err
+                }
+
+            }
+        }
+
+        mapProjectDiscipline("ROSTOCK-HJTHIESEN-KIDNEY","IMMUNOHISTOCHEMISTRY")
+
+        mapProjectDiscipline("ULB-ANAPATH-ASP","CYTOLOGY")
+        mapProjectDiscipline("ULB-ANAPATH-FROTTIS-EBUS","CYTOLOGY")
+        mapProjectDiscipline("ULB-ANAPATH-FROTTIS-PAPA","CYTOLOGY")
+        mapProjectDiscipline("ULB-ANAPATH-LBA-CB","CYTOLOGY")
+        mapProjectDiscipline("ULB-ANAPATH-LBA-DQ","CYTOLOGY")
+        mapProjectDiscipline("ULB-ANAPATH-LBA-PAPA","CYTOLOGY")
+        mapProjectDiscipline("ULB-ANAPATH-TPP","CYTOLOGY")
+
+        mapProjectDiscipline("ULG-LBTD-LBA","CYTOLOGY")
+        mapProjectDiscipline("ULG-LBTD-NEO04","HISTOLOGY")
+        mapProjectDiscipline("ULG-LBTD-NEO13","HISTOLOGY")
+
+        mapProjectDiscipline("XCELLSOLUTIONS-BESTCYTE-CERVIX","CYTOLOGY")
+
+
+
+
+    }
+
+    void mapProjectDiscipline(String projectName, String disciplineName) {
+        Project project = Project.findByNameIlike(projectName)
+        if(!project || project.discipline) return
+        project.setDiscipline(Discipline.findByNameIlike(disciplineName))
+        project.save(flush:true)
+    }
+
+
 
 }

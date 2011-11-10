@@ -11,14 +11,15 @@ var AddProjectDialog = Backbone.View.extend({
       require([
          "text!application/templates/project/ProjectAddDialog.tpl.html",
          "text!application/templates/project/OntologiesChoicesRadio.tpl.html",
+         "text!application/templates/project/DisciplinesChoicesRadio.tpl.html",
          "text!application/templates/project/UsersChoices.tpl.html"
       ],
-          function(projectAddDialogTpl, ontologiesChoicesRadioTpl, usersChoicesTpl) {
-             self.doLayout(projectAddDialogTpl, ontologiesChoicesRadioTpl, usersChoicesTpl);
+          function(projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl, usersChoicesTpl) {
+             self.doLayout(projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl,usersChoicesTpl);
           });
       return this;
    },
-   doLayout : function(projectAddDialogTpl, ontologiesChoicesRadioTpl, usersChoicesTpl) {
+   doLayout : function(projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl, usersChoicesTpl) {
 
       var self = this;
       var dialog = _.template(projectAddDialogTpl, {});
@@ -34,7 +35,13 @@ var AddProjectDialog = Backbone.View.extend({
          }
       });
 
-
+      $("#projectdiscipline").empty();
+     var choice = _.template(disciplinesChoicesRadioTpl, {id:-1,name:"*** Undefined ***"});
+     $("#projectdiscipline").append(choice);
+      window.app.models.disciplines.each(function(discipline){
+         var choice = _.template(disciplinesChoicesRadioTpl, {id:discipline.id,name:discipline.get("name")});
+         $("#projectdiscipline").append(choice);
+      });
       $("#projectontology").empty();
       window.app.models.ontologies.each(function(ontology){
          var choice = _.template(ontologiesChoicesRadioTpl, {id:ontology.id,name:ontology.get("name")});
@@ -49,8 +56,7 @@ var AddProjectDialog = Backbone.View.extend({
       //check current user
       $("#projectuser").find('#users'+window.app.status.user.id).attr('checked','checked');
       $("#projectuser").find('#users'+window.app.status.user.id).click(function() {
-
-         $("#projectuser").find('#users'+window.app.status.user.id).attr('checked','checked');
+        $("#projectuser").find('#users'+window.app.status.user.id).attr('checked','checked');
       });
       $("#projectuser").find('[for="users'+window.app.status.user.id+'"]').css("font-weight","bold");
 
@@ -82,6 +88,7 @@ var AddProjectDialog = Backbone.View.extend({
       $("#project-name").val("");
 
       $(self.addProjectCheckedOntologiesRadioElem).attr("checked", false);
+      $(self.addProjectCheckedDisciplinesRadioElem).attr("checked", false);
       $(self.addProjectCheckedUsersCheckboxElem).attr("checked", false);
    },
    createProject : function() {
@@ -92,6 +99,8 @@ var AddProjectDialog = Backbone.View.extend({
       $("#projecterrorlabel").hide();
 
       var name =  $("#project-name").val().toUpperCase();
+      var discipline = $("#projectdiscipline").attr('value');
+       if(discipline==-1) discipline=null;
       var ontology = $("#projectontology").attr('value');
       var users = new Array();
 
@@ -100,7 +109,7 @@ var AddProjectDialog = Backbone.View.extend({
       });
 
       //create project
-      new ProjectModel({name : name, ontology : ontology}).save({name : name, ontology : ontology},{
+      new ProjectModel({name : name, ontology : ontology, discipline:discipline }).save({name : name, ontology : ontology,discipline:discipline},{
              success: function (model, response) {
 
                 window.app.view.message("Project", response.message, "success");

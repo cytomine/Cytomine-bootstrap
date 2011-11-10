@@ -12,11 +12,16 @@ var ProjectController = Backbone.Router.extend({
         window.app.models.ontologies.fetch({
             success : function (ontologies, response) {
 
+        window.app.models.disciplines.fetch({
+            success : function (disciplines, response) {
+
+
                 window.app.models.projects.fetch({
                     success : function (collection, response) {
                         self.view = new ProjectView({
                             model : collection,
                             ontologies : ontologies,
+                            disciplines : disciplines,
                             el:$("#warehouse > .project"),
                             container : window.app.view.components.warehouse
                         }).render();
@@ -25,6 +30,7 @@ var ProjectController = Backbone.Router.extend({
 
                         if (_.isFunction(callback)) callback.call();
                     }});
+                 }});
             }});
     },
 

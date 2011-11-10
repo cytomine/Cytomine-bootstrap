@@ -111,8 +111,12 @@ class Project extends SequenceDomain {
         if(!name.equals("null"))
             project.name = jsonProject.name.toUpperCase()
         else throw new IllegalArgumentException("Project name cannot be null")
+
         if (jsonProject.ontology)
             project.ontology = Ontology.read(jsonProject.ontology)
+
+        if (!jsonProject.discipline.toString().equals("null"))
+            project.discipline = Discipline.read(jsonProject.discipline)
 
         try {project.countAnnotations = Long.parseLong(jsonProject.numberOfAnnotations.toString()) } catch(Exception e) {
             project.countAnnotations=0

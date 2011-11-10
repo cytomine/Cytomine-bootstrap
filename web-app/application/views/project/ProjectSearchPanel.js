@@ -1,11 +1,13 @@
 var ProjectSearchPanel = Backbone.View.extend({
    ontologies : null,
+   disciplines : null,
    idUser : null,
    container : null,
    projectsPanel : null,
    allProjectsButtonElem: "#projectallbutton",
    addProjectButtonElem : "#projectaddbutton",
    searchProjectOntolgiesListElem : "#ontologyChoiceList",
+   searchProjectDisciplinesListElem : "#disciplineChoiceList",
    sliderNumberOfImagesElem : "#numberofimageSlider",
    labelNumberOfImagesElem : "#amountNumberOfImages",
    sliderNumberOfSlidesElem : "#numberofslideSlider",
@@ -16,9 +18,11 @@ var ProjectSearchPanel = Backbone.View.extend({
    searchProjectButtonElem : "#projectsearchbutton",
    searchProjectCheckedOntologiesElem : 'input[type=checkbox][name=ontology]:checked',
    addProjectCheckedOntologiesRadioElem : 'input[type=radio][name=ontologyradio]:checked',
+   addProjectCheckedDisciplinesRadioElem : 'input[type=radio][name=disciplineradio]:checked',
    addProjectCheckedUsersCheckboxElem : 'input[type=checkbox][name=usercheckbox]:checked',
    initialize: function(options) {
       this.ontologies = options.ontologies;
+      this.disciplines = options.disciplines;
       this.idUser = options.idUser;
       this.container = options.container;
       this.projectsPanel = options.projectsPanel;
@@ -48,10 +52,10 @@ var ProjectSearchPanel = Backbone.View.extend({
 
 
       require([
-         "text!application/templates/project/OntologiesChoices.tpl.html"
+         "text!application/templates/project/OntologiesChoices.tpl.html","text!application/templates/project/DisciplinesChoices.tpl.html"
       ],
-          function(tpl) {
-             self.loadPanelAndButton(tpl);
+          function(ontologiesChoices,disciplinesChoices) {
+             self.loadPanelAndButton(ontologiesChoices,disciplinesChoices);
           });
 
 
@@ -67,7 +71,7 @@ var ProjectSearchPanel = Backbone.View.extend({
    /**
     * Load panel and all buttons/checkbox
     */
-   loadPanelAndButton : function(tpl) {
+   loadPanelAndButton : function(ontologiesChoices,disciplinesChoices) {
       var self = this;
       //create search panel
       /*$(self.el).find("#searchProjectPanel").panel({
@@ -90,8 +94,13 @@ var ProjectSearchPanel = Backbone.View.extend({
 
       //render ontologies choice
       self.ontologies.each(function(ontology) {
-         var choice = _.template(tpl, {id:ontology.id,name:ontology.get("name")});
+         var choice = _.template(ontologiesChoices, {id:ontology.id,name:ontology.get("name")});
          $(self.searchProjectOntolgiesListElem).append(choice);
+      });
+
+      self.disciplines.each(function(discipline) {
+         var choice = _.template(disciplinesChoices, {id:discipline.id,name:discipline.get("name")});
+         $(self.searchProjectDisciplinesListElem).append(choice);
       });
 
    },
@@ -202,6 +211,7 @@ var ProjectSearchPanel = Backbone.View.extend({
       //reset every element
       $(self.searchProjectTextBoxElem).val("");
       $("#ontologyChoiceList").val(-1);
+      $("#disciplineChoiceList").val(-1);
       self.resetSlider(self.sliderNumberOfImagesElem);
       self.resetSlider(self.sliderNumberOfSlidesElem);
       self.resetSlider(self.sliderNumberOfAnnotationsElem);
@@ -225,10 +235,18 @@ var ProjectSearchPanel = Backbone.View.extend({
    searchProject : function() {
       var self = this;
       var searchText = $(self.searchProjectTextBoxElem).val();
+
       var searchOntologies = new Array();
       var selectedOntology = $("#ontologyChoiceList").val();
       if (selectedOntology != -1) {
          searchOntologies.push(selectedOntology);
+      }
+
+
+      var searchDisciplines = new Array();
+      var selectedDiscipline = $("#disciplineChoiceList").val();
+      if (selectedDiscipline != -1) {
+         searchDisciplines.push(selectedDiscipline);
       }
       /*$.each($(self.searchProjectCheckedOntologiesElem), function(index, value) {
          var idOntology =  $(value).attr('id').replace("ontologies","");
@@ -250,7 +268,13 @@ var ProjectSearchPanel = Backbone.View.extend({
       numberOfAnnotations.push($(self.sliderNumberOfAnnotationsElem).slider( "values", 0 ));
       numberOfAnnotations.push($(self.sliderNumberOfAnnotationsElem).slider( "values", 1 ));
 
-      self.filterProjects(searchText==""?undefined:searchText,searchOntologies.length==0?undefined:searchOntologies,numberOfImages,numberOfSlides,numberOfAnnotations);
+      self.filterProjects(
+              searchText==""?undefined:searchText,
+              searchOntologies.length==0?undefined:searchOntologies,
+              searchDisciplines.length==0?undefined:searchDisciplines,
+              numberOfImages,
+              numberOfSlides,
+              numberOfAnnotations);
    },
    /**
     * Show dialog to add a project
@@ -272,6 +296,7 @@ var ProjectSearchPanel = Backbone.View.extend({
    filterProjects : function(
        searchText,
        searchOntologies,
+       searchDisciplines,
        searchNumberOfImages,
        searchNumberOfSlides,
        searchNumberOfAnnotations) {
@@ -284,6 +309,7 @@ var ProjectSearchPanel = Backbone.View.extend({
       //don't match with data search
       projects = self.filterByProjectsByName(searchText,projects);
       projects = self.filterProjectsByOntology(searchOntologies,projects);
+      projects = self.filterProjectsByDiscipline(searchDisciplines,projects);
       projects = self.filterProjectsByNumberOfImages(searchNumberOfImages,projects);
       projects = self.filterProjectsByNumberOfSlides(searchNumberOfSlides,projects);
       projects = self.filterProjectsByNumberOfAnnotations(searchNumberOfAnnotations,projects);
@@ -316,6 +342,18 @@ var ProjectSearchPanel = Backbone.View.extend({
 
          var idOntology = project.get('ontology') +"";
          if(searchOntologies!=undefined && _.indexOf(searchOntologies,idOntology)==-1)
+            projectNewList.remove(project);
+      });
+      return projectNewList;
+   },
+   filterProjectsByDiscipline : function(searchDisciplines,projectOldList) {
+      var self = this;
+      var projectNewList =  new ProjectCollection(projectOldList.models);
+
+      projectOldList.each(function(project) {
+
+         var idDiscipline = project.get('discipline') +"";
+         if(searchDisciplines!=undefined && _.indexOf(searchDisciplines,idDiscipline)==-1)
             projectNewList.remove(project);
       });
       return projectNewList;
