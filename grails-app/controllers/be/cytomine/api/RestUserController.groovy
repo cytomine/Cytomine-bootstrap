@@ -28,7 +28,7 @@ class RestUserController extends RestController {
      */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
-        responseSuccess(User.list())
+        responseSuccess(User.list(sort:"username", order:"asc"))
     }
 
     /**

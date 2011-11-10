@@ -11,7 +11,7 @@ import be.cytomine.command.group.DeleteGroupCommand
 class RestGroupController extends  RestController {
 
     def list = {
-        responseSuccess(Group.list())
+        responseSuccess(Group.list(sort:"name", order:"asc"))
     }
 
     def show = {

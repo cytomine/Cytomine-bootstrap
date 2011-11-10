@@ -39,7 +39,9 @@ var UserCollection = Backbone.Collection.extend({
    },
    initialize: function (options) {
       this.project = options.project;
-   }
+    },comparator : function(user) {
+        return user.get("username").toLowerCase();
+    }
 });
 
 
