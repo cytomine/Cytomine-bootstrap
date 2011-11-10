@@ -9,6 +9,7 @@ import be.cytomine.command.project.DeleteProjectCommand
 import be.cytomine.command.project.EditProjectCommand
 import be.cytomine.command.CommandHistory
 import be.cytomine.ontology.Ontology
+import be.cytomine.project.Discipline
 
 class RestProjectController extends RestController {
 
@@ -38,6 +39,13 @@ class RestProjectController extends RestController {
 
         if(user!=null) responseSuccess(user.projects())
         else responseNotFound("User",params.id)
+    }
+
+    def listByDiscipline = {
+        log.info "listByDiscipline with discipline id:" + params.id
+        Discipline discipline = Discipline.read(params.id);
+        if(discipline != null) responseSuccess(project.findAllByDiscipline(discipline))
+        else responseNotFound("Project","Discipline",params.id)
     }
 
     def show = {

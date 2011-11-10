@@ -21,6 +21,7 @@ import be.cytomine.image.AbstractImageGroup
 import be.cytomine.ontology.SuggestedTerm
 import be.cytomine.processing.Software
 import be.cytomine.processing.Job
+import be.cytomine.project.Discipline
 
 /**
  * Created by IntelliJ IDEA.
@@ -67,6 +68,43 @@ class BasicInstance {
     assert relation!=null
     relation
   }
+
+
+    static Discipline createOrGetBasicDiscipline() {
+
+      log.debug "createOrGetBasicDiscipline()"
+      def discipline = Discipline.findByName("BASICDISCIPLINE")
+      if(!discipline) {
+        discipline =  new Discipline(name:"BASICDISCIPLINE")
+        discipline.validate()
+        log.debug("discipline.errors="+discipline.errors)
+        discipline.save(flush : true)
+        log.debug("discipline.errors="+discipline.errors)
+      }
+      assert discipline!=null
+      discipline
+    }
+
+    static Discipline getBasicDisciplineNotExist() {
+
+      log.debug "createOrGetBasicDisciplineNotExist()"
+      def random = new Random()
+      def randomInt = random.nextInt()
+      def discipline = Discipline.findByName(randomInt+"")
+
+      while(discipline){
+        randomInt = random.nextInt()
+        discipline = Discipline.findByName(randomInt+"")
+     }
+
+      discipline =  new Discipline(name:randomInt+"")
+      discipline.validate()
+      log.debug("discipline.errors="+discipline.errors)
+
+      assert discipline!=null
+      discipline
+    }
+
 
   static Mime createOrGetBasicMime() {
 
@@ -360,7 +398,7 @@ log.debug  "createOrGetBasicUser()"
     def project = Project.findByName(name)
     if(!project) {
 
-      project = new Project(name:name, ontology:createOrGetBasicOntology())
+      project = new Project(name:name, ontology:createOrGetBasicOntology(), discipline:createOrGetBasicDiscipline())
       project.validate()
       log.debug "project.errors="+project.errors
       project.save(flush : true)
@@ -382,7 +420,7 @@ log.debug  "createOrGetBasicUser()"
       project = Project.findByName(randomInt+"")
    }
 
-    project =  new Project(name:randomInt+"",ontology:createOrGetBasicOntology())
+    project =  new Project(name:randomInt+"",ontology:createOrGetBasicOntology(),discipline:createOrGetBasicDiscipline())
 
     log.debug "getBasicProjectNotExist() validate="+project.validate()
     log.debug "getBasicProjectNotExist() project="+project
@@ -831,6 +869,12 @@ log.debug  "createOrGetBasicUser()"
 
 
     static void compareRelation(map, json)  {
+
+    assert map.name.equals(json.name)
+
+  }
+
+    static void compareDiscipline(map, json)  {
 
     assert map.name.equals(json.name)
 

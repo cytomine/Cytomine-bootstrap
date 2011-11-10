@@ -18,6 +18,8 @@ class Project extends SequenceDomain {
 
     String name
     Ontology ontology
+    Discipline discipline
+
     long countAnnotations
     long countImages
 
@@ -27,6 +29,7 @@ class Project extends SequenceDomain {
 
     static constraints = {
            name(maxSize : 150, unique : true, blank : false) //, validator: {
+           discipline(nullable:true)
             //  return !Project.findByNameIlike(it)
             //})
     }
@@ -34,6 +37,7 @@ class Project extends SequenceDomain {
     static mapping = {
         id generator : "assigned"
         ontology fetch:'join'
+        discipline fetch:'join'
     }
 
     String toString() {
@@ -124,6 +128,10 @@ class Project extends SequenceDomain {
         if(this.ontologyId) return this.ontologyId
         else return this.ontology?.id
     }
+    def getIdDiscipline() {
+        if(this.disciplineId) return this.disciplineId
+        else return this.discipline?.id
+    }
 
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + Project.class
@@ -134,6 +142,9 @@ class Project extends SequenceDomain {
             returnArray['name'] = it.name
             returnArray['ontology'] = it.getIdOntology()
             returnArray['ontologyName'] = it.ontology? it.ontology.name : null
+            returnArray['discipline'] = it.getIdDiscipline()
+            returnArray['disciplineName'] = it.discipline? it.discipline.name : null
+
             returnArray['ontologyURL'] = UrlApi.getOntologyURLWithOntologyId(it.ontology?.id)
             returnArray['abstractimageURL'] = UrlApi.getAbstractImageURLWithProjectId(it.id)
             returnArray['imageinstanceURL'] = UrlApi.getImageInstanceURLWithProjectId(it.id)
