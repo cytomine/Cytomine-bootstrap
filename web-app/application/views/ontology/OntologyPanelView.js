@@ -127,8 +127,10 @@ var OntologyPanelView = Backbone.View.extend({
       var self = this;
       var idTerm = self.getCurrentTermId();
       var term = window.app.models.terms.get(idTerm);
+      console.log("Delete term:"+term.id);
       new AnnotationCollection({term:idTerm}).fetch({
          success : function (collection, response) {
+             console.log("There are "+collection.length + " annotations map with this term");
             if(collection.length==0) self.buildDeleteTermConfirmDialog(term);
             else self.buildDeleteTermWithAnnotationConfirmDialog(term,collection.length);
          }});
@@ -229,14 +231,7 @@ var OntologyPanelView = Backbone.View.extend({
             return false;
          });
          $('#deleteTermButton').click(function(){
-            new BeginTransactionModel({}).save({}, {
-               success: function (model, response) {
-                  self.deleteTermWithoutAnnotationTerm(term);
-               },
-               error: function (model, response) {
-                  window.app.view.message("ERROR", "error transaction begin", "error");
-               }
-            });
+            self.removeTerm(term);
             return false;
          });
       });
@@ -248,7 +243,6 @@ var OntologyPanelView = Backbone.View.extend({
     * @param numberOfAnnotation
     */
    buildDeleteTermWithAnnotationConfirmDialog : function(term,numberOfAnnotation) {
-      //TODO:ask confirmation (and delete term  with annotation? or not...)
       var self = this;
       require(["text!application/templates/ontology/OntologyDeleteTermWithAnnotationConfirmDialog.tpl.html"], function(tpl) {
          var dialog =  new ConfirmDialogView({
@@ -260,14 +254,7 @@ var OntologyPanelView = Backbone.View.extend({
                height : 300,
                buttons: {
                   "Delete all link and delete term": function() {
-                     new BeginTransactionModel({}).save({}, {
-                        success: function (model, response) {
-                           self.deleteTermWithAnnotationTerm(term);
-                        },
-                        error: function (model, response) {
-                           window.app.view.message("ERROR", "error transaction begin", "error");
-                        }
-                     });
+                     self.removeTerm(term);
                   },
                   "Cancel": function() {
                      //doesn't work! :-(
@@ -281,69 +268,11 @@ var OntologyPanelView = Backbone.View.extend({
       });
    },
    /**
-    * Delete a term which can have annotation and relation
-    * @param term  term that must be deleted
-    */
-   deleteTermWithAnnotationTerm : function(term) {
-      var self = this;
-      var counter = 0;
-      //delete all annotation term
-      new AnnotationCollection({term:term.id}).fetch({
-         success:function (collection, response){
-            if (collection.size() == 0) {
-               self.removeAnnotationTermCallback(0,0, term);
-               return;
-            }
-            collection.each(function(annotation) {
-               new AnnotationTermModel({
-                  term:term.id,
-                  annotation:annotation.id
-               }).destroy({success : function (model, response) {
-                  self.removeAnnotationTermCallback(collection.length, ++counter, term);
-               }});
-            });
-         }
-      });
-   },
-   /**
     * Delete a term which can have relation but no annotation
     * @param term term that must be deleted
     */
-   deleteTermWithoutAnnotationTerm : function(term) {
-      var self = this;
-      var counter = 0;
-      //get all relation with this term and remove all of them
-      new RelationTermCollection({term:term.id}).fetch({
-         success:function (collection, response){
-            if (collection.size() == 0) {
-               self.removeRelationTermCallback(0,0, term);
-               return;
-            }
-            collection.each(function(item) {
-               var json = item.toJSON();
-               new RelationTermModel({
-                  relation:json.relation.id,
-                  term1:json.term1.id,
-                  term2:json.term2.id
-               }).destroy({success : function (model, response) {
-                  self.removeRelationTermCallback(collection.length, ++counter, term);
-               }});
-
-            });
-
-         }});
-   },
-   removeAnnotationTermCallback : function(total, counter, term) {
-      var self = this;
-      if (counter < total) return;
-      //all annotation-term are deleted for this term: delete term like a term with no annotation
-      self.deleteTermWithoutAnnotationTerm(term);
-
-   },
-   removeRelationTermCallback : function(total, counter, term) {
-      var self = this;
-      if (counter < total) return;
-      //term has no relation, delete term
+   removeTerm : function(term) {
+       var self= this;
       new TermModel({id:term.id}).destroy({
          success : function (model, response) {
             new EndTransactionModel({}).save();
@@ -359,6 +288,8 @@ var OntologyPanelView = Backbone.View.extend({
             $("#delete-term-error-message").append(json.errors)
          }});
    },
+
+
 
    buildButton : function() {
       var self = this;

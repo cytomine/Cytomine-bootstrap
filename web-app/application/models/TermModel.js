@@ -17,6 +17,7 @@ var TermModel = Backbone.Model.extend({
 
 var AnnotationTermModel = Backbone.Model.extend({
 	url : function() {
+        console.log("JAI SOIF");
         if (this.term == null)
 		    return 'api/annotation/' + this.annotation +'/term.json';
         else if(this.clear != null) {
