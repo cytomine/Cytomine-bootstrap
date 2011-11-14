@@ -80,54 +80,42 @@ class Annotation extends SequenceDomain implements Serializable {
         }
     }
 
-   def termsId() {
-       return annotationTerm.collect{
-           it.getIdTerm()
-       }.unique()
-   }
+    def termsId() {
+        return annotationTerm.collect{
+            it.getIdTerm()
+        }.unique()
+    }
 
     def termsIdByUser() {
         Map<Long,List<Long>> usersAnnotation = [:]
         annotationTerm.each{ annotationTerm ->
             if(usersAnnotation.containsKey(annotationTerm.user.id)) {
                 //if user is already there, add term to the list
-               List<Long> terms = usersAnnotation.get(annotationTerm.user.id)
-               terms.add(annotationTerm.term.id)
-               usersAnnotation.put(annotationTerm.user.id,terms)
+                List<Long> terms = usersAnnotation.get(annotationTerm.user.id)
+                terms.add(annotationTerm.term.id)
+                usersAnnotation.put(annotationTerm.user.id,terms)
             } else {
                 //if user is not there create list with term id
-               List<Long> terms = new ArrayList<Long>();
-               terms.add(annotationTerm.term.id)
-               usersAnnotation.put(annotationTerm.user.id,terms)
+                List<Long> terms = new ArrayList<Long>();
+                terms.add(annotationTerm.term.id)
+                usersAnnotation.put(annotationTerm.user.id,terms)
             }
         }
         usersAnnotation
     }
 
     def usersIdByTerm() {
-
         def results = []
-
         annotationTerm.each{ annotationTerm ->
-             def subsresults = [:]
-             subsresults.term = annotationTerm.getIdTerm()
-             subsresults.user = [annotationTerm.userId]
-             results = addEntry(results,subsresults)
+            def map = [:]
+            map.id = annotationTerm.id
+            map.term = annotationTerm.getIdTerm()
+            map.user = [annotationTerm.user.id]
+            def item  = results.find { it.term == annotationTerm.getIdTerm() }
+            if (!item) results << map
+            else item.user.add(annotationTerm.user.id)
         }
-
         results
-    }
-
-    def addEntry(def all, def item) {
-        boolean found = false
-        all.each {
-             if(it.term==item.term) {
-                 it.user.add(item.user.first())
-                 found = true
-             }
-         }
-        if(!found) all << item
-        return all
     }
 
     def project() {

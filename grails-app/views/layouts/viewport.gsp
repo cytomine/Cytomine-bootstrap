@@ -30,7 +30,8 @@
     <link rel="stylesheet" href="lib/bootstrap-1.3/bootstrap.min.css">
     <!-- JQuery & JQuery UI-->
     <link rel='stylesheet' href='css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
-    <!--<link rel='stylesheet' href='css/custom-ben/css/custom-theme/jquery-ui-1.8.16.custom.css' type='text/css'/>-->
+    <!--<link rel='stylesheet' href='css
+    /custom-ben/css/custom-theme/jquery-ui-1.8.16.custom.css' type='text/css'/>-->
     <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 
@@ -188,8 +189,8 @@
         $(function() {
             //Change underscore _.template function delimiter
             /*_.templateSettings = {
-                interpolate : /\{\{(.+?)\}\}/g
-            };*/
+             interpolate : /\{\{(.+?)\}\}/g
+             };*/
             // Create the app.
             require(
                     { urlArgs: "bust=" + (new Date()).getTime() }

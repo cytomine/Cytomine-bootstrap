@@ -217,7 +217,7 @@ AnnotationLayer.prototype = {
             }
             new AnnotationModel({id : evt.feature.attributes.idAnnotation}).fetch({
                 success : function (model, response) {
-                    var json = model.toJSON()
+                    var json = model.toJSON();
                     //username
                     json.username = window.app.models.users.get(json.user).prettyName();
 

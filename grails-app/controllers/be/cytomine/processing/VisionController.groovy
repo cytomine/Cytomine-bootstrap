@@ -28,10 +28,10 @@ class VisionController {
              imageURL = "http://" + split[1]
         }
 
-        println "URL " + params.url
+        /*println "URL " + params.url
         println "METHOD " + params.method
         println "contrast " + params.contrast
-        println "brightness " + params.brightness
+        println "brightness " + params.brightness*/
 
         try {
             /* Create Buffered Image  From URL */
@@ -168,7 +168,7 @@ class VisionController {
                     max = center+(0.5*range)/slope;
                 }
 
-                println("MIN/MAX : " + Math.round(min) + "/" + Math.round(max))
+                //println("MIN/MAX : " + Math.round(min) + "/" + Math.round(max))
                 ip.getProcessor().setMinAndMax(Math.round(min),Math.round(max))
                 bufferedImage = ip.getBufferedImage()
             }

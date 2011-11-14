@@ -100,7 +100,7 @@ class AnnotationTerm extends SequenceDomain implements Serializable{
         println "Register custom JSON renderer for " + AnnotationTerm.class
         JSON.registerObjectMarshaller(AnnotationTerm) {
             def returnArray = [:]
-            returnArray['class'] = it.class
+            //returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['annotation'] = it.annotation?.id
             returnArray['term'] = it.term?.id

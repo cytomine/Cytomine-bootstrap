@@ -26,7 +26,7 @@ class RestAnnotationTermController extends RestController {
     else
     {
         Annotation annotation =  Annotation.read(params.idannotation)
-        if(annotation!=null && !params.idUser) responseSuccess(annotation.usersIdByTerm())
+        if(annotation!=null && !params.idUser) responseSuccess(annotation.annotationTerm)
         else if(annotation!=null && params.idUser) {
             User user = User.read(params.idUser)
             if(user)  {
