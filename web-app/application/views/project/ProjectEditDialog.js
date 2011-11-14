@@ -183,8 +183,8 @@ var EditProjectDialog = Backbone.View.extend({
                         }});
                 });
                 _.each(projectDeleteUser,function(user){
-                    
-                    new ProjectUserModel({project: id,user:user}).destroy({
+                    //use fake ID since backbone > 0.5 : we should destroy only object saved or fetched
+                    new ProjectUserModel({id : 1, project: id,user:user}).destroy({
                         success: function (model, response) {
                             self.addDeleteUserProjectCallback(total,++counter);
                         },error: function (model, response) {

@@ -83,13 +83,25 @@ class RestAnnotationController extends RestController {
                     groupProperty("annotation.id")
                 }
             }
-            def annotations = Annotation.createCriteria().list {
-                inList("image", project.imagesinstance())
-                inList("user",userList)
-                not {
-                    inList("id", annotationsWithTerms)
+            println "annotationsWithTerms ---> " + annotationsWithTerms.size()
+            //inList crash is argument is an empty list so we have to use if/else at this time
+            def annotations = null
+            if (annotationsWithTerms.size() == 0) {
+                annotations = Annotation.createCriteria().list {
+                    inList("image", project.imagesinstance())
+                    inList("user",userList)
+
+                }
+            } else {
+                annotations = Annotation.createCriteria().list {
+                    inList("image", project.imagesinstance())
+                    inList("user",userList)
+                    not {
+                        inList("id", annotationsWithTerms)
+                    }
                 }
             }
+
             if(project) responseSuccess(annotations)
             else responseNotFound("Project",params.id)
         } else {
@@ -225,16 +237,16 @@ class RestAnnotationController extends RestController {
         Long id = result?.annotation?.id
 
         //add annotation-term
-         if(id) {
-             def term = json.term;
-             if(term)  {
-                 term.each { idTerm ->
-                        def postDataAnnotationTerm = ([user : currentUser.id, annotation : id, term : idTerm]) as JSON
-                        Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : postDataAnnotationTerm.toString(),user: currentUser)
-                        def resultTerm = processCommand(addAnnotationTermCommand, currentUser)
-                 }
-             }
-         }
+        if(id) {
+            def term = json.term;
+            if(term)  {
+                term.each { idTerm ->
+                    def postDataAnnotationTerm = ([user : currentUser.id, annotation : id, term : idTerm]) as JSON
+                    Command addAnnotationTermCommand = new AddAnnotationTermCommand(postData : postDataAnnotationTerm.toString(),user: currentUser)
+                    def resultTerm = processCommand(addAnnotationTermCommand, currentUser)
+                }
+            }
+        }
 
         transaction.stop()
         //add annotation on the retrieval

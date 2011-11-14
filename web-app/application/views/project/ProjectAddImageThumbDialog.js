@@ -228,7 +228,8 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         
         //add slide to project
         //delete slide from project
-        new ImageInstanceModel({project : idProject, user : null, baseImage : idImage}).destroy({
+        //use fake ID since backbone > 0.5 : we should destroy only object saved or fetched
+        new ImageInstanceModel({id :1, project : idProject, user : null, baseImage : idImage}).destroy({
             success : function (image,response) {
                 
                 window.app.view.message("ImageInstance", response.message, "success");

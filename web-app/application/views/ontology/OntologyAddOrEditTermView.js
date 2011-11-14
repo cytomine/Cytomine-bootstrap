@@ -337,7 +337,8 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
    },
    resetRelation : function(child,oldParent,newParent) {
       var self = this;
-      new RelationTermModel({term1:oldParent, term2:child}).destroy({
+       //use fake ID since backbone > 0.5 : we should destroy only object saved or fetched
+      new RelationTermModel({id : 1, term1:oldParent, term2:child}).destroy({
          success : function (model, response) {
             //create relation with new parent
             if(newParent!=null) {

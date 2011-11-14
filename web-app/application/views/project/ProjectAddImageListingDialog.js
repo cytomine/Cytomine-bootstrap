@@ -397,7 +397,8 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
       _.each(idSelectedArray, function(idImage){
 
          var idAsbtractImage = self.imagesProject.get(idImage).get('baseImage');
-         new ImageInstanceModel({project : self.model.id, user : null, baseImage :idAsbtractImage}).destroy({
+          //use fake ID since backbone > 0.5 : we should destroy only object saved or fetched
+         new ImageInstanceModel({id : 1,project : self.model.id, user : null, baseImage :idAsbtractImage}).destroy({
             success : function (image,response) {
 
                window.app.view.message("Image", response.message, "success");

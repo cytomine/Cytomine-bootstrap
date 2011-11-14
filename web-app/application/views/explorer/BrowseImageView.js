@@ -31,7 +31,6 @@ var BrowseImageView = Backbone.View.extend({
       this.el.css("display", "block");
       this.initToolbar();
       this.initMap();
-      this.initOntology();
       this.initAnnotationsTabs();
       if (this.iPad) this.initMobile();
       return this;
@@ -317,7 +316,7 @@ var BrowseImageView = Backbone.View.extend({
          });
 
          self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
-
+         self.initOntology();
          //Set the height of the map manually
          var paddingTop = 71;
          var height = $(window).height() - paddingTop;

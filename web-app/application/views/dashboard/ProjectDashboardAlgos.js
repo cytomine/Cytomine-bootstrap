@@ -13,6 +13,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
    },
    removeImageFilter : function (imageFilter) {
       var self = this;
+      //use fake ID since backbone > 0.5 : we should destroy only object saved or fetched
       new ProjectImageFilterModel({ id : 1, project : self.model.id, imageFilter : imageFilter.get("id")}).destroy({
          success : function (model, response) {
             $(self.el).find("li.imageFilter"+imageFilter.get("id")).remove();

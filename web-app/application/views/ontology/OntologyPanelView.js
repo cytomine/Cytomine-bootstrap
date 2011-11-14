@@ -127,10 +127,8 @@ var OntologyPanelView = Backbone.View.extend({
       var self = this;
       var idTerm = self.getCurrentTermId();
       var term = window.app.models.terms.get(idTerm);
-      console.log("Delete term:"+term.id);
       new AnnotationCollection({term:idTerm}).fetch({
          success : function (collection, response) {
-             console.log("There are "+collection.length + " annotations map with this term");
             if(collection.length==0) self.buildDeleteTermConfirmDialog(term);
             else self.buildDeleteTermWithAnnotationConfirmDialog(term,collection.length);
          }});
@@ -288,8 +286,6 @@ var OntologyPanelView = Backbone.View.extend({
             $("#delete-term-error-message").append(json.errors)
          }});
    },
-
-
 
    buildButton : function() {
       var self = this;
