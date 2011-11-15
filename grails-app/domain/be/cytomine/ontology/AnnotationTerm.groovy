@@ -62,8 +62,8 @@ class AnnotationTerm extends SequenceDomain implements Serializable{
             annotationTerm.id = id
             annotation?.addToAnnotationTerm(annotationTerm)
             term?.addToAnnotationTerm(annotationTerm)
-            annotation.refresh()
-            term.refresh()
+//            annotation.refresh()
+//            term.refresh()
             annotationTerm.save(flush:true)
         } else throw new IllegalArgumentException("Annotation " + annotation.id + " and term " + term.id + " are already mapped with user " + user.id)
         return annotationTerm
@@ -80,8 +80,8 @@ class AnnotationTerm extends SequenceDomain implements Serializable{
         if (annotationTerm) {
             annotation?.removeFromAnnotationTerm(annotationTerm)
             term?.removeFromAnnotationTerm(annotationTerm)
-            annotation.refresh()
-            term.refresh()
+            //annotation.refresh()
+            //term.refresh()
             println "delete annotationTerm="+annotationTerm
             annotationTerm.delete(flush : true)
 
