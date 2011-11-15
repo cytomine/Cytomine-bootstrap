@@ -1,4 +1,4 @@
-
+package cytomine.web
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -13,7 +13,7 @@ class RequestFilters {
       before = {request.currentTime = System.currentTimeMillis()}
       after = {}
       afterView = {
-          log.info "Request took ${System.currentTimeMillis()-request.currentTime}ms"
+          log.info controllerName+"."+actionName + " Request took ${System.currentTimeMillis()-request.currentTime}ms"
       }
     }
   }

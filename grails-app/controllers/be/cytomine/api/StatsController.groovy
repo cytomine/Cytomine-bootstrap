@@ -106,7 +106,6 @@ class StatsController extends RestController {
             }
         }
         stats.each{
-            println "Item: $it"
             list << ["id": ids.get(it.key), "key":it.key,"value":it.value,"color":color.get(it.key)]
         }
         responseSuccess(list)

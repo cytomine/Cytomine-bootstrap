@@ -105,7 +105,6 @@ class RestTermController extends RestController {
     List convertHashToList(HashMap<String, Integer> map) {
         def list = []
         map.each {
-            println "Item: $it"
             list << ["key": it.key, "value": it.value]
         }
         list

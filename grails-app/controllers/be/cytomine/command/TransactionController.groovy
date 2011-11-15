@@ -27,7 +27,7 @@ class TransactionController {
 
     def stopIfTransactionInProgress() {
         synchronized(this.getClass()) {
-            log.info "end transaction:" + springSecurityService.principal.id
+            //log.info "end transaction:" + springSecurityService.principal.id
             SecUser user = User.get(springSecurityService.principal.id)
             if(user.transactionInProgress) {
                 stop(user)

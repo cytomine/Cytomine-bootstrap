@@ -12,6 +12,8 @@ import be.cytomine.image.ImageInstance
 
 import be.cytomine.image.AbstractImage
 import java.util.Map.Entry
+import org.perf4j.LoggingStopWatch
+import org.perf4j.StopWatch
 
 class Annotation extends SequenceDomain implements Serializable {
 
@@ -42,6 +44,7 @@ class Annotation extends SequenceDomain implements Serializable {
         columns {
             location type: org.hibernatespatial.GeometryUserType
         }
+        annotationTerm fetch: 'join'
     }
 
 
@@ -110,7 +113,7 @@ class Annotation extends SequenceDomain implements Serializable {
             def map = [:]
             map.id = annotationTerm.id
             map.term = annotationTerm.getIdTerm()
-            map.user = [annotationTerm.user.id]
+            map.user = [annotationTerm.getIdUser()]
             def item  = results.find { it.term == annotationTerm.getIdTerm() }
             if (!item) results << map
             else item.user.add(annotationTerm.user.id)
@@ -236,6 +239,7 @@ class Annotation extends SequenceDomain implements Serializable {
         println "Register custom JSON renderer for " + Annotation.class
         JSON.registerObjectMarshaller(Annotation) {
             def returnArray = [:]
+
             ImageInstance imageinstance = it.image
             AbstractImage image = imageinstance?.baseImage
             returnArray['class'] = it.class
@@ -258,7 +262,9 @@ class Annotation extends SequenceDomain implements Serializable {
             returnArray['updated'] = it.updated? it.updated.time.toString() : null
 
             returnArray['term'] = it.termsId()
+
             returnArray['userByTerm'] = it.usersIdByTerm()
+
             //retrieval
             try {if(it?.similarity) returnArray['similarity'] = it.similarity}catch(Exception e){}
 

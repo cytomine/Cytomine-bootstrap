@@ -23,6 +23,11 @@ class AnnotationTerm extends SequenceDomain implements Serializable{
         else return this.term?.id
     }
 
+    def getIdUser() {
+        if(this.userId) return this.userId
+        else return this.user?.id
+    }
+
     static AnnotationTerm link(Annotation annotation,Term term, User user) {
         if(!annotation)  throw new IllegalArgumentException("Annotation cannot be null")
         if(!term)  throw new IllegalArgumentException("Term cannot be null")
