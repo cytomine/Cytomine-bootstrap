@@ -146,11 +146,11 @@ class RestOntologyController extends RestController {
                 }
 
                 def annotationTerm = AnnotationTerm.findAllByTerm(term)
-                log.info "annotationTerm= " +relationTerm.size()
+                log.info "annotationTerm= " +annotationTerm.size()
 
                 annotationTerm.each{ annotterm ->
                     log.info "unlink annotterm:" +annotterm.id
-                    def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id]) as JSON
+                    def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id, user: annotterm.user.id]) as JSON
                     Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData :postDataRT.toString() ,user: currentUser,printMessage:false)
                     def result = processCommand(deleteAnnotationTermCommand, currentUser)
                 }
