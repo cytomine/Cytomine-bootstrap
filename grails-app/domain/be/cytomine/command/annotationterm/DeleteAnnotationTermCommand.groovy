@@ -19,7 +19,6 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
 
     try {
       def postData = JSON.parse(postData)
-      postData.user = user.id
       Annotation annotation = Annotation.get(postData.annotation)
       Term term = Term.get(postData.term)
       User user = User.get(postData.user)

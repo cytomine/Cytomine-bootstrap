@@ -278,8 +278,8 @@ class RestAnnotationController extends RestController {
                 log.info "annotationTerm= " +annotationTerm.size()
 
                 annotationTerm.each{ annotterm ->
-                    log.info "unlink annotterm:" +annotterm.id
-                    def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id]) as JSON
+                    log.info "unlink annotterm:" +annotterm.id + " = " + annotterm.term.name
+                    def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id, user : annotterm.user.id]) as JSON
                     Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData :postDataRT.toString() ,user: currentUser,printMessage:false)
                     def result = processCommand(deleteAnnotationTermCommand, currentUser)
                 }
