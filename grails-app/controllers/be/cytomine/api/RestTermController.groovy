@@ -176,34 +176,6 @@ class RestTermController extends RestController {
         response(result)
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def update = {
         log.info "Update"
         User currentUser = getCurrentUser(springSecurityService.principal.id)

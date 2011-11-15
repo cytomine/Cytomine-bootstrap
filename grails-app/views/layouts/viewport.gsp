@@ -115,7 +115,6 @@
         <script type="text/javascript" src="application/models/ProjectModel.js" ></script>
         <script type="text/javascript" src="application/models/AnnotationModel.js" ></script>
         <script type="text/javascript" src="application/models/SlideModel.js" ></script>
-        <script type="text/javascript" src="application/models/TransactionModel.js" ></script>
         <script type="text/javascript" src="application/models/StatsModel.js" ></script>
         <script type="text/javascript" src="application/models/CommandModel.js" ></script>
         <script type="text/javascript" src="application/models/RelationModel.js" ></script>

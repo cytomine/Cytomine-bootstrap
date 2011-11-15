@@ -82,6 +82,7 @@
             <fileset dir="${src.dir}" includes="application/models/ImageModel.js" />
             <fileset dir="${src.dir}" includes="application/models/TermModel.js" />
             <fileset dir="${src.dir}" includes="application/models/OntologyModel.js" />
+            <fileset dir="${src.dir}" includes="application/models/DisciplineModel.js" />
             <fileset dir="${src.dir}" includes="application/models/UserModel.js" />
             <fileset dir="${src.dir}" includes="application/models/ImageFilter.js" />
             <fileset dir="${src.dir}" includes="application/models/ProjectModel.js" />
@@ -89,7 +90,6 @@
             <fileset dir="${src.dir}" includes="application/models/AnnotationModel.js" />
             <fileset dir="${src.dir}" includes="application/models/SlideModel.js" />
             <fileset dir="${src.dir}" includes="application/models/SoftwareModel.js" />
-            <fileset dir="${src.dir}" includes="application/models/TransactionModel.js" />
             <fileset dir="${src.dir}" includes="application/models/SuggestedAnnotationTermModel.js" />
             <fileset dir="${src.dir}" includes="application/models/StatsModel.js" />
             <fileset dir="${src.dir}" includes="application/models/CommandModel.js" />
