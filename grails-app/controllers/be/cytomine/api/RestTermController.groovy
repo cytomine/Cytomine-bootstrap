@@ -172,6 +172,7 @@ class RestTermController extends RestController {
         }
         Command deleteTermCommand = new DeleteTermCommand(postData: postData.toString(), user: currentUser)
         def result = processCommand(deleteTermCommand, currentUser)
+        transaction.stop()
         response(result)
     }
 
