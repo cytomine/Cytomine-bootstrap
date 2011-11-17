@@ -275,7 +275,6 @@ var BrowseImageView = Backbone.View.extend({
                new OpenLayers.Control.MousePosition(),
                new OpenLayers.Control.KeyboardDefaults()],
             eventListeners: {
-               //"moveend": mapEvent,
                "zoomend": function (event) {
                   var map = event.object;
                   var maxMagnification = self.model.get("magnification");
@@ -287,11 +286,7 @@ var BrowseImageView = Backbone.View.extend({
                   $("#zoomInfoPanel"+self.model.id).html(magnification + "X");
                },
                "moveend": function() {
-                   self.imageFiltersPanel.redraw();
                }
-
-               /*"changelayer": mapLayerChanged,
-                "changebaselayer": mapBaseLayerChanged*/
             }
          };
 

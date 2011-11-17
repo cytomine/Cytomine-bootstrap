@@ -20,9 +20,15 @@ import be.cytomine.command.annotationterm.DeleteAnnotationTermCommand
 
 import be.cytomine.command.TransactionController
 import be.cytomine.command.annotation.DeleteAnnotationCommand
+import java.awt.image.BufferedImage
+import be.cytomine.ontology.Term
+import java.awt.Color
+import com.vividsolutions.jts.geom.Coordinate
+import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom.LinearRing
 import be.cytomine.ontology.SuggestedTerm
 import be.cytomine.command.suggestedTerm.DeleteSuggestedTermCommand
-
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -34,6 +40,7 @@ class RestImageInstanceController extends RestController {
 
     def springSecurityService
     def transactionService
+    def segmentationService
 
     def index = {
         redirect(controller: "image")
@@ -152,5 +159,76 @@ class RestImageInstanceController extends RestController {
             response(result)
         }
 
+    }
+
+    def window = {
+        println "WINDOW REQUEST " + params.toString()
+        ImageInstance image = ImageInstance.read(params.id)
+        AbstractImage abstractImage = image.getBaseImage()
+        int x = Integer.parseInt(params.x)
+        int y = abstractImage.getHeight() - Integer.parseInt(params.y)
+        int w = Integer.parseInt(params.w)
+        int h = Integer.parseInt(params.h)
+        try {
+            String url = abstractImage.getCropURL(x,y,w,h)
+            log.info("Window : " + url)
+            responseImage(url)
+        } catch ( Exception e) {
+            log.error("GetThumb:"+e);
+        }
+    }
+
+    def mask = {
+        println "WINDOW REQUEST " + params.toString()
+        ImageInstance image = ImageInstance.read(params.id)
+        AbstractImage abstractImage = image.getBaseImage()
+        int x = Integer.parseInt(params.x)
+        int y =  Integer.parseInt(params.y)
+        int w = Integer.parseInt(params.w)
+        int h = Integer.parseInt(params.h)
+        int termID = Integer.parseInt(params.term)
+
+        try {
+            //Get the image, compute ratio between asked and received
+            String url = abstractImage.getCropURL(x,abstractImage.getHeight() - y,w,h)
+            BufferedImage window = getImageFromURL(url)
+            double x_ratio = window.getWidth() / w
+            double y_ratio = window.getHeight() / h
+
+            //Fetch annotations with the requested term on the request image
+            Term term = Term.read(termID)
+
+            Collection<Annotation> annotations = (Collection<Annotation>) AnnotationTerm.createCriteria().list {
+                inList("term", [term])
+                join("annotation")
+                createAlias("annotation", "a")
+                projections {
+                    inList("a.image", [image])
+                    groupProperty("annotation")
+                }
+            }
+            //Create a geometry corresponding to the ROI of the request (x,y,w,h)
+            //1. Compute points
+            Coordinate[] roiPoints = new Coordinate[5]
+            roiPoints[0] = new Coordinate(x   , abstractImage.getHeight() - y);
+            roiPoints[1] = new Coordinate(x+w , abstractImage.getHeight() - y);
+            roiPoints[2] = new Coordinate(x+w , abstractImage.getHeight() - (y+h));
+            roiPoints[3] = new Coordinate(x   , abstractImage.getHeight() - (y+h));
+            roiPoints[4] = roiPoints[0]
+            //Build geometry
+            LinearRing linearRing = new GeometryFactory().createLinearRing(roiPoints)
+            Geometry roiGeometry = new GeometryFactory().createPolygon(linearRing)
+            //Filter annotation which intersects the ROI
+            Collection<Geometry> intersectGeometries = new LinkedList<Geometry>()
+            annotations.each { annotation ->
+                if (roiGeometry.intersects(annotation.getLocation())) {
+                    intersectGeometries.add(annotation.getLocation())
+                }
+            }
+            window = segmentationService.colorizeWindow(abstractImage, window, intersectGeometries, Color.decode(term.color), x,y,x_ratio,y_ratio)
+            responseBufferedImage(window)
+        } catch ( Exception e) {
+            log.error("GetThumb:"+e);
+        }
     }
 }

@@ -7,7 +7,8 @@ import be.cytomine.command.EditCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Command
 import be.cytomine.command.CommandHistory
-import org.codehaus.groovy.grails.web.json.JSONElement
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 
 class RestController {
 
@@ -127,6 +128,35 @@ class RestController {
         }
       }
   }
+
+    BufferedImage getImageFromURL(String url)  {
+        def out = new ByteArrayOutputStream()
+        out << new URL(url).openStream()
+        InputStream inputStream = new ByteArrayInputStream(out.toByteArray());
+        return ImageIO.read(inputStream);
+    }
+
+    def responseBufferedImage(BufferedImage bufferedImage) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "jpg", baos);
+        byte[] bytesOut = baos.toByteArray();
+        response.contentLength = baos.size();
+        response.setHeader("Connection","Keep-Alive")
+        response.setHeader("Accept-Ranges","bytes")
+        response.setHeader("Content-Type", "image/jpeg")
+        withFormat {
+            jpg {
+                if (request.method == 'HEAD') {
+                    render(text: "", contentType: "image/jpeg");
+                }
+                else {
+                    response.contentType = "image/jpeg";
+                    response.getOutputStream() << bytesOut
+                    response.getOutputStream().flush()
+                }
+            }
+        }
+    }
 
     boolean isSuccess() {
         try {

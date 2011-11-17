@@ -11,8 +11,9 @@ import ij.process.ImageConverter
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.algorithm.ConvexHull
 import com.vividsolutions.jts.geom.GeometryFactory
-import org.postgis.Geometry
+
 import be.cytomine.processing.image.filters.Auto_Threshold
+import com.vividsolutions.jts.geom.Geometry
 
 class ProcessingController extends RestController{
 
@@ -32,9 +33,9 @@ class ProcessingController extends RestController{
         println url
         ImagePlus ip = getImage(url)
         def coordinates = computeCoordinates(ip, shift, shift, x, y)
-        def geometry = new GeometryFactory().buildGeometry(new LinkedList<Coordinate>()) //EMPTY GEOMETRY
+        Geometry geometry = new GeometryFactory().buildGeometry(new LinkedList<Coordinate>()) //EMPTY GEOMETRY
         if (coordinates != null) {
-            def convexHull = new ConvexHull(coordinates, new GeometryFactory())
+            ConvexHull convexHull = new ConvexHull(coordinates, new GeometryFactory())
             geometry = convexHull.getConvexHull()
             println "geometry" + geometry.geometryType
         }
@@ -100,7 +101,7 @@ class ProcessingController extends RestController{
         return (x >= 0 && x < ip.getWidth() && y >= 0 && y < ip.getHeight())
     }
 
-    private def computeCoordinates(ImagePlus ip, int x, int y, topLeftX, topLeftY) {
+    private def computeCoordinates(ImagePlus ip, int x, int y, long topLeftX, long topLeftY) {
         int[] firstPixel = ip.getPixel(x,y)
         if (firstPixel[0] == WHITE) { //pixel is white, nothing to do
             return null

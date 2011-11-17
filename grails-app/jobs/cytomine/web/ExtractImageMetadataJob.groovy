@@ -7,7 +7,7 @@ class ExtractImageMetadataJob {
     def imagePropertiesService
 
     static triggers = {
-        simple name: 'extractImageMetadataJob', startDelay: 5000, repeatInterval: 1000*60*10
+        simple name: 'extractImageMetadataJob', startDelay: 5000, repeatInterval: 1000*60*100
     }
 
     def execute() {

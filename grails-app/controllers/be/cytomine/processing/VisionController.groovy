@@ -8,10 +8,11 @@ import ij.process.ImageConverter
 import be.cytomine.processing.image.filters.Multi_OtsuThreshold
 
 import be.cytomine.processing.image.filters.Colour_Deconvolution
-import be.cytomine.processing.image.filters.DynamicThreshold
+
 import be.cytomine.processing.image.filters.Auto_Threshold
 import ij.plugin.ContrastEnhancer
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import be.cytomine.api.RestController
 
 /**
  * Cytomine @ GIGA-ULG
@@ -19,7 +20,7 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
  * Date: 1/06/11
  * Time: 13:44
  */
-class VisionController {
+class VisionController extends RestController {
 
     def process = {
         def split = request.queryString.split("url=http://")
@@ -174,40 +175,11 @@ class VisionController {
             }
 
             /* Write response from BufferedImage */
-            responseImage(bufferedImage)
+            responseBufferedImage(bufferedImage)
 
         } catch (Exception e) {
             BufferedImage bufferedImage = getImageFromURL(ConfigurationHolder.config.grails.serverURL + "/images/notavailable.jpg")
-            responseImage(bufferedImage)
-        }
-    }
-
-    BufferedImage getImageFromURL(String url)  {
-        def out = new ByteArrayOutputStream()
-        out << new URL(url).openStream()
-        InputStream inputStream = new ByteArrayInputStream(out.toByteArray());
-        return ImageIO.read(inputStream);
-    }
-
-    def responseImage(BufferedImage bufferedImage) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "jpg", baos);
-        byte[] bytesOut = baos.toByteArray();
-        response.contentLength = baos.size();
-        response.setHeader("Connection","Keep-Alive")
-        response.setHeader("Accept-Ranges","bytes")
-        response.setHeader("Content-Type", "image/jpeg")
-        withFormat {
-            jpg {
-                if (request.method == 'HEAD') {
-                    render(text: "", contentType: "image/jpeg");
-                }
-                else {
-                    response.contentType = "image/jpeg";
-                    response.getOutputStream() << bytesOut
-                    response.getOutputStream().flush()
-                }
-            }
+            responseBufferedImage(bufferedImage)
         }
     }
 

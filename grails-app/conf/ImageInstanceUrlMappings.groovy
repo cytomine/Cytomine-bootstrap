@@ -14,5 +14,11 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/$id"(controller: "restImageInstance"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
+        "/api/imageinstance/$id/window-$x-$y-$w-$h"(controller: "restImageInstance"){
+            action = [GET:"window"]
+        }
+        "/api/imageinstance/$id/mask-$x-$y-$w-$h-$term"(controller: "restImageInstance"){
+            action = [GET:"mask"]
+        }
     }
 }

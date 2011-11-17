@@ -92,7 +92,7 @@ class IIPResolver extends Resolver{
             }
         }
         def x = (topLeftX == 0) ? 0 : 1/(baseImageWidth / topLeftX)
-        def y = ((baseImageHeight - topLeftY) == 0) ? baseImageHeight : 1/(baseImageHeight / (baseImageHeight - topLeftY))
+        def y = ((baseImageHeight - topLeftY) == 0) ? 0 : 1/(baseImageHeight / (baseImageHeight - topLeftY))
         def w = (width == 0) ? 0 : 1/(baseImageWidth / width)
         def h = (height == 0) ? 0 : 1/(baseImageHeight / height)
         args.clear()
