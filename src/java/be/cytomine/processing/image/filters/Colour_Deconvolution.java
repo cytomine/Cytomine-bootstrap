@@ -1,7 +1,6 @@
 package be.cytomine.processing.image.filters;
 
 import ij.*;
-import ij.plugin.*;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.*;
 import ij.gui.*;
@@ -73,7 +72,7 @@ public class Colour_Deconvolution implements PlugInFilter {
     ImagePlus imp;
     ImagePlus[] result = new ImagePlus[3];
     String [] stain={"From ROI", "H&E", "H&E 2","H DAB", "Feulgen Light Green", "Giemsa", "FastRed FastBlue DAB", "Methyl Green DAB", "H&E DAB", "H AEC","Azan-Mallory","Masson Trichrome","Alcian blue & H","H PAS","RGB","CMY", "User values"};
-    int selectedStain = 1;
+    private int selectedStain = 1;
 
     public int setup(String arg, ImagePlus imp) {
         this.imp = imp;
@@ -110,7 +109,7 @@ public class Colour_Deconvolution implements PlugInFilter {
 		gd.showDialog();
 		if (gd.wasCanceled())
 			return;*/
-		String myStain = stain[selectedStain];
+		String myStain = stain[getSelectedStain()];
 		boolean doIshow = false;//gd.getNextBoolean();
 		boolean hideLegend = true;//gd.getNextBoolean();
 
@@ -702,5 +701,13 @@ public class Colour_Deconvolution implements PlugInFilter {
 		xyzf[3]=ic.getModifiers();
 	}
 
+
+    public int getSelectedStain() {
+        return selectedStain;
+    }
+
+    public void setSelectedStain(int selectedStain) {
+        this.selectedStain = selectedStain;
+    }
 }
 

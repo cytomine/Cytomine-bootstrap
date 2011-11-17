@@ -28,7 +28,7 @@ class RestProjectController extends RestController {
     def listByUser = {
         log.info "List with id user:"+params.id + " (null will be currentuser)"
         User user=null
-        if(!params.id)
+        if(params.id != null)
             user = User.read(params.id)
         else
             user = getCurrentUser(springSecurityService.principal.id)

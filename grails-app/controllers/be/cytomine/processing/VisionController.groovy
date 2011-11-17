@@ -39,20 +39,40 @@ class VisionController extends RestController {
             BufferedImage bufferedImage = getImageFromURL(imageURL)
 
             /* Process the BufferedImage */
-            if (params.method == "eosin") {
+            if (params.method == "he-eosin") {
                 ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
+                dt.setSelectedStain(1)
                 dt.setup(params.url, ip)
                 dt.run(ip.getProcessor())
                 bufferedImage = dt.getResult(1).getBufferedImage()
             }
 
-            if (params.method == "haematoxylin") {
+            if (params.method == "he-haematoxylin") {
                 ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
+                dt.setSelectedStain(1)
                 dt.setup(params.url, ip)
                 dt.run(ip.getProcessor())
                 bufferedImage = dt.getResult(0).getBufferedImage()
+            }
+
+            if (params.method == "hdab-haematoxylin") {
+                ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
+                Colour_Deconvolution dt = new Colour_Deconvolution()
+                dt.setSelectedStain(3)
+                dt.setup(params.url, ip)
+                dt.run(ip.getProcessor())
+                bufferedImage = dt.getResult(0).getBufferedImage()
+            }
+
+            if (params.method == "hdab-dab") {
+                ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
+                Colour_Deconvolution dt = new Colour_Deconvolution()
+                dt.setSelectedStain(3)
+                dt.setup(params.url, ip)
+                dt.run(ip.getProcessor())
+                bufferedImage = dt.getResult(1).getBufferedImage()
             }
 
             if (params.method == "binary") {
