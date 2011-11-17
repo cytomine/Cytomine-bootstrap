@@ -7,6 +7,7 @@ import be.cytomine.command.EditCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Command
 import be.cytomine.command.CommandHistory
+import org.codehaus.groovy.grails.web.json.JSONElement
 
 class RestController {
 
@@ -25,24 +26,27 @@ class RestController {
     return User.read(idUser)
   }
 
-  def processCommand(AddCommand c, User user)
+  def processCommand(AddCommand c,def json)
   {
-    processCommand(c,user,SUCCESS_ADD_CODE)
+    processCommand(c,json,SUCCESS_ADD_CODE)
   }
 
-  def processCommand(EditCommand c, User user)
+  def processCommand(EditCommand c, def json)
   {
-    processCommand(c,user,SUCCESS_EDIT_CODE)
+    processCommand(c,json,SUCCESS_EDIT_CODE)
   }
 
-  def processCommand(DeleteCommand c, User user)
+  def processCommand(DeleteCommand c,def json)
   {
-    processCommand(c,user,SUCCESS_DELETE_CODE)
+    processCommand(c,json,SUCCESS_DELETE_CODE)
   }
 
-  def processCommand(Command c, User user, int successCode) {
+  def processCommand(Command c, def json, int successCode) {
     def result
-    log.info "c.postData.size()=" + c.postData.size() + " Command.MAXSIZEREQUEST=" + Command.MAXSIZEREQUEST
+    c.setJson(json)
+    c.postData = json.toString()
+
+    log.debug "c.postData.size()=" + c.postData.size() + " Command.MAXSIZEREQUEST=" + Command.MAXSIZEREQUEST
     if(c.postData.size()>=Command.MAXSIZEREQUEST) {
          response.status = TOO_LONG_REQUEST
         log.error "Request too long: " +  c.postData.size() + "character (max="+ Command.MAXSIZEREQUEST+")"
@@ -51,16 +55,14 @@ class RestController {
 
     result = c.execute()
     if (result.status == successCode) {
-      log.info "c.project=" +c.project
       c.save()
       CommandHistory ch = new CommandHistory(command:c,prefixAction:"", project: c.project)
-
       ch.save();
       if(c.saveOnUndoRedoStack) {
+        User user = c.user
         new UndoStackItem(command : c, user: user, transactionInProgress:  user.transactionInProgress, transaction : user.transaction).save(flush:true)
       }
     }
-    //log.debug "Lastcommands="+UndoStackItem.findAllByUser(user)
     response.status = result.status
     log.debug "result.status="+result.status+" result.data=" + result.data
     return result.data
@@ -127,7 +129,11 @@ class RestController {
   }
 
     boolean isSuccess() {
+        try {
         return response.status==SUCCESS_ADD_CODE || response.status==SUCCESS_EDIT_CODE || response.status==SUCCESS_DELETE_CODE;
+        } catch(Exception ex) {
+             return false;
+        }
     }
 
 }

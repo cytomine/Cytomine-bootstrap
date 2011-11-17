@@ -32,7 +32,6 @@ class RestSuggestedTermController extends RestController{
   }
 
   def show = {
-    log.info "Show: term="+ params.idterm + " annotation=" +params.idannotation + " job="+params.idjob
     Term term = Term.read(params.idterm)
     Annotation annotation = Annotation.read(params.idannotation)
     Job job = Job.read(params.idjob)
@@ -42,7 +41,6 @@ class RestSuggestedTermController extends RestController{
   }
 
   def worstAnnotation = {
-      log.info "List suggested annotation-term for project " + params.idproject +" max="+ params.max
       List<SuggestedTerm> results = new ArrayList<SuggestedTerm>()
       Project project = Project.read(params.idproject)
       int max = params.max ? Integer.parseInt(params.max) : 20
@@ -53,13 +51,10 @@ class RestSuggestedTermController extends RestController{
           if(suggest.get(i).annotationMapWithBadTerm())
               results.add(suggest.get(i));
       }
-
       responseSuccess(results)
   }
 
   def worstTerm = {
-      log.info "List worst term for project " + params.idproject
-
       Map<Term,Integer> termMap = new HashMap<Term,Integer>()
       Project project = Project.read(params.idproject)
       int max = params.max ? Integer.parseInt(params.max) : 20
@@ -86,22 +81,16 @@ class RestSuggestedTermController extends RestController{
 
 
   def add = {
-    log.info "Add"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
-    log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-    Command addSuggestedTermCommand = new AddSuggestedTermCommand(postData : request.JSON.toString(), user: currentUser)
-    def result = processCommand(addSuggestedTermCommand, currentUser)
+    def result = processCommand(new AddSuggestedTermCommand(user: currentUser), request.JSON)
     response(result)
   }
 
 
   def delete = {
-    log.info "Delete"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
-    log.info "User:" + currentUser.username + " params.id=" + params.id
-    def postData = ([annotation : params.idannotation,term : params.idterm,job : params.idjob]) as JSON
-    Command deleteSuggestedTermCommand = new DeleteSuggestedTermCommand(postData : postData.toString(), user: currentUser)
-    def result = processCommand(deleteSuggestedTermCommand, currentUser)
+    def json = ([annotation : params.idannotation,term : params.idterm,job : params.idjob]) as JSON
+    def result = processCommand(new DeleteSuggestedTermCommand(user: currentUser), json)
     response(result)
   }
 

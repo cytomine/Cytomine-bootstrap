@@ -20,6 +20,8 @@ import be.cytomine.command.annotationterm.DeleteAnnotationTermCommand
 
 import be.cytomine.command.TransactionController
 import be.cytomine.command.annotation.DeleteAnnotationCommand
+import be.cytomine.ontology.SuggestedTerm
+import be.cytomine.command.suggestedTerm.DeleteSuggestedTermCommand
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,12 +39,10 @@ class RestImageInstanceController extends RestController {
         redirect(controller: "image")
     }
     def list = {
-        log.info "list"
         response(ImageInstance.list())
     }
 
     def show = {
-        log.info "show " + params.id
         ImageInstance image = ImageInstance.read(params.id)
         if(image!=null) responseSuccess(image)
         else responseNotFound("ImageInstance",params.id)
@@ -50,7 +50,6 @@ class RestImageInstanceController extends RestController {
 
 
     def showByProjectAndImage = {
-        log.info "show project: " + params.idproject + " " +  " image: " + params.idimage
         Project project = Project.read(params.idproject)
         AbstractImage image = AbstractImage.read(params.idimage)
         ImageInstance imageInstance = ImageInstance.findByBaseImageAndProject(image,project)
@@ -59,21 +58,18 @@ class RestImageInstanceController extends RestController {
     }
 
     def listByUser = {
-        log.info "List with id user:"+params.id
         User user = User.read(params.id)
         if(user!=null) responseSuccess(ImageInstance.findAllByUser(user))
         else responseNotFound("ImageInstance","User",params.id)
     }
 
     def listByImage = {
-        log.info "List with id user:"+params.id
         AbstractImage image = AbstractImage.read(params.id)
         if(image!=null) responseSuccess(ImageInstance.findAllByBaseImage(image))
         else responseNotFound("ImageInstance","AbstractImage",params.id)
     }
 
     def listByProject = {
-        log.info "List with id project:"+params.id
         Project project = Project.read(params.id)
         def images = ImageInstance.createCriteria().list {
             createAlias("slide", "s")
@@ -87,30 +83,22 @@ class RestImageInstanceController extends RestController {
     }
 
     def add = {
-        log.info "Add"
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-        Command addImageInstanceCommand = new AddImageInstanceCommand(postData : request.JSON.toString(), user: currentUser)
         def result
         synchronized(this.getClass()) {
-            result = processCommand(addImageInstanceCommand, currentUser)
+            result = processCommand(new AddImageInstanceCommand(user: currentUser), request.JSON)
         }
         response(result)
     }
 
     def update = {
-        log.info "Update"
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-        Command editImageInstanceCommand = new EditImageInstanceCommand(postData : request.JSON.toString(), user: currentUser)
-        def result = processCommand(editImageInstanceCommand, currentUser)
+        def result = processCommand(new EditImageInstanceCommand(user: currentUser), request.JSON)
         response(result)
     }
 
     def delete = {
-        log.info "Delete"
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " params.idproject=" + params.idproject+ " params.idimage=" + params.idimage
         Project project = Project.read(params.idproject)
         AbstractImage image = AbstractImage.read(params.idimage)
         ImageInstance imageInstance = ImageInstance.findByBaseImageAndProject(image,project)
@@ -120,44 +108,46 @@ class RestImageInstanceController extends RestController {
             return
         }
         synchronized(this.getClass()) {
-            log.info "TransactionController"
+            //Start transaction
             TransactionController transaction = new TransactionController();
             transaction.start()
 
+            //Delete annotation
             def annotations = Annotation.findAllByImage(imageInstance)
             log.debug "annotations.size=" +  annotations.size()
             annotations.each { annotation ->
 
-                def terms = annotation.terms()
+                //Delete Annotation-Term before deleting Annotation
+                def annotationTerm = AnnotationTerm.findAllByAnnotation(annotation)
                 log.debug "annotation.terms.size=" + terms.size()
-                terms.each { term ->
-
-                    def annotationTerm = AnnotationTerm.findAllByTermAndAnnotation(term,annotation)
-                    log.info "annotationTerm= " +annotationTerm.size()
-
-
-                    annotationTerm.each{ annotterm ->
-                        log.info "unlink annotterm:" +annotterm.id
-                        def postDataRT = ([term: annotterm.term.id,annotation: annotterm.annotation.id]) as JSON
-                        Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData :postDataRT.toString() ,user: currentUser,printMessage:false)
-                        def result = processCommand(deleteAnnotationTermCommand, currentUser)
-                    }
+                annotationTerm.each { annotterm ->
+                    log.info "unlink annotterm:" + annotterm.id
+                    def jsonDataRT = ([term: annotterm.term.id, annotation: annotterm.annotation.id, user: annotterm.user.id]) as JSON
+                    def result = processCommand(new DeleteAnnotationTermCommand(user: currentUser, printMessage: false), jsonDataRT)
                 }
 
+                //Delete Suggested-Term before deleting Annotation
+                def suggestTerm = SuggestedTerm.findAllByAnnotation(annotation)
+                log.info "suggestTerm= " + suggestTerm.size()
+                suggestTerm.each { suggestterm ->
+                    log.info "unlink suggestterm:" + suggestterm.id
+                    def jsonDataRT = ([term: suggestterm.term.id, annotation: suggestterm.annotation.id, job: suggestterm.job.id]) as JSON
+                    def result = processCommand(new DeleteSuggestedTermCommand(user: currentUser, printMessage: false), jsonDataRT)
+                }
+
+                //Delete annotation
                 Annotation annotationDeleted =  annotation
                 log.info "delete term " +annotationDeleted
-                def postDataAnnotation = ([id : annotationDeleted.id]) as JSON
-                Command deleteAnnotationCommand = new DeleteAnnotationCommand(postData :postDataAnnotation.toString() ,user: currentUser,printMessage:false)
-                def result = processCommand(deleteAnnotationCommand, currentUser)
+                def jsonDataAnnotation = ([id : annotationDeleted.id]) as JSON
+                def result = processCommand(new DeleteAnnotationCommand(user: currentUser,printMessage:false), jsonDataAnnotation)
             }
             log.info "delete image"
 
-            def postData = ([id : imageInstance.id]) as JSON
-            Command deleteImageInstanceCommand = new DeleteImageInstanceCommand(postData : postData.toString(), user: currentUser)
-            def result
+            //Delete image
+            def json = ([id : imageInstance.id]) as JSON
+            def result = processCommand(new DeleteImageInstanceCommand(user: currentUser), json)
 
-            result = processCommand(deleteImageInstanceCommand, currentUser)
-
+            //Stop transaction
             transaction.stop()
             response(result)
         }

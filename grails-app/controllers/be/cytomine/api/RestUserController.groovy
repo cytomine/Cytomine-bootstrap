@@ -66,8 +66,7 @@ class RestUserController extends RestController {
     @Secured(['ROLE_ADMIN'])
     def save = {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        Command addUserCommand = new AddUserCommand(postData: request.JSON.toString(), user: currentUser)
-        def result = processCommand(addUserCommand, currentUser)
+        def result = processCommand( new AddUserCommand(user: currentUser), request.JSON)
         response(result)
     }
 
@@ -81,8 +80,7 @@ class RestUserController extends RestController {
     @Secured(['ROLE_ADMIN'])
     def update = {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        Command editUserCommand = new EditUserCommand(postData: request.JSON.toString(), user: currentUser)
-        def result = processCommand(editUserCommand, currentUser)
+        def result = processCommand(new EditUserCommand(user: currentUser), request.JSON)
         response(result)
     }
 
@@ -100,9 +98,8 @@ class RestUserController extends RestController {
             result = [data: [success: false, errors: "The user can't delete herself"], status: 403]
             response.status = result.status
         } else {
-            def postData = ([id: params.id]) as JSON
-            Command deleteUserCommand = new DeleteUserCommand(postData: postData.toString(), user: currentUser)
-            result = processCommand(deleteUserCommand, currentUser)
+            def json = ([id: params.id]) as JSON
+            result = processCommand(new DeleteUserCommand(user: currentUser), json)
         }
         response(result)
     }
@@ -141,17 +138,12 @@ class RestUserController extends RestController {
 
     @Secured(['ROLE_ADMIN'])
     def deleteUser = {
-        log.info "DeleteUser"
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " params.idProject=" + params.id
-
 
         Project project = Project.get(params.id)
         User user = User.get(params.idUser)
-        log.info "Delete user " + user?.username + " in project " + project?.name
 
         synchronized(this.getClass()) {
-
 
             if (project) {
                 Group group = Group.findByName(project.name)
@@ -164,10 +156,7 @@ class RestUserController extends RestController {
 
                 UserGroup.unlink(user, group);
             }
-
-
         }
-
 
         response.status = 201
         def ret = [data: [message: "OK"], status: 201]
@@ -176,10 +165,7 @@ class RestUserController extends RestController {
 
     @Secured(['ROLE_ADMIN'])
     def addUser = {
-        log.info "AddUser"
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " params.idProject=" + params.id
-
 
         Project project = Project.get(params.id)
         log.info "project= " + project

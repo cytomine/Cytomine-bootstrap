@@ -34,35 +34,30 @@ class RestTermController extends RestController {
     }
 
     def show = {
-        log.info "Show:" + params.id
         Term term = Term.read(params.id)
         if (term) responseSuccess(term)
         else responseNotFound("Term", params.id)
     }
 
     def showFull = {
-        log.info "Show:" + params.id
         Term term = Term.read(params.id)
         if (term) responseSuccess(term)
         else responseNotFound("Term", params.id)
     }
 
     def listByOntology = {
-        log.info "listByOntology " + params.idontology
         Ontology ontology = Ontology.read(params.idontology)
         if (ontology) responseSuccess(ontology.leafTerms())
         else responseNotFound("Term", "Ontology", params.idontology)
     }
 
     def listAllByProject = {
-        log.info "listAllByProject " + params.idProject
         Project project = Project.read(params.idProject)
         if (project && project.ontology) responseSuccess(project.ontology.terms())
         else responseNotFound("Term", "Project", params.idProject)
     }
 
     def listByImageInstance = {
-        log.info "listByImage " + params.id
         ImageInstance image = ImageInstance.read(params.id)
         if (image) responseSuccess(image.terms())
         else responseNotFound("Term", "Image", params.id)
@@ -111,50 +106,42 @@ class RestTermController extends RestController {
     }
 
 
-
     def add = {
-        log.info "Add"
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-        Command addTermCommand = new AddTermCommand(postData: request.JSON.toString(), user: currentUser)
-        def result = processCommand(addTermCommand, currentUser)
+        def result = processCommand(new AddTermCommand(user: currentUser), request.JSON)
         response(result)
     }
 
 
     def delete = {
-        log.info "Delete"
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " params.id=" + params.id
-        def postData = ([id: params.id]) as JSON
+        def json = ([id: params.id]) as JSON
 
-        log.info "Start transaction"
+        //Start transaction
         TransactionController transaction = new TransactionController();
         transaction.start()
 
         Term term = Term.read(params.id)
 
         if (term) {
-            //delete annotation
+            //delete annotation-term
             def annotationTerm = AnnotationTerm.findAllByTerm(term)
             log.info "annotationTerm= " + annotationTerm.size()
 
             annotationTerm.each { annotterm ->
                 log.info "unlink annotterm:" + annotterm.id
-                def postDataRT = ([term: annotterm.term.id, annotation: annotterm.annotation.id, user: annotterm.user.id]) as JSON
-                Command deleteAnnotationTermCommand = new DeleteAnnotationTermCommand(postData: postDataRT.toString(), user: currentUser, printMessage: false)
-                def result = processCommand(deleteAnnotationTermCommand, currentUser)
+                def jsonDataRT = ([term: annotterm.term.id, annotation: annotterm.annotation.id, user: annotterm.user.id]) as JSON
+                def result = processCommand(new DeleteAnnotationTermCommand(user: currentUser, printMessage: false), jsonDataRT)
             }
 
-            //delete suggestTerm
+            //delete suggest-term
             def suggestTerm = SuggestedTerm.findAllByTerm(term)
             log.info "suggestTerm= " + suggestTerm.size()
 
             suggestTerm.each { suggestterm ->
                 log.info "unlink suggestterm:" + suggestterm.id
-                def postDataRT = ([term: suggestterm.term.id, annotation: suggestterm.annotation.id, job: suggestterm.job.id]) as JSON
-                Command deleteSuggestedTermCommand = new DeleteSuggestedTermCommand(postData: postDataRT.toString(), user: currentUser, printMessage: false)
-                def result = processCommand(deleteSuggestedTermCommand, currentUser)
+                def jsonDataRT = ([term: suggestterm.term.id, annotation: suggestterm.annotation.id, job: suggestterm.job.id]) as JSON
+                def result = processCommand( new DeleteSuggestedTermCommand(user: currentUser, printMessage: false), jsonDataRT)
             }
 
             //delete relationTerm
@@ -163,24 +150,22 @@ class RestTermController extends RestController {
 
             relationTerm.each { relationterm ->
                 log.info "unlink relationterm:" + relationterm.id
-                def postDataRT = ([relation: relationterm.relation.id, term1: relationterm.term1.id, term2: relationterm.term2.id]) as JSON
-                Command deleteRelationTermCommand = new DeleteRelationTermCommand(postData: postDataRT.toString(), user: currentUser)
-                def result = processCommand(deleteRelationTermCommand, currentUser)
+                def jsonDataRT = ([relation: relationterm.relation.id, term1: relationterm.term1.id, term2: relationterm.term2.id]) as JSON
+                def result = processCommand(new DeleteRelationTermCommand(user: currentUser), jsonDataRT)
 
             }
         }
-        Command deleteTermCommand = new DeleteTermCommand(postData: postData.toString(), user: currentUser)
-        def result = processCommand(deleteTermCommand, currentUser)
+        def result = processCommand(new DeleteTermCommand(user: currentUser), json)
+
+        //Stop transaction
         transaction.stop()
+
         response(result)
     }
 
     def update = {
-        log.info "Update"
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-        Command editTermCommand = new EditTermCommand(postData: request.JSON.toString(), user: currentUser)
-        def result = processCommand(editTermCommand, currentUser)
+        def result = processCommand(new EditTermCommand(user: currentUser), request.JSON)
         response(result)
     }
 

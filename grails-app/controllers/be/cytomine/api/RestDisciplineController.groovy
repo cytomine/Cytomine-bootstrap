@@ -26,37 +26,28 @@ class RestDisciplineController extends RestController {
     }
 
     def show = {
-        log.info "show with id:" + params.id
         Discipline discipline = Discipline.read(params.id)
-        if(discipline!=null) responseSuccess(discipline)
+        if(discipline) responseSuccess(discipline)
         else responseNotFound("Discipline",params.id)
     }
 
     def add = {
-        log.info "Add"
+        def json = request.JSON
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-        Command addDisciplineCommand = new AddDisciplineCommand(postData : request.JSON.toString(),user: currentUser)
-        def result = processCommand(addDisciplineCommand, currentUser)
+        def result = processCommand(new AddDisciplineCommand(user: currentUser), json)
         response(result)
     }
 
     def update = {
-        log.info "Update"
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-        Command editDisciplineCommand = new EditDisciplineCommand(postData : request.JSON.toString(),user: currentUser)
-        def result = processCommand(editDisciplineCommand, currentUser)
+        def result = processCommand(new EditDisciplineCommand(user: currentUser), request.JSON)
         response(result)
     }
 
     def delete =  {
-        log.info "Delete"
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " params.id=" + params.id
-        def postData = ([id : params.id]) as JSON
-        Command deleteDisciplineCommand = new DeleteDisciplineCommand(postData : postData.toString(),user: currentUser,printMessage:true)
-        def result = processCommand(deleteDisciplineCommand, currentUser)
+        def json = ([id : params.id]) as JSON
+        def result = processCommand( new DeleteDisciplineCommand(user: currentUser,printMessage:true), json)
         response(result)
     }
 

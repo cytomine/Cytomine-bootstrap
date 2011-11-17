@@ -3,6 +3,8 @@ import grails.converters.JSON
 import be.cytomine.SequenceDomain
 import be.cytomine.security.User
 import be.cytomine.project.Project
+import org.codehaus.groovy.grails.web.json.JSONObject
+import org.codehaus.groovy.grails.web.json.JSONElement
 
 class Command extends SequenceDomain {
 
@@ -10,6 +12,9 @@ class Command extends SequenceDomain {
 
     String data
     String postData
+    def json
+    static transients = ["json"]
+
     User user
     Project project
 

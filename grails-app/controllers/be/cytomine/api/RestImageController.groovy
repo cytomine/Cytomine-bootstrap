@@ -28,26 +28,12 @@ class RestImageController extends RestController{
         redirect(controller: "image")
     }
     def list = {
-        log.info "list"
         response(AbstractImage.list())
     }
 
-  /*def listByUser = {
-    log.info "List with id user:"+params.id
-    User user=null
-    if(params.id!=null) {
-      user = User.read(params.id)
-    } else {
-       user = getCurrentUser(springSecurityService.principal.id)
-    }
-
-    if(user!=null) responseSuccess(user.abstractimages())
-    else responseNotFound("User",params.id)
-  }*/
-
       def listByUser = {
-        log.info "List with id user:"+params.id
         def data = [:]
+
         User user=null
         if(params.id!=null) {
           user = User.read(params.id)
@@ -88,45 +74,36 @@ class RestImageController extends RestController{
       }
 
     def show = {
-        log.info "show " + params.id
         AbstractImage image = AbstractImage.read(params.id)
-        if(image!=null) responseSuccess(image)
+        if(image) responseSuccess(image)
         else responseNotFound("Image",params.id)
     }
 
 
     def listByProject = {
-        log.info "List with id user:"+params.id
         Project project = Project.read(params.id)
-        if(project!=null) responseSuccess(project.abstractimages())
+        if(project) responseSuccess(project.abstractimages())
         else responseNotFound("Image","Project",params.id)
     }
 
     def add = {
-        log.info "Add"
+        def json = request.JSON
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-        Command addImageCommand = new AddAbstractImageCommand(postData : request.JSON.toString(), user: currentUser)
-        def result = processCommand(addImageCommand, currentUser)
+        def result = processCommand(new AddAbstractImageCommand(user: currentUser), json)
         response(result)
     }
 
     def update = {
-        log.info "Update"
+        def json = request.JSON
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-        Command editImageCommand = new EditAbstractImageCommand(postData : request.JSON.toString(), user: currentUser)
-        def result = processCommand(editImageCommand, currentUser)
+        def result = processCommand(new EditAbstractImageCommand(user: currentUser), json)
         response(result)
     }
 
     def delete = {
-        log.info "Delete"
+        def json = ([id : params.id]) as JSON
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " params.id=" + params.id
-        def postData = ([id : params.id]) as JSON
-        Command deleteImageCommand = new DeleteAbstractImageCommand(postData : postData.toString(), user: currentUser)
-        def result = processCommand(deleteImageCommand, currentUser)
+        def result = processCommand(new DeleteAbstractImageCommand(user: currentUser), json)
         response(result)
     }
 
@@ -168,9 +145,7 @@ class RestImageController extends RestController{
     }
 
     def thumb = {
-        log.info "Thumb with id:" + params.id
         AbstractImage image = AbstractImage.read(params.id)
-        log.info "image.getThumbURL()="+image.getThumbURL()
         try {
             responseImage(image.getThumbURL())
         } catch ( Exception e) {
@@ -179,7 +154,6 @@ class RestImageController extends RestController{
     }
 
     def crop = {
-        log.info "Crop with id annotation: " + params.id
         Annotation annotation = Annotation.read(params.id)
         def zoom
         if (params.zoom != null) zoom = Integer.parseInt(params.zoom)

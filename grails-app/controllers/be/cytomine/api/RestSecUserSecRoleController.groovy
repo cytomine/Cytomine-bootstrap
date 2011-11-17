@@ -17,10 +17,10 @@ class RestSecUserSecRoleController extends RestController {
         responseSuccess(SecUserSecRole.findAllBySecUser(user))
     }
 
- 	@Secured(['ROLE_ADMIN'])
+    @Secured(['ROLE_ADMIN'])
     def show = {
-		User user = User.read(params.user);
-		SecRole role = SecRole.read(params.role);
+        User user = User.read(params.user);
+        SecRole role = SecRole.read(params.role);
         SecUserSecRole secUserSecRole = SecUserSecRole.findBySecUserAndSecRole(user, role)
         if (!secUserSecRole) responseNotFound("SecUserSecRole", params.user)
         responseSuccess(secUserSecRole)
@@ -29,24 +29,22 @@ class RestSecUserSecRoleController extends RestController {
     @Secured(['ROLE_ADMIN'])
     def save = {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        Command addSecUserSecRoleCommand = new AddSecUserSecRoleCommand(postData: request.JSON.toString(), user: currentUser)
-        def result = processCommand(addSecUserSecRoleCommand, currentUser)
+        def result = processCommand(new AddSecUserSecRoleCommand(user: currentUser), request.JSON)
         response(result)
     }
 
     @Secured(['ROLE_ADMIN'])
     def delete = {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        def postData = ([user: params.user, role : params.role]) as JSON
-        Command deleteSecUserSecRoleCommand = new DeleteSecUserSecRoleCommand(postData: postData.toString(), user: currentUser)
-        def result = processCommand(deleteSecUserSecRoleCommand, currentUser)
+        def json = ([user: params.user, role: params.role]) as JSON
+        def result = processCommand(new DeleteSecUserSecRoleCommand(user: currentUser), json)
         response(result)
     }
 
     @Secured(['ROLE_ADMIN'])
     def grid = {
         def sortIndex = params.sidx ?: 'id'
-        def sortOrder  = params.sord ?: 'asc'
+        def sortOrder = params.sord ?: 'asc'
         def maxRows = 50//params.row ? Integer.valueOf(params.rows) : 20
         def currentPage = params.page ? Integer.valueOf(params.page) : 1
         def rowOffset = currentPage == 1 ? 0 : (currentPage - 1) * maxRows

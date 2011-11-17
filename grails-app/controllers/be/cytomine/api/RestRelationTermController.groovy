@@ -17,24 +17,20 @@ class RestRelationTermController extends RestController {
   def springSecurityService
 
   def list = {
-    log.info "List"
     responseSuccess(RelationTerm.list())
   }
 
   def listByRelation = {
-    log.info "listByRelation"
     Relation relation
     if(params.id!=null)
       relation = Relation.read(params.id)
     else
       relation = Relation.findByName(RelationTerm.names.PARENT)
-    log.info "Relation =" + relation.name
     if(relation)responseSuccess(RelationTerm.findAllByRelation(relation))
     else responseNotFound("RelationTerm","Relation",params.id)
   }
 
   def listByTerm = {
-    log.info "listByTerm with term "+ params.i +" id:" + params.id
     Term term = Term.read(params.id)
     String position = params.i
 
@@ -45,9 +41,7 @@ class RestRelationTermController extends RestController {
   }
 
   def listByTermAll = {
-    log.info "listByTerm with term id:" + params.id
     Term term = Term.read(params.id)
-
     if(term) {
       def relation1 = RelationTerm.findAllByTerm1(term);
       def relation2 = RelationTerm.findAllByTerm2(term);
@@ -59,7 +53,6 @@ class RestRelationTermController extends RestController {
 
 
   def show = {
-    log.info "Show with relation id:" + params.idrelation + " term1:" + params.idterm1 + " term2:" + params.idterm2
     Relation relation
     if(params.idrelation!=null)
       relation = Relation.read(params.idrelation)
@@ -71,36 +64,32 @@ class RestRelationTermController extends RestController {
 
     RelationTerm relationTerm = RelationTerm.findWhere('relation': relation,'term1':term1, 'term2':term2)
 
-    if(relation && term1 && term2 && relationTerm) {
+    if(relation && term1 && term2 && relationTerm)
       responseSuccess(relationTerm)
-    } else {
+     else
       responseNotFound("RelationTerm","Relation",relation,"Term1",term1,"Term2",term2)
-    }
+
   }
 
   def add = {
-    log.info "Add"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
     def json =  request.JSON
-    log.info "User:" + currentUser.username + " request:" + json.toString()
 
     Relation relation
     if(json.relation!=null)
       relation = Relation.read(params.id)
     else
       relation = Relation.findByName(RelationTerm.names.PARENT)
+
     json.relation = relation? relation.id : -1
 
-    Command addRelationTermCommand = new AddRelationTermCommand(postData : json.toString(), user: currentUser)
-    def result = processCommand(addRelationTermCommand, currentUser)
+    def result = processCommand(new AddRelationTermCommand(user: currentUser), json)
     response(result)
   }
 
 
   def delete =  {
-    log.info "Delete"
     User currentUser = getCurrentUser(springSecurityService.principal.id)
-    log.info "User:" + currentUser.username + " params.idrelation=" + params.idrelation
 
     Relation relation
     if(params.idrelation!=null)
@@ -108,9 +97,8 @@ class RestRelationTermController extends RestController {
     else
       relation = Relation.findByName(RelationTerm.names.PARENT)
 
-    def postData = ([relation :relation? relation.id:-1,term1: params.idterm1,term2: params.idterm2]) as JSON
-    Command deleteRelationTermCommand = new DeleteRelationTermCommand(postData : postData.toString(),user: currentUser)
-    def result = processCommand(deleteRelationTermCommand, currentUser)
+    def json = ([relation :relation? relation.id:-1,term1: params.idterm1,term2: params.idterm2]) as JSON
+    def result = processCommand(new DeleteRelationTermCommand(user: currentUser), json)
     response(result)
   }
 

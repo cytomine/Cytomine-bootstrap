@@ -22,9 +22,9 @@ class RestJobController extends RestController {
 
     @Secured(['ROLE_ADMIN'])
     def save = {
+        def json = request.JSON
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        Command addJobCommand = new AddJobCommand(postData: request.JSON.toString(), user: currentUser)
-        def result = processCommand(addJobCommand, currentUser)
+        def result = processCommand(new AddJobCommand(user: currentUser), json)
         response(result)
     }
 

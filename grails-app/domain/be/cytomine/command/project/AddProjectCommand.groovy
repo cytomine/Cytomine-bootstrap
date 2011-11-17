@@ -5,6 +5,7 @@ import be.cytomine.project.Project
 import grails.converters.JSON
 import be.cytomine.command.AddCommand
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
+import org.codehaus.groovy.grails.web.json.JSONElement
 
 class AddProjectCommand extends AddCommand implements UndoRedoCommand {
 
@@ -12,7 +13,9 @@ class AddProjectCommand extends AddCommand implements UndoRedoCommand {
     log.info("Execute")
     Project newProject=null
     try {
-      def json = JSON.parse(postData)
+      //def json = JSON.parse(postData)
+      //def json = JSON.parse(postData)
+      log.info "json (execute) ="+json
       newProject = Project.createFromData(json)
       return super.validateAndSave(newProject,["#ID#",newProject.name] as Object[])
     }catch(ConstraintException  ex){

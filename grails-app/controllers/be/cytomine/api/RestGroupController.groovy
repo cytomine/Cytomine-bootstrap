@@ -21,24 +21,23 @@ class RestGroupController extends  RestController {
     }
 
     def save = {
+        def json = request.JSON
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        Command addGroupCommand = new AddGroupCommand(postData: request.JSON.toString(), user: currentUser)
-        def result = processCommand(addGroupCommand, currentUser)
+        def result = processCommand(new AddGroupCommand(user: currentUser), json)
         response(result)
     }
     
     def update = {
+        def json = request.JSON
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        Command editGroupCommand = new EditGroupCommand(postData: request.JSON.toString(), user: currentUser)
-        def result = processCommand(editGroupCommand, currentUser)
+        def result = processCommand(new EditGroupCommand(user: currentUser), json)
         response(result)
     }
 
     def delete = {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        def postData = ([id: params.id]) as JSON
-        Command deleteGroupCommand = new DeleteGroupCommand(postData: postData.toString(), user: currentUser)
-        def result = processCommand(deleteGroupCommand, currentUser)
+        def jsonData = ([id: params.id]) as JSON
+        def result = processCommand(new DeleteGroupCommand(user: currentUser), jsonData)
         response(result)
     }
 

@@ -29,17 +29,15 @@ class RestUserGroupController extends RestController {
     @Secured(['ROLE_ADMIN'])
     def save = {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        Command addUserGroupCommand = new AddUserGroupCommand(postData: request.JSON.toString(), user: currentUser)
-        def result = processCommand(addUserGroupCommand, currentUser)
+        def result = processCommand( new AddUserGroupCommand(user: currentUser), request.JSON)
         response(result)
     }
 
     @Secured(['ROLE_ADMIN'])
     def delete = {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        def postData = ([user: params.user, group : params.group]) as JSON
-        Command deleteUserGroupCommand = new DeleteUserGroupCommand(postData: postData.toString(), user: currentUser)
-        def result = processCommand(deleteUserGroupCommand, currentUser)
+        def json = ([user: params.user, group : params.group]) as JSON
+        def result = processCommand(new DeleteUserGroupCommand(postData: postData.toString(), user: currentUser), json)
         response(result)
     }
 }

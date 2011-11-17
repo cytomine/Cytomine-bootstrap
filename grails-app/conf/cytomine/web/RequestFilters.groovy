@@ -1,4 +1,6 @@
 package cytomine.web
+
+import be.cytomine.api.RestController
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -8,9 +10,20 @@ package cytomine.web
  */
 
 class RequestFilters {
+
+  def springSecurityService
+
   def filters = {
     all(uri:'/api/**') {
-      before = {request.currentTime = System.currentTimeMillis()}
+      before = {
+          request.currentTime = System.currentTimeMillis()
+          String strParam =""
+          params.each{ strParam = strParam +"<" + it.key +':'+ it.value +'>; ' }
+          String strPost = ""
+          try {strPost = request.JSON } catch(Exception e) {}
+          String requestInfo = "| PARAM="+strParam + "| POST=" + strPost + " | "
+          log.info controllerName+"."+actionName + ": user:" + springSecurityService.principal.id + " request=" + requestInfo
+      }
       after = {}
       afterView = {
           log.info controllerName+"."+actionName + " Request took ${System.currentTimeMillis()-request.currentTime}ms"
