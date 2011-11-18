@@ -1,7 +1,8 @@
 package be.cytomine.command
 
 import grails.converters.JSON
-import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
+import be.cytomine.Exception.ConstraintException
+import be.cytomine.Exception.CytomineException
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,7 +22,7 @@ class EditCommand extends Command {
    * @throws NullPointerException Object don't exists
    * @throws ConstraintException Object is not correct
    */
-  def validateAndSave(def postData, def newObject, Object[] messageParams) throws NullPointerException, ConstraintException {
+  def validateAndSave(def postData, def newObject, Object[] messageParams) throws CytomineException {
     log.info "validateAndSave: postdata="+postData
     String objectName = getClassName(newObject)
     String command = "be.cytomine.Edit" + objectName + "Command"

@@ -6,6 +6,7 @@ import be.cytomine.project.Project
 import be.cytomine.command.EditCommand
 import be.cytomine.security.Group
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
+import be.cytomine.Exception.CytomineException
 
 class EditProjectCommand extends EditCommand implements UndoRedoCommand {
   boolean saveOnUndoRedoStack = false;
@@ -31,6 +32,9 @@ class EditProjectCommand extends EditCommand implements UndoRedoCommand {
       log.error(e)
       return [data : [success : false, errors : updatedProject.retrieveErrors()], status : 400]
     } catch(IllegalArgumentException e) {
+      log.error(e)
+      return [data : [success : false, errors : e.getMessage()], status : 400]
+    } catch(CytomineException e) {
       log.error(e)
       return [data : [success : false, errors : e.getMessage()], status : 400]
     }

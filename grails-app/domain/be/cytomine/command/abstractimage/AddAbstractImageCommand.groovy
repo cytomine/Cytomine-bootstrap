@@ -6,6 +6,7 @@ import grails.converters.JSON
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.command.AddCommand
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
+import be.cytomine.Exception.CytomineException
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,6 +28,8 @@ class AddAbstractImageCommand extends AddCommand implements UndoRedoCommand {
     }catch(ConstraintException ex){
       return [data : [image:newImage,errors:newImage.retrieveErrors()], status : 400]
     }catch(IllegalArgumentException ex){
+      return [data : [image:null,errors:["Cannot save image:"+ex.toString()]], status : 400]
+    }catch(CytomineException ex){
       return [data : [image:null,errors:["Cannot save image:"+ex.toString()]], status : 400]
     }
   }

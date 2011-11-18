@@ -23,6 +23,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.ontology.SuggestedTerm
 import be.cytomine.command.suggestedTerm.DeleteSuggestedTermCommand
 import be.cytomine.command.annotationterm.AddAnnotationTermCommand
+import org.apache.commons.logging.LogFactory
 
 class RestAnnotationController extends RestController {
 
@@ -161,26 +162,25 @@ class RestAnnotationController extends RestController {
             log.error("Cannot simplify:" + e)
         }
 
-        //add annotation
-        log.info "Start transaction"
+        //Start transaction
         TransactionController transaction = new TransactionController();
         transaction.start()
 
+        //Add Annotation
         def result = processCommand(new AddAnnotationCommand(user: currentUser), json)
-
         Long id = result?.annotation?.id
 
-        //add annotation-term if term
+        //Add annotation-term if term
         if (id) {
             def term = json.term;
             if (term) {
                 term.each { idTerm ->
-                    def jsonAnnotationTerm = ([user: currentUser.id, annotation: id, term: idTerm]) as JSON
-                    def resultTerm = processCommand(new AddAnnotationTermCommand(user: currentUser), jsonAnnotationTerm)
+                    new RestAnnotationTermController().addAnnotationTerm(id,idTerm,currentUser.id,currentUser)
                 }
             }
         }
 
+        //Stop transaction
         transaction.stop()
 
         //add annotation on the retrieval
@@ -204,36 +204,12 @@ class RestAnnotationController extends RestController {
     def delete = {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
 
-        def json = ([id: params.id]) as JSON
-
         //Start transaction
         TransactionController transaction = new TransactionController();
         transaction.start()
 
-        Annotation annotation = Annotation.read(params.id)
-
-        if (annotation) {
-            //Delete Annotation-Term before deleting Annotation
-            def annotationTerm = AnnotationTerm.findAllByAnnotation(annotation)
-
-            annotationTerm.each { annotterm ->
-                log.info "unlink annotterm:" + annotterm.id
-                def jsonDataRT = ([term: annotterm.term.id, annotation: annotterm.annotation.id, user: annotterm.user.id]) as JSON
-                def result = processCommand(new DeleteAnnotationTermCommand(user: currentUser, printMessage: false), jsonDataRT)
-            }
-
-            //Delete Suggested-Term before deleting Annotation
-            def suggestTerm = SuggestedTerm.findAllByAnnotation(annotation)
-            log.info "suggestTerm= " + suggestTerm.size()
-            suggestTerm.each { suggestterm ->
-                log.info "unlink suggestterm:" + suggestterm.id
-                def jsonDataRT = ([term: suggestterm.term.id, annotation: suggestterm.annotation.id, job: suggestterm.job.id]) as JSON
-                def result = processCommand(new DeleteSuggestedTermCommand(user: currentUser, printMessage: false), jsonDataRT)
-            }
-        }
-        //Delete annotation
-        log.info "delete annotation"
-        def result = processCommand(new DeleteAnnotationCommand(user: currentUser), json)
+        //Delete annotation (+cascade)
+        def result = deleteAnnotation(params.id,currentUser)
 
         //Stop transaction
         transaction.stop()
@@ -243,6 +219,28 @@ class RestAnnotationController extends RestController {
         try {if (id) deleteRetrievalAnnotation(id) } catch (Exception e) { log.error "Cannot delete in retrieval:" + e.toString()}
         response(result)
     }
+
+
+    def deleteAnnotation(def idAnnotation,User currentUser) {
+        return deleteAnnotation(idAnnotation,currentUser,true)
+    }
+
+    def deleteAnnotation(def idAnnotation, User currentUser, boolean printMessage) {
+        log.info "Delete annotation: " + idAnnotation
+        Annotation annotation = Annotation.read(idAnnotation)
+        if (annotation) {
+            //Delete Annotation-Term before deleting Annotation
+            new RestAnnotationTermController().deleteAnnotationTermFromAllUser(annotation,currentUser)
+
+            //Delete Suggested-Term before deleting Annotation
+            new RestSuggestedTermController().deleteSuggestedTermFromAllUser(annotation,currentUser)
+        }
+        //Delete annotation
+        def json = JSON.parse("{id: $idAnnotation}")
+        def result = processCommand(new DeleteAnnotationCommand(user: currentUser,printMessage: printMessage), json)
+        return result
+    }
+
 
     private indexRetrievalAnnotation(Long id) {
         //index in retrieval (asynchronous)

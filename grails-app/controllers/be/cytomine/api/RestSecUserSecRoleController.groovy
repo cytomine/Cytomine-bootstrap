@@ -36,7 +36,7 @@ class RestSecUserSecRoleController extends RestController {
     @Secured(['ROLE_ADMIN'])
     def delete = {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        def json = ([user: params.user, role: params.role]) as JSON
+        def json = JSON.parse("{user: $params.user, role: $params.role}")
         def result = processCommand(new DeleteSecUserSecRoleCommand(user: currentUser), json)
         response(result)
     }

@@ -6,6 +6,7 @@ import be.cytomine.security.User
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.command.DeleteCommand
 import java.util.prefs.BackingStoreException
+import be.cytomine.Exception.CytomineException
 
 class DeleteUserCommand extends DeleteCommand implements UndoRedoCommand {
 
@@ -22,6 +23,8 @@ class DeleteUserCommand extends DeleteCommand implements UndoRedoCommand {
     } catch(BackingStoreException e) {
       log.error(e)
       return [data : [success : false, errors : e.getMessage()], status : 400]
+    } catch(CytomineException ex){
+      return [data : [image:null,errors:["Cannot save image:"+ex.toString()]], status : 400]
     }
   }
 

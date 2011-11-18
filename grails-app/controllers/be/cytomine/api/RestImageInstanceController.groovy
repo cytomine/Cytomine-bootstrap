@@ -121,37 +121,12 @@ class RestImageInstanceController extends RestController {
 
             //Delete annotation
             def annotations = Annotation.findAllByImage(imageInstance)
-            log.debug "annotations.size=" +  annotations.size()
             annotations.each { annotation ->
-
-                //Delete Annotation-Term before deleting Annotation
-                def annotationTerm = AnnotationTerm.findAllByAnnotation(annotation)
-                log.debug "annotation.terms.size=" + terms.size()
-                annotationTerm.each { annotterm ->
-                    log.info "unlink annotterm:" + annotterm.id
-                    def jsonDataRT = ([term: annotterm.term.id, annotation: annotterm.annotation.id, user: annotterm.user.id]) as JSON
-                    def result = processCommand(new DeleteAnnotationTermCommand(user: currentUser, printMessage: false), jsonDataRT)
-                }
-
-                //Delete Suggested-Term before deleting Annotation
-                def suggestTerm = SuggestedTerm.findAllByAnnotation(annotation)
-                log.info "suggestTerm= " + suggestTerm.size()
-                suggestTerm.each { suggestterm ->
-                    log.info "unlink suggestterm:" + suggestterm.id
-                    def jsonDataRT = ([term: suggestterm.term.id, annotation: suggestterm.annotation.id, job: suggestterm.job.id]) as JSON
-                    def result = processCommand(new DeleteSuggestedTermCommand(user: currentUser, printMessage: false), jsonDataRT)
-                }
-
-                //Delete annotation
-                Annotation annotationDeleted =  annotation
-                log.info "delete term " +annotationDeleted
-                def jsonDataAnnotation = ([id : annotationDeleted.id]) as JSON
-                def result = processCommand(new DeleteAnnotationCommand(user: currentUser,printMessage:false), jsonDataAnnotation)
+                new RestAnnotationController().deleteAnnotation(annotation,currentUser,false)
             }
-            log.info "delete image"
 
             //Delete image
-            def json = ([id : imageInstance.id]) as JSON
+            def json = JSON.parse("{id : $imageInstance.id}")
             def result = processCommand(new DeleteImageInstanceCommand(user: currentUser), json)
 
             //Stop transaction

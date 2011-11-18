@@ -81,7 +81,7 @@ class RestProjectController extends RestController {
 
     def delete =  {
         log.info "Delete"
-        def json = ([id : params.id]) as JSON
+        def json = JSON.parse("{id : $params.id}")
         User currentUser = getCurrentUser(springSecurityService.principal.id)
         log.info "User:" + currentUser.username + " params.id=" + params.id
         def result = processCommand(new DeleteProjectCommand(user: currentUser), json)

@@ -4,6 +4,8 @@ import grails.converters.JSON
 import be.cytomine.SequenceDomain
 import org.perf4j.StopWatch
 import org.perf4j.LoggingStopWatch
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.Exception.CytomineException
 
 class Term extends SequenceDomain implements Serializable {
 
@@ -86,21 +88,21 @@ class Term extends SequenceDomain implements Serializable {
         return relations
     }
 
-    static Term createFromData(jsonTerm) {
+    static Term createFromData(jsonTerm) throws CytomineException {
         def term = new Term()
         getFromData(term,jsonTerm)
     }
 
-    static Term getFromData(term,jsonTerm) {
+    static Term getFromData(term,jsonTerm) throws CytomineException {
         if(!jsonTerm.name.toString().equals("null"))
             term.name = jsonTerm.name
-        else throw new IllegalArgumentException("Term name cannot be null")
+        else throw new WrongArgumentException("Term name cannot be null")
         term.comment = jsonTerm.comment
 
         String ontologyId = jsonTerm.ontology.toString()
         if(!ontologyId.equals("null")) {
             term.ontology = Ontology.get(ontologyId)
-            if(term.ontology==null) throw new IllegalArgumentException("Ontology was not found with id:"+ ontologyId)
+            if(term.ontology==null) throw new WrongArgumentException("Ontology was not found with id:"+ ontologyId)
         }
         else term.ontology = null
 
@@ -122,18 +124,10 @@ class Term extends SequenceDomain implements Serializable {
             returnArray['comment'] = it.comment
             returnArray['ontology'] = it.getIdOntology()
             try {returnArray['rate'] = it.rate}catch(Exception e){println e}
-            RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT),Term.get(it.id))
+            RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT),Term.read(it.id))
 
             returnArray['parent'] = rt?.getIdTerm1()
             if(it.color) returnArray['color'] = it.color
-
-            /*def children = [:]
-          it.child.each { child ->
-            def childArray = [:]
-            childArray['name'] = child.name
-            children[child.id] = childArray
-          }
-          returnArray['children'] = children*/
             return returnArray
         }
     }

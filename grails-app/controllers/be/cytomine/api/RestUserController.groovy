@@ -98,7 +98,7 @@ class RestUserController extends RestController {
             result = [data: [success: false, errors: "The user can't delete herself"], status: 403]
             response.status = result.status
         } else {
-            def json = ([id: params.id]) as JSON
+            def json =JSON.parse("{id : $params.id}")
             result = processCommand(new DeleteUserCommand(user: currentUser), json)
         }
         response(result)

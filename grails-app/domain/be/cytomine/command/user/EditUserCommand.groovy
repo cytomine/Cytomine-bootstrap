@@ -6,6 +6,7 @@ import grails.converters.JSON
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.command.EditCommand
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
+import be.cytomine.Exception.CytomineException
 
 class EditUserCommand extends EditCommand implements UndoRedoCommand {
 
@@ -25,7 +26,9 @@ class EditUserCommand extends EditCommand implements UndoRedoCommand {
         } catch(IllegalArgumentException e) {
             log.error(e)
             return [data : [success : false, errors : e.getMessage()], status : 400]
-        }
+        } catch(CytomineException ex){
+      return [data : [image:null,errors:["Cannot save image:"+ex.toString()]], status : 400]
+    }
 
     }
 

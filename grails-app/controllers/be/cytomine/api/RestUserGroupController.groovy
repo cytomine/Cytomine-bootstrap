@@ -36,7 +36,7 @@ class RestUserGroupController extends RestController {
     @Secured(['ROLE_ADMIN'])
     def delete = {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        def json = ([user: params.user, group : params.group]) as JSON
+        def json = JSON.parse("{user: $params.user, group : $params.group}")
         def result = processCommand(new DeleteUserGroupCommand(postData: postData.toString(), user: currentUser), json)
         response(result)
     }

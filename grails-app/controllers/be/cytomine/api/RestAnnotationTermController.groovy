@@ -134,6 +134,12 @@ class RestAnnotationTermController extends RestController {
         response(result)
     }
 
+    def addAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser) {
+        def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, user: $idUser}")
+        def result = processCommand(new AddAnnotationTermCommand(user: currentUser), json)
+        return result
+    }
+
     /**
      * Add annotation-term for an annotation and delete all annotation-term that where already map with this annotation by this user
      */
@@ -148,18 +154,10 @@ class RestAnnotationTermController extends RestController {
             transaction.start()
 
             //Delete all annotation term
-            def annotationTerm = AnnotationTerm.findAllByAnnotationAndUser(annotation, currentUser)
-            log.info "Delete old annotationTerm= " + annotationTerm.size()
+            deleteAnnotationTermFromUser(annotation, currentUser, currentUser)
 
-            annotationTerm.each { annotterm ->
-                log.info "unlink annotterm:" + annotterm.id
-                def jsonDataRT = ([term: annotterm.term.id, annotation: annotterm.annotation.id, user: annotterm.user.id]) as JSON
-                def result = processCommand(new DeleteAnnotationTermCommand(user: currentUser, printMessage: false), jsonDataRT)
-            }
-
-            log.info "Add new annotationTerm with Annotation=" + params.idannotation + " Term=" + params.idterm
-            def json = ([annotation: params.idannotation, term: params.idterm]) as JSON
-            def result = processCommand(new AddAnnotationTermCommand(user: currentUser), json)
+            //Delete annotation term
+            def result = deleteAnnotationTerm(params.idannotation, params.idterm, currentUser.id, currentUser)
 
             //Stop transaction
             transaction.stop()
@@ -171,8 +169,61 @@ class RestAnnotationTermController extends RestController {
 
     def delete = {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        def json = ([annotation: params.idannotation, term: params.idterm, user: currentUser.id]) as JSON
-        def result = processCommand(new DeleteAnnotationTermCommand(user: currentUser), json)
+        def result = deleteAnnotationTerm(params.idannotation, params.idterm, currentUser.id, currentUser)
         response(result)
+    }
+
+    /**
+     * Delete an annotation term
+     */
+    def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser) {
+        return deleteAnnotationTerm(idAnnotation,idTerm,idUser,currentUser,true)
+    }
+    def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser, boolean printMessage) {
+        def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, user: $idUser}")
+        def result = processCommand(new DeleteAnnotationTermCommand(user: currentUser,printMessage: printMessage), json)
+        return result
+    }
+
+    /**
+     * Delete all term map by user for annotation
+     */
+    def deleteAnnotationTermFromUser(Annotation annotation, User user, User currentUser) {
+        //Delete all annotation term
+        def annotationTerm = AnnotationTerm.findAllByAnnotationAndUser(annotation, user)
+        log.info  "Delete old annotationTerm= " + annotationTerm.size()
+
+        annotationTerm.each { annotterm ->
+            log.info  "unlink annotterm:" + annotterm.id
+            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.user.id, currentUser,false)
+        }
+    }
+
+    /**
+     * Delete all term map for annotation
+     */
+    def deleteAnnotationTermFromAllUser(Annotation annotation, User currentUser) {
+        //Delete all annotation term
+        def annotationTerm = AnnotationTerm.findAllByAnnotation(annotation)
+        log.info  "Delete old annotationTerm= " + annotationTerm.size()
+
+        annotationTerm.each { annotterm ->
+            log.info  "unlink annotterm:" + annotterm.id
+            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.user.id, currentUser,false)
+        }
+    }
+
+    /**
+     * Delete all term map by user for term
+     */
+    def deleteAnnotationTermFromAllUser(Term term, User currentUser) {
+        //Delete all annotation term
+        def annotationTerm = AnnotationTerm.findAllByTerm(term)
+        log.info  "Delete old annotationTerm= " + annotationTerm.size()
+
+        annotationTerm.each { annotterm ->
+            log.info  "unlink annotterm:" + annotterm.id
+            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.user.id, currentUser,false)
+        }
     }
 }

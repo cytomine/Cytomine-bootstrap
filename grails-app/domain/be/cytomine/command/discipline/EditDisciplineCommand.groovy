@@ -13,6 +13,7 @@ import be.cytomine.command.UndoRedoCommand
 import be.cytomine.project.Discipline
 import grails.converters.JSON
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
+import be.cytomine.Exception.CytomineException
 
 class EditDisciplineCommand extends EditCommand implements UndoRedoCommand {
   boolean saveOnUndoRedoStack = true;
@@ -35,6 +36,8 @@ class EditDisciplineCommand extends EditCommand implements UndoRedoCommand {
     } catch(IllegalArgumentException e) {
       log.error(e)
       return [data : [success : false, errors : e.getMessage()], status : 400]
+    }catch(CytomineException ex){
+      return [data : [image:null,errors:["Cannot save image:"+ex.toString()]], status : 400]
     }
 
   }

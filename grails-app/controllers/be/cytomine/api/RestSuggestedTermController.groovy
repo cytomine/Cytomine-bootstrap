@@ -89,11 +89,46 @@ class RestSuggestedTermController extends RestController{
 
   def delete = {
     User currentUser = getCurrentUser(springSecurityService.principal.id)
-    def json = ([annotation : params.idannotation,term : params.idterm,job : params.idjob]) as JSON
-    def result = processCommand(new DeleteSuggestedTermCommand(user: currentUser), json)
+    def result = deleteSuggestedTerm(params.idannotation,params.idterm,params.idjob,currentUser)
     response(result)
   }
 
+    /**
+     * Delete an annotation term
+     */
+    def deleteSuggestedTerm(def idAnnotation, def idTerm, def idJob, User currentUser) {
+        def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, job: $idJob}")
+        def result = processCommand(new DeleteSuggestedTermCommand(user: currentUser), json)
+        return result
+    }
+    
+    /**
+     * Delete all term map for annotation
+     */
+    def deleteSuggestedTermFromAllUser(Annotation annotation, User currentUser) {
+        //Delete all annotation term
+        def suggestedterm = SuggestedTerm.findAllByAnnotation(annotation)
+        log.info  "Delete old suggestedterm= " + suggestedterm.size()
 
+        suggestedterm.each { sugterm ->
+            log.info  "unlink sugterm:" + sugterm.id
+            deleteSuggestedterm(sugterm.annotation.id, sugterm.term.id, sugterm.job.id, currentUser)
+        }
+    }
+
+    /**
+     * Delete all term map by user for term
+     */
+    def deleteSuggestedTermFromAllUser(Term term, User currentUser) {
+        //Delete all annotation term
+        def suggestedterm = SuggestedTerm.findAllByTerm(term)
+        log.info  "Delete old suggestedterm= " + suggestedterm.size()
+
+        suggestedterm.each { sugterm ->
+            log.info  "unlink sugterm:" + sugterm.id
+            deleteSuggestedterm(sugterm.annotation.id, sugterm.term.id, sugterm.job.id, currentUser)
+        }
+    }    
+    
 
 }

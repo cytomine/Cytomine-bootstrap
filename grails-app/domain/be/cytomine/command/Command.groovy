@@ -12,7 +12,7 @@ class Command extends SequenceDomain {
 
     String data
     String postData
-    def json
+    JSONElement json
     static transients = ["json"]
 
     User user

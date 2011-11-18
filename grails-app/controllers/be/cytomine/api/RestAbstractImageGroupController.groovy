@@ -47,7 +47,7 @@ class RestAbstractImageGroupController extends RestController {
     }
 
     def delete = {
-        def json = ([abstractimage: params.idabstractimage, group: params.idgroup]) as JSON
+        def json = JSON.parse("{abstractimage: $params.idabstractimage, group: $params.idgroup}")
         User currentUser = getCurrentUser(springSecurityService.principal.id)
         def result = processCommand(new DeleteAbstractImageGroupCommand(user: currentUser), json)
         response(result)

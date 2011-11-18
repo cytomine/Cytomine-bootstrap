@@ -5,6 +5,7 @@ import be.cytomine.security.User
 import be.cytomine.project.Project
 import org.perf4j.LoggingStopWatch
 import org.perf4j.StopWatch
+import be.cytomine.Exception.WrongArgumentException
 
 class Ontology extends SequenceDomain implements Serializable{
 
@@ -138,7 +139,7 @@ class Ontology extends SequenceDomain implements Serializable{
     static Ontology getFromData(ontology,jsonOntology) {
         if(!jsonOntology.name.toString().equals("null"))
             ontology.name = jsonOntology.name
-        else throw new IllegalArgumentException("Ontology name cannot be null")
+        else throw new WrongArgumentException("Ontology name cannot be null")
         ontology.user =  User.get(jsonOntology.user);
         println "jsonOntology.name=" + jsonOntology.name
         println "ontology.name=" +  ontology.name

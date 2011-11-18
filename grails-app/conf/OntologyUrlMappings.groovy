@@ -14,9 +14,6 @@ class OntologyUrlMappings {
         "/api/ontology/light"(controller:"restOntology"){  //TODO: merge with previous block
             action = [GET: "listLight"]
         }
-        "/api/ontology/$id/node"(controller:"restOntology"){
-            action = [GET: "showWithOnlyParentTerm"]
-        }
         "/api/ontology/$id"(controller:"restOntology"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }

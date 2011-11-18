@@ -46,7 +46,7 @@ class RestDisciplineController extends RestController {
 
     def delete =  {
         User currentUser = getCurrentUser(springSecurityService.principal.id)
-        def json = ([id : params.id]) as JSON
+        def json = JSON.parse("{id : $params.id}")
         def result = processCommand( new DeleteDisciplineCommand(user: currentUser,printMessage:true), json)
         response(result)
     }

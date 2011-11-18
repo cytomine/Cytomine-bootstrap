@@ -3,6 +3,8 @@ package be.cytomine.command
 import java.util.prefs.BackingStoreException
 import grails.converters.JSON
 import be.cytomine.ontology.Ontology
+import be.cytomine.Exception.ConstraintException
+import be.cytomine.Exception.CytomineException
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,7 +25,7 @@ class DeleteCommand extends Command {
    * @throws NullPointerException Object don't exist
    * @throws BackingStoreException Object cannot be deleted
    */
-  def createDeleteMessage(def id, def objectToDelete, Object[] messageParams) throws NullPointerException, BackingStoreException {
+  def createDeleteMessage(def id, def objectToDelete, Object[] messageParams) throws CytomineException {
     return deleteAndCreateDeleteMessage(id, objectToDelete, messageParams, false)
   }
 
@@ -36,7 +38,7 @@ class DeleteCommand extends Command {
    * @throws NullPointerException Object don't exist
    * @throws BackingStoreException Object cannot be deleted
    */
-  def deleteAndCreateDeleteMessage(def id, def objectToDelete, Object[] messageParams) throws NullPointerException, BackingStoreException {
+  def deleteAndCreateDeleteMessage(def id, def objectToDelete, Object[] messageParams) throws CytomineException {
     return deleteAndCreateDeleteMessage(id, objectToDelete, messageParams, true)
   }
 
@@ -50,7 +52,7 @@ class DeleteCommand extends Command {
    * @throws NullPointerException Object don't exist
    * @throws BackingStoreException Object cannot be deleted
    */
-  def deleteAndCreateDeleteMessage(def id, def objectToDelete, Object[] messageParams, boolean delete) throws NullPointerException, BackingStoreException {
+  def deleteAndCreateDeleteMessage(def id, def objectToDelete, Object[] messageParams, boolean delete) throws CytomineException {
     log.info("delete")
     String objectName = getClassName(objectToDelete)
     String command = "be.cytomine.Delete" + objectName + "Command"
@@ -64,7 +66,7 @@ class DeleteCommand extends Command {
       log.info "delete:"+delete
       log.info "objectToDelete:"+objectToDelete
       if (delete) {
-        objectToDelete.delete(flush: true)
+        objectToDelete.delete(flush: true,failOnError:true)
       }
 
       def message = messageSource.getMessage(command, messageParams as Object[], Locale.ENGLISH)
@@ -80,13 +82,19 @@ class DeleteCommand extends Command {
 
     } catch (org.hibernate.exception.ConstraintViolationException e) {
       log.error(e)
-      throw new BackingStoreException(objectName + " is still map with data (project...):" + e.toString()) //400
+      throw new ConstraintException(objectName + " is still map with data (project...):" + e.toString()) //400
+    }catch (org.postgresql.util.PSQLException e) {
+      log.error(e)
+      throw new ConstraintException(objectName + " is still map with data (project...):" + e.toString()) //400
     }catch (org.springframework.dao.DataIntegrityViolationException e) {
       log.error(e)
-      throw new BackingStoreException(objectName + " is still map with data (project...):" + e.toString()) //400
+      throw new ConstraintException(objectName + " is still map with data (project...):" + e.toString()) //400
+    } catch (RuntimeException e) {
+      log.error(e)
+      throw new ConstraintException("Unknow error:" + e.toString()) //400
     } catch (Exception e) {
       log.error(e)
-      throw new BackingStoreException("Unknow error:" + e.toString()) //400
+      throw new ConstraintException("Unknow error:" + e.toString()) //400
     }
 
   }

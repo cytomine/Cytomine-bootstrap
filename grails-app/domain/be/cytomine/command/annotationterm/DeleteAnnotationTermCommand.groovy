@@ -18,10 +18,10 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
     log.info "Execute"
 
     try {
-      def postData = JSON.parse(postData)
-      Annotation annotation = Annotation.get(postData.annotation)
-      Term term = Term.get(postData.term)
-      User user = User.get(postData.user)
+        log.info "JSON ="  + json
+      Annotation annotation = Annotation.get(json.annotation)
+      Term term = Term.get(json.term)
+      User user = User.get(json.user)
       log.info "Delete annotation-term with annotation=" + annotation + " term=" + term  + " user=" + user
 
       AnnotationTerm annotationTerm = AnnotationTerm.findWhere('annotation':annotation,'term':term,'user':user)

@@ -8,6 +8,7 @@ import be.cytomine.command.AddCommand
 import be.cytomine.image.ImageInstance
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 import com.vividsolutions.jts.io.ParseException
+import be.cytomine.Exception.CytomineException
 
 class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
 
@@ -38,6 +39,8 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
     }catch(ParseException e) {
       log.error("Cannot save annotation with bad geometry:"+e.toString())
       return [data : [annotation : null , errors : ["Geometry "+ JSON.parse(postData).location +" is not valid:"+e.toString()]], status : 400]
+    }catch(CytomineException ex){
+      return [data : [image:null,errors:["Cannot save image:"+ex.toString()]], status : 400]
     }
   }
 

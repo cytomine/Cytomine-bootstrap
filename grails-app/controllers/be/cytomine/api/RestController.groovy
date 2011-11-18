@@ -9,6 +9,10 @@ import be.cytomine.command.Command
 import be.cytomine.command.CommandHistory
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
+import java.util.prefs.BackingStoreException
+import org.hibernate.exception.ConstraintViolationException
+import java.sql.SQLException
+import org.codehaus.groovy.grails.web.json.JSONElement
 
 class RestController {
 
@@ -22,27 +26,26 @@ class RestController {
   static int NOT_FOUND_CODE = 404
   static int TOO_LONG_REQUEST = 413
 
-  User getCurrentUser(idUser) {
-    log.info "User=" + idUser
+  static User getCurrentUser(idUser) {
     return User.read(idUser)
   }
 
-  def processCommand(AddCommand c,def json)
+  def processCommand(AddCommand c,JSONElement json)  throws NullPointerException, BackingStoreException, SQLException
   {
     processCommand(c,json,SUCCESS_ADD_CODE)
   }
 
-  def processCommand(EditCommand c, def json)
+  def processCommand(EditCommand c, JSONElement json)  throws NullPointerException, BackingStoreException, SQLException
   {
     processCommand(c,json,SUCCESS_EDIT_CODE)
   }
 
-  def processCommand(DeleteCommand c,def json)
+  def processCommand(DeleteCommand c,JSONElement json)   throws NullPointerException, BackingStoreException, SQLException
   {
     processCommand(c,json,SUCCESS_DELETE_CODE)
   }
 
-  def processCommand(Command c, def json, int successCode) {
+  def processCommand(Command c, JSONElement json, int successCode)  throws NullPointerException, BackingStoreException, SQLException{
     def result
     c.setJson(json)
     c.postData = json.toString()
@@ -74,13 +77,26 @@ class RestController {
       xml { render data as XML}
     }
   }
+  def responseOK(result) {
+      response.status = result.status
+    withFormat {
+      json { render result.data as JSON }
+      xml { render result.data as XML}
+    }
+  }
+
   def responseSuccess(data, code) {
-    response.status = code
-    response(data)
+    response(data,code)
   }
   def responseSuccess(data) {
     response(data)
   }
+
+  def response(data, code) {
+    response.status = code
+    response(data)
+  }
+
   def responseNotFound(className,id) {
     log.error className + " Id " + id+ " don't exist"
     response.status = NOT_FOUND_CODE
@@ -166,4 +182,11 @@ class RestController {
         }
     }
 
+    boolean isSuccess(Integer code) {
+        try {
+        return code==SUCCESS_ADD_CODE || code==SUCCESS_EDIT_CODE || code==SUCCESS_DELETE_CODE;
+        } catch(Exception ex) {
+             return false;
+        }
+    }
 }

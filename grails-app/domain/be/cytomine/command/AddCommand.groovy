@@ -1,8 +1,7 @@
 package be.cytomine.command
 
 import grails.validation.ValidationException
-
-import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
+import be.cytomine.Exception.ConstraintException
 
 /**
  * Created by IntelliJ IDEA.

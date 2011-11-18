@@ -15,24 +15,21 @@ import be.cytomine.command.DeleteCommand
 import java.util.prefs.BackingStoreException
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.project.Project
+import org.hibernate.exception.ConstraintViolationException
+import java.sql.SQLException
+import be.cytomine.Exception.InvalidRequestException
+import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.Exception.ConstraintException
+import be.cytomine.Exception.CytomineException
 
 class DeleteOntologyCommand extends DeleteCommand implements UndoRedoCommand {
   boolean saveOnUndoRedoStack = true;
-  def execute() {
+  def execute() throws CytomineException{
     log.info "Execute"
-    try {
-      def postData = JSON.parse(postData)
-      Ontology ontology = Ontology.findById(postData.id)
-      log.info "ontology="+ontology
-      if(ontology && Project.findAllByOntology(ontology).size()>0) throw new BackingStoreException("Ontology is still map with project")
-      return super.deleteAndCreateDeleteMessage(postData.id,ontology,[ontology.id,ontology.name] as Object[])
-    } catch(NullPointerException e) {
-      log.error(e)
-      return [data : [success : false, errors : e.getMessage()], status : 404]
-    } catch(BackingStoreException e) {
-      log.error(e)
-      return [data : [success : false, errors : e.getMessage()], status : 400]
-    }
+      Ontology ontology = Ontology.get(json.id)
+      if(!ontology) throw new ObjectNotFoundException("Ontology " + id + " not found")
+      if(ontology && Project.findAllByOntology(ontology).size()>0) throw new ConstraintException("Ontology is still map with project")
+      return super.deleteAndCreateDeleteMessage(json.id,ontology,[ontology.id,ontology.name] as Object[])
   }
 
   def undo() {

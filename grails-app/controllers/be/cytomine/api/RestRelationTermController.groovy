@@ -97,9 +97,26 @@ class RestRelationTermController extends RestController {
     else
       relation = Relation.findByName(RelationTerm.names.PARENT)
 
-    def json = ([relation :relation? relation.id:-1,term1: params.idterm1,term2: params.idterm2]) as JSON
-    def result = processCommand(new DeleteRelationTermCommand(user: currentUser), json)
+    def result = deleteRelationTerm(relation? relation.id:-1,params.idterm1,params.idterm2,currentUser)
     response(result)
   }
 
+    def deleteRelationTerm(def idRelation, def idTerm1, def idTerm2, User currentUser) {
+        return deleteRelationTerm(idRelation,idTerm1,idTerm2,currentUser,true)
+    }
+    def deleteRelationTerm(def idRelation, def idTerm1, def idTerm2, User currentUser, boolean printMessage) {
+        def json = JSON.parse("{relation: $idRelation, term1: $idTerm1, term2: $idTerm2}")
+        def result = processCommand(new DeleteRelationTermCommand(user: currentUser,printMessage: printMessage), json)
+        return result
+    }
+
+    def deleteRelationTermFromTerm(Term term, User currentUser) {
+        def relationTerm = RelationTerm.findAllByTerm1OrTerm2(term,term)
+        log.info "relationTerm= " +relationTerm.size()
+
+        relationTerm.each{ relterm ->
+            log.info "unlink relterm:" +relationTerm.id
+            deleteRelationTerm(relterm.relation.id,relterm.term1.id,relterm.term2.id,currentUser,false)
+        }
+    }
 }
