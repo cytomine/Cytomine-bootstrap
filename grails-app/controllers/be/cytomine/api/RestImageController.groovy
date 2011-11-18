@@ -5,6 +5,7 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.security.User
 import be.cytomine.project.Project
 import be.cytomine.Exception.CytomineException
+import be.cytomine.security.Group
 
 class RestImageController extends RestController {
 
@@ -29,6 +30,15 @@ class RestImageController extends RestController {
         if (user != null) responseSuccess(abstractImageService.list(user, params.page, params.rows, params.sidx, params.sord, params.filename, params.createdstart, params.createdstop))
         else responseNotFound("User", params.id)
     }
+
+
+
+    def listByGroup = {
+        Group group = Group.read(params.idgroup)
+        if (group) responseSuccess(abstractImageService.list(group))
+        else responseNotFound("AbstractImageGroup", "Group", params.idgroup)
+    }
+
 
     def show = {
         AbstractImage image = abstractImageService.read(params.id)

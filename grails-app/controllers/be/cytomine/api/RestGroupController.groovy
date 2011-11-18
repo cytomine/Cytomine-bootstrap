@@ -7,12 +7,26 @@ import be.cytomine.command.group.AddGroupCommand
 import grails.converters.JSON
 import be.cytomine.command.group.EditGroupCommand
 import be.cytomine.command.group.DeleteGroupCommand
+import be.cytomine.image.AbstractImage
+import be.cytomine.GroupService
 
 class RestGroupController extends  RestController {
+    def abstractImageService
+    def groupService
 
     def list = {
         responseSuccess(Group.list(sort:"name", order:"asc"))
     }
+
+    def listGroupByAbstractImage = {
+        if (params.idabstractimage == "undefined") responseNotFound("AbstractImageGroup", "AbstractImage", params.idabstractimage)
+        else {
+            AbstractImage abstractimage = abstractImageService.read(params.idabstractimage)
+            if (abstractimage != null) responseSuccess(groupService.list(abstractimage))
+            else responseNotFound("AbstractImageGroup", "AbstractImage", params.idabstractimage)
+        }
+    }
+
 
     def show = {
         Group group = Group.read(params.id)

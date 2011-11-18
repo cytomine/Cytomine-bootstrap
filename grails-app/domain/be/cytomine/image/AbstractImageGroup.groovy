@@ -3,6 +3,7 @@ package be.cytomine.image
 import be.cytomine.security.Group
 import be.cytomine.SequenceDomain
 import grails.converters.JSON
+import be.cytomine.Exception.WrongArgumentException
 
 class AbstractImageGroup extends SequenceDomain implements Serializable{
 
@@ -19,10 +20,10 @@ class AbstractImageGroup extends SequenceDomain implements Serializable{
     }
 
     static AbstractImageGroup link(AbstractImage abstractimage,Group group) {
-        if(!abstractimage)  throw new IllegalArgumentException("AbstractImage cannot be null")
-        if(!group)  throw new IllegalArgumentException("Group cannot be null")
+        if(!abstractimage)  throw new WrongArgumentException("AbstractImage cannot be null")
+        if(!group)  throw new WrongArgumentException("Group cannot be null")
         def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-        if(abstractimageGroup) throw new IllegalArgumentException("AbstractImage - group already exist")
+        if(abstractimageGroup) throw new WrongArgumentException("AbstractImage - group already exist")
         //AbstractImage.withTransaction {
         if (!abstractimageGroup) {
             abstractimageGroup = new AbstractImageGroup()
@@ -39,10 +40,10 @@ class AbstractImageGroup extends SequenceDomain implements Serializable{
 
     static AbstractImageGroup link(long id,AbstractImage abstractimage,Group group) {
 
-        if(!abstractimage)  throw new IllegalArgumentException("AbstractImage cannot be null")
-        if(!group)  throw new IllegalArgumentException("Group cannot be null")
+        if(!abstractimage)  throw new WrongArgumentException("AbstractImage cannot be null")
+        if(!group)  throw new WrongArgumentException("Group cannot be null")
         def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-        if(abstractimageGroup) throw new IllegalArgumentException("AbstractImage - group already exist")
+        if(abstractimageGroup) throw new WrongArgumentException("AbstractImage - group already exist")
 
         if (!abstractimageGroup) {
             abstractimageGroup = new AbstractImageGroup()
@@ -58,10 +59,10 @@ class AbstractImageGroup extends SequenceDomain implements Serializable{
 
     static void unlink(AbstractImage abstractimage, Group group) {
 
-        if(!abstractimage)  throw new IllegalArgumentException("AbstractImage cannot be null")
-        if(!group)  throw new IllegalArgumentException("Group cannot be null")
+        if(!abstractimage)  throw new WrongArgumentException("AbstractImage cannot be null")
+        if(!group)  throw new WrongArgumentException("Group cannot be null")
         def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-        if(!abstractimageGroup) throw new IllegalArgumentException("AbstractImage - group not exist")
+        if(!abstractimageGroup) throw new WrongArgumentException("AbstractImage - group not exist")
 
         AbstractImageGroup.list().each {
             println it.id + " abstractimage=" + it.abstractimage.id + " group=" + it.group.id

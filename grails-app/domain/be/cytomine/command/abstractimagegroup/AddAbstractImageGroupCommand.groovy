@@ -8,27 +8,20 @@ import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 import be.cytomine.image.AbstractImageGroup
 import be.cytomine.image.AbstractImage
 import be.cytomine.security.Group
+import be.cytomine.Exception.CytomineException
 
 class AddAbstractImageGroupCommand extends AddCommand implements UndoRedoCommand {
   boolean saveOnUndoRedoStack = true;
-  def execute() {
-    log.info("Execute")
-    AbstractImageGroup newAbstractImageGroup=null
-    try {
+
+  def execute() throws CytomineException {
       def json = JSON.parse(postData)
-      newAbstractImageGroup = AbstractImageGroup.createAbstractImageGroupFromData(json)
+      AbstractImageGroup newAbstractImageGroup = AbstractImageGroup.createAbstractImageGroupFromData(json)
       AbstractImageGroup.link(newAbstractImageGroup.abstractimage,newAbstractImageGroup.group)
-        return super.validateWithoutSave(newAbstractImageGroup,["#ID#",newAbstractImageGroup.abstractimage.filename,newAbstractImageGroup.group.name] as Object[])
-      }catch(ConstraintException  ex){
-      return [data : [abstractimagegroup:newAbstractImageGroup,errors:newAbstractImageGroup.retrieveErrors()], status : 400]
-    }catch(IllegalArgumentException ex){
-      return [data : [abstractimagegroup:null,errors:["Cannot save abstractimage-group:"+ex.toString()]], status : 400]
-    }
+      return super.validateWithoutSave(newAbstractImageGroup,["#ID#",newAbstractImageGroup.abstractimage.filename,newAbstractImageGroup.group.name] as Object[])
   }
 
   def undo() {
     log.info("Undo")
-    log.info("data="+data)
     def abstractimageGroupData = JSON.parse(data)
     def abstractimage = AbstractImage.get(abstractimageGroupData.abstractimage)
     def group = Group.get(abstractimageGroupData.group)
@@ -49,7 +42,7 @@ class AddAbstractImageGroupCommand extends AddCommand implements UndoRedoCommand
 
 
   def redo() {
-    log.info("Redo="+data)
+    log.info("Redo")
     def abstractimageGroupData = JSON.parse(data)
 
     def abstractimage = AbstractImage.get(abstractimageGroupData.abstractimage)

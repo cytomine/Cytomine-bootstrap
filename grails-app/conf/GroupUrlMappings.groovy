@@ -14,8 +14,8 @@ class GroupUrlMappings {
         "/api/group/$id"(controller: "restGroup"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
-        "/api/group/$idgroup/image"(controller:"restAbstractImageGroup"){
-            action = [GET: "listAbstractImageByGroup"]
+        "/api/group/$idgroup/image"(controller:"restImage"){
+            action = [GET: "listByGroup"]
         }
         "/api/group/grid"(controller:"restGroup"){
             action = [GET:"grid"]

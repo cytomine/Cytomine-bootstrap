@@ -13,6 +13,7 @@ import be.cytomine.command.abstractimage.DeleteAbstractImageCommand
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.ontology.Annotation
 import be.cytomine.image.server.RetrievalServer
+import be.cytomine.security.Group
 
 class AbstractImageService {
 
@@ -34,6 +35,10 @@ class AbstractImageService {
 
     def list(Project project) {
         project.abstractimages()
+    }
+
+    def list(Group group) {
+        group.abstractimages()
     }
 
     def list(User user, def page, def limit, def sortedRow, def sord, def filename, def dateStart, def dateStop) {

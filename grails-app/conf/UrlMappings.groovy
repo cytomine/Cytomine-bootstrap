@@ -82,7 +82,7 @@ class UrlMappings {
         "/api/image/$id/imageinstance"(controller: "restImageInstance"){
             action = [GET:"listByImage"]
         }
-        "/api/image/$idabstractimage/group"(controller:"restAbstractImageGroup"){
+        "/api/image/$idabstractimage/group"(controller:"restGroup"){
             action = [GET: "listGroupByAbstractImage"]
         }
 
