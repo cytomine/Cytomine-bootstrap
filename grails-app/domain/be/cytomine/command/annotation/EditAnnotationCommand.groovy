@@ -6,36 +6,26 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.command.EditCommand
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
+import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.Exception.ObjectNotFoundException
 
 class EditAnnotationCommand extends EditCommand implements UndoRedoCommand  {
 
   boolean saveOnUndoRedoStack = true;
 
-  def execute() {
-    log.info "Execute"
-    log.debug "postData="+postData
-    Annotation updatedAnnotation=null
+  def execute() throws CytomineException{
     try {
-      def postData = JSON.parse(postData)
-      postData.user = user.id
-      updatedAnnotation = Annotation.get(postData.id)
+      json.user = user.id
+      Annotation updatedAnnotation = Annotation.get(json.id)
+      if(!updatedAnnotation) throw new ObjectNotFoundException("Annotation "+ json.id + " not found")
       String filename = updatedAnnotation.image?.baseImage?.getFilename()
       super.changeCurrentProject(updatedAnnotation.image.project)
-      return super.validateAndSave(postData,updatedAnnotation,[updatedAnnotation.id,filename] as Object[])
-
-    } catch(NullPointerException e) {
-      log.error(e)
-      return [data : [success : false, errors : e.getMessage()], status : 404]
-    } catch(ConstraintException e) {
-      log.error(e)
-      return [data : [success : false, errors : updatedAnnotation.retrieveErrors()], status : 400]
-    } catch(IllegalArgumentException e) {
-      log.error(e)
-      return [data : [success : false, errors : e.getMessage()], status : 400]
-    } catch(com.vividsolutions.jts.io.ParseException e)
+      return super.validateAndSave(json,updatedAnnotation,[updatedAnnotation.id,filename] as Object[])
+    }catch(com.vividsolutions.jts.io.ParseException e)
     {
       log.error "New annotation can't be saved (bad geom): " +  e.toString()
-      return [data : [annotation : null , errors : ["Geometry "+ JSON.parse(postData).location +" is not valid:"+e.toString()]], status : 400]
+      throw new WrongArgumentException("Location invalid:"+json.location)
     }
 
   }

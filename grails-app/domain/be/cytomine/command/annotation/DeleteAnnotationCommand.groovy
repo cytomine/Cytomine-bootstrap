@@ -6,6 +6,9 @@ import grails.converters.JSON
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.command.DeleteCommand
 import java.util.prefs.BackingStoreException
+import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.Exception.ObjectNotFoundException
 
 class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand {
 
@@ -13,21 +16,11 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand {
 
   String toString() {"DeleteAnnotationCommand"}
 
-  def execute() {
-    log.info "Execute"
-    try {
-      def postData = JSON.parse(postData)
-      Annotation annotation = Annotation.findById(postData.id)
+  def execute() throws CytomineException{
+      Annotation annotation = Annotation.findById(json.id)
+      if(!annotation) throw new ObjectNotFoundException("Annotation "+ json.id + " not found")
       super.changeCurrentProject(annotation.image.project)
-      return super.deleteAndCreateDeleteMessage(postData.id, annotation, [annotation.id, annotation.imageFileName()] as Object[])
-
-    } catch (NullPointerException e) {
-      log.error(e)
-      return [data: [success: false, errors: e.getMessage()], status: 404]
-    } catch (BackingStoreException e) {
-      log.error(e)
-      return [data: [success: false, errors: e.getMessage()], status: 400]
-    }
+      return super.deleteAndCreateDeleteMessage(json.id, annotation, [annotation.id, annotation.imageFileName()] as Object[])
   }
 
   def undo() {
@@ -36,7 +29,6 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand {
     Annotation annotation = Annotation.createFromData(annotationData)
     annotation.id = annotationData.id;
     annotation.save(flush: true)
-    log.error "Annotation errors = " + annotation.errors
     def callback = [annotationID : annotation.id , imageID : annotation.image.id ]
     return super.createUndoMessage(annotation,[annotation.id, annotation.imageFileName()] as Object[],callback);
   }

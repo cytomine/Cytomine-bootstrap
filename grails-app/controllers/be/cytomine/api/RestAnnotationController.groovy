@@ -24,11 +24,14 @@ import be.cytomine.ontology.SuggestedTerm
 import be.cytomine.command.suggestedTerm.DeleteSuggestedTermCommand
 import be.cytomine.command.annotationterm.AddAnnotationTermCommand
 import org.apache.commons.logging.LogFactory
+import be.cytomine.Exception.CytomineException
 
 class RestAnnotationController extends RestController {
 
     def springSecurityService
     def exportService
+    def annotationService
+    def transactionService
 
     def list = {
         responseSuccess(Annotation.list())
@@ -60,52 +63,15 @@ class RestAnnotationController extends RestController {
         }
         log.info "List by project " + project.id + " with user:" + userList
 
-        if (userList.isEmpty()) responseSuccess([])
-        else if (params.noTerm == "true") {
-
-            def terms = Term.findAllByOntology(project.getOntology())
-            def annotationsWithTerms = AnnotationTerm.createCriteria().list {
-                inList("term", terms)
-                join("annotation")
-                createAlias("annotation", "a")
-                projections {
-                    inList("a.image", project.imagesinstance())
-                    groupProperty("annotation.id")
-                }
-            }
-            println "annotationsWithTerms ---> " + annotationsWithTerms.size()
-            //inList crash is argument is an empty list so we have to use if/else at this time
-            def annotations = null
-            if (annotationsWithTerms.size() == 0) {
-                annotations = Annotation.createCriteria().list {
-                    inList("image", project.imagesinstance())
-                    inList("user", userList)
-
-                }
-            } else {
-                annotations = Annotation.createCriteria().list {
-                    inList("image", project.imagesinstance())
-                    inList("user", userList)
-                    not {
-                        inList("id", annotationsWithTerms)
-                    }
-                }
-            }
-
-            if (project) responseSuccess(annotations)
-            else responseNotFound("Project", params.id)
-        } else {
-            def annotations = Annotation.findAllByImageInListAndUserInList(project.imagesinstance(), userList)
-            if (project) responseSuccess(annotations)
-            else responseNotFound("Project", params.id)
-        }
+        if (project) responseSuccess(annotationService.list(project,userList,(params.noTerm == "true")))
+        else responseNotFound("Project", params.id)
     }
 
     def listByImageAndUser = {
         def image = ImageInstance.read(params.idImage)
         def user = User.read(params.idUser)
 
-        if (image && user) responseSuccess(Annotation.findAllByImageAndUser(image, user))
+        if (image && user) responseSuccess(annotationService.list(image,user))
         else if (!user) responseNotFound("User", params.idUser)
         else if (!image) responseNotFound("Image", params.idImage)
     }
@@ -146,162 +112,46 @@ class RestAnnotationController extends RestController {
     }
 
     def show = {
-        Annotation annotation = Annotation.read(params.id)
-        if (annotation != null) responseSuccess(annotation)
+        Annotation annotation = annotationService.read(params.id)
+        if (annotation) responseSuccess(annotation)
         else responseNotFound("Annotation", params.id)
     }
 
     def add = {
-        def json = request.JSON
-        User currentUser = getCurrentUser(springSecurityService.principal.id)
-
-        //simplify annotation
         try {
-            json.location = new WKTWriter().write(simplifyPolygon(json.location))
-        } catch (Exception e) {
-            log.error("Cannot simplify:" + e)
+            def result = annotationService.addAnnotation(request.JSON)
+            responseOK(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.message], e.code)
+        } finally {
+            transactionService.stopIfTransactionInProgress()
         }
-
-        //Start transaction
-        TransactionController transaction = new TransactionController();
-        transaction.start()
-
-        //Add Annotation
-        def result = processCommand(new AddAnnotationCommand(user: currentUser), json)
-        Long id = result?.annotation?.id
-
-        //Add annotation-term if term
-        if (id) {
-            def term = json.term;
-            if (term) {
-                term.each { idTerm ->
-                    new RestAnnotationTermController().addAnnotationTerm(id,idTerm,currentUser.id,currentUser)
-                }
-            }
-        }
-
-        //Stop transaction
-        transaction.stop()
-
-        //add annotation on the retrieval
-        try {if (id) indexRetrievalAnnotation(id) } catch (Exception e) { log.error "Cannot index in retrieval:" + e.toString()}
-
-        response(result)
     }
 
     def update = {
-        def json = request.JSON
-        User currentUser = getCurrentUser(springSecurityService.principal.id)
-        def result = processCommand(new EditAnnotationCommand(user: currentUser), json)
-
-        if (result.success) {
-            Long id = result.annotation.id
-            try {updateRetrievalAnnotation(id)} catch (Exception e) { log.error "Cannot update in retrieval:" + e.toString()}
+        try {
+            def result = annotationService.updateAnnotation(request.JSON)
+            responseOK(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.message], e.code)
+        } finally {
+            transactionService.stopIfTransactionInProgress()
         }
-        response(result)
     }
 
     def delete = {
-        User currentUser = getCurrentUser(springSecurityService.principal.id)
-
-        //Start transaction
-        TransactionController transaction = new TransactionController();
-        transaction.start()
-
-        //Delete annotation (+cascade)
-        def result = deleteAnnotation(params.id,currentUser)
-
-        //Stop transaction
-        transaction.stop()
-
-        //Remove annotation from retrieval
-        Long id = result?.annotation?.id
-        try {if (id) deleteRetrievalAnnotation(id) } catch (Exception e) { log.error "Cannot delete in retrieval:" + e.toString()}
-        response(result)
-    }
-
-
-    def deleteAnnotation(def idAnnotation,User currentUser) {
-        return deleteAnnotation(idAnnotation,currentUser,true)
-    }
-
-    def deleteAnnotation(def idAnnotation, User currentUser, boolean printMessage) {
-        log.info "Delete annotation: " + idAnnotation
-        Annotation annotation = Annotation.read(idAnnotation)
-        if (annotation) {
-            //Delete Annotation-Term before deleting Annotation
-            new RestAnnotationTermController().deleteAnnotationTermFromAllUser(annotation,currentUser)
-
-            //Delete Suggested-Term before deleting Annotation
-            new RestSuggestedTermController().deleteSuggestedTermFromAllUser(annotation,currentUser)
-        }
-        //Delete annotation
-        def json = JSON.parse("{id: $idAnnotation}")
-        def result = processCommand(new DeleteAnnotationCommand(user: currentUser,printMessage: printMessage), json)
-        return result
-    }
-
-
-    private indexRetrievalAnnotation(Long id) {
-        //index in retrieval (asynchronous)
-        RetrievalServer retrieval = RetrievalServer.findByDescription("retrieval")
-        log.info "annotation.id=" + id + " stevben-server=" + retrieval
-        if (id && retrieval) {
-            log.info "index annotation " + id + " on  " + retrieval.url
-            RestRetrievalController.indexAnnotationSynchronous(Annotation.read(id))
+        try {
+            def result = annotationService.deleteAnnotation(params.id)
+            responseOK(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.message], e.code)
+        } finally {
+            transactionService.stopIfTransactionInProgress()
         }
     }
 
-    private deleteRetrievalAnnotation(Long id) {
-        RetrievalServer retrieval = RetrievalServer.findByDescription("retrieval")
-        log.info "annotation.id=" + id + " retrieval-server=" + retrieval
-        if (id && retrieval) {
-            log.info "delete annotation " + id + " on  " + retrieval.url
-            RestRetrievalController.deleteAnnotationSynchronous(id)
-        }
-    }
-
-    private updateRetrievalAnnotation(Long id) {
-        RetrievalServer retrieval = RetrievalServer.findByDescription("retrieval")
-        log.info "annotation.id=" + id + " retrieval-server=" + retrieval
-        if (id && retrieval) {
-            log.info "update annotation " + id + " on  " + retrieval.url
-            RestRetrievalController.updateAnnotationSynchronous(id)
-        }
-    }
-
-
-    private Geometry simplifyPolygon(String form) {
-
-        Geometry annotationFull = new WKTReader().read(form);
-        Geometry lastAnnotationFull = annotationFull
-        println "points=" + annotationFull.getNumPoints() + " " + annotationFull.getArea();
-        println "annotationFull:" + annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
-        StopWatch stopWatch = new LoggingStopWatch();
-        /* Number of point (ex: 500 points) */
-        double numberOfPoint = annotationFull.getNumPoints()
-        /* Maximum number of point that we would have (500/5 (max 150)=max 100 points)*/
-        double rateLimitMax = Math.min(numberOfPoint / 7.5d, 150)
-        /* Minimum number of point that we would have (500/10 (min 10 max 100)=min 50 points)*/
-        double rateLimitMin = Math.min(Math.max(numberOfPoint / 10d, 10), 100)
-        /* Increase value for the increment (allow to converge faster) */
-        float incrThreshold = 0.25f
-        double increaseIncrThreshold = numberOfPoint / 100d
-        float i = 0;
-        /* Max number of loop (prevent infinite loop) */
-        int maxLoop = 500
-
-        while (numberOfPoint > rateLimitMax && maxLoop > 0) {
-            lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull, i)
-            log.debug "annotationFull=" + i + " " + lastAnnotationFull.getNumPoints()
-            if (lastAnnotationFull.getNumPoints() < rateLimitMin) break;
-            annotationFull = lastAnnotationFull
-            i = i + (incrThreshold * increaseIncrThreshold); maxLoop--;
-        }
-
-        stopWatch.stop("compress:");
-        log.debug "annotationFull good=" + i + " " + annotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
-        return lastAnnotationFull
-    }
 
 }
