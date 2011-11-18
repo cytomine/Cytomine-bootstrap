@@ -1,47 +1,33 @@
 package be.cytomine.command.annotationterm
 
-import be.cytomine.command.Command
 import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.Term
 import be.cytomine.command.DeleteCommand
-import java.util.prefs.BackingStoreException
 import be.cytomine.security.User
+import be.cytomine.Exception.ObjectNotFoundException
 
 class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoCommand {
 
   boolean saveOnUndoRedoStack = true;
 
   def execute() {
-    log.info "Execute"
-
-    try {
-        log.info "JSON ="  + json
       Annotation annotation = Annotation.get(json.annotation)
       Term term = Term.get(json.term)
       User user = User.get(json.user)
       log.info "Delete annotation-term with annotation=" + annotation + " term=" + term  + " user=" + user
 
       AnnotationTerm annotationTerm = AnnotationTerm.findWhere('annotation':annotation,'term':term,'user':user)
+      if(!annotationTerm) throw new ObjectNotFoundException("Annotation term not found ($annotation,$term,$user)")
       String id = annotationTerm.id
       super.changeCurrentProject(annotationTerm.annotation.image.project)
       def response = super.createDeleteMessage(id,annotationTerm,[id,annotation.id,term.name, user?.username] as Object[])
       AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term, annotationTerm.user)
 
       return response
-
-    } catch (NullPointerException e) {
-      log.error(e)
-      return [data: [success: false, errors: e.getMessage()], status: 404]
-    } catch (BackingStoreException e) {
-      log.error(e)
-      return [data: [success: false, errors: e.getMessage()], status: 400]
-    }
   }
-
-
 
   def undo() {
     log.info("Undo")
@@ -61,8 +47,6 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
     return super.createUndoMessage(annotationTerm,[id,annotation.id,term.name,user?.username] as Object[],callback
     );
   }
-
-
 
   def redo() {
     log.info("Redo")

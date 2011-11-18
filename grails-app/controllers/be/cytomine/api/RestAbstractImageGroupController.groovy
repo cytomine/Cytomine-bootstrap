@@ -1,13 +1,8 @@
 package be.cytomine.api
 
-import be.cytomine.command.Command
-import be.cytomine.security.User
 import grails.converters.JSON
 import be.cytomine.image.AbstractImage
 import be.cytomine.security.Group
-import be.cytomine.image.AbstractImageGroup
-import be.cytomine.command.abstractimagegroup.AddAbstractImageGroupCommand
-import be.cytomine.command.abstractimagegroup.DeleteAbstractImageGroupCommand
 import be.cytomine.Exception.CytomineException
 
 class RestAbstractImageGroupController extends RestController {
@@ -31,7 +26,7 @@ class RestAbstractImageGroupController extends RestController {
     def add = {
         try {
             def result = abstractImageGroupService.addAbstractImageGroup(request.JSON)
-            responseOK(result)
+            responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.message], e.code)
@@ -44,7 +39,7 @@ class RestAbstractImageGroupController extends RestController {
         try {
             def json = JSON.parse("{abstractimage: $params.idabstractimage, group: $params.idgroup}")
             def result = abstractImageGroupService.deleteAbstractImageGroup(json)
-            responseOK(result)
+            responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.message], e.code)

@@ -130,7 +130,7 @@ class UrlMappings {
             action = [GET: "listTermByAnnotation"]
         }
         "/api/annotation/$idannotation/notuser/$idNotUser/term"(controller:"restAnnotationTerm"){
-            action = [GET: "listAnnotationTermByUser"]
+            action = [GET: "listAnnotationTermByUserNot"]
         }
         "/api/annotation/$idannotation/term/$idterm/clearBefore"(controller:"restAnnotationTerm"){
             action = [POST:"addWithDeletingOldTerm"]
@@ -157,13 +157,10 @@ class UrlMappings {
             action = [GET:"worstTerm"]
         }
 
-        "/api/term/$idterm/annotation"(controller:"restAnnotationTerm"){
+        "/api/term/$idterm/annotation"(controller:"restAnnotation"){
             action = [GET: "listAnnotationByTerm"]
         }
-        "/api/term/$idterm/annotation"(controller:"restAnnotationTerm"){
-            action = [GET: "listAnnotationByTerm"]
-        }
-        "/api/term/$idterm/project/$idproject/annotation"(controller:"restAnnotationTerm"){
+        "/api/term/$idterm/project/$idproject/annotation"(controller:"restAnnotation"){
             action = [GET: "listAnnotationByProjectAndTerm"]
         }
         "/api/term/$idterm/imageinstance/$idimageinstance/annotation"(controller:"restAnnotationTerm"){

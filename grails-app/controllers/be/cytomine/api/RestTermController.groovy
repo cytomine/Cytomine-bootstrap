@@ -49,7 +49,7 @@ class RestTermController extends RestController {
     def add = {
         try {
             def result = termService.addTerm(request.JSON)
-            responseOK(result)
+            responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.message], e.code)
@@ -61,7 +61,7 @@ class RestTermController extends RestController {
     def update = {
         try {
             def result = termService.updateTerm(request.JSON)
-            responseOK(result)
+            responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.message], e.code)
@@ -73,7 +73,7 @@ class RestTermController extends RestController {
     def delete = {
         try {
             def result = termService.deleteTerm(params.id)
-            responseOK(result)
+            responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.message], e.code)

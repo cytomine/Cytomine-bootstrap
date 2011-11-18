@@ -77,7 +77,7 @@ class RestController {
       xml { render data as XML}
     }
   }
-  def responseOK(result) {
+  def responseResult(result) {
       response.status = result.status
     withFormat {
       json { render result.data as JSON }

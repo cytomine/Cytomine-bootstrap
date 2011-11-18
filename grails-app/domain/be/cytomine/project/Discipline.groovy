@@ -2,6 +2,7 @@ package be.cytomine.project
 
 import be.cytomine.SequenceDomain
 import grails.converters.JSON
+import be.cytomine.Exception.WrongArgumentException
 
 class Discipline extends SequenceDomain {
 
@@ -34,7 +35,7 @@ class Discipline extends SequenceDomain {
         String name = jsonDiscipline.name.toString()
         if(!name.equals("null"))
             discipline.name = jsonDiscipline.name.toUpperCase()
-        else throw new IllegalArgumentException("Discipline name cannot be null")
+        else throw new WrongArgumentException("Discipline name cannot be null")
         return discipline;
     }
 }

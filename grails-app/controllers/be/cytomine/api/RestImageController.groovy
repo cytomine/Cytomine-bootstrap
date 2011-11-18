@@ -56,7 +56,7 @@ class RestImageController extends RestController {
     def add = {
         try {
             def result = abstractImageService.addImage(request.JSON)
-            responseOK(result)
+            responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.message], e.code)
@@ -68,7 +68,7 @@ class RestImageController extends RestController {
     def update = {
         try {
             def result = abstractImageService.updateImage(request.JSON)
-            responseOK(result)
+            responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.message], e.code)
@@ -80,7 +80,7 @@ class RestImageController extends RestController {
     def delete = {
         try {
             def result = abstractImageService.deleteImage(params.id)
-            responseOK(result)
+            responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.message], e.code)

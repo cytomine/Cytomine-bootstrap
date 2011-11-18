@@ -7,9 +7,6 @@
 class AnnotationTermUrlMappings {
 
     static mappings = {
-        "/api/annotation/$idannotation/ontology/$idontology/term"(controller:"restAnnotationTerm"){
-            action = [GET: "listTermByAnnotationAndOntology"]
-        }
 
         "/api/annotation/$idannotation/term/$idterm"(controller:"restAnnotationTerm"){
             action = [POST:"add",DELETE:"delete", GET:"show"]

@@ -18,6 +18,8 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.command.term.AddTermCommand
 import be.cytomine.command.term.EditTermCommand
 import be.cytomine.Exception.CytomineException
+import be.cytomine.ontology.Annotation
+import be.cytomine.ontology.AnnotationTerm
 
 class TermService {
 
@@ -26,6 +28,7 @@ class TermService {
     def transactionService
     def commandService
     def cytomineService
+    def annotationTermService
 
     def list() {
         return Term.list()
@@ -50,6 +53,14 @@ class TermService {
     def list(ImageInstance image) {
         return image?.terms()
     }
+
+
+    def list(Annotation annotation, User user) {
+        return AnnotationTerm.findAllByUserAndAnnotation(user, annotation).collect {it.term.id}
+    }
+
+
+
 
     def statProject(Term term) {
         log.debug "term=" + term.name
@@ -111,7 +122,7 @@ class TermService {
         Term term = Term.read(idTerm)
         if (term) {
             //Delete Annotation-Term before deleting Term
-            new RestAnnotationTermController().deleteAnnotationTermFromAllUser(term, currentUser)
+            annotationTermService.deleteAnnotationTermFromAllUser(term, currentUser)
 
             //Delete Suggested-Term before deleting Term
             new RestSuggestedTermController().deleteSuggestedTermFromAllUser(term, currentUser)

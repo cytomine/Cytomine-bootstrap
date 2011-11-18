@@ -3,6 +3,7 @@ package be.cytomine.ontology
 import grails.converters.JSON
 import be.cytomine.SequenceDomain
 import be.cytomine.security.User
+import be.cytomine.Exception.WrongArgumentException
 
 class AnnotationTerm extends SequenceDomain implements Serializable{
 
@@ -29,11 +30,11 @@ class AnnotationTerm extends SequenceDomain implements Serializable{
     }
 
     static AnnotationTerm link(Annotation annotation,Term term, User user) {
-        if(!annotation)  throw new IllegalArgumentException("Annotation cannot be null")
-        if(!term)  throw new IllegalArgumentException("Term cannot be null")
-        if(!user)  throw new IllegalArgumentException("User cannot be null")
+        if(!annotation)  throw new WrongArgumentException("Annotation cannot be null")
+        if(!term)  throw new WrongArgumentException("Term cannot be null")
+        if(!user)  throw new WrongArgumentException("User cannot be null")
         def annotationTerm = AnnotationTerm.findWhere('annotation':annotation, 'term':term,'user':user)
-        if(annotationTerm) throw new IllegalArgumentException("Annotation - term already exist")
+        if(annotationTerm) throw new WrongArgumentException("Annotation - term already exist")
         //Annotation.withTransaction {
         if (!annotationTerm) {
             annotationTerm = new AnnotationTerm(user:user)
@@ -43,7 +44,7 @@ class AnnotationTerm extends SequenceDomain implements Serializable{
             annotation.refresh()
             term.refresh()
             annotationTerm.save(flush:true)
-        } else throw new IllegalArgumentException("Annotation " + annotation.id + " and term " + term.id + " are already mapped with user " + user.id)
+        } else throw new WrongArgumentException("Annotation " + annotation.id + " and term " + term.id + " are already mapped with user " + user.id)
         //}
         return annotationTerm
     }
@@ -51,11 +52,11 @@ class AnnotationTerm extends SequenceDomain implements Serializable{
 
     static AnnotationTerm link(long id,Annotation annotation,Term term, User user) {
 
-        if(!annotation)  throw new IllegalArgumentException("Annotation cannot be null")
-        if(!term)  throw new IllegalArgumentException("Term cannot be null")
-        if(!user)  throw new IllegalArgumentException("User cannot be null")
+        if(!annotation)  throw new WrongArgumentException("Annotation cannot be null")
+        if(!term)  throw new WrongArgumentException("Term cannot be null")
+        if(!user)  throw new WrongArgumentException("User cannot be null")
         def annotationTerm = AnnotationTerm.findWhere('annotation':annotation, 'term':term,'user':user)
-        if(annotationTerm) throw new IllegalArgumentException("Annotation - term already exist")
+        if(annotationTerm) throw new WrongArgumentException("Annotation - term already exist")
 
         if (!annotationTerm) {
             annotationTerm = new AnnotationTerm(user:user)
@@ -65,17 +66,17 @@ class AnnotationTerm extends SequenceDomain implements Serializable{
 //            annotation.refresh()
 //            term.refresh()
             annotationTerm.save(flush:true)
-        } else throw new IllegalArgumentException("Annotation " + annotation.id + " and term " + term.id + " are already mapped with user " + user.id)
+        } else throw new WrongArgumentException("Annotation " + annotation.id + " and term " + term.id + " are already mapped with user " + user.id)
         return annotationTerm
     }
 
     static void unlink(Annotation annotation, Term term,User user) {
 
-        if(!annotation)  throw new IllegalArgumentException("Annotation cannot be null")
-        if(!term)  throw new IllegalArgumentException("Term cannot be null")
-        if(!user)  throw new IllegalArgumentException("User cannot be null")
+        if(!annotation)  throw new WrongArgumentException("Annotation cannot be null")
+        if(!term)  throw new WrongArgumentException("Term cannot be null")
+        if(!user)  throw new WrongArgumentException("User cannot be null")
         def annotationTerm = AnnotationTerm.findWhere('annotation':annotation, 'term':term,'user':user)
-        if(!annotationTerm) throw new IllegalArgumentException("Annotation - term - user not exist")
+        if(!annotationTerm) throw new WrongArgumentException("Annotation - term - user not exist")
 
         if (annotationTerm) {
             annotation?.removeFromAnnotationTerm(annotationTerm)

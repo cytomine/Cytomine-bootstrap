@@ -6,31 +6,21 @@ import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.Term
 import be.cytomine.command.AddCommand
-import be.cytomine.ontology.RelationTerm
-import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 
 class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
+
   boolean saveOnUndoRedoStack = true;
+
   def execute() {
-    log.info("Execute")
-    AnnotationTerm newAnnotationTerm=null
-    try {
-      def json = JSON.parse(postData)
       json.user = user.id
-      newAnnotationTerm = AnnotationTerm.createAnnotationTermFromData(json)
+      AnnotationTerm newAnnotationTerm = AnnotationTerm.createAnnotationTermFromData(json)
       AnnotationTerm.link(newAnnotationTerm.annotation,newAnnotationTerm.term,newAnnotationTerm.user)
       super.changeCurrentProject(newAnnotationTerm.annotation.image.project)
-        return super.validateWithoutSave(newAnnotationTerm,["#ID#",newAnnotationTerm.annotation.id,newAnnotationTerm.term.name,newAnnotationTerm.user?.username] as Object[])
-      }catch(ConstraintException  ex){
-      return [data : [annotationterm:newAnnotationTerm,errors:newAnnotationTerm.retrieveErrors()], status : 400]
-    }catch(IllegalArgumentException ex){
-      return [data : [annotationterm:null,errors:["Cannot save annotation-term:"+ex.toString()]], status : 400]
-    }
+      return super.validateWithoutSave(newAnnotationTerm,["#ID#",newAnnotationTerm.annotation.id,newAnnotationTerm.term.name,newAnnotationTerm.user?.username] as Object[])
   }
 
   def undo() {
     log.info("Undo")
-    log.info("data="+data)
     def annotationTermData = JSON.parse(data)
     def annotation = Annotation.get(annotationTermData.annotation)
     def term = Term.get(annotationTermData.term)
@@ -52,7 +42,7 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
 
 
   def redo() {
-    log.info("Redo="+data)
+    log.info("Redo")
     def annotationTermData = JSON.parse(data)
 
     def annotation = Annotation.get(annotationTermData.annotation)

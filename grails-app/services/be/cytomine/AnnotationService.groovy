@@ -26,6 +26,7 @@ class AnnotationService {
     def cytomineService
     def commandService
     def transactionService
+    def annotationTermService
 
     def list() {
         Annotation.list()
@@ -82,6 +83,21 @@ class AnnotationService {
         return Annotation.findAllByImageAndUser(image, user)
     }
 
+    def list(Term term) {
+        term.annotations()
+    }
+
+
+    def list(Project project, Term term, List<User> userList){
+        def annotationFromTermAndProject = []
+        def annotationFromTerm = term.annotations()
+        annotationFromTerm.each { annotation ->
+            if (annotation.project() != null && annotation.project().id == project.id && userList.contains(annotation.user))
+                annotationFromTermAndProject << annotation
+        }
+        annotationFromTermAndProject
+    }
+
     Annotation get(def id) {
         Annotation.get(id)
     }
@@ -113,7 +129,7 @@ class AnnotationService {
             def term = json.term;
             if (term) {
                 term.each { idTerm ->
-                    new RestAnnotationTermController().addAnnotationTerm(annotation,idTerm,currentUser.id,currentUser)
+                   annotationTermService.addAnnotationTerm(annotation,idTerm,currentUser.id,currentUser)
                 }
             }
         }
@@ -168,7 +184,7 @@ class AnnotationService {
         Annotation annotation = Annotation.read(idAnnotation)
         if (annotation) {
             //Delete Annotation-Term before deleting Annotation
-            new RestAnnotationTermController().deleteAnnotationTermFromAllUser(annotation,currentUser)
+           annotationTermService.deleteAnnotationTermFromAllUser(annotation,currentUser)
 
             //Delete Suggested-Term before deleting Annotation
             new RestSuggestedTermController().deleteSuggestedTermFromAllUser(annotation,currentUser)

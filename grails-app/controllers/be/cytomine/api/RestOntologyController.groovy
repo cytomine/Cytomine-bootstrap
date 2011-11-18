@@ -47,7 +47,7 @@ class RestOntologyController extends RestController {
     def add = {
         try {
             def result = ontologyService.addOntology(request.JSON)
-            responseOK(result)
+            responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.message], e.code)
@@ -59,7 +59,7 @@ class RestOntologyController extends RestController {
     def update = {
         try {
             def result = ontologyService.updateOntology(request.JSON)
-            responseOK(result)
+            responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.message], e.code)
@@ -71,7 +71,7 @@ class RestOntologyController extends RestController {
     def delete = {
         try {
             def result = ontologyService.deleteOntology(params.id)
-            responseOK(result)
+            responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.message], e.code)
