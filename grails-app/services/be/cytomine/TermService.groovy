@@ -31,19 +31,23 @@ class TermService {
         return Term.list()
     }
 
-    def show(def id) {
+    Term read(def id) {
         return Term.read(id)
     }
 
-    def listByOntology(Ontology ontology) {
+    Term get(def id) {
+        return Term.get(id)
+    }
+
+    def list(Ontology ontology) {
         return ontology?.leafTerms()
     }
 
-    def listAllByProject(Project project) {
+    def list(Project project) {
         return project?.ontology?.terms()
     }
 
-    def listByImageInstance(ImageInstance image) {
+    def list(ImageInstance image) {
         return image?.terms()
     }
 
@@ -82,8 +86,6 @@ class TermService {
         }
         list
     }
-
-
 
     def addTerm(def json) throws CytomineException{
         User currentUser = cytomineService.getCurrentUser()

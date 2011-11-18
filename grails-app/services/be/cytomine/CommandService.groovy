@@ -53,7 +53,6 @@ class CommandService {
     if(c.postData.size()>=Command.MAXSIZEREQUEST) {
         throw new TooLongRequestException("Request is too long")
     }
-
     def result = c.execute()
     if (result.status == successCode) {
       c.save()

@@ -63,12 +63,13 @@ class OntologyService extends CytomineService {
         return user?.ontologies()
     }
 
-
-    def show(def id) {
+    Ontology read(def id) {
         return Ontology.read(id)
     }
 
-
+    Ontology get(def id) {
+        return Ontology.get(id)
+    }
 
     def addOntology(def json) throws CytomineException {
         User currentUser = cytomineService.getCurrentUser()

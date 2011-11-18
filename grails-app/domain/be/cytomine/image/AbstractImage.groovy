@@ -12,6 +12,8 @@ import be.cytomine.project.Slide
 import be.cytomine.server.resolvers.Resolver
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.image.server.ImageProperty
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.Exception.CytomineException
 
 class AbstractImage extends SequenceDomain {
 
@@ -67,13 +69,12 @@ class AbstractImage extends SequenceDomain {
     }
 
 
-    static AbstractImage createFromData(jsonImage) {
+    static AbstractImage createFromData(jsonImage) throws CytomineException{
         def image = new AbstractImage()
         getFromData(image,jsonImage)
     }
 
-    static AbstractImage getFromData(image,jsonImage) {
-        println "getFromData:"+ jsonImage
+    static AbstractImage getFromData(image,jsonImage) throws CytomineException{
         image.filename = jsonImage.filename
         image.path = jsonImage.path
 
@@ -87,24 +88,24 @@ class AbstractImage extends SequenceDomain {
         String scannerId = jsonImage.scanner.toString()
         if(!scannerId.equals("null")) {
             image.scanner = Scanner.get(scannerId)
-            if (image.scanner==null) throw new IllegalArgumentException("Scanner was not found with id:"+ scannerId)
+            if (image.scanner==null) throw new WrongArgumentException("Scanner was not found with id:"+ scannerId)
         }
         else image.scanner = null
 
         String slideId = jsonImage.slide.toString()
         if(!slideId.equals("null")) {
             image.slide = Slide.get(slideId)
-            if(image.slide==null) throw new IllegalArgumentException("Slide was not found with id:"+ slideId)
+            if(image.slide==null) throw new WrongArgumentException("Slide was not found with id:"+ slideId)
         }
         else image.slide = null
 
         String mimeId = jsonImage.mime.toString()
         image.mime = Mime.findByExtension(mimeId)
         if(image.mime==null) {
-            throw new IllegalArgumentException("Mime was not found with id:"+ mimeId)
+            throw new WrongArgumentException("Mime was not found with id:"+ mimeId)
         }
         else if(image.mime.imageServers().size()==0) {
-            throw new IllegalArgumentException("Mime with id:"+ mimeId + " has not image server")
+            throw new WrongArgumentException("Mime with id:"+ mimeId + " has not image server")
         }
 
         /*String roi = jsonImage.roi.toString()

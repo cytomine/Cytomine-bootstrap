@@ -5,7 +5,7 @@ package be.cytomine.Exception;
  * Date: 17/11/11
  * GIGA-ULg
  */
-public abstract class CytomineException extends Exception{
+public abstract class CytomineException extends RuntimeException{
 
     public int code;
     public String message;

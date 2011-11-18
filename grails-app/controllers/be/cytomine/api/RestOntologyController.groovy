@@ -38,7 +38,7 @@ class RestOntologyController extends RestController {
     }
 
     def show = {
-        Ontology ontology = ontologyService.show(params.id)
+        Ontology ontology = ontologyService.read(params.id)
         if (ontology) responseSuccess(ontology)
         else responseNotFound("Ontology", params.id)
     }

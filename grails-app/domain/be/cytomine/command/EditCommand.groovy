@@ -28,7 +28,6 @@ class EditCommand extends Command {
     String command = "be.cytomine.Edit" + objectName + "Command"
     if (!newObject) throw new NullPointerException(objectName + " not found with id " + postData.id);
     def backup = newObject.encodeAsJSON()
-
     newObject = newObject.getFromData(newObject, postData)
     if (postData.id instanceof String) {
         newObject.id = Long.parseLong(postData.id)

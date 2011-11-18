@@ -5,11 +5,12 @@ import grails.converters.JSON
 import be.cytomine.ontology.Term
 import be.cytomine.command.EditCommand
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
+import be.cytomine.Exception.CytomineException
 
 class EditTermCommand extends EditCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
-    def execute() {
+    def execute() throws CytomineException{
         log.info "Execute"
         Term updatedTerm = Term.get(json.id)
         return super.validateAndSave(json, updatedTerm, [updatedTerm.id, updatedTerm.name, updatedTerm.ontology?.name] as Object[])
