@@ -315,7 +315,9 @@ var OntologyPanelView = Backbone.View.extend({
       self.$infoOntology.empty();
 
       var idUserOwner = self.model.get('user');
+      console.log("idUserOwner="+idUserOwner);
       var userOwner = window.app.models.users.get(idUserOwner);
+      console.log("userOwner="+userOwner);
       var sharedTo = "Nobody";
       var users = self.model.get('users');
       if (_.size(users) > 0) {
