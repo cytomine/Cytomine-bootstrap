@@ -9,7 +9,7 @@ class UserUrlMappings {
     static mappings = {
         /* User */
         "/api/user"(controller:"restUser"){
-            action = [GET:"list", POST:"save"]
+            action = [GET:"list", POST:"add"]
         }
         "/api/user/$id"(controller:"restUser"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]

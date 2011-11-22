@@ -4,6 +4,7 @@ import be.cytomine.SequenceDomain
 import be.cytomine.processing.Job
 import grails.converters.JSON
 import be.cytomine.project.Project
+import be.cytomine.Exception.WrongArgumentException
 
 class SuggestedTerm extends SequenceDomain implements Serializable{
 
@@ -42,21 +43,21 @@ class SuggestedTerm extends SequenceDomain implements Serializable{
         String annotationId = jsonSuggestedTerm.annotation.toString()
         if(!annotationId.equals("null")) {
             suggestedTerm.annotation = Annotation.get(annotationId)
-            if(suggestedTerm.annotation==null) throw new IllegalArgumentException("Annotation was not found with id:"+ annotationId)
+            if(suggestedTerm.annotation==null) throw new WrongArgumentException("Annotation was not found with id:"+ annotationId)
         }
         else suggestedTerm.annotation = null
         
         String termId = jsonSuggestedTerm.term.toString()
         if(!termId.equals("null")) {
             suggestedTerm.term = Term.get(termId)
-            if(suggestedTerm.term==null) throw new IllegalArgumentException("Term was not found with id:"+ termId)
+            if(suggestedTerm.term==null) throw new WrongArgumentException("Term was not found with id:"+ termId)
         }
         else suggestedTerm.term = null        
         
         String jobId = jsonSuggestedTerm.job.toString()
         if(!jobId.equals("null")) {
             suggestedTerm.job = Job.get(jobId)
-            if(suggestedTerm.job==null) throw new IllegalArgumentException("Job was not found with id:"+ jobId)
+            if(suggestedTerm.job==null) throw new WrongArgumentException("Job was not found with id:"+ jobId)
         }
         else suggestedTerm.job = null
         

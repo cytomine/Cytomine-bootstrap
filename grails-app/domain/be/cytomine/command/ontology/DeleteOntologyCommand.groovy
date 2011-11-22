@@ -12,18 +12,15 @@ import be.cytomine.command.UndoRedoCommand
 import be.cytomine.ontology.Ontology
 import grails.converters.JSON
 import be.cytomine.command.DeleteCommand
-import java.util.prefs.BackingStoreException
-import be.cytomine.ontology.RelationTerm
 import be.cytomine.project.Project
-import org.hibernate.exception.ConstraintViolationException
-import java.sql.SQLException
-import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 
 class DeleteOntologyCommand extends DeleteCommand implements UndoRedoCommand {
+
   boolean saveOnUndoRedoStack = true;
+
   def execute() throws CytomineException{
     log.info "Execute"
       Ontology ontology = Ontology.get(json.id)
@@ -38,7 +35,6 @@ class DeleteOntologyCommand extends DeleteCommand implements UndoRedoCommand {
     Ontology ontology = Ontology.createFromData(ontologyData)
     ontology.id = ontologyData.id;
     ontology.save(flush:true)
-    log.error "Ontology errors = " + ontology.errors
     return super.createUndoMessage(ontology,[ontology.id,ontology.name] as Object[]);
   }
 

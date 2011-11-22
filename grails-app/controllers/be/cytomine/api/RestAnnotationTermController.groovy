@@ -8,7 +8,6 @@ import be.cytomine.Exception.CytomineException
 
 class RestAnnotationTermController extends RestController {
 
-    def springSecurityService
     def termService
     def annotationService
     def annotationTermService

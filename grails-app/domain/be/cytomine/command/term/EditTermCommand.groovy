@@ -6,6 +6,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.command.EditCommand
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.ObjectNotFoundException
 
 class EditTermCommand extends EditCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
@@ -13,6 +14,7 @@ class EditTermCommand extends EditCommand implements UndoRedoCommand {
     def execute() throws CytomineException{
         log.info "Execute"
         Term updatedTerm = Term.get(json.id)
+        if(!updatedTerm) throw new ObjectNotFoundException("Term ${json.id} not found")
         return super.validateAndSave(json, updatedTerm, [updatedTerm.id, updatedTerm.name, updatedTerm.ontology?.name] as Object[])
     }
 

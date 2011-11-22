@@ -2,6 +2,7 @@ package be.cytomine.ontology
 
 import grails.converters.JSON
 import be.cytomine.SequenceDomain
+import be.cytomine.Exception.WrongArgumentException
 
 class RelationTerm extends SequenceDomain implements Serializable{
 
@@ -25,9 +26,9 @@ class RelationTerm extends SequenceDomain implements Serializable{
     }
 
     static RelationTerm link(long id,Relation relation,Term term1,Term term2) {
-        if(!relation)  throw new IllegalArgumentException("Relation cannot be null");
-        if(!term1)  throw new IllegalArgumentException("Term 1 cannot be null");
-        if(!term2)  throw new IllegalArgumentException("Term 2 cannot be null");
+        if(!relation)  throw new WrongArgumentException("Relation cannot be null");
+        if(!term1)  throw new WrongArgumentException("Term 1 cannot be null");
+        if(!term2)  throw new WrongArgumentException("Term 2 cannot be null");
 
         println "Link Term " + term1.id + " with Term " + term2.id + " with relation " + relation.id
         def relationTerm = RelationTerm.findWhere('relation': relation,'term1':term1, 'term2':term2)
@@ -41,7 +42,7 @@ class RelationTerm extends SequenceDomain implements Serializable{
             term2.refresh()
             relation.refresh()
             relationTerm.save(flush : true)
-        } else throw new IllegalArgumentException("Term1 " + term1.id + " and " + term2.id + " are already mapped with relation " + relation.id)
+        } else throw new WrongArgumentException("Term1 " + term1.id + " and " + term2.id + " are already mapped with relation " + relation.id)
         return relationTerm
     }
 

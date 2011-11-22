@@ -2,6 +2,7 @@ package be.cytomine.ontology
 
 import grails.converters.JSON
 import be.cytomine.SequenceDomain
+import be.cytomine.Exception.WrongArgumentException
 
 class Relation extends SequenceDomain implements Serializable{
 
@@ -28,7 +29,7 @@ class Relation extends SequenceDomain implements Serializable{
     static Relation getRelationFromData(relation,jsonRelation) {
         if(!jsonRelation.name.toString().equals("null"))
             relation.name = jsonRelation.name
-        else throw new IllegalArgumentException("Relation name cannot be null")
+        else throw new WrongArgumentException("Relation name cannot be null")
         return relation;
     }
 

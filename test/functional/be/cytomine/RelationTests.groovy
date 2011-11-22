@@ -34,7 +34,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
     assert json instanceof JSONArray
   }
 
-  void testListRelationWithoutCredential() {
+ /* void testListRelationWithoutCredential() {
 
     log.info("get relation")
     String URL = Infos.CYTOMINEURL+"api/relation.json"
@@ -102,7 +102,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
     assertEquals(200,code)
 
-    /*log.info("test undo")
+    *//*log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -145,7 +145,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
     code  = client.getResponseCode()
     response = client.getResponseData()
     client.disconnect();
-    assertEquals(200,code) */
+    assertEquals(200,code) *//*
 
   }
 
@@ -209,13 +209,13 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
     def mapNew = ["name":newName]
     def mapOld = ["name":oldName]
 
-    /* Create a Name1 relation */
+    *//* Create a Name1 relation *//*
     log.info("create relation")
     Relation relationToAdd = BasicInstance.createOrGetBasicRelation()
     relationToAdd.name = oldName
     assert (relationToAdd.save(flush:true) != null)
 
-    /* Encode a niew relation Name2*/
+    *//* Encode a niew relation Name2*//*
     Relation relationToEdit = Relation.get(relationToAdd.id)
     def jsonRelation = relationToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonRelation)
@@ -253,7 +253,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
     BasicInstance.compareRelation(mapNew,json)
 
-   /* log.info("test undo")
+   *//* log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL + ".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -315,17 +315,17 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
     assertEquals(200,code)
     json = JSON.parse(response)
-    assert json instanceof JSONObject */
+    assert json instanceof JSONObject *//*
 
   }
 
   void testEditRelationWithBadName() {
 
-    /* Create a Name1 relation */
+    *//* Create a Name1 relation *//*
     log.info("create relation")
     Relation relationToAdd = BasicInstance.createOrGetBasicRelation()
 
-    /* Encode a niew relation Name2*/
+    *//* Encode a niew relation Name2*//*
     Relation relationToEdit = Relation.get(relationToAdd.id)
     def jsonRelation = relationToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonRelation)
@@ -347,14 +347,14 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
   void testEditRelationWithNameAlreadyExist() {
 
-    /* Create a Name1 relation */
+    *//* Create a Name1 relation *//*
     log.info("create relation")
     Relation relationWithOldName = BasicInstance.createOrGetBasicRelation()
     Relation relationWithNewName = BasicInstance.getBasicRelationNotExist()
     relationWithNewName.save(flush:true)
 
 
-    /* Encode a niew relation Name2*/
+    *//* Encode a niew relation Name2*//*
     Relation relationToEdit = Relation.get(relationWithNewName.id)
     log.info("relationToEdit="+relationToEdit)
     def jsonRelation = relationToEdit.encodeAsJSON()
@@ -378,14 +378,14 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
   void testEditRelationNotExist() {
 
-    /* Create a Name1 relation */
+    *//* Create a Name1 relation *//*
     log.info("create relation")
     Relation relationWithOldName = BasicInstance.createOrGetBasicRelation()
     Relation relationWithNewName = BasicInstance.getBasicRelationNotExist()
     relationWithNewName.save(flush:true)
 
 
-    /* Encode a niew relation Name2*/
+    *//* Encode a niew relation Name2*//*
     Relation relationToEdit = Relation.get(relationWithNewName.id)
     log.info("relationToEdit="+relationToEdit)
     def jsonRelation = relationToEdit.encodeAsJSON()
@@ -437,7 +437,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
     assertEquals(404,code)
 
-   /* log.info("test undo")
+   *//* log.info("test undo")
     client = new HttpClient()
     URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -480,7 +480,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
     client.get()
     code  = client.getResponseCode()
     client.disconnect();
-    assertEquals(404,code) */
+    assertEquals(404,code) *//*
 
   }
 
@@ -521,5 +521,5 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
 
   void testAddRelationWithTermsAlreadyExist() {
 
-  }
+  }*/
 }

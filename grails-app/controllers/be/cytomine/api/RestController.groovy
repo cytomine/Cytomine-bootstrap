@@ -19,58 +19,8 @@ class RestController {
   def springSecurityService
   int idUser
 
-  static int SUCCESS_ADD_CODE = 200
-  static int SUCCESS_EDIT_CODE = 200
-  static int SUCCESS_DELETE_CODE = 200
-
   static int NOT_FOUND_CODE = 404
-  static int TOO_LONG_REQUEST = 413
 
-  static User getCurrentUser(idUser) {
-    return User.read(idUser)
-  }
-
-  def processCommand(AddCommand c,JSONElement json)  throws NullPointerException, BackingStoreException, SQLException
-  {
-    processCommand(c,json,SUCCESS_ADD_CODE)
-  }
-
-  def processCommand(EditCommand c, JSONElement json)  throws NullPointerException, BackingStoreException, SQLException
-  {
-    processCommand(c,json,SUCCESS_EDIT_CODE)
-  }
-
-  def processCommand(DeleteCommand c,JSONElement json)   throws NullPointerException, BackingStoreException, SQLException
-  {
-    processCommand(c,json,SUCCESS_DELETE_CODE)
-  }
-
-  def processCommand(Command c, JSONElement json, int successCode)  throws NullPointerException, BackingStoreException, SQLException{
-    def result
-    c.setJson(json)
-    c.postData = json.toString()
-
-    log.debug "c.postData.size()=" + c.postData.size() + " Command.MAXSIZEREQUEST=" + Command.MAXSIZEREQUEST
-    if(c.postData.size()>=Command.MAXSIZEREQUEST) {
-         response.status = TOO_LONG_REQUEST
-        log.error "Request too long: " +  c.postData.size() + "character (max="+ Command.MAXSIZEREQUEST+")"
-         return [object : null , errors : ["Request too long:"+c.postData.size() + "character"]]
-    }
-
-    result = c.execute()
-    if (result.status == successCode) {
-      c.save()
-      CommandHistory ch = new CommandHistory(command:c,prefixAction:"", project: c.project)
-      ch.save();
-      if(c.saveOnUndoRedoStack) {
-        User user = c.user
-        new UndoStackItem(command : c, user: user, transactionInProgress:  user.transactionInProgress, transaction : user.transaction).save(flush:true)
-      }
-    }
-    response.status = result.status
-    log.debug "result.status="+result.status+" result.data=" + result.data
-    return result.data
-  }
   def response(data) {
     withFormat {
       json { render data as JSON }
@@ -171,22 +121,6 @@ class RestController {
                     response.getOutputStream().flush()
                 }
             }
-        }
-    }
-
-    boolean isSuccess() {
-        try {
-        return response.status==SUCCESS_ADD_CODE || response.status==SUCCESS_EDIT_CODE || response.status==SUCCESS_DELETE_CODE;
-        } catch(Exception ex) {
-             return false;
-        }
-    }
-
-    boolean isSuccess(Integer code) {
-        try {
-        return code==SUCCESS_ADD_CODE || code==SUCCESS_EDIT_CODE || code==SUCCESS_DELETE_CODE;
-        } catch(Exception ex) {
-             return false;
         }
     }
 }

@@ -32,7 +32,7 @@ class AbstractImageGroup extends SequenceDomain implements Serializable{
             abstractimage.refresh()
             group.refresh()
             abstractimageGroup.save(flush:true)
-        } else throw new IllegalArgumentException("AbstractImage " + abstractimage.id + " and group " + group.id + " are already mapped")
+        } else throw new WrongArgumentException("AbstractImage " + abstractimage.id + " and group " + group.id + " are already mapped")
         //}
         return abstractimageGroup
     }
@@ -53,7 +53,7 @@ class AbstractImageGroup extends SequenceDomain implements Serializable{
             abstractimage.refresh()
             group.refresh()
             abstractimageGroup.save(flush:true)
-        } else throw new IllegalArgumentException("AbstractImage " + abstractimage.id + " and group " + group.id + " are already mapped")
+        } else throw new WrongArgumentException("AbstractImage " + abstractimage.id + " and group " + group.id + " are already mapped")
         return abstractimageGroup
     }
 

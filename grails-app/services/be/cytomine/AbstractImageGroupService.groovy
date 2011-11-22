@@ -18,12 +18,12 @@ class AbstractImageGroupService {
        AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
     }
 
-    def addAbstractImageGroup(def json) throws CytomineException{
+    def add(def json) throws CytomineException{
         User currentUser = cytomineService.getCurrentUser()
         return commandService.processCommand(new AddAbstractImageGroupCommand(user: currentUser), json)
     }
 
-    def deleteAbstractImageGroup(def json) throws CytomineException{
+    def delete(def json) throws CytomineException{
         User currentUser = cytomineService.getCurrentUser()
         return commandService.processCommand(new DeleteAbstractImageGroupCommand(user: currentUser), json)
     }

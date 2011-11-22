@@ -1,9 +1,7 @@
 package be.cytomine.api
 
-import be.cytomine.api.RestController
 import be.cytomine.project.Slide
 import be.cytomine.security.User
-import grails.orm.PagedResultList
 
 /**
  * Cytomine @ GIGA-ULG
@@ -14,49 +12,39 @@ import grails.orm.PagedResultList
 class RestSlideController extends RestController {
 
     def springSecurityService
+    def userService
+    def slideService
+    def cytomineService
 
     def list = {
-        responseSuccess(Slide.list())
+        responseSuccess(slideService.list())
     }
 
     def listByUser = {
-        def data = [:]
         User user = null
         if (params.id != null) {
-            user = User.read(params.id)
+            user = userService.read(params.id)
         } else {
-            user = getCurrentUser(springSecurityService.principal.id)
+            user = cytomineService.getCurrentUser()
         }
 
+        if (user != null)  {
         String page = params.page
         String limit = params.rows
         String sortedRow = params.sidx
         String sord = params.sord
+        if(page || limit || sortedRow || sord)
+            responseSuccess(slideService.list(user,page,limit,sortedRow,sord))
+        else
+            responseSuccess(slideService.list(user))
 
-        log.info "page=" + page + " limit=" + limit + " sortedRow=" + sortedRow + " sord=" + sord
-
-        if (params.page || params.rows || params.sidx || params.sord) {
-            int pg = Integer.parseInt(page) - 1
-            int max = Integer.parseInt(limit)
-            int offset = pg * max
-
-            PagedResultList results = user.slides(max, offset, sortedRow, sord)
-            data.page = pg + ""
-            data.records = results.totalCount
-            data.total = Math.ceil(results.totalCount / max) + "" //[100/10 => 10 page]
-            data.rows = results.list
         }
-        else {
-            data = user?.slides()
-        }
-
-        if (user != null) responseSuccess(data)
         else responseNotFound("User", params.id)
     }
 
 
     def show = {
-        Slide slide = Slide.read(params.id)
+        Slide slide = slideService.read(params.id)
         if (slide) responseSuccess(slide)
         else responseNotFound("Slide", params.id)
     }

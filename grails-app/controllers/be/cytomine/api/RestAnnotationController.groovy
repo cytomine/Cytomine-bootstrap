@@ -10,30 +10,32 @@ import be.cytomine.Exception.CytomineException
 
 class RestAnnotationController extends RestController {
 
-    def springSecurityService
     def exportService
     def annotationService
     def termService
     def transactionService
+    def imageInstanceService
+    def userService
+    def projectService
 
     def list = {
         responseSuccess(Annotation.list())
     }
 
     def listByImage = {
-        ImageInstance image = ImageInstance.read(params.id)
+        ImageInstance image = imageInstanceService.read(params.id)
         if (image) responseSuccess(Annotation.findAllByImage(image))
         else responseNotFound("Image", params.id)
     }
 
     def listByUser = {
-        User user = User.read(params.id)
+        User user = userService.read(params.id)
         if (user) responseSuccess(Annotation.findAllByUser(user))
         else responseNotFound("User", params.id)
     }
 
     def listByProject = {
-        Project project = Project.read(params.id)
+        Project project = projectService.read(params.id)
         List<User> userList = project.users()
 
         if (params.users) {
@@ -51,8 +53,8 @@ class RestAnnotationController extends RestController {
     }
 
     def listByImageAndUser = {
-        def image = ImageInstance.read(params.idImage)
-        def user = User.read(params.idUser)
+        def image = imageInstanceService.read(params.idImage)
+        def user = userService.read(params.idUser)
 
         if (image && user) responseSuccess(annotationService.list(image,user))
         else if (!user) responseNotFound("User", params.idUser)
@@ -66,8 +68,8 @@ class RestAnnotationController extends RestController {
     }
 
     def listAnnotationByProjectAndTerm = {
-         Term term = Term.read(params.idterm)
-         Project project = Project.read(params.idproject)
+         Term term = termService.read(params.idterm)
+         Project project = projectService.read(params.idproject)
          List<User> userList = project.users()
 
          if (params.users) {
@@ -90,7 +92,7 @@ class RestAnnotationController extends RestController {
 
     def downloadDocumentByProject = {
         // Export service provided by Export plugi
-        Project project = Project.read(params.id)
+        Project project = projectService.read(params.id)
         if (project) {
             if (params?.format && params.format != "html") {
                 def exporterIdentifier = params.format;

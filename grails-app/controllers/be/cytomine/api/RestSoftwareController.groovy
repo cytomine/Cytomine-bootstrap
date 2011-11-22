@@ -5,14 +5,16 @@ import grails.plugins.springsecurity.Secured
 
 class RestSoftwareController extends RestController {
 
+    def softwareService
+
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
-        responseSuccess(Software.list())
+        responseSuccess(softwareService.list())
     }
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
-        Software software = Software.read(params.id)
+        Software software = softwareService.read(params.id)
         if (software) responseSuccess(software)
         else responseNotFound("Software", params.id)
     }

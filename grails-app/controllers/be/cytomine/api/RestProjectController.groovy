@@ -1,27 +1,29 @@
 package be.cytomine.api
 
-import grails.converters.*
 import be.cytomine.project.Project
-import be.cytomine.command.project.AddProjectCommand
 import be.cytomine.security.User
-import be.cytomine.command.project.DeleteProjectCommand
-import be.cytomine.command.project.EditProjectCommand
-import be.cytomine.command.CommandHistory
 import be.cytomine.ontology.Ontology
 import be.cytomine.project.Discipline
+import be.cytomine.Exception.CytomineException
 
 class RestProjectController extends RestController {
 
     def springSecurityService
+    def projectService
+    def userService
+    def disciplineService
+    def ontologyService
+    def cytomineService
+    def transactionService
 
     def list = {
-        responseSuccess(Project.list(sort:"name"))
+        responseSuccess(projectService.list())
     }
 
     def listByOntology = {
         log.info "listByOntology with ontology id:" + params.id
-        Ontology ontology = Ontology.read(params.id);
-        if(ontology != null) responseSuccess(Project.findAllByOntology(ontology))
+        Ontology ontology = ontologyService.read(params.id);
+        if(ontology != null) responseSuccess(projectService.list(ontology))
         else responseNotFound("Project","Ontology",params.id)
     }
 
@@ -31,61 +33,70 @@ class RestProjectController extends RestController {
         if(params.id != null)
             user = User.read(params.id)
         else
-            user = getCurrentUser(springSecurityService.principal.id)
+            user = cytomineService.getCurrentUser()
 
-        if(user) responseSuccess(user.projects())
+        if(user) responseSuccess(projectService.list(user))
         else responseNotFound("User",params.id)
     }
 
     def listByDiscipline = {
         log.info "listByDiscipline with discipline id:" + params.id
-        Discipline discipline = Discipline.read(params.id);
-        if(discipline) responseSuccess(project.findAllByDiscipline(discipline))
+        Discipline discipline = disciplineService.read(params.id);
+        if(discipline) responseSuccess(projectService.list(discipline))
         else responseNotFound("Project","Discipline",params.id)
     }
 
     def show = {
-        Project project = Project.read(params.id)
+        Project project = projectService.read(params.id)
         if(project) responseSuccess(project)
         else responseNotFound("Project", params.id)
     }
 
     def lastAction = {
         log.info "lastAction"
-        Project project = Project.read(params.id)    //need to be filter by project
+        Project project = projectService.read(params.id)    //need to be filter by project
         int max =  Integer.parseInt(params.max);
 
-        if(project) {
-            responseSuccess(CommandHistory.findAllByProject(project,[sort:"created", order:"desc", max:max]))
-        }
+        if(project)
+            responseSuccess(projectService.lastAction(project, max))
         else responseNotFound("Project", params.id)
     }
 
+
     def add = {
-        log.info "Add"
-        def json = request.JSON
-        User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " request:" + json.toString()
-        def result = processCommand(new AddProjectCommand(user: currentUser), json)
-        response(result)
+        try {
+            def result = projectService.add(request.JSON)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.message], e.code)
+        } finally {
+            transactionService.stopIfTransactionInProgress()
+        }
     }
 
     def update = {
-        log.info "Update"
-        def json = request.JSON
-        User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " request:" + request.JSON.toString()
-        def result = processCommand(new EditProjectCommand(user: currentUser), json)
-        response(result)
+        try {
+            def result = projectService.update(request.JSON)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.message], e.code)
+        } finally {
+            transactionService.stopIfTransactionInProgress()
+        }
     }
 
-    def delete =  {
-        log.info "Delete"
-        def json = JSON.parse("{id : $params.id}")
-        User currentUser = getCurrentUser(springSecurityService.principal.id)
-        log.info "User:" + currentUser.username + " params.id=" + params.id
-        def result = processCommand(new DeleteProjectCommand(user: currentUser), json)
-        response(result)
+    def delete = {
+        try {
+            def result = projectService.delete(params.id)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.message], e.code)
+        } finally {
+            transactionService.stopIfTransactionInProgress()
+        }
     }
 }
 

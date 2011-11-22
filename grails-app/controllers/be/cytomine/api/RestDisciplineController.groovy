@@ -1,7 +1,6 @@
 package be.cytomine.api
 
 import be.cytomine.project.Discipline
-
 import be.cytomine.Exception.CytomineException
 
 class RestDisciplineController extends RestController {

@@ -8,36 +8,53 @@ import be.cytomine.command.Command
 import grails.converters.JSON
 import be.cytomine.command.usergroup.AddUserGroupCommand
 import be.cytomine.command.usergroup.DeleteUserGroupCommand
+import be.cytomine.Exception.CytomineException
 
 class RestUserGroupController extends RestController {
 
+    def userGroupService
+    def userService
+    def groupService
+    def transactionService
+
+    def cytomineService
+
     @Secured(['ROLE_ADMIN'])
     def list = {
-        User user = User.read(params.user);
-        responseSuccess(UserGroup.findAllByUser(user))
+        User user = userService.read(params.user);
+        responseSuccess(userGroupService.list(user))
     }
 
  	@Secured(['ROLE_ADMIN'])
     def show = {
-		User user = User.read(params.user);
-		Group group = Group.read(params.group);
-        UserGroup userGroup = UserGroup.findByUserAndGroup(user, group)
+		User user = userService.read(params.user);
+		Group group = groupService.read(params.group);
+        UserGroup userGroup = userGroupService.get(user, group)
         if (!userGroup) responseNotFound("UserGroup", params.user)
-        responseSuccess(userGroup)
+        else responseSuccess(userGroup)
     }
 
-    @Secured(['ROLE_ADMIN'])
-    def save = {
-        User currentUser = getCurrentUser(springSecurityService.principal.id)
-        def result = processCommand( new AddUserGroupCommand(user: currentUser), request.JSON)
-        response(result)
+    def add = {
+        try {
+            def result = userService.add(request.JSON)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.message], e.code)
+        } finally {
+            transactionService.stopIfTransactionInProgress()
+        }
     }
 
-    @Secured(['ROLE_ADMIN'])
     def delete = {
-        User currentUser = getCurrentUser(springSecurityService.principal.id)
-        def json = JSON.parse("{user: $params.user, group : $params.group}")
-        def result = processCommand(new DeleteUserGroupCommand(postData: postData.toString(), user: currentUser), json)
-        response(result)
+        try {
+            def result = userService.delete(params.id)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.message], e.code)
+        } finally {
+            transactionService.stopIfTransactionInProgress()
+        }
     }
 }

@@ -6,23 +6,28 @@ import be.cytomine.processing.ImageFilter
 
 class RestImageFilterProjectController extends RestController {
 
+    def imageFilterService
+    def imageFilterProjectService
+    def projectService
+
+
     def list = {
-        def imagesFiltersProject = ImageFilterProject.findAllByProject(Project.read(params.project))
-        if(imagesFiltersProject!=null) responseSuccess(imagesFiltersProject.collect { it.imageFilter })
+        def imagesFiltersProject = imageFilterProjectService.list(Project.read(params.project))
+        if(imagesFiltersProject) responseSuccess(imagesFiltersProject.collect { it.imageFilter })
         else responseNotFound("ImageFilter","ImageFilter",params.project)
     }
 
     def add = {
-        Project project = Project.read(request.JSON.project)
-        ImageFilter imageFilter = ImageFilter.read(request.JSON.imageFilter)
-        ImageFilterProject.link(imageFilter,project)
-        responseSuccess(ImageFilterProject.findByImageFilterAndProject(imageFilter, project).imageFilter)
+        Project project = projectService.read(request.JSON.project)
+        ImageFilter imageFilter = imageFilterService.read(request.JSON.imageFilter)
+        imageFilterProjectService.add(project,imageFilter)
+        responseSuccess(imageFilterProjectService.get(project,imageFilter).imageFilter)
     }
 
     def delete = {
-        Project project = Project.read(params.project)
-        ImageFilter imageFilter = ImageFilter.read(params.imageFilter)
-        ImageFilterProject.unlink(imageFilter,project)
+        Project project = projectService.read(params.project)
+        ImageFilter imageFilter = imageFilterService.read(params.imageFilter)
+        imageFilterProjectService.delete(project,imageFilter)
         responseSuccess([])
     }
 

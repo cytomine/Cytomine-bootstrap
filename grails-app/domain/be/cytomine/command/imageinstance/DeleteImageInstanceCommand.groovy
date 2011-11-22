@@ -10,50 +10,42 @@ package be.cytomine.command.imageinstance
 
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.UndoRedoCommand
-
 import grails.converters.JSON
 import be.cytomine.image.ImageInstance
-
 import java.util.prefs.BackingStoreException
+import be.cytomine.Exception.ObjectNotFoundException
 
-class DeleteImageInstanceCommand extends DeleteCommand implements UndoRedoCommand{
-  boolean saveOnUndoRedoStack = true;
-  def execute() {
-    log.info "Execute"
-    try {
-      def postData = JSON.parse(postData)
-      ImageInstance image = ImageInstance.findById(postData.id)
-      super.changeCurrentProject(image.project)
-      return super.deleteAndCreateDeleteMessage(postData.id, image, [image.id, image?.baseImage?.filename,image.project.name] as Object[])
-    } catch (NullPointerException e) {
-      log.error(e)
-      return [data: [success: false, errors: e.getMessage()], status: 404]
-    } catch (BackingStoreException e) {
-      log.error(e)
-      return [data: [success: false, errors: e.getMessage()], status: 400]
+class DeleteImageInstanceCommand extends DeleteCommand implements UndoRedoCommand {
+    boolean saveOnUndoRedoStack = true;
+
+    def execute() {
+        log.info "Execute" + json
+        ImageInstance image = ImageInstance.get(json.id)
+        if (!image) throw new ObjectNotFoundException("Image instance $json.id not found!")
+        super.changeCurrentProject(image.project)
+        return super.deleteAndCreateDeleteMessage(json.id, image, [image.id, image?.baseImage?.filename, image.project.name] as Object[])
     }
-  }
 
-  def undo() {
-    log.info("Undo")
-    def imageData = JSON.parse(data)
-    ImageInstance image = ImageInstance.createFromData(imageData)
-    image.id = imageData.id;
-    image.save(flush: true)
-    log.error "Image errors = " + image.errors
-    return super.createUndoMessage(image,[image.id, image?.baseImage,image?.project?.name] as Object[]);
-  }
+    def undo() {
+        log.info("Undo")
+        def imageData = JSON.parse(data)
+        ImageInstance image = ImageInstance.createFromData(imageData)
+        image.id = imageData.id;
+        image.save(flush: true)
+        log.error "Image errors = " + image.errors
+        return super.createUndoMessage(image, [image.id, image?.baseImage, image?.project?.name] as Object[]);
+    }
 
 
-  def redo() {
-    log.info("Redo")
-    def postData = JSON.parse(postData)
-    ImageInstance image = ImageInstance.findById(postData.id)
-    String id = image.id
-    String filename = image?.baseImage?.filename
-    String projectname = image.project.name
-    image.delete(flush:true);
-    return super.createRedoMessage(id,image,[id, filename,projectname] as Object[]);
-  }
+    def redo() {
+        log.info("Redo")
+        def postData = JSON.parse(postData)
+        ImageInstance image = ImageInstance.findById(postData.id)
+        String id = image.id
+        String filename = image?.baseImage?.filename
+        String projectname = image.project.name
+        image.delete(flush: true);
+        return super.createRedoMessage(id, image, [id, filename, projectname] as Object[]);
+    }
 
 }

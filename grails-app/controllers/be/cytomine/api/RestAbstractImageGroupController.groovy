@@ -7,15 +7,15 @@ import be.cytomine.Exception.CytomineException
 
 class RestAbstractImageGroupController extends RestController {
 
-    def springSecurityService
     def abstractImageService
     def abstractImageGroupService
     def transactionService
+    def groupService
 
     def show = {
         AbstractImage abstractimage = abstractImageService.read(params.idabstractimage)
-        Group group = Group.read(params.idgroup)
-        if (abstractimage != null && group != null) {
+        Group group = groupService.read(params.idgroup)
+        if (abstractimage && group) {
             def abstractimageGroup =  abstractImageGroupService.get(abstractimage,group)
             if(abstractimageGroup) responseSuccess(abstractimageGroup)
             else responseNotFound("AbstractImageGroup", "Group", "AbstractImage", params.idgroup, params.idabstractimage)
@@ -25,7 +25,7 @@ class RestAbstractImageGroupController extends RestController {
 
     def add = {
         try {
-            def result = abstractImageGroupService.addAbstractImageGroup(request.JSON)
+            def result = abstractImageGroupService.add(request.JSON)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -38,7 +38,7 @@ class RestAbstractImageGroupController extends RestController {
     def delete = {
         try {
             def json = JSON.parse("{abstractimage: $params.idabstractimage, group: $params.idgroup}")
-            def result = abstractImageGroupService.deleteAbstractImageGroup(json)
+            def result = abstractImageGroupService.delete(json)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)

@@ -12,10 +12,10 @@ import be.cytomine.command.UndoRedoCommand
 import grails.converters.JSON
 import be.cytomine.ontology.Ontology
 import be.cytomine.command.AddCommand
-import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 import be.cytomine.Exception.CytomineException
 
 class AddOntologyCommand extends AddCommand implements UndoRedoCommand {
+
     boolean saveOnUndoRedoStack = true;
 
     def execute() throws CytomineException {

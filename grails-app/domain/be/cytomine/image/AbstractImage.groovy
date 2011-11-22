@@ -114,7 +114,7 @@ class AbstractImage extends SequenceDomain {
             try { image.roi = new WKTReader().read(roi)}
             catch(com.vividsolutions.jts.io.ParseException e)
             {
-                throw new IllegalArgumentException("Bad Geometry:"+ e.getMessage())
+                throw new WrongArgumentException("Bad Geometry:"+ e.getMessage())
             }
 
         }

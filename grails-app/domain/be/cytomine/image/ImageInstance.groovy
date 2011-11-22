@@ -6,6 +6,7 @@ import be.cytomine.SequenceDomain
 import be.cytomine.ontology.Annotation
 import be.cytomine.api.UrlApi
 import be.cytomine.project.Slide
+import be.cytomine.Exception.WrongArgumentException
 
 /**
  * Created by IntelliJ IDEA.
@@ -61,7 +62,7 @@ class ImageInstance extends SequenceDomain {
         println "userId="+userId
         if(!userId.equals("null")) {
             image.user = User.get(Long.parseLong(userId))
-            if(image.user==null) throw new IllegalArgumentException("User was not found with id:"+userId)
+            if(image.user==null) throw new WrongArgumentException("User was not found with id:"+userId)
         }
         else image.user = null
 
@@ -69,7 +70,7 @@ class ImageInstance extends SequenceDomain {
         println "baseImageId="+baseImageId
         if(!baseImageId.equals("null")) {
             image.baseImage = AbstractImage.get(Long.parseLong(baseImageId))
-            if(image.baseImage==null) throw new IllegalArgumentException("BaseImage was not found with id:"+baseImageId)
+            if(image.baseImage==null) throw new WrongArgumentException("BaseImage was not found with id:"+baseImageId)
         }
         else image.baseImage = null
 
@@ -78,7 +79,7 @@ class ImageInstance extends SequenceDomain {
         println "projectId="+projectId
         if(!projectId.equals("null")) {
             image.project = Project.get(Long.parseLong(projectId))
-            if(image.project==null) throw new IllegalArgumentException("Project was not found with id:"+projectId)
+            if(image.project==null) throw new WrongArgumentException("Project was not found with id:"+projectId)
         }
         else image.project = null
 
@@ -86,7 +87,7 @@ class ImageInstance extends SequenceDomain {
          println "slideId="+slideId
         if(!slideId.equals("null")) {
             image.slide = Slide.get(Long.parseLong(slideId))
-            if(image.slide==null) throw new IllegalArgumentException("Slide was not found with id:"+slideId)
+            if(image.slide==null) throw new WrongArgumentException("Slide was not found with id:"+slideId)
         }
         else image.slide = null
 

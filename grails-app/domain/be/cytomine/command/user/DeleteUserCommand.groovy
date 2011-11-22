@@ -7,28 +7,15 @@ import be.cytomine.command.UndoRedoCommand
 import be.cytomine.command.DeleteCommand
 import java.util.prefs.BackingStoreException
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.ObjectNotFoundException
 
 class DeleteUserCommand extends DeleteCommand implements UndoRedoCommand {
 
   def execute() {
-    log.info("Execute")
-
-    try {
-      def postData = JSON.parse(postData)
-      User user = User.findById(postData.id)
-      return super.deleteAndCreateDeleteMessage(postData.id,user,[user.id,user.username] as Object[])
-    } catch(NullPointerException e) {
-      log.error(e)
-      return [data : [success : false, errors : e.getMessage()], status : 404]
-    } catch(BackingStoreException e) {
-      log.error(e)
-      return [data : [success : false, errors : e.getMessage()], status : 400]
-    } catch(CytomineException ex){
-      return [data : [image:null,errors:["Cannot save image:"+ex.toString()]], status : 400]
-    }
+      User user = User.findById(json.id)
+      if(!user) throw new ObjectNotFoundException("User $json.id was not found")
+      return super.deleteAndCreateDeleteMessage(json.id,user,[user.id,user.username] as Object[])
   }
-
-
 
   def undo() {
     log.info("Undo")
@@ -36,7 +23,6 @@ class DeleteUserCommand extends DeleteCommand implements UndoRedoCommand {
     User user = User.createFromData(userData)
     user.id = userData.id
     user.save(flush:true)
-    log.error "User errors = " + user.errors
     return super.createUndoMessage(user,[user.id,user.username] as Object[]);
   }
 

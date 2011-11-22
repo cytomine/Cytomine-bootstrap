@@ -5,12 +5,12 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.security.User
 import be.cytomine.Exception.CytomineException
 
-
 class RestOntologyController extends RestController {
 
     def springSecurityService
     def transactionService
     def ontologyService
+    def cytomineService
 
     def list = {
         responseSuccess(ontologyService.list())
@@ -27,13 +27,13 @@ class RestOntologyController extends RestController {
     }
 
     def listByUserLight = {
-        User user = getCurrentUser(springSecurityService.principal.id)
+        User user = cytomineService.getCurrentUser()
         if (user) responseSuccess(ontologyService.listByUserLight(user))
         else responseNotFound("User", springSecurityService.principal.id)
     }
     def listByUser = {
-        User user = getCurrentUser(springSecurityService.principal.id)
-        if (user) responseSuccess(ontologyService.listByUserLight(user))
+        User user = cytomineService.getCurrentUser()
+        if (user) responseSuccess(ontologyService.listByUser(user))
         else responseNotFound("User", springSecurityService.principal.id)
     }
 

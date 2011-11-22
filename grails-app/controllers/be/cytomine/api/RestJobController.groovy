@@ -8,14 +8,16 @@ import be.cytomine.command.job.AddJobCommand
 
 class RestJobController extends RestController {
 
+    def jobService
+
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
-        responseSuccess(Job.list())
+        jobService.list()
     }
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
-        Job job = Job.read(params.id)
+        Job job = jobService.read(params.id)
         if (job) responseSuccess(job)
         else responseNotFound("Job", params.id)
     }
@@ -23,9 +25,7 @@ class RestJobController extends RestController {
     @Secured(['ROLE_ADMIN'])
     def save = {
         def json = request.JSON
-        User currentUser = getCurrentUser(springSecurityService.principal.id)
-        def result = processCommand(new AddJobCommand(user: currentUser), json)
-        response(result)
+        response(jobService.add(json))
     }
 
 }

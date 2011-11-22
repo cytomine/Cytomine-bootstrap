@@ -2,43 +2,57 @@ package be.cytomine.api
 
 import grails.plugins.springsecurity.Secured
 import be.cytomine.security.SecUserSecRole
-import be.cytomine.command.Command
 import be.cytomine.security.User
-import be.cytomine.command.secusersecrole.AddSecUserSecRoleCommand
-import be.cytomine.command.secusersecrole.DeleteSecUserSecRoleCommand
 import grails.converters.JSON
 import be.cytomine.security.SecRole
+import be.cytomine.Exception.CytomineException
 
 class RestSecUserSecRoleController extends RestController {
 
+    def userService
+    def secRoleService
+    def secUserSecRoleService
+    def cytomineService
+    def transactionService
+
     @Secured(['ROLE_ADMIN'])
     def list = {
-        User user = User.read(params.user);
-        responseSuccess(SecUserSecRole.findAllBySecUser(user))
+        User user = userService.read(params.user);
+        responseSuccess(secUserSecRoleService.list(user))
     }
 
     @Secured(['ROLE_ADMIN'])
     def show = {
-        User user = User.read(params.user);
-        SecRole role = SecRole.read(params.role);
-        SecUserSecRole secUserSecRole = SecUserSecRole.findBySecUserAndSecRole(user, role)
+        User user = userService.read(params.user);
+        SecRole role = secRoleService.read(params.role);
+        SecUserSecRole secUserSecRole = secUserSecRoleService.get(user, role)
         if (!secUserSecRole) responseNotFound("SecUserSecRole", params.user)
         responseSuccess(secUserSecRole)
     }
 
     @Secured(['ROLE_ADMIN'])
     def save = {
-        User currentUser = getCurrentUser(springSecurityService.principal.id)
-        def result = processCommand(new AddSecUserSecRoleCommand(user: currentUser), request.JSON)
-        response(result)
+        try {
+            def result = secUserSecRoleService.add(request.JSON)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.message], e.code)
+        } finally {
+            transactionService.stopIfTransactionInProgress()
+        }
     }
-
     @Secured(['ROLE_ADMIN'])
     def delete = {
-        User currentUser = getCurrentUser(springSecurityService.principal.id)
-        def json = JSON.parse("{user: $params.user, role: $params.role}")
-        def result = processCommand(new DeleteSecUserSecRoleCommand(user: currentUser), json)
-        response(result)
+        try {
+            def result = secUserSecRoleService.delete(params.user,params.role)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.message], e.code)
+        } finally {
+            transactionService.stopIfTransactionInProgress()
+        }
     }
 
     @Secured(['ROLE_ADMIN'])
@@ -48,9 +62,8 @@ class RestSecUserSecRoleController extends RestController {
         def maxRows = 50//params.row ? Integer.valueOf(params.rows) : 20
         def currentPage = params.page ? Integer.valueOf(params.page) : 1
         def rowOffset = currentPage == 1 ? 0 : (currentPage - 1) * maxRows
-        def secRoles = SecUserSecRole.createCriteria().list(max: maxRows, offset: rowOffset) {
-            order(sortIndex, sortOrder).ignoreCase()
-        }
+
+        def secRoles = secUserSecRoleService.list(sortIndex,sortOrder,maxRows,currentPage,rowOffset)
 
         def totalRows = secRoles.totalCount
         def numberOfPages = Math.ceil(totalRows / maxRows)

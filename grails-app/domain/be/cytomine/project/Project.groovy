@@ -13,6 +13,7 @@ import be.cytomine.command.Command
 import be.cytomine.processing.Software
 import be.cytomine.processing.SoftwareProjects
 import be.cytomine.processing.ImageFilterProject
+import be.cytomine.Exception.WrongArgumentException
 
 class Project extends SequenceDomain {
 
@@ -110,7 +111,7 @@ class Project extends SequenceDomain {
         String name = jsonProject.name.toString()
         if(!name.equals("null"))
             project.name = jsonProject.name.toUpperCase()
-        else throw new IllegalArgumentException("Project name cannot be null")
+        else throw new WrongArgumentException("Project name cannot be null")
 
         if (jsonProject.ontology)
             project.ontology = Ontology.read(jsonProject.ontology)

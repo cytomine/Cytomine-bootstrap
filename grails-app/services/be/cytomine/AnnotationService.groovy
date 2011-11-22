@@ -27,6 +27,8 @@ class AnnotationService {
     def commandService
     def transactionService
     def annotationTermService
+    def retrievalService
+    def suggestedTermService
 
     def list() {
         Annotation.list()
@@ -138,7 +140,7 @@ class AnnotationService {
         transactionService.stop()
 
         //add annotation on the retrieval
-        try {if (id) indexRetrievalAnnotation(id) } catch (Exception e) { log.error "Cannot index in retrieval:" + e.toString()}
+        try {if (annotation) indexRetrievalAnnotation(annotation) } catch (Exception e) { log.error "Cannot index in retrieval:" + e.toString()}
 
         return result
     }
@@ -187,7 +189,7 @@ class AnnotationService {
            annotationTermService.deleteAnnotationTermFromAllUser(annotation,currentUser)
 
             //Delete Suggested-Term before deleting Annotation
-            new RestSuggestedTermController().deleteSuggestedTermFromAllUser(annotation,currentUser)
+            suggestedTermService.deleteSuggestedTermFromAllUser(annotation,currentUser)
         }
         //Delete annotation
         def json = JSON.parse("{id: $idAnnotation}")
@@ -202,7 +204,7 @@ class AnnotationService {
         log.info "annotation.id=" + id + " stevben-server=" + retrieval
         if (id && retrieval) {
             log.info "index annotation " + id + " on  " + retrieval.url
-            RestRetrievalController.indexAnnotationSynchronous(Annotation.read(id))
+            retrievalService.indexAnnotationSynchronous(Annotation.read(id))
         }
     }
 
@@ -211,7 +213,7 @@ class AnnotationService {
         log.info "annotation.id=" + id + " retrieval-server=" + retrieval
         if (id && retrieval) {
             log.info "delete annotation " + id + " on  " + retrieval.url
-            RestRetrievalController.deleteAnnotationSynchronous(id)
+            retrievalService.deleteAnnotationSynchronous(id)
         }
     }
 
@@ -220,7 +222,7 @@ class AnnotationService {
         log.info "annotation.id=" + id + " retrieval-server=" + retrieval
         if (id && retrieval) {
             log.info "update annotation " + id + " on  " + retrieval.url
-            RestRetrievalController.updateAnnotationSynchronous(id)
+            retrievalService.updateAnnotationSynchronous(id)
         }
     }
 

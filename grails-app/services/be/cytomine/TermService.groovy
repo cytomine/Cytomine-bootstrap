@@ -1,17 +1,9 @@
 package be.cytomine
 
 import be.cytomine.security.User
-import java.util.prefs.BackingStoreException
-import java.sql.SQLException
 import be.cytomine.ontology.Term
-import be.cytomine.api.RestAnnotationTermController
-import be.cytomine.api.RestSuggestedTermController
-import be.cytomine.api.RestRelationTermController
 import be.cytomine.command.term.DeleteTermCommand
 import grails.converters.JSON
-import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.Exception.InvalidRequestException
-import be.cytomine.Exception.ConstraintException
 import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import be.cytomine.image.ImageInstance
@@ -29,6 +21,8 @@ class TermService {
     def commandService
     def cytomineService
     def annotationTermService
+    def suggestedTermService
+    def relationTermService
 
     def list() {
         return Term.list()
@@ -58,9 +52,6 @@ class TermService {
     def list(Annotation annotation, User user) {
         return AnnotationTerm.findAllByUserAndAnnotation(user, annotation).collect {it.term.id}
     }
-
-
-
 
     def statProject(Term term) {
         log.debug "term=" + term.name
@@ -98,17 +89,17 @@ class TermService {
         list
     }
 
-    def addTerm(def json) throws CytomineException{
+    def add(def json) throws CytomineException{
         User currentUser = cytomineService.getCurrentUser()
         return commandService.processCommand(new AddTermCommand(user: currentUser), json)
     }
 
-    def updateTerm(def json) throws CytomineException{
+    def update(def json) throws CytomineException{
         User currentUser = cytomineService.getCurrentUser()
         return commandService.processCommand(new EditTermCommand(user: currentUser), json)
     }
 
-    def deleteTerm(def id) throws CytomineException{
+    def delete(def id) throws CytomineException{
         User currentUser = cytomineService.getCurrentUser()
         return deleteTerm(id, currentUser)
     }
@@ -125,10 +116,10 @@ class TermService {
             annotationTermService.deleteAnnotationTermFromAllUser(term, currentUser)
 
             //Delete Suggested-Term before deleting Term
-            new RestSuggestedTermController().deleteSuggestedTermFromAllUser(term, currentUser)
+            suggestedTermService.deleteSuggestedTermFromAllUser(term, currentUser)
 
             //Delete relation-Term before deleting Term
-            new RestRelationTermController().deleteRelationTermFromTerm(term, currentUser)
+            relationTermService.deleteRelationTermFromTerm(term, currentUser)
         }
         //Delete term
         def json = JSON.parse("{id : $idTerm}")
@@ -141,7 +132,7 @@ class TermService {
         Term term = Term.read(idTerm)
         if (term) {
             //Delete relation-Term before deleting Term
-            new RestRelationTermController().deleteRelationTermFromTerm(term, currentUser)
+            relationTermService.deleteRelationTermFromTerm(term, currentUser)
         }
         //Delete term
         def json = JSON.parse("{id : $idTerm}")

@@ -14,6 +14,7 @@ class RestImageController extends RestController {
     def imagePropertiesService
     def storageService
     def abstractImageService
+    def cytomineService
 
     def index = {
         redirect(controller: "image")
@@ -24,9 +25,9 @@ class RestImageController extends RestController {
 
     def listByUser = {
         User user = null
-        if (params.id != null)
-            user = User.read(params.id)
-        else user = getCurrentUser(springSecurityService.principal.id)
+        if (params.id != null) user = User.read(params.id)
+        else user = cytomineService.getCurrentUser()
+
         if (user != null) responseSuccess(abstractImageService.list(user, params.page, params.rows, params.sidx, params.sord, params.filename, params.createdstart, params.createdstop))
         else responseNotFound("User", params.id)
     }
@@ -111,7 +112,7 @@ class RestImageController extends RestController {
 
 
     def imageservers = {
-        AbstractImage image = AbstractImage.read(params.id)
+        AbstractImage image = abstractImageService.read(params.id)
         def urls = image.getImageServers().collect { it.getZoomifyUrl() + image.getPath() + "/" }
         def result = [:]
         result.imageServersURLs = urls

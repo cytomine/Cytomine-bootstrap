@@ -18,7 +18,11 @@ class RequestFilters {
       before = {
           request.currentTime = System.currentTimeMillis()
           String strParam =""
-          params.each{ strParam = strParam +"<" + it.key +':'+ it.value +'>; ' }
+          params.each{
+              if(!it.key.equals('action') && !it.key.equals('controller')) {
+              strParam = strParam +"<" + it.key +':'+ it.value +'>; '
+              }
+          }
           String strPost = ""
           try {strPost = request.JSON } catch(Exception e) {}
           String requestInfo = "| PARAM="+strParam + "| POST=" + strPost + " | "
