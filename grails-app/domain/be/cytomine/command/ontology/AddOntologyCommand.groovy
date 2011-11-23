@@ -19,10 +19,17 @@ class AddOntologyCommand extends AddCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
     def execute() throws CytomineException {
-        log.info("Execute")
         json.user = user.id
-        Ontology newOntology = Ontology.createFromData(json)
-        return super.validateAndSave(newOntology, ["#ID#", json.name] as Object[])
+        //Init new domain object
+        Ontology domain = Ontology.createFromData(json)
+        //Validate and save domain
+        domainService.saveDomain(domain)
+        //Build response message
+        String message = createMessage(domain, [domain.id, domain.name])
+        //Init command info
+        fillCommandInfo(domain,message)
+        //Create and return response
+        return responseService.createResponseMessage(domain,message,printMessage)
     }
 
     def undo() {

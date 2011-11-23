@@ -9,6 +9,7 @@ import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
+import be.cytomine.Exception.WrongArgumentException
 
 class Annotation extends SequenceDomain implements Serializable {
 
@@ -214,6 +215,7 @@ class Annotation extends SequenceDomain implements Serializable {
      * @return annotation with json attributes
      */
     static Annotation getFromData(annotation, jsonAnnotation) {
+        try {
         annotation.name = jsonAnnotation.name
         annotation.location = new WKTReader().read(jsonAnnotation.location);
         //annotation.location = DouglasPeuckerSimplifier.simplify(annotation.location,50)
@@ -223,7 +225,9 @@ class Annotation extends SequenceDomain implements Serializable {
         annotation.user = User.get(jsonAnnotation.user);
         annotation.created = (!jsonAnnotation.created.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.created)) : null
         annotation.updated = (!jsonAnnotation.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.updated)) : null
-
+             } catch (com.vividsolutions.jts.io.ParseException ex) {
+            throw new WrongArgumentException(ex.toString())
+        }
         return annotation;
     }
 

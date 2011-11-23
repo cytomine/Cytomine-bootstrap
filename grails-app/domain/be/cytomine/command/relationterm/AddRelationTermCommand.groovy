@@ -13,10 +13,16 @@ class AddRelationTermCommand extends AddCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
     def execute() {
-        RelationTerm newRelationTerm = RelationTerm.createFromData(json)
-        newRelationTerm = RelationTerm.link(newRelationTerm.relation, newRelationTerm.term1, newRelationTerm.term2)
-        if (!newRelationTerm) throw new ObjectNotFoundException("RelationTerm $newRelationTerm.relation - ($newRelationTerm.term1#$newRelationTerm.term2) not found")
-        return super.validateWithoutSave(newRelationTerm, ["#ID#", newRelationTerm.relation.name, newRelationTerm.term1.name, newRelationTerm.term2.name] as Object[])
+        //Init new domain object
+        RelationTerm newRelation = RelationTerm.createFromData(json)
+        //Link relation domain
+        newRelation = RelationTerm.link(newRelation.relation, newRelation.term1, newRelation.term2)
+        //Build response message
+        String message = createMessage(newRelation,[newRelation.id, newRelation.relation.name, newRelation.term1.name, newRelation.term2.name])
+        //Init command info
+        fillCommandInfo(newRelation,message)
+        //Create and return response
+        return responseService.createResponseMessage(newRelation,message,printMessage)
     }
 
     def undo() {

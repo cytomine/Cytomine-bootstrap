@@ -16,12 +16,19 @@ class AddDisciplineCommand extends AddCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
     def execute() {
-        Discipline newDiscipline = Discipline.createFromData(json)
-        return super.validateAndSave(newDiscipline, ["#ID#", json.name] as Object[])
+        //Init new domain object
+        Discipline domain = Discipline.createFromData(json)
+        //Validate and save domain
+        domainService.saveDomain(domain)
+        //Build response message
+        String message = createMessage(domain, [domain.id, domain.name])
+        //Init command info
+        fillCommandInfo(domain,message)
+        //Create and return response
+        return responseService.createResponseMessage(domain,message,printMessage)
     }
 
     def undo() {
-        log.info("Undo")
         def disciplineData = JSON.parse(data)
         Discipline discipline = Discipline.get(disciplineData.id)
         discipline.delete(flush: true)
@@ -30,7 +37,6 @@ class AddDisciplineCommand extends AddCommand implements UndoRedoCommand {
     }
 
     def redo() {
-        log.info("Undo")
         def disciplineData = JSON.parse(data)
         def discipline = Discipline.createFromData(disciplineData)
         discipline.id = disciplineData.id

@@ -8,8 +8,16 @@ import grails.converters.JSON
 class AddProjectCommand extends AddCommand implements UndoRedoCommand {
 
     def execute() {
-        Project newProject = Project.createFromData(json)
-        return super.validateAndSave(newProject, ["#ID#", newProject.name] as Object[])
+        //Init new domain object
+        Project domain = Project.createFromData(json)
+        //Validate and save domain
+        domainService.saveDomain(domain)
+        //Build response message
+        String message = createMessage(domain, [domain.id, domain.name])
+        //Init command info
+        fillCommandInfo(domain,message)
+        //Create and return response
+        return responseService.createResponseMessage(domain,message,printMessage)
     }
 
     def undo() {

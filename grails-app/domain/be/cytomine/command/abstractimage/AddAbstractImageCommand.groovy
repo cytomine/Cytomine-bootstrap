@@ -16,12 +16,19 @@ class AddAbstractImageCommand extends AddCommand implements UndoRedoCommand {
 
     def execute() throws CytomineException {
         json.user = user.id
+        //Init new domain object
         AbstractImage newImage = AbstractImage.createFromData(json)
-        return super.validateAndSave(newImage, ["#ID#", json.name] as Object[])
+        //Validate and save domain
+        domainService.saveDomain(newImage)
+        //Build response message
+        String message = createMessage(newImage, [newImage.id, newImage.filename])
+        //Init command info
+        fillCommandInfo(newImage,message)
+        //Create and return response
+        return responseService.createResponseMessage(newImage,message,printMessage)
     }
 
     def undo() {
-        log.info("Undo")
         def imageData = JSON.parse(data)
         AbstractImage image = AbstractImage.get(imageData.id)
         image.delete(flush: true)
@@ -30,7 +37,6 @@ class AddAbstractImageCommand extends AddCommand implements UndoRedoCommand {
     }
 
     def redo() {
-        log.info("Redo")
         def imageData = JSON.parse(data)
         AbstractImage image = AbstractImage.createFromData(imageData)
         image.id = imageData.id

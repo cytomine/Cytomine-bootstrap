@@ -7,7 +7,15 @@ import be.cytomine.processing.Job
 class AddJobCommand extends AddCommand implements SimpleCommand {
 
     def execute() {
-        Job job = Job.createFromData(json)
-        return super.validateAndSave(job, ["#ID#", job] as Object[])
+        //Init new domain object
+        Job domain = Job.createFromData(json)
+        //Validate and save domain
+        domainService.saveDomain(domain)
+        //Build response message
+        String message = createMessage(domain, [domain.id, Job])
+        //Init command info
+        fillCommandInfo(domain,message)
+        //Create and return response
+        return responseService.createResponseMessage(domain,message,printMessage)
     }
 }

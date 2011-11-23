@@ -13,10 +13,17 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
 
     def execute() {
         json.user = user.id
-        AnnotationTerm newAnnotationTerm = AnnotationTerm.createAnnotationTermFromData(json)
-        AnnotationTerm.link(newAnnotationTerm.annotation, newAnnotationTerm.term, newAnnotationTerm.user)
-        super.changeCurrentProject(newAnnotationTerm.annotation.image.project)
-        return super.validateWithoutSave(newAnnotationTerm, ["#ID#", newAnnotationTerm.annotation.id, newAnnotationTerm.term.name, newAnnotationTerm.user?.username] as Object[])
+        //Init new domain object
+        AnnotationTerm newRelation = AnnotationTerm.createFromData(json)
+        //Link relation domain
+        newRelation = AnnotationTerm.link(newRelation.annotation, newRelation.term, newRelation.user)
+        //Build response message
+        String message = createMessage(newRelation,[newRelation.id, newRelation.annotation.id, newRelation.term.name, newRelation.user?.username])
+        //Init command info
+        fillCommandInfo(newRelation,message)
+        //Create and return response
+        super.initCurrentCommantProject(newRelation.annotation.image.project)
+        return responseService.createResponseMessage(newRelation,message,printMessage)
     }
 
     def undo() {
@@ -49,7 +56,7 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
         def term = Term.get(annotationTermData.term)
         def user = be.cytomine.security.User.get(annotationTermData.user)
 
-        def annotationTerm = AnnotationTerm.createAnnotationTermFromData(annotationTermData)
+        def annotationTerm = AnnotationTerm.createFromData(annotationTermData)
 
         AnnotationTerm.link(annotation, term, user)
 

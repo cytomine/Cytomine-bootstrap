@@ -9,6 +9,8 @@ import org.codehaus.groovy.grails.web.json.JSONElement
 class Command extends SequenceDomain {
 
     def messageSource
+    def domainService
+    def responseService
 
     String data
     String postData
@@ -36,7 +38,7 @@ class Command extends SequenceDomain {
         project(nullable: true)
     }
 
-    void changeCurrentProject(Project project) { //setCur... doesn't work with spring
+    void initCurrentCommantProject(Project project) { //setCur... doesn't work with spring
         println "setCurrentProject=" + project
         this.project = project;
     }
@@ -81,6 +83,14 @@ class Command extends SequenceDomain {
         String[] array = name.split("\\.")  //[be,cytomine,image,Image]
         log.info array.length
         return array[array.length - 1] // Image
+    }
+
+
+
+    protected void fillCommandInfo(def newObject,String message) {
+        data = newObject.encodeAsJSON()
+        actionMessage = message
+
     }
 
 }

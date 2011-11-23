@@ -14,7 +14,9 @@ import java.util.prefs.BackingStoreException
  */
 class DeleteCommand extends Command {
     // String actiontype = "DELETE"
-
+    protected createMessage(def updatedTerm, def params) {
+        responseService.createMessage(updatedTerm, params, "Delete")
+    }
     /**
      * Create delete message for object that has been deleted
      * @param id Object id

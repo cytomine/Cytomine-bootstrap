@@ -19,19 +19,24 @@ class AddImageInstanceCommand extends AddCommand implements UndoRedoCommand {
 
     def execute() {
         json.user = user.id
-        ImageInstance newImage = ImageInstance.createFromData(json)
-        newImage.slide = newImage.baseImage.slide
-        super.changeCurrentProject(newImage.project)
-
-        def oldImageInstance = ImageInstance.findByBaseImageAndProject(newImage.baseImage, newImage.project)
-        if (oldImageInstance) throw new WrongArgumentException("Image " + newImage?.baseImage?.filename + " already map with project")
-
-        return super.validateAndSave(newImage, ["#ID#", newImage?.baseImage?.filename, newImage.project.name] as Object[])
+        //Init new domain object
+        ImageInstance domain = ImageInstance.createFromData(json)
+        def alreadyExistImage = ImageInstance.findByBaseImageAndProject(domain.baseImage, domain.project)
+        if (alreadyExistImage) throw new WrongArgumentException("Image " + domain?.baseImage?.filename + " already map with project")
+        domain.slide = domain.baseImage.slide
+        initCurrentCommantProject(domain.project)
+        //Validate and save domain
+        domainService.saveDomain(domain)
+        //Build response message
+        String message = createMessage(domain, [domain.id, domain?.baseImage?.filename, domain.project.name])
+        //Init command info
+        fillCommandInfo(domain, message)
+        //Create and return response
+        return responseService.createResponseMessage(domain, message, printMessage)
     }
 
 
     def undo() {
-        log.info("Undo")
         def imageData = JSON.parse(data)
         ImageInstance image = ImageInstance.get(imageData.id)
         image.delete(flush: true)
@@ -41,7 +46,6 @@ class AddImageInstanceCommand extends AddCommand implements UndoRedoCommand {
 
 
     def redo() {
-        log.info("Redo")
         def imageData = JSON.parse(data)
         ImageInstance image = ImageInstance.createFromData(imageData)
         image.id = imageData.id

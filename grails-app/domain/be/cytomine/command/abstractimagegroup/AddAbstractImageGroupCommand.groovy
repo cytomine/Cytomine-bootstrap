@@ -12,14 +12,19 @@ class AddAbstractImageGroupCommand extends AddCommand implements UndoRedoCommand
     boolean saveOnUndoRedoStack = true;
 
     def execute() throws CytomineException {
-        def json = JSON.parse(postData)
+        //Init new domain object
         AbstractImageGroup newAbstractImageGroup = AbstractImageGroup.createAbstractImageGroupFromData(json)
-        AbstractImageGroup.link(newAbstractImageGroup.abstractimage, newAbstractImageGroup.group)
-        return super.validateWithoutSave(newAbstractImageGroup, ["#ID#", newAbstractImageGroup.abstractimage.filename, newAbstractImageGroup.group.name] as Object[])
+        //Link relation domain
+        newAbstractImageGroup = AbstractImageGroup.link(newAbstractImageGroup.abstractimage, newAbstractImageGroup.group)
+        //Build response message
+        String message = createMessage(newAbstractImageGroup, [newAbstractImageGroup.id, newAbstractImageGroup.abstractimage.filename, newAbstractImageGroup.group.name])
+        //Init command info
+        fillCommandInfo(newAbstractImageGroup,message)
+        //Create and return response
+        return responseService.createResponseMessage(newAbstractImageGroup,message,printMessage)
     }
 
     def undo() {
-        log.info("Undo")
         def abstractimageGroupData = JSON.parse(data)
         def abstractimage = AbstractImage.get(abstractimageGroupData.abstractimage)
         def group = Group.get(abstractimageGroupData.group)
@@ -40,7 +45,6 @@ class AddAbstractImageGroupCommand extends AddCommand implements UndoRedoCommand
 
 
     def redo() {
-        log.info("Redo")
         def abstractimageGroupData = JSON.parse(data)
 
         def abstractimage = AbstractImage.get(abstractimageGroupData.abstractimage)

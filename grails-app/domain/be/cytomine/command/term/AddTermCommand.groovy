@@ -11,13 +11,19 @@ class AddTermCommand extends AddCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
     def execute() throws CytomineException {
-        log.info("Execute")
-        Term newTerm = Term.createFromData(json)
-        return super.validateAndSave(newTerm, ["#ID#", json.name, Ontology.read(json.ontology)?.name] as Object[])
+        //Init new domain object
+        Term domain = Term.createFromData(json)
+        //Validate and save domain
+        domainService.saveDomain(domain)
+        //Build response message
+        String message = createMessage(domain, [domain.id, domain.name,domain.ontology?.name])
+        //Init command info
+        fillCommandInfo(domain,message)
+        //Create and return response
+        return responseService.createResponseMessage(domain,message,printMessage)
     }
 
     def undo() {
-        log.info("Undo")
         def termData = JSON.parse(data)
         Term term = Term.get(termData.id)
         def callback = [ontologyID: term?.ontology?.id]
@@ -27,7 +33,6 @@ class AddTermCommand extends AddCommand implements UndoRedoCommand {
     }
 
     def redo() {
-        log.info("Undo")
         def termData = JSON.parse(data)
         def term = Term.createFromData(termData)
         term.id = termData.id

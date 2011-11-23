@@ -13,26 +13,24 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
     def execute() throws CytomineException {
-        try {
-            json.user = user.id
-            Annotation newAnnotation = Annotation.createFromData(json)
+        json.user = user.id
+        Annotation newAnnotation = Annotation.createFromData(json)
 
-            if (!newAnnotation.location) throw new WrongArgumentException("Geo is null: 0 points")
-            if (newAnnotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geo is empty:" + newAnnotation.location.getNumPoints() + " points")
+        if (!newAnnotation.location) throw new WrongArgumentException("Geo is null: 0 points")
+        if (newAnnotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geo is empty:" + newAnnotation.location.getNumPoints() + " points")
 
-            super.changeCurrentProject(newAnnotation?.image?.project)
-            return super.validateAndSave(newAnnotation, ["#ID#", newAnnotation?.imageFileName()] as Object[])
-        } catch (com.vividsolutions.jts.io.ParseException ex) {
-            throw new WrongArgumentException(ex.toString())
-        }
-
+        domainService.saveDomain(newAnnotation)
+        //Build response message
+        String message = createMessage(newAnnotation, [newAnnotation.id, newAnnotation?.imageFileName()])
+        //Init command info
+        fillCommandInfo(newAnnotation, message)
+        super.initCurrentCommantProject(newAnnotation?.image?.project)
+        //Create and return response
+        return responseService.createResponseMessage(newAnnotation, message, printMessage)
     }
 
     def undo() {
-        log.info("Undo")
-        log.info("data=" + data)
         def annotationData = JSON.parse(data)
-
         String filename = ImageInstance.get(annotationData.image)?.baseImage?.filename
         Annotation annotation = Annotation.get(annotationData.id)
         def callback = [annotationID: annotation.id, imageID: annotation.image.id]
@@ -42,8 +40,6 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
     }
 
     def redo() {
-        log.info("Redo")
-
         def annotationData = JSON.parse(data)
         String filename = ImageInstance.get(annotationData.image)?.baseImage?.filename
         def annotation = Annotation.createFromData(annotationData)
@@ -52,6 +48,4 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
         annotation.save(flush: true)
         return super.createRedoMessage(annotation, [annotationData.id, filename] as Object[], callback);
     }
-
-
 }

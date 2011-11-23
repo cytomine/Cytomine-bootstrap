@@ -13,6 +13,10 @@ import grails.converters.JSON
  */
 class EditCommand extends Command {
 
+    protected createMessage(def updatedTerm, def params) {
+        responseService.createMessage(updatedTerm, params, "Edit")
+    }
+
     /**
      * Validate and save postData info in newObject
      * @param postData New data for newObject
@@ -148,6 +152,14 @@ class EditCommand extends Command {
         def result = [data: params, status: 200];
 
         return result
+    }
+
+    protected void fillCommandInfo(def newObject,def oldObject, String message) {
+        HashMap<String, Object> paramsData = new HashMap<String, Object>()
+        paramsData.put('previous' + responseService.getClassName(newObject), (JSON.parse(oldObject)))
+        paramsData.put("new" + responseService.getClassName(newObject), newObject)
+        data = (paramsData) as JSON
+        actionMessage = message
     }
 
 }

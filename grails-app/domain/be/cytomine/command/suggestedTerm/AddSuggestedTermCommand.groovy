@@ -13,9 +13,16 @@ class AddSuggestedTermCommand extends AddCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
     def execute() {
-        SuggestedTerm newSuggestedTerm = SuggestedTerm.createFromData(json)
-        return super.validateAndSave(newSuggestedTerm, ["#ID#", Term.read(json.term)?.name, Annotation.read(json.annotation)?.id, Job.read(json.job)?.software?.name] as Object[]
-        )
+        //Init new domain object
+        SuggestedTerm newRelation = SuggestedTerm.createFromData(json)
+        domainService.saveDomain(newRelation)
+        //Build response message
+        String message = createMessage(newRelation,[newRelation.id, newRelation.term.name,newRelation.annotation.id , newRelation.job?.software?.name])
+        //Init command info
+        fillCommandInfo(newRelation,message)
+        //Create and return response
+        super.initCurrentCommantProject(newRelation.annotation.image.project)
+        return responseService.createResponseMessage(newRelation,message,printMessage)
     }
 
     def undo() {

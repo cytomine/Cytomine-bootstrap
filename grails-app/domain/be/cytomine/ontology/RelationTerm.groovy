@@ -40,7 +40,9 @@ class RelationTerm extends SequenceDomain implements Serializable {
             term1.refresh()
             term2.refresh()
             relation.refresh()
+            println"relationTerm.id="+relationTerm.id
             relationTerm.save(flush: true)
+            println "relationTerm.id="+relationTerm.id
         } else throw new WrongArgumentException("Term1 " + term1.id + " and " + term2.id + " are already mapped with relation " + relation.id)
         return relationTerm
     }
