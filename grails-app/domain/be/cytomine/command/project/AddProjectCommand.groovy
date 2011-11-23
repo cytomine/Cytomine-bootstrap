@@ -7,8 +7,6 @@ import grails.converters.JSON
 
 class AddProjectCommand extends AddCommand implements UndoRedoCommand {
 
-    def domainService
-
     def execute() {
         //Init new domain object
         Project domain = Project.createFromData(json)

@@ -6,8 +6,6 @@ import be.cytomine.processing.Job
 
 class AddJobCommand extends AddCommand implements SimpleCommand {
 
-    def domainService
-
     def execute() {
         //Init new domain object
         Job domain = Job.createFromData(json)

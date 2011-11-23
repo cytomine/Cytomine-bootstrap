@@ -9,6 +9,7 @@ import be.cytomine.security.Group
 import grails.converters.JSON
 
 class AddAbstractImageGroupCommand extends AddCommand implements UndoRedoCommand {
+
     boolean saveOnUndoRedoStack = true;
 
     def execute() throws CytomineException {

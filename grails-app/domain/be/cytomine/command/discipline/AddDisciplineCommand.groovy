@@ -13,8 +13,6 @@ import grails.converters.JSON
 
 class AddDisciplineCommand extends AddCommand implements UndoRedoCommand {
 
-    def domainService
-
     boolean saveOnUndoRedoStack = true;
 
     def execute() {

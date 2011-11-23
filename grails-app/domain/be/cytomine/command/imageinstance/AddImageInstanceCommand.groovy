@@ -15,8 +15,6 @@ import grails.converters.JSON
  */
 class AddImageInstanceCommand extends AddCommand implements UndoRedoCommand {
 
-    def domainService
-
     boolean saveOnUndoRedoStack = true;
 
     def execute() {

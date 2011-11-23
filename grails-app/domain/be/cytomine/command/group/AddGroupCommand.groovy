@@ -6,8 +6,6 @@ import be.cytomine.security.Group
 
 class AddGroupCommand extends AddCommand implements SimpleCommand {
 
-    def domainService
-
     def execute() {
         //Init new domain object
         Group domain = Group.createFromData(json)

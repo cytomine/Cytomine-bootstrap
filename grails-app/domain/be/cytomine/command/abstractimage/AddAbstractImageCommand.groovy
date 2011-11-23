@@ -14,8 +14,6 @@ import grails.converters.JSON
  */
 class AddAbstractImageCommand extends AddCommand implements UndoRedoCommand {
 
-    def domainService
-
     def execute() throws CytomineException {
         json.user = user.id
         //Init new domain object

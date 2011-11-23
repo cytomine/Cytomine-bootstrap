@@ -9,8 +9,6 @@ import grails.converters.JSON
 
 class AddTermCommand extends AddCommand implements UndoRedoCommand {
 
-    def domainService
-
     boolean saveOnUndoRedoStack = true;
 
     def execute() throws CytomineException {
