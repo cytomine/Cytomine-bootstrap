@@ -14,7 +14,7 @@ class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
 
     boolean saveOnUndoRedoStack = true;
 
-    def execute() throws CytomineException {
+    def execute() {
         //Retrieve domain
         Term domain = Term.get(json.id)
         if (!domain) throw new ObjectNotFoundException("Term " + json.id + " was not found")

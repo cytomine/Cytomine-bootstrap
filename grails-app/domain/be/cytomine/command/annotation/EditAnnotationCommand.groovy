@@ -13,18 +13,20 @@ class EditAnnotationCommand extends EditCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
     def execute() throws CytomineException {
-        try {
-            json.user = user.id
-            Annotation updatedAnnotation = Annotation.get(json.id)
-            if (!updatedAnnotation) throw new ObjectNotFoundException("Annotation " + json.id + " not found")
-            String filename = updatedAnnotation.image?.baseImage?.getFilename()
-            super.initCurrentCommantProject(updatedAnnotation.image.project)
-            return super.validateAndSave(json, updatedAnnotation, [updatedAnnotation.id, filename] as Object[])
-        } catch (com.vividsolutions.jts.io.ParseException e) {
-            log.error "New annotation can't be saved (bad geom): " + e.toString()
-            throw new WrongArgumentException("Location invalid:" + json.location)
-        }
-
+        //Retrieve domain
+        Annotation updatedDomain = Annotation.get(json.id)
+        if (!updatedDomain) throw new ObjectNotFoundException("Annotation ${json.id} not found")
+        def oldDomain = updatedDomain.encodeAsJSON()
+        updatedDomain.getFromData(updatedDomain, json)
+        //Validate and save domain
+        domainService.editDomain(updatedDomain,json)
+        //Build response message
+        String message = createMessage(updatedDomain, [updatedDomain.id, updatedDomain?.image?.baseImage?.filename])
+        //Init command info
+        super.initCurrentCommantProject(updatedDomain.image.project)
+        fillCommandInfo(updatedDomain,oldDomain,message)
+        //Create and return response
+        return responseService.createResponseMessage(updatedDomain,message,printMessage)
     }
 
     def undo() {

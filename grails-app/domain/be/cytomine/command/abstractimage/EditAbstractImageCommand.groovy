@@ -17,16 +17,22 @@ import grails.converters.JSON
 class EditAbstractImageCommand extends EditCommand implements UndoRedoCommand {
 
     def execute() throws CytomineException {
-        AbstractImage updatedImage = AbstractImage.get(json.id)
-        log.info "### before validateAndSave"
-        if (!updatedImage) throw new ObjectNotFoundException("Image " + json.id + " was not found")
-        def data = super.validateAndSave(json, updatedImage, [updatedImage.id, updatedImage.filename] as Object[])
-        log.info "### after validateAndSave"
-        return data
+        //Retrieve domain
+        AbstractImage updatedDomain = AbstractImage.get(json.id)
+        if (!updatedDomain) throw new ObjectNotFoundException("Image ${json.id} not found")
+        def oldDomain = updatedDomain.encodeAsJSON()
+        updatedDomain.getFromData(updatedDomain, json)
+        //Validate and save domain
+        domainService.editDomain(updatedDomain,json)
+        //Build response message
+        String message = createMessage(updatedDomain, [updatedDomain.id, updatedDomain.filename])
+        //Init command info
+        fillCommandInfo(updatedDomain,oldDomain,message)
+        //Create and return response
+        return responseService.createResponseMessage(updatedDomain,message,printMessage)
     }
 
     def undo() {
-        log.info "Undo"
         def imageData = JSON.parse(data)
         AbstractImage image = AbstractImage.findById(imageData.previousImage.id)
         image = AbstractImage.getFromData(image, imageData.previousImage)
@@ -35,7 +41,6 @@ class EditAbstractImageCommand extends EditCommand implements UndoRedoCommand {
     }
 
     def redo() {
-        log.info "Redo"
         def imageData = JSON.parse(data)
         AbstractImage image = AbstractImage.findById(imageData.newImage.id)
         image = AbstractImage.getFromData(image, imageData.newImage)

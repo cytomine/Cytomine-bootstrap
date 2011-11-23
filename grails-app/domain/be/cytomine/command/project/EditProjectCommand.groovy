@@ -11,15 +11,25 @@ class EditProjectCommand extends EditCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = false;
 
     def execute() {
-        Project updatedProject = Project.get(json.id)
-        if (!updatedProject) throw new ObjectNotFoundException("Project $json.id not found!")
-        Group group = Group.findByName(updatedProject.name)
-        log.info "rename group " + updatedProject.name + "(" + group + ") by " + json.name
+        //Retrieve domain
+        Project updatedDomain = Project.get(json.id)
+        if (!updatedDomain) throw new ObjectNotFoundException("Project ${json.id} not found")
+        def oldDomain = updatedDomain.encodeAsJSON()
+        updatedDomain.getFromData(updatedDomain, json)
+        //Validate and save domain
+        domainService.editDomain(updatedDomain,json)
+        Group group = Group.findByName(updatedDomain.name)
+        log.info "rename group " + updatedDomain.name + "(" + group + ") by " + json.name
         if (group) {
             group.name = json.name
             group.save(flush: true)
         }
-        return super.validateAndSave(json, updatedProject, [updatedProject.id, updatedProject.name] as Object[])
+        //Build response message
+        String message = createMessage(updatedDomain, [updatedDomain.id, updatedDomain.name])
+        //Init command info
+        fillCommandInfo(updatedDomain,oldDomain,message)
+        //Create and return response
+        return responseService.createResponseMessage(updatedDomain,message,printMessage)
 
     }
 

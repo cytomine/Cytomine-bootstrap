@@ -11,7 +11,7 @@ class AddTermCommand extends AddCommand implements UndoRedoCommand {
 
     boolean saveOnUndoRedoStack = true;
 
-    def execute() throws CytomineException {
+    def execute() {
         //Init new domain object
         Term domain = Term.createFromData(json)
         //Validate and save domain

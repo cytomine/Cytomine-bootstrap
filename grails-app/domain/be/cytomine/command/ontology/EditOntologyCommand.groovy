@@ -18,10 +18,19 @@ class EditOntologyCommand extends EditCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
     def execute() throws CytomineException {
-        log.info "Execute"
-        Ontology updatedOntology = Ontology.get(json.id)
-        if (!updatedOntology) throw new ObjectNotFoundException("Ontology " + json.id + " was not found")
-        return super.validateAndSave(json, updatedOntology, [updatedOntology.id, updatedOntology.name] as Object[])
+        //Retrieve domain
+        Ontology updatedDomain = Ontology.get(json.id)
+        if (!updatedDomain) throw new ObjectNotFoundException("Ontology ${json.id} not found")
+        def oldDomain = updatedDomain.encodeAsJSON()
+        updatedDomain.getFromData(updatedDomain, json)
+        //Validate and save domain
+        domainService.editDomain(updatedDomain,json)
+        //Build response message
+        String message = createMessage(updatedDomain, [updatedDomain.id, updatedDomain.name])
+        //Init command info
+        fillCommandInfo(updatedDomain,oldDomain,message)
+        //Create and return response
+        return responseService.createResponseMessage(updatedDomain,message,printMessage)
     }
 
     def undo() {

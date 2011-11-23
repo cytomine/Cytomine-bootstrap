@@ -4,6 +4,7 @@ import be.cytomine.command.EditCommand
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.image.ImageInstance
 import grails.converters.JSON
+import be.cytomine.Exception.ObjectNotFoundException
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,9 +18,20 @@ class EditImageInstanceCommand extends EditCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
     def execute() {
-        ImageInstance updatedImage = ImageInstance.get(json.id)
-        super.initCurrentCommantProject(updatedImage.project)
-        return super.validateAndSave(json, updatedImage, [updatedImage.id, updatedImage?.baseImage?.filename, updatedImage.project.name] as Object[])
+        //Retrieve domain
+        ImageInstance updatedDomain = ImageInstance.get(json.id)
+        if (!updatedDomain) throw new ObjectNotFoundException("ImageInstance ${json.id} not found")
+        def oldDomain = updatedDomain.encodeAsJSON()
+        updatedDomain.getFromData(updatedDomain,json)
+        //Validate and save domain
+        domainService.editDomain(updatedDomain,json)
+        //Build response message
+        String message = createMessage(updatedDomain, [updatedDomain.id, updatedDomain?.baseImage?.filename, updatedDomain.project.name])
+        //Init command info
+        fillCommandInfo(updatedDomain,oldDomain,message)
+        super.initCurrentCommantProject(updatedDomain.project)
+        //Create and return response
+        return responseService.createResponseMessage(updatedDomain,message,printMessage)
     }
 
     def undo() {

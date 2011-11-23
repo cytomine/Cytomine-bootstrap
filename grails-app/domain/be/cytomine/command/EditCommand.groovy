@@ -18,51 +18,6 @@ class EditCommand extends Command {
     }
 
     /**
-     * Validate and save postData info in newObject
-     * @param postData New data for newObject
-     * @param newObject Old value of newObject
-     * @param messageParams Params for result message
-     * @return Result message
-     * @throws NullPointerException Object don't exists
-     * @throws ConstraintException Object is not correct
-     */
-    def validateAndSave(def postData, def newObject, Object[] messageParams) throws CytomineException {
-        log.info "validateAndSave: postdata=" + postData
-        String objectName = getClassName(newObject)
-        String command = "be.cytomine.Edit" + objectName + "Command"
-        if (!newObject) throw new NullPointerException(objectName + " not found with id " + postData.id);
-        def backup = newObject.encodeAsJSON()
-        newObject = newObject.getFromData(newObject, postData)
-        if (postData.id instanceof String) {
-            newObject.id = Long.parseLong(postData.id)
-        } else {
-            newObject.id = postData.id
-        }
-
-        if (newObject.validate() && newObject.save(flush: true)) {
-            log.info "New " + objectName + " is saved"
-
-            def message = messageSource.getMessage(command, messageParams as Object[], Locale.ENGLISH)
-            actionMessage = message
-
-            HashMap<String, Object> paramsData = new HashMap<String, Object>()
-            paramsData.put('previous' + objectName, (JSON.parse(backup)))
-            paramsData.put("new" + objectName, newObject)
-            data = (paramsData) as JSON
-
-            HashMap<String, Object> params = new HashMap<String, Object>()
-            params.put('success', true)
-            params.put('message', message)
-            params.put('printMessage', printMessage)
-            params.put(objectName.toLowerCase(), newObject)
-
-            return [data: params, status: 200]
-        } else throw new ConstraintException(newObject.errors.toString())
-
-
-    }
-
-    /**
      * Create undo message for an undo-edit on object
      * @param data New json value of object
      * @param object Undo-edit object
