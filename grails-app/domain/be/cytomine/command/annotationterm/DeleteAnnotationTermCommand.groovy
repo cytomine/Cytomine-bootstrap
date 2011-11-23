@@ -22,7 +22,7 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
         AnnotationTerm annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
         if (!annotationTerm) throw new ObjectNotFoundException("Annotation term not found ($annotation,$term,$user)")
         String id = annotationTerm.id
-        super.changeCurrentProject(annotationTerm.annotation.image.project)
+        super.initCurrentCommantProject(annotationTerm.annotation.image.project)
         def response = super.createDeleteMessage(id, annotationTerm, [id, annotation.id, term.name, user?.username] as Object[])
         AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term, annotationTerm.user)
 
@@ -36,7 +36,7 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
         def term = Term.get(annotationTermData.term)
         def user = User.get(annotationTermData.user)
 
-        AnnotationTerm annotationTerm = AnnotationTerm.createAnnotationTermFromData(annotationTermData)
+        AnnotationTerm annotationTerm = AnnotationTerm.createFromData(annotationTermData)
         annotationTerm = AnnotationTerm.link(annotationTermData.id, annotation, term, user)
 
         HashMap<String, Object> callback = new HashMap<String, Object>();

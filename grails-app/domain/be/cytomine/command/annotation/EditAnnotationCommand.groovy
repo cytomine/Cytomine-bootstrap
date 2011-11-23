@@ -18,7 +18,7 @@ class EditAnnotationCommand extends EditCommand implements UndoRedoCommand {
             Annotation updatedAnnotation = Annotation.get(json.id)
             if (!updatedAnnotation) throw new ObjectNotFoundException("Annotation " + json.id + " not found")
             String filename = updatedAnnotation.image?.baseImage?.getFilename()
-            super.changeCurrentProject(updatedAnnotation.image.project)
+            super.initCurrentCommantProject(updatedAnnotation.image.project)
             return super.validateAndSave(json, updatedAnnotation, [updatedAnnotation.id, filename] as Object[])
         } catch (com.vividsolutions.jts.io.ParseException e) {
             log.error "New annotation can't be saved (bad geom): " + e.toString()

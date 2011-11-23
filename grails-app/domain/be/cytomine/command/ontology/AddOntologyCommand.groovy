@@ -18,6 +18,8 @@ class AddOntologyCommand extends AddCommand implements UndoRedoCommand {
 
     boolean saveOnUndoRedoStack = true;
 
+    def domainService
+
     def execute() throws CytomineException {
         json.user = user.id
         //Init new domain object

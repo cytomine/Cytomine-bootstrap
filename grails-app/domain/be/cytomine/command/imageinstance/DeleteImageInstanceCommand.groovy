@@ -21,7 +21,7 @@ class DeleteImageInstanceCommand extends DeleteCommand implements UndoRedoComman
         log.info "Execute" + json
         ImageInstance image = ImageInstance.get(json.id)
         if (!image) throw new ObjectNotFoundException("Image instance $json.id not found!")
-        super.changeCurrentProject(image.project)
+        super.initCurrentCommantProject(image.project)
         return super.deleteAndCreateDeleteMessage(json.id, image, [image.id, image?.baseImage?.filename, image.project.name] as Object[])
     }
 

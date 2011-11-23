@@ -14,28 +14,31 @@ class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
     def execute() throws CytomineException {
-        log.info "Execute"
-
+        //Get domain
         Term term = Term.get(json.id)
         if (!term) throw new ObjectNotFoundException("Term " + json.id + " was not found")
         if (!SuggestedTerm.findAllByTerm(term).isEmpty()) throw new ConstraintException("Term " + json.id + " has suggested term")
         if (!AnnotationTerm.findAllByTerm(term).isEmpty()) throw new ConstraintException("Term " + json.id + " has annotation term")
-        return super.deleteAndCreateDeleteMessage(json.id, term, [term.id, term.name, term.ontology?.name] as Object[])
+        //Build response message
+        String message = createMessage(term, [term.id, term.name, term.ontology?.name])
+        //Delete domain
+        domainService.deleteDomain(term)
+        //Init command info
+        fillCommandInfo(term,message)
+        //Create and return response
+        return responseService.createResponseMessage(term,message,printMessage)
     }
 
     def undo() {
-        log.info("Undo")
         def termData = JSON.parse(data)
         Term term = Term.createFromData(termData)
         term.id = termData.id;
         term.save(flush: true)
         def callback = [ontologyID: term?.ontology?.id]
-        log.error "Term errors = " + term.errors
         return super.createUndoMessage(term, [term.id, term.name, term.ontology] as Object[], callback);
     }
 
     def redo() {
-        log.info("Redo postData=" + postData)
         def termData = JSON.parse(postData)
         Term term = Term.findById(termData.id)
         String id = termData.id
@@ -43,7 +46,6 @@ class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
         String ontologyName = term.ontology?.name
         def callback = [ontologyID: term?.ontology?.id]
         term.delete(flush: true);
-
         return super.createRedoMessage(id, term, [id, name, ontologyName] as Object[], callback);
     }
 

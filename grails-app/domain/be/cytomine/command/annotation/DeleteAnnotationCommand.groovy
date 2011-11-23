@@ -16,7 +16,7 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand {
     def execute() throws CytomineException {
         Annotation annotation = Annotation.findById(json.id)
         if (!annotation) throw new ObjectNotFoundException("Annotation " + json.id + " not found")
-        super.changeCurrentProject(annotation.image.project)
+        super.initCurrentCommantProject(annotation.image.project)
         return super.deleteAndCreateDeleteMessage(json.id, annotation, [annotation.id, annotation.imageFileName()] as Object[])
     }
 

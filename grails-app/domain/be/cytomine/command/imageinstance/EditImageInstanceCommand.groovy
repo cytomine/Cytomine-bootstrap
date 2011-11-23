@@ -18,7 +18,7 @@ class EditImageInstanceCommand extends EditCommand implements UndoRedoCommand {
 
     def execute() {
         ImageInstance updatedImage = ImageInstance.get(json.id)
-        super.changeCurrentProject(updatedImage.project)
+        super.initCurrentCommantProject(updatedImage.project)
         return super.validateAndSave(json, updatedImage, [updatedImage.id, updatedImage?.baseImage?.filename, updatedImage.project.name] as Object[])
     }
 

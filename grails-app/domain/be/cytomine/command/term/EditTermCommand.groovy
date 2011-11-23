@@ -14,11 +14,20 @@ class EditTermCommand extends EditCommand implements UndoRedoCommand {
         log.info "Execute"
         Term updatedTerm = Term.get(json.id)
         if (!updatedTerm) throw new ObjectNotFoundException("Term ${json.id} not found")
-        return super.validateAndSave(json, updatedTerm, [updatedTerm.id, updatedTerm.name, updatedTerm.ontology?.name] as Object[])
+
+        def oldTerm = updatedTerm.encodeAsJSON()
+        updatedTerm.getFromData(updatedTerm, json)
+        //Validate and save domain
+        domainService.editDomain(updatedTerm,json)
+        //Build response message
+        String message = createMessage(updatedTerm, [updatedTerm.id, updatedTerm.name, updatedTerm.ontology?.name])
+        //Init command info
+        fillCommandInfo(updatedTerm,oldTerm,message)
+        //Create and return response
+        return responseService.createResponseMessage(updatedTerm,message,printMessage)
     }
 
     def undo() {
-        log.info "Undo"
         def termData = JSON.parse(data)
         Term term = Term.findById(termData.previousTerm.id)
         term = term.getFromData(term, termData.previousTerm)
@@ -28,7 +37,6 @@ class EditTermCommand extends EditCommand implements UndoRedoCommand {
     }
 
     def redo() {
-        log.info "Redo"
         def termData = JSON.parse(data)
         Term term = Term.findById(termData.newTerm.id)
         term = Term.getFromData(term, termData.newTerm)

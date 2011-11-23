@@ -31,7 +31,7 @@ class DeleteRelationTermCommand extends DeleteCommand implements UndoRedoCommand
         def relationTermData = JSON.parse(data)
         RelationTerm relationTerm = RelationTerm.createFromData(relationTermData)
         relationTerm = RelationTerm.link(relationTermData.id, relationTerm.relation, relationTerm.term1, relationTerm.term2)
-        return super.createUndoMessage(relationTerm, [relationTerm.id, relationTerm.relation.name, relationTerm.term1.name, relationTerm.term2.name] as Object[]);
+        return super.createUndoMessage(relationTerm, [relationTerm.id, relationTerm.relation?.name, relationTerm.term1?.name, relationTerm.term2?.name] as Object[]);
     }
 
     def redo() {
