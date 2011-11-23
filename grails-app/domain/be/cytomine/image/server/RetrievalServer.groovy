@@ -1,6 +1,5 @@
 package be.cytomine.image.server
 
-import groovy.xml.MarkupBuilder
 import be.cytomine.SequenceDomain
 
 /**
@@ -11,10 +10,10 @@ import be.cytomine.SequenceDomain
  */
 class RetrievalServer extends SequenceDomain {
 
-  String description
-  String url
-  int port = 0
+    String description
+    String url
+    int port = 0
 
-  String toString() { return url; }
+    String toString() { return url; }
 
 }

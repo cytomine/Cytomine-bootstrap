@@ -6,14 +6,13 @@ package be.cytomine.command.discipline
  * Date: 16/03/11
  */
 
+import be.cytomine.Exception.ConstraintException
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.project.Discipline
 import be.cytomine.project.Project
 import grails.converters.JSON
-import java.util.prefs.BackingStoreException
-import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.Exception.ConstraintException
 
 class DeleteDisciplineCommand extends DeleteCommand implements UndoRedoCommand {
 

@@ -1,13 +1,11 @@
 package be.cytomine.command.term
 
-import be.cytomine.command.UndoRedoCommand
-import grails.converters.JSON
-import be.cytomine.ontology.Term
-import be.cytomine.command.AddCommand
-import be.cytomine.ontology.Ontology
-
-import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 import be.cytomine.Exception.CytomineException
+import be.cytomine.command.AddCommand
+import be.cytomine.command.UndoRedoCommand
+import be.cytomine.ontology.Ontology
+import be.cytomine.ontology.Term
+import grails.converters.JSON
 
 class AddTermCommand extends AddCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;

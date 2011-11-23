@@ -1,6 +1,5 @@
 package be.cytomine.processing
 
-import be.cytomine.security.UserGroup
 import be.cytomine.project.Project
 
 class SoftwareProjects {
@@ -18,7 +17,7 @@ class SoftwareProjects {
             softwareProjects = new SoftwareProjects()
             software?.addToSoftwareProjects(softwareProjects)
             project?.addToSoftwareProjects(softwareProjects)
-            softwareProjects.save(flush : true)
+            softwareProjects.save(flush: true)
         }
     }
 
@@ -27,7 +26,7 @@ class SoftwareProjects {
         if (softwareProjects) {
             software?.removeFromSoftwareProjects(softwareProjects)
             project?.removeFromSoftwareProjects(softwareProjects)
-            softwareProjects.delete(flush : true)
-        } else {println "no link between "+software + " " + project}
+            softwareProjects.delete(flush: true)
+        } else {println "no link between " + software + " " + project}
     }
 }

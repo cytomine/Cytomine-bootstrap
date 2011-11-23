@@ -1,12 +1,12 @@
 package be.cytomine.command.imageinstance
 
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.command.AddCommand
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.image.AbstractImage
-import grails.converters.JSON
 import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
-import be.cytomine.Exception.WrongArgumentException
+import grails.converters.JSON
 
 /**
  * Created by IntelliJ IDEA.

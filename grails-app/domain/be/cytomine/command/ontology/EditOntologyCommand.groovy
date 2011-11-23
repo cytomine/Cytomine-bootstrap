@@ -6,12 +6,12 @@ package be.cytomine.command.ontology
  * Date: 16/03/11
  */
 
-import be.cytomine.command.UndoRedoCommand
-import grails.converters.JSON
-import be.cytomine.ontology.Ontology
-import be.cytomine.command.EditCommand
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.command.EditCommand
+import be.cytomine.command.UndoRedoCommand
+import be.cytomine.ontology.Ontology
+import grails.converters.JSON
 
 class EditOntologyCommand extends EditCommand implements UndoRedoCommand {
 
@@ -20,7 +20,7 @@ class EditOntologyCommand extends EditCommand implements UndoRedoCommand {
     def execute() throws CytomineException {
         log.info "Execute"
         Ontology updatedOntology = Ontology.get(json.id)
-        if(!updatedOntology) throw new ObjectNotFoundException("Ontology " + json.id + " was not found")
+        if (!updatedOntology) throw new ObjectNotFoundException("Ontology " + json.id + " was not found")
         return super.validateAndSave(json, updatedOntology, [updatedOntology.id, updatedOntology.name] as Object[])
     }
 

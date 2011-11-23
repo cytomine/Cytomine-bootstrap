@@ -23,7 +23,7 @@ class ImportController {
         int i = 0;
         AbstractImage.withCriteria {
             isNull('width')
-        }.each { image->
+        }.each { image ->
             if (i % 10 == 0) { println i }
             i++;
 
@@ -40,70 +40,70 @@ class ImportController {
         String serverUrl = "http://139.165.108.140:48/cytomine-web"
         String idProject = params.idProject //from server
 
-        def jsonProject = getProjectFromServer(idProject,serverUrl)
-        def jsonAnnotations = getAnnotationsFromServer(idProject,serverUrl)
+        def jsonProject = getProjectFromServer(idProject, serverUrl)
+        def jsonAnnotations = getAnnotationsFromServer(idProject, serverUrl)
         def jsonUsers = getUsersFromServer(serverUrl)
 
 
 
         String projectName = jsonProject.name
-        log.info("project.name="+ projectName)
+        log.info("project.name=" + projectName)
         Project project = null
         Project.list().each {
-            log.info("it="+ it)
-            if(it.name.toUpperCase().equals(projectName.toUpperCase())) {
+            log.info("it=" + it)
+            if (it.name.toUpperCase().equals(projectName.toUpperCase())) {
                 project = it
             }
         }
-        log.info("project="+ project)
-        if(!project) {
+        log.info("project=" + project)
+        if (!project) {
             log.error("Project is null");
             return;
         }
 
         def users = [:]
-        for(int i=0;i<jsonUsers.length();i++) {
+        for (int i = 0; i < jsonUsers.length(); i++) {
             def jsonUser = jsonUsers.get(i)
-            log.info jsonUser.id + "="+ jsonUser.username
-            users[(jsonUser.id)]= jsonUser.username
+            log.info jsonUser.id + "=" + jsonUser.username
+            users[(jsonUser.id)] = jsonUser.username
         }
-        log.info "users="+ users
+        log.info "users=" + users
 
 
 
 
-        for(int i=0;i<jsonAnnotations.length();i++) {
+        for (int i = 0; i < jsonAnnotations.length(); i++) {
             def elem = jsonAnnotations.get(i);
-            log.info("****************** ANNOTATION "+ (i+1) + "/"+ jsonAnnotations.length() +" ******************************")
-            log.info("elem="+ elem)
+            log.info("****************** ANNOTATION " + (i + 1) + "/" + jsonAnnotations.length() + " ******************************")
+            log.info("elem=" + elem)
 
             //get image
             AbstractImage baseimage = AbstractImage.findByFilename(elem.imageFilename)
-            log.info("baseimage="+baseimage)
-            ImageInstance image = ImageInstance.findByBaseImageAndProject(baseimage,project)
-            log.info("image="+image)
+            log.info("baseimage=" + baseimage)
+            ImageInstance image = ImageInstance.findByBaseImageAndProject(baseimage, project)
+            log.info("image=" + image)
             //change id from other sever by id from current server
             elem.image = image.id
 
             User user = User.findByUsername(users[(elem.user)])
             //change id from other sever by id from current server
-            if(!user) user = User.findByUsername("rmaree")
+            if (!user) user = User.findByUsername("rmaree")
             elem.user = user.id
 
             //create annotation
             Annotation annotation = Annotation.createFromData(elem)
             annotation.name = ""
-            log.info("annotation="+annotation + " image="+elem.image + " user="+elem.user);
-            if(!annotation.validate()) log.info("ERROR ANNOTATION:"+annotation.errors);
-            annotation.save(flush:true)
+            log.info("annotation=" + annotation + " image=" + elem.image + " user=" + elem.user);
+            if (!annotation.validate()) log.info("ERROR ANNOTATION:" + annotation.errors);
+            annotation.save(flush: true)
             def jsonTerms = elem.term
-            for(int j=0;j<jsonTerms.length();j++) {
-                def jsonTerm =  jsonTerms.get(j)
-                def remoteTerm = getTermFromServer(jsonTerm,serverUrl)
-                Term term = Term.findByNameAndOntology(remoteTerm.name,project.ontology)
-                log.info("name="+remoteTerm.name +" and " + project.ontology.id)
-                log.info("term="+term)
-                AnnotationTerm.link(annotation,term)
+            for (int j = 0; j < jsonTerms.length(); j++) {
+                def jsonTerm = jsonTerms.get(j)
+                def remoteTerm = getTermFromServer(jsonTerm, serverUrl)
+                Term term = Term.findByNameAndOntology(remoteTerm.name, project.ontology)
+                log.info("name=" + remoteTerm.name + " and " + project.ontology.id)
+                log.info("term=" + term)
+                AnnotationTerm.link(annotation, term)
             }
         }
 
@@ -111,62 +111,62 @@ class ImportController {
 
     }
 
-    def getAnnotationsFromServer(String idProjectFromServer,String url) {
+    def getAnnotationsFromServer(String idProjectFromServer, String url) {
 
-        String URL = url+"/api/project/"+idProjectFromServer+"/annotation.json"
+        String URL = url + "/api/project/" + idProjectFromServer + "/annotation.json"
         HttpClient client = new HttpClient();
-        client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
         client.get()
-        int code  = client.getResponseCode()
+        int code = client.getResponseCode()
         String response = client.getResponseData()
         client.disconnect();
 
-        log.info("check response "+ code)
+        log.info("check response " + code)
         def json = JSON.parse(response)
         json
     }
 
-     def getTermFromServer(Integer idTermFromServer,String url) {
+    def getTermFromServer(Integer idTermFromServer, String url) {
 
-        String URL = url+"/api/term/"+idTermFromServer+".json"
+        String URL = url + "/api/term/" + idTermFromServer + ".json"
         HttpClient client = new HttpClient();
-        client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
         client.get()
-        int code  = client.getResponseCode()
+        int code = client.getResponseCode()
         String response = client.getResponseData()
         client.disconnect();
 
-        log.info("check response "+ code)
+        log.info("check response " + code)
         def json = JSON.parse(response)
         json
     }
 
     def getUsersFromServer(String url) {
 
-        String URL = url+"/api/user.json"
+        String URL = url + "/api/user.json"
         HttpClient client = new HttpClient();
-        client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
         client.get()
-        int code  = client.getResponseCode()
+        int code = client.getResponseCode()
         String response = client.getResponseData()
         client.disconnect();
 
-        log.info("check response "+ code)
+        log.info("check response " + code)
         def json = JSON.parse(response)
         json
     }
 
-    def getProjectFromServer(String idProjectFromServer,String url) {
+    def getProjectFromServer(String idProjectFromServer, String url) {
 
-        String URL = url+"/api/project/" + idProjectFromServer +".json"
+        String URL = url + "/api/project/" + idProjectFromServer + ".json"
         HttpClient client = new HttpClient();
-        client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
         client.get()
-        int code  = client.getResponseCode()
+        int code = client.getResponseCode()
         String response = client.getResponseData()
         client.disconnect();
 
-        log.info("check response "+ code)
+        log.info("check response " + code)
         def json = JSON.parse(response)
         json
     }

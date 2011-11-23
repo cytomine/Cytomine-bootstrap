@@ -1,8 +1,8 @@
 package be.cytomine.command.group
 
 import be.cytomine.command.AddCommand
-import be.cytomine.security.Group
 import be.cytomine.command.SimpleCommand
+import be.cytomine.security.Group
 
 class AddGroupCommand extends AddCommand implements SimpleCommand {
 

@@ -1,33 +1,33 @@
 package be.cytomine.ontology
 
-import grails.converters.JSON
-import be.cytomine.SequenceDomain
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.SequenceDomain
+import grails.converters.JSON
 
-class Relation extends SequenceDomain implements Serializable{
+class Relation extends SequenceDomain implements Serializable {
 
     String name
 
-    static hasMany = [relationTerm:RelationTerm]
+    static hasMany = [relationTerm: RelationTerm]
 
     static constraints = {
-        name (unique:true, nullable:false)
+        name(unique: true, nullable: false)
     }
     static mapping = {
-        id (generator:'assigned', unique : true)
+        id(generator: 'assigned', unique: true)
     }
-    String toString()
-    {
+
+    String toString() {
         return name
     }
 
     static Relation createRelationFromData(jsonRelation) {
         def relation = new Relation()
-        getRelationFromData(relation,jsonRelation)
+        getRelationFromData(relation, jsonRelation)
     }
 
-    static Relation getRelationFromData(relation,jsonRelation) {
-        if(!jsonRelation.name.toString().equals("null"))
+    static Relation getRelationFromData(relation, jsonRelation) {
+        if (!jsonRelation.name.toString().equals("null"))
             relation.name = jsonRelation.name
         else throw new WrongArgumentException("Relation name cannot be null")
         return relation;

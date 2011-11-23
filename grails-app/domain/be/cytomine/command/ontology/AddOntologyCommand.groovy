@@ -8,11 +8,11 @@ package be.cytomine.command.ontology
  * To change this template use File | Settings | File Templates.
  */
 
-import be.cytomine.command.UndoRedoCommand
-import grails.converters.JSON
-import be.cytomine.ontology.Ontology
-import be.cytomine.command.AddCommand
 import be.cytomine.Exception.CytomineException
+import be.cytomine.command.AddCommand
+import be.cytomine.command.UndoRedoCommand
+import be.cytomine.ontology.Ontology
+import grails.converters.JSON
 
 class AddOntologyCommand extends AddCommand implements UndoRedoCommand {
 

@@ -18,7 +18,7 @@ class UploadController {
     def imagePropertiesService
     def springSecurityService
 
-    static allowedMethods = [image:'POST']
+    static allowedMethods = [image: 'POST']
 
     private def getExtensionFromFilename = {filename ->
         def returned_value = ""
@@ -31,22 +31,22 @@ class UploadController {
         println "UPLOAD REQUESTED"
         User currentUser = User.read(springSecurityService.principal.id)
         def f = request.getFile('file')
-        if(!f.empty) {
+        if (!f.empty) {
             println "not empty"
-            def ext =  getExtensionFromFilename(f.originalFilename)
+            def ext = getExtensionFromFilename(f.originalFilename)
             def tmpFile = File.createTempFile(f.originalFilename, ext)
             tmpFile.deleteOnExit()
             f.transferTo(tmpFile)
             println "Tmp file created " + tmpFile.getPath()
             def aimage = new AbstractImage(
                     filename: f.originalFilename,
-                    scanner : Scanner.list().first(),
-                    slide : Slide.list().first(),
-                    path : f.originalFilename,
-                    mime : Mime.findByExtension(ext))
+                    scanner: Scanner.list().first(),
+                    slide: Slide.list().first(),
+                    path: f.originalFilename,
+                    mime: Mime.findByExtension(ext))
 
             if (aimage.validate()) {
-                aimage.save(flush : true)
+                aimage.save(flush: true)
                 Group group = Group.findByName(currentUser.getUsername())
                 AbstractImageGroup.link(aimage, group)
                 Storage.list().each { storage ->

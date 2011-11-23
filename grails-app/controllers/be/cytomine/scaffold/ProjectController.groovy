@@ -4,5 +4,5 @@ import be.cytomine.project.Project
 
 class ProjectController {
 
-  def scaffold = Project
+    def scaffold = Project
 }

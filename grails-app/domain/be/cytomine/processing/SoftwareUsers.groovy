@@ -17,7 +17,7 @@ class SoftwareUsers {
             softwareUsers = new SoftwareProjects()
             software?.addToSoftwareProjects(softwareUsers)
             user?.addToSoftwareProjects(softwareUsers)
-            softwareUsers.save(flush : true)
+            softwareUsers.save(flush: true)
         }
     }
 
@@ -26,7 +26,7 @@ class SoftwareUsers {
         if (softwareUsers) {
             software?.removeFromSoftwareProjects(softwareUsers)
             user?.removeFromSoftwareProjects(softwareUsers)
-            softwareUsers.delete(flush : true)
-        } else {println "no link between "+software + " " + user}
+            softwareUsers.delete(flush: true)
+        } else {println "no link between " + software + " " + user}
     }
 }

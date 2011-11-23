@@ -1,9 +1,8 @@
 package be.cytomine.project
 
-import grails.converters.JSON
 import be.cytomine.SequenceDomain
 import be.cytomine.image.AbstractImage
-import be.cytomine.image.ImageInstance
+import grails.converters.JSON
 
 class Slide extends SequenceDomain {
 
@@ -16,13 +15,14 @@ class Slide extends SequenceDomain {
         }
     }*/
     static constraints = {
-        name(blank:false, unique:true)
+        name(blank: false, unique: true)
     }
+
     String toString() {
         name
     }
 
-    static hasMany = [image:AbstractImage]
+    static hasMany = [image: AbstractImage]
 
 
     static void registerMarshaller() {
@@ -32,15 +32,15 @@ class Slide extends SequenceDomain {
             returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['name'] = it.name
-            def images =[]
+            def images = []
 
             it.getImages().each {img ->
-               def imageinfo = [:]
-               imageinfo.id = img.id
-               imageinfo.filename = img.filename
-               imageinfo.thumb = img.getThumbURL()
-               imageinfo.info = it.name
-               images << imageinfo
+                def imageinfo = [:]
+                imageinfo.id = img.id
+                imageinfo.filename = img.filename
+                imageinfo.thumb = img.getThumbURL()
+                imageinfo.info = it.name
+                images << imageinfo
             }
             returnArray['images'] = images
             return returnArray

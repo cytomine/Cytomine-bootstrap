@@ -10,9 +10,9 @@ class ImageProperty {
     AbstractImage image
 
     static constraints = {
-        key (nullable: false, empty :false)
-        value (nullable: false, empty :false)
-        image (nullable :false)
+        key(nullable: false, empty: false)
+        value(nullable: false, empty: false)
+        image(nullable: false)
     }
 
     static void registerMarshaller() {

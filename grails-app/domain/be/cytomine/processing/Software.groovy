@@ -6,10 +6,10 @@ class Software extends SequenceDomain {
 
     String name
 
-    static hasMany = [ softwareUsers : SoftwareUsers, softwareProjects : SoftwareProjects]
+    static hasMany = [softwareUsers: SoftwareUsers, softwareProjects: SoftwareProjects]
 
     static constraints = {
-        name (nullable: false, unique: true)
+        name(nullable: false, unique: true)
     }
 
     String toString() {

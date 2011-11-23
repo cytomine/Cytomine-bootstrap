@@ -4,12 +4,12 @@ import be.cytomine.SequenceDomain
 
 class Source extends SequenceDomain {
 
-  String name
+    String name
 
-  static constraints = {
-  }
+    static constraints = {
+    }
 
-  String toString() {
-    name
-  }
+    String toString() {
+        name
+    }
 }

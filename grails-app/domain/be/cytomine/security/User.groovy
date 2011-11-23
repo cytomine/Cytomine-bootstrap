@@ -1,16 +1,11 @@
 package be.cytomine.security
 
-import grails.converters.JSON
-import be.cytomine.ontology.Ontology
 import be.cytomine.image.AbstractImage
-import be.cytomine.project.Slide
-import be.cytomine.project.Project
-import be.cytomine.project.ProjectGroup
 import be.cytomine.image.AbstractImageGroup
-import org.perf4j.StopWatch
-import org.perf4j.LoggingStopWatch
-import be.cytomine.processing.Software
+import be.cytomine.ontology.Ontology
 import be.cytomine.processing.SoftwareProjects
+import be.cytomine.project.ProjectGroup
+import grails.converters.JSON
 
 class User extends SecUser {
 
@@ -24,20 +19,20 @@ class User extends SecUser {
     int transaction
 
     static constraints = {
-        firstname blank : false
-        lastname blank : false
-        email (blank : false , email : true)
-        color (blank : false, nullable : true)
+        firstname blank: false
+        lastname blank: false
+        email(blank: false, email: true)
+        color(blank: false, nullable: true)
     }
 
-    static hasMany = [ softwareProjects : SoftwareProjects]
+    static hasMany = [softwareProjects: SoftwareProjects]
 
     String toString() {
         firstname + " " + lastname + " (" + username + ")"
     }
 
     def groups() {
-        return userGroup.collect{
+        return userGroup.collect {
             it.group
         }
     }
@@ -45,13 +40,13 @@ class User extends SecUser {
     def ontologies() {
         def ontologies = []
         //add ontology created by this user
-        if(this.version!=null) ontologies.addAll(Ontology.findAllByUser(this))
+        if (this.version != null) ontologies.addAll(Ontology.findAllByUser(this))
         //add ontology from project which can be view by this user
         def project = this.projects();
 
         project.each { proj ->
             Ontology ontology = proj.ontology
-            if(!ontologies.contains(ontology))
+            if (!ontologies.contains(ontology))
                 ontologies << ontology
         }
         ontologies
@@ -61,7 +56,7 @@ class User extends SecUser {
     def projects() {
         def c = ProjectGroup.createCriteria()
 
-        if(userGroup==null || userGroup.size()==0) return []
+        if (userGroup == null || userGroup.size() == 0) return []
         def projects = c {
             inList("group.id", userGroup.collect {it.groupId})
             projections {
@@ -75,7 +70,7 @@ class User extends SecUser {
         def abstractImages = []
         if (userGroup.size() > 0) {
             abstractImages = AbstractImageGroup.createCriteria().list {
-                inList("group.id", userGroup.collect{it.group.id})
+                inList("group.id", userGroup.collect {it.group.id})
                 projections {
                     groupProperty('abstractimage')
                 }
@@ -88,9 +83,9 @@ class User extends SecUser {
 
     def abstractimage(int max, int first, String col, String order, String filename, Date dateAddedStart, Date dateAddedStop) {
 
-        AbstractImage.createCriteria().list(offset:first, max:max ,sort:col, order:order){
+        AbstractImage.createCriteria().list(offset: first, max: max, sort: col, order: order) {
             inList("id", AbstractImageGroup.createCriteria().list {
-                inList("group.id", userGroup.collect{it.group.id})
+                inList("group.id", userGroup.collect {it.group.id})
                 projections {
                     groupProperty('abstractimage.id')
                 }
@@ -98,17 +93,17 @@ class User extends SecUser {
             projections {
                 groupProperty('abstractimage')
             }
-            ilike("filename","%"+filename+"%")
-            between('created',dateAddedStart, dateAddedStop)
+            ilike("filename", "%" + filename + "%")
+            between('created', dateAddedStart, dateAddedStop)
 
         }
 
     }
 
     def slides() {
-        AbstractImage.createCriteria().list{
+        AbstractImage.createCriteria().list {
             inList("id", AbstractImageGroup.createCriteria().list {
-                inList("group.id", userGroup.collect{it.group.id})
+                inList("group.id", userGroup.collect {it.group.id})
                 projections {
                     groupProperty('abstractimage.id')
                 }
@@ -120,9 +115,9 @@ class User extends SecUser {
     }
 
     def slides(int max, int first, String col, String order) {
-        AbstractImage.createCriteria().list(offset:first, max:max ,sort:col, order:order){
+        AbstractImage.createCriteria().list(offset: first, max: max, sort: col, order: order) {
             inList("id", AbstractImageGroup.createCriteria().list {
-                inList("group.id", userGroup.collect{it.group.id})
+                inList("group.id", userGroup.collect {it.group.id})
                 projections {
                     groupProperty('abstractimage.id')
                 }
@@ -161,8 +156,8 @@ class User extends SecUser {
             returnArray['email'] = it.email
             returnArray['password'] = "******"
             returnArray['color'] = it.color
-            returnArray['created'] = it.created? it.created.time.toString() : null
-            returnArray['updated'] = it.updated? it.updated.time.toString() : null
+            returnArray['created'] = it.created ? it.created.time.toString() : null
+            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
             return returnArray
         }
     }

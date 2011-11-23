@@ -1,18 +1,18 @@
 package be.cytomine.project
 
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SequenceDomain
 import grails.converters.JSON
-import be.cytomine.Exception.WrongArgumentException
 
 class Discipline extends SequenceDomain {
 
     String name
 
     static constraints = {
-        name(blank:false, unique:true)
+        name(blank: false, unique: true)
     }
     static mapping = {
-        id (generator:'assigned', unique : true)
+        id(generator: 'assigned', unique: true)
     }
 
     static void registerMarshaller() {
@@ -28,12 +28,12 @@ class Discipline extends SequenceDomain {
 
     static Discipline createFromData(jsonDiscipline) {
         def discipline = new Discipline()
-        getFromData(discipline,jsonDiscipline)
+        getFromData(discipline, jsonDiscipline)
     }
 
-    static Discipline getFromData(discipline,jsonDiscipline) {
+    static Discipline getFromData(discipline, jsonDiscipline) {
         String name = jsonDiscipline.name.toString()
-        if(!name.equals("null"))
+        if (!name.equals("null"))
             discipline.name = jsonDiscipline.name.toUpperCase()
         else throw new WrongArgumentException("Discipline name cannot be null")
         return discipline;

@@ -1,18 +1,14 @@
 package be.cytomine.command.term
 
-import be.cytomine.command.UndoRedoCommand
-import be.cytomine.ontology.Term
-import grails.converters.JSON
-import be.cytomine.command.DeleteCommand
-import java.util.prefs.BackingStoreException
-import be.cytomine.ontology.Ontology
-import org.hibernate.exception.ConstraintViolationException
-import java.sql.SQLException
+import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ontology.SuggestedTerm
-import be.cytomine.Exception.ConstraintException
+import be.cytomine.command.DeleteCommand
+import be.cytomine.command.UndoRedoCommand
 import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.ontology.SuggestedTerm
+import be.cytomine.ontology.Term
+import grails.converters.JSON
 
 class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
@@ -22,8 +18,8 @@ class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
 
         Term term = Term.get(json.id)
         if (!term) throw new ObjectNotFoundException("Term " + json.id + " was not found")
-        if(!SuggestedTerm.findAllByTerm(term).isEmpty()) throw new ConstraintException("Term " + json.id + " has suggested term")
-        if(!AnnotationTerm.findAllByTerm(term).isEmpty()) throw new ConstraintException("Term " + json.id + " has annotation term")
+        if (!SuggestedTerm.findAllByTerm(term).isEmpty()) throw new ConstraintException("Term " + json.id + " has suggested term")
+        if (!AnnotationTerm.findAllByTerm(term).isEmpty()) throw new ConstraintException("Term " + json.id + " has annotation term")
         return super.deleteAndCreateDeleteMessage(json.id, term, [term.id, term.name, term.ontology?.name] as Object[])
     }
 

@@ -5,9 +5,9 @@ import be.cytomine.security.User
 class CytomineService {
 
     static transactional = false
-      def springSecurityService
+    def springSecurityService
 
-      User getCurrentUser() {
+    User getCurrentUser() {
         return User.read(springSecurityService.principal.id)
-      }
+    }
 }

@@ -26,7 +26,7 @@ class VisionController extends RestController {
         def split = request.queryString.split("url=http://")
         String imageURL = ConfigurationHolder.config.grails.serverURL + "/images/notavailable.jpg"
         if (split.size() > 0) {
-             imageURL = "http://" + split[1]
+            imageURL = "http://" + split[1]
         }
 
         /*println "URL " + params.url
@@ -40,7 +40,7 @@ class VisionController extends RestController {
 
             /* Process the BufferedImage */
             if (params.method == "he-eosin") {
-                ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
                 dt.setSelectedStain(1)
                 dt.setup(params.url, ip)
@@ -49,7 +49,7 @@ class VisionController extends RestController {
             }
 
             if (params.method == "he-haematoxylin") {
-                ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
                 dt.setSelectedStain(1)
                 dt.setup(params.url, ip)
@@ -58,7 +58,7 @@ class VisionController extends RestController {
             }
 
             if (params.method == "hdab-haematoxylin") {
-                ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
                 dt.setSelectedStain(3)
                 dt.setup(params.url, ip)
@@ -67,7 +67,7 @@ class VisionController extends RestController {
             }
 
             if (params.method == "hdab-dab") {
-                ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
                 dt.setSelectedStain(3)
                 dt.setup(params.url, ip)
@@ -76,7 +76,7 @@ class VisionController extends RestController {
             }
 
             if (params.method == "binary") {
-                ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 ImageConverter ic = new ImageConverter(ip)
                 ic.convertToGray8()
                 ip.getProcessor().autoThreshold()
@@ -84,14 +84,14 @@ class VisionController extends RestController {
             }
 
             if (params.method == "gray") {
-                ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 ImageConverter ic = new ImageConverter(ip)
                 ic.convertToGray8()
                 bufferedImage = ip.getBufferedImage()
             }
 
             if (params.method == "otsu") {
-                ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 ImageConverter ic = new ImageConverter(ip)
                 ic.convertToGray8()
                 Multi_OtsuThreshold dt = new Multi_OtsuThreshold()
@@ -100,59 +100,58 @@ class VisionController extends RestController {
                 bufferedImage = dt.getResult().getBufferedImage()
             }
             /* Apply filters */
-            if (params.method=="huang" ) {
+            if (params.method == "huang") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "Huang")
             }
-            if( params.method=="intermodes" ) {
+            if (params.method == "intermodes") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "Intermodes")
             }
-            if( params.method=="isodata" ) {
+            if (params.method == "isodata") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "IsoData")
             }
-            if( params.method=="li" ) {
+            if (params.method == "li") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "Li")
             }
-            if( params.method=="maxentropy" ) {
+            if (params.method == "maxentropy") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "MaxEntropy")
             }
-            if( params.method=="mean" ) {
+            if (params.method == "mean") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "Mean")
             }
-            if( params.method=="minerror" ) {
+            if (params.method == "minerror") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "MinError(I)")
             }
-            if( params.method=="minimum" ) {
+            if (params.method == "minimum") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "Minimum")
             }
-            if( params.method=="moments" ) {
+            if (params.method == "moments") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "Moments")
             }
-            if( params.method=="percentile" ) {
+            if (params.method == "percentile") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "percentile")
             }
-            if( params.method=="renyientropy" ) {
+            if (params.method == "renyientropy") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "RenyiEntropy")
             }
-            if( params.method=="shanbhag" ) {
+            if (params.method == "shanbhag") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "Shanbhag")
             }
-            if( params.method=="triangle" ) {
+            if (params.method == "triangle") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "Triangle")
             }
-            if( params.method=="yen") {
+            if (params.method == "yen") {
                 bufferedImage = dynBinary(imageURL, bufferedImage, "Yen")
             }
 
-
             /* Apply filters */
             if (Boolean.parseBoolean(params.enhance)) {
-                ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 new ContrastEnhancer().stretchHistogram(ip, 0.5)
                 bufferedImage = ip.getBufferedImage()
             }
 
             if (Boolean.parseBoolean(params.invert)) {
-                ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 ip.getProcessor().invert()
                 bufferedImage = ip.getBufferedImage()
             }
@@ -160,37 +159,37 @@ class VisionController extends RestController {
             if (params.brightness != null && params.contrast != null) {
                 double brightness = Double.parseDouble(params.brightness)
                 double contrast = Double.parseDouble(params.contrast)
-                ImagePlus ip = new ImagePlus(imageURL,bufferedImage)
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 double defaultMin = ip.getDisplayRangeMin()
                 double defaultMax = ip.getDisplayRangeMax()
                 double max = ip.getDisplayRangeMax()
                 double min = ip.getDisplayRangeMin()
-                double range = defaultMax-defaultMin
+                double range = defaultMax - defaultMin
                 int fullRange = 256
 
                 //BRIGHTNESS
-                def center = defaultMin + (defaultMax-defaultMin)*((range-brightness)/range);
-                double width = max-min;
+                def center = defaultMin + (defaultMax - defaultMin) * ((range - brightness) / range);
+                double width = max - min;
 
-                min = center - width/2.0;
-                max = center + width/2.0;
+                min = center - width / 2.0;
+                max = center + width / 2.0;
 
                 //CONTRAST
-                center = min + (max-min)/2.0;
-                double mid  = fullRange / 2
+                center = min + (max - min) / 2.0;
+                double mid = fullRange / 2
                 double slope
                 if (contrast <= mid) {
-                    slope = brightness/mid
+                    slope = brightness / mid
                 } else {
-                    slope = mid / (fullRange-contrast)
+                    slope = mid / (fullRange - contrast)
                 }
                 if (slope > 0.0) {
-                    min = center-(0.5*range)/slope
-                    max = center+(0.5*range)/slope;
+                    min = center - (0.5 * range) / slope
+                    max = center + (0.5 * range) / slope;
                 }
 
                 //println("MIN/MAX : " + Math.round(min) + "/" + Math.round(max))
-                ip.getProcessor().setMinAndMax(Math.round(min),Math.round(max))
+                ip.getProcessor().setMinAndMax(Math.round(min), Math.round(max))
                 bufferedImage = ip.getBufferedImage()
             }
 
@@ -203,8 +202,8 @@ class VisionController extends RestController {
         }
     }
 
-    def dynBinary (String url, BufferedImage bufferedImage, String method) {
-        ImagePlus ip = new ImagePlus(url,bufferedImage)
+    def dynBinary(String url, BufferedImage bufferedImage, String method) {
+        ImagePlus ip = new ImagePlus(url, bufferedImage)
         ImageConverter ic = new ImageConverter(ip)
         ic.convertToGray8()
         def at = new Auto_Threshold()

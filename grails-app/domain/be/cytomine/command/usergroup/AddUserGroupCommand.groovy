@@ -1,8 +1,8 @@
 package be.cytomine.command.usergroup
 
-import be.cytomine.security.UserGroup
-import be.cytomine.command.SimpleCommand
 import be.cytomine.command.AddCommand
+import be.cytomine.command.SimpleCommand
+import be.cytomine.security.UserGroup
 
 class AddUserGroupCommand extends AddCommand implements SimpleCommand {
 

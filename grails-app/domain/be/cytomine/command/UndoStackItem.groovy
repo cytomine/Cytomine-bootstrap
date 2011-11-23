@@ -1,28 +1,28 @@
 package be.cytomine.command
 
-import be.cytomine.security.User
 import be.cytomine.SequenceDomain
+import be.cytomine.security.User
 
 class UndoStackItem extends SequenceDomain implements Comparable {
-  User user
-  Command command
-  Boolean transactionInProgress
-  int transaction
-  boolean isFromRedo = false //the undo item come from redo stack
+    User user
+    Command command
+    Boolean transactionInProgress
+    int transaction
+    boolean isFromRedo = false //the undo item come from redo stack
 
-  static belongsTo = [user:User, command:Command]
+    static belongsTo = [user: User, command: Command]
 
- static mapping = {
-      user index:'undostackitem_user_index'
-  }
+    static mapping = {
+        user index: 'undostackitem_user_index'
+    }
 
-  int compareTo(obj) {
-    created.compareTo(obj.created)
-  }
+    int compareTo(obj) {
+        created.compareTo(obj.created)
+    }
 
-  static constraints = {
-    isFromRedo(nullable : true)
-  }
+    static constraints = {
+        isFromRedo(nullable: true)
+    }
 
-  String toString() { return "|user="+user.id + " command="+command + " transaction="+transactionInProgress + " isFromRedo="+isFromRedo}
+    String toString() { return "|user=" + user.id + " command=" + command + " transaction=" + transactionInProgress + " isFromRedo=" + isFromRedo}
 }

@@ -1,10 +1,9 @@
 package be.cytomine.command.user
 
+import be.cytomine.command.AddCommand
+import be.cytomine.command.UndoRedoCommand
 import be.cytomine.security.User
 import grails.converters.JSON
-
-import be.cytomine.command.UndoRedoCommand
-import be.cytomine.command.AddCommand
 
 class AddUserCommand extends AddCommand implements UndoRedoCommand {
 

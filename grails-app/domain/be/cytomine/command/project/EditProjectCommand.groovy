@@ -1,13 +1,11 @@
 package be.cytomine.command.project
 
-import be.cytomine.command.UndoRedoCommand
-import grails.converters.JSON
-import be.cytomine.project.Project
-import be.cytomine.command.EditCommand
-import be.cytomine.security.Group
-import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
-import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.command.EditCommand
+import be.cytomine.command.UndoRedoCommand
+import be.cytomine.project.Project
+import be.cytomine.security.Group
+import grails.converters.JSON
 
 class EditProjectCommand extends EditCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = false;

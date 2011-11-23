@@ -4,6 +4,6 @@ import be.cytomine.image.server.MimeImageServer
 
 class MimeImageServerController {
 
-  def scaffold = MimeImageServer
+    def scaffold = MimeImageServer
 
 }

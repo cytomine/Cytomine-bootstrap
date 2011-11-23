@@ -8,12 +8,11 @@ package be.cytomine.command.imageinstance
  * To change this template use File | Settings | File Templates.
  */
 
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.UndoRedoCommand
-import grails.converters.JSON
 import be.cytomine.image.ImageInstance
-import java.util.prefs.BackingStoreException
-import be.cytomine.Exception.ObjectNotFoundException
+import grails.converters.JSON
 
 class DeleteImageInstanceCommand extends DeleteCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;

@@ -1,8 +1,8 @@
 package be.cytomine.command.secusersecrole
 
 import be.cytomine.command.AddCommand
-import be.cytomine.security.SecUserSecRole
 import be.cytomine.command.SimpleCommand
+import be.cytomine.security.SecUserSecRole
 
 class AddSecUserSecRoleCommand extends AddCommand implements SimpleCommand {
 

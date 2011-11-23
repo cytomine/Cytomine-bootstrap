@@ -8,8 +8,8 @@ package be.cytomine.command.discipline
 
 import be.cytomine.command.AddCommand
 import be.cytomine.command.UndoRedoCommand
-import grails.converters.JSON
 import be.cytomine.project.Discipline
+import grails.converters.JSON
 
 class AddDisciplineCommand extends AddCommand implements UndoRedoCommand {
 

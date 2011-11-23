@@ -7,23 +7,23 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class ServerController {
 
-  def springSecurityService
-  def grailsApplication
+    def springSecurityService
+    def grailsApplication
 
-  def ping = {
+    def ping = {
 
-    def data = [:]
-    data.alive = true
-    data.authenticated = springSecurityService.isLoggedIn()
-    data.version = grailsApplication.metadata['app.version']
-    data.serverURL = ConfigurationHolder.config.grails.serverURL
+        def data = [:]
+        data.alive = true
+        data.authenticated = springSecurityService.isLoggedIn()
+        data.version = grailsApplication.metadata['app.version']
+        data.serverURL = ConfigurationHolder.config.grails.serverURL
 
-    if (data.authenticated)
-      data.user = springSecurityService.principal.id
+        if (data.authenticated)
+            data.user = springSecurityService.principal.id
 
-    withFormat {
-      json { render data as JSON }
-      xml { render data as XML}
+        withFormat {
+            json { render data as JSON }
+            xml { render data as XML}
+        }
     }
-  }
 }

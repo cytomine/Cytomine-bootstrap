@@ -1,17 +1,16 @@
 package be.cytomine.command.user
 
+import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.command.EditCommand
+import be.cytomine.command.UndoRedoCommand
 import be.cytomine.security.User
 import grails.converters.JSON
-
-import be.cytomine.command.UndoRedoCommand
-import be.cytomine.command.EditCommand
-import be.cytomine.Exception.ObjectNotFoundException
 
 class EditUserCommand extends EditCommand implements UndoRedoCommand {
 
     def execute() {
         User updatedUser = User.get(json.id)
-        if(!updatedUser) throw new ObjectNotFoundException("User ${json.id} not found")
+        if (!updatedUser) throw new ObjectNotFoundException("User ${json.id} not found")
         return super.validateAndSave(json, updatedUser, [updatedUser.id, updatedUser.username] as Object[])
     }
 

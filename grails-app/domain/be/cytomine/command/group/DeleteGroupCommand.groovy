@@ -1,8 +1,8 @@
 package be.cytomine.command.group
 
-import be.cytomine.security.Group
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.SimpleCommand
+import be.cytomine.security.Group
 
 class DeleteGroupCommand extends DeleteCommand implements SimpleCommand {
 

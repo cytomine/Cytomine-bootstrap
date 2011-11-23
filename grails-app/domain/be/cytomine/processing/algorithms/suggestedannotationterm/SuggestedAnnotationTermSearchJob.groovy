@@ -14,14 +14,14 @@ class SuggestedAnnotationTermSearchJob extends Job {
     be.cytomine.processing.algorithms.suggestedannotationterm.SuggestedAnnotationTermIndexJob suggestedAnnotationTermIndexJob
 
     static constraints = {
-        suggestedAnnotationTermIndexJob (nullable: false)
+        suggestedAnnotationTermIndexJob(nullable: false)
     }
 
     def execute() {
         if (!suggestedAnnotationTermIndexJob.successful) {
             this.successful = false
             this.save()
-            print "Can't launch " + this.class.getName() + "(job : "+ this.id +") because " + suggestedAnnotationTermIndexJob.class.getName() + "(job : "+ this.id +") was not successful"
+            print "Can't launch " + this.class.getName() + "(job : " + this.id + ") because " + suggestedAnnotationTermIndexJob.class.getName() + "(job : " + this.id + ") was not successful"
         }
         print "Do something with  " + this.class.getName() + " !!!"
     }

@@ -11,13 +11,13 @@ class ProjectGroup {
         version false
     }
 
-    static ProjectGroup link(Project project,Group group) {
+    static ProjectGroup link(Project project, Group group) {
         def projectGroup = ProjectGroup.findByProjectAndGroup(project, group)
         if (!projectGroup) {
             projectGroup = new ProjectGroup()
             project?.addToProjectGroup(projectGroup)
             group?.addToProjectGroup(projectGroup)
-            projectGroup.save(flush : true)
+            projectGroup.save(flush: true)
         }
         return projectGroup
     }
@@ -27,7 +27,7 @@ class ProjectGroup {
         if (projectGroup) {
             project?.removeFromProjectGroup(projectGroup)
             group?.removeFromProjectGroup(projectGroup)
-            projectGroup.delete(flush : true)
+            projectGroup.delete(flush: true)
         }
 
     }

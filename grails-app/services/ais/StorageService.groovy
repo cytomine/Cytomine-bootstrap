@@ -12,7 +12,7 @@ class StorageService {
 
     def copy(Storage storage, AbstractImage image) {
         def remotePath = getRemotePath(storage, image)
-        def command = ais + " -s " + storage.getName() + " cp " + image.getPath() + " " +remotePath// Create the String
+        def command = ais + " -s " + storage.getName() + " cp " + image.getPath() + " " + remotePath// Create the String
         println command
         def proc = command.execute()                 // Call *execute* on the string
         proc.waitFor()                               // Wait for the command to finish
@@ -42,7 +42,7 @@ class StorageService {
         return JSON.parse(stdout)
     }
 
-    def getRemotePath (Storage storage, AbstractImage image){
+    def getRemotePath(Storage storage, AbstractImage image) {
         storage.getServiceUrl() + storage.getName() + "/" + image.getFilename()
     }
 

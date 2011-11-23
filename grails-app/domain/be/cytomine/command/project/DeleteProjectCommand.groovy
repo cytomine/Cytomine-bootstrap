@@ -1,20 +1,12 @@
 package be.cytomine.command.project
 
-import be.cytomine.command.UndoRedoCommand
-import be.cytomine.project.Project
-import grails.converters.JSON
-import be.cytomine.command.DeleteCommand
-import java.util.prefs.BackingStoreException
-
-import be.cytomine.project.ProjectGroup
-import be.cytomine.security.UserGroup
-import be.cytomine.security.Group
-import be.cytomine.command.CommandHistory
-import be.cytomine.command.Command
-import be.cytomine.command.RedoStackItem
-import be.cytomine.command.UndoStackItem
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.project.Project
+import be.cytomine.project.ProjectGroup
+import be.cytomine.security.Group
+import be.cytomine.security.UserGroup
+import grails.converters.JSON
+import be.cytomine.command.*
 
 class DeleteProjectCommand extends DeleteCommand implements UndoRedoCommand {
 

@@ -17,7 +17,7 @@ class ImageFilterProject {
             imageFilterProject = new ImageFilterProject()
             imageFilter?.addToImageFilterProjects(imageFilterProject)
             project?.addToImageFilterProjects(imageFilterProject)
-            imageFilterProject.save(flush : true)
+            imageFilterProject.save(flush: true)
         }
     }
 
@@ -26,8 +26,8 @@ class ImageFilterProject {
         if (imageFilterProject) {
             imageFilter?.removeFromImageFilterProjects(imageFilterProject)
             project?.removeFromImageFilterProjects(imageFilterProject)
-            imageFilterProject.delete(flush : true)
-        } else {println "no link between "+imageFilter + " " + project}
+            imageFilterProject.delete(flush: true)
+        } else {println "no link between " + imageFilter + " " + project}
     }
 }
 

@@ -21,7 +21,7 @@ class ImagePropertiesService {
     }
 
     def populate(AbstractImage image) {
-        def imageServer= ImageServer.findByName("IIP-Openslide2");
+        def imageServer = ImageServer.findByName("IIP-Openslide2");
         Resolver resolver = Resolver.getResolver(imageServer.className)
         def propertiesURL = resolver.getPropertiesURL(imageServer.getBaseUrl(), imageServer.getStorage().getBasePath() + image.getPath())
         println image.getFilename() + " : " + propertiesURL
@@ -35,7 +35,7 @@ class ImagePropertiesService {
                 def args = line.split(":")
                 if (args.length != 2) return
                 //if (args[0].contains("Error/")) return
-                def property = new ImageProperty( key : args[0], value : args[1], image : image)
+                def property = new ImageProperty(key: args[0], value: args[1], image: image)
                 property.save();
                 image.addToImageProperties(property)
             }
@@ -43,23 +43,23 @@ class ImagePropertiesService {
         } catch (java.net.SocketTimeoutException e) {
             println "Timeout reached to image : " + image.getFilename()
         } catch (IOException e) {
-            println "IO Exception:"+e.toString()
+            println "IO Exception:" + e.toString()
         }
 
     }
 
     def extractUseful(AbstractImage image) {
         switch (image.getMime().extension) {
-            case "mrxs" :
+            case "mrxs":
                 extractUsefulMrxs(image)
                 break
-            case "vms" :
+            case "vms":
                 extractUsefulVms(image)
                 break
-            case "tif" :
+            case "tif":
                 extractUsefulTif(image)
                 break;
-            case "tiff" :
+            case "tiff":
                 extractUsefulTif(image)
                 break;
             case "svs":
@@ -72,7 +72,7 @@ class ImagePropertiesService {
         println "extract properties from tiff : " + image.getFilename()
         def storages = StorageAbstractImage.findAllByAbstractImage(image).collect { it.storage }
         if (storages.size() == 0) return
-        def imageServer= ImageServer.findByStorage(storages.first())
+        def imageServer = ImageServer.findByStorage(storages.first())
         Resolver resolver = Resolver.getResolver(imageServer.className)
         def metadaURL = resolver.getMetaDataURL(imageServer.getBaseUrl(), imageServer.getStorage().getBasePath() + image.getPath())
         def url = new URL(metadaURL)
@@ -94,7 +94,7 @@ class ImagePropertiesService {
         } catch (java.net.SocketTimeoutException e) {
             println "Timeout reached to image : " + image.getFilename()
         } catch (IOException e) {
-            println "IO Exception:"+e.toString()
+            println "IO Exception:" + e.toString()
         }
         image.setMagnification(10)
         image.setResolution(0.65)
@@ -126,7 +126,7 @@ class ImagePropertiesService {
         //Magnification : hamamatsu.SourceLens
         def magnificationProperty = ImageProperty.findByImageAndKey(image, "hamamatsu.SourceLens")
         if (magnificationProperty) {
-            def value = Float.parseFloat(magnificationProperty.getValue().replace(",","."))
+            def value = Float.parseFloat(magnificationProperty.getValue().replace(",", "."))
             image.setMagnification(value.toInteger())
         }
         //Width openslide.layer[0].width

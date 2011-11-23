@@ -1,100 +1,100 @@
 package be.cytomine.ontology
 
-import grails.converters.JSON
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SequenceDomain
 import be.cytomine.security.User
-import be.cytomine.Exception.WrongArgumentException
+import grails.converters.JSON
 
-class AnnotationTerm extends SequenceDomain implements Serializable{
+class AnnotationTerm extends SequenceDomain implements Serializable {
 
     Annotation annotation
     Term term
     User user
 
     static mapping = {
-        id (generator:'assigned', unique : true)
+        id(generator: 'assigned', unique: true)
     }
-    String toString()
-    {
-        "[" + this.id + " <" + annotation + "," + term + ","+user+">]"
+
+    String toString() {
+        "[" + this.id + " <" + annotation + "," + term + "," + user + ">]"
     }
 
     def getIdTerm() {
-        if(this.termId) return this.termId
+        if (this.termId) return this.termId
         else return this.term?.id
     }
 
     def getIdUser() {
-        if(this.userId) return this.userId
+        if (this.userId) return this.userId
         else return this.user?.id
     }
 
-    static AnnotationTerm link(Annotation annotation,Term term, User user) {
-        if(!annotation)  throw new WrongArgumentException("Annotation cannot be null")
-        if(!term)  throw new WrongArgumentException("Term cannot be null")
-        if(!user)  throw new WrongArgumentException("User cannot be null")
-        def annotationTerm = AnnotationTerm.findWhere('annotation':annotation, 'term':term,'user':user)
-        if(annotationTerm) throw new WrongArgumentException("Annotation - term already exist")
+    static AnnotationTerm link(Annotation annotation, Term term, User user) {
+        if (!annotation) throw new WrongArgumentException("Annotation cannot be null")
+        if (!term) throw new WrongArgumentException("Term cannot be null")
+        if (!user) throw new WrongArgumentException("User cannot be null")
+        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
+        if (annotationTerm) throw new WrongArgumentException("Annotation - term already exist")
         //Annotation.withTransaction {
         if (!annotationTerm) {
-            annotationTerm = new AnnotationTerm(user:user)
+            annotationTerm = new AnnotationTerm(user: user)
             annotation?.addToAnnotationTerm(annotationTerm)
             term?.addToAnnotationTerm(annotationTerm)
             println "save annotationTerm"
             annotation.refresh()
             term.refresh()
-            annotationTerm.save(flush:true)
+            annotationTerm.save(flush: true)
         } else throw new WrongArgumentException("Annotation " + annotation.id + " and term " + term.id + " are already mapped with user " + user.id)
         //}
         return annotationTerm
     }
 
 
-    static AnnotationTerm link(long id,Annotation annotation,Term term, User user) {
+    static AnnotationTerm link(long id, Annotation annotation, Term term, User user) {
 
-        if(!annotation)  throw new WrongArgumentException("Annotation cannot be null")
-        if(!term)  throw new WrongArgumentException("Term cannot be null")
-        if(!user)  throw new WrongArgumentException("User cannot be null")
-        def annotationTerm = AnnotationTerm.findWhere('annotation':annotation, 'term':term,'user':user)
-        if(annotationTerm) throw new WrongArgumentException("Annotation - term already exist")
+        if (!annotation) throw new WrongArgumentException("Annotation cannot be null")
+        if (!term) throw new WrongArgumentException("Term cannot be null")
+        if (!user) throw new WrongArgumentException("User cannot be null")
+        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
+        if (annotationTerm) throw new WrongArgumentException("Annotation - term already exist")
 
         if (!annotationTerm) {
-            annotationTerm = new AnnotationTerm(user:user)
+            annotationTerm = new AnnotationTerm(user: user)
             annotationTerm.id = id
             annotation?.addToAnnotationTerm(annotationTerm)
             term?.addToAnnotationTerm(annotationTerm)
 //            annotation.refresh()
 //            term.refresh()
-            annotationTerm.save(flush:true)
+            annotationTerm.save(flush: true)
         } else throw new WrongArgumentException("Annotation " + annotation.id + " and term " + term.id + " are already mapped with user " + user.id)
         return annotationTerm
     }
 
-    static void unlink(Annotation annotation, Term term,User user) {
+    static void unlink(Annotation annotation, Term term, User user) {
 
-        if(!annotation)  throw new WrongArgumentException("Annotation cannot be null")
-        if(!term)  throw new WrongArgumentException("Term cannot be null")
-        if(!user)  throw new WrongArgumentException("User cannot be null")
-        def annotationTerm = AnnotationTerm.findWhere('annotation':annotation, 'term':term,'user':user)
-        if(!annotationTerm) throw new WrongArgumentException("Annotation - term - user not exist")
+        if (!annotation) throw new WrongArgumentException("Annotation cannot be null")
+        if (!term) throw new WrongArgumentException("Term cannot be null")
+        if (!user) throw new WrongArgumentException("User cannot be null")
+        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
+        if (!annotationTerm) throw new WrongArgumentException("Annotation - term - user not exist")
 
         if (annotationTerm) {
             annotation?.removeFromAnnotationTerm(annotationTerm)
             term?.removeFromAnnotationTerm(annotationTerm)
             //annotation.refresh()
             //term.refresh()
-            println "delete annotationTerm="+annotationTerm
-            annotationTerm.delete(flush : true)
+            println "delete annotationTerm=" + annotationTerm
+            annotationTerm.delete(flush: true)
 
         }
     }
 
     static AnnotationTerm createAnnotationTermFromData(jsonAnnotationTerm) {
         def annotationTerm = new AnnotationTerm()
-        getAnnotationTermFromData(annotationTerm,jsonAnnotationTerm)
+        getAnnotationTermFromData(annotationTerm, jsonAnnotationTerm)
     }
 
-    static AnnotationTerm getAnnotationTermFromData(annotationTerm,jsonAnnotationTerm) {
+    static AnnotationTerm getAnnotationTermFromData(annotationTerm, jsonAnnotationTerm) {
         println "jsonAnnotationTerm from getAnnotationTermFromData = " + jsonAnnotationTerm
         annotationTerm.annotation = Annotation.get(jsonAnnotationTerm.annotation.toString())
         annotationTerm.term = Term.get(jsonAnnotationTerm.term.toString())

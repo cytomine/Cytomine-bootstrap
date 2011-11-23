@@ -8,13 +8,11 @@ package be.cytomine.command.discipline
  * To change this template use File | Settings | File Templates.
  */
 
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.command.EditCommand
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.project.Discipline
 import grails.converters.JSON
-import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
-import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.ObjectNotFoundException
 
 class EditDisciplineCommand extends EditCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;

@@ -1,9 +1,9 @@
 package be.cytomine.command.project
 
+import be.cytomine.command.AddCommand
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.project.Project
 import grails.converters.JSON
-import be.cytomine.command.AddCommand
 
 class AddProjectCommand extends AddCommand implements UndoRedoCommand {
 

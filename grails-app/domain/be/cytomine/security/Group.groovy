@@ -1,9 +1,9 @@
 package be.cytomine.security
 
-import be.cytomine.project.Project
-import be.cytomine.project.ProjectGroup
 import be.cytomine.SequenceDomain
 import be.cytomine.image.AbstractImageGroup
+import be.cytomine.project.Project
+import be.cytomine.project.ProjectGroup
 import grails.converters.JSON
 
 class Group extends SequenceDomain {
@@ -11,7 +11,7 @@ class Group extends SequenceDomain {
     String name
 
     static belongsTo = Project
-    static hasMany = [userGroup:UserGroup, projectGroup:ProjectGroup, abstractimagegroup : AbstractImageGroup]
+    static hasMany = [userGroup: UserGroup, projectGroup: ProjectGroup, abstractimagegroup: AbstractImageGroup]
 
 
     static mapping = {
@@ -19,7 +19,7 @@ class Group extends SequenceDomain {
     }
 
     static constraints = {
-        name(blank:false, unique:true)
+        name(blank: false, unique: true)
     }
 
     static Group getFromData(Group group, jsonGroup) {
@@ -36,19 +36,19 @@ class Group extends SequenceDomain {
     }
 
     def abstractimages() {
-        return abstractimagegroup.collect{
+        return abstractimagegroup.collect {
             it.abstractimage
         }
     }
 
     def users() {
-        return userGroup.collect{
+        return userGroup.collect {
             it.user
         }
     }
 
     def projects() {
-        return projectGroup.collect{
+        return projectGroup.collect {
             it.project
         }
     }

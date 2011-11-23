@@ -16,9 +16,9 @@ class RemoteCopyService {
         def password = storage.getPassword()
         ant.scp(file: localFile,
                 todir: username + "@" + ip + ":" + remoteFile,
-                password : "${password}",
-                port : port,
-                trust:true, verbose :true)
+                password: "${password}",
+                port: port,
+                trust: true, verbose: true)
     }
 
 }

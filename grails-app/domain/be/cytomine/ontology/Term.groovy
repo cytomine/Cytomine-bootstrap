@@ -1,11 +1,9 @@
 package be.cytomine.ontology
 
-import grails.converters.JSON
-import be.cytomine.SequenceDomain
-import org.perf4j.StopWatch
-import org.perf4j.LoggingStopWatch
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.SequenceDomain
+import grails.converters.JSON
 
 class Term extends SequenceDomain implements Serializable {
 
@@ -17,26 +15,26 @@ class Term extends SequenceDomain implements Serializable {
 
     Double rate
 
-    static belongsTo = [ontology:Ontology]
+    static belongsTo = [ontology: Ontology]
     static transients = ["rate"]
     //static belongsTo = Annotation
-    static hasMany = [annotationTerm:AnnotationTerm,relationTerm1:RelationTerm, relationTerm2:RelationTerm]
+    static hasMany = [annotationTerm: AnnotationTerm, relationTerm1: RelationTerm, relationTerm2: RelationTerm]
 
     //must be done because RelationTerm has two Term attribute
-    static mappedBy = [relationTerm1:'term1', relationTerm2:'term2']
+    static mappedBy = [relationTerm1: 'term1', relationTerm2: 'term2']
 
     static constraints = {
-        comment(blank:true,nullable:true)
+        comment(blank: true, nullable: true)
     }
     static mapping = {
-        id (generator:'assigned', unique : true)
+        id(generator: 'assigned', unique: true)
     }
 
     def annotations() {
         def annotations = []
-        annotationTerm.each{
-            if(!annotations.contains(it.annotation))
-                annotations <<  it.annotation
+        annotationTerm.each {
+            if (!annotations.contains(it.annotation))
+                annotations << it.annotation
         }
         annotations
     }
@@ -45,17 +43,17 @@ class Term extends SequenceDomain implements Serializable {
         def relations = []
         relationTerm1.each {
             def map = [:]
-            map.put(it.relation,it.term2)
+            map.put(it.relation, it.term2)
             relations.add(map)
         }
         return relations
     }
 
     def hasChildren() {
-        boolean hasChildren=false
+        boolean hasChildren = false
         this.relationTerm1.each {
-            if(it.getRelation().getName().equals(RelationTerm.names.PARENT)) {
-                hasChildren=true
+            if (it.getRelation().getName().equals(RelationTerm.names.PARENT)) {
+                hasChildren = true
                 return
             }
         }
@@ -82,7 +80,7 @@ class Term extends SequenceDomain implements Serializable {
         def relations = []
         relationTerm2.each {
             def map = [:]
-            map.put(it.relation,it.term1)
+            map.put(it.relation, it.term1)
             relations.add(map)
         }
         return relations
@@ -90,19 +88,19 @@ class Term extends SequenceDomain implements Serializable {
 
     static Term createFromData(jsonTerm) throws CytomineException {
         def term = new Term()
-        getFromData(term,jsonTerm)
+        getFromData(term, jsonTerm)
     }
 
-    static Term getFromData(term,jsonTerm) throws CytomineException {
-        if(!jsonTerm.name.toString().equals("null"))
+    static Term getFromData(term, jsonTerm) throws CytomineException {
+        if (!jsonTerm.name.toString().equals("null"))
             term.name = jsonTerm.name
         else throw new WrongArgumentException("Term name cannot be null")
         term.comment = jsonTerm.comment
 
         String ontologyId = jsonTerm.ontology.toString()
-        if(!ontologyId.equals("null")) {
+        if (!ontologyId.equals("null")) {
             term.ontology = Ontology.get(ontologyId)
-            if(term.ontology==null) throw new WrongArgumentException("Ontology was not found with id:"+ ontologyId)
+            if (term.ontology == null) throw new WrongArgumentException("Ontology was not found with id:" + ontologyId)
         }
         else term.ontology = null
 
@@ -111,7 +109,7 @@ class Term extends SequenceDomain implements Serializable {
     }
 
     def getIdOntology() {
-        if(this.ontologyId) return this.ontologyId
+        if (this.ontologyId) return this.ontologyId
         else return this.ontology?.id
     }
 
@@ -123,19 +121,20 @@ class Term extends SequenceDomain implements Serializable {
             returnArray['name'] = it.name
             returnArray['comment'] = it.comment
             returnArray['ontology'] = it.getIdOntology()
-            try {returnArray['rate'] = it.rate}catch(Exception e){println e}
-            RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT),Term.read(it.id))
+            try {returnArray['rate'] = it.rate} catch (Exception e) {println e}
+            RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT), Term.read(it.id))
 
             returnArray['parent'] = rt?.getIdTerm1()
-            if(it.color) returnArray['color'] = it.color
+            if (it.color) returnArray['color'] = it.color
             return returnArray
         }
     }
-     public boolean equals(Object o) {
-        if(!o) return false
+
+    public boolean equals(Object o) {
+        if (!o) return false
         if (!o instanceof Term) return false
-        try {return ((Term) o).getId() == this.getId()}catch(Exception e) { return false}
-         //if no try/catch, when getting term from ontology => GroovyCastException: Cannot cast object 'null' with class 'org.codehaus.groovy.grails.web.json.JSONObject$Null' to class 'be.cytomine.ontology.Term'
+        try {return ((Term) o).getId() == this.getId()} catch (Exception e) { return false}
+        //if no try/catch, when getting term from ontology => GroovyCastException: Cannot cast object 'null' with class 'org.codehaus.groovy.grails.web.json.JSONObject$Null' to class 'be.cytomine.ontology.Term'
 
     }
 }

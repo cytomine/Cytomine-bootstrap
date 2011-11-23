@@ -1,7 +1,7 @@
 package be.cytomine.image.server
 
-import be.cytomine.image.Mime
 import be.cytomine.SequenceDomain
+import be.cytomine.image.Mime
 
 class ImageServer extends SequenceDomain {
 
@@ -12,14 +12,14 @@ class ImageServer extends SequenceDomain {
     Storage storage
     Boolean available
 
-    static hasMany = [mimes:Mime, mis:MimeImageServer]
+    static hasMany = [mimes: Mime, mis: MimeImageServer]
 
     static constraints = {
-        name blank : false
-        url  blank : false
-        mimes nullable : true
-        storage nullable : true
-        available nullable : false
+        name blank: false
+        url blank: false
+        mimes nullable: true
+        storage nullable: true
+        available nullable: false
     }
 
     String toString() {
@@ -27,7 +27,7 @@ class ImageServer extends SequenceDomain {
     }
 
     def mimes() {
-        return mis.collect{it.Mime}
+        return mis.collect {it.Mime}
     }
 
     def getBaseUrl() {

@@ -4,6 +4,6 @@ import be.cytomine.image.server.ImageServer
 
 class ImageServerController {
 
-     def scaffold = ImageServer
+    def scaffold = ImageServer
 
 }

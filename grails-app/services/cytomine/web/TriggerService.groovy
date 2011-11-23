@@ -9,67 +9,67 @@ package cytomine.web
  */
 class TriggerService {
 
-  def sessionFactory
-  def grailsApplication
-  public final static String SEQ_NAME = "CYTOMINE_SEQ"
-  static transactional = true
+    def sessionFactory
+    def grailsApplication
+    public final static String SEQ_NAME = "CYTOMINE_SEQ"
+    static transactional = true
 
-  def initTrigger() {
-    sessionFactory.getCurrentSession().clear();
-    def connection = sessionFactory.currentSession.connection()
+    def initTrigger() {
+        sessionFactory.getCurrentSession().clear();
+        def connection = sessionFactory.currentSession.connection()
 
-    try {
-      def statement  = connection.createStatement()
+        try {
+            def statement = connection.createStatement()
 
 
-      statement.execute(getProjectImageCountTriggerIncr())
-      statement.execute(getProjectImageCountTriggerDecr())
-      statement.execute(getProjectAnnotationCountTriggerIncr())
-      statement.execute(getProjectAnnotationCountTriggerDecr())
-      statement.execute(getImageAnnotationCountTriggerIncr())
-      statement.execute(getImageAnnotationCountTriggerDecr())
+            statement.execute(getProjectImageCountTriggerIncr())
+            statement.execute(getProjectImageCountTriggerDecr())
+            statement.execute(getProjectAnnotationCountTriggerIncr())
+            statement.execute(getProjectAnnotationCountTriggerDecr())
+            statement.execute(getImageAnnotationCountTriggerIncr())
+            statement.execute(getImageAnnotationCountTriggerDecr())
 
-    } catch (org.postgresql.util.PSQLException e) {
-      println e
+        } catch (org.postgresql.util.PSQLException e) {
+            println e
+        }
+
     }
 
-  }
-
-  String getProjectImageCountTriggerIncr() {
-    String createFunction ="""
+    String getProjectImageCountTriggerIncr() {
+        String createFunction = """
         CREATE OR REPLACE FUNCTION incrementProjectImage() RETURNS trigger as '
         BEGIN UPDATE project SET count_images = count_images + 1 WHERE id = NEW.project_id; RETURN NEW; END ;'
         LANGUAGE plpgsql;"""
 
-    String dropTrigger = "DROP TRIGGER IF EXISTS countImageProject on image_instance;"
+        String dropTrigger = "DROP TRIGGER IF EXISTS countImageProject on image_instance;"
 
-    String createTrigger = "CREATE TRIGGER countImageProject AFTER INSERT ON image_instance FOR EACH ROW EXECUTE PROCEDURE incrementProjectImage();"
+        String createTrigger = "CREATE TRIGGER countImageProject AFTER INSERT ON image_instance FOR EACH ROW EXECUTE PROCEDURE incrementProjectImage();"
 
 
-    println createFunction
-    println dropTrigger
-    println createTrigger
-    return createFunction + dropTrigger+createTrigger
-  }
+        println createFunction
+        println dropTrigger
+        println createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
 
-  String getProjectImageCountTriggerDecr() {
-    String createFunction ="""
+    String getProjectImageCountTriggerDecr() {
+        String createFunction = """
         CREATE OR REPLACE FUNCTION decrementProjectImage() RETURNS trigger as '
         BEGIN UPDATE project SET count_images = count_images - 1 WHERE id = OLD.project_id; RETURN OLD; END ;'
         LANGUAGE plpgsql;"""
 
-    String dropTrigger = "DROP TRIGGER IF EXISTS countDecrImageProject on image_instance;"
+        String dropTrigger = "DROP TRIGGER IF EXISTS countDecrImageProject on image_instance;"
 
-    String createTrigger = "CREATE TRIGGER countDecrImageProject AFTER DELETE ON image_instance FOR EACH ROW EXECUTE PROCEDURE decrementProjectImage();"
+        String createTrigger = "CREATE TRIGGER countDecrImageProject AFTER DELETE ON image_instance FOR EACH ROW EXECUTE PROCEDURE decrementProjectImage();"
 
-    println createFunction
-    println dropTrigger
-    println createTrigger
-    return createFunction + dropTrigger+createTrigger
-  }
+        println createFunction
+        println dropTrigger
+        println createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
 
-  String getProjectAnnotationCountTriggerIncr() {
-    String createFunction ="""
+    String getProjectAnnotationCountTriggerIncr() {
+        String createFunction = """
         CREATE OR REPLACE FUNCTION incrementProjectAnnotation() RETURNS trigger as '
         BEGIN
         UPDATE project
@@ -80,18 +80,18 @@ class TriggerService {
         END ;
         ' LANGUAGE plpgsql; """
 
-    String dropTrigger = "DROP TRIGGER IF EXISTS countAnnotationProject on annotation;"
+        String dropTrigger = "DROP TRIGGER IF EXISTS countAnnotationProject on annotation;"
 
-    String createTrigger = "CREATE TRIGGER countAnnotationProject AFTER INSERT ON annotation FOR EACH ROW EXECUTE PROCEDURE incrementProjectAnnotation(); "
+        String createTrigger = "CREATE TRIGGER countAnnotationProject AFTER INSERT ON annotation FOR EACH ROW EXECUTE PROCEDURE incrementProjectAnnotation(); "
 
-    println createFunction
-    println dropTrigger
-    println createTrigger
-    return createFunction + dropTrigger+createTrigger
-  }
+        println createFunction
+        println dropTrigger
+        println createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
 
-  String getProjectAnnotationCountTriggerDecr() {
-    String createFunction ="""
+    String getProjectAnnotationCountTriggerDecr() {
+        String createFunction = """
         CREATE OR REPLACE FUNCTION decrementProjectAnnotation() RETURNS trigger as '
         BEGIN
         UPDATE project
@@ -102,18 +102,18 @@ class TriggerService {
         END ;
         ' LANGUAGE plpgsql; """
 
-    String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationProject on annotation;"
+        String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationProject on annotation;"
 
-    String createTrigger = "CREATE TRIGGER countDecrAnnotationProject AFTER DELETE ON annotation FOR EACH ROW EXECUTE PROCEDURE decrementProjectAnnotation(); "
+        String createTrigger = "CREATE TRIGGER countDecrAnnotationProject AFTER DELETE ON annotation FOR EACH ROW EXECUTE PROCEDURE decrementProjectAnnotation(); "
 
-    println createFunction
-    println dropTrigger
-    println createTrigger
-    return createFunction + dropTrigger+createTrigger
-  }
+        println createFunction
+        println dropTrigger
+        println createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
 
-  String getImageAnnotationCountTriggerIncr() {
-    String createFunction ="""
+    String getImageAnnotationCountTriggerIncr() {
+        String createFunction = """
         CREATE OR REPLACE FUNCTION incrementImageAnnotation() RETURNS trigger as '
         BEGIN
         UPDATE image_instance
@@ -122,18 +122,18 @@ class TriggerService {
         END ;
         ' LANGUAGE plpgsql; """
 
-    String dropTrigger = "DROP TRIGGER IF EXISTS countAnnotationImage on annotation;"
+        String dropTrigger = "DROP TRIGGER IF EXISTS countAnnotationImage on annotation;"
 
-    String createTrigger = "CREATE TRIGGER countAnnotationImage AFTER INSERT ON annotation FOR EACH ROW EXECUTE PROCEDURE incrementImageAnnotation(); "
+        String createTrigger = "CREATE TRIGGER countAnnotationImage AFTER INSERT ON annotation FOR EACH ROW EXECUTE PROCEDURE incrementImageAnnotation(); "
 
-    println createFunction
-    println dropTrigger
-    println createTrigger
-    return createFunction + dropTrigger+createTrigger
-  }
+        println createFunction
+        println dropTrigger
+        println createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
 
-  String getImageAnnotationCountTriggerDecr() {
-    String createFunction ="""
+    String getImageAnnotationCountTriggerDecr() {
+        String createFunction = """
         CREATE OR REPLACE FUNCTION decrementImageAnnotation() RETURNS trigger as '
         BEGIN
         UPDATE image_instance
@@ -142,13 +142,13 @@ class TriggerService {
         END ;
         ' LANGUAGE plpgsql; """
 
-    String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationImage on annotation;"
+        String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationImage on annotation;"
 
-    String createTrigger = "CREATE TRIGGER countDecrAnnotationImage AFTER DELETE ON annotation FOR EACH ROW EXECUTE PROCEDURE decrementImageAnnotation(); "
+        String createTrigger = "CREATE TRIGGER countDecrAnnotationImage AFTER DELETE ON annotation FOR EACH ROW EXECUTE PROCEDURE decrementImageAnnotation(); "
 
-    println createFunction
-    println dropTrigger
-    println createTrigger
-    return createFunction + dropTrigger+createTrigger
-  }
+        println createFunction
+        println dropTrigger
+        println createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
 }

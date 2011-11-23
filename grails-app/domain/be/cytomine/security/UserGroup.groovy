@@ -13,11 +13,11 @@ class UserGroup {
     }
 
     int hashCode() {
-		def builder = new HashCodeBuilder()
-		if (user) builder.append(user.id)
-		if (group) builder.append(group.id)
-		builder.toHashCode()
-	}
+        def builder = new HashCodeBuilder()
+        if (user) builder.append(user.id)
+        if (group) builder.append(group.id)
+        builder.toHashCode()
+    }
 
     static UserGroup link(User user, Group group) {
         def userGroup = UserGroup.findByUserAndGroup(user, group)
@@ -25,7 +25,7 @@ class UserGroup {
             userGroup = new UserGroup()
             user?.addToUserGroup(userGroup)
             group?.addToUserGroup(userGroup)
-            userGroup.save(flush : true)
+            userGroup.save(flush: true)
         }
     }
 
@@ -35,8 +35,8 @@ class UserGroup {
             user?.removeFromUserGroup(userGroup)
             group?.removeFromUserGroup(userGroup)
             userGroup.refresh()
-            userGroup.delete(flush : true)
-        } else {println "no link between "+user?.username + " " + group?.name}
+            userGroup.delete(flush: true)
+        } else {println "no link between " + user?.username + " " + group?.name}
     }
 
     static UserGroup getFromData(UserGroup userGroup, jsonUserGroup) {

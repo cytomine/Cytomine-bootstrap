@@ -15,7 +15,7 @@ import com.vividsolutions.jts.geom.GeometryFactory
 import be.cytomine.processing.image.filters.Auto_Threshold
 import com.vividsolutions.jts.geom.Geometry
 
-class ProcessingController extends RestController{
+class ProcessingController extends RestController {
 
     def sessionFactory
 
@@ -29,7 +29,7 @@ class ProcessingController extends RestController{
         AbstractImage image = ImageInstance.read(idImage).getBaseImage()
         def y = image.getHeight() - Math.round(Double.parseDouble(params.y)) + shift
         def x = Math.round(Double.parseDouble(params.x)) - shift
-        def url = image.getCropURL((int)x,(int)y,(int)shift*2,(int)shift*2)
+        def url = image.getCropURL((int) x, (int) y, (int) shift * 2, (int) shift * 2)
         println url
         ImagePlus ip = getImage(url)
         def coordinates = computeCoordinates(ip, shift, shift, x, y)
@@ -50,7 +50,7 @@ class ProcessingController extends RestController{
         AbstractImage image = ImageInstance.read(idImage).getBaseImage()
         def y = image.getHeight() - Math.round(Double.parseDouble(params.y)) + shift
         def x = Math.round(Double.parseDouble(params.x)) - shift
-        def url = image.getCropURL((int)x,(int)y,(int)shift*2,(int)shift*2)
+        def url = image.getCropURL((int) x, (int) y, (int) shift * 2, (int) shift * 2)
         println url
         ImagePlus ip = getImage(url)
         //computeCoordinates(ip, shift,shift,x,y)
@@ -76,7 +76,7 @@ class ProcessingController extends RestController{
         InputStream inputStream = new ByteArrayInputStream(out.toByteArray());
         BufferedImage bufferedImage;
         bufferedImage = ImageIO.read(inputStream);
-        ImagePlus ip = new ImagePlus(url,bufferedImage)
+        ImagePlus ip = new ImagePlus(url, bufferedImage)
         ImageConverter ic = new ImageConverter(ip)
         ic.convertToGray8()
         //ip.getProcessor().autoThreshold()
@@ -90,10 +90,10 @@ class ProcessingController extends RestController{
     private def getROI(idImage, x, y) {
         def shift = ProcessingController.ROI_SIZE / 2
         def points = []
-        points.add([x : (x - shift), y  : (y - shift)]) //topLeft
-        points.add([x : (x + shift), y  : (y - shift)]) //topRight
-        points.add([x : (x + shift), y  : (y + shift)]) //bottomRight
-        points.add([x : (x - shift), y  : (y + shift)]) //bottomLeft
+        points.add([x: (x - shift), y: (y - shift)]) //topLeft
+        points.add([x: (x + shift), y: (y - shift)]) //topRight
+        points.add([x: (x + shift), y: (y + shift)]) //bottomRight
+        points.add([x: (x - shift), y: (y + shift)]) //bottomLeft
         points
     }
 
@@ -102,15 +102,15 @@ class ProcessingController extends RestController{
     }
 
     private def computeCoordinates(ImagePlus ip, int x, int y, long topLeftX, long topLeftY) {
-        int[] firstPixel = ip.getPixel(x,y)
+        int[] firstPixel = ip.getPixel(x, y)
         if (firstPixel[0] == WHITE) { //pixel is white, nothing to do
             return null
         }
         Stack<Coordinate> toVisit = new Stack<Coordinate>()
         List<Coordinate> visited = new LinkedList<Coordinate>()
-        toVisit.push(new Coordinate(x,y))
-        ip.getProcessor().putPixel(x,y,255)
-        assert(ip.getProcessor().getPixel( (int) x, (int) y) == WHITE)
+        toVisit.push(new Coordinate(x, y))
+        ip.getProcessor().putPixel(x, y, 255)
+        assert (ip.getProcessor().getPixel((int) x, (int) y) == WHITE)
         while (!toVisit.empty()) {
             Coordinate point = toVisit.pop()
             visited.push(new Coordinate(topLeftX + point.x, topLeftY - point.y)) //compute the real coordinate, not relative to the crop
@@ -119,19 +119,19 @@ class ProcessingController extends RestController{
             int posY
 
             int[] xShifts = [-1, 0, 1,
-                    -1,    1,
+                    -1, 1,
                     -1, 0, 1]
 
             int[] yShifts = [-1, -1, -1,
-                    0,      0,
-                    1,  1,  1]
+                    0, 0,
+                    1, 1, 1]
 
-            assert(xShifts.size() == yShifts.size())
+            assert (xShifts.size() == yShifts.size())
             for (int i = 0; i < xShifts.size(); i++) {
                 posX = (int) point.x + xShifts[i]
                 posY = (int) point.y + yShifts[i]
-                if (isInROI(ip, posX, posY) && ip.getProcessor().getPixel(posX,posY) != WHITE) {
-                    ip.getProcessor().putPixel( posX, posY, WHITE)
+                if (isInROI(ip, posX, posY) && ip.getProcessor().getPixel(posX, posY) != WHITE) {
+                    ip.getProcessor().putPixel(posX, posY, WHITE)
                     toVisit.push(new Coordinate(posX, posY))
                 }
             }

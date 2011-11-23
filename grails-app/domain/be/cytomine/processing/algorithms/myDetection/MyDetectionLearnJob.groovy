@@ -1,10 +1,9 @@
 package be.cytomine.processing.algorithms.myDetection
 
-import be.cytomine.project.Project
-import be.cytomine.security.User
 import be.cytomine.ontology.Term
 import be.cytomine.processing.Job
-import be.cytomine.processing.CytomineJob
+import be.cytomine.project.Project
+import be.cytomine.security.User
 
 class MyDetectionLearnJob extends Job {
 
@@ -24,7 +23,7 @@ class MyDetectionLearnJob extends Job {
     int split = 10
     int ratio = 2
 
-    static hasMany = [ users : User, terms : Term ]
+    static hasMany = [users: User, terms: Term]
 
     static constraints = {
     }

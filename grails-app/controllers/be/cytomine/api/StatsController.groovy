@@ -1,15 +1,15 @@
 package be.cytomine.api
 
-import be.cytomine.project.Project
-import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Annotation
+import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
+import be.cytomine.project.Project
 
 class StatsController extends RestController {
 
-     def statUserAnnotations = {
+    def statUserAnnotations = {
         Project project = Project.read(params.id)
-        if(project == null) responseNotFound("Project", params.id)
+        if (project == null) responseNotFound("Project", params.id)
         def terms = Term.findAllByOntology(project.getOntology())
         def nbAnnotationsByUserAndTerms = AnnotationTerm.createCriteria().list {
             inList("term", terms)
@@ -24,7 +24,7 @@ class StatsController extends RestController {
         }
 
         Map<Long, Object> result = new HashMap<Long, Object>()
-        project.users().each { user->
+        project.users().each { user ->
             def item = [:]
             item.id = user.id
             item.key = user.firstname + " " + user.lastname
@@ -39,7 +39,7 @@ class StatsController extends RestController {
             }
             result.put(user.id, item)
         }
-        nbAnnotationsByUserAndTerms.each { stat->
+        nbAnnotationsByUserAndTerms.each { stat ->
             def item = result.get(stat[0])
             item.terms.each {
                 if (it.id == stat[1]) {
@@ -52,7 +52,7 @@ class StatsController extends RestController {
 
     def statUser = {
         Project project = Project.read(params.id)
-        if(project==null) { responseNotFound("Project", params.id) }
+        if (project == null) { responseNotFound("Project", params.id) }
         def userAnnotations = Annotation.createCriteria().list {
             inList("image", project.imagesinstance())
             join("user")  //right join possible ? it will be sufficient
@@ -62,7 +62,7 @@ class StatsController extends RestController {
             }
         }
         Map<Long, Object> result = new HashMap<Long, Object>()
-        project.users().each { user->
+        project.users().each { user ->
             def item = [:]
             item.id = user.id
             item.key = user.firstname + " " + user.lastname
@@ -78,7 +78,7 @@ class StatsController extends RestController {
 
     def statTerm = {
         Project project = Project.read(params.id)
-        if(project == null) responseNotFound("Project", params.id)
+        if (project == null) responseNotFound("Project", params.id)
 
 
         def terms = project.ontology.terms()
@@ -89,8 +89,8 @@ class StatsController extends RestController {
         def list = []
 
         //init list
-        terms.each{ term ->
-            if(!term.hasChildren()) {
+        terms.each { term ->
+            if (!term.hasChildren()) {
                 stats[term.name] = 0
                 color[term.name] = term.color
                 ids[term.name] = term.id
@@ -98,23 +98,23 @@ class StatsController extends RestController {
         }
 
         //compute stat
-        annotations.each{ annotation ->
+        annotations.each { annotation ->
             def termOfAnnotation = annotation.terms()
-            termOfAnnotation.each{ term ->
-                if(term.ontology.id==project.ontology.id && !term.hasChildren())
-                    stats[term.name] = stats[term.name]+1
+            termOfAnnotation.each { term ->
+                if (term.ontology.id == project.ontology.id && !term.hasChildren())
+                    stats[term.name] = stats[term.name] + 1
             }
         }
-        stats.each{
-            list << ["id": ids.get(it.key), "key":it.key,"value":it.value,"color":color.get(it.key)]
+        stats.each {
+            list << ["id": ids.get(it.key), "key": it.key, "value": it.value, "color": color.get(it.key)]
         }
         responseSuccess(list)
     }
 
     /* Pour chaque terme, le nombre de slides dans lesquels ils ont été annotés. */
-    def statTermSlide =  {
+    def statTermSlide = {
         Project project = Project.read(params.id)
-        if(project == null) responseNotFound("Project", params.id)
+        if (project == null) responseNotFound("Project", params.id)
         def terms = Term.findAllByOntology(project.getOntology())
         def annotations = AnnotationTerm.createCriteria().list {
             inList("term", terms)
@@ -128,7 +128,7 @@ class StatsController extends RestController {
             }
         }
         Map<Long, Object> result = new HashMap<Long, Object>()
-        terms.each { term->
+        terms.each { term ->
             def item = [:]
             item.id = term.id
             item.key = term.name
@@ -144,9 +144,9 @@ class StatsController extends RestController {
     }
 
     /*Pour chaque user, le nombre de slides dans lesquels ils ont fait des annotations.*/
-    def statUserSlide =  {
+    def statUserSlide = {
         Project project = Project.read(params.id)
-        if(project == null) responseNotFound("Project", params.id)
+        if (project == null) responseNotFound("Project", params.id)
         def terms = Term.findAllByOntology(project.getOntology())
         def annotations = AnnotationTerm.createCriteria().list {
             inList("term", terms)
@@ -160,7 +160,7 @@ class StatsController extends RestController {
             }
         }
         Map<Long, Object> result = new HashMap<Long, Object>()
-        project.users().each { user->
+        project.users().each { user ->
             def item = [:]
             item.id = user.id
             item.key = user.firstname + " " + user.lastname

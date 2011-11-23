@@ -1,11 +1,11 @@
 package be.cytomine.processing
 
-import be.cytomine.security.User
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import be.cytomine.SequenceDomain
 import be.cytomine.processing.algorithms.myDetection.MyDetectionLearnJob
 import be.cytomine.processing.algorithms.myDetection.MyDetectionPredictJob
 import be.cytomine.project.Project
+import be.cytomine.security.User
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class Job extends SequenceDomain implements CytomineJob {   //TODO : SHOULD BE ABSTRACT with GRAILS2.0
 
@@ -17,14 +17,14 @@ class Job extends SequenceDomain implements CytomineJob {   //TODO : SHOULD BE A
 
     static transients = ["url"]
 
-    static belongsTo = [ software : Software]
+    static belongsTo = [software: Software]
 
-    static hasMany = [ jobData : JobData]
+    static hasMany = [jobData: JobData]
 
 
     static constraints = {
-        user nullable : false
-        progress(min : 0, max : 100)
+        user nullable: false
+        progress(min: 0, max: 100)
     }
 
     public afterInsert() {
@@ -55,7 +55,7 @@ class Job extends SequenceDomain implements CytomineJob {   //TODO : SHOULD BE A
             if (data.doRGB) job.doRGB = Boolean.parseBoolean(data.doRGB)
             if (data.doEDGE) job.doEDGE = Boolean.parseBoolean(data.doEDGE)
             if (data.doHSV) job.doHSV = Boolean.parseBoolean(data.doHSV)
-                if (data.doGRAY) job.doGRAY = Boolean.parseBoolean(data.doGRAY)
+            if (data.doGRAY) job.doGRAY = Boolean.parseBoolean(data.doGRAY)
             if (data.doLBP) job.doLBP = Boolean.parseBoolean(data.doLBP)
             if (data.ratio) job.ratio = Integer.parseInt(data.ratio)
             if (data.split) job.split = Integer.parseInt(data.split)
