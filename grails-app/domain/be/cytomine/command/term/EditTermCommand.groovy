@@ -7,6 +7,7 @@ import be.cytomine.ontology.Term
 import grails.converters.JSON
 
 class EditTermCommand extends EditCommand implements UndoRedoCommand {
+
     boolean saveOnUndoRedoStack = true;
 
     def execute() {
@@ -26,15 +27,21 @@ class EditTermCommand extends EditCommand implements UndoRedoCommand {
     }
 
     def undo() {
+        //Rebuilt previous state of object that was previoulsy edited
         Term term = fillDomainWithData(new Term(),JSON.parse(data).previousTerm)
+        //Build response message
         def response = createResponseMessageUndo(term,[term.id, term.name, term.ontology.name],[ontologyID: term?.ontology?.id])
+        //Save update
         term.save(flush: true)
         return response
     }
 
     def redo() {
+        //Rebuilt previous state of object that was previoulsy edited
         Term term = fillDomainWithData(new Term(), JSON.parse(data).newTerm)
+        //Build response message
         def response = createResponseMessageRedo(term,[term.id, term.name, term.ontology.name],[ontologyID: term?.ontology?.id])
+        //Save update
         term.save(flush: true)
         return response
     }
