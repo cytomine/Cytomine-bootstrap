@@ -6,6 +6,8 @@ import be.cytomine.security.SecUserSecRole
 
 class AddSecUserSecRoleCommand extends AddCommand implements SimpleCommand {
 
+    def domainService
+
     def execute() {
         //Init new domain object
         SecUserSecRole newRelation = SecUserSecRole.createFromData(json)

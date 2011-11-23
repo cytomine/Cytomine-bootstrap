@@ -7,6 +7,8 @@ import grails.converters.JSON
 
 class AddUserCommand extends AddCommand implements UndoRedoCommand {
 
+    def domainService
+
     def execute() {
         //Init new domain object
         User domain = User.createFromData(json)

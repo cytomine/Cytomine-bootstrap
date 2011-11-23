@@ -11,6 +11,9 @@ import be.cytomine.ontology.Term
 import grails.converters.JSON
 
 class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
+
+    def domainService
+
     boolean saveOnUndoRedoStack = true;
 
     def execute() throws CytomineException {

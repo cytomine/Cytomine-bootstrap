@@ -9,6 +9,8 @@ import grails.converters.JSON
 
 class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
 
+    def domainService
+
     boolean saveOnUndoRedoStack = true;
 
     def execute() {

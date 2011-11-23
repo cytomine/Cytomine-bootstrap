@@ -6,6 +6,8 @@ import be.cytomine.security.UserGroup
 
 class AddUserGroupCommand extends AddCommand implements SimpleCommand {
 
+    def domainService
+
     def execute() {
         //Init new domain object
         UserGroup domain = UserGroup.createFromData(json)

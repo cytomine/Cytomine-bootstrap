@@ -16,9 +16,9 @@ import grails.converters.JSON
 
 class AddOntologyCommand extends AddCommand implements UndoRedoCommand {
 
-    boolean saveOnUndoRedoStack = true;
-
     def domainService
+
+    boolean saveOnUndoRedoStack = true;
 
     def execute() throws CytomineException {
         json.user = user.id

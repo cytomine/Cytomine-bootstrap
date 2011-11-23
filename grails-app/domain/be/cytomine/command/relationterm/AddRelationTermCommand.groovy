@@ -10,6 +10,8 @@ import grails.converters.JSON
 
 class AddRelationTermCommand extends AddCommand implements UndoRedoCommand {
 
+    def domainService
+
     boolean saveOnUndoRedoStack = true;
 
     def execute() {
