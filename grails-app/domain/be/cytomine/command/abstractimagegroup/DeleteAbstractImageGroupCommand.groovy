@@ -13,20 +13,20 @@ class DeleteAbstractImageGroupCommand extends DeleteCommand implements UndoRedoC
 
     boolean saveOnUndoRedoStack = true;
 
-    def execute() throws CytomineException {
-
+    def execute()  {
+        //Retrieve domain
         AbstractImage abstractimage = AbstractImage.get(json.abstractimage)
         Group group = Group.get(json.group)
-
-        log.info "Delete abstractimage-group with abstractimage=" + abstractimage + " group=" + group
-
-        AbstractImageGroup abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-        if (!abstractimageGroup) throw new ObjectNotFoundException("AbstractImageGroup not found " + abstractimage + " group=" + group)
-
-        def response = super.createDeleteMessage(id, abstractimageGroup, [id, abstractimage.id, group.name] as Object[])
-        AbstractImageGroup.unlink(abstractimageGroup.abstractimage, abstractimageGroup.group)
-
-        return response
+        AbstractImageGroup relation = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
+        if (!relation) throw new ObjectNotFoundException("AbstractImageGroup not found " + abstractimage + " group=" + group)
+        //Build response message
+        String message = createMessage(relation, [relation.id, relation.abstractimage.id, relation.group.name])
+        //Init command info
+        fillCommandInfo(relation,message)
+        //Delete domain
+        AbstractImageGroup.unlink(relation.abstractimage, relation.group)
+        //Create and return response
+        return responseService.createResponseMessage(relation,message,printMessage)
     }
 
 

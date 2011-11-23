@@ -13,11 +13,19 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand {
 
     String toString() {"DeleteAnnotationCommand"}
 
-    def execute() throws CytomineException {
-        Annotation annotation = Annotation.findById(json.id)
-        if (!annotation) throw new ObjectNotFoundException("Annotation " + json.id + " not found")
-        super.initCurrentCommantProject(annotation.image.project)
-        return super.deleteAndCreateDeleteMessage(json.id, annotation, [annotation.id, annotation.imageFileName()] as Object[])
+    def execute()  {
+        //Retrieve domain
+        Annotation domain = Annotation.findById(json.id)
+        if (!domain) throw new ObjectNotFoundException("Annotation " + json.id + " not found")
+        //Build response message
+        String message = createMessage(domain, [domain.id, domain.imageFileName()])
+        //Init command info
+        super.initCurrentCommantProject(domain.image.project)
+        fillCommandInfo(domain,message)
+        //Delete domain
+        domainService.deleteDomain(domain)
+        //Create and return response
+        return responseService.createResponseMessage(domain,message,printMessage)
     }
 
     def undo() {

@@ -17,10 +17,18 @@ import grails.converters.JSON
 
 class DeleteAbstractImageCommand extends DeleteCommand implements UndoRedoCommand {
 
-    def execute() throws CytomineException {
-        AbstractImage image = AbstractImage.findById(json.id)
-        if (!image) throw new ObjectNotFoundException("Image " + json.id + " was not found")
-        return super.deleteAndCreateDeleteMessage(json.id, image, [image.id, image.filename] as Object[])
+    def execute()  {
+        //Retrieve domain
+        AbstractImage domain = AbstractImage.findById(json.id)
+        if (!domain) throw new ObjectNotFoundException("Image " + json.id + " was not found")
+        //Build response message
+        String message = createMessage(domain, [domain.id, domain.filename])
+        //Init command info
+        fillCommandInfo(domain,message)
+        //Delete domain
+        domainService.deleteDomain(domain)
+        //Create and return response
+        return responseService.createResponseMessage(domain,message,printMessage)
     }
 
     def undo() {

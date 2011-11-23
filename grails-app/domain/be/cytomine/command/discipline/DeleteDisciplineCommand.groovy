@@ -19,10 +19,18 @@ class DeleteDisciplineCommand extends DeleteCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
     def execute() {
-        Discipline discipline = Discipline.findById(json.id)
-        if (!discipline) throw new ObjectNotFoundException("Discipline $json.id was not found")
-        if (discipline && Project.findAllByDiscipline(discipline).size() > 0) throw new ConstraintException("Discipline is still map with project")
-        return super.deleteAndCreateDeleteMessage(json.id, discipline, [discipline.id, discipline.name] as Object[])
+        //Retrieve domain
+        Discipline domain = Discipline.findById(json.id)
+        if (!domain) throw new ObjectNotFoundException("Discipline $json.id was not found")
+        if (domain && Project.findAllByDiscipline(domain).size() > 0) throw new ConstraintException("Discipline is still map with project")
+        //Build response message
+        String message = createMessage(domain, [domain.id, domain.name])
+        //Init command info
+        fillCommandInfo(domain,message)
+        //Delete domain
+        domainService.deleteDomain(domain)
+        //Create and return response
+        return responseService.createResponseMessage(domain,message,printMessage)
     }
 
     def undo() {

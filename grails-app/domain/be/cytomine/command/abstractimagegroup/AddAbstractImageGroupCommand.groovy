@@ -12,7 +12,7 @@ class AddAbstractImageGroupCommand extends AddCommand implements UndoRedoCommand
 
     boolean saveOnUndoRedoStack = true;
 
-    def execute() throws CytomineException {
+    def execute() {
         //Init new domain object
         AbstractImageGroup newAbstractImageGroup = AbstractImageGroup.createAbstractImageGroupFromData(json)
         //Link relation domain

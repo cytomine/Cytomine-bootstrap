@@ -14,13 +14,20 @@ class DeleteSuggestedTermCommand extends DeleteCommand implements UndoRedoComman
     boolean saveOnUndoRedoStack = true;
 
     def execute() {
+        //Retrieve domain
         Annotation annotation = Annotation.read(json.annotation)
         Term term = Term.read(json.term)
         Job job = Job.read(json.job)
-        SuggestedTerm suggestedTerm = SuggestedTerm.findWhere(annotation: annotation, term: term, job: job)
-        if (!suggestedTerm) throw new ObjectNotFoundException("SuggestedTerm was not found with annotation:$annotation,term:$term,job:$job")
-        String id = suggestedTerm.id
-        return super.deleteAndCreateDeleteMessage(id, suggestedTerm, [suggestedTerm.term.name, suggestedTerm.annotation.id, suggestedTerm.job.id] as Object[])
+        SuggestedTerm domain = SuggestedTerm.findWhere(annotation: annotation, term: term, job: job)
+        if (!domain) throw new ObjectNotFoundException("SuggestedTerm was not found with annotation:$annotation,term:$term,job:$job")
+        //Build response message
+        String message = createMessage(domain, [domain.term.name, domain.annotation.id, domain.job.id])
+        //Init command info
+        fillCommandInfo(domain,message)
+        //Delete domain
+        domainService.deleteDomain(domain)
+        //Create and return response
+        return responseService.createResponseMessage(domain,message,printMessage)
     }
 
     def undo() {

@@ -10,10 +10,19 @@ import be.cytomine.security.User
 class DeleteSecUserSecRoleCommand extends DeleteCommand implements SimpleCommand {
 
     def execute() {
+
+        //Retrieve domain
         User user = User.read(json.user)
         SecRole role = SecRole.read(json.role)
-        SecUserSecRole userRole = SecUserSecRole.findBySecUserAndSecRole(user, role)
-        if (!userRole) throw new WrongArgumentException("UserRole $user/$role was not found!")
-        return super.deleteAndCreateDeleteMessage(user.id, userRole, [user.id, role.id] as Object[])
+        SecUserSecRole domain = SecUserSecRole.findBySecUserAndSecRole(user, role)
+        if (!domain) throw new WrongArgumentException("UserRole $user/$role was not found!")
+        //Build response message
+        String message = createMessage(domain, [user.id, role.id])
+        //Init command info
+        fillCommandInfo(domain,message)
+        //Delete domain
+        domainService.deleteDomain(domain)
+        //Create and return response
+        return responseService.createResponseMessage(domain,message,printMessage)
     }
 }

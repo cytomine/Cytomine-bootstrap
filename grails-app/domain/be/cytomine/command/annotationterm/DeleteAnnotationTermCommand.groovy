@@ -14,19 +14,22 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
     boolean saveOnUndoRedoStack = true;
 
     def execute() {
+        //Retrieve domain
         Annotation annotation = Annotation.get(json.annotation)
         Term term = Term.get(json.term)
         User user = User.get(json.user)
-        log.info "Delete annotation-term with annotation=" + annotation + " term=" + term + " user=" + user
-
-        AnnotationTerm annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
-        if (!annotationTerm) throw new ObjectNotFoundException("Annotation term not found ($annotation,$term,$user)")
-        String id = annotationTerm.id
-        super.initCurrentCommantProject(annotationTerm.annotation.image.project)
-        def response = super.createDeleteMessage(id, annotationTerm, [id, annotation.id, term.name, user?.username] as Object[])
-        AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term, annotationTerm.user)
-
-        return response
+        AnnotationTerm relation = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
+        if (!relation) throw new ObjectNotFoundException("Annotation term not found ($annotation,$term,$user)")
+        String id = relation.id
+         //Build response message
+        String message = createMessage(relation, [id, annotation.id, term.name, user?.username])
+        //Init command info
+        super.initCurrentCommantProject(relation.annotation.image.project)
+        fillCommandInfo(relation,message)
+        //Delete domain
+        relation.unlink(relation.annotation, relation.term, relation.user)
+        //Create and return response
+        return responseService.createResponseMessage(relation,message,printMessage)
     }
 
     def undo() {

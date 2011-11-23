@@ -22,11 +22,19 @@ class DeleteOntologyCommand extends DeleteCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
     def execute() throws CytomineException {
-        log.info "Execute"
-        Ontology ontology = Ontology.get(json.id)
-        if (!ontology) throw new ObjectNotFoundException("Ontology " + id + " not found")
-        if (ontology && Project.findAllByOntology(ontology).size() > 0) throw new ConstraintException("Ontology is still map with project")
-        return super.deleteAndCreateDeleteMessage(json.id, ontology, [ontology.id, ontology.name] as Object[])
+
+        //Retrieve domain
+        Ontology domain = Ontology.get(json.id)
+        if (!domain) throw new ObjectNotFoundException("Ontology " + json.id + " was not found")
+        if (domain && Project.findAllByOntology(domain).size() > 0) throw new ConstraintException("Ontology is still map with project")
+        //Build response message
+        String message = createMessage(domain, [domain.id, domain.name])
+        //Init command info
+        fillCommandInfo(domain,message)
+        //Delete domain
+        domainService.deleteDomain(domain)
+        //Create and return response
+        return responseService.createResponseMessage(domain,message,printMessage)
     }
 
     def undo() {

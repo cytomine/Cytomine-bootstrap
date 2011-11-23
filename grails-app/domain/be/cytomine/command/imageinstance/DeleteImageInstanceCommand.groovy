@@ -18,11 +18,18 @@ class DeleteImageInstanceCommand extends DeleteCommand implements UndoRedoComman
     boolean saveOnUndoRedoStack = true;
 
     def execute() {
-        log.info "Execute" + json
-        ImageInstance image = ImageInstance.get(json.id)
-        if (!image) throw new ObjectNotFoundException("Image instance $json.id not found!")
-        super.initCurrentCommantProject(image.project)
-        return super.deleteAndCreateDeleteMessage(json.id, image, [image.id, image?.baseImage?.filename, image.project.name] as Object[])
+         //Retrieve domain
+        ImageInstance domain = ImageInstance.get(json.id)
+        if (!domain) throw new ObjectNotFoundException("Image instance $json.id not found!")
+        //Build response message
+        String message = createMessage(domain, [domain.id, domain?.baseImage?.filename, domain.project.name])
+        //Init command info
+        super.initCurrentCommantProject(domain.project)
+        fillCommandInfo(domain,message)
+        //Delete domain
+        domainService.deleteDomain(domain)
+        //Create and return response
+        return responseService.createResponseMessage(domain,message,printMessage)
     }
 
     def undo() {

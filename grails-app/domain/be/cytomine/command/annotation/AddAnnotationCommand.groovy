@@ -12,7 +12,7 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
 
     boolean saveOnUndoRedoStack = true;
 
-    def execute() throws CytomineException {
+    def execute()  {
         json.user = user.id
         Annotation newAnnotation = Annotation.createFromData(json)
 
