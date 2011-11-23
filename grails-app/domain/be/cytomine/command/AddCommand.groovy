@@ -13,6 +13,19 @@ class AddCommand extends Command {
     protected createMessage(def updatedTerm, def params) {
         responseService.createMessage(updatedTerm, params, "Add")
     }
+    public def createResponseMessageUndo(def object, def messageParams) {
+        responseService.createResponseMessage(object,messageParams,printMessage,"Delete",null)
+    }
+    public def createResponseMessageUndo(def object, def messageParams,def additionalCallbackParams) {
+        responseService.createResponseMessage(object,messageParams,printMessage,"Delete",additionalCallbackParams)
+    }
+    public def createResponseMessageRedo(def object, def messageParams) {
+        responseService.createResponseMessage(object,messageParams,printMessage,"Add",null)
+    }
+    public def createResponseMessageRedo(def object, def messageParams,def additionalCallbackParams) {
+        responseService.createResponseMessage(object,messageParams,printMessage,"Add",additionalCallbackParams)
+    }
+
     /**
      * Create an Undo Message for an Add
      * @param id Id of the object that must be undo (e.g. annotation id)

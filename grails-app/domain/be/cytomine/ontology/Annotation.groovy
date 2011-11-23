@@ -196,6 +196,13 @@ class Annotation extends SequenceDomain implements Serializable {
         if (this.image.baseImage.resolution == null) return Math.round(this.getPerimeter()) + " pixels"
         else return Math.round(this.getPerimeter() * this.image.baseImage.resolution) + " µm"
     }
+
+    static Annotation createFromDataWithId(json)  {
+        def domain = createFromData(json)
+        domain.id = json.id
+        return domain
+    }
+
     /**
      * Create a new Annotation with jsonAnnotation attributes
      * So, jsonAnnotation must have jsonAnnotation.location, jsonAnnotation.name, ...

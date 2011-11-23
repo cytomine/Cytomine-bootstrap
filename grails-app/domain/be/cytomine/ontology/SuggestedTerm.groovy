@@ -27,6 +27,12 @@ class SuggestedTerm extends SequenceDomain implements Serializable {
         project = annotation?.image?.project;
     }
 
+     static SuggestedTerm createFromDataWithId(json)  {
+        def domain = createFromData(json)
+        domain.id = json.id
+        return domain
+    }
+
     static SuggestedTerm createFromData(jsonSuggestedTerm) {
         def suggestedTerm = new SuggestedTerm()
         getFromData(suggestedTerm, jsonSuggestedTerm)

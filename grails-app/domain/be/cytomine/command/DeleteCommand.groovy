@@ -18,6 +18,19 @@ class DeleteCommand extends Command {
         responseService.createMessage(updatedTerm, params, "Delete")
     }
 
+    public def createResponseMessageUndo(def object, def messageParams) {
+        responseService.createResponseMessage(object,messageParams,printMessage,"Add",null)
+    }
+    public def createResponseMessageUndo(def object, def messageParams,def additionalCallbackParams) {
+        responseService.createResponseMessage(object,messageParams,printMessage,"Add",additionalCallbackParams)
+    }
+    public def createResponseMessageRedo(def object, def messageParams) {
+        responseService.createResponseMessage(object,messageParams,printMessage,"Delete",null)
+    }
+    public def createResponseMessageRedo(def object, def messageParams,def additionalCallbackParams) {
+        responseService.createResponseMessage(object,messageParams,printMessage,"Delete",additionalCallbackParams)
+    }
+
     /**
      * Create undo message for an undo of a delete on newObject
      * @param newObject Object that has been undo-deleted

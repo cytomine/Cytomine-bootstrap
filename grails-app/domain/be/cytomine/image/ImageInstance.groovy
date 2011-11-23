@@ -48,6 +48,12 @@ class ImageInstance extends SequenceDomain {
         terms
     }
 
+    static ImageInstance createFromDataWithId(json)  {
+        def domain = createFromData(json)
+        domain.id = json.id
+        return domain
+    }
+
     static ImageInstance createFromData(jsonImage) {
         def image = new ImageInstance()
         getFromData(image, jsonImage)

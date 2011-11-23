@@ -79,6 +79,11 @@ class AbstractImageGroup extends SequenceDomain implements Serializable {
 
         }
     }
+    static AbstractImageGroup createFromDataWithId(json)  {
+        def domain = createAbstractImageGroupFromData(json)
+        domain.id = json.id
+        return domain
+    }
 
     static AbstractImageGroup createAbstractImageGroupFromData(jsonAbstractImageGroup) {
         def abstractimageGroup = new AbstractImageGroup()

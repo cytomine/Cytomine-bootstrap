@@ -90,7 +90,6 @@ class Command extends SequenceDomain {
     protected void fillCommandInfo(def newObject,String message) {
         data = newObject.encodeAsJSON()
         actionMessage = message
-
     }
 
 }

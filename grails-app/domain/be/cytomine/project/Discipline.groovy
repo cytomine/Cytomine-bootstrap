@@ -26,6 +26,12 @@ class Discipline extends SequenceDomain {
         }
     }
 
+      static Discipline createFromDataWithId(json)  {
+        def domain = createFromData(json)
+        domain.id = json.id
+        return domain
+    }
+
     static Discipline createFromData(jsonDiscipline) {
         def discipline = new Discipline()
         getFromData(discipline, jsonDiscipline)

@@ -89,6 +89,12 @@ class AnnotationTerm extends SequenceDomain implements Serializable {
         }
     }
 
+    static AnnotationTerm createFromDataWithId(json)  {
+        def domain = createFromData(json)
+        domain.id = json.id
+        return domain
+    }
+
     static AnnotationTerm createFromData(jsonAnnotationTerm) {
         def annotationTerm = new AnnotationTerm()
         getFromData(annotationTerm, jsonAnnotationTerm)

@@ -145,6 +145,12 @@ class User extends SecUser {
         getFromData(new User(), data)
     }
 
+      static User createFromDataWithId(json)  {
+        def domain = createFromData(json)
+        domain.id = json.id
+        return domain
+    }
+
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + User.class
         JSON.registerObjectMarshaller(User) {

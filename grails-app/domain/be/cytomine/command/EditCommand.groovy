@@ -16,7 +16,18 @@ class EditCommand extends Command {
     protected createMessage(def updatedTerm, def params) {
         responseService.createMessage(updatedTerm, params, "Edit")
     }
-
+    public def createResponseMessageUndo(def object, def messageParams) {
+        responseService.createResponseMessage(object,messageParams,printMessage,"Edit",null)
+    }
+    public def createResponseMessageUndo(def object, def messageParams,def additionalCallbackParams) {
+        responseService.createResponseMessage(object,messageParams,printMessage,"Edit",additionalCallbackParams)
+    }
+    public def createResponseMessageRedo(def object, def messageParams) {
+        responseService.createResponseMessage(object,messageParams,printMessage,"Edit",null)
+    }
+    public def createResponseMessageRedo(def object, def messageParams,def additionalCallbackParams) {
+        responseService.createResponseMessage(object,messageParams,printMessage,"Edit",additionalCallbackParams)
+    }
     /**
      * Create undo message for an undo-edit on object
      * @param data New json value of object
@@ -115,6 +126,14 @@ class EditCommand extends Command {
         paramsData.put("new" + responseService.getClassName(newObject), newObject)
         data = (paramsData) as JSON
         actionMessage = message
+    }
+
+    protected def fillDomainWithData(def object, def json)
+    {
+        def domain = object.get(json.id)
+        domain = object.getFromData(domain,json)
+        domain.id = json.id
+        return domain
     }
 
 }

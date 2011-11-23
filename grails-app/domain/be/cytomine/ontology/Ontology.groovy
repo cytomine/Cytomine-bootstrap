@@ -131,6 +131,12 @@ class Ontology extends SequenceDomain implements Serializable {
         }
     }
 
+    static Ontology createFromDataWithId(json)  {
+        def domain = createFromData(json)
+        domain.id = json.id
+        return domain
+    }
+
     static Ontology createFromData(jsonOntology) {
         def ontology = new Ontology()
         getFromData(ontology, jsonOntology)

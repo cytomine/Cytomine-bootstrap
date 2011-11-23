@@ -65,6 +65,11 @@ class AbstractImage extends SequenceDomain {
         }
     }
 
+    static AbstractImage createFromDataWithId(json) throws CytomineException {
+        def domain = createFromData(json)
+        domain.id = json.id
+        return domain
+    }
 
     static AbstractImage createFromData(jsonImage) throws CytomineException {
         def image = new AbstractImage()

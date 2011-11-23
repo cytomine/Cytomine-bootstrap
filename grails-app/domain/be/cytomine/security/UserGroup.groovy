@@ -49,6 +49,12 @@ class UserGroup {
         getFromData(new UserGroup(), data)
     }
 
+      static UserGroup createFromDataWithId(json)  {
+        def domain = createFromData(json)
+        domain.id = json.id
+        return domain
+    }
+
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + UserGroup.class
         JSON.registerObjectMarshaller(UserGroup) {

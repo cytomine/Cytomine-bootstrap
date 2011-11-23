@@ -27,6 +27,12 @@ class Group extends SequenceDomain {
         return group;
     }
 
+      static Group createFromDataWithId(json)  {
+        def domain = createFromData(json)
+        domain.id = json.id
+        return domain
+    }
+
     static Group createFromData(data) {
         getFromData(new Group(), data)
     }

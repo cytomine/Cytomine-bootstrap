@@ -31,23 +31,17 @@ class DeleteTermCommand extends DeleteCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        def termData = JSON.parse(data)
-        Term term = Term.createFromData(termData)
-        term.id = termData.id;
+        Term term = Term.createFromDataWithId(JSON.parse(data))
+        def response = createResponseMessageUndo(term,[term.id, term.name, term.ontology.name],[ontologyID: term?.ontology?.id])
         term.save(flush: true)
-        def callback = [ontologyID: term?.ontology?.id]
-        return super.createUndoMessage(term, [term.id, term.name, term.ontology] as Object[], callback);
+        return response;
     }
 
     def redo() {
-        def termData = JSON.parse(postData)
-        Term term = Term.findById(termData.id)
-        String id = termData.id
-        String name = term.name
-        String ontologyName = term.ontology?.name
-        def callback = [ontologyID: term?.ontology?.id]
+        Term term = Term.findById(JSON.parse(postData).id)
+        def response = createResponseMessageRedo(term,[term.id, term.name, term.ontology.name],[ontologyID: term?.ontology?.id])
         term.delete(flush: true);
-        return super.createRedoMessage(id, term, [id, name, ontologyName] as Object[], callback);
+        return response
     }
 
 }

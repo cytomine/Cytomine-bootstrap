@@ -41,7 +41,11 @@ class SecUserSecRole implements Serializable {
         secRole.secRole = SecRole.read(jsonSecRole.role)
         return secRole;
     }
-
+      static SecUserSecRole createFromDataWithId(json)  {
+        def domain = createFromData(json)
+        domain.id = json.id
+        return domain
+    }
     static SecUserSecRole createFromData(data) {
         getFromData(new SecUserSecRole(), data)
     }

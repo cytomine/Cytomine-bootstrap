@@ -99,6 +99,13 @@ class Project extends SequenceDomain {
         UserGroup.findAllByGroupInList(this.groups()).collect { it.user }.unique() //not optimal but okay for users&groups
     }
 
+
+      static Project createFromDataWithId(json)  {
+        def domain = createFromData(json)
+        domain.id = json.id
+        return domain
+    }
+
     static Project createFromData(jsonProject) {
         def project = new Project()
         getFromData(project, jsonProject)

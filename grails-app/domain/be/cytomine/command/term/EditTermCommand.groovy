@@ -1,6 +1,5 @@
 package be.cytomine.command.term
 
-import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.command.EditCommand
 import be.cytomine.command.UndoRedoCommand
@@ -27,20 +26,16 @@ class EditTermCommand extends EditCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        def termData = JSON.parse(data)
-        Term term = Term.findById(termData.previousTerm.id)
-        term = term.getFromData(term, termData.previousTerm)
+        Term term = fillDomainWithData(new Term(),JSON.parse(data).previousTerm)
+        def response = createResponseMessageUndo(term,[term.id, term.name, term.ontology.name],[ontologyID: term?.ontology?.id])
         term.save(flush: true)
-        def callback = [ontologyID: term?.ontology?.id]
-        super.createUndoMessage(termData, term, [term.id, term.name, term.ontology?.name] as Object[], callback)
+        return response
     }
 
     def redo() {
-        def termData = JSON.parse(data)
-        Term term = Term.findById(termData.newTerm.id)
-        term = Term.getFromData(term, termData.newTerm)
+        Term term = fillDomainWithData(new Term(), JSON.parse(data).newTerm)
+        def response = createResponseMessageRedo(term,[term.id, term.name, term.ontology.name],[ontologyID: term?.ontology?.id])
         term.save(flush: true)
-        def callback = [ontologyID: term?.ontology?.id]
-        super.createRedoMessage(termData, term, [term.id, term.name, term.ontology?.name] as Object[], callback)
+        return response
     }
 }

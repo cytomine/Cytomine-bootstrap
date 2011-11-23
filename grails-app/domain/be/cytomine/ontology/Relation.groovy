@@ -21,6 +21,12 @@ class Relation extends SequenceDomain implements Serializable {
         return name
     }
 
+    static Relation createFromDataWithId(json)  {
+        def domain = createRelationFromData(json)
+        domain.id = json.id
+        return domain
+    }
+
     static Relation createRelationFromData(jsonRelation) {
         def relation = new Relation()
         getRelationFromData(relation, jsonRelation)

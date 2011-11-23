@@ -63,6 +63,12 @@ class RelationTerm extends SequenceDomain implements Serializable {
 
     }
 
+    static RelationTerm createFromDataWithId(json)  {
+        def domain = createFromData(json)
+        domain.id = json.id
+        return domain
+    }
+
     static RelationTerm createFromData(jsonRelationTerm) {
         def relationTerm = new RelationTerm()
         getFromData(relationTerm, jsonRelationTerm)

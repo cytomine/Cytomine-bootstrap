@@ -86,6 +86,12 @@ class Term extends SequenceDomain implements Serializable {
         return relations
     }
 
+    static Term createFromDataWithId(jsonTerm) throws CytomineException {
+        def term = createFromData(jsonTerm)
+        term.id = jsonTerm.id
+        return term
+    }
+
     static Term createFromData(jsonTerm) throws CytomineException {
         def term = new Term()
         getFromData(term, jsonTerm)
