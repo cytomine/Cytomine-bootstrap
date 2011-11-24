@@ -74,4 +74,38 @@ class RelationTermService extends ModelService {
             deleteRelationTerm(relterm.relation.id, relterm.term1.id, relterm.term2.id, currentUser, false)
         }
     }
+
+    /**
+     * Restore domain which was previously deleted
+     * @param json domain info
+     * @param commandType command name (add/delete/...) which execute this method
+     * @param printMessage print message or not
+     * @return response
+     */
+    def restore(def json, String commandType, boolean printMessage) {
+        //Rebuilt object that was previoulsy deleted
+        def domain = RelationTerm.createFromData(json)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.relation.name, domain.term1.name, domain.term2.name],printMessage,commandType)
+        //Save new object
+        RelationTerm.link(domain.relation, domain.term1, domain.term2)
+        return response
+    }
+
+    /**
+     * Destroy domain which was previously added
+     * @param json domain info
+     * @param commandType command name (add/delete/...) which execute this method
+     * @param printMessage print message or not
+     * @return response
+     */
+    def destroy(def json, String commandType, boolean printMessage) {
+        //Destroy object that was previoulsy deleted
+        def domain = RelationTerm.createFromData(json)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.relation.name, domain.term1.name, domain.term2.name],printMessage,commandType)
+        //Delete new object
+        RelationTerm.unlink(domain.relation, domain.term1, domain.term2)
+        return response
+    }
 }

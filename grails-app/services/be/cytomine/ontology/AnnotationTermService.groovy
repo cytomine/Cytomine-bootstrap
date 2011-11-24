@@ -14,6 +14,7 @@ class AnnotationTermService extends ModelService {
     def cytomineService
     def transactionService
     def commandService
+    def responseService
 
     def list(Annotation annotation) {
         annotation.annotationTerm
@@ -136,5 +137,37 @@ class AnnotationTermService extends ModelService {
         }
     }
 
+    /**
+     * Restore domain which was previously deleted
+     * @param json domain info
+     * @param commandType command name (add/delete/...) which execute this method
+     * @param printMessage print message or not
+     * @return response
+     */
+    def restore(def json, String commandType, boolean printMessage) {
+        //Rebuilt object that was previoulsy deleted
+        def domain = AnnotationTerm.createFromData(json)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id,domain.annotation.id, domain.term.name, domain.user?.username],printMessage,commandType,domain.getCallBack())
+        //Save new object
+        AnnotationTerm.link(domain.annotation, domain.term, domain.user)
+        return response
+    }
 
+    /**
+     * Destroy domain which was previously added
+     * @param json domain info
+     * @param commandType command name (add/delete/...) which execute this method
+     * @param printMessage print message or not
+     * @return response
+     */
+    def destroy(def json, String commandType, boolean printMessage) {
+        //Destroy object that was previoulsy deleted
+        def domain = AnnotationTerm.createFromData(json)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id,domain.annotation.id, domain.term.name, domain.user?.username],printMessage,commandType,domain.getCallBack())
+        //Delete new object
+        AnnotationTerm.unlink(domain.annotation, domain.term, domain.user)
+        return response
+    }
 }

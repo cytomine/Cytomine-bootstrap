@@ -25,22 +25,10 @@ class AddTermCommand extends AddCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        //Get object to delete
-        Term term = Term.get(JSON.parse(data).id)
-        //Build response message
-        def response = createResponseMessageUndo(term,[term.id, term.name, term.ontology.name],[ontologyID: term?.ontology?.id])
-        //Delete object
-        term.delete(flush: true)
-        return response
+        return destroy(termService,JSON.parse(data))
     }
 
     def redo() {
-        //Rebuilt object that was previoulsy deleted
-        def term = Term.createFromDataWithId(JSON.parse(data))
-        //Build response message
-        def response = createResponseMessageRedo(term,[term.id, term.name, term.ontology.name],[ontologyID: term?.ontology?.id])
-        //Save new object
-        term.save(flush: true)
-        return response
+        return restore(termService,JSON.parse(data))
     }
 }

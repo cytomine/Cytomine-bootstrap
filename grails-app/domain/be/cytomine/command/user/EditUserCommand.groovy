@@ -25,20 +25,10 @@ class EditUserCommand extends EditCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info "Undo"
-        def userData = JSON.parse(data)
-        User user = User.findById(userData.previousUser.id)
-        user = User.getFromData(user, userData.previousUser)
-        user.save(flush: true)
-        super.createUndoMessage(userData, user, [user.id, user.username] as Object[])
+        return edit(userService,JSON.parse(data).previousUser)
     }
 
     def redo() {
-        log.info "Redo"
-        def userData = JSON.parse(data)
-        User user = User.findById(userData.newUser.id)
-        user = User.getFromData(user, userData.newUser)
-        user.save(flush: true)
-        super.createRedoMessage(userData, user, [user.id, user.username] as Object[])
+        return edit(userService,JSON.parse(data).newUser)
     }
 }

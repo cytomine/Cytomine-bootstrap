@@ -21,20 +21,10 @@ class AddUserCommand extends AddCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info("Undo")
-        def userData = JSON.parse(data)
-        def user = User.findById(userData.id)
-        user.delete(flush: true)
-        String id = userData.id
-        return super.createUndoMessage(id, user, [userData.id, userData.username] as Object[]);
+        return destroy(userService,JSON.parse(data))
     }
 
     def redo() {
-        log.info("Redo")
-        def userData = JSON.parse(data)
-        def user = User.createFromData(userData)
-        user.id = userData.id
-        user.save(flush: true)
-        return super.createRedoMessage(user, [userData.id, userData.username] as Object[]);
+        return restore(userService,JSON.parse(data))
     }
 }

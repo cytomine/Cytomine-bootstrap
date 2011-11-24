@@ -1,10 +1,8 @@
 package be.cytomine.command.annotation
 
-import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.command.AddCommand
 import be.cytomine.command.UndoRedoCommand
-import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Annotation
 import grails.converters.JSON
 
@@ -13,12 +11,11 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
     boolean saveOnUndoRedoStack = true;
 
     def execute()  {
-        json.user = user.id
+        //Create new domain
         Annotation newAnnotation = Annotation.createFromData(json)
-
         if (!newAnnotation.location) throw new WrongArgumentException("Geo is null: 0 points")
         if (newAnnotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geo is empty:" + newAnnotation.location.getNumPoints() + " points")
-
+        //Validate and save domain
         domainService.saveDomain(newAnnotation)
         //Build response message
         String message = createMessage(newAnnotation, [newAnnotation.id, newAnnotation?.imageFileName()])
@@ -30,22 +27,10 @@ class AddAnnotationCommand extends AddCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        def annotationData = JSON.parse(data)
-        String filename = ImageInstance.get(annotationData.image)?.baseImage?.filename
-        Annotation annotation = Annotation.get(annotationData.id)
-        def callback = [annotationID: annotation.id, imageID: annotation.image.id]
-        annotation.delete(flush: true)
-        String id = annotationData.id
-        return super.createUndoMessage(id, annotation, [annotationData.id, filename] as Object[], callback);
+        return destroy(annotationService,JSON.parse(data))
     }
 
     def redo() {
-        def annotationData = JSON.parse(data)
-        String filename = ImageInstance.get(annotationData.image)?.baseImage?.filename
-        def annotation = Annotation.createFromData(annotationData)
-        def callback = [annotationID: annotationData.id, imageID: annotation.image.id]
-        annotation.id = annotationData.id
-        annotation.save(flush: true)
-        return super.createRedoMessage(annotation, [annotationData.id, filename] as Object[], callback);
+        return restore(annotationService,JSON.parse(data))
     }
 }

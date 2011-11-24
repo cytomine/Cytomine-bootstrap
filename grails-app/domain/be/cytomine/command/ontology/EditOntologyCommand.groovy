@@ -34,21 +34,10 @@ class EditOntologyCommand extends EditCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info "Undo"
-        def ontologyData = JSON.parse(data)
-        Ontology ontology = Ontology.findById(ontologyData.previousOntology.id)
-        ontology = Ontology.getFromData(ontology, ontologyData.previousOntology)
-        ontology.save(flush: true)
-        super.createUndoMessage(ontologyData, ontology, [ontology.id, ontology.name] as Object[])
+        return edit(ontologyService,JSON.parse(data).previousOntology)
     }
 
     def redo() {
-        log.info "Redo"
-        def ontologyData = JSON.parse(data)
-        Ontology ontology = Ontology.findById(ontologyData.newOntology.id)
-        ontology = Ontology.getFromData(ontology, ontologyData.newOntology)
-        ontology.save(flush: true)
-        super.createRedoMessage(ontologyData, ontology, [ontology.id, ontology.name] as Object[])
+        return edit(ontologyService,JSON.parse(data).newOntology)
     }
-
 }

@@ -31,26 +31,11 @@ class DeleteSuggestedTermCommand extends DeleteCommand implements UndoRedoComman
     }
 
     def undo() {
-        log.info("Undo")
-        def suggestedTermData = JSON.parse(data)
-        SuggestedTerm suggestedTerm = SuggestedTerm.createFromData(suggestedTermData)
-        suggestedTerm.id = suggestedTermData.id;
-        suggestedTerm.save(flush: true)
-        def callback = [annotationID: suggestedTerm?.getIdAnnotation()]
-        return super.createUndoMessage(suggestedTerm, [suggestedTerm?.term?.name, suggestedTerm.getIdAnnotation(), suggestedTerm.getIdJob()] as Object[], callback);
+        return restore(suggestedTermService,JSON.parse(data))
     }
 
     def redo() {
-        log.info("Redo")
-        def suggestedTermData = JSON.parse(postData)
-        SuggestedTerm suggestedTerm = SuggestedTerm.findById(suggestedTermData.id)
-        String id = suggestedTermData.id
-        String annotationId = suggestedTerm.getIdAnnotation()
-        String termName = suggestedTerm?.term?.name
-        String jobName = suggestedTerm?.job?.software?.name
-        def callback = [annotationID: suggestedTerm?.getIdAnnotation()]
-        suggestedTerm.delete(flush: true);
-        return super.createRedoMessage(id, suggestedTerm, [termName, annotationId, jobName] as Object[], callback);
+        return destroy(suggestedTermService,JSON.parse(data))
     }
 
 }

@@ -38,21 +38,10 @@ class DeleteOntologyCommand extends DeleteCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info("Undo")
-        def ontologyData = JSON.parse(data)
-        Ontology ontology = Ontology.createFromData(ontologyData)
-        ontology.id = ontologyData.id;
-        ontology.save(flush: true)
-        return super.createUndoMessage(ontology, [ontology.id, ontology.name] as Object[]);
+        return restore(ontologyService,JSON.parse(data))
     }
 
     def redo() {
-        log.info("Redo")
-        def postData = JSON.parse(postData)
-        Ontology ontology = Ontology.findById(postData.id)
-        String id = postData.id
-        String name = ontology.name
-        ontology.delete(flush: true);
-        return super.createRedoMessage(id, ontology, [id, name] as Object[]);
+        return destroy(ontologyService,JSON.parse(data))
     }
 }

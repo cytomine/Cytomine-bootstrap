@@ -14,7 +14,7 @@ class AddAbstractImageGroupCommand extends AddCommand implements UndoRedoCommand
 
     def execute() {
         //Init new domain object
-        AbstractImageGroup newAbstractImageGroup = AbstractImageGroup.createAbstractImageGroupFromData(json)
+        AbstractImageGroup newAbstractImageGroup = AbstractImageGroup.createFromData(json)
         //Link relation domain
         newAbstractImageGroup = AbstractImageGroup.link(newAbstractImageGroup.abstractimage, newAbstractImageGroup.group)
         //Build response message
@@ -26,41 +26,11 @@ class AddAbstractImageGroupCommand extends AddCommand implements UndoRedoCommand
     }
 
     def undo() {
-        def abstractimageGroupData = JSON.parse(data)
-        def abstractimage = AbstractImage.get(abstractimageGroupData.abstractimage)
-        def group = Group.get(abstractimageGroupData.group)
-        def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-
-        AbstractImageGroup.unlink(abstractimageGroup.abstractimage, abstractimageGroup.group)
-
-        HashMap<String, Object> callback = new HashMap<String, Object>();
-        callback.put("abstractimageID", abstractimage.id)
-        callback.put("groupID", group.id)
-        callback.put("imageID", abstractimage.id)
-
-        log.debug "AbstractImageGroup=" + abstractimageGroupData.id + " abstractimage.filename=" + abstractimage.filename + " group.name=" + group.name
-        String id = abstractimageGroupData.id
-        return super.createUndoMessage(id, abstractimageGroup, [id, abstractimage.filename, group.name] as Object[], callback);
+        return destroy(abstractImageGroupService,JSON.parse(data))
     }
 
-
-
     def redo() {
-        def abstractimageGroupData = JSON.parse(data)
-
-        def abstractimage = AbstractImage.get(abstractimageGroupData.abstractimage)
-        def group = Group.get(abstractimageGroupData.group)
-
-        def abstractimageGroup = AbstractImageGroup.createAbstractImageGroupFromData(abstractimageGroupData)
-
-        AbstractImageGroup.link(abstractimage, group)
-
-        HashMap<String, Object> callback = new HashMap<String, Object>();
-        callback.put("abstractimageID", abstractimage.id)
-        callback.put("groupID", group.id)
-        callback.put("imageID", abstractimage.id)
-
-        return super.createRedoMessage(abstractimageGroup, [id, abstractimage.filename, group.name] as Object[], callback);
+        return restore(abstractImageGroupService,JSON.parse(data))
     }
 
 }

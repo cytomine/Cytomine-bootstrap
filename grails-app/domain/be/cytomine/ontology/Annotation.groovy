@@ -243,6 +243,10 @@ class Annotation extends SequenceDomain implements Serializable {
         else return this.image?.id
     }
 
+    def getCallBack() {
+        return [annotationID: this.id, imageID: this.image.id]
+    }
+
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + Annotation.class
         JSON.registerObjectMarshaller(Annotation) {

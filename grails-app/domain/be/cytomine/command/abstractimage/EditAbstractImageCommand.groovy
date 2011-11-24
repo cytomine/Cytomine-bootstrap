@@ -33,19 +33,10 @@ class EditAbstractImageCommand extends EditCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        def imageData = JSON.parse(data)
-        AbstractImage image = AbstractImage.findById(imageData.previousImage.id)
-        image = AbstractImage.getFromData(image, imageData.previousImage)
-        image.save(flush: true)
-        super.createUndoMessage(imageData, image, [image.id, image.filename] as Object[])
+        return edit(abstractImageService,JSON.parse(data).previousImage)
     }
 
     def redo() {
-        def imageData = JSON.parse(data)
-        AbstractImage image = AbstractImage.findById(imageData.newImage.id)
-        image = AbstractImage.getFromData(image, imageData.newImage)
-        image.save(flush: true)
-        super.createRedoMessage(imageData, image, [image.id, image.filename] as Object[])
+        return edit(abstractImageService,JSON.parse(data).newImage)
     }
-
 }

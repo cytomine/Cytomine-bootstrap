@@ -34,21 +34,10 @@ class DeleteDisciplineCommand extends DeleteCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info("Undo")
-        def disciplineData = JSON.parse(data)
-        Discipline discipline = Discipline.createFromData(disciplineData)
-        discipline.id = disciplineData.id;
-        discipline.save(flush: true)
-        return super.createUndoMessage(discipline, [discipline.id, discipline.name] as Object[]);
+        return restore(disciplineService,JSON.parse(data))
     }
 
     def redo() {
-        log.info("Redo")
-        def postData = JSON.parse(postData)
-        Discipline discipline = Discipline.findById(postData.id)
-        String id = postData.id
-        String name = discipline.name
-        discipline.delete(flush: true);
-        return super.createRedoMessage(id, discipline, [id, name] as Object[]);
+        return destroy(disciplineService,JSON.parse(data))
     }
 }

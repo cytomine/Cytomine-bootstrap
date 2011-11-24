@@ -33,42 +33,11 @@ class DeleteAnnotationTermCommand extends DeleteCommand implements UndoRedoComma
     }
 
     def undo() {
-        log.info("Undo")
-        def annotationTermData = JSON.parse(data)
-        def annotation = Annotation.get(annotationTermData.annotation)
-        def term = Term.get(annotationTermData.term)
-        def user = User.get(annotationTermData.user)
-
-        AnnotationTerm annotationTerm = AnnotationTerm.createFromData(annotationTermData)
-        annotationTerm = AnnotationTerm.link(annotationTermData.id, annotation, term, user)
-
-        HashMap<String, Object> callback = new HashMap<String, Object>();
-        callback.put("annotationID", annotation.id)
-        callback.put("termID", term.id)
-        callback.put("imageID", annotation.image.id)
-
-        return super.createUndoMessage(annotationTerm, [id, annotation.id, term.name, user?.username] as Object[], callback
-        );
+        return restore(annotationTermService,JSON.parse(data))
     }
 
     def redo() {
-        log.info("Redo")
-        def postData = JSON.parse(postData)
-        Annotation annotation = Annotation.get(postData.annotation)
-        Term term = Term.get(postData.term)
-        User user = User.get(postData.user)
-
-        AnnotationTerm annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
-        String id = annotationTerm.id
-        AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term, annotationTerm.user)
-
-        HashMap<String, Object> callback = new HashMap<String, Object>();
-        callback.put("annotationID", annotation.id)
-        callback.put("termID", term.id)
-        callback.put("imageID", annotation.image.id)
-
-        return super.createRedoMessage(id, annotationTerm, [id, annotation.id, term.name, user?.username] as Object[], callback
-        );
+        return destroy(annotationTermService,JSON.parse(data))
     }
 
 }

@@ -23,6 +23,7 @@ class AnnotationService extends ModelService {
     def annotationTermService
     def retrievalService
     def suggestedTermService
+    def responseService
 
     def list() {
         Annotation.list()
@@ -116,6 +117,8 @@ class AnnotationService extends ModelService {
         //Start transaction
         transactionService.start()
 
+        //Add annotation user
+        json.user = currentUser.id
         //Add Annotation
         def result = commandService.processCommand(new AddAnnotationCommand(user: currentUser), json)
         def annotation = result?.data?.annotation?.id
@@ -252,4 +255,56 @@ class AnnotationService extends ModelService {
         log.debug "annotationFull good=" + i + " " + annotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
         return lastAnnotationFull
     }
+
+    /**
+     * Restore domain which was previously deleted
+     * @param json domain info
+     * @param commandType command name (add/delete/...) which execute this method
+     * @param printMessage print message or not
+     * @return response
+     */
+    def restore(def json, String commandType, boolean printMessage) {
+        //Rebuilt object that was previoulsy deleted
+        def domain = Annotation.createFromDataWithId(json)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.image?.baseImage?.filename],printMessage,commandType,domain.getCallBack())
+        //Save new object
+        domain.save(flush: true)
+        return response
+    }
+
+    /**
+     * Destroy domain which was previously added
+     * @param json domain info
+     * @param commandType command name (add/delete/...) which execute this method
+     * @param printMessage print message or not
+     * @return response
+     */
+    def destroy(def json, String commandType, boolean printMessage) {
+         //Get object to delete
+        def domain = Annotation.get(json.id)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.image?.baseImage?.filename],printMessage,commandType,domain.getCallBack())
+        //Delete object
+        domain.delete(flush: true)
+        return response
+    }
+
+    /**
+     * Edit domain which was previously edited
+     * @param json domain info
+     * @param commandType  command name (add/delete/...) which execute this method
+     * @param printMessage  print message or not
+     * @return response
+     */
+    def edit(def json, String commandType, boolean printMessage) {
+         //Rebuilt previous state of object that was previoulsy edited
+        def domain = fillDomainWithData(new Annotation(),json)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.image?.baseImage?.filename],printMessage,commandType,domain.getCallBack())
+        //Save update
+        domain.save(flush: true)
+        return response
+    }
+
 }

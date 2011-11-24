@@ -33,25 +33,11 @@ class DeleteImageInstanceCommand extends DeleteCommand implements UndoRedoComman
     }
 
     def undo() {
-        log.info("Undo")
-        def imageData = JSON.parse(data)
-        ImageInstance image = ImageInstance.createFromData(imageData)
-        image.id = imageData.id;
-        image.save(flush: true)
-        log.error "Image errors = " + image.errors
-        return super.createUndoMessage(image, [image.id, image?.baseImage, image?.project?.name] as Object[]);
+        return restore(imageInstanceService,JSON.parse(data))
     }
 
-
     def redo() {
-        log.info("Redo")
-        def postData = JSON.parse(postData)
-        ImageInstance image = ImageInstance.findById(postData.id)
-        String id = image.id
-        String filename = image?.baseImage?.filename
-        String projectname = image.project.name
-        image.delete(flush: true);
-        return super.createRedoMessage(id, image, [id, filename, projectname] as Object[]);
+        return destroy(imageInstanceService,JSON.parse(data))
     }
 
 }

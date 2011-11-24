@@ -79,22 +79,31 @@ class AbstractImageGroup extends SequenceDomain implements Serializable {
 
         }
     }
-    static AbstractImageGroup createFromDataWithId(json)  {
-        def domain = createAbstractImageGroupFromData(json)
+
+    static AbstractImageGroup createFromDataWithId(json) {
+        def domain = createFromData(json)
         domain.id = json.id
         return domain
     }
 
-    static AbstractImageGroup createAbstractImageGroupFromData(jsonAbstractImageGroup) {
+    static AbstractImageGroup createFromData(jsonAbstractImageGroup) {
         def abstractimageGroup = new AbstractImageGroup()
-        getAbstractImageGroupFromData(abstractimageGroup, jsonAbstractImageGroup)
+        getFromData(abstractimageGroup, jsonAbstractImageGroup)
     }
 
-    static AbstractImageGroup getAbstractImageGroupFromData(abstractimageGroup, jsonAbstractImageGroup) {
+    static AbstractImageGroup getFromData(abstractimageGroup, jsonAbstractImageGroup) {
         println "jsonAbstractImageGroup from getAbstractImageGroupFromData = " + jsonAbstractImageGroup
         abstractimageGroup.abstractimage = AbstractImage.get(jsonAbstractImageGroup.abstractimage.toString())
         abstractimageGroup.group = Group.get(jsonAbstractImageGroup.group.toString())
         return abstractimageGroup;
+    }
+
+    def getCallBack() {
+        HashMap<String, Object> callback = new HashMap<String, Object>();
+        callback.put("abstractimageID", this.abstractimage.id)
+        callback.put("groupID", this.group.id)
+        callback.put("imageID", this.abstractimage.id)
+        return callback
     }
 
     static void registerMarshaller() {

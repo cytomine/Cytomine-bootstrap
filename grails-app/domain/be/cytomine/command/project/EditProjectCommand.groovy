@@ -34,21 +34,10 @@ class EditProjectCommand extends EditCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info "Undo"
-        def projectData = JSON.parse(data)
-        Project project = Project.findById(projectData.previousProject.id)
-        project = Project.getFromData(project, projectData.previousProject)
-        project.save(flush: true)
-        super.createUndoMessage(projectData, project, [project.id, project.name] as Object[])
+        return edit(projectService,JSON.parse(data).previousProject)
     }
 
     def redo() {
-        log.info "Redo"
-        def projectData = JSON.parse(data)
-        Project project = Project.findById(projectData.newProject.id)
-        project = Project.getFromData(project, projectData.newProject)
-        project.save(flush: true)
-        super.createRedoMessage(projectData, project, [project.id, project.name] as Object[])
+        return edit(projectService,JSON.parse(data).newProject)
     }
-
 }

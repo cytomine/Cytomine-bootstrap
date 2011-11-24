@@ -2,7 +2,6 @@ package be.cytomine.command.annotation
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.command.EditCommand
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.ontology.Annotation
@@ -30,26 +29,11 @@ class EditAnnotationCommand extends EditCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info "Undo"
-        def annotationsData = JSON.parse(data)
-        Annotation annotation = Annotation.findById(annotationsData.previousAnnotation.id)
-        annotation = Annotation.getFromData(annotation, annotationsData.previousAnnotation)
-        annotation.save(flush: true)
-        def filename = annotation.image?.baseImage?.getFilename()
-        def callback = [annotationID: annotation.id, imageID: annotation.image.id]
-        super.createUndoMessage(annotationsData, annotation, [annotation.id, filename] as Object[], callback)
+        return edit(annotationService,JSON.parse(data).previousAnnotation)
     }
 
-
     def redo() {
-        log.info "Redo"
-        def annotationsData = JSON.parse(data)
-        Annotation annotation = Annotation.findById(annotationsData.newAnnotation.id)
-        annotation = Annotation.getFromData(annotation, annotationsData.newAnnotation)
-        annotation.save(flush: true)
-        def filename = annotation.image?.baseImage?.getFilename()
-        def callback = [annotationID: annotation.id, imageID: annotation.image.id]
-        super.createRedoMessage(annotationsData, annotation, [annotation.id, filename] as Object[], callback)
+        return edit(annotationService,JSON.parse(data).newAnnotation)
     }
 
 }

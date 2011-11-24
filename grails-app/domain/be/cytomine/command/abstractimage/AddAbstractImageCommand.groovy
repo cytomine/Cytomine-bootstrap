@@ -1,6 +1,5 @@
 package be.cytomine.command.abstractimage
 
-import be.cytomine.Exception.CytomineException
 import be.cytomine.command.AddCommand
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.image.AbstractImage
@@ -29,18 +28,10 @@ class AddAbstractImageCommand extends AddCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        def imageData = JSON.parse(data)
-        AbstractImage image = AbstractImage.get(imageData.id)
-        image.delete(flush: true)
-        String id = imageData.id
-        return super.createUndoMessage(id, [imageData.id, imageData.name] as Object[]);
+        return destroy(abstractImageService,JSON.parse(data))
     }
 
     def redo() {
-        def imageData = JSON.parse(data)
-        AbstractImage image = AbstractImage.createFromData(imageData)
-        image.id = imageData.id
-        image.save(flush: true)
-        return super.createRedoMessage(image, [imageData.id, imageData.name] as Object[]);
+        return restore(abstractImageService,JSON.parse(data))
     }
 }

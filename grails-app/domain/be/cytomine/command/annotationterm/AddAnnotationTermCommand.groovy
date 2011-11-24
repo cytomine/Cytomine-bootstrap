@@ -27,45 +27,11 @@ class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info("Undo")
-        def annotationTermData = JSON.parse(data)
-        def annotation = Annotation.get(annotationTermData.annotation)
-        def term = Term.get(annotationTermData.term)
-        def user = be.cytomine.security.User.get(annotationTermData.user)
-        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
-
-        AnnotationTerm.unlink(annotationTerm.annotation, annotationTerm.term, annotationTerm.user)
-
-        HashMap<String, Object> callback = new HashMap<String, Object>();
-        callback.put("annotationID", annotation.id)
-        callback.put("termID", term.id)
-        callback.put("imageID", annotation.image.id)
-
-        log.debug "AnnotationTerm=" + annotationTermData.id + " annotation.name=" + annotation.name + " term.name=" + term.name + " user.username=" + user?.username
-        String id = annotationTermData.id
-        return super.createUndoMessage(id, annotationTerm, [id, annotation.id, term.name, user?.username] as Object[], callback);
+        return destroy(annotationTermService,JSON.parse(data))
     }
 
-
-
     def redo() {
-        log.info("Redo")
-        def annotationTermData = JSON.parse(data)
-
-        def annotation = Annotation.get(annotationTermData.annotation)
-        def term = Term.get(annotationTermData.term)
-        def user = be.cytomine.security.User.get(annotationTermData.user)
-
-        def annotationTerm = AnnotationTerm.createFromData(annotationTermData)
-
-        AnnotationTerm.link(annotation, term, user)
-
-        HashMap<String, Object> callback = new HashMap<String, Object>();
-        callback.put("annotationID", annotation.id)
-        callback.put("termID", term.id)
-        callback.put("imageID", annotation.image.id)
-
-        return super.createRedoMessage(annotationTerm, [id, annotation.id, term.name, user?.username] as Object[], callback);
+        return restore(annotationTermService,JSON.parse(data))
     }
 
 }

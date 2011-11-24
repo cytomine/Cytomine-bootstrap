@@ -15,6 +15,7 @@ import be.cytomine.project.Discipline
 import grails.converters.JSON
 
 class EditDisciplineCommand extends EditCommand implements UndoRedoCommand {
+
     boolean saveOnUndoRedoStack = true;
 
     def execute() {
@@ -34,21 +35,11 @@ class EditDisciplineCommand extends EditCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info "Undo"
-        def disciplineData = JSON.parse(data)
-        Discipline discipline = Discipline.findById(disciplineData.previousDiscipline.id)
-        discipline = Discipline.getFromData(discipline, disciplineData.previousDiscipline)
-        discipline.save(flush: true)
-        super.createUndoMessage(disciplineData, discipline, [discipline.id, discipline.name] as Object[])
+        return edit(disciplineService,JSON.parse(data).previousDiscipline)
     }
 
     def redo() {
-        log.info "Redo"
-        def disciplineData = JSON.parse(data)
-        Discipline discipline = Discipline.findById(disciplineData.newDiscipline.id)
-        discipline = Discipline.getFromData(discipline, disciplineData.newDiscipline)
-        discipline.save(flush: true)
-        super.createRedoMessage(disciplineData, discipline, [discipline.id, discipline.name] as Object[])
+        return edit(disciplineService,JSON.parse(data).newDiscipline)
     }
 
 }

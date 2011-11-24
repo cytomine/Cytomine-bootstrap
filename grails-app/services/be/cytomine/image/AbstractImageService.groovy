@@ -19,6 +19,7 @@ class AbstractImageService extends ModelService {
     def commandService
     def cytomineService
     def imagePropertiesService
+    def responseService
 
     def list() {
         return AbstractImage.list()
@@ -132,5 +133,56 @@ class AbstractImageService extends ModelService {
     def retrieval(Annotation annotation, int zoom, int maxSimilarPictures) {
         def retrievalServers = RetrievalServer.findAll()
         return retrievalServers.get(0).search(annotation.getCropURL(zoom), maxSimilarPictures)
+    }
+
+    /**
+     * Restore domain which was previously deleted
+     * @param json domain info
+     * @param commandType command name (add/delete/...) which execute this method
+     * @param printMessage print message or not
+     * @return response
+     */
+    def restore(def json, String commandType, boolean printMessage) {
+        //Rebuilt object that was previoulsy deleted
+        def domain = AbstractImage.createFromDataWithId(json)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.filename],printMessage,commandType)
+        //Save new object
+        domain.save(flush: true)
+        return response
+    }
+
+    /**
+     * Destroy domain which was previously added
+     * @param json domain info
+     * @param commandType command name (add/delete/...) which execute this method
+     * @param printMessage print message or not
+     * @return response
+     */
+    def destroy(def json, String commandType, boolean printMessage) {
+         //Get object to delete
+        def domain = AbstractImage.get(json.id)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.filename],printMessage,commandType)
+        //Delete object
+        domain.delete(flush: true)
+        return response
+    }
+
+     /**
+     * Edit domain which was previously edited
+     * @param json domain info
+     * @param commandType  command name (add/delete/...) which execute this method
+     * @param printMessage  print message or not
+     * @return response
+     */
+    def edit(def json, String commandType, boolean printMessage) {
+         //Rebuilt previous state of object that was previoulsy edited
+        def domain = fillDomainWithData(new AbstractImage(),json)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.filename],printMessage,commandType)
+        //Save update
+        domain.save(flush: true)
+        return response
     }
 }

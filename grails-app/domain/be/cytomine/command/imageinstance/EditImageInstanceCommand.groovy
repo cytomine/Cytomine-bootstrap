@@ -35,20 +35,10 @@ class EditImageInstanceCommand extends EditCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info "Undo"
-        def imageData = JSON.parse(data)
-        ImageInstance image = ImageInstance.findById(imageData.previousImageInstance.id)
-        image = ImageInstance.getFromData(image, imageData.previousImageInstance)
-        image.save(flush: true)
-        super.createUndoMessage(imageData, image, [image.id, image?.baseImage?.filename, image.project.name] as Object[])
+        return edit(imageInstanceService,JSON.parse(data).previousImageInstance)
     }
 
     def redo() {
-        log.info "Redo"
-        def imageData = JSON.parse(data)
-        ImageInstance image = ImageInstance.findById(imageData.newImageInstance.id)
-        image = ImageInstance.getFromData(image, imageData.newImageInstance)
-        image.save(flush: true)
-        super.createRedoMessage(imageData, image, [image.id, image?.baseImage?.filename, image.project.name] as Object[])
+        return edit(imageInstanceService,JSON.parse(data).newImageInstance)
     }
 }

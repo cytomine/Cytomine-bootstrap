@@ -13,111 +13,15 @@ import grails.converters.JSON
  */
 class EditCommand extends Command {
 
+    static String commandNameUndo = "Edit"
+    static String commandNameRedo = "Edit"
+
     protected createMessage(def updatedTerm, def params) {
         responseService.createMessage(updatedTerm, params, "Edit")
     }
-    public def createResponseMessageUndo(def object, def messageParams) {
-        responseService.createResponseMessage(object,messageParams,printMessage,"Edit",null)
-    }
-    public def createResponseMessageUndo(def object, def messageParams,def additionalCallbackParams) {
-        responseService.createResponseMessage(object,messageParams,printMessage,"Edit",additionalCallbackParams)
-    }
-    public def createResponseMessageRedo(def object, def messageParams) {
-        responseService.createResponseMessage(object,messageParams,printMessage,"Edit",null)
-    }
-    public def createResponseMessageRedo(def object, def messageParams,def additionalCallbackParams) {
-        responseService.createResponseMessage(object,messageParams,printMessage,"Edit",additionalCallbackParams)
-    }
-    /**
-     * Create undo message for an undo-edit on object
-     * @param data New json value of object
-     * @param object Undo-edit object
-     * @param messageParams Params for result message
-     * @return Result message
-     */
-    def createUndoMessage(def data, def object, Object[] messageParams) {
-        log.info "createUndoMessage"
-        this.createUndoMessage(data, object, messageParams, null);
-    }
 
-    /**
-     * Create undo message for an undo-edit on object
-     * @param data New json value of object
-     * @param object Undo-edit object
-     * @param messageParams Params for result message
-     * @param additionalCallbackParams Additional params for callback (like imageID for annotation)
-     * @return Result message
-     */
-    def createUndoMessage(def data, def object, Object[] messageParams, HashMap<String, Object> additionalCallbackParams) {
-        String objectName = getClassName(object)
-        log.info("Undo EditCommand " + objectName)
-        String command = "be.cytomine.Edit" + objectName + "Command"
-        String idName = objectName.toLowerCase() + "ID" //termID, annotationID,...
-
-        log.debug("Edit " + objectName + " with id:" + id)
-
-        HashMap<String, Object> paramsCallback = new HashMap<String, Object>()
-        paramsCallback.put('method', command)
-        paramsCallback.put(idName, id)
-        if (additionalCallbackParams)
-            paramsCallback.putAll(additionalCallbackParams);
-
-        def message = messageSource.getMessage(command, messageParams as Object[], Locale.ENGLISH)
-
-        HashMap<String, Object> params = new HashMap<String, Object>()
-        params.put('message', message)
-        params.put('callback', paramsCallback)
-        params.put('printMessage', printMessage)
-        params.put(objectName.toLowerCase(), id)
-
-        return [data: params, status: 200]
-    }
-
-    /**
-     * Create redo message for an redo-edit on object
-     * @param data New json value of object
-     * @param object Redo-edit object
-     * @param messageParams Params for result message
-     * @return Result message
-     */
-    def createRedoMessage(def data, def object, Object[] messageParams) {
-        this.createRedoMessage(data, object, messageParams, null)
-    }
-
-    /**
-     * Create redo message for an redo-edit on object
-     * @param data New json value of object
-     * @param object Redo-edit object
-     * @param messageParams Params for result message
-     * @param additionalCallbackParams Additional params for callback (like imageID for annotation)
-     * @return Result message
-     */
-    def createRedoMessage(def data, def object, Object[] messageParams, HashMap<String, Object> additionalCallbackParams) {
-
-        String objectName = getClassName(object)
-        String command = "be.cytomine.Edit" + objectName + "Command"
-        String idName = objectName.toLowerCase() + "ID" //termID, annotationID,...
-
-        log.debug("Edit " + objectName + " with id:" + id)
-
-        HashMap<String, Object> paramsCallback = new HashMap<String, Object>()
-        paramsCallback.put('method', command)
-        paramsCallback.put(idName, object.id)
-        if (additionalCallbackParams)
-            paramsCallback.putAll(additionalCallbackParams);
-
-        def message = messageSource.getMessage(command, messageParams, Locale.ENGLISH)
-
-
-        HashMap<String, Object> params = new HashMap<String, Object>()
-        params.put('message', message)
-        params.put('callback', paramsCallback)
-        params.put('printMessage', printMessage)
-        params.put(objectName.toLowerCase(), object)
-
-        def result = [data: params, status: 200];
-
-        return result
+    protected def edit(def service, def json) {
+        return service.edit(json,commandNameRedo,printMessage)
     }
 
     protected void fillCommandInfo(def newObject,def oldObject, String message) {

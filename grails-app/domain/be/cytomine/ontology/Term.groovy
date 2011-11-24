@@ -119,6 +119,10 @@ class Term extends SequenceDomain implements Serializable {
         else return this.ontology?.id
     }
 
+    def getCallBack() {
+        return [ontologyID: this?.ontology?.id]
+    }
+
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + Term.class
         JSON.registerObjectMarshaller(Term) {

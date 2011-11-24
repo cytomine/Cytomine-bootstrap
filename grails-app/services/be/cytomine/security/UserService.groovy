@@ -146,4 +146,55 @@ class UserService extends ModelService {
         }
         return users
     }
+
+    /**
+     * Restore domain which was previously deleted
+     * @param json domain info
+     * @param commandType command name (add/delete/...) which execute this method
+     * @param printMessage print message or not
+     * @return response
+     */
+    def restore(def json, String commandType, boolean printMessage) {
+        //Rebuilt object that was previoulsy deleted
+        def domain = User.createFromDataWithId(json)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.username],printMessage,commandType)
+        //Save new object
+        domain.save(flush: true)
+        return response
+    }
+
+    /**
+     * Destroy domain which was previously added
+     * @param json domain info
+     * @param commandType command name (add/delete/...) which execute this method
+     * @param printMessage print message or not
+     * @return response
+     */
+    def destroy(def json, String commandType, boolean printMessage) {
+         //Get object to delete
+        def domain = User.get(json.id)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.username],printMessage,commandType)
+        //Delete object
+        domain.delete(flush: true)
+        return response
+    }
+
+    /**
+     * Edit domain which was previously edited
+     * @param json domain info
+     * @param commandType  command name (add/delete/...) which execute this method
+     * @param printMessage  print message or not
+     * @return response
+     */
+    def edit(def json, String commandType, boolean printMessage) {
+         //Rebuilt previous state of object that was previoulsy edited
+        def domain = fillDomainWithData(new User(),json)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.username],printMessage,commandType)
+        //Save update
+        domain.save(flush: true)
+        return response
+    }
 }

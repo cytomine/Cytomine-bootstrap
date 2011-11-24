@@ -35,21 +35,11 @@ class AddImageInstanceCommand extends AddCommand implements UndoRedoCommand {
         return responseService.createResponseMessage(domain, message, printMessage)
     }
 
-
     def undo() {
-        def imageData = JSON.parse(data)
-        ImageInstance image = ImageInstance.get(imageData.id)
-        image.delete(flush: true)
-        String id = imageData.id
-        return super.createUndoMessage(id, image, [imageData.id, AbstractImage.read(imageData.baseImage).filename, Project.read(imageData.project)] as Object[]);
+        return destroy(imageInstanceService,JSON.parse(data))
     }
 
-
     def redo() {
-        def imageData = JSON.parse(data)
-        ImageInstance image = ImageInstance.createFromData(imageData)
-        image.id = imageData.id
-        image.save(flush: true)
-        return super.createRedoMessage(image, [imageData.id, image?.baseImage?.filename, image.project.name] as Object[]);
+        return restore(imageInstanceService,JSON.parse(data))
     }
 }

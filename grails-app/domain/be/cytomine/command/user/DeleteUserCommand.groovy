@@ -23,23 +23,10 @@ class DeleteUserCommand extends DeleteCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info("Undo")
-        def userData = JSON.parse(data)
-        User user = User.createFromData(userData)
-        user.id = userData.id
-        user.save(flush: true)
-        return super.createUndoMessage(user, [user.id, user.username] as Object[]);
+        return restore(userService,JSON.parse(data))
     }
 
-
-
     def redo() {
-        log.info("Redo")
-        def postData = JSON.parse(postData)
-        User user = User.findById(postData.id)
-        String username = user.username
-        user.delete(flush: true);
-        String id = postData.id
-        return super.createRedoMessage(id, user[id, username] as Object[]);
+        return destroy(userService,JSON.parse(data))
     }
 }

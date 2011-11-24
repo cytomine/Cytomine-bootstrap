@@ -108,6 +108,14 @@ class AnnotationTerm extends SequenceDomain implements Serializable {
         return annotationTerm;
     }
 
+
+    def getCallBack() {
+        HashMap<String, Object> callback = new HashMap<String, Object>();
+        callback.put("annotationID", this.annotation.id)
+        callback.put("termID", this.term.id)
+        callback.put("imageID", this.annotation.image.id)
+    }
+
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + AnnotationTerm.class
         JSON.registerObjectMarshaller(AnnotationTerm) {

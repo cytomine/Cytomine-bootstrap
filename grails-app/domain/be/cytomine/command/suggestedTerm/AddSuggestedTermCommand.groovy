@@ -26,23 +26,11 @@ class AddSuggestedTermCommand extends AddCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info("Undo")
-        def suggestedTermData = JSON.parse(data)
-        SuggestedTerm suggestedTerm = SuggestedTerm.get(suggestedTermData.id)
-        def callback = [annotationID: suggestedTerm?.getIdAnnotation()]
-        suggestedTerm.delete(flush: true)
-        String id = suggestedTermData.id
-        return super.createUndoMessage(id, suggestedTerm, [Term.read(suggestedTermData.term)?.name, Annotation.read(suggestedTermData.annotation)?.id, Job.read(suggestedTermData.job)?.software?.name] as Object[], callback);
+        return destroy(suggestedTermService,JSON.parse(data))
     }
 
     def redo() {
-        log.info("Redo")
-        def suggestedTermData = JSON.parse(data)
-        def suggestedTerm = SuggestedTerm.createFromData(suggestedTermData)
-        suggestedTerm.id = suggestedTermData.id
-        suggestedTerm.save(flush: true)
-        def callback = [annotationID: suggestedTerm?.getIdAnnotation()]
-        return super.createRedoMessage(suggestedTerm, [Term.read(suggestedTermData.term)?.name, Annotation.read(suggestedTermData.annotation)?.id, Job.read(suggestedTermData.job)?.software?.name] as Object[], callback);
+        return restore(suggestedTermService,JSON.parse(data))
     }
 
 }

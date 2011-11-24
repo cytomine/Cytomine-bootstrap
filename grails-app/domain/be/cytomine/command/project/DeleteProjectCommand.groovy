@@ -52,21 +52,11 @@ class DeleteProjectCommand extends DeleteCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info("Undo")
-        def projectData = JSON.parse(data)
-        Project project = Project.createFromData(projectData)
-        project.id = projectData.id;
-        project.save(flush: true)
-        return super.createUndoMessage(project, [project.id, project.name] as Object[]);
+        return restore(projectService,JSON.parse(data))
     }
 
     def redo() {
-        log.info("Redo")
-        def postData = JSON.parse(postData)
-        Project project = Project.findById(postData.id)
-        project.delete(flush: true);
-        String id = postData.id
-        return super.createRedoMessage(id, project, [postData.id, postData.name] as Object[]);
+        return destroy(projectService,JSON.parse(data))
     }
 
 }

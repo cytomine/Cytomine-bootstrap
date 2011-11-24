@@ -27,22 +27,10 @@ class EditTermCommand extends EditCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        //Rebuilt previous state of object that was previoulsy edited
-        Term term = fillDomainWithData(new Term(),JSON.parse(data).previousTerm)
-        //Build response message
-        def response = createResponseMessageUndo(term,[term.id, term.name, term.ontology.name],[ontologyID: term?.ontology?.id])
-        //Save update
-        term.save(flush: true)
-        return response
+        return edit(termService,JSON.parse(data).previousTerm)
     }
 
     def redo() {
-        //Rebuilt previous state of object that was previoulsy edited
-        Term term = fillDomainWithData(new Term(), JSON.parse(data).newTerm)
-        //Build response message
-        def response = createResponseMessageRedo(term,[term.id, term.name, term.ontology.name],[ontologyID: term?.ontology?.id])
-        //Save update
-        term.save(flush: true)
-        return response
+        return edit(termService,JSON.parse(data).newTerm)
     }
 }

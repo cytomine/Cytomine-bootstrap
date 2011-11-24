@@ -29,19 +29,11 @@ class AddDisciplineCommand extends AddCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        def disciplineData = JSON.parse(data)
-        Discipline discipline = Discipline.get(disciplineData.id)
-        discipline.delete(flush: true)
-        String id = disciplineData.id
-        return super.createUndoMessage(id, discipline, [disciplineData.id, disciplineData.name] as Object[]);
+        return destroy(disciplineService,JSON.parse(data))
     }
 
     def redo() {
-        def disciplineData = JSON.parse(data)
-        def discipline = Discipline.createFromData(disciplineData)
-        discipline.id = disciplineData.id
-        discipline.save(flush: true)
-        return super.createRedoMessage(discipline, [disciplineData.id, disciplineData.name] as Object[]);
+        return restore(disciplineService,JSON.parse(data))
     }
 
 }

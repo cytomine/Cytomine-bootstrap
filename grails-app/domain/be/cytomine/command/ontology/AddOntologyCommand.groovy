@@ -33,31 +33,10 @@ class AddOntologyCommand extends AddCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info("Undo")
-        def ontologyData = JSON.parse(data)
-        Ontology ontology = Ontology.get(ontologyData.id)
-        ontology.delete(flush: true)
-        String id = ontologyData.id
-        return super.createUndoMessage(id, ontology, [ontologyData.id, ontologyData.name] as Object[]);
+        return destroy(ontologyService,JSON.parse(data))
     }
 
     def redo() {
-        log.info("Undo")
-        def ontologyData = JSON.parse(data)
-        def json = JSON.parse(postData)
-        def ontology = Ontology.createFromData(ontologyData)
-        log.info "data=" + data
-        log.info "postData=" + postData
-        log.info "ontologyData.id=" + ontologyData.id
-        ontology.id = ontologyData.id
-        Ontology.list().each {
-            println it.id
-        }
-        log.info "ontology.id=" + ontology.id
-        ontology.save(flush: true)
-        log.info "ontology.id=" + ontology.id
-
-        return super.createRedoMessage(ontology, [ontologyData.id, ontologyData.name] as Object[]);
+        return restore(ontologyService,JSON.parse(data))
     }
-
 }

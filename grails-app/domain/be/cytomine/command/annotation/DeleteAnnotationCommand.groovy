@@ -1,6 +1,5 @@
 package be.cytomine.command.annotation
 
-import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.UndoRedoCommand
@@ -10,8 +9,6 @@ import grails.converters.JSON
 class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand {
 
     boolean saveOnUndoRedoStack = true;
-
-    String toString() {"DeleteAnnotationCommand"}
 
     def execute()  {
         //Retrieve domain
@@ -29,25 +26,11 @@ class DeleteAnnotationCommand extends DeleteCommand implements UndoRedoCommand {
     }
 
     def undo() {
-        log.info("Undo")
-        def annotationData = JSON.parse(data)
-        Annotation annotation = Annotation.createFromData(annotationData)
-        annotation.id = annotationData.id;
-        annotation.save(flush: true)
-        def callback = [annotationID: annotation.id, imageID: annotation.image.id]
-        return super.createUndoMessage(annotation, [annotation.id, annotation.imageFileName()] as Object[], callback);
+        return restore(annotationService,JSON.parse(data))
     }
 
     def redo() {
-        log.info("Redo")
-        def postData = JSON.parse(postData)
-        Annotation annotation = Annotation.findById(postData.id)
-        String filename = annotation.imageFileName()
-        String idImage = annotation.image.id
-        annotation.delete(flush: true);
-        String id = postData.id
-        def callback = [annotationID: id, imageID: idImage]
-        return super.createRedoMessage(id, annotation, [postData.id, filename] as Object[], callback);
+        return destroy(annotationService,JSON.parse(data))
     }
 
 }

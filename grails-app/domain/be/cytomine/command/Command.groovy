@@ -12,6 +12,22 @@ class Command extends SequenceDomain {
     def domainService
     def responseService
 
+    def abstractImageService
+    def abstractImageGroupService
+    def annotationService
+    def annotationTermService
+    def disciplineService
+    def groupService
+    def imageInstanceService
+    def ontologyService
+    def projectService
+    def relationTermService
+    def secUserSecRoleService
+    def suggestedTermService
+    def termService
+    def userService
+    def userGroupService
+
     String data
     String postData
     JSONElement json
@@ -84,8 +100,6 @@ class Command extends SequenceDomain {
         log.info array.length
         return array[array.length - 1] // Image
     }
-
-
 
     protected void fillCommandInfo(def newObject,String message) {
         data = newObject.encodeAsJSON()
