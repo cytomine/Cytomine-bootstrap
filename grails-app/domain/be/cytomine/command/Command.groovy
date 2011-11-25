@@ -1,12 +1,16 @@
 package be.cytomine.command
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONElement
+import java.util.regex.Pattern
+import java.util.regex.Matcher
+import org.codehaus.groovy.grails.commons.ApplicationHolder
+import org.codehaus.groovy.grails.web.json.JSONObject
 
-class Command extends SequenceDomain {
+class Command extends CytomineDomain {
 
     def messageSource
     def domainService
@@ -44,6 +48,16 @@ class Command extends SequenceDomain {
 
     boolean saveOnUndoRedoStack = false //by default, don't save command on stack
 
+    def service
+    String serviceName
+
+    def initService() {
+        if(!service) {
+            log.info "initService:"+serviceName
+            service = ApplicationHolder.application.getMainContext().getBean(serviceName)
+        }
+    }
+
     static mapping = {
         version: false
     }
@@ -52,6 +66,7 @@ class Command extends SequenceDomain {
         postData(type: 'text', maxSize: Command.MAXSIZEREQUEST)
         actionMessage(nullable: true)
         project(nullable: true)
+        serviceName(nullable: true)
     }
 
     void initCurrentCommantProject(Project project) { //setCur... doesn't work with spring
@@ -105,5 +120,8 @@ class Command extends SequenceDomain {
         data = newObject.encodeAsJSON()
         actionMessage = message
     }
-
+    protected void fillCommandInfoJSON(def newObject,String message) {
+        data = newObject
+        actionMessage = message
+    }
 }

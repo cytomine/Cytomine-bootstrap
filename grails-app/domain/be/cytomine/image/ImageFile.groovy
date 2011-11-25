@@ -1,8 +1,8 @@
 package be.cytomine.image
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 
-class ImageFile extends SequenceDomain {
+class ImageFile extends CytomineDomain {
 
     File file
     AbstractImage image

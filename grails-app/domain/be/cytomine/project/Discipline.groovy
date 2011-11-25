@@ -1,10 +1,10 @@
 package be.cytomine.project
 
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import grails.converters.JSON
 
-class Discipline extends SequenceDomain {
+class Discipline extends CytomineDomain {
 
     String name
 
@@ -28,7 +28,7 @@ class Discipline extends SequenceDomain {
 
       static Discipline createFromDataWithId(json)  {
         def domain = createFromData(json)
-        domain.id = json.id
+        try{domain.id = json.id}catch(Exception e){}
         return domain
     }
 

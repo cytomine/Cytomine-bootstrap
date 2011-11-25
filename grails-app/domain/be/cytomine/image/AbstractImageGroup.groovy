@@ -1,11 +1,11 @@
 package be.cytomine.image
 
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.security.Group
 import grails.converters.JSON
 
-class AbstractImageGroup extends SequenceDomain implements Serializable {
+class AbstractImageGroup extends CytomineDomain implements Serializable {
 
     AbstractImage abstractimage
     Group group
@@ -82,7 +82,7 @@ class AbstractImageGroup extends SequenceDomain implements Serializable {
 
     static AbstractImageGroup createFromDataWithId(json) {
         def domain = createFromData(json)
-        domain.id = json.id
+        try{domain.id = json.id}catch(Exception e){}
         return domain
     }
 

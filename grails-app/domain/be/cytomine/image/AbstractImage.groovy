@@ -2,7 +2,7 @@ package be.cytomine.image
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.api.UrlApi
 import be.cytomine.image.acquisition.Scanner
 import be.cytomine.image.server.ImageProperty
@@ -13,7 +13,7 @@ import be.cytomine.server.resolvers.Resolver
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
-class AbstractImage extends SequenceDomain {
+class AbstractImage extends CytomineDomain {
 
     def imagePropertiesService
 
@@ -67,7 +67,7 @@ class AbstractImage extends SequenceDomain {
 
     static AbstractImage createFromDataWithId(json) throws CytomineException {
         def domain = createFromData(json)
-        domain.id = json.id
+        try{domain.id = json.id}catch(Exception e){}
         return domain
     }
 

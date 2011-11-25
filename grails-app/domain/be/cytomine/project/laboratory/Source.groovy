@@ -1,8 +1,8 @@
 package be.cytomine.project.laboratory
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 
-class Source extends SequenceDomain {
+class Source extends CytomineDomain {
 
     String name
 

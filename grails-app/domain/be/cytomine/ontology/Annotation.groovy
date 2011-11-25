@@ -1,6 +1,6 @@
 package be.cytomine.ontology
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
@@ -10,8 +10,9 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.project.Project
 
-class Annotation extends SequenceDomain implements Serializable {
+class Annotation extends CytomineDomain implements Serializable {
 
     String name
     Geometry location
@@ -121,6 +122,10 @@ class Annotation extends SequenceDomain implements Serializable {
         return image?.project
     }
 
+    Project projectDomain() {
+        return image?.project
+    }
+
     String imageFileName() {
         return this.image?.baseImage?.getFilename()
     }
@@ -199,7 +204,7 @@ class Annotation extends SequenceDomain implements Serializable {
 
     static Annotation createFromDataWithId(json)  {
         def domain = createFromData(json)
-        domain.id = json.id
+        try{domain.id = json.id}catch(Exception e){}
         return domain
     }
 
@@ -224,14 +229,18 @@ class Annotation extends SequenceDomain implements Serializable {
     static Annotation getFromData(annotation, jsonAnnotation) {
         try {
         annotation.name = jsonAnnotation.name
-        annotation.location = new WKTReader().read(jsonAnnotation.location);
+        annotation.location = new WKTReader().read(jsonAnnotation.location)
         //annotation.location = DouglasPeuckerSimplifier.simplify(annotation.location,50)
         annotation.image = ImageInstance.get(jsonAnnotation.image);
+        println "Annotation image = " + annotation.image + "($jsonAnnotation.image)"
+        if (!annotation.image) throw new WrongArgumentException("Image $jsonAnnotation.image not found!")
         annotation.zoomLevel = (!jsonAnnotation.zoomLevel.toString().equals("null")) ? ((String) jsonAnnotation.zoomLevel).toDouble() : -1
         annotation.channels = jsonAnnotation.channels
         annotation.user = User.get(jsonAnnotation.user);
         annotation.created = (!jsonAnnotation.created.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.created)) : null
         annotation.updated = (!jsonAnnotation.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.updated)) : null
+        if (!annotation.location) throw new WrongArgumentException("Geo is null: 0 points")
+        if (annotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geo is empty:" + annotation.location.getNumPoints() + " points")
              } catch (com.vividsolutions.jts.io.ParseException ex) {
             throw new WrongArgumentException(ex.toString())
         }

@@ -1,13 +1,13 @@
 package be.cytomine.processing
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.processing.algorithms.myDetection.MyDetectionLearnJob
 import be.cytomine.processing.algorithms.myDetection.MyDetectionPredictJob
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
-class Job extends SequenceDomain implements CytomineJob {   //TODO : SHOULD BE ABSTRACT with GRAILS2.0
+class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE ABSTRACT with GRAILS2.0
 
     User user
     Boolean running = false

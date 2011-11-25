@@ -1,8 +1,8 @@
 package be.cytomine.image.acquisition
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 
-abstract class Instrument extends SequenceDomain {
+abstract class Instrument extends CytomineDomain {
 
     String brand
     String model

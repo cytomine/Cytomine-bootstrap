@@ -42,6 +42,7 @@ class CommandService {
         }
         def result = c.execute()
         if (result.status == successCode) {
+            if(!c.validate()) log.error c.errors.toString()
             c.save()
             CommandHistory ch = new CommandHistory(command: c, prefixAction: "", project: c.project)
             ch.save();

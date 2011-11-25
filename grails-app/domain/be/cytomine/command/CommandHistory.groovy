@@ -1,6 +1,6 @@
 package be.cytomine.command
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
 import grails.converters.JSON
 
@@ -11,7 +11,7 @@ import grails.converters.JSON
  * Time: 9:16
  * To change this template use File | Settings | File Templates.
  */
-class CommandHistory extends SequenceDomain {
+class CommandHistory extends CytomineDomain {
     Command command
     String prefixAction = "" //undo, redo or nothing
     Project project

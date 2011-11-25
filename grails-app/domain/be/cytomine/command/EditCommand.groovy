@@ -40,4 +40,36 @@ class EditCommand extends Command {
         return domain
     }
 
+    String domainName() {
+        String domain = serviceName.replace("Service","")
+       String str = domain.substring(0,1).toUpperCase()+ domain.substring(1);
+        log.info "domainName="+ str
+        return str
+    }
+
+    def undo() {
+        initService()
+        return service.edit(JSON.parse(data).get("previous"+domainName()),commandNameUndo,printMessage)
+    }
+
+    def redo() {
+        initService()
+        return service.edit(JSON.parse(data).get("new"+domainName()),commandNameRedo,printMessage)
+    }
+
+    def execute()  {
+        initService()
+        //Create new domain
+        def updatedDomain = service.retrieve(json)
+        def oldDomain = updatedDomain.encodeAsJSON()
+        updatedDomain.getFromData(updatedDomain, json)
+        //Init command info
+        super.initCurrentCommantProject(updatedDomain?.projectDomain())
+
+        def response = service.edit(updatedDomain, "Delete", printMessage)
+        fillCommandInfo(updatedDomain,oldDomain, response.message)
+        return response
+    }
+
+
 }

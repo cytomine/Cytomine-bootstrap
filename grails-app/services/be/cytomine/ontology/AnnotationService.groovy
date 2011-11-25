@@ -13,17 +13,23 @@ import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.io.WKTWriter
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
 import grails.converters.JSON
+import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.command.AddCommand
+import be.cytomine.command.EditCommand
+import be.cytomine.command.DeleteCommand
+import be.cytomine.Exception.ObjectNotFoundException
 
 class AnnotationService extends ModelService {
 
     static transactional = true
     def cytomineService
-    def commandService
     def transactionService
     def annotationTermService
     def retrievalService
     def suggestedTermService
     def responseService
+
+   boolean saveOnUndoRedoStack = true
 
     def list() {
         Annotation.list()
@@ -99,6 +105,8 @@ class AnnotationService extends ModelService {
         Annotation.get(id)
     }
 
+
+
     Annotation read(def id) {
         Annotation.read(id)
     }
@@ -120,7 +128,8 @@ class AnnotationService extends ModelService {
         //Add annotation user
         json.user = currentUser.id
         //Add Annotation
-        def result = commandService.processCommand(new AddAnnotationCommand(user: currentUser), json)
+        log.debug this.toString()
+        def result = executeCommand(new AddCommand(user: currentUser), json)
         def annotation = result?.data?.annotation?.id
         log.info "annotation=" + annotation + " json.term=" + json.term
         //Add annotation-term if term
@@ -145,7 +154,7 @@ class AnnotationService extends ModelService {
     def update(def json) {
 
         User currentUser = cytomineService.getCurrentUser()
-        def result = commandService.processCommand(new EditAnnotationCommand(user: currentUser), json)
+        def result = executeCommand(new EditCommand(user: currentUser), json)
 
         if (result.success) {
             Long id = result.annotation.id
@@ -190,7 +199,7 @@ class AnnotationService extends ModelService {
         }
         //Delete annotation
         def json = JSON.parse("{id: $idAnnotation}")
-        def result = commandService.processCommand(new DeleteAnnotationCommand(user: currentUser), json)
+        def result = executeCommand(new DeleteCommand(user: currentUser), json)
         return result
     }
 
@@ -263,16 +272,17 @@ class AnnotationService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(def json, String commandType, boolean printMessage) {
-        //Rebuilt object that was previoulsy deleted
-        def domain = Annotation.createFromDataWithId(json)
-        //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.image?.baseImage?.filename],printMessage,commandType,domain.getCallBack())
+    def restore(JSONObject json, String commandType, boolean printMessage) {
+        log.info "#####" + commandType + "=Add"
+        restore(Annotation.createFromDataWithId(json),commandType,printMessage)
+    }
+    def restore(Annotation domain, String commandType, boolean printMessage) {
         //Save new object
         domain.save(flush: true)
+        //Build response message
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.image?.baseImage?.filename],printMessage,commandType,domain.getCallBack())
         return response
     }
-
     /**
      * Destroy domain which was previously added
      * @param json domain info
@@ -280,9 +290,12 @@ class AnnotationService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(def json, String commandType, boolean printMessage) {
-         //Get object to delete
-        def domain = Annotation.get(json.id)
+    def destroy(JSONObject json, String commandType, boolean printMessage) {
+        //Get object to delete
+        log.info "#####" + commandType + "=Delete"
+         destroy(Annotation.get(json.id),commandType,printMessage)
+    }
+    def destroy(Annotation domain, String commandType, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain,[domain.id, domain.image?.baseImage?.filename],printMessage,commandType,domain.getCallBack())
         //Delete object
@@ -297,14 +310,27 @@ class AnnotationService extends ModelService {
      * @param printMessage  print message or not
      * @return response
      */
-    def edit(def json, String commandType, boolean printMessage) {
-         //Rebuilt previous state of object that was previoulsy edited
-        def domain = fillDomainWithData(new Annotation(),json)
+    def edit(JSONObject json, String commandType, boolean printMessage) {
+        log.info "#####" + commandType + "=Edit"
+        //Rebuilt previous state of object that was previoulsy edited
+        edit(fillDomainWithData(new Annotation(),json),commandType,printMessage)
+    }
+    def edit(Annotation domain, String commandType, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain,[domain.id, domain.image?.baseImage?.filename],printMessage,commandType,domain.getCallBack())
         //Save update
         domain.save(flush: true)
         return response
+    }
+
+    Annotation createFromData(def json) {
+       return Annotation.createFromData(json)
+    }
+
+    def retrieve(JSONObject json) {
+        Annotation annotation = Annotation.get(json.id)
+        if(!annotation) throw new ObjectNotFoundException("Annotation " + json.id + " not found")
+        return annotation
     }
 
 }

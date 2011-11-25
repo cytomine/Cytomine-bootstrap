@@ -1,8 +1,8 @@
 package be.cytomine.security
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 
-class SecUser extends SequenceDomain {
+class SecUser extends CytomineDomain {
 
     String username
     String password

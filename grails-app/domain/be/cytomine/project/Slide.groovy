@@ -1,10 +1,10 @@
 package be.cytomine.project
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.image.AbstractImage
 import grails.converters.JSON
 
-class Slide extends SequenceDomain {
+class Slide extends CytomineDomain {
 
     String name
     int index

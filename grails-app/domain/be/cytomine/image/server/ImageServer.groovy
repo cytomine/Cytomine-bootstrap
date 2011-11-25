@@ -1,9 +1,9 @@
 package be.cytomine.image.server
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.image.Mime
 
-class ImageServer extends SequenceDomain {
+class ImageServer extends CytomineDomain {
 
     String name
     String url

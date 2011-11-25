@@ -1,11 +1,11 @@
 package be.cytomine.ontology
 
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.security.User
 import grails.converters.JSON
 
-class AnnotationTerm extends SequenceDomain implements Serializable {
+class AnnotationTerm extends CytomineDomain implements Serializable {
 
     Annotation annotation
     Term term
@@ -91,7 +91,7 @@ class AnnotationTerm extends SequenceDomain implements Serializable {
 
     static AnnotationTerm createFromDataWithId(json)  {
         def domain = createFromData(json)
-        domain.id = json.id
+        try{domain.id = json.id}catch(Exception e){}
         return domain
     }
 
@@ -105,6 +105,9 @@ class AnnotationTerm extends SequenceDomain implements Serializable {
         annotationTerm.annotation = Annotation.get(jsonAnnotationTerm.annotation.toString())
         annotationTerm.term = Term.get(jsonAnnotationTerm.term.toString())
         annotationTerm.user = User.get(jsonAnnotationTerm.user.toString())
+        if (!annotationTerm.annotation) throw new WrongArgumentException("Annotation ${jsonAnnotationTerm.annotation.toString()} doesn't exist!")
+        if (!annotationTerm.term) throw new WrongArgumentException("Term ${jsonAnnotationTerm.term.toString()} doesn't exist!")
+        if (!annotationTerm.user) throw new WrongArgumentException("User ${jsonAnnotationTerm.user.toString()} doesn't exist!")
         return annotationTerm;
     }
 

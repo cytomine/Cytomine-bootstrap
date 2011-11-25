@@ -1,10 +1,10 @@
 package be.cytomine.ontology
 
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import grails.converters.JSON
 
-class RelationTerm extends SequenceDomain implements Serializable {
+class RelationTerm extends CytomineDomain implements Serializable {
 
     static names = [PARENT: "parent", SYNONYM: "synonyme"]
 
@@ -65,7 +65,7 @@ class RelationTerm extends SequenceDomain implements Serializable {
 
     static RelationTerm createFromDataWithId(json)  {
         def domain = createFromData(json)
-        domain.id = json.id
+        try{domain.id = json.id}catch(Exception e){}
         return domain
     }
 

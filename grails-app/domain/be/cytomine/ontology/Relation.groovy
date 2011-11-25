@@ -1,10 +1,10 @@
 package be.cytomine.ontology
 
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import grails.converters.JSON
 
-class Relation extends SequenceDomain implements Serializable {
+class Relation extends CytomineDomain implements Serializable {
 
     String name
 
@@ -23,7 +23,7 @@ class Relation extends SequenceDomain implements Serializable {
 
     static Relation createFromDataWithId(json)  {
         def domain = createRelationFromData(json)
-        domain.id = json.id
+        try{domain.id = json.id}catch(Exception e){}
         return domain
     }
 

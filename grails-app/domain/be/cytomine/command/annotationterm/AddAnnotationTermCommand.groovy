@@ -9,29 +9,20 @@ import grails.converters.JSON
 
 class AddAnnotationTermCommand extends AddCommand implements UndoRedoCommand {
 
-    boolean saveOnUndoRedoStack = true;
 
-    def execute() {
-        json.user = user.id
-        //Init new domain object
-        AnnotationTerm newRelation = AnnotationTerm.createFromData(json)
-        //Link relation domain
-        newRelation = AnnotationTerm.link(newRelation.annotation, newRelation.term, newRelation.user)
-        //Build response message
-        String message = createMessage(newRelation,[newRelation.id, newRelation.annotation.id, newRelation.term.name, newRelation.user?.username])
-        //Init command info
-        fillCommandInfo(newRelation,message)
-        //Create and return response
-        super.initCurrentCommantProject(newRelation.annotation.image.project)
-        return responseService.createResponseMessage(newRelation,message,printMessage)
-    }
-
-    def undo() {
-        return destroy(annotationTermService,JSON.parse(data))
-    }
-
-    def redo() {
-        return restore(annotationTermService,JSON.parse(data))
-    }
+//    def execute() {
+//        json.user = user.id
+//        //Init new domain object
+//        AnnotationTerm newRelation = AnnotationTerm.createFromData(json)
+//        //Link relation domain
+//        newRelation = AnnotationTerm.link(newRelation.annotation, newRelation.term, newRelation.user)
+//        //Build response message
+//        String message = createMessage(newRelation,[newRelation.id, newRelation.annotation.id, newRelation.term.name, newRelation.user?.username])
+//        //Init command info
+//        fillCommandInfo(newRelation,message)
+//        //Create and return response
+//        super.initCurrentCommantProject(newRelation.annotation.image.project)
+//        return responseService.createResponseMessage(newRelation,message,printMessage)
+//    }
 
 }

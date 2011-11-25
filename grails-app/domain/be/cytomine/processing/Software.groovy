@@ -1,8 +1,8 @@
 package be.cytomine.processing
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 
-class Software extends SequenceDomain {
+class Software extends CytomineDomain {
 
     String name
 

@@ -1,6 +1,6 @@
 package be.cytomine.image.server
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 
 /**
  * Cytomine @ GIGA-ULG
@@ -8,7 +8,7 @@ import be.cytomine.SequenceDomain
  * Date: 27/01/11
  * Time: 15:21
  */
-class RetrievalServer extends SequenceDomain {
+class RetrievalServer extends CytomineDomain {
 
     String description
     String url

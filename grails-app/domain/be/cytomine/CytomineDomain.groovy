@@ -1,6 +1,8 @@
 package be.cytomine
 
-abstract class SequenceDomain {
+import be.cytomine.project.Project
+
+abstract class CytomineDomain {
 
     def sequenceService
     Long id
@@ -27,4 +29,16 @@ abstract class SequenceDomain {
     public beforeUpdate() {
         updated = new Date()
     }
+
+    /**
+     * Return domain project (annotation project, ...)
+     * By default, a domain has no project.
+     * You need to override getProject() in domain class
+     * @return Domain project
+     */
+    public Project projectDomain() {
+        return null;
+    }
+
+
 }

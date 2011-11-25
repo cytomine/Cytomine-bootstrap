@@ -1,9 +1,9 @@
 package be.cytomine.command
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.security.User
 
-class RedoStackItem extends SequenceDomain implements Comparable {
+class RedoStackItem extends CytomineDomain implements Comparable {
     User user
     Command command
     Boolean transactionInProgress

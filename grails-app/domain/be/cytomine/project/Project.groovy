@@ -1,7 +1,7 @@
 package be.cytomine.project
 
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.api.UrlApi
 import be.cytomine.command.Command
 import be.cytomine.image.ImageInstance
@@ -12,7 +12,7 @@ import be.cytomine.processing.SoftwareProjects
 import be.cytomine.security.UserGroup
 import grails.converters.JSON
 
-class Project extends SequenceDomain {
+class Project extends CytomineDomain {
 
     String name
     Ontology ontology
@@ -102,7 +102,7 @@ class Project extends SequenceDomain {
 
       static Project createFromDataWithId(json)  {
         def domain = createFromData(json)
-        domain.id = json.id
+        try{domain.id = json.id}catch(Exception e){}
         return domain
     }
 

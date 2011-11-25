@@ -1,7 +1,7 @@
 package be.cytomine.image
 
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.api.UrlApi
 import be.cytomine.ontology.Annotation
 import be.cytomine.project.Project
@@ -16,7 +16,7 @@ import grails.converters.JSON
  * Time: 8:33
  * To change this template use File | Settings | File Templates.
  */
-class ImageInstance extends SequenceDomain {
+class ImageInstance extends CytomineDomain {
 
     AbstractImage baseImage
     Project project
@@ -50,7 +50,7 @@ class ImageInstance extends SequenceDomain {
 
     static ImageInstance createFromDataWithId(json)  {
         def domain = createFromData(json)
-        domain.id = json.id
+        try{domain.id = json.id}catch(Exception e){}
         return domain
     }
 

@@ -1,12 +1,12 @@
 package be.cytomine.security
 
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.image.AbstractImageGroup
 import be.cytomine.project.Project
 import be.cytomine.project.ProjectGroup
 import grails.converters.JSON
 
-class Group extends SequenceDomain {
+class Group extends CytomineDomain {
 
     String name
 
@@ -29,7 +29,7 @@ class Group extends SequenceDomain {
 
       static Group createFromDataWithId(json)  {
         def domain = createFromData(json)
-        domain.id = json.id
+        try{domain.id = json.id}catch(Exception e){}
         return domain
     }
 

@@ -7,6 +7,10 @@ import be.cytomine.command.annotationterm.DeleteAnnotationTermCommand
 import be.cytomine.image.ImageInstance
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.command.AddCommand
+import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.command.term.AddTermCommand
+import be.cytomine.command.DeleteCommand
 
 class AnnotationTermService extends ModelService {
 
@@ -15,6 +19,8 @@ class AnnotationTermService extends ModelService {
     def transactionService
     def commandService
     def responseService
+
+    boolean saveOnUndoRedoStack = true
 
     def list(Annotation annotation) {
         annotation.annotationTerm
@@ -44,12 +50,12 @@ class AnnotationTermService extends ModelService {
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
-        commandService.processCommand(new AddAnnotationTermCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser), json)
     }
 
     def addAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser) {
         def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, user: $idUser}")
-        commandService.processCommand(new AddAnnotationTermCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser), json)
     }
 
     def delete(def json) {
@@ -91,7 +97,7 @@ class AnnotationTermService extends ModelService {
 
     def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser, boolean printMessage) {
         def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, user: $idUser}")
-        def result = commandService.processCommand(new DeleteAnnotationTermCommand(user: currentUser, printMessage: printMessage), json)
+        def result = executeCommand(new DeleteCommand(user: currentUser), json)
         return result
     }
 
@@ -144,10 +150,12 @@ class AnnotationTermService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(def json, String commandType, boolean printMessage) {
-        //Rebuilt object that was previoulsy deleted
-        def domain = AnnotationTerm.createFromData(json)
+    def restore(JSONObject json, String commandType, boolean printMessage) {
+        restore(AnnotationTerm.createFromDataWithId(json),commandType,printMessage)
+    }
+    def restore(AnnotationTerm domain, String commandType, boolean printMessage) {
         //Build response message
+        log.debug "domain="+domain + " responseService="+responseService
         def response = responseService.createResponseMessage(domain,[domain.id,domain.annotation.id, domain.term.name, domain.user?.username],printMessage,commandType,domain.getCallBack())
         //Save new object
         AnnotationTerm.link(domain.annotation, domain.term, domain.user)
@@ -162,12 +170,26 @@ class AnnotationTermService extends ModelService {
      * @return response
      */
     def destroy(def json, String commandType, boolean printMessage) {
-        //Destroy object that was previoulsy deleted
-        def domain = AnnotationTerm.createFromData(json)
+         destroy(AnnotationTerm.createFromData(json),commandType,printMessage)
+    }
+    def destroy(AnnotationTerm domain, String commandType, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain,[domain.id,domain.annotation.id, domain.term.name, domain.user?.username],printMessage,commandType,domain.getCallBack())
         //Delete new object
         AnnotationTerm.unlink(domain.annotation, domain.term, domain.user)
         return response
+    }
+
+    AnnotationTerm createFromData(def json) {
+       return AnnotationTerm.createFromData(json)
+    }
+
+    def retrieve(def json) {
+        Annotation annotation = Annotation.get(json.annotation)
+        Term term = Term.get(json.term)
+        User user = User.get(json.user)
+        AnnotationTerm relation = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
+        if (!relation) throw new ObjectNotFoundException("Annotation term not found ($annotation,$term,$user)")
+        return relation
     }
 }

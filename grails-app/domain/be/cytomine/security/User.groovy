@@ -147,7 +147,7 @@ class User extends SecUser {
 
       static User createFromDataWithId(json)  {
         def domain = createFromData(json)
-        domain.id = json.id
+        try{domain.id = json.id}catch(Exception e){}
         return domain
     }
 

@@ -28,4 +28,30 @@ class DeleteCommand extends Command {
     protected def destroy(def service,def json) {
         return service.destroy(json,commandNameRedo,printMessage)
     }
+
+
+
+    def undo() {
+        initService()
+        return service.restore(JSON.parse(data),commandNameUndo,printMessage)
+    }
+
+    def redo() {
+        initService()
+        return service.destroy(JSON.parse(data),commandNameRedo,printMessage)
+    }
+
+
+    def execute()  {
+        initService()
+        //Create new domain
+        def oldDomain = service.retrieve(json)
+        def backup = oldDomain.encodeAsJSON()
+        //Init command info
+        super.initCurrentCommantProject(oldDomain?.projectDomain())
+
+        def response = service.destroy(oldDomain, "Delete", printMessage)
+        fillCommandInfoJSON(backup, response.message)
+        return response
+    }
 }

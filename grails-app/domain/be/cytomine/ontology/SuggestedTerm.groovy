@@ -1,12 +1,12 @@
 package be.cytomine.ontology
 
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SequenceDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.processing.Job
 import be.cytomine.project.Project
 import grails.converters.JSON
 
-class SuggestedTerm extends SequenceDomain implements Serializable {
+class SuggestedTerm extends CytomineDomain implements Serializable {
 
     Annotation annotation
     Term term
@@ -29,7 +29,7 @@ class SuggestedTerm extends SequenceDomain implements Serializable {
 
      static SuggestedTerm createFromDataWithId(json)  {
         def domain = createFromData(json)
-        domain.id = json.id
+        try{domain.id = json.id}catch(Exception e){}
         return domain
     }
 
