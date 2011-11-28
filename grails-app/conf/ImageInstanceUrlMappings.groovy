@@ -20,5 +20,8 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/$id/mask-$x-$y-$w-$h-$term"(controller: "restImageInstance"){
             action = [GET:"mask"]
         }
+        "/api/imageinstance/$id/mask-$annotation-$term"(controller: "restImageInstance"){
+            action = [GET:"cropmask"]
+        }
     }
 }

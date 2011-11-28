@@ -111,8 +111,9 @@ class RestImageInstanceController extends RestController {
 
         try {
             //Get the image, compute ratio between asked and received
-            String url = abstractImage.getCropURL(x, abstractImage.getHeight() - y, w, h)
-            BufferedImage window = getImageFromURL(url)
+            //String url = abstractImage.getCropURL(x, abstractImage.getHeight() - y, w, h)
+            //BufferedImage window = getImageFromURL(url)
+            BufferedImage window = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB)
             double x_ratio = window.getWidth() / w
             double y_ratio = window.getHeight() / h
 
@@ -120,7 +121,7 @@ class RestImageInstanceController extends RestController {
             Term term = Term.read(termID)
 
             Collection<Annotation> annotations = (Collection<Annotation>) AnnotationTerm.createCriteria().list {
-                inList("term", [term])
+                //inList("term", terms)
                 join("annotation")
                 createAlias("annotation", "a")
                 projections {
@@ -131,10 +132,10 @@ class RestImageInstanceController extends RestController {
             //Create a geometry corresponding to the ROI of the request (x,y,w,h)
             //1. Compute points
             Coordinate[] roiPoints = new Coordinate[5]
-            roiPoints[0] = new Coordinate(x, abstractImage.getHeight() - y);
-            roiPoints[1] = new Coordinate(x + w, abstractImage.getHeight() - y);
-            roiPoints[2] = new Coordinate(x + w, abstractImage.getHeight() - (y + h));
-            roiPoints[3] = new Coordinate(x, abstractImage.getHeight() - (y + h));
+            roiPoints[0] = new Coordinate(x, abstractImage.getHeight() - y)
+            roiPoints[1] = new Coordinate(x + w, abstractImage.getHeight() - y)
+            roiPoints[2] = new Coordinate(x + w, abstractImage.getHeight() - (y + h))
+            roiPoints[3] = new Coordinate(x, abstractImage.getHeight() - (y + h))
             roiPoints[4] = roiPoints[0]
             //Build geometry
             LinearRing linearRing = new GeometryFactory().createLinearRing(roiPoints)
@@ -149,7 +150,44 @@ class RestImageInstanceController extends RestController {
             window = segmentationService.colorizeWindow(abstractImage, window, intersectGeometries, Color.decode(term.color), x, y, x_ratio, y_ratio)
             responseBufferedImage(window)
         } catch (Exception e) {
-            log.error("GetThumb:" + e);
+            log.error("GetThumb:" + e)
         }
     }
+
+    def cropmask = {
+        Annotation annotation = Annotation.read(params.annotation)
+         if (!annotation) {
+            responseNotFound("Annotation", params.annotation)
+        }
+        Term term = Term.read(params.term)
+        if (!term) {
+            responseNotFound("Term", params.term)
+        }
+        if (!annotation.termsId().contains(term.id)) {
+            response([ error : "Term not associated with annotation", annotation : annotation.id, term : term.id])
+        }
+        def zoom
+        if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
+        if (annotation == null)
+            responseNotFound("Crop", "Annotation", params.annotation)
+        else if ((params.zoom != null) && (zoom < annotation.getImage().getBaseImage().getZoomLevels().min || zoom > annotation.getImage().getBaseImage().getZoomLevels().max))
+            responseNotFound("Crop", "Zoom", zoom)
+        else {
+            try {
+                BufferedImage crop = getImageFromURL(abstractImageService.crop(annotation, zoom))
+                BufferedImage window = new BufferedImage(crop.getWidth(),crop.getHeight(),BufferedImage.TYPE_INT_ARGB);
+                AbstractImage abstractImage = annotation.getImage().getBaseImage()
+                Collection<Geometry> geometries = new LinkedList<Geometry>()
+                geometries.add(annotation.getLocation())
+                def boundaries = annotation.getBoundaries()
+                double x_ratio = crop.getWidth() / boundaries.width
+                double y_ratio = crop.getHeight() / boundaries.height
+                window = segmentationService.colorizeWindow(abstractImage, window, geometries, Color.decode(term.color), boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
+                responseBufferedImage(window)
+            } catch (Exception e) {
+                log.error("GetThumb:" + e);
+            }
+        }
+    }
+
 }
