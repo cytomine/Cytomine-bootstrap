@@ -89,9 +89,9 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         }
     }
 
-    static AnnotationTerm createFromDataWithId(json)  {
+    static AnnotationTerm createFromDataWithId(json) {
         def domain = createFromData(json)
-        try{domain.id = json.id}catch(Exception e){}
+        try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 

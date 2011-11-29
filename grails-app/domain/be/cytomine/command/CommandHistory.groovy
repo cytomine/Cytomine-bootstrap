@@ -5,16 +5,26 @@ import be.cytomine.project.Project
 import grails.converters.JSON
 
 /**
- * Created by IntelliJ IDEA.
- * User: lrollus
- * Date: 23/05/11
- * Time: 9:16
- * To change this template use File | Settings | File Templates.
+ * @author ULG-GIGA Cytomine Team
+ * The CommandHistory class define a history item for a project.
+ * It contains the command that was launch for a project and its method (undo/redo/nothing)
  */
 class CommandHistory extends CytomineDomain {
+
+    /**
+     * Command that was launch
+     */
     Command command
-    String prefixAction = "" //undo, redo or nothing
+
+    /**
+     * Project concerned by the command
+     */
     Project project
+
+    /**
+     * Type of operation for the command (undo, redo, nothing)
+     */
+    String prefixAction = ""
 
     static constraints = {
         project(nullable: true)

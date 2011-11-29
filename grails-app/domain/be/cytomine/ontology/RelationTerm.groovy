@@ -40,9 +40,9 @@ class RelationTerm extends CytomineDomain implements Serializable {
             term1.refresh()
             term2.refresh()
             relation.refresh()
-            println"relationTerm.id="+relationTerm.id
+            println "relationTerm.id=" + relationTerm.id
             relationTerm.save(flush: true)
-            println "relationTerm.id="+relationTerm.id
+            println "relationTerm.id=" + relationTerm.id
         } else throw new WrongArgumentException("Term1 " + term1.id + " and " + term2.id + " are already mapped with relation " + relation.id)
         return relationTerm
     }
@@ -63,9 +63,9 @@ class RelationTerm extends CytomineDomain implements Serializable {
 
     }
 
-    static RelationTerm createFromDataWithId(json)  {
+    static RelationTerm createFromDataWithId(json) {
         def domain = createFromData(json)
-        try{domain.id = json.id}catch(Exception e){}
+        try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 

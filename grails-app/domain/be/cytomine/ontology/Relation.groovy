@@ -21,9 +21,9 @@ class Relation extends CytomineDomain implements Serializable {
         return name
     }
 
-    static Relation createFromDataWithId(json)  {
+    static Relation createFromDataWithId(json) {
         def domain = createRelationFromData(json)
-        try{domain.id = json.id}catch(Exception e){}
+        try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 

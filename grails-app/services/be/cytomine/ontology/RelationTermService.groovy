@@ -66,7 +66,7 @@ class RelationTermService extends ModelService {
     def deleteRelationTerm(def idRelation, def idTerm1, def idTerm2, User currentUser, boolean printMessage) {
         def json = JSON.parse("{relation: $idRelation, term1: $idTerm1, term2: $idTerm2}")
         log.info "json=" + json
-        return executeCommand(new DeleteCommand(user: currentUser,printMessage:printMessage), json)
+        return executeCommand(new DeleteCommand(user: currentUser, printMessage: printMessage), json)
     }
 
     def deleteRelationTermFromTerm(Term term, User currentUser) {
@@ -86,13 +86,14 @@ class RelationTermService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, boolean printMessage) {
-        restore(RelationTerm.createFromDataWithId(json),printMessage)
+    def create(JSONObject json, boolean printMessage) {
+        create(RelationTerm.createFromDataWithId(json), printMessage)
     }
-    def restore(RelationTerm domain, boolean printMessage) {
+
+    def create(RelationTerm domain, boolean printMessage) {
         //Build response message
-        log.debug "domain="+domain + " responseService="+responseService
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.relation.name, domain.term1.name, domain.term2.name],printMessage,"Add",domain.getCallBack())
+        log.debug "domain=" + domain + " responseService=" + responseService
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.relation.name, domain.term1.name, domain.term2.name], printMessage, "Add", domain.getCallBack())
         //Save new object
         RelationTerm.link(domain.relation, domain.term1, domain.term2)
         return response
@@ -106,18 +107,19 @@ class RelationTermService extends ModelService {
      * @return response
      */
     def destroy(def json, boolean printMessage) {
-         destroy(RelationTerm.createFromData(json),printMessage)
+        destroy(RelationTerm.createFromData(json), printMessage)
     }
+
     def destroy(RelationTerm domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.relation.name, domain.term1.name, domain.term2.name],printMessage,"Delete",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.relation.name, domain.term1.name, domain.term2.name], printMessage, "Delete", domain.getCallBack())
         //Delete new object
         RelationTerm.unlink(domain.relation, domain.term1, domain.term2)
         return response
     }
 
     RelationTerm createFromJSON(def json) {
-       return RelationTerm.createFromData(json)
+        return RelationTerm.createFromData(json)
     }
 
     def retrieve(def json) {

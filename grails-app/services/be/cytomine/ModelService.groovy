@@ -10,6 +10,7 @@ abstract class ModelService {
 
     def responseService
     def commandService
+    def cytomineService
 
     boolean saveOnUndoRedoStack
 
@@ -20,8 +21,8 @@ abstract class ModelService {
     abstract def delete(def json)
 
 //
-//    abstract def restore(JSONObject json, boolean printMessage)
-//    abstract def restore(Annotation domain, boolean printMessage)
+//    abstract def create(JSONObject json, boolean printMessage)
+//    abstract def create(Annotation domain, boolean printMessage)
 //    abstract def destroy(JSONObject json, boolean printMessage)
 //    abstract def destroy(Annotation domain, boolean printMessage)
 //    abstract def edit(JSONObject json, boolean printMessage)
@@ -29,10 +30,9 @@ abstract class ModelService {
 //    abstract def retrieve(JSONObject json)
 
 
-    protected def fillDomainWithData(def object, def json)
-    {
+    protected def fillDomainWithData(def object, def json) {
         def domain = object.get(json.id)
-        domain = object.getFromData(domain,json)
+        domain = object.getFromData(domain, json)
         domain.id = json.id
         return domain
     }
@@ -42,19 +42,19 @@ abstract class ModelService {
     }
 
     void initCommandService() {
-        if(!commandService) {
-            log.info "initService:"+serviceName
+        if (!commandService) {
+            log.info "initService:" + serviceName
             commandService = ApplicationHolder.application.getMainContext().getBean("commandService")
         }
 
     }
 
-    protected executeCommand(Command c,def json) {
+    protected executeCommand(Command c, def json) {
         initCommandService()
         c.saveOnUndoRedoStack = this.isSaveOnUndoRedoStack() //need to use getter method, to get child value
         c.service = this
         c.serviceName = getServiceName()
-        log.info "commandService="+commandService + " c="+c + " json="+json
-        return commandService.processCommand(c,json)
+        log.info "commandService=" + commandService + " c=" + c + " json=" + json
+        return commandService.processCommand(c, json)
     }
 }

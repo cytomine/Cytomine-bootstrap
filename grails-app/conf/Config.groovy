@@ -31,6 +31,7 @@ grails.mime.types = [ html: ['text/html','application/xhtml+xml'],
         form: 'application/x-www-form-urlencoded',
         multipartForm: 'multipart/form-data'
 ]
+cytomine.maxRequestSize = 102400
 
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000

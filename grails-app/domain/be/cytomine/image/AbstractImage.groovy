@@ -67,7 +67,7 @@ class AbstractImage extends CytomineDomain {
 
     static AbstractImage createFromDataWithId(json) throws CytomineException {
         def domain = createFromData(json)
-        try{domain.id = json.id}catch(Exception e){}
+        try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 

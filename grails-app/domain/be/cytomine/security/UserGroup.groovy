@@ -49,9 +49,9 @@ class UserGroup {
         getFromData(new UserGroup(), data)
     }
 
-      static UserGroup createFromDataWithId(json)  {
+    static UserGroup createFromDataWithId(json) {
         def domain = createFromData(json)
-        try{domain.id = json.id}catch(Exception e){}
+        try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 

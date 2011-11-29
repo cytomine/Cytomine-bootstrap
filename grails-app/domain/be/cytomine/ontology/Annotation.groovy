@@ -202,9 +202,9 @@ class Annotation extends CytomineDomain implements Serializable {
         else return Math.round(this.getPerimeter() * this.image.baseImage.resolution) + " µm"
     }
 
-    static Annotation createFromDataWithId(json)  {
+    static Annotation createFromDataWithId(json) {
         def domain = createFromData(json)
-        try{domain.id = json.id}catch(Exception e){}
+        try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
@@ -228,20 +228,20 @@ class Annotation extends CytomineDomain implements Serializable {
      */
     static Annotation getFromData(annotation, jsonAnnotation) {
         try {
-        annotation.name = jsonAnnotation.name
-        annotation.location = new WKTReader().read(jsonAnnotation.location)
-        //annotation.location = DouglasPeuckerSimplifier.simplify(annotation.location,50)
-        annotation.image = ImageInstance.get(jsonAnnotation.image);
-        println "Annotation image = " + annotation.image + "($jsonAnnotation.image)"
-        if (!annotation.image) throw new WrongArgumentException("Image $jsonAnnotation.image not found!")
-        annotation.zoomLevel = (!jsonAnnotation.zoomLevel.toString().equals("null")) ? ((String) jsonAnnotation.zoomLevel).toDouble() : -1
-        annotation.channels = jsonAnnotation.channels
-        annotation.user = User.get(jsonAnnotation.user);
-        annotation.created = (!jsonAnnotation.created.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.created)) : null
-        annotation.updated = (!jsonAnnotation.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.updated)) : null
-        if (!annotation.location) throw new WrongArgumentException("Geo is null: 0 points")
-        if (annotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geo is empty:" + annotation.location.getNumPoints() + " points")
-             } catch (com.vividsolutions.jts.io.ParseException ex) {
+            annotation.name = jsonAnnotation.name
+            annotation.location = new WKTReader().read(jsonAnnotation.location)
+            //annotation.location = DouglasPeuckerSimplifier.simplify(annotation.location,50)
+            annotation.image = ImageInstance.get(jsonAnnotation.image);
+            println "Annotation image = " + annotation.image + "($jsonAnnotation.image)"
+            if (!annotation.image) throw new WrongArgumentException("Image $jsonAnnotation.image not found!")
+            annotation.zoomLevel = (!jsonAnnotation.zoomLevel.toString().equals("null")) ? ((String) jsonAnnotation.zoomLevel).toDouble() : -1
+            annotation.channels = jsonAnnotation.channels
+            annotation.user = User.get(jsonAnnotation.user);
+            annotation.created = (!jsonAnnotation.created.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.created)) : null
+            annotation.updated = (!jsonAnnotation.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.updated)) : null
+            if (!annotation.location) throw new WrongArgumentException("Geo is null: 0 points")
+            if (annotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geo is empty:" + annotation.location.getNumPoints() + " points")
+        } catch (com.vividsolutions.jts.io.ParseException ex) {
             throw new WrongArgumentException(ex.toString())
         }
         return annotation;

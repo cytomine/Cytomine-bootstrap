@@ -88,7 +88,7 @@ class Term extends CytomineDomain implements Serializable {
 
     static Term createFromDataWithId(jsonTerm) throws CytomineException {
         def term = createFromData(jsonTerm)
-        try{term.id = jsonTerm.id}catch(Exception e){}
+        try {term.id = jsonTerm.id} catch (Exception e) {}
         return term
     }
 

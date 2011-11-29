@@ -6,94 +6,91 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.grails.web.json.JSONElement
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
+/**
+ * @author ULG-GIGA Cytomine Team
+ * The Command class define a command which package on operation on a domain
+ * It contains data about relevant domain, user who launch command,...
+ */
 class Command extends CytomineDomain {
 
     def messageSource
     def domainService
     def responseService
 
-    def abstractImageService
-    def abstractImageGroupService
-    def annotationService
-    def annotationTermService
-    def disciplineService
-    def groupService
-    def imageInstanceService
-    def ontologyService
-    def projectService
-    def relationTermService
-    def secUserSecRoleService
-    def suggestedTermService
-    def termService
-    def userService
-    def userGroupService
-
+    /**
+     * JSON string with relevant field data
+     */
     String data
-    String postData
+
+    /**
+     * JSON object with data
+     */
     JSONElement json
     static transients = ["json"]
 
+    /**
+     * User who launch command
+     */
     User user
+
+    /**
+     * Project concerned by command
+     */
     Project project
 
+    /**
+     * Flag that indicate that the message will be show or not
+     */
     boolean printMessage = true
 
-    static Integer MAXSIZEREQUEST = 102400
-
+    /**
+     * Message explaining the command
+     */
     String actionMessage
 
-    boolean saveOnUndoRedoStack = false //by default, don't save command on stack
+    /**
+     * Set to false if command is not undo(redo)-able
+     * By default, don't save command on stack
+     */
+    boolean saveOnUndoRedoStack = false
 
+    /**
+     * Service of the relevant domain for the command
+     */
     def service
-    String serviceName
 
-    def initService() {
-        if(!service) {
-            log.info "initService:"+serviceName
-            service = ApplicationHolder.application.getMainContext().getBean(serviceName)
-        }
-    }
+    /**
+     * Service name of the relevant domain for the command
+     */
+    String serviceName
 
     static mapping = {
         version: false
     }
     static constraints = {
-        data(type: 'text', maxSize: Command.MAXSIZEREQUEST, nullable: true)
-        postData(type: 'text', maxSize: Command.MAXSIZEREQUEST)
+        data(type: 'text', maxSize: ConfigurationHolder.config.cytomine.maxRequestSize, nullable: true)
         actionMessage(nullable: true)
         project(nullable: true)
         serviceName(nullable: true)
     }
 
-    void initCurrentCommantProject(Project project) { //setCur... doesn't work with spring
-        println "setCurrentProject=" + project
-        this.project = project;
-    }
-
-    static void registerMarshaller() {
-        println "Register custom JSON renderer for " + Command.class
-        JSON.registerObjectMarshaller(Command) {
-            def returnArray = [:]
-
-            returnArray['CLASSNAME'] = it.class
-            returnArray['action'] = it.getActionMessage() + " by " + it?.user?.username
-            returnArray['data'] = it.data
-            returnArray['user'] = it?.userId
-            returnArray['type'] = "UNKNOWN"
-            if (it instanceof AddCommand) returnArray['type'] = "ADD"
-            else if (it instanceof EditCommand) returnArray['type'] = "EDIT"
-            else if (it instanceof DeleteCommand) returnArray['type'] = "DELETE"
-
-            returnArray['created'] = it.created ? it.created.time.toString() : null
-            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
-
-            return returnArray
+    /**
+     * Load domaine service
+     */
+    void initService() {
+        if (!service) {
+            service = ApplicationHolder.application.getMainContext().getBean(serviceName)
         }
     }
 
-    String getActionMessage() {
-        return actionMessage
+    /**
+     * Add a project concerned by this command
+     * @param project Project concerned by this command
+     */
+    void initCurrentCommantProject(Project project) {
+        this.project = project;
     }
 
     public String toString() {
@@ -113,12 +110,44 @@ class Command extends CytomineDomain {
         return array[array.length - 1] // Image
     }
 
-    protected void fillCommandInfo(def newObject,String message) {
+    /**
+     * Add command info for the new domain concerned by the command
+     * @param newObject New domain
+     * @param message Message build for the command
+     */
+    protected void fillCommandInfo(def newObject, String message) {
         data = newObject.encodeAsJSON()
         actionMessage = message
     }
-    protected void fillCommandInfoJSON(def newObject,String message) {
+
+    /**
+     * Add command info for the new domain concerned by the command
+     * @param newObject New json domain
+     * @param message Message build for the command
+     */
+    protected void fillCommandInfoJSON(def newObject, String message) {
         data = newObject
         actionMessage = message
+    }
+
+    static void registerMarshaller() {
+        println "Register custom JSON renderer for " + Command.class
+        JSON.registerObjectMarshaller(Command) {
+            def returnArray = [:]
+
+            returnArray['CLASSNAME'] = it.class
+            returnArray['action'] = it.actionMessage + " by " + it?.user?.username
+            returnArray['data'] = it.data
+            returnArray['user'] = it?.userId
+            returnArray['type'] = "UNKNOWN"
+            if (it instanceof AddCommand) returnArray['type'] = "ADD"
+            else if (it instanceof EditCommand) returnArray['type'] = "EDIT"
+            else if (it instanceof DeleteCommand) returnArray['type'] = "DELETE"
+
+            returnArray['created'] = it.created ? it.created.time.toString() : null
+            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
+
+            return returnArray
+        }
     }
 }

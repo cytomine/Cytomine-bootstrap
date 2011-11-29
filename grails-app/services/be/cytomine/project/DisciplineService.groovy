@@ -37,16 +37,15 @@ class DisciplineService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json)  {
+    def update(def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def json)  {
+    def delete(def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
-
 
     /**
      * Restore domain which was previously deleted
@@ -55,14 +54,15 @@ class DisciplineService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, boolean printMessage) {
-        restore(Discipline.createFromDataWithId(json),printMessage)
+    def create(JSONObject json, boolean printMessage) {
+        create(Discipline.createFromDataWithId(json), printMessage)
     }
-    def restore(Discipline domain, boolean printMessage) {
+
+    def create(Discipline domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Add",domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -73,12 +73,13 @@ class DisciplineService extends ModelService {
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
-         destroy(Discipline.get(json.id),printMessage)
+        destroy(Discipline.get(json.id), printMessage)
     }
+
     def destroy(Discipline domain, boolean printMessage) {
         //Build response message
         if (domain && Project.findAllByDiscipline(domain).size() > 0) throw new ConstraintException("Discipline is still map with project")
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Edit",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -87,16 +88,17 @@ class DisciplineService extends ModelService {
     /**
      * Edit domain which was previously edited
      * @param json domain info
-     * @param printMessage  print message or not
+     * @param printMessage print message or not
      * @return response
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new Discipline(),json),printMessage)
+        edit(fillDomainWithData(new Discipline(), json), printMessage)
     }
+
     def edit(Discipline domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Delete",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response
@@ -108,7 +110,7 @@ class DisciplineService extends ModelService {
      * @return new domain
      */
     Discipline createFromJSON(def json) {
-       return Discipline.createFromData(json)
+        return Discipline.createFromData(json)
     }
 
     /**
@@ -118,7 +120,7 @@ class DisciplineService extends ModelService {
      */
     def retrieve(JSONObject json) {
         Discipline discipline = Discipline.get(json.id)
-        if(!discipline) throw new ObjectNotFoundException("Discipline " + json.id + " not found")
+        if (!discipline) throw new ObjectNotFoundException("Discipline " + json.id + " not found")
         return discipline
     }
 

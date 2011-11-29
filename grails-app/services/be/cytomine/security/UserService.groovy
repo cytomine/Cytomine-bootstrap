@@ -47,7 +47,7 @@ class UserService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json)  {
+    def update(def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
@@ -56,7 +56,7 @@ class UserService extends ModelService {
         User currentUser = cytomineService.getCurrentUser()
 
         if (json.id == springSecurityService.principal.id) throw new ForbiddenException("The user can't delete herself")
-         return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /*def clearUser = {
@@ -121,10 +121,8 @@ class UserService extends ModelService {
                 UserGroup.link(user, group);
             }
         }
-        response.status = 201
         def ret = [data: [message: "OK"], status: 201]
-        response(ret)
-
+        ret
     }
 
     def list(def currentPage, def maxRows, def sortIndex, def sortOrder, def firstName, def lastName, def email) {
@@ -150,14 +148,15 @@ class UserService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, boolean printMessage) {
-        restore(User.createFromDataWithId(json),printMessage)
+    def create(JSONObject json, boolean printMessage) {
+        create(User.createFromDataWithId(json), printMessage)
     }
-    def restore(User domain, boolean printMessage) {
+
+    def create(User domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain,[domain.id, domain.username],printMessage,"Add",domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.id, domain.username], printMessage, "Add", domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -167,11 +166,12 @@ class UserService extends ModelService {
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
-         destroy(User.get(json.id),printMessage)
+        destroy(User.get(json.id), printMessage)
     }
+
     def destroy(User domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.username],printMessage,"Delete",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.username], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -180,16 +180,17 @@ class UserService extends ModelService {
     /**
      * Edit domain which was previously edited
      * @param json domain info
-     * @param printMessage  print message or not
+     * @param printMessage print message or not
      * @return response
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new User(),json),printMessage)
+        edit(fillDomainWithData(new User(), json), printMessage)
     }
+
     def edit(User domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.username],printMessage,"Edit",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.username], printMessage, "Edit", domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response
@@ -201,7 +202,7 @@ class UserService extends ModelService {
      * @return new domain
      */
     User createFromJSON(def json) {
-       return User.createFromData(json)
+        return User.createFromData(json)
     }
 
     /**
@@ -211,7 +212,7 @@ class UserService extends ModelService {
      */
     def retrieve(JSONObject json) {
         User user = User.get(json.id)
-        if(!user) throw new ObjectNotFoundException("User " + json.id + " not found")
+        if (!user) throw new ObjectNotFoundException("User " + json.id + " not found")
         return user
     }
 }

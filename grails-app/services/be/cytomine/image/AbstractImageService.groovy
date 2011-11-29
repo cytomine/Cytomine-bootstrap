@@ -138,20 +138,21 @@ class AbstractImageService extends ModelService {
     }
 
     /**
-     * Restore domain which was previously deleted
+     * create domain which was previously deleted
      * @param json domain info
 
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, boolean printMessage) {
-        restore(AbstractImage.createFromDataWithId(json),printMessage)
+    def create(JSONObject json, boolean printMessage) {
+        create(AbstractImage.createFromDataWithId(json), printMessage)
     }
-    def restore(AbstractImage domain, boolean printMessage) {
+
+    def create(AbstractImage domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain,[domain.id, domain.filename],printMessage,"Add",domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.id, domain.filename], printMessage, "Add", domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -162,11 +163,12 @@ class AbstractImageService extends ModelService {
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
-         destroy(AbstractImage.get(json.id),printMessage)
+        destroy(AbstractImage.get(json.id), printMessage)
     }
+
     def destroy(AbstractImage domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.filename],printMessage,"Delete",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.filename], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -175,16 +177,17 @@ class AbstractImageService extends ModelService {
     /**
      * Edit domain which was previously edited
      * @param json domain info
-     * @param printMessage  print message or not
+     * @param printMessage print message or not
      * @return response
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new AbstractImage(),json),printMessage)
+        edit(fillDomainWithData(new AbstractImage(), json), printMessage)
     }
+
     def edit(AbstractImage domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.filename],printMessage,"Edit",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.filename], printMessage, "Edit", domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response
@@ -196,7 +199,7 @@ class AbstractImageService extends ModelService {
      * @return new domain
      */
     AbstractImage createFromJSON(def json) {
-       return AbstractImage.createFromData(json)
+        return AbstractImage.createFromData(json)
     }
 
     /**
@@ -206,7 +209,7 @@ class AbstractImageService extends ModelService {
      */
     def retrieve(JSONObject json) {
         AbstractImage image = AbstractImage.get(json.id)
-        if(!image) throw new ObjectNotFoundException("Image " + json.id + " not found")
+        if (!image) throw new ObjectNotFoundException("Image " + json.id + " not found")
         return image
     }
 

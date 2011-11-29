@@ -53,16 +53,15 @@ class ProjectService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json)  {
+    def update(def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def json)  {
+    def delete(def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
-
 
     /**
      * Restore domain which was previously deleted
@@ -71,14 +70,15 @@ class ProjectService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, boolean printMessage) {
-        restore(Project.createFromDataWithId(json),printMessage)
+    def create(JSONObject json, boolean printMessage) {
+        create(Project.createFromDataWithId(json), printMessage)
     }
-    def restore(Project domain, boolean printMessage) {
+
+    def create(Project domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Add",domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -89,8 +89,9 @@ class ProjectService extends ModelService {
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
-         destroy(Project.get(json.id),printMessage)
+        destroy(Project.get(json.id), printMessage)
     }
+
     def destroy(Project domain, boolean printMessage) {
         //Build response message
         //Delete all command / command history from project
@@ -121,7 +122,7 @@ class ProjectService extends ModelService {
             group.delete(flush: true)
         }
 
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Delete",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -130,13 +131,14 @@ class ProjectService extends ModelService {
     /**
      * Edit domain which was previously edited
      * @param json domain info
-     * @param printMessage  print message or not
+     * @param printMessage print message or not
      * @return response
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new Project(),json),printMessage)
+        edit(fillDomainWithData(new Project(), json), printMessage)
     }
+
     def edit(Project domain, boolean printMessage) {
         //Validate and save domain
         Group group = Group.findByName(domain.name)
@@ -146,7 +148,7 @@ class ProjectService extends ModelService {
             group.save(flush: true)
         }
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Edit",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response
@@ -158,7 +160,7 @@ class ProjectService extends ModelService {
      * @return new domain
      */
     Project createFromJSON(def json) {
-       return Project.createFromData(json)
+        return Project.createFromData(json)
     }
 
     /**
@@ -168,7 +170,7 @@ class ProjectService extends ModelService {
      */
     def retrieve(JSONObject json) {
         Project project = Project.get(json.id)
-        if(!project) throw new ObjectNotFoundException("Project " + json.id + " not found")
+        if (!project) throw new ObjectNotFoundException("Project " + json.id + " not found")
         return project
     }
 

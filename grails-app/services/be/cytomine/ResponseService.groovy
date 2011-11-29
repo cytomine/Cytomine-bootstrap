@@ -7,7 +7,7 @@ class ResponseService {
     def messageSource
 
     public String createMessage(def newObject, def messageParams, String commandType) {
-        String command = getCommandName(newObject,commandType)
+        String command = getCommandName(newObject, commandType)
         messageSource.getMessage(command, messageParams as Object[], Locale.ENGLISH)
     }
 
@@ -21,11 +21,12 @@ class ResponseService {
     }
 
     public def createResponseMessage(def object, def messageParams, boolean printMessage, String commandType) {
-        createResponseMessage(object,messageParams,printMessage,commandType,null)
+        createResponseMessage(object, messageParams, printMessage, commandType, null)
     }
-    public def createResponseMessage(def object, def messageParams, boolean printMessage, String commandType,HashMap<String, Object> additionalCallbackParams) {
+
+    public def createResponseMessage(def object, def messageParams, boolean printMessage, String commandType, HashMap<String, Object> additionalCallbackParams) {
         String objectName = getClassName(object)
-        String command = "be.cytomine."+commandType + objectName + "Command"
+        String command = "be.cytomine." + commandType + objectName + "Command"
         String idName = objectName.toLowerCase() + "ID" //termID, annotationID,...
         String id = object.id
         HashMap<String, Object> paramsCallback = new HashMap<String, Object>()
@@ -59,7 +60,7 @@ class ResponseService {
 
     def getCommandName(def newObject, String commandType) {
         String objectName = getClassName(newObject)
-        return "be.cytomine."+commandType + objectName + "Command"
+        return "be.cytomine." + commandType + objectName + "Command"
     }
 
     /**

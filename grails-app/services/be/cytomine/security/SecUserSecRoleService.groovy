@@ -26,7 +26,7 @@ class SecUserSecRoleService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def delete(def json)  {
+    def delete(def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
@@ -50,13 +50,14 @@ class SecUserSecRoleService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, boolean printMessage) {
-        restore(SecUserSecRole.createFromDataWithId(json),printMessage)
+    def create(JSONObject json, boolean printMessage) {
+        create(SecUserSecRole.createFromDataWithId(json), printMessage)
     }
-    def restore(SecUserSecRole domain, boolean printMessage) {
+
+    def create(SecUserSecRole domain, boolean printMessage) {
         //Build response message
-        log.debug "domain="+domain + " responseService="+responseService
-        def response = responseService.createResponseMessage(domain,[domain.user.id,domain.role.id],printMessage,"Add",domain.getCallBack())
+        log.debug "domain=" + domain + " responseService=" + responseService
+        def response = responseService.createResponseMessage(domain, [domain.user.id, domain.role.id], printMessage, "Add", domain.getCallBack())
         //Save new object
         domainService.saveDomain(domain)
         return response
@@ -70,18 +71,19 @@ class SecUserSecRoleService extends ModelService {
      * @return response
      */
     def destroy(def json, boolean printMessage) {
-         destroy(SecUserSecRole.createFromData(json),printMessage)
+        destroy(SecUserSecRole.createFromData(json), printMessage)
     }
+
     def destroy(SecUserSecRole domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.user.id,domain.role.id],printMessage,"Delete",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.user.id, domain.role.id], printMessage, "Delete", domain.getCallBack())
         //Delete new object
-        domain.delete(flush:true)
+        domain.delete(flush: true)
         return response
     }
 
     SecUserSecRole createFromJSON(def json) {
-       return SecUserSecRole.createFromData(json)
+        return SecUserSecRole.createFromData(json)
     }
 
     def retrieve(def json) {

@@ -45,12 +45,12 @@ class GroupService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json)  {
+    def update(def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def json)  {
+    def delete(def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
@@ -62,14 +62,15 @@ class GroupService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, boolean printMessage) {
-        restore(Group.createFromDataWithId(json),printMessage)
+    def create(JSONObject json, boolean printMessage) {
+        create(Group.createFromDataWithId(json), printMessage)
     }
-    def restore(Group domain, boolean printMessage) {
+
+    def create(Group domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Add",domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -80,11 +81,12 @@ class GroupService extends ModelService {
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
-         destroy(Group.get(json.id),printMessage)
+        destroy(Group.get(json.id), printMessage)
     }
+
     def destroy(Group domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Delete",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -93,16 +95,17 @@ class GroupService extends ModelService {
     /**
      * Edit domain which was previously edited
      * @param json domain info
-     * @param printMessage  print message or not
+     * @param printMessage print message or not
      * @return response
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new Group(),json),printMessage)
+        edit(fillDomainWithData(new Group(), json), printMessage)
     }
+
     def edit(Group domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Edit",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response
@@ -114,7 +117,7 @@ class GroupService extends ModelService {
      * @return new domain
      */
     Group createFromJSON(def json) {
-       return Group.createFromData(json)
+        return Group.createFromData(json)
     }
 
     /**
@@ -124,11 +127,8 @@ class GroupService extends ModelService {
      */
     def retrieve(JSONObject json) {
         Group group = Group.get(json.id)
-        if(!group) throw new ObjectNotFoundException("Group " + json.id + " not found")
+        if (!group) throw new ObjectNotFoundException("Group " + json.id + " not found")
         return group
     }
-
-
-
 
 }

@@ -27,7 +27,7 @@ class UserGroupService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def delete(def json)  {
+    def delete(def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
@@ -43,14 +43,15 @@ class UserGroupService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, boolean printMessage) {
-        restore(UserGroup.createFromDataWithId(json),printMessage)
+    def create(JSONObject json, boolean printMessage) {
+        create(UserGroup.createFromDataWithId(json), printMessage)
     }
-    def restore(UserGroup domain, boolean printMessage) {
+
+    def create(UserGroup domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain,[domain.id, domain.user,domain.group],printMessage,"Add",domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.id, domain.user, domain.group], printMessage, "Add", domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -63,16 +64,16 @@ class UserGroupService extends ModelService {
         User user = User.read(json.user)
         Group group = Group.read(json.group)
         UserGroup domain = UserGroup.findByUserAndGroup(user, group)
-         destroy(domain,printMessage)
+        destroy(domain, printMessage)
     }
+
     def destroy(UserGroup domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.user,domain.group],printMessage,"Delete",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.user, domain.group], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
     }
-
 
     /**
      * Create domain from JSON object
@@ -80,7 +81,7 @@ class UserGroupService extends ModelService {
      * @return new domain
      */
     UserGroup createFromJSON(def json) {
-       return UserGroup.createFromData(json)
+        return UserGroup.createFromData(json)
     }
 
     /**

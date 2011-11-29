@@ -11,13 +11,12 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 
 class AbstractImageGroupService extends ModelService {
 
-    static transactional = true
-    def cytomineService
-    def commandService
-    def responseService
-    def domainService
-
     boolean saveOnUndoRedoStack = true
+    static transactional = true
+
+    def cytomineService
+    def responseService
+
 
     def get(AbstractImage abstractimage, Group group) {
         AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
@@ -38,20 +37,21 @@ class AbstractImageGroupService extends ModelService {
     }
 
     /**
-     * Restore domain which was previously deleted
+     * create domain which was previously deleted
      * @param json domain info
 
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, boolean printMessage) {
-        restore(AbstractImageGroup.createFromDataWithId(json),printMessage)
+    def create(JSONObject json, boolean printMessage) {
+        create(AbstractImageGroup.createFromDataWithId(json), printMessage)
     }
-    def restore(AbstractImageGroup domain, boolean printMessage) {
+
+    def create(AbstractImageGroup domain, boolean printMessage) {
         //Save new object
         domain = AbstractImageGroup.link(domain.abstractimage, domain.group)
         //Build response message
-        return responseService.createResponseMessage(domain,[domain.id, domain.abstractimage.filename, domain.group.name],printMessage,"Add",domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.id, domain.abstractimage.filename, domain.group.name], printMessage, "Add", domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -64,11 +64,12 @@ class AbstractImageGroupService extends ModelService {
         //Get object to delete
         log.debug "json=" + json
 
-         destroy(retrieve(json),printMessage)
+        destroy(retrieve(json), printMessage)
     }
+
     def destroy(AbstractImageGroup domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.abstractimage.filename, domain.group.name],printMessage,"Delete",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.abstractimage.filename, domain.group.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
         AbstractImageGroup.unlink(domain.abstractimage, domain.group)
         return response
@@ -80,7 +81,7 @@ class AbstractImageGroupService extends ModelService {
      * @return new domain
      */
     AbstractImageGroup createFromJSON(def json) {
-       return AbstractImageGroup.createFromData(json)
+        return AbstractImageGroup.createFromData(json)
     }
 
     /**
@@ -92,7 +93,7 @@ class AbstractImageGroupService extends ModelService {
         AbstractImage abstractimage = AbstractImage.get(json.abstractimage)
         Group group = Group.get(json.group)
         AbstractImageGroup domain = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-        if(!domain) throw new ObjectNotFoundException("AbstractImageGroup group=${json.group} image=${json.abstractimage} not found")
+        if (!domain) throw new ObjectNotFoundException("AbstractImageGroup group=${json.group} image=${json.abstractimage} not found")
         return domain
     }
 }

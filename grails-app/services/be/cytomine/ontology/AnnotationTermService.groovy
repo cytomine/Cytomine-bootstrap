@@ -147,13 +147,14 @@ class AnnotationTermService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, boolean printMessage) {
-        restore(AnnotationTerm.createFromDataWithId(json),printMessage)
+    def create(JSONObject json, boolean printMessage) {
+        create(AnnotationTerm.createFromDataWithId(json), printMessage)
     }
-    def restore(AnnotationTerm domain, boolean printMessage) {
+
+    def create(AnnotationTerm domain, boolean printMessage) {
         //Build response message
-        log.debug "domain="+domain + " responseService="+responseService
-        def response = responseService.createResponseMessage(domain,[domain.id,domain.annotation.id, domain.term.name, domain.user?.username],printMessage,"Add",domain.getCallBack())
+        log.debug "domain=" + domain + " responseService=" + responseService
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.annotation.id, domain.term.name, domain.user?.username], printMessage, "Add", domain.getCallBack())
         //Save new object
         AnnotationTerm.link(domain.annotation, domain.term, domain.user)
         return response
@@ -166,18 +167,19 @@ class AnnotationTermService extends ModelService {
      * @return response
      */
     def destroy(def json, boolean printMessage) {
-         destroy(AnnotationTerm.createFromData(json),printMessage)
+        destroy(AnnotationTerm.createFromData(json), printMessage)
     }
+
     def destroy(AnnotationTerm domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id,domain.annotation.id, domain.term.name, domain.user?.username],printMessage,"Delete",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.annotation.id, domain.term.name, domain.user?.username], printMessage, "Delete", domain.getCallBack())
         //Delete new object
         AnnotationTerm.unlink(domain.annotation, domain.term, domain.user)
         return response
     }
 
     AnnotationTerm createFromJSON(def json) {
-       return AnnotationTerm.createFromData(json)
+        return AnnotationTerm.createFromData(json)
     }
 
     def retrieve(def json) {

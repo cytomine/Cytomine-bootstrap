@@ -12,6 +12,7 @@ import be.cytomine.image.AbstractImage
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.image.ImageInstance
 import be.cytomine.command.Command
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,7 +30,7 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
     String textAdded = "***************************************************************************************"
     textAdded = textAdded+textAdded+textAdded+textAdded+textAdded+textAdded+textAdded+textAdded+textAdded+textAdded
     //create a big string (don't care about content)
-    while(jsonImage.size()<=(Command.MAXSIZEREQUEST*2))
+    while(jsonImage.size()<=(ConfigurationHolder.config.cytomine.maxRequestSize*2))
     {
       jsonImage+=textAdded
     }

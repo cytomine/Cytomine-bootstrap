@@ -27,9 +27,9 @@ class SuggestedTerm extends CytomineDomain implements Serializable {
         project = annotation?.image?.project;
     }
 
-     static SuggestedTerm createFromDataWithId(json)  {
+    static SuggestedTerm createFromDataWithId(json) {
         def domain = createFromData(json)
-        try{domain.id = json.id}catch(Exception e){}
+        try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 

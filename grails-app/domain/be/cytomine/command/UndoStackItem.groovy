@@ -3,12 +3,36 @@ package be.cytomine.command
 import be.cytomine.CytomineDomain
 import be.cytomine.security.User
 
+/**
+ * @author ULG-GIGA Cytomine Team
+ * The UndoStackItem class allow to store command on a undo stack so that a command or a group of command can be undo
+ */
 class UndoStackItem extends CytomineDomain implements Comparable {
+
+    /**
+     * User who launch command
+     */
     User user
+
+    /**
+     * Command save on redo stack
+     */
     Command command
+
+    /**
+     * Flag that indicate if command is in a transaction
+     */
     Boolean transactionInProgress
+
+    /**
+     * Transaction id
+     */
     int transaction
-    boolean isFromRedo = false //the undo item come from redo stack
+
+    /**
+     * Flag that indicate if command comes from redo stack (true) or is a new command (false)
+     */
+    boolean isFromRedo = false
 
     static belongsTo = [user: User, command: Command]
 

@@ -27,9 +27,9 @@ class Group extends CytomineDomain {
         return group;
     }
 
-      static Group createFromDataWithId(json)  {
+    static Group createFromDataWithId(json) {
         def domain = createFromData(json)
-        try{domain.id = json.id}catch(Exception e){}
+        try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 

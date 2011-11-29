@@ -3,19 +3,29 @@ package be.cytomine.command
 import grails.converters.JSON
 
 /**
- * Created by IntelliJ IDEA.
- * User: lrollus
- * Date: 14/04/11
- * Time: 13:43
- * To change this template use File | Settings | File Templates.
+ * @author ULG-GIGA Cytomine Team
+ * The EditCommand class is a command that edit a domain
+ * It provide an execute method that edit domain from command, an undo method that undo edit on domain and an redo method edit domain
  */
 class EditCommand extends Command {
 
-    protected createMessage(def updatedTerm, def params) {
+    /**
+     * Return a response message for the domain instance thanks to message parameters un params
+     * @param domain Domain instance
+     * @param params Message parameters
+     * @return Message
+     */
+    def createMessage(def updatedTerm, def params) {
         responseService.createMessage(updatedTerm, params, "Edit")
     }
 
-    protected void fillCommandInfo(def newObject,def oldObject, String message) {
+    /**
+     * Add command info for the new domain concerned by the command
+     * @param newObject domain after update
+     * @param oldObject domain before update
+     * @param message Message build for the command
+     */
+    protected void fillCommandInfo(def newObject, def oldObject, String message) {
         HashMap<String, Object> paramsData = new HashMap<String, Object>()
         paramsData.put('previous' + responseService.getClassName(newObject), (JSON.parse(oldObject)))
         paramsData.put("new" + responseService.getClassName(newObject), newObject)
@@ -23,32 +33,32 @@ class EditCommand extends Command {
         actionMessage = message
     }
 
-    protected def fillDomainWithData(def object, def json)
-    {
+    /**
+     * Add command info for the new domain concerned by the command
+     * @param newObject New domain
+     * @param message Message build for the command
+     */
+    protected def fillDomainWithData(def object, def json) {
         def domain = object.get(json.id)
-        domain = object.getFromData(domain,json)
+        domain = object.getFromData(domain, json)
         domain.id = json.id
         return domain
     }
 
+    /**
+     * Get domain name
+     * @return domaine name
+     */
     String domainName() {
-        String domain = serviceName.replace("Service","")
-       String str = domain.substring(0,1).toUpperCase()+ domain.substring(1);
-        log.info "domainName="+ str
-        return str
+        String domain = serviceName.replace("Service", "")
+        return domain.substring(0, 1).toUpperCase() + domain.substring(1);
     }
 
-    def undo() {
-        initService()
-        return service.edit(JSON.parse(data).get("previous"+domainName()),printMessage)
-    }
-
-    def redo() {
-        initService()
-        return service.edit(JSON.parse(data).get("new"+domainName()),printMessage)
-    }
-
-    def execute()  {
+    /**
+     * Process an Add operation for this command
+     * @return Message
+     */
+    def execute() {
         initService()
         //Create new domain
         def updatedDomain = service.retrieve(json)
@@ -58,9 +68,25 @@ class EditCommand extends Command {
         super.initCurrentCommantProject(updatedDomain?.projectDomain())
 
         def response = service.edit(updatedDomain, printMessage)
-        fillCommandInfo(updatedDomain,oldDomain, response.message)
+        fillCommandInfo(updatedDomain, oldDomain, response.message)
         return response
     }
 
+    /**
+     * Process an undo op
+     * @return Message
+     */
+    def undo() {
+        initService()
+        return service.edit(JSON.parse(data).get("previous" + domainName()), printMessage)
+    }
 
+    /**
+     * Process a redo op
+     * @return Message
+     */
+    def redo() {
+        initService()
+        return service.edit(JSON.parse(data).get("new" + domainName()), printMessage)
+    }
 }

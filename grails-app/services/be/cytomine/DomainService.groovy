@@ -14,7 +14,7 @@ class DomainService {
 
     def deleteDomain(def oldObject) {
         try {
-            oldObject.delete(flush: true, failOnError:true)
+            oldObject.delete(flush: true, failOnError: true)
         } catch (Exception e) {
             log.error e.toString()
             throw new InvalidRequestException(e.toString())

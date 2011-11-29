@@ -110,14 +110,15 @@ class OntologyService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, boolean printMessage) {
-        restore(Ontology.createFromDataWithId(json),printMessage)
+    def create(JSONObject json, boolean printMessage) {
+        create(Ontology.createFromDataWithId(json), printMessage)
     }
-    def restore(Ontology domain, boolean printMessage) {
+
+    def create(Ontology domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Add",domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -127,12 +128,13 @@ class OntologyService extends ModelService {
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
-         destroy(Ontology.get(json.id),printMessage)
+        destroy(Ontology.get(json.id), printMessage)
     }
+
     def destroy(Ontology domain, boolean printMessage) {
         if (domain && Project.findAllByOntology(domain).size() > 0) throw new ConstraintException("Ontology is still map with project")
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Delete",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -141,16 +143,17 @@ class OntologyService extends ModelService {
     /**
      * Edit domain which was previously edited
      * @param json domain info
-     * @param printMessage  print message or not
+     * @param printMessage print message or not
      * @return response
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new Ontology(),json),printMessage)
+        edit(fillDomainWithData(new Ontology(), json), printMessage)
     }
+
     def edit(Ontology domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Edit",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response
@@ -162,7 +165,7 @@ class OntologyService extends ModelService {
      * @return new domain
      */
     Ontology createFromJSON(def json) {
-       return Ontology.createFromData(json)
+        return Ontology.createFromData(json)
     }
 
     /**
@@ -172,7 +175,7 @@ class OntologyService extends ModelService {
      */
     def retrieve(JSONObject json) {
         Ontology ontology = Ontology.get(json.id)
-        if(!ontology) throw new ObjectNotFoundException("Ontology " + json.id + " not found")
+        if (!ontology) throw new ObjectNotFoundException("Ontology " + json.id + " not found")
         return ontology
     }
 

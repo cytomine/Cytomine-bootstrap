@@ -6,7 +6,7 @@ import be.cytomine.command.AddCommand
 import be.cytomine.security.User
 import org.codehaus.groovy.grails.web.json.JSONObject
 
-class JobService extends ModelService{
+class JobService extends ModelService {
 
     static transactional = true
     def cytomineService
@@ -41,14 +41,15 @@ class JobService extends ModelService{
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, boolean printMessage) {
-        restore(Job.createFromDataWithId(json),printMessage)
+    def create(JSONObject json, boolean printMessage) {
+        create(Job.createFromDataWithId(json), printMessage)
     }
-    def restore(Job domain, boolean printMessage) {
+
+    def create(Job domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain,[domain.id, Job],printMessage,"Add",domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.id, Job], printMessage, "Add", domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -59,11 +60,12 @@ class JobService extends ModelService{
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
-         destroy(Job.get(json.id),printMessage)
+        destroy(Job.get(json.id), printMessage)
     }
+
     def destroy(Job domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, Job],printMessage,"Delete",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, Job], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -72,16 +74,17 @@ class JobService extends ModelService{
     /**
      * Edit domain which was previously edited
      * @param json domain info
-     * @param printMessage  print message or not
+     * @param printMessage print message or not
      * @return response
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new Job(),json),printMessage)
+        edit(fillDomainWithData(new Job(), json), printMessage)
     }
+
     def edit(Job domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, Job],printMessage,"Edit",domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, Job], printMessage, "Edit", domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response
@@ -93,7 +96,7 @@ class JobService extends ModelService{
      * @return new domain
      */
     Job createFromJSON(def json) {
-       return Job.createFromData(json)
+        return Job.createFromData(json)
     }
 
     /**
@@ -103,7 +106,7 @@ class JobService extends ModelService{
      */
     def retrieve(JSONObject json) {
         Job job = Job.get(json.id)
-        if(!job) throw new ObjectNotFoundException("Job " + json.id + " not found")
+        if (!job) throw new ObjectNotFoundException("Job " + json.id + " not found")
         return job
     }
 }
