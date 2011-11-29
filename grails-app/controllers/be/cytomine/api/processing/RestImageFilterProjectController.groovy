@@ -12,14 +12,18 @@ class RestImageFilterProjectController extends RestController {
 
 
     def list = {
-        def imagesFiltersProject = imageFilterProjectService.list(Project.read(params.project))
-        if (imagesFiltersProject) responseSuccess(imagesFiltersProject.collect { it.imageFilter })
-        else responseNotFound("ImageFilter", "ImageFilter", params.project)
+		def project = Project.read(params.project)
+		if (!project) responseNotFound("Project", "Project", params.project)
+        def imagesFiltersProject = imageFilterProjectService.list(project)
+ 		responseSuccess(imagesFiltersProject.collect { it.imageFilter })        
     }
 
     def add = {
+		println request.JSON
         Project project = projectService.read(request.JSON.project)
+		if (!project) responseNotFound("Project", "Project", request.JSON.project)
         ImageFilter imageFilter = imageFilterService.read(request.JSON.imageFilter)
+		if (!imageFilter) responseNotFound("ImageFilter", "ImageFilter", request.JSON.imageFilter)
         imageFilterProjectService.add(project, imageFilter)
         responseSuccess(imageFilterProjectService.get(project, imageFilter).imageFilter)
     }

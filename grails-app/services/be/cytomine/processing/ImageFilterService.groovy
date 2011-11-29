@@ -15,7 +15,7 @@ class ImageFilterService {
         ImageFilter.list()
     }
 
-    def read() {
-        ImageFilter.read(params.id)
+    def read(def id) {
+        ImageFilter.read(id)
     }
 }
