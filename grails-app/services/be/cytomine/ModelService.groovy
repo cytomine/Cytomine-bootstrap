@@ -3,6 +3,8 @@ package be.cytomine
 import grails.util.GrailsNameUtils
 import be.cytomine.command.Command
 import org.codehaus.groovy.grails.commons.ApplicationHolder
+import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.ontology.Annotation
 
 abstract class ModelService {
 
@@ -18,6 +20,16 @@ abstract class ModelService {
     abstract def update(def json)
 
     abstract def delete(def json)
+
+//
+//    abstract def restore(JSONObject json, String commandType, boolean printMessage)
+//    abstract def restore(Annotation domain, String commandType, boolean printMessage)
+//    abstract def destroy(JSONObject json, String commandType, boolean printMessage)
+//    abstract def destroy(Annotation domain, String commandType, boolean printMessage)
+//    abstract def edit(JSONObject json, String commandType, boolean printMessage)
+//    abstract def edit(Annotation domain, String commandType, boolean printMessage)
+//    abstract def retrieve(JSONObject json)
+
 
     protected def fillDomainWithData(def object, def json)
     {

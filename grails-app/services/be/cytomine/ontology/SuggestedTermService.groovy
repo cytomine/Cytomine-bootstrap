@@ -7,12 +7,19 @@ import be.cytomine.processing.Job
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.command.AddCommand
+import be.cytomine.command.DeleteCommand
+import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.Exception.ObjectNotFoundException
 
 class SuggestedTermService extends ModelService {
 
     static transactional = true
     def cytomineService
     def commandService
+    def domainService
+
+    boolean saveOnUndoRedoStack = true
 
     def list() {
         SuggestedTerm.list()
@@ -61,7 +68,7 @@ class SuggestedTermService extends ModelService {
 
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
-        commandService.processCommand(new AddSuggestedTermCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser), json)
     }
 
     def delete(def json) {
@@ -79,8 +86,7 @@ class SuggestedTermService extends ModelService {
      */
     def deleteSuggestedTerm(def idAnnotation, def idTerm, def idJob, User currentUser) {
         def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, job: $idJob}")
-        def result = commandService.processCommand(new DeleteSuggestedTermCommand(user: currentUser), json)
-        return result
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /**
@@ -118,16 +124,15 @@ class SuggestedTermService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(def json, String commandType, boolean printMessage) {
-        //Rebuilt object that was previoulsy deleted
-        def domain = SuggestedTerm.createFromDataWithId(json)
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.job?.software?.name], printMessage, commandType)
-        //Save new object
-        domain.save(flush: true)
-        return response
+    def restore(JSONObject json, String commandType, boolean printMessage) {
+        restore(SuggestedTerm.createFromDataWithId(json),commandType,printMessage)
     }
-
+    def restore(SuggestedTerm domain, String commandType, boolean printMessage) {
+        //Save new object
+        domainService.saveDomain(domain)
+        //Build response message
+        return responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.job?.software?.name],printMessage,commandType,domain.getCallBack())
+    }
     /**
      * Destroy domain which was previously added
      * @param json domain info
@@ -135,30 +140,58 @@ class SuggestedTermService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(def json, String commandType, boolean printMessage) {
+    def destroy(JSONObject json, String commandType, boolean printMessage) {
         //Get object to delete
-        def domain = SuggestedTerm.get(json.id)
+         destroy(SuggestedTerm.get(json.id),commandType,printMessage)
+    }
+    def destroy(SuggestedTerm domain, String commandType, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.job?.software?.name], printMessage, commandType)
+        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.job?.software?.name],printMessage,commandType,domain.getCallBack())
         //Delete object
-        domain.delete(flush: true)
+        domainService.deleteDomain(domain)
         return response
     }
 
     /**
      * Edit domain which was previously edited
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
-     * @param printMessage print message or not
+     * @param commandType  command name (add/delete/...) which execute this method
+     * @param printMessage  print message or not
      * @return response
      */
-    def edit(def json, String commandType, boolean printMessage) {
+    def edit(JSONObject json, String commandType, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        def domain = fillDomainWithData(new SuggestedTerm(), json)
+        edit(fillDomainWithData(new SuggestedTerm(),json),commandType,printMessage)
+    }
+    def edit(SuggestedTerm domain, String commandType, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.job?.software?.name], printMessage, commandType)
+        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.job?.software?.name],printMessage,commandType,domain.getCallBack())
         //Save update
-        domain.save(flush: true)
+        domainService.saveDomain(domain)
         return response
+    }
+
+    /**
+     * Create domain from JSON object
+     * @param json JSON with new domain info
+     * @return new domain
+     */
+    SuggestedTerm createFromJSON(def json) {
+       return SuggestedTerm.createFromData(json)
+    }
+
+    /**
+     * Retrieve domain thanks to a JSON object
+     * @param json JSON with new domain info
+     * @return domain retrieve thanks to json
+     */
+    def retrieve(JSONObject json) {
+        //Retrieve domain
+        Annotation annotation = Annotation.read(json.annotation)
+        Term term = Term.read(json.term)
+        Job job = Job.read(json.job)
+        SuggestedTerm domain = SuggestedTerm.findWhere(annotation: annotation, term: term, job: job)
+        if(!domain) throw new ObjectNotFoundException("SuggestedTerm was not found with annotation:$annotation,term:$term,job:$job")
+        return domain
     }
 }

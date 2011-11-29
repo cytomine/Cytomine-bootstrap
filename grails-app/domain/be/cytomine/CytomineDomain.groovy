@@ -40,5 +40,9 @@ abstract class CytomineDomain {
         return null;
     }
 
+    def getCallBack() {
+        return null
+    }
+
 
 }

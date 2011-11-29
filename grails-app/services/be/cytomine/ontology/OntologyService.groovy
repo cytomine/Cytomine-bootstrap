@@ -6,6 +6,13 @@ import be.cytomine.command.ontology.AddOntologyCommand
 import be.cytomine.command.ontology.DeleteOntologyCommand
 import be.cytomine.command.ontology.EditOntologyCommand
 import be.cytomine.security.User
+import be.cytomine.command.AddCommand
+import be.cytomine.command.EditCommand
+import be.cytomine.command.DeleteCommand
+import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.Exception.ConstraintException
+import be.cytomine.project.Project
 
 class OntologyService extends ModelService {
 
@@ -15,7 +22,9 @@ class OntologyService extends ModelService {
     def commandService
     def termService
     def cytomineService
+    def domainService
 
+    boolean saveOnUndoRedoStack = true
 
     def list() {
         return Ontology.list()
@@ -63,15 +72,14 @@ class OntologyService extends ModelService {
 
     def add(def json) throws CytomineException {
         User currentUser = cytomineService.getCurrentUser()
-        def result = commandService.processCommand(new AddOntologyCommand(user: currentUser), json)
-        return result
+        return executeCommand(new AddCommand(user: currentUser), json)
     }
 
     def update(def json) throws CytomineException {
         User currentUser = cytomineService.getCurrentUser()
-        def result = commandService.processCommand(new EditOntologyCommand(user: currentUser), json)
-        return result
+        return executeCommand(new EditCommand(user: currentUser), json)
     }
+
 
 
     def delete(def json) throws CytomineException {
@@ -91,15 +99,13 @@ class OntologyService extends ModelService {
         }
         //Delete ontology
         log.info "Delete ontology"
-        def result = commandService.processCommand(new DeleteOntologyCommand(user: currentUser, printMessage: true), json)
+        def result = executeCommand(new DeleteCommand(user: currentUser), json)
 
         //Stop transaction
         transactionService.stop()
 
         return result
     }
-
-
 
     /**
      * Restore domain which was previously deleted
@@ -108,16 +114,15 @@ class OntologyService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(def json, String commandType, boolean printMessage) {
-        //Rebuilt object that was previoulsy deleted
-        def domain = Ontology.createFromDataWithId(json)
-        //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType)
-        //Save new object
-        domain.save(flush: true)
-        return response
+    def restore(JSONObject json, String commandType, boolean printMessage) {
+        restore(Ontology.createFromDataWithId(json),commandType,printMessage)
     }
-
+    def restore(Ontology domain, String commandType, boolean printMessage) {
+        //Save new object
+        domainService.saveDomain(domain)
+        //Build response message
+        return responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType,domain.getCallBack())
+    }
     /**
      * Destroy domain which was previously added
      * @param json domain info
@@ -125,13 +130,16 @@ class OntologyService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(def json, String commandType, boolean printMessage) {
-         //Get object to delete
-        def domain = Ontology.get(json.id)
+    def destroy(JSONObject json, String commandType, boolean printMessage) {
+        //Get object to delete
+         destroy(Ontology.get(json.id),commandType,printMessage)
+    }
+    def destroy(Ontology domain, String commandType, boolean printMessage) {
+        if (domain && Project.findAllByOntology(domain).size() > 0) throw new ConstraintException("Ontology is still map with project")
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType)
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType,domain.getCallBack())
         //Delete object
-        domain.delete(flush: true)
+        domainService.deleteDomain(domain)
         return response
     }
 
@@ -142,13 +150,36 @@ class OntologyService extends ModelService {
      * @param printMessage  print message or not
      * @return response
      */
-    def edit(def json, String commandType, boolean printMessage) {
-         //Rebuilt previous state of object that was previoulsy edited
-        def domain = fillDomainWithData(new Ontology(),json)
+    def edit(JSONObject json, String commandType, boolean printMessage) {
+        //Rebuilt previous state of object that was previoulsy edited
+        edit(fillDomainWithData(new Ontology(),json),commandType,printMessage)
+    }
+    def edit(Ontology domain, String commandType, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType)
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType,domain.getCallBack())
         //Save update
-        domain.save(flush: true)
+        domainService.saveDomain(domain)
         return response
     }
+
+    /**
+     * Create domain from JSON object
+     * @param json JSON with new domain info
+     * @return new domain
+     */
+    Ontology createFromJSON(def json) {
+       return Ontology.createFromData(json)
+    }
+
+    /**
+     * Retrieve domain thanks to a JSON object
+     * @param json JSON with new domain info
+     * @return domain retrieve thanks to json
+     */
+    def retrieve(JSONObject json) {
+        Ontology ontology = Ontology.get(json.id)
+        if(!ontology) throw new ObjectNotFoundException("Ontology " + json.id + " not found")
+        return ontology
+    }
+
 }

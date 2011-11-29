@@ -28,6 +28,7 @@ class AnnotationService extends ModelService {
     def retrievalService
     def suggestedTermService
     def responseService
+    def domainService
 
    boolean saveOnUndoRedoStack = true
 
@@ -273,15 +274,13 @@ class AnnotationService extends ModelService {
      * @return response
      */
     def restore(JSONObject json, String commandType, boolean printMessage) {
-        log.info "#####" + commandType + "=Add"
         restore(Annotation.createFromDataWithId(json),commandType,printMessage)
     }
     def restore(Annotation domain, String commandType, boolean printMessage) {
         //Save new object
-        domain.save(flush: true)
+        domainService.saveDomain(domain)
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.image?.baseImage?.filename],printMessage,commandType,domain.getCallBack())
-        return response
+        return responseService.createResponseMessage(domain,[domain.id, domain.image?.baseImage?.filename],printMessage,commandType,domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -292,14 +291,13 @@ class AnnotationService extends ModelService {
      */
     def destroy(JSONObject json, String commandType, boolean printMessage) {
         //Get object to delete
-        log.info "#####" + commandType + "=Delete"
          destroy(Annotation.get(json.id),commandType,printMessage)
     }
     def destroy(Annotation domain, String commandType, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain,[domain.id, domain.image?.baseImage?.filename],printMessage,commandType,domain.getCallBack())
         //Delete object
-        domain.delete(flush: true)
+        domainService.deleteDomain(domain)
         return response
     }
 
@@ -311,7 +309,6 @@ class AnnotationService extends ModelService {
      * @return response
      */
     def edit(JSONObject json, String commandType, boolean printMessage) {
-        log.info "#####" + commandType + "=Edit"
         //Rebuilt previous state of object that was previoulsy edited
         edit(fillDomainWithData(new Annotation(),json),commandType,printMessage)
     }
@@ -319,14 +316,24 @@ class AnnotationService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain,[domain.id, domain.image?.baseImage?.filename],printMessage,commandType,domain.getCallBack())
         //Save update
-        domain.save(flush: true)
+        domainService.saveDomain(domain)
         return response
     }
 
-    Annotation createFromData(def json) {
+    /**
+     * Create domain from JSON object
+     * @param json JSON with new domain info
+     * @return new domain
+     */
+    Annotation createFromJSON(def json) {
        return Annotation.createFromData(json)
     }
 
+    /**
+     * Retrieve domain thanks to a JSON object
+     * @param json JSON with new domain info
+     * @return domain retrieve thanks to json
+     */
     def retrieve(JSONObject json) {
         Annotation annotation = Annotation.get(json.id)
         if(!annotation) throw new ObjectNotFoundException("Annotation " + json.id + " not found")

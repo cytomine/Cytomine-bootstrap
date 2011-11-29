@@ -7,6 +7,16 @@ import be.cytomine.command.project.DeleteProjectCommand
 import be.cytomine.command.project.EditProjectCommand
 import be.cytomine.ontology.Ontology
 import be.cytomine.security.User
+import be.cytomine.command.AddCommand
+import be.cytomine.command.EditCommand
+import be.cytomine.command.DeleteCommand
+import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.command.Command
+import be.cytomine.command.UndoStackItem
+import be.cytomine.command.RedoStackItem
+import be.cytomine.security.Group
+import be.cytomine.security.UserGroup
 
 class ProjectService extends ModelService {
 
@@ -14,6 +24,9 @@ class ProjectService extends ModelService {
     def ontologyService
     def cytomineService
     def commandService
+    def domainService
+
+    boolean saveOnUndoRedoStack = false
 
     def list() {
         Project.list(sort: "name")
@@ -36,6 +49,7 @@ class ProjectService extends ModelService {
     }
 
     def get(def id) {
+
         Project.get(id)
     }
 
@@ -45,18 +59,19 @@ class ProjectService extends ModelService {
 
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
-        commandService.processCommand(new AddProjectCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json) {
+    def update(def json)  {
         User currentUser = cytomineService.getCurrentUser()
-        commandService.processCommand(new EditProjectCommand(user: currentUser), json)
+        return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def json) {
+    def delete(def json)  {
         User currentUser = cytomineService.getCurrentUser()
-        commandService.processCommand(new DeleteProjectCommand(user: currentUser, printMessage: true), json)
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
+
 
     /**
      * Restore domain which was previously deleted
@@ -65,16 +80,15 @@ class ProjectService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(def json, String commandType, boolean printMessage) {
-        //Rebuilt object that was previoulsy deleted
-        def domain = Project.createFromDataWithId(json)
-        //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType)
-        //Save new object
-        domain.save(flush: true)
-        return response
+    def restore(JSONObject json, String commandType, boolean printMessage) {
+        restore(Project.createFromDataWithId(json),commandType,printMessage)
     }
-
+    def restore(Project domain, String commandType, boolean printMessage) {
+        //Save new object
+        domainService.saveDomain(domain)
+        //Build response message
+        return responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType,domain.getCallBack())
+    }
     /**
      * Destroy domain which was previously added
      * @param json domain info
@@ -82,13 +96,43 @@ class ProjectService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(def json, String commandType, boolean printMessage) {
-         //Get object to delete
-        def domain = Project.get(json.id)
+    def destroy(JSONObject json, String commandType, boolean printMessage) {
+        //Get object to delete
+         destroy(Project.get(json.id),commandType,printMessage)
+    }
+    def destroy(Project domain, String commandType, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType)
+        //Delete all command / command history from project
+        CommandHistory.findAllByProject(domain).each { it.delete() }
+        Command.findAllByProject(domain).each {
+            it
+            UndoStackItem.findAllByCommand(it).each { it.delete()}
+            RedoStackItem.findAllByCommand(it).each { it.delete()}
+            it.delete()
+        }
+        //Delete group map with project
+        Group projectGroup = Group.findByName(domain.name);
+
+        if (projectGroup) {
+            projectGroup.name = "TO REMOVE " + domain.id
+            log.info "group " + projectGroup + " will be renamed"
+            projectGroup.save(flush: true)
+        }
+        def groups = domain.groups()
+        groups.each { group ->
+            ProjectGroup.unlink(domain, group)
+            //for each group, delete user link
+            def users = group.users()
+            users.each { user ->
+                UserGroup.unlink(user, group)
+            }
+            //delete group
+            group.delete(flush: true)
+        }
+
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType,domain.getCallBack())
         //Delete object
-        domain.delete(flush: true)
+        domainService.deleteDomain(domain)
         return response
     }
 
@@ -99,13 +143,43 @@ class ProjectService extends ModelService {
      * @param printMessage  print message or not
      * @return response
      */
-    def edit(def json, String commandType, boolean printMessage) {
-         //Rebuilt previous state of object that was previoulsy edited
-        def domain = fillDomainWithData(new Project(),json)
+    def edit(JSONObject json, String commandType, boolean printMessage) {
+        //Rebuilt previous state of object that was previoulsy edited
+        edit(fillDomainWithData(new Project(),json),commandType,printMessage)
+    }
+    def edit(Project domain, String commandType, boolean printMessage) {
+        //Validate and save domain
+        Group group = Group.findByName(domain.name)
+        log.info "rename group " + group?.name + "(" + group + ") by " + domain?.name
+        if (group) {
+            group.name = domain.name
+            group.save(flush: true)
+        }
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType)
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType,domain.getCallBack())
         //Save update
-        domain.save(flush: true)
+        domainService.saveDomain(domain)
         return response
     }
+
+    /**
+     * Create domain from JSON object
+     * @param json JSON with new domain info
+     * @return new domain
+     */
+    Project createFromJSON(def json) {
+       return Project.createFromData(json)
+    }
+
+    /**
+     * Retrieve domain thanks to a JSON object
+     * @param json JSON with new domain info
+     * @return domain retrieve thanks to json
+     */
+    def retrieve(JSONObject json) {
+        Project project = Project.get(json.id)
+        if(!project) throw new ObjectNotFoundException("Project " + json.id + " not found")
+        return project
+    }
+
 }

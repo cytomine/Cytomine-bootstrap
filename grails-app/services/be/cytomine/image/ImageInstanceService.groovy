@@ -9,6 +9,11 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.command.AddCommand
+import be.cytomine.command.EditCommand
+import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.command.DeleteCommand
 
 class ImageInstanceService extends ModelService {
 
@@ -19,6 +24,9 @@ class ImageInstanceService extends ModelService {
     def transactionService
     def annotationService
     def responseService
+    def domainService
+
+    boolean saveOnUndoRedoStack = true
 
     def read(def id) {
         ImageInstance.read(id)
@@ -61,13 +69,13 @@ class ImageInstanceService extends ModelService {
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
         synchronized (this.getClass()) {
-            commandService.processCommand(new AddImageInstanceCommand(user: currentUser), json)
+            executeCommand(new AddCommand(user: currentUser), json)
         }
     }
 
     def update(def json) {
         User currentUser = cytomineService.getCurrentUser()
-        commandService.processCommand(new EditImageInstanceCommand(user: currentUser), json)
+        executeCommand(new EditCommand(user: currentUser), json)
     }
 
     def delete(def json) {
@@ -92,13 +100,14 @@ class ImageInstanceService extends ModelService {
         Long id = imageInstance?.id
         if (!imageInstance) throw new ObjectNotFoundException("Image Instance $json.idproject - $json.idimage not found")
         def jsonImage = JSON.parse("{id : $id}")
-        def result = commandService.processCommand(new DeleteImageInstanceCommand(user: currentUser, printMessage: true), jsonImage)
+        def result = executeCommand(new DeleteCommand(user: currentUser), jsonImage)
 
         //Stop transaction
         transactionService.stop()
 
         return result
     }
+
 
     /**
      * Restore domain which was previously deleted
@@ -107,16 +116,17 @@ class ImageInstanceService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(def json, String commandType, boolean printMessage) {
-        //Rebuilt object that was previoulsy deleted
-        def domain = ImageInstance.createFromDataWithId(json)
-        //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.baseImage?.filename, domain.project.name],printMessage,commandType)
-        //Save new object
-        domain.save(flush: true)
-        return response
+    def restore(JSONObject json, String commandType, boolean printMessage) {
+        restore(ImageInstance.createFromDataWithId(json),commandType,printMessage)
     }
-
+    def restore(ImageInstance domain, String commandType, boolean printMessage) {
+        if (ImageInstance.findByBaseImageAndProject(domain.baseImage, domain.project))
+            throw new WrongArgumentException("Image " + domain?.baseImage?.filename + " already map with project " + domain.project.name)
+        //Save new object
+        domainService.saveDomain(domain)
+        //Build response message
+        return responseService.createResponseMessage(domain,[domain.id, domain.baseImage?.filename, domain.project.name],printMessage,commandType,domain.getCallBack())
+    }
     /**
      * Destroy domain which was previously added
      * @param json domain info
@@ -124,13 +134,15 @@ class ImageInstanceService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(def json, String commandType, boolean printMessage) {
-         //Get object to delete
-        def domain = ImageInstance.get(json.id)
+    def destroy(JSONObject json, String commandType, boolean printMessage) {
+        //Get object to delete
+         destroy(ImageInstance.get(json.id),commandType,printMessage)
+    }
+    def destroy(ImageInstance domain, String commandType, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.baseImage?.filename, domain.project.name],printMessage,commandType)
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.baseImage?.filename, domain.project.name],printMessage,commandType,domain.getCallBack())
         //Delete object
-        domain.delete(flush: true)
+        domainService.deleteDomain(domain)
         return response
     }
 
@@ -141,13 +153,35 @@ class ImageInstanceService extends ModelService {
      * @param printMessage  print message or not
      * @return response
      */
-    def edit(def json, String commandType, boolean printMessage) {
-         //Rebuilt previous state of object that was previoulsy edited
-        def domain = fillDomainWithData(new ImageInstance(),json)
+    def edit(JSONObject json, String commandType, boolean printMessage) {
+        //Rebuilt previous state of object that was previoulsy edited
+        edit(fillDomainWithData(new ImageInstance(),json),commandType,printMessage)
+    }
+    def edit(ImageInstance domain, String commandType, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.baseImage?.filename, domain.project.name],printMessage,commandType)
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.baseImage?.filename, domain.project.name],printMessage,commandType,domain.getCallBack())
         //Save update
-        domain.save(flush: true)
+        domainService.saveDomain(domain)
         return response
+    }
+
+    /**
+     * Create domain from JSON object
+     * @param json JSON with new domain info
+     * @return new domain
+     */
+    ImageInstance createFromJSON(def json) {
+       return ImageInstance.createFromData(json)
+    }
+
+    /**
+     * Retrieve domain thanks to a JSON object
+     * @param json JSON with new domain info
+     * @return domain retrieve thanks to json
+     */
+    def retrieve(JSONObject json) {
+        ImageInstance image = ImageInstance.get(json.id)
+        if(!image) throw new ObjectNotFoundException("ImageInstance " + json.id + " not found")
+        return image
     }
 }

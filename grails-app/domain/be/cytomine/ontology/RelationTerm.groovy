@@ -88,6 +88,9 @@ class RelationTerm extends CytomineDomain implements Serializable {
             relationTerm.term1 = Term.get(jsonRelationTerm.term1)
             relationTerm.term2 = Term.get(jsonRelationTerm.term2)
         }
+        if (!relationTerm.relation) throw new WrongArgumentException("Relation ${jsonRelationTerm.relation.toString()} doesn't exist!")
+        if (!relationTerm.term1) throw new WrongArgumentException("Term ${jsonRelationTerm.term1.toString()} doesn't exist!")
+        if (!relationTerm.term2) throw new WrongArgumentException("Term ${jsonRelationTerm.term2.toString()} doesn't exist!")
         return relationTerm;
     }
 

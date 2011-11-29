@@ -202,29 +202,29 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testaddImageWithBadGeometry() {
-
-    log.info("create image")
-    def imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
-    String jsonImage = imageToAdd.encodeAsJSON()
-    def updateImage = JSON.parse(jsonImage)
-    jsonImage = updateImage.encodeAsJSON()
-
-    log.info("post image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonImage)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-  }
+//  void testaddImageWithBadGeometry() {
+//
+//    log.info("create image")
+//    def imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
+//    String jsonImage = imageToAdd.encodeAsJSON()
+//    def updateImage = JSON.parse(jsonImage)
+//    jsonImage = updateImage.encodeAsJSON()
+//
+//    log.info("post image:"+jsonImage.replace("\n",""))
+//    String URL = Infos.CYTOMINEURL+"api/image.json"
+//    HttpClient client = new HttpClient()
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+//    client.post(jsonImage)
+//    int code  = client.getResponseCode()
+//    String response = client.getResponseData()
+//    client.disconnect();
+//
+//    log.info("check response")
+//    assertEquals(400,code)
+//    def json = JSON.parse(response)
+//    assert json instanceof JSONObject
+//
+//  }
 
   void testaddImageWithUnexistingScanner() {
 

@@ -19,6 +19,7 @@ class AnnotationTermService extends ModelService {
     def transactionService
     def commandService
     def responseService
+    def domainService
 
     boolean saveOnUndoRedoStack = true
 
@@ -180,7 +181,7 @@ class AnnotationTermService extends ModelService {
         return response
     }
 
-    AnnotationTerm createFromData(def json) {
+    AnnotationTerm createFromJSON(def json) {
        return AnnotationTerm.createFromData(json)
     }
 

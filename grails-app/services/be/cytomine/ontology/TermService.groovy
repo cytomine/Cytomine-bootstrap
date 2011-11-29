@@ -9,6 +9,12 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.command.EditCommand
+import be.cytomine.command.AddCommand
+import be.cytomine.command.DeleteCommand
+import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.Exception.ConstraintException
 
 class TermService extends ModelService {
 
@@ -20,6 +26,9 @@ class TermService extends ModelService {
     def annotationTermService
     def suggestedTermService
     def relationTermService
+    def domainService
+
+    boolean saveOnUndoRedoStack = true
 
     def list() {
         return Term.list()
@@ -86,14 +95,14 @@ class TermService extends ModelService {
         list
     }
 
-    def add(def json) throws CytomineException {
+    def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
-        return commandService.processCommand(new AddTermCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json) throws CytomineException {
+    def update(def json)  {
         User currentUser = cytomineService.getCurrentUser()
-        return commandService.processCommand(new EditTermCommand(user: currentUser), json)
+        return executeCommand(new EditCommand(user: currentUser), json)
     }
 
     def delete(def json) throws CytomineException {
@@ -120,8 +129,7 @@ class TermService extends ModelService {
         }
         //Delete term
         def json = JSON.parse("{id : $idTerm}")
-        def result = commandService.processCommand(new DeleteTermCommand(user: currentUser, printMessage: printMessage), json)
-        return result
+        return executeCommand(new DeleteCommand(user: currentUser,printMessage:printMessage), json)
     }
 
     def deleteTermRestricted(def idTerm, User currentUser, boolean printMessage) throws CytomineException {
@@ -133,8 +141,7 @@ class TermService extends ModelService {
         }
         //Delete term
         def json = JSON.parse("{id : $idTerm}")
-        def result = commandService.processCommand(new DeleteTermCommand(user: currentUser, printMessage: printMessage), json)
-        return result
+        return executeCommand(new DeleteCommand(user: currentUser,printMessage:printMessage), json)
     }
 
     /**
@@ -144,16 +151,15 @@ class TermService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(def json, String commandType, boolean printMessage) {
-        //Rebuilt object that was previoulsy deleted
-        def domain = Term.createFromDataWithId(json)
-        //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name, domain.ontology.name],printMessage,commandType,domain.getCallBack())
-        //Save new object
-        domain.save(flush: true)
-        return response
+    def restore(JSONObject json, String commandType, boolean printMessage) {
+        restore(Term.createFromDataWithId(json),commandType,printMessage)
     }
-
+    def restore(Term domain, String commandType, boolean printMessage) {
+        //Save new object
+        domainService.saveDomain(domain)
+        //Build response message
+        return responseService.createResponseMessage(domain,[domain.id, domain.name, domain.ontology?.name],printMessage,commandType,domain.getCallBack())
+    }
     /**
      * Destroy domain which was previously added
      * @param json domain info
@@ -161,13 +167,17 @@ class TermService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(def json, String commandType, boolean printMessage) {
-         //Get object to delete
-        def domain = Term.get(json.id)
+    def destroy(JSONObject json, String commandType, boolean printMessage) {
+        //Get object to delete
+         destroy(Term.get(json.id),commandType,printMessage)
+    }
+    def destroy(Term domain, String commandType, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name, domain.ontology.name],printMessage,commandType,domain.getCallBack())
+        if (!SuggestedTerm.findAllByTerm(domain).isEmpty()) throw new ConstraintException("Term " + domain.id + " has suggested term")
+        if (!AnnotationTerm.findAllByTerm(domain).isEmpty()) throw new ConstraintException("Term " + domain.id + " has annotation term")
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.name, domain.ontology?.name],printMessage,commandType,domain.getCallBack())
         //Delete object
-        domain.delete(flush: true)
+        domainService.deleteDomain(domain)
         return response
     }
 
@@ -178,13 +188,35 @@ class TermService extends ModelService {
      * @param printMessage  print message or not
      * @return response
      */
-    def edit(def json, String commandType, boolean printMessage) {
-         //Rebuilt previous state of object that was previoulsy edited
-        def domain = fillDomainWithData(new Term(),json)
+    def edit(JSONObject json, String commandType, boolean printMessage) {
+        //Rebuilt previous state of object that was previoulsy edited
+        edit(fillDomainWithData(new Term(),json),commandType,printMessage)
+    }
+    def edit(Term domain, String commandType, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name, domain.ontology.name],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.name, domain.ontology?.name],printMessage,commandType,domain.getCallBack())
         //Save update
-        domain.save(flush: true)
+        domainService.saveDomain(domain)
         return response
+    }
+
+    /**
+     * Create domain from JSON object
+     * @param json JSON with new domain info
+     * @return new domain
+     */
+    Term createFromJSON(def json) {
+       return Term.createFromData(json)
+    }
+
+    /**
+     * Retrieve domain thanks to a JSON object
+     * @param json JSON with new domain info
+     * @return domain retrieve thanks to json
+     */
+    def retrieve(JSONObject json) {
+        Term term = Term.get(json.id)
+        if(!term) throw new ObjectNotFoundException("Term " + json.id + " not found")
+        return term
     }
 }

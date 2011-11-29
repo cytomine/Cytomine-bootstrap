@@ -5,6 +5,11 @@ import be.cytomine.command.relationterm.AddRelationTermCommand
 import be.cytomine.command.relationterm.DeleteRelationTermCommand
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.Exception.CytomineException
+import be.cytomine.command.AddCommand
+import be.cytomine.command.DeleteCommand
+import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.Exception.ObjectNotFoundException
 
 class RelationTermService extends ModelService {
 
@@ -13,6 +18,9 @@ class RelationTermService extends ModelService {
     def springSecurityService
     def commandService
     def cytomineService
+    def domainService
+
+    boolean saveOnUndoRedoStack = true
 
     def list() {
         RelationTerm.list()
@@ -41,7 +49,7 @@ class RelationTermService extends ModelService {
 
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
-        commandService.processCommand(new AddRelationTermCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser), json)
     }
 
     def update(def json) {
@@ -61,8 +69,7 @@ class RelationTermService extends ModelService {
     def deleteRelationTerm(def idRelation, def idTerm1, def idTerm2, User currentUser, boolean printMessage) {
         def json = JSON.parse("{relation: $idRelation, term1: $idTerm1, term2: $idTerm2}")
         log.info "json=" + json
-        def result = commandService.processCommand(new DeleteRelationTermCommand(user: currentUser, printMessage: printMessage), json)
-        return result
+        return executeCommand(new DeleteCommand(user: currentUser,printMessage:printMessage), json)
     }
 
     def deleteRelationTermFromTerm(Term term, User currentUser) {
@@ -82,11 +89,13 @@ class RelationTermService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(def json, String commandType, boolean printMessage) {
-        //Rebuilt object that was previoulsy deleted
-        def domain = RelationTerm.createFromData(json)
+    def restore(JSONObject json, String commandType, boolean printMessage) {
+        restore(RelationTerm.createFromDataWithId(json),commandType,printMessage)
+    }
+    def restore(RelationTerm domain, String commandType, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.relation.name, domain.term1.name, domain.term2.name],printMessage,commandType)
+        log.debug "domain="+domain + " responseService="+responseService
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.relation.name, domain.term1.name, domain.term2.name],printMessage,commandType,domain.getCallBack())
         //Save new object
         RelationTerm.link(domain.relation, domain.term1, domain.term2)
         return response
@@ -100,12 +109,26 @@ class RelationTermService extends ModelService {
      * @return response
      */
     def destroy(def json, String commandType, boolean printMessage) {
-        //Destroy object that was previoulsy deleted
-        def domain = RelationTerm.createFromData(json)
+         destroy(RelationTerm.createFromData(json),commandType,printMessage)
+    }
+    def destroy(RelationTerm domain, String commandType, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.relation.name, domain.term1.name, domain.term2.name],printMessage,commandType)
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.relation.name, domain.term1.name, domain.term2.name],printMessage,commandType,domain.getCallBack())
         //Delete new object
         RelationTerm.unlink(domain.relation, domain.term1, domain.term2)
         return response
+    }
+
+    RelationTerm createFromJSON(def json) {
+       return RelationTerm.createFromData(json)
+    }
+
+    def retrieve(def json) {
+        Relation relation = Relation.get(json.relation)
+        Term term1 = Term.get(json.term1)
+        Term term2 = Term.get(json.term2)
+        RelationTerm relationTerm = RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
+        if (!relationTerm) throw new ObjectNotFoundException("Relation-term not found ($relation,$term1,$term2)")
+        return relationTerm
     }
 }

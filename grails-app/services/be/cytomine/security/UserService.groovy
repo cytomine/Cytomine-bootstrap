@@ -7,6 +7,11 @@ import be.cytomine.command.user.DeleteUserCommand
 import be.cytomine.command.user.EditUserCommand
 import be.cytomine.project.Project
 import be.cytomine.project.ProjectGroup
+import be.cytomine.command.EditCommand
+import be.cytomine.command.AddCommand
+import be.cytomine.command.DeleteCommand
+import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.Exception.ObjectNotFoundException
 
 class UserService extends ModelService {
 
@@ -16,6 +21,7 @@ class UserService extends ModelService {
     def transactionService
     def cytomineService
     def commandService
+    def domainService
 
 
 
@@ -41,25 +47,19 @@ class UserService extends ModelService {
 
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
-        def result = commandService.processCommand(new AddUserCommand(user: currentUser), json)
-        return result
+        return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json) {
+    def update(def json)  {
         User currentUser = cytomineService.getCurrentUser()
-        def result = commandService.processCommand(new EditUserCommand(user: currentUser), json)
-        return result
+        return executeCommand(new EditCommand(user: currentUser), json)
     }
 
     def delete(def json) {
         User currentUser = cytomineService.getCurrentUser()
 
-        def result = null
         if (json.id == springSecurityService.principal.id) throw new ForbiddenException("The user can't delete herself")
-        else {
-            result = commandService.processCommand(new DeleteUserCommand(user: currentUser), json)
-        }
-        return result
+         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /*def clearUser = {
@@ -154,16 +154,15 @@ class UserService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def restore(def json, String commandType, boolean printMessage) {
-        //Rebuilt object that was previoulsy deleted
-        def domain = User.createFromDataWithId(json)
-        //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.username],printMessage,commandType)
-        //Save new object
-        domain.save(flush: true)
-        return response
+    def restore(JSONObject json, String commandType, boolean printMessage) {
+        restore(User.createFromDataWithId(json),commandType,printMessage)
     }
-
+    def restore(User domain, String commandType, boolean printMessage) {
+        //Save new object
+        domainService.saveDomain(domain)
+        //Build response message
+        return responseService.createResponseMessage(domain,[domain.id, domain.username],printMessage,commandType,domain.getCallBack())
+    }
     /**
      * Destroy domain which was previously added
      * @param json domain info
@@ -171,13 +170,15 @@ class UserService extends ModelService {
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(def json, String commandType, boolean printMessage) {
-         //Get object to delete
-        def domain = User.get(json.id)
+    def destroy(JSONObject json, String commandType, boolean printMessage) {
+        //Get object to delete
+         destroy(User.get(json.id),commandType,printMessage)
+    }
+    def destroy(User domain, String commandType, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.username],printMessage,commandType)
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.username],printMessage,commandType,domain.getCallBack())
         //Delete object
-        domain.delete(flush: true)
+        domainService.deleteDomain(domain)
         return response
     }
 
@@ -188,13 +189,35 @@ class UserService extends ModelService {
      * @param printMessage  print message or not
      * @return response
      */
-    def edit(def json, String commandType, boolean printMessage) {
-         //Rebuilt previous state of object that was previoulsy edited
-        def domain = fillDomainWithData(new User(),json)
+    def edit(JSONObject json, String commandType, boolean printMessage) {
+        //Rebuilt previous state of object that was previoulsy edited
+        edit(fillDomainWithData(new User(),json),commandType,printMessage)
+    }
+    def edit(User domain, String commandType, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.username],printMessage,commandType)
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.username],printMessage,commandType,domain.getCallBack())
         //Save update
-        domain.save(flush: true)
+        domainService.saveDomain(domain)
         return response
+    }
+
+    /**
+     * Create domain from JSON object
+     * @param json JSON with new domain info
+     * @return new domain
+     */
+    User createFromJSON(def json) {
+       return User.createFromData(json)
+    }
+
+    /**
+     * Retrieve domain thanks to a JSON object
+     * @param json JSON with new domain info
+     * @return domain retrieve thanks to json
+     */
+    def retrieve(JSONObject json) {
+        User user = User.get(json.id)
+        if(!user) throw new ObjectNotFoundException("User " + json.id + " not found")
+        return user
     }
 }
