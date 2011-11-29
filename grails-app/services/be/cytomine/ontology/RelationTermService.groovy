@@ -82,17 +82,17 @@ class RelationTermService extends ModelService {
     /**
      * Restore domain which was previously deleted
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
+
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, String commandType, boolean printMessage) {
-        restore(RelationTerm.createFromDataWithId(json),commandType,printMessage)
+    def restore(JSONObject json, boolean printMessage) {
+        restore(RelationTerm.createFromDataWithId(json),printMessage)
     }
-    def restore(RelationTerm domain, String commandType, boolean printMessage) {
+    def restore(RelationTerm domain, boolean printMessage) {
         //Build response message
         log.debug "domain="+domain + " responseService="+responseService
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.relation.name, domain.term1.name, domain.term2.name],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.relation.name, domain.term1.name, domain.term2.name],printMessage,"Add",domain.getCallBack())
         //Save new object
         RelationTerm.link(domain.relation, domain.term1, domain.term2)
         return response
@@ -101,16 +101,16 @@ class RelationTermService extends ModelService {
     /**
      * Destroy domain which was previously added
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
+
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(def json, String commandType, boolean printMessage) {
-         destroy(RelationTerm.createFromData(json),commandType,printMessage)
+    def destroy(def json, boolean printMessage) {
+         destroy(RelationTerm.createFromData(json),printMessage)
     }
-    def destroy(RelationTerm domain, String commandType, boolean printMessage) {
+    def destroy(RelationTerm domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.relation.name, domain.term1.name, domain.term2.name],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.relation.name, domain.term1.name, domain.term2.name],printMessage,"Delete",domain.getCallBack())
         //Delete new object
         RelationTerm.unlink(domain.relation, domain.term1, domain.term2)
         return response

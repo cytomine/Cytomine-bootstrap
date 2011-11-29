@@ -144,35 +144,35 @@ class TermService extends ModelService {
     /**
      * Restore domain which was previously deleted
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
+
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, String commandType, boolean printMessage) {
-        restore(Term.createFromDataWithId(json),commandType,printMessage)
+    def restore(JSONObject json, boolean printMessage) {
+        restore(Term.createFromDataWithId(json),printMessage)
     }
-    def restore(Term domain, String commandType, boolean printMessage) {
+    def restore(Term domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain,[domain.id, domain.name, domain.ontology?.name],printMessage,commandType,domain.getCallBack())
+        return responseService.createResponseMessage(domain,[domain.id, domain.name, domain.ontology?.name],printMessage,"Add",domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
+
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(JSONObject json, String commandType, boolean printMessage) {
+    def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
-         destroy(Term.get(json.id),commandType,printMessage)
+         destroy(Term.get(json.id),printMessage)
     }
-    def destroy(Term domain, String commandType, boolean printMessage) {
+    def destroy(Term domain, boolean printMessage) {
         //Build response message
         if (!SuggestedTerm.findAllByTerm(domain).isEmpty()) throw new ConstraintException("Term " + domain.id + " has suggested term")
         if (!AnnotationTerm.findAllByTerm(domain).isEmpty()) throw new ConstraintException("Term " + domain.id + " has annotation term")
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name, domain.ontology?.name],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.name, domain.ontology?.name],printMessage,"Delete",domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -181,17 +181,16 @@ class TermService extends ModelService {
     /**
      * Edit domain which was previously edited
      * @param json domain info
-     * @param commandType  command name (add/delete/...) which execute this method
      * @param printMessage  print message or not
      * @return response
      */
-    def edit(JSONObject json, String commandType, boolean printMessage) {
+    def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new Term(),json),commandType,printMessage)
+        edit(fillDomainWithData(new Term(),json),printMessage)
     }
-    def edit(Term domain, String commandType, boolean printMessage) {
+    def edit(Term domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name, domain.ontology?.name],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.name, domain.ontology?.name],printMessage,"Edit",domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response

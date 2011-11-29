@@ -39,35 +39,35 @@ class UserGroupService extends ModelService {
     /**
      * Restore domain which was previously deleted
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
+
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, String commandType, boolean printMessage) {
-        restore(UserGroup.createFromDataWithId(json),commandType,printMessage)
+    def restore(JSONObject json, boolean printMessage) {
+        restore(UserGroup.createFromDataWithId(json),printMessage)
     }
-    def restore(UserGroup domain, String commandType, boolean printMessage) {
+    def restore(UserGroup domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain,[domain.id, domain.user,domain.group],printMessage,commandType,domain.getCallBack())
+        return responseService.createResponseMessage(domain,[domain.id, domain.user,domain.group],printMessage,"Add",domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
+
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(JSONObject json, String commandType, boolean printMessage) {
+    def destroy(JSONObject json, boolean printMessage) {
         User user = User.read(json.user)
         Group group = Group.read(json.group)
         UserGroup domain = UserGroup.findByUserAndGroup(user, group)
-         destroy(domain,commandType,printMessage)
+         destroy(domain,printMessage)
     }
-    def destroy(UserGroup domain, String commandType, boolean printMessage) {
+    def destroy(UserGroup domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.user,domain.group],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.user,domain.group],printMessage,"Delete",domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response

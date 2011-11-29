@@ -11,15 +11,8 @@ import grails.converters.JSON
  */
 class EditCommand extends Command {
 
-    static String commandNameUndo = "Edit"
-    static String commandNameRedo = "Edit"
-
     protected createMessage(def updatedTerm, def params) {
         responseService.createMessage(updatedTerm, params, "Edit")
-    }
-
-    protected def edit(def service, def json) {
-        return service.edit(json,commandNameRedo,printMessage)
     }
 
     protected void fillCommandInfo(def newObject,def oldObject, String message) {
@@ -47,12 +40,12 @@ class EditCommand extends Command {
 
     def undo() {
         initService()
-        return service.edit(JSON.parse(data).get("previous"+domainName()),commandNameUndo,printMessage)
+        return service.edit(JSON.parse(data).get("previous"+domainName()),printMessage)
     }
 
     def redo() {
         initService()
-        return service.edit(JSON.parse(data).get("new"+domainName()),commandNameRedo,printMessage)
+        return service.edit(JSON.parse(data).get("new"+domainName()),printMessage)
     }
 
     def execute()  {
@@ -64,7 +57,7 @@ class EditCommand extends Command {
         //Init command info
         super.initCurrentCommantProject(updatedDomain?.projectDomain())
 
-        def response = service.edit(updatedDomain, "Delete", printMessage)
+        def response = service.edit(updatedDomain, printMessage)
         fillCommandInfo(updatedDomain,oldDomain, response.message)
         return response
     }

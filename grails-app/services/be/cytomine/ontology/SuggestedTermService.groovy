@@ -118,33 +118,33 @@ class SuggestedTermService extends ModelService {
     /**
      * Restore domain which was previously deleted
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
+
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, String commandType, boolean printMessage) {
-        restore(SuggestedTerm.createFromDataWithId(json),commandType,printMessage)
+    def restore(JSONObject json, boolean printMessage) {
+        restore(SuggestedTerm.createFromDataWithId(json),printMessage)
     }
-    def restore(SuggestedTerm domain, String commandType, boolean printMessage) {
+    def restore(SuggestedTerm domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.job?.software?.name],printMessage,commandType,domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.job?.software?.name],printMessage,"Add",domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
+
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(JSONObject json, String commandType, boolean printMessage) {
+    def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
-         destroy(SuggestedTerm.get(json.id),commandType,printMessage)
+         destroy(SuggestedTerm.get(json.id),printMessage)
     }
-    def destroy(SuggestedTerm domain, String commandType, boolean printMessage) {
+    def destroy(SuggestedTerm domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.job?.software?.name],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.job?.software?.name],printMessage,"Delete",domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -153,17 +153,16 @@ class SuggestedTermService extends ModelService {
     /**
      * Edit domain which was previously edited
      * @param json domain info
-     * @param commandType  command name (add/delete/...) which execute this method
      * @param printMessage  print message or not
      * @return response
      */
-    def edit(JSONObject json, String commandType, boolean printMessage) {
+    def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new SuggestedTerm(),json),commandType,printMessage)
+        edit(fillDomainWithData(new SuggestedTerm(),json),printMessage)
     }
-    def edit(SuggestedTerm domain, String commandType, boolean printMessage) {
+    def edit(SuggestedTerm domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.job?.software?.name],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.job?.software?.name],printMessage,"Edit",domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response

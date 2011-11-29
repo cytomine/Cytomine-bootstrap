@@ -46,17 +46,17 @@ class SecUserSecRoleService extends ModelService {
     /**
      * Restore domain which was previously deleted
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
+
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, String commandType, boolean printMessage) {
-        restore(SecUserSecRole.createFromDataWithId(json),commandType,printMessage)
+    def restore(JSONObject json, boolean printMessage) {
+        restore(SecUserSecRole.createFromDataWithId(json),printMessage)
     }
-    def restore(SecUserSecRole domain, String commandType, boolean printMessage) {
+    def restore(SecUserSecRole domain, boolean printMessage) {
         //Build response message
         log.debug "domain="+domain + " responseService="+responseService
-        def response = responseService.createResponseMessage(domain,[domain.user.id,domain.role.id],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,[domain.user.id,domain.role.id],printMessage,"Add",domain.getCallBack())
         //Save new object
         domainService.saveDomain(domain)
         return response
@@ -65,16 +65,16 @@ class SecUserSecRoleService extends ModelService {
     /**
      * Destroy domain which was previously added
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
+
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(def json, String commandType, boolean printMessage) {
-         destroy(SecUserSecRole.createFromData(json),commandType,printMessage)
+    def destroy(def json, boolean printMessage) {
+         destroy(SecUserSecRole.createFromData(json),printMessage)
     }
-    def destroy(SecUserSecRole domain, String commandType, boolean printMessage) {
+    def destroy(SecUserSecRole domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.user.id,domain.role.id],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,[domain.user.id,domain.role.id],printMessage,"Delete",domain.getCallBack())
         //Delete new object
         domain.delete(flush:true)
         return response

@@ -20,12 +20,12 @@ abstract class ModelService {
     abstract def delete(def json)
 
 //
-//    abstract def restore(JSONObject json, String commandType, boolean printMessage)
-//    abstract def restore(Annotation domain, String commandType, boolean printMessage)
-//    abstract def destroy(JSONObject json, String commandType, boolean printMessage)
-//    abstract def destroy(Annotation domain, String commandType, boolean printMessage)
-//    abstract def edit(JSONObject json, String commandType, boolean printMessage)
-//    abstract def edit(Annotation domain, String commandType, boolean printMessage)
+//    abstract def restore(JSONObject json, boolean printMessage)
+//    abstract def restore(Annotation domain, boolean printMessage)
+//    abstract def destroy(JSONObject json, boolean printMessage)
+//    abstract def destroy(Annotation domain, boolean printMessage)
+//    abstract def edit(JSONObject json, boolean printMessage)
+//    abstract def edit(Annotation domain, boolean printMessage)
 //    abstract def retrieve(JSONObject json)
 
 

@@ -144,17 +144,16 @@ class AnnotationTermService extends ModelService {
     /**
      * Restore domain which was previously deleted
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, String commandType, boolean printMessage) {
-        restore(AnnotationTerm.createFromDataWithId(json),commandType,printMessage)
+    def restore(JSONObject json, boolean printMessage) {
+        restore(AnnotationTerm.createFromDataWithId(json),printMessage)
     }
-    def restore(AnnotationTerm domain, String commandType, boolean printMessage) {
+    def restore(AnnotationTerm domain, boolean printMessage) {
         //Build response message
         log.debug "domain="+domain + " responseService="+responseService
-        def response = responseService.createResponseMessage(domain,[domain.id,domain.annotation.id, domain.term.name, domain.user?.username],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,[domain.id,domain.annotation.id, domain.term.name, domain.user?.username],printMessage,"Add",domain.getCallBack())
         //Save new object
         AnnotationTerm.link(domain.annotation, domain.term, domain.user)
         return response
@@ -163,16 +162,15 @@ class AnnotationTermService extends ModelService {
     /**
      * Destroy domain which was previously added
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(def json, String commandType, boolean printMessage) {
-         destroy(AnnotationTerm.createFromData(json),commandType,printMessage)
+    def destroy(def json, boolean printMessage) {
+         destroy(AnnotationTerm.createFromData(json),printMessage)
     }
-    def destroy(AnnotationTerm domain, String commandType, boolean printMessage) {
+    def destroy(AnnotationTerm domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id,domain.annotation.id, domain.term.name, domain.user?.username],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,[domain.id,domain.annotation.id, domain.term.name, domain.user?.username],printMessage,"Delete",domain.getCallBack())
         //Delete new object
         AnnotationTerm.unlink(domain.annotation, domain.term, domain.user)
         return response

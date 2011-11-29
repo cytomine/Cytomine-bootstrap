@@ -67,31 +67,31 @@ class ProjectService extends ModelService {
     /**
      * Restore domain which was previously deleted
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
+
      * @param printMessage print message or not
      * @return response
      */
-    def restore(JSONObject json, String commandType, boolean printMessage) {
-        restore(Project.createFromDataWithId(json),commandType,printMessage)
+    def restore(JSONObject json, boolean printMessage) {
+        restore(Project.createFromDataWithId(json),printMessage)
     }
-    def restore(Project domain, String commandType, boolean printMessage) {
+    def restore(Project domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType,domain.getCallBack())
+        return responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Add",domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
      * @param json domain info
-     * @param commandType command name (add/delete/...) which execute this method
+
      * @param printMessage print message or not
      * @return response
      */
-    def destroy(JSONObject json, String commandType, boolean printMessage) {
+    def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
-         destroy(Project.get(json.id),commandType,printMessage)
+         destroy(Project.get(json.id),printMessage)
     }
-    def destroy(Project domain, String commandType, boolean printMessage) {
+    def destroy(Project domain, boolean printMessage) {
         //Build response message
         //Delete all command / command history from project
         CommandHistory.findAllByProject(domain).each { it.delete() }
@@ -121,7 +121,7 @@ class ProjectService extends ModelService {
             group.delete(flush: true)
         }
 
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Delete",domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -130,15 +130,14 @@ class ProjectService extends ModelService {
     /**
      * Edit domain which was previously edited
      * @param json domain info
-     * @param commandType  command name (add/delete/...) which execute this method
      * @param printMessage  print message or not
      * @return response
      */
-    def edit(JSONObject json, String commandType, boolean printMessage) {
+    def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new Project(),json),commandType,printMessage)
+        edit(fillDomainWithData(new Project(),json),printMessage)
     }
-    def edit(Project domain, String commandType, boolean printMessage) {
+    def edit(Project domain, boolean printMessage) {
         //Validate and save domain
         Group group = Group.findByName(domain.name)
         log.info "rename group " + group?.name + "(" + group + ") by " + domain?.name
@@ -147,7 +146,7 @@ class ProjectService extends ModelService {
             group.save(flush: true)
         }
         //Build response message
-        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,commandType,domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,[domain.id, domain.name],printMessage,"Edit",domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response
