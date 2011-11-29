@@ -54,8 +54,19 @@ class ProjectService extends ModelService {
     }
 
     def update(def json) {
+        String oldName = Project.get(json.id)?.name
         User currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new EditCommand(user: currentUser), json)
+        def response = executeCommand(new EditCommand(user: currentUser), json)
+        String newName = Project.get(json.id)?.name
+         //Validate and save domain
+        log.debug "oldName = " + oldName
+        Group group = Group.findByName(oldName)
+        log.info "rename group " + group?.name + "(" + group + ") by " + newName
+        if (group) {
+            group.name = newName
+            group.save(flush: true)
+        }
+        return response
     }
 
     def delete(def json) {
@@ -76,6 +87,7 @@ class ProjectService extends ModelService {
 
     def create(Project domain, boolean printMessage) {
         //Save new object
+        log.debug "create2"
         domainService.saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
@@ -140,13 +152,6 @@ class ProjectService extends ModelService {
     }
 
     def edit(Project domain, boolean printMessage) {
-        //Validate and save domain
-        Group group = Group.findByName(domain.name)
-        log.info "rename group " + group?.name + "(" + group + ") by " + domain?.name
-        if (group) {
-            group.name = domain.name
-            group.save(flush: true)
-        }
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
         //Save update

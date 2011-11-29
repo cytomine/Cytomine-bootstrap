@@ -8,8 +8,15 @@ class DomainService {
     static transactional = true
 
     def saveDomain(def newObject) {
-        if (!newObject.validate()) throw new WrongArgumentException(newObject.errors.toString())
-        if (!newObject.save(flush: true)) throw new InvalidRequestException(newObject.errors.toString())
+        if (!newObject.validate()) {
+//            String error = ""
+//            newObject.errors.allErrors.each {
+//                    error=error+it
+//                }
+            println newObject.retrieveErrors().toString()
+            throw new WrongArgumentException(newObject.retrieveErrors().toString())
+        }
+        if (!newObject.save(flush: true)) throw new InvalidRequestException(newObject.retrieveErrors().toString())
     }
 
     def deleteDomain(def oldObject) {
