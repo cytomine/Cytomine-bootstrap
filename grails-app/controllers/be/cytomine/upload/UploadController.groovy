@@ -1,15 +1,15 @@
 package be.cytomine.upload
 
-import grails.converters.JSON
-import be.cytomine.image.server.Storage
 import be.cytomine.image.AbstractImage
-import be.cytomine.project.Slide
-import be.cytomine.image.acquisition.Scanner
-import be.cytomine.image.Mime
-import be.cytomine.image.server.StorageAbstractImage
-import be.cytomine.security.User
-import be.cytomine.security.Group
 import be.cytomine.image.AbstractImageGroup
+import be.cytomine.image.Mime
+import be.cytomine.image.acquisition.Scanner
+import be.cytomine.image.server.Storage
+import be.cytomine.image.server.StorageAbstractImage
+import be.cytomine.project.Slide
+import be.cytomine.security.Group
+import be.cytomine.security.User
+import grails.converters.JSON
 
 class UploadController {
 

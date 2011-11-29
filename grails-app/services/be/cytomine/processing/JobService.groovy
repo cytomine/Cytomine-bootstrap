@@ -1,11 +1,10 @@
 package be.cytomine.processing
 
-import be.cytomine.command.job.AddJobCommand
-import be.cytomine.security.User
-import be.cytomine.command.AddCommand
-import be.cytomine.ModelService
-import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.ModelService
+import be.cytomine.command.AddCommand
+import be.cytomine.security.User
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 class JobService extends ModelService{
 

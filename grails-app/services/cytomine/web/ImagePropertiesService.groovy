@@ -3,8 +3,8 @@ package cytomine.web
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
-import be.cytomine.server.resolvers.Resolver
 import be.cytomine.image.server.StorageAbstractImage
+import be.cytomine.server.resolvers.Resolver
 
 /**
  * Cytomine @ GIGA-ULG

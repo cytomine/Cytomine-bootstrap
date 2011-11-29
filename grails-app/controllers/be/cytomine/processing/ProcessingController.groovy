@@ -1,19 +1,18 @@
 package be.cytomine.processing
 
-import grails.converters.JSON
+import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-import be.cytomine.api.RestController
-import ij.ImagePlus
-import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
-import ij.process.ImageConverter
-import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.algorithm.ConvexHull
-import com.vividsolutions.jts.geom.GeometryFactory
-
 import be.cytomine.processing.image.filters.Auto_Threshold
+import com.vividsolutions.jts.algorithm.ConvexHull
+import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom.GeometryFactory
+import grails.converters.JSON
+import ij.ImagePlus
+import ij.process.ImageConverter
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
 
 class ProcessingController extends RestController {
 

@@ -1,22 +1,13 @@
 package be.cytomine.project
 
-import be.cytomine.ModelService
-import be.cytomine.command.CommandHistory
-import be.cytomine.command.project.AddProjectCommand
-import be.cytomine.command.project.DeleteProjectCommand
-import be.cytomine.command.project.EditProjectCommand
-import be.cytomine.ontology.Ontology
-import be.cytomine.security.User
-import be.cytomine.command.AddCommand
-import be.cytomine.command.EditCommand
-import be.cytomine.command.DeleteCommand
-import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.command.Command
-import be.cytomine.command.UndoStackItem
-import be.cytomine.command.RedoStackItem
+import be.cytomine.ModelService
+import be.cytomine.ontology.Ontology
 import be.cytomine.security.Group
+import be.cytomine.security.User
 import be.cytomine.security.UserGroup
+import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.command.*
 
 class ProjectService extends ModelService {
 

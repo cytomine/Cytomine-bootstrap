@@ -1,22 +1,14 @@
 package cytomine.web
 
-import be.cytomine.ontology.Annotation
-import java.awt.image.BufferedImage
 import be.cytomine.image.AbstractImage
+import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.algorithm.PointLocator
-import com.vividsolutions.jts.geom.util.PointExtracter
-import com.vividsolutions.jts.geom.Point
-import com.vividsolutions.jts.geom.util.AffineTransformation
 import ij.ImagePlus
 import ij.process.ImageProcessor
-import com.vividsolutions.jts.geom.Coordinate
-import java.awt.Color
-import be.cytomine.ontology.Term
-import com.vividsolutions.jts.operation.polygonize.Polygonizer
-import java.awt.Polygon
 import ij.process.PolygonFiller
+import java.awt.Color
 import java.awt.Rectangle
+import java.awt.image.BufferedImage
 
 class SegmentationService {
 

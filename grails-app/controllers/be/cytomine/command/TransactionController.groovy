@@ -1,8 +1,7 @@
 package be.cytomine.command
 
-import grails.converters.*
-import be.cytomine.security.User
 import be.cytomine.security.SecUser
+import be.cytomine.security.User
 
 class TransactionController {
 

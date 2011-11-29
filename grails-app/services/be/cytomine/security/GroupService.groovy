@@ -1,15 +1,12 @@
 package be.cytomine.security
 
-import be.cytomine.ModelService
-import be.cytomine.command.discipline.AddDisciplineCommand
-import be.cytomine.command.discipline.DeleteDisciplineCommand
-import be.cytomine.command.discipline.EditDisciplineCommand
-import be.cytomine.image.AbstractImage
-import be.cytomine.command.AddCommand
-import be.cytomine.command.EditCommand
-import be.cytomine.command.DeleteCommand
-import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.ModelService
+import be.cytomine.command.AddCommand
+import be.cytomine.command.DeleteCommand
+import be.cytomine.command.EditCommand
+import be.cytomine.image.AbstractImage
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 class GroupService extends ModelService {
 

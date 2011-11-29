@@ -1,7 +1,7 @@
 package be.cytomine.project
 
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
 
 class Discipline extends CytomineDomain {

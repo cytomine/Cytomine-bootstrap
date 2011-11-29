@@ -1,6 +1,5 @@
 package cytomine.web
 
-import be.cytomine.api.RestController
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus

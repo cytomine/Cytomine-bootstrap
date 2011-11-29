@@ -1,8 +1,8 @@
 package be.cytomine.ontology
 
+import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.CytomineDomain
 import grails.converters.JSON
 
 class Term extends CytomineDomain implements Serializable {

@@ -1,9 +1,6 @@
 package be.cytomine.command
 
-import be.cytomine.Exception.ConstraintException
-import be.cytomine.Exception.CytomineException
 import grails.converters.JSON
-import java.util.prefs.BackingStoreException
 
 /**
  * Created by IntelliJ IDEA.

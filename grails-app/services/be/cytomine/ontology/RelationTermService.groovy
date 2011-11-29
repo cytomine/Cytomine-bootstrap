@@ -1,15 +1,12 @@
 package be.cytomine.ontology
 
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
-import be.cytomine.command.relationterm.AddRelationTermCommand
-import be.cytomine.command.relationterm.DeleteRelationTermCommand
-import be.cytomine.security.User
-import grails.converters.JSON
-import be.cytomine.Exception.CytomineException
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
+import be.cytomine.security.User
+import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.Exception.ObjectNotFoundException
 
 class RelationTermService extends ModelService {
 

@@ -1,9 +1,7 @@
 package be.cytomine.command
 
-import be.cytomine.security.User
-import grails.converters.JSON
-import grails.converters.XML
 import be.cytomine.api.RestController
+import be.cytomine.security.User
 
 class CommandController extends RestController {
     def springSecurityService

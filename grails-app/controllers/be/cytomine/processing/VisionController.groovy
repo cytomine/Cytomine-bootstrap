@@ -1,18 +1,14 @@
 package be.cytomine.processing
 
-import ij.ImagePlus
-import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
-
-import ij.process.ImageConverter
-import be.cytomine.processing.image.filters.Multi_OtsuThreshold
-
-import be.cytomine.processing.image.filters.Colour_Deconvolution
-
-import be.cytomine.processing.image.filters.Auto_Threshold
-import ij.plugin.ContrastEnhancer
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import be.cytomine.api.RestController
+import be.cytomine.processing.image.filters.Auto_Threshold
+import be.cytomine.processing.image.filters.Colour_Deconvolution
+import be.cytomine.processing.image.filters.Multi_OtsuThreshold
+import ij.ImagePlus
+import ij.plugin.ContrastEnhancer
+import ij.process.ImageConverter
+import java.awt.image.BufferedImage
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 /**
  * Cytomine @ GIGA-ULG

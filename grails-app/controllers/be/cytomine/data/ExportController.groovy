@@ -1,7 +1,7 @@
 package be.cytomine.data
 
-import be.cytomine.image.ImageInstance
 import be.cytomine.image.AbstractImage
+import be.cytomine.image.ImageInstance
 
 class ExportController {
 

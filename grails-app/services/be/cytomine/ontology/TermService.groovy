@@ -1,20 +1,17 @@
 package be.cytomine.ontology
 
+import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
-import be.cytomine.command.term.AddTermCommand
-import be.cytomine.command.term.DeleteTermCommand
-import be.cytomine.command.term.EditTermCommand
+import be.cytomine.command.AddCommand
+import be.cytomine.command.DeleteCommand
+import be.cytomine.command.EditCommand
 import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
-import be.cytomine.command.EditCommand
-import be.cytomine.command.AddCommand
-import be.cytomine.command.DeleteCommand
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.Exception.ConstraintException
 
 class TermService extends ModelService {
 

@@ -1,7 +1,7 @@
 package be.cytomine.image
 
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.UrlApi
 import be.cytomine.ontology.Annotation
 import be.cytomine.project.Project

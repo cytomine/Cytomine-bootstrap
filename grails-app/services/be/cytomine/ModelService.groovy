@@ -1,10 +1,8 @@
 package be.cytomine
 
-import grails.util.GrailsNameUtils
 import be.cytomine.command.Command
+import grails.util.GrailsNameUtils
 import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.ontology.Annotation
 
 abstract class ModelService {
 

@@ -1,8 +1,7 @@
 package be.cytomine
 
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.Exception.InvalidRequestException
-import grails.validation.ValidationException
+import be.cytomine.Exception.WrongArgumentException
 
 class DomainService {
 

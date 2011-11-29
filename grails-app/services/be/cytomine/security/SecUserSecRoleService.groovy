@@ -1,13 +1,10 @@
 package be.cytomine.security
 
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
-import be.cytomine.command.secusersecrole.AddSecUserSecRoleCommand
-import be.cytomine.command.secusersecrole.DeleteSecUserSecRoleCommand
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.Exception.ObjectNotFoundException
 
 class SecUserSecRoleService extends ModelService {
 

@@ -1,16 +1,14 @@
 package be.cytomine.ontology
 
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
-import be.cytomine.command.suggestedTerm.AddSuggestedTermCommand
-import be.cytomine.command.suggestedTerm.DeleteSuggestedTermCommand
+import be.cytomine.command.AddCommand
+import be.cytomine.command.DeleteCommand
 import be.cytomine.processing.Job
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
-import be.cytomine.command.AddCommand
-import be.cytomine.command.DeleteCommand
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.Exception.ObjectNotFoundException
 
 class SuggestedTermService extends ModelService {
 

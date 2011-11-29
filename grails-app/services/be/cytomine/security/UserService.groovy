@@ -1,17 +1,14 @@
 package be.cytomine.security
 
 import be.cytomine.Exception.ForbiddenException
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
-import be.cytomine.command.user.AddUserCommand
-import be.cytomine.command.user.DeleteUserCommand
-import be.cytomine.command.user.EditUserCommand
-import be.cytomine.project.Project
-import be.cytomine.project.ProjectGroup
-import be.cytomine.command.EditCommand
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
+import be.cytomine.command.EditCommand
+import be.cytomine.project.Project
+import be.cytomine.project.ProjectGroup
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.Exception.ObjectNotFoundException
 
 class UserService extends ModelService {
 

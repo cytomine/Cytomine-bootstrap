@@ -1,9 +1,6 @@
 package be.cytomine.command
 
-import be.cytomine.Exception.ConstraintException
 import grails.converters.JSON
-import javax.annotation.Generated
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 
 /**
  * Created by IntelliJ IDEA.

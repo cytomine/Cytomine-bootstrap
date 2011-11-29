@@ -2,15 +2,12 @@ package be.cytomine.ontology
 
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
-import be.cytomine.command.annotationterm.AddAnnotationTermCommand
-import be.cytomine.command.annotationterm.DeleteAnnotationTermCommand
+import be.cytomine.command.AddCommand
+import be.cytomine.command.DeleteCommand
 import be.cytomine.image.ImageInstance
 import be.cytomine.security.User
 import grails.converters.JSON
-import be.cytomine.command.AddCommand
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.command.term.AddTermCommand
-import be.cytomine.command.DeleteCommand
 
 class AnnotationTermService extends ModelService {
 

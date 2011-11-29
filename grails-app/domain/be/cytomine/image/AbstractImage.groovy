@@ -1,8 +1,8 @@
 package be.cytomine.image
 
+import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.CytomineDomain
 import be.cytomine.api.UrlApi
 import be.cytomine.image.acquisition.Scanner
 import be.cytomine.image.server.ImageProperty

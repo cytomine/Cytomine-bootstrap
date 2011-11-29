@@ -1,10 +1,11 @@
 package be.cytomine.image
 
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
-import be.cytomine.command.abstractimage.AddAbstractImageCommand
-import be.cytomine.command.abstractimage.DeleteAbstractImageCommand
-import be.cytomine.command.abstractimage.EditAbstractImageCommand
+import be.cytomine.command.AddCommand
+import be.cytomine.command.DeleteCommand
+import be.cytomine.command.EditCommand
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.RetrievalServer
 import be.cytomine.ontology.Annotation
@@ -13,10 +14,6 @@ import be.cytomine.security.Group
 import be.cytomine.security.User
 import grails.orm.PagedResultList
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.command.AddCommand
-import be.cytomine.command.EditCommand
-import be.cytomine.command.DeleteCommand
 
 class AbstractImageService extends ModelService {
 
