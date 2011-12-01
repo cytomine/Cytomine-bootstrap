@@ -15,6 +15,7 @@ class RequestFilters {
   def filters = {
     all(uri:'/api/**') {
       before = {
+          if(actionName.equals("crop")) return
           request.currentTime = System.currentTimeMillis()
           String strParam =""
           params.each{
@@ -29,6 +30,7 @@ class RequestFilters {
       }
       after = {}
       afterView = {
+          if(actionName.equals("crop")) return
           log.info controllerName+"."+actionName + " Request took ${System.currentTimeMillis()-request.currentTime}ms"
       }
     }
