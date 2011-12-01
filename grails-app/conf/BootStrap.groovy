@@ -33,6 +33,7 @@ class BootStrap {
     def countersService
     def triggerService
     def grantService
+    def userGroupService
 
     static def development = "development"
     static def production = "production"
@@ -305,6 +306,7 @@ class BootStrap {
             if (group.validate()) {
                 println "Creating group ${group.name}..."
                 group.save(flush : true)
+                println "Creating group ${group.name}... OK"
             }
             else {
                 println("\n\n\n Errors in group boostrap for ${item.name}!\n\n\n")
@@ -350,12 +352,12 @@ class BootStrap {
                 ]
                 createGroups(userGroup)
                 Group group = Group.findByName(userGroupName)
-                UserGroup.link(user, group)
+                userGroupService.link(user, group)
 
                 /* Handle groups */
                 item.group.each { elem ->
                     group = Group.findByName(elem.name)
-                    UserGroup.link(user, group)
+                    userGroupService.link(user, group)
                 }
 
                 /* Add Roles */

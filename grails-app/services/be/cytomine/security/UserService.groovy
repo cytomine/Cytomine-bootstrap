@@ -19,6 +19,7 @@ class UserService extends ModelService {
     def cytomineService
     def commandService
     def domainService
+    def userGroupService
 
 
 
@@ -103,7 +104,7 @@ class UserService extends ModelService {
                     ProjectGroup.link(project, group)
                 }
 
-                UserGroup.unlink(user, group);
+                userGroupService.unlink(user, group)
             }
         }
     }
@@ -118,7 +119,7 @@ class UserService extends ModelService {
                     group.save()
                     ProjectGroup.link(project, group)
                 }
-                UserGroup.link(user, group);
+                userGroupService.link(user, group);
             }
         }
         def ret = [data: [message: "OK"], status: 201]

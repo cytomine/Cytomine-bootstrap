@@ -16,6 +16,7 @@ class ProjectService extends ModelService {
     def cytomineService
     def commandService
     def domainService
+    def userGroupService
 
     boolean saveOnUndoRedoStack = false
 
@@ -123,15 +124,18 @@ class ProjectService extends ModelService {
             projectGroup.save(flush: true)
         }
         def groups = domain.groups()
+//        def l = []
+//        l += groups
+
         groups.each { group ->
-            ProjectGroup.unlink(domain, group)
             //for each group, delete user link
             def users = group.users()
             users.each { user ->
-                UserGroup.unlink(user, group)
+                userGroupService.unlink(user, group)
             }
+            ProjectGroup.unlink(domain, group)
             //delete group
-            group.delete(flush: true)
+            group.delete(flush:true)
         }
 
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())

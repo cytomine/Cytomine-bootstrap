@@ -14,7 +14,8 @@ class SecUser extends CytomineDomain {
 
     static transients = ["currentTransaction", "nextTransaction"]
 
-    static hasMany = [userGroup: UserGroup]
+    //Map userGroup
+    //static hasMany = [userGroup: UserGroup]
 
     static constraints = {
         username blank: false, unique: true

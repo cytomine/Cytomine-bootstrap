@@ -31,8 +31,12 @@ class User extends SecUser {
         firstname + " " + lastname + " (" + username + ")"
     }
 
+    def userGroups() {
+        UserGroup.findAllByUser(this)
+    }
+
     def groups() {
-        return userGroup.collect {
+        return userGroups().collect {
             it.group
         }
     }
@@ -55,7 +59,7 @@ class User extends SecUser {
 
     def projects() {
         def c = ProjectGroup.createCriteria()
-
+        def userGroup = userGroups()
         if (userGroup == null || userGroup.size() == 0) return []
         def projects = c {
             inList("group.id", userGroup.collect {it.groupId})
@@ -68,6 +72,7 @@ class User extends SecUser {
 
     def abstractimages() {
         def abstractImages = []
+        def userGroup = userGroups()
         if (userGroup.size() > 0) {
             abstractImages = AbstractImageGroup.createCriteria().list {
                 inList("group.id", userGroup.collect {it.group.id})
@@ -82,7 +87,7 @@ class User extends SecUser {
 
 
     def abstractimage(int max, int first, String col, String order, String filename, Date dateAddedStart, Date dateAddedStop) {
-
+         def userGroup = userGroups()
         AbstractImage.createCriteria().list(offset: first, max: max, sort: col, order: order) {
             inList("id", AbstractImageGroup.createCriteria().list {
                 inList("group.id", userGroup.collect {it.group.id})
@@ -101,6 +106,7 @@ class User extends SecUser {
     }
 
     def slides() {
+        def userGroup = userGroups()
         AbstractImage.createCriteria().list {
             inList("id", AbstractImageGroup.createCriteria().list {
                 inList("group.id", userGroup.collect {it.group.id})
@@ -115,6 +121,7 @@ class User extends SecUser {
     }
 
     def slides(int max, int first, String col, String order) {
+        def userGroup = userGroups()
         AbstractImage.createCriteria().list(offset: first, max: max, sort: col, order: order) {
             inList("id", AbstractImageGroup.createCriteria().list {
                 inList("group.id", userGroup.collect {it.group.id})

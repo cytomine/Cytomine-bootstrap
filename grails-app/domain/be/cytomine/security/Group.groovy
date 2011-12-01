@@ -9,9 +9,9 @@ import grails.converters.JSON
 class Group extends CytomineDomain {
 
     String name
-
+    //Map userGroup
     static belongsTo = Project
-    static hasMany = [userGroup: UserGroup, projectGroup: ProjectGroup, abstractimagegroup: AbstractImageGroup]
+    static hasMany = [projectGroup: ProjectGroup, abstractimagegroup: AbstractImageGroup]
 
 
     static mapping = {
@@ -20,6 +20,10 @@ class Group extends CytomineDomain {
 
     static constraints = {
         name(blank: false, unique: true)
+    }
+
+    def userGroups() {
+        UserGroup.findAllByGroup(this)
     }
 
     static Group getFromData(Group group, jsonGroup) {
@@ -48,7 +52,7 @@ class Group extends CytomineDomain {
     }
 
     def users() {
-        return userGroup.collect {
+        return userGroups().collect {
             it.user
         }
     }

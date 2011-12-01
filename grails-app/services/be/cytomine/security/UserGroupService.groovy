@@ -5,6 +5,8 @@ import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.Exception.InvalidRequestException
 
 class UserGroupService extends ModelService {
 
@@ -96,4 +98,31 @@ class UserGroupService extends ModelService {
         if (!domain) throw new ObjectNotFoundException("Usergroup with user $user and group $group not found")
         return domain
     }
+    UserGroup link(User user, Group group) {
+       println "link between " + user?.username + " " + group?.name
+       def userGroup = UserGroup.findByUserAndGroup(user, group)
+       if (!userGroup) {
+           userGroup = new UserGroup(user:user, group:group)
+            if (!userGroup.validate()) {
+                println userGroup.retrieveErrors().toString()
+                throw new WrongArgumentException(userGroup.retrieveErrors().toString())
+            }
+            if (!userGroup.save(flush: true)) {
+                println userGroup.retrieveErrors().toString()
+                throw new InvalidRequestException(userGroup.retrieveErrors().toString())
+           }
+       }
+       userGroup
+   }
+
+   void unlink(User user, Group group) {
+       println "###################################"
+       def userGroup = UserGroup.findByUserAndGroup(user, group)
+       if (userGroup) {
+           userGroup.delete(flush:true)
+
+       } else {println "no link between " + user?.username + " " + group?.name}
+   }
+
+
 }

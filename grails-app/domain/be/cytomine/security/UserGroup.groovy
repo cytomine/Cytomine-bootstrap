@@ -2,67 +2,60 @@ package be.cytomine.security
 
 import grails.converters.JSON
 import org.apache.commons.lang.builder.HashCodeBuilder
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.Exception.InvalidRequestException
 
 class UserGroup {
 
-    User user
-    Group group
+    def domaineService
 
-    static mapping = {
-        version false
-    }
+   User user
+   Group group
 
-    int hashCode() {
-        def builder = new HashCodeBuilder()
-        if (user) builder.append(user.id)
-        if (group) builder.append(group.id)
-        builder.toHashCode()
-    }
+    static belongsTo = [user: User,group: Group]
 
-    static UserGroup link(User user, Group group) {
-        def userGroup = UserGroup.findByUserAndGroup(user, group)
-        if (!userGroup) {
-            userGroup = new UserGroup()
-            user?.addToUserGroup(userGroup)
-            group?.addToUserGroup(userGroup)
-            userGroup.save(flush: true)
-        }
-    }
+   static mapping = {
+       version false
+   }
 
-    static void unlink(User user, Group group) {
-        def userGroup = UserGroup.findByUserAndGroup(user, group)
-        if (userGroup) {
-            user?.removeFromUserGroup(userGroup)
-            group?.removeFromUserGroup(userGroup)
-            userGroup.refresh()
-            userGroup.delete(flush: true)
-        } else {println "no link between " + user?.username + " " + group?.name}
-    }
+   int hashCode() {
+       def builder = new HashCodeBuilder()
+       if (user) builder.append(user.id)
+       if (group) builder.append(group.id)
+       builder.toHashCode()
+   }
 
-    static UserGroup getFromData(UserGroup userGroup, jsonUserGroup) {
-        userGroup.group = Group.read(jsonUserGroup.group)
-        userGroup.user = User.read(jsonUserGroup.user)
-        return userGroup;
-    }
+   static UserGroup getFromData(UserGroup userGroup, jsonUserGroup) {
+       userGroup.group = Group.read(jsonUserGroup.group)
+       userGroup.user = User.read(jsonUserGroup.user)
+       return userGroup;
+   }
 
-    static UserGroup createFromData(data) {
-        getFromData(new UserGroup(), data)
-    }
+   static UserGroup createFromData(data) {
+       getFromData(new UserGroup(), data)
+   }
 
-    static UserGroup createFromDataWithId(json) {
-        def domain = createFromData(json)
-        try {domain.id = json.id} catch (Exception e) {}
-        return domain
-    }
+   static UserGroup createFromDataWithId(json) {
+       def domain = createFromData(json)
+       try {domain.id = json.id} catch (Exception e) {}
+       return domain
+   }
 
-    static void registerMarshaller() {
-        println "Register custom JSON renderer for " + UserGroup.class
-        JSON.registerObjectMarshaller(UserGroup) {
-            def returnArray = [:]
-            returnArray['id'] = it.hashCode()
-            returnArray['user'] = it.user.id
-            returnArray['group'] = it.group.id
-            return returnArray
-        }
+   static void registerMarshaller() {
+       println "Register custom JSON renderer for " + UserGroup.class
+       JSON.registerObjectMarshaller(UserGroup) {
+           def returnArray = [:]
+           returnArray['id'] = it.hashCode()
+           returnArray['user'] = it.user.id
+           returnArray['group'] = it.group.id
+           return returnArray
+       }
+   }
+
+    public boolean equals(Object o) {
+        println "equals " + o?.id + " vs " + this?.id
+        if (!o) return false
+        if (!o instanceof UserGroup) return false
+        try {return ((UserGroup) o).getId() == this.getId()} catch (Exception e) { return false}
     }
 }

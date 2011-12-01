@@ -9,10 +9,6 @@ class DomainService {
 
     def saveDomain(def newObject) {
         if (!newObject.validate()) {
-//            String error = ""
-//            newObject.errors.allErrors.each {
-//                    error=error+it
-//                }
             println newObject.retrieveErrors().toString()
             throw new WrongArgumentException(newObject.retrieveErrors().toString())
         }

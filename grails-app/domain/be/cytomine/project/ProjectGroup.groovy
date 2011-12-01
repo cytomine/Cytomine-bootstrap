@@ -17,7 +17,7 @@ class ProjectGroup {
             projectGroup = new ProjectGroup()
             project?.addToProjectGroup(projectGroup)
             group?.addToProjectGroup(projectGroup)
-            projectGroup.save(flush: true)
+            projectGroup.save(flush:true)
         }
         return projectGroup
     }
@@ -27,7 +27,7 @@ class ProjectGroup {
         if (projectGroup) {
             project?.removeFromProjectGroup(projectGroup)
             group?.removeFromProjectGroup(projectGroup)
-            projectGroup.delete(flush: true)
+            projectGroup.delete(flush:true)
         }
 
     }
