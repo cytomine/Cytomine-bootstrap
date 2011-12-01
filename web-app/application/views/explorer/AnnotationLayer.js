@@ -95,6 +95,11 @@ AnnotationLayer.prototype = {
                 }
 
             },
+            'sketchcomplete': function (evt) {
+
+                self.updateAnnotation(evt.feature);
+
+            },
             'beforefeaturemodified': function (evt) {
 
             },
@@ -112,13 +117,23 @@ AnnotationLayer.prototype = {
         /*if (isOwner) { */
 
         this.controls = {
-            'freehand': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon, {handlerOptions: {freehand: true }}),
+            'freehand': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon, {
+                handlerOptions: {
+                    freehand: true,
+                    holeModifier: "altKey"
+                }
+            }),
             'point': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
             'line': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
-            'polygon': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon),
+            'polygon': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon, {
+                handlerOptions: {
+                    holeModifier: "altKey"
+                }
+            }),
             'regular': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.RegularPolygon, {
                 handlerOptions: {
-                    sides: 5
+                    sides: 5,
+                    holeModifier: "altKey"
                 }
             }),
             'modify': new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
@@ -556,6 +571,7 @@ AnnotationLayer.prototype = {
 
     /*Modifiy annotation on database*/
     updateAnnotation: function (feature) {
+        if (feature.attributes.idAnnotation == undefined) return;
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
         new AnnotationModel({id:feature.attributes.idAnnotation}).fetch({
