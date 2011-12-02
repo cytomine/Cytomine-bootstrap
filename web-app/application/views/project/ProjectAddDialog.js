@@ -127,7 +127,7 @@ var AddProjectDialog = Backbone.View.extend({
                       },error: function (model, response) {
 
                          var json = $.parseJSON(response.responseText);
-                         window.app.view.message("User", json.errors, "success");
+                         window.app.view.message("User", json.errors, "error");
                        }});
                 });
 
@@ -135,8 +135,8 @@ var AddProjectDialog = Backbone.View.extend({
              error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
 
-
-                $("#projecterrorlabel").show();
+                window.app.view.message("Project", json.errors, "error");
+                //$("#projecterrorlabel").show();
 
 
              }
