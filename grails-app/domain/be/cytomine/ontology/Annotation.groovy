@@ -21,6 +21,7 @@ class Annotation extends CytomineDomain implements Serializable {
     String channels
     User user
     Double similarity
+    Double geometryCompression
 
     static belongsTo = [ImageInstance]
     static hasMany = [annotationTerm: AnnotationTerm]
@@ -31,6 +32,7 @@ class Annotation extends CytomineDomain implements Serializable {
         name(blank: true)
         location(nullable: false)
         zoomLevel(nullable: true)
+        geometryCompression(nullable: true)
         channels(nullable: true)
         user(nullable: false)
         similarity(nullable: true)
@@ -235,6 +237,7 @@ class Annotation extends CytomineDomain implements Serializable {
             println "Annotation image = " + annotation.image + "($jsonAnnotation.image)"
             if (!annotation.image) throw new WrongArgumentException("Image $jsonAnnotation.image not found!")
             annotation.zoomLevel = (!jsonAnnotation.zoomLevel.toString().equals("null")) ? ((String) jsonAnnotation.zoomLevel).toDouble() : -1
+            annotation.geometryCompression = (!jsonAnnotation.geometryCompression.toString().equals("null")) ? ((String) jsonAnnotation.geometryCompression).toDouble() : 0
             annotation.channels = jsonAnnotation.channels
             annotation.user = User.get(jsonAnnotation.user);
             annotation.created = (!jsonAnnotation.created.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.created)) : null
@@ -270,6 +273,7 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['image'] = it.getIdImage()
             returnArray['imageFilename'] = image?.filename
             returnArray['zoomLevel'] = it.zoomLevel
+            returnArray['geometryCompression'] = it.geometryCompression
             returnArray['channels'] = it.channels
             returnArray['project'] = imageinstance?.getIdProject()
             if (it.userId) returnArray['user'] = it.userId

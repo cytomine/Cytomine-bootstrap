@@ -17,11 +17,14 @@ class RestController {
 
     def add(def service, def json) {
         try {
+            log.debug("add")
             def result = service.add(json)
+            log.debug("result")
             responseResult(result)
         } catch (CytomineException e) {
+            log.error("add error:" + e.msg)
             log.error(e)
-            response([success: false, errors: e.message], e.code)
+            response([success: false, errors: e.msg], e.code)
         } finally {
             transactionService?.stopIfTransactionInProgress()
         }
@@ -33,7 +36,7 @@ class RestController {
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
-            response([success: false, errors: e.message], e.code)
+            response([success: false, errors: e.msg], e.code)
         } finally {
             transactionService?.stopIfTransactionInProgress()
         }
@@ -45,7 +48,7 @@ class RestController {
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
-            response([success: false, errors: e.message], e.code)
+            response([success: false, errors: e.msg], e.code)
         } finally {
             transactionService?.stopIfTransactionInProgress()
         }

@@ -115,7 +115,9 @@ class AnnotationService extends ModelService {
 
         //simplify annotation
         try {
-            json.location = new WKTWriter().write(simplifyPolygon(json.location))
+            def data = simplifyPolygon(json.location)
+            json.location = new WKTWriter().write(data.geometry)
+            json.geometryCompression = data.rate
         } catch (Exception e) {
             log.error("Cannot simplify:" + e)
         }
@@ -152,6 +154,16 @@ class AnnotationService extends ModelService {
     def update(def json) {
 
         User currentUser = cytomineService.getCurrentUser()
+
+        //simplify annotation
+        try {
+            def annotation = Annotation.read(json.id)
+            def data = simplifyPolygon(json.location, annotation?.geometryCompression)
+            json.location = new WKTWriter().write(data.geometry)
+        } catch (Exception e) {
+            log.error("Cannot simplify:" + e)
+        }
+
         def result = executeCommand(new EditCommand(user: currentUser), json)
 
         if (result.success) {
@@ -231,7 +243,7 @@ class AnnotationService extends ModelService {
     }
 
 
-    private Geometry simplifyPolygon(String form) {
+    private def simplifyPolygon(String form) {
 
         Geometry annotationFull = new WKTReader().read(form);
         Geometry lastAnnotationFull = annotationFull
@@ -250,17 +262,25 @@ class AnnotationService extends ModelService {
         float i = 0;
         /* Max number of loop (prevent infinite loop) */
         int maxLoop = 500
+        double rate=0
 
         while (numberOfPoint > rateLimitMax && maxLoop > 0) {
-            lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull, i)
-            log.debug "annotationFull=" + i + " " + lastAnnotationFull.getNumPoints()
+            rate = i
+            lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull, rate)
+            log.debug "annotationFull=" + rate + " " + lastAnnotationFull.getNumPoints()
             if (lastAnnotationFull.getNumPoints() < rateLimitMin) break;
             annotationFull = lastAnnotationFull
             i = i + (incrThreshold * increaseIncrThreshold); maxLoop--;
         }
 
         log.debug "annotationFull good=" + i + " " + annotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
-        return lastAnnotationFull
+        return [geometry : lastAnnotationFull, rate : rate]
+    }
+
+    private def simplifyPolygon(String form, double rate) {
+        Geometry annotation = new WKTReader().read(form);
+        annotation = DouglasPeuckerSimplifier.simplify(annotation, rate)
+        return [geometry : annotation, rate : rate]
     }
 
     /**

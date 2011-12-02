@@ -15,6 +15,7 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         id(generator: 'assigned', unique: true)
     }
 
+
     String toString() {
         "[" + this.id + " <" + annotation + "," + term + "," + user + ">]"
     }

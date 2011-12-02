@@ -88,7 +88,6 @@ class ProjectService extends ModelService {
 
     def create(Project domain, boolean printMessage) {
         //Save new object
-        log.debug "create2"
         domainService.saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())

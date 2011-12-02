@@ -8,10 +8,10 @@ package be.cytomine.Exception;
 public abstract class CytomineException extends RuntimeException{
 
     public int code;
-    public String message;
+    public String msg;
 
-    public CytomineException(String message, int code) {
-        this.message=message;
+    public CytomineException(String msg, int code) {
+        this.msg=msg;
         this.code = code;
     }
 }
