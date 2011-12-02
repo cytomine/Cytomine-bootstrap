@@ -55,13 +55,21 @@ class ImageInstanceService extends ModelService {
 
     def list(Project project) {
         def images = ImageInstance.createCriteria().list {
-            createAlias("slide", "s")
+            createAlias("baseImage", "i")
             eq("project", project)
-            order("slide")
-            order("s.index", "asc")
+            order("i.filename", "asc")
         }
         return images
     }
+//    def list(Project project) {
+//        def images = ImageInstance.createCriteria().list {
+//            createAlias("slide", "s")
+//            eq("project", project)
+//            order("slide")
+//            order("s.index", "asc")
+//        }
+//        return images
+//    }
 
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
