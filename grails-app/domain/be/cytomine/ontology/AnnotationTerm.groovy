@@ -5,6 +5,7 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.security.User
 import grails.converters.JSON
 import be.cytomine.security.SecUser
+import be.cytomine.project.Project
 
 class AnnotationTerm extends CytomineDomain implements Serializable {
 
@@ -138,5 +139,9 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
             returnArray['user'] = it.user?.id
             return returnArray
         }
+    }
+
+     public Project projectDomain() {
+        return annotation.image.project
     }
 }

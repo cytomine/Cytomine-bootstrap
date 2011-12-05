@@ -68,7 +68,7 @@ class EditCommand extends Command {
         super.initCurrentCommantProject(updatedDomain?.projectDomain())
 
         def response = service.edit(updatedDomain, printMessage)
-        fillCommandInfo(updatedDomain, oldDomain, response.message)
+        fillCommandInfo(updatedDomain, oldDomain, response.data.message)
         return response
     }
 

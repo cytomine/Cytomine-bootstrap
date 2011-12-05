@@ -135,11 +135,11 @@ class Command extends CytomineDomain {
         JSON.registerObjectMarshaller(Command) {
             def returnArray = [:]
 
-            returnArray['className'] = it.class
+            returnArray['CLASSNAME'] = it.class
             returnArray['serviceName'] = it.serviceName
             returnArray['action'] = it.actionMessage + " by " + it?.user?.username
             returnArray['data'] = it.data
-            returnArray['user'] = it?.userId
+            returnArray['user'] = it.user
             returnArray['type'] = "UNKNOWN"
             if (it instanceof AddCommand) returnArray['type'] = "ADD"
             else if (it instanceof EditCommand) returnArray['type'] = "EDIT"

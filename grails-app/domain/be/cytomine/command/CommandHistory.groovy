@@ -34,6 +34,7 @@ class CommandHistory extends CytomineDomain {
         println "Register custom JSON renderer for " + CommandHistory.class
         JSON.registerObjectMarshaller(CommandHistory) {
             def returnArray = [:]
+            returnArray['id'] = it.id
             returnArray['class'] = it.class
             returnArray['command'] = it.command
             returnArray['prefixAction'] = it.prefixAction

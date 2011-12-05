@@ -32,7 +32,7 @@ class DeleteCommand extends Command {
         super.initCurrentCommantProject(oldDomain?.projectDomain())
 
         def response = service.destroy(oldDomain, printMessage)
-        fillCommandInfoJSON(backup, response.message)
+        fillCommandInfoJSON(backup, response.data.message)
         return response
     }
 

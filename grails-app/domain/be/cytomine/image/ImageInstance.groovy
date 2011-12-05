@@ -172,4 +172,8 @@ class ImageInstance extends CytomineDomain {
         }
     }
 
+     public Project projectDomain() {
+        return project;
+    }
+
 }
