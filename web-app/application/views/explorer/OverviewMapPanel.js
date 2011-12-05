@@ -38,6 +38,7 @@ var OverviewMapPanel = Backbone.View.extend({
           var self = this;
           new DraggablePanelView({
                  el : $('#overviewMap' + self.model.get('id')),
+                 className : "overviewPanel",
                  template : _.template(tpl, {id : self.model.get('id')})
               }).render();
        }

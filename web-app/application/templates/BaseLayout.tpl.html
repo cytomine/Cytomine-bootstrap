@@ -9,8 +9,18 @@
                 <li><a id="upload-button" data-placement="below" rel='twipsy' title='Upload new data' href="#upload">Upload</a></li>
             </ul>
             <ul id="menu-right" class="nav secondary-nav">
+
                 <li><a id="undo">Undo</a></li>
                 <li><a id="redo">Redo</a></li>
+                <li class="dropdown" data-dropdown="dropdown" >
+                    <a href="#" class="dropdown-toggle">Panels</a>
+                    <ul class="dropdown-menu">
+                        <li><a id="toggle-ontology-panel"></a></li>
+                        <li><a id="toggle-layer-panel"></a></li>
+                        <li><a id="toggle-overview-panel"></a></li>
+                        <li><a id="toggle-filters-panel"></a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>
@@ -18,14 +28,4 @@
 <div id="content">
 </div>
 <div id="popup-wrapper"></div>
-
-<!--<script>
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({
-            pageLanguage: 'en',
-            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-        }, 'google_translate_element');
-    }
-</script><script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
--->
 

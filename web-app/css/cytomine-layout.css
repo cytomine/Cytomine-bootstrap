@@ -61,8 +61,8 @@ div.olControlOverviewMapElement {
 div .overviewPanel {
     align : center;
     position : absolute;
-    right : 20px;
-    top : 300px;
+    /*right : 20px;
+    top : 300px;*/
     z-index : 2020;
     background-color: rgba(0, 0, 0, 0.7);
     color : #fff;
@@ -146,8 +146,8 @@ div .ontologypanel {
     width:auto;
     max-width: 500px;
     position : absolute;
-    left : 20px;
-    top : 325px;
+    /*left : 20px;
+    top : 325px;*/
     max-height: 500px;
     z-index : 2021;
     background-color: rgba(0, 0, 0, 0.7);
@@ -247,8 +247,8 @@ input .layerSwitcher{
 
 div .layerSwitcherPanel {
     position : absolute;
-    right : 20px;
-    top : 100px;
+    /*right : 20px;
+    top : 100px;*/
     z-index : 2030;
     background-color: black;
     color : #fff;
@@ -264,8 +264,8 @@ div .layerSwitcherPanel {
 
 div .imageFiltersPanel {
     position : absolute;
-    right : 10px;
-    bottom : 15px;
+    /*right : 10px;
+    bottom : 15px;*/
     z-index : 2030;
     background-color: black;
     color : #fff;

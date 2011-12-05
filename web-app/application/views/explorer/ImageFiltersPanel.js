@@ -32,6 +32,7 @@ var ImageFiltersPanel = Backbone.View.extend({
       var el = $('#imageFiltersPanel' + this.model.get('id'));
       new DraggablePanelView({
          el : el,
+         className : "imageFiltersPanel",
          template : _.template(tpl, this.model.toJSON())
       }).render();
       el.find("#contrast"+this.model.get("id")).slider({

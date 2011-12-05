@@ -67,7 +67,7 @@ var ApplicationController = Backbone.Router.extend({
       window.app.controllers.annotation   = new AnnotationController();
       //window.app.controllers.admin        = new AdminController();
       //Start the history
-
+      window.app.view.initPreferences();
       window.app.view.initUserMenu();
 
       Backbone.history.start();

@@ -73,39 +73,19 @@ var LayerSwitcherPanel = Backbone.View.extend({
       $("#layerSwitcher"+self.model.get("id")).html(content);
 
       $("#layerSwitcher"+self.model.get("id")).find(".toggleShowBaseLayers").click(function () {
-         $("#layerSwitcher"+self.model.get("id")).find("ul.baseLayers").toggle(300);
+         $("#layerSwitcher"+self.model.get("id")).find("ul.baseLayers").toggle(150);
          return false;
       });
 
       $("#layerSwitcher"+self.model.get("id")).find(".toggleShowVectorLayers").click(function () {
-         $("#layerSwitcher"+self.model.get("id")).find("ul.annotationLayers").toggle(300);
+         $("#layerSwitcher"+self.model.get("id")).find("ul.annotationLayers").toggle(150);
          return false;
       });
 
 
       new DraggablePanelView({
-         el : $('#layerSwitcher' + self.model.get('id'))
+         el : $('#layerSwitcher' + self.model.get('id')),
+         className : "layerSwitcherPanel"
       }).render();
-      /*$("#layers-slider-"+self.model.id).slider({
-       value: 100,
-       min : 0,
-       max : 100,
-       slide: function(e, ui) {
-
-       _.each(self.browseImageView.layers, function(layer) {
-
-       layer.vectorsLayer.setOpacity(ui.value / 100);
-       });
-
-       }
-       });*/
-      /*$("#image-slider-"+self.model.id).slider({
-       value: 100,
-       min : 0,
-       max : 100,
-       slide: function(e, ui) {
-       self.map.baseLayer.setOpacity(ui.value / 100);
-       }
-       });*/
    }
 });
