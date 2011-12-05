@@ -1,8 +1,6 @@
 package be.cytomine.processing
 
 import be.cytomine.CytomineDomain
-import be.cytomine.processing.algorithms.myDetection.MyDetectionLearnJob
-import be.cytomine.processing.algorithms.myDetection.MyDetectionPredictJob
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
@@ -14,13 +12,13 @@ class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE A
     Boolean indeterminate = true
     int progress = 0
     Boolean successful = false
+    Project project
 
     static transients = ["url"]
 
     static belongsTo = [software: Software]
 
-    static hasMany = [jobData: JobData]
-
+    static hasMany = [jobData: JobData, jobParameter : JobParameter]
 
     static constraints = {
         user nullable: false
@@ -48,9 +46,9 @@ class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE A
 
         Job job = null
 
-        if (new MyDetectionLearnJob().getClass().getName().contains(data.className.toString())) {
+        /*if (new MyDetectionLearnJob().getClass().getName().contains(data.className.toString())) {
             println "MyDetectionLearnJob"
-            /* Should be in  MyDetectionLearnJob.createFromData but doesn't work ? Instance is null when passed in argument... (*) */
+            // Should be in  MyDetectionLearnJob.createFromData but doesn't work ? Instance is null when passed in argument... (*)
             job = new MyDetectionLearnJob()
             if (data.doRGB) job.doRGB = Boolean.parseBoolean(data.doRGB)
             if (data.doEDGE) job.doEDGE = Boolean.parseBoolean(data.doEDGE)
@@ -70,10 +68,10 @@ class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE A
 
         if (new MyDetectionPredictJob().getClass().getName().contains(data.className.toString())) {
             println "MyDetectionPredictJob"
-            /* Same than (*) */
+            // Same than (*)
             job = new MyDetectionPredictJob()
             job.myDetectionLearnJob = MyDetectionLearnJob.read(data.myDetectionPredictJob)
-        }
+        }*/
         return job
     }
 

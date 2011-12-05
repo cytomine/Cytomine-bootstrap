@@ -10,9 +10,10 @@ class SuggestedTerm extends CytomineDomain implements Serializable {
 
     Annotation annotation
     Term term
-    Double rate
-    Job job
-    Project project
+    Double rate //ok
+    Job job //ok
+    //USER is equals job.user
+    Project project //not needed, we got it trough Job and Annotation : shortcut for speed ?
 
     static constraints = {
         annotation nullable: false

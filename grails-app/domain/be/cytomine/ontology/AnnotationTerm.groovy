@@ -4,17 +4,24 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.security.SecUser
 
 class AnnotationTerm extends CytomineDomain implements Serializable {
 
     Annotation annotation
     Term term
-    User user
+    Term expectedTerm
+    SecUser user
+    Double rate = 1d
 
     static mapping = {
         id(generator: 'assigned', unique: true)
     }
 
+    static constraints = {
+        rate(min: 0d, max: 1d)
+        expectedTerm (nullable : true)
+    }
 
     String toString() {
         "[" + this.id + " <" + annotation + "," + term + "," + user + ">]"

@@ -11,6 +11,7 @@ import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
+import be.cytomine.security.SecUser
 
 class Annotation extends CytomineDomain implements Serializable {
 
@@ -19,7 +20,7 @@ class Annotation extends CytomineDomain implements Serializable {
     ImageInstance image
     Double zoomLevel
     String channels
-    User user
+    SecUser user
     Double similarity
     Double geometryCompression
 
@@ -35,7 +36,6 @@ class Annotation extends CytomineDomain implements Serializable {
         geometryCompression(nullable: true)
         channels(nullable: true)
         user(nullable: false)
-        similarity(nullable: true)
     }
 
     static mapping = {

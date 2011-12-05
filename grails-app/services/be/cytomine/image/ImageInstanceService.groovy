@@ -57,7 +57,7 @@ class ImageInstanceService extends ModelService {
         def images = ImageInstance.createCriteria().list {
             createAlias("baseImage", "i")
             eq("project", project)
-            order("i.filename", "asc")
+            order("i.created", "desc")
         }
         return images
     }

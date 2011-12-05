@@ -198,7 +198,6 @@
             window.app = new ApplicationController();
         });
     </script>
-    <script type="text/javascript" src="http://jqueryui.com/themeroller/themeswitchertool/"></script>
 </head>
 <body>
 
