@@ -251,29 +251,29 @@ AnnotationLayer.prototype = {
                     json.terms = terms.join(", ")
 
 
-               var content = _.template(tpl, json);
-               self.popup = new OpenLayers.Popup("",
-                   new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
-                   new OpenLayers.Size(300, 200),
-                   content,
-                   false);
-               self.popup.setBackgroundColor("transparent");
-               self.popup.setBorder(0);
-               self.popup.padding = 0;
-               evt.feature.popup = self.popup;
-               self.popup.feature = evt.feature;
-               map.addPopup(self.popup);
-               $("#annotationHide" + model.id).click(function() {
-                  self.controls.select.unselectAll();
-                  var feature = self.getFeature(model.id);
-                  if (feature == undefined || feature == null) return;
-                  self.hideFeature(feature);
-                  var url = "tabs-image-"+window.app.status.currentProjectModel.get("id")+"-"+self.browseImageView.model.get("id")+"-";
-                  window.app.controllers.browse.navigate(url, false);
-                  return false;
-               });
-              self.showSimilarAnnotation(model);
-                 }
+                    var content = _.template(tpl, json);
+                    self.popup = new OpenLayers.Popup("",
+                            new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
+                            new OpenLayers.Size(300, 200),
+                            content,
+                            false);
+                    self.popup.setBackgroundColor("transparent");
+                    self.popup.setBorder(0);
+                    self.popup.padding = 0;
+                    evt.feature.popup = self.popup;
+                    self.popup.feature = evt.feature;
+                    map.addPopup(self.popup);
+                    $("#annotationHide" + model.id).click(function() {
+                        self.controls.select.unselectAll();
+                        var feature = self.getFeature(model.id);
+                        if (feature == undefined || feature == null) return;
+                        self.hideFeature(feature);
+                        var url = "tabs-image-"+window.app.status.currentProjectModel.get("id")+"-"+self.browseImageView.model.get("id")+"-";
+                        window.app.controllers.browse.navigate(url, false);
+                        return false;
+                    });
+                    self.showSimilarAnnotation(model);
+                }
             });
         });
     },
@@ -461,25 +461,21 @@ AnnotationLayer.prototype = {
              }*/
         });
 
-        console.log(annotation.toJSON());
-        annotation.save(annotation.toJSON(), {
+        annotation.save({}, {
             success: function (annotation, response) {
-
                 var annotationID = response.annotation.id;
                 var message = response.message;
-                 new AnnotationModel({id:annotationID}).fetch({
+                new AnnotationModel({id:annotationID}).fetch({
                     success : function (annotation, response) {
                         self.vectorsLayer.removeFeatures([feature]);
                         var newFeature = self.createFeatureFromAnnotation(annotation);
                         self.addFeature(newFeature);
                         self.controls.select.unselectAll();
                         self.controls.select.select(newFeature);
-
                         var cropURL = annotation.get('cropURL');
                         var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url : cropURL, alt : cropURL});
                         var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message : message, cropImage : cropImage});
                         window.app.view.message("Annotation added", alertMessage, "success");
-
                         self.browseImageView.refreshAnnotationTabs(undefined);
                     },
                     error : function(model, response) {
@@ -488,7 +484,7 @@ AnnotationLayer.prototype = {
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
-                window.app.view.message("Add annotation", "error:" + json.errors, "");
+                window.app.view.message("Add annotation", "error:" + json.errors, "error");
             }
         });
 
@@ -548,7 +544,7 @@ AnnotationLayer.prototype = {
 
             new AnnotationModel({id:feature.attributes.idAnnotation}).destroy({
                 success: function (model, response) {
-                    window.app.view.message("Annotation", response.message, "");
+                    window.app.view.message("Annotation", response.message, "success");
                     self.browseImageView.refreshAnnotationTabs(undefined);
 
                     /*collection.each(function(term) {
@@ -561,7 +557,7 @@ AnnotationLayer.prototype = {
                 },
                 error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Annotation", json.errors, "");
+                    window.app.view.message("Annotation", json.errors, "error");
                 }
             });
 
@@ -576,8 +572,22 @@ AnnotationLayer.prototype = {
         var geomwkt = format.write(feature);
         new AnnotationModel({id:feature.attributes.idAnnotation}).fetch({
             success : function(model, response) {
-                model.set({location : geomwkt});
-                model.save();  //TODO : callback success-error
+
+                model.save({location : geomwkt},{
+                    success : function (annotation, response) {
+                        var message = response.message;
+                        var cropURL = annotation.get('cropURL');
+                        var urlPrefix = "?bust=" + (new Date()).getTime(); //force refreshing URL
+                        var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url : cropURL + urlPrefix, alt : cropURL});
+                        var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message : message, cropImage : cropImage});
+                        window.app.view.message("Annotation edited", alertMessage, "success");
+                        self.browseImageView.refreshAnnotationTabs(undefined);
+                    },
+                    error : function(model, response) {
+                        var json = $.parseJSON(response.responseText);
+                        window.app.view.message("Annotation", json.errors, "");
+                    }
+                });
             }
         });
     },
@@ -726,24 +736,24 @@ AnnotationLayer.prototype = {
         var annotation = new AnnotationModel({
             id: idAnnotation
         }).fetch({
-                     success: function (model) {
-                         var feature = self.createFeatureFromAnnotation(model);
-                         /*var format = new OpenLayers.Format.WKT();
-                          var location = format.read(model.get('location'));
-                          var feature = new OpenLayers.Feature.Vector(location.geometry);
-                          feature.attributes = {
-                          idAnnotation: model.get('id'),
-                          listener: 'NO',
-                          measure : 'NO',
-                          importance: 10
-                          };*/
-                         self.addFeature(feature);
-                         self.selectFeature(feature);
-                         self.controls.select.activate();
-                         self.deleteOnSelect = deleteOnSelectBackup;
-                         self.browseImageView.refreshAnnotationTabs(undefined);
-                     }
-                 });
+            success: function (model) {
+                var feature = self.createFeatureFromAnnotation(model);
+                /*var format = new OpenLayers.Format.WKT();
+                 var location = format.read(model.get('location'));
+                 var feature = new OpenLayers.Feature.Vector(location.geometry);
+                 feature.attributes = {
+                 idAnnotation: model.get('id'),
+                 listener: 'NO',
+                 measure : 'NO',
+                 importance: 10
+                 };*/
+                self.addFeature(feature);
+                self.selectFeature(feature);
+                self.controls.select.activate();
+                self.deleteOnSelect = deleteOnSelectBackup;
+                self.browseImageView.refreshAnnotationTabs(undefined);
+            }
+        });
 
     },
     annotationRemoved: function (idAnnotation) {
