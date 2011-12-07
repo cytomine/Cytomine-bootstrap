@@ -104,12 +104,15 @@ var ProjectDashboardView = Backbone.View.extend({
             });
             new ProjectDashboardStats({model : self.model}).fetchStats();
         }
+        var fetchInformations = function () {
+            self.model.fetch({
+                success : function(model, response) {
+                    refreshDashboard(model, response); //to do : optimiser pour ne pas tout recharger
+                }
+            });
+        }
+        fetchInformations();
 
-        self.model.fetch({
-            success : function(model, response) {
-                refreshDashboard(model, response);
-            }
-        });
     },
 
     fetchProjectInfo : function () {
@@ -162,7 +165,7 @@ var ProjectDashboardView = Backbone.View.extend({
                             dateCreated.setTime(command.created);
                             var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
                             var jsonCommand = $.parseJSON(command.data);
-
+                            var action = "undefined";
                             if(command.serviceName=="annotationService" && command.CLASSNAME=="be.cytomine.command.AddCommand") {
                                 var cropStyle = "block";
                                 var cropURL = jsonCommand.cropURL;
@@ -170,7 +173,7 @@ var ProjectDashboardView = Backbone.View.extend({
                                     cropStyle = "none";
                                     cropURL = "";
                                 }
-                                var action = _.template(commandAnnotationTpl,
+                                action = _.template(commandAnnotationTpl,
                                         {   idProject : self.model.id,
                                             idAnnotation : jsonCommand.id,
                                             idImage : jsonCommand.image,
@@ -181,7 +184,6 @@ var ProjectDashboardView = Backbone.View.extend({
                                             cropURL:cropURL,
                                             cropStyle:cropStyle
                                         });
-                                $("#lastactionitem").append(action);
                             }
                             else if(command.serviceName=="annotationService" && command.CLASSNAME=="be.cytomine.command.EditCommand") {
                                 var cropStyle = "";
@@ -190,8 +192,7 @@ var ProjectDashboardView = Backbone.View.extend({
                                     cropStyle = "display : none;";
                                     cropURL = "";
                                 }
-                                var action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.newAnnotation.id, idImage : jsonCommand.newAnnotation.image,imageFilename : jsonCommand.newAnnotation.imageFilename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
-                                $("#lastactionitem").append(action);
+                                action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.newAnnotation.id, idImage : jsonCommand.newAnnotation.image,imageFilename : jsonCommand.newAnnotation.imageFilename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
                             }
                             else if(command.serviceName=="annotationService" && command.CLASSNAME=="be.cytomine.command.DeleteCommand") {
                                 var cropStyle = "";
@@ -200,33 +201,34 @@ var ProjectDashboardView = Backbone.View.extend({
                                     cropStyle = "display : none;";
                                     cropURL = "";
                                 }
-                                var action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.id, idImage : jsonCommand.image,imageFilename : jsonCommand.imageFilename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
-                                $("#lastactionitem").append(action);
+                                action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.id, idImage : jsonCommand.image,imageFilename : jsonCommand.imageFilename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
+
                             }
                             else if(command.serviceName=="annotationTermService" && command.CLASSNAME=="be.cytomine.command.AddCommand") {
-                                var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-plus",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,image:""});
-                                $("#lastactionitem").append(action);
+                                action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-plus",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,image:""});
+
                             }
                             else if(command.serviceName=="annotationTermService" && command.CLASSNAME=="be.cytomine.command.EditCommand") {
-                                var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-pencil",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,image:""});
-                                $("#lastactionitem").append(action);
+                                action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-pencil",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,image:""});
+
                             }
                             else if(command.serviceName=="annotationTermService" && command.CLASSNAME=="be.cytomine.command.DeleteCommand") {
-                                var action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-trash",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,image:""});
-                                $("#lastactionitem").append(action);
+                                action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-trash",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,image:""});
+
                             }
                             else if(command.serviceName=="imageInstanceService" && command.CLASSNAME=="be.cytomine.command.AddComman") {
                                 var cropStyle = "block";
                                 var cropURL = jsonCommand.thumb;
-                                var action = _.template(commandImageInstanceTpl, {idProject : self.model.id, idImage : jsonCommand.id, imageFilename : jsonCommand.filename, icon:"add.png",text:commandHistory.get("prefixAction")+ " " + command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
-                                $("#lastactionitem").append(action);
+                                action = _.template(commandImageInstanceTpl, {idProject : self.model.id, idImage : jsonCommand.id, imageFilename : jsonCommand.filename, icon:"add.png",text:commandHistory.get("prefixAction")+ " " + command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
+
                             }
                             else if(command.serviceName=="imageInstanceService" && command.CLASSNAME=="be.cytomine.command.DeleteCommand") {
                                 var cropStyle = "block";
                                 var cropURL = jsonCommand.thumb;
-                                var action = _.template(commandImageInstanceTpl, {idProject : self.model.id, idImage : jsonCommand.id, imageFilename : jsonCommand.filename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
-                                $("#lastactionitem").append(action);
+                                action = _.template(commandImageInstanceTpl, {idProject : self.model.id, idImage : jsonCommand.id, imageFilename : jsonCommand.filename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
+
                             }
+                            $("#lastactionitem").append(action);
                         });
                     }
                     commandCollection.fetch({

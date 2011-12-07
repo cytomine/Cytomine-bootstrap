@@ -35,8 +35,9 @@ var CommandCollection = Backbone.Collection.extend({
         }
     },
     initialize: function (options) {
-        this.project = options.project;
-        this.max = options.max;
+        if (!options) return;
+        if (options.project != undefined) this.project = options.project;
+        if (options.max != undefined) this.max = options.max;
     }
 });
 

@@ -41,8 +41,28 @@ class AnnotationService extends ModelService {
         Annotation.findAllByUser(user)
     }
 
-    def list(Project project, List<User> userList, boolean noTerm) {
+    def list(Project project, List<User> userList, boolean noTerm, boolean multipleTerm) {
         if (userList.isEmpty()) return []
+        else if (multipleTerm) {
+            def terms = Term.findAllByOntology(project.getOntology())
+            def annotationsWithTerms = AnnotationTerm.createCriteria().list {
+                inList("term", terms)
+                join("annotation")
+                createAlias("annotation", "a")
+                projections {
+                    inList("a.image", project.imagesinstance())
+                    groupProperty("annotation")
+                    createAlias("term", "nbterms")
+                    count("term")
+                }
+            }
+
+            def annotations = []
+            annotationsWithTerms.each {  result ->
+                 if (result[1] > 1) annotations.add(result[0]) //filter in groovy, to do : I tried greaterThan criteria on alias nbTerms whithout success
+            }
+            annotations
+        }
         else if (noTerm) {
 
             def terms = Term.findAllByOntology(project.getOntology())
@@ -297,7 +317,7 @@ class AnnotationService extends ModelService {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain, [domain.id, domain.image?.baseImage?.filename], printMessage, "Add", domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Add", domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -312,7 +332,7 @@ class AnnotationService extends ModelService {
 
     def destroy(Annotation domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.image?.baseImage?.filename], printMessage, "Delete", domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.user.toString(),  domain.image?.baseImage?.filename], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -331,7 +351,7 @@ class AnnotationService extends ModelService {
 
     def edit(Annotation domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.image?.baseImage?.filename], printMessage, "Edit", domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.user.toString(),  domain.image?.baseImage?.filename], printMessage, "Edit", domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response

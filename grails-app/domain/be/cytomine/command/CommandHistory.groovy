@@ -11,6 +11,8 @@ import grails.converters.JSON
  */
 class CommandHistory extends CytomineDomain {
 
+    def messageService
+
     /**
      * Command that was launch
      */
@@ -38,10 +40,8 @@ class CommandHistory extends CytomineDomain {
             returnArray['class'] = it.class
             returnArray['command'] = it.command
             returnArray['prefixAction'] = it.prefixAction
-
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null
-
             return returnArray
         }
     }

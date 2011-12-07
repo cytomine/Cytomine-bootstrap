@@ -9,4 +9,8 @@ class UserJob extends  SecUser {
 
     static constraints = {
     }
+
+    String toString() {
+        "Job"+ id + " ( " + user.toString() + " )"
+    }
 }

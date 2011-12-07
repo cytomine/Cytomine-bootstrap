@@ -195,13 +195,13 @@ class Annotation extends CytomineDomain implements Serializable {
     }
 
     def computeArea() {
-        if (this.image.baseImage.resolution == null) return Math.round(this.getArea()) + " pixels²"
-        else return Math.round(this.getArea() * this.image.baseImage.resolution) + " µm²"
+        if (this.image.baseImage.resolution == null) return Math.round(this.getArea())// + " pixels²"
+        else return Math.round(this.getArea() * this.image.baseImage.resolution)// + " µm²"
     }
 
     def computePerimeter() {
-        if (this.image.baseImage.resolution == null) return Math.round(this.getPerimeter()) + " pixels"
-        else return Math.round(this.getPerimeter() * this.image.baseImage.resolution) + " µm"
+        if (this.image.baseImage.resolution == null) return Math.round(this.getPerimeter())// + " pixels"
+        else return Math.round(this.getPerimeter() * this.image.baseImage.resolution)// + " µm"
     }
 
     static Annotation createFromDataWithId(json) {

@@ -568,6 +568,7 @@ AnnotationLayer.prototype = {
     /*Modifiy annotation on database*/
     updateAnnotation: function (feature) {
         if (feature.attributes.idAnnotation == undefined) return;
+        var self = this;
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
         new AnnotationModel({id:feature.attributes.idAnnotation}).fetch({

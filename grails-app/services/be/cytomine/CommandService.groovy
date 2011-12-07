@@ -19,6 +19,10 @@ class CommandService {
     static int NOT_FOUND_CODE = 404
     static int TOO_LONG_REQUEST = 413
 
+    //to do : filter by user
+    def list()  {
+        CommandHistory.list([sort: "created", order: "desc", max: 100])
+    }
 
     def processCommand(AddCommand c, JSONElement json) throws CytomineException {
         processCommand(c, json, SUCCESS_ADD_CODE)

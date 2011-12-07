@@ -265,6 +265,10 @@ class UrlMappings {
             action = [GET:"downloadDocumentByProject"]
         }
 
+        "/api/command" (controller : "command") {
+            action = [GET:"list"]
+        }
+
 
 
     }

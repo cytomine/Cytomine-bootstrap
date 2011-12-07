@@ -105,6 +105,7 @@
         <script type="text/javascript" src="application/controllers/CommandController.js" ></script>
         <script type="text/javascript" src="application/controllers/AnnotationController.js" ></script>
         <script type="text/javascript" src="application/controllers/AdminController.js" ></script>
+        <script type="text/javascript" src="application/controllers/ActivityController.js" ></script>
         <!-- Models -->
         <script type="text/javascript" src="application/models/ImageModel.js" ></script>
         <script type="text/javascript" src="application/models/TermModel.js" ></script>
@@ -121,6 +122,7 @@
         <script type="text/javascript" src="application/models/SecRoleModel.js" ></script>
         <script type="text/javascript" src="application/models/SuggestedAnnotationTermModel.js" ></script>
         <!-- View -->
+        <script type="text/javascript" src="application/views/activity/ActivityView.js" ></script>
         <script type="text/javascript" src="application/views/auth/LoginDialogView.js" ></script>
         <script type="text/javascript" src="application/views/auth/LoadingDialogView.js" ></script>
         <script type="text/javascript" src="application/views/auth/LogoutDialogView.js" ></script>

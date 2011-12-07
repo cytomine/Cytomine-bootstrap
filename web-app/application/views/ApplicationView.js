@@ -165,9 +165,24 @@ var ApplicationView = Backbone.View.extend({
             "text!application/templates/upload/UploadComponent.tpl.html",
             "text!application/templates/WarehouseComponent.tpl.html",
             "text!application/templates/explorer/ExplorerComponent.tpl.html",
-            "text!application/templates/AdminComponent.tpl.html"
+            "text!application/templates/AdminComponent.tpl.html",
+            "text!application/templates/activity/ActivityComponent.tpl.html"
         ],
-                function(uploadTpl, warehouseTpl, explorerTpl, adminTpl) {
+                function(uploadTpl, warehouseTpl, explorerTpl, adminTpl, activityTpl) {
+                    self.components.activity = new Component({
+                        el : "#content",
+                        template : _.template(activityTpl, {}),
+                        buttonAttr : {
+                            elButton : "activity-button",
+                            buttonText : "Activity",
+                            buttonWrapper : "#menu",
+                            dataContent : "Activity feed !",
+                            dataTitle : "Activity",
+                            icon : "ui-icon-circle-arrow-s",
+                            route : "#activity"
+                        },
+                        divId : "activity"
+                    });
                     self.components.upload = new Component({
                         el : "#content",
                         template : _.template(uploadTpl, {}),

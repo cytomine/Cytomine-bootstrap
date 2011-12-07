@@ -6,6 +6,11 @@ import be.cytomine.security.User
 class CommandController extends RestController {
     def springSecurityService
     def messageSource
+    def commandService
+
+    def list = {
+        responseSuccess(commandService.list())
+    }
 
     def undo = {
         log.info "Undo"

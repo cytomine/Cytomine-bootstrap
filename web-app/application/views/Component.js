@@ -37,6 +37,9 @@ var Component = Backbone.View.extend({
       $("#explorer-button").twipsy({
          placement : "below"
       });
+       $("#activity-button").twipsy({
+         placement : "below"
+      });
       return this;
    },
    /**
