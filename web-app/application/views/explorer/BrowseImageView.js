@@ -445,36 +445,15 @@ var BrowseImageView = Backbone.View.extend({
     initToolbar: function () {
         var toolbar = $('#toolbar' + this.model.get('id'));
         var self = this;
-        toolbar.find('input[name=select]').button({
-            //text : false,
-            // icons: {
-            // primary: "ui-icon-seek-start"
-            // }
-        });
-        toolbar.find('button[name=delete]').button({
-            text: false,
-            icons: {
-                primary: "ui-icon-trash"
-
-            }
-        });
-
-        toolbar.find('button[name=ruler]').button({
-            text: false,
-            icons: {
-                secondary: "ui-icon-arrow-2-ne-sw"
-
-            }
-        });
+        toolbar.find('input[name=select]').button();
+        toolbar.find('button[name=delete]').button();
+        toolbar.find('button[name=ruler]').button();
         toolbar.find('input[id^=ruler]').button({
             text: true,
             icons: {
                 secondary: "ui-icon-arrow-2-ne-sw"
-
             }
         });
-
-
         toolbar.find('input[name=rotate]').button();
         toolbar.find('input[name=resize]').button();
         toolbar.find('input[name=drag]').button();
@@ -484,7 +463,6 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('span[class=edit-toolbar]').buttonset();
         toolbar.find('span[class=delete-toolbar]').buttonset();
         toolbar.find('span[class=ruler-toolbar]').buttonset();
-
         toolbar.find('input[id=none' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("none");
