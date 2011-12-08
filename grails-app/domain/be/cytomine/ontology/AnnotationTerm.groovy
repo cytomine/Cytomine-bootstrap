@@ -20,7 +20,7 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     static constraints = {
-        rate(min: 0d, max: 1d)
+        rate(min: 0d, max: 1d, nullable: true)
         expectedTerm (nullable : true)
     }
 

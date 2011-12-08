@@ -86,7 +86,7 @@ class RestAnnotationTermController extends RestController {
      */
     def addWithDeletingOldTerm = {
         try {
-            def result = annotationTermService.addAnnotationTerm(params.idannotation, params.idterm)
+            def result = annotationTermService.addWithDeletingOldTerm(params.idannotation, params.idterm)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)

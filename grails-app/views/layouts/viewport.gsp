@@ -35,9 +35,8 @@
     <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 
+    <script text="text/javascript" src="https://raw.github.com/furf/jquery-ui-touch-punch/master/jquery.ui.touch-punch.min.js"></script>
     <!-- Twitter bootstrap -->
-
-
     <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-modal.js"></script>
     <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-dropdown.js"></script>
     <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-twipsy.js"></script>

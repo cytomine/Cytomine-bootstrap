@@ -78,7 +78,7 @@ class AnnotationTermService extends ModelService {
         deleteAnnotationTermFromUser(annotation, currentUser, currentUser)
 
         //Delete annotation term
-        def result = deleteAnnotationTerm(idAnnotation, idterm, currentUser.id, currentUser)
+        def result = addAnnotationTerm(idAnnotation, idterm, currentUser.id, currentUser)
 
         //Stop transaction
         transactionService.stop()

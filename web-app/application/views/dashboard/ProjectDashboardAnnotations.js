@@ -67,6 +67,10 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                 //expand all nodes
                 $(self.el).find('#treeAnnotationListing').dynatree("getRoot").visit(function(node){
                     node.expand(true);
+                    if(!node.hasChildren()) {
+                        $(node.span).attr("data-term", node.data.key);
+                        $(node.span).attr("class", "droppableNode");
+                    }
                 });
                 $("#ontology-annotations-panel-"+self.model.id).panel();
 
@@ -89,20 +93,23 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     success : function (collection, response) {
                         self.terms = collection;
                         window.app.status.currentTermsCollection = collection;
-                        $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : -1, name : "Undefined"}));
+                        $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : -1, name : "Undefined", className : "noDropZone"}));
                         $("#tabsterm-panel-"+self.model.id+"--1").panel();
                         $("#tabsterm-panel-"+self.model.id+"--1").hide();
-                        $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : -2, name : "Multiple"}));
+                        $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : -2, name : "Multiple", className : "noDropZone"}));
                         $("#tabsterm-panel-"+self.model.id+"--2").panel();
                         $("#tabsterm-panel-"+self.model.id+"--2").hide();
                         collection.each(function(term) {
                             //add x term tab
-                            $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : term.get("id"), name : term.get("name")}));
+                            $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : term.get("id"), name : term.get("name"), className : "termDropZone"}));
                             $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).panel();
                             $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).hide();
                         });
+                        self.initDropZone(collection);
                         callback.call();
+
                     }});
+
             }
         });
 
@@ -133,6 +140,8 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     showAllTerms : function() {
         $(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked", "checked");
         $(this.el).find("input.undefinedAnnotationsCheckbox").trigger("change");
+        $(this.el).find("input.multipleAnnotationsCheckbox").attr("checked", "checked");
+        $(this.el).find("input.multipleAnnotationsCheckbox").trigger("change");
         this.selectAnnotations(true);
     },
     showAllUsers : function() {
@@ -141,10 +150,61 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     hideAllTerms : function() {
         $(this.el).find("input.undefinedAnnotationsCheckbox").removeAttr("checked");
         $(this.el).find("input.undefinedAnnotationsCheckbox").trigger("change");
+        $(this.el).find("input.multipleAnnotationsCheckbox").removeAttr("checked");
+        $(this.el).find("input.multipleAnnotationsCheckbox").trigger("change");
         this.selectAnnotations(false);
     },
     hideAllUsers : function() {
         $(this.selectUser).multiselect("uncheckAll");
+    },
+    initDropZone : function (termCollection) {
+        var self = this;
+        var dropHandler = function(event, ui) {
+              $(this).css("background-color", "");
+                var annotation = $(ui.draggable).attr("data-annotation");
+                var term = $(ui.draggable).attr("data-term");
+                var newTerm = $(this).attr("data-term");
+                if (term == newTerm) return;
+                new AnnotationTermModel({term : newTerm, annotation : annotation, clear : true}).save({},{
+                    success : function(model, response) {
+                        window.app.view.message(response.message, null,"success");
+                        $(ui.draggable).remove();
+                        self.refreshSelectedTermsWithUserFilter();
+                    },
+                    error : function(model, response) {
+                        window.app.view.message(response.message, null, "error");
+                    }
+                });
+        };
+        $(".noDropZone").droppable({
+            over: function(event, ui) {
+                $(this).css("background-color", "red");
+            },
+            out: function() {
+                $(this).css("background-color", "");
+            },
+            drop: function() {
+                $(this).css("background-color", "");
+            }
+        });
+        $(".droppableNode").droppable({
+            over: function(event, ui) {
+                $(this).css("background-color", "lightgreen");
+            },
+            out: function() {
+                $(this).css("background-color", "");
+            },
+            drop: dropHandler
+        });
+        $(".termDropZone").droppable({
+            over: function(event, ui) {
+                $(this).css("background-color", "lightgreen");
+            },
+            out: function() {
+                $(this).css("background-color", "");
+            },
+            drop: dropHandler
+        });
     },
     render : function(callback) {
         var self = this;
@@ -238,19 +298,6 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             $("#listtabannotation").hide();
         }
     },
-    refreshSelectedTerms : function () {
-        var self = this;
-        var tree = $(this.el).find('#treeAnnotationListing').dynatree("getRoot");
-        if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
-        tree.visit(function(node){
-            if (!node.isSelected()) return;
-            self.refreshAnnotations(node.data.key);
-        });
-        if ($(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked") == "checked") {
-            self.refreshAnnotations(0);
-        }
-        self.updateContentVisibility();
-    },
     selectTerms : function(terms) {
         terms = terms.split(",");
         var tree = $(this.el).find('#treeAnnotationListing').dynatree("getTree");
@@ -267,17 +314,20 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         });
     },
     refreshSelectedTermsWithUserFilter : function () {
-        return;
         var self = this;
         var users = self.getSelectedUser();
         var tree = $(this.el).find('#treeAnnotationListing').dynatree("getRoot");
         if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
         tree.visit(function(node){
             if (!node.isSelected()) return;
+            console.log("REFRESH  "+ node.data.key);
             self.refreshAnnotations(node.data.key,users);
         });
         if ($(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked") == "checked") {
-            self.refreshAnnotations(0,users);
+            self.refreshAnnotations(-1,users);
+        }
+        if ($(this.el).find("input.multipleAnnotationsCheckbox").attr("checked") == "checked") {
+            self.refreshAnnotations(-2,users);
         }
         self.updateContentVisibility();
     },
@@ -313,7 +363,6 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         /*var idTerm = 0;
          if(term==0) {idTerm = undefined;}
          else idTerm = term*/
-        console.log("AnnotationCollection: project="+self.model.id + " term="+idTerm + " users="+users);
         new AnnotationCollection({project:self.model.id,term:idTerm,users:users}).fetch({
             success : function (collection, response) {
                 console.log("success");
@@ -321,17 +370,12 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     self.annotationsViews[idTerm].refresh(collection,users);
                     return;
                 }
-                console.log($elem);
-                console.log($($elem).children().length);
                 $($elem).empty();
-                console.log($($elem).children().length);
-                console.log("annotation size="+collection.length);
                 self.annotationsViews[idTerm] = new AnnotationView({
                     page : undefined,
                     model : collection,
                     idTerm : idTerm,
-                    el:$($elem),
-                    container : window.app.view.components.warehouse
+                    el:$($elem)
                 }).render();
 
                 //self.annotationsViews[term].refresh(collection);

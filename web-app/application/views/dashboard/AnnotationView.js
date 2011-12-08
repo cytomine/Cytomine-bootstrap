@@ -3,7 +3,6 @@ var AnnotationView = Backbone.View.extend({
     nb_thumb_by_page : 24,
     pagination_window : 3,
     initialize: function(options) {
-        this.container = options.container;
         this.page = options.page;
         this.idTerm = options.idTerm;
         this.annotations = null; //array of annotations that are printed
@@ -80,7 +79,8 @@ var AnnotationView = Backbone.View.extend({
                 var thumb = new AnnotationThumbView({
                     model : annotation,
                     className : "thumb-wrap",
-                    id : "annotationthumb"+annotation.get('id')
+                    idTerm : self.idTerm
+                    //id : "annotationthumb"+annotation.get('id')
                 }).render();
                 $(self.el).append(thumb.el);
             }

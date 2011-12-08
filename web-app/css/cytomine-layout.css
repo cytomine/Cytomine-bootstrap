@@ -15,6 +15,15 @@ ul,
 }
 
 
+.termDropZone {
+    min-height: 20px;
+}
+
+.noDropZone {
+    min-height: 20px;
+}
+
+
 .thumb{
     background:#EEE;
     border:#CCC solid 1px;
@@ -36,7 +45,6 @@ span.version {
 .thumb-wrap{
     text-align: center;
     vertical-align: middle;
-
     display: inline-block;
     margin: 4px;
     margin-right: 0;
