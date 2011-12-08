@@ -160,21 +160,23 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     initDropZone : function (termCollection) {
         var self = this;
         var dropHandler = function(event, ui) {
-              $(this).css("background-color", "");
-                var annotation = $(ui.draggable).attr("data-annotation");
-                var term = $(ui.draggable).attr("data-term");
-                var newTerm = $(this).attr("data-term");
-                if (term == newTerm) return;
-                new AnnotationTermModel({term : newTerm, annotation : annotation, clear : true}).save({},{
-                    success : function(model, response) {
-                        window.app.view.message(response.message, null,"success");
-                        $(ui.draggable).remove();
-                        self.refreshSelectedTermsWithUserFilter();
-                    },
-                    error : function(model, response) {
-                        window.app.view.message(response.message, null, "error");
-                    }
-                });
+            $(this).css("background-color", "");
+            $(ui.draggable).hide();
+            var annotation = $(ui.draggable).attr("data-annotation");
+            var term = $(ui.draggable).attr("data-term");
+            var newTerm = $(this).attr("data-term");
+            if (term == newTerm) return;
+            new AnnotationTermModel({term : newTerm, annotation : annotation, clear : true}).save({},{
+                success : function(model, response) {
+                    window.app.view.message(response.message, null,"success");
+                    $(ui.draggable).remove();
+                    self.refreshSelectedTermsWithUserFilter();
+                },
+                error : function(model, response) {
+                    $(ui.draggable).show();
+                    window.app.view.message(response.message, null, "error");
+                }
+            });
         };
         $(".noDropZone").droppable({
             over: function(event, ui) {
