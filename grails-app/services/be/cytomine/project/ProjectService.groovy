@@ -8,6 +8,14 @@ import be.cytomine.security.User
 import be.cytomine.security.UserGroup
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.command.*
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.access.prepost.PostFilter
+import org.springframework.transaction.annotation.Transactional
+
+import org.springframework.security.acls.domain.BasePermission
+import org.springframework.security.acls.model.Permission
+import be.cytomine.test.Infos
+import grails.converters.JSON
 
 class ProjectService extends ModelService {
 
@@ -17,31 +25,72 @@ class ProjectService extends ModelService {
     def commandService
     def domainService
     def userGroupService
+    def aclPermissionFactory
+    def aclService
+    def aclUtilService
+    def springSecurityService
+
 
     boolean saveOnUndoRedoStack = false
 
+    void addPermission(Project project, String username, int permission) {
+       addPermission(project, username, aclPermissionFactory.buildFromMask(permission))
+    }
+
+    @PreAuthorize("hasPermission(#project, admin)")
+    void addPermission(Project project, String username, Permission permission) {
+        log.info "Add Permission " +  permission.toString() + " for " + username + " to " + project?.name
+       aclUtilService.addPermission(project, username, permission)
+    }
+
+   @Transactional
+   @PreAuthorize("hasPermission(#project, admin)")
+   void deletePermission(Project project, String username, Permission permission) {
+      def acl = aclUtilService.readAcl(project)
+
+      // Remove all permissions associated with this particular recipient
+      acl.entries.eachWithIndex { entry, i ->
+          log.debug "entry.permission.equals(permission)="+entry.permission.equals(permission) + " entry.sid="+entry.sid.getPrincipal()
+         if (entry.sid.getPrincipal().equals(username) && entry.permission.equals(permission)) {
+             log.debug "REMOVE PERMISSION FOR"
+            acl.deleteAce(i)
+         }
+      }
+
+      aclService.updateAcl(acl)
+   }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin) or hasRole('ROLE_ADMIN')")
     def list() {
         Project.list(sort: "name")
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin) or hasRole('ROLE_ADMIN')")
     def list(Ontology ontology) {
         Project.findAllByOntology(ontology)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin) or hasRole('ROLE_ADMIN')")
     def list(User user) {
         user.projects()
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin) or hasRole('ROLE_ADMIN')")
     def list(Discipline discipline) {
-        project.findAllByDiscipline(discipline)
+        Project.findAllByDiscipline(discipline)
     }
 
+    @PreAuthorize("hasPermission(#id, 'be.cytomine.project.Project',read) or hasPermission(#id, 'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
     def read(def id) {
         Project.read(id)
     }
 
+    @PreAuthorize("hasPermission(#id, 'be.cytomine.project.Project',read) or hasPermission(#id, 'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
     def get(def id) {
-
         Project.get(id)
     }
 
@@ -49,12 +98,14 @@ class ProjectService extends ModelService {
         return CommandHistory.findAllByProject(project, [sort: "created", order: "desc", max: max])
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json) {
+    @PreAuthorize("hasPermission(#domain ,write) or hasPermission(#domain,admin) or hasRole('ROLE_ADMIN')")
+    def update(def domain, def json) {
         String oldName = Project.get(json.id)?.name
         User currentUser = cytomineService.getCurrentUser()
         def response = executeCommand(new EditCommand(user: currentUser), json)
@@ -70,7 +121,8 @@ class ProjectService extends ModelService {
         return response
     }
 
-    def delete(def json) {
+    @PreAuthorize("hasPermission(#domain,delete) or hasPermission(#domain,admin) or hasRole('ROLE_ADMIN')")
+    def delete(def domain, def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
@@ -89,6 +141,8 @@ class ProjectService extends ModelService {
     def create(Project domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
+        log.info("Add permission on " + domain + " to " + springSecurityService.authentication.name)
+        addPermission(domain, springSecurityService.authentication.name,BasePermission.ADMINISTRATION)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
     }
@@ -154,11 +208,14 @@ class ProjectService extends ModelService {
         edit(fillDomainWithData(new Project(), json), printMessage)
     }
 
-    def edit(Project domain, boolean printMessage) {
+    def edit(Project project, boolean printMessage) {
+        log.debug "EDIT domain " + project.id
+        Infos.printRight(project)
+        log.debug "CURRENT USER " + cytomineService.getCurrentUser().username
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
+        def response = responseService.createResponseMessage(project, [project.id, project.name], printMessage, "Edit", project.getCallBack())
         //Save update
-        domainService.saveDomain(domain)
+        domainService.saveDomain(project)
         return response
     }
 

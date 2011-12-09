@@ -32,7 +32,10 @@ class RestController {
 
     def update(def service, def json) {
         try {
-            def result = service.update(json)
+            def domain = service.retrieve(json)
+            log.debug "json="+json
+            log.debug "domain="+domain
+            def result = service.update(domain,json)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -44,7 +47,8 @@ class RestController {
 
     def delete(def service, def json) {
         try {
-            def result = service.delete(json)
+            def domain = service.retrieve(json)
+            def result = service.delete(domain,json)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)

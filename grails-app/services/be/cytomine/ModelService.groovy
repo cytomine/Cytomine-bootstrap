@@ -16,9 +16,9 @@ abstract class ModelService {
 
     abstract def add(def json)
 
-    abstract def update(def json)
+    abstract def update(def domain,def json)
 
-    abstract def delete(def json)
+    abstract def delete(def domain,def json)
 
 //
 //    abstract def create(JSONObject json, boolean printMessage)

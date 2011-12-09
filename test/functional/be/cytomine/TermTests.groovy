@@ -72,7 +72,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     String response = client.getResponseData()
     client.disconnect();
 
-    log.info("check response")
+    log.info("check response:"+response)
     assertEquals(200,code)
     def json = JSON.parse(response)
 

@@ -17,7 +17,7 @@ class RestSuggestedTermController extends RestController {
     def suggestedTermService
 
     def list = {
-        Annotation annotation = annotationService.read(params.idannotation)
+        Annotation annotation = annotationService.read(params.long('idannotation'))
         if (params.idannotation) {
             if (annotation)
                 responseSuccess(suggestedTermService.list(annotation))
@@ -28,21 +28,21 @@ class RestSuggestedTermController extends RestController {
 
     def show = {
         Term term = termService.read(params.idterm)
-        Annotation annotation = annotationService.read(params.idannotation)
-        Job job = jobService.read(params.idjob)
+        Annotation annotation = annotationService.read(params.long('idannotation'))
+        Job job = jobService.read(params.long('idjob'))
         SuggestedTerm suggestedTerm = suggestedTermService.read(annotation, term, job)
         if (suggestedTerm) responseSuccess(suggestedTerm)
         else responseNotFound("SuggestedTerm", "Term", params.idterm, "Annotation", params.idannotation, "Job", params.idjob)
     }
 
     def worstAnnotation = {
-        Project project = projectService.read(params.idproject)
+        Project project = projectService.read(params.long('idproject'))
         int max = params.max ? Integer.parseInt(params.max) : 20
         responseSuccess(suggestedTermService.listWorst(project, max))
     }
 
     def worstTerm = {
-        Project project = projectService.read(params.idproject)
+        Project project = projectService.read(params.long('idproject'))
         int max = params.max ? Integer.parseInt(params.max) : 20
         responseSuccess(suggestedTermService.listWorstTerm(project, max))
     }
@@ -56,7 +56,7 @@ class RestSuggestedTermController extends RestController {
     }
 
     def delete = {
-        delete(suggestedTermService, JSON.parse("{idannotation : $params.idannotation, idterm : $params.idterm,idjob : $params.idjob}"))
+        delete(suggestedTermService, JSON.parse("{annotation : $params.idannotation, term : $params.idterm,job : $params.idjob}"))
     }
 
 }

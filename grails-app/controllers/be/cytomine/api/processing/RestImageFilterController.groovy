@@ -12,7 +12,7 @@ class RestImageFilterController extends RestController {
     }
 
     def show = {
-        ImageFilter imageFilter = imageFilterService.read(params.id)
+        ImageFilter imageFilter = imageFilterService.read(params.long('id'))
         if (imageFilter) responseSuccess(imageFilter)
         else responseNotFound("ImageFilter", params.id)
     }

@@ -16,7 +16,7 @@ class RestTermController extends RestController {
     }
 
     def show = {
-        Term term = termService.read(params.id)
+        Term term = termService.read(params.long('id'))
         if (term) responseSuccess(term)
         else responseNotFound("Term", params.id)
     }

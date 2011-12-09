@@ -78,12 +78,12 @@ class AbstractImageService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json) throws CytomineException {
+    def update(def domain,def json) throws CytomineException {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def json) throws CytomineException {
+    def delete(def domain,def json) throws CytomineException {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }

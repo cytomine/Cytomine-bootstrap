@@ -6,6 +6,7 @@ import be.cytomine.project.Discipline
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.Exception.CytomineException
 
 class RestProjectController extends RestController {
 
@@ -23,7 +24,7 @@ class RestProjectController extends RestController {
 
     def listByOntology = {
         log.info "listByOntology with ontology id:" + params.id
-        Ontology ontology = ontologyService.read(params.id);
+        Ontology ontology = ontologyService.read(params.long('id'));
         if (ontology != null) responseSuccess(projectService.list(ontology))
         else responseNotFound("Project", "Ontology", params.id)
     }
@@ -31,31 +32,31 @@ class RestProjectController extends RestController {
     def listByUser = {
         log.info "List with id user:" + params.id + " (null will be currentuser)"
         User user = null
-        if (params.id != null)
-            user = User.read(params.id)
+        if (params.id != null) {
+            user = User.read(params.long('id'))
+            if(user) responseSuccess(projectService.list(user))
+            else responseNotFound("User", params.id)
+        }
         else
-            user = cytomineService.getCurrentUser()
-
-        if (user) responseSuccess(projectService.list(user))
-        else responseNotFound("User", params.id)
+            responseSuccess(projectService.list())
     }
 
     def listByDiscipline = {
         log.info "listByDiscipline with discipline id:" + params.id
-        Discipline discipline = disciplineService.read(params.id);
+        Discipline discipline = disciplineService.read(params.long('id'));
         if (discipline) responseSuccess(projectService.list(discipline))
         else responseNotFound("Project", "Discipline", params.id)
     }
 
     def show = {
-        Project project = projectService.read(params.id)
+        Project project = projectService.read(params.long('id'))
         if (project) responseSuccess(project)
         else responseNotFound("Project", params.id)
     }
 
     def lastAction = {
         log.info "lastAction"
-        Project project = projectService.read(params.id)    //need to be filter by project
+        Project project = projectService.read(params.long('id'))    //need to be filter by project
         int max = Integer.parseInt(params.max);
 
         if (project)
@@ -74,5 +75,17 @@ class RestProjectController extends RestController {
     def delete = {
         delete(projectService, JSON.parse("{id : $params.id}"))
     }
+
+//    def delete = {
+//        try {
+//            def result = projectService.delete(Long.parseLong(params.id))
+//            responseResult(result)
+//        } catch (CytomineException e) {
+//            log.error(e)
+//            response([success: false, errors: e.msg], e.code)
+//        } finally {
+//            transactionService?.stopIfTransactionInProgress()
+//        }
+//    }
 }
 

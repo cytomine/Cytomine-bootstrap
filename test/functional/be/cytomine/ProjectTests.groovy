@@ -10,6 +10,7 @@ import be.cytomine.ontology.Ontology
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.project.ProjectGroup
 import be.cytomine.security.User
+import be.cytomine.test.http.ProjectAPI
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -17,647 +18,223 @@ import be.cytomine.security.User
  * Time: 16:16
  * To change this template use File | Settings | File Templates.
  */
-class ProjectTests extends functionaltestplugin.FunctionalTestCase{
-
-  void testListProjectWithCredential() {
-
-    log.info("get project")
-    String URL = Infos.CYTOMINEURL+"api/project.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response:"+response)
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONArray
-  }
-
-  void testListProjectWithoutCredential() {
-
-    log.info("get project")
-    String URL = Infos.CYTOMINEURL+"api/project.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.BADLOGIN,Infos.BADPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(401,code)
-  }
-
-  void testShowProjectWithCredential() {
-
-    log.info("create project")
-    Project project =  BasicInstance.createOrGetBasicProject()
-
-    log.info("get project")
-    String URL = Infos.CYTOMINEURL+"api/project/"+ project.id +".json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response:"+response)
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-  }
-
-  void testListProjectByUser() {
-
-    log.info("create project")
-    Project project =  BasicInstance.createOrGetBasicProject()
-    User user =  BasicInstance.createOrGetBasicUser()
-
-    log.info("list project by user")
-    String URL = Infos.CYTOMINEURL+"api/user/"+ user.id +"/project.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response:"+response)
-    assertEquals(200,code)
-  }
-
-
-  void testAddProjectCorrect() {
-
-    log.info("create project")
-    def projectToAdd = BasicInstance.getBasicProjectNotExist()
-    String jsonProject = projectToAdd.encodeAsJSON()
-
-    log.info("post project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonProject)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int idProject = json.project.id
-
-    log.info("check if object "+ idProject +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    /*log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idProject +" not exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(404,code)
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    //must be done because redo change id
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-    idProject = json.project.id
-
-    log.info("check if object "+ idProject +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)*/
-
-  }
-
-  void testAddProjectWithBadName() {
-
-    log.info("create project")
-    def projectToAdd = BasicInstance.createOrGetBasicProject()
-    String jsonProject =  projectToAdd.encodeAsJSON()
-
-    def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.name = null
-    jsonProject = jsonUpdate.encodeAsJSON()
-
-    log.info("post project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonProject)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-
-  }
-
-  void testEditProjectCorrect() {
-
-    String oldName = "Name1"
-    String newName = "Name2"
-
-    Ontology oldOtology = BasicInstance.createOrGetBasicOntology()
-    Ontology newOtology = BasicInstance.getBasicOntologyNotExist()
-    newOtology.save(flush:true)
-
-    def mapNew = ["name":newName,"ontology":newOtology]
-    def mapOld = ["name":oldName,"ontology":oldOtology]
-
-    /* Create a Name1 project */
-    log.info("create project")
-    Project projectToAdd = BasicInstance.createOrGetBasicProject()
-    projectToAdd.name = oldName
-    projectToAdd.ontology = oldOtology
-    assert (projectToAdd.save(flush:true) != null)
-
-    /* Encode a niew project Name2*/
-    Project projectToEdit = Project.get(projectToAdd.id)
-    def jsonProject = projectToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.name = newName
-    jsonUpdate.ontology = newOtology.id
-    jsonProject = jsonUpdate.encodeAsJSON()
-
-    log.info("put project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project/"+projectToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonProject)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int idProject = json.project.id
-
-    log.info("check if object "+ idProject +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-    BasicInstance.compareProject(mapNew,json)
-
-    /*log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL + ".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idProject +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-    BasicInstance.compareProject(mapOld,json)
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL + ".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idProject +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-    BasicInstance.compareProject(mapNew,json)
-
-
-    log.info("check if object "+ idProject +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject */
-
-  }
-
-  void testEditProjectWithBadName() {
-
-    /* Create a Name1 project */
-    log.info("create project")
-    Project projectToAdd = BasicInstance.createOrGetBasicProject()
-
-    /* Encode a niew project Name2*/
-    Project projectToEdit = Project.get(projectToAdd.id)
-    def jsonProject = projectToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.name = null
-    jsonProject = jsonUpdate.encodeAsJSON()
-
-    log.info("put project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project/"+projectToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonProject)
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-
-  }
-
-  void testEditProjectWithNameAlreadyExist() {
-
-    /* Create a Name1 project */
-    log.info("create project")
-    Project projectWithOldName = BasicInstance.createOrGetBasicProject()
-    Project projectWithNewName = BasicInstance.getBasicProjectNotExist()
-    projectWithNewName.save(flush:true)
-
-
-    /* Encode a niew project Name2*/
-    Project projectToEdit = Project.get(projectWithNewName.id)
-    log.info("projectToEdit="+projectToEdit)
-    def jsonProject = projectToEdit.encodeAsJSON()
-    log.info("jsonProject="+jsonProject)
-    def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.name = projectWithOldName.name
-    jsonProject = jsonUpdate.encodeAsJSON()
-
-    log.info("put project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project/"+projectToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonProject)
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-
-  }
-
-  void testEditProjectNotExist() {
-
-    /* Create a Name1 project */
-    log.info("create project")
-    Project projectWithOldName = BasicInstance.createOrGetBasicProject()
-    Project projectWithNewName = BasicInstance.getBasicProjectNotExist()
-    projectWithNewName.save(flush:true)
-
-
-    /* Encode a niew project Name2*/
-    Project projectToEdit = Project.get(projectWithNewName.id)
-    log.info("projectToEdit="+projectToEdit)
-    def jsonProject = projectToEdit.encodeAsJSON()
-    log.info("jsonProject="+jsonProject)
-    def jsonUpdate = JSON.parse(jsonProject)
-    jsonUpdate.name = projectWithOldName.name
-    jsonUpdate.id = -99
-    jsonProject = jsonUpdate.encodeAsJSON()
-
-    log.info("put project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonProject)
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
-
-  }
-
-  void testDeleteProject() {
-
-    log.info("create project")
-    def projectToDelete = BasicInstance.getBasicProjectNotExist()
-    assert projectToDelete.save(flush:true)!=null
-    String jsonProject = projectToDelete.encodeAsJSON()
-    int idProject = projectToDelete.id
-    log.info("delete project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project/"+idProject+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-
-    log.info("check if object "+ idProject +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-
-    assertEquals(404,code)
-
-    /*log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int newIdProject  = json.project.id
-
-    log.info("check if object "+ idProject +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+newIdProject  +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ newIdProject +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(404,code) */
-
-  }
-    void testDeleteProjectWithData() {
-      log.info("create project")
-      //create project
-      def projectToDelete = BasicInstance.getBasicProjectNotExist()
-
-
-      assert projectToDelete.save(flush:true)!=null
-      String jsonProject = projectToDelete.encodeAsJSON()
-      int idProject = projectToDelete.id
-
-
-      //add a image so that we have a command, commandhistory, ... for this project
-      log.info("create imageinstance")
-      def imageToAdd = BasicInstance.getBasicImageInstanceNotExist()
-        imageToAdd.project = projectToDelete
-        String jsonImage = imageToAdd.encodeAsJSON()
-
-      log.info("post imageinstance:"+jsonImage.replace("\n",""))
-      String URL = Infos.CYTOMINEURL+"api/imageinstance.json"
-      HttpClient client = new HttpClient()
-      client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      client.post(jsonImage)
-      int code  = client.getResponseCode()
-      String response = client.getResponseData()
-      println response
-      client.disconnect();
-
-      log.info("check response")
-      assertEquals(200,code)
-      def json = JSON.parse(response)
-      assert json instanceof JSONObject
-      int idImage = json.imageinstance.id
-
-        //delete the image so that we can delete project
-      URL = Infos.CYTOMINEURL+"api/project/"+idProject + "/image/"+imageToAdd.baseImage.id + "/imageinstance.json"
-      client = new HttpClient()
-      client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      client.delete()
-      code  = client.getResponseCode()
-      client.disconnect();
-
-      log.info("check response")
-      assertEquals(200,code)
-
-      log.info("check if object "+ idImage +" exist in DB")
-      client = new HttpClient();
-      URL = Infos.CYTOMINEURL+"api/imageinstance/"+idImage +".json"
-      client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-      client.get()
-      code  = client.getResponseCode()
-      client.disconnect();
-
-      assertEquals(404,code)
-
-      //delete project must be ok
-      log.info("delete project:"+jsonProject.replace("\n",""))
-      URL = Infos.CYTOMINEURL+"api/project/"+idProject+".json"
-      client = new HttpClient()
-      client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      client.delete()
-      code  = client.getResponseCode()
-      client.disconnect();
-
-      log.info("check response")
-      assertEquals(200,code)
-
-      log.info("check if object "+ idProject +" exist in DB")
-      client = new HttpClient();
-      URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
-      client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-      client.get()
-      code  = client.getResponseCode()
-      client.disconnect();
-
-      assertEquals(404,code)
+class ProjectTests extends functionaltestplugin.FunctionalTestCase {
+
+    void testListProjectWithCredential() {
+        log.info("list project")
+        def result = ProjectAPI.listProject(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        log.info("check response:" + response)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
     }
 
-  void testDeleteProjectWithGroup1() {
-  log.info("create project")
-    def projectToDelete = BasicInstance.getBasicProjectNotExist()
-    def group = BasicInstance.createOrGetBasicGroup()
+    void testListProjectWithoutCredential() {
+        log.info("list project")
+        def result = ProjectAPI.listProject(Infos.BADLOGIN, Infos.BADPASSWORD)
+        log.info("check response:" + response)
+        log.info("check response")
+        assertEquals(401, result.code)
+    }
 
-    assert projectToDelete.save(flush:true)!=null
-    ProjectGroup.link(projectToDelete,group)
-    String jsonProject = projectToDelete.encodeAsJSON()
-    int idProject = projectToDelete.id
-    log.info("delete project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project/"+idProject+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
+    void testShowProjectWithCredential() {
+        log.info("create project")
+        Project project = BasicInstance.createOrGetBasicProjectWithRight()
+        log.info("show project")
+        def result = ProjectAPI.showProject(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        log.info("check response:" + response)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+    }
 
-    log.info("check response")
-    assertEquals(200,code)
+    void testListProjectByUser() {
+        log.info("create project")
+        Project project = BasicInstance.createOrGetBasicProject()
+        User user = BasicInstance.createOrGetBasicUser()
+        log.info("list project by user")
+        def result = ProjectAPI.listProjectByUser(user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        log.info("check response:" + response)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
 
-    log.info("check if object "+ idProject +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
+    void testAddProjectCorrect() {
+        log.info("create project")
+        def projectToAdd = BasicInstance.getBasicProjectNotExist()
+        def result = ProjectAPI.createProject(projectToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        log.info("check response:" + response)
+        assertEquals(200, result.code)
+        Project project = result.data
+        log.info("check if object " + project.id + " exist in DB")
+        result = ProjectAPI.showProject(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
 
-    assertEquals(404,code)
-  }
+    void testAddProjectWithBadName() {
+        log.info("init project with bad name")
+        def projectToAdd = BasicInstance.createOrGetBasicProject()
+        String jsonProject = projectToAdd.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonProject)
+        jsonUpdate.name = null
+        log.info("create project")
+        def result = ProjectAPI.createProject(jsonUpdate.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        log.info("check response:" + response)
+        assertEquals(400, result.code)
+    }
 
-  void testDeleteProjectWithGroup2() {
-  log.info("create project")
-    def projectToDelete = BasicInstance.getBasicProjectNotExist()
-    def group = BasicInstance.createOrGetBasicGroup()
+    void testEditProjectCorrect() {
+        log.info("create project")
+        Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
+        def result = ProjectAPI.updateProject(projectToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        log.info("check response:"+result)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        int idProject = json.project.id
+        def showResult = ProjectAPI.showProject(idProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        json = JSON.parse(showResult.data)
+        BasicInstance.compareProject(result.mapNew, json)
+    }
+
+    void testEditProjectWithBadName() {
+        log.info("create project")
+        Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
+        log.info("init project with bad name")
+        Project projectToEdit = Project.get(projectToAdd.id)
+        def jsonProject = projectToEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonProject)
+        jsonUpdate.name = null
+        jsonProject = jsonUpdate.encodeAsJSON()
+        log.info("update project")
+        def result = ProjectAPI.updateProject(projectToAdd.id, jsonProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(400, result.code)
+
+    }
+
+    void testEditProjectWithNameAlreadyExist() {
+        log.info("create 2 projects")
+        Project projectWithOldName = BasicInstance.createOrGetBasicProjectWithRight()
+        Project projectWithNewName = BasicInstance.getBasicProjectNotExist()
+        projectWithNewName.save(flush: true)
+        Infos.addUserRight(Infos.GOODLOGIN, projectWithNewName)
+        log.info("init project with name already exist")
+        Project projectToEdit = Project.get(projectWithNewName.id)
+        def jsonProject = projectToEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonProject)
+        jsonUpdate.name = projectWithOldName.name
+        jsonProject = jsonUpdate.encodeAsJSON()
+        log.info("update project")
+        def result = ProjectAPI.updateProject(projectToEdit.id, jsonProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(400, result.code)
+    }
+
+    void testEditProjectNotExist() {
+        log.info("create project")
+        Project projectWithOldName = BasicInstance.createOrGetBasicProject()
+        Project projectWithNewName = BasicInstance.getBasicProjectNotExist()
+        projectWithNewName.save(flush: true)
+        log.info("init project not exist")
+        Project projectToEdit = Project.get(projectWithNewName.id)
+        def jsonProject = projectToEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonProject)
+        jsonUpdate.name = projectWithOldName.name
+        jsonUpdate.id = -99
+        jsonProject = jsonUpdate.encodeAsJSON()
+        log.info("update project")
+        def result = ProjectAPI.updateProject(-99, jsonProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+
+    }
+
+    void testDeleteProject() {
+        log.info("create project")
+        def projectToDelete = BasicInstance.getBasicProjectNotExist()
+        assert projectToDelete.save(flush: true) != null
+        Infos.addUserRight(Infos.GOODLOGIN, projectToDelete)
+        log.info("delete project")
+        def result = ProjectAPI.deleteProject(projectToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def showResult = ProjectAPI.showProject(projectToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        log.info("check response:" + response)
+        assertEquals(404, showResult.code)
+    }
+
+    void testDeleteProjectNotExist() {
+        log.info("delete project")
+        def result = ProjectAPI.deleteProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        log.info("check response")
+        assertEquals(404, result.code)
+    }
 
 
-    assert projectToDelete.save()!=null
-    ProjectGroup.link(projectToDelete,group)
-    String jsonProject = projectToDelete.encodeAsJSON()
-    int idProject = projectToDelete.id
-    log.info("delete project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project/"+idProject+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-
-    log.info("check if object "+ idProject +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-
-    assertEquals(404,code)
-  }
 
 
-  void testDeleteProjectNotExist() {
-
-     log.info("create project")
-    def projectToDelete = BasicInstance.createOrGetBasicProject()
-    String jsonProject = projectToDelete.encodeAsJSON()
-
-    log.info("delete project:"+jsonProject.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/project/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
-  }
-
-
-  /*void testAddProjectUser() {
-
-     log.info("add project user")
-    def project = BasicInstance.createOrGetBasicProject()
-    def user =  BasicInstance.createOrGetBasicUser()
-
-    String URL = Infos.CYTOMINEURL+"api/project/"+project.id+"/user/"+user.id +".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post("")
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-  }   */
+//  void testDeleteProjectWithGroup1() {
+//  log.info("create project")
+//    def projectToDelete = BasicInstance.getBasicProjectNotExist()
+//    def group = BasicInstance.createOrGetBasicGroup()
+//
+//    assert projectToDelete.save(flush:true)!=null
+//      Infos.addUserRight(Infos.GOODLOGIN,projectToDelete)
+//    ProjectGroup.link(projectToDelete,group)
+//    String jsonProject = projectToDelete.encodeAsJSON()
+//    int idProject = projectToDelete.id
+//    log.info("delete project:"+jsonProject.replace("\n",""))
+//    String URL = Infos.CYTOMINEURL+"api/project/"+idProject+".json"
+//    HttpClient client = new HttpClient()
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+//    client.delete()
+//    int code  = client.getResponseCode()
+//    client.disconnect();
+//
+//    log.info("check response")
+//    assertEquals(200,code)
+//
+//    log.info("check if object "+ idProject +" exist in DB")
+//    client = new HttpClient();
+//    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+//    client.get()
+//    code  = client.getResponseCode()
+//    client.disconnect();
+//
+//    assertEquals(404,code)
+//  }
+//
+//  void testDeleteProjectWithGroup2() {
+//  log.info("create project")
+//    def projectToDelete = BasicInstance.getBasicProjectNotExist()
+//    def group = BasicInstance.createOrGetBasicGroup()
+//
+//
+//    assert projectToDelete.save()!=null
+//      Infos.addUserRight(Infos.GOODLOGIN,projectToDelete)
+//    ProjectGroup.link(projectToDelete,group)
+//    String jsonProject = projectToDelete.encodeAsJSON()
+//    int idProject = projectToDelete.id
+//    log.info("delete project:"+jsonProject.replace("\n",""))
+//    String URL = Infos.CYTOMINEURL+"api/project/"+idProject+".json"
+//    HttpClient client = new HttpClient()
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+//    client.delete()
+//    int code  = client.getResponseCode()
+//    client.disconnect();
+//
+//    log.info("check response")
+//    assertEquals(200,code)
+//
+//    log.info("check if object "+ idProject +" exist in DB")
+//    client = new HttpClient();
+//    URL = Infos.CYTOMINEURL+"api/project/"+idProject +".json"
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+//    client.get()
+//    code  = client.getResponseCode()
+//    client.disconnect();
+//
+//    assertEquals(404,code)
+//  }
 
 
 }

@@ -29,8 +29,8 @@ class RestImageFilterProjectController extends RestController {
     }
 
     def delete = {
-        Project project = projectService.read(params.project)
-        ImageFilter imageFilter = imageFilterService.read(params.imageFilter)
+        Project project = projectService.read(params.long('project'))
+        ImageFilter imageFilter = imageFilterService.read(params.long('imageFilter'))
         imageFilterProjectService.delete(project, imageFilter)
         responseSuccess([])
     }

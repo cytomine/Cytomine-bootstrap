@@ -171,7 +171,7 @@ class AnnotationService extends ModelService {
         return result
     }
 
-    def update(def json) {
+    def update(def domain,def json) {
 
         User currentUser = cytomineService.getCurrentUser()
 
@@ -193,7 +193,7 @@ class AnnotationService extends ModelService {
         return result
     }
 
-    def delete(def json) {
+    def delete(def domain,def json) {
 
         User currentUser = cytomineService.getCurrentUser()
 

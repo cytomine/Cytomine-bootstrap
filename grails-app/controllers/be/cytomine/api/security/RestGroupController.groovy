@@ -17,14 +17,14 @@ class RestGroupController extends RestController {
     def listGroupByAbstractImage = {
         if (params.idabstractimage == "undefined") responseNotFound("AbstractImageGroup", "AbstractImage", params.idabstractimage)
         else {
-            AbstractImage abstractimage = abstractImageService.read(params.idabstractimage)
+            AbstractImage abstractimage = abstractImageService.read(params.long('idabstractimage'))
             if (abstractimage) responseSuccess(groupService.list(abstractimage))
             else responseNotFound("AbstractImageGroup", "AbstractImage", params.idabstractimage)
         }
     }
 
     def show = {
-        Group group = groupService.read(params.id)
+        Group group = groupService.read(params.long('id'))
         if (group) responseSuccess(group)
         else responseNotFound("Group", params.id)
     }

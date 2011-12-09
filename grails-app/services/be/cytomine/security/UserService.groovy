@@ -9,6 +9,13 @@ import be.cytomine.command.EditCommand
 import be.cytomine.project.Project
 import be.cytomine.project.ProjectGroup
 import org.codehaus.groovy.grails.web.json.JSONObject
+import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
+import static org.springframework.security.acls.domain.BasePermission.DELETE
+import static org.springframework.security.acls.domain.BasePermission.READ
+import static org.springframework.security.acls.domain.BasePermission.WRITE
+import org.springframework.security.access.prepost.PreAuthorize
+
+
 
 class UserService extends ModelService {
 
@@ -20,6 +27,7 @@ class UserService extends ModelService {
     def commandService
     def domainService
     def userGroupService
+    def projectService
 
 
 
@@ -48,12 +56,12 @@ class UserService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json) {
+    def update(def domain,def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def json) {
+    def delete(def domain,def json) {
         User currentUser = cytomineService.getCurrentUser()
 
         if (json.id == springSecurityService.principal.id) throw new ForbiddenException("The user can't delete herself")
@@ -92,39 +100,68 @@ class UserService extends ModelService {
 
  }   */
 
-    def deleteUserFromProject(User user, Project project) {
-        synchronized (this.getClass()) {
+//    def deleteUserFromProject(User user, Project project) {
+//        synchronized (this.getClass()) {
+//
+//            if (project) {
+//                Group group = Group.findByName(project.name)
+//                log.info "group= " + group
+//                if (!group) {
+//                    group = new Group(name: project.name)
+//                    group.save()
+//                    ProjectGroup.link(project, group)
+//                }
+//
+//                userGroupService.unlink(user, group)
+//            }
+//        }
+//    }
+//
+//    def addUserFromProject(User user, Project project) {
+//        synchronized (this.getClass()) {
+//            if (project) {
+//                Group group = Group.findByName(project.name)
+//                log.info "group= " + group
+//                if (!group) {
+//                    group = new Group(name: project.name)
+//                    group.save()
+//                    ProjectGroup.link(project, group)
+//                }
+//                userGroupService.link(user, group);
+//            }
+//        }
+//        def ret = [data: [message: "OK"], status: 201]
+//        ret
+//    }
 
+    //TODO: when project private/public, a user must have permission to add himself in a public project
+    @PreAuthorize("hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    def addUserFromProject(User user, Project project, boolean admin) {
             if (project) {
-                Group group = Group.findByName(project.name)
-                log.info "group= " + group
-                if (!group) {
-                    group = new Group(name: project.name)
-                    group.save()
-                    ProjectGroup.link(project, group)
+                log.debug "addUserFromProject project=" + project + " username=" + user.username + " ADMIN=" + admin
+                if(admin) projectService.addPermission(project,user.username,ADMINISTRATION)
+                else {
+                    projectService.addPermission(project,user.username,READ)
+                    //projectService.addPermission(project,user.username,WRITE)
                 }
-
-                userGroupService.unlink(user, group)
             }
-        }
+        [data: [message: "OK"], status: 201]
     }
 
-    def addUserFromProject(User user, Project project) {
-        synchronized (this.getClass()) {
+    @PreAuthorize("hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    def deleteUserFromProject(User user, Project project, boolean admin) {
             if (project) {
-                Group group = Group.findByName(project.name)
-                log.info "group= " + group
-                if (!group) {
-                    group = new Group(name: project.name)
-                    group.save()
-                    ProjectGroup.link(project, group)
+                log.debug "deleteUserFromProject project=" + project?.id + " username=" + user?.username + " ADMIN=" + admin
+                if(admin) projectService.deletePermission(project,user.username,ADMINISTRATION)
+                else {
+                    projectService.deletePermission(project,user.username,READ)
+                    //projectService.deletePermission(project,user.username,WRITE)
                 }
-                userGroupService.link(user, group);
             }
-        }
-        def ret = [data: [message: "OK"], status: 201]
-        ret
+       [data: [message: "OK"], status: 201]
     }
+
+
 
     def list(def currentPage, def maxRows, def sortIndex, def sortOrder, def firstName, def lastName, def email) {
         def rowOffset = currentPage == 1 ? 0 : (currentPage - 1) * maxRows

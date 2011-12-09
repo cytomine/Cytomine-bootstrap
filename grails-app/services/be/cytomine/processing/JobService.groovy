@@ -26,11 +26,11 @@ class JobService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(Object json) {
+    def update(def domain,Object json) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    def delete(Object json) {
+    def delete(def domain,Object json) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

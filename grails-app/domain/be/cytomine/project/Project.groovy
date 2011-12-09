@@ -11,8 +11,13 @@ import be.cytomine.processing.ImageFilterProject
 import be.cytomine.processing.SoftwareProjects
 import be.cytomine.security.UserGroup
 import grails.converters.JSON
+import be.cytomine.security.User
+import org.springframework.security.acls.model.Acl
 
 class Project extends CytomineDomain {
+
+    def securityService
+    def aclUtilService
 
     String name
     Ontology ontology
@@ -96,7 +101,31 @@ class Project extends CytomineDomain {
     }
 
     def users() {
-        UserGroup.findAllByGroupInList(this.groups()).collect { it.user }.unique() //not optimal but okay for users&groups
+        securityService.getUserList(this)
+        //UserGroup.findAllByGroupInList(this.groups()).collect { it.user }.unique() //not optimal but okay for users&groups
+
+//        List<User> users = []
+//        println "1"
+//        try {
+//            println "2"
+//            def acl = aclUtilService.readAcl(this)
+//            println "3"
+//            acl.entries.each { entry ->
+//                users.add(User.findByUsername(entry.sid.getPrincipal()))
+//            }
+//        }
+//        catch (org.springframework.security.acls.model.NotFoundException e) {
+//            println "4"
+//            println e
+//            println "5"
+//        }
+//        catch (RuntimeException e) {
+//            println "6"
+//            println e
+//            println "7"
+//        }
+//        println "8"
+//        return users
     }
 
 
@@ -143,6 +172,31 @@ class Project extends CytomineDomain {
         else return this.discipline?.id
     }
 
+    def creator() {
+       securityService.getCreator(this)
+//        User user
+//        try {
+//        Acl acl = aclUtilService.readAcl(domain)
+//        def owner = acl.getOwner()
+//            user = User.findByUsername(owner.getPrincipal())
+//         } catch (org.springframework.security.acls.model.NotFoundException e) {e.printStackTrace()}
+//        return user
+
+    }
+
+    def admins() {
+        securityService.getAdminList(this)
+//        List<User> users = []
+//        try {
+//            def acl = aclUtilService.readAcl(domain)
+//            acl.entries.each { entry ->
+//                if (entry.permission.equals(ADMINISTRATION))
+//                    users.add(User.findByUsername(entry.sid.getPrincipal()))
+//            }
+//        } catch (org.springframework.security.acls.model.NotFoundException e) {e.printStackTrace()}
+//        return users
+    }
+
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + Project.class
         JSON.registerObjectMarshaller(Project) {
@@ -160,7 +214,9 @@ class Project extends CytomineDomain {
             returnArray['imageinstanceURL'] = UrlApi.getImageInstanceURLWithProjectId(it.id)
             returnArray['termURL'] = UrlApi.getTermsURLWithOntologyId(it.ontologyId)
             returnArray['userURL'] = UrlApi.getUsersURLWithProjectId(it.id)
-            returnArray['users'] = it.users().collect { it.id }
+             try {returnArray['creator'] = it.creator().collect { it.id }} catch (Exception e) {println "creator:"+e}
+             try {returnArray['admins'] = it.admins().collect { it.id }} catch (Exception e) {println "admins:"+e}
+             try {returnArray['users'] = it.users().collect { it.id } } catch (Exception e) {println "users:"+e}
             try {returnArray['numberOfSlides'] = it.countSlides()} catch (Exception e) {returnArray['numberOfSlides'] = -1}
             try {returnArray['numberOfImages'] = it.countImageInstance()} catch (Exception e) {returnArray['numberOfImages'] = -1}
             try {returnArray['numberOfAnnotations'] = it.countAnnotations()} catch (Exception e) {e.printStackTrace(); returnArray['numberOfAnnotations'] = -1}

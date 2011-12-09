@@ -17,14 +17,14 @@ class RestSecUserSecRoleController extends RestController {
 
     @Secured(['ROLE_ADMIN'])
     def list = {
-        User user = userService.read(params.user);
+        User user = userService.read(params.long('user'));
         responseSuccess(secUserSecRoleService.list(user))
     }
 
     @Secured(['ROLE_ADMIN'])
     def show = {
-        User user = userService.read(params.user);
-        SecRole role = secRoleService.read(params.role);
+        User user = userService.read(params.long('user'));
+        SecRole role = secRoleService.read(params.long('role'));
         SecUserSecRole secUserSecRole = secUserSecRoleService.get(user, role)
         if (!secUserSecRole) responseNotFound("SecUserSecRole", params.user)
         responseSuccess(secUserSecRole)

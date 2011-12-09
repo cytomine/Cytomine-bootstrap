@@ -13,14 +13,15 @@ class RestAnnotationTermController extends RestController {
     def termService
     def annotationService
     def annotationTermService
+    def cytomineService
 
     def listTermByAnnotation = {
         if (params.idannotation == "undefined") responseNotFound("Annotation Term", "Annotation", params.idannotation)
         else {
-            Annotation annotation = annotationService.read(params.idannotation)
+            Annotation annotation = annotationService.read(params.long('idannotation'))
             if (annotation && !params.idUser) responseSuccess(annotationTermService.list(annotation))
             else if (annotation && params.idUser) {
-                User user = User.read(params.idUser)
+                User user = User.read(params.long('idUser'))
                 if (user) responseSuccess(termService.list(annotation, user))
                 else responseNotFound("Annotation Term", "User", params.idUser)
             }
@@ -32,7 +33,7 @@ class RestAnnotationTermController extends RestController {
     def listAnnotationTermByUserNot = {
         if (params.idannotation == "undefined") responseNotFound("Annotation Term", "Annotation", params.idannotation)
         else {
-            Annotation annotation = annotationService.read(params.idannotation)
+            Annotation annotation = annotationService.read(params.long('idannotation'))
             if (annotation != null && params.idNotUser) {
                 User user = User.read(params.idNotUser)
                 if (user) responseSuccess(annotationTermService.listNotUser(annotation, user))
@@ -53,8 +54,8 @@ class RestAnnotationTermController extends RestController {
     }
 
     def show = {
-        Annotation annotation = annotationService.read(params.idannotation)
-        Term term = termService.read(params.idterm)
+        Annotation annotation = annotationService.read(params.long('idannotation'))
+        Term term = termService.read(params.long('idterm'))
 
         if (!annotation) responseNotFound("Annotation", params.idannotation)
         if (!term) responseNotFound("Term", params.idterm)
@@ -77,7 +78,8 @@ class RestAnnotationTermController extends RestController {
     }
 
     def delete = {
-        def json = JSON.parse("{idannotation: $params.idannotation, idterm: $params.idterm}")
+        User user = cytomineService.getCurrentUser()
+        def json = JSON.parse("{annotation: $params.idannotation, term: $params.idterm, user: $user.id}")
         delete(annotationTermService, json)
     }
 

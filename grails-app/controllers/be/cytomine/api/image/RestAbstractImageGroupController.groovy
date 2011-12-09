@@ -12,8 +12,8 @@ class RestAbstractImageGroupController extends RestController {
     def groupService
 
     def show = {
-        AbstractImage abstractimage = abstractImageService.read(params.idabstractimage)
-        Group group = groupService.read(params.idgroup)
+        AbstractImage abstractimage = abstractImageService.read(params.long('idabstractimage'))
+        Group group = groupService.read(params.long('idgroup'))
         if (abstractimage && group) {
             def abstractimageGroup = abstractImageGroupService.get(abstractimage, group)
             if (abstractimageGroup) responseSuccess(abstractimageGroup)

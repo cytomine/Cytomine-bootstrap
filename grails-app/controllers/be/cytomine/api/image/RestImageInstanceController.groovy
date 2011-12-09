@@ -37,33 +37,33 @@ class RestImageInstanceController extends RestController {
     }
 
     def show = {
-        ImageInstance image = imageInstanceService.read(params.id)
+        ImageInstance image = imageInstanceService.read(params.long('id'))
         if (image) responseSuccess(image)
         else responseNotFound("ImageInstance", params.id)
     }
 
     def showByProjectAndImage = {
-        Project project = projectService.read(params.idproject)
-        AbstractImage image = abstractImageService.read(params.idimage)
+        Project project = projectService.read(params.long('idproject'))
+        AbstractImage image = abstractImageService.read(params.long('idimage'))
         ImageInstance imageInstance = imageInstanceService.get(project, image)
         if (imageInstance) responseSuccess(imageInstance)
         else responseNotFound("ImageInstance", "Project", params.idproject, "Image", params.idimage)
     }
 
     def listByUser = {
-        User user = userService.read(params.id)
+        User user = userService.read(params.long('id'))
         if (user) responseSuccess(imageInstanceService.list(user))
         else responseNotFound("ImageInstance", "User", params.id)
     }
 
     def listByImage = {
-        AbstractImage image = abstractImageService.read(params.id)
+        AbstractImage image = abstractImageService.read(params.long('id'))
         if (image) responseSuccess(imageInstanceService.list(image))
         else responseNotFound("ImageInstance", "AbstractImage", params.id)
     }
 
     def listByProject = {
-        Project project = projectService.read(params.id)
+        Project project = projectService.read(params.long('id'))
         def images = imageInstanceService.list(project)
 
         if (project) responseSuccess(images)
@@ -79,12 +79,12 @@ class RestImageInstanceController extends RestController {
     }
 
     def delete = {
-        delete(imageInstanceService, JSON.parse("{idproject : $params.idproject, idimage : $params.idimage}"))
+        delete(imageInstanceService, JSON.parse("{project : $params.idproject, image : $params.idimage}"))
     }
 
     def window = {
         println "WINDOW REQUEST " + params.toString()
-        ImageInstance image = ImageInstance.read(params.id)
+        ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
         int x = Integer.parseInt(params.x)
         int y = abstractImage.getHeight() - Integer.parseInt(params.y)
@@ -101,7 +101,7 @@ class RestImageInstanceController extends RestController {
 
     def mask = {
         println "WINDOW REQUEST " + params.toString()
-        ImageInstance image = ImageInstance.read(params.id)
+        ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
         int x = Integer.parseInt(params.x)
         int y = Integer.parseInt(params.y)

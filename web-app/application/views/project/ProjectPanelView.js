@@ -75,6 +75,8 @@ var ProjectPanelView = Backbone.View.extend({
       var idOntology = json.ontology;
       //json.ontology = window.app.models.ontologies.get(idOntology).get('name');
 
+       json.creator = window.app.models.users.get(json.creator).prettyName();
+
       var users = [];
       _.each(self.model.get('users'), function (idUser) {
          users.push(window.app.models.users.get(idUser).prettyName());
@@ -86,6 +88,20 @@ var ProjectPanelView = Backbone.View.extend({
       }
 
       json.users = users.join(", ");
+
+
+      var admins = [];
+      _.each(self.model.get('admins'), function (idUser) {
+         admins.push(window.app.models.users.get(idUser).prettyName());
+      });
+      if (_.size(users ) == 0) {
+         json.shortAdmins = admins[0];
+      } else if (_.size(users ) >= 1){
+         json.shortAdmins = admins[0] + ", ...";
+      }
+
+      json.admins = admins.join(", ");
+
 
       if(json.disciplineName==undefined) {
           json.disciplineName="";
@@ -104,6 +120,8 @@ var ProjectPanelView = Backbone.View.extend({
 
       $(self.el).find(".usersPopover").popover();
       $(self.el).find(".usersPopover").click(function(){return false;});
+      $(self.el).find(".adminsPopover").popover();
+      $(self.el).find(".adminsPopover").click(function(){return false;});
       self.renderCurrentProjectButton();
       self.renderShowImageButton(json.numberOfImages);
 

@@ -13,7 +13,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 
 class OntologyService extends ModelService {
 
-    static transactional = true
+    static transactional = false
     def springSecurityService
     def transactionService
     def commandService
@@ -72,14 +72,14 @@ class OntologyService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json) throws CytomineException {
+    def update(def domain,def json) throws CytomineException {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
 
 
-    def delete(def json) throws CytomineException {
+    def delete(def domain,def json) throws CytomineException {
         //Start transaction
         transactionService.start()
         User currentUser = cytomineService.getCurrentUser()

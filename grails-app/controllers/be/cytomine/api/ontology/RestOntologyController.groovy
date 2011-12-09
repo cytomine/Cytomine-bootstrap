@@ -22,7 +22,7 @@ class RestOntologyController extends RestController {
     }
 
     def listByTerm = {
-        Term term = termService.read(params.id);
+        Term term = termService.read(params.long('id'));
         if (term) responseSuccess(ontologyService.listByTerm(term))
         else responseNotFound("Ontology", "Term", params.id)
     }
@@ -39,7 +39,7 @@ class RestOntologyController extends RestController {
     }
 
     def show = {
-        Ontology ontology = ontologyService.read(params.id)
+        Ontology ontology = ontologyService.read(params.long('id'))
         if (ontology) responseSuccess(ontology)
         else responseNotFound("Ontology", params.id)
     }

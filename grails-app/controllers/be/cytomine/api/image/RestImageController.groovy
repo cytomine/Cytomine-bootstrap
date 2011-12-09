@@ -41,7 +41,7 @@ class RestImageController extends RestController {
 
 
     def show = {
-        AbstractImage image = abstractImageService.read(params.id)
+        AbstractImage image = abstractImageService.read(params.long('id'))
         if (image) responseSuccess(image)
         else responseNotFound("Image", params.id)
     }
@@ -66,7 +66,7 @@ class RestImageController extends RestController {
     }
 
     def metadata = {
-        def url = abstractImageService.metadata(params.id)
+        def url = abstractImageService.metadata(params.long('id'))
 
         withFormat {
             json {
@@ -76,17 +76,17 @@ class RestImageController extends RestController {
     }
 
     def imageProperties = {
-        response(abstractImageService.imageProperties(params.id))
+        response(abstractImageService.imageProperties(params.long('id')))
     }
 
     def imageProperty = {
-        def imageProperty = abstractImageService.imageProperty(params.imageproperty)
+        def imageProperty = abstractImageService.imageProperty(params.long('id'))
         if (imageProperty) responseSuccess(imageProperty)
         else responseNotFound("ImageProperty", params.imageproperty)
     }
 
     def imageservers = {
-        AbstractImage image = abstractImageService.read(params.id)
+        AbstractImage image = abstractImageService.read(params.long('id'))
         def urls = image.getImageServers().collect { it.getZoomifyUrl() + image.getPath() + "/" }
         def result = [:]
         result.imageServersURLs = urls
@@ -94,7 +94,7 @@ class RestImageController extends RestController {
     }
 
     def thumb = {
-        AbstractImage image = AbstractImage.read(params.id)
+        AbstractImage image = AbstractImage.read(params.long('id'))
         try {
             responseImage(image.getThumbURL())
         } catch (Exception e) {

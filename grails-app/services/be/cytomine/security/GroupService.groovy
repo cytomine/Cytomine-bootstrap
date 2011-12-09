@@ -45,12 +45,12 @@ class GroupService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json) {
+    def update(def domain,def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def json) {
+    def delete(def domain,def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }

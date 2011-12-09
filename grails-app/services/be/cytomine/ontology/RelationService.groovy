@@ -26,11 +26,11 @@ class RelationService extends ModelService {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    def update(def json) {
+    def update(def domain,def json) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    def delete(def json) {
+    def delete(def domain,def json) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

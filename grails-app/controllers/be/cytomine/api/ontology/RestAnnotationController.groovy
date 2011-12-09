@@ -26,19 +26,19 @@ class RestAnnotationController extends RestController {
     }
 
     def listByImage = {
-        ImageInstance image = imageInstanceService.read(params.id)
+        ImageInstance image = imageInstanceService.read(params.long('id'))
         if (image) responseSuccess(annotationService.list(image))
         else responseNotFound("Image", params.id)
     }
 
     def listByUser = {
-        User user = userService.read(params.id)
+        User user = userService.read(params.long('id'))
         if (user) responseSuccess(annotationService.list(user))
         else responseNotFound("User", params.id)
     }
 
     def listByProject = {
-        Project project = projectService.read(params.id)
+        Project project = projectService.read(params.long('id'))
         List<User> userList = userService.list(project)
 
         if (params.users) {
@@ -56,7 +56,7 @@ class RestAnnotationController extends RestController {
     }
 
     def listByImageAndUser = {
-        def image = imageInstanceService.read(params.idImage)
+        def image = imageInstanceService.read(params.long('idImage'))
         def user = userService.read(params.idUser)
 
         if (image && user) responseSuccess(annotationService.list(image, user))
@@ -65,14 +65,14 @@ class RestAnnotationController extends RestController {
     }
 
     def listAnnotationByTerm = {
-        Term term = termService.read(params.idterm)
+        Term term = termService.read(params.long('idterm'))
         if (term) responseSuccess(annotationService.list(term))
         else responseNotFound("Annotation Term", "Term", params.idterm)
     }
 
     def listAnnotationByProjectAndTerm = {
-        Term term = termService.read(params.idterm)
-        Project project = projectService.read(params.idproject)
+        Term term = termService.read(params.long('idterm'))
+        Project project = projectService.read(params.long('idproject'))
         List<User> userList = userService.list(project)
 
         if (params.users) {
@@ -95,7 +95,7 @@ class RestAnnotationController extends RestController {
 
     def downloadDocumentByProject = {
         // Export service provided by Export plugin
-        Project project = projectService.read(params.id)
+        Project project = projectService.read(params.long('id'))
         if (project) {
             if (params?.format && params.format != "html") {
                 def exporterIdentifier = params.format;
@@ -135,7 +135,7 @@ class RestAnnotationController extends RestController {
     }
 
     def show = {
-        Annotation annotation = annotationService.read(params.id)
+        Annotation annotation = annotationService.read(params.long('id'))
         if (annotation) responseSuccess(annotation)
         else responseNotFound("Annotation", params.id)
     }

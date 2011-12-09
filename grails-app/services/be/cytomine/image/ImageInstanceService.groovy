@@ -78,18 +78,18 @@ class ImageInstanceService extends ModelService {
         }
     }
 
-    def update(def json) {
+    def update(def domain,def json) {
         User currentUser = cytomineService.getCurrentUser()
         executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def json) {
+    def delete(def domain,def json) {
         //Start transaction
         transactionService.start()
         User currentUser = cytomineService.getCurrentUser()
         //Read image
-        Project project = Project.read(json.idproject)
-        AbstractImage image = AbstractImage.read(json.idimage)
+        Project project = Project.read(json.project)
+        AbstractImage image = AbstractImage.read(json.image)
         ImageInstance imageInstance = ImageInstance.findByBaseImageAndProject(image, project)
 
         //Delete each annotation from image (if possible)
@@ -186,8 +186,15 @@ class ImageInstanceService extends ModelService {
      * @return domain retrieve thanks to json
      */
     def retrieve(JSONObject json) {
-        ImageInstance image = ImageInstance.get(json.id)
-        if (!image) throw new ObjectNotFoundException("ImageInstance " + json.id + " not found")
-        return image
+        ImageInstance imageInstance
+        imageInstance = ImageInstance.read(json.id)
+
+        if(!imageInstance) {
+            AbstractImage image = AbstractImage.read(json.image)
+            Project project = Project.read(json.project)
+            imageInstance = ImageInstance.findByProjectAndBaseImage(project,image)
+        }
+        if (!imageInstance) throw new ObjectNotFoundException("ImageInstance " + json.id + " not found")
+        return imageInstance
     }
 }

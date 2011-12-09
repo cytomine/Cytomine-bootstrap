@@ -13,7 +13,7 @@ class RestDisciplineController extends RestController {
     }
 
     def show = {
-        Discipline discipline = disciplineService.read(params.id)
+        Discipline discipline = disciplineService.read(params.long('id'))
         if (discipline) responseSuccess(discipline)
         else responseNotFound("Discipline", params.id)
     }

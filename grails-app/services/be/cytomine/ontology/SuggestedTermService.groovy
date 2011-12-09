@@ -69,13 +69,13 @@ class SuggestedTermService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def delete(def json) {
+    def delete(def domain,def json) {
         User currentUser = cytomineService.getCurrentUser()
-        def result = deleteSuggestedTerm(json.idannotation, json.idterm, json.idjob, currentUser)
+        def result = deleteSuggestedTerm(json.annotation, json.term, json.job, currentUser)
         return result
     }
 
-    def update(def json) {
+    def update(def domain,def json) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -15,7 +15,7 @@ class RestJobController extends RestController {
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
-        Job job = jobService.read(params.id)
+        Job job = jobService.read(params.long('id'))
         if (job) responseSuccess(job)
         else responseNotFound("Job", params.id)
     }

@@ -27,12 +27,12 @@ class AbstractImageGroupService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def delete(def json) throws CytomineException {
+    def delete(def domain,def json) throws CytomineException {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
-    def update(def json) {
+    def update(def domain,def json) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

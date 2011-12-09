@@ -33,7 +33,7 @@ class RestUserController extends RestController {
      */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
-        User user = userService.read(params.id)
+        User user = userService.read(params.long('id'))
         if (user) responseSuccess(user)
         else responseNotFound("User", params.id)
     }
@@ -45,7 +45,7 @@ class RestUserController extends RestController {
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showByProject = {
-        Project project = projectService.read(params.id)
+        Project project = projectService.read(params.long('id'))
         if (project) responseSuccess(project.users())
         else responseNotFound("User", "Project", params.id)
     }
@@ -63,32 +63,48 @@ class RestUserController extends RestController {
         delete(userService, JSON.parse("{id : $params.id}"))
     }
 
-
-    @Secured(['ROLE_ADMIN'])
     def deleteUser = {
         Project project = Project.get(params.id)
         User user = User.get(params.idUser)
+        boolean admin = false
+         userService.deleteUserFromProject(user,project,admin)
+        response.status = 200
+        def ret = [data: [message: "OK"], status: 200]
+        response(ret)
+    }
 
-        synchronized (this.getClass()) {
-            userService.deleteUserFromProject(user, project)
-        }
+    def addUser = {
+        Project project = Project.get(params.id)
+        User user = User.get(params.idUser)
+        boolean admin = false
+        log.debug "addUser project="+project+" user="+user+" admin="+admin
+        userService.addUserFromProject(user,project,admin)
+        response.status = 200
+        def ret = [data: [message: "OK"], status: 200]
+        response(ret)
 
-        response.status = 201
-        def ret = [data: [message: "OK"], status: 201]
+    }
+
+    @Secured(['ROLE_ADMIN'])
+    def deleteUserAdmin = {
+        Project project = Project.get(params.id)
+        User user = User.get(params.idUser)
+        boolean admin = true
+         userService.deleteUserFromProject(user,project,admin)
+        response.status = 200
+        def ret = [data: [message: "OK"], status: 200]
         response(ret)
     }
 
     @Secured(['ROLE_ADMIN'])
-    def addUser = {
+    def addUserAdmin = {
         Project project = Project.get(params.id)
         User user = User.get(params.idUser)
-        log.info "project= " + project
-
-        synchronized (this.getClass()) {
-            userService.addUserFromProject(user, project)
-        }
-        response.status = 201
-        def ret = [data: [message: "OK"], status: 201]
+        boolean admin = true
+        log.debug "addUser project="+project+" user="+user+" admin="+admin
+        userService.addUserFromProject(user,project,admin)
+        response.status = 200
+        def ret = [data: [message: "OK"], status: 200]
         response(ret)
 
     }

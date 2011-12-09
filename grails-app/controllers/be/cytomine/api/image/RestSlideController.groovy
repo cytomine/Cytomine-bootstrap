@@ -24,7 +24,7 @@ class RestSlideController extends RestController {
     def listByUser = {
         User user = null
         if (params.id != null) {
-            user = userService.read(params.id)
+            user = userService.read(params.long('id'))
         } else {
             user = cytomineService.getCurrentUser()
         }
@@ -45,7 +45,7 @@ class RestSlideController extends RestController {
 
 
     def show = {
-        Slide slide = slideService.read(params.id)
+        Slide slide = slideService.read(params.long('id'))
         if (slide) responseSuccess(slide)
         else responseNotFound("Slide", params.id)
     }

@@ -1,3 +1,6 @@
+import org.springframework.security.acls.model.NotFoundException
+import org.springframework.security.access.AccessDeniedException
+
 class UrlMappings {
 
     static mappings = {
@@ -12,8 +15,14 @@ class UrlMappings {
         "/"(view:"/index")
 
         /* Errors */
-        "/500" (view:'/error')
-        "/403" (view:'/forbidden')
+//        "/500" (view:'/error')
+//        "/403" (view:'/forbidden')
+        "403"(controller: "errors", action: "error403")
+        //"404"(controller: "errors", action: "error404")
+        "500"(controller: "errors", action: "error500")
+        "500"(controller: "errors", action: "error403", exception: AccessDeniedException)
+        "500"(controller: "errors", action: "error403", exception: NotFoundException)
+
 
         /* FILTERS */
         "/api/user/$id/image"(controller:"restImage"){
@@ -260,6 +269,9 @@ class UrlMappings {
         }
         "/api/project/$id/user/$idUser"(controller: "restUser"){
             action = [DELETE:"deleteUser",POST:"addUser"]
+        }
+        "/api/project/$id/user/$idUser/admin"(controller: "restUser"){
+            action = [DELETE:"deleteUserAdmin",POST:"addUserAdmin"]
         }
         "/api/project/$id/annotation/download"(controller: "restAnnotation"){
             action = [GET:"downloadDocumentByProject"]

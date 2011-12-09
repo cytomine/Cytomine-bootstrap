@@ -13,7 +13,7 @@ class RestRelationController extends RestController {
     }
 
     def show = {
-        Relation relation = relationService.read(params.id)
+        Relation relation = relationService.read(params.long('id'))
         if (relation) responseSuccess(relation)
         else responseNotFound("Relation", params.id)
     }

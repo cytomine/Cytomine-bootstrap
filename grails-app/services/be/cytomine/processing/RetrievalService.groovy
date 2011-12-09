@@ -41,7 +41,7 @@ class RetrievalService {
                 if (projectTerms.contains(term)) {
                     Double oldValue = bestTermNotOrdered.get(term)
                     //for each term, add similarity value
-                    bestTermNotOrdered.put(term, oldValue + annotation.similarity)
+                    bestTermNotOrdered.put(term, oldValue + similarAnnotation.similarity)
                 }
             }
         }
@@ -61,9 +61,8 @@ class RetrievalService {
         return data
     }
 
-    def getTermMap(Project projet, List<Term> terms) {
+    def getTermMap(List<Term> termList) {
         def map = [:]
-        def termList = projet.ontology.terms()
         termList.each {
             map.put(it, 0d)
         }

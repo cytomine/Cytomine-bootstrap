@@ -18,14 +18,14 @@ class RestRelationTermController extends RestController {
 
     def listByRelation = {
         Relation relation
-        if (params.id != null) relation = relationService.read(params.id)
+        if (params.id != null) relation = relationService.read(params.long('id'))
         else relation = relationService.getRelationParent()
         if (relation) responseSuccess(relationTermService.list(relation))
         else responseNotFound("RelationTerm", "Relation", params.id)
     }
 
     def listByTerm = {
-        Term term = termService.read(params.id)
+        Term term = termService.read(params.long('id'))
         String position = params.i
 
         if (term && (position == "1" || position == "2"))
@@ -34,18 +34,18 @@ class RestRelationTermController extends RestController {
     }
 
     def listByTermAll = {
-        Term term = termService.read(params.id)
+        Term term = termService.read(params.long('id'))
         if (term) responseSuccess(relationTermService.list(term))
         else responseNotFound("RelationTerm", "Term", params.id)
     }
 
     def show = {
         Relation relation
-        if (params.idrelation != null) relation = relationService.read(params.idrelation)
+        if (params.idrelation != null) relation = relationService.read(params.long('idrelation'))
         else relation = relationService.getRelationParent()
 
-        Term term1 = termService.read(params.idterm1)
-        Term term2 = termService.read(params.idterm2)
+        Term term1 = termService.read(params.long('idterm1'))
+        Term term2 = termService.read(params.long('idterm2'))
 
         RelationTerm relationTerm = relationTermService.get(relation, term1, term2)
 
@@ -58,7 +58,7 @@ class RestRelationTermController extends RestController {
         def json = request.JSON
         Relation relation
         if (json.relation != null)
-            relation = relationService.read(params.id)
+            relation = relationService.read(params.long('id'))
         else
             relation = relationService.getRelationParent()
 
@@ -71,11 +71,11 @@ class RestRelationTermController extends RestController {
 
         Relation relation
         if (params.idrelation != null)
-            relation = relationService.read(params.idrelation)
+            relation = relationService.read(params.long('idrelation'))
         else
             relation = relationService.getRelationParent()
 
-        def json = JSON.parse("{relation: ${relation ? relation.id : -1}, idterm1: $params.idterm1, idterm2: $params.idterm2}")
+        def json = JSON.parse("{relation: ${relation ? relation.id : -1}, term1: $params.idterm1, term2: $params.idterm2}")
         delete(relationTermService, json)
     }
 }

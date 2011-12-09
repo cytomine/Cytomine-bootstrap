@@ -15,7 +15,7 @@ class RestSoftwareController extends RestController {
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
-        Software software = softwareService.read(params.id)
+        Software software = softwareService.read(params.long('id'))
         if (software) responseSuccess(software)
         else responseNotFound("Software", params.id)
     }
