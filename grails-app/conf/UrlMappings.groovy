@@ -248,7 +248,7 @@ class UrlMappings {
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
 
-        "/api/software"(controller:"restSoftware") {
+        "/api/software"(controller:"recreateOrGetBasicOntology()stSoftware") {
             action = [GET:"list"]
         }
 
