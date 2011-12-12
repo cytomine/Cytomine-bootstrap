@@ -19,6 +19,8 @@ class ProjectAPI extends DomainAPI {
 
     private static final log = LogFactory.getLog(this)
 
+
+
     static def showProject(Long id, String username, String password) {
         log.info("show project:" + id)
         String URL = Infos.CYTOMINEURL + "api/project/" + id + ".json"
@@ -55,8 +57,18 @@ class ProjectAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+
+    static def createProject(Project projectToAdd, User user) {
+       createProject(projectToAdd.encodeAsJSON(),user.username,user.password)
+    }
+
+
     static def createProject(Project projectToAdd, String username, String password) {
         return createProject(projectToAdd.encodeAsJSON(), username, password)
+    }
+
+    static def createProject(String jsonProject, User user) {
+        createProject(jsonProject,user.username,user.password)
     }
 
     static def createProject(String jsonProject, String username, String password) {
@@ -106,7 +118,7 @@ class ProjectAPI extends DomainAPI {
         jsonUpdate.ontology = newOtology.id
         jsonProject = jsonUpdate.encodeAsJSON()
 
-        def data = updateProject(project, jsonProject, username, password)
+        def data = updateProject(project.id, jsonProject, username, password)
         data.mapNew = mapNew
         data.mapOld = mapOld
         return data
@@ -138,6 +150,10 @@ class ProjectAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def addUserProject(def idProject, def idUser, User user) {
+        addUserProject(idProject, idUser, user.username, user.password)
+    }
+
     static def addUserProject(def idProject, def idUser, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/project/${idProject}/user/${idUser}.json"
         HttpClient client = new HttpClient()
@@ -148,6 +164,10 @@ class ProjectAPI extends DomainAPI {
         println response
         client.disconnect();
         return [data: response, code: code]
+    }
+
+    static def deleteUserProject(def idProject, def idUser, User user) {
+        deleteUserProject(idProject,idUser,user.username,user.password)
     }
 
     static def deleteUserProject(def idProject, def idUser, String username, String password) {

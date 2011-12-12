@@ -15,6 +15,9 @@ import com.vividsolutions.jts.geom.LinearRing
 import grails.converters.JSON
 import java.awt.Color
 import java.awt.image.BufferedImage
+import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.test.Infos
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,13 +35,15 @@ class RestImageInstanceController extends RestController {
     def index = {
         redirect(controller: "image")
     }
-    def list = {
-        response(imageInstanceService.list())
-    }
 
     def show = {
+        log.info "show"
         ImageInstance image = imageInstanceService.read(params.long('id'))
-        if (image) responseSuccess(image)
+
+        if (image) {
+            imageInstanceService.checkAuthorization(image.project.id)
+            responseSuccess(image)
+        }
         else responseNotFound("ImageInstance", params.id)
     }
 
@@ -46,40 +51,71 @@ class RestImageInstanceController extends RestController {
         Project project = projectService.read(params.long('idproject'))
         AbstractImage image = abstractImageService.read(params.long('idimage'))
         ImageInstance imageInstance = imageInstanceService.get(project, image)
-        if (imageInstance) responseSuccess(imageInstance)
+        if (imageInstance) {
+            imageInstanceService.checkAuthorization(project.id)
+            responseSuccess(imageInstance)
+        }
         else responseNotFound("ImageInstance", "Project", params.idproject, "Image", params.idimage)
-    }
-
-    def listByUser = {
-        User user = userService.read(params.long('id'))
-        if (user) responseSuccess(imageInstanceService.list(user))
-        else responseNotFound("ImageInstance", "User", params.id)
-    }
-
-    def listByImage = {
-        AbstractImage image = abstractImageService.read(params.long('id'))
-        if (image) responseSuccess(imageInstanceService.list(image))
-        else responseNotFound("ImageInstance", "AbstractImage", params.id)
     }
 
     def listByProject = {
         Project project = projectService.read(params.long('id'))
-        def images = imageInstanceService.list(project)
 
-        if (project) responseSuccess(images)
+        if (project) {
+            imageInstanceService.checkAuthorization(project.id)
+            responseSuccess(imageInstanceService.list(project))
+        }
         else responseNotFound("ImageInstance", "Project", params.id)
     }
 
     def add = {
-        add(imageInstanceService, request.JSON)
+        try {
+            def json = request.JSON
+            if(!json.project || !Project.read(json.project)) throw new WrongArgumentException("Image Instance must have a valide project:"+json.project)
+            imageInstanceService.checkAuthorization(request.JSON.project)
+            log.debug("add")
+            def result = imageInstanceService.add(json)
+            log.debug("result")
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error("add error:" + e.msg)
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        } finally {
+            transactionService?.stopIfTransactionInProgress()
+        }
     }
 
+
     def update = {
-        update(imageInstanceService, request.JSON)
+        def json = request.JSON
+        try {
+            def domain = imageInstanceService.retrieve(json)
+            try {Infos.printRight(domain?.project) } catch(Exception e) {log.info e}
+            imageInstanceService.checkAuthorization(domain?.project?.id)
+            def result = imageInstanceService.update(domain,json)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        } finally {
+            transactionService?.stopIfTransactionInProgress()
+        }
     }
 
     def delete = {
-        delete(imageInstanceService, JSON.parse("{project : $params.idproject, image : $params.idimage}"))
+        def json = JSON.parse("{project : $params.idproject, image : $params.idimage}")
+        try {
+            def domain = imageInstanceService.retrieve(json)
+            imageInstanceService.checkAuthorization(domain?.project?.id)
+            def result = imageInstanceService.delete(domain,json)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        } finally {
+            transactionService?.stopIfTransactionInProgress()
+        }
     }
 
     def window = {

@@ -96,7 +96,6 @@ class ProjectSecurityTests extends functionaltestplugin.FunctionalTestCase {
       //check if user 2 can access/update/delete
       assertEquals(200, ProjectAPI.showProject(project.id,USERNAME2,PASSWORD2).code)
       assertTrue(ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.listProject(USERNAME2,PASSWORD2).data)))
-      log.info "toto"
       assertEquals(403, ProjectAPI.updateProject(project,USERNAME2,PASSWORD2).code)
       assertEquals(403, ProjectAPI.deleteProject(project.id,USERNAME2,PASSWORD2).code)
 

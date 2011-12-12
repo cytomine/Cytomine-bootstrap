@@ -7,7 +7,10 @@ import grails.plugins.springsecurity.Secured
 
        def error403 = {
             response.status = 403
-            render "FORBIDDEN"
+            render(contentType: 'text/json') {
+                errors(message: "You are not allowed to do this!")
+            }
+
        }
 
        def error404 = {}

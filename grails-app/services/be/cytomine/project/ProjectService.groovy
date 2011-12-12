@@ -37,21 +37,21 @@ class ProjectService extends ModelService {
        addPermission(project, username, aclPermissionFactory.buildFromMask(permission))
     }
 
-    @PreAuthorize("hasPermission(#project, admin)")
+    @PreAuthorize("hasPermission(#project, admin) or hasRole('ROLE_ADMIN')")
     void addPermission(Project project, String username, Permission permission) {
         log.info "Add Permission " +  permission.toString() + " for " + username + " to " + project?.name
        aclUtilService.addPermission(project, username, permission)
     }
 
    @Transactional
-   @PreAuthorize("hasPermission(#project, admin)")
-   void deletePermission(Project project, String username, Permission permission) {
+   @PreAuthorize("hasPermission(#project, admin) or #user.id == principal.id or hasRole('ROLE_ADMIN')")
+   void deletePermission(Project project, User user, Permission permission) {
       def acl = aclUtilService.readAcl(project)
 
       // Remove all permissions associated with this particular recipient
       acl.entries.eachWithIndex { entry, i ->
           log.debug "entry.permission.equals(permission)="+entry.permission.equals(permission) + " entry.sid="+entry.sid.getPrincipal()
-         if (entry.sid.getPrincipal().equals(username) && entry.permission.equals(permission)) {
+         if (entry.sid.getPrincipal().equals(user.username) && entry.permission.equals(permission)) {
              log.debug "REMOVE PERMISSION FOR"
             acl.deleteAce(i)
          }

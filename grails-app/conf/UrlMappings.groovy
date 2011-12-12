@@ -28,9 +28,6 @@ class UrlMappings {
         "/api/user/$id/image"(controller:"restImage"){
             action = [GET:"listByUser"]
         }
-        "/api/user/$id/imageinstance"(controller:"restImageInstance"){
-            action = [GET:"listByUser"]
-        }
         "/api/user/$id/annotation"(controller:"restAnnotation"){
             action = [GET:"listByUser"]
         }
@@ -70,9 +67,7 @@ class UrlMappings {
         "/api/project/$project/imagefilter/$imageFilter"(controller: "restImageFilterProject"){
             action = [DELETE : "delete"]
         }
-        "/api/project/$id/imageinstance"(controller: "restImageInstance"){
-            action = [GET:"listByProject"]
-        }
+
         "/api/project/$id/annotation"(controller: "restAnnotation"){
             action = [GET:"listByProject"]
         }
@@ -88,15 +83,8 @@ class UrlMappings {
         "/api/imageinstance/$id/term"(controller:"restTerm"){
             action = [GET:"listByImageInstance"]
         }
-        "/api/image/$id/imageinstance"(controller: "restImageInstance"){
-            action = [GET:"listByImage"]
-        }
         "/api/image/$idabstractimage/group"(controller:"restGroup"){
             action = [GET: "listGroupByAbstractImage"]
-        }
-
-        "/api/project/$idproject/image/$idimage/imageinstance"(controller:"restImageInstance"){
-            action = [GET:"showByProjectAndImage",DELETE:"delete"]
         }
 
         //TODO:  + add current user

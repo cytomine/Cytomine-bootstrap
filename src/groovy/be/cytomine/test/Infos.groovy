@@ -23,6 +23,7 @@ import org.springframework.security.acls.model.MutableAcl
 import org.springframework.security.acls.model.NotFoundException
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.acls.domain.ObjectIdentityImpl
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -89,6 +90,7 @@ class Infos {
 
     static void printRight(def domain) {
         def aclUtilService = ApplicationHolder.application.getMainContext().getBean("aclUtilService")
+        if(!AclObjectIdentity.findByObjectId(domain.id)) return
         def acl = aclUtilService.readAcl(domain)
         println "Right for domain " + domain.id + " name=" + domain?.name
 

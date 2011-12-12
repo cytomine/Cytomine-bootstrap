@@ -60,11 +60,7 @@ var ImageInstanceModel = Backbone.Model.extend({
 var ImageInstanceCollection = Backbone.Collection.extend({
    model: ImageModel,
    url: function() {
-      if (this.project != undefined) {
          return "api/project/" + this.project + "/imageinstance.json";
-      } else {
-         return "api/imageinstance.json";
-      }
    },
    initialize: function (options) {
       this.project = options.project;

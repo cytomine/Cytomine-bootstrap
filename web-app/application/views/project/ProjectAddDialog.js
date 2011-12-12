@@ -107,7 +107,7 @@ var AddProjectDialog = Backbone.View.extend({
       $('input[type=checkbox][name=usercheckbox]:checked').each(function(i,item){
          users.push($(item).attr("value"))
       });
-
+       console.log("toto");
       //create project
       new ProjectModel({name : name, ontology : ontology, discipline:discipline }).save({name : name, ontology : ontology,discipline:discipline},{
              success: function (model, response) {
@@ -133,6 +133,7 @@ var AddProjectDialog = Backbone.View.extend({
 
              },
              error: function (model, response) {
+
                 var json = $.parseJSON(response.responseText);
 
                 window.app.view.message("Project", json.errors, "error");

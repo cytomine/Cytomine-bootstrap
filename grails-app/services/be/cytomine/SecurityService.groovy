@@ -55,7 +55,9 @@ class SecurityService {
             if (aclObject) {
                 def acl = aclUtilService.readAcl(domain)
                 acl.entries.each { entry ->
-                    users.add(User.findByUsername(entry.sid.getPrincipal()))
+                    User user = User.findByUsername(entry.sid.getPrincipal())
+                    if(!users.contains(user))
+                        users.add(user)
                 }
             }
         }

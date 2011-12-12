@@ -9,7 +9,7 @@ class ImageInstanceUrlMappings {
     static mappings = {
         /* Image Instance */
         "/api/imageinstance"(controller: "restImageInstance"){
-            action = [GET:"list", POST:"add"]
+            action = [POST:"add"]
         }
         "/api/imageinstance/$id"(controller: "restImageInstance"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
@@ -22,6 +22,12 @@ class ImageInstanceUrlMappings {
         }
         "/api/annotation/$annotation/mask-$term"(controller: "restImageInstance"){
             action = [GET:"cropmask"]
+        }
+        "/api/project/$id/imageinstance"(controller: "restImageInstance"){
+            action = [GET:"listByProject"]
+        }
+        "/api/project/$idproject/image/$idimage/imageinstance"(controller:"restImageInstance"){
+            action = [GET:"showByProjectAndImage",DELETE:"delete"]
         }
     }
 }

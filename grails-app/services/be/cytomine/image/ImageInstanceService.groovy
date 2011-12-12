@@ -11,6 +11,8 @@ import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
+import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.test.Infos
 
 class ImageInstanceService extends ModelService {
 
@@ -25,34 +27,32 @@ class ImageInstanceService extends ModelService {
 
     boolean saveOnUndoRedoStack = true
 
+    //@PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasPermission(#id ,'be.cytomine.project.Project',read) or hasPermission(#id ,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
+    void checkAuthorization(def id) {
+        log.info "checkAuthorization OK"
+    }
+
     def read(def id) {
         ImageInstance.read(id)
     }
 
+    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
     def read(Project project, AbstractImage image) {
         ImageInstance.findByBaseImageAndProject(image, project)
     }
 
     def get(def id) {
         ImageInstance.get(id)
+        //get(image.project, image.baseImage)
     }
 
+    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
     def get(Project project, AbstractImage image) {
         ImageInstance.findByBaseImageAndProject(image, project)
     }
 
-    def list() {
-        ImageInstance.list()
-    }
-
-    def list(User user) {
-        ImageInstance.findAllByUser(user)
-    }
-
-    def list(AbstractImage image) {
-        ImageInstance.findAllByBaseImage(image)
-    }
-
+    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
     def list(Project project) {
         def images = ImageInstance.createCriteria().list {
             createAlias("baseImage", "i")
@@ -61,29 +61,26 @@ class ImageInstanceService extends ModelService {
         }
         return images
     }
-//    def list(Project project) {
-//        def images = ImageInstance.createCriteria().list {
-//            createAlias("slide", "s")
-//            eq("project", project)
-//            order("slide")
-//            order("s.index", "asc")
-//        }
-//        return images
-//    }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
+        log.info "current user = " + currentUser.username
         synchronized (this.getClass()) {
             executeCommand(new AddCommand(user: currentUser), json)
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     def update(def domain,def json) {
+//        if(domain) checkAuthorization(domain.projectId)
         User currentUser = cytomineService.getCurrentUser()
         executeCommand(new EditCommand(user: currentUser), json)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     def delete(def domain,def json) {
+//        if(domain) checkAuthorization(domain.projectId)
         //Start transaction
         transactionService.start()
         User currentUser = cytomineService.getCurrentUser()
