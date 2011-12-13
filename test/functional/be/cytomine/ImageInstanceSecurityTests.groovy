@@ -40,7 +40,9 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
       assertEquals(200, result.code)
       image = result.data
       assertEquals(200, ImageInstanceAPI.showImageInstance(image.id,USERNAMEADMIN,PASSWORDADMIN).code)
-      assertTrue(ImageInstanceAPI.containsInJSONList(image.id,JSON.parse(ImageInstanceAPI.listImageInstanceByProject(project.id,USERNAMEADMIN,PASSWORDADMIN).data)))
+      result = ImageInstanceAPI.listImageInstanceByProject(project.id,USERNAMEADMIN,PASSWORDADMIN)
+      assertEquals(200, result.code)
+      assertTrue(ImageInstanceAPI.containsInJSONList(image.id,JSON.parse(result.data)))
       assertEquals(200, ImageInstanceAPI.updateImageInstance(image,USERNAMEADMIN,PASSWORDADMIN).code)
       assertEquals(200, ImageInstanceAPI.deleteImageInstance(image,USERNAMEADMIN,PASSWORDADMIN).code)
   }
@@ -69,7 +71,9 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
       assertEquals(200, result.code)
       image = result.data
       assertEquals(200, ImageInstanceAPI.showImageInstance(image.id,USERNAME2,PASSWORD2).code)
-      assertTrue(ImageInstanceAPI.containsInJSONList(image.id,JSON.parse(ImageInstanceAPI.listImageInstanceByProject(project.id,USERNAME2,PASSWORD2).data)))
+      result = ImageInstanceAPI.listImageInstanceByProject(project.id,USERNAME2,PASSWORD2)
+      assertEquals(200, result.code)
+      assertTrue(ImageInstanceAPI.containsInJSONList(image.id,JSON.parse(result.data)))
       //assertEquals(200, ImageInstanceAPI.updateImageInstance(image,USERNAME2,PASSWORD2).code)
       assertEquals(200, ImageInstanceAPI.deleteImageInstance(image,USERNAME2,PASSWORD2).code)
   }
