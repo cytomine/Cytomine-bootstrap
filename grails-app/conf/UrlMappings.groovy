@@ -28,12 +28,7 @@ class UrlMappings {
         "/api/user/$id/image"(controller:"restImage"){
             action = [GET:"listByUser"]
         }
-        "/api/user/$id/annotation"(controller:"restAnnotation"){
-            action = [GET:"listByUser"]
-        }
-        "/api/user/$idUser/imageinstance/$idImage/annotation"(controller:"restAnnotation"){
-            action = [GET:"listByImageAndUser"]
-        }
+
         "/api/user/$id/project"(controller:"restProject"){
             action = [GET:"listByUser"]
         }
@@ -68,18 +63,14 @@ class UrlMappings {
             action = [DELETE : "delete"]
         }
 
-        "/api/project/$id/annotation"(controller: "restAnnotation"){
-            action = [GET:"listByProject"]
-        }
+
         "/api/project/$idproject/slide"(controller:"restProjectSlide"){
             action = [GET: "listSlideByProject"]
         }
         "/api/project/$idProject/term"(controller:"restTerm"){
             action = [GET:"listAllByProject"]
         }
-        "/api/imageinstance/$id/annotation"(controller:"restAnnotation"){
-            action = [GET:"listByImage"]
-        }
+
         "/api/imageinstance/$id/term"(controller:"restTerm"){
             action = [GET:"listByImageInstance"]
         }
@@ -154,15 +145,7 @@ class UrlMappings {
             action = [GET:"worstTerm"]
         }
 
-        "/api/term/$idterm/annotation"(controller:"restAnnotation"){
-            action = [GET: "listAnnotationByTerm"]
-        }
-        "/api/term/$idterm/project/$idproject/annotation"(controller:"restAnnotation"){
-            action = [GET: "listAnnotationByProjectAndTerm"]
-        }
-        "/api/term/$idterm/imageinstance/$idimageinstance/annotation"(controller:"restAnnotationTerm"){
-            action = [GET: "listAnnotationByProjectAndImageInstance"]
-        }
+
         "/api/term/$id/ontology"(controller:"restOntology"){
             action = [GET:"listByTerm"]
         }
@@ -261,9 +244,7 @@ class UrlMappings {
         "/api/project/$id/user/$idUser/admin"(controller: "restUser"){
             action = [DELETE:"deleteUserAdmin",POST:"addUserAdmin"]
         }
-        "/api/project/$id/annotation/download"(controller: "restAnnotation"){
-            action = [GET:"downloadDocumentByProject"]
-        }
+
 
         "/api/command" (controller : "command") {
             action = [GET:"list"]

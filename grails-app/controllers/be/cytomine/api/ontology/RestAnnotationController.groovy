@@ -11,6 +11,8 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import java.text.SimpleDateFormat
 import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.Exception.CytomineException
 
 class RestAnnotationController extends RestController {
 
@@ -20,9 +22,15 @@ class RestAnnotationController extends RestController {
     def imageInstanceService
     def userService
     def projectService
+    def cytomineService
 
     def list = {
-        responseSuccess(annotationService.list())
+        def annotations = []
+        def projects = projectService.list()
+        projects.each {
+            annotations.addAll(annotationService.list(it))
+        }
+        responseSuccess(annotations)
     }
 
     def listByImage = {
@@ -33,6 +41,7 @@ class RestAnnotationController extends RestController {
 
     def listByUser = {
         User user = userService.read(params.long('id'))
+        //TODO: SECURITY! How to filter?
         if (user) responseSuccess(annotationService.list(user))
         else responseNotFound("User", params.id)
     }
@@ -92,7 +101,6 @@ class RestAnnotationController extends RestController {
         responseSuccess(annotationFromTermAndProject)
     }
 
-
     def downloadDocumentByProject = {
         // Export service provided by Export plugin
         Project project = projectService.read(params.long('id'))
@@ -136,17 +144,50 @@ class RestAnnotationController extends RestController {
 
     def show = {
         Annotation annotation = annotationService.read(params.long('id'))
-        if (annotation) responseSuccess(annotation)
+        if (annotation) {
+            annotationService.checkAuthorization(annotation.project.id)
+            responseSuccess(annotation)
+        }
         else responseNotFound("Annotation", params.id)
     }
 
     def add = {
-        add(annotationService, request.JSON)
+        def json = request.JSON
+        try {
+            if(!json.project || !Project.read(json.project)) throw new WrongArgumentException("Annotation must have a valide project:"+json.project)
+            log.info "json.project="+json.project
+            annotationService.checkAuthorization(Long.parseLong(json.project.toString()))
+            def result = annotationService.add(json)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error("add error:" + e.msg)
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        } finally {
+            transactionService?.stopIfTransactionInProgress()
+        }
     }
 
-    def update = {
-        update(annotationService, request.JSON)
+//    def update = {
+//        update(annotationService, request.JSON)
+//    }
+
+    def update= {
+        def json = request.JSON
+        try {
+            def domain = annotationService.retrieve(json)
+            log.info "CurrentUser = "+cytomineService.getCurrentUser().id
+            log.info "Annotation.user.id = "+domain.user.id
+            def result = annotationService.update(domain,json)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        } finally {
+            transactionService?.stopIfTransactionInProgress()
+        }
     }
+
 
     def delete = {
         def json = JSON.parse("{id : $params.id}")

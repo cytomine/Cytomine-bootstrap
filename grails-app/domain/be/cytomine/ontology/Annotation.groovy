@@ -23,6 +23,7 @@ class Annotation extends CytomineDomain implements Serializable {
     SecUser user
     Double similarity
     Double geometryCompression
+    Project project
 
     static belongsTo = [ImageInstance]
     static hasMany = [annotationTerm: AnnotationTerm]
@@ -36,6 +37,7 @@ class Annotation extends CytomineDomain implements Serializable {
         geometryCompression(nullable: true)
         channels(nullable: true)
         user(nullable: false)
+        project(nullable:true)
     }
 
     static mapping = {
@@ -55,6 +57,7 @@ class Annotation extends CytomineDomain implements Serializable {
     public beforeInsert() {
         super.beforeInsert()
         name = name && !name.trim().equals("") ? name : "Annotation " + id
+        project = image.project
     }
     /*public afterInsert() {
       println "Annotation.afterInsert"
@@ -236,6 +239,9 @@ class Annotation extends CytomineDomain implements Serializable {
             annotation.image = ImageInstance.get(jsonAnnotation.image);
             println "Annotation image = " + annotation.image + "($jsonAnnotation.image)"
             if (!annotation.image) throw new WrongArgumentException("Image $jsonAnnotation.image not found!")
+
+            annotation.project = Project.get(jsonAnnotation.project);
+            if (!annotation.project) throw new WrongArgumentException("Project $jsonAnnotation.project not found!")
             annotation.zoomLevel = (!jsonAnnotation.zoomLevel.toString().equals("null")) ? ((String) jsonAnnotation.zoomLevel).toDouble() : -1
             annotation.geometryCompression = (!jsonAnnotation.geometryCompression.toString().equals("null")) ? ((String) jsonAnnotation.geometryCompression).toDouble() : 0
             annotation.channels = jsonAnnotation.channels
@@ -275,7 +281,7 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['zoomLevel'] = it.zoomLevel
             returnArray['geometryCompression'] = it.geometryCompression
             returnArray['channels'] = it.channels
-            returnArray['project'] = imageinstance?.getIdProject()
+            returnArray['project'] = it.project.id
             if (it.userId) returnArray['user'] = it.userId
             else returnArray['user'] = it.user?.id
 

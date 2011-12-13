@@ -147,6 +147,7 @@ class BootStrap {
         }
 
         createProjectGrant()
+        createAnnotationGrant()
 
         def destroy = {
         }
@@ -185,7 +186,13 @@ class BootStrap {
         SCH.clearContext()
     }
 
+    private def createAnnotationGrant() {
+        Annotation.list().each{
+             it.project = it.image.project
+             it.save(flush:true)
+        }
 
+    }
 
 
 

@@ -15,6 +15,9 @@ import com.vividsolutions.jts.io.WKTWriter
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
+import org.springframework.security.access.prepost.PostFilter
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.access.AccessDeniedException
 
 class AnnotationService extends ModelService {
 
@@ -29,18 +32,24 @@ class AnnotationService extends ModelService {
 
     boolean saveOnUndoRedoStack = true
 
-    def list() {
-        Annotation.list()
-    }
-
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostFilter("hasPermission(filterObject.project, read) or hasPermission(filterObject.project, admin) or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image) {
         Annotation.findAllByImage(image)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostFilter("hasPermission(filterObject.project, read) or hasPermission(filterObject.project, admin) or hasRole('ROLE_ADMIN')")
     def list(User user) {
         Annotation.findAllByUser(user)
     }
 
+    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    def list(Project project) {
+        Annotation.findAllByProject(project)
+    }
+
+    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
     def list(Project project, List<User> userList, boolean noTerm, boolean multipleTerm) {
         if (userList.isEmpty()) return []
         else if (multipleTerm) {
@@ -100,15 +109,19 @@ class AnnotationService extends ModelService {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostFilter("hasPermission(filterObject.project, read) or hasPermission(filterObject.project, admin) or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, User user) {
         return Annotation.findAllByImageAndUser(image, user)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostFilter("hasPermission(filterObject.project, read) or hasPermission(filterObject.project, admin) or hasRole('ROLE_ADMIN')")
     def list(Term term) {
         term.annotations()
     }
 
-
+    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, List<User> userList) {
         def annotationFromTermAndProject = []
         def annotationFromTerm = term.annotations()
@@ -123,16 +136,14 @@ class AnnotationService extends ModelService {
         Annotation.get(id)
     }
 
-
-
     Annotation read(def id) {
         Annotation.read(id)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json) {
 
         User currentUser = cytomineService.getCurrentUser()
-
         //simplify annotation
         try {
             def data = simplifyPolygon(json.location)
@@ -171,10 +182,9 @@ class AnnotationService extends ModelService {
         return result
     }
 
+    @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
     def update(def domain,def json) {
-
         User currentUser = cytomineService.getCurrentUser()
-
         //simplify annotation
         try {
             def annotation = Annotation.read(json.id)
@@ -193,6 +203,7 @@ class AnnotationService extends ModelService {
         return result
     }
 
+    @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
     def delete(def domain,def json) {
 
         User currentUser = cytomineService.getCurrentUser()
