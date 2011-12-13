@@ -368,7 +368,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             error: function (model, response) {
 
                var json = $.parseJSON(response.responseText);
-               window.app.view.message("Image", json.errors, "error");
+               window.app.view.message("Image", json.errors.message, "error");
                self.addImageProjectCallback(idSelectedArray.length, ++counter)
             }
          });
@@ -407,7 +407,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             error: function (model, response) {
 
                var json = $.parseJSON(response.responseText);
-               window.app.view.message("Image", json.errors, "error");
+               window.app.view.message("Image", json.errors.message, "error");
                self.deleteImageProjectCallback(idSelectedArray.length, ++counter)
             }
          });

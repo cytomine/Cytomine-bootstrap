@@ -66,6 +66,7 @@ class ImageInstanceService extends ModelService {
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
         log.info "current user = " + currentUser.username
+        json.user = currentUser.id
         synchronized (this.getClass()) {
             executeCommand(new AddCommand(user: currentUser), json)
         }
