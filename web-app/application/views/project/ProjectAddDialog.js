@@ -136,7 +136,7 @@ var AddProjectDialog = Backbone.View.extend({
 
                 var json = $.parseJSON(response.responseText);
 
-                window.app.view.message("Project", json.errors, "error");
+                window.app.view.message("Project", json.errors[0], "error");
                 //$("#projecterrorlabel").show();
 
 

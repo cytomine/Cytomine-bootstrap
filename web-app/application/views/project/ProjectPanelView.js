@@ -184,7 +184,7 @@ var ProjectPanelView = Backbone.View.extend({
                    },
                    error: function (model, response) {
                       var json = $.parseJSON(response.responseText);
-                      window.app.view.message("Project", json.errors.message, "error");
+                      window.app.view.message("Project", json.errors[0], "error");
                    }
                 }
             );

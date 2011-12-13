@@ -179,7 +179,7 @@ var EditProjectDialog = Backbone.View.extend({
                         },error: function (model, response) {
                             
                             var json = $.parseJSON(response.responseText);
-                            window.app.view.message("User", json.errors, "error");
+                            window.app.view.message("User", json.errors[0], "error");
                         }});
                 });
                 _.each(projectDeleteUser,function(user){
@@ -190,7 +190,7 @@ var EditProjectDialog = Backbone.View.extend({
                         },error: function (model, response) {
                             
                             var json = $.parseJSON(response.responseText);
-                            window.app.view.message("User", json.errors, "error");
+                            window.app.view.message("User", json.errors[0], "error");
                         }});
                 });
 
@@ -198,7 +198,7 @@ var EditProjectDialog = Backbone.View.extend({
             error: function (model, response) {
                 console.log(response);
                 var json = $.parseJSON(response.responseText);
-                window.app.view.message("Project", json.errors.message, "error");
+                window.app.view.message("Project", json.errors[0], "error");
 
                 //$("#projectediterrorlabel").show();
 
