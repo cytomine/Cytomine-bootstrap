@@ -100,7 +100,7 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
       image.save(flush:true)
 
       assertEquals(403, ImageInstanceAPI.showImageInstance(image.id,USERNAME2,PASSWORD2).code)
-      assertFalse(ImageInstanceAPI.containsInJSONList(image.id,JSON.parse(ImageInstanceAPI.listImageInstanceByProject(project.id,USERNAME2,PASSWORD2).data)))
+      assertEquals(403,ImageInstanceAPI.listImageInstanceByProject(project.id,USERNAME2,PASSWORD2).code)
       //assertEquals(403, ImageInstanceAPI.updateImageInstance(image,USERNAME2,PASSWORD2).code)
       assertEquals(403, ImageInstanceAPI.deleteImageInstance(image,USERNAME2,PASSWORD2).code)
   }
