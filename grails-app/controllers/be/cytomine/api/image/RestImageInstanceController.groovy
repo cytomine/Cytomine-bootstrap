@@ -72,7 +72,7 @@ class RestImageInstanceController extends RestController {
         try {
             def json = request.JSON
             if(!json.project || !Project.read(json.project)) throw new WrongArgumentException("Image Instance must have a valide project:"+json.project)
-            imageInstanceService.checkAuthorization(Long.parseLong(json.project))
+            imageInstanceService.checkAuthorization(json.project)
             log.debug("add")
             def result = imageInstanceService.add(json)
             log.debug("result")
