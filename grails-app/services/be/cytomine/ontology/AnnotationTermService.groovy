@@ -8,6 +8,7 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
+import org.springframework.security.access.prepost.PreAuthorize
 
 class AnnotationTermService extends ModelService {
 
@@ -20,14 +21,17 @@ class AnnotationTermService extends ModelService {
 
     boolean saveOnUndoRedoStack = true
 
+    @PreAuthorize("hasPermission(#annotation.project.id,'be.cytomine.project.Project',read) or hasPermission(#annotation.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
     def list(Annotation annotation) {
         annotation.annotationTerm
     }
 
+    @PreAuthorize("hasPermission(#annotation.project.id,'be.cytomine.project.Project',read) or hasPermission(#annotation.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
     def listNotUser(Annotation annotation, User user) {
         AnnotationTerm.findAllByAnnotationAndUserNotEqual(annotation, user)
     }
 
+    @PreAuthorize("hasPermission(#image.project.id,'be.cytomine.project.Project',read) or hasPermission(#image.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, Term term) {
 
         def annotations = []
@@ -39,12 +43,13 @@ class AnnotationTermService extends ModelService {
         annotations
     }
 
-
+    @PreAuthorize("hasPermission(#annotation.project.id,'be.cytomine.project.Project',read) or hasPermission(#annotation.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
     def read(Annotation annotation, Term term, User user) {
         if (user) AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
         else AnnotationTerm.findByAnnotationAndTerm(annotation, term)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
@@ -56,6 +61,7 @@ class AnnotationTermService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
+    @PreAuthorize("#domain.user.id == principal.id or hasRole('ROLE_ADMIN')")
     def delete(def domain,def json) {
         User currentUser = cytomineService.getCurrentUser()
         return deleteAnnotationTerm(json.annotation, json.term, currentUser.id, currentUser)
@@ -154,9 +160,10 @@ class AnnotationTermService extends ModelService {
     def create(AnnotationTerm domain, boolean printMessage) {
         //Build response message
         log.debug "domain=" + domain + " responseService=" + responseService
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.annotation.id, domain.term.name, domain.user?.username], printMessage, "Add", domain.getCallBack())
         //Save new object
-        AnnotationTerm.link(domain.annotation, domain.term, domain.user)
+        domain = AnnotationTerm.link(domain.annotation, domain.term, domain.user)
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.annotation.id, domain.term.name, domain.user?.username], printMessage, "Add", domain.getCallBack())
+
         return response
     }
 

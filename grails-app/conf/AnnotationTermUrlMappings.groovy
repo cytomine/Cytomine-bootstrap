@@ -12,7 +12,7 @@ class AnnotationTermUrlMappings {
             action = [POST:"add",DELETE:"delete", GET:"show"]
         }
         "/api/annotation/$idannotation/term/$idterm/user/$idUser"(controller:"restAnnotationTerm"){
-            action = [GET:"show"]
+            action = [GET:"show",DELETE:"delete"]
         }
     }
 }

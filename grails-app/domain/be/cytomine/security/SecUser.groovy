@@ -32,5 +32,11 @@ class SecUser extends CytomineDomain {
         SecUserSecRole.findAllBySecUser(this).collect { it.secRole } as Set
     }
 
+	def beforeInsert() {
+        super.beforeInsert()
+	}
 
+	def beforeUpdate() {
+        super.beforeUpdate()
+	}
 }

@@ -150,8 +150,10 @@ log4j = {
 
 // Added by the Spring Security Core plugin:
 grails.plugins.springsecurity.userLookup.userDomainClassName = 'be.cytomine.security.SecUser'
+grails.plugins.springsecurity.userLookup.passwordPropertyName = 'password'
 grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'be.cytomine.security.SecUserSecRole'
 grails.plugins.springsecurity.authority.className = 'be.cytomine.security.SecRole'
+grails.plugins.springsecurity.projectClass = 'be.cytomine.project.Project'
 
 grails.plugins.springsecurity.controllerAnnotations.staticRules = [
    '/securityInfo/**': ['ROLE_ADMIN']

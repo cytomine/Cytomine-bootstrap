@@ -10,6 +10,7 @@ import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
 import be.cytomine.ontology.Annotation
 import com.vividsolutions.jts.io.WKTReader
+import be.cytomine.image.ImageInstance
 
 /**
  * User: lrollus
@@ -20,6 +21,22 @@ import com.vividsolutions.jts.io.WKTReader
 class AnnotationAPI extends DomainAPI {
 
     private static final log = LogFactory.getLog(this)
+
+    static ImageInstance buildBasicImage(String username, String password) {
+        //Create project with user 1
+        def result = ProjectAPI.createProject(BasicInstance.getBasicProjectNotExist(), username, password)
+        assert 200==result.code
+        Project project = result.data
+
+        //Add image with user 1
+        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        image.project = project
+        result = ImageInstanceAPI.createImageInstance(image, username, password)
+        assert 200==result.code
+        image = result.data
+        return image
+    }
+
 
     static def showAnnotation(Long id, String username, String password) {
         log.info("show Annotation:" + id)

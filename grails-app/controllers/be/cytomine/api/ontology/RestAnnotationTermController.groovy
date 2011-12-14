@@ -7,6 +7,9 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.Term
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.project.Project
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.test.Infos
 
 class RestAnnotationTermController extends RestController {
 
@@ -74,12 +77,24 @@ class RestAnnotationTermController extends RestController {
     }
 
     def add = {
-        add(annotationTermService, request.JSON)
+        def json = request.JSON
+        try {
+            if(!json.annotation || !Annotation.read(json.annotation)) throw new WrongArgumentException("AnnotationTerm must have a valide annotation:"+json.annotation)
+            annotationTermService.checkAuthorization(Annotation.read(json.annotation).project.id)
+            def result = annotationTermService.add(json)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error("add error:" + e.msg)
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        } finally {
+            transactionService?.stopIfTransactionInProgress()
+        }
     }
 
     def delete = {
-        User user = cytomineService.getCurrentUser()
-        def json = JSON.parse("{annotation: $params.idannotation, term: $params.idterm, user: $user.id}")
+        def idUser = params.idUser!=null ? params.idUser : cytomineService.getCurrentUser().id
+        def json = JSON.parse("{annotation: $params.idannotation, term: $params.idterm, user: $idUser}")
         delete(annotationTermService, json)
     }
 

@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.Exception.CytomineException
+import be.cytomine.test.Infos
 
 class RestAnnotationController extends RestController {
 
@@ -154,6 +155,10 @@ class RestAnnotationController extends RestController {
     def add = {
         def json = request.JSON
         try {
+            if(!json.project) {
+                ImageInstance image = ImageInstance.read(json.image)
+                if(image) json.project = image.project.id
+            }
             if(!json.project || !Project.read(json.project)) throw new WrongArgumentException("Annotation must have a valide project:"+json.project)
             log.info "json.project="+json.project
             annotationService.checkAuthorization(Long.parseLong(json.project.toString()))

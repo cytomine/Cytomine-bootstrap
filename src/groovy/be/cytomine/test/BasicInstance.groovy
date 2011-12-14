@@ -312,7 +312,7 @@ class BasicInstance {
   firstname : item.firstname,
   lastname : item.lastname,
   email : item.email,
-  password : springSecurityService.encodePassword("password"),
+  password : password,
   dateCreated : new Date(),
   enabled : true)*/
 
@@ -348,7 +348,7 @@ class BasicInstance {
                     firstname: "Basic",
                     lastname: "User",
                     email: "Basic@User.be",
-                    password: springSecurityService.encodePassword(password),
+                    password: password,
                     enabled: true)
             user.validate()
             log.debug "user.errors=" + user.errors

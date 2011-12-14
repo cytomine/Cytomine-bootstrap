@@ -25,7 +25,7 @@ class Annotation extends CytomineDomain implements Serializable {
     Double geometryCompression
     Project project
 
-    static belongsTo = [ImageInstance]
+    static belongsTo = [ImageInstance, Project]
     static hasMany = [annotationTerm: AnnotationTerm]
 
     static transients = ["cropURL", "boundaries", "similarity"]
@@ -124,7 +124,7 @@ class Annotation extends CytomineDomain implements Serializable {
     }
 
     def project() {
-        return image?.project
+        return project
     }
 
     Project projectDomain() {

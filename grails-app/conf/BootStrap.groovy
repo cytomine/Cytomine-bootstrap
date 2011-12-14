@@ -147,7 +147,7 @@ class BootStrap {
         }
 
         createProjectGrant()
-        createAnnotationGrant()
+        //createAnnotationGrant()
 
         def destroy = {
         }
@@ -391,7 +391,7 @@ class BootStrap {
                         lastname: item.lastname,
                         email: item.email,
                         color: item.color,
-                        password: springSecurityService.encodePassword(item.password),
+                        password: item.password,
                         enabled: true)
             } else {
                 user.username = item.username;
@@ -399,11 +399,13 @@ class BootStrap {
                 user.lastname = item.lastname;
                 user.email = item.email;
                 user.color = item.color;
-                user.password = springSecurityService.encodePassword(item.password);
+                user.password = item.password;
+
             }
             if (user.validate()) {
                 println "Creating user ${user.username}..."
                 // user.addToTransactions(new Transaction())
+                //user.encodePassword()
                 user.save(flush: true)
 
                 /* Create a special group the user */

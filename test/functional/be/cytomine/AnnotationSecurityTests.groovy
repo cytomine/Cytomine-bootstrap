@@ -28,23 +28,14 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         User admin = getUserAdmin()
 
         //Create project with user 1
-        def result = ProjectAPI.createProject(BasicInstance.getBasicProjectNotExist(), USERNAME1, PASSWORD1)
-        assertEquals(200, result.code)
-        Project project = result.data
-        Infos.printRight(project)
-
-        //Add image with user 1
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
-        image.project = project
-        result = ImageInstanceAPI.createImageInstance(image, USERNAME1, PASSWORD1)
-        assertEquals(200, result.code)
-        image = result.data
+        ImageInstance image = AnnotationAPI.buildBasicImage(USERNAME1, PASSWORD1)
+        Project project = image.project
 
         //Add annotation 1 with cytomine admin
         Annotation annotation1 = BasicInstance.getBasicAnnotationNotExist()
         annotation1.image = image
         annotation1.project = image.project
-        result = AnnotationAPI.createAnnotation(annotation1, USERNAMEADMIN, PASSWORDADMIN)
+        def result = AnnotationAPI.createAnnotation(annotation1, USERNAMEADMIN, PASSWORDADMIN)
         assertEquals(200, result.code)
         annotation1 = result.data
 
@@ -77,23 +68,14 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         User user = getUser1()
 
         //Create project with user 1
-        def result = ProjectAPI.createProject(BasicInstance.getBasicProjectNotExist(), USERNAME1, PASSWORD1)
-        assertEquals(200, result.code)
-        Project project = result.data
-        Infos.printRight(project)
-
-        //Add image with user 1
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
-        image.project = project
-        result = ImageInstanceAPI.createImageInstance(image, USERNAME1, PASSWORD1)
-        assertEquals(200, result.code)
-        image = result.data
+        ImageInstance image = AnnotationAPI.buildBasicImage(USERNAME1, PASSWORD1)
+        Project project = image.project
 
         //Add annotation 1 with user1
         Annotation annotation = BasicInstance.getBasicAnnotationNotExist()
         annotation.image = image
         annotation.project = image.project
-        result = AnnotationAPI.createAnnotation(annotation, USERNAME1, PASSWORD1)
+        def result = AnnotationAPI.createAnnotation(annotation, USERNAME1, PASSWORD1)
         assertEquals(200, result.code)
         annotation = result.data
         log.info("### " + annotation.user.username + " " + annotation.user.id)
@@ -124,17 +106,8 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         User user2 = getUser2()
 
         //Create project with user 1
-        def result = ProjectAPI.createProject(BasicInstance.getBasicProjectNotExist(), USERNAME1, PASSWORD1)
-        assertEquals(200, result.code)
-        Project project = result.data
-        Infos.printRight(project)
-
-        //Add image with user 1
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
-        image.project = project
-        result = ImageInstanceAPI.createImageInstance(image, USERNAME1, PASSWORD1)
-        assertEquals(200, result.code)
-        image = result.data
+        ImageInstance image = AnnotationAPI.buildBasicImage(USERNAME1, PASSWORD1)
+        Project project = image.project
 
         //Add project right for user 2
         def resAddUser = ProjectAPI.addUserProject(project.id, user2.id, USERNAME1, PASSWORD1)
@@ -145,7 +118,7 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         Annotation annotation = BasicInstance.getBasicAnnotationNotExist()
         annotation.image = image
         annotation.project = image.project
-        result = AnnotationAPI.createAnnotation(annotation, USERNAME1, PASSWORD1)
+        def result = AnnotationAPI.createAnnotation(annotation, USERNAME1, PASSWORD1)
         assertEquals(200, result.code)
         annotation = result.data
 
@@ -171,23 +144,14 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         User user2 = getUser2()
 
         //Create project with user 1
-        def result = ProjectAPI.createProject(BasicInstance.getBasicProjectNotExist(), USERNAME1, PASSWORD1)
-        assertEquals(200, result.code)
-        Project project = result.data
-        Infos.printRight(project)
-
-        //Add image with user 1
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
-        image.project = project
-        result = ImageInstanceAPI.createImageInstance(image, USERNAME1, PASSWORD1)
-        assertEquals(200, result.code)
-        image = result.data
+        ImageInstance image = AnnotationAPI.buildBasicImage(USERNAME1, PASSWORD1)
+        Project project = image.project
 
         //Add annotation 1 with user 1
         Annotation annotation = BasicInstance.getBasicAnnotationNotExist()
         annotation.image = image
         annotation.project = image.project
-        result = AnnotationAPI.createAnnotation(annotation, USERNAME1, PASSWORD1)
+        def result = AnnotationAPI.createAnnotation(annotation, USERNAME1, PASSWORD1)
         assertEquals(200, result.code)
         annotation = result.data
 
@@ -211,22 +175,14 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         User user1 = getUser1()
 
         //Create project with user 1
-        def result = ProjectAPI.createProject(BasicInstance.getBasicProjectNotExist(), USERNAME1, PASSWORD1)
-        assertEquals(200, result.code)
-        Project project = result.data
-        Infos.printRight(project)
+        ImageInstance image = AnnotationAPI.buildBasicImage(USERNAME1, PASSWORD1)
+        Project project = image.project
 
-        //Add image with user 1
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
-        image.project = project
-        result = ImageInstanceAPI.createImageInstance(image, USERNAME1, PASSWORD1)
-        assertEquals(200, result.code)
-        image = result.data
         //Add annotation 1 with user 1
         Annotation annotation = BasicInstance.getBasicAnnotationNotExist()
         annotation.image = image
         annotation.project = image.project
-        result = AnnotationAPI.createAnnotation(annotation, USERNAME1, PASSWORD1)
+        def result = AnnotationAPI.createAnnotation(annotation, USERNAME1, PASSWORD1)
         assertEquals(200, result.code)
         annotation = result.data
 

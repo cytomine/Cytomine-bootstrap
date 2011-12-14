@@ -18,6 +18,8 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.access.AccessDeniedException
+import be.cytomine.test.Infos
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class AnnotationService extends ModelService {
 
@@ -33,18 +35,17 @@ class AnnotationService extends ModelService {
     boolean saveOnUndoRedoStack = true
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject.project, read) or hasPermission(filterObject.project, admin) or hasRole('ROLE_ADMIN')")
-    def list(ImageInstance image) {
-        Annotation.findAllByImage(image)
-    }
-
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject.project, read) or hasPermission(filterObject.project, admin) or hasRole('ROLE_ADMIN')")
+    @PostFilter("hasPermission(filterObject.project.id,'be.cytomine.project.Project',read) or hasPermission(filterObject.project.id,'be.cytomine.project.Project', admin) or hasRole('ROLE_ADMIN')")
     def list(User user) {
         Annotation.findAllByUser(user)
     }
 
-    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasPermission(#image.project.id,'be.cytomine.project.Project',read) or hasPermission(#image.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
+        def list(ImageInstance image) {
+        Annotation.findAllByImage(image)
+    }
+
+    @PreAuthorize("hasPermission(#project,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
     def list(Project project) {
         Annotation.findAllByProject(project)
     }
@@ -109,14 +110,13 @@ class AnnotationService extends ModelService {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject.project, read) or hasPermission(filterObject.project, admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasPermission(#image.project.id,'be.cytomine.project.Project',read) or hasPermission(#image.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, User user) {
         return Annotation.findAllByImageAndUser(image, user)
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject.project, read) or hasPermission(filterObject.project, admin) or hasRole('ROLE_ADMIN')")
+    @PostFilter("hasPermission(filterObject.project.id,'be.cytomine.project.Project',read) or hasPermission(filterObject.project.id,'be.cytomine.project.Project', admin) or hasRole('ROLE_ADMIN')")
     def list(Term term) {
         term.annotations()
     }

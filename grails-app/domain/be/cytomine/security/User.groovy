@@ -141,7 +141,7 @@ class User extends SecUser {
         user.lastname = jsonUser.lastname
         user.email = jsonUser.email
         user.color = jsonUser.color
-        user.password = user.springSecurityService.encodePassword(jsonUser.password)
+        user.password = jsonUser.password
         user.enabled = true
 //    user.created = (!jsonUser.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.created)) : null
         //    user.updated = (!jsonUser.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.updated)) : null
@@ -174,6 +174,24 @@ class User extends SecUser {
             return returnArray
         }
     }
+
+	def beforeInsert() {
+        super.beforeInsert()
+		encodePassword()
+	}
+
+	def beforeUpdate() {
+        super.beforeUpdate()
+         println "###################"
+		if (isDirty('password')) {
+			encodePassword()
+		}
+	}
+
+	protected void encodePassword() {
+        println "€€€€€€€€€€€€€€€€€€€€€€E"
+		password = springSecurityService.encodePassword(password)
+	}
 
 
 }
