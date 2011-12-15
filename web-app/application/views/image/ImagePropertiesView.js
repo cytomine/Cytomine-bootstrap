@@ -44,7 +44,7 @@ var ImagePropertiesView = Backbone.View.extend({
                   target.append(html);
                });
                $("#image-properties").dialog('open');
-               $("ul#image-properties-content>li").tsort();
+               //$("ul#image-properties-content>li").tsort();
             }
          });
       });

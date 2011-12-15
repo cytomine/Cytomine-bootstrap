@@ -80,6 +80,7 @@
             <fileset dir="${src.dir}" includes="application/controllers/AnnotationController.js" />
             <fileset dir="${src.dir}" includes="application/controllers/AdminController.js" />
             <fileset dir="${src.dir}" includes="application/controllers/ActivityController.js" />
+            <fileset dir="${src.dir}" includes="application/models/AnnotationsFilterModel.js" />
             <fileset dir="${src.dir}" includes="application/models/ImageModel.js" />
             <fileset dir="${src.dir}" includes="application/models/TermModel.js" />
             <fileset dir="${src.dir}" includes="application/models/OntologyModel.js" />

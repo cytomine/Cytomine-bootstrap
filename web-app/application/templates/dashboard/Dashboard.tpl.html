@@ -110,18 +110,29 @@
                 <div style="padding-left: 30px;"><input class="undefinedAnnotationsCheckbox" type="checkbox"> <span class="label important">Annotations without terms</span></div>
                 <div style="padding-left: 30px;"><input class="multipleAnnotationsCheckbox" type="checkbox"> <span class="label important">Annotations with several terms</span></div>
                 <div id="treeAnnotationListing" class="tree"></div>
-                <h4>User</h4>
-                <select id="filterAnnotationByUser<%= id %>" name="User" multiple="multiple" >
-                </select>
-                <hr/>
-                <h4>Actions</h4>
                 <ul style="display : inline;">
-                    <li style="display : inline;"><button id="showAllAnnotations" class="btn">Show all</button></li>
-                    <li style="display : inline;"><button id="hideAllAnnotations" class="btn">Hide all</button></li>
-                    <li style="display : inline;"><button id="refreshAnnotations" class="btn">Refresh</button></li>
+                    <li style="display : inline;"><button id="checkAllTerms" class="btn">Check all</button></li>
+                    <li style="display : inline;"><button id="uncheckAllTerms" class="btn">Uncheck all</button></li>
                 </ul>
+                <hr />
+                <h4>User</h4>
+                <div id="treeUserListing" class="tree"></div>
+                <ul style="display : inline;">
+                    <li style="display : inline;"><button id="checkAllUsers" class="btn">Check all</button></li>
+                    <li style="display : inline;"><button id="uncheckAllUsers" class="btn">Uncheck all</button></li>
+                </ul>
+
             </div>
             <div id="downloadAnnotations" class="well" style="padding: 10px;width: 350px;">
+                <h4>Actions</h4>
+                <li style="display : inline;"><button id="refreshAnnotations" class="btn">Refresh</button></li>
+                <hr />
+                <h4>Annotations Filter</h4>
+                <select id="annotationFilterSelect">
+                </select>
+                <li style="display : inline;"><button id="saveAnnotationFilter" class="btn">Save</button></li>
+                <li style="display : inline;"><button id="deleteAnnotationFilter" class="btn">Delete</button></li>
+                <hr />
                 <h4>Download</h4>
                 <ul>
                     <li style="padding-bottom: 5px;"><a href="/api/project/<%= id %>/annotation/download?format=csv"  id="downloadAnnotationsCSV" class="btn">Download CSV</a></li>

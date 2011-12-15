@@ -27,9 +27,6 @@ class ImageInstanceService extends ModelService {
 
     boolean saveOnUndoRedoStack = true
 
-    //@PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
-
-
     def read(def id) {
         ImageInstance.read(id)
     }

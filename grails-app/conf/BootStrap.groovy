@@ -101,6 +101,8 @@ class BootStrap {
         println "========= C O M P I L E == J S ========= "
         def proc = "./scripts/yui-compressor-ant-task/doc/example/deploy.sh".execute()
         proc.in.eachLine { line -> println line }
+        proc = "./scripts/yui-compressor-ant-task/doc/lib/deploy.sh".execute()
+        proc.in.eachLine { line -> println line }
         println "======================================== "
     }
 

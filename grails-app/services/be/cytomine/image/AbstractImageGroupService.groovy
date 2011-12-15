@@ -24,6 +24,7 @@ class AbstractImageGroupService extends ModelService {
 
     def add(def json) throws CytomineException {
         User currentUser = cytomineService.getCurrentUser()
+        json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 

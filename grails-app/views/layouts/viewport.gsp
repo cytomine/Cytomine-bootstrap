@@ -16,79 +16,61 @@
 
     <link rel="icon" type="image/png" href="favicon.ico">
 
-    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <!-- Styles -->
 
-    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
-    <script type="text/javascript">
-        google.load('visualization', '1', {packages: ['corechart']});
-    </script>
-    <!-- RequireJS -->
-    <script type="text/javascript" src="lib/requirejs/require.min.js"></script>
-    <link rel="stylesheet" href="lib/bootstrap-1.3/bootstrap.min.css">
-    <!-- JQuery & JQuery UI-->
     <link rel='stylesheet' href='css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
-    <!--<link rel='stylesheet' href='css
-    /custom-ben/css/custom-theme/jquery-ui-1.8.16.custom.css' type='text/css'/>-->
+    <link rel='stylesheet' href='lib/ui.panel/ui.panel.css' type='text/css'/>
+    <link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
+    <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
+    <link rel="stylesheet" href="lib/bootstrap-1.3/bootstrap.min.css">
+    <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
+
+    <!-- JQuery & JQuery UI -->
     <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 
-    <script text="text/javascript" src="https://raw.github.com/furf/jquery-ui-touch-punch/master/jquery.ui.touch-punch.min.js"></script>
-    <!-- Twitter bootstrap -->
-    <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-modal.js"></script>
-    <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-dropdown.js"></script>
-    <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-twipsy.js"></script>
-    <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-popover.js"></script>
-    <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-alerts.js"></script>
-
-
-    <!-- Core Libs -->
-    <script type="text/javascript" src="lib/underscore.min.js"></script>
-    <script type="text/javascript" src="lib/backbone.min.js"></script>
-
-    <!-- Modules -->
-
-
-    <script type="text/javascript" src="lib/fileupload/jquery.fileupload-ui.min.js"></script>
-    <script type="text/javascript" src="lib/fileupload/jquery.fileupload.min.js"></script>
-    <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
-
-    <script type="text/javascript" src="lib/ui.panel/ui.panel.min.js"></script>
-    <link type="text/css" href="lib/ui.panel/ui.panel.css" rel="stylesheet" />
-
-    <link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css">
-    <script src="lib/dynatree/jquery.dynatree.min.js" type="text/javascript"></script>
-
-    <!-- OpenLayers -->
-    <!--<script type="text/javascript" src="lib/openlayers/OpenLayers.js"></script>
-    <script type="text/javascript" src="lib/openlayers/OpenURL.min.js"></script>-->
-
-    <script type="text/javascript" src="lib/farbtastic/farbtastic.min.js"></script>
-
-    <link href="lib/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css">
-    <script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>
-
-    <!--jqgrid -->
-    <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
-    <script src="lib/jqgrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
-    <script src="lib/jqgrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
-    <script src="lib/jqgrid/plugins/jquery.tablednd.min.js" type="text/javascript"></script>
-    <script src="lib/jqgrid/plugins/jquery.contextmenu.min.js" type="text/javascript"></script>
-
-    <!-- jcarrousel -->
-    <script type="text/javascript" src="lib/jcarousel/jquery.carousel.min.js"></script>
-    <script type="text/javascript" src="lib/tinysort/jquery.tinysort.min.js"></script>
-
-    <!-- multiselect -->
-    <script type="text/javascript" src="lib/multisel/jquery.multiselect.min.js"></script>
-    <link href="lib/multisel/jquery.multiselect.css" rel="stylesheet" type="text/css">
-
-    <!-- Styles -->
-    <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
-
     <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
+
+        <!-- RequireJS -->
+        <script type="text/javascript" src="lib/requirejs/require.js"></script>
+
+        <!-- Twitter bootstrap -->
+        <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-modal.js"></script>
+        <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-dropdown.js"></script>
+        <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-twipsy.js"></script>
+        <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-popover.js"></script>
+        <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-alerts.js"></script>
+
+
+        <!-- Core Libs -->
+        <script type="text/javascript" src="lib/underscore.js"></script>
+        <script type="text/javascript" src="lib/backbone.js"></script>
+
+        <!-- Modules -->
+        <script type="text/javascript" src="lib/fileupload/jquery.fileupload-ui.js"></script>
+        <script type="text/javascript" src="lib/fileupload/jquery.fileupload.js"></script>
+
+
+
+        <script src="lib/dynatree/jquery.dynatree.js" type="text/javascript"></script>
+
+        <script src="lib/ui.panel/ui.panel.min.js" type="text/javascript"></script>
+
+        <script type="text/javascript" src="lib/farbtastic/farbtastic.js"></script>
+
+        <link href="lib/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>
+
+        <!--jqgrid -->
+
+        <script src="lib/jqgrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
+        <script src="lib/jqgrid/js/jquery.jqGrid.src.js" type="text/javascript"></script>
+
+
+
+
+
         <!-- Application -->
         <script type="text/javascript" src="application/Utilities.js" ></script>
         <!-- controllers -->
@@ -106,6 +88,7 @@
         <script type="text/javascript" src="application/controllers/AdminController.js" ></script>
         <script type="text/javascript" src="application/controllers/ActivityController.js" ></script>
         <!-- Models -->
+        <script type="text/javascript" src="application/models/AnnotationsFilterModel.js" ></script>
         <script type="text/javascript" src="application/models/ImageModel.js" ></script>
         <script type="text/javascript" src="application/models/TermModel.js" ></script>
         <script type="text/javascript" src="application/models/ImageFilter.js" ></script>
@@ -182,20 +165,15 @@
 
     </g:if>
     <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">
+        <script type="text/javascript" src="lib.js" ></script>
         <script type="text/javascript" src="application.js" ></script>
     </g:if>
 
     <script type="text/javascript">
         $(function() {
-            //Change underscore _.template function delimiter
-            /*_.templateSettings = {
-             interpolate : /\{\{(.+?)\}\}/g
-             };*/
-            // Create the app.
             require(
                     { urlArgs: "bust=" + (new Date()).getTime() }
             );
-
             window.app = new ApplicationController();
         });
     </script>
@@ -207,4 +185,11 @@
 <div id="switcher" style="position:absolute; top : 10px; left : 200px; z-index: 900;"></div>
 <div id="alerts"></div>
 </body>
+<!-- Google Charts -->
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">
+    google.load('visualization', '1', {packages: ['corechart']});
+</script>
+ <!-- OpenLayers -->
+    <script type="text/javascript" src="lib/OpenLayers-2.11/OpenLayers-Cytomine.js"></script>
 </html>

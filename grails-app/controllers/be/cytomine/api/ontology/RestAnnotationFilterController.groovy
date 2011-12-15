@@ -4,6 +4,7 @@ import be.cytomine.api.RestController
 import be.cytomine.project.Project
 import be.cytomine.ontology.AnnotationFilter
 import be.cytomine.security.User
+import grails.converters.JSON
 
 class RestAnnotationFilterController extends RestController {
 
@@ -11,7 +12,7 @@ class RestAnnotationFilterController extends RestController {
     def projectService
     def cytomineService
 
-    def list = {
+    def listByProject = {
         if (params.project) {
             Project project = projectService.read(params.project)
             if (!project) {
@@ -37,7 +38,7 @@ class RestAnnotationFilterController extends RestController {
     }
 
     def delete = {
-        delete(annotationFilterService, request.JSON)
+        delete(annotationFilterService,  JSON.parse("{id : $params.id}"))
     }
 
 }

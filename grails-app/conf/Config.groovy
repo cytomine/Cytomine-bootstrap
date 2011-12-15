@@ -21,6 +21,7 @@ grails.mime.types = [ html: ['text/html','application/xhtml+xml'],
         json: ['application/json','text/json'],
         xml: ['text/xml', 'application/xml'],
         jpg : 'image/jpeg',
+		png : 'image/png',
         text: 'text/plain',
         js: 'text/javascript',
         rss: 'application/rss+xml',
@@ -41,9 +42,9 @@ grails.views.default.codec = "none" // none, html, base64
 grails.views.gsp.encoding = "UTF-8"
 grails.converters.encoding = "UTF-8"
 grails.converters.json.default.deep = false
-grails.converters.json.date = "javascript"
-grails.converters.xml.date = "javascript"
-grails.converters.default.pretty.print = true
+//grails.converters.json.date = "javascript"
+//grails.converters.xml.date = "javascript"
+//grails.converters.default.pretty.print = true
 
 // enable Sitemesh preprocessing of GSP pages
 grails.views.gsp.sitemesh.preprocess = true

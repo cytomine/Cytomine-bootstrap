@@ -4,7 +4,7 @@ var AnnotationView = Backbone.View.extend({
     pagination_window : 3,
     initialize: function(options) {
         this.page = options.page;
-        this.idTerm = options.idTerm;
+        this.term = options.term;
         this.annotations = null; //array of annotations that are printed
         if (this.page == undefined) this.page = 0;
     },
@@ -26,16 +26,16 @@ var AnnotationView = Backbone.View.extend({
         var nb_pages = Math.ceil(_.size(this.model) / this.nb_thumb_by_page);
         if (nb_pages < 2) return; //paginator not useful
         require(["text!application/templates/dashboard/Pagination.tpl.html"], function(paginationTpl) {
-            var pagination = _.template(paginationTpl, { term : self.idTerm});
+            var pagination = _.template(paginationTpl, { term : self.term});
             $(self.el).append(pagination);
-            var $pagination = $(self.el).find("#pagination-term-"+self.idTerm).find("ul");
+            var $pagination = $(self.el).find("#pagination-term-"+self.term).find("ul");
             var className = (self.page == 0) ? "prev disabled" : "";
             var pageLink = _.template("<li class='<%= className %>'><a data-page='<%= page %>' href='#'>&larr; Previous</a></li>", { className : className, page : self.page-1});
             $pagination.append(pageLink);
             var shiftUp = (self.page - self.pagination_window < 0) ? Math.abs(self.page - self.pagination_window) : 0;
             var shiftDown = (self.page + self.pagination_window >= nb_pages) ? Math.abs(self.pagination_window + self.page - nb_pages + 1) : 0;
             for (var i = Math.max(0, self.page - self.pagination_window - shiftDown); i < Math.min(nb_pages, self.page + self.pagination_window + shiftUp + 1); i++) {
-                var linkID = "term-"+self.idTerm+"-page-"+i;
+                var linkID = "term-"+self.term+"-page-"+i;
                 className = (i == self.page) ? "active" : "";
                 pageLink = _.template("<li class='<%= className %>'><a data-page='<%= page %>' href='#'><%= page %></a></li>", {
                     className : className,
@@ -79,7 +79,7 @@ var AnnotationView = Backbone.View.extend({
                 var thumb = new AnnotationThumbView({
                     model : annotation,
                     className : "thumb-wrap",
-                    idTerm : self.idTerm
+                    term : self.term
                     //id : "annotationthumb"+annotation.get('id')
                 }).render();
                 $(self.el).append(thumb.el);

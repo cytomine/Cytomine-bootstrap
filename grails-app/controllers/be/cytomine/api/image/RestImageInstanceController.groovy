@@ -32,10 +32,6 @@ class RestImageInstanceController extends RestController {
     def abstractImageService
     def userService
 
-    def index = {
-        redirect(controller: "image")
-    }
-
     def show = {
         log.info "show"
         ImageInstance image = imageInstanceService.read(params.long('id'))

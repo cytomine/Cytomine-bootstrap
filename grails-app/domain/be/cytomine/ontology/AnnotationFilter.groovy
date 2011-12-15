@@ -6,6 +6,7 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.security.SecUser
 import be.cytomine.CytomineDomain
+import grails.converters.JSON
 
 class AnnotationFilter extends CytomineDomain implements Serializable {
 
@@ -38,7 +39,7 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
             if (user) annotationFilter.addToUser(user)
         }
         json.terms?.each { termID ->
-            Term term = SecUser.read(termID)
+            Term term = Term.read(termID)
             if (term) annotationFilter.addToTerm(term)
         }
         return annotationFilter;
@@ -47,4 +48,22 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
     def getCallBack() {
         return [annotationFilterID: this?.id] //not sure...here
     }
+
+
+    static void registerMarshaller() {
+        println "Register custom JSON renderer for " + AnnotationFilter.class
+        JSON.registerObjectMarshaller(AnnotationFilter) {
+            def returnArray = [:]
+            returnArray['class'] = it.class
+            returnArray['id'] = it.id
+            returnArray['name'] = it.name
+            returnArray['terms'] = it.term
+            returnArray['users'] = it.user
+            returnArray['created'] = it.created ? it.created.time.toString() : null
+            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
+            return returnArray
+        }
+    }
+
+
 }

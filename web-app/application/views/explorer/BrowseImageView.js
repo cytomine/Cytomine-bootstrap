@@ -48,8 +48,8 @@ var BrowseImageView = Backbone.View.extend({
         var self = this;
         //var template = (this.iPad) ? "text!application/templates/explorer/BrowseImageMobile.tpl.html" : "text!application/templates/explorer/BrowseImage.tpl.html";
 
-        require(["lib/OpenLayers-2.11/OpenLayers.js", "text!application/templates/explorer/BrowseImage.tpl.html"
-        ], function(openLayers,  tpl) {
+        require(["text!application/templates/explorer/BrowseImage.tpl.html"
+        ], function(  tpl) {
             self.doLayout(tpl);
         });
         return this;
