@@ -119,6 +119,7 @@ var OntologyTreeView = Backbone.View.extend({
         console.log("refresh term for annotation " + idAnnotation);
         this.idAnnotation = idAnnotation;
         var refreshTree = function(collection , response) {
+            console.log("collection.lenght="+collection.length);
             self.annotationTerm = collection;
             self.clear();
             self.activeEvent = false;

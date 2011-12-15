@@ -29,6 +29,8 @@ import be.cytomine.test.Infos
 import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
+import be.cytomine.project.ProjectGroup
 
 
 
@@ -147,7 +149,8 @@ class BootStrap {
         }
 
         createProjectGrant()
-        //createAnnotationGrant()
+        createProjectOwner()
+        createAnnotationGrant()
 
         def destroy = {
         }
@@ -156,6 +159,7 @@ class BootStrap {
 
     private def createProjectGrant() {
         //Remove admin ritht for non-giga user
+        println "createProjectGrant..."
         List<User> usersList = User.list()
         usersList.each { user ->
             if (!user.username.equals("lrollus") && !user.username.equals("stevben") && !user.username.equals("rmaree")) {
@@ -167,7 +171,7 @@ class BootStrap {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         List<Project> projects = Project.list()
         projects.each { project ->
-
+            println "createProjectGrant for project $project.name..."
             def objectACL = AclObjectIdentity.findByObjectId(project.id)
 
             if (!objectACL) {
@@ -175,8 +179,18 @@ class BootStrap {
                     //Create object security id for each project
                     aclService.createAcl(objectIdentityRetrievalStrategy.getObjectIdentity(project))
                     //For each project, create ADMIN grant for each user
-                    List<User> users = project.users()
+
+                    List<User> users = []
+                    ProjectGroup.findAllByProject(project).each {
+                        Group group = it.group
+                        group.users().each { user ->
+                           if(!users.contains(user))
+                            users.add(user)
+                        }
+
+                    }
                     users.each { user ->
+                        println "add user $user.username..."
                         aclUtilService.addPermission(project, user.username, ADMINISTRATION)
                     }
                 } catch (Exception e) { e.printStackTrace()}
@@ -186,11 +200,52 @@ class BootStrap {
         SCH.clearContext()
     }
 
+    private def createProjectOwner() {
+        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+
+        changeOwner("BOTANIQUE-LEAVES","aempain")
+        changeOwner("ROSTOCK-HJTHIESEN-KIDNEY","rmaree")
+        changeOwner("ULG-LBTD-LBA","dcataldo")
+        changeOwner("ULB-ANAPATH-TPP-CB","isalmon")
+        changeOwner("ULB-ANAPATH-FROTTIS-EBUS","isalmon")
+        changeOwner("ULB-ANAPATH-PCT-CB","isalmon")
+        changeOwner("ULB-ANAPATH-ASP-CB","isalmon")
+        changeOwner("ULB-ANAPATH-LBA-DQ","isalmon")
+        changeOwner("ULG-BMGG-ZEBRA_CTL","stern")
+        changeOwner("ULG-LBTD-NEO13","dcataldo")
+        changeOwner("ULB-ANAPATH-FROTTIS-PAPA","isalmon")
+        changeOwner("ULB-ANAPATH-ASP","isalmon")
+        changeOwner("ULG-LBTD-NEO04","dcataldo")
+        changeOwner("XCELLSOLUTIONS-BESTCYTE-CERVIX","rmaree")
+        changeOwner("ULB-ANAPATH-LBA-PAPA","isalmon")
+        changeOwner("ULB-ANAPATH-LBA-CB","isalmon")
+        changeOwner("ZEBRA_CTL","ostern")
+        sessionFactory.currentSession.flush()
+        SCH.clearContext()
+    }
+
+    private void changeOwner(String projectName, String username) {
+        Project project = Project.findByName(projectName)
+        if(project) {
+            println "Project " + project.name + " id=" + project.id  +" will be owned by " + username
+            aclUtilService.changeOwner project, username
+        } else {
+            println "Project not found " + projectName
+        }
+//        AclObjectIdentity acl = AclObjectIdentity.findByObjectId(project.id)
+//        acl.owner = AclSid.findBySid(username)
+//        acl.save(flush:true)
+
+    }
+
+
     private def createAnnotationGrant() {
-        Annotation.list().each{
+        //if(Annotation.list().first().project) return
+        Annotation.findAllByProjectIsNull().each{
              it.project = it.image.project
              it.save(flush:true)
         }
+        //Annotation.findAllByProjectIsNull().each {it -> println it}
 
     }
 
@@ -384,8 +439,8 @@ class BootStrap {
         def adminRole = SecRole.findByAuthority("ROLE_ADMIN") ?: new SecRole(authority: "ROLE_ADMIN").save(flush: true)
         usersSamples.each { item ->
             User user = User.findByUsername(item.username)
-            if (!user) {
-                user = new User(
+            if (user)  return
+            user = new User(
                         username: item.username,
                         firstname: item.firstname,
                         lastname: item.lastname,
@@ -393,15 +448,6 @@ class BootStrap {
                         color: item.color,
                         password: item.password,
                         enabled: true)
-            } else {
-                user.username = item.username;
-                user.firstname = item.firstname;
-                user.lastname = item.lastname;
-                user.email = item.email;
-                user.color = item.color;
-                user.password = item.password;
-
-            }
             if (user.validate()) {
                 println "Creating user ${user.username}..."
                 // user.addToTransactions(new Transaction())

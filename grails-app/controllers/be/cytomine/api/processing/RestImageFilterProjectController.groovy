@@ -3,12 +3,14 @@ package be.cytomine.api.processing
 import be.cytomine.api.RestController
 import be.cytomine.processing.ImageFilter
 import be.cytomine.project.Project
+import be.cytomine.test.Infos
 
 class RestImageFilterProjectController extends RestController {
 
     def imageFilterService
     def imageFilterProjectService
     def projectService
+    def cytomineService
 
 
     def list = {
@@ -20,7 +22,7 @@ class RestImageFilterProjectController extends RestController {
 
     def add = {
 		println request.JSON
-        Project project = projectService.read(request.JSON.project)
+        Project project = projectService.read(Long.parseLong(request.JSON.project.toString()))
 		if (!project) responseNotFound("Project", "Project", request.JSON.project)
         ImageFilter imageFilter = imageFilterService.read(request.JSON.imageFilter)
 		if (!imageFilter) responseNotFound("ImageFilter", "ImageFilter", request.JSON.imageFilter)
