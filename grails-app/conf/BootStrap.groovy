@@ -219,7 +219,7 @@ class BootStrap {
         changeOwner("XCELLSOLUTIONS-BESTCYTE-CERVIX","rmaree")
         changeOwner("ULB-ANAPATH-LBA-PAPA","isalmon")
         changeOwner("ULB-ANAPATH-LBA-CB","isalmon")
-        changeOwner("ZEBRA_CTL","ostern")
+        changeOwner("ZEBRA_CTL","stern")
         sessionFactory.currentSession.flush()
         SCH.clearContext()
     }
