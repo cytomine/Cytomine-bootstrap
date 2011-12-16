@@ -114,7 +114,9 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
         annotationWithTerm.term = [idTerm1, idTerm2]
         jsonAnnotation = annotationWithTerm.encodeAsJSON()
 
+        log.info("START")
         def result = AnnotationAPI.createAnnotation(jsonAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        log.info("END")
         log.info("check response")
         assertEquals(200, result.code)
         int idAnnotation = result.data.id
