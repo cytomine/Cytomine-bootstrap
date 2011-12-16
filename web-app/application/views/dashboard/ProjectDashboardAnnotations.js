@@ -383,9 +383,16 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             if (!node.isSelected()) return;
             nbTermSelected++;
         });
+        var tree = $(this.el).find('#treeUserListing').dynatree("getRoot");
+        if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
+        var nbUserSelected = 0;
+        tree.visit(function(node){
+            if (!node.isSelected()) return;
+            nbUserSelected++;
+        });
         nbTermSelected += ($(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked") == "checked") ? 1 : 0;
         nbTermSelected += ($(this.el).find("input.multipleAnnotationsCheckbox").attr("checked") == "checked") ? 1 : 0;
-        if (nbTermSelected > 0){
+        if (nbTermSelected > 0 && nbUserSelected > 0){
             $("#listtabannotation").show();
             $("#downloadAnnotation").show();
         } else {
@@ -446,9 +453,12 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
      */
     printAnnotationThumbAllTerms : function(terms,users) {
         var self = this;
+        self.updateContentVisibility();
+        if (_.size(users) == 0) return; //nothing to display
         for(var i=0;i<terms.length;i++) {
             self.printAnnotationThumb(terms[i],"#tabsterm-"+self.model.id+"-"+terms[i],users);
         }
+
     },
     printAnnotationThumb : function(idTerm,$elem,users){
         var self = this;
