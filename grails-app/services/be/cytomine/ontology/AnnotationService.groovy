@@ -252,7 +252,8 @@ class AnnotationService extends ModelService {
         log.info "annotation.id=" + id + " stevben-server=" + retrieval
         if (id && retrieval) {
             log.info "index annotation " + id + " on  " + retrieval.url
-            retrievalService.indexAnnotationSynchronous(Annotation.read(id))
+            retrievalService.indexAnnotationAsynchronous(Annotation.read(id))
+
         }
     }
 
@@ -261,7 +262,7 @@ class AnnotationService extends ModelService {
         log.info "annotation.id=" + id + " retrieval-server=" + retrieval
         if (id && retrieval) {
             log.info "delete annotation " + id + " on  " + retrieval.url
-            retrievalService.deleteAnnotationSynchronous(id)
+            retrievalService.deleteAnnotationAsynchronous(id)
         }
     }
 
@@ -270,7 +271,7 @@ class AnnotationService extends ModelService {
         log.info "annotation.id=" + id + " retrieval-server=" + retrieval
         if (id && retrieval) {
             log.info "update annotation " + id + " on  " + retrieval.url
-            retrievalService.updateAnnotationSynchronous(id)
+            retrievalService.updateAnnotationAsynchronous(id)
         }
     }
 
