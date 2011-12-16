@@ -54,6 +54,7 @@ class AnnotationService extends ModelService {
     def list(Project project, List<User> userList, boolean noTerm, boolean multipleTerm) {
         if (userList.isEmpty()) return []
         else if (multipleTerm) {
+            log.info "multipleTerm"
             def terms = Term.findAllByOntology(project.getOntology())
             def annotationsWithTerms = AnnotationTerm.createCriteria().list {
                 inList("term", terms)
@@ -74,7 +75,7 @@ class AnnotationService extends ModelService {
             annotations
         }
         else if (noTerm) {
-
+            log.info "noTerm"
             def terms = Term.findAllByOntology(project.getOntology())
             def annotationsWithTerms = AnnotationTerm.createCriteria().list {
                 inList("term", terms)
@@ -124,14 +125,26 @@ class AnnotationService extends ModelService {
 
     @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, List<User> userList) {
-        def annotationFromTermAndProject = []
-        def annotationFromTerm = term.annotations()
-        annotationFromTerm.each { annotation ->
-            if (annotation.project() != null && annotation.project().id == project.id && userList.contains(annotation.user))
-                annotationFromTermAndProject << annotation
+        def criteria = Annotation.withCriteria {
+            'in'('user',userList)
+            eq('project',project)
+            annotationTerm {
+                 eq('term',term)
+            }
         }
-        annotationFromTermAndProject
+        criteria
     }
+
+//    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+//    def list(Project project, Term term, List<User> userList) {
+//        def annotationFromTermAndProject = []
+//        def annotationFromTerm = term.annotations()
+//        annotationFromTerm.each { annotation ->
+//            if (annotation.project() != null && annotation.project().id == project.id && userList.contains(annotation.user))
+//                annotationFromTermAndProject << annotation
+//        }
+//        annotationFromTermAndProject
+//    }
 
     Annotation get(def id) {
         Annotation.get(id)
