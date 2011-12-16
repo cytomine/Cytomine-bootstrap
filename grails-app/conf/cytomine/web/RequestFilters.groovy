@@ -26,7 +26,10 @@ class RequestFilters {
           String strPost = ""
           try {strPost = request.JSON } catch(Exception e) {}
           String requestInfo = "| PARAM="+strParam + "| POST=" + strPost + " | "
-          log.info controllerName+"."+actionName + ": user:" + springSecurityService.principal.id + " request=" + requestInfo
+          String userInfo = ""
+          try { userInfo = springSecurityService.principal.id} catch(Exception e) { userInfo = springSecurityService.principal}
+
+          log.info controllerName+"."+actionName + ": user:" + userInfo + " request=" + requestInfo
       }
       after = {}
       afterView = {
