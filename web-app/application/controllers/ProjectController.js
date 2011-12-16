@@ -9,7 +9,7 @@ var ProjectController = Backbone.Router.extend({
     initView : function(callback) {
         var self = this;
 
-        window.app.models.ontologies.fetch({
+        new OntologyCollection({ light : true }).fetch({
             success : function (ontologies, response) {
 
         window.app.models.disciplines.fetch({

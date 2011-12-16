@@ -10,6 +10,7 @@ import be.cytomine.command.DeleteCommand
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.ConstraintException
+import org.springframework.security.access.prepost.PreAuthorize
 
 class AnnotationFilterService extends ModelService {
 
@@ -18,32 +19,34 @@ class AnnotationFilterService extends ModelService {
     def cytomineService
     def domainService
 
-    def list() {
-        return AnnotationFilter.list()
-    }
-
+    @PreAuthorize("hasRole('ROLE_USER')")
     def listByProject(Project project) {
         return AnnotationFilter.findAllByProject(project)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     AnnotationFilter read(def id) {
         return AnnotationFilter.read(id)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     AnnotationFilter get(def id) {
         return AnnotationFilter.get(id)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json) throws CytomineException {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     def update(def model,def json) throws CytomineException {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     def delete(def model,def json) throws CytomineException {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)

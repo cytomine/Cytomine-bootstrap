@@ -339,3 +339,13 @@ div.olControlOverviewMapElement img {
 label.ui-corner-all {
     text-align : left;
 }
+
+.modal-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.bigModal {
+    width:940px;
+    margin-left:-470px;
+}

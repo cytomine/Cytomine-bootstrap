@@ -100,15 +100,15 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     success : function (collection, response) {
                         self.terms = collection;
                         window.app.status.currentTermsCollection = collection;
-                        $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : -1, name : "Undefined", className : "noDropZone"}));
+                        $("#listtabannotation").append(_.template(termTabContentTpl, { project : self.model.id, id : -1, name : "Undefined", className : "noDropZone"}));
                         $("#tabsterm-panel-"+self.model.id+"--1").panel();
                         $("#tabsterm-panel-"+self.model.id+"--1").hide();
-                        $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : -2, name : "Multiple", className : "noDropZone"}));
+                        $("#listtabannotation").append(_.template(termTabContentTpl, { project : self.model.id, id : -2, name : "Multiple", className : "noDropZone"}));
                         $("#tabsterm-panel-"+self.model.id+"--2").panel();
                         $("#tabsterm-panel-"+self.model.id+"--2").hide();
                         collection.each(function(term) {
                             //add x term tab
-                            $("#listtabannotation").prepend(_.template(termTabContentTpl, { project : self.model.id, id : term.get("id"), name : term.get("name"), className : "droppableElem"}));
+                            $("#listtabannotation").append(_.template(termTabContentTpl, { project : self.model.id, id : term.get("id"), name : term.get("name"), className : "droppableElem"}));
                             $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).panel();
                             $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).hide();
                         });
@@ -123,11 +123,13 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     initAnnotationsFilter : function() {
         var self = this;
         var select = $(this.el).find("#annotationFilterSelect");
+        var annotationFilterCollection = undefined;
         var refreshSelect = function(){
             select.empty();
             select.attr("disabled", "disabled");
             new AnnotationFilterCollection({project : self.model.id}).fetch({
                 success : function (collection, response) {
+                    annotationFilterCollection = collection;
                     if (_.size(collection) > 0) $(select).removeAttr("disabled");
                     collection.each (function (annotationFilter) {
                         var optionFilterTpl = "<option value='<%= id %>'><%= name %></option>";
@@ -142,41 +144,76 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         };
         refreshSelect();
 
+        /* Select Annotation Filter */
+        var selectButton = $(this.el).find("#selectAnnotationFilter");
+        selectButton.click(function(){
+            var idAnnotationFilter = select.val();
+            if (!idAnnotationFilter) return;
+            var annotationFilter = annotationFilterCollection.get(idAnnotationFilter);
+            var url = "#tabs-annotations-"+self.model.get("id")+"-"+annotationFilter.get("terms")+"-"+annotationFilter.get("users");
+            console.log(url);
+            window.app.controllers.browse.tabs.triggerRoute = false;
+            window.app.controllers.browse.navigate(url, true);
+            window.app.controllers.browse.tabs.triggerRoute = true;
+        });
         /* Save Annotation Filter */
         var saveButton = $(this.el).find("#saveAnnotationFilter");
+        var confirmButton = $(this.el).find("#confirmAnnotationFilter");
+        var cancelButton = $(this.el).find("#cancelAnnotationFilter");
+        var showConfirm = function() {
+            $("#liSaveAnnotationFilter").hide();
+            $("#liConfirmAnnotationFilter").css("display", "inline");
+            $("#inputAnnotationFilterName").focus();
+            $("#inputAnnotationFilterName").twipsy();
+        }
+        var hideConfirm = function () {
+            $("#liSaveAnnotationFilter").css("display", "inline");
+            $("#liConfirmAnnotationFilter").hide();
+        }
+        cancelButton.click(function(){
+            hideConfirm();
+            return;
+        });
         saveButton.click(function (){
-            var name = prompt("Name :", "");
-            if (name == "") name = new Date().toLocaleTimeString() + " noname";
+            showConfirm();
+            return;
+        });
+        confirmButton.click(function(){
+            var name = $("#inputAnnotationFilterName").val();
+            if (name == "" || name == undefined) {
+                window.app.view.message("Error", "You have to specify a identifier", "error");
+                return;
+            }
             new AnnotationFilterModel().save(
-                    {
-                        name : name,
-                        terms : self.selectedTerm,
-                        users : self.selectedUsers,
-                        project : self.model.id
+                {
+                    name : name,
+                    terms : self.selectedTerm,
+                    users : self.selectedUsers,
+                    project : self.model.id
+                },
+                {
+                    success: function(model, response) {
+                        hideConfirm();
+                        refreshSelect();
                     },
-                    {
-                        success: function(model, response) {
-                            refreshSelect();
-                        },
-                        error : function (model, response) {
+                    error : function (model, response) {
 
-                        }
-                    });
+                    }
+                });
         });
         /* Delete Annotation Filter */
         var deleteButton = $(this.el).find("#deleteAnnotationFilter");
         deleteButton.click(function(){
             var idAnnotationFilter = select.val();
-            alert("idAnnotationFilter="+idAnnotationFilter);
-            if (idAnnotationFilter != undefined) {
-                new AnnotationFilterModel({id : idAnnotationFilter}).destroy({
-                    success: function(model, response) {
-                        refreshSelect();
-                    },
-                    error : function (model, response) {
-                    }
-                });
-            }
+            if (!idAnnotationFilter) return;
+            new AnnotationFilterModel({id : idAnnotationFilter}).destroy({
+                success: function(model, response) {
+                    refreshSelect();
+                },
+                error : function (model, response) {
+                }
+            });
+
         });
     },
     checkTermsAndUsers : function(terms, users) {
@@ -313,9 +350,9 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     idPrefix: "dynatree-Cb-user-"+self.model.id+"-"
                 });
 
-                /*$(self.el).find('#treeUserListing').dynatree("getRoot").visit(function(node){
-                 node.expand(true);
-                 });*/
+                $(self.el).find('#treeUserListing').dynatree("getRoot").visit(function(node){
+                    node.expand(true);
+                });
                 $(self.el).find('#treeUserListing').dynatree("getTree").selectKey(window.app.status.user.id);
             }});
     },
@@ -347,8 +384,10 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         nbTermSelected += ($(this.el).find("input.multipleAnnotationsCheckbox").attr("checked") == "checked") ? 1 : 0;
         if (nbTermSelected > 0){
             $("#listtabannotation").show();
+            $("#downloadAnnotation").show();
         } else {
             $("#listtabannotation").hide();
+            $("#downloadAnnotation").hide();
         }
     },
     selectTerms : function(terms) {

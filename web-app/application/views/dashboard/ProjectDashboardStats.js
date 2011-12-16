@@ -1,4 +1,5 @@
 var ProjectDashboardStats = Backbone.View.extend({
+
    fetchStats : function () {
       var self = this;
       if (self.model.get('numberOfAnnotations') == 0) return;

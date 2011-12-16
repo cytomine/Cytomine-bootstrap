@@ -8,12 +8,14 @@ import be.cytomine.security.SecUser
 import be.cytomine.CytomineDomain
 import grails.converters.JSON
 
+//TO DO : move this Domain to another package (utilities ? preferences ?)
 class AnnotationFilter extends CytomineDomain implements Serializable {
 
     String name
     Project project
+    User user
 
-    static hasMany = [term: Term, user: User]
+    static hasMany = [terms: Term, users: SecUser]
 
     static constraints = {
         name (nullable : false, blank : false)
@@ -34,13 +36,14 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
     static AnnotationFilter getFromData(AnnotationFilter annotationFilter, json) throws CytomineException {
         annotationFilter.name = json.name
         annotationFilter.project = Project.read(json.project)
+        annotationFilter.user = SecUser.read(json.user)
         json.users?.each { userID ->
             SecUser user = SecUser.read(userID)
-            if (user) annotationFilter.addToUser(user)
+            if (user) annotationFilter.addToUsers(user)
         }
         json.terms?.each { termID ->
             Term term = Term.read(termID)
-            if (term) annotationFilter.addToTerm(term)
+            if (term) annotationFilter.addToTerms(term)
         }
         return annotationFilter;
     }
@@ -57,8 +60,8 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
             returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['name'] = it.name
-            returnArray['terms'] = it.term
-            returnArray['users'] = it.user
+            returnArray['terms'] = it.terms.collect { it.id }
+            returnArray['users'] = it.users.collect { it.id }
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null
             return returnArray

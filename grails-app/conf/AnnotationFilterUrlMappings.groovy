@@ -8,7 +8,7 @@ class AnnotationFilterUrlMappings {
     static mappings = {
         /* User */
         "/api/annotationfilter"(controller:"restAnnotationFilter"){
-            action = [GET:"list", POST:"add"]
+            action = [GET:"listByProject", POST:"add"]
         }
         "/api/annotationfilter/$id"(controller:"restAnnotationFilter"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
