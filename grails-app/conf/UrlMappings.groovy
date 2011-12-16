@@ -32,9 +32,7 @@ class UrlMappings {
         "/api/user/$id/project"(controller:"restProject"){
             action = [GET:"listByUser"]
         }
-        "/api/currentuser/project"(controller:"restProject"){
-            action = [GET:"listByUser"]
-        }
+
         "/api/currentuser/ontology"(controller:"restOntology"){
             action = [GET:"listByUser"]
         }

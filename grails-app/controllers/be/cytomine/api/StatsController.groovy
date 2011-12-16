@@ -16,7 +16,7 @@ class StatsController extends RestController {
             join("annotation")
             createAlias("annotation", "a")
             projections {
-                inList("a.image", project.imagesinstance())
+                eq("a.project", project)
                 groupProperty("a.user.id")
                 groupProperty("term.id")
                 count("term")
@@ -54,7 +54,7 @@ class StatsController extends RestController {
         Project project = Project.read(params.id)
         if (project == null) { responseNotFound("Project", params.id) }
         def userAnnotations = Annotation.createCriteria().list {
-            inList("image", project.imagesinstance())
+            eq("project", project)
             join("user")  //right join possible ? it will be sufficient
             projections {
                 countDistinct('id')
@@ -121,7 +121,7 @@ class StatsController extends RestController {
             join("annotation")
             createAlias("annotation", "a")
             projections {
-                inList("a.image", project.imagesinstance())
+                eq("a.project", project)
                 groupProperty("a.image.id")
                 groupProperty("term.id")
                 count("term.id")
@@ -153,7 +153,7 @@ class StatsController extends RestController {
             join("annotation")
             createAlias("annotation", "a")
             projections {
-                inList("a.image", project.imagesinstance())
+                eq("a.project", project)
                 groupProperty("a.image.id")
                 groupProperty("a.user")
                 count("a.user")

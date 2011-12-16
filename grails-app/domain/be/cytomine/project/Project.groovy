@@ -66,7 +66,7 @@ class Project extends CytomineDomain {
     }
 
     def annotations() {
-        Annotation.findAllByImageInList(this.imagesinstance())
+        Annotation.findAllByProject(this)
     }
 
     def countAnnotations() {

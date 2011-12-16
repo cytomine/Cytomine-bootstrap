@@ -60,7 +60,7 @@ class AnnotationService extends ModelService {
                 join("annotation")
                 createAlias("annotation", "a")
                 projections {
-                    inList("a.image", project.imagesinstance())
+                    eq("a.project", project)
                     groupProperty("annotation")
                     createAlias("term", "nbterms")
                     count("term")
@@ -81,7 +81,7 @@ class AnnotationService extends ModelService {
                 join("annotation")
                 createAlias("annotation", "a")
                 projections {
-                    inList("a.image", project.imagesinstance())
+                    eq("a.project", project)
                     groupProperty("annotation.id")
                 }
             }
@@ -90,13 +90,13 @@ class AnnotationService extends ModelService {
             def annotations = null
             if (annotationsWithTerms.size() == 0) {
                 annotations = Annotation.createCriteria().list {
-                    inList("image", project.imagesinstance())
+                    eq("project", project)
                     inList("user", userList)
 
                 }
             } else {
                 annotations = Annotation.createCriteria().list {
-                    inList("image", project.imagesinstance())
+                    eq("project", project)
                     inList("user", userList)
                     not {
                         inList("id", annotationsWithTerms)
@@ -106,7 +106,8 @@ class AnnotationService extends ModelService {
 
             return annotations
         } else {
-            return Annotation.findAllByImageInListAndUserInList(project.imagesinstance(), userList)
+            log.info "findAllByProjectAndUserInList="+ project + " users="+userList
+            return Annotation.findAllByProjectAndUserInList(project, userList)
         }
     }
 

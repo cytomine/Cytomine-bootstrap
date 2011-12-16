@@ -30,15 +30,10 @@ class RestProjectController extends RestController {
     }
 
     def listByUser = {
-        log.info "List with id user:" + params.id + " (null will be currentuser)"
-        User user = null
-        if (params.id != null) {
-            user = User.read(params.long('id'))
-            if(user) responseSuccess(projectService.list(user))
-            else responseNotFound("User", params.id)
-        }
-        else
-            responseSuccess(projectService.list())
+        log.info "List with id user:" + params.id
+        User user = User.read(params.long('id'))
+        if(user) responseSuccess(projectService.list(user))
+        else responseNotFound("User", params.id)
     }
 
     def listByDiscipline = {
