@@ -193,11 +193,12 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                 },
                 {
                     success: function(model, response) {
+                        window.app.view.message("Success", response.message, "success");
                         hideConfirm();
                         refreshSelect();
                     },
                     error : function (model, response) {
-
+                        window.app.view.message("Error", response.message, "error");
                     }
                 });
         });
@@ -208,9 +209,11 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             if (!idAnnotationFilter) return;
             new AnnotationFilterModel({id : idAnnotationFilter}).destroy({
                 success: function(model, response) {
+                    window.app.view.message("Success", response.message, "success");
                     refreshSelect();
                 },
                 error : function (model, response) {
+                    window.app.view.message("Error", response.message, "error");
                 }
             });
 
