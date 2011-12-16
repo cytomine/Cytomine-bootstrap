@@ -18,27 +18,25 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                 self.ontology = model;
                 $(self.el).find("input.undefinedAnnotationsCheckbox").change(function(){
                     if ($(this).attr("checked") == "checked") {
-                        self.updateContentVisibility();
                         self.refreshAnnotations(-1,self.selectedUsers);
                         self.selectedTerm.push(-1);
                         $("#tabsterm-panel-"+self.model.id+"--1").show();
                     } else {
-                        self.updateContentVisibility();
                         $("#tabsterm-panel-"+self.model.id+"--1").hide();
                         self.selectedTerm = _.without(self.selectedTerm, -1);
                     }
+                    self.updateContentVisibility();self.updateDownloadLinks();
                 });
                 $(self.el).find("input.multipleAnnotationsCheckbox").change(function(){
                     if ($(this).attr("checked") == "checked") {
-                        self.updateContentVisibility();
                         self.refreshAnnotations(-2,self.selectedUsers);
                         self.selectedTerm.push(-2);
                         $("#tabsterm-panel-"+self.model.id+"--2").show();
                     } else {
-                        self.updateContentVisibility();
                         $("#tabsterm-panel-"+self.model.id+"--2").hide();
                         self.selectedTerm = _.without(self.selectedTerm, -2);
                     }
+                    self.updateContentVisibility();self.updateDownloadLinks();
                 });
                 $(self.el).find('#treeAnnotationListing').dynatree({
                     checkbox: true,
@@ -49,16 +47,15 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     onSelect: function(select, node) {
                         //if(!self.activeEvent) return;
                         if (node.isSelected()) {
-                            self.updateContentVisibility();
                             self.refreshAnnotations(node.data.key,self.selectedUsers);
                             $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).show();
                             self.selectedTerm.push(node.data.key);
                         }
                         else {
-                            self.updateContentVisibility();
                             $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).hide();
                             self.selectedTerm = _.without(self.selectedTerm, node.data.key);
                         }
+                        self.updateContentVisibility();self.updateDownloadLinks();
                     },
                     onDblClick: function(node, event) {
                         //node.toggleSelect();
@@ -227,13 +224,13 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         }
         this.hideAllTerms();
         this.hideAllUsers();
-        if (_users && !_terms) {
+        if (_users && _terms == "all") {
             this.selectUsers(users);
             this.showAllTerms();
         } else if (_users && _terms) {
             this.selectUsers(users);
             this.selectTerms(terms);
-        } else if (!_users && _terms) {
+        } else if (_users == "all" && _terms) {
             this.showAllUsers();
             this.selectTerms(terms);
         }
@@ -375,21 +372,17 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             $(self.el).find('#treeAnnotationListing').dynatree("getTree").selectKey(term.get("id"), selected);
         });
     },
+    updateDownloadLinks : function () {
+        var users = this.selectedUsers.join(",");
+        var terms = this.selectedTerm.join(",");
+        var prefix = "&users=" + users + "&terms=" + terms;
+        $("#downloadAnnotationsCSV").attr("href", "/api/project/"+this.model.id+"/annotation/download?format=csv" + prefix);
+        $("#downloadAnnotationsExcel").attr("href", "/api/project/"+this.model.id+"/annotation/download?format=xls" + prefix);
+        $("#downloadAnnotationsPDF").attr("href", "/api/project/"+this.model.id+"/annotation/download?format=pdf" + prefix);
+    },
     updateContentVisibility : function () {
-        var tree = $(this.el).find('#treeAnnotationListing').dynatree("getRoot");
-        if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
-        var nbTermSelected = 0;
-        tree.visit(function(node){
-            if (!node.isSelected()) return;
-            nbTermSelected++;
-        });
-        var tree = $(this.el).find('#treeUserListing').dynatree("getRoot");
-        if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
-        var nbUserSelected = 0;
-        tree.visit(function(node){
-            if (!node.isSelected()) return;
-            nbUserSelected++;
-        });
+        var nbUserSelected = _.size(this.selectedUsers);
+        var nbTermSelected = _.size(this.selectedTerm);
         nbTermSelected += ($(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked") == "checked") ? 1 : 0;
         nbTermSelected += ($(this.el).find("input.multipleAnnotationsCheckbox").attr("checked") == "checked") ? 1 : 0;
         if (nbTermSelected > 0 && nbUserSelected > 0){
@@ -432,7 +425,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         if ($(this.el).find("input.multipleAnnotationsCheckbox").attr("checked") == "checked") {
             self.refreshAnnotations(-2,users);
         }
-        self.updateContentVisibility();
+        self.updateContentVisibility();self.updateDownloadLinks();
     },
     /**
      * Refresh all annotation dor the given term
@@ -453,7 +446,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
      */
     printAnnotationThumbAllTerms : function(terms,users) {
         var self = this;
-        self.updateContentVisibility();
+        self.updateContentVisibility();self.updateDownloadLinks();
         if (_.size(users) == 0) return; //nothing to display
         for(var i=0;i<terms.length;i++) {
             self.printAnnotationThumb(terms[i],"#tabsterm-"+self.model.id+"-"+terms[i],users);

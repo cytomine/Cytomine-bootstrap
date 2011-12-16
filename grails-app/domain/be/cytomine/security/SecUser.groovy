@@ -39,4 +39,8 @@ class SecUser extends CytomineDomain {
 	def beforeUpdate() {
         super.beforeUpdate()
 	}
+    
+    String toString() {
+        return username
+    }
 }

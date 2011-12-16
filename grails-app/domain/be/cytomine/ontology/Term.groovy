@@ -147,4 +147,8 @@ class Term extends CytomineDomain implements Serializable {
         //if no try/catch, when getting term from ontology => GroovyCastException: Cannot cast object 'null' with class 'org.codehaus.groovy.grails.web.json.JSONObject$Null' to class 'be.cytomine.ontology.Term'
 
     }
+    
+    String toString() {
+        name
+    }
 }
