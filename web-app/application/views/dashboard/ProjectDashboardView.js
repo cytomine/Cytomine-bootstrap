@@ -241,44 +241,44 @@ var ProjectDashboardView = Backbone.View.extend({
 
     fetchWorstAnnotations : function (annotations, terms) {
         console.log("fetchWorstAnnotations");
-        var self = this;
-        require([
-            "text!application/templates/dashboard/SuggestedAnnotationTerm.tpl.html"],
-                function(suggestedAnnotationTermTpl) {
-
-                    var suggestedCollection = new SuggestedAnnotationTermCollection({project:self.model.get('id'),max:self.maxSuggestView});
-                    var suggestedCallback = function(collection, response) {
-                        $("#worstannotationitem").empty();
-
-                        if(collection.length==0) {
-                            $("#worstannotationitem").append("You must run Retrieval Validate Algo for this project...");
-                        }
-
-                        collection.each(function(suggest) {
-                            var json = suggest.toJSON()
-                            var rate = Math.round(json.rate*100)-1+"%"
-                            var annotation = annotations.get(json.annotation);
-                            var suggestedTerm =  terms.get(json.term).get('name');
-                            var realTerms = new Array();
-                            _.each(annotation.get('term'), function(idTerm){ realTerms.push(terms.get(idTerm).get('name')); });
-                            var termsAnnotation =  realTerms.join();
-                            var text = "<b>" + suggestedTerm +"</b> for annotation " + annotation.id + " instead of <b>" + termsAnnotation +"</b>";
-
-                            var cropStyle = "block";
-                            var cropURL = annotation.get("cropURL");
-
-                            var action = _.template(suggestedAnnotationTermTpl, {idProject : self.model.id, idAnnotation : annotation.id, idImage : annotation.get('image'), icon:"add.png",text:text,rate:rate,cropURL:cropURL, cropStyle:cropStyle});
-                            $("#worstannotationitem").append(action);
-
-
-                        });
-                    }
-                    suggestedCollection.fetch({
-                        success : function(model, response) {
-                            suggestedCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-                        }
-                    });
-                });
+//        var self = this;
+//        require([
+//            "text!application/templates/dashboard/SuggestedAnnotationTerm.tpl.html"],
+//                function(suggestedAnnotationTermTpl) {
+//
+//                    var suggestedCollection = new SuggestedAnnotationTermCollection({project:self.model.get('id'),max:self.maxSuggestView});
+//                    var suggestedCallback = function(collection, response) {
+//                        $("#worstannotationitem").empty();
+//
+//                        if(collection.length==0) {
+//                            $("#worstannotationitem").append("You must run Retrieval Validate Algo for this project...");
+//                        }
+//
+//                        collection.each(function(suggest) {
+//                            var json = suggest.toJSON()
+//                            var rate = Math.round(json.rate*100)-1+"%"
+//                            var annotation = annotations.get(json.annotation);
+//                            var suggestedTerm =  terms.get(json.term).get('name');
+//                            var realTerms = new Array();
+//                            _.each(annotation.get('term'), function(idTerm){ realTerms.push(terms.get(idTerm).get('name')); });
+//                            var termsAnnotation =  realTerms.join();
+//                            var text = "<b>" + suggestedTerm +"</b> for annotation " + annotation.id + " instead of <b>" + termsAnnotation +"</b>";
+//
+//                            var cropStyle = "block";
+//                            var cropURL = annotation.get("cropURL");
+//
+//                            var action = _.template(suggestedAnnotationTermTpl, {idProject : self.model.id, idAnnotation : annotation.id, idImage : annotation.get('image'), icon:"add.png",text:text,rate:rate,cropURL:cropURL, cropStyle:cropStyle});
+//                            $("#worstannotationitem").append(action);
+//
+//
+//                        });
+//                    }
+//                    suggestedCollection.fetch({
+//                        success : function(model, response) {
+//                            suggestedCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+//                        }
+//                    });
+//                });
     },
     showImagesThumbs : function() {
         $("#tabs-projectImageThumb"+this.model.id).show();
