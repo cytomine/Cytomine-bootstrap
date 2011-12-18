@@ -16,9 +16,6 @@ var ShareAnnotationView = Backbone.View.extend({
                 dialogID : "#share-confirm"
             }
         }).render();
-
-        var selectUser = $("#selectUserShare" + self.model.id);
-
         var userCollection = new UserCollection({project : this.project}).fetch({
             success : function (collection, response) {
                 userCollection = collection;
@@ -32,6 +29,31 @@ var ShareAnnotationView = Backbone.View.extend({
             }
         });
 
+        var selectUser = $("#selectUserShare" + self.model.id);
+        var shareWithOption = $("input[name=shareWithOption]");
+
+        var getSelectedUsers = function () {
+            var value = $("input[name=shareWithOption]:checked").val();
+            if (value == "everyone") {
+                var users = []
+                userCollection.each (function (user) {
+                    users.push(user.get("id"));
+                });
+                return users;
+            } else if (value == "somebody") {
+                return [selectUser.val()];
+            }
+        }
+
+        shareWithOption.change(function(){
+            var value = $(this).val();
+            if (value == "everyone") {
+                selectUser.attr("disabled", "disabled");
+            } else if (value == "somebody") {
+                selectUser.removeAttr("disabled");
+            }
+        });
+
         $("#shareCancelButton"+self.model.id).click(function(){
             self.close();
             return false;
@@ -41,9 +63,9 @@ var ShareAnnotationView = Backbone.View.extend({
             var shareButton = $(this);
             shareButton.html("Sending...");
             var sendMail = function(imageData) {
-                var user = selectUser.val();
+                var users = getSelectedUsers();
+                var userName = (_.size(users) == 1) ? userCollection.get(users[0]).prettyName() : "user";
                 var comment = $("#annotationComment"+self.model.id).val();
-
                 var annotationURL = _.template(window.app.status.serverURL+"/#tabs-image-<%= idProject %>-<%= idImage %>-<%= idAnnotation %>",
                     { idProject : self.project,
                         idImage : self.image,
@@ -51,7 +73,7 @@ var ShareAnnotationView = Backbone.View.extend({
                     });
                 var message = _.template(shareAnnotationMailTpl, {
                     from : userCollection.get(window.app.status.user.id).prettyName(),
-                    to : userCollection.get(user).prettyName(),
+                    to : userName,
                     comment : comment,
                     annotationURL : annotationURL,
                     imageData : imageData,
@@ -59,7 +81,7 @@ var ShareAnnotationView = Backbone.View.extend({
                 });
                 var subject = _.template("Cytomine : <%= from %> shared an annotation with you",{ from : userCollection.get(window.app.status.user.id).prettyName()});
                 new ShareAnnotationModel().save({
-                    user : user,
+                    users : users,
                     annotation : self.model.id,
                     message : message,
                     comment : comment,

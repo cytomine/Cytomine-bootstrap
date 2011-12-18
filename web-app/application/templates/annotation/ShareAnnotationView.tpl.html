@@ -5,31 +5,64 @@
     <div class="modal-body">
         <div class="row" style="min-height: 250px;">
             <div class="span9">
-                <h3>Informations</h3>
-                <ul>
-                    <li><b>Creator</b> : <%= username %></li>
-                    <!--<li><b>Term(s)</b> : <%= terms %></li>-->
-                </ul>
-                <hr />
-                <fieldset>
-                    <div class="clearfix">
-                        <label for="selectUserShare<%= id %>">Share with</label>
-                        <select id="selectUserShare<%= id %>" name="selectUserShare<%= id %>" />
-                    </div>
-                    <br />
-                    <div class="clearfix">
-                        <label for="annotationComment<%= id %>">Your comment / question</label>
-                        <textarea class="xlarge" id="annotationComment<%= id %>" name="annotationComment<%= id %>" rows="5"></textarea>
-                    </div>
-                </fieldset>
-            </div>
-            <div class="span6"><img src="<%= cropURL %>" style="max-height: 250px;max-width: 300px;"/></div>
-        </div>
+                <form>
+                    <fieldset>
+                        <div class="clearfix">
+                            <label id="optionsCheckboxes">Share with</label>
+                            <div class="input">
+                                <ul class="inputs-list">
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="shareWithOption" value="everyone" checked>
+                                            <span>Everyone</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="shareWithOption" value="somebody">
+                                            <span>One person in particular</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <select id="selectUserShare<%= id %>" name="selectUserShare<%= id %>" disabled />
+                                        </label>
+                                    </li>
 
+                                </ul>
+                                <!--<span class="help-block">
+                                    <strong>Note:</strong> Labels surround all the options for much larger click areas and a more usable form.
+                                </span>-->
+                            </div>
+                        </div>
+
+                        <div class="clearfix">
+                            <label for="annotationComment<%= id %>">Comment</label>
+                            <div class="input">
+                                <ul class="inputs-list">
+                                    <textarea class="xlarge" id="annotationComment<%= id %>" name="annotationComment<%= id %>" rows="6"></textarea>
+                                </ul>
+                        </div>
+            </div>
+            </fieldset>
+            </form>
+        </div>
+        <div class="span6">
+            <h3>Informations</h3>
+            <ul>
+                <li><b>Creator</b> : <%= username %></li>
+                <li>&nbsp;</li>
+                <li><img src="<%= cropURL %>" style="max-height: 250px;max-width: 300px;"/></li>
+                <!--<li><b>Term(s)</b> : <%= terms %></li>-->
+            </ul>
+
+        </div>
     </div>
-    <div class="modal-footer">
-        <a href="#" id="shareCancelButton<%= id %>" class="btn" tabindex="4">Cancel</a>
-        <a href="#" id="shareButton<%= id %>" class="btn primary" tabindex="4">Share</a>
-    </div>
-    <canvas id="imageDrawer<%= id %>" style="display : none;"></canvas>
+
+</div>
+<div class="modal-footer">
+    <a href="#" id="shareCancelButton<%= id %>" class="btn" tabindex="4">Cancel</a>
+    <a href="#" id="shareButton<%= id %>" class="btn primary" tabindex="4">Share</a>
+</div>
+<canvas id="imageDrawer<%= id %>" style="display : none;"></canvas>
 </div>

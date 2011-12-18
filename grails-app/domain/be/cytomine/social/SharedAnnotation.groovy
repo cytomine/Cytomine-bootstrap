@@ -2,13 +2,16 @@ package be.cytomine.social
 
 import be.cytomine.ontology.Annotation
 import be.cytomine.security.User
+import be.cytomine.CytomineDomain
 
-class SharedAnnotation {
+class SharedAnnotation extends CytomineDomain {
 
     User from
-    User to
+
     String comment
     Annotation annotation
+
+    static hasMany = [to : User]
 
     static constraints = {
     }

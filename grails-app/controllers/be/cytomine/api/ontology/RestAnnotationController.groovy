@@ -162,23 +162,29 @@ class RestAnnotationController extends RestController {
 
 
     def share = {
-        try {
-            User sender = User.read(springSecurityService.principal.id)
-            User receiver = User.read(request.JSON.user)
-            mailService.send("cytomine.ulg@gmail.com", receiver.getEmail(), sender.getEmail(), request.JSON.subject, request.JSON.message)
-            Annotation annotation = Annotation.read(request.JSON.annotation)
-            def sharedAnnotation = new SharedAnnotation(
-                    from : sender,
-                    to : receiver,
-                    comment : request.JSON.comment,
-                    annotation: annotation
-            )
-            sharedAnnotation.save()
-            response([success: true, message: "Annotation shared to " + receiver.toString()], 200)
-        } catch (Exception e) {
-            response([success: false, message: e.toString()], 400)
+        //try {
+        User sender = User.read(springSecurityService.principal.id)
+        Annotation annotation = Annotation.read(request.JSON.annotation)
+        List<User> receivers = request.JSON.users.collect { userID ->
+            User.read(userID)
         }
-        
+        String[] receiversEmail = new String[receivers.size()]
+        for (int i = 0; i < receivers.size(); i++) {
+            receiversEmail[i] = receivers[i].getEmail();
+        }
+        mailService.send("cytomine.ulg@gmail.com", receiversEmail, sender.getEmail(), request.JSON.subject, request.JSON.message)
+        def sharedAnnotation = new SharedAnnotation(
+                from : sender,
+                to : receivers,
+                comment : request.JSON.comment,
+                annotation: annotation
+        )
+        sharedAnnotation.save()
+        response([success: true, message: "Annotation shared to " + receivers.toString()], 200)
+        /* } catch (Exception e) {
+            response([success: false, message: e.toString()], 400)
+        }*/
+
     }
 
     def show = {

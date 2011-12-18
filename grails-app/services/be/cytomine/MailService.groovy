@@ -8,7 +8,7 @@ class MailService {
 
     static transactional = false
 
-    def send(String from, String to, String cc, String subject, String message) {
+    def send(String from, String[] to, String cc, String subject, String message) {
         Properties props = new Properties();
         props.put("mail.smtp.starttls.enable","true");
         props.put("mail.smtp.starttls.required","true");
