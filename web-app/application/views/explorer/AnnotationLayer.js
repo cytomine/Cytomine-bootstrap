@@ -3,14 +3,14 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 
     var styleMap = new OpenLayers.StyleMap({
         "default" : OpenLayers.Util.applyDefaults({fillColor: color, fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
-                OpenLayers.Feature.Vector.style["default"]),
+            OpenLayers.Feature.Vector.style["default"]),
         "select" : OpenLayers.Util.applyDefaults({fillColor: "#25465D", fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
-                OpenLayers.Feature.Vector.style["default"])
+            OpenLayers.Feature.Vector.style["default"])
     });
     this.ontologyTreeView = ontologyTreeView;
     this.name = name;
-    this.map = map,
-            this.imageID = imageID;
+    this.map = map;
+    this.imageID = imageID;
     this.userID = userID;
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
         styleMap: styleMap,
@@ -18,7 +18,6 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
             zIndexing: true
         }
     });
-
     this.features = [];
     this.controls = null;
     this.dialog = null;
@@ -231,14 +230,13 @@ AnnotationLayer.prototype = {
                 return;
             }
             new AnnotationModel({id : evt.feature.attributes.idAnnotation}).fetch({
-                success : function (model, response) {
-                    var json = model.toJSON();
-                    //username
-                    json.username = window.app.models.users.get(json.user).prettyName();
+                success : function (annotation, response) {
+
+                    annotation.set({"username" : window.app.models.users.get(annotation.get("user")).prettyName()});
 
                     var terms = new Array();
                     //browse all term and compute the number of user who add this term
-                    _.each(json.userByTerm, function(termuser) {
+                    _.each(annotation.get("userByTerm"), function(termuser) {
                         var idTerm = termuser.term;
                         var termName = window.app.status.currentTermsCollection.get(idTerm).get('name');
                         var userCount = termuser.user.length;
@@ -248,31 +246,36 @@ AnnotationLayer.prototype = {
                         terms.push(tpl);
 
                     });
-                    json.terms = terms.join(", ")
+                    annotation.set({"terms" : terms.join(", ")});
 
 
-                    var content = _.template(tpl, json);
+                    var content = _.template(tpl, annotation.toJSON());
                     self.popup = new OpenLayers.Popup("",
-                            new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
-                            new OpenLayers.Size(300, 200),
-                            content,
-                            false);
+                        new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
+                        new OpenLayers.Size(300, 200),
+                        content,
+                        false);
                     self.popup.setBackgroundColor("transparent");
                     self.popup.setBorder(0);
                     self.popup.padding = 0;
                     evt.feature.popup = self.popup;
                     self.popup.feature = evt.feature;
                     map.addPopup(self.popup);
-                    $("#annotationHide" + model.id).click(function() {
+                    $("#annotationHide" + annotation.id).click(function() {
                         self.controls.select.unselectAll();
-                        var feature = self.getFeature(model.id);
+                        var feature = self.getFeature(annotation.id);
                         if (feature == undefined || feature == null) return;
                         self.hideFeature(feature);
                         var url = "tabs-image-"+window.app.status.currentProjectModel.get("id")+"-"+self.browseImageView.model.get("id")+"-";
                         window.app.controllers.browse.navigate(url, false);
                         return false;
                     });
-                    self.showSimilarAnnotation(model);
+                    $("#annotationShare" + annotation.id).click(function() {
+                        var url = "#share-annotation/" + annotation.id;
+                        window.app.controllers.browse.navigate(url, true);
+                        return false;
+                    });
+                    self.showSimilarAnnotation(annotation);
                 }
             });
         });
@@ -404,10 +407,10 @@ AnnotationLayer.prototype = {
             }
             var content = _.template(tpl, {length:length});
             self.popup = new OpenLayers.Popup("chicken",
-                    new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
-                    new OpenLayers.Size(200, 60),
-                    content,
-                    false);
+                new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
+                new OpenLayers.Size(200, 60),
+                content,
+                false);
             self.popup.setBackgroundColor("transparent");
             self.popup.setBorder(0);
             self.popup.padding = 0;

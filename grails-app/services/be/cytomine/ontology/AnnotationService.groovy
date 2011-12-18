@@ -41,7 +41,7 @@ class AnnotationService extends ModelService {
     }
 
     @PreAuthorize("hasPermission(#image.project.id,'be.cytomine.project.Project',read) or hasPermission(#image.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
-        def list(ImageInstance image) {
+    def list(ImageInstance image) {
         Annotation.findAllByImage(image)
     }
 
@@ -70,7 +70,7 @@ class AnnotationService extends ModelService {
 
             def annotations = []
             annotationsWithTerms.each {  result ->
-                 if (result[1] > 1) annotations.add(result[0]) //filter in groovy, to do : I tried greaterThan criteria on alias nbTerms whithout success
+                if (result[1] > 1) annotations.add(result[0]) //filter in groovy, to do : I tried greaterThan criteria on alias nbTerms whithout success
             }
             annotations
         }
@@ -126,10 +126,10 @@ class AnnotationService extends ModelService {
     @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, List<User> userList) {
         def criteria = Annotation.withCriteria {
-            'in'('user',userList)
             eq('project',project)
             annotationTerm {
-                 eq('term',term)
+                eq('term',term)
+                inList('user',userList)
             }
         }
         criteria

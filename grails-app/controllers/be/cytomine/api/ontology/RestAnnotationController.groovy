@@ -15,6 +15,7 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.test.Infos
 import be.cytomine.security.SecUser
+import be.cytomine.social.SharedAnnotation
 
 class RestAnnotationController extends RestController {
 
@@ -25,6 +26,7 @@ class RestAnnotationController extends RestController {
     def userService
     def projectService
     def cytomineService
+    def mailService
 
     def list = {
         def annotations = []
@@ -109,10 +111,10 @@ class RestAnnotationController extends RestController {
         Project project = projectService.read(params.long('id'))
         if (!project) responseNotFound("Project", params.long('id'))
         projectService.checkAuthorization(project.id)
-        def users = []        
+        def users = []
         params.users.split(",").each { id ->
             users << Long.parseLong(id)
-        }        
+        }
         def terms = []
         params.terms.split(",").each {  id ->
             terms << Long.parseLong(id)
@@ -156,6 +158,27 @@ class RestAnnotationController extends RestController {
             String title = "Annotations in " + project.getName() + " created by " + usersName.join(" or ") + " and associated with " + termsName.join(" or ") + " @ " + (new Date()).toLocaleString()
             exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04,0.06,0.06,0.04,0.08,0.06,0.06,0.25,0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
         }
+    }
+
+
+    def share = {
+        try {
+            User sender = User.read(springSecurityService.principal.id)
+            User receiver = User.read(request.JSON.user)
+            mailService.send("cytomine.ulg@gmail.com", receiver.getEmail(), sender.getEmail(), request.JSON.subject, request.JSON.message)
+            Annotation annotation = Annotation.read(request.JSON.annotation)
+            def sharedAnnotation = new SharedAnnotation(
+                    from : sender,
+                    to : receiver,
+                    comment : request.JSON.comment,
+                    annotation: annotation
+            )
+            sharedAnnotation.save()
+            response([success: true, message: "Annotation shared to " + receiver.toString()], 200)
+        } catch (Exception e) {
+            response([success: false, message: e.toString()], 400)
+        }
+        
     }
 
     def show = {

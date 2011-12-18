@@ -118,3 +118,9 @@ var AnnotationRetrievalCollection = Backbone.Collection.extend({
         return -annotation.get("similarity");
     }
 });
+
+var ShareAnnotationModel = Backbone.Model.extend({
+    url : function() {
+        return 'api/annotation/share.json';
+    }
+});

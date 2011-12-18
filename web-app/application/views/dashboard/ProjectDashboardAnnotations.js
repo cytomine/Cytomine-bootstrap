@@ -148,7 +148,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             if (!idAnnotationFilter) return;
             var annotationFilter = annotationFilterCollection.get(idAnnotationFilter);
             var url = "#tabs-annotations-"+self.model.get("id")+"-"+annotationFilter.get("terms")+"-"+annotationFilter.get("users");
-            console.log(url);
+
             window.app.controllers.browse.tabs.triggerRoute = false;
             window.app.controllers.browse.navigate(url, true);
             window.app.controllers.browse.tabs.triggerRoute = true;
@@ -217,23 +217,35 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         });
     },
     checkTermsAndUsers : function(terms, users) {
-        var _terms = (terms !="" && terms!= undefined);
+        console.log("Terms = " + terms);
+        console.log("users = " + users + " " + (users == "all"));
+        /*var _terms = (terms !="" && terms!= undefined);
         var _users = (users != "" && users != undefined);
         if (!_users && !_terms) {
             return;
-        }
+        }*/
         this.hideAllTerms();
         this.hideAllUsers();
-        if (_users && _terms == "all") {
+        if (terms == "all") {
+            this.showAllTerms();
+        } else if (terms !="" && terms!= undefined) {
+            this.selectTerms(terms);
+        }
+        if (users == "all") {
+            this.showAllUsers();
+        } else if (users != "" && users != undefined) {
+            this.selectUsers(users);
+        }
+        /*if (_users && _terms == "all") {
             this.selectUsers(users);
             this.showAllTerms();
-        } else if (_users && _terms) {
-            this.selectUsers(users);
-            this.selectTerms(terms);
         } else if (_users == "all" && _terms) {
             this.showAllUsers();
             this.selectTerms(terms);
-        }
+        } else if (_users && _terms) {
+            this.selectUsers(users);
+            this.selectTerms(terms);
+        }*/
     },
     showAllTerms : function() {
         $(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked", "checked");

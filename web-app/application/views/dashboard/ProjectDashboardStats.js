@@ -145,7 +145,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          collection.each(function(stat) {
             if (stat.get("key") == key) {
                var user = stat.get("id");
-               var url = "#tabs-annotations-"+self.model.get("id")+"--"+user;
+               var url = "#tabs-annotations-"+self.model.get("id")+"-all-"+user;
                window.app.controllers.browse.tabs.triggerRoute = false;
                window.app.controllers.browse.navigate(url, true);
                window.app.controllers.browse.tabs.triggerRoute = true;
@@ -182,7 +182,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          collection.each(function(stat) {
             if (stat.get("key") == key) {
                var term = stat.get("id");
-               var url = "#tabs-annotations-"+self.model.get("id")+"-"+term+"-";
+               var url = "#tabs-annotations-"+self.model.get("id")+"-"+term+"-all";
                window.app.controllers.browse.tabs.triggerRoute = false;
                window.app.controllers.browse.navigate(url, true);
                window.app.controllers.browse.tabs.triggerRoute = true;
@@ -230,7 +230,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          collection.each(function(stat) {
             if (stat.get("key") == key) {
                var term = stat.get("id");
-               var url = "#tabs-annotations-"+self.model.get("id")+"-"+term+"-";
+               var url = "#tabs-annotations-"+self.model.get("id")+"-"+term+"-all";
                window.app.controllers.browse.tabs.triggerRoute = false;
                window.app.controllers.browse.navigate(url, true);
                window.app.controllers.browse.tabs.triggerRoute = true;
@@ -345,7 +345,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          collection.each(function(stat) {
             if (stat.get("key") == key) {
                var user = stat.get("id");
-               var url = "#tabs-annotations-"+self.model.get("id")+"--"+user;
+               var url = "#tabs-annotations-"+self.model.get("id")+"-all-"+user;
                window.app.controllers.browse.tabs.triggerRoute = false;
                window.app.controllers.browse.navigate(url, true);
                window.app.controllers.browse.tabs.triggerRoute = true;

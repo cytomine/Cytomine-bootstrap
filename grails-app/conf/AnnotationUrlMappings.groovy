@@ -38,5 +38,8 @@ class AnnotationUrlMappings {
         "/api/project/$id/annotation/download"(controller: "restAnnotation"){
             action = [GET:"downloadDocumentByProject"]
         }
+        "/api/annotation/share"(controller: "restAnnotation"){
+            action = [POST:"share"]
+        }
     }
 }

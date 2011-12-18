@@ -2,9 +2,10 @@
     <ul>
         <li style="color:#FFFFFF;"><b>Area </b> : <%= area %> µm²</li>
         <li style="color:#FFFFFF;"><b>Perimeter</b> : <%= perimeter %> µm</li>
-        <li style="color:#FFFFFF;"><b>Term</b> : <%= terms %></li>
+        <li style="color:#FFFFFF;"><b>Term(s)</b> : <%= terms %></li>
         <li style="color:#FFFFFF;"><b>User</b> : <%= username %></li>
         <li style="color:#FFFFFF;"><b>Suggested term</b> : <div id="suggTerm<%= id %>"></div></li>
-        <li style="color:#FFFFFF;"><a href="#" id="annotationHide<%= id %>">Hide</a> | <label id="loadSimilarAnnotation<%= id %>" style="display:inline">Computing similar annotations...</label></li>
+        <li style="color:#FFFFFF;"><a href="#" id="annotationShare<%= id %>">Share</a> | <a href="#" id="annotationHide<%= id %>">Hide</a></li>
+        <li style="color:#FFFFFF;"><label id="loadSimilarAnnotation<%= id %>" style="display:inline">Computing similar annotations...</label></li>
     </ul>
 </div>

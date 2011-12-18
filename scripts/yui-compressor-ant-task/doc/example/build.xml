@@ -144,6 +144,7 @@
             <fileset dir="${src.dir}" includes="application/views/utils/CrudGridView.js" />
             <fileset dir="${src.dir}" includes="application/views/annotation/AnnotationListView.js" />
             <fileset dir="${src.dir}" includes="application/views/annotation/AnnotationRetrievalView.js" />
+            <fileset dir="${src.dir}" includes="application/views/annotation/ShareAnnotationView.js" />
             <fileset dir="${src.dir}" includes="application/views/Component.js" />
             <fileset dir="${src.dir}" includes="application/views/ApplicationView.js" />
             <fileset dir="${src.dir}" includes="application/views/ConfirmDialogView.js" />

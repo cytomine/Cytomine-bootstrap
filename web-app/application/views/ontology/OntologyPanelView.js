@@ -405,6 +405,7 @@ var OntologyPanelView = Backbone.View.extend({
 
    updateInfoPanel : function(idTerm,name) {
       var self = this;
+      return; //TO DO : REPAIR IT. DO NOTHING ACTUALLY, BROKEN SERVICE
       // Create and populate the data table.
       var data = new google.visualization.DataTable();
       data.addColumn('string', 'Project');
@@ -477,33 +478,5 @@ var OntologyPanelView = Backbone.View.extend({
             drawPieChart(model, response);
          }
       });
-
-
-
-
-      /*self.$infoTerm.append("<div id=\"termchart-"+self.model.id +"\"><h3>"+name+"</h3><div id=\"terminfo-"+self.model.id +"\"></div>");
-
-       new TermModel({id:idTerm}).fetch({
-       success : function (model, response) {
-       var tpl = _.template("<a href='#' class='editTerm'>Color : <span name='color' id='color' style='display:inline;background-color: <%=   color %>;'>&nbsp;&nbsp;&nbsp;&nbsp;</span></a><br />", {color : model.get('color')});
-       $("#terminfo-"+self.model.id).append(tpl);
-       var statsCollection = new StatsCollection({term:idTerm});
-       var statsCallback = function(collection, response) {
-       collection.each(function(stat) {
-       $("#terminfo-"+self.model.id).append("Project "+stat.get('key') + ": " + stat.get('value') + " annotations<br>");
-       });
-
-       //$("#termchart-"+self.model.id).panel({
-       //       collapsible:false
-       //    });
-       }
-       statsCollection.fetch({
-       success : function(model, response) {
-       statsCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-       }
-       });
-       ;
-        %>);  */
-
    }
 });

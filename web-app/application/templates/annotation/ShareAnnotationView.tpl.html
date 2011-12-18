@@ -1,0 +1,35 @@
+<div id="share-confirm" class="bigModal modal hide fade">
+    <div class="modal-header">
+        <h2>Share an annotation</h2>
+    </div>
+    <div class="modal-body">
+        <div class="row" style="min-height: 250px;">
+            <div class="span9">
+                <h3>Informations</h3>
+                <ul>
+                    <li><b>Creator</b> : <%= username %></li>
+                    <!--<li><b>Term(s)</b> : <%= terms %></li>-->
+                </ul>
+                <hr />
+                <fieldset>
+                    <div class="clearfix">
+                        <label for="selectUserShare<%= id %>">Share with</label>
+                        <select id="selectUserShare<%= id %>" name="selectUserShare<%= id %>" />
+                    </div>
+                    <br />
+                    <div class="clearfix">
+                        <label for="annotationComment<%= id %>">Your comment / question</label>
+                        <textarea class="xlarge" id="annotationComment<%= id %>" name="annotationComment<%= id %>" rows="5"></textarea>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="span6"><img src="<%= cropURL %>" style="max-height: 250px;max-width: 300px;"/></div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="shareCancelButton<%= id %>" class="btn" tabindex="4">Cancel</a>
+        <a href="#" id="shareButton<%= id %>" class="btn primary" tabindex="4">Share</a>
+    </div>
+    <canvas id="imageDrawer<%= id %>" style="display : none;"></canvas>
+</div>

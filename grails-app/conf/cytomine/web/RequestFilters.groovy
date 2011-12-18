@@ -10,32 +10,37 @@ package cytomine.web
 
 class RequestFilters {
 
-  def springSecurityService
+    def springSecurityService
 
-  def filters = {
-    all(uri:'/api/**') {
-      before = {
-          if(actionName.equals("crop")) return
-          request.currentTime = System.currentTimeMillis()
-          String strParam =""
-          params.each{
-              if(!it.key.equals('action') && !it.key.equals('controller')) {
-              strParam = strParam +"<" + it.key +':'+ it.value +'>; '
-              }
-          }
-          String strPost = ""
-          try {strPost = request.JSON } catch(Exception e) {}
-          String requestInfo = "| PARAM="+strParam + "| POST=" + strPost + " | "
-          String userInfo = ""
-          try { userInfo = springSecurityService.principal.id} catch(Exception e) { userInfo = springSecurityService.principal}
+    def filters = {
+        all(uri:'/api/**') {
+            before = {
+                if(actionName.equals("crop")) return
+                request.currentTime = System.currentTimeMillis()
+                String strParam =""
+                params.each{
+                    if(!it.key.equals('action') && !it.key.equals('controller')) {
+                        String value = new String(it.value)
+                        value = value.substring(0,Math.min(200, value.length()))
+                        strParam = strParam +"<" + it.key +':'+ value +'>; '
+                    }
+                }
+                String strPost = ""
+                try {
+                    strPost = request.JSON
+                    strPost = strPost.substring(0,Math.min(400, strPost.length()))
+                } catch(Exception e) {}
+                String requestInfo = "| PARAM="+strParam + "| POST=" + strPost + " | "
+                String userInfo = ""
+                try { userInfo = springSecurityService.principal.id} catch(Exception e) { userInfo = springSecurityService.principal}
 
-          log.info controllerName+"."+actionName + ": user:" + userInfo + " request=" + requestInfo
-      }
-      after = {}
-      afterView = {
-          if(actionName.equals("crop")) return
-          log.info controllerName+"."+actionName + " Request took ${System.currentTimeMillis()-request.currentTime}ms"
-      }
+                log.info controllerName+"."+actionName + ": user:" + userInfo + " request=" + requestInfo
+            }
+            after = {}
+            afterView = {
+                if(actionName.equals("crop")) return
+                log.info controllerName+"."+actionName + " Request took ${System.currentTimeMillis()-request.currentTime}ms"
+            }
+        }
     }
-  }
 }

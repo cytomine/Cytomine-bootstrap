@@ -158,10 +158,13 @@
         <script type="text/javascript" src="application/views/annotation/AnnotationListView.js" ></script>
         <script type="text/javascript" src="application/views/annotation/AnnotationRetrievalView.js" ></script>
 
+
         <script type="text/javascript" src="application/views/utils/CrudGridView.js" ></script>
         <script type="text/javascript" src="application/views/Component.js" ></script>
         <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
         <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
+
+        <script type="text/javascript" src="application/views/annotation/ShareAnnotationView.js" ></script>
 
     </g:if>
     <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">

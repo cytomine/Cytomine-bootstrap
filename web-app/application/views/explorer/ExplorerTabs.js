@@ -46,7 +46,7 @@ var ExplorerTabs = Backbone.View.extend({
                tabs.tabs('select', '#' + ui.panel.id);
                self.triggerRoute = true;
             } else {
-               $(ui.panel).css({ 'background-image': 'url(http://subtlepatterns.com/patterns/whitey.png)'});
+               //$(ui.panel).css({ 'background-image': 'url(http://subtlepatterns.com/patterns/whitey.png)'});
             }
             /*$("#"+ui.panel.id).attr('style', 'width:100%;height:100%;overflow:hidden;');*/
          },

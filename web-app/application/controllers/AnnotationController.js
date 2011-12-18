@@ -2,7 +2,8 @@ var AnnotationController = Backbone.Router.extend({
 
     routes: {
         "annotation"            :   "annotation",
-        "annotation/:idAnnotation"           :   "annotation"
+        "annotation/:idAnnotation"           :   "annotation",
+        "share-annotation/:idAnnotation" : "share"
     },
 
     annotation : function(idAnnotation) {
@@ -22,5 +23,17 @@ var AnnotationController = Backbone.Router.extend({
                 }
             });
         }
+    },
+
+    share : function(idAnnotation) {
+        new AnnotationModel({id : idAnnotation}).fetch({
+            success : function (model, response) {
+                new ShareAnnotationView({
+                    model : model,
+                    image : model.get("image"),
+                    project : model.get("project")
+                }).render();
+            }
+        });
     }
 });
