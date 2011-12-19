@@ -570,10 +570,7 @@ AnnotationLayer.prototype = {
                 model.save({location : geomwkt},{
                     success : function (annotation, response) {
                         var message = response.message;
-                        var cropURL = annotation.get('cropURL');
-                        var urlPrefix = "?bust=" + (new Date()).getTime(); //force refreshing URL
-                        var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url : cropURL + urlPrefix, alt : cropURL});
-                        var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message : message, cropImage : cropImage});
+                        var alertMessage = _.template("<p><%=   message %></p>", { message : message});
                         window.app.view.message("Annotation edited", alertMessage, "success");
                         self.browseImageView.refreshAnnotationTabs(undefined);
                     },
