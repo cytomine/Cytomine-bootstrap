@@ -39,7 +39,7 @@ var EditOntologyDialog = Backbone.View.extend({
       //Build dialog
       self.editOntologyDialog = $("#editontology").modal({
          keyboard : true,
-         modal : true
+         backdrop : true
       });
       $('#editOntologyButton').click(function(){$("#login-form-edit-ontology").submit();return false;});
       $('#closeEditOntologyDialog').click(function(){$("#editontology").modal("hide");$("#editontology").remove();return false;});

@@ -217,13 +217,11 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         });
     },
     checkTermsAndUsers : function(terms, users) {
-        console.log("Terms = " + terms);
-        console.log("users = " + users + " " + (users == "all"));
-        /*var _terms = (terms !="" && terms!= undefined);
+        var _terms = (terms !="" && terms!= undefined);
         var _users = (users != "" && users != undefined);
         if (!_users && !_terms) {
             return;
-        }*/
+        }
         this.hideAllTerms();
         this.hideAllUsers();
         if (terms == "all") {
@@ -236,16 +234,6 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         } else if (users != "" && users != undefined) {
             this.selectUsers(users);
         }
-        /*if (_users && _terms == "all") {
-            this.selectUsers(users);
-            this.showAllTerms();
-        } else if (_users == "all" && _terms) {
-            this.showAllUsers();
-            this.selectTerms(terms);
-        } else if (_users && _terms) {
-            this.selectUsers(users);
-            this.selectTerms(terms);
-        }*/
     },
     showAllTerms : function() {
         $(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked", "checked");

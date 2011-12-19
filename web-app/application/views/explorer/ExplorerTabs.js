@@ -55,7 +55,7 @@ var ExplorerTabs = Backbone.View.extend({
             return true;
          },
          select: function(event, ui) {
-            window.app.controllers.browse.navigate("#"+ui.panel.id, self.triggerRoute);
+            if (self.triggerRoute) window.app.controllers.browse.navigate("#"+ui.panel.id, self.triggerRoute);
 
          }
       });

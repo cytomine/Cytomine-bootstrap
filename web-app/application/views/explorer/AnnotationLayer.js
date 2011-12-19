@@ -30,6 +30,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.map = browseImageView.map;
     this.popup = null;
     this.hoverControl = null;
+    this.triggerUpdateOnUnselect = true,
     this.isOwner = null;
     this.deleteOnSelect = false; //true if select tool checked
     this.measureOnSelect = false;
@@ -95,20 +96,14 @@ AnnotationLayer.prototype = {
 
             },
             'sketchcomplete': function (evt) {
-
-                self.updateAnnotation(evt.feature);
-
+                if (self.triggerUpdateOnUnselect) self.updateAnnotation(evt.feature);
             },
-            'beforefeaturemodified': function (evt) {
-
-            },
-            'afterfeaturemodified': function (evt) {
-
-                self.updateAnnotation(evt.feature);
-
+            'featuremodified': function (evt) {
+                //prevent to update an annotation when it is unnecessary
+                console.log("self.triggerUpdateOnUnselect="+self.triggerUpdateOnUnselect);
+                if (self.triggerUpdateOnUnselect) self.updateAnnotation(evt.feature);
             },
             'onDelete': function (feature) {
-
             }
         });
     },
@@ -268,11 +263,6 @@ AnnotationLayer.prototype = {
                         self.hideFeature(feature);
                         var url = "tabs-image-"+window.app.status.currentProjectModel.get("id")+"-"+self.browseImageView.model.get("id")+"-";
                         window.app.controllers.browse.navigate(url, false);
-                        return false;
-                    });
-                    $("#annotationShare" + annotation.id).click(function() {
-                        var url = "#share-annotation/" + annotation.id;
-                        window.app.controllers.browse.navigate(url, true);
                         return false;
                     });
                     self.showSimilarAnnotation(annotation);

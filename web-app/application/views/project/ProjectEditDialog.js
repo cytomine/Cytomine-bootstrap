@@ -54,7 +54,8 @@ var EditProjectDialog = Backbone.View.extend({
         //Build dialog
         
         self.editProjectDialog = $("#editproject").modal({
-           keyboard : true
+           keyboard : true,
+            backdrop : true
         });
 
         self.open();

@@ -229,7 +229,7 @@ var OntologyPanelView = Backbone.View.extend({
             return false;
          });
          $('#deleteTermButton').click(function(){
-            self.removeTerm(term);
+            self.removeTerm(term, '#delete-term-confirm');
             return false;
          });
       });
@@ -247,7 +247,8 @@ var OntologyPanelView = Backbone.View.extend({
             el:'#dialogsTerm',
             template : _.template(tpl, {term : term.get('name'),ontology : self.model.get('name'),numberOfAnnotation:numberOfAnnotation}),
             dialogAttr : {
-               dialogID : '#dialogsTerm',
+               dialogID : '#delete-term-with-annotation-confirm'
+               /*,
                width : 400,
                height : 300,
                buttons: {
@@ -258,26 +259,34 @@ var OntologyPanelView = Backbone.View.extend({
                      //doesn't work! :-(
                      $('#dialogsTerm').dialog( "close" ) ;
                   }
-               },
+               }*/,
                close :function (event) {
                }
             }
          }).render();
+          $('#closeDeleteTermDialog').click(function(){
+              $('#delete-term-with-annotation-confirm').modal('hide');
+              $('#delete-term-with-annotation-confirm').remove();
+              return false;
+          });
+          $('#deleteTermButton').click(function(){
+              self.removeTerm(term, "#delete-term-with-annotation-confirm");
+              return false;
+          });
       });
    },
    /**
     * Delete a term which can have relation but no annotation
     * @param term term that must be deleted
     */
-   removeTerm : function(term) {
+   removeTerm : function(term, dialogIdentifier) {
        var self= this;
       new TermModel({id:term.id}).destroy({
          success : function (model, response) {
-            new EndTransactionModel({}).save();
             window.app.view.message("Term", response.message, "success");
             self.refresh();
-            $('#delete-term-confirm').modal('hide');
-            $('#delete-term-confirm').remove();
+            $(dialogIdentifier).modal('hide');
+            $(dialogIdentifier).remove();
          },
          error: function (model, response) {
             var json = $.parseJSON(response.responseText);

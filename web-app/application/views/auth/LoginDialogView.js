@@ -7,7 +7,8 @@ var LoginDialogView = Backbone.View.extend({
          el:'#dialogs',
          template : _.template(tpl, {version : window.app.status.version}),
          dialogAttr : {
-            dialogID : "#login-confirm"
+            dialogID : "#login-confirm",
+            backdrop : false
             /*width : 350,
             height : 350,
             buttons: {

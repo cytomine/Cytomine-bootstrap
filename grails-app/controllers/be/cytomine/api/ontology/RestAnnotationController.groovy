@@ -16,6 +16,8 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.test.Infos
 import be.cytomine.security.SecUser
 import be.cytomine.social.SharedAnnotation
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
 
 class RestAnnotationController extends RestController {
 
@@ -165,6 +167,11 @@ class RestAnnotationController extends RestController {
         //try {
         User sender = User.read(springSecurityService.principal.id)
         Annotation annotation = Annotation.read(request.JSON.annotation)
+        BufferedImage bufferedImage = getImageFromURL(annotation.getCropURL())
+        File annnotationCrop = File.createTempFile("temp", ".jpg")
+        annnotationCrop.deleteOnExit()
+        ImageIO.write(bufferedImage, "JPG", annnotationCrop)
+
         List<User> receivers = request.JSON.users.collect { userID ->
             User.read(userID)
         }
@@ -172,7 +179,7 @@ class RestAnnotationController extends RestController {
         for (int i = 0; i < receivers.size(); i++) {
             receiversEmail[i] = receivers[i].getEmail();
         }
-        mailService.send("cytomine.ulg@gmail.com", receiversEmail, sender.getEmail(), request.JSON.subject, request.JSON.message)
+        mailService.send("cytomine.ulg@gmail.com", receiversEmail, sender.getEmail(), request.JSON.subject, request.JSON.message, [[cid : "annotation", file : annnotationCrop]])
         def sharedAnnotation = new SharedAnnotation(
                 from : sender,
                 to : receivers,

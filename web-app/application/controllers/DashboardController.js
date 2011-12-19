@@ -80,8 +80,9 @@ var DashboardController = Backbone.Router.extend({
             var tabs = $("#explorer > .browser").children(".tabs");
             window.app.controllers.browse.tabs.triggerRoute = false;
             tabs.tabs("select", "#tabs-annotations-"+window.app.status.currentProject);
-            window.app.controllers.browse.tabs.triggerRoute = true;
             self.view.refreshAnnotations(terms, users);
+            window.app.controllers.browse.tabs.triggerRoute = true;
+
         };
         this.init(project, func);
     },

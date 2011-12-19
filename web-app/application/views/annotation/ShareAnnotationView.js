@@ -62,56 +62,41 @@ var ShareAnnotationView = Backbone.View.extend({
         $("#shareButton"+self.model.id).click(function(){
             var shareButton = $(this);
             shareButton.html("Sending...");
-            var sendMail = function(imageData) {
-                var users = getSelectedUsers();
-                var userName = (_.size(users) == 1) ? userCollection.get(users[0]).prettyName() : "user";
-                var comment = $("#annotationComment"+self.model.id).val();
-                var annotationURL = _.template(window.app.status.serverURL+"/#tabs-image-<%= idProject %>-<%= idImage %>-<%= idAnnotation %>",
-                    { idProject : self.project,
-                        idImage : self.image,
-                        idAnnotation : self.model.id
-                    });
-                var message = _.template(shareAnnotationMailTpl, {
-                    from : userCollection.get(window.app.status.user.id).prettyName(),
-                    to : userName,
-                    comment : comment,
-                    annotationURL : annotationURL,
-                    imageData : imageData,
-                    by : window.app.status.serverURL
-                });
-                var subject = _.template("Cytomine : <%= from %> shared an annotation with you",{ from : userCollection.get(window.app.status.user.id).prettyName()});
-                new ShareAnnotationModel().save({
-                    users : users,
-                    annotation : self.model.id,
-                    message : message,
-                    comment : comment,
-                    subject : subject,
-                    annotationURL : annotationURL
-                }, {
-                    success : function (model, response) {
-                        shareButton.html("Share");
-                        window.app.view.message("Success", response.message, "success");
-                        self.close();
-                    },
-                    error : function (model, response) {
-                        shareButton.html("Share");
-                        window.app.view.message("Error", response.message, "error");
-                    }
-                });
 
-            }
-            var canvas = document.getElementById("imageDrawer" + self.model.id);
-            var context = canvas.getContext("2d");
-            // load image from data url
-            var imageObj = new Image();
-            imageObj.onload = function(){
-                canvas.width = imageObj.width;
-                canvas.height = imageObj.height;
-                context.drawImage(this, 0, 0);
-                sendMail(canvas.toDataURL());
-            };
-            imageObj.src = self.model.get("cropURL");
-
+            var users = getSelectedUsers();
+            var userName = (_.size(users) == 1) ? userCollection.get(users[0]).prettyName() : "user";
+            var comment = $("#annotationComment"+self.model.id).val();
+            var annotationURL = _.template(window.app.status.serverURL+"/#tabs-image-<%= idProject %>-<%= idImage %>-<%= idAnnotation %>",
+                { idProject : self.project,
+                    idImage : self.image,
+                    idAnnotation : self.model.id
+                });
+            var message = _.template(shareAnnotationMailTpl, {
+                from : userCollection.get(window.app.status.user.id).prettyName(),
+                to : userName,
+                comment : comment,
+                annotationURL : annotationURL,
+                by : window.app.status.serverURL
+            });
+            var subject = _.template("Cytomine : <%= from %> shared an annotation with you",{ from : userCollection.get(window.app.status.user.id).prettyName()});
+            new ShareAnnotationModel().save({
+                users : users,
+                annotation : self.model.id,
+                message : message,
+                comment : comment,
+                subject : subject,
+                annotationURL : annotationURL
+            }, {
+                success : function (model, response) {
+                    shareButton.html("Share");
+                    window.app.view.message("Success", response.message, "success");
+                    self.close();
+                },
+                error : function (model, response) {
+                    shareButton.html("Share");
+                    window.app.view.message("Error", response.message, "error");
+                }
+            });
             return false;
         });
 

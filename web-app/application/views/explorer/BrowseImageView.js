@@ -114,8 +114,10 @@ var BrowseImageView = Backbone.View.extend({
             //Simulate click on select button
             var toolbar = $('#toolbar' + this.model.get('id'));
             toolbar.find('input[id=select' + self.model.get('id') + ']').click();
-            layer.controls.select.unselectAll();
+            layer.triggerUpdateOnUnselect = false;
+            /*layer.controls.select.unselectAll();*/
             layer.controls.select.select(feature);
+            layer.triggerUpdateOnUnselect = true;
             self.currentAnnotation = idAnnotation;
             this.map.moveTo(new OpenLayers.LonLat(feature.geometry.getCentroid().x, feature.geometry.getCentroid().y), Math.max(0, zoom));
         }

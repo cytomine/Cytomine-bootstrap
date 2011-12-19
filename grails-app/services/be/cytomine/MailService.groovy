@@ -3,12 +3,13 @@ package be.cytomine
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.mail.javamail.MimeMessageHelper
 import javax.mail.internet.MimeMessage
+import org.springframework.core.io.FileSystemResource
 
 class MailService {
 
     static transactional = false
 
-    def send(String from, String[] to, String cc, String subject, String message) {
+    def send(String from, String[] to, String cc, String subject, String message, attachment) {
         Properties props = new Properties();
         props.put("mail.smtp.starttls.enable","true");
         props.put("mail.smtp.starttls.required","true");
@@ -25,11 +26,16 @@ class MailService {
         MimeMessage mail = sender.createMimeMessage()
         MimeMessageHelper helper = new MimeMessageHelper(mail, true)
 
+
         helper.setFrom(from)
         helper.setTo(to)
         helper.setCc(cc)
         helper.setSubject(subject)
         helper.setText("",message)
+        attachment.each {
+            helper.addInline(it.cid, new FileSystemResource(it.file))
+        }
+        
         sender.send(mail);
     }
 }

@@ -88,7 +88,8 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
       //Build dialog
       self.ontologyDialog = $(self.$termDialog).modal({
          keyboard : true,
-         show : true
+          backdrop : true
+
          /*width: "1000",
           autoOpen : false,
           modal:true,
