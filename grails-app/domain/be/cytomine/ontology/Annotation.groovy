@@ -12,6 +12,7 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import be.cytomine.security.SecUser
+import be.cytomine.social.SharedAnnotation
 
 class Annotation extends CytomineDomain implements Serializable {
 
@@ -284,7 +285,7 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['project'] = it.project.id
             if (it.userId) returnArray['user'] = it.userId
             else returnArray['user'] = it.user?.id
-
+            returnArray['nbComments'] = SharedAnnotation.findAllByAnnotation(it).size()
             returnArray['area'] = it.computeArea()
             returnArray['perimeter'] = it.computePerimeter()
             returnArray['centroid'] = it.getCentroid()

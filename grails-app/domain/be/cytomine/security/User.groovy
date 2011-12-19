@@ -28,7 +28,7 @@ class User extends SecUser {
     static hasMany = [softwareProjects: SoftwareProjects]
 
     String toString() {
-        firstname + " " + lastname + " (" + username + ")"
+        firstname + " " + lastname
     }
 
     def userGroups() {
@@ -182,14 +182,12 @@ class User extends SecUser {
 
 	def beforeUpdate() {
         super.beforeUpdate()
-         println "###################"
 		if (isDirty('password')) {
 			encodePassword()
 		}
 	}
 
 	protected void encodePassword() {
-        println "€€€€€€€€€€€€€€€€€€€€€€E"
 		password = springSecurityService.encodePassword(password)
 	}
 

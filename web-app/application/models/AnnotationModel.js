@@ -63,7 +63,6 @@ var AnnotationCollection = Backbone.Collection.extend({
             }
             if (this.term >= "0" && this.users==undefined) return "api/term/" + this.term + "/project/" + this.project + "/annotation.json";
             if (this.term >= "0" && this.users!=undefined) {
-                console.log("good url");
                 return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users="+this.users.join('_');
             }
 
@@ -119,8 +118,25 @@ var AnnotationRetrievalCollection = Backbone.Collection.extend({
     }
 });
 
-var ShareAnnotationModel = Backbone.Model.extend({
+
+var AnnotationCommentModel = Backbone.Model.extend({
+    initialize: function (options) {
+        this.annotation = options.annotation;
+    },
     url : function() {
-        return 'api/annotation/'+this.id+'/comment.json';
+        var base = 'api/annotation/'+this.annotation+'/comment';
+        var format = '.json';
+        if (this.isNew()) return base + format;
+        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+    }
+});
+
+var AnnotationCommentCollection = Backbone.Collection.extend({
+    model: AnnotationCommentModel,
+    initialize: function (options) {
+        this.annotation = options.annotation;
+    },
+    url : function() {
+        return'api/annotation/'+this.annotation+'/comment.json';
     }
 });

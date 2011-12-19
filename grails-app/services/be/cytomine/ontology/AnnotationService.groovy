@@ -123,14 +123,14 @@ class AnnotationService extends ModelService {
 
     @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, List<User> userList) {
-        def criteria = Annotation.withCriteria(uniqueResult:true) {
+        def criteria = Annotation.withCriteria() {
             eq('project',project)
             annotationTerm {
                 eq('term',term)
                 inList('user',userList)
             }
         }
-        criteria
+        criteria.unique()
     }
 
 //    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")

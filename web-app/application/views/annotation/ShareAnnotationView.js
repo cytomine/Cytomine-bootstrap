@@ -16,6 +16,39 @@ var ShareAnnotationView = Backbone.View.extend({
                 dialogID : "#share-confirm"
             }
         }).render();
+
+
+        var selectUser = $("#selectUserShare" + self.model.id);
+        var comments = $("#comments" + self.model.id);
+        var shareWithOption = $("input[name=shareWithOption]");
+
+        new AnnotationCommentCollection({ annotation : self.model.id}).fetch({
+            success : function (collection, response) {
+                var commentTpl = "<ul><li><b>( <%= hour %> )</b> <%= sender %> : <i><%= comment %></i></li></ul>";
+                var lastDateString = undefined;
+                collection.each(function (model) {
+                    var date = new Date();
+                    date.setTime(model.get("created"));
+                    var dateString = date.toLocaleDateString();
+
+                    if (dateString != lastDateString) {
+                        comments.append(_.template("<h4><%= date %></h4>", {date : dateString}));
+                        lastDateString = dateString
+                    }
+                    var hours = (date.getHours() < 10) ? "0"+date.getHours() : date.getHours();
+                    var minutes = (date.getMinutes() < 10) ? "0"+date.getMinutes() : date.getMinutes();
+                    comments.append(_.template(commentTpl, {
+                        sender: model.get("sender"),
+                        comment : model.get("comment"),
+                        hour : hours + "h" + minutes
+                    }));
+                });
+            },
+            error : function(collection, response) {
+                //window.app.view.message("Error", response.message, "error")
+            }
+        });
+
         var userCollection = new UserCollection({project : this.project}).fetch({
             success : function (collection, response) {
                 userCollection = collection;
@@ -28,9 +61,6 @@ var ShareAnnotationView = Backbone.View.extend({
                 window.app.view.message("Error", response.message, "error")
             }
         });
-
-        var selectUser = $("#selectUserShare" + self.model.id);
-        var shareWithOption = $("input[name=shareWithOption]");
 
         var getSelectedUsers = function () {
             var value = $("input[name=shareWithOption]:checked").val();
@@ -85,7 +115,7 @@ var ShareAnnotationView = Backbone.View.extend({
                 by : window.app.status.serverURL
             });
             var subject = _.template("Cytomine : <%= from %> shared an annotation with you",{ from : userCollection.get(window.app.status.user.id).prettyName()});
-            new ShareAnnotationModel().save({
+            new AnnotationCommentModel().save({
                 users : users,
                 annotation : self.model.id,
                 message : message,

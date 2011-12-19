@@ -5,6 +5,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     selectedUsers: [],
     terms : null,
     ontology : null,
+    shouldRefresh : true,
     render : function(callback) {
         var self = this;
         require(["text!application/templates/dashboard/TermTab.tpl.html", "text!application/templates/dashboard/TermTabContent.tpl.html"], function(termTabTpl, termTabContentTpl) {
@@ -250,9 +251,13 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         this.selectAnnotations(false);
     },
     showAllUsers : function() {
+        var self = this;
+        this.shouldRefresh = false;
         $(this.el).find('#treeUserListing').dynatree("getRoot").visit(function (node) {
             if (!node.data.isFolder) node.select(true);
         });
+        this.shouldRefresh = true;
+        self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers);
     },
     hideAllUsers : function() {
         $(this.el).find('#treeUserListing').dynatree("getRoot").visit(function (node) {
@@ -338,7 +343,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                         else {
                             self.selectedUsers = _.without(self.selectedUsers, node.data.key);
                         }
-                        self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers);
+                        if (self.shouldRefresh) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers);
                     },
                     onDblClick: function(node, event) {
                         //node.toggleSelect();
@@ -446,7 +451,8 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
      */
     printAnnotationThumbAllTerms : function(terms,users) {
         var self = this;
-        self.updateContentVisibility();self.updateDownloadLinks();
+        self.updateContentVisibility();
+        self.updateDownloadLinks();
         if (_.size(users) == 0) return; //nothing to display
         for(var i=0;i<terms.length;i++) {
             self.printAnnotationThumb(terms[i],"#tabsterm-"+self.model.id+"-"+terms[i],users);

@@ -222,7 +222,7 @@ class RestAnnotationController extends RestController {
                 }
                 order("created", "desc")
             }
-            responseSuccess(sharedAnnotations)
+            responseSuccess(sharedAnnotations.unique())
         } else {
             responseNotFound("Annotation", params.id)
         }
