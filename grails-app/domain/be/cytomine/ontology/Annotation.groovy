@@ -285,7 +285,7 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['project'] = it.project.id
             if (it.userId) returnArray['user'] = it.userId
             else returnArray['user'] = it.user?.id
-            returnArray['nbComments'] = SharedAnnotation.findAllByAnnotation(it).size()
+            returnArray['nbComments'] = it.id ? SharedAnnotation.findAllByAnnotation(it).size() : 0
             returnArray['area'] = it.computeArea()
             returnArray['perimeter'] = it.computePerimeter()
             returnArray['centroid'] = it.getCentroid()
