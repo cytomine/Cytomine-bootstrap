@@ -66,6 +66,7 @@ class RestController {
     }
 
     def responseResult(result) {
+        log.info "result.status="+result.status
         response.status = result.status
         withFormat {
             json { render result.data as JSON }

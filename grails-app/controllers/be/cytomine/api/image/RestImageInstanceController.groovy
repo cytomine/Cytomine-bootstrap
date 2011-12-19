@@ -98,10 +98,15 @@ class RestImageInstanceController extends RestController {
 
     def delete = {
         def json = JSON.parse("{project : $params.idproject, image : $params.idimage}")
+        log.info "delete image instance:" + json.toString()
         try {
+            log.info "retrieve domain"
             def domain = imageInstanceService.retrieve(json)
+            log.info "checkAuthorization"
             imageInstanceService.checkAuthorization(domain?.project?.id)
+            log.info "delete"
             def result = imageInstanceService.delete(domain,json)
+            log.info "responseResult"
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)

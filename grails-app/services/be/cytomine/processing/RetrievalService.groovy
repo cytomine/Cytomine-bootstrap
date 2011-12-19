@@ -78,7 +78,7 @@ class RetrievalService {
         def data = []
 
         for (int i = 0; i < json.length(); i++) {
-            def annotationjson = json.get(i)  //{"id":6754,"url":"http://beta.cytomine.be:48/api/annotation/6754/crop.jpg","sim":6.922589484181173E-6},{"id":5135,"url":"http://beta.cytomine.be:48/api/annotation/5135/crop.jpg","sim":6.912057598973113E-6}]
+            def annotationjson = json.get(i)  //{"id":6754,"url":"http://beimport java.util.concurrent.Futureta.cytomine.be:48/api/annotation/6754/crop.jpg","sim":6.922589484181173E-6},{"id":5135,"url":"http://beta.cytomine.be:48/api/annotation/5135/crop.jpg","sim":6.912057598973113E-6}]
             Annotation annotation = Annotation.read(annotationjson.id)
             if (annotation && annotation.id != searchAnnotation.id && (annotation.image.getIdProject() == searchAnnotation.image.getIdProject())) {
                 annotation.similarity = new Double(annotationjson.sim)
@@ -136,13 +136,10 @@ class RetrievalService {
     }
 
     public static def indexAnnotationAsynchronous(Annotation annotation) {
+        //indexAnnotationSynchronous(annotation)
         println "index asynchronous"
-        Asynchronizer.doParallel() {
-            Closure indexAnnotation = {
-                try {
-                    indexAnnotationSynchronous(annotation)
-                } catch (Exception e) {e.printStackTrace()}
-            }
+        Asynchronizer.withAsynchronizer() {
+            Closure indexAnnotation = {try {indexAnnotationSynchronous(annotation)} catch (Exception e) {e.printStackTrace()}}
             Closure annotationIndexing = indexAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
             Future result = annotationIndexing()
         }
@@ -150,14 +147,14 @@ class RetrievalService {
 
     public static def deleteAnnotationAsynchronous(Long id) {
         println "delete asynchronous"
-        Asynchronizer.doParallel() {
+        Asynchronizer.withAsynchronizer() {
             Closure deleteAnnotation = {
                 try {
                     deleteAnnotationSynchronous(id)
                 } catch (Exception e) {e.printStackTrace()}
             }
-            Closure annotationIndexing = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
-            //Future result=annotationIndexing()
+            Closure annotationDeleting = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
+            Future result=annotationDeleting()
         }
     }
 
@@ -171,9 +168,12 @@ class RetrievalService {
                     indexAnnotationSynchronous(id)
                 } catch (Exception e) {e.printStackTrace()}
             }
-            Closure annotationIndexing = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
-            //Future result=annotationIndexing()
+            Closure annotationUpdating = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
+            Future result=annotationUpdating()
         }
     }
+
+
+
 
 }

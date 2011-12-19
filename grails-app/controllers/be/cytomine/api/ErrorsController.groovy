@@ -16,7 +16,7 @@ import grails.plugins.springsecurity.Secured
        def error404 = {}
 
        def error500 = {
-          render view: '/error'
+          render view: '/errors/error'
        }
 
 }
