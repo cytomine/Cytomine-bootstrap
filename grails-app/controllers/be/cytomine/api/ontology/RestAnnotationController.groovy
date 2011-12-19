@@ -163,7 +163,7 @@ class RestAnnotationController extends RestController {
     }
 
 
-    def share = {
+    def addComment = {
         //try {
         User sender = User.read(springSecurityService.principal.id)
         Annotation annotation = Annotation.read(request.JSON.annotation)
@@ -179,19 +179,53 @@ class RestAnnotationController extends RestController {
         for (int i = 0; i < receivers.size(); i++) {
             receiversEmail[i] = receivers[i].getEmail();
         }
-        mailService.send("cytomine.ulg@gmail.com", receiversEmail, sender.getEmail(), request.JSON.subject, request.JSON.message, [[cid : "annotation", file : annnotationCrop]])
         def sharedAnnotation = new SharedAnnotation(
-                from : sender,
-                to : receivers,
+                sender : sender,
+                receiver : receivers,
                 comment : request.JSON.comment,
                 annotation: annotation
         )
-        sharedAnnotation.save()
-        response([success: true, message: "Annotation shared to " + receivers.toString()], 200)
+        if (sharedAnnotation.save()) {
+            mailService.send("cytomine.ulg@gmail.com", receiversEmail, sender.getEmail(), request.JSON.subject, request.JSON.message, [[cid : "annotation", file : annnotationCrop]])
+            response([success: true, message: "Annotation shared to " + receivers.toString()], 200)
+        } else {
+            response([success: false, message: "Error"], 400)
+        }
         /* } catch (Exception e) {
             response([success: false, message: e.toString()], 400)
         }*/
 
+    }
+
+    def showComment = {
+        Annotation annotation = annotationService.read(params.long('annotation'))
+        User user = User.read(springSecurityService.principal.id)
+        if (!annotation)  responseNotFound("Annotation", params.annotation)
+        annotationService.checkAuthorization(annotation.project.id)
+        def sharedAnnotation = SharedAnnotation.findById(params.long('id'))
+        if (!sharedAnnotation) responseNotFound("SharedAnnotation", params.id)
+        responseSuccess(sharedAnnotation)
+    }
+
+    def listComments = {
+        Annotation annotation = annotationService.read(params.long('annotation'))
+        User user = User.read(springSecurityService.principal.id)
+        if (annotation) {
+            annotationService.checkAuthorization(annotation.project.id)
+            def sharedAnnotations = SharedAnnotation.createCriteria().list {
+                eq("annotation", annotation)
+                or {
+                    eq("sender", user)
+                    receiver {
+                        eq("id", user.id)
+                    }
+                }
+                order("created", "desc")
+            }
+            responseSuccess(sharedAnnotations)
+        } else {
+            responseNotFound("Annotation", params.id)
+        }
     }
 
     def show = {

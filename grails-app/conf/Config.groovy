@@ -44,7 +44,7 @@ grails.converters.encoding = "UTF-8"
 grails.converters.json.default.deep = false
 //grails.converters.json.date = "javascript"
 //grails.converters.xml.date = "javascript"
-//grails.converters.default.pretty.print = true
+grails.converters.default.pretty.print = true
 
 // enable Sitemesh preprocessing of GSP pages
 grails.views.gsp.sitemesh.preprocess = true

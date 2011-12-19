@@ -85,6 +85,11 @@ var BrowseImageView = Backbone.View.extend({
             }
         });
     },
+    switchControl : function(controlName) {
+        var toolbar = $('#toolbar' + this.model.get('id'));
+        toolbar.find('input[id=' + controlName + this.model.get('id') + ']').click();
+
+    },
     /**
      * Move the OpenLayers view to the Annotation, at the
      * optimal zoom
@@ -403,9 +408,7 @@ var BrowseImageView = Backbone.View.extend({
             }
         });
     },
-    /**
-     * Init the Map if ImageServer is Adore Djatoka
-     */
+
     reloadAnnotation : function(idAnnotation) {
         var self = this;
         self.removeFeature(idAnnotation);
@@ -445,6 +448,7 @@ var BrowseImageView = Backbone.View.extend({
      * Init the toolbar
      */
     initToolbar: function () {
+        console.log("initToolbar");
         var toolbar = $('#toolbar' + this.model.get('id'));
         var self = this;
         toolbar.find('input[name=select]').button();

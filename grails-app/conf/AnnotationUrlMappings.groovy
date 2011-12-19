@@ -14,6 +14,12 @@ class AnnotationUrlMappings {
         "/api/annotation/$id"(controller:"restAnnotation"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
+        "/api/annotation/$annotation/comment"(controller:"restAnnotation"){
+            action = [POST: "addComment", GET:"listComments"]
+        }
+        "/api/annotation/$annotation/comment/$id"(controller:"restAnnotation"){
+            action = [GET:"showComment"]
+        }
         "/api/user/$id/annotation"(controller:"restAnnotation"){
             action = [GET:"listByUser"]
         }
@@ -37,9 +43,6 @@ class AnnotationUrlMappings {
         }
         "/api/project/$id/annotation/download"(controller: "restAnnotation"){
             action = [GET:"downloadDocumentByProject"]
-        }
-        "/api/annotation/share"(controller: "restAnnotation"){
-            action = [POST:"share"]
         }
     }
 }

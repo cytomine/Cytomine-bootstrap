@@ -1,4 +1,4 @@
-<div id="share-confirm" class="bigModal modal hide">
+<div id="share-confirm" class="xbigModal modal hide">
     <div class="modal-header">
         <h2>Comment an annotation</h2>
     </div>
@@ -39,26 +39,20 @@
                                 <ul class="inputs-list">
                                     <textarea class="xlarge" id="annotationComment<%= id %>" name="annotationComment<%= id %>" rows="6"></textarea>
                                 </ul>
+                            </div>
                         </div>
+                    </fieldset>
+                </form>
             </div>
-            </fieldset>
-            </form>
+            <div class="span6">
+                <div class="row"><img src="<%= cropURL %>" style="max-height: 150px;max-width: 150px;"/></div>
+                <div class="row">Comments</div>
+            </div>
         </div>
-        <div class="span6">
-            <h3>Informations</h3>
-            <ul>
-                <li><b>Creator</b> : <%= username %></li>
-                <li>&nbsp;</li>
-                <li><img src="<%= cropURL %>" style="max-height: 250px;max-width: 300px;"/></li>
-                <!--<li><b>Term(s)</b> : <%= terms %></li>-->
-            </ul>
 
-        </div>
     </div>
-
-</div>
-<div class="modal-footer">
-    <a href="#" id="shareCancelButton<%= id %>" class="btn" tabindex="4">Cancel</a>
-    <a href="#" id="shareButton<%= id %>" class="btn primary" tabindex="4">Share</a>
-</div>
+    <div class="modal-footer">
+        <a href="#" id="shareCancelButton<%= id %>" class="btn" tabindex="4">Cancel</a>
+        <a href="#" id="shareButton<%= id %>" class="btn primary" tabindex="4">Share</a>
+    </div>
 </div>

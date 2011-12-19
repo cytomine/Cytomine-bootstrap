@@ -56,18 +56,16 @@ class AnnotationService extends ModelService {
         else if (multipleTerm) {
             log.info "multipleTerm"
             def terms = Term.findAllByOntology(project.getOntology())
-            def annotationsWithTerms = AnnotationTerm.createCriteria().list {
+            def annotationsWithTerms = AnnotationTerm.withCriteria() {
                 inList("term", terms)
                 join("annotation")
                 createAlias("annotation", "a")
+                eq("a.project", project)
                 projections {
-                    eq("a.project", project)
                     groupProperty("annotation")
-                    createAlias("term", "nbterms")
-                    count("term")
+                    countDistinct("term")
                 }
             }
-
             def annotations = []
             annotationsWithTerms.each {  result ->
                 if (result[1] > 1) annotations.add(result[0]) //filter in groovy, to do : I tried greaterThan criteria on alias nbTerms whithout success
@@ -125,7 +123,7 @@ class AnnotationService extends ModelService {
 
     @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, List<User> userList) {
-        def criteria = Annotation.withCriteria {
+        def criteria = Annotation.withCriteria(uniqueResult:true) {
             eq('project',project)
             annotationTerm {
                 eq('term',term)

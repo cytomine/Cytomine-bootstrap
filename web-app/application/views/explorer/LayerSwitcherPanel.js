@@ -54,12 +54,12 @@ var LayerSwitcherPanel = Backbone.View.extend({
       $("#"+layerID).click(function(){
          var checked = $(this).attr("checked");
          layer.vectorsLayer.setVisibility(checked);
-         if (checked) {
+         /*if (checked) {
             _.each(layer.vectorsLayer.features, function (feature) {
                feature.style.display = '';
                layer.vectorsLayer.drawFeature(feature);
             });
-         }
+         }*/
       });
 
    },

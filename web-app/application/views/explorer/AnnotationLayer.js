@@ -31,10 +31,11 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.popup = null;
     this.hoverControl = null;
     this.triggerUpdateOnUnselect = true,
-    this.isOwner = null;
+        this.isOwner = null;
     this.deleteOnSelect = false; //true if select tool checked
     this.measureOnSelect = false;
     this.magicOnClick = false;
+    this.cpt = 0;
 }
 
 AnnotationLayer.prototype = {
@@ -100,7 +101,6 @@ AnnotationLayer.prototype = {
             },
             'featuremodified': function (evt) {
                 //prevent to update an annotation when it is unnecessary
-                console.log("self.triggerUpdateOnUnselect="+self.triggerUpdateOnUnselect);
                 if (self.triggerUpdateOnUnselect) self.updateAnnotation(evt.feature);
             },
             'onDelete': function (feature) {
@@ -152,18 +152,23 @@ AnnotationLayer.prototype = {
         var self = this;
         new AnnotationCollection({user : this.userID, image : this.imageID, term: undefined}).fetch({
             success : function (collection, response) {
+                var features = []
                 collection.each(function(annotation) {
                     var feature = self.createFeatureFromAnnotation(annotation);
-                    self.addFeature(feature);
+                    features.push(feature);
+                    self.features[feature.attributes.idAnnotation] = feature;
                 });
+                self.addFeatures(features);
                 browseImageView.layerLoadedCallback(self);
             }
         });
         browseImageView.addVectorLayer(this, this.userID);
     },
+    addFeatures: function (features) {
+        this.vectorsLayer.addFeatures(features);
+    },
     addFeature: function (feature) {
-        this.features[feature.attributes.idAnnotation] = feature;
-
+        //this.features[feature.attributes.idAnnotation] = feature;
         this.vectorsLayer.addFeatures(feature);
     },
     selectFeature: function (feature) {
@@ -329,7 +334,7 @@ AnnotationLayer.prototype = {
             suggestedTerm += "<span id=\"changeBySuggest" + bestTerm1.id + "\" style=\"display : inline\"><u>" + bestTerm1.get('name') + "</u> (" + Math.round(bestTerm1Value) + "%)<span>";
         if (bestTerm2 != undefined)
             suggestedTerm2 += " or " + "<span id=\"changeBySuggest" + bestTerm2.id + "\" style=\"display : inline\"><u>" + bestTerm2.get('name') + "</u> (" + Math.round(bestTerm2Value) + "%)<span>";
-        //console.log("suggestedTerm=" + suggestedTerm + " suggestedTerm2=" + suggestedTerm2);
+
         $("#suggTerm" + annotation.id).empty();
         $("#suggTerm" + annotation.id).append(suggestedTerm);
         $("#suggTerm" + annotation.id).append(suggestedTerm2);
@@ -343,13 +348,11 @@ AnnotationLayer.prototype = {
 
         $("#loadSimilarAnnotation" + annotation.id).replaceWith("<a href=\"#\" id=\"annotationSimilar" + annotation.id + "\"> Search similar annotations</a>");
         $("#annotationSimilar" + annotation.id).click(function() {
-            console.log("click similar");
-
             $('#annotationRetrieval').replaceWith("");
             $("#annotationRetrievalMain").empty();
             $("#annotationRetrievalMain").append("<div id=\"annotationRetrieval\"></div>");
 
-            console.log("load AnnotationRetrievalView = " + $('#annotationRetrieval').length);
+
             var panel = new AnnotationRetrievalView({
                 model : new AnnotationRetrievalCollection(similarAnnotation),
                 projectsPanel : self,
@@ -469,7 +472,7 @@ AnnotationLayer.prototype = {
                         var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url : cropURL, alt : cropURL});
                         var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message : message, cropImage : cropImage});
                         window.app.view.message("Annotation added", alertMessage, "success");
-                        self.browseImageView.refreshAnnotationTabs(undefined);
+                        //self.browseImageView.refreshAnnotationTabs(undefined);
                     },
                     error : function(model, response) {
                     }
@@ -511,7 +514,6 @@ AnnotationLayer.prototype = {
             }
         } else {
             _.each(annotation.get("term"), function(idTerm) {
-
                 var term = window.app.status.currentTermsCollection.get(idTerm);
                 if (term == undefined) return;
                 feature.style = {
@@ -525,37 +527,29 @@ AnnotationLayer.prototype = {
         return feature;
     },
     removeAnnotation : function(feature) {
-        var terms = this.ontologyTreeView.getTermsChecked();
         var idAnnotation = feature.attributes.idAnnotation;
         this.removeFeature(feature);
         this.controls.select.unselectAll();
         this.vectorsLayer.removeFeatures([feature]);
         var self = this;
+        new AnnotationModel({id:feature.attributes.idAnnotation}).destroy({
+            success: function (model, response) {
+                window.app.view.message("Annotation", response.message, "success");
+                //self.browseImageView.refreshAnnotationTabs(undefined);
+
+                /*collection.each(function(term) {
+                 console.log("term="+term.id);
 
 
-        new AnnotationTermCollection({idAnnotation:idAnnotation}).fetch({success:function (collection, response) {
+                 });*/
+                self.browseImageView.refreshAnnotationTabs(undefined);
 
-            new AnnotationModel({id:feature.attributes.idAnnotation}).destroy({
-                success: function (model, response) {
-                    window.app.view.message("Annotation", response.message, "success");
-                    self.browseImageView.refreshAnnotationTabs(undefined);
-
-                    /*collection.each(function(term) {
-                     console.log("term="+term.id);
-
-
-                     });*/
-                    self.browseImageView.refreshAnnotationTabs(undefined);
-
-                },
-                error: function (model, response) {
-                    var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Annotation", json.errors, "error");
-                }
-            });
-
-        }});
-
+            },
+            error: function (model, response) {
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Annotation", json.errors, "error");
+            }
+        });
     },
 
     /*Modifiy annotation on database*/
@@ -572,7 +566,7 @@ AnnotationLayer.prototype = {
                         var message = response.message;
                         var alertMessage = _.template("<p><%=   message %></p>", { message : message});
                         window.app.view.message("Annotation edited", alertMessage, "success");
-                        self.browseImageView.refreshAnnotationTabs(undefined);
+                        //self.browseImageView.refreshAnnotationTabs(undefined);
                     },
                     error : function(model, response) {
                         var json = $.parseJSON(response.responseText);
@@ -742,22 +736,21 @@ AnnotationLayer.prototype = {
                 self.selectFeature(feature);
                 self.controls.select.activate();
                 self.deleteOnSelect = deleteOnSelectBackup;
-                self.browseImageView.refreshAnnotationTabs(undefined);
+                //self.browseImageView.refreshAnnotationTabs(undefined);
             }
         });
 
     },
     annotationRemoved: function (idAnnotation) {
         this.removeFeature(idAnnotation);
-        this.browseImageView.refreshAnnotationTabs(undefined);
+        //this.browseImageView.refreshAnnotationTabs(undefined);
     },
     annotationUpdated: function (idAnnotation, idImage) {
         this.annotationRemoved(idAnnotation);
         this.annotationAdded(idAnnotation);
+
     },
     termAdded: function (idAnnotation, idTerm) {
-        var self = this;
-
         this.ontologyTreeView.check(idTerm);
     },
     termRemoved: function (idAnnotation, idTerm) {

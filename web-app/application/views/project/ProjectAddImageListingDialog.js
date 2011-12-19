@@ -262,7 +262,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
          viewrecords: true,
          sortorder: "asc",
          caption:"Images in " + self.model.get('name'),
-         multiselect: true
+         multiselect: false
       });
       $("#"+self.listmanageproject).jqGrid('navGrid','#'+self.listmanageproject,{edit:false,add:false,del:false});
       $("#"+self.listmanageproject).jqGrid('hideCol',"id");
@@ -330,7 +330,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
          viewrecords: true,
          sortorder: "asc",
          caption:"Available images",
-         multiselect: true,
+         multiselect: false,
          rowNum:10,
          rowList:[10,20,30],
          jsonReader: {

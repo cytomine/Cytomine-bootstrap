@@ -184,10 +184,10 @@
 
     <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
         <script type="text/javascript">
-           setTimeout(function(){
-               $("#j_username").val("stevben");
-               $("#j_password").val("sB$2011");
-           }, 1000);
+            setTimeout(function(){
+                $("#j_username").val("stevben");
+                $("#j_password").val("sB$2011");
+            }, 1000);
         </script>
     </g:if>
 </head>
@@ -203,6 +203,6 @@
 <script type="text/javascript">
     google.load('visualization', '1', {packages: ['corechart']});
 </script>
- <!-- OpenLayers -->
-    <script type="text/javascript" src="lib/OpenLayers-2.11/OpenLayers-Cytomine.js"></script>
+<!-- OpenLayers -->
+<script type="text/javascript" src="lib/OpenLayers-2.11/OpenLayers.js"></script>
 </html>

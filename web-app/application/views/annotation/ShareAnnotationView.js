@@ -66,8 +66,13 @@ var ShareAnnotationView = Backbone.View.extend({
             var users = getSelectedUsers();
             var userName = (_.size(users) == 1) ? userCollection.get(users[0]).prettyName() : "user";
             var comment = $("#annotationComment"+self.model.id).val();
-            var annotationURL = _.template(window.app.status.serverURL+"/#tabs-image-<%= idProject %>-<%= idImage %>-<%= idAnnotation %>",
-                { idProject : self.project,
+            var shareAnnotationURL = _.template("<%= serverURL %>/#share-annotation/<%= id %>", {
+                serverURL : window.app.status.serverURL,
+                id : self.model.id
+            });
+            var annotationURL = _.template("<%= serverURL %>/#tabs-image-<%= idProject %>-<%= idImage %>-<%= idAnnotation %>",
+                {   serverURL : window.app.status.serverURL,
+                    idProject : self.project,
                     idImage : self.image,
                     idAnnotation : self.model.id
                 });
@@ -76,6 +81,7 @@ var ShareAnnotationView = Backbone.View.extend({
                 to : userName,
                 comment : comment,
                 annotationURL : annotationURL,
+                shareAnnotationURL : shareAnnotationURL,
                 by : window.app.status.serverURL
             });
             var subject = _.template("Cytomine : <%= from %> shared an annotation with you",{ from : userCollection.get(window.app.status.user.id).prettyName()});

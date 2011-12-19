@@ -88,10 +88,10 @@ var AnnotationCollection = Backbone.Collection.extend({
         this.project = options.project;
         this.term = options.term;
         this.users = options.users;
-    },
+    }/*,
     comparator : function (annotation) {
         return -annotation.get("id"); //id or created (chronology?)
-    }
+    }*/
 });
 
 
@@ -121,6 +121,6 @@ var AnnotationRetrievalCollection = Backbone.Collection.extend({
 
 var ShareAnnotationModel = Backbone.Model.extend({
     url : function() {
-        return 'api/annotation/share.json';
+        return 'api/annotation/'+this.id+'/comment.json';
     }
 });

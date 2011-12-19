@@ -26,7 +26,7 @@ class MailService {
         MimeMessage mail = sender.createMimeMessage()
         MimeMessageHelper helper = new MimeMessageHelper(mail, true)
 
-
+        helper.setReplyTo("noreply@cytomine.be")
         helper.setFrom(from)
         helper.setTo(to)
         helper.setCc(cc)
