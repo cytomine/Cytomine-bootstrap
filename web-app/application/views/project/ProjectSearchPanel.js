@@ -283,7 +283,7 @@ var ProjectSearchPanel = Backbone.View.extend({
 
       var self = this;
       $('#addproject').remove();
-      self.addProjectDialog = new AddProjectDialog({projectsPanel:self.projectsPanel,el:self.el}).render();
+      self.addProjectDialog = new AddProjectDialog({projectsPanel:self.projectsPanel,el:self.el, ontologies : self.ontologies}).render();
    },
    /**
     * Show only project that match with params
