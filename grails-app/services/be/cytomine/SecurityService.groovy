@@ -7,10 +7,11 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.security.acls.model.NotFoundException
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 
-@Transactional(noRollbackFor = RuntimeException.class)
 class SecurityService {
 
     def aclUtilService
+
+    def transactional = false
 
     static transaction = false
 
@@ -66,4 +67,5 @@ class SecurityService {
         }
         return users
     }
+
 }

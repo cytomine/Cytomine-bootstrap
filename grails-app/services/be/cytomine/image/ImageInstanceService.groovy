@@ -13,6 +13,7 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.test.Infos
+import org.hibernate.FetchMode
 
 class ImageInstanceService extends ModelService {
 
@@ -52,6 +53,11 @@ class ImageInstanceService extends ModelService {
             createAlias("baseImage", "i")
             eq("project", project)
             order("i.created", "desc")
+            fetchMode 'baseImage', FetchMode.JOIN
+            fetchMode 'baseImage.storageAbstractImages', FetchMode.JOIN
+//            fetchMode 'baseImage.mim', FetchMode.JOIN
+//            fetchMode 'baseImage.mim.mis', FetchMode.JOIN
+//            fetchMode 'baseImage.mim.mis.imageServer', FetchMode.JOIN
         }
         return images
     }

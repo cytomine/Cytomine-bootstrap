@@ -20,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.access.AccessDeniedException
 import be.cytomine.test.Infos
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.hibernate.FetchMode
 
 class AnnotationService extends ModelService {
 
@@ -106,7 +107,13 @@ class AnnotationService extends ModelService {
             return annotations
         } else {
             log.info "findAllByProjectAndUserInList="+ project + " users="+userList
-            return Annotation.findAllByProjectAndUserInList(project, userList)
+                 def annotations = Annotation.createCriteria().list {
+                    eq("project", project)
+                    inList("user", userList)
+                    fetchMode 'image', FetchMode.JOIN
+                    fetchMode 'image.baseImage', FetchMode.JOIN
+                }
+            return annotations
         }
     }
 

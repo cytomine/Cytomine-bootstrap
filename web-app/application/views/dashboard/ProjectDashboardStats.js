@@ -28,11 +28,11 @@ var ProjectDashboardStats = Backbone.View.extend({
             self.drawUserAnnotationsChart(collection, undefined, response);
          }
       });
-      new SuggestedTermCollection({project:self.model.get('id')}).fetch({
-         success : function(collection, response) {
-            self.drawWorstTermPieChart(collection, response);
-         }
-      });
+//      new SuggestedTermCollection({project:self.model.get('id')}).fetch({
+//         success : function(collection, response) {
+//            self.drawWorstTermPieChart(collection, response);
+//         }
+//      });
       new StatsTermSlideCollection({project:self.model.get('id')}).fetch({
          success : function(collection, response) {
             self.drawTermSlideChart(collection, response);
