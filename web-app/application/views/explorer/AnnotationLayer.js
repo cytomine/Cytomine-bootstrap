@@ -144,31 +144,22 @@ AnnotationLayer.prototype = {
         map.initTools(this.controls);
 
     },
-
-
-    /*Load annotation from database on layer */
     loadAnnotations: function (browseImageView) {
 
         var self = this;
         new AnnotationCollection({user : this.userID, image : this.imageID, term: undefined}).fetch({
             success : function (collection, response) {
-                var features = []
                 collection.each(function(annotation) {
                     var feature = self.createFeatureFromAnnotation(annotation);
-                    features.push(feature);
-                    self.features[feature.attributes.idAnnotation] = feature;
+                    self.addFeature(feature);
                 });
-                self.addFeatures(features);
                 browseImageView.layerLoadedCallback(self);
             }
         });
         browseImageView.addVectorLayer(this, this.userID);
     },
-    addFeatures: function (features) {
-        this.vectorsLayer.addFeatures(features);
-    },
     addFeature: function (feature) {
-        //this.features[feature.attributes.idAnnotation] = feature;
+        this.features[feature.attributes.idAnnotation] = feature;
         this.vectorsLayer.addFeatures(feature);
     },
     selectFeature: function (feature) {

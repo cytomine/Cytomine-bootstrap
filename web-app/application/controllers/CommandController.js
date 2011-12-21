@@ -4,13 +4,17 @@ var CommandController = Backbone.Router.extend({
    },
    undo : function() {
       var self = this;
+       console.log("undo");
       if (self.commandInProgess) {
          window.app.view.message("Oh wait :-)", "Operation already in progress", "error");
          return
       }
       self.commandInProgess = true;
+       console.log("post undo");
       $.post('command/undo.json', {}, function(data) {
          _.each(data, function(undoElem){
+             console.log("undoElem");
+             console.log(undoElem);
             self.dispatch(undoElem.callback,undoElem.message,"Undo");
             if(undoElem.printMessage) {
                window.app.view.message("Undo", undoElem.message, "info");
@@ -40,8 +44,10 @@ var CommandController = Backbone.Router.extend({
    },
 
    dispatch : function(callback,message,operation) {
-
-
+      console.log("callback");
+      console.log(callback);
+      console.log("operation");
+      console.log(operation);
       if (!callback) return; //nothing to do
 
       /**
@@ -72,7 +78,7 @@ var CommandController = Backbone.Router.extend({
          if(window.app.controllers.dashboard.view!=null)
             window.app.controllers.dashboard.view.refreshAnnotations();
       } else if (callback.method == "be.cytomine.DeleteAnnotationCommand") {
-
+         console.log("delete annotation");
          var tab = _.detect(window.app.controllers.browse.tabs.tabs, function(object) {
             return object.idImage == callback.imageID;
          });
