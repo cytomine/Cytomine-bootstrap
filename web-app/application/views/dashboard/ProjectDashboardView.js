@@ -216,7 +216,7 @@ var ProjectDashboardView = Backbone.View.extend({
                                 action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-trash",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,image:""});
 
                             }
-                            else if(command.serviceName=="imageInstanceService" && command.CLASSNAME=="be.cytomine.command.AddComman") {
+                            else if(command.serviceName=="imageInstanceService" && command.CLASSNAME=="be.cytomine.command.AddCommand") {
                                 var cropStyle = "block";
                                 var cropURL = jsonCommand.thumb;
                                 action = _.template(commandImageInstanceTpl, {idProject : self.model.id, idImage : jsonCommand.id, imageFilename : jsonCommand.filename, icon:"add.png",text:commandHistory.get("prefixAction")+ " " + command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
