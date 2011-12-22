@@ -20,14 +20,9 @@ class UndoStackItem extends CytomineDomain implements Comparable {
     Command command
 
     /**
-     * Flag that indicate if command is in a transaction
-     */
-    Boolean transactionInProgress
-
-    /**
      * Transaction id
      */
-    int transaction
+    Transaction transaction
 
     /**
      * Flag that indicate if command comes from redo stack (true) or is a new command (false)
@@ -46,7 +41,8 @@ class UndoStackItem extends CytomineDomain implements Comparable {
 
     static constraints = {
         isFromRedo(nullable: true)
+        transaction(nullable: true)
     }
 
-    String toString() { return "|user=" + user.id + " command=" + command + " transaction=" + transactionInProgress + " isFromRedo=" + isFromRedo}
+    String toString() { return "|user=" + user.id + " command=" + command + " transaction=" + transaction + " isFromRedo=" + isFromRedo}
 }

@@ -12,6 +12,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.command.Transaction
 
 class TermService extends ModelService {
 
@@ -104,41 +105,41 @@ class TermService extends ModelService {
 
     def delete(def domain,def json) throws CytomineException {
         User currentUser = cytomineService.getCurrentUser()
-        return deleteTerm(json.id, currentUser)
+        return deleteTerm(json.id, currentUser,null)
     }
 
-    def deleteTerm(def idTerm, User currentUser) throws CytomineException {
-        return deleteTerm(idTerm, currentUser, true)
+    def deleteTerm(def idTerm, User currentUser,Transaction transaction) throws CytomineException {
+        return deleteTerm(idTerm, currentUser, true,transaction)
     }
 
-    def deleteTerm(def idTerm, User currentUser, boolean printMessage) throws CytomineException {
+    def deleteTerm(def idTerm, User currentUser, boolean printMessage, Transaction transaction) throws CytomineException {
         log.info "Delete term: " + idTerm
         Term term = Term.read(idTerm)
         if (term) {
             //Delete Annotation-Term before deleting Term
-            annotationTermService.deleteAnnotationTermFromAllUser(term, currentUser)
+            annotationTermService.deleteAnnotationTermFromAllUser(term, currentUser,transaction)
 
             //Delete Suggested-Term before deleting Term
-            suggestedTermService.deleteSuggestedTermFromAllUser(term, currentUser)
+            suggestedTermService.deleteSuggestedTermFromAllUser(term, currentUser,transaction)
 
             //Delete relation-Term before deleting Term
-            relationTermService.deleteRelationTermFromTerm(term, currentUser)
+            relationTermService.deleteRelationTermFromTerm(term, currentUser,transaction)
         }
         //Delete term
         def json = JSON.parse("{id : $idTerm}")
         return executeCommand(new DeleteCommand(user: currentUser, printMessage: printMessage), json)
     }
 
-    def deleteTermRestricted(def idTerm, User currentUser, boolean printMessage) throws CytomineException {
+    def deleteTermRestricted(def idTerm, User currentUser, boolean printMessage, Transaction transaction) throws CytomineException {
         log.info "Delete term: " + idTerm
         Term term = Term.read(idTerm)
         if (term) {
             //Delete relation-Term before deleting Term
-            relationTermService.deleteRelationTermFromTerm(term, currentUser)
+            relationTermService.deleteRelationTermFromTerm(term, currentUser,transaction)
         }
         //Delete term
         def json = JSON.parse("{id : $idTerm}")
-        return executeCommand(new DeleteCommand(user: currentUser, printMessage: printMessage), json)
+        return executeCommand(new DeleteCommand(user: currentUser, printMessage: printMessage,transaction:transaction), json)
     }
 
     /**

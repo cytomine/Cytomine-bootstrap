@@ -10,6 +10,7 @@ import be.cytomine.command.EditCommand
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.command.Transaction
 
 class OntologyService extends ModelService {
 
@@ -82,7 +83,7 @@ class OntologyService extends ModelService {
 
     def delete(def domain,def json) throws CytomineException {
         //Start transaction
-        transactionService.start()
+        Transaction transaction = transactionService.start()
         User currentUser = cytomineService.getCurrentUser()
         //Read ontology
         Ontology ontology = Ontology.read(json.id)
@@ -92,12 +93,12 @@ class OntologyService extends ModelService {
             log.info "Delete term from ontology"
             def terms = ontology.terms()
             terms.each { term ->
-                termService.deleteTermRestricted(term.id, currentUser, false)
+                termService.deleteTermRestricted(term.id, currentUser, false,transaction)
             }
         }
         //Delete ontology
         log.info "Delete ontology"
-        def result = executeCommand(new DeleteCommand(user: currentUser), json)
+        def result = executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
 
         //Stop transaction
         transactionService.stop()

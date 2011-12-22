@@ -262,7 +262,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
          viewrecords: true,
          sortorder: "asc",
          caption:"Images in " + self.model.get('name'),
-         multiselect: false
+         multiselect: true
       });
       $("#"+self.listmanageproject).jqGrid('navGrid','#'+self.listmanageproject,{edit:false,add:false,del:false});
       $("#"+self.listmanageproject).jqGrid('hideCol',"id");
@@ -318,7 +318,6 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
 
             //change color of already selected image
             self.imagesProject.each(function(image) {
-               //
                $("#"+self.listmanageall).find("#" + image.get('baseImage')).find("td").css("background-color", "a0dc4f");
                $("#"+self.listmanageall).find("#" + image.get('baseImage')).find(".cbox").attr('disabled', true)
                $("#"+self.listmanageall).find("#" + image.get('baseImage')).find(".cbox").css("visible", false);
@@ -330,7 +329,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
          viewrecords: true,
          sortorder: "asc",
          caption:"Available images",
-         multiselect: false,
+         multiselect: true,
          rowNum:10,
          rowList:[10,20,30],
          jsonReader: {

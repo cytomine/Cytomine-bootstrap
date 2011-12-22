@@ -21,6 +21,7 @@ import org.springframework.security.access.AccessDeniedException
 import be.cytomine.test.Infos
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.hibernate.FetchMode
+import be.cytomine.command.Transaction
 
 class AnnotationService extends ModelService {
 
@@ -106,13 +107,13 @@ class AnnotationService extends ModelService {
 
             return annotations
         } else {
-            log.info "findAllByProjectAndUserInList="+ project + " users="+userList
-                 def annotations = Annotation.createCriteria().list {
-                    eq("project", project)
-                    inList("user", userList)
-                    fetchMode 'image', FetchMode.JOIN
-                    fetchMode 'image.baseImage', FetchMode.JOIN
-                }
+            log.info "findAllByProjectAndUserInList=" + project + " users=" + userList
+            def annotations = Annotation.createCriteria().list {
+                eq("project", project)
+                inList("user", userList)
+                fetchMode 'image', FetchMode.JOIN
+                fetchMode 'image.baseImage', FetchMode.JOIN
+            }
             return annotations
         }
     }
@@ -131,10 +132,10 @@ class AnnotationService extends ModelService {
     @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, List<User> userList) {
         def criteria = Annotation.withCriteria() {
-            eq('project',project)
+            eq('project', project)
             annotationTerm {
-                eq('term',term)
-                inList('user',userList)
+                eq('term', term)
+                inList('user', userList)
             }
         }
         criteria.unique()
@@ -173,36 +174,42 @@ class AnnotationService extends ModelService {
         }
 
         //Start transaction
-        transactionService.start()
+        Transaction transaction = transactionService.start()
 
-        //Add annotation user
-        json.user = currentUser.id
-        //Add Annotation
-        log.debug this.toString()
-        def result = executeCommand(new AddCommand(user: currentUser), json)
-        def annotation = result?.data?.annotation?.id
-        log.info "annotation=" + annotation + " json.term=" + json.term
-        //Add annotation-term if term
-        if (annotation) {
-            def term = json.term;
-            if (term) {
-                term.each { idTerm ->
-                    annotationTermService.addAnnotationTerm(annotation, idTerm, currentUser.id, currentUser)
+        //Synchronzed this part of code, prevent two annotation to be add at the same time
+        synchronized (this.getClass()) {
+            //Add annotation user
+            json.user = currentUser.id
+            //Add Annotation
+            log.debug this.toString()
+            def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
+            def annotation = result?.data?.annotation?.id
+            log.info "annotation=" + annotation + " json.term=" + json.term
+            //Add annotation-term if term
+            if (annotation) {
+                def term = json.term;
+                if (term) {
+                    term.each { idTerm ->
+                        annotationTermService.addAnnotationTerm(annotation, idTerm, currentUser.id, currentUser, transaction)
+                    }
                 }
             }
-        }
 
         //Stop transaction
         transactionService.stop()
 
         //add annotation on the retrieval
-        try {if (annotation) indexRetrievalAnnotation(annotation) } catch (Exception e) { log.error "Cannot index in retrieval:" + e.toString()}
+        try {if (annotation) indexRetrievalAnnotation(annotation) } catch (Exception e) {
+            log.error "Cannot index in retrieval:" + e.toString()
+            e.printStackTrace()
+        }
 
         return result
+        }
     }
 
     @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
-    def update(def domain,def json) {
+    def update(def domain, def json) {
         User currentUser = cytomineService.getCurrentUser()
         //simplify annotation
         try {
@@ -223,15 +230,15 @@ class AnnotationService extends ModelService {
     }
 
     @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
-    def delete(def domain,def json) {
+    def delete(def domain, def json) {
 
         User currentUser = cytomineService.getCurrentUser()
 
         //Start transaction
-        transactionService.start()
+        Transaction transaction = transactionService.start()
 
         //Delete annotation (+cascade)
-        def result = deleteAnnotation(json.id, currentUser)
+        def result = deleteAnnotation(json.id, currentUser, transaction)
 
         //Stop transaction
         transactionService.stop()
@@ -243,23 +250,23 @@ class AnnotationService extends ModelService {
     }
 
 
-    def deleteAnnotation(def idAnnotation, User currentUser) {
-        return deleteAnnotation(idAnnotation, currentUser, true)
+    def deleteAnnotation(def idAnnotation, User currentUser, Transaction transaction) {
+        return deleteAnnotation(idAnnotation, currentUser, true, transaction)
     }
 
-    def deleteAnnotation(def idAnnotation, User currentUser, boolean printMessage) {
+    def deleteAnnotation(def idAnnotation, User currentUser, boolean printMessage, Transaction transaction) {
         log.info "Delete annotation: " + idAnnotation
         Annotation annotation = Annotation.read(idAnnotation)
         if (annotation) {
             //Delete Annotation-Term before deleting Annotation
-            annotationTermService.deleteAnnotationTermFromAllUser(annotation, currentUser)
+            annotationTermService.deleteAnnotationTermFromAllUser(annotation, currentUser, transaction)
 
             //Delete Suggested-Term before deleting Annotation
-            suggestedTermService.deleteSuggestedTermFromAllUser(annotation, currentUser)
+            suggestedTermService.deleteSuggestedTermFromAllUser(annotation, currentUser, transaction)
         }
         //Delete annotation
         def json = JSON.parse("{id: $idAnnotation}")
-        def result = executeCommand(new DeleteCommand(user: currentUser), json)
+        def result = executeCommand(new DeleteCommand(user: currentUser, transaction: transaction), json)
         return result
     }
 
@@ -313,7 +320,7 @@ class AnnotationService extends ModelService {
         float i = 0;
         /* Max number of loop (prevent infinite loop) */
         int maxLoop = 500
-        double rate=0
+        double rate = 0
 
         while (numberOfPoint > rateLimitMax && maxLoop > 0) {
             rate = i
@@ -325,13 +332,13 @@ class AnnotationService extends ModelService {
         }
 
         log.debug "annotationFull good=" + i + " " + annotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
-        return [geometry : lastAnnotationFull, rate : rate]
+        return [geometry: lastAnnotationFull, rate: rate]
     }
 
     private def simplifyPolygon(String form, double rate) {
         Geometry annotation = new WKTReader().read(form);
         annotation = DouglasPeuckerSimplifier.simplify(annotation, rate)
-        return [geometry : annotation, rate : rate]
+        return [geometry: annotation, rate: rate]
     }
 
     /**
@@ -363,7 +370,7 @@ class AnnotationService extends ModelService {
 
     def destroy(Annotation domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.user.toString(),  domain.image?.baseImage?.filename], printMessage, "Delete", domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -382,7 +389,7 @@ class AnnotationService extends ModelService {
 
     def edit(Annotation domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.user.toString(),  domain.image?.baseImage?.filename], printMessage, "Edit", domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Edit", domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response

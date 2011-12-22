@@ -7,6 +7,7 @@ import be.cytomine.command.DeleteCommand
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.command.Transaction
 
 class RelationTermService extends ModelService {
 
@@ -56,26 +57,26 @@ class RelationTermService extends ModelService {
 
     def delete(def domain,def json) {
         User currentUser = cytomineService.getCurrentUser()
-        return deleteRelationTerm(json.relation ? json.relation : -1, json.term1, json.term2, currentUser)
+        return deleteRelationTerm(json.relation ? json.relation : -1, json.term1, json.term2, currentUser, null)
     }
 
-    def deleteRelationTerm(def idRelation, def idTerm1, def idTerm2, User currentUser) {
-        return deleteRelationTerm(idRelation, idTerm1, idTerm2, currentUser, true)
+    def deleteRelationTerm(def idRelation, def idTerm1, def idTerm2, User currentUser,Transaction transaction) {
+        return deleteRelationTerm(idRelation, idTerm1, idTerm2, currentUser, true,transaction)
     }
 
-    def deleteRelationTerm(def idRelation, def idTerm1, def idTerm2, User currentUser, boolean printMessage) {
+    def deleteRelationTerm(def idRelation, def idTerm1, def idTerm2, User currentUser, boolean printMessage,Transaction transaction) {
         def json = JSON.parse("{relation: $idRelation, term1: $idTerm1, term2: $idTerm2}")
         log.info "json=" + json
-        return executeCommand(new DeleteCommand(user: currentUser, printMessage: printMessage), json)
+        return executeCommand(new DeleteCommand(user: currentUser, printMessage: printMessage,transaction:transaction), json)
     }
 
-    def deleteRelationTermFromTerm(Term term, User currentUser) {
+    def deleteRelationTermFromTerm(Term term, User currentUser, Transaction transaction) {
         def relationTerm = RelationTerm.findAllByTerm1OrTerm2(term, term)
         log.info "relationTerm= " + relationTerm.size()
 
         relationTerm.each { relterm ->
             log.info "unlink relterm:" + relationTerm.id
-            deleteRelationTerm(relterm.relation.id, relterm.term1.id, relterm.term2.id, currentUser, false)
+            deleteRelationTerm(relterm.relation.id, relterm.term1.id, relterm.term2.id, currentUser, false,transaction)
         }
     }
 

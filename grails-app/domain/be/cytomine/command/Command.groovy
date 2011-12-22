@@ -34,6 +34,7 @@ class Command extends CytomineDomain {
      * User who launch command
      */
     User user
+    Transaction transaction
 
     /**
      * Project concerned by command
@@ -74,6 +75,7 @@ class Command extends CytomineDomain {
         actionMessage(nullable: true)
         project(nullable: true)
         serviceName(nullable: true)
+        transaction(nullable: true)
     }
 
     /**

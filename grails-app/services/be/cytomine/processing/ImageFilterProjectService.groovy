@@ -20,7 +20,6 @@ class ImageFilterProjectService extends ModelService {
 
     @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
     def list(Project project) {
-        log.info "je passe"
         return ImageFilterProject.findAllByProject(project)
     }
 

@@ -1,7 +1,5 @@
 package cytomine.web
 
-import be.cytomine.command.TransactionController
-
 class TransactionFilters {
 
     def filters = {
@@ -9,7 +7,7 @@ class TransactionFilters {
           before = {
           }
           after = {
-              new TransactionController().stopIfTransactionInProgress()
+              //new TransactionController().stopIfTransactionInProgress()
           }
           afterView = {
           }

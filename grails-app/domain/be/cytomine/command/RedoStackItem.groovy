@@ -19,17 +19,17 @@ class RedoStackItem extends CytomineDomain implements Comparable {
      */
     Command command
 
-    /**
-     * Flag that indicate if command is in a transaction
-     */
-    Boolean transactionInProgress
 
     /**
      * Transaction id
      */
-    int transaction
+    Transaction transaction
 
     static belongsTo = [user: User, command: Command]
+
+    static constraints = {
+        transaction(nullable: true)
+    }
 
     int compareTo(obj) {
         created.compareTo(obj.created)

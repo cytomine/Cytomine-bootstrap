@@ -54,7 +54,7 @@ class CommandService {
             ch.save();
             if (c.saveOnUndoRedoStack) {
                 User user = c.user
-                new UndoStackItem(command: c, user: user, transactionInProgress: user.transactionInProgress, transaction: user.transaction).save(flush: true)
+                new UndoStackItem(command: c, user: user, transaction: c.transaction).save(flush: true)
             }
         }
 

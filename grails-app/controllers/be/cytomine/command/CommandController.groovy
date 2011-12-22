@@ -32,24 +32,27 @@ class CommandController extends RestController {
         def firstUndoStack = lastCommands.last()
         log.debug "FirstUndoStack=" + firstUndoStack
 
-        def transactionInProgress = firstUndoStack.transactionInProgress //backup
-        boolean noError = true;
-        int firstTransaction = -1
 
-        if (!transactionInProgress) {
+        def transaction =  firstUndoStack.transaction
+
+        if (!transaction) {
             log.debug "Transaction not in progress"
             result = firstUndoStack.getCommand().undo()
             moveToRedoStack(firstUndoStack)
             results << result.data
             response.status = result.status
         } else {
+            int firstTransaction = -1
+            boolean noError = true;
             log.debug "Transaction in progress"
             def undoStacks = UndoStackItem.findAllByUser(user, [sort: "created", order: "desc"])
-            if (undoStacks.size() > 0)
-                firstTransaction = undoStacks.get(0).transaction
+            if (undoStacks.size() > 0) {
+                def subtransaction = undoStacks.get(0).transaction
+                if(subtransaction) firstTransaction = subtransaction.id
+            }
             for (undoStack in undoStacks) {
-                log.debug "Undo stack transaction:" + firstTransaction + " VS " + undoStack.transaction
-                if (!undoStack.transactionInProgress || firstTransaction != undoStack.transaction) break;
+                log.debug "Undo stack transaction:" + firstTransaction + " VS " + undoStack?.transaction?.id
+                if (!undoStack.transaction || firstTransaction != undoStack.transaction.id) break;
                 result = undoStack.getCommand().undo()
                 results << result.data
                 noError = noError && (result.status == 200 || result.status == 201)
@@ -70,11 +73,9 @@ class CommandController extends RestController {
     }
 
     private def moveToRedoStack(UndoStackItem firstUndoStack) {
-
         new RedoStackItem(
                 command: firstUndoStack.getCommand(),
                 user: firstUndoStack.getUser(),
-                transactionInProgress: firstUndoStack.transactionInProgress,
                 transaction: firstUndoStack.transaction
         ).save(flush: true)
         new CommandHistory(command: firstUndoStack.getCommand(), prefixAction: "UNDO", project: firstUndoStack.getCommand().project).save();
@@ -95,11 +96,11 @@ class CommandController extends RestController {
         }
         def lastRedoStack = lastCommands.last()
         def result
-        def transactionInProgress = lastRedoStack.transactionInProgress //backup
+        def transaction = lastRedoStack.transaction //backup
         boolean noError = true;
-        int firstTransaction
+        int firstTransaction = -1
 
-        if (!transactionInProgress) {
+        if (!transaction) {
             log.debug "Transaction not in progress"
             result = lastRedoStack.getCommand().redo()
             moveToUndoStack(lastRedoStack)
@@ -109,12 +110,14 @@ class CommandController extends RestController {
             log.debug "Transaction in progress"
             def redoStacks = RedoStackItem.findAllByUser(user, [sort: "created", order: "desc"])
 
-            if (redoStacks.size() > 0)
-                firstTransaction = redoStacks.get(0).transaction
+            if (redoStacks.size() > 0) {
+                def subtransaction = redoStacks.get(0).transaction
+                if(subtransaction) firstTransaction = subtransaction.id
+            }
             for (redoStack in redoStacks) {
                 log.debug redoStack.getCommand()
-                log.debug redoStack.transactionInProgress
-                if (!redoStack.transactionInProgress || firstTransaction != redoStack.transaction) break;
+                log.debug redoStack.transaction
+                if (!redoStack.transaction || firstTransaction != redoStack.transaction.id) break;
                 result = redoStack.getCommand().redo()
                 results << result.data
                 noError = noError && (result.status == 200 || result.status == 201)
@@ -140,7 +143,6 @@ class CommandController extends RestController {
         new UndoStackItem(
                 command: lastRedoStack.getCommand(),
                 user: lastRedoStack.getUser(),
-                transactionInProgress: lastRedoStack.transactionInProgress,
                 transaction: lastRedoStack.transaction,
         ).save(flush: true)
         new CommandHistory(command: lastRedoStack.getCommand(), prefixAction: "REDO", project: lastRedoStack.getCommand().project).save();

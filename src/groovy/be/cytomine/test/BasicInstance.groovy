@@ -235,7 +235,9 @@ class BasicInstance {
 
         log.debug "createOrGetBasicScanner()"
         Scanner scanner = new Scanner(maxResolution: "x40", brand: "brand", model: "model")
+        log.info(scanner)
         scanner.validate()
+        log.info("validate")
         log.debug "scanner.errors=" + scanner.errors
         scanner.save(flush: true)
         log.debug "scanner.errors=" + scanner.errors

@@ -9,6 +9,7 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.Transaction
 
 class AnnotationTermService extends ModelService {
 
@@ -56,15 +57,15 @@ class AnnotationTermService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def addAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser) {
+    def addAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser,Transaction transaction) {
         def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, user: $idUser}")
-        return executeCommand(new AddCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser,transaction:transaction), json)
     }
 
     @PreAuthorize("#domain.user.id == principal.id or hasRole('ROLE_ADMIN')")
     def delete(def domain,def json) {
         User currentUser = cytomineService.getCurrentUser()
-        return deleteAnnotationTerm(json.annotation, json.term, currentUser.id, currentUser)
+        return deleteAnnotationTerm(json.annotation, json.term, currentUser.id, currentUser,null)
     }
 
     def update(def domain,def json) {
@@ -78,13 +79,13 @@ class AnnotationTermService extends ModelService {
         Annotation annotation = Annotation.read(idAnnotation)
         if (!annotation) throw new ObjectNotFoundException("Annotation $idAnnotation not found")
         //Start transaction
-        transactionService.start()
+        Transaction transaction = transactionService.start()
 
         //Delete all annotation term
-        deleteAnnotationTermFromUser(annotation, currentUser, currentUser)
+        deleteAnnotationTermFromUser(annotation, currentUser, currentUser,transaction)
 
-        //Delete annotation term
-        def result = addAnnotationTerm(idAnnotation, idterm, currentUser.id, currentUser)
+        //Add annotation term
+        def result = addAnnotationTerm(idAnnotation, idterm, currentUser.id, currentUser,transaction)
 
         //Stop transaction
         transactionService.stop()
@@ -95,55 +96,55 @@ class AnnotationTermService extends ModelService {
     /**
      * Delete an annotation term
      */
-    def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser) {
-        return deleteAnnotationTerm(idAnnotation, idTerm, idUser, currentUser, true)
+    def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser, Transaction transaction) {
+        return deleteAnnotationTerm(idAnnotation, idTerm, idUser, currentUser, true,transaction)
     }
 
-    def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser, boolean printMessage) {
+    def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser, boolean printMessage, Transaction transaction) {
         def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, user: $idUser}")
-        def result = executeCommand(new DeleteCommand(user: currentUser), json)
+        def result = executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
         return result
     }
 
     /**
      * Delete all term map by user for annotation
      */
-    def deleteAnnotationTermFromUser(Annotation annotation, User user, User currentUser) {
+    def deleteAnnotationTermFromUser(Annotation annotation, User user, User currentUser, Transaction transaction) {
         //Delete all annotation term
         def annotationTerm = AnnotationTerm.findAllByAnnotationAndUser(annotation, user)
         log.info "Delete old annotationTerm= " + annotationTerm.size()
 
         annotationTerm.each { annotterm ->
             log.info "unlink annotterm:" + annotterm.id
-            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.user.id, currentUser, false)
+            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.user.id, currentUser, false,transaction)
         }
     }
 
     /**
      * Delete all term map for annotation
      */
-    def deleteAnnotationTermFromAllUser(Annotation annotation, User currentUser) {
+    def deleteAnnotationTermFromAllUser(Annotation annotation, User currentUser, Transaction transaction) {
         //Delete all annotation term
         def annotationTerm = AnnotationTerm.findAllByAnnotation(annotation)
         log.info "Delete old annotationTerm= " + annotationTerm.size()
 
         annotationTerm.each { annotterm ->
             log.info "unlink annotterm:" + annotterm.id
-            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.user.id, currentUser, false)
+            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.user.id, currentUser, false,transaction)
         }
     }
 
     /**
      * Delete all term map by user for term
      */
-    def deleteAnnotationTermFromAllUser(Term term, User currentUser) {
+    def deleteAnnotationTermFromAllUser(Term term, User currentUser, Transaction transaction) {
         //Delete all annotation term
         def annotationTerm = AnnotationTerm.findAllByTerm(term)
         log.info "Delete old annotationTerm= " + annotationTerm.size()
 
         annotationTerm.each { annotterm ->
             log.info "unlink annotterm:" + annotterm.id
-            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.user.id, currentUser, false)
+            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.user.id, currentUser, false,transaction)
         }
     }
 

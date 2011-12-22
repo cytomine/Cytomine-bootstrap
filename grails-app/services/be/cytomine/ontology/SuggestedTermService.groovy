@@ -9,6 +9,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.command.Transaction
 
 class SuggestedTermService extends ModelService {
 
@@ -71,7 +72,7 @@ class SuggestedTermService extends ModelService {
 
     def delete(def domain,def json) {
         User currentUser = cytomineService.getCurrentUser()
-        def result = deleteSuggestedTerm(json.annotation, json.term, json.job, currentUser)
+        def result = deleteSuggestedTerm(json.annotation, json.term, json.job, currentUser,null)
         return result
     }
 
@@ -82,36 +83,36 @@ class SuggestedTermService extends ModelService {
     /**
      * Delete an annotation term
      */
-    def deleteSuggestedTerm(def idAnnotation, def idTerm, def idJob, User currentUser) {
+    def deleteSuggestedTerm(def idAnnotation, def idTerm, def idJob, User currentUser, Transaction transaction) {
         def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, job: $idJob}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**
      * Delete all term map for annotation
      */
-    def deleteSuggestedTermFromAllUser(Annotation annotation, User currentUser) {
+    def deleteSuggestedTermFromAllUser(Annotation annotation, User currentUser, Transaction transaction) {
         //Delete all annotation term
         def suggestedterm = SuggestedTerm.findAllByAnnotation(annotation)
         log.info "Delete old suggestedterm= " + suggestedterm.size()
 
         suggestedterm.each { sugterm ->
             log.info "unlink sugterm:" + sugterm.id
-            deleteSuggestedterm(sugterm.annotation.id, sugterm.term.id, sugterm.job.id, currentUser)
+            deleteSuggestedterm(sugterm.annotation.id, sugterm.term.id, sugterm.job.id, currentUser,transaction)
         }
     }
 
     /**
      * Delete all term map by user for term
      */
-    def deleteSuggestedTermFromAllUser(Term term, User currentUser) {
+    def deleteSuggestedTermFromAllUser(Term term, User currentUser,Transaction transaction) {
         //Delete all annotation term
         def suggestedterm = SuggestedTerm.findAllByTerm(term)
         log.info "Delete old suggestedterm= " + suggestedterm.size()
 
         suggestedterm.each { sugterm ->
             log.info "unlink sugterm:" + sugterm.id
-            deleteSuggestedterm(sugterm.annotation.id, sugterm.term.id, sugterm.job.id, currentUser)
+            deleteSuggestedterm(sugterm.annotation.id, sugterm.term.id, sugterm.job.id, currentUser,transaction)
         }
     }
 

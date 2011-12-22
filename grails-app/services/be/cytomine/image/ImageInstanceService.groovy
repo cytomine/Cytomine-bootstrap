@@ -14,6 +14,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.test.Infos
 import org.hibernate.FetchMode
+import be.cytomine.command.Transaction
 
 class ImageInstanceService extends ModelService {
 
@@ -58,7 +59,7 @@ class ImageInstanceService extends ModelService {
 //            fetchMode 'baseImage.mim', FetchMode.JOIN
 //            fetchMode 'baseImage.mim.mis', FetchMode.JOIN
 //            fetchMode 'baseImage.mim.mis.imageServer', FetchMode.JOIN
-        }
+        }.unique()
         return images
     }
 
@@ -83,7 +84,7 @@ class ImageInstanceService extends ModelService {
     def delete(def domain,def json) {
 //        if(domain) checkAuthorization(domain.projectId)
         //Start transaction
-        transactionService.start()
+        Transaction transaction = transactionService.start()
         User currentUser = cytomineService.getCurrentUser()
         //Read image
         Project project = Project.read(json.project)
@@ -95,7 +96,7 @@ class ImageInstanceService extends ModelService {
             log.info "Delete annotation from image"
             def annotations = Annotation.findAllByImage(imageInstance)
             annotations.each { annotation ->
-                annotationService.deleteAnnotation(annotation, currentUser, false)
+                annotationService.deleteAnnotation(annotation, currentUser, false,transaction)
             }
         }
         //Delete image
@@ -103,7 +104,7 @@ class ImageInstanceService extends ModelService {
         Long id = imageInstance?.id
         if (!imageInstance) throw new ObjectNotFoundException("Image Instance $json.idproject - $json.idimage not found")
         def jsonImage = JSON.parse("{id : $id}")
-        def result = executeCommand(new DeleteCommand(user: currentUser), jsonImage)
+        def result = executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), jsonImage)
 
         //Stop transaction
         transactionService.stop()
