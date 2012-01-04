@@ -106,8 +106,6 @@ class RestAnnotationTermController extends RestController {
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.message], e.code)
-        } finally {
-            transactionService.stopIfTransactionInProgress()
         }
     }
 
