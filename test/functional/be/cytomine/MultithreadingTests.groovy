@@ -31,7 +31,10 @@ class MultithreadingTests extends functionaltestplugin.FunctionalTestCase {
 
         for(int i=0;i<nbThread;i++) {
            ts[i]=new AnnotationAddConcurrent();
-           ts[i].start();
+        }
+
+        for(int i=0;i<nbThread;i++) {
+           ts[i].start()
         }
 
         for(int i=0;i<nbThread;i++) {
