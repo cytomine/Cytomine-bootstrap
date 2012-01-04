@@ -32,4 +32,10 @@ class RestRetrievalController extends RestController {
         retrievalService.indexAnnotationAsynchronous(Annotation.read(params.idannotation))
         responseSuccess([])
     }
+
+    def missingAnnotation = {
+        log.info "get missing annotation"
+        retrievalService.indexMissingAnnotation()
+        responseSuccess([])
+    }
 }

@@ -9,6 +9,7 @@ import be.cytomine.utils.ValueComparator
 import grails.converters.JSON
 import groovyx.gpars.Asynchronizer
 import java.util.concurrent.Future
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 class RetrievalService {
 
@@ -154,7 +155,7 @@ class RetrievalService {
                 } catch (Exception e) {e.printStackTrace()}
             }
             Closure annotationDeleting = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
-            Future result=annotationDeleting()
+            Future result = annotationDeleting()
         }
     }
 
@@ -169,11 +170,50 @@ class RetrievalService {
                 } catch (Exception e) {e.printStackTrace()}
             }
             Closure annotationUpdating = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
-            Future result=annotationUpdating()
+            Future result = annotationUpdating()
         }
     }
 
 
+    public void indexMissingAnnotation() {
+        //Get indexed resources
+        List<Long> resources = getIndexedResource()
+        //Check if each annotation is well indexed
+        def annotations = Annotation.list()
+        int i = 1
+        annotations.each { annotation ->
+            log.debug "Annotation $i/" + annotations.size()
+            if (!resources.contains(annotation.id)) {
+                log.debug "Annotation $annotation.id IS NOT INDEXED"
+                try {indexAnnotationSynchronous(annotation)} catch (Exception e) {e.printStackTrace()}
+            } else {
+                log.debug "Annotation $annotation.id IS INDEXED"
+            }
+            i++
+        }
+    }
 
+    List<Long> getIndexedResource() {
+        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+        String URL = server.url + ".json"
+        List json = JSON.parse(getGetResponse(URL))
+        List<Long> resources = new ArrayList<Long>()
+        json.each { subserver ->
+            subserver.each { resource ->
+                log.debug "resource=" + Long.parseLong(resource.key)
+                resources.add(Long.parseLong(resource.key))
+            }
+        }
+        resources
+    }
 
+    public static String getGetResponse(String URL) {
+        HttpClient client = new HttpClient();
+        client.connect(URL, "xxx", "xxx");
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return response
+    }
 }

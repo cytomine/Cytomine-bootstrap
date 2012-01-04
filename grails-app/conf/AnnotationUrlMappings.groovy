@@ -44,5 +44,9 @@ class AnnotationUrlMappings {
         "/api/project/$id/annotation/download"(controller: "restAnnotation"){
             action = [GET:"downloadDocumentByProject"]
         }
+
+        "/api/retrieval/missing/annotation"(controller: "restRetrieval"){
+            action = [GET:"missingAnnotation"]
+        }
     }
 }
