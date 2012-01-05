@@ -50,9 +50,10 @@ class MultithreadingTests extends functionaltestplugin.FunctionalTestCase {
 
         for(int i=0;i<nbThread;i++) {
            ts[i]=new ImageInstanceAddConcurrent();
-           ts[i].start();
         }
-
+         for(int i=0;i<nbThread;i++) {
+           ts[i].start()
+        }
         for(int i=0;i<nbThread;i++) {
            ts[i].join()
            assertEquals(200, ts[i].code)
@@ -66,7 +67,9 @@ class MultithreadingTests extends functionaltestplugin.FunctionalTestCase {
 
         for(int i=0;i<nbThread;i++) {
            ts[i]=new AnnotationTermAddConcurrent();
-           ts[i].start();
+        }
+        for(int i=0;i<nbThread;i++) {
+           ts[i].start()
         }
 
         for(int i=0;i<nbThread;i++) {
