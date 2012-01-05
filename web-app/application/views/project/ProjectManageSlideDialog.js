@@ -77,7 +77,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
          icons : {primary: "ui-icon-circle-triangle-w"}
       });
 
-      /*$("input[class=showImageTable]").click(function() {
+      $("input[class=showImageTable]").click(function() {
        self.imageListing.refresh();
        $("#tabsProjectaddimagedialog"+self.model.id+"-2").show();
        $("#tabsProjectaddimagedialog"+self.model.id+"-1").hide();
@@ -99,7 +99,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
 
        $("input[class=showImageThumbs]").button({
        icons : {primary: "ui-icon-image"}
-       });*/
+       });
 
       /*SHOW ONLY TABLE FOR NOW */
       self.imageListing.refresh();

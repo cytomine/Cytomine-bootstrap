@@ -279,7 +279,7 @@ var BrowseImageView = Backbone.View.extend({
                         }
                     }),
                     //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),
-                    new OpenLayers.Control.Navigation(),
+                    new OpenLayers.Control.Navigation( {dragPanOptions: {enableKinetic: true}}),
                     new OpenLayers.Control.PanZoomBar(),
                     new OpenLayers.Control.MousePosition(),
                     new OpenLayers.Control.KeyboardDefaults()],
@@ -333,8 +333,9 @@ var BrowseImageView = Backbone.View.extend({
             var baseLayer = new OpenLayers.Layer.Zoomify(
                     "Original",
                     zoomify_urls,
-                    new OpenLayers.Size( metadata.width, metadata.height )
+                    new OpenLayers.Size( metadata.width, metadata.height)
             );
+            baseLayer.transitionEffect = 'resize';
             baseLayer.getImageSize = function() {
                 if (arguments.length > 0) {
                     bounds = this.adjustBounds(arguments[0]);
@@ -365,6 +366,7 @@ var BrowseImageView = Backbone.View.extend({
                         imageFilter.get("name"),
                         url,
                         new OpenLayers.Size( metadata.width, metadata.height ) );
+                layer.transitionEffect = 'resize';
                 self.addBaseLayer(layer);
             });
 

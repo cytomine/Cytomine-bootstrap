@@ -436,6 +436,7 @@ class BasicInstance {
     }
 
     static Project createOrGetBasicProjectWithRight() {
+    	log.debug "createOrGetBasicProjectWithRight()"
         Project project = createOrGetBasicProject()
         Infos.addUserRight(Infos.GOODLOGIN,project)
         return project
