@@ -18,7 +18,10 @@ var AnnotationRetrievalView = Backbone.View.extend({
 
                 $(self.el).append("<ul><li><a href=\"#retrievalThumb\">Thumb view</a></li><li><a href=\"#retrievalPieChart\">Stats view</a></li></ul>");
                 $(self.el).append("<div id=\"retrievalThumb\"><div>");
-                $(self.el).append("<div id=\"retrievalPieChart\"><div>");
+                $(self.el).append("<div id=\"retrievalPieChart\"><div id=\"retrievalPieChartTerm\" style=\"float: left; width: 50%;\"></div><div id=\"retrievalPieChartProject\" style=\"float: left; width: 50%;\"></div></div>");
+
+
+
 
                 $("#annotationRetrieval").tabs();
                 $(self.el).dialog({
@@ -59,8 +62,8 @@ var AnnotationRetrievalView = Backbone.View.extend({
     },
     createStatsView : function() {
         var self = this;
-        //extract as method
-        var data = new Object();
+        //Get term from annotation
+        var dataTerm = new Object();
         self.model.each(function(annotation) {
             var termArray = annotation.get('term');
             _.each(termArray, function(termid){
@@ -68,23 +71,36 @@ var AnnotationRetrievalView = Backbone.View.extend({
                 console.log(self.terms);
                 var isTermFromCurrentProject = self.terms!=undefined && self.terms.get(termid)!=undefined;
                 if(isTermFromCurrentProject) {
-                    if(data[termid] != null ) {
-                        data[termid] = data[termid] + Number(annotation.get('similarity'));
+                    if(dataTerm[termid] != null ) {
+                        dataTerm[termid] = dataTerm[termid] + Number(annotation.get('similarity'));
                     } else {
-                        data[termid] = Number(annotation.get('similarity'));
+                        dataTerm[termid] = Number(annotation.get('similarity'));
                     }
                 }
             });
         });
-        console.log("data:");
-        console.log(data);
-        self.drawPieChart(data);
+        console.log("drawPieChartTerm");
+        self.drawPieChartTerm(dataTerm);
 
+        var dataProject = new Object();
+        self.model.each(function(annotation) {
+            var projectId = annotation.get('project');
+            if(dataProject[projectId] != null ) {
+                dataProject[projectId] = dataProject[projectId] + 1;
+            } else {
+                dataProject[projectId] = 1;
+            }
+        });
+        console.log("drawPieChartProject");
 
+        window.app.models.projects.fetch({
+            success : function (collection, response) {
+                self.drawPieChartProject(dataProject,collection);
+        }});
     },
-    drawPieChart : function (collection) {
+    drawPieChartTerm : function (collection) {
         var self = this;
-        $("#retrievalPieChart").empty();
+        $("#retrievalPieChartTerm").empty();
         // Create and populate the data table.
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Term');
@@ -105,7 +121,39 @@ var AnnotationRetrievalView = Backbone.View.extend({
         }
 
         // Create and draw the visualization.
-        new google.visualization.PieChart(document.getElementById('retrievalPieChart')).
+        new google.visualization.PieChart(document.getElementById('retrievalPieChartTerm')).
+                draw(data, {width: 500, height: 350,title:""});
+    },
+
+
+    drawPieChartProject : function (collection, projects) {
+        var self = this;
+        $("#retrievalPieChartProject").empty();
+        // Create and populate the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Project');
+        data.addColumn('number', 'Similarity in project');
+        data.addRows(_.size(collection));
+        var i = 0;
+        var colors = [];
+
+        console.log(collection);
+        for (var key in collection) {
+            if (collection.hasOwnProperty(key)) {
+                var value = collection[key];
+                var projectName = "Project not accessible"
+                if(projects.get(key)!=undefined) {
+                    projectName = projects.get(key).get('name');
+                }
+                //colors.push(term.get('color'));
+                data.setValue(i,0, projectName);
+                data.setValue(i,1, value);
+                i++;
+            }
+        }
+        console.log("creation:"+$("#retrievalPieChartProject").length);
+        // Create and draw the visualization.
+        new google.visualization.PieChart(document.getElementById('retrievalPieChartProject')).
                 draw(data, {width: 500, height: 350,title:""});
     },
 

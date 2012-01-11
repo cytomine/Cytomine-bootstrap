@@ -283,6 +283,7 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['geometryCompression'] = it.geometryCompression
             returnArray['channels'] = it.channels
             returnArray['project'] = it.project.id
+            returnArray['container'] = it.project.id
             if (it.userId) returnArray['user'] = it.userId
             else returnArray['user'] = it.user?.id
             returnArray['nbComments'] = it.id ? SharedAnnotation.findAllByAnnotation(it).size() : 0

@@ -61,6 +61,5 @@ abstract class ModelService {
 
     @PreAuthorize("hasPermission(#id ,'be.cytomine.project.Project',read) or hasPermission(#id ,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
     void checkAuthorization(def id) {
-        log.info "checkAuthorization OK"
     }
 }

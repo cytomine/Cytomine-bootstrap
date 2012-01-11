@@ -10,10 +10,15 @@ import grails.converters.JSON
 import groovyx.gpars.Asynchronizer
 import java.util.concurrent.Future
 import org.codehaus.groovy.grails.web.json.JSONArray
+import be.cytomine.ontology.Ontology
+import be.cytomine.ontology.OntologyService
+import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.acls.model.NotFoundException
 
 class RetrievalService {
 
     static transactional = true
+    def projectService
 
     /**
      * Search similar annotation and best term for an annotation
@@ -75,18 +80,44 @@ class RetrievalService {
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String URL = server.url + "/search.json"
 
-        def json = JSON.parse(getPostResponse(URL, searchAnnotation))
+        def json = JSON.parse(getPostSearchResponse(URL, searchAnnotation))
         def data = []
 
         for (int i = 0; i < json.length(); i++) {
             def annotationjson = json.get(i)  //{"id":6754,"url":"http://beimport java.util.concurrent.Futureta.cytomine.be:48/api/annotation/6754/crop.jpg","sim":6.922589484181173E-6},{"id":5135,"url":"http://beta.cytomine.be:48/api/annotation/5135/crop.jpg","sim":6.912057598973113E-6}]
-            Annotation annotation = Annotation.read(annotationjson.id)
-            if (annotation && annotation.id != searchAnnotation.id && (annotation.image.getIdProject() == searchAnnotation.image.getIdProject())) {
-                annotation.similarity = new Double(annotationjson.sim)
-                data << annotation
+
+            try {
+                Annotation annotation = Annotation.read(annotationjson.id)
+                projectService.checkAuthorization(annotation.project.id)
+                if (annotation && annotation.id != searchAnnotation.id) {
+                    annotation.similarity = new Double(annotationjson.sim)
+                    data << annotation
+                }
             }
+            catch(AccessDeniedException ex) {log.info "User cannot have access to this annotation"}
+            catch(NotFoundException ex) {log.info "User cannot have access to this annotation"}
         }
         return data
+    }
+
+    public String getPostSearchResponse(String URL, Annotation annotation) {
+        HttpClient client = new HttpClient();
+        client.connect(URL, "xxx", "xxx");
+
+        //Get project id with same ontology
+        List<Long> projectWithSameOntology = projectService.list( annotation.project.ontology).collect {it.id}
+
+//        def json = ["id": annotation.id, "url" : annotation.getCropURL(), "container" : projectWithSameOntology]
+//        println json.toString()
+
+        def json = JSON.parse(annotation.encodeAsJSON())
+        json.containers = projectWithSameOntology
+        println json.toString()
+        client.post(json.toString())
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return response
     }
 
     public static String getPostResponse(String URL, Annotation annotation) {
