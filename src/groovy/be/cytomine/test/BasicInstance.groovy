@@ -25,6 +25,7 @@ import be.cytomine.project.Discipline
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.SecRole
+import be.cytomine.security.SecUser
 
 /**
  * Created by IntelliJ IDEA.
@@ -322,7 +323,7 @@ class BasicInstance {
     static User createOrGetBasicUser() {
 
         log.debug "createOrGetBasicUser()"
-        def user = User.findByUsername("BasicUser")
+        def user = SecUser.findByUsername("BasicUser")
         if (!user) {
             user = new User(
                     username: "BasicUser",
@@ -331,6 +332,7 @@ class BasicInstance {
                     email: "Basic@User.be",
                     password: "password",
                     enabled: true)
+            user.generateKeys()
             user.validate()
             log.debug "user.errors=" + user.errors
             user.save(flush: true)
@@ -343,7 +345,7 @@ class BasicInstance {
     static User createOrGetBasicUser(String username, String password) {
         def springSecurityService = ApplicationHolder.application.getMainContext().getBean("springSecurityService")
         log.debug "createOrGetBasicUser()"
-        def user = User.findByUsername(username)
+        def user = SecUser.findByUsername(username)
         if (!user) {
             user = new User(
                     username: username,
@@ -352,6 +354,7 @@ class BasicInstance {
                     email: "Basic@User.be",
                     password: password,
                     enabled: true)
+            user.generateKeys()
             user.validate()
             log.debug "user.errors=" + user.errors
             user.save(flush: true)
@@ -396,6 +399,7 @@ class BasicInstance {
                 email: "BasicNotExist@User.be",
                 password: "password",
                 enabled: true)
+        user.generateKeys()
         assert user.validate()
         log.debug "user.errors=" + user.errors
         user

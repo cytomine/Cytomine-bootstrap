@@ -9,7 +9,7 @@ class GroupUrlMappings {
     static mappings = {
         /* Group */
         "/api/group"(controller: "restGroup"){
-            action = [GET:"list", POST:"save"]
+            action = [GET:"list", POST:"add"]
         }
         "/api/group/$id"(controller: "restGroup"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]

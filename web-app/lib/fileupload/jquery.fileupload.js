@@ -274,7 +274,7 @@
                     ));
                 }, files.length);
                 for (i = 0; i < files.length; i += 1) {
-                    loadFileContent(files[i], loader.complete);
+                    //loadFileContent(files[i], loader.complete);
                 }
             },
 

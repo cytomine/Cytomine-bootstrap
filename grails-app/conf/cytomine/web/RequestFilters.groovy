@@ -1,4 +1,5 @@
 package cytomine.web
+import be.cytomine.security.SecUser
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,7 +34,6 @@ class RequestFilters {
                 String requestInfo = "| PARAM="+strParam + "| POST=" + strPost + " | "
                 String userInfo = ""
                 try { userInfo = springSecurityService.principal.id} catch(Exception e) { userInfo = springSecurityService.principal}
-
                 log.info controllerName+"."+actionName + ": user:" + userInfo + " request=" + requestInfo
             }
             after = {}

@@ -46,14 +46,20 @@ class UserGroupService extends ModelService {
      * @return response
      */
     def create(JSONObject json, boolean printMessage) {
-        create(UserGroup.createFromDataWithId(json), printMessage)
+        create(UserGroup.createFromData(json), printMessage)
     }
 
     def create(UserGroup domain, boolean printMessage) {
         //Save new object
+        println "new usegroup " + domain
+        domain.validate()
+        domain.errors.each {
+            println it
+        }
+        domain.setId(null)
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain, [domain.id, domain.user, domain.group], printMessage, "Add", domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.id, domain.user, domain.group], printMessage, "Add")
     }
     /**
      * Destroy domain which was previously added
@@ -98,6 +104,7 @@ class UserGroupService extends ModelService {
         if (!domain) throw new ObjectNotFoundException("Usergroup with user $user and group $group not found")
         return domain
     }
+
     UserGroup link(User user, Group group) {
        println "link between " + user?.username + " " + group?.name
        def userGroup = UserGroup.findByUserAndGroup(user, group)

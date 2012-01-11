@@ -143,6 +143,7 @@ class User extends SecUser {
         user.color = jsonUser.color
         user.password = jsonUser.password
         user.enabled = true
+        user.generateKeys()
 //    user.created = (!jsonUser.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.created)) : null
         //    user.updated = (!jsonUser.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.updated)) : null
         return user;
@@ -175,21 +176,15 @@ class User extends SecUser {
         }
     }
 
-	def beforeInsert() {
+    def beforeInsert() {
         super.beforeInsert()
-		encodePassword()
-	}
+    }
 
-	def beforeUpdate() {
+    def beforeUpdate() {
         super.beforeUpdate()
-		if (isDirty('password')) {
-			encodePassword()
-		}
-	}
+    }
 
-	protected void encodePassword() {
-		password = springSecurityService.encodePassword(password)
-	}
+
 
 
 }

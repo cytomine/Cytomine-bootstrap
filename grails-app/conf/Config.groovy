@@ -12,7 +12,7 @@ import grails.converters.JSON
 //    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
 // }
 
-grails.plugins.springsecurity.useBasicAuth = true
+
 JSON.use('default')
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
@@ -21,7 +21,7 @@ grails.mime.types = [ html: ['text/html','application/xhtml+xml'],
         json: ['application/json','text/json'],
         xml: ['text/xml', 'application/xml'],
         jpg : 'image/jpeg',
-		png : 'image/png',
+        png : 'image/png',
         text: 'text/plain',
         js: 'text/javascript',
         rss: 'application/rss+xml',
@@ -65,88 +65,90 @@ mail.error.starttls = true
 
 // set per-environment serverURL stem for creating absolute links
 environments {
-  production {
-    grails.serverURL = "http://beta.cytomine.be"
-  }
-  development {
-    grails.serverURL = "http://localhost:8080"
-  }
-  test {
-    grails.serverURL = "http://localhost:8080"
-  }
+    production {
+        grails.serverURL = "http://beta.cytomine.be"
+    }
+    development {
+        grails.serverURL = "http://localhost:8080"
+    }
+    test {
+        grails.serverURL = "http://localhost:8080"
+        grails.plugins.springsecurity.useBasicAuth = true
+    }
 
 }
 
 // log4j configuration
 log4j = {
-  // Example of changing the log pattern for the default console
-  // appender:
-  //
-  //appenders {
-  //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-  //}
-   System.setProperty('mail.smtp.port', mail.error.port.toString())
-   System.setProperty('mail.smtp.starttls.enable',  mail.error.starttls.toString())
+    // Example of changing the log pattern for the default console
+    // appender:
+    //
+    //appenders {
+    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+    //}
+    System.setProperty('mail.smtp.port', mail.error.port.toString())
+    System.setProperty('mail.smtp.starttls.enable',  mail.error.starttls.toString())
 
-  println "Log4j consoleLevel"
+    println "Log4j consoleLevel"
 
-  appenders {
-     rollingFile name:"logfile", maxFileSize:'300kB',
-            layout:pattern(conversionPattern: "%d{[ dd.MM.yy HH:mm:ss.SSS]} [%t] %-5p %c %x - %m%n"),
-            file:"/tmp/cytomine.log"
-    appender new org.apache.log4j.net.SMTPAppender(name:'mail', to:'cytomine.ulg@gmail.com', from:'cytomine.ulg@gmail.com', subject:'[Application Error]',
-            SMTPHost:'smtp.gmail.com', SMTPUsername:'cytomine.ulg@gmail.com', SMTPPassword: 'C3=8wj9R',
-            layout: pattern(conversionPattern: '%d{[ dd.MM.yy HH:mm:ss.SSS]} [%t] %n%-5p %n%c %n%C %n %x %n %m%n %n'),
-            threshold:org.apache.log4j.Level.ERROR)
-  }
+    appenders {
+        rollingFile name:"logfile", maxFileSize:'300kB',
+                layout:pattern(conversionPattern: "%d{[ dd.MM.yy HH:mm:ss.SSS]} [%t] %-5p %c %x - %m%n"),
+                file:"/tmp/cytomine.log"
+        appender new org.apache.log4j.net.SMTPAppender(name:'mail', to:'cytomine.ulg@gmail.com', from:'cytomine.ulg@gmail.com', subject:'[Application Error]',
+                SMTPHost:'smtp.gmail.com', SMTPUsername:'cytomine.ulg@gmail.com', SMTPPassword: 'C3=8wj9R',
+                layout: pattern(conversionPattern: '%d{[ dd.MM.yy HH:mm:ss.SSS]} [%t] %n%-5p %n%c %n%C %n %x %n %m%n %n'),
+                threshold:org.apache.log4j.Level.ERROR)
+    }
 
-  error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
-          'org.codehaus.groovy.grails.web.pages', //  GSP
-          'org.codehaus.groovy.grails.web.sitemesh', //  layouts
-          'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-          'org.codehaus.groovy.grails.web.mapping', // URL mapping
-          'org.codehaus.groovy.grails.commons', // core / classloading
-          'org.codehaus.groovy.grails.plugins', // plugins
-          'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
-          'org.springframework',
-          'net.sf.ehcache.hibernate',
-          'org.hibernate.engine.StatefulPersistenceContext.ProxyWarnLog'
+    error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
+            'org.codehaus.groovy.grails.web.pages', //  GSP
+            'org.codehaus.groovy.grails.web.sitemesh', //  layouts
+            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+            'org.codehaus.groovy.grails.web.mapping', // URL mapping
+            'org.codehaus.groovy.grails.commons', // core / classloading
+            'org.codehaus.groovy.grails.plugins', // plugins
+            'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
+            'org.springframework',
+            'net.sf.ehcache.hibernate',
+            'org.hibernate.engine.StatefulPersistenceContext.ProxyWarnLog'
 
-  info   'be.cytomine' ,'org.hibernate'
+    debug 'org.codehaus.groovy.grails.plugins.springsecurity.AnnotationFilterInvocationDefinition'
+    info   'be.cytomine' ,'org.hibernate'
 
 
 
 
     environments {
-      production {
-          root {
-            info 'stdout','appLog',"logfile"
-            error  'mail'
-            additivity = true
-          }
-      }
-      development {
-          root {
-            info 'stdout','appLog',"logfile"
-            additivity = true
-          }
-      }
-      test {
-          root {
-            info 'stdout','appLog',"logfile"
-            additivity = true
-          }
-      }
+        production {
+            root {
+                info 'stdout','appLog',"logfile"
+                error  'mail'
+                additivity = true
+            }
+        }
+        development {
+            root {
+                info 'stdout','appLog',"logfile"
+                additivity = true
+            }
+        }
+        test {
+            root {
+                info 'stdout','appLog',"logfile"
+                additivity = true
+            }
+        }
     }
-  //debug "org.hibernate.SQL"
-  debug 'be.cytomine'
-  debug 'grails.app'
-  debug 'grails.app.service'
-  debug 'grails.app.controller'
+    //debug "org.hibernate.SQL"
+    debug 'be.cytomine'
+    debug 'grails.app'
+    debug 'grails.app.service'
+    debug 'grails.app.controller'
 
-  //UNCOMMENT THESE 2 LINES TO SEE SQL REQUEST AND THEIR PARAMETERS VALUES
-  //debug 'org.hibernate.SQL'
-  //trace 'org.hibernate.type'
+    //UNCOMMENT THESE 2 LINES TO SEE SQL REQUEST AND THEIR PARAMETERS VALUES
+    //debug 'org.hibernate.SQL'
+    //trace 'org.hibernate.type'
 }
 
 
@@ -158,5 +160,5 @@ grails.plugins.springsecurity.authority.className = 'be.cytomine.security.SecRol
 grails.plugins.springsecurity.projectClass = 'be.cytomine.project.Project'
 
 grails.plugins.springsecurity.controllerAnnotations.staticRules = [
-   '/securityInfo/**': ['ROLE_ADMIN']
+        '/securityInfo/**': ['ROLE_ADMIN']
 ]

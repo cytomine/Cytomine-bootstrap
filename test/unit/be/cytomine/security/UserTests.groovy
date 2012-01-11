@@ -30,25 +30,6 @@ class UserTests extends GrailsUnitTestCase {
        assertEquals 'johndoe@site.com', user.email
    }
 
-
-   void testValidEmail() {
-       mockDomain(User)
-       def today = new Date()
-       def user = new User(firstname:"John",lastname:"Doe",email:"johndoe@site.com",password:"totototo",username:"toto")
-
-       /*if(user.validate()) {
-           println "ok"
-        }
-        else {
-            println "nok"
-            user.errors.allErrors.each {
-            println it
-            }
-        }    */
-
-       assertTrue 'validation should be OK', user.validate()
-   }
-
    void testInValidEmail() {
        mockDomain(User)
        def today = new Date()

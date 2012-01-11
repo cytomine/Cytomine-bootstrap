@@ -7,7 +7,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
 import be.cytomine.Exception.CytomineException
-
+import grails.plugins.springsecurity.Secured
 class RestProjectController extends RestController {
 
     def springSecurityService
@@ -18,9 +18,11 @@ class RestProjectController extends RestController {
     def cytomineService
     def transactionService
 
+	@Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
         responseSuccess(projectService.list())
     }
+
 
     def listByOntology = {
         log.info "listByOntology with ontology id:" + params.id
@@ -43,6 +45,7 @@ class RestProjectController extends RestController {
         else responseNotFound("Project", "Discipline", params.id)
     }
 
+    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
         Project project = projectService.read(params.long('id'))
         if (project) responseSuccess(project)

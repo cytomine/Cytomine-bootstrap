@@ -13,4 +13,12 @@ class UserJob extends  SecUser {
     String toString() {
         "Job"+ id + " ( " + user.toString() + " )"
     }
+
+    def beforeInsert() {
+        super.beforeInsert()
+    }
+
+    def beforeUpdate() {
+        super.beforeUpdate()
+    }
 }

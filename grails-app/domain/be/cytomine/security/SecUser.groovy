@@ -6,6 +6,8 @@ class SecUser extends CytomineDomain {
 
     String username
     String password
+    String publicKey
+    String privateKey
     boolean enabled
     boolean accountExpired
     boolean accountLocked
@@ -32,15 +34,32 @@ class SecUser extends CytomineDomain {
         SecUserSecRole.findAllBySecUser(this).collect { it.secRole } as Set
     }
 
-	def beforeInsert() {
-        super.beforeInsert()
-	}
+    def generateKeys() {
+        println "GENERATE KEYS"
+        String privateKey = UUID.randomUUID().toString();
+        String publicKey = UUID.randomUUID().toString();
+        this.setPrivateKey(privateKey)
+        this.setPublicKey(publicKey)
+    }
 
-	def beforeUpdate() {
+    def beforeInsert() {
+        super.beforeInsert()
+        encodePassword()
+        generateKeys()
+    }
+
+    def beforeUpdate() {
         super.beforeUpdate()
-	}
-    
+        if (isDirty('password')) {
+            encodePassword()
+        }
+    }
+
     String toString() {
         return username
+    }
+
+    protected void encodePassword() {
+        password = springSecurityService.encodePassword(password)
     }
 }

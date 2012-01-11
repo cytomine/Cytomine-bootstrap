@@ -57,7 +57,7 @@ class SecUserSecRoleService extends ModelService {
     def create(SecUserSecRole domain, boolean printMessage) {
         //Build response message
         log.debug "domain=" + domain + " responseService=" + responseService
-        def response = responseService.createResponseMessage(domain, [domain.user.id, domain.role.id], printMessage, "Add", domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.secUser.id, domain.secRole.id], printMessage, "Add", domain.getCallBack())
         //Save new object
         domainService.saveDomain(domain)
         return response
@@ -76,7 +76,7 @@ class SecUserSecRoleService extends ModelService {
 
     def destroy(SecUserSecRole domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.user.id, domain.role.id], printMessage, "Delete", domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.secUser.id, domain.secRole.id], printMessage, "Delete", domain.getCallBack())
         //Delete new object
         domain.delete(flush: true)
         return response

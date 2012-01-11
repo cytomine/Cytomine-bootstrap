@@ -31,6 +31,9 @@ import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 import be.cytomine.project.ProjectGroup
+import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+
 
 
 
@@ -59,6 +62,8 @@ class BootStrap {
 
 
     def init = { servletContext ->
+        //Register API Authentifier
+        SpringSecurityUtils.clientRegisterFilter( 'apiAuthentificationFilter', SecurityFilterPosition.OPENID_FILTER.order + 10)
 
         println "GrailsUtil.environment= " + GrailsUtil.environment + " BootStrap.development=" + BootStrap.development
         if (GrailsUtil.environment == BootStrap.development) { //scripts are not present in productions mode
@@ -186,8 +191,8 @@ class BootStrap {
                     ProjectGroup.findAllByProject(project).each {
                         Group group = it.group
                         group.users().each { user ->
-                           if(!users.contains(user))
-                            users.add(user)
+                            if(!users.contains(user))
+                                users.add(user)
                         }
 
                     }
@@ -235,8 +240,8 @@ class BootStrap {
             println "Project not found " + projectName
         }
 //        AclObjectIdentity acl = AclObjectIdentity.findByObjectId(project.id)
-//        acl.owner = AclSid.findBySid(username)
-//        acl.save(flush:true)
+        //        acl.owner = AclSid.findBySid(username)
+        //        acl.save(flush:true)
 
     }
 
@@ -244,8 +249,8 @@ class BootStrap {
     private def createAnnotationGrant() {
         //if(Annotation.list().first().project) return
         Annotation.findAllByProjectIsNull().each{
-             it.project = it.image.project
-             it.save(flush:true)
+            it.project = it.image.project
+            it.save(flush:true)
         }
         //Annotation.findAllByProjectIsNull().each {it -> println it}
 
@@ -443,13 +448,14 @@ class BootStrap {
             User user = User.findByUsername(item.username)
             if (user)  return
             user = new User(
-                        username: item.username,
-                        firstname: item.firstname,
-                        lastname: item.lastname,
-                        email: item.email,
-                        color: item.color,
-                        password: item.password,
-                        enabled: true)
+                    username: item.username,
+                    firstname: item.firstname,
+                    lastname: item.lastname,
+                    email: item.email,
+                    color: item.color,
+                    password: item.password,
+                    enabled: true)
+            user.generateKeys()
             if (user.validate()) {
                 println "Creating user ${user.username}..."
                 // user.addToTransactions(new Transaction())
@@ -588,36 +594,36 @@ class BootStrap {
         //Comment: DON'T ADD AGAIN A PROJECT A USER RENAME IT
         //=> What should we do with bootsrap data?
 
-//        projectSamples.each { item->
-//            if(Project.findByNameIlike(item.name)) return
-//            def ontology = Ontology.findByName(item.ontology)
-//            def project = new Project(
-//                    name : item.name.toString().toUpperCase(),
-//                    ontology : ontology,
-//                    created : new Date(),
-//                    updated : item.updated,
-//                    deleted : item.deleted
-//            )
-//            if (project.validate()){
-//                println "Creating project  ${project.name}..."
-//
-//                project.save(flush : true)
-//
-//                /* Handle groups */
-//                item.groups.each { elem ->
-//                    Group group = Group.findByName(elem.name)
-//                    ProjectGroup.link(project, group)
-//                }
-//
-//
-//
-//            } else {
-//                println("\n\n\n Errors in project boostrap for ${item.name}!\n\n\n")
-//                project.errors.each {
-//                    err -> println err
-//                }
-//            }
-//        }
+        //        projectSamples.each { item->
+        //            if(Project.findByNameIlike(item.name)) return
+        //            def ontology = Ontology.findByName(item.ontology)
+        //            def project = new Project(
+        //                    name : item.name.toString().toUpperCase(),
+        //                    ontology : ontology,
+        //                    created : new Date(),
+        //                    updated : item.updated,
+        //                    deleted : item.deleted
+        //            )
+        //            if (project.validate()){
+        //                println "Creating project  ${project.name}..."
+        //
+        //                project.save(flush : true)
+        //
+        //                /* Handle groups */
+        //                item.groups.each { elem ->
+        //                    Group group = Group.findByName(elem.name)
+        //                    ProjectGroup.link(project, group)
+        //                }
+        //
+        //
+        //
+        //            } else {
+        //                println("\n\n\n Errors in project boostrap for ${item.name}!\n\n\n")
+        //                project.errors.each {
+        //                    err -> println err
+        //                }
+        //            }
+        //        }
     }
 
     def createSlides(slideSamples) {

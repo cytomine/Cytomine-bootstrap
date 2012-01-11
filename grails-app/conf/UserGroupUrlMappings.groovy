@@ -9,7 +9,7 @@ class UserGroupUrlMappings {
     static mappings = {
         /* UserGroup */
         "/api/user/$user/group"(controller: "restUserGroup") {
-            action = [GET:"list", POST:"save"]
+            action = [GET:"list", POST:"add"]
         }
 
         "/api/user/$user/group/$group"(controller: "restUserGroup") {
