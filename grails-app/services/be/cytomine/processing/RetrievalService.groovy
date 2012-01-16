@@ -88,8 +88,8 @@ class RetrievalService {
 
             try {
                 Annotation annotation = Annotation.read(annotationjson.id)
-                projectService.checkAuthorization(annotation.project.id)
                 if (annotation && annotation.id != searchAnnotation.id) {
+                    projectService.checkAuthorization(annotation.project.id)
                     annotation.similarity = new Double(annotationjson.sim)
                     data << annotation
                 }

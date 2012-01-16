@@ -244,7 +244,8 @@ class AnnotationService extends ModelService {
         transactionService.stop()
 
         //Remove annotation from retrieval
-        Long idAnnotation = result?.annotation?.id
+        Long idAnnotation = json.id
+        log.info "Remove " + json.id + " from retrieval"
         try {if (idAnnotation) deleteRetrievalAnnotation(idAnnotation) } catch (Exception e) { log.error "Cannot delete in retrieval:" + e.toString()}
         return result
     }
@@ -370,6 +371,7 @@ class AnnotationService extends ModelService {
 
     def destroy(Annotation domain, boolean printMessage) {
         //Build response message
+        log.info "destroy remove " + domain.id
         def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
