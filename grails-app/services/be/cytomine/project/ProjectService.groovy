@@ -160,6 +160,7 @@ class ProjectService extends ModelService {
 
     def destroy(Project domain, boolean printMessage) {
         //Build response message
+        println "destroy project"
         //Delete all command / command history from project
         CommandHistory.findAllByProject(domain).each { it.delete() }
         Command.findAllByProject(domain).each {
@@ -168,9 +169,10 @@ class ProjectService extends ModelService {
             RedoStackItem.findAllByCommand(it).each { it.delete()}
             it.delete()
         }
+        log.info "command deleted"
         //Delete group map with project
         Group projectGroup = Group.findByName(domain.name);
-
+        log.info "projectGroup " + projectGroup
         if (projectGroup) {
             projectGroup.name = "TO REMOVE " + domain.id
             log.info "group " + projectGroup + " will be renamed"
@@ -179,10 +181,11 @@ class ProjectService extends ModelService {
         def groups = domain.groups()
 //        def l = []
 //        l += groups
-
+        log.info "groups="+groups
         groups.each { group ->
             //for each group, delete user link
             def users = group.users()
+            log.info "users="+users
             users.each { user ->
                 userGroupService.unlink(user, group)
             }
@@ -190,10 +193,12 @@ class ProjectService extends ModelService {
             //delete group
             group.delete(flush:true)
         }
-
+        log.info "createResponseMessage"
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
+        log.info "deleteDomain"
         domainService.deleteDomain(domain)
+        log.info "response"
         return response
     }
 

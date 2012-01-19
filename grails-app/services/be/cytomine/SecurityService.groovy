@@ -50,6 +50,7 @@ class SecurityService {
     //@Transactional(noRollbackFor = NotFoundException.class)
 
     List<User> getUserList(def domain) {
+        log.info "*************"+domain
         List<User> users = []
         try {
             AclObjectIdentity aclObject = AclObjectIdentity.findByObjectId(domain.id)
@@ -57,6 +58,7 @@ class SecurityService {
                 def acl = aclUtilService.readAcl(domain)
                 acl.entries.each { entry ->
                     User user = User.findByUsername(entry.sid.getPrincipal())
+                    log.info "user authorize="+user.username
                     if(!users.contains(user))
                         users.add(user)
                 }

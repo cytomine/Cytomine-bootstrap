@@ -24,14 +24,19 @@ class DeleteCommand extends Command {
      * @return Message
      */
     def execute() {
+         println "execute() deletecommand"
         initService()
         //Create new domain
+        println "retrieve:"+json
         def oldDomain = service.retrieve(json)
+        println "oldDomain:"+oldDomain
         def backup = oldDomain.encodeAsJSON()
+        println "backup:"+backup
         //Init command info
         super.initCurrentCommantProject(oldDomain?.projectDomain())
-
+        println "initCurrentCommantProject ok"
         def response = service.destroy(oldDomain, printMessage)
+
         fillCommandInfoJSON(backup, response.data.message)
         return response
     }

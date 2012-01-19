@@ -4,6 +4,7 @@ import be.cytomine.command.Command
 import grails.util.GrailsNameUtils
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.project.Project
 
 abstract class ModelService {
 
@@ -61,5 +62,6 @@ abstract class ModelService {
 
     @PreAuthorize("hasPermission(#id ,'be.cytomine.project.Project',read) or hasPermission(#id ,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
     void checkAuthorization(def id) {
+        log.info "checkAuthorization OK for project = " +  id
     }
 }

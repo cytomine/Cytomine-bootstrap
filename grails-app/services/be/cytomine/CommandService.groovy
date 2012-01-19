@@ -42,8 +42,9 @@ class CommandService {
         String postData = json.toString()
         def maxRequestSize = ConfigurationHolder.config.cytomine.maxRequestSize
 
-        log.debug "c.postData.size()=" + postData.size() + " Command.MAXSIZEREQUEST=" + maxRequestSize
+
         if (postData.size() >= maxRequestSize) {
+            log.error "c.postData.size() is too big=" + postData.size() + " Command.MAXSIZEREQUEST=" + maxRequestSize
             throw new TooLongRequestException("Request is too long")
         }
         def result = c.execute()

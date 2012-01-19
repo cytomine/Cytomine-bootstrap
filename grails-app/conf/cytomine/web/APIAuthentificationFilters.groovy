@@ -30,9 +30,11 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
      * http://code.google.com/apis/storage/docs/reference/v1/developer-guidev1.html#authentication
      */
     private void tryAPIAuthentification(HttpServletRequest request, HttpServletResponse response) {
+
         String authorization = request.getHeader("authorization")
+
         if (request.getHeader("date") == null) {
-            println "Date Header Must be set"
+            //println "Date Header Must be set"
             return
         }
         if (request.getHeader("host") == null) {
@@ -48,6 +50,7 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
             return
         }
         try {
+
             String content_md5 = (request.getHeader("content-MD5") != null) ? request.getHeader("content-MD5") : ""
             String content_type = (request.getHeader("content-type") != null) ? request.getHeader("content-type") : ""
             String date = (request.getHeader("date") != null) ? request.getHeader("date") : ""

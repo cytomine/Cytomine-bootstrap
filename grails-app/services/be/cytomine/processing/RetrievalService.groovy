@@ -161,6 +161,13 @@ class RetrievalService {
         getDeleteResponse(URL)
     }
 
+    public static def deleteContainerSynchronous(Long id) {
+        println "delete container synchronous"
+        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+        String URL = server.url + "/container/" + id + ".json"
+        getDeleteResponse(URL)
+    }
+
     public static def updateAnnotationSynchronous(Long id) {
         println "update synchronous"
         deleteAnnotationSynchronous(id)
@@ -187,6 +194,19 @@ class RetrievalService {
             }
             Closure annotationDeleting = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
             Future result = annotationDeleting()
+        }
+    }
+
+    public static def deleteContainerAsynchronous(Long id) {
+        println "delete asynchronous"
+        Asynchronizer.withAsynchronizer() {
+            Closure deleteContainer = {
+                try {
+                    deleteContainerSynchronous(id)
+                } catch (Exception e) {e.printStackTrace()}
+            }
+            Closure containerDeleting = deleteContainer.async()  //create a new closure, which starts the original closure on a thread pool
+            Future result = containerDeleting()
         }
     }
 

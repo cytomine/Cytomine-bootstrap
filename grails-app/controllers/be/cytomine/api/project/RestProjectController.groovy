@@ -17,8 +17,8 @@ class RestProjectController extends RestController {
     def ontologyService
     def cytomineService
     def transactionService
+    def retrievalService
 
-	@Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
         responseSuccess(projectService.list())
     }
@@ -45,10 +45,15 @@ class RestProjectController extends RestController {
         else responseNotFound("Project", "Discipline", params.id)
     }
 
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
         Project project = projectService.read(params.long('id'))
-        if (project) responseSuccess(project)
+        if (project) {
+            def userList = project.users().collect{it.id}
+            def currentUserAuth = cytomineService.getCurrentUser().authorities.asList().collect{it.authority}
+            log.info "check authorization: project="+ project.id + " user="+  cytomineService.getCurrentUser().id + " user-project="+userList  + " user-type="+currentUserAuth
+            projectService.checkAuthorization(project.id)
+            responseSuccess(project)
+        }
         else responseNotFound("Project", params.id)
     }
 
@@ -70,20 +75,23 @@ class RestProjectController extends RestController {
         update(projectService, request.JSON)
     }
 
-    def delete = {
-        delete(projectService, JSON.parse("{id : $params.id}"))
-    }
-
 //    def delete = {
-//        try {
-//            def result = projectService.delete(Long.parseLong(params.id))
-//            responseResult(result)
-//        } catch (CytomineException e) {
-//            log.error(e)
-//            response([success: false, errors: e.msg], e.code)
-//        } finally {
-//            transactionService?.stopIfTransactionInProgress()
-//        }
+//        delete(projectService, JSON.parse("{id : $params.id}"))
 //    }
+
+
+    def delete = {
+        try {
+            def domain = projectService.retrieve(JSON.parse("{id : $params.id}"))
+            def result = projectService.delete(domain,JSON.parse("{id : $params.id}"))
+            log.info "delete container $params.id start"
+            try {retrievalService.deleteContainerAsynchronous(params.id) } catch(Exception e) {log.error e}
+            log.info "delete container $params.id in progress"
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+    }
 }
 
