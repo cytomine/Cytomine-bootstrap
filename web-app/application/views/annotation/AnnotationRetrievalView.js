@@ -15,10 +15,12 @@ var AnnotationRetrievalView = Backbone.View.extend({
 
         var self = this;
         console.log("AnnotationRetrievalView: main elem "+$(self.el).length);
-
-                $(self.el).append("<ul><li><a href=\"#retrievalThumb\">Thumb view</a></li><li><a href=\"#retrievalPieChart\">Stats view</a></li></ul>");
-                $(self.el).append("<div id=\"retrievalThumb\"><div>");
-                $(self.el).append("<div id=\"retrievalPieChart\"><div id=\"retrievalPieChartTerm\" style=\"float: left; width: 50%;\"></div><div id=\"retrievalPieChartProject\" style=\"float: left; width: 50%;\"></div></div>");
+        $("#retrievalMenu").replaceWith("");
+        $("#retrievalThumb").replaceWith("");
+        $("#retrievalPieChart").replaceWith("");
+        $(self.el).append("<ul id=\"retrievalMenu\"><li><a href=\"#retrievalThumb\">Thumb view</a></li><li><a href=\"#retrievalPieChart\">Stats view</a></li></ul>");
+        $(self.el).append("<div id=\"retrievalThumb\"><div>");
+        $(self.el).append("<div id=\"retrievalPieChart\"><div id=\"retrievalPieChartTerm\" style=\"float: left; width: 50%;\"></div><div id=\"retrievalPieChartProject\" style=\"float: left; width: 50%;\"></div></div>");
 
 
 
