@@ -22,6 +22,7 @@ import be.cytomine.test.Infos
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.hibernate.FetchMode
 import be.cytomine.command.Transaction
+import be.cytomine.social.SharedAnnotation
 
 class AnnotationService extends ModelService {
 
@@ -264,6 +265,12 @@ class AnnotationService extends ModelService {
 
             //Delete Suggested-Term before deleting Annotation
             suggestedTermService.deleteSuggestedTermFromAllUser(annotation, currentUser, transaction)
+
+            //Delete Shared annotation:
+            def sharedAnnotation = SharedAnnotation.findAllByAnnotation(annotation)
+            sharedAnnotation.each {
+                it.delete()
+            }
         }
         //Delete annotation
         def json = JSON.parse("{id: $idAnnotation}")

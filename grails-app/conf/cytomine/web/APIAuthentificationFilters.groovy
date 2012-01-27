@@ -66,7 +66,7 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
             String authorizationSign = authorization.substring(authorization.indexOf(":") + 1)
             SecUser user = SecUser.findByPublicKey(accessKey)
             if (!user) {
-                println "No private key associated with this public key"
+                println "No private key associated with this public key:"+accessKey
                 return
             }
             String key = user.getPrivateKey()
