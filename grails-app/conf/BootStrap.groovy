@@ -33,6 +33,7 @@ import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 import be.cytomine.project.ProjectGroup
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 
 
@@ -64,7 +65,7 @@ class BootStrap {
     def init = { servletContext ->
         //Register API Authentifier
         SpringSecurityUtils.clientRegisterFilter( 'apiAuthentificationFilter', SecurityFilterPosition.OPENID_FILTER.order + 10)
-
+        println "###################" + ConfigurationHolder.config.grails.serverURL + "##################"
         println "GrailsUtil.environment= " + GrailsUtil.environment + " BootStrap.development=" + BootStrap.development
         if (GrailsUtil.environment == BootStrap.development) { //scripts are not present in productions mode
             compileJS();
