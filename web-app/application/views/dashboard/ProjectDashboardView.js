@@ -92,17 +92,18 @@ var ProjectDashboardView = Backbone.View.extend({
                 success : function (collection, response) {
                     self.fetchCommands(collection);
                     console.log("AnnotationCollection ok");
-                    new TermCollection({idOntology:self.model.get("ontology")}).fetch({
+                    new TermCollection({idProject:self.model.id}).fetch({
                         success : function (terms, response) {
                             console.log("TermCollection ok:"+terms.length);
                             window.app.status.currentTermsCollection = terms;
-                            self.fetchWorstAnnotations(collection,terms);
+                            //self.fetchWorstAnnotations(collection,terms);
+                            new ProjectDashboardStats({model : self.model}).fetchStats(terms,collection);
 
                         }
                     });
                 }
             });
-            new ProjectDashboardStats({model : self.model}).fetchStats();
+            //new ProjectDashboardStats({model : self.model}).fetchStats();
         }
         var fetchInformations = function () {
             self.model.fetch({

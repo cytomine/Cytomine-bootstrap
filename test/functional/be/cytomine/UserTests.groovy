@@ -67,6 +67,72 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
     assert json instanceof JSONObject
   }
 
+/*    @Secured(['ROLE_ADMIN'])
+    def addChild = {
+       def json = request.JSON
+       User user = User.get(json.parent)
+
+       String username = json.username
+
+       UserJob newUser = new UserJob()
+       newUser.username = username
+       newUser.password = user.password
+       newUser.publicKey = user.publicKey
+       newUser.privateKey = user.privateKey
+       newUser.enabled = user.enabled
+       newUser.accountExpired = user.accountExpired
+       newUser.accountLocked = user.accountLocked
+       newUser.passwordExpired = user.passwordExpired
+       newUser.user = user
+
+        newUser.save(flush:true)
+
+        def ret = [data: [user: newUser], status: 200]
+        response(ret)
+
+    }*/
+
+
+  void testAddUserChildCorrect() {
+    log.info("create user")
+    def parent = User.findByUsername(Infos.GOODLOGIN);
+    def json = "{parent:"+ parent.id +", username:"+ Math.random()+"}";
+
+    log.info("post user child")
+    String URL = Infos.CYTOMINEURL+"api/userJob.json"
+    HttpClient client = new HttpClient()
+    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    client.post(json.toString())
+    int code  = client.getResponseCode()
+    String response = client.getResponseData()
+    println response
+    client.disconnect();
+
+    log.info("check response")
+    assertEquals(200,code)
+    json = JSON.parse(response)
+    assert json instanceof JSONObject
+    int idUser = json.userJob.id
+
+//    log.info("check if object "+ idUser +" exist in DB")
+//    client = new HttpClient();
+//    URL = Infos.CYTOMINEURL+"api/user/"+idUser +".json"
+//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+//    client.get()
+//    code  = client.getResponseCode()
+//    response = client.getResponseData()
+//    client.disconnect();
+//    assertEquals(200,code)
+
+  }
+
+
+
+
+
+
+
+
   void testAddUserCorrect() {
     log.info("create user")
     def userToAdd = BasicInstance.getBasicUserNotExist()

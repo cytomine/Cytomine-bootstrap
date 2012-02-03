@@ -191,7 +191,7 @@ class AnnotationService extends ModelService {
                 def term = json.term;
                 if (term) {
                     term.each { idTerm ->
-                        annotationTermService.addAnnotationTerm(annotation, idTerm, currentUser.id, currentUser, transaction)
+                        annotationTermService.addAnnotationTerm(annotation, idTerm, null,currentUser.id, currentUser, transaction)
                     }
                 }
             }

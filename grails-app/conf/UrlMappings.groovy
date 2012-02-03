@@ -92,6 +92,9 @@ class UrlMappings {
         "/api/project/$id/stats/userannotations"(controller:"stats"){
             action = [GET:"statUserAnnotations"]
         }
+        "/api/project/$id/stats/retrievalsuggestion"(controller:"stats"){
+            action = [GET:"statRetrievalsuggestion"]
+        }
         "/api/project/$id/last/$max"(controller:"restProject"){
             action = [GET:"lastAction"]
         }

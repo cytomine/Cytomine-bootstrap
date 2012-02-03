@@ -809,12 +809,9 @@ class BasicInstance {
         assert annotationTerm == null
 
         log.debug "annotation.id:" + annotation.id + " term.id:" + term.id + " user.id:" + user.id
-        if (!annotationTerm) {
-            log.debug "annotationTerm link"
-
-            annotationTerm = AnnotationTerm.link(annotation, term, user)
-            log.debug "AnnotationTerm.errors=" + annotationTerm.errors
-        }
+        //annotationTerm = new AnnotationTerm(annotation:annotation,term:term,user:user)
+        annotationTerm = AnnotationTerm.link(annotation, term,null,user,0, false)
+        annotationTerm.save(flush:true)
         assert annotationTerm != null
         annotationTerm
     }
@@ -834,7 +831,7 @@ class BasicInstance {
         def user = User.findByUsername(Infos.GOODLOGIN)
         assert user != null
 
-        def annotationTerm = new AnnotationTerm(annotation: annotation, term: term, user: user)
+        def annotationTerm = new AnnotationTerm(annotation:annotation,term:term,user:user)
 
         log.debug "annotationTerm.errors=" + annotationTerm.errors
         annotationTerm

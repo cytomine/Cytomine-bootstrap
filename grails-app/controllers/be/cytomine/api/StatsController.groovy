@@ -4,8 +4,146 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
+import be.cytomine.security.UserJob
+import be.cytomine.processing.structure.ConfusionMatrix
+import be.cytomine.security.SecUser
 
 class StatsController extends RestController {
+
+    def annotationService
+    def termService
+
+
+    def statRetrievalsuggestion = {
+        //Get project
+        Project project = Project.read(params.id)
+        if (project == null) {
+            responseNotFound("Project", params.id)
+            return
+        }
+
+        //Get all userjob from project
+        //List<UserJob> allUserJob = UserJob.list()
+        def users = AnnotationTerm.createCriteria().list {
+            join("annotation")
+            join("user")
+            createAlias("annotation", "a")
+            eq("a.project", project)
+            eq("algo", true)
+            //inList("user", allUserJob)
+            projections {
+                groupProperty('user')
+            }
+        }
+
+        //Get last userJob
+        SecUser lastUserJob = null
+        println "****************************"
+        users.each {
+            if(!lastUserJob || lastUserJob.created<it.created)  {
+                lastUserJob = it
+            }
+        }
+        println "****************************"
+        println "Last: "+ lastUserJob?.username
+        println "****************************"
+
+        //Get all data from this job
+        def annotationsTerm = AnnotationTerm.findAllByUser(lastUserJob, [sort: "rate", order: "desc"]);
+
+        //Get all term from this project, structure: [idterm,i,...]
+
+
+
+        double avg = computeAVG(annotationsTerm)
+        println "AVG="+avg
+
+        ConfusionMatrix matrix = computeConfusionMatrix(termService.list(project),annotationsTerm)
+        matrix.print()
+        String matrixJSON =  matrix.toJSON()
+
+        def worstTerms = listWorstTerm(annotationsTerm,project)
+
+        def worstAnnotations = listWorstAnnotationTerm(annotationsTerm,30)
+
+
+        def data = ['avg':avg, 'matrix':matrixJSON, "worstTerms":worstTerms, "worstAnnotations":worstAnnotations ]
+        responseSuccess(data)
+    }
+
+    private double computeAVG(def annotationsTerm){
+        long correct=0
+        long totalWithTerm=0
+
+        annotationsTerm.each {
+            if(it.term) {
+                totalWithTerm++
+                if(it.term==it.expectedTerm) correct++
+            }
+
+        }
+        double avg = (double)(correct/totalWithTerm)
+        return avg
+    }
+
+    private ConfusionMatrix computeConfusionMatrix(def projectTerms, def annotationsTerm){
+        def projectTermsId = projectTerms.collect {it.id+""}
+        ConfusionMatrix matrix = new ConfusionMatrix(projectTermsId);
+
+        annotationsTerm.each {
+            if(it.term && it.expectedTerm) matrix.addEntry(it.termId+"",it.expectedTermId+"")
+            //matrix.print()
+        }
+        println matrix.getDiagonalSum()
+        println matrix.getTotalSum()
+        println (matrix.getDiagonalSum()/matrix.getTotalSum())
+        return matrix
+    }
+
+    private def listWorstTerm(def annotationsTerms, Project project) {
+        Map<Term, Integer> termMap = new HashMap<Term, Integer>()
+        List<Term> termList = termService.list(project)
+        termList.each {termMap.put(it, 0)}
+
+        annotationsTerms.each {
+            if (it.term && it.expectedTerm && it.term!=it.expectedTerm) {
+                Term term = it.term
+                termMap.put(term, termMap.get(term) + 1);
+            }
+        }
+        termList.clear()
+        termMap.each {  key, value ->
+            key.rate = value
+            termList.add(key)
+        }
+        return termList
+    }
+
+    private def listWorstAnnotationTerm(def annotationsTerms,def max) {
+       def results = []
+
+        for (int i = 0; i < annotationsTerms.size() && max > results.size(); i++) {
+            def suggest = annotationsTerms.get(i)
+            def annotation = suggest.annotation
+            def realTerm = termService.list(annotation,annotation.user)
+            println "id="+suggest.id
+            println "annotation="+annotation.id
+            println "realTerm="+realTerm
+            println "suggest.expectedTermId="+suggest.termId
+            println "realTerm.contains(suggest.expectedTermId)="+realTerm.contains(suggest.termId)
+            if (suggest.term && suggest.expectedTerm && !realTerm.contains(suggest.termId)) {
+                results.add(suggest);
+            }
+        }
+
+        return results
+
+    }
+
+
+
+
+
 
     def statUserAnnotations = {
         Project project = Project.read(params.id)

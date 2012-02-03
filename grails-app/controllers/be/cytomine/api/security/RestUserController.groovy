@@ -5,6 +5,8 @@ import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
+import be.cytomine.security.SecUser
+import be.cytomine.security.UserJob
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
@@ -61,6 +63,31 @@ class RestUserController extends RestController {
     @Secured(['ROLE_ADMIN'])
     def delete = {
         delete(userService, JSON.parse("{id : $params.id}"))
+    }
+
+    @Secured(['ROLE_ADMIN'])
+    def addChild = {
+       def json = request.JSON
+       User user = User.get(json.parent)
+
+       String username = json.username
+
+       UserJob newUser = new UserJob()
+       newUser.username = username
+       newUser.password = user.password
+       newUser.publicKey = user.publicKey
+       newUser.privateKey = user.privateKey
+       newUser.enabled = user.enabled
+       newUser.accountExpired = user.accountExpired
+       newUser.accountLocked = user.accountLocked
+       newUser.passwordExpired = user.passwordExpired
+       newUser.user = user
+
+        newUser.save(flush:true)
+
+        //def ret = [data: [user: newUser], status: 200]
+        response([userJob: newUser],200)
+
     }
 
     def deleteUser = {

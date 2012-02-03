@@ -1,6 +1,6 @@
 var ProjectDashboardStats = Backbone.View.extend({
 
-   fetchStats : function () {
+   fetchStats : function (terms, annotations) {
       var self = this;
       if (self.model.get('numberOfAnnotations') == 0) return;
       //Annotations by terms
@@ -28,11 +28,6 @@ var ProjectDashboardStats = Backbone.View.extend({
             self.drawUserAnnotationsChart(collection, undefined, response);
          }
       });
-//      new SuggestedTermCollection({project:self.model.get('id')}).fetch({
-//         success : function(collection, response) {
-//            self.drawWorstTermPieChart(collection, response);
-//         }
-//      });
       new StatsTermSlideCollection({project:self.model.get('id')}).fetch({
          success : function(collection, response) {
             self.drawTermSlideChart(collection, response);
@@ -42,6 +37,21 @@ var ProjectDashboardStats = Backbone.View.extend({
       new StatsUserSlideCollection({project:self.model.get('id')}).fetch({
          success : function(collection, response) {
             self.drawUserSlideChart(collection, response);
+         }
+      });
+
+
+      new StatsRetrievalSuggestionModel({project:self.model.get('id')}).fetch({
+         success : function(model, response) {
+             console.log("terms="+terms);
+//             window.app.models.terms.fetch({
+//                 success : function(terms, response) {
+                     self.drawRetrievalSuggestionTable(model,response, terms);
+                     self.drawWorstTermPieChart(model,response, terms);
+                     self.drawWorstAnnotationsTable(model,response, terms,annotations);
+//              }
+//            });
+
          }
       });
 
@@ -241,27 +251,7 @@ var ProjectDashboardStats = Backbone.View.extend({
       $("#projectColumnChart").show();
 
    },
-   drawWorstTermPieChart : function (collection, response) {
-      $("#worstTermprojectPieChart").empty();
-      console.log("drawWorstTermPieChart:"+_.size(collection));
-      // Create and populate the data table.
-      var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Term');
-      data.addColumn('number', 'Number of questionable annotations');
-      data.addRows(_.size(collection));
-      var i = 0;
-      var colors = [];
-      collection.each(function(stat) {
-         colors.push(stat.get('color'));
-         data.setValue(i,0, stat.get('name'));
-         data.setValue(i,1, stat.get('rate'));
-         i++;
-      });
-      var width = Math.round($(window).width()/2 - 75);
-      // Create and draw the visualization.
-      new google.visualization.PieChart(document.getElementById('worstTermprojectPieChart')).
-          draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
-   },
+
 
    drawTermSlideChart : function(collection, response){
       var self = this;
@@ -354,5 +344,178 @@ var ProjectDashboardStats = Backbone.View.extend({
       };
       google.visualization.events.addListener(chart,'select', handleClick);
 
-   }
+   },
+   reduceTermName : function(termName) {
+        //var termReduce = termName.substring(0,Math.min(4,termName.length));
+       var termReduce="";
+       var termNameItems = termName.split(" ");
+       for (var i=0; i<termNameItems.length; i++) {
+           console.log("termNameItems="+termNameItems[i]);
+            termReduce = termReduce + termNameItems[i].substring(0,Math.min(4,termNameItems[i].length))+ ". ";
+       }
+       return termReduce;
+   },
+   drawRetrievalSuggestionTable: function(model, response, terms){
+      var self = this;
+
+        console.log(model);
+        console.log(model.get('avg'));
+
+        var matrixJSON = model.get('matrix');
+        console.log(matrixJSON);
+
+        var matrix = eval('('+matrixJSON +')');
+       var data = new google.visualization.DataTable();
+       //add column
+       data.addColumn('string', 'X');
+       for(var i = 1; i<matrix[0].length-1;i++){
+           var termName ="";
+           var term = terms.get(matrix[0][i]);
+           if(term!=undefined) termName = self.reduceTermName(term.get('name'));
+           data.addColumn('number', termName);
+       }
+       data.addColumn('string', matrix[0][matrix[0].length-1]);
+       data.addRows((matrix.length-1));
+
+//       data.setColumnProperties(2, {style: 'font-style:bold; width : 500px;'});  => dosen't work :-(
+//       data.setColumnProperty(2, "width", "500px");     => dosen't work :-(
+
+         for(i = 0; i<matrix.length-1;i++){
+             var indx = i+1;
+             //console.log("i:"+i);
+
+             for(j=0; j<matrix[indx].length;j++) {
+                 //console.log("j:"+j);
+                var value = matrix[indx][j];
+                 //console.log("value:"+value);
+
+                    if(indx==j) {
+                        //diagonal
+                        data.setCell(i, j, matrix[indx][j],undefined,{style: 'font-style:bold; background-color:#90c140;'});
+                    } else if(j==0) {
+                        //first column
+                        var idTerm = matrix[indx][j];
+                        console.log(idTerm);
+                        console.log(terms);
+                        var term = terms.get(idTerm);
+                        data.setCell(i, j,term.get('name'));
+                    } else if(j==matrix[indx].length-1) {
+                        //last column
+                        var printValue =""
+                        var value = matrix[indx][j];
+                        if(value!=-1) {
+                           printValue = Math.round(value*100)+"%";
+                        }
+                        data.setCell(i, j, printValue);
+                    }
+                    else {
+                        //value
+                        if(matrix[indx][j]>0 && j>0) {
+                            //bad value, should be 0
+                            data.setCell(i, j, matrix[indx][j],undefined,{style: 'font-style:bold; background-color:#ff5800;'});
+                        }else {
+                            //good value (=0)
+                            //don't print 0
+                        }
+                    }
+             }
+       }
+       var width = Math.round($(window).width() - 75);
+      var visualization = new google.visualization.Table(document.getElementById('userRetrievalSuggestMatrixDataTable'));
+      visualization.draw(data, {title:"",
+             legend : "none",
+             //backgroundColor : "whiteSmoke",
+             width:"98%",
+             allowHtml : true
+          });
+
+   },
+   drawWorstTermPieChart : function (model, response, terms) {
+      $("#worstTermprojectPieChart").empty();
+      var dataJSON = model.get('worstTerms');
+      console.log(dataJSON);
+
+        //var worstTerm = eval('('+dataJSON +')');
+      console.log("drawWorstTermPieChart:"+dataJSON.length);
+      // Create and populate the data table.
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Term');
+      data.addColumn('number', 'Number of questionable annotations');
+      data.addRows(dataJSON.length);
+      var colors = [];
+       for(var i=0;i<dataJSON.length;i++) {
+         colors.push(dataJSON[i].color);
+         data.setValue(i,0, dataJSON[i].name);
+         data.setValue(i,1, dataJSON[i].rate);
+         console.log(dataJSON[i]);
+         console.log(dataJSON[i].color);
+       }
+      var width = Math.round($(window).width()/2 - 75);
+      // Create and draw the visualization.
+      new google.visualization.PieChart(document.getElementById('worstTermprojectPieChart')).
+          draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
+   },
+//   drawWorstAnnotationsTable : function (model, response) {
+//      $("#worstTermprojectPieChart").empty();
+//      var dataJSON = model.get('worstTerms');
+//      console.log(dataJSON);
+//
+//        //var worstTerm = eval('('+dataJSON +')');
+//      console.log("drawWorstTermPieChart:"+dataJSON.length);
+//      // Create and populate the data table.
+//      var data = new google.visualization.DataTable();
+//      data.addColumn('string', 'Term');
+//      data.addColumn('number', 'Number of questionable annotations');
+//      data.addRows(dataJSON.length);
+//      var colors = [];
+//       for(var i=0;i<dataJSON.length;i++) {
+//         colors.push(dataJSON[i].color);
+//         data.setValue(i,0, dataJSON[i].name);
+//         data.setValue(i,1, dataJSON[i].rate);
+//         console.log(dataJSON[i]);
+//         console.log(dataJSON[i].color);
+//       }
+//      var width = Math.round($(window).width()/2 - 75);
+//      // Create and draw the visualization.
+//      new google.visualization.PieChart(document.getElementById('worstTermprojectPieChart')).
+//          draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
+//   },
+
+
+    drawWorstAnnotationsTable : function (model, response,terms, annotations) {
+        console.log("drawWorstAnnotationsTable");
+        var annotationsTerms = model.get('worstAnnotations');
+        var self = this;
+        require([
+            "text!application/templates/dashboard/SuggestedAnnotationTerm.tpl.html"],
+                function(suggestedAnnotationTermTpl) {
+                        $("#worstannotationitem").empty();
+
+                        if(annotationsTerms.length==0) {
+                            $("#worstannotationitem").append("You must run Retrieval Validate Algo for this project...");
+                        }
+
+                        for(var i=0;i<annotationsTerms.length;i++) {
+                            var annotationTerm = annotationsTerms[i];
+                            var rate = Math.round(annotationTerm.rate*100)-1+"%";
+                            var annotation = annotations.get(annotationTerm.annotation);
+                            console.log("suggestedTerm="+annotationTerm.expectedTerm);
+                            var suggestedTerm = terms.get(annotationTerm.term).get('name');
+                            var termsAnnotation = terms.get(annotationTerm.expectedTerm).get('name');
+//                            _.each(annotation.get('term'), function(idTerm){ realTerms.push(terms.get(idTerm).get('name')); });
+                            //var termsAnnotation =  realTerms.join();
+                            var text = "<b>" + suggestedTerm +"</b> for annotation " + annotation.id + " instead of <b>" + termsAnnotation +"</b>";
+
+                            var cropStyle = "block";
+                            var cropURL = annotation.get("cropURL");
+
+                            var action = _.template(suggestedAnnotationTermTpl, {idProject : self.model.id, idAnnotation : annotation.id, idImage : annotation.get('image'), icon:"add.png",text:text,rate:rate,cropURL:cropURL, cropStyle:cropStyle});
+                            $("#worstannotationitem").append(action);
+                        }
+                    }
+                );
+    }
+
+
+    //drawWorstAnnotationsTable
 });

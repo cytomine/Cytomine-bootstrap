@@ -60,6 +60,7 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         //Add annotation-Term for annotation 1 with cytomine admin
         AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
         annotationTerm.annotation = annotation
+        annotationTerm.user = User.findByUsername(USERNAME1)
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm, USERNAME1, PASSWORD1)
         assertEquals(200, result.code)
         annotationTerm = result.data

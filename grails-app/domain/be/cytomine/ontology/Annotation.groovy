@@ -87,9 +87,13 @@ class Annotation extends CytomineDomain implements Serializable {
     }
 
     def termsId() {
-        return annotationTerm.collect {
-            it.getIdTerm()
-        }.unique()
+        def termsIds = []
+        annotationTerm.each {
+            if(!it.algo && !termsIds.contains(it.termId)) {
+               termsIds << it.termId
+            }
+        }
+        return termsIds
     }
 
     def termsIdByUser() {

@@ -14,6 +14,7 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
     Term expectedTerm
     SecUser user
     Double rate = 1d
+    boolean algo = false
 
     static mapping = {
         id(generator: 'assigned', unique: true)
@@ -38,15 +39,15 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         else return this.user?.id
     }
 
-    static AnnotationTerm link(Annotation annotation, Term term, User user) {
+    static AnnotationTerm link(Annotation annotation, Term term, Term expectedTerm, SecUser user, double rate,boolean algo) {
         if (!annotation) throw new WrongArgumentException("Annotation cannot be null")
         if (!term) throw new WrongArgumentException("Term cannot be null")
         if (!user) throw new WrongArgumentException("User cannot be null")
-        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
+        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'expectedTerm': expectedTerm,'user': user)
         if (annotationTerm) throw new WrongArgumentException("Annotation - term already exist")
         //Annotation.withTransaction {
         if (!annotationTerm) {
-            annotationTerm = new AnnotationTerm(user: user)
+            annotationTerm = new AnnotationTerm(user: user,expectedTerm:expectedTerm,rate:rate,algo:algo)
             annotation?.addToAnnotationTerm(annotationTerm)
             term?.addToAnnotationTerm(annotationTerm)
             println "save annotationTerm"
@@ -59,16 +60,16 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
     }
 
 
-    static AnnotationTerm link(long id, Annotation annotation, Term term, User user) {
+    static AnnotationTerm link(long id, Annotation annotation, Term term, Term expectedTerm, SecUser user, double rate,boolean algo) {
 
         if (!annotation) throw new WrongArgumentException("Annotation cannot be null")
         if (!term) throw new WrongArgumentException("Term cannot be null")
         if (!user) throw new WrongArgumentException("User cannot be null")
-        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
+        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'expectedTerm': expectedTerm,'user': user)
         if (annotationTerm) throw new WrongArgumentException("Annotation - term already exist")
 
         if (!annotationTerm) {
-            annotationTerm = new AnnotationTerm(user: user)
+            annotationTerm = new AnnotationTerm(user: user, expectedTerm:expectedTerm,rate:rate,algo:algo)
             annotationTerm.id = id
             annotation?.addToAnnotationTerm(annotationTerm)
             term?.addToAnnotationTerm(annotationTerm)
@@ -79,12 +80,12 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         return annotationTerm
     }
 
-    static void unlink(Annotation annotation, Term term, User user) {
+    static void unlink(Annotation annotation, Term term, Term expectedTerm, SecUser user) {
 
         if (!annotation) throw new WrongArgumentException("Annotation cannot be null")
         if (!term) throw new WrongArgumentException("Term cannot be null")
         if (!user) throw new WrongArgumentException("User cannot be null")
-        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
+        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'expectedTerm': expectedTerm,'user': user)
         if (!annotationTerm) throw new WrongArgumentException("Annotation - term - user not exist")
 
         if (annotationTerm) {
@@ -113,7 +114,10 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         println "jsonAnnotationTerm from getAnnotationTermFromData = " + jsonAnnotationTerm
         annotationTerm.annotation = Annotation.get(jsonAnnotationTerm.annotation.toString())
         annotationTerm.term = Term.get(jsonAnnotationTerm.term.toString())
-        annotationTerm.user = User.get(jsonAnnotationTerm.user.toString())
+        annotationTerm.expectedTerm = (!jsonAnnotationTerm.expectedTerm.toString().equals("null"))? Term.read(jsonAnnotationTerm.expectedTerm) : null;
+        annotationTerm.user = SecUser.get(jsonAnnotationTerm.user.toString())
+        annotationTerm.rate = (!jsonAnnotationTerm.rate.toString().equals("null"))? Double.parseDouble(jsonAnnotationTerm.rate.toString()) : 0d;
+        annotationTerm.algo = (!jsonAnnotationTerm.algo.toString().equals("null"))? Boolean.parseBoolean(jsonAnnotationTerm.algo.toString()) : false;
         if (!annotationTerm.annotation) throw new WrongArgumentException("Annotation ${jsonAnnotationTerm.annotation.toString()} doesn't exist!")
         if (!annotationTerm.term) throw new WrongArgumentException("Term ${jsonAnnotationTerm.term.toString()} doesn't exist!")
         if (!annotationTerm.user) throw new WrongArgumentException("User ${jsonAnnotationTerm.user.toString()} doesn't exist!")
@@ -136,7 +140,10 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
             returnArray['id'] = it.id
             returnArray['annotation'] = it.annotation?.id
             returnArray['term'] = it.term?.id
+            returnArray['expectedTerm'] = it.expectedTerm?.id
             returnArray['user'] = it.user?.id
+            returnArray['rate'] = it.rate
+            returnArray['algo'] = it.algo
             return returnArray
         }
     }

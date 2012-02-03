@@ -101,7 +101,7 @@ class ImportController {
                 Term term = Term.findByNameAndOntology(remoteTerm.name, project.ontology)
                 log.info("name=" + remoteTerm.name + " and " + project.ontology.id)
                 log.info("term=" + term)
-                AnnotationTerm.link(annotation, term)
+               // AnnotationTerm.link(annotation, term)
             }
         }
 

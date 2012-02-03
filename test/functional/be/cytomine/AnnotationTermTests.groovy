@@ -85,16 +85,16 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
   }
 
-   void testAddAnnotationTermAlreadyExist() {
-
-    log.info("create AnnotationTerm")
-    def annotationTermToAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermAlreadyExist")
-    annotationTermToAdd.save(flush:true)
-    //annotationTermToAdd is in database, we will try to add it twice
-    String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
-    def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(400,result.code)
-  }
+//  void testAddAnnotationTermAlreadyExist() {
+//
+//    log.info("create AnnotationTerm")
+//    def annotationTermToAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermAlreadyExist")
+//    annotationTermToAdd.save(flush:true)
+//    //annotationTermToAdd is in database, we will try to add it twice
+//    String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
+//    def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+//    assertEquals(400,result.code)
+//  }
 
   void testAddAnnotationTermWithAnnotationNotExist() {
 

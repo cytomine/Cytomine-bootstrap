@@ -22,6 +22,19 @@ var StatsModel = Backbone.Model.extend({
     }
 });
 
+
+var StatsRetrievalSuggestionModel = Backbone.Model.extend({
+
+	url : function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/stats/retrievalsuggestion.json";
+        }
+	},
+    initialize: function (options) {
+        this.project = options.project;
+    }
+});
+
 // define our collection
 var StatsTermCollection = Backbone.Collection.extend({
     model: StatsModel,

@@ -201,7 +201,7 @@
 <!-- Google Charts -->
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript">
-    google.load('visualization', '1', {packages: ['corechart']});
+    google.load('visualization', '1', {packages: ['corechart','table']});
 </script>
 <!-- OpenLayers -->
 <script type="text/javascript" src="lib/OpenLayers-2.11/OpenLayers.js"></script>

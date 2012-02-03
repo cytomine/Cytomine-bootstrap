@@ -79,7 +79,9 @@ var TermCollection = Backbone.Collection.extend({
     model: TermModel,
     CLASS_NAME: "be.cytomine.ontology.Term",
 	url : function() {
-        if(this.idOntology==undefined && this.idAnnotation==undefined)
+        if(this.idProject!=undefined)
+             return 'api/project/'+this.idProject+'/term.json';
+        else if(this.idOntology==undefined && this.idAnnotation==undefined)
 		    return 'api/term.json';
         else if(this.idOntology!=undefined && this.idAnnotation==undefined)
             return 'api/ontology/'+ this.idOntology + '/term.json';
@@ -89,6 +91,7 @@ var TermCollection = Backbone.Collection.extend({
     initialize: function (options) {
         this.idOntology = options.idOntology;
         this.idAnnotation = options.idAnnotation;
+        this.idProject = options.idProject;
         // something
     }
 });
