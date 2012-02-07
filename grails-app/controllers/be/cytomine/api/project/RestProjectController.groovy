@@ -48,6 +48,7 @@ class RestProjectController extends RestController {
     def show = {
         Project project = projectService.read(params.long('id'))
         if (project) {
+            log.info project.users()
             def userList = project.users().collect{it.id}
             def currentUserAuth = cytomineService.getCurrentUser().authorities.asList().collect{it.authority}
             log.info "check authorization: project="+ project.id + " user="+  cytomineService.getCurrentUser().id + " user-project="+userList  + " user-type="+currentUserAuth

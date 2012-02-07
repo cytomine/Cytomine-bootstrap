@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.Exception.CytomineException
-import be.cytomine.test.Infos
+
 import be.cytomine.security.SecUser
 import be.cytomine.social.SharedAnnotation
 import java.awt.image.BufferedImage

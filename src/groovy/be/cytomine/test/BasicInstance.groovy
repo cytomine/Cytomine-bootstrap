@@ -18,7 +18,7 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.image.ImageInstance
 import be.cytomine.security.Group
 import be.cytomine.image.AbstractImageGroup
-import be.cytomine.ontology.SuggestedTerm
+import be.cytomine.ontology.AlgoAnnotationTerm
 import be.cytomine.processing.Software
 import be.cytomine.processing.Job
 import be.cytomine.project.Discipline
@@ -26,6 +26,7 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
+import be.cytomine.security.UserJob
 
 /**
  * Created by IntelliJ IDEA.
@@ -573,58 +574,6 @@ class BasicInstance {
 
 
 
-   static SuggestedTerm createOrGetBasicSuggestedTerm() {
-       log.debug  "createOrGetBasicSuggestedTerm()"
-
-       def annotation = getBasicAnnotationNotExist()
-       annotation.save(flush:true)
-       assert annotation!=null
-       def term = getBasicTermNotExist()
-       term.save(flush:true)
-       assert term!=null
-       def job = getBasicJobNotExist()
-       job.save(flush:true)
-       assert job!=null
-       def suggestedTerm = SuggestedTerm.findWhere('annotation':annotation,'term':term,'job':job)
-
-       log.debug "annotation.id:" + annotation.id + " term.id:" + term.id  + " job.id:" + job.id
-       if(!suggestedTerm) {
-           log.debug "suggestedTerm link"
-
-           suggestedTerm = new SuggestedTerm(annotation:annotation,term:term,job:job,rate:0d)
-           suggestedTerm.save(flush:true)
-           log.debug "AnnotationTerm.errors="+suggestedTerm.errors
-       }
-       assert suggestedTerm!=null
-       suggestedTerm
-   }
-
-   static SuggestedTerm getBasicSuggestedTermNotExist(String method) {
-
-       log.debug "getBasicAnnotationTermNotExist()"
-
-       def term = getBasicTermNotExist()
-       term.save(flush:true)
-       assert term!=null
-
-       def annotation = getBasicAnnotationNotExist()
-       annotation.save(flush:true)
-       assert annotation!=null
-
-       def job = getBasicJobNotExist()
-       job.save(flush:true)
-       assert job!=null
-
-       def suggestedTerm =  new SuggestedTerm(annotation:annotation,term:term,job:job,rate:0d)
-
-       log.debug "annotationTerm.errors="+suggestedTerm.errors
-       assert suggestedTerm!=null
-       suggestedTerm
-   }
-
-
-
-
 
    static Job createOrGetBasicJob() {
        log.debug  "createOrGetBasicJob()"
@@ -655,22 +604,6 @@ class BasicInstance {
        log.debug "getBasicJobNotExist() end"
        job
    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -810,7 +743,7 @@ class BasicInstance {
 
         log.debug "annotation.id:" + annotation.id + " term.id:" + term.id + " user.id:" + user.id
         //annotationTerm = new AnnotationTerm(annotation:annotation,term:term,user:user)
-        annotationTerm = AnnotationTerm.link(annotation, term,null,user,0, false)
+        annotationTerm = AnnotationTerm.link(annotation, term,user)
         annotationTerm.save(flush:true)
         assert annotationTerm != null
         annotationTerm
@@ -835,6 +768,64 @@ class BasicInstance {
 
         log.debug "annotationTerm.errors=" + annotationTerm.errors
         annotationTerm
+    }
+
+    static AlgoAnnotationTerm createOrGetBasicAlgoAnnotationTerm(UserJob user) {
+        log.debug "createOrGetBasicAlgoAnnotationTerm()"
+
+        def annotation = getBasicAnnotationNotExist()
+        annotation.save(flush: true)
+        assert annotation != null
+        def term = getBasicTermNotExist()
+        term.save(flush: true)
+        assert term != null
+
+        def algoannotationTerm = AlgoAnnotationTerm.findWhere('annotation': annotation, 'term': term, 'userJob': user)
+        assert algoannotationTerm == null
+
+        log.debug "annotation.id:" + annotation.id + " term.id:" + term.id + " user.id:" + user.id
+        //annotationTerm = new AnnotationTerm(annotation:annotation,term:term,user:user)
+        algoannotationTerm = new AlgoAnnotationTerm(annotation:annotation, term:term,expectedTerm:term,userJob:user,rate:0)
+        algoannotationTerm.save(flush:true)
+        assert algoannotationTerm != null
+        algoannotationTerm
+    }
+
+    static AlgoAnnotationTerm getBasicAlgoAnnotationTermNotExist(UserJob user) {
+
+        log.debug "getBasicAnnotationTermNotExist()"
+
+        def term = getBasicTermNotExist()
+        term.save(flush: true)
+        assert term != null
+
+        def annotation = getBasicAnnotationNotExist()
+        annotation.save(flush: true)
+        assert annotation != null
+
+        def algoannotationTerm = new AlgoAnnotationTerm(annotation:annotation,term:term,userJob:user, expectedTerm: term, rate:1d)
+
+        log.debug "annotationTerm.errors=" + algoannotationTerm.errors
+        algoannotationTerm
+    }
+
+    static createUserJob(User user) {
+
+       String username = new Date().toString()
+
+       UserJob newUser = new UserJob()
+       newUser.username = username
+       newUser.password = "password"
+       newUser.publicKey = user.publicKey
+       newUser.privateKey = user.privateKey
+       newUser.enabled = user.enabled
+       newUser.accountExpired = user.accountExpired
+       newUser.accountLocked = user.accountLocked
+       newUser.passwordExpired = user.passwordExpired
+       newUser.user = user
+       newUser.generateKeys()
+        newUser.save(flush:true)
+        return newUser
     }
 
 

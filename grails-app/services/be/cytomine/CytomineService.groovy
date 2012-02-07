@@ -1,13 +1,18 @@
 package be.cytomine
 
 import be.cytomine.security.User
+import be.cytomine.security.SecUser
 
 class CytomineService {
 
     static transactional = false
     def springSecurityService
 
-    User getCurrentUser() {
-        return User.read(springSecurityService.principal.id)
+    SecUser getCurrentUser() {
+        return SecUser.read(springSecurityService.principal.id)
+    }
+
+    boolean isUserAlgo() {
+        return getCurrentUser().algo()
     }
 }

@@ -22,7 +22,7 @@ class TermService extends ModelService {
     def commandService
     def cytomineService
     def annotationTermService
-    def suggestedTermService
+    def algoAnnotationTermService
     def relationTermService
     def domainService
 
@@ -120,7 +120,7 @@ class TermService extends ModelService {
             annotationTermService.deleteAnnotationTermFromAllUser(term, currentUser,transaction)
 
             //Delete Suggested-Term before deleting Term
-            suggestedTermService.deleteSuggestedTermFromAllUser(term, currentUser,transaction)
+            algoAnnotationTermService.deleteAlgoAnnotationTermFromAllUser(term, currentUser,transaction)
 
             //Delete relation-Term before deleting Term
             relationTermService.deleteRelationTermFromTerm(term, currentUser,transaction)
@@ -173,7 +173,7 @@ class TermService extends ModelService {
 
     def destroy(Term domain, boolean printMessage) {
         //Build response message
-        if (!SuggestedTerm.findAllByTerm(domain).isEmpty()) throw new ConstraintException("Term " + domain.id + " has suggested term")
+        if (!AlgoAnnotationTerm.findAllByTerm(domain).isEmpty()) throw new ConstraintException("Term " + domain.id + " has suggested term")
         if (!AnnotationTerm.findAllByTerm(domain).isEmpty()) throw new ConstraintException("Term " + domain.id + " has annotation term")
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name, domain.ontology?.name], printMessage, "Delete", domain.getCallBack())
         //Delete object

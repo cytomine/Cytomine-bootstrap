@@ -16,6 +16,7 @@ import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.model.Permission
 import be.cytomine.test.Infos
 import grails.converters.JSON
+import be.cytomine.security.SecUser
 
 class ProjectService extends ModelService {
 
@@ -45,7 +46,7 @@ class ProjectService extends ModelService {
 
    @Transactional
    @PreAuthorize("hasPermission(#project, admin) or #user.id == principal.id or hasRole('ROLE_ADMIN')")
-   void deletePermission(Project project, User user, Permission permission) {
+   void deletePermission(Project project, SecUser user, Permission permission) {
       def acl = aclUtilService.readAcl(project)
 
       // Remove all permissions associated with this particular recipient

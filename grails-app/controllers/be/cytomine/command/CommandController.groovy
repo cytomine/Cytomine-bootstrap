@@ -2,6 +2,7 @@ package be.cytomine.command
 
 import be.cytomine.api.RestController
 import be.cytomine.security.User
+import be.cytomine.security.SecUser
 
 class CommandController extends RestController {
     def springSecurityService
@@ -14,7 +15,7 @@ class CommandController extends RestController {
 
     def undo = {
         log.info "Undo"
-        User user = User.read(springSecurityService.principal.id)
+        SecUser user = SecUser.read(springSecurityService.principal.id)
         log.debug "User=" + user.id
         def lastCommands = UndoStackItem.findAllByUser(user, [sort: "created", order: "desc", max: 1, offset: 0])
         log.debug "Lastcommands=" + lastCommands
@@ -84,7 +85,7 @@ class CommandController extends RestController {
 
     def redo = {
         log.info "Redo"
-        User user = User.read(springSecurityService.principal.id)
+        SecUser user = SecUser.read(springSecurityService.principal.id)
         log.debug "User=" + user.id
 
         def lastCommands = RedoStackItem.findAllByUser(user, [sort: "created", order: "desc", max: 1, offset: 0])

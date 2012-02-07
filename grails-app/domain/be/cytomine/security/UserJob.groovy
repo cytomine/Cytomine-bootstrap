@@ -1,6 +1,7 @@
 package be.cytomine.security
 
 import be.cytomine.processing.Job
+import grails.converters.JSON
 
 class UserJob extends SecUser {
 
@@ -8,6 +9,7 @@ class UserJob extends SecUser {
 
     User user
     Job job
+
 
     static constraints = {
         job(nullable: true)
@@ -23,5 +25,23 @@ class UserJob extends SecUser {
 
     def beforeUpdate() {
         super.beforeUpdate()
+    }
+
+    boolean algo() {
+        return true
+    }
+
+    static void registerMarshaller() {
+        println "Register custom JSON renderer for " + UserJob.class
+        JSON.registerObjectMarshaller(UserJob) {
+            def returnArray = [:]
+            returnArray['id'] = it.id
+            returnArray['username'] = it.username
+            returnArray['publicKey'] = it.publicKey
+            returnArray['privateKey'] = it.privateKey
+            returnArray['created'] = it.created ? it.created.time.toString() : null
+            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
+            return returnArray
+        }
     }
 }

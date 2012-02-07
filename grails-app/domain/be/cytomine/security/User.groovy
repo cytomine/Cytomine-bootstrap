@@ -135,6 +135,10 @@ class User extends SecUser {
         }
     }
 
+    boolean algo() {
+        return false
+    }
+
     static User getFromData(User user, jsonUser) {
         user.username = jsonUser.username
         user.firstname = jsonUser.firstname

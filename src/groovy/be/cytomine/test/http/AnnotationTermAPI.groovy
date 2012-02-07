@@ -5,12 +5,13 @@ import be.cytomine.security.User
 import be.cytomine.test.BasicInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
-import com.vividsolutions.jts.io.WKTReader
+
 import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.project.Project
 import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.AlgoAnnotationTerm
 
 /**
  * User: lrollus
@@ -121,5 +122,46 @@ class AnnotationTermAPI extends DomainAPI {
         String response = client.getResponseData()
         client.disconnect();
         return [data: response, code: code]
+    }
+
+    static def showAlgoAnnotationTerm(Long idAnnotation,Long idTerm, Long idUser,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/annotation/" + idAnnotation + "/term/"+ idTerm +"/user/"+idUser+".json"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+    static def createAlgoAnnotationTerm(AnnotationTerm annotationTermToAdd, User user) {
+       createAnnotationTerm(annotationTermToAdd.encodeAsJSON(),user.username,user.password)
+    }
+
+    static def createAlgoAnnotationTerm(AnnotationTerm annotationTermToAdd, String username, String password) {
+        return createAnnotationTerm(annotationTermToAdd.encodeAsJSON(), username, password)
+    }
+
+    static def createAlgoAnnotationTerm(String jsonAnnotationTerm, User user) {
+        createAlgoAnnotationTerm(jsonAnnotationTerm,user.username,user.password)
+    }
+
+    static def createAlgoAnnotationTerm(String jsonAnnotationTerm, String username, String password) {
+        log.info("post Annotation:" + jsonAnnotationTerm.replace("\n", ""))
+        def json = JSON.parse(jsonAnnotationTerm);
+        String URL = Infos.CYTOMINEURL+"api/annotation/"+ json.annotation +"/term/"+ json.term +".json"
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        client.post(jsonAnnotationTerm)
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        println response
+        client.disconnect();
+        log.info("check response")
+        json = JSON.parse(response)
+        int idAnnotationTerm
+        try {idAnnotationTerm= json?.algoannotationterm?.id } catch(Exception e) {log.error e}
+        return [data: AlgoAnnotationTerm.get(idAnnotationTerm), code: code]
     }
 }

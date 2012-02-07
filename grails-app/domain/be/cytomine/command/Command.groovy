@@ -7,6 +7,7 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.grails.web.json.JSONElement
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import be.cytomine.security.SecUser
 
 /**
  * @author ULG-GIGA Cytomine Team
@@ -33,7 +34,7 @@ class Command extends CytomineDomain {
     /**
      * User who launch command
      */
-    User user
+    SecUser user
     Transaction transaction
 
     /**

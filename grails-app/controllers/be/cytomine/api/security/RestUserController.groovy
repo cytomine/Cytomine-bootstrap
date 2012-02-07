@@ -75,15 +75,20 @@ class RestUserController extends RestController {
        UserJob newUser = new UserJob()
        newUser.username = username
        newUser.password = user.password
-       newUser.publicKey = user.publicKey
-       newUser.privateKey = user.privateKey
+//       newUser.publicKey = user.publicKey
+//       newUser.privateKey = user.privateKey
+        newUser.generateKeys()
        newUser.enabled = user.enabled
        newUser.accountExpired = user.accountExpired
        newUser.accountLocked = user.accountLocked
        newUser.passwordExpired = user.passwordExpired
        newUser.user = user
 
-        newUser.save(flush:true)
+       newUser.save(flush:true)
+
+        projectService.list().each {
+            userService.addUserFromProject(newUser,it,false)
+        }
 
         //def ret = [data: [user: newUser], status: 200]
         response([userJob: newUser],200)

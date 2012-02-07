@@ -55,6 +55,10 @@ class SecUser extends CytomineDomain {
         }
     }
 
+    boolean algo() {
+        return false
+    }
+
     String toString() {
         return username
     }

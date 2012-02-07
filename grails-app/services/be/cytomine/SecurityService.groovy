@@ -6,6 +6,7 @@ import org.springframework.security.acls.model.Acl
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.security.acls.model.NotFoundException
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
+import be.cytomine.security.SecUser
 
 class SecurityService {
 
@@ -49,17 +50,17 @@ class SecurityService {
 
     //@Transactional(noRollbackFor = NotFoundException.class)
 
-    List<User> getUserList(def domain) {
+    List<SecUser> getUserList(def domain) {
         //log.info "*************"+domain
-        List<User> users = []
+        List<SecUser> users = []
         try {
             AclObjectIdentity aclObject = AclObjectIdentity.findByObjectId(domain.id)
             if (aclObject) {
                 def acl = aclUtilService.readAcl(domain)
                 acl.entries.each { entry ->
-                    User user = User.findByUsername(entry.sid.getPrincipal())
+                    SecUser user = SecUser.findByUsername(entry.sid.getPrincipal())
                     //log.info "user authorize="+user.username
-                    if(!users.contains(user))
+                    if(!user.algo() && !users.contains(user))
                         users.add(user)
                 }
             }

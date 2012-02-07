@@ -93,5 +93,8 @@ var TermCollection = Backbone.Collection.extend({
         this.idAnnotation = options.idAnnotation;
         this.idProject = options.idProject;
         // something
+    },
+    comparator : function (term) {
+        return term.get("name");
     }
 });

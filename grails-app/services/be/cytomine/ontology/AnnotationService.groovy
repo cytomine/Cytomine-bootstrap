@@ -17,9 +17,7 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.access.AccessDeniedException
-import be.cytomine.test.Infos
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
+
 import org.hibernate.FetchMode
 import be.cytomine.command.Transaction
 import be.cytomine.social.SharedAnnotation
@@ -31,7 +29,7 @@ class AnnotationService extends ModelService {
     def transactionService
     def annotationTermService
     def retrievalService
-    def suggestedTermService
+    def algoAnnotationTermService
     def responseService
     def domainService
 
@@ -264,7 +262,7 @@ class AnnotationService extends ModelService {
             annotationTermService.deleteAnnotationTermFromAllUser(annotation, currentUser, transaction)
 
             //Delete Suggested-Term before deleting Annotation
-            suggestedTermService.deleteSuggestedTermFromAllUser(annotation, currentUser, transaction)
+            algoAnnotationTermService.deleteAlgoAnnotationTermFromAllUser(annotation, currentUser, transaction)
 
             //Delete Shared annotation:
             def sharedAnnotation = SharedAnnotation.findAllByAnnotation(annotation)

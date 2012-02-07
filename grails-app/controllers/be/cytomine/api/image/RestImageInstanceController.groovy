@@ -7,7 +7,7 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
-import be.cytomine.security.User
+
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryFactory

@@ -31,7 +31,7 @@ class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE A
     }
 
     static mapping = {
-        tablePerHierarchy(true)
+        tablePerHierarchy(false)
     }
 
     def getUrl() {

@@ -6,6 +6,7 @@ import be.cytomine.security.User
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.codehaus.groovy.grails.web.json.JSONElement
 import be.cytomine.command.*
+import be.cytomine.security.SecUser
 
 class CommandService {
 
@@ -54,7 +55,7 @@ class CommandService {
             CommandHistory ch = new CommandHistory(command: c, prefixAction: "", project: c.project)
             ch.save();
             if (c.saveOnUndoRedoStack) {
-                User user = c.user
+                SecUser user = c.user
                 new UndoStackItem(command: c, user: user, transaction: c.transaction).save(flush: true)
             }
         }

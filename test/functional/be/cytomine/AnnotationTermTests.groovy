@@ -5,7 +5,7 @@ import grails.converters.JSON
 import be.cytomine.test.BasicInstance
 import be.cytomine.ontology.Annotation
 import be.cytomine.test.Infos
-import be.cytomine.test.HttpClient
+
 import be.cytomine.ontology.Term
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.security.User

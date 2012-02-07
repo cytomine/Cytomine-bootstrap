@@ -2,6 +2,7 @@ package be.cytomine.command
 
 import be.cytomine.CytomineDomain
 import be.cytomine.security.User
+import be.cytomine.security.SecUser
 
 /**
  * @author ULG-GIGA Cytomine Team
@@ -12,7 +13,7 @@ class UndoStackItem extends CytomineDomain implements Comparable {
     /**
      * User who launch command
      */
-    User user
+    SecUser user
 
     /**
      * Command save on redo stack

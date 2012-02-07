@@ -9,7 +9,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          //Check if there is something to display
          self.drawPieChart(collection, response);
          self.drawColumnChart(collection, response);
-      }
+      };
       statsCollection.fetch({
          success : function(model, response) {
             statsCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
@@ -41,19 +41,58 @@ var ProjectDashboardStats = Backbone.View.extend({
       });
 
 
-      new StatsRetrievalSuggestionModel({project:self.model.get('id')}).fetch({
+//      new StatsRetrievalSuggestionModel({project:self.model.get('id')}).fetch({
+//         success : function(model, response) {
+//             console.log("terms="+terms);
+////             window.app.models.terms.fetch({
+////                 success : function(terms, response) {
+//                     self.drawRetrievalSuggestionTable(model,response, terms);
+//                     self.drawWorstTermPieChart(model,response, terms);
+//                     self.drawWorstAnnotationsTable(model,response, terms,annotations);
+//                     self.drawAVGEvolution(model,response);
+////              }
+////            });
+//
+//         }
+//      });
+
+
+//      new StatsRetrievalSuggestionMatrixModel({project:self.model.get('id')}).fetch({
+//         success : function(model, response) {
+//            self.drawRetrievalSuggestionTable(model,response, terms);
+//
+//         }
+//      });
+
+
+      new StatsRetrievalSuggestionWorstTermWithSuggest({project:self.model.get('id')}).fetch({
          success : function(model, response) {
-             console.log("terms="+terms);
-//             window.app.models.terms.fetch({
-//                 success : function(terms, response) {
-                     self.drawRetrievalSuggestionTable(model,response, terms);
-                     self.drawWorstTermPieChart(model,response, terms);
-                     self.drawWorstAnnotationsTable(model,response, terms,annotations);
-//              }
-//            });
+             self.drawWorstTermTable(model,response, terms);
 
          }
       });
+
+      new StatsRetrievalSuggestionWorstTermModel({project:self.model.get('id')}).fetch({
+         success : function(model, response) {
+                     self.drawWorstTermPieChart(model,response, terms);
+
+         }
+      });
+
+      new StatsRetrievalSuggestionWorstAnnotationModel({project:self.model.get('id')}).fetch({
+         success : function(model, response) {
+                     self.drawWorstAnnotationsTable(model,response, terms,annotations);
+
+         }
+      });
+
+
+       new StatsRetrievalSuggestionEvolutionModel({project:self.model.get('id')}).fetch({
+          success : function(model, response) {
+                      self.drawAVGEvolution(model,response);
+
+          }
+       });
 
    },
    drawUserAnnotationsChart : function (collection, currentUser, response) {
@@ -350,19 +389,86 @@ var ProjectDashboardStats = Backbone.View.extend({
        var termReduce="";
        var termNameItems = termName.split(" ");
        for (var i=0; i<termNameItems.length; i++) {
-           console.log("termNameItems="+termNameItems[i]);
             termReduce = termReduce + termNameItems[i].substring(0,Math.min(4,termNameItems[i].length))+ ". ";
        }
        return termReduce;
    },
+    //worstTermList
+    drawWorstTermTable : function (model, response,terms) {
+        console.log("drawWorstTermTable");
+        var termList = model.get('worstTerms');
+         console.log(model);
+        console.log(model.get('project'));
+        console.log(model.get('worstTerms'));
+        if(termList==undefined)
+        {
+            $("#worstTermListPanel").hide();
+            return;
+        }
+        var self = this;
+        require([
+            "text!application/templates/dashboard/WorstTermList.tpl.html"],
+                function(worstTermListTpl) {
+                        $("#worstTermList").empty();
+
+                            console.log(terms);
+
+                            terms.each(function(term) {
+
+                                console.log("term="+term.get('name'));
+                                var action = _.template(worstTermListTpl, {term:term.get('name'),id:term.id});
+
+                                var max = 3;
+                                var entry = termList[term.id];
+                                if(entry.length>0) $("#worstTermList").append(action); //if no annotation, don't print info
+                                for(var i=0;i<entry.length && i<max;i++) {
+                                    //console.log(entry[i]);
+                                    for(var propertyName in entry[i]) {
+                                        if(propertyName!=term.id) {
+                                             $("#list-suggest-"+term.id).append("<b>"+terms.get(propertyName).get('name') + "</b> ("+entry[i][propertyName] + "%) ");
+                                            console.log(entry[i][propertyName]);
+                                        } else {
+                                              $("#success-suggest-"+term.id).html("");
+                                              $("#success-suggest-"+term.id).append(entry[i][propertyName]);
+                                        }
+
+                                    }
+
+                                }
+                            });
+
+                            $("#worstTermList").append('<br><button id="matrix-suggest" class="btn">See full information</button>');
+                            $("#matrix-suggest").button();
+                            $('#matrix-suggest').click(function(){
+                                self.initMatrixDialog(terms);
+                            });
+                    }
+                );
+    },
+    initMatrixDialog: function(terms) {
+        var self = this;
+      new StatsRetrievalSuggestionMatrixModel({project:self.model.get('id')}).fetch({
+         success : function(model, response) {
+            self.drawRetrievalSuggestionTable(model,response, terms);
+             $("#userRetrievalSuggestMatrixDataTable").dialog({
+                 modal : true,
+                 minWidth : Math.round($(window).width() - 75),
+                 minHeight : Math.round($(window).height() - 75),
+                 buttons: [
+                {
+                    text: "Ok",
+                    click: function() { $(this).dialog("close"); }
+                }
+            ] });
+
+         }
+      });
+    },
    drawRetrievalSuggestionTable: function(model, response, terms){
       var self = this;
 
-        console.log(model);
-        console.log(model.get('avg'));
-
         var matrixJSON = model.get('matrix');
-        console.log(matrixJSON);
+       if(matrixJSON==undefined) return;
 
         var matrix = eval('('+matrixJSON +')');
        var data = new google.visualization.DataTable();
@@ -395,8 +501,6 @@ var ProjectDashboardStats = Backbone.View.extend({
                     } else if(j==0) {
                         //first column
                         var idTerm = matrix[indx][j];
-                        console.log(idTerm);
-                        console.log(terms);
                         var term = terms.get(idTerm);
                         data.setCell(i, j,term.get('name'));
                     } else if(j==matrix[indx].length-1) {
@@ -433,10 +537,12 @@ var ProjectDashboardStats = Backbone.View.extend({
    drawWorstTermPieChart : function (model, response, terms) {
       $("#worstTermprojectPieChart").empty();
       var dataJSON = model.get('worstTerms');
-      console.log(dataJSON);
+       if(dataJSON==undefined) {
+           $("#worstTermPieChartPanel").hide();
+           return;
+       }
 
         //var worstTerm = eval('('+dataJSON +')');
-      console.log("drawWorstTermPieChart:"+dataJSON.length);
       // Create and populate the data table.
       var data = new google.visualization.DataTable();
       data.addColumn('string', 'Term');
@@ -447,8 +553,6 @@ var ProjectDashboardStats = Backbone.View.extend({
          colors.push(dataJSON[i].color);
          data.setValue(i,0, dataJSON[i].name);
          data.setValue(i,1, dataJSON[i].rate);
-         console.log(dataJSON[i]);
-         console.log(dataJSON[i].color);
        }
       var width = Math.round($(window).width()/2 - 75);
       // Create and draw the visualization.
@@ -485,6 +589,10 @@ var ProjectDashboardStats = Backbone.View.extend({
     drawWorstAnnotationsTable : function (model, response,terms, annotations) {
         console.log("drawWorstAnnotationsTable");
         var annotationsTerms = model.get('worstAnnotations');
+         if(annotationsTerms==undefined) {
+             $("#worstAnnotationPanel").hide();
+             return;
+         }
         var self = this;
         require([
             "text!application/templates/dashboard/SuggestedAnnotationTerm.tpl.html"],
@@ -499,7 +607,6 @@ var ProjectDashboardStats = Backbone.View.extend({
                             var annotationTerm = annotationsTerms[i];
                             var rate = Math.round(annotationTerm.rate*100)-1+"%";
                             var annotation = annotations.get(annotationTerm.annotation);
-                            console.log("suggestedTerm="+annotationTerm.expectedTerm);
                             var suggestedTerm = terms.get(annotationTerm.term).get('name');
                             var termsAnnotation = terms.get(annotationTerm.expectedTerm).get('name');
 //                            _.each(annotation.get('term'), function(idTerm){ realTerms.push(terms.get(idTerm).get('name')); });
@@ -514,8 +621,49 @@ var ProjectDashboardStats = Backbone.View.extend({
                         }
                     }
                 );
+    },
+    drawAVGEvolution : function (model, response) {
+        // Create and populate the data table.
+        var evolution = model.get('evolution');
+        if(evolution==undefined) {
+            $("#avgEvolutionLineChartPanel").hide();
+            return;
+        }
+        var data = new google.visualization.DataTable();
+        data.addColumn('date', 'Date');
+        data.addColumn('number', 'Success rate');
+//        var date1 = new Date();
+//        date1.setTime(1325576699000);
+//        var date2 = new Date(2012, 0, 10);
+//        var date3 = new Date(2012, 0, 15);
+//        var date4 = new Date(2012, 1, 10);
+
+        for(var i=0;i<evolution.length;i++) {
+            var date = new Date();
+            date.setTime(evolution[i].date);
+            data.addRow([date, evolution[i].avg]);
+        }
+//        data.addRow([date1, 60]);
+//        data.addRow([date2, 70]);
+//        data.addRow([date3, 72]);
+//        data.addRow([date4, 79]);
+//        data.addRow([new Date(2012, 0, 1), 10]);
+//        data.addRow([new Date(2012, 0, 10), 15]);
+//        data.addRow([new Date(2012, 0, 15), 40]);
+//        data.addRow([new Date(2012, 1, 10), 50]);
+
+         var width = Math.round($(window).width()/2 - 75);
+        // Create and draw the visualization.
+        var chart = new google.visualization.AreaChart(
+            document.getElementById('avgEvolutionLineChart'));
+        chart.draw(data, {title: '',
+                          width: width, height: 350,
+                          vAxis: {title: "Success rate"},
+                          hAxis: {title: "Time"},
+                          backgroundColor : "whiteSmoke",
+                          lineWidth: 1}
+                  );
+        //          draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
     }
-
-
     //drawWorstAnnotationsTable
 });

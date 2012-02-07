@@ -23,11 +23,67 @@ var StatsModel = Backbone.Model.extend({
 });
 
 
-var StatsRetrievalSuggestionModel = Backbone.Model.extend({
-
+var StatsRetrievalSuggestionAVGModel = Backbone.Model.extend({
 	url : function() {
         if (this.project != undefined) {
-            return "api/project/" + this.project + "/stats/retrievalsuggestion.json";
+            return "api/project/" + this.project + "/stats/retrieval/avg.json";
+        }
+	},
+    initialize: function (options) {
+        this.project = options.project;
+    }
+});
+
+var StatsRetrievalSuggestionMatrixModel = Backbone.Model.extend({
+	url : function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/stats/retrieval/confusionmatrix.json";
+        }
+	},
+    initialize: function (options) {
+        this.project = options.project;
+    }
+});
+
+var StatsRetrievalSuggestionWorstTermModel = Backbone.Model.extend({
+	url : function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/stats/retrieval/worstTerm.json";
+        }
+	},
+    initialize: function (options) {
+        this.project = options.project;
+    }
+});
+
+var StatsRetrievalSuggestionWorstTermWithSuggest = Backbone.Model.extend({
+	url : function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/stats/retrieval/worstTermWithSuggest.json";
+        }
+	},
+    initialize: function (options) {
+        this.project = options.project;
+    }
+});
+
+
+
+var StatsRetrievalSuggestionWorstAnnotationModel = Backbone.Model.extend({
+	url : function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/stats/retrieval/worstAnnotation.json";
+        }
+	},
+    initialize: function (options) {
+        this.project = options.project;
+    }
+});
+
+var StatsRetrievalSuggestionEvolutionModel = Backbone.Model.extend({
+	url : function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/stats/retrieval/evolution.json";
         }
 	},
     initialize: function (options) {

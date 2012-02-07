@@ -99,6 +99,28 @@ class UrlMappings {
             action = [GET:"lastAction"]
         }
 
+        "/api/project/$id/stats/retrieval/avg"(controller:"stats"){
+            action = [GET:"statRetrievalAVG"]
+        }
+        "/api/project/$id/stats/retrieval/confusionmatrix"(controller:"stats"){
+            action = [GET:"statRetrievalConfusionMatrix"]
+        }
+        "/api/project/$id/stats/retrieval/worstTerm"(controller:"stats"){
+            action = [GET:"statRetrievalWorstTerm"]
+        }
+        "/api/project/$id/stats/retrieval/worstTermWithSuggest"(controller:"stats"){
+            action = [GET:"statWorstTermWithSuggestedTerm"]
+        }
+
+
+        "/api/project/$id/stats/retrieval/worstAnnotation"(controller:"stats"){
+            action = [GET:"statRetrievalWorstAnnotation"]
+        }
+
+        "/api/project/$id/stats/retrieval/evolution"(controller:"stats"){
+            action = [GET:"statRetrievalEvolution"]
+        }
+
         "/api/image/$idabstractimage/group/$idgroup"(controller:"restAbstractImageGroup"){
             action = [GET:"show",DELETE:"delete",POST:"add"]
         }
@@ -128,24 +150,6 @@ class UrlMappings {
         "/api/annotation/$idannotation/retrieval"(controller:"restRetrieval"){
             action = [GET:"listSimilarAnnotationAndBestTerm",POST:"index"]
         }
-
-        "/api/annotation/term/suggest"(controller:"restSuggestedTerm"){
-            action = [GET:"list"]
-        }
-        "/api/annotation/$idannotation/term/suggest"(controller:"restSuggestedTerm"){
-            action = [GET:"list",POST:"add"]
-        }
-        "/api/annotation/$idannotation/term/$idterm/job/$idjob/suggest"(controller:"restSuggestedTerm"){
-            action = [GET:"show", DELETE:"delete"]
-        }
-
-        "/api/project/$idproject/annotation/term/suggest"(controller:"restSuggestedTerm"){
-            action = [GET:"worstAnnotation"]
-        }
-        "/api/project/$idproject/term/suggest"(controller:"restSuggestedTerm"){
-            action = [GET:"worstTerm"]
-        }
-
 
         "/api/term/$id/ontology"(controller:"restOntology"){
             action = [GET:"listByTerm"]
