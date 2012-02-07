@@ -30,7 +30,7 @@ class UploadController {
     def image = {
         println "UPLOAD REQUESTED"
         User currentUser = User.read(springSecurityService.principal.id)
-        def f = request.getFile('file')
+        def f = request.getFile('files[]')
         if (!f.empty) {
             println "not empty"
             def ext = getExtensionFromFilename(f.originalFilename)
@@ -38,7 +38,8 @@ class UploadController {
             tmpFile.deleteOnExit()
             f.transferTo(tmpFile)
             println "Tmp file created " + tmpFile.getPath()
-            def aimage = new AbstractImage(
+
+            /*def aimage = new AbstractImage(
                     filename: f.originalFilename,
                     scanner: Scanner.list().first(),
                     slide: Slide.list().first(),
@@ -58,18 +59,19 @@ class UploadController {
                 aimage.errors.each {
                     println it
                 }
-            }
+            }   */
         }
         else {
             response.status = 400;
             render ""
         }
 
-        def response = [:]
-        response.status = 200;
-        response.name = f.originalFilename
-        response.size = f.size
-        response.type = f.contentType
+        def content = [:]
+        content.status = 200;
+        content.name = f.originalFilename
+        content.size = f.size
+        content.type = f.contentType
+        def response = [content]
         render response as JSON
     }
 }

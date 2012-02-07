@@ -19,17 +19,17 @@ class RequestFilters {
                 if(actionName.equals("crop")) return
                 request.currentTime = System.currentTimeMillis()
                 String strParam =""
-                params.each{
+                /*params.each{
                     if(!it.key.equals('action') && !it.key.equals('controller')) {
                         String value = new String(it.value)
                         value = value.substring(0,Math.min(200, value.length()))
                         strParam = strParam +"<" + it.key +':'+ value +'>; '
                     }
-                }
+                }*/
                 String strPost = ""
                 try {
                     strPost = request.JSON
-                    strPost = strPost.substring(0,Math.min(400, strPost.length()))
+                    strPost = strPost.substring(0,Math.min(200, strPost.length()))
                 } catch(Exception e) {}
                 String requestInfo = "| PARAM="+strParam + "| POST=" + strPost + " | "
                 String userInfo = ""

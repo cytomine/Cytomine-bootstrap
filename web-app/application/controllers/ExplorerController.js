@@ -21,6 +21,11 @@ var ExplorerController = Backbone.Router.extend({
           }
        },
        browse : function (idProject, idImage, idAnnotation) {
+          /*
+          if (window.app.secondaryWindow) {
+            window.app.secondaryWindow.location = window.location;
+          }
+          */
           var self = this;
           this.initTabs();
           var createBrowseImageViewTab = function() {

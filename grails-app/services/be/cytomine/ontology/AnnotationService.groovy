@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.hibernate.FetchMode
 import be.cytomine.command.Transaction
 import be.cytomine.social.SharedAnnotation
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 
 class AnnotationService extends ModelService {
 
@@ -306,6 +307,13 @@ class AnnotationService extends ModelService {
         }
     }
 
+    //experimental
+    private def simplifyPolygonPreserving(String geometryString) {
+        Geometry geometry = new WKTReader().read(geometryString);
+        TopologyPreservingSimplifier tps = new TopologyPreservingSimplifier(geometry)
+        return [geometry: tps.getResultGeometry(), rate: 0]
+
+    }
 
     private def simplifyPolygon(String form) {
 

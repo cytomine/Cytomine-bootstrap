@@ -46,6 +46,7 @@ grails.converters.json.default.deep = false
 //grails.converters.xml.date = "javascript"
 grails.converters.default.pretty.print = true
 
+
 // enable Sitemesh preprocessing of GSP pages
 grails.views.gsp.sitemesh.preprocess = true
 // scaffolding templates configuration
@@ -72,7 +73,7 @@ environments {
         grails.serverURL = "http://localhost:8080"
     }
     test {
-        grails.serverURL = "http://localhost:8090"
+        grails.serverURL = "http://localhost:8080"
         grails.plugins.springsecurity.useBasicAuth = true
     }
 
@@ -113,7 +114,8 @@ log4j = {
             'net.sf.ehcache.hibernate',
             'org.hibernate.engine.StatefulPersistenceContext.ProxyWarnLog'
 
-    debug 'org.codehaus.groovy.grails.plugins.springsecurity.AnnotationFilterInvocationDefinition'
+    error 'org.codehaus.groovy.grails.plugins.springsecurity'
+
     info   'be.cytomine' ,'org.hibernate'
 
 

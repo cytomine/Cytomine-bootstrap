@@ -18,15 +18,23 @@ import java.awt.image.BufferedImage
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.test.Infos
+import org.springframework.web.multipart.MultipartHttpServletRequest
+import org.springframework.web.multipart.MultipartFile
+import javax.imageio.ImageIO
+import ij.ImagePlus
+
+import com.vividsolutions.jts.geom.CoordinateFilter
 
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
  * Date: 18/05/11
  */
+
 class RestImageInstanceController extends RestController {
 
     def segmentationService
+    def imageProcessingService
     def imageInstanceService
     def projectService
     def abstractImageService
@@ -184,7 +192,7 @@ class RestImageInstanceController extends RestController {
 
     def cropmask = {
         Annotation annotation = Annotation.read(params.annotation)
-         if (!annotation) {
+        if (!annotation) {
             responseNotFound("Annotation", params.annotation)
         }
         Term term = Term.read(params.term)
@@ -216,6 +224,34 @@ class RestImageInstanceController extends RestController {
                 log.error("GetThumb:" + e);
             }
         }
+    }
+
+
+
+    def putMask = {
+        //Load request attachment
+        MultipartFile uploadedFile = ((MultipartHttpServletRequest)request).getFile('mask')
+        ImagePlus original = new ImagePlus("ori", ImageIO.read ( new ByteArrayInputStream ( uploadedFile.getBytes() )))
+        ImagePlus copy = new ImagePlus("copy", ImageIO.read ( new ByteArrayInputStream ( uploadedFile.getBytes() )))
+
+        //Extract params
+        double scale = Integer.parseInt(params.w) / original.getWidth()
+
+        // Get polygons
+        Collection<Coordinate[]> components = imageProcessingService.getConnectedComponents(original, copy, 500)
+        String[] polygons = new String[components.size()]
+        int i = 0
+        components.each { coordinates ->
+            coordinates.each { coordinate ->
+                coordinate.y = original.getHeight() - coordinate.y
+                coordinate.x = coordinate.x * scale
+                coordinate.y = coordinate.y * scale
+
+            }
+            polygons[i] = imageProcessingService.getWKTPolygon(coordinates)
+            i++
+        }
+        response(["polygons" : polygons])
     }
 
 }

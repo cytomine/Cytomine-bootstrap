@@ -244,7 +244,7 @@ class RestAnnotationController extends RestController {
                 ImageInstance image = ImageInstance.read(json.image)
                 if(image) json.project = image.project.id
             }
-            if(!json.project || !Project.read(json.project)) throw new WrongArgumentException("Annotation must have a valide project:"+json.project)
+            if(!json.project || !Project.read(json.project) || json.location == null || json.location == "null") throw new WrongArgumentException("Annotation must have a valide project:"+json.project)
             log.info "json.project="+json.project
             annotationService.checkAuthorization(Long.parseLong(json.project.toString()))
             def result = annotationService.add(json)

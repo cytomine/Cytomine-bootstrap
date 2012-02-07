@@ -300,20 +300,20 @@ var OntologyPanelView = Backbone.View.extend({
       var self = this;
 
       self.$buttonAddTerm.button({
-         icons : {secondary: "ui-icon-plus" }
+         /*icons : {secondary: "ui-icon-plus" }*/
       });
       self.$buttonEditTerm.button({
-         icons : {secondary: "ui-icon-pencil" }
+         /*icons : {secondary: "ui-icon-pencil" }*/
       });
       self.$buttonDeleteTerm.button({
-         icons : {secondary: "ui-icon-trash" }
+         /*icons : {secondary: "ui-icon-trash" }*/
       });
 
       self.$buttonEditOntology.button({
-         icons : {secondary: "ui-icon-pencil" }
+         /*icons : {secondary: "ui-icon-pencil" }*/
       });
       self.$buttonDeleteOntology.button({
-         icons : {secondary: "ui-icon-trash" }
+         /*icons : {secondary: "ui-icon-trash" }*/
       });
 
 

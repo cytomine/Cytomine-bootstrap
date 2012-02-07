@@ -18,16 +18,16 @@
 
     <!-- Styles -->
 
-    <link rel='stylesheet' href='css/custom-theme/jquery-ui-1.8.7.custom.css' type='text/css'/>
+    <link rel='stylesheet' href='css/bootstrap/jquery-ui-1.8.16.custom.css' type='text/css'/>
     <link rel='stylesheet' href='lib/ui.panel/ui.panel.css' type='text/css'/>
     <link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
-    <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
     <link rel="stylesheet" href="lib/bootstrap-1.3/bootstrap.min.css">
     <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
+    <link rel='stylesheet' href='lib/fileupload2/jquery.fileupload-ui.css' type='text/css'/>
 
     <!-- JQuery & JQuery UI -->
-    <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+    <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 
     <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
@@ -47,10 +47,11 @@
         <script type="text/javascript" src="lib/underscore.js"></script>
         <script type="text/javascript" src="lib/backbone.js"></script>
 
-        <!-- Modules -->
-        <script type="text/javascript" src="lib/fileupload/jquery.fileupload-ui.js"></script>
-        <script type="text/javascript" src="lib/fileupload/jquery.fileupload.js"></script>
-
+        <!-- fileupload -->
+        <script type="text/javascript" src="lib/fileupload2/vendor/jquery.ui.widget.js"></script>
+        <script type="text/javascript" src="lib/fileupload2/jquery.iframe-transport.js"></script>
+        <script type="text/javascript" src="lib/fileupload2/jquery.fileupload.js"></script>
+        <script type="text/javascript" src="lib/fileupload2/cors/jquery.xdr-transport.js"></script>
 
 
         <script src="lib/dynatree/jquery.dynatree.js" type="text/javascript"></script>

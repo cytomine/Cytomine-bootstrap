@@ -13,46 +13,44 @@ import ij.ImagePlus
 import ij.process.ImageConverter
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
+import ij.process.ImageProcessor
+import ij.IJ
 
 class ProcessingController extends RestController {
 
+    def imageProcessingService
     def sessionFactory
 
-    private static def ROI_SIZE = 250 //MAX CVT IN IIP CONFIG FILE !
-    private static def BLACK = 0
-    private static def WHITE = 255
+    private static def ROI_SIZE = 750 //MAX ALLOWED SIZE IS MAX CVT IN IIP CONFIG FILE !
 
     def detect = {
-        int shift = ProcessingController.ROI_SIZE / 2
+        int middleROI = ProcessingController.ROI_SIZE / 2
         def idImage = Integer.parseInt(params.image)
         AbstractImage image = ImageInstance.read(idImage).getBaseImage()
-        def y = image.getHeight() - Math.round(Double.parseDouble(params.y)) + shift
-        def x = Math.round(Double.parseDouble(params.x)) - shift
-        def url = image.getCropURL((int) x, (int) y, (int) shift * 2, (int) shift * 2)
-        println url
-        ImagePlus ip = getImage(url)
-        def coordinates = computeCoordinates(ip, shift, shift, x, y)
-        Geometry geometry = new GeometryFactory().buildGeometry(new LinkedList<Coordinate>()) //EMPTY GEOMETRY
-        if (coordinates != null) {
-            ConvexHull convexHull = new ConvexHull(coordinates, new GeometryFactory())
-            geometry = convexHull.getConvexHull()
-            println "geometry" + geometry.geometryType
+        int shiftY = image.getHeight() - Math.round(Double.parseDouble(params.y)) + middleROI
+        int shiftX = Math.round(Double.parseDouble(params.x)) - middleROI
+        def url = image.getCropURL((int) shiftX, (int) shiftY, ProcessingController.ROI_SIZE, ProcessingController.ROI_SIZE)
+        ImagePlus ori = getImage(url)
+        Coordinate[] coordinates = imageProcessingService.doWand(ori, middleROI, middleROI, 4, null)
+        coordinates.each { coordinate ->
+            coordinate.x = shiftX + coordinate.x
+            coordinate.y = shiftY - coordinate.y
         }
+        String polygon = imageProcessingService.getWKTPolygon(coordinates)
         def result = [:]
-        result.geometry = geometry.toString()
+        result.geometry = polygon
         render result as JSON
     }
 
     def show = {
-        int shift = ProcessingController.ROI_SIZE / 2
+        int middleROI = ProcessingController.ROI_SIZE / 2
         def idImage = Integer.parseInt(params.image)
         AbstractImage image = ImageInstance.read(idImage).getBaseImage()
-        def y = image.getHeight() - Math.round(Double.parseDouble(params.y)) + shift
-        def x = Math.round(Double.parseDouble(params.x)) - shift
-        def url = image.getCropURL((int) x, (int) y, (int) shift * 2, (int) shift * 2)
+        def y = image.getHeight() - Math.round(Double.parseDouble(params.y)) + middleROI
+        def x = Math.round(Double.parseDouble(params.x)) - middleROI
+        def url = image.getCropURL((int) x, (int) y, (int) ProcessingController.ROI_SIZE, (int) ProcessingController.ROI_SIZE)
         println url
         ImagePlus ip = getImage(url)
-        //computeCoordinates(ip, shift,shift,x,y)
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(ip.getBufferedImage(), "jpg", baos);
         byte[] bytesOut = baos.toByteArray();
@@ -96,57 +94,6 @@ class ProcessingController extends RestController {
         points
     }
 
-    private def isInROI(ImagePlus ip, x, y) {
-        return (x >= 0 && x < ip.getWidth() && y >= 0 && y < ip.getHeight())
-    }
 
-    private def computeCoordinates(ImagePlus ip, int x, int y, long topLeftX, long topLeftY) {
-        int[] firstPixel = ip.getPixel(x, y)
-        if (firstPixel[0] == WHITE) { //pixel is white, nothing to do
-            return null
-        }
-        Stack<Coordinate> toVisit = new Stack<Coordinate>()
-        List<Coordinate> visited = new LinkedList<Coordinate>()
-        toVisit.push(new Coordinate(x, y))
-        ip.getProcessor().putPixel(x, y, 255)
-        assert (ip.getProcessor().getPixel((int) x, (int) y) == WHITE)
-        while (!toVisit.empty()) {
-            Coordinate point = toVisit.pop()
-            visited.push(new Coordinate(topLeftX + point.x, topLeftY - point.y)) //compute the real coordinate, not relative to the crop
-
-            int posX
-            int posY
-
-            int[] xShifts = [-1, 0, 1,
-                    -1, 1,
-                    -1, 0, 1]
-
-            int[] yShifts = [-1, -1, -1,
-                    0, 0,
-                    1, 1, 1]
-
-            assert (xShifts.size() == yShifts.size())
-            for (int i = 0; i < xShifts.size(); i++) {
-                posX = (int) point.x + xShifts[i]
-                posY = (int) point.y + yShifts[i]
-                if (isInROI(ip, posX, posY) && ip.getProcessor().getPixel(posX, posY) != WHITE) {
-                    ip.getProcessor().putPixel(posX, posY, WHITE)
-                    toVisit.push(new Coordinate(posX, posY))
-                }
-            }
-        }
-        /* Draw the detected region */
-        /*for (int i = 0; i < ip.getWidth(); i++) {
-                for (int j = 0; j < ip.getHeight(); j++)
-                    ip.getProcessor().putPixel(i, j, 255)
-        }
-        visited.each { point ->
-            ip.getProcessor().putPixel(point.x, point.y , 125)
-        }*/
-        //return to coordinates array
-        Coordinate[] coordinates = new Coordinate[visited.size()]
-        visited.toArray(coordinates)
-        coordinates
-    }
 
 }

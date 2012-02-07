@@ -12,6 +12,11 @@ import javax.servlet.FilterChain
 import javax.servlet.ServletResponse
 import javax.servlet.ServletRequest
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import javax.servlet.http.HttpServletRequestWrapper
+import org.springframework.web.multipart.MultipartHttpServletRequest
+import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest
+
+
 
 class APIAuthentificationFilters implements javax.servlet.Filter {
 
@@ -29,30 +34,29 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
     /**
      * http://code.google.com/apis/storage/docs/reference/v1/developer-guidev1.html#authentication
      */
-    private void tryAPIAuthentification(HttpServletRequest request, HttpServletResponse response) {
-
+    private boolean tryAPIAuthentification(HttpServletRequest request, HttpServletResponse response) {
         String authorization = request.getHeader("authorization")
-
         if (request.getHeader("date") == null) {
             //println "Date Header Must be set"
-            return
+            return false
         }
         if (request.getHeader("host") == null) {
-            println "Host Header Must be set"
-            return
+            //println "Host Header Must be set"
+            return false
         }
         if (authorization == null) {
-            println "Authorization Header must be set"
-            return
+            //println "Authorization Header must be set"
+            return false
         }
         if (!authorization.startsWith("CYTOMINE") || !authorization.indexOf(" ") == -1 || !authorization.indexOf(":") == -1) {
-            println "Authorization Header is not valid"
-            return
+            //println "Authorization Header is not valid"
+            return false
         }
         try {
 
             String content_md5 = (request.getHeader("content-MD5") != null) ? request.getHeader("content-MD5") : ""
             String content_type = (request.getHeader("content-type") != null) ? request.getHeader("content-type") : ""
+            content_type = (request.getHeader("Content-Type") != null) ? request.getHeader("Content-Type") : content_type
             String date = (request.getHeader("date") != null) ? request.getHeader("date") : ""
             String canonicalHeaders = request.getMethod() + "\n" + content_md5 + "\n" + content_type + "\n" + date + "\n"
             String canonicalExtensionHeaders = ""
@@ -66,8 +70,7 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
             String authorizationSign = authorization.substring(authorization.indexOf(":") + 1)
             SecUser user = SecUser.findByPublicKey(accessKey)
             if (!user) {
-                println "No private key associated with this public key:"+accessKey
-                return
+                return false
             }
             String key = user.getPrivateKey()
             SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), "HmacSHA1")
@@ -81,16 +84,21 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
             signature = new String(signatureBytes)
             if (authorizationSign == signature) {
                 SpringSecurityUtils.reauthenticate user.getUsername(), null
+                return true
+            } else {
+                return false
             }
+
         } catch (Exception e) {
             e.printStackTrace()
+            return false
         }
+        return false
     }
 
     def filters = {
         all(uri:'/api/**') {
             before = {
-
             }
             after = {
 

@@ -95,6 +95,10 @@ div .popupPanel {
 
 }
 
+div .popupPanel a {
+    color: #26b4e3;
+}
+
 
 
 div .zoomInfoPanel {
@@ -217,11 +221,7 @@ div.ontologypanel > .tree > li > span.dynatree-selected a
 }
 
 
-.tabs-bottom { position: relative; background-color: transparent;}
-.tabs-bottom .ui-tabs-panel { height : 225px; overflow: auto; }
-.tabs-bottom .ui-tabs-nav { position: absolute !important; left: 0; bottom: 0; right:0; padding: 0 0em 0em 0; }
-.tabs-bottom .ui-tabs-nav li { margin-top: 0px !important; margin-bottom: 0px !important; border-top: none; border-bottom-width: 0px; }
-.ui-tabs-selected { margin-top: 0px !important; }
+
 
 div .ontologypanel a {
     color : #fff;
@@ -346,12 +346,24 @@ label.ui-corner-all {
 }
 
 .bigModal {
-    width:800px;
+    width:700px;
     margin-left:-400px;
 }
 
 .xbigModal {
-    width:900px;
+    width:800px;
     margin-left:-450px;
 }
 
+/* Override JQuery tabs spacing */
+/*.tabs-bottom { position: relative; background-color: transparent;}*/
+.tabs-bottom .ui-tabs-panel { height : 225px; overflow: auto; }
+/*.tabs-bottom .ui-tabs-nav { position: absolute !important; left: 0; bottom: 0; right:0; padding: 0 0em 0em 0; }
+.tabs-bottom .ui-tabs-nav li { margin-top: 0px !important; margin-bottom: 0px !important; border-top: none; border-bottom-width: 0px; }*/
+.ui-tabs-selected { margin-top: 0px !important; }
+.ui-tabs .ui-tabs-panel { display: block; border-width: 0; padding: 0em 0em; background: none; }
+.ui-tabs { position: relative; padding: 0; zoom: 1; border:0px;} /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+
+span .ui-icon {
+    display: inline;
+}

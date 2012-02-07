@@ -138,7 +138,7 @@ class ImageInstance extends CytomineDomain {
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null
 
-            try {returnArray['thumb'] = it.baseImage ? it.baseImage.getThumbURL() : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
+            
             returnArray['filename'] = it.baseImage ? it.baseImage.filename : null
 
             if (it.slideId) returnArray['slide'] = it.slideId
@@ -158,7 +158,9 @@ class ImageInstance extends CytomineDomain {
             //returnArray['info'] = it.baseImage.slide?.name
             //returnArray['annotations'] = it.annotations
             // returnArray['thumb'] = it.baseImage.getThumbURL()
-            returnArray['preview'] = it.baseImage ? it.baseImage.getPreviewURL() : null
+            //returnArray['preview'] = it.baseImage ? it.baseImage.getPreviewURL() : null
+			try {returnArray['preview'] = it.baseImage ? UrlApi.getPreviewURLWithImageId(it.baseImage.id) : null} catch (Exception e) {returnArray['preview'] = 'NO preview:' + e.toString()}
+			try {returnArray['thumb'] = it.baseImage ? UrlApi.getThumbURLWithImageId(it.baseImage.id) : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
             //returnArray['thumb'] = UrlApi.getThumbURLWithImageId(it.id)
             returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.baseImage.id)
 

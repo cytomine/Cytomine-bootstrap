@@ -322,7 +322,7 @@ var BrowseImageView = Backbone.View.extend({
             self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
             self.initOntology();
             //Set the height of the map manually
-            var paddingTop = 71;
+            var paddingTop = 79;
             var height = $(window).height() - paddingTop;
             $("#map"+self.model.get('id')).css("height",height);
             $(window).resize(function() {
@@ -457,10 +457,10 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('button[name=delete]').button();
         toolbar.find('button[name=ruler]').button();
         toolbar.find('input[id^=ruler]').button({
-            text: true,
+            text: true/*,
             icons: {
                 secondary: "ui-icon-arrow-2-ne-sw"
-            }
+            }*/
         });
         toolbar.find('input[name=rotate]').button();
         toolbar.find('input[name=resize]').button();

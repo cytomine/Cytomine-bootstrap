@@ -1,17 +1,40 @@
 <div class="container-fluid">
     <div class="hero-unit">
-        <h2>Upload</h2>
-        <div class='main upload'>
-            <div style="padding: 10px;">
-                <form id="file_upload" action="upload/image" method="POST" enctype="multipart/form-data">
-                    <input type="file" name="file" multiple>
-                    <button>Upload</button>
-                    <div>Select files</div>
-                </form>
-                <button id="start_uploads"  class="btn">Start uploads</button>
-                <hr />
-                <ul id="files"></ul>
-            </div>
+        <div class="page-header">
+            <h2>Upload</h2>
         </div>
+        <br>
+        <form id="fileupload" action="upload/image" method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <div class="span16 fileupload-buttonbar">
+                    <div class="progressbar fileupload-progressbar fade"><div style="width:0%;"></div></div>
+                <span class="btn success fileinput-button">
+                    <span>Add files...</span>
+                    <input type="file" name="files[]" multiple>
+                </span>
+                    <button type="submit" class="btn primary start">Start upload</button>
+                    <button type="reset" class="btn info cancel">Cancel upload</button>
+                    <button type="button" class="btn danger delete">Delete selected</button>
+                    <input type="checkbox" class="toggle">
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="span16">
+                       <table class="zebra-striped"><tbody class="files-list"></tbody></table>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
+
+<script>
+    var fileUploadErrors = {
+        maxFileSize: 'File is too big',
+        minFileSize: 'File is too small',
+        acceptFileTypes: 'Filetype not allowed',
+        maxNumberOfFiles: 'Max number of files exceeded',
+        uploadedBytes: 'Uploaded bytes exceed file size',
+        emptyResult: 'Empty file upload result'
+    };
+</script>

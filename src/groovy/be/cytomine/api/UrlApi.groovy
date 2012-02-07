@@ -35,6 +35,10 @@ class UrlApi {
         return ConfigurationHolder.config.grails.serverURL + "/api/image/"+idImage+"/thumb.jpg"
     }
 
+    static def getPreviewURLWithImageId(Long idImage) {
+        return ConfigurationHolder.config.grails.serverURL + "/api/image/"+idImage+"/preview.jpg"
+    }
+
     static def getMetadataURLWithImageId(Long idImage) {
         return ConfigurationHolder.config.grails.serverURL + "/api/image/"+idImage+"/metadata.json"
     }

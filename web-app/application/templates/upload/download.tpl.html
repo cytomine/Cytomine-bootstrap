@@ -1,0 +1,22 @@
+<% for (var i=0, files=o.files, l=files.length, file=files[0]; i< files.length; file=files[++i]) { %>
+<tr class="template-download fade">
+    <% if (file.error) { %>
+    <td></td>
+    <td class="name"><%=file.name%></td>
+    <td class="size"><%=o.formatFileSize(file.size)%></td>
+    <td class="error" colspan="2"><span class="label important">Error</span> <%=fileUploadErrors[file.error] || file.error%></td>
+    <% } else { %>
+    <td class="preview"></td>
+    <td class="name">
+        <%=file.name%>
+    </td>
+    <td class="size"><%=o.formatFileSize(file.size)%></td>
+    <td colspan="2"></td>
+    <% } %>
+    <td class="delete">
+        <button class="btn danger" data-type="<%=file.delete_type%>" data-url="<%=file.delete_url%>">Delete</button>
+        <input type="checkbox" name="delete" value="1">
+    </td>
+</tr>
+
+<% } %>

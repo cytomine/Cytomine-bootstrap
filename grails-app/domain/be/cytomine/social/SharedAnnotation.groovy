@@ -19,7 +19,7 @@ class SharedAnnotation extends CytomineDomain {
     }
     
     String toString() {
-        "Annotation shared from " + from.toString() + " to " + to.toString()
+        "Annotation " + annotation + " shared by " + sender
     }
 
     static void registerMarshaller() {

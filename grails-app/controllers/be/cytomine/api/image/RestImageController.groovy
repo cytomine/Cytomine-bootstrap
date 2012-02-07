@@ -102,6 +102,15 @@ class RestImageController extends RestController {
         }
     }
 
+    def preview = {
+        AbstractImage image = AbstractImage.read(params.long('id'))
+        try {
+            responseImage(image.getPreviewURL())
+        } catch (Exception e) {
+            log.error("GetThumb:" + e);
+        }
+    }
+
     def crop = {
         Annotation annotation = Annotation.read(params.id)
         def zoom
