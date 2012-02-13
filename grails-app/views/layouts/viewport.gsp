@@ -158,6 +158,7 @@
 
         <script type="text/javascript" src="application/views/annotation/AnnotationListView.js" ></script>
         <script type="text/javascript" src="application/views/annotation/AnnotationRetrievalView.js" ></script>
+          <script type="text/javascript" src="application/views/annotation/AnnotationQuestionableView.js" ></script>
 
 
         <script type="text/javascript" src="application/views/utils/CrudGridView.js" ></script>

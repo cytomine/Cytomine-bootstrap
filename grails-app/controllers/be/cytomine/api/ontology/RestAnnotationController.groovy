@@ -104,7 +104,16 @@ class RestAnnotationController extends RestController {
         if (term == null) responseNotFound("Term", params.idterm)
         if (project == null) responseNotFound("Project", params.idproject)
         log.info "annotationService.list: " + project + " # " + term + " # " + userList
-        def annotationFromTermAndProject = annotationService.list(project, term, userList)
+        def annotationFromTermAndProject=[]
+        if(!params.suggestTerm) {
+            log.info "params.suggestTerm="+params.suggestTerm
+            annotationFromTermAndProject = annotationService.list(project, term, userList)
+        }
+        else {
+            log.info "params.suggestTerm="+params.suggestTerm
+            Term suggestedTerm = termService.read(params.suggestTerm)
+            annotationFromTermAndProject = annotationService.list(project, userList, term, suggestedTerm)
+        }
         responseSuccess(annotationFromTermAndProject)
     }
 

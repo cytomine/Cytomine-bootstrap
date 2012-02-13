@@ -425,7 +425,25 @@ var ProjectDashboardStats = Backbone.View.extend({
                                     //console.log(entry[i]);
                                     for(var propertyName in entry[i]) {
                                         if(propertyName!=term.id) {
-                                             $("#list-suggest-"+term.id).append("<b>"+terms.get(propertyName).get('name') + "</b> ("+entry[i][propertyName] + "%) ");
+                                            var elemId =  "term" + term.id + "suggest"+ propertyName;
+                                            console.log("elemId="+elemId);
+                                             $("#list-suggest-"+term.id).append("<a id=\""+elemId+ "\"><b>"+terms.get(propertyName).get('name') + "</b> ("+entry[i][propertyName] + "%) </a>");
+                                            console.log("elemId action="+elemId + " " + $("#"+elemId).length);
+
+
+
+
+
+
+                                            self.linkAnnotationMapWithBadTerm( $("#"+elemId),term.id,propertyName,terms);
+
+//                                            $("#"+elemId).click(function() {
+//                                                var idTerm = term.id;
+//                                                var idTermSuggest = propertyName;
+//                                                //alert('elemId='+elemId);
+//                                                 alert('Click term ' + terms.get(idTerm).get('name') + " suggest " + terms.get(idTermSuggest).get('name'));
+//                                            });
+
                                             console.log(entry[i][propertyName]);
                                         } else {
                                               $("#success-suggest-"+term.id).html("");
@@ -444,6 +462,29 @@ var ProjectDashboardStats = Backbone.View.extend({
                             });
                     }
                 );
+    },
+    linkAnnotationMapWithBadTerm: function($item, term, suggestTerm, terms) {
+        var self = this;
+        $item.click(function() {
+
+            $('#annotationQuestionable').replaceWith("");
+            $("#annotationQuestionableMain").empty();
+            $("#annotationQuestionableMain").append("<div id=\"annotationQuestionable\"></div>");
+
+           new AnnotationCollection({project:self.model.get('id'),term:term, suggestTerm:suggestTerm}).fetch({
+             success : function(collection, response) {
+                    var panel = new AnnotationQuestionableView({
+                        model : collection,
+                        container : self,
+                        el : "#annotationQuestionable",
+                        terms : terms,
+                        term : term,
+                        suggestTerm : suggestTerm
+                    }).render();
+
+             }
+          });
+       });
     },
     initMatrixDialog: function(terms) {
         var self = this;
@@ -466,7 +507,7 @@ var ProjectDashboardStats = Backbone.View.extend({
     },
    drawRetrievalSuggestionTable: function(model, response, terms){
       var self = this;
-
+       var visualization = new google.visualization.Table(document.getElementById('userRetrievalSuggestMatrixDataTable'));
         var matrixJSON = model.get('matrix');
        if(matrixJSON==undefined) return;
 
@@ -525,7 +566,19 @@ var ProjectDashboardStats = Backbone.View.extend({
              }
        }
        var width = Math.round($(window).width() - 75);
-      var visualization = new google.visualization.Table(document.getElementById('userRetrievalSuggestMatrixDataTable'));
+      google.visualization.events.addListener(visualization, 'select', function() {
+                console.log(visualization.getSelection());
+                  var selection  = visualization.getSelection();
+                  for (var i = 0; i < selection.length; i++) {
+                        var item = selection[i];
+                        console.log("item.row="+item.row +" item.column="+item.column);
+                      //TODO: cannot GET COLUMN ID!!! (item.row => OK, item.column = undefined
+//                        if (item.row != null && item.column != null) {
+//
+//                        }
+                  }
+
+        });
       visualization.draw(data, {title:"",
              legend : "none",
              //backgroundColor : "whiteSmoke",
@@ -631,7 +684,7 @@ var ProjectDashboardStats = Backbone.View.extend({
         }
         var data = new google.visualization.DataTable();
         data.addColumn('date', 'Date');
-        data.addColumn('number', 'Success rate');
+        data.addColumn('number', 'Success rate (%)');
 //        var date1 = new Date();
 //        date1.setTime(1325576699000);
 //        var date2 = new Date(2012, 0, 10);
@@ -658,7 +711,7 @@ var ProjectDashboardStats = Backbone.View.extend({
             document.getElementById('avgEvolutionLineChart'));
         chart.draw(data, {title: '',
                           width: width, height: 350,
-                          vAxis: {title: "Success rate"},
+                          vAxis: {title: "Success rate",minValue:0,maxValue:100},
                           hAxis: {title: "Time"},
                           backgroundColor : "whiteSmoke",
                           lineWidth: 1}

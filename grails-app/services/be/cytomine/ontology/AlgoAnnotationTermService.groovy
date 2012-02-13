@@ -12,6 +12,14 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.command.Transaction
 import be.cytomine.security.UserJob
 import be.cytomine.security.SecUser
+import be.cytomine.processing.structure.ConfusionMatrix
+import be.cytomine.security.SecUser
+import be.cytomine.ontology.AlgoAnnotationTerm
+import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.utils.ValueComparator
+import be.cytomine.utils.Utils
+import java.util.TreeMap.Entry
+import be.cytomine.security.UserJob
 
 class AlgoAnnotationTermService extends ModelService {
 
@@ -164,4 +172,78 @@ class AlgoAnnotationTermService extends ModelService {
         if (!domain) throw new ObjectNotFoundException("SuggestedTerm was not found with annotation:$annotation,term:$term,userJob:$userJob")
         return domain
     }
+
+     SecUser getLastUserJob(Project project) {
+        def users = getAllLastUserJobWithDate(project)
+        return users.isEmpty() ? null : users.first().first()
+    }
+
+     List getAllLastUserJobWithDate(Project project) {
+        def users = AlgoAnnotationTerm.createCriteria().list {
+            createAlias("userJob", "u")
+            eq("project", project)
+            join("u")
+            order "u.created", "desc"
+            projections {
+                groupProperty('userJob')
+                groupProperty('u.created')
+            }
+        }
+        return users
+    }
+     double computeAVG(def userJob) {
+
+        def nbTermNotCorrect = AlgoAnnotationTerm.createCriteria().count {
+            eq("userJob", userJob)
+            isNotNull("term")
+            isNotNull("expectedTerm")
+            eqProperty("term", "expectedTerm")
+        }
+        def nbTermTotal = AlgoAnnotationTerm.createCriteria().count {
+            eq("userJob", userJob)
+            isNotNull("term")
+            isNotNull("expectedTerm")
+        }
+        return (double) (nbTermNotCorrect / nbTermTotal)
+    }
+
+     ConfusionMatrix computeConfusionMatrix(def projectTerms, def userJob) {
+        def projectTermsId = projectTerms.collect {it.id + ""}
+        println projectTermsId
+        ConfusionMatrix matrix = new ConfusionMatrix(projectTermsId);
+        def algoAnnotationsTerm = AlgoAnnotationTerm.findAllByUserJob(userJob);
+
+        algoAnnotationsTerm.each {
+            if (it.term && it.expectedTerm) matrix.addEntry(it.getIdExpectedTerm() + "", it.getIdTerm() + "")
+            //matrix.print()
+        }
+        return matrix
+    }
+
+
+
+    long computeSumOfValue(SortedSet<Entry<Long, Integer>> mapSorted) {
+        long sum = 0
+        mapSorted.each { entry ->
+            sum = sum + entry.value
+        }
+        return sum
+    }
+
+    def listAVGEvolution(Project project) {
+        def data = []
+        //Get all project userJob
+        List userJobs = getAllLastUserJobWithDate(project)
+        if(userJobs.isEmpty()) return null
+        println userJobs
+        userJobs.each {
+            def userJob = it.first()
+            def item = [:]
+            item.date = userJob.created.getTime()
+            item.avg = computeAVG(userJob)*100
+            data << item
+        }
+        return data
+    }
+
 }

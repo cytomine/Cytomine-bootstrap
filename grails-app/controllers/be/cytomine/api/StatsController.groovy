@@ -11,11 +11,13 @@ import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.utils.ValueComparator
 import be.cytomine.utils.Utils
 import java.util.TreeMap.Entry
+import be.cytomine.security.UserJob
 
 class StatsController extends RestController {
 
     def annotationService
     def termService
+    def algoAnnotationTermService
 
     def statRetrievalAVG = {
         Project project = Project.read(params.id)
@@ -23,8 +25,8 @@ class StatsController extends RestController {
             responseNotFound("Project", params.id)
             return
         }
-        SecUser lastUserJob = getLastUserJob(project)
-        double avg = computeAVG(lastUserJob)
+        SecUser lastUserJob = algoAnnotationTermService.getLastUserJob(project)
+        double avg = algoAnnotationTermService.computeAVG(lastUserJob)
         def data = ['avg': avg]
         responseSuccess(data)
     }
@@ -37,9 +39,9 @@ class StatsController extends RestController {
             responseNotFound("Project", params.id)
             return
         }
-        SecUser lastUserJob = getLastUserJob(project)
+        SecUser lastUserJob = algoAnnotationTermService.getLastUserJob(project)
         if (lastUserJob) {
-            ConfusionMatrix matrix = computeConfusionMatrix(termService.list(project), lastUserJob)
+            ConfusionMatrix matrix = algoAnnotationTermService.computeConfusionMatrix(termService.list(project), lastUserJob)
             String matrixJSON = matrix.toJSON()
             data = ['matrix': matrixJSON]
         }
@@ -53,7 +55,7 @@ class StatsController extends RestController {
             responseNotFound("Project", params.id)
             return
         }
-        SecUser lastUserJob = getLastUserJob(project)
+        SecUser lastUserJob = algoAnnotationTermService.getLastUserJob(project)
         if (lastUserJob) {
             def worstTerms = listWorstTerm(lastUserJob, project)
             data = ['worstTerms': worstTerms]
@@ -69,7 +71,7 @@ class StatsController extends RestController {
             responseNotFound("Project", params.id)
             return
         }
-        SecUser lastUserJob = getLastUserJob(project)
+        SecUser lastUserJob = algoAnnotationTermService.getLastUserJob(project)
         if (lastUserJob) {
             def worstTerms = listWorstTermWithSuggestedTerm(lastUserJob, project)
             data = ['worstTerms': worstTerms]
@@ -84,7 +86,7 @@ class StatsController extends RestController {
             responseNotFound("Project", params.id)
             return
         }
-        SecUser lastUserJob = getLastUserJob(project)
+        SecUser lastUserJob = algoAnnotationTermService.getLastUserJob(project)
         if (lastUserJob) {
             def worstTerms = listWorstAnnotationTerm(lastUserJob, 30)
             data = ['worstAnnotations': worstTerms]
@@ -99,56 +101,13 @@ class StatsController extends RestController {
             responseNotFound("Project", params.id)
             return
         }
-        def evolution = listAVGEvolution(project)
-        def data = ['evolution': evolution]
+        def data = []
+        def evolution = algoAnnotationTermService.listAVGEvolution(project)
+        if(evolution) data = ['evolution': evolution]
         responseSuccess(data)
     }
 
-    private SecUser getLastUserJob(Project project) {
-        def users = AlgoAnnotationTerm.createCriteria().list {
-            createAlias("userJob", "u")
-            eq("project", project)
-            join("u")
-            order "u.created", "desc"
-            projections {
-                groupProperty('userJob')
-                groupProperty('u.created')
-            }
-        }
-        return users.isEmpty() ? null : users.first().first()
-    }
-
-    private double computeAVG(def userJob) {
-        long correct = 0
-        long totalWithTerm = 0
-        def algoAnnotationsTerm = AlgoAnnotationTerm.findAllByUserJob(userJob);
-        algoAnnotationsTerm.each {
-            if (it.term) {
-                totalWithTerm++
-                if (it.term == it.expectedTerm) correct++
-            }
-        }
-        double avg = (double) (correct / totalWithTerm)
-        return avg
-    }
-
-    private ConfusionMatrix computeConfusionMatrix(def projectTerms, def userJob) {
-        def projectTermsId = projectTerms.collect {it.id + ""}
-        println projectTermsId
-        ConfusionMatrix matrix = new ConfusionMatrix(projectTermsId);
-        def algoAnnotationsTerm = AlgoAnnotationTerm.findAllByUserJob(userJob);
-
-        algoAnnotationsTerm.each {
-            if (it.term && it.expectedTerm) matrix.addEntry(it.getIdExpectedTerm() + "", it.getIdTerm() + "")
-            //matrix.print()
-        }
-        println matrix.getDiagonalSum()
-        println matrix.getTotalSum()
-        println(matrix.getDiagonalSum() / matrix.getTotalSum())
-        return matrix
-    }
-
-    private def listWorstTerm(def userJob, Project project) {
+     def listWorstTerm(def userJob, Project project) {
         Map<Term, Integer> termMap = new HashMap<Term, Integer>()
         List<Term> termList = termService.list(project)
         termList.each {termMap.put(it, 0)}
@@ -169,16 +128,13 @@ class StatsController extends RestController {
         return termList
     }
 
-    private def listWorstTermWithSuggestedTerm(def userJob, Project project) {
+     def listWorstTermWithSuggestedTerm(def userJob, Project project) {
         TreeMap<Long, TreeMap<Long, Integer>> termMap = new TreeMap<Long, TreeMap<Long, Integer>>()
         List<Term> termList = termService.list(project)
-        log.info "listWorstTermWithSuggestedTerm:" + termList.size()
         termList.each {
-            log.info "add term " + it + " class=" + it.class
             termMap.put(it.id, new TreeMap<Long, Integer>())
 
         }
-        log.info "termList"
 
         def algoAnnotationsTerm = AlgoAnnotationTerm.createCriteria().list {
             eq("userJob", userJob)
@@ -187,21 +143,17 @@ class StatsController extends RestController {
 
         algoAnnotationsTerm.each {
             TreeMap<Long, Integer> subMap = termMap.get(it.getIdExpectedTerm());
-            log.info it.getIdTerm()
-            log.info it.getIdExpectedTerm()
-            log.info subMap
             Integer oldValue = subMap.get(it.getIdTerm())
             if (!oldValue) oldValue = 0
             subMap.put(it.getIdTerm(), oldValue + 1)
 
             termMap.put(it.getIdExpectedTerm(), subMap)
-            log.info "termMap= " + termMap
         }
         def data = [:]
         termMap.each {
             SortedSet<Entry<Long, Integer>> mapSorted = Utils.entriesSortedByValuesDesc(termMap.get(it.key));
             data[it.key] = []
-            long sum = computeSumOfValue(mapSorted)
+            long sum = algoAnnotationTermService.computeSumOfValue(mapSorted)
 
 
 
@@ -214,21 +166,9 @@ class StatsController extends RestController {
             }
             ///log.info "mapSorted= " + mapSorted
         }
-        log.info "data=" + data
         return data
     }
-
-    private long computeSumOfValue(SortedSet<Entry<Long, Integer>> mapSorted) {
-        long sum = 0
-        mapSorted.each { entry ->
-            sum = sum + entry.value
-        }
-        return sum
-    }
-
-
-
-    private def listWorstAnnotationTerm(def userJob, def max) {
+    def listWorstAnnotationTerm(def userJob, def max) {
         def results = []
 
         def algoAnnotationsTerm = AlgoAnnotationTerm.createCriteria().list {
@@ -239,34 +179,14 @@ class StatsController extends RestController {
 
         for (int i = 0; i < algoAnnotationsTerm.size() && max > results.size(); i++) {
             def suggest = algoAnnotationsTerm.get(i)
-            def annotation = suggest.annotation
-            def realTerm = termService.list(annotation, annotation.user)
-            println "id=" + suggest.id
-            println "annotation=" + annotation.id
-            println "realTerm=" + realTerm
-            println "suggest.expectedTermId=" + suggest.termId
-            println "realTerm.contains(suggest.expectedTermId)=" + realTerm.contains(suggest.termId)
+            //def annotation = suggest.annotation
+            //def realTerm = termService.list(annotation, annotation.user)
             results.add(suggest);
         }
 
         return results
 
     }
-
-    private def listAVGEvolution(Project project) {
-        //TODO: must be implemented :-)
-
-        //Get all avg from all job for this projet
-
-        //Sort by date!
-
-        def data = [[date: 1325576699000, avg: 65], [date: 1326607200000, avg: 72], [date: 1328594400000, avg: 73], [date: 1330754400000, avg: 75]]
-        return data
-    }
-
-
-
-
 
 
     def statUserAnnotations = {

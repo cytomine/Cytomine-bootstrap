@@ -21,6 +21,8 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.hibernate.FetchMode
 import be.cytomine.command.Transaction
 import be.cytomine.social.SharedAnnotation
+import be.cytomine.security.UserJob
+import be.cytomine.security.SecUser
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 
 class AnnotationService extends ModelService {
@@ -116,6 +118,40 @@ class AnnotationService extends ModelService {
             }
             return annotations
         }
+    }
+
+
+    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    def list(Project project, List<User> userList, Term realTerm, Term suggestedTerm) {
+        // POUR realTerm == null => voir dans la fonction précédente le bloc else if (noTerm) {
+        log.info "list with suggestedTerm"
+        //Get last userjob
+        SecUser user = algoAnnotationTermService.getLastUserJob(project)
+
+        //Get all annotation from this project with this term
+        def criteria = Annotation.withCriteria() {
+            eq('project', project)
+            annotationTerm {
+                eq('term', realTerm)
+                inList('user', userList)
+            }
+        }
+        def annotations = criteria.unique()
+
+        //Get all annotation from this project with this suggestedTerm
+        def algoAnnotationsTerm = AlgoAnnotationTerm.createCriteria().list {
+            eq("userJob", user)
+            eq("term", suggestedTerm)
+            inList("annotation",annotations)
+            join("annotation")
+            createAlias("annotation", "a")
+            projections {
+                groupProperty("annotation")
+            }
+        }
+
+        return algoAnnotationsTerm
+
     }
 
     @PreAuthorize("hasPermission(#image.project.id,'be.cytomine.project.Project',read) or hasPermission(#image.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
