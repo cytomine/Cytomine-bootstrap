@@ -271,17 +271,21 @@ class Annotation extends CytomineDomain implements Serializable {
 
             ImageInstance imageinstance = it.image
             AbstractImage image = imageinstance?.baseImage
+
             returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['name'] = it.name != "" ? it.name : "Annotation " + it.id
             returnArray['location'] = it.location.toString()
             returnArray['image'] = it.getIdImage()
+
             returnArray['imageFilename'] = image?.filename
             returnArray['zoomLevel'] = it.zoomLevel
             returnArray['geometryCompression'] = it.geometryCompression
             returnArray['channels'] = it.channels
             returnArray['project'] = it.project.id
             returnArray['container'] = it.project.id
+
+
             if (it.userId) returnArray['user'] = it.userId
             else returnArray['user'] = it.user?.id
             returnArray['nbComments'] = it.id ? SharedAnnotation.findAllByAnnotation(it).size() : 0
@@ -291,6 +295,7 @@ class Annotation extends CytomineDomain implements Serializable {
 
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null
+
 
             returnArray['term'] = it.termsId()
 
@@ -302,6 +307,9 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
             returnArray['url'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
             returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.getIdProject(), imageinstance.id, it.id)
+
+
+
             return returnArray
         }
     }

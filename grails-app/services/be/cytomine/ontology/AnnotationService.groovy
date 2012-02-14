@@ -110,12 +110,15 @@ class AnnotationService extends ModelService {
             return annotations
         } else {
             log.info "findAllByProjectAndUserInList=" + project + " users=" + userList
+            long start = new Date().time
             def annotations = Annotation.createCriteria().list {
                 eq("project", project)
                 inList("user", userList)
                 fetchMode 'image', FetchMode.JOIN
                 fetchMode 'image.baseImage', FetchMode.JOIN
             }
+            long end = new Date().time
+            println "time = " + (end - start) + "ms"
             return annotations
         }
     }

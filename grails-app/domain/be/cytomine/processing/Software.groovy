@@ -2,6 +2,8 @@ package be.cytomine.processing
 
 import be.cytomine.CytomineDomain
 import grails.converters.JSON
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.security.User
 
 class Software extends CytomineDomain {
 
@@ -26,6 +28,24 @@ class Software extends CytomineDomain {
 
     String toString() {
         name
+    }
+
+    static Software createFromDataWithId(json) {
+        def domain = createFromData(json)
+        try {domain.id = json.id} catch (Exception e) {}
+        return domain
+    }
+
+    static Software createFromData(jsonSoftware) {
+        def software = new Software()
+        getFromData(software, jsonSoftware)
+    }
+
+    static Software getFromData(software, jsonSoftware) {
+        if (!jsonSoftware.name.toString().equals("null"))
+            software.name = jsonSoftware.name
+        else throw new WrongArgumentException("Software name cannot be null")
+        return software;
     }
 
 }

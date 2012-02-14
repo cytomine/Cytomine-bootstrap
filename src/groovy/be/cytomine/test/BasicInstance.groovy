@@ -954,6 +954,11 @@ class BasicInstance {
 
     }
 
+    static void compareSoftware(map, json) {
+        assert map.name.equals(json.name)
+
+    }
+
     static Double toDouble(String s) {
         if (s == null && s.equals("null")) return null
         else return Double.parseDouble(s)

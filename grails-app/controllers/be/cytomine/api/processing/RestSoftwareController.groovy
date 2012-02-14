@@ -3,6 +3,7 @@ package be.cytomine.api.processing
 import be.cytomine.api.RestController
 import be.cytomine.processing.Software
 import grails.plugins.springsecurity.Secured
+import grails.converters.JSON
 
 class RestSoftwareController extends RestController {
 
@@ -18,5 +19,18 @@ class RestSoftwareController extends RestController {
         Software software = softwareService.read(params.long('id'))
         if (software) responseSuccess(software)
         else responseNotFound("Software", params.id)
+    }
+
+    def add = {
+        add(softwareService, request.JSON)
+    }
+
+    def update = {
+        log.info "update software controller"
+        update(softwareService, request.JSON)
+    }
+
+    def delete = {
+        delete(softwareService, JSON.parse("{id : $params.id}"))
     }
 }

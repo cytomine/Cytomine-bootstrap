@@ -1,4 +1,4 @@
-package be.cytomine
+package be.cytomine.security
 
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstance

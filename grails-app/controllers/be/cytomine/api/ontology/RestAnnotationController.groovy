@@ -64,7 +64,7 @@ class RestAnnotationController extends RestController {
             }
             userList = userListTemp;
         }
-        log.info "List by project " + project.id + " with user:" + userList
+        log.info "Listing by project " + project.id + " with user:" + userList
 
         if (project) responseSuccess(annotationService.list(project, userList, (params.noTerm == "true"), (params.multipleTerm == "true")))
         else responseNotFound("Project", params.id)
