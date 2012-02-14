@@ -5,8 +5,12 @@ import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
-import be.cytomine.security.SecUser
+
 import be.cytomine.security.UserJob
+import be.cytomine.processing.Job
+import be.cytomine.processing.Software
+import be.cytomine.security.SecUserSecRole
+import be.cytomine.security.SecUser
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
@@ -67,39 +71,44 @@ class RestUserController extends RestController {
 
     @Secured(['ROLE_ADMIN'])
     def addChild = {
-       def json = request.JSON
-       User user = User.get(json.parent)
+        def json = request.JSON
+        User user = User.read(springSecurityService.principal.id)
 
-       String username = json.username
+        Job job = new Job()
+        job.software = Software.read(json.software)
+        job = job.save(flush : true)
 
-       UserJob newUser = new UserJob()
-       newUser.username = username
-       newUser.password = user.password
-//       newUser.publicKey = user.publicKey
-//       newUser.privateKey = user.privateKey
-        newUser.generateKeys()
-       newUser.enabled = user.enabled
-       newUser.accountExpired = user.accountExpired
-       newUser.accountLocked = user.accountLocked
-       newUser.passwordExpired = user.passwordExpired
-       newUser.user = user
+        String username = json.username
+        UserJob userJob = new UserJob()
+        userJob.job = job
+        userJob.username = "JOB[" + user.username + " ], " + new Date().toString()
+        userJob.password = user.password
+        userJob.generateKeys()
+        userJob.enabled = user.enabled
+        userJob.accountExpired = user.accountExpired
+        userJob.accountLocked = user.accountLocked
+        userJob.passwordExpired = user.passwordExpired
+        userJob.user = user
+        userJob = userJob.save(flush:true)
 
-       newUser.save(flush:true)
+        user.getAuthorities().each { secRole ->
+            SecUserSecRole.create(userJob, secRole)
+        }
 
         projectService.list().each {
-            userService.addUserFromProject(newUser,it,false)
+            userService.addUserFromProject(userJob,it,true)
         }
 
         //def ret = [data: [user: newUser], status: 200]
-        response([userJob: newUser],200)
+        response([userJob: userJob],200)
 
     }
 
     def deleteUser = {
         Project project = Project.get(params.id)
-        User user = User.get(params.idUser)
+        SecUser user = SecUser.get(params.idUser)
         boolean admin = false
-         userService.deleteUserFromProject(user,project,admin)
+        userService.deleteUserFromProject(user,project,admin)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
@@ -107,7 +116,7 @@ class RestUserController extends RestController {
 
     def addUser = {
         Project project = Project.get(params.id)
-        User user = User.get(params.idUser)
+        SecUser user = SecUser.get(params.idUser)
         boolean admin = false
         log.debug "addUser project="+project+" user="+user+" admin="+admin
         userService.addUserFromProject(user,project,admin)
@@ -120,9 +129,9 @@ class RestUserController extends RestController {
     @Secured(['ROLE_ADMIN'])
     def deleteUserAdmin = {
         Project project = Project.get(params.id)
-        User user = User.get(params.idUser)
+        SecUser user = SecUser.get(params.idUser)
         boolean admin = true
-         userService.deleteUserFromProject(user,project,admin)
+        userService.deleteUserFromProject(user,project,admin)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)

@@ -44,6 +44,9 @@ class AlgoAnnotationTermService extends ModelService {
 
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        SecUser creator = SecUser.read(json.user)
+        if(!creator)
+            json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 

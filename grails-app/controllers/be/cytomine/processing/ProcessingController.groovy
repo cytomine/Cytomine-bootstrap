@@ -4,17 +4,15 @@ import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.processing.image.filters.Auto_Threshold
-import com.vividsolutions.jts.algorithm.ConvexHull
+
 import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.GeometryFactory
+
 import grails.converters.JSON
 import ij.ImagePlus
 import ij.process.ImageConverter
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
-import ij.process.ImageProcessor
-import ij.IJ
+import ij.plugin.filter.PlugInFilter
 
 class ProcessingController extends RestController {
 
@@ -24,13 +22,28 @@ class ProcessingController extends RestController {
     private static def ROI_SIZE = 750 //MAX ALLOWED SIZE IS MAX CVT IN IIP CONFIG FILE !
 
     def detect = {
-        int middleROI = ProcessingController.ROI_SIZE / 2
+        String method = params.method  != null ? params.method : "MaxEntropy"
+        //int scale = params.scale != null ? Integer.parseInt(params.scale) : 1
+        int roiSize = ROI_SIZE
+        int middleROI = roiSize / 2
         def idImage = Integer.parseInt(params.image)
         AbstractImage image = ImageInstance.read(idImage).getBaseImage()
         int shiftY = image.getHeight() - Math.round(Double.parseDouble(params.y)) + middleROI
         int shiftX = Math.round(Double.parseDouble(params.x)) - middleROI
-        def url = image.getCropURL((int) shiftX, (int) shiftY, ProcessingController.ROI_SIZE, ProcessingController.ROI_SIZE)
-        ImagePlus ori = getImage(url)
+        def url = image.getCropURL((int) shiftX, (int) shiftY, roiSize, roiSize)
+        println url
+        //Image Processing
+        ImagePlus ori = getThresholdedImage(url, method)
+        int erodeDilateNumber = 3
+        for (int i = 0; i < erodeDilateNumber; i++)
+            ori.getProcessor().dilate()
+
+        for (int i = 0; i < erodeDilateNumber; i++)
+            ori.getProcessor().erode()
+
+        PlugInFilter filler = new ij.plugin.filter.Binary()
+        filler.setup("fill", ori)
+        filler.run(ori.getProcessor())
         Coordinate[] coordinates = imageProcessingService.doWand(ori, middleROI, middleROI, 4, null)
         coordinates.each { coordinate ->
             coordinate.x = shiftX + coordinate.x
@@ -43,6 +56,7 @@ class ProcessingController extends RestController {
     }
 
     def show = {
+        String method = params.method  != null ? params.method : "Triangle"
         int middleROI = ProcessingController.ROI_SIZE / 2
         def idImage = Integer.parseInt(params.image)
         AbstractImage image = ImageInstance.read(idImage).getBaseImage()
@@ -50,7 +64,7 @@ class ProcessingController extends RestController {
         def x = Math.round(Double.parseDouble(params.x)) - middleROI
         def url = image.getCropURL((int) x, (int) y, (int) ProcessingController.ROI_SIZE, (int) ProcessingController.ROI_SIZE)
         println url
-        ImagePlus ip = getImage(url)
+        ImagePlus ip = getThresholdedImage(url, method)
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(ip.getBufferedImage(), "jpg", baos);
         byte[] bytesOut = baos.toByteArray();
@@ -67,7 +81,7 @@ class ProcessingController extends RestController {
         }
     }
 
-    private def getImage(url) {
+    private def getThresholdedImage(String url, String method) {
         def out = new ByteArrayOutputStream()
         out << new URL(url).openStream()
         InputStream inputStream = new ByteArrayInputStream(out.toByteArray());
@@ -78,7 +92,7 @@ class ProcessingController extends RestController {
         ic.convertToGray8()
         //ip.getProcessor().autoThreshold()
         def at = new Auto_Threshold()
-        Object[] result = at.exec(ip, "Triangle", false, false, true, false, false, false)
+        Object[] result = at.exec(ip, method, false, false, true, false, false, false)
         ImagePlus ip_thresholded = (ImagePlus) result[1]
         ip_thresholded
     }

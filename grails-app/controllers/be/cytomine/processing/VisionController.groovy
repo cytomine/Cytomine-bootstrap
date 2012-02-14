@@ -18,6 +18,8 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
  */
 class VisionController extends RestController {
 
+    def imageProcessingService
+    
     def process = {
         def split = request.queryString.split("url=http://")
         String imageURL = ConfigurationHolder.config.grails.serverURL + "/images/notavailable.jpg"
@@ -97,46 +99,46 @@ class VisionController extends RestController {
             }
             /* Apply filters */
             if (params.method == "huang") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "Huang")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Huang")
             }
             if (params.method == "intermodes") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "Intermodes")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Intermodes")
             }
             if (params.method == "isodata") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "IsoData")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "IsoData")
             }
             if (params.method == "li") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "Li")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Li")
             }
             if (params.method == "maxentropy") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "MaxEntropy")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "MaxEntropy")
             }
             if (params.method == "mean") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "Mean")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Mean")
             }
             if (params.method == "minerror") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "MinError(I)")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "MinError(I)")
             }
             if (params.method == "minimum") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "Minimum")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Minimum")
             }
             if (params.method == "moments") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "Moments")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Moments")
             }
             if (params.method == "percentile") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "percentile")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "percentile")
             }
             if (params.method == "renyientropy") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "RenyiEntropy")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "RenyiEntropy")
             }
             if (params.method == "shanbhag") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "Shanbhag")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Shanbhag")
             }
             if (params.method == "triangle") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "Triangle")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Triangle")
             }
             if (params.method == "yen") {
-                bufferedImage = dynBinary(imageURL, bufferedImage, "Yen")
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Yen")
             }
 
             /* Apply filters */
@@ -198,13 +200,5 @@ class VisionController extends RestController {
         }
     }
 
-    def dynBinary(String url, BufferedImage bufferedImage, String method) {
-        ImagePlus ip = new ImagePlus(url, bufferedImage)
-        ImageConverter ic = new ImageConverter(ip)
-        ic.convertToGray8()
-        def at = new Auto_Threshold()
-        Object[] result = at.exec(ip, method, false, false, true, false, false, false)
-        ImagePlus ipThresholded = (ImagePlus) result[1]
-        return ipThresholded.getBufferedImage()
-    }
+
 }

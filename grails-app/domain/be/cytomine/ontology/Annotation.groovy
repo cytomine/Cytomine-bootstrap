@@ -26,6 +26,8 @@ class Annotation extends CytomineDomain implements Serializable {
     Double geometryCompression
     Project project
 
+    long countComments = 0L
+
     static belongsTo = [ImageInstance, Project]
     static hasMany = [annotationTerm: AnnotationTerm]
 
@@ -244,7 +246,7 @@ class Annotation extends CytomineDomain implements Serializable {
             annotation.zoomLevel = (!jsonAnnotation.zoomLevel.toString().equals("null")) ? ((String) jsonAnnotation.zoomLevel).toDouble() : -1
             annotation.geometryCompression = (!jsonAnnotation.geometryCompression.toString().equals("null")) ? ((String) jsonAnnotation.geometryCompression).toDouble() : 0
             annotation.channels = jsonAnnotation.channels
-            annotation.user = User.get(jsonAnnotation.user);
+            annotation.user = SecUser.get(jsonAnnotation.user);
             annotation.created = (!jsonAnnotation.created.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.created)) : null
             annotation.updated = (!jsonAnnotation.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.updated)) : null
             if (!annotation.location) throw new WrongArgumentException("Geo is null: 0 points")
@@ -288,7 +290,7 @@ class Annotation extends CytomineDomain implements Serializable {
 
             if (it.userId) returnArray['user'] = it.userId
             else returnArray['user'] = it.user?.id
-            returnArray['nbComments'] = it.id ? SharedAnnotation.findAllByAnnotation(it).size() : 0
+            returnArray['nbComments'] = it.countComments
             returnArray['area'] = it.computeArea()
             returnArray['perimeter'] = it.computePerimeter()
             returnArray['centroid'] = it.getCentroid()

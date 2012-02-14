@@ -1,4 +1,4 @@
-Storage.prototype.setObject = function(key, value) {
+Storage.prototype.setObject = function(key, value) {    
     this.setItem(key, JSON.stringify(value));
 }
 
@@ -44,7 +44,7 @@ var ApplicationView = Backbone.View.extend({
     },
     updateMenuItem : function (item) {
         var preference = localStorage.getObject(item.key);
-        if (preference.visible) {
+        if (preference != undefined && preference.visible != undefined) {
             $("#"+item.linkID).html("Hide " + item.name);
             $("."+item.className).each(
                  function( intIndex ){
@@ -113,6 +113,7 @@ var ApplicationView = Backbone.View.extend({
     },
     updatePanelPosition : function (item) {
         var preference = localStorage.getObject(item.key);
+		if (preference == undefined) return;
         var position = preference.position;
         if (position.top == undefined) position.top = '';
         $("."+item.className).css("top", position.top);

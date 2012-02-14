@@ -24,6 +24,7 @@ import be.cytomine.social.SharedAnnotation
 import be.cytomine.security.UserJob
 import be.cytomine.security.SecUser
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
+import be.cytomine.security.SecUser
 
 class AnnotationService extends ModelService {
 
@@ -40,7 +41,7 @@ class AnnotationService extends ModelService {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostFilter("hasPermission(filterObject.project.id,'be.cytomine.project.Project',read) or hasPermission(filterObject.project.id,'be.cytomine.project.Project', admin) or hasRole('ROLE_ADMIN')")
-    def list(User user) {
+    def list(SecUser user) {
         Annotation.findAllByUser(user)
     }
 
@@ -55,7 +56,7 @@ class AnnotationService extends ModelService {
     }
 
     @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
-    def list(Project project, List<User> userList, boolean noTerm, boolean multipleTerm) {
+    def list(Project project, List<SecUser> userList, boolean noTerm, boolean multipleTerm) {
         if (userList.isEmpty()) return []
         else if (multipleTerm) {
             log.info "multipleTerm"
@@ -158,7 +159,7 @@ class AnnotationService extends ModelService {
     }
 
     @PreAuthorize("hasPermission(#image.project.id,'be.cytomine.project.Project',read) or hasPermission(#image.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
-    def list(ImageInstance image, User user) {
+    def list(ImageInstance image, SecUser user) {
         return Annotation.findAllByImageAndUser(image, user)
     }
 
@@ -169,7 +170,7 @@ class AnnotationService extends ModelService {
     }
 
     @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
-    def list(Project project, Term term, List<User> userList) {
+    def list(Project project, Term term, List<SecUser> userList) {
         def criteria = Annotation.withCriteria() {
             eq('project', project)
             annotationTerm {
@@ -202,7 +203,8 @@ class AnnotationService extends ModelService {
     @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json) {
 
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
+
         //simplify annotation
         try {
             def data = simplifyPolygon(json.location)
@@ -249,7 +251,7 @@ class AnnotationService extends ModelService {
 
     @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
     def update(def domain, def json) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         //simplify annotation
         try {
             def annotation = Annotation.read(json.id)
@@ -271,7 +273,7 @@ class AnnotationService extends ModelService {
     @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
     def delete(def domain, def json) {
 
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
 
         //Start transaction
         Transaction transaction = transactionService.start()
@@ -290,11 +292,11 @@ class AnnotationService extends ModelService {
     }
 
 
-    def deleteAnnotation(def idAnnotation, User currentUser, Transaction transaction) {
+    def deleteAnnotation(def idAnnotation, SecUser currentUser, Transaction transaction) {
         return deleteAnnotation(idAnnotation, currentUser, true, transaction)
     }
 
-    def deleteAnnotation(def idAnnotation, User currentUser, boolean printMessage, Transaction transaction) {
+    def deleteAnnotation(def idAnnotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
         log.info "Delete annotation: " + idAnnotation
         Annotation annotation = Annotation.read(idAnnotation)
         if (annotation) {

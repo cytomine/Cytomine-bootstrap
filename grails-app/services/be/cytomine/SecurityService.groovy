@@ -33,15 +33,15 @@ class SecurityService {
         return user
     }
 
-    List<User> getAdminList(def domain) {
-        List<User> users = []
+    List<SecUser> getAdminList(def domain) {
+        List<SecUser> users = []
         try {
             AclObjectIdentity aclObject = AclObjectIdentity.findByObjectId(domain.id)
             if (aclObject) {
                 def acl = aclUtilService.readAcl(domain)
                 acl.entries.each { entry ->
                     if (entry.permission.equals(ADMINISTRATION))
-                        users.add(User.findByUsername(entry.sid.getPrincipal()))
+                        users.add(SecUser.findByUsername(entry.sid.getPrincipal()))
                 }
             }
         } catch (Exception e) {e.printStackTrace()}

@@ -13,7 +13,8 @@ class BootStrapData {
 
 
     static def softwareSamples = [
-            [name:"ValidateAnnotation"]
+            [name:"ValidateAnnotation"],
+            [name:"AutoLung"]
     ]
 
     /* AIS Storages */

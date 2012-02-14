@@ -7,7 +7,7 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE ABSTRACT with GRAILS2.0
 
-    User user
+    //User user
     Boolean running = false
     Boolean indeterminate = true
     int progress = 0
@@ -21,7 +21,7 @@ class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE A
     static hasMany = [jobData: JobData, jobParameter : JobParameter]
 
     static constraints = {
-        user nullable: false
+        //user nullable: false
         progress(min: 0, max: 100)
     }
 

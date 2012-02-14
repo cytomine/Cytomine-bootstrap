@@ -46,36 +46,45 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     static AlgoAnnotationTerm getFromData(AlgoAnnotationTerm algoAnnotationTerm, jsonAlgoAnnotationTerm) {
+        println "=========jsonAlgoAnnotationTerm======="  + jsonAlgoAnnotationTerm
 
         String annotationId = jsonAlgoAnnotationTerm.annotation.toString()
         if (!annotationId.equals("null")) {
-            algoAnnotationTerm.annotation = Annotation.get(annotationId)
+            algoAnnotationTerm.annotation = Annotation.read(annotationId)
             if (algoAnnotationTerm.annotation == null) throw new WrongArgumentException("Annotation was not found with id:" + annotationId)
         }
         else algoAnnotationTerm.annotation = null
 
         String termId = jsonAlgoAnnotationTerm.term.toString()
+        println "termID="+termId
         if (!termId.equals("null")) {
-            algoAnnotationTerm.term = Term.get(termId)
+            algoAnnotationTerm.term = Term.read(termId)
             if (algoAnnotationTerm.term == null) throw new WrongArgumentException("Term was not found with id:" + termId)
         }
         else algoAnnotationTerm.term = null
 
         String expectedTermId = jsonAlgoAnnotationTerm.expectedTerm.toString()
+        println "expectedTermId="+expectedTermId
         if (!expectedTermId.equals("null")) {
-            algoAnnotationTerm.expectedTerm = Term.get(expectedTermId)
+            algoAnnotationTerm.expectedTerm = Term.read(expectedTermId)
             if (algoAnnotationTerm.term == null) throw new WrongArgumentException("Expected Term was not found with id:" + termId)
         }
-        else algoAnnotationTerm.term = null
+        else algoAnnotationTerm.expectedTerm = null
+
 
         String userJobId = jsonAlgoAnnotationTerm.user.toString()
+        println "userJobId="+userJobId
         if (!userJobId.equals("null")) {
-            algoAnnotationTerm.userJob = UserJob.get(userJobId)
+            algoAnnotationTerm.userJob = UserJob.read(userJobId)
             if (algoAnnotationTerm.userJob == null) throw new WrongArgumentException("UserJob was not found with id:" + userJobId)
         }
         else algoAnnotationTerm.userJob = null
 
+        if (!jsonAlgoAnnotationTerm.rate) jsonAlgoAnnotationTerm.rate = 0
         algoAnnotationTerm.rate = Double.parseDouble(jsonAlgoAnnotationTerm.rate + "")
+
+        println ">>>>> user " + algoAnnotationTerm.userJob + "<<<<"
+        println ">>>>> term " + algoAnnotationTerm.term + "<<<<"
         return algoAnnotationTerm;
     }
 

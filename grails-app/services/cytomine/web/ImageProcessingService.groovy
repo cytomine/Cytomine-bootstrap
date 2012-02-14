@@ -7,6 +7,9 @@ import ij.gui.PolygonRoi
 import ij.gui.Roi
 import ij.gui.Wand
 import ij.process.ImageProcessor
+import java.awt.image.BufferedImage
+import ij.process.ImageConverter
+import be.cytomine.processing.image.filters.Auto_Threshold
 
 class ImageProcessingService {
 
@@ -63,8 +66,17 @@ class ImageProcessingService {
         return polygons
     }
 
+     public BufferedImage dynBinary(String url, BufferedImage bufferedImage, String method) {
+        ImagePlus ip = new ImagePlus(url, bufferedImage)
+        ImageConverter ic = new ImageConverter(ip)
+        ic.convertToGray8()
+        def at = new Auto_Threshold()
+        Object[] result = at.exec(ip, method, false, false, true, false, false, false)
+        ImagePlus ipThresholded = (ImagePlus) result[1]
+        return ipThresholded.getBufferedImage()
+    }
+
     public static Coordinate[] doWand(ImagePlus img, int x, int y, double tolerance, String mode) {
-        println "DoWand (X,Y) : (" + x + "," + y + ")"
         Collection<Coordinate> coordinates = new ArrayList<Coordinate>()
         long start = new Date().getTime()
         ImageProcessor ip = img.getProcessor()
