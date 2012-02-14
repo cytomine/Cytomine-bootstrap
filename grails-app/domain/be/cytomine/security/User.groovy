@@ -3,7 +3,7 @@ package be.cytomine.security
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.AbstractImageGroup
 import be.cytomine.ontology.Ontology
-import be.cytomine.processing.SoftwareProjects
+import be.cytomine.processing.SoftwareProject
 import be.cytomine.project.ProjectGroup
 import grails.converters.JSON
 
@@ -25,7 +25,7 @@ class User extends SecUser {
         color(blank: false, nullable: true)
     }
 
-    static hasMany = [softwareProjects: SoftwareProjects]
+    static hasMany = [softwareProjects: SoftwareProject]
 
     String toString() {
         firstname + " " + lastname

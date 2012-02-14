@@ -8,11 +8,9 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.ImageFilterProject
-import be.cytomine.processing.SoftwareProjects
-import be.cytomine.security.UserGroup
+import be.cytomine.processing.SoftwareProject
+
 import grails.converters.JSON
-import be.cytomine.security.User
-import org.springframework.security.acls.model.Acl
 
 class Project extends CytomineDomain {
 
@@ -27,7 +25,7 @@ class Project extends CytomineDomain {
     long countImages
 
     static belongsTo = [ontology: Ontology]
-    static hasMany = [projectGroup: ProjectGroup, commands: Command, softwareProjects: SoftwareProjects, imageFilterProjects: ImageFilterProject]
+    static hasMany = [projectGroup: ProjectGroup, commands: Command, softwareProjects: SoftwareProject, imageFilterProjects: ImageFilterProject]
 
 
     static constraints = {

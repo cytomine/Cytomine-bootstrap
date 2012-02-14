@@ -27,6 +27,8 @@ import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
+import be.cytomine.processing.SoftwareParameter
+import be.cytomine.processing.SoftwareProject
 
 /**
  * Created by IntelliJ IDEA.
@@ -642,7 +644,82 @@ class BasicInstance {
     }
 
 
+    static SoftwareParameter createOrGetBasicSoftwareParameter() {
+        log.debug "createOrGetBasicSoftwareParameter()"
+        Software software = createOrGetBasicSoftware()
 
+        def parameter = SoftwareParameter.findBySoftware(software)
+        if (!parameter) {
+
+            parameter = new SoftwareParameter()
+            parameter.name = "anotherParameter"
+            parameter.software = software
+            parameter.type = "String"
+
+            parameter.validate()
+            log.debug "SoftwareParameter.errors=" + parameter.errors
+            parameter.save(flush: true)
+            log.debug "SoftwareParameter.errors=" + parameter.errors
+        }
+        assert parameter != null
+        parameter
+    }
+
+    static SoftwareParameter getBasicSoftwareParameterNotExist() {
+
+        log.debug "getBasicSoftwareParameterNotExist() start"
+
+        Software software = createOrGetBasicSoftware()
+
+        def random = new Random()
+        def randomInt = random.nextInt()
+        def parameter = SoftwareParameter.findByNameAndSoftware(randomInt + "",software)
+
+        while (parameter) {
+            randomInt = random.nextInt()
+            parameter = SoftwareParameter.findByNameAndSoftware(randomInt + "",software)
+        }
+
+        parameter = new SoftwareParameter(name: randomInt + "",software:software,type:"String")
+        parameter.validate()
+        log.debug "getBasicSoftwareParameterNotExist() end"
+        parameter
+    }
+
+
+    static SoftwareProject createOrGetBasicSoftwareProject() {
+        log.debug "createOrGetBasicSoftwareProject()"
+        Software software = createOrGetBasicSoftware()
+        Project project = createOrGetBasicProject()
+        log.debug "software="+software+" project="+project
+
+        SoftwareProject softproj = SoftwareProject.link(software,project)
+
+        softproj.validate()
+        log.debug "SoftwareParameter.errors=" + softproj.errors
+        softproj.save(flush: true)
+        log.debug "SoftwareParameter.errors=" + softproj.errors
+
+        assert softproj != null
+        softproj
+    }
+
+    static SoftwareProject getBasicSoftwareProjectNotExist() {
+
+        log.debug "getBasicSoftwareProjectNotExist() start"
+
+        Software software = getBasicSoftwareNotExist()
+        Project project = getBasicProjectNotExist()
+        software.save(flush:true)
+        project.save(flush:true)
+
+        SoftwareProject softproj = new SoftwareProject(software:software,project:project)
+
+
+        softproj.validate()
+        log.debug "getBasicSoftwareParameterNotExist() end"
+        softproj
+    }
 
 
 
@@ -956,7 +1033,10 @@ class BasicInstance {
 
     static void compareSoftware(map, json) {
         assert map.name.equals(json.name)
+    }
 
+    static void compareSoftwareParameter(map, json) {
+        assert map.name.equals(json.name)
     }
 
     static Double toDouble(String s) {

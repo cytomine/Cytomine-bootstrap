@@ -43,7 +43,7 @@ class ResponseService {
         params.put('printMessage', printMessage)
         params.put(objectName.toLowerCase(), object)
 
-        return [data: params, status: 200];
+        return [data: params, status: 200, object:object];
     }
 
 

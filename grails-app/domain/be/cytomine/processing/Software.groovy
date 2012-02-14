@@ -3,13 +3,12 @@ package be.cytomine.processing
 import be.cytomine.CytomineDomain
 import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.security.User
 
 class Software extends CytomineDomain {
 
     String name
 
-    static hasMany = [softwareUsers: SoftwareUsers, softwareProjects: SoftwareProjects, softwareParameters : SoftwareParameter]
+    static hasMany = [softwareUsers: SoftwareUsers, softwareProjects: SoftwareProject, softwareParameters : SoftwareParameter]
 
     static constraints = {
         name(nullable: false, unique: true)

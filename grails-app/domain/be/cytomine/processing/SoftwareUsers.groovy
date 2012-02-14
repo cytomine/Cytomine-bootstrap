@@ -14,7 +14,7 @@ class SoftwareUsers {
     static SoftwareUsers link(Software software, User user) {
         def softwareUsers = SoftwareUsers.findBySoftwareAndUser(software, user)
         if (!softwareUsers) {
-            softwareUsers = new SoftwareProjects()
+            softwareUsers = new SoftwareProject()
             software?.addToSoftwareProjects(softwareUsers)
             user?.addToSoftwareProjects(softwareUsers)
             softwareUsers.save(flush: true)

@@ -31,7 +31,9 @@ class AddCommand extends Command {
         log.debug "newDomain="+newDomain
         def response = service.create(newDomain, printMessage)
         log.debug "response="+response
+        log.debug "newDomain="+newDomain?.id
         //Init command info
+        newDomain = response.object
         fillCommandInfo(newDomain, response.data.message)
         super.initCurrentCommantProject(newDomain?.projectDomain())
         return response

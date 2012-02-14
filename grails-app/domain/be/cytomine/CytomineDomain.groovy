@@ -22,8 +22,10 @@ abstract class CytomineDomain {
         if (!created) {
             created = new Date()
         }
-        if (id == null)
+        if (id == null) {
             id = sequenceService.generateID(this)
+        }
+
     }
 
     public beforeUpdate() {
