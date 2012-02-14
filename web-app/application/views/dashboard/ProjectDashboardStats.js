@@ -416,7 +416,7 @@ var ProjectDashboardStats = Backbone.View.extend({
                             terms.each(function(term) {
 
                                 console.log("term="+term.get('name'));
-                                var action = _.template(worstTermListTpl, {term:term.get('name'),id:term.id});
+                                var action = _.template(worstTermListTpl, {term:term.get('name'),id:term.id, idProject:self.model.id});
 
                                 var max = 3;
                                 var entry = termList[term.id];
