@@ -8,7 +8,7 @@ class Software extends CytomineDomain {
 
     String name
 
-    static hasMany = [softwareUsers: SoftwareUsers, softwareProjects: SoftwareProject, softwareParameters : SoftwareParameter]
+    static hasMany = [softwareProjects: SoftwareProject, softwareParameters : SoftwareParameter]
 
     static constraints = {
         name(nullable: false, unique: true)

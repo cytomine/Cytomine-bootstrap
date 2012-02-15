@@ -571,22 +571,21 @@ class BasicInstance {
         term
     }
 
-
-
-
-
-
-
    static Job createOrGetBasicJob() {
        log.debug  "createOrGetBasicJob()"
-       def job = Job.findAll()?.first()
-       if(!job) {
-
-           job = new Job(user:createOrGetBasicUser(),software:createOrGetBasicSoftware())
+       def job
+       def jobs = Job.findAllByProjectIsNotNull()
+       if(jobs.isEmpty()) {
+           Project project = createOrGetBasicProject()
+           job = new Job(project:project,software:createOrGetBasicSoftware())
+           log.debug  "job.project"+job.project
+           log.debug  "project"+project
            job.validate()
            log.debug "job.errors="+job.errors
            job.save(flush : true)
            log.debug "job.errors="+job.errors
+       } else {
+           job = jobs.first()
        }
        assert job!=null
        job
@@ -596,19 +595,14 @@ class BasicInstance {
 
        log.debug "getBasicJobNotExist() start"
        Software software = getBasicSoftwareNotExist()
-       User user = getBasicUserNotExist()
        Project project = getBasicProjectNotExist()
        software.save(flush:true)
-       user.save(flush:true)
        project.save(flush : true)
-       Job job =  new Job(user:user,software:software, project : project)
+       Job job =  new Job(software:software, project : project)
        job.validate()
-       log.debug "getBasicJobNotExist() end"
+       log.debug "job.errors="+job.errors
        job
    }
-
-
-
 
     static Software createOrGetBasicSoftware() {
         log.debug "createOrGetBasicSoftware()"
@@ -1026,9 +1020,12 @@ class BasicInstance {
     }
 
     static void compareOntology(map, json) {
-
         assert map.name.equals(json.name)
+    }
 
+    static void compareJob(map, json) {
+        assert map.progress.equals(json.progress)
+        assert map.successful.equals(json.successful)
     }
 
     static void compareSoftware(map, json) {

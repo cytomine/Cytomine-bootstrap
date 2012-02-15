@@ -5,6 +5,9 @@ import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.security.User
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.project.Project
+import be.cytomine.command.EditCommand
+import be.cytomine.command.DeleteCommand
 
 class JobService extends ModelService {
 
@@ -21,17 +24,29 @@ class JobService extends ModelService {
         Job.read(id)
     }
 
+    def list(Software software) {
+        Job.findAllBySoftware(software)
+    }
+
+    def list(Software software, Project project) {
+        Job.findAllBySoftwareAndProject(software, project)
+    }
+
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
     def update(def domain, Object json) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        User currentUser = cytomineService.getCurrentUser()
+        return executeCommand(new EditCommand(user: currentUser), json)
     }
 
     def delete(def domain, Object json) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        User currentUser = cytomineService.getCurrentUser()
+        //TODO: delete job-parameters
+        //TODO: delete job-data
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /**
