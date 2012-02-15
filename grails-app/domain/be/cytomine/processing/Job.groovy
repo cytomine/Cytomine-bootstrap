@@ -26,10 +26,6 @@ class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE A
         project(nullable:true)
     }
 
-    public afterInsert() {
-        //execute()
-    }
-
     static mapping = {
         tablePerHierarchy(false)
     }

@@ -29,6 +29,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
 import be.cytomine.processing.SoftwareParameter
 import be.cytomine.processing.SoftwareProject
+import be.cytomine.processing.JobParameter
 
 /**
  * Created by IntelliJ IDEA.
@@ -603,6 +604,8 @@ class BasicInstance {
        log.debug "job.errors="+job.errors
        job
    }
+    
+
 
     static Software createOrGetBasicSoftware() {
         log.debug "createOrGetBasicSoftware()"
@@ -636,6 +639,37 @@ class BasicInstance {
         log.debug "getBasicSoftwareNotExist() end"
         software
     }
+    
+    static JobParameter createOrGetBasicJobParameter() {
+        log.debug "createOrGetBasicJobparameter()"
+
+        def job = createOrGetBasicJob()
+        def softwareParam = createOrGetBasicSoftwareParameter()
+
+        def jobparameter = JobParameter.findByJobAndSoftwareParameter(job,softwareParam)
+        if (!jobparameter) {
+
+            jobparameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
+            jobparameter.validate()
+            log.debug "jobparameter.errors=" + jobparameter.errors
+            jobparameter.save(flush: true)
+            log.debug "jobparameter.errors=" + jobparameter.errors
+        }
+        assert jobparameter != null
+        jobparameter
+    }
+
+    static JobParameter getBasicJobParameterNotExist() {
+
+        log.debug "getBasicJobparameterNotExist() start"
+        def job = getBasicJobNotExist()
+        def softwareParam = getBasicSoftwareParameterNotExist()
+        job.save(flush:true)
+        softwareParam.save(flush:true)
+
+        def jobparameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
+        jobparameter
+    }    
 
 
     static SoftwareParameter createOrGetBasicSoftwareParameter() {
@@ -714,49 +748,6 @@ class BasicInstance {
         log.debug "getBasicSoftwareParameterNotExist() end"
         softproj
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -998,6 +989,12 @@ class BasicInstance {
     static void compareDiscipline(map, json) {
 
         assert map.name.equals(json.name)
+
+    }
+
+    static void compareJobParameter(map, json) {
+
+        assert map.value.equals(json.value)
 
     }
 
