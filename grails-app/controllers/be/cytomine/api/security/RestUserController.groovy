@@ -11,6 +11,8 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.Software
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.SecUser
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
@@ -49,10 +51,19 @@ class RestUserController extends RestController {
         responseSuccess(userService.readCurrentUser())
     }
 
+//    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
+//    def showByProject = {
+//        Project project = projectService.read(params.long('id'))
+//        if (project) responseSuccess(project.users())
+//        else responseNotFound("User", "Project", params.id)
+//    }
+
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showByProject = {
         Project project = projectService.read(params.long('id'))
-        if (project) responseSuccess(project.users())
+        if (project) {
+            responseSuccess(project.users())
+        }
         else responseNotFound("User", "Project", params.id)
     }
 

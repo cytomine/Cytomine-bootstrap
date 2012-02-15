@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.security.acls.model.NotFoundException
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 import be.cytomine.security.SecUser
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
 
 class SecurityService {
 
@@ -34,40 +35,19 @@ class SecurityService {
     }
 
     List<SecUser> getAdminList(def domain) {
-        List<SecUser> users = []
-        try {
-            AclObjectIdentity aclObject = AclObjectIdentity.findByObjectId(domain.id)
-            if (aclObject) {
-                def acl = aclUtilService.readAcl(domain)
-                acl.entries.each { entry ->
-                    if (entry.permission.equals(ADMINISTRATION))
-                        users.add(SecUser.findByUsername(entry.sid.getPrincipal()))
-                }
-            }
-        } catch (Exception e) {e.printStackTrace()}
+
+        def users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+
+            "where aclObjectId.objectId = "+domain.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.mask = 16 and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class like 'be.cytomine.security.User'")
+
         return users
     }
 
     //@Transactional(noRollbackFor = NotFoundException.class)
 
     List<SecUser> getUserList(def domain) {
-        //log.info "*************"+domain
-        List<SecUser> users = []
-        try {
-            AclObjectIdentity aclObject = AclObjectIdentity.findByObjectId(domain.id)
-            if (aclObject) {
-                def acl = aclUtilService.readAcl(domain)
-                acl.entries.each { entry ->
-                    SecUser user = SecUser.findByUsername(entry.sid.getPrincipal())
-                    //log.info "user authorize="+user.username
-                    if(!user.algo() && !users.contains(user))
-                        users.add(user)
-                }
-            }
-        }
-        catch (org.springframework.security.acls.model.NotFoundException e) {
-            println e
-        }
+        List<SecUser> users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+
+            "where aclObjectId.objectId = "+domain.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class like 'be.cytomine.security.User'")
+
         return users
     }
 
