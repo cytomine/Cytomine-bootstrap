@@ -5,7 +5,12 @@ import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.server.resolvers.Resolver
-
+import be.cytomine.image.server.MimeImageServer
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.HttpHost
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.HttpEntity
+import org.apache.commons.io.IOUtils
 /**
  * Cytomine @ GIGA-ULG
  * User: stevben
@@ -21,15 +26,19 @@ class ImagePropertiesService {
     }
 
     def populate(AbstractImage image) {
-        def imageServer = ImageServer.findByName("IIP-Openslide2");
+        Collection<ImageServer> imageServers = image.getImageServers()
+        def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
+        def imageServer = imageServers.get(index)
         Resolver resolver = Resolver.getResolver(imageServer.className)
         def propertiesURL = resolver.getPropertiesURL(imageServer.getBaseUrl(), imageServer.getStorage().getBasePath() + image.getPath())
         println image.getFilename() + " : " + propertiesURL
-        URL url = new URL(propertiesURL)
-        URLConnection conn = url.openConnection();
-        conn.setReadTimeout(1500)
+        DefaultHttpClient httpClient = new DefaultHttpClient()
+        URI _url = new URI(propertiesURL)
+        HttpGet httpGet = new HttpGet(_url)
+        def response = httpClient.execute(httpGet)
+        HttpEntity entityResponse = response.getEntity()
         try {
-            conn.getInputStream().eachLine { line ->
+            entityResponse.getContent().eachLine { line ->
                 if (line.isEmpty()) return;
 
                 def args = line.split(":")
@@ -69,20 +78,27 @@ class ImagePropertiesService {
     }
 
     private def extractUsefulTif(AbstractImage image) {
-        println "extract properties from tiff : " + image.getFilename()
-        def storages = StorageAbstractImage.findAllByAbstractImage(image).collect { it.storage }
-        if (storages.size() == 0) return
-        def imageServer = ImageServer.findByStorage(storages.first())
+        Collection<ImageServer> imageServers = image.getImageServers()
+        if (imageServers.size() == 0) return
+        def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
+        def imageServer = imageServers.get(index)
         Resolver resolver = Resolver.getResolver(imageServer.className)
         def metadaURL = resolver.getMetaDataURL(imageServer.getBaseUrl(), imageServer.getStorage().getBasePath() + image.getPath())
-        def url = new URL(metadaURL)
+
+        DefaultHttpClient httpClient = new DefaultHttpClient()
+        URI _url = new URI(metadaURL)
+        HttpGet httpGet = new HttpGet(_url)
+        def response = httpClient.execute(httpGet)
+        HttpEntity entityResponse = response.getEntity()
         print metadaURL
         //def dimensions = null
 
-        URLConnection conn = url.openConnection();
-        conn.setReadTimeout(1500)
+
+        /*URLConnection conn = url.openConnection();
+        conn.setReadTimeout(5000)
+        conn.setConnectTimeout(5000)*/
         try {
-            conn.getInputStream().eachLine { line ->
+            entityResponse.getContent().eachLine { line ->
                 def args = line.split(":")
                 if (args[0].equals("Max-size")) {
                     def sizes = args[1].split(" ")

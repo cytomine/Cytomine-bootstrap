@@ -204,6 +204,14 @@ class UrlMappings {
             action = [GET: "listProjectBySlide"]
         }
 
+        "/api/storage" (controller:"restStorage") {
+            //to do
+        }
+
+        "/api/storage/$id" (controller:"restStorage") {
+            //to do
+        }
+
         "/api/import/annotations/$idProject"(controller: "import") {
             action = [GET:"annotations"]
         }

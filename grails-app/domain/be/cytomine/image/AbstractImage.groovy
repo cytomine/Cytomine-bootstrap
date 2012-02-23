@@ -55,10 +55,6 @@ class AbstractImage extends CytomineDomain {
         magnification(nullable: true)
     }
 
-    String toString() {
-        filename
-    }
-
     def groups() {
         return abstractimagegroup.collect {
             it.group
@@ -203,9 +199,10 @@ class AbstractImage extends CytomineDomain {
         }
         def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
         Integer desiredWidth = this.getWidth()
-        while (desiredWidth > 256) {
+        while (desiredWidth > 512) {
             desiredWidth /= 2
         }
+
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
         String url = resolver.getThumbUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(), desiredWidth)
         return url

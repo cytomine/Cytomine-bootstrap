@@ -25,19 +25,19 @@ var Component = Backbone.View.extend({
       $(this.el).append(this.template);
 
       //Init menu
-      $("#project-button").twipsy({
+      $("#project-button").tooltip({
          placement : "below"
       });
-       $("#ontology-button").twipsy({
+       $("#ontology-button").tooltip({
          placement : "below"
       });
-      $("#upload-button").twipsy({
+      $("#upload-button").tooltip({
          placement : "below"
       });
-      $("#explorer-button").twipsy({
+      $("#explorer-button").tooltip({
          placement : "below"
       });
-       $("#activity-button").twipsy({
+       $("#activity-button").tooltip({
          placement : "below"
       });
       return this;

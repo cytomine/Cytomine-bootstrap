@@ -131,7 +131,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          i++;
 
       });
-      var width = Math.round($(window).width() - 75);
+      var width = Math.round($(window).width() - 95);
       // Create and draw the visualization.
       var chart = new google.visualization.ColumnChart(document.getElementById('userAnnotationsChart'));
       chart.draw(data,
@@ -173,7 +173,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          data.setValue(j, 1, stat.get("value"));
          j++;
       });
-      var width = Math.round($(window).width()/2 - 75);
+      var width = Math.round($(window).width()/2 - 95);
       // Create and draw the visualization.
       var chart = new google.visualization.ColumnChart(document.getElementById("userNbAnnotationsChart"));
       chart.draw(data,
@@ -220,7 +220,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          data.setValue(i,1, stat.get('value'));
          i++;
       });
-      var width = Math.round($(window).width()/2 - 75);
+      var width = Math.round($(window).width()/2 - 95);
       // Create and draw the visualization.
       var chart = new google.visualization.PieChart(document.getElementById('projectPieChart'));
       chart.draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
@@ -260,7 +260,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          data.setValue(j, 1, stat.get("value"));
          j++;
       });
-      var width = Math.round($(window).width()/2 - 75);
+      var width = Math.round($(window).width()/2 - 95);
       // Create and draw the visualization.
       var chart = new google.visualization.ColumnChart(document.getElementById("projectColumnChart"));
       chart.draw(data,
@@ -309,7 +309,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          data.setValue(j, 1, stat.get("value"));
          j++;
       });
-      var width = Math.round($(window).width()/2 - 75);
+      var width = Math.round($(window).width()/2 - 95);
       // Create and draw the visualization.
       var chart = new google.visualization.ColumnChart(document.getElementById("termSlideAnnotationsChart"));
       chart.draw(data,
@@ -354,7 +354,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          data.setValue(j, 1, stat.get("value"));
          j++;
       });
-      var width = Math.round($(window).width()/2 - 75);
+      var width = Math.round($(window).width()/2 - 95);
       // Create and draw the visualization.
       var chart = new google.visualization.ColumnChart(document.getElementById("userSlideAnnotationsChart"));
       chart.draw(data,
@@ -565,7 +565,7 @@ var ProjectDashboardStats = Backbone.View.extend({
                     }
              }
        }
-       var width = Math.round($(window).width() - 75);
+       var width = Math.round($(window).width() - 95);
       google.visualization.events.addListener(visualization, 'select', function() {
                 console.log(visualization.getSelection());
                   var selection  = visualization.getSelection();
@@ -607,7 +607,7 @@ var ProjectDashboardStats = Backbone.View.extend({
          data.setValue(i,0, dataJSON[i].name);
          data.setValue(i,1, dataJSON[i].rate);
        }
-      var width = Math.round($(window).width()/2 - 75);
+      var width = Math.round($(window).width()/2 - 95);
       // Create and draw the visualization.
       new google.visualization.PieChart(document.getElementById('worstTermprojectPieChart')).
           draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
@@ -632,7 +632,7 @@ var ProjectDashboardStats = Backbone.View.extend({
 //         console.log(dataJSON[i]);
 //         console.log(dataJSON[i].color);
 //       }
-//      var width = Math.round($(window).width()/2 - 75);
+//      var width = Math.round($(window).width()/2 - 95);
 //      // Create and draw the visualization.
 //      new google.visualization.PieChart(document.getElementById('worstTermprojectPieChart')).
 //          draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
@@ -705,7 +705,7 @@ var ProjectDashboardStats = Backbone.View.extend({
 //        data.addRow([new Date(2012, 0, 15), 40]);
 //        data.addRow([new Date(2012, 1, 10), 50]);
 
-         var width = Math.round($(window).width()/2 - 75);
+         var width = Math.round($(window).width()/2 - 95);
         // Create and draw the visualization.
         var chart = new google.visualization.AreaChart(
             document.getElementById('avgEvolutionLineChart'));

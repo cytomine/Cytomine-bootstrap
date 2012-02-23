@@ -1,23 +1,38 @@
-<div id="addproject" title="" class="modal hide">
+<div id="addproject" title="" class="modal xbigModal  hide">
     <div class="modal-header">
-        <a href="#" class="close">&times;</a>
+        <!--<a href="#" class="close">&times;</a>-->
         <h3>Create a new project</h3>
     </div>
     <div class="modal-body">
+        <div id="projecterrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+            <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                <strong>Error:</strong><div id="errormessage"></div></p>
+        </div>
         <form id="login-form-add-project">
-                <div id="projecterrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-                    <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                        <strong>Error:</strong><div id="errormessage"></div></p>
-                </div>
-                <legend style="font-weight: bold;padding-bottom: 3px;">Name</legend>
-                <input type="text" size="20" id="project-name" value="" >
-                <legend style="font-weight: bold;padding-bottom: 3px;padding-top: 5px;">Discipline</legend>
-                <select id="projectdiscipline" />
-                <legend style="font-weight: bold;padding-bottom: 3px;padding-top: 5px;">Ontology</legend>
-                <select id="projectontology" />
-                <legend style="font-weight: bold;padding-bottom: 3px;;padding-top: 5px;">Groups</legend>
-                <ul id="projectuser"></ul>
 
+            <div class="control-group">
+                <label class="control-label" for="project-name">Name</label>
+                <div class="controls">
+                    <input class="input-xlarge focused" id="project-name" type="text" placeholder="Your project name">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="projectdiscipline">Discipline</label>
+                <div class="controls">
+                    <select class="input-xlarge focused" id="projectdiscipline" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="projectontology">Ontology</label>
+                <div class="controls">
+                    <select class="input-xlarge focused" id="projectontology"  />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Groups</label>
+                <div class="controls row" id="projectuser">
+                </div>
+            </div>
         </form>
     </div>
     <div class="modal-footer">

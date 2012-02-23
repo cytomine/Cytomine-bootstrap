@@ -22,7 +22,11 @@
     <link rel='stylesheet' href='lib/ui.panel/ui.panel.css' type='text/css'/>
     <link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
-    <link rel="stylesheet" href="lib/bootstrap-1.3/bootstrap.min.css">
+
+    <!--<link rel="stylesheet" href="lib/bootstrap-1.3/bootstrap.min.css">-->
+    <link rel="stylesheet" href="lib/bootstrap-2.0/css/bootstrap.css">
+    <link rel="stylesheet" href="lib/bootstrap-2.0/css/bootstrap-responsive.css">
+
     <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
     <link rel='stylesheet' href='lib/fileupload2/jquery.fileupload-ui.css' type='text/css'/>
 
@@ -36,12 +40,15 @@
         <script type="text/javascript" src="lib/requirejs/require.js"></script>
 
         <!-- Twitter bootstrap -->
+
+        <script type="text/javascript" src="lib/bootstrap-2.0/js/bootstrap.js"></script>
+        <!--
         <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-modal.js"></script>
         <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-dropdown.js"></script>
         <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-twipsy.js"></script>
         <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-popover.js"></script>
         <script type="text/javascript" src="lib/bootstrap-1.3/bootstrap-alerts.js"></script>
-
+        -->
 
         <!-- Core Libs -->
         <script type="text/javascript" src="lib/underscore.js"></script>
@@ -187,10 +194,10 @@
 
     <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
         <script type="text/javascript">
-            setTimeout(function(){
+            /*setTimeout(function(){
                 $("#j_username").val("stevben");
                 $("#j_password").val("sB$2011");
-            }, 1000);
+            }, 1000);*/
         </script>
     </g:if>
 </head>

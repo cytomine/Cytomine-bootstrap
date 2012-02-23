@@ -36,10 +36,6 @@ var LoginDialogView = Backbone.View.extend({
             return false;
          }
       });
-      $("#submit-login").click(function(){
-
-         $('#login-form').submit();
-      });
       return this;
    },
    render: function() {

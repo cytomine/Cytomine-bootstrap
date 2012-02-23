@@ -39,8 +39,8 @@ var DashboardController = Backbone.Router.extend({
         var self = this;
         var func = function() {
             self.view.refreshImagesThumbs();
-            var tabs = $("#explorer > .browser").children(".tabs");
-            tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
+            var tabs = $("#explorer > .browser").find(".nav-tabs");
+            tabs.find('a[href=#tabs-images-'+window.app.status.currentProject+']').click();
         };
         this.init(project, func);
     },
@@ -49,8 +49,8 @@ var DashboardController = Backbone.Router.extend({
         var func = function() {
             self.view.changeImagePage(page);
             self.view.showImagesThumbs();
-            var tabs = $("#explorer > .browser").children(".tabs");
-            tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
+            var tabs = $("#explorer > .browser").find(".nav-tabs");
+            tabs.find('a[href=#tabs-images-'+window.app.status.currentProject+']').click();
         };
         this.init(project, func);
     },
@@ -59,8 +59,8 @@ var DashboardController = Backbone.Router.extend({
         var func = function() {
             self.view.refreshImagesTable();
             self.view.showImagesThumbs();
-            var tabs = $("#explorer > .browser").children(".tabs");
-            tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
+            var tabs = $("#explorer > .browser").find(".nav-tabs");
+            tabs.find('a[href=#tabs-images-'+window.app.status.currentProject+']').click();
         };
         this.init(project, func);
     },
@@ -69,17 +69,17 @@ var DashboardController = Backbone.Router.extend({
         var func = function() {
             self.view.refreshImagesTable();
             self.view.showImagesTable();
-            var tabs = $("#explorer > .browser").children(".tabs");
-            tabs.tabs("select", "#tabs-images-"+window.app.status.currentProject);
+            var tabs = $("#explorer > .browser").find(".nav-tabs");
+            tabs.find('a[href=#tabs-images-'+window.app.status.currentProject+']').click();
         };
         this.init(project, func);
     },
     annotations : function(project, terms, users) {
         var self = this;
         var func = function() {
-            var tabs = $("#explorer > .browser").children(".tabs");
             window.app.controllers.browse.tabs.triggerRoute = false;
-            tabs.tabs("select", "#tabs-annotations-"+window.app.status.currentProject);
+            var tabs = $("#explorer > .browser").find(".nav-tabs");
+            tabs.find('a[href=#tabs-annotations-'+window.app.status.currentProject+']').click();
             self.view.refreshAnnotations(terms, users);
             window.app.controllers.browse.tabs.triggerRoute = true;
 
@@ -91,8 +91,8 @@ var DashboardController = Backbone.Router.extend({
         var self = this;
         var func = function() {
             self.view.refreshAlgos();
-            var tabs = $("#explorer > .browser").children(".tabs");
-            tabs.tabs("select", "#tabs-algos-"+window.app.status.currentProject);
+            var tabs = $("#explorer > .browser").find(".nav-tabs");
+            tabs.find('a[href=#tabs-algos-'+window.app.status.currentProject+']').click();
         };
         this.init(project, func);
     },
@@ -101,9 +101,9 @@ var DashboardController = Backbone.Router.extend({
         var self = this;
         var func = function() {
             self.view.refreshDashboard();
-            var tabs = $("#explorer > .browser").children(".tabs");
             window.app.controllers.browse.tabs.triggerRoute = false;
-            tabs.tabs("select", "#tabs-dashboard-"+window.app.status.currentProject);
+            var tabs = $("#explorer > .browser").find(".nav-tabs");
+            tabs.find('a[href=#tabs-dashboard-'+window.app.status.currentProject+']').click();
             window.app.controllers.browse.tabs.triggerRoute = true;
             if (callback != undefined) callback.call();
 
@@ -112,14 +112,13 @@ var DashboardController = Backbone.Router.extend({
     },
 
     createView : function (callback) {
-        var tabs = $("#explorer > .browser").children(".tabs");
         var self = this;
         new ProjectModel({id : window.app.status.currentProject}).fetch({
             success : function(model, response) {
                 window.app.status.currentProjectModel = model;
                 self.view = new ProjectDashboardView({
                     model : model,
-                    el: tabs
+                    el: $("#explorer-tab-content")
                 }).render();
                 callback.call();
             }

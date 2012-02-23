@@ -26,11 +26,10 @@ var BrowseImageView = Backbone.View.extend({
         var self = this;
         var templateData = this.model.toJSON();
         templateData.project = window.app.status.currentProject;
-        $(this.el).append(_.template(tpl, templateData));
+
         setTimeout(function(){window.app.view.applyPreferences();},1700);
-        var tabs = $(this.el).children('.tabs');
-        this.el.tabs("add", "#tabs-image-" + window.app.status.currentProject + "-" + this.model.get('id') + "-", this.model.get('filename'));
-        this.el.css("display", "block");
+        $(this.el).append(_.template(tpl, templateData));
+        $(".nav-tabs").append(_.template("<li><a style='float: left;' id='tabs-image-<%= idImage %>' href='#tabs-image-<%= idProject %>-<%= idImage %>-' data-toggle='tab'><i class='icon-search' /> <%= filename %> </a><a style='float: left;' href='#' data-image='<%= idImage %>' class='close closeTab'>&times;</a></li>",{ idProject : window.app.status.currentProject, idImage : this.model.get('id'), filename : this.model.get('filename')}));
         this.initToolbar();
         this.initMap();
         this.initAnnotationsTabs();
@@ -47,7 +46,6 @@ var BrowseImageView = Backbone.View.extend({
     render : function() {
         var self = this;
         //var template = (this.iPad) ? "text!application/templates/explorer/BrowseImageMobile.tpl.html" : "text!application/templates/explorer/BrowseImage.tpl.html";
-
         require(["text!application/templates/explorer/BrowseImage.tpl.html"
         ], function(  tpl) {
             self.doLayout(tpl);
@@ -61,7 +59,6 @@ var BrowseImageView = Backbone.View.extend({
         var self = this;
         if (options.goToAnnotation != undefined) {
             _.each(this.layers, function(layer) {
-
                 self.goToAnnotation(layer,  options.goToAnnotation.value);
             });
         }
@@ -88,7 +85,6 @@ var BrowseImageView = Backbone.View.extend({
     switchControl : function(controlName) {
         var toolbar = $('#toolbar' + this.model.get('id'));
         toolbar.find('input[id=' + controlName + this.model.get('id') + ']').click();
-
     },
     /**
      * Move the OpenLayers view to the Annotation, at the
@@ -139,7 +135,6 @@ var BrowseImageView = Backbone.View.extend({
      */
     layerLoadedCallback : function (layer) {
         var self = this;
-
         this.layersLoaded++;
         var project = window.app.status.currentProjectModel;
         if (this.layersLoaded == project.get("users").length) {
@@ -230,8 +225,10 @@ var BrowseImageView = Backbone.View.extend({
      * @param userID the id of the user associated to the layer
      */
     addVectorLayer : function(layer, userID) {
+        layer.vectorsLayer.setVisibility(false);
         this.map.addLayer(layer.vectorsLayer);
         this.layers.push(layer);
+
         this.layerSwitcherPanel.addVectorLayer(layer, this.model, userID);
     },
     /**
@@ -258,7 +255,6 @@ var BrowseImageView = Backbone.View.extend({
      * Init the Map if ImageServer is IIPImage
      */
     initIIP : function () {
-
         var self = this;
         var initZoomifyLayer = function(metadata, zoomify_urls, imageFilters) {
             self.createLayerSwitcher();
@@ -275,11 +271,11 @@ var BrowseImageView = Backbone.View.extend({
                 controls: [
                     new OpenLayers.Control.TouchNavigation({
                         dragPanOptions: {
-                            enableKinetic: true
+                            enableKinetic: false
                         }
                     }),
                     //new OpenLayers.Control.Navigation({zoomWheelEnabled : true, mouseWheelOptions: {interval: 1}, cumulative: false}),
-                    new OpenLayers.Control.Navigation( {dragPanOptions: {enableKinetic: true}}),
+                    new OpenLayers.Control.Navigation( {dragPanOptions: {enableKinetic: false}}),
                     new OpenLayers.Control.PanZoomBar(),
                     new OpenLayers.Control.MousePosition(),
                     new OpenLayers.Control.KeyboardDefaults()],
@@ -319,11 +315,15 @@ var BrowseImageView = Backbone.View.extend({
                 }
             });
 
+            $("#map" + self.model.get('id')).css("width", "100%");
+            $("#map" + self.model.get('id')).css("height", "100%");
             self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
+
             self.initOntology();
             //Set the height of the map manually
             var paddingTop = 79;
             var height = $(window).height() - paddingTop;
+
             $("#map"+self.model.get('id')).css("height",height);
             $(window).resize(function() {
                 var height = $(window).height() - paddingTop;
@@ -453,91 +453,75 @@ var BrowseImageView = Backbone.View.extend({
         console.log("initToolbar");
         var toolbar = $('#toolbar' + this.model.get('id'));
         var self = this;
-        toolbar.find('input[name=select]').button();
-        toolbar.find('button[name=delete]').button();
-        toolbar.find('button[name=ruler]').button();
-        toolbar.find('input[id^=ruler]').button({
-            text: true/*,
-            icons: {
-                secondary: "ui-icon-arrow-2-ne-sw"
-            }*/
-        });
-        toolbar.find('input[name=rotate]').button();
-        toolbar.find('input[name=resize]').button();
-        toolbar.find('input[name=drag]').button();
-        toolbar.find('input[name=irregular]').button();
-        toolbar.find('span[class=nav-toolbar]').buttonset();
-        toolbar.find('span[class=draw-toolbar]').buttonset();
-        toolbar.find('span[class=edit-toolbar]').buttonset();
-        toolbar.find('span[class=delete-toolbar]').buttonset();
-        toolbar.find('span[class=ruler-toolbar]').buttonset();
-        toolbar.find('input[id=none' + this.model.get('id') + ']').click(function () {
+        $('a[id=none' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("none");
             self.getUserLayer().enableHightlight();
         });
-        toolbar.find('input[id=select' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=select' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().toggleControl("select");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('input[id=regular4' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=regular4' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().setSides(4);
             self.getUserLayer().toggleControl("regular");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('input[id=regular30' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=regular30' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().setSides(15);
             self.getUserLayer().toggleControl("regular");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('input[id=polygon' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=polygon' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("polygon");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('input[id=freehand' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=freehand' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("freehand");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('input[id=magic' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=magic' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("select");
             self.getUserLayer().magicOnClick = true;
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('input[id=modify' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=modify' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().toggleEdit();
             self.getUserLayer().toggleControl("modify");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('input[id=delete' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=delete' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("select");
             self.getUserLayer().deleteOnSelect = true;
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('input[id=rotate' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=rotate' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().toggleRotate();
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('input[id=resize' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=resize' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().toggleResize();
             self.getUserLayer().disableHightlight();
 
         });
-        toolbar.find('input[id=drag' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=drag' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().toggleDrag();
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('input[id=ruler' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=ruler' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("line");
             self.getUserLayer().measureOnSelect = true;
             self.getUserLayer().disableHightlight();
         });
+
+
         /*toolbar.find('input[id=irregular' + this.model.get('id') + ']').click(function () {
          self.getUserLayer().toggleIrregular();
          });

@@ -12,10 +12,11 @@ var ApplicationView = Backbone.View.extend({
     className : "layout",
     components : {},
     panelsConfiguration : [
-        {key : "toggle-overview-panel", linkID : "toggle-overview-panel", name : "overview", className : "overviewPanel", value : { visible : true , position : { right : 20, top : 325}}},
-        {key : "toggle-ontology-panel", linkID : "toggle-ontology-panel", name : "ontology", className : "ontologypanel", value : { visible : true , position : { left : 20, top : 280}}},
-        {key : "toggle-layer-panel", linkID : "toggle-layer-panel", name : "layer switcher", className : "layerSwitcherPanel", value : { visible : false , position : { right : 20, top : 100}}},
-        {key : "toggle-filters-panel", linkID : "toggle-filters-panel", name : "filters", className : "imageFiltersPanel", value : { visible : false , position : { right : 20, bottom : 15}}}
+        {key : "toggle-toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { left : 120, top : 100}}},
+        {key : "toggle-overview-panel", linkID : "toggle-overview-panel", name : "Overview", className : "overviewPanel", value : { visible : true , position : { right : 20, top : 325}}},
+        {key : "toggle-ontology-panel", linkID : "toggle-ontology-panel", name : "Ontology", className : "ontologypanel", value : { visible : true , position : { left : 20, top : 280}}},
+        {key : "toggle-layer-panel", linkID : "toggle-layer-panel", name : "Layer switcher", className : "layerSwitcherPanel", value : { visible : false , position : { right : 20, top : 100}}},
+        {key : "toggle-filters-panel", linkID : "toggle-filters-panel", name : "Filters", className : "imageFiltersPanel", value : { visible : false , position : { right : 20, bottom : 15}}}
     ],
     events: {
         "click #undo":          "undo",
@@ -44,20 +45,18 @@ var ApplicationView = Backbone.View.extend({
     },
     updateMenuItem : function (item) {
         var preference = localStorage.getObject(item.key);
-        if (preference != undefined && preference.visible != undefined) {
-            $("#"+item.linkID).html("Hide " + item.name);
+        if (preference != undefined && preference.visible != undefined && preference.visible == true) {
+            $("#"+item.linkID).html("<i class='icon-eye-close' /> " + item.name);
             $("."+item.className).each(
                  function( intIndex ){
-                     console.log(intIndex);
                     $(this).show('fast');
                  }
             );
         }
         else {
-            $("#"+item.linkID).html("Show " + item.name);
+            $("#"+item.linkID).html("<i class='icon-eye-open' /> " + item.name);
              $("."+item.className).each(
                  function( intIndex ){
-                     console.log(intIndex);
                     $(this).hide('fast');
                  }
             );
@@ -80,8 +79,6 @@ var ApplicationView = Backbone.View.extend({
         });
 
         renderCallback.call();
-        //$('#switcher').themeswitcher();
-
         return this;
     },
     /**
@@ -150,7 +147,7 @@ var ApplicationView = Backbone.View.extend({
             $("#loggedUser").html(window.app.status.user.model.prettyName());
             _.each(self.panelsConfiguration, function (item){
                 self.updateMenuItem(item);
-                $("#"+item.linkID).click(function(){
+                $("#"+item.linkID).on('click',function(){
                     self.toggleVisibility(item);
                     self.updatePanelPosition(item);
                 });
@@ -278,17 +275,21 @@ var ApplicationView = Backbone.View.extend({
 });
 
 ApplicationView.prototype.message =  function(title, message, type) {
-    type = type || 'info';
+    if (type == "" || type == undefined)
+        type = 'alert-info';
+    else
+        type = 'alert-'+type;
+
     if(message!=undefined) {
         message.responseText && (message = message.responseText);
     }
 
-    var tpl = '<div style="min-width: 200px" id="alert<%=   timestamp %>" class="alert-message <%=   type %> fade in" data-alert="alert"><a class="close" href="#">×</a><p><strong><%=   alert %></strong> <%=   message %></p></div>';
+    var tpl = '<div style="min-width: 200px" id="alert<%=   timestamp %>" class="alert <%=   type %> fade in" data-alert="alert"><a class="close" data-dismiss="alert">×</a><p><strong><%=   alert %></strong> <%=   message %></p></div>';
     var timestamp = new Date().getTime();
     $("#alerts").append(_.template(tpl, { alert : title, message : message, timestamp : timestamp, type : type}));
     $("#alert"+timestamp).alert();
     setTimeout(function(){
-        $("#alert"+timestamp).alert('close');
+        //$("#alert"+timestamp).alert('close');
         $("#alert"+timestamp).remove();
     }, 3000);
 

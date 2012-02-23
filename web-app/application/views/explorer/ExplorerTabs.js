@@ -26,55 +26,61 @@ var ExplorerTabs = Backbone.View.extend({
     doLayout: function(tpl) {
         var self = this;
         $(this.el).html(_.template(tpl, {}));
-        var tabs = $(this.el).children('.tabs');
-        /*tabs.tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });*/
-        tabs.tabs({
-            add: function(event, ui) {
-
-                /*$("#"+ui.panel.id).parent().parent().css('height', "100%");*/
-                if (ui.panel.id != ("tabs-dashboard-"+window.app.status.currentProject)
-                        && (ui.panel.id != "tabs-images-"+window.app.status.currentProject)
-                        && ui.panel.id != ("tabs-annotations-"+window.app.status.currentProject)
-                        && ui.panel.id != ("tabs-algos-"+window.app.status.currentProject)) {
-                    //Append cross for close
-                    tabs.find("ul").find("a[href=#"+ui.panel.id+"]").find("span").attr("style", "display:inline;");
-                    tabs.find("ul").find("a[href=#"+ui.panel.id+"]").append("<span class='ui-icon ui-icon-close' style='display:inline;cursor:pointer;'>&nbsp;&nbsp;&nbsp;&nbsp;</span>");
-                    tabs.find("ul").find("a[href=#"+ui.panel.id+"]").find("span.ui-icon-close" ).click(function(e) {
-                        e.preventDefault();
-                        var index = $( "li", tabs ).index( $( this ).parent() );
-                        self.removeTab(index);
-                    });
-                    //Append open a new window icon
-                    /*tabs.find("ul").find("a[href=#"+ui.panel.id+"]").find("span").attr("style", "display:inline;");
-                    tabs.find("ul").find("a[href=#"+ui.panel.id+"]").append("<span class='ui-icon ui-icon-extlink' style='display:inline;cursor:pointer;'>&nbsp;&nbsp;&nbsp;&nbsp;</span>");
-                    tabs.find("ul").find("a[href=#"+ui.panel.id+"]").find("span.ui-icon-extlink" ).click(function(e) {
-                        e.preventDefault();
-                        var hash = $(this).parent().attr("href");
-                        var url = "http://" + window.location.host + "/" + hash;
-                        var windowName = "Cytomine (2)";
-                        var index = $( "li", tabs ).index( $( this ).parent() );
-                        self.removeTab(index);
-                        window.app.secondaryWindow = window.open(url, windowName);
-                    });*/
-                    self.triggerRoute = false;
-                    tabs.tabs('select', '#' + ui.panel.id);
-                    self.triggerRoute = true;
-                } else {
-                    //$(ui.panel).css({ 'background-image': 'url(http://subtlepatterns.com/patterns/whitey.png)'});
-                }
-                /*$("#"+ui.panel.id).attr('style', 'width:100%;height:100%;overflow:hidden;');*/
-            },
-            show: function(event, ui){
-                /*$("#"+ui.panel.id).attr('style', 'width:100%;height:100%;overflow:hidden;');*/
-                return true;
-            },
-            select: function(event, ui) {
-                if (self.triggerRoute) window.app.controllers.browse.navigate("#"+ui.panel.id, self.triggerRoute);
-
-            }
+        $(".closeTab" ).live("click",function(e) {
+            e.preventDefault();
+            var index = $( "li", $(".nav-tabs") ).index( $( this ).parent() );
+            var idImage = $(this).attr("data-image");
+            self.removeTab(index, idImage);
+            self.selectLastTab();
         });
+        /*tabs.tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });*/
+        /*tabs.tabs({
+         add: function(event, ui) {
 
-        $("ul.tabs a").css('height', $("ul.tabs").height());
+         ///$("#"+ui.panel.id).parent().parent().css('height', "100%");
+         if (ui.panel.id != ("tabs-dashboard-"+window.app.status.currentProject)
+         && (ui.panel.id != "tabs-images-"+window.app.status.currentProject)
+         && ui.panel.id != ("tabs-annotations-"+window.app.status.currentProject)
+         && ui.panel.id != ("tabs-algos-"+window.app.status.currentProject)) {
+         //Append cross for close
+         tabs.find("ul").find("a[href=#"+ui.panel.id+"]").find("span").attr("style", "display:inline;");
+         tabs.find("ul").find("a[href=#"+ui.panel.id+"]").append("<span class='ui-icon ui-icon-close' style='display:inline;cursor:pointer;'>&nbsp;&nbsp;&nbsp;&nbsp;</span>");
+         tabs.find("ul").find("a[href=#"+ui.panel.id+"]").find("span.ui-icon-close" ).click(function(e) {
+         e.preventDefault();
+         var index = $( "li", tabs ).index( $( this ).parent() );
+         self.removeTab(index);
+         });
+         //Append open a new window icon
+         //tabs.find("ul").find("a[href=#"+ui.panel.id+"]").find("span").attr("style", "display:inline;");
+         //tabs.find("ul").find("a[href=#"+ui.panel.id+"]").append("<span class='ui-icon ui-icon-extlink' style='display:inline;cursor:pointer;'>&nbsp;&nbsp;&nbsp;&nbsp;</span>");
+         //tabs.find("ul").find("a[href=#"+ui.panel.id+"]").find("span.ui-icon-extlink" ).click(function(e) {
+         //    e.preventDefault();
+         //    var hash = $(this).parent().attr("href");
+         //    var url = "http://" + window.location.host + "/" + hash;
+         //    var windowName = "Cytomine (2)";
+         //    var index = $( "li", tabs ).index( $( this ).parent() );
+         //    self.removeTab(index);
+         //    window.app.secondaryWindow = window.open(url, windowName);
+         //});
+         self.triggerRoute = false;
+         tabs.tabs('select', '#' + ui.panel.id);
+         self.triggerRoute = true;
+         } else {
+         //$(ui.panel).css({ 'background-image': 'url(http://subtlepatterns.com/patterns/whitey.png)'});
+         }
+         //$("#"+ui.panel.id).attr('style', 'width:100%;height:100%;overflow:hidden;');
+         },
+         show: function(event, ui){
+         //$("#"+ui.panel.id).attr('style', 'width:100%;height:100%;overflow:hidden;');
+         return true;
+         },
+         select: function(event, ui) {
+         if (self.triggerRoute) window.app.controllers.browse.navigate("#"+ui.panel.id, self.triggerRoute);
+
+         }
+         });
+
+         $("ul.tabs a").css('height', $("ul.tabs").height());*/
         return this;
     },
     /**
@@ -89,7 +95,7 @@ var ExplorerTabs = Backbone.View.extend({
             tab.view.show(options);
             return;
         }
-        var tabs = $(self.el).children('.tabs');
+        var tabs = $("#explorer-tab-content");
         new ImageInstanceModel({id : idImage}).fetch({
             success : function(model, response) {
                 var view = new BrowseImageView({
@@ -97,6 +103,7 @@ var ExplorerTabs = Backbone.View.extend({
                     initCallback : function(){view.show(options)},
                     el: tabs
                 }).render();
+                self.showTab(idImage);
                 self.tabs.push({idImage : idImage,view : view});
             }
         });
@@ -116,19 +123,28 @@ var ExplorerTabs = Backbone.View.extend({
      * Remove a Tab
      * @param index the identifier of the Tab
      */
-    removeTab : function (index) {
+    removeTab : function (index, idImage) {
         this.tabs.splice(index,1);
-        var tabs = $(this.el).children('.tabs');
-        tabs.tabs( "remove", index);
+        var tabs = $(this.el).children('.nav-tab');
+        var target = $('#tabs-image-'+idImage).attr("href");
+        $(target).remove();
+        window.app.controllers.browse.tabs.triggerRoute = false;
+        $('#tabs-image-'+idImage).parent().remove();
+        window.app.controllers.browse.tabs.triggerRoute = true;
+    },
+    selectLastTab : function () {
+        var tabs = $("#explorer > .browser").find(".nav-tabs");
+        tabs.last().find("a").first().click();
     },
     /**
      * Show a tab
-     * @param index the identifier of the Tab
+     * @param idImage the identifier of the Tab
      */
-    showTab : function(index) {
-        var tabs = $("#explorer > .browser").children(".tabs");
-        tabs.tabs("select", "#tabs-image-"+window.app.status.currentProject+"-"+index+"-");
-        return;
+    showTab : function(idImage) {
+        var tabs = $("#explorer > .browser").find(".nav-tabs");
+        window.app.controllers.browse.tabs.triggerRoute = false;
+        $('a[href=#tabs-image-'+window.app.status.currentProject+'-'+idImage+'-]').click();
+        window.app.controllers.browse.tabs.triggerRoute = true;
     },
     /**
      * Return the number of opened tabs
@@ -154,12 +170,20 @@ var ExplorerTabs = Backbone.View.extend({
      * @param dashboard the ProjectDashBoardView instance
      */
     addDashboard : function(dashboard) {
+        var self = this;
+        var tabs = $('#explorer-tab-content');
+        $(".nav-tabs").append(_.template("<li><a href='#tabs-dashboard-<%= idProject %>' data-toggle='tab'><i class='icon-road' /> Dashboard</a></li>",{ idProject : window.app.status.currentProject}));
+        $(".nav-tabs").append(_.template("<li><a href='#tabs-images-<%= idProject %>' data-toggle='tab'><i class='icon-picture' /> Images</a></li>",{ idProject : window.app.status.currentProject}));
+        $(".nav-tabs").append(_.template("<li><a href='#tabs-annotations-<%= idProject %>' data-toggle='tab'><i class='icon-pencil' /> Annotations</a></li>",{ idProject : window.app.status.currentProject}));
+        $(".nav-tabs").append(_.template("<li><a href='#tabs-algos-<%= idProject %>' data-toggle='tab'><i class='icon-cog' /> Configuration</a></li>",{ idProject : window.app.status.currentProject}));
 
-        var tabs = $(this.el).children('.tabs');
-        tabs.tabs("add", "#tabs-dashboard-"+window.app.status.currentProject, 'Dashboard');
-        tabs.tabs("add", "#tabs-images-"+window.app.status.currentProject, 'Images');
-        tabs.tabs("add", "#tabs-annotations-"+window.app.status.currentProject, 'Annotations');
-        tabs.tabs("add", "#tabs-algos-"+window.app.status.currentProject, 'Expert');
+        $('a[data-toggle="tab"]').live('show', function (e) {
+            var hash = this.href.split("#")[1];
+            $("#"+hash).attr('style', 'width:100%;height:100%;overflow:hidden;');
+            if (self.triggerRoute) window.app.controllers.browse.navigate("#"+hash, self.triggerRoute);
+        });
+
+
         $("#explorer > .browser").show();
         $("#explorer > .noProject").hide();
         this.tabs.push({

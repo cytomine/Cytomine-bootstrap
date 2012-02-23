@@ -4,7 +4,7 @@ class SequenceService {
 
     def sessionFactory
     def grailsApplication
-    public final static String SEQ_NAME = "CYTOMINE_SEQ"
+    public final static String SEQ_NAME = "hibernate_sequence"
     static transactional = true
 
     def initSequences() {

@@ -3,6 +3,10 @@ package be.cytomine.api.image
 import be.cytomine.api.RestController
 import be.cytomine.project.Slide
 import be.cytomine.security.User
+import grails.converters.JSON
+import grails.plugins.springsecurity.Secured
+import be.cytomine.Exception.CytomineException
+import be.cytomine.test.Infos
 
 /**
  * Cytomine @ GIGA-ULG
@@ -48,5 +52,44 @@ class RestSlideController extends RestController {
         Slide slide = slideService.read(params.long('id'))
         if (slide) responseSuccess(slide)
         else responseNotFound("Slide", params.id)
+    }
+
+    def add = {
+        try {
+            def json = request.JSON
+            log.debug("add")
+            def result = slideService.add(json)
+            log.debug("result")
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error("add error:" + e.msg)
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+    }
+
+
+    def update = {
+        def json = request.JSON
+        try {
+            def domain = slideService.retrieve(json)
+            def result = slideService.update(domain,json)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+    }
+
+    def delete = {
+        def json = JSON.parse("{id : $params.id}")
+        try {
+            def domain = slideService.retrieve(json)
+            def result = slideService.delete(domain,json)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
     }
 }

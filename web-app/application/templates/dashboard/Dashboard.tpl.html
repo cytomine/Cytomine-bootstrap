@@ -1,6 +1,6 @@
-<div id="tabs-dashboard-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding : 20px;">
-    <div class="row">
-        <div id="projectInfoPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;min-height: 250px;" class="span6 hero-unit">
+<div class="tab-pane"  id="tabs-dashboard-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding : 20px;">
+    <div class="row" style="padding-top: 15px;padding-left: 30px;">
+        <div id="projectInfoPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;min-height: 250px;" class="span5 hero-unit">
             <h3>Project Info</h3>
             <ul>
                 <li>Name: <a href="#tabs-dashboard-<%= id %>"><%= name %></a></li>
@@ -16,7 +16,7 @@
 
         </div>
 
-        <div id="projectLastCommandPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;min-height: 250px;"  class="span6 hero-unit">
+        <div id="projectLastCommandPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;min-height: 250px;"  class="span5 hero-unit">
             <h3>Activity</h3>
             <div style="height: 200px;">
                 <div>
@@ -27,52 +27,52 @@
             </div>
         </div>
 
-        <div id="projectcolmunChartPanel" style="padding : 15px; margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
+        <div id="projectcolmunChartPanel" style="padding : 15px; margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
             <h3>Number of annotations by term (column)</h3>
             <div>
                 <div id="projectColumnChart">No data to display</div>
             </div>
         </div>
 
-        <div id="projectPieChartPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
+        <div id="projectPieChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
             <h3>Number of annotations by term (pie)</h3>
             <div>
                 <div id="projectPieChart">No data to display</div>
             </div>
         </div>
 
-        <div id="userAnnotationsChartPanel" style="padding : 15px;margin-right:10px;min-width: <%= width2 %>;"  class="span6 hero-unit">
+        <div id="userAnnotationsChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width2 %>;"  class="span5 hero-unit">
             <h3>Number of annotations by term & user</h3>
             <div>
                 <div id="userAnnotationsChart">No data to display</div>
             </div>
         </div>
 
-        <div id="userNbAnnotationsChartPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
+        <div id="userNbAnnotationsChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
             <h3>Number of annotations by user</h3>
             <div>
                 <div id="userNbAnnotationsChart">No data to display</div>
             </div>
         </div>
-        <div id="termSlideAnnotationsChartPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
+        <div id="termSlideAnnotationsChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
             <h3>Number of annotated slides by term</h3>
             <div>
                 <div id="termSlideAnnotationsChart">No data to display</div>
             </div>
         </div>
-        <div id="userSlideAnnotationsChartPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
+        <div id="userSlideAnnotationsChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
             <h3>Number of annotated slides by users</h3>
             <div>
                 <div id="userSlideAnnotationsChart">No data to display</div>
             </div>
         </div>
-        <!--<div id="worstAnnotationTablePanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">-->
-            <!--<h3>Most Questionable Annotations</h3>-->
-            <!--<div>-->
-                <!--<div id="worstAnnotationTable">No data to display</div>-->
-            <!--</div>-->
+        <!--<div id="worstAnnotationTablePanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">-->
+        <!--<h3>Most Questionable Annotations</h3>-->
+        <!--<div>-->
+        <!--<div id="worstAnnotationTable">No data to display</div>-->
         <!--</div>-->
-        <div id="worstAnnotationPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
+        <!--</div>-->
+        <div id="worstAnnotationPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
             <h3>Most Questionable Annotation Term</h3>
             <div>
                 <div>
@@ -82,97 +82,104 @@
                 </div>
             </div>
         </div>
-        <div id="worstTermPieChartPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
+        <div id="worstTermPieChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
             <h3>Most Questionable Terms (pie)</h3>
             <div>
                 <div id="worstTermprojectPieChart">No data to display</div>
             </div>
         </div>
-        <div id="avgEvolutionLineChartPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
+        <div id="avgEvolutionLineChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
             <h3>AVG of success rate for retrieval algo</h3>
             <div>
                 <div id="avgEvolutionLineChart">No data to display</div>
             </div>
         </div>
-        <div id="worstTermListPanel" style="padding : 15px;margin-right:10px;min-width: <%= width %>;"  class="span6 hero-unit">
+        <div id="worstTermListPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
             <h3>Success for retrieval algo with term suggestion</h3>
             <div>
                 <div id="worstTermList">No data to display</div>
                 <div id="userRetrievalSuggestMatrixDataTable"></div>
             </div>
         </div>
-        <!--<div id="userRetrievalSuggestMatrixDataTablePanel" style="padding : 15px;margin-right:10px;min-width:95%;"  class="span6 hero-unit">-->
-            <!--<h3>Confusion Matrix</h3>-->
-            <!--<div>-->
-                <!---->
-            <!--</div>-->
+        <!--<div id="userRetrievalSuggestMatrixDataTablePanel" style="padding : 15px;margin-right:5px;min-width:95%;"  class="span5 hero-unit">-->
+        <!--<h3>Confusion Matrix</h3>-->
+        <!--<div>-->
+        <!---->
+        <!--</div>-->
         <!--</div>-->
 
     </div>
-    <div id="tabs-images-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding: 5px;">
-        <div align="right" style="margin-bottom: 10px;">
-            <a id="imageThumbs<%= id %>" href="#tabs-thumbs-<%= id %>">Thumbs</a>
-            <a id="imageArray<%= id %>" href="#tabs-imagesarray-<%= id %>">Listing</a>
-        </div>
-        <div id="tabs-projectImageThumb<%= id %>">
-            <div id="projectImageThumb<%= id %>" style="display:inline-block;width:95%;">
-                <span class="label notice">Loading...</span>
-            </div>
-        </div>
-        <div id="tabs-projectImageListing<%= id %>">
-            <div id="projectImageListing<%= id %>" style="display:inline-block;width:95%;">
-                <span class="label notice">Loading...</span>
-            </div>
+</div>
+<div class="tab-pane" id="tabs-images-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding: 5px;">
+    <div align="right" style="margin-bottom: 10px;">
+        <a id="imageThumbs<%= id %>" href="#tabs-thumbs-<%= id %>">Thumbs</a>
+        <a id="imageArray<%= id %>" href="#tabs-imagesarray-<%= id %>">Listing</a>
+    </div>
+    <div id="tabs-projectImageThumb<%= id %>">
+        <div id="projectImageThumb<%= id %>" style="display:inline-block;width:95%;">
+            <span class="label notice">Loading...</span>
         </div>
     </div>
+    <div id="tabs-projectImageListing<%= id %>">
+        <div id="projectImageListing<%= id %>" style="display:inline-block;width:95%;">
+            <span class="label notice">Loading...</span>
+        </div>
+    </div>
+</div>
 
-</div>
-<div id="tabs-annotations-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;">
+<div class="tab-pane" id="tabs-annotations-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;">
     <div class="container-fluid" style="padding-top: 10px;">
-        <div class="sidebar">
-            <div id="annotationsFilters" class="well" style="padding: 10px;width: 350px;">
-                <h4>Filters</h4>
-                <div style="padding-left: 30px;"><input class="undefinedAnnotationsCheckbox" type="checkbox"> <span class="label important">Annotations without terms</span></div>
-                <div style="padding-left: 30px;"><input class="multipleAnnotationsCheckbox" type="checkbox"> <span class="label important">Annotations with several terms</span></div>
-                <div id="treeAnnotationListing" class="tree"></div>
-                <ul style="display : inline;">
-                    <li style="display : inline;"><button id="checkAllTerms" class="btn">Check all</button></li>
-                    <li style="display : inline;"><button id="uncheckAllTerms" class="btn">Uncheck all</button></li>
-                </ul>
-                <hr />
-                <div id="treeUserListing" class="tree"></div>
-                <ul style="display : inline;">
-                    <li style="display : inline;"><button id="checkAllUsers" class="btn">Check all</button></li>
-                    <li style="display : inline;"><button id="uncheckAllUsers" class="btn">Uncheck all</button></li>
-                </ul>
-                <li style="display : inline;"><button id="refreshAnnotations" class="btn">Refresh</button></li>
-            </div>
-        </div>
-        <div class="content" style="padding-left: 150px;">
-            <div class="hero-unit" style="padding-top : 15px; padding-bottom: 15px;">
-                <span class="label success">New</span>&nbsp;<h4 style="display: inline-block;">Predefined Filters</h4><br/>
-                <select id="annotationFilterSelect">
-                </select>
-                <li style="display : inline;"><button id="selectAnnotationFilter" class="btn info">Select</button></li>
-                <li style="display : inline;"><button id="deleteAnnotationFilter" class="btn error">Delete</button></li>
-                <li id="liSaveAnnotationFilter" style="display : inline;"><button id="saveAnnotationFilter" class="btn success"> Save current selection</button></li>
-                <li id="liConfirmAnnotationFilter" style="display : none;"><input id="inputAnnotationFilterName" type="text" data-placement="below" rel='twipsy' title='Please specify a identifier' />&nbsp;<button id="confirmAnnotationFilter" class="btn success"> Confirm</button>&nbsp;<button id="cancelAnnotationFilter" class="btn"> Cancel</button></li>
-            </div>
-            <div id="listtabannotation" class="hero-unit" style="display: none;"><h4>Annotations</h4></div>
-            <div id="downloadAnnotation" class="hero-unit" style="padding-top : 15px; padding-bottom: 15px;display: none;">
-                <h4>Download</h4>
-                <ul>
-                    <li style="display : inline;"><a href="/api/project/<%= id %>/annotation/download?format=csv"  id="downloadAnnotationsCSV" class="btn">Download CSV</a></li>
-                    <li style="display : inline;"><a href="/api/project/<%= id %>/annotation/download?format=xls" id="downloadAnnotationsExcel" class="btn">Download Excel</a></li>
-                    <li style="display : inline;"><a href="/api/project/<%= id %>/annotation/download?format=pdf" id="downloadAnnotationsPDF" class="btn">Download PDF</a></li>
-                </ul>
-            </div>
-            <div id="annotationRetrievalMain"><div id="annotationRetrieval"></div></div>
-            <div id="annotationQuestionableMain"><div id="annotationQuestionable"></div></div>
-        </div>
+        <div class="row-fluid">
+            <div class="span3">
+                <div class="well sidebar-nav">
+                    <div id="annotationsFilters" style="padding: 10px;width: 350px;">
+                        <p></p><h3>Filters</h3></p>
+                        <div style="padding-left: 30px;"><input class="undefinedAnnotationsCheckbox" type="checkbox"> <span class="label label-important">Annotations without terms</span></div>
+                        <div style="padding-left: 30px;"><input class="multipleAnnotationsCheckbox" type="checkbox"> <span class="label label-important">Annotations with several terms</span></div>
+                        <hr />
+                        <div id="treeAnnotationListing" class="tree"></div>
+                        <ul style="display : inline;">
+                            <li style="display : inline;"><button id="checkAllTerms" class="btn">Check all</button></li>
+                            <li style="display : inline;"><button id="uncheckAllTerms" class="btn">Uncheck all</button></li>
+                        </ul>
+                        <hr />
+                        <div id="treeUserListing" class="tree"></div>
+                        <ul style="display : inline;">
+                            <li style="display : inline;"><button id="checkAllUsers" class="btn">Check all</button></li>
+                            <li style="display : inline;"><button id="uncheckAllUsers" class="btn">Uncheck all</button></li>
+                        </ul>
+                        <li style="display : inline;"><button id="refreshAnnotations" class="btn">Refresh</button></li>
+                    </div>
+                </div><!--/.well -->
+            </div><!--/span-->
+            <div class="span9">
+                <div class="row-fluid">
+                    <div class="row hero-unit" style="padding-top : 15px;">
+                        <span class="label label-success">New</span>&nbsp;<h4 style="display: inline-block;">Predefined Filters</h4><br/>
+                        <select id="annotationFilterSelect">
+                        </select>
+                        <li style="display : inline;"><button id="selectAnnotationFilter" class="btn info">Select</button></li>
+                        <li style="display : inline;"><button id="deleteAnnotationFilter" class="btn error">Delete</button></li>
+                        <li id="liSaveAnnotationFilter" style="display : inline;"><button id="saveAnnotationFilter" class="btn success"> Save current selection</button></li>
+                        <li id="liConfirmAnnotationFilter" style="display : none;"><input id="inputAnnotationFilterName" type="text" data-placement="below" rel='tooltip' title='Please specify a identifier' />&nbsp;<button id="confirmAnnotationFilter" class="btn success"> Confirm</button>&nbsp;<button id="cancelAnnotationFilter" class="btn"> Cancel</button></li>
+                    </div>
+                    <div id="listtabannotation" style="display: none;"></div>
+                    <div id="downloadAnnotation" class="row hero-unit" style="padding-top : 15px; padding-bottom: 15px;display: none;">
+                        <h4>Download</h4>
+                        <ul>
+                            <li style="display : inline;"><a href="/api/project/<%= id %>/annotation/download?format=csv"  id="downloadAnnotationsCSV" class="btn">Download CSV</a></li>
+                            <li style="display : inline;"><a href="/api/project/<%= id %>/annotation/download?format=xls" id="downloadAnnotationsExcel" class="btn">Download Excel</a></li>
+                            <li style="display : inline;"><a href="/api/project/<%= id %>/annotation/download?format=pdf" id="downloadAnnotationsPDF" class="btn">Download PDF</a></li>
+                        </ul>
+                    </div>
+                    <div id="annotationRetrievalMain"><div id="annotationRetrieval"></div></div>
+                    <div id="annotationQuestionableMain"><div id="annotationQuestionable"></div></div>
+                </div><!--/row-->
+            </div><!--/span-->
+        </div><!--/row-->
     </div>
 </div>
-<div id="tabs-algos-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding: 20px;">
+<div class="tab-pane" id="tabs-algos-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding: 20px;">
     <div class="container-fluid">
         <div class="hero-unit">
             <h3>Algo retrieval</h3>

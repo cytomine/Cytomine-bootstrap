@@ -87,7 +87,7 @@ class User extends SecUser {
 
 
     def abstractimage(int max, int first, String col, String order, String filename, Date dateAddedStart, Date dateAddedStop) {
-         def userGroup = userGroups()
+        def userGroup = userGroups()
         AbstractImage.createCriteria().list(offset: first, max: max, sort: col, order: order) {
             inList("id", AbstractImageGroup.createCriteria().list {
                 inList("group.id", userGroup.collect {it.group.id})

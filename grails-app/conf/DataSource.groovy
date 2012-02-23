@@ -29,7 +29,7 @@ environments {
   production {
     dataSource {
       dbCreate = "update"
-      url = "jdbc:postgresql://localhost:5432/cytomine"
+      url = "jdbc:postgresql://localhost:5432/cytomineprod"
     }
   }
 }

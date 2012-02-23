@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.test.Infos
 import org.hibernate.FetchMode
 import be.cytomine.command.Transaction
+import be.cytomine.security.SecUser
 
 class ImageInstanceService extends ModelService {
 
@@ -76,7 +77,7 @@ class ImageInstanceService extends ModelService {
     @PreAuthorize("hasRole('ROLE_USER')")
     def update(def domain,def json) {
 //        if(domain) checkAuthorization(domain.projectId)
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         executeCommand(new EditCommand(user: currentUser), json)
     }
 
@@ -85,7 +86,7 @@ class ImageInstanceService extends ModelService {
 //        if(domain) checkAuthorization(domain.projectId)
         //Start transaction
         Transaction transaction = transactionService.start()
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         //Read image
         Project project = Project.read(json.project)
         AbstractImage image = AbstractImage.read(json.image)

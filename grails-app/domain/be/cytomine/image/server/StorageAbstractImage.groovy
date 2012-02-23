@@ -23,8 +23,7 @@ class StorageAbstractImage {
 
     static StorageAbstractImage unlink(Storage storage, AbstractImage abstractImage) {
         def storageAbstractImage = StorageAbstractImage.findByStorageAndAbstractImage(storage, abstractImage)
-        if (!storageAbstractImage) {
-            storageAbstractImage = new StorageAbstractImage()
+        if (storageAbstractImage) {
             storage.removeFromStorageAbstractImages(storageAbstractImage)
             abstractImage.removeFromStorageAbstractImages(storageAbstractImage)
             storageAbstractImage.delete(flush: true)

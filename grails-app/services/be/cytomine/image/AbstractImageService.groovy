@@ -14,6 +14,9 @@ import be.cytomine.security.Group
 import be.cytomine.security.User
 import grails.orm.PagedResultList
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.command.Transaction
+import be.cytomine.image.server.Storage
+import be.cytomine.image.server.StorageAbstractImage
 
 class AbstractImageService extends ModelService {
 
@@ -23,6 +26,8 @@ class AbstractImageService extends ModelService {
     def imagePropertiesService
     def responseService
     def domainService
+    def transactionService
+    def storageService
 
     def list() {
         return AbstractImage.list()
@@ -74,18 +79,62 @@ class AbstractImageService extends ModelService {
 
 
     def add(def json) throws CytomineException {
+        Transaction transaction = transactionService.start()
+
         User currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new AddCommand(user: currentUser), json)
+
+        def res = executeCommand(new AddCommand(user: currentUser), json)
+        AbstractImage abstractImage = (AbstractImage) res.data.abstractimage
+        Group group = Group.findByName(currentUser.getUsername())
+        AbstractImageGroup.link(abstractImage, group)
+        json.storage.each { storageID ->
+            Storage storage = storageService.read(storageID)
+            StorageAbstractImage.link(storage, abstractImage)
+        }
+        imagePropertiesService.extractUseful(abstractImage)
+        //Stop transaction
+        transactionService.stop()
+
+        return res
+
+
     }
 
     def update(def domain,def json) throws CytomineException {
+        Transaction transaction = transactionService.start()
         User currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new EditCommand(user: currentUser), json)
+        def res = executeCommand(new EditCommand(user: currentUser), json)
+        AbstractImage abstractImage = (AbstractImage) res.data.abstractimage
+        StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
+              StorageAbstractImage.unlink(storageAbstractImage.storage, abstractImage)
+        }
+        json.storage.each { storageID ->
+            Storage storage = storageService.read(storageID)
+            StorageAbstractImage.link(storage, abstractImage)
+        }
+
+
+        //Stop transaction
+        transactionService.stop()
+
+        return res
     }
 
     def delete(def domain,def json) throws CytomineException {
+        Transaction transaction = transactionService.start()
         User currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        AbstractImage abstractImage = AbstractImage.read(json.id)
+        Group group = Group.findByName(currentUser.getUsername())
+        AbstractImageGroup.unlink(abstractImage, group)
+        StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
+              StorageAbstractImage.unlink(storageAbstractImage.storage, storageAbstractImage.abstractImage)
+        }
+        def res =  executeCommand(new DeleteCommand(user: currentUser), json)
+
+        //Stop transaction
+        transactionService.stop()
+
+        return res
     }
 
 

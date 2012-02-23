@@ -1,28 +1,49 @@
+<div class="navbar navbar-fixed-top" >
+    <div class="navbar-inner">
+        <div class="container" style="width : auto;">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="#">&nbsp; Cytomine <span style="font-size: 10px">ßeta</span></a>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a id="project-button"  href="#project"><i class="icon-folder-open icon-white" /> Projects</a></li>
+                    <li><a id="ontology-button" href="#ontology"><i class="icon-book icon-white" /> Ontologies</a></li>
+                    <li><a id="explorer-button" href="#explorer"><i class="icon-search icon-white" /> Explore</a></li>
+                    <!--<li><a id="activity-button" data-placement="below" rel='tooltip' title='Activity feed' href="#activity">Activity</a></li>-->
+                    <li><a id="upload-button"  href="#upload"><i class="icon-upload icon-white" /> Upload</a></li>
+                </ul>
+                <ul id="menu-right" class="nav pull-right">
+                    <li class="divider-vertical"></li>
+                    <li><a id="undo">Undo</a></li>
+                    <li><a id="redo">Redo</a></li>
+                    <li class="divider-vertical"></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog icon-white" /> Settings<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li class="nav-header">Panels</li>
+                            <li><a id="toggle-toolbar-panel"></a></li>
+                            <li><a id="toggle-ontology-panel"></a></li>
+                            <li><a id="toggle-layer-panel"></a></li>
+                            <li><a id="toggle-overview-panel"></a></li>
+                            <li><a id="toggle-filters-panel"></a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 <div id='header' class='topbar'>
     <div class="topbar-inner">
         <div class="container-fluid">
-            <a class="brand" href="#">Cytomine <span style="font-size: 10px">ßeta</span></a>
-            <ul>
-                <li><a id="project-button" data-placement="below" rel='twipsy' title='Organize your data into projects' href="#project">Projects</a></li>
-                <li><a id="ontology-button" data-placement="below" rel='twipsy' title='Define and manage ontologies' href="#ontology">Ontologies</a></li>
-                <li><a id="explorer-button" data-placement="below" rel='twipsy' title='Open and contribute to a project' href="#explorer">Explore</a></li>
-                <!--<li><a id="activity-button" data-placement="below" rel='twipsy' title='Activity feed' href="#activity">Activity</a></li>-->
-                <li><a id="upload-button" data-placement="below" rel='twipsy' title='Upload new data' href="#upload">Upload</a></li>
-            </ul>
-            <ul id="menu-right" class="nav secondary-nav">
 
-                <li><a id="undo">Undo</a></li>
-                <li><a id="redo">Redo</a></li>
-                <li class="dropdown" data-dropdown="dropdown" >
-                    <a href="#" class="dropdown-toggle">Panels</a>
-                    <ul class="dropdown-menu">
-                        <li><a id="toggle-ontology-panel"></a></li>
-                        <li><a id="toggle-layer-panel"></a></li>
-                        <li><a id="toggle-overview-panel"></a></li>
-                        <li><a id="toggle-filters-panel"></a></li>
-                    </ul>
-                </li>
+            <ul>
+
             </ul>
+
         </div>
     </div>
 </div>

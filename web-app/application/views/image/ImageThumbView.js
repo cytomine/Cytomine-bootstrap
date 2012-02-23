@@ -17,7 +17,7 @@ var ImageThumbView = Backbone.View.extend({
          jsonModel.title = (jsonModel.filename.length < 27) ? jsonModel.filename : jsonModel.filename.substr(0,24) + "...";
          jsonModel.resolution = Math.round(1000*jsonModel.resolution)/1000; //round to third decimal
          $(self.el).html(_.template(tpl, jsonModel));
-         $(self.el).find("a.title-thumb-"+self.model.id).twipsy();
+         $(self.el).find("a.title-thumb-"+self.model.id).tooltip();
          //$(self.el).find("#getImageProperties-"+self.model.id).click(function(){self.properties();return false;});
          $(self.el).find("#getImageProperties-"+self.model.id).click(function(){
             $("#image-properties").remove();

@@ -1,8 +1,13 @@
-<a href='#tabs-image-<%= project %>-<%=  image  %>-<%= id %>'>
-    <div class='thumb' rel="popover">
-        <img src='<%=  cropURL  %>' alt='alt |<%=  name  %>|' style="max-height:150px; max-width:150px; "  />
-    </div>
-    <div style="display: block">
-    <a href='#tabs-image-<%= project %>-<%=  image  %>-<%= id %>'>View</a> | <a href="#share-annotation/<%= id %>">Comment (<%= nbComments %>)</a>
-    </div>
-</a>
+<div class="tab-pane">
+    <a href='#tabs-image-<%= project %>-<%=  image  %>-<%= id %>'>
+        <div class="thumbnail">
+            <div style="min-height: 150px;">
+                <img src='<%=  cropURL  %>' alt='alt |<%=  name  %>|' style="max-height:150px; max-width:150px; "  />
+            </div>
+            <div class="caption">
+                <a  class="btn btn-info btn-small"  href="#share-annotation/<%= id %>"><i class="icon-comment icon-white" /> Comment (<%= nbComments %>)</a> <a  class="btn btn-info btn-small" href='#tabs-image-<%= project %>-<%=  image  %>-<%= id %>'><i class="icon-eye-open icon-white" /> View</a> <a  class="btn btn-warning btn-small"  href="#delete-annotation/<%= id %>"><i class="icon-trash icon-white" /> </a>
+
+            </div>
+        </div>
+    </a>
+</div>

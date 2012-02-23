@@ -1,6 +1,6 @@
-<div id="editproject" title="" class="modal hide">
+<div id="editproject" title="" class="modal xbigModal hide">
     <div class="modal-header">
-        <a href="#" class="close">&times;</a>
+        <!--<a href="#" class="close">&times;</a>-->
         <h3>Edit a project</h3>
     </div>
     <div class="modal-body">
@@ -9,10 +9,17 @@
                 <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
                     <strong>Error:</strong><div id="errormessage"></div></p>
             </div>
-            <legend style="font-weight: bold;padding-bottom: 3px;">Name</legend>
-            <input type="text" size="20" id="project-edit-name">
-            <legend style="font-weight: bold;padding-bottom: 3px;;padding-top: 5px;">Groups</legend>
-            <ul id="projectedituser"></ul>
+            <div class="control-group">
+                <label class="control-label" for="project-edit-name">Name</label>
+                <div class="controls">
+                    <input class="input-xlarge focused" id="project-edit-name" type="text" placeholder="Your project name">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Groups</label>
+                <div class="controls row" id="projectedituser">
+                </div>
+            </div>
 
         </form>
     </div>

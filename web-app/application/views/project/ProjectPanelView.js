@@ -83,7 +83,7 @@ var ProjectPanelView = Backbone.View.extend({
       if (_.size(users ) == 0) {
          json.shortUsers = users[0];
       } else if (_.size(users ) >= 1){
-         json.shortUsers = users[0] + ", ...";
+         json.shortUsers = users[0] + ", " + users[1] + " ...";
       }
 
       json.users = users.join(", ");

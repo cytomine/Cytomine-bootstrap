@@ -119,7 +119,7 @@ class AnnotationTermService extends ModelService {
 
         annotationTerm.each { annotterm ->
             log.info "unlink annotterm:" + annotterm.id
-            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.expectedTerm?.id,annotterm.user.id, currentUser, false,transaction)
+            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.user.id, currentUser, false,transaction)
         }
     }
 

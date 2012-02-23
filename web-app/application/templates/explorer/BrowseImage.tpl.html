@@ -1,33 +1,23 @@
-<div id="tabs-image-<%= project %>-<%= id %>-">
-    <div class="toolbar" id="toolbar<%= id %>" >
-      <span class="nav-toolbar">
-        <input type="radio" id="none<%= id %>" name="toolbar" /><label for="none<%= id %>" style="width:auto;">Navigate</label>
-        <input type="radio" id="select<%= id %>" name="toolbar" /><label for="select<%= id %>" style="width:auto;">Select</label>
-      </span>
-      <span class="draw-toolbar">
-        <!--<input type="radio" id="freehand<%= id %>" name="toolbar" /><label for="freehand<%= id %>">Freehand</label>-->
-        <input type="radio" id="regular4<%= id %>" name="toolbar" /><label for="regular4<%= id %>" style="width:auto;">Quadrilateral</label>
-        <input type="radio" id="regular30<%= id %>" name="toolbar" /><label for="regular30<%= id %>" style="width:auto;">Ellipse</label>
-        <input type="radio" id="polygon<%= id %>" name="toolbar" /><label for="polygon<%= id %>" style="width:auto;">Polygon</label>
-        <input type="radio" id="freehand<%= id %>" name="toolbar" /><label for="freehand<%= id %>" style="width:auto;">Freehand</label>
-        <input type="radio" id="magic<%= id %>" name="toolbar" style="display:none;"/><label for="magic<%= id %>" style="width:auto;">Auto</label>
-      </span>
-      <span class="edit-toolbar">
-        <input type="radio" id="modify<%= id %>" name="toolbar" /><label for="modify<%= id %>" style="width:auto;">Edit</label>
-        <input type="radio" id="rotate<%= id %>" name="toolbar" /><label for="rotate<%= id %>" style="width:auto;">Rotate</label>
-        <input type="radio" id="resize<%= id %>" name="toolbar" /><label for="resize<%= id %>" style="width:auto;">Resize</label>
-        <input type="radio" id="drag<%= id %>"  name="toolbar" /><label for="drag<%= id %>" style="width:auto;">Drag</label>
-      </span>
-      <span class="delete-toolbar">
-        <input type="radio" id="delete<%= id %>" name="toolbar" /><label for="delete<%= id %>" style="width:auto;">Delete</label>
-      </span>
-
-      <span class="ruler-toolbar">
-        <input type="radio" id="ruler<%= id %>" name="toolbar" /><label for="ruler<%= id %>" style="width:auto;">Ruler</label>
-      </span>
-    </div>
+<div class="tab-pane" id="tabs-image-<%= project %>-<%= id %>-">
     <div class="map" id="map<%= id %>"></div>
     <div class="controlPanels">
+        <div class="toolbar toolbarPanel">
+            <div class="btn-group" data-toggle="buttons-radio"  id="toolbar<%= id %>">
+                <a class="btn btn-inverse" id="none<%= id %>" data-toggle="button" ><i class="icon-move icon-white" /> Navigate</a>
+                <a class="btn btn-inverse" id="select<%= id %>" data-toggle="button" >Select</a>
+                <!--<a class="btn btn-inverse" id="regular4<%= id %>" data-toggle="button" >Quadrilateral</a>
+                <a class="btn btn-inverse" id="regular30<%= id %>" data-toggle="button" >Ellipse</a>-->
+                <a class="btn btn-inverse" id="polygon<%= id %>" data-toggle="button" >Polygon</a>
+                <a class="btn btn-inverse" id="freehand<%= id %>" data-toggle="button" ><i class="icon-pencil icon-white" /> Freehand</a>
+                <a class="btn btn-inverse" id="magic<%= id %>" data-toggle="button" >Magic Wand</a>
+                <a class="btn btn-inverse" id="modify<%= id %>" data-toggle="button" >Edit</a>
+                <a class="btn btn-inverse" id="rotate<%= id %>" data-toggle="button" >Rotate</a>
+                <a class="btn btn-inverse" id="resize<%= id %>" data-toggle="button" >Resize</a>
+                <a class="btn btn-inverse" id="drag<%= id %>" data-toggle="button" >Drag</a>
+                <a class="btn btn-inverse" id="delete<%= id %>" data-toggle="button" ><i class="icon-trash icon-white" /> Delete</a>
+                <a class="btn btn-inverse" id="ruler<%= id %>" data-toggle="button" >Ruler</a>
+            </div>
+        </div>
         <div class="overviewPanel" id="overviewMap<%= id %>" style="display : none"></div>
         <div class="layerSwitcherPanel" id="layerSwitcher<%= id %>" style="display : none"></div>
         <div class="ontologypanel" id="ontologyTree<%= id %>" style="display : none"></div>

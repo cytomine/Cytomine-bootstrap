@@ -1,29 +1,27 @@
 <h3>Project</h3>
-<button id='projectaddbutton' type="button" class="btn info addProject">Add a new project</button>
+<button id='projectaddbutton' type="button" class="btn btn-info addProject">Add a new project</button>
 <hr />
 <h3>Filters</h3>
-<legend style="font-weight : bold;margin-bottom: 3px;padding-top: 10px;">By name</legend>
-<input id="projectsearchtextbox" style="max-width: 120px;" />
-
-<legend style="font-weight : bold;margin-bottom: 3px;;padding-top: 10px;">By discipline</legend>
-<select id="disciplineChoiceList" class="searchProjectCriteria" style="max-width: 100px;">
-    <option value="-1">All</option>
-</select>
-
-<legend style="font-weight : bold;margin-bottom: 3px;;padding-top: 10px;">By ontology</legend>
-<select id="ontologyChoiceList" class="searchProjectCriteria" style="max-width: 100px;">
-    <option value="-1">All</option>
-</select>
-<legend style="font-weight : bold;margin-bottom: 3px;;padding-top: 10px;">Slides</legend>
+<h5>By name</h5>
+<input id="projectsearchtextbox" style="max-width: 150px;" />
+<h5>Slides</h5>
 <input type="text" id="amountNumberOfSlides" style="max-width: 50px;display: inline-block;" />
-<div id="numberofslideSlider" style="margin-left: 10px;display: inline-block;min-width: 100px;" />
-<legend style="font-weight : bold;margin-bottom: 3px;;padding-top: 10px;">Images</legend>
+<div id="numberofslideSlider" style="margin-left: 10px;display: inline-block;min-width: 75px;" />
+<h5>Images</h5>
 <input type="text" id="amountNumberOfImages" style="max-width: 50px;display: inline-block;" />
-<div id="numberofimageSlider" style="margin-left: 10px;display: inline-block;min-width: 100px;" />
-
-<legend style="font-weight : bold;margin-bottom: 3px;;padding-top: 10px;">Annotations</legend>
+<div id="numberofimageSlider" style="margin-left: 10px;display: inline-block;min-width: 75px;" />
+<h5>Annotations</h5>
 <input type="text" id="amountNumberOfAnnotations"  style="max-width: 50px;display: inline-block;" />
-<div id="numberofannotationSlider" style="margin-left: 10px;display: inline-block;min-width: 100px;" />
+<div id="numberofannotationSlider" style="margin-left: 10px;display: inline-block;min-width: 75px;" />
+<h5>By discipline</h5>
+<select id="disciplineChoiceList" class="searchProjectCriteria" style="max-width: 155px;">
+    <option value="-1">All</option>
+</select>
+<h5>By ontology</h5>
+<select id="ontologyChoiceList" class="searchProjectCriteria" style="max-width: 155px;">
+    <option value="-1">All</option>
+</select>
+
 <hr />
 <button id='projectallbutton' type="button" class="btn showAllProject">Reset</button>
 

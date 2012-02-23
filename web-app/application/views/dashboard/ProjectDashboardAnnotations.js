@@ -75,7 +75,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                         $(node.span).attr("class", "droppableElem");
                     }
                 });
-                $("#ontology-annotations-panel-"+self.model.id).panel();
+                //$("#ontology-annotations-panel-"+self.model.id).panel();
 
                 self.initSelectUser();
                 self.initAnnotationsFilter();
@@ -99,15 +99,15 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                         self.terms = collection;
                         window.app.status.currentTermsCollection = collection;
                         $("#listtabannotation").append(_.template(termTabContentTpl, { project : self.model.id, id : -1, name : "Undefined", className : "noDropZone"}));
-                        $("#tabsterm-panel-"+self.model.id+"--1").panel();
+                        //$("#tabsterm-panel-"+self.model.id+"--1").panel();
                         $("#tabsterm-panel-"+self.model.id+"--1").hide();
                         $("#listtabannotation").append(_.template(termTabContentTpl, { project : self.model.id, id : -2, name : "Multiple", className : "noDropZone"}));
-                        $("#tabsterm-panel-"+self.model.id+"--2").panel();
+                        //$("#tabsterm-panel-"+self.model.id+"--2").panel();
                         $("#tabsterm-panel-"+self.model.id+"--2").hide();
                         collection.each(function(term) {
                             //add x term tab
                             $("#listtabannotation").append(_.template(termTabContentTpl, { project : self.model.id, id : term.get("id"), name : term.get("name"), className : "droppableElem"}));
-                            $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).panel();
+                            //$("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).panel();
                             $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).hide();
                         });
                         self.initDropZone();
@@ -162,7 +162,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             $("#liSaveAnnotationFilter").hide();
             $("#liConfirmAnnotationFilter").css("display", "inline");
             $("#inputAnnotationFilterName").focus();
-            $("#inputAnnotationFilterName").twipsy();
+            $("#inputAnnotationFilterName").tooltip();
         }
         var hideConfirm = function () {
             $("#liSaveAnnotationFilter").css("display", "inline");

@@ -24,6 +24,29 @@ class Slide extends CytomineDomain {
 
     static hasMany = [image: AbstractImage]
 
+     static Slide createFromDataWithId(json) {
+        def domain = createFromData(json)
+        try {domain.id = json.id} catch (Exception e) {}
+        return domain
+    }
+
+    static Slide createFromData(jsonSlide) {
+        def image = new Slide()
+        getFromData(image, jsonSlide)
+    }
+
+    static Slide getFromData(Slide slide, jsonSlide) {
+        println "getFromData:" + jsonSlide
+
+        slide.created = (!jsonSlide.created.toString().equals("null")) ? new Date(Long.parseLong(jsonSlide.created)) : null
+        slide.updated = (!jsonSlide.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonSlide.updated)) : null
+
+        slide.name = jsonSlide.name
+        slide.index = jsonSlide.index
+
+
+        return slide;
+    }
 
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + Slide.class
