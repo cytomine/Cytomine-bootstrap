@@ -104,6 +104,7 @@
         <script type="text/javascript" src="application/models/RelationModel.js" ></script>
         <script type="text/javascript" src="application/models/SecRoleModel.js" ></script>
         <script type="text/javascript" src="application/models/SuggestedAnnotationTermModel.js" ></script>
+        <script type="text/javascript" src="application/models/JobModel.js" ></script>
         <!-- View -->
         <script type="text/javascript" src="application/views/activity/ActivityView.js" ></script>
         <script type="text/javascript" src="application/views/auth/LoginDialogView.js" ></script>

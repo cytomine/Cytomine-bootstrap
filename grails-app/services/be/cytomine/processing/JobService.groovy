@@ -8,6 +8,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.project.Project
 import be.cytomine.command.EditCommand
 import be.cytomine.command.DeleteCommand
+import be.cytomine.security.SecUser
 
 class JobService extends ModelService {
 
@@ -28,17 +29,23 @@ class JobService extends ModelService {
         Job.findAllBySoftware(software)
     }
 
+    def list(Project project) {
+        Job.findAllByProject(project)
+    }
+
     def list(Software software, Project project) {
         Job.findAllBySoftwareAndProject(software, project)
     }
 
     def add(def json) {
+        log.info "json="+json
+        log.info "cytomineService="+cytomineService
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
     def update(def domain, Object json) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 

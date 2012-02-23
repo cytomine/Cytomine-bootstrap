@@ -6,6 +6,7 @@ import be.cytomine.security.User
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.ResponseService
 
 class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE ABSTRACT with GRAILS2.0
 
@@ -19,15 +20,14 @@ class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE A
 
     static belongsTo = [software: Software]
 
-    static hasMany = [jobData: JobData, jobParameter : JobParameter]
-
     static constraints = {
         progress(min: 0, max: 100)
         project(nullable:true)
     }
 
     static mapping = {
-        tablePerHierarchy(false)
+        tablePerHierarchy(true)
+        id(generator: 'assigned', unique: true)
     }
 
     def getUrl() {
@@ -43,6 +43,7 @@ class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE A
         JSON.registerObjectMarshaller(Job) {
             def job = [:]
             job.id = it.id
+            job.algoType = ResponseService.getClassName(it).toLowerCase()
             job.running = it.running
             job.indeterminate = it.indeterminate
             job.progress = it.progress
@@ -51,8 +52,8 @@ class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE A
             job.project = it.project?.id
             job.software = it.software?.id
             
-            job.jobParameter = it.jobParameter
-            job.jobData = it.jobData
+            try {job.jobParameter = JobParameter.findAllByJob(it) } catch(Exception e) {}
+
             return job
         }
     }
@@ -68,7 +69,7 @@ class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE A
         getFromData(job, jsonJob)
     }
 
-    static Job getFromData(job, jsonJob) {
+    static def getFromData(job, jsonJob) {
         try {
             if (!jsonJob.running.toString().equals("null"))
                 job.running = Boolean.parseBoolean(jsonJob.running.toString())

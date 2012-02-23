@@ -34,6 +34,10 @@ class SecUser extends CytomineDomain {
         SecUserSecRole.findAllBySecUser(this).collect { it.secRole } as Set
     }
 
+    boolean hasPermission() {
+
+    }
+
     def generateKeys() {
         println "GENERATE KEYS"
         String privateKey = UUID.randomUUID().toString();

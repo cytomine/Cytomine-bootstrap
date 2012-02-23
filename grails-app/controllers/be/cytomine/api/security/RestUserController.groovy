@@ -31,7 +31,16 @@ class RestUserController extends RestController {
      */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
-        responseSuccess(userService.list())
+        if(params.publicKey!=null) {
+             responseSuccess(userService.getByPublicKey(params.publicKey))
+        } else responseSuccess(userService.list())
+    }
+
+    def showUserJob = {
+        UserJob userJob = UserJob.read(params.long('id'))
+        if(userJob) responseSuccess(userJob)
+        else responseNotFound("UserJob", params.id)
+
     }
 
     /**

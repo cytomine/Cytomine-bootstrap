@@ -68,11 +68,11 @@ class ResponseService {
      * @param o Object
      * @return Class name (without package) of o
      */
-    public String getClassName(Object o) {
-        log.info("getClassName=" + o.getClass());
+    public static String getClassName(Object o) {
+        //log.info("getClassName=" + o.getClass());
         String name = o.getClass()   //be.cytomine.image.Image
         String[] array = name.split("\\.")  //[be,cytomine,image,Image]
-        log.info array.length
+        //log.info array.length
         return array[array.length - 1] // Image
     }
 

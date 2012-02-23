@@ -11,6 +11,7 @@ class SoftwareParameter extends CytomineDomain {
     String type
     String defaultValue
     Boolean required = false
+    Integer index=-1
 
     static belongsTo = [Software]
 
@@ -18,6 +19,19 @@ class SoftwareParameter extends CytomineDomain {
         name (nullable: false, blank : false)
         type (inList: ["String", "Boolean", "Number"])
         defaultValue (nullable: true, blank : true)
+    }
+
+    public beforeInsert() {
+        super.beforeInsert()
+        SoftwareParameter softwareParam = SoftwareParameter.findBySoftware(software,[max: 1,sort: "index",order: "desc"])
+        if(this.index==-1) {
+              if(softwareParam)
+                this.index =  softwareParam.index
+              else
+                this.index = 0
+        }
+
+
     }
 
     String toString() {
@@ -39,6 +53,7 @@ class SoftwareParameter extends CytomineDomain {
             softwareParameter.defaultValue = it.defaultValue
             softwareParameter.required = it.required
             softwareParameter.software = it.getIdSoftware()
+            softwareParameter.index = it.index
             return softwareParameter
         }
     }
@@ -72,6 +87,9 @@ class SoftwareParameter extends CytomineDomain {
 
         if (!jsonSoftwareParameter.required.toString().equals("null"))
             softwareParameter.required = Boolean.parseBoolean(jsonSoftwareParameter.required.toString())
+
+        if (!jsonSoftwareParameter.index.toString().equals("null"))
+            softwareParameter.index = Integer.parseInt(jsonSoftwareParameter.index.toString())
 
         return softwareParameter;
     }

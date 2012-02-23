@@ -11,9 +11,6 @@ class UserUrlMappings {
         "/api/user"(controller:"restUser"){
             action = [GET:"list", POST:"add"]
         }
-        "/api/userJob"(controller:"restUser"){
-            action = [POST:"addChild"]
-        }
         "/api/user/$id"(controller:"restUser"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
@@ -22,6 +19,13 @@ class UserUrlMappings {
         }
         "/api/user/current"(controller:"restUser"){
             action = [GET:"showCurrent"]
+        }
+
+        "/api/userJob"(controller:"restUser"){
+            action = [POST:"addChild"]
+        }
+        "/api/userJob/$id"(controller:"restUser"){
+            action = [GET:"showUserJob"]
         }
     }
 }

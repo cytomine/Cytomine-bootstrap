@@ -20,7 +20,10 @@ class JobParameter extends CytomineDomain{
             jobParameter.id = it.id
             jobParameter.value = it.value
             jobParameter.job = it.job.id
-            jobParameter.softwareParameter = it.softwareParameter.id
+            SoftwareParameter softwareParam =  it.softwareParameter
+            jobParameter.softwareParameter = softwareParam.id
+            jobParameter.name = softwareParam.name
+            jobParameter.type = softwareParam.type
             return jobParameter
         }
     }

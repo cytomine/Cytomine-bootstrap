@@ -41,6 +41,8 @@ class UserJob extends SecUser {
             	returnArray['publicKey'] = it.publicKey
             	returnArray['privateKey'] = it.privateKey
 			}
+            returnArray['job'] = it.job?.id
+            returnArray['user'] = it.user?.id
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null
             return returnArray

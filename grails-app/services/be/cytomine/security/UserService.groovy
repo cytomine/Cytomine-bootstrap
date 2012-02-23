@@ -30,9 +30,12 @@ class UserService extends ModelService {
     def projectService
 
 
-
     def get(def id) {
         User.get(id)
+    }
+
+    SecUser getByPublicKey(String key) {
+        SecUser.findByPublicKey(key)
     }
 
     def read(def id) {
