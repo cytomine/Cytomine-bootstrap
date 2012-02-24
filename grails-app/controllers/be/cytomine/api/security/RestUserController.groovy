@@ -101,7 +101,7 @@ class RestUserController extends RestController {
         String username = json.username
         UserJob userJob = new UserJob()
         userJob.job = job
-        userJob.username = "JOB[" + user.username + " ], " + new Date().toString()
+        userJob.username = "JOB[" + user.username + "], " + new Date().toString()
         userJob.password = user.password
         userJob.generateKeys()
         userJob.enabled = user.enabled
@@ -115,9 +115,9 @@ class RestUserController extends RestController {
             SecUserSecRole.create(userJob, secRole)
         }
 
-        projectService.list().each {
-            userService.addUserFromProject(userJob,it,true)
-        }
+//        projectService.list().each {
+//            userService.addUserFromProject(userJob,it,true)
+//        }
 
         //def ret = [data: [user: newUser], status: 200]
         response([userJob: userJob],200)
@@ -183,6 +183,37 @@ class RestUserController extends RestController {
         def numberOfPages = Math.ceil(totalRows / maxRows)
         def jsonData = [rows: users, page: currentPage, records: totalRows, total: numberOfPages]
         render jsonData as JSON
+    }
+
+    def test = {
+        //get project
+        Project project = Project.read(57);
+
+        //get user
+        User user1 = User.findByUsername("lrollus")
+
+        //get bad user
+        User user2 = User.findByUsername("isalmon")
+
+        //test if user has permission
+        println "1 true="+user1.hasReadPermission(project)
+
+        //test if bad user has permission
+        println "2 false="+user2.hasReadPermission(project)
+
+        //get user job
+        UserJob user3 = UserJob.read(181548)
+
+        //get bad user job
+        UserJob user4 = new UserJob(user:user2,job:null)
+
+        //test if user job has permisssion
+        println "3 true="+user3.hasReadPermission(project)
+
+        //test if bad user job has permission
+        println "4 false="+user4.hasReadPermission(project)
+
+
     }
 
 }

@@ -20,9 +20,9 @@ class AnnotationUrlMappings {
         "/api/annotation/$annotation/comment/$id"(controller:"restAnnotation"){
             action = [GET:"showComment"]
         }
-        "/api/user/$id/annotation"(controller:"restAnnotation"){
-            action = [GET:"listByUser"]
-        }
+//        "/api/user/$id/annotation"(controller:"restAnnotation"){
+//            action = [GET:"listByUser"]
+//        }
         "/api/user/$idUser/imageinstance/$idImage/annotation"(controller:"restAnnotation"){
             action = [GET:"listByImageAndUser"]
         }

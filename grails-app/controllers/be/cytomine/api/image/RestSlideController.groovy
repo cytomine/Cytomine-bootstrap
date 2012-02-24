@@ -7,6 +7,7 @@ import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 import be.cytomine.Exception.CytomineException
 import be.cytomine.test.Infos
+import be.cytomine.security.SecUser
 
 /**
  * Cytomine @ GIGA-ULG
@@ -26,7 +27,7 @@ class RestSlideController extends RestController {
     }
 
     def listByUser = {
-        User user = null
+        SecUser user = null
         if (params.id != null) {
             user = userService.read(params.long('id'))
         } else {

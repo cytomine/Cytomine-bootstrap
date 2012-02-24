@@ -138,7 +138,7 @@ class UserService extends ModelService {
 //    }
 
     //TODO: when project private/public, a user must have permission to add himself in a public project
-    @PreAuthorize("hasPermission(#project,admin) or #user.id == principal.id or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
     def addUserFromProject(SecUser user, Project project, boolean admin) {
             if (project) {
                 log.debug "addUserFromProject project=" + project + " username=" + user.username + " ADMIN=" + admin
@@ -151,7 +151,7 @@ class UserService extends ModelService {
         [data: [message: "OK"], status: 201]
     }
 
-    @PreAuthorize("hasPermission(#project,admin) or #user.id == principal.id or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
     def deleteUserFromProject(SecUser user, Project project, boolean admin) {
             if (project) {
                 log.debug "deleteUserFromProject project=" + project?.id + " username=" + user?.username + " ADMIN=" + admin

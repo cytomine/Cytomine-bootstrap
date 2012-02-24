@@ -8,6 +8,7 @@ import be.cytomine.command.DeleteCommand
 import be.cytomine.security.Group
 import be.cytomine.security.User
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.security.SecUser
 
 class AbstractImageGroupService extends ModelService {
 
@@ -23,13 +24,13 @@ class AbstractImageGroupService extends ModelService {
     }
 
     def add(def json) throws CytomineException {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
     def delete(def domain,def json) throws CytomineException {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 

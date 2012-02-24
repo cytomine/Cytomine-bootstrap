@@ -7,7 +7,7 @@ class ImageFilterService {
 
     static transactional = true
 
-    @PreAuthorize("hasPermission(#project,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission(#project,'READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
         def imagesFiltersProject = ImageFilterProject.findAllByProject(project)
         return imagesFiltersProject.collect { it.imageFilter }

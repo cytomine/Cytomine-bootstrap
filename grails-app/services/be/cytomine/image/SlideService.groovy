@@ -27,7 +27,7 @@ class SlideService extends ModelService {
         user.slides()
     }
 
-    PagedResultList list(User user, def page, def limit, def sortedRow, def sord) {
+    PagedResultList list(SecUser user, def page, def limit, def sortedRow, def sord) {
         def data = [:]
         log.info "page=" + page + " limit=" + limit + " sortedRow=" + sortedRow + " sord=" + sord
         int pg = Integer.parseInt(page) - 1

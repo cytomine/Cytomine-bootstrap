@@ -18,6 +18,8 @@ import be.cytomine.security.SecUser
 import be.cytomine.social.SharedAnnotation
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import be.cytomine.security.UserJob
 
 class RestAnnotationController extends RestController {
 
@@ -45,15 +47,15 @@ class RestAnnotationController extends RestController {
         else responseNotFound("Image", params.id)
     }
 
-    def listByUser = {
-        User user = userService.read(params.long('id'))
-        //TODO: SECURITY! How to filter?
-        if (user) responseSuccess(annotationService.list(user))
-        else responseNotFound("User", params.id)
-    }
+//    def listByUser = {
+//        User user = userService.read(params.long('id'))
+//        //TODO: Security with postfilter = (very) bad performance!
+//        if (user) responseSuccess(annotationService.list(user))
+//        else responseNotFound("User", params.id)
+//    }
 
     def listByProject = {
-        Project project = projectService.read(params.long('id'))
+        Project project = projectService.read(params.long('id'), new Project())
         List<User> userList = userService.list(project)
 
         if (params.users) {
@@ -64,7 +66,9 @@ class RestAnnotationController extends RestController {
             }
             userList = userListTemp;
         }
-        log.info "Listing by project " + project.id + " with user:" + userList
+        log.info "List by project " + project.id + " with user:" + userList
+
+        log.info "Check user =" + cytomineService.getCurrentUser()
 
         if (project) responseSuccess(annotationService.list(project, userList, (params.noTerm == "true"), (params.multipleTerm == "true")))
         else responseNotFound("Project", params.id)
@@ -121,7 +125,7 @@ class RestAnnotationController extends RestController {
         // Export service provided by Export plugin
         Project project = projectService.read(params.long('id'))
         if (!project) responseNotFound("Project", params.long('id'))
-        projectService.checkAuthorization(project.id)
+        projectService.checkAuthorization(project)
         def users = []
         params.users.split(",").each { id ->
             users << Long.parseLong(id)
@@ -210,7 +214,7 @@ class RestAnnotationController extends RestController {
         Annotation annotation = annotationService.read(params.long('annotation'))
         User user = User.read(springSecurityService.principal.id)
         if (!annotation)  responseNotFound("Annotation", params.annotation)
-        annotationService.checkAuthorization(annotation.project.id)
+        annotationService.checkAuthorization(annotation.project)
         def sharedAnnotation = SharedAnnotation.findById(params.long('id'))
         if (!sharedAnnotation) responseNotFound("SharedAnnotation", params.id)
         responseSuccess(sharedAnnotation)
@@ -220,7 +224,7 @@ class RestAnnotationController extends RestController {
         Annotation annotation = annotationService.read(params.long('annotation'))
         User user = User.read(springSecurityService.principal.id)
         if (annotation) {
-            annotationService.checkAuthorization(annotation.project.id)
+            annotationService.checkAuthorization(annotation.project)
             def sharedAnnotations = SharedAnnotation.createCriteria().list {
                 eq("annotation", annotation)
                 or {
@@ -240,7 +244,7 @@ class RestAnnotationController extends RestController {
     def show = {
         Annotation annotation = annotationService.read(params.long('id'))
         if (annotation) {
-            annotationService.checkAuthorization(annotation.project.id)
+            annotationService.checkAuthorization(annotation.project)
             responseSuccess(annotation)
         }
         else responseNotFound("Annotation", params.id)
@@ -255,7 +259,7 @@ class RestAnnotationController extends RestController {
             }
             if(!json.project || !Project.read(json.project) || json.location == null || json.location == "null") throw new WrongArgumentException("Annotation must have a valide project:"+json.project)
             log.info "json.project="+json.project
-            annotationService.checkAuthorization(Long.parseLong(json.project.toString()))
+            annotationService.checkAuthorization(Long.parseLong(json.project.toString()), new Annotation())
             def result = annotationService.add(json)
             responseResult(result)
         } catch (CytomineException e) {

@@ -34,7 +34,7 @@ class ImageInstanceService extends ModelService {
         ImageInstance.read(id)
     }
 
-    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def read(Project project, AbstractImage image) {
         ImageInstance.findByBaseImageAndProject(image, project)
     }
@@ -44,12 +44,12 @@ class ImageInstanceService extends ModelService {
         //get(image.project, image.baseImage)
     }
 
-    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def get(Project project, AbstractImage image) {
         ImageInstance.findByBaseImageAndProject(image, project)
     }
 
-    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
         def images = ImageInstance.createCriteria().list {
             createAlias("baseImage", "i")
@@ -66,7 +66,7 @@ class ImageInstanceService extends ModelService {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         log.info "current user = " + currentUser.username
         json.user = currentUser.id
         synchronized (this.getClass()) {

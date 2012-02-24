@@ -40,7 +40,7 @@ class JobService extends ModelService {
     def add(def json) {
         log.info "json="+json
         log.info "cytomineService="+cytomineService
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
@@ -50,7 +50,7 @@ class JobService extends ModelService {
     }
 
     def delete(def domain, Object json) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         //TODO: delete job-parameters
         //TODO: delete job-data
         return executeCommand(new DeleteCommand(user: currentUser), json)

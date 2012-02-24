@@ -24,6 +24,7 @@ import javax.imageio.ImageIO
 import ij.ImagePlus
 
 import com.vividsolutions.jts.geom.CoordinateFilter
+import be.cytomine.CytomineDomain
 
 /**
  * Created by IntelliJ IDEA.
@@ -45,7 +46,7 @@ class RestImageInstanceController extends RestController {
         ImageInstance image = imageInstanceService.read(params.long('id'))
 
         if (image) {
-            imageInstanceService.checkAuthorization(image.project.id)
+            imageInstanceService.checkAuthorization(image.project)
             responseSuccess(image)
         }
         else responseNotFound("ImageInstance", params.id)
@@ -56,14 +57,14 @@ class RestImageInstanceController extends RestController {
         AbstractImage image = abstractImageService.read(params.long('idimage'))
         ImageInstance imageInstance = imageInstanceService.get(project, image)
         if (imageInstance) {
-            imageInstanceService.checkAuthorization(project.id)
+            imageInstanceService.checkAuthorization(project)
             responseSuccess(imageInstance)
         }
         else responseNotFound("ImageInstance", "Project", params.idproject, "Image", params.idimage)
     }
 
     def listByProject = {
-        Project project = projectService.read(params.long('id'))
+        Project project = projectService.read(params.long('id'), new Project())
 
         if (project) responseSuccess(imageInstanceService.list(project))
         else responseNotFound("ImageInstance", "Project", params.id)
@@ -73,7 +74,7 @@ class RestImageInstanceController extends RestController {
         try {
             def json = request.JSON
             if(!json.project || !Project.read(json.project)) throw new WrongArgumentException("Image Instance must have a valide project:"+json.project)
-            imageInstanceService.checkAuthorization(Long.parseLong(json.project.toString()))
+            imageInstanceService.checkAuthorization(Long.parseLong(json.project.toString()), new Project())
             log.debug("add")
             def result = imageInstanceService.add(json)
             log.debug("result")
@@ -91,7 +92,7 @@ class RestImageInstanceController extends RestController {
         try {
             def domain = imageInstanceService.retrieve(json)
             try {Infos.printRight(domain?.project) } catch(Exception e) {log.info e}
-            imageInstanceService.checkAuthorization(domain?.project?.id)
+            imageInstanceService.checkAuthorization(domain?.project)
             def result = imageInstanceService.update(domain,json)
             responseResult(result)
         } catch (CytomineException e) {
@@ -107,7 +108,7 @@ class RestImageInstanceController extends RestController {
             log.info "retrieve domain"
             def domain = imageInstanceService.retrieve(json)
             log.info "checkAuthorization"
-            imageInstanceService.checkAuthorization(domain?.project?.id)
+            imageInstanceService.checkAuthorization(domain?.project)
             log.info "delete"
             def result = imageInstanceService.delete(domain,json)
             log.info "responseResult"

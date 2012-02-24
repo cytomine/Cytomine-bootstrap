@@ -49,7 +49,7 @@ class RestJobController extends RestController {
 
     def listBySoftwareAndProject = {
         Software software = softwareService.read(params.long('idSoftware'));
-        Project project = projectService.read(params.long('idProject'));
+        Project project = projectService.read(params.long('idProject'), new Project());
         if (!software) responseNotFound("Job", "Software", params.idSoftware)
         if (!project) responseNotFound("Job", "Project", params.idProject)
         else responseSuccess(jobService.list(software, project))

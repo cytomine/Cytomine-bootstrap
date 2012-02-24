@@ -13,6 +13,7 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.command.Transaction
+import be.cytomine.security.SecUser
 
 class TermService extends ModelService {
 
@@ -94,17 +95,17 @@ class TermService extends ModelService {
     }
 
     def add(def json) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
     def update(def domain,def json) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
     def delete(def domain,def json) throws CytomineException {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return deleteTerm(json.id, currentUser,null)
     }
 

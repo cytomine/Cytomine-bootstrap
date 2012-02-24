@@ -15,7 +15,7 @@ class RestAnnotationFilterController extends RestController {
     def listByProject = {
         if (!params.long('project')) responseNotFound("Project", "undefined")
         Long idProject = params.long('project');
-        projectService.checkAuthorization(idProject)
+        projectService.checkAuthorization(idProject, new AnnotationFilter())
         Project project = projectService.read(idProject)
         responseSuccess(annotationFilterService.listByProject(project))
     }
@@ -23,7 +23,7 @@ class RestAnnotationFilterController extends RestController {
     def show = {
         AnnotationFilter annotationFilter = annotationFilterService.read(params.id)
         if (!annotationFilter) responseNotFound("AnnotationFilter", params.id)
-        projectService.checkAuthorization(annotationFilter.project.id)
+        projectService.checkAuthorization(annotationFilter.project)
         responseSuccess(annotationFilter)
     }
 
@@ -31,7 +31,7 @@ class RestAnnotationFilterController extends RestController {
         def json= request.JSON
         json.user = springSecurityService.principal.id
         if(!json.project || !Project.read(json.project)) throw new WrongArgumentException("Annotation filter must have a valid project:"+json.project)
-        projectService.checkAuthorization(Long.parseLong(json.project.toString()))
+        projectService.checkAuthorization(Long.parseLong(json.project.toString()),new AnnotationFilter())
         add(annotationFilterService, json)
     }
 

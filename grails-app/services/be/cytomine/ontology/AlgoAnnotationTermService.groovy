@@ -51,7 +51,7 @@ class AlgoAnnotationTermService extends ModelService {
     }
 
     def delete(def domain,def json) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         def result = deleteAlgoAnnotationTerm(json.annotation, json.term, json.userJob, currentUser,null)
         return result
     }

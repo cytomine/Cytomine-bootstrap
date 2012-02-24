@@ -17,6 +17,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.command.Transaction
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
+import be.cytomine.security.SecUser
 
 class AbstractImageService extends ModelService {
 
@@ -49,7 +50,7 @@ class AbstractImageService extends ModelService {
         group.abstractimages()
     }
 
-    def list(User user, def page, def limit, def sortedRow, def sord, def filename, def dateStart, def dateStop) {
+    def list(SecUser user, def page, def limit, def sortedRow, def sord, def filename, def dateStart, def dateStop) {
         def data = [:]
 
         log.info "page=" + page + " limit=" + limit + " sortedRow=" + sortedRow + " sord=" + sord
@@ -81,7 +82,7 @@ class AbstractImageService extends ModelService {
     def add(def json) throws CytomineException {
         Transaction transaction = transactionService.start()
 
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
 
         def res = executeCommand(new AddCommand(user: currentUser), json)
         AbstractImage abstractImage = (AbstractImage) res.data.abstractimage
@@ -102,7 +103,7 @@ class AbstractImageService extends ModelService {
 
     def update(def domain,def json) throws CytomineException {
         Transaction transaction = transactionService.start()
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         def res = executeCommand(new EditCommand(user: currentUser), json)
         AbstractImage abstractImage = (AbstractImage) res.data.abstractimage
         StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
@@ -122,7 +123,7 @@ class AbstractImageService extends ModelService {
 
     def delete(def domain,def json) throws CytomineException {
         Transaction transaction = transactionService.start()
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         AbstractImage abstractImage = AbstractImage.read(json.id)
         Group group = Group.findByName(currentUser.getUsername())
         AbstractImageGroup.unlink(abstractImage, group)

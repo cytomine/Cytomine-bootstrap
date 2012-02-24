@@ -2,6 +2,9 @@ package be.cytomine.security
 
 import be.cytomine.processing.Job
 import grails.converters.JSON
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
 
 class UserJob extends SecUser {
 
@@ -19,6 +22,10 @@ class UserJob extends SecUser {
         "Job"+ id + " ( " + user.toString() + " )"
     }
 
+    String realUsername() {
+        return user.username
+    }
+
     def beforeInsert() {
         super.beforeInsert()
     }
@@ -30,6 +37,62 @@ class UserJob extends SecUser {
     boolean algo() {
         return true
     }
+
+    def userGroups() {
+        user.userGroups()
+    }
+
+    def groups() {
+        user.groups()
+    }
+
+    def ontologies() {
+        user.ontologies()
+    }
+
+    def projects() {
+        user.projects()
+    }
+
+    def abstractimages() {
+        user.abstractimages()
+    }
+
+    def abstractimage(int max, int first, String col, String order, String filename, Date dateAddedStart, Date dateAddedStop) {
+        user.abstractimage(max,first,col,order,filename,dateAddedStart,dateAddedStop)
+    }
+
+    def slides() {
+        user.slides()
+    }
+
+    def slides(int max, int first, String col, String order) {
+        user.slides(max,first,col,order)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + UserJob.class

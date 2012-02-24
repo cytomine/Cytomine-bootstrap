@@ -60,7 +60,12 @@ abstract class ModelService {
         return commandService.processCommand(c, json)
     }
 
-    @PreAuthorize("hasPermission(#id ,'be.cytomine.project.Project',read) or hasPermission(#id ,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
-    void checkAuthorization(def id) {
+    //@PreAuthorize("hasPermission(#id ,'be.cytomine.project.Project',read) or hasPermission(#id ,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#cytomineDomain.hasPermission(#id,'be.cytomine.project.Project','READ') or hasRole('ROLE_ADMIN')")
+    void checkAuthorization(def id, def cytomineDomain) {
+    }
+
+    @PreAuthorize("#cytomineDomain.hasPermission(#cytomineDomain,'READ') or hasRole('ROLE_ADMIN')")
+    void checkAuthorization(def cytomineDomain) {
     }
 }

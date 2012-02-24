@@ -96,12 +96,12 @@ class RestAnnotationTermController extends RestController {
         try {
             if(!cytomineService.isUserAlgo()) {
                 if(!json.annotation || !Annotation.read(json.annotation)) throw new WrongArgumentException("AnnotationTerm must have a valide annotation:"+json.annotation)
-                annotationTermService.checkAuthorization(Annotation.read(json.annotation).project.id)
+                annotationTermService.checkAuthorization(Annotation.read(json.annotation).project)
                 def result = annotationTermService.add(json)
                 responseResult(result)
             } else {
                 if(!json.annotation || !Annotation.read(json.annotation)) throw new WrongArgumentException("AlgoAnnotationTerm must have a valide annotation:"+json.annotation)
-                annotationTermService.checkAuthorization(Annotation.read(json.annotation).project.id)
+                annotationTermService.checkAuthorization(Annotation.read(json.annotation).project)
                 def result = algoAnnotationTermService.add(json)
                 responseResult(result)
             }

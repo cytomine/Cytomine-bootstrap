@@ -8,7 +8,7 @@ import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ResponseService
 
-class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE ABSTRACT with GRAILS2.0
+class Job extends CytomineDomain implements CytomineJob {
 
     Boolean running = false
     Boolean indeterminate = true
@@ -19,6 +19,8 @@ class Job extends CytomineDomain implements CytomineJob {   //TODO : SHOULD BE A
     static transients = ["url"]
 
     static belongsTo = [software: Software]
+
+    static hasMany = [jobParameter: JobParameter]
 
     static constraints = {
         progress(min: 0, max: 100)

@@ -5,6 +5,7 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.security.SecUser
 
 class RestOntologyController extends RestController {
 
@@ -28,12 +29,12 @@ class RestOntologyController extends RestController {
     }
 
     def listByUserLight = {
-        User user = cytomineService.getCurrentUser()
+        SecUser user = cytomineService.getCurrentUser()
         if (user) responseSuccess(ontologyService.listByUserLight(user))
         else responseNotFound("User", springSecurityService.principal.id)
     }
     def listByUser = {
-        User user = cytomineService.getCurrentUser()
+        SecUser user = cytomineService.getCurrentUser()
         if (user) responseSuccess(ontologyService.listByUser(user))
         else responseNotFound("User", springSecurityService.principal.id)
     }

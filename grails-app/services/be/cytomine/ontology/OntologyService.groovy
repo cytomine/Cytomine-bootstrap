@@ -11,6 +11,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.User
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.command.Transaction
+import be.cytomine.security.SecUser
 
 class OntologyService extends ModelService {
 
@@ -44,7 +45,7 @@ class OntologyService extends ModelService {
         return term?.ontology
     }
 
-    def listByUserLight(User user) {
+    def listByUserLight(SecUser user) {
         def ontologies = user.ontologies()
         def data = []
         ontologies.each { ontology ->
@@ -69,13 +70,13 @@ class OntologyService extends ModelService {
     }
 
     def add(def json) throws CytomineException {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
     def update(def domain,def json) throws CytomineException {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
@@ -84,7 +85,7 @@ class OntologyService extends ModelService {
     def delete(def domain,def json) throws CytomineException {
         //Start transaction
         Transaction transaction = transactionService.start()
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         //Read ontology
         Ontology ontology = Ontology.read(json.id)
 

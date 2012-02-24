@@ -1,6 +1,10 @@
 package be.cytomine.security
 
 import be.cytomine.CytomineDomain
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
+import java.security.acl.Acl
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 
 class SecUser extends CytomineDomain {
 
@@ -34,9 +38,10 @@ class SecUser extends CytomineDomain {
         SecUserSecRole.findAllBySecUser(this).collect { it.secRole } as Set
     }
 
-    boolean hasPermission() {
-
+    String realUsername() {
+        return username
     }
+
 
     def generateKeys() {
         println "GENERATE KEYS"

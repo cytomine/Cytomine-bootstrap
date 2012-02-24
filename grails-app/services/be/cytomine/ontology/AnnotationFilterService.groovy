@@ -11,6 +11,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.ConstraintException
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.security.SecUser
 
 class AnnotationFilterService extends ModelService {
 
@@ -36,19 +37,19 @@ class AnnotationFilterService extends ModelService {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json) throws CytomineException {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def update(def model,def json) throws CytomineException {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def delete(def model,def json) throws CytomineException {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 

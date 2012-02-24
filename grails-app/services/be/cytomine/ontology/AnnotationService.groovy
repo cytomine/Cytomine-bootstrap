@@ -39,24 +39,19 @@ class AnnotationService extends ModelService {
 
     boolean saveOnUndoRedoStack = true
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject.project.id,'be.cytomine.project.Project',read) or hasPermission(filterObject.project.id,'be.cytomine.project.Project', admin) or hasRole('ROLE_ADMIN')")
-    def list(SecUser user) {
-        Annotation.findAllByUser(user)
-    }
-
-    @PreAuthorize("hasPermission(#image.project.id,'be.cytomine.project.Project',read) or hasPermission(#image.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image) {
         Annotation.findAllByImage(image)
     }
 
-    @PreAuthorize("hasPermission(#project,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
         Annotation.findAllByProject(project)
     }
 
-    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, List<SecUser> userList, boolean noTerm, boolean multipleTerm) {
+        log.info("project/userList/noTerm/multipleTerm")
         if (userList.isEmpty()) return []
         else if (multipleTerm) {
             log.info "multipleTerm"
@@ -125,7 +120,7 @@ class AnnotationService extends ModelService {
     }
 
 
-    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, List<User> userList, Term realTerm, Term suggestedTerm) {
         // POUR realTerm == null => voir dans la fonction précédente le bloc else if (noTerm) {
         log.info "list with suggestedTerm"
@@ -158,18 +153,18 @@ class AnnotationService extends ModelService {
 
     }
 
-    @PreAuthorize("hasPermission(#image.project.id,'be.cytomine.project.Project',read) or hasPermission(#image.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, SecUser user) {
         return Annotation.findAllByImageAndUser(image, user)
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject.project.id,'be.cytomine.project.Project',read) or hasPermission(filterObject.project.id,'be.cytomine.project.Project', admin) or hasRole('ROLE_ADMIN')")
+    @PostFilter("filterObject.hasPermission('READ')")
     def list(Term term) {
         term.annotations()
     }
 
-    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, List<SecUser> userList) {
         def criteria = Annotation.withCriteria() {
             eq('project', project)
@@ -180,17 +175,6 @@ class AnnotationService extends ModelService {
         }
         criteria.unique()
     }
-
-//    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
-//    def list(Project project, Term term, List<User> userList) {
-//        def annotationFromTermAndProject = []
-//        def annotationFromTerm = term.annotations()
-//        annotationFromTerm.each { annotation ->
-//            if (annotation.project() != null && annotation.project().id == project.id && userList.contains(annotation.user))
-//                annotationFromTermAndProject << annotation
-//        }
-//        annotationFromTermAndProject
-//    }
 
     Annotation get(def id) {
         Annotation.get(id)

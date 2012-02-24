@@ -31,8 +31,6 @@ class RestController {
     def update(def service, def json) {
         try {
             def domain = service.retrieve(json)
-            log.debug "json="+json
-            log.debug "domain="+domain
             def result = service.update(domain,json)
             responseResult(result)
         } catch (CytomineException e) {

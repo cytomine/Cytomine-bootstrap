@@ -23,18 +23,18 @@ class AnnotationTermService extends ModelService {
 
     boolean saveOnUndoRedoStack = true
 
-    @PreAuthorize("hasPermission(#annotation.project.id,'be.cytomine.project.Project',read) or hasPermission(#annotation.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#annotation.hasPermission(#annotation.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(Annotation annotation) {
         annotation.annotationTerm
     }
 
-    @PreAuthorize("hasPermission(#annotation.project.id,'be.cytomine.project.Project',read) or hasPermission(#annotation.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#annotation.hasPermission(#annotation.project,'READ') or hasRole('ROLE_ADMIN')")
     def listNotUser(Annotation annotation, User user) {
         AnnotationTerm.findAllByAnnotationAndUserNotEqual(annotation, user)
     }
 
-    @PreAuthorize("hasPermission(#image.project.id,'be.cytomine.project.Project',read) or hasPermission(#image.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
-    def list(ImageInstance image, Term term) {
+   @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
+   def list(ImageInstance image, Term term) {
 
         def annotations = []
         Annotation.findAllByImage(image).each { annotation ->
@@ -45,7 +45,7 @@ class AnnotationTermService extends ModelService {
         annotations
     }
 
-    @PreAuthorize("hasPermission(#annotation.project.id,'be.cytomine.project.Project',read) or hasPermission(#annotation.project.id,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#annotation.hasPermission(#annotation.project,'READ') or hasRole('ROLE_ADMIN')")
     def read(Annotation annotation, Term term, SecUser user) {
         if (user) AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
         else AnnotationTerm.findByAnnotationAndTerm(annotation, term)
@@ -53,7 +53,7 @@ class AnnotationTermService extends ModelService {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         SecUser creator = SecUser.read(json.user)
         if(!creator)
             json.user = currentUser.id
@@ -67,7 +67,7 @@ class AnnotationTermService extends ModelService {
 
     @PreAuthorize("#domain.user.id == principal.id or hasRole('ROLE_ADMIN')")
     def delete(def domain,def json) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return deleteAnnotationTerm(json.annotation, json.term, domain.user.id, currentUser,null)
     }
 
@@ -78,7 +78,7 @@ class AnnotationTermService extends ModelService {
      * Add annotation-term for an annotation and delete all annotation-term that where already map with this annotation by this user
      */
     def addWithDeletingOldTerm(def idAnnotation, def idterm) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         Annotation annotation = Annotation.read(idAnnotation)
         if (!annotation) throw new ObjectNotFoundException("Annotation $idAnnotation not found")
         //Start transaction

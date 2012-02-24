@@ -8,6 +8,7 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.command.Transaction
+import be.cytomine.security.SecUser
 
 class RelationTermService extends ModelService {
 
@@ -46,7 +47,7 @@ class RelationTermService extends ModelService {
 
 
     def add(def json) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
@@ -56,7 +57,7 @@ class RelationTermService extends ModelService {
 
 
     def delete(def domain,def json) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return deleteRelationTerm(json.relation ? json.relation : -1, json.term1, json.term2, currentUser, null)
     }
 

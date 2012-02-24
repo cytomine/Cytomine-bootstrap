@@ -46,13 +46,13 @@ class RestProjectController extends RestController {
     }
 
     def show = {
-        Project project = projectService.read(params.long('id'))
+        Project project = projectService.read(params.long('id'), new Project())
         if (project) {
             log.info project.users()
             def userList = project.users().collect{it.id}
             def currentUserAuth = cytomineService.getCurrentUser().authorities.asList().collect{it.authority}
             log.info "check authorization: project="+ project.id + " user="+  cytomineService.getCurrentUser().id + " user-project="+userList  + " user-type="+currentUserAuth
-            projectService.checkAuthorization(project.id)
+            projectService.checkAuthorization(project)
             responseSuccess(project)
         }
         else responseNotFound("Project", params.id)
@@ -60,7 +60,7 @@ class RestProjectController extends RestController {
 
     def lastAction = {
         log.info "lastAction"
-        Project project = projectService.read(params.long('id'))    //need to be filter by project
+        Project project = projectService.read(params.long('id'),new Project())    //need to be filter by project
         int max = Integer.parseInt(params.max);
 
         if (project)

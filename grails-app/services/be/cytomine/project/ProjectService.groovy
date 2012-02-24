@@ -38,14 +38,14 @@ class ProjectService extends ModelService {
        addPermission(project, username, aclPermissionFactory.buildFromMask(permission))
     }
 
-    @PreAuthorize("hasPermission(#project, admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('ADMIN') or hasRole('ROLE_ADMIN')")
     void addPermission(Project project, String username, Permission permission) {
         log.info "Add Permission " +  permission.toString() + " for " + username + " to " + project?.name
        aclUtilService.addPermission(project, username, permission)
     }
 
    @Transactional
-   @PreAuthorize("hasPermission(#project, admin) or #user.id == principal.id or hasRole('ROLE_ADMIN')")
+   @PreAuthorize("#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
    void deletePermission(Project project, SecUser user, Permission permission) {
       def acl = aclUtilService.readAcl(project)
 
@@ -62,36 +62,36 @@ class ProjectService extends ModelService {
    }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin) or hasRole('ROLE_ADMIN')")
+    @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list() {
         Project.list(sort: "name")
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin) or hasRole('ROLE_ADMIN')")
+    @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Ontology ontology) {
         Project.findAllByOntology(ontology)
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin) or hasRole('ROLE_ADMIN')")
+    @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(User user) {
         user.projects()
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("hasPermission(filterObject, read) or hasPermission(filterObject, admin) or hasRole('ROLE_ADMIN')")
+    @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Discipline discipline) {
         Project.findAllByDiscipline(discipline)
     }
 
-    @PreAuthorize("hasPermission(#id, 'be.cytomine.project.Project',read) or hasPermission(#id, 'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
-    def read(def id) {
+    @PreAuthorize("#cytomineDomain.hasPermission(#id, 'be.cytomine.project.Project','READ') or hasRole('ROLE_ADMIN')")
+    def read(def id, def cytomineDomain) {
         Project.read(id)
     }
 
-    @PreAuthorize("hasPermission(#id, 'be.cytomine.project.Project',read) or hasPermission(#id, 'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
-    def get(def id) {
+    @PreAuthorize("#cytomineDomain.hasPermission(#id, 'be.cytomine.project.Project','READ') or hasRole('ROLE_ADMIN')")
+    def get(def id, def cytomineDomain) {
         Project.get(id)
     }
 
@@ -101,14 +101,14 @@ class ProjectService extends ModelService {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    @PreAuthorize("hasPermission(#domain ,write) or hasPermission(#domain,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#domain.hasPermission('WRITE') or hasRole('ROLE_ADMIN')")
     def update(def domain, def json) {
         String oldName = Project.get(json.id)?.name
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         def response = executeCommand(new EditCommand(user: currentUser), json)
         String newName = Project.get(json.id)?.name
          //Validate and save domain
@@ -122,9 +122,9 @@ class ProjectService extends ModelService {
         return response
     }
 
-    @PreAuthorize("hasPermission(#domain,delete) or hasPermission(#domain,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#domain.hasPermission('DELETE') or hasRole('ROLE_ADMIN')")
     def delete(def domain, def json) {
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 

@@ -7,6 +7,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.Group
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.security.SecUser
 
 class RestImageController extends RestController {
 
@@ -23,7 +24,7 @@ class RestImageController extends RestController {
     }
 
     def listByUser = {
-        User user = null
+        SecUser user = null
         if (params.id != null) user = User.read(params.id)
         else user = cytomineService.getCurrentUser()
 

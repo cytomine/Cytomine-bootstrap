@@ -13,22 +13,22 @@ class ImageFilterProjectService extends ModelService {
     def aclUtilService
     def springSecurityService
 
-    @PreAuthorize("hasPermission(#project,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def get(Project project, ImageFilter image) {
         return ImageFilterProject.findByImageFilterAndProject(image, project)
     }
 
-    @PreAuthorize("hasPermission(#project ,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
         return ImageFilterProject.findAllByProject(project)
     }
 
-    @PreAuthorize("hasPermission(#project,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def add(Project project, ImageFilter imageFilter) {
         ImageFilterProject.link(imageFilter, project)
     }
 
-    @PreAuthorize("hasPermission(#project,read) or hasPermission(#project,admin) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def delete(Project project, ImageFilter imageFilter) {
         ImageFilterProject.unlink(imageFilter, project)
     }
