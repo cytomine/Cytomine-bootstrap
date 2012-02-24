@@ -12,6 +12,7 @@ class ExtractImageMetadataJob {
 
     def execute() {
         println "ExtractImageMetadataJob"
+        return
         Collection<AbstractImage> abstractImages = AbstractImage.findAllByWidthIsNull()
         abstractImages.each { image ->
             println "Extracting... " + image

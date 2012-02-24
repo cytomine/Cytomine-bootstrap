@@ -119,10 +119,10 @@ class BasicInstance {
     static Mime createOrGetBasicMime() {
 
         log.debug "createOrGetBasicMime1()"
-        def jp2mime = Mime.findByExtension("tif")
-        jp2mime.refresh()
-        jp2mime.imageServers()
-        jp2mime
+        def mime = Mime.findByExtension("tif")
+        mime.refresh()
+        mime.imageServers()
+        mime
     }
 
     static Mime getBasicMimeNotExist() {
