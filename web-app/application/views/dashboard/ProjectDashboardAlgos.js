@@ -82,7 +82,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var self = this;
 
         $("#launchRetrievalAlgoButton").click(function() {
-                    new JobModel({ project : self.model.id, software : 'retrieval'}).save({}, {
+                    new JobModel({ project : self.model.id, software : 'retrievalSuggestedTermJobService'}).save({}, {
                                 success : function (job, response) {
                                     console.log("SUCCESS JOB");
                                 },
@@ -110,7 +110,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         console.log("listRetrievalAlgo");
         var refreshData = function() {
 
-            new JobCollection({ project : self.model.id, software :"retrieval"}).fetch({
+            new JobCollection({ project : self.model.id, software :"retrievalSuggestedTermJobService"}).fetch({
                 success : function (jobs, response) {
                     var i=0;
                     $("#listAlgoRetrieval").jqGrid('clearGridData');

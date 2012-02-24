@@ -123,7 +123,7 @@ class RestAnnotationController extends RestController {
 
     def downloadDocumentByProject = {  //and filter by users and terms !
         // Export service provided by Export plugin
-        Project project = projectService.read(params.long('id'))
+        Project project = projectService.read(params.long('id'),new Project())
         if (!project) responseNotFound("Project", params.long('id'))
         projectService.checkAuthorization(project)
         def users = []

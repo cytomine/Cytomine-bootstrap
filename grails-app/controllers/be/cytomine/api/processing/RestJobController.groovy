@@ -8,7 +8,6 @@ import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import be.cytomine.processing.JobParameter
 import be.cytomine.processing.SoftwareParameter
-import be.cytomine.processing.job.RetrievalSuggestTermJob
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import be.cytomine.security.SecUserSecRole
@@ -26,17 +25,21 @@ class RestJobController extends RestController {
     def list = {
         log.info "list all job"
         if(params.software!=null) {
-            if(params.software.equals("retrieval")) responseSuccess(retrievalSuggestTermJobService.list())
+            Software software = Software.findByServiceNameIlike(params.software)
+            if(software) responseSuccess(jobService.list(software))
+            else responseNotFound("Job", "Software", params.software)
         } else responseSuccess(jobService.list())
     }
 
     def listByProject = {
         log.info "list all job by project"
-        Project project = projectService.read(params.long('id'))
+        Project project = projectService.read(params.long('id'), new Project())
         if(project) {
             log.info "project="+project.id + " software="+params.software
             if(params.software!=null) {
-                if(params.software.equals("retrieval")) responseSuccess(retrievalSuggestTermJobService.list(project))
+                Software software = Software.findByServiceNameIlike(params.software)
+                if(software) responseSuccess(jobService.list(software,project))
+                else responseNotFound("Job", "Software", params.software)
             } else responseSuccess(jobService.list(project))
         } else responseNotFound("Job", "Project", params.id)
     }
@@ -82,10 +85,10 @@ class RestJobController extends RestController {
     }
 
     def execute = {
-        Project project = projectService.read(params.long('id'));
+        Project project = projectService.read(params.long('id'),new Project());
         if (!project) responseNotFound("Job", "Project", params.id)
         else {
-            if(params.software.equals("retrieval")) {
+            if(params.software.equals("retrievalSuggestedTermJobService")) {
                 def resp = executeRetrieval(project)
                 responseSuccess(resp)
             }
@@ -101,11 +104,11 @@ class RestJobController extends RestController {
 
             //create Job
             log.info "Create Job..."
-            RetrievalSuggestTermJob job = new RetrievalSuggestTermJob(project: project, software: software)
-            def result = retrievalSuggestTermJobService.add(JSON.parse(job.encodeAsJSON()))
+            Job job = new Job(project: project, software: software)
+            def result = jobService.add(JSON.parse(job.encodeAsJSON()))
             log.info "result=" + result
-            log.info "result=" + Long.parseLong(result.data.retrievalsuggesttermjob.id.toString())
-            job = RetrievalSuggestTermJob.get(Long.parseLong(result.data.retrievalsuggesttermjob.id.toString()))
+            log.info "result=" + Long.parseLong(result.data.job.id.toString())
+            job = Job.get(Long.parseLong(result.data.job.id.toString()))
             Job.list().each {
                 println "JOB=" + it.id + " " + it.class
             }
@@ -140,8 +143,8 @@ class RestJobController extends RestController {
             jobParameterService.add(JSON.parse(createParam("searchProject",job, "57").encodeAsJSON()))
             //Execute Job
             log.info "Execute Job..."
-            job.execute()
-            responseSuccess(job)
+            software.service.execute(job)
+            job
     }
 
     public JobParameter createParam(String name, Job job, String value) {
@@ -166,10 +169,6 @@ class RestJobController extends RestController {
 
         user.getAuthorities().each { secRole ->
             SecUserSecRole.create(userJob, secRole)
-        }
-
-        projectService.list().each {
-            userService.addUserFromProject(userJob, it, true)
         }
 
         return userJob

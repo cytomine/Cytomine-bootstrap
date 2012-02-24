@@ -367,14 +367,17 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
 
         String oldName = "Name1"
         String newName = "Name2"
+        String oldNameService = "projectService"
+        String newNameService = "annotationService"
 
-        def mapNew = ["name": newName]
-        def mapOld = ["name": oldName]
+        def mapNew = ["name": newName,"serviceName" : newNameService]
+        def mapOld = ["name": oldName,"serviceName" : oldNameService]
 
         /* Create a Name1 software */
         log.info("create software")
         Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
         softwareToAdd.name = oldName
+        softwareToAdd.serviceName = oldNameService
         assert (softwareToAdd.save(flush: true) != null)
 
         /* Encode a niew software Name2*/
@@ -382,6 +385,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
         def jsonSoftware = softwareToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonSoftware)
         jsonUpdate.name = newName
+        jsonUpdate.serviceName = newNameService
         jsonSoftware = jsonUpdate.encodeAsJSON()
 
         log.info("put software:" + jsonSoftware.replace("\n", ""))

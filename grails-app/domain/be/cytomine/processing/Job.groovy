@@ -2,13 +2,13 @@ package be.cytomine.processing
 
 import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
-import be.cytomine.security.User
+
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ResponseService
 
-class Job extends CytomineDomain implements CytomineJob {
+class Job extends CytomineDomain  {
 
     Boolean running = false
     Boolean indeterminate = true
@@ -34,10 +34,6 @@ class Job extends CytomineDomain implements CytomineJob {
 
     def getUrl() {
         ConfigurationHolder.config.grails.serverURL
-    }
-
-    def execute() {
-        //throw "Method job.execute() not overridden"
     }
 
     static void registerMarshaller() {

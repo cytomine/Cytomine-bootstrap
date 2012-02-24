@@ -69,7 +69,7 @@ class RestUserController extends RestController {
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showByProject = {
-        Project project = projectService.read(params.long('id'))
+        Project project = projectService.read(params.long('id'),new Project())
         if (project) {
             responseSuccess(project.users())
         }

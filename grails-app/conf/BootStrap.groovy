@@ -852,7 +852,7 @@ class BootStrap {
         println "createRelation"
         softwareSamples.each { item ->
             if (Software.findByName(item.name)) return
-            Software software = new Software(name: item.name)
+            Software software = new Software(name: item.name, serviceName: "wrongService")
             println "create software=" + software.name
 
             if (software.validate()) {

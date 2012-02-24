@@ -612,7 +612,7 @@ class BasicInstance {
         def software = Software.findByName("AnotherBasicSoftware")
         if (!software) {
 
-            software = new Software(name: "AnotherBasicSoftware")
+            software = new Software(name: "AnotherBasicSoftware", serviceName:"retrievalSuggestedTermJobService")
             software.validate()
             log.debug "software.errors=" + software.errors
             software.save(flush: true)
@@ -634,7 +634,7 @@ class BasicInstance {
             software = Software.findByName(randomInt + "")
         }
 
-        software = new Software(name: randomInt + "")
+        software = new Software(name: randomInt + "",serviceName:"retrievalSuggestedTermJobService")
         software.validate()
         log.debug "getBasicSoftwareNotExist() end"
         software
@@ -1027,6 +1027,7 @@ class BasicInstance {
 
     static void compareSoftware(map, json) {
         assert map.name.equals(json.name)
+        assert map.serviceName.equals(json.serviceName)
     }
 
     static void compareSoftwareParameter(map, json) {
