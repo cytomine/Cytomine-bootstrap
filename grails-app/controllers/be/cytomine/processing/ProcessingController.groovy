@@ -23,8 +23,10 @@ class ProcessingController extends RestController {
 
     def detect = {
         String method = params.method  != null ? params.method : "MaxEntropy"
+
         //int scale = params.scale != null ? Integer.parseInt(params.scale) : 1
-        int roiSize = ROI_SIZE
+        int scale = 1
+        int roiSize = ROI_SIZE * scale
         int middleROI = roiSize / 2
         def idImage = Integer.parseInt(params.image)
         AbstractImage image = ImageInstance.read(idImage).getBaseImage()
@@ -34,6 +36,31 @@ class ProcessingController extends RestController {
         println url
         //Image Processing
         ImagePlus ori = getThresholdedImage(url, method)
+
+        /* Work in progress for handle scaling */
+        double widthRatio = roiSize / ori.getWidth()
+        double heightRatio = roiSize / ori.getHeight()
+        int startPixelX = middleROI / widthRatio
+        int startPixelY = middleROI / heightRatio
+        /*println "ImageRatio "
+        println "widthRatio = " + widthRatio
+        println "heightRatio = " + heightRatio
+        println "startPixelX = " + startPixelX
+        println "startPixelY = " + startPixelY
+        if (shiftX < 0) {
+            println " shiftX < 0 : " + shiftX
+            println " + " + (Math.abs(shiftX) / widthRatio)
+            startPixelX = startPixelX + (Math.abs(shiftX) / widthRatio)
+        }
+        if (shiftY < 0) {
+            println " shiftY < 0 : " + shiftX
+            println " + " + (Math.abs(shiftY) / heightRatio)
+            startPixelY = startPixelY - (Math.abs(shiftY) / heightRatio)
+        }
+        println "startPixelX = " + startPixelX
+        println "startPixelY = " + startPixelY
+        */
+
         int erodeDilateNumber = 3
         for (int i = 0; i < erodeDilateNumber; i++)
             ori.getProcessor().dilate()
@@ -44,7 +71,7 @@ class ProcessingController extends RestController {
         PlugInFilter filler = new ij.plugin.filter.Binary()
         filler.setup("fill", ori)
         filler.run(ori.getProcessor())
-        Coordinate[] coordinates = imageProcessingService.doWand(ori, middleROI, middleROI, 4, null)
+        Coordinate[] coordinates = imageProcessingService.doWand(ori, startPixelX, startPixelY, 30, null)
         coordinates.each { coordinate ->
             coordinate.x = shiftX + coordinate.x
             coordinate.y = shiftY - coordinate.y

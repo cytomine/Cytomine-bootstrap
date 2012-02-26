@@ -19,7 +19,7 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
 class VisionController extends RestController {
 
     def imageProcessingService
-    
+
     def process = {
         def split = request.queryString.split("url=http://")
         String imageURL = ConfigurationHolder.config.grails.serverURL + "/images/notavailable.jpg"
@@ -37,6 +37,60 @@ class VisionController extends RestController {
             BufferedImage bufferedImage = getImageFromURL(imageURL)
 
             /* Process the BufferedImage */
+
+            if (params.method == "r_rgb") {
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
+                Colour_Deconvolution dt = new Colour_Deconvolution()
+                dt.setSelectedStain(14)
+                dt.setup(params.url, ip)
+                dt.run(ip.getProcessor())
+                bufferedImage = dt.getResult(0).getBufferedImage()
+            }
+
+            if (params.method == "g_rgb") {
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
+                Colour_Deconvolution dt = new Colour_Deconvolution()
+                dt.setSelectedStain(14)
+                dt.setup(params.url, ip)
+                dt.run(ip.getProcessor())
+                bufferedImage = dt.getResult(1).getBufferedImage()
+            }
+
+            if (params.method == "b_rgb") {
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
+                Colour_Deconvolution dt = new Colour_Deconvolution()
+                dt.setSelectedStain(14)
+                dt.setup(params.url, ip)
+                dt.run(ip.getProcessor())
+                bufferedImage = dt.getResult(2).getBufferedImage()
+            }
+
+            if (params.method == "c_cmy") {
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
+                Colour_Deconvolution dt = new Colour_Deconvolution()
+                dt.setSelectedStain(15)
+                dt.setup(params.url, ip)
+                dt.run(ip.getProcessor())
+                bufferedImage = dt.getResult(0).getBufferedImage()
+            }
+            if (params.method == "m_cmy") {
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
+                Colour_Deconvolution dt = new Colour_Deconvolution()
+                dt.setSelectedStain(15)
+                dt.setup(params.url, ip)
+                dt.run(ip.getProcessor())
+                bufferedImage = dt.getResult(1).getBufferedImage()
+            }
+
+            if (params.method == "y_cmy") {
+                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
+                Colour_Deconvolution dt = new Colour_Deconvolution()
+                dt.setSelectedStain(15)
+                dt.setup(params.url, ip)
+                dt.run(ip.getProcessor())
+                bufferedImage = dt.getResult(2).getBufferedImage()
+            }
+
             if (params.method == "he-eosin") {
                 ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()

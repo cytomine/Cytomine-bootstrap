@@ -62,11 +62,19 @@ class UrlMappings {
         }
 
 
+
         "/api/project/$idproject/slide"(controller:"restProjectSlide"){
             action = [GET: "listSlideByProject"]
         }
         "/api/project/$idProject/term"(controller:"restTerm"){
             action = [GET:"listAllByProject"]
+        }
+
+        "/api/imageinstance/$id/position" (controller : "restUserPosition") {
+            action = [POST:"add"]
+        }
+        "/api/imageinstance/$id/position/$user" (controller : "restUserPosition") {
+            action = [GET:"list"]
         }
 
         "/api/imageinstance/$id/term"(controller:"restTerm"){

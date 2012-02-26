@@ -22,28 +22,9 @@ var ConfirmDialogView = Backbone.View.extend({
             show : true,
             backdrop : (this.dialogAttr.backdrop != undefined) ? this.dialogAttr.backdrop : true
         });
-        $(this.dialogAttr.dialogID).bind('hidden', function () {
+        $(this.dialogAttr.dialogID).on('hidden', function () {
             $(self.dialogAttr.dialogID).remove();
         });
-        /*$(this.dialogAttr.dialogID).modal('show');*/
-        /* {
-
-         create: function (event, ui) {
-         $(self.dialogAttr.dialogID).prev('.ui-dialog-titlebar').hide();
-         },
-         resizable: false,
-         autoOpen : this.dialogAttr.autoOpen,
-         draggable : false,
-         width: this.dialogAttr.width,
-         height: this.dialogAttr.height,
-         closeOnEscape : true,
-         modal: true,
-         //close : this.dialogAttr.close,
-         buttons: this.dialogAttr.buttons
-         }
-         );*/
-
-        /*$(".ui-panel-header").css("display","block");*/
     },
     render: function() {
         var self = this;

@@ -12,6 +12,7 @@ var BrowseImageView = Backbone.View.extend({
         this.layers = [];
         this.layersLoaded = 0;
         this.baseLayers = [];
+        this.broadcastPositionInterval = null;
         this.annotationsPanel = null;
         this.map = null;
         this.currentAnnotation = null;
@@ -26,10 +27,12 @@ var BrowseImageView = Backbone.View.extend({
         var self = this;
         var templateData = this.model.toJSON();
         templateData.project = window.app.status.currentProject;
-
         setTimeout(function(){window.app.view.applyPreferences();},1700);
         $(this.el).append(_.template(tpl, templateData));
-        $(".nav-tabs").append(_.template("<li><a style='float: left;' id='tabs-image-<%= idImage %>' href='#tabs-image-<%= idProject %>-<%= idImage %>-' data-toggle='tab'><i class='icon-search' /> <%= filename %> </a><a style='float: left;' href='#' data-image='<%= idImage %>' class='close closeTab'>&times;</a></li>",{ idProject : window.app.status.currentProject, idImage : this.model.get('id'), filename : this.model.get('filename')}));
+        var tabTpl = "<li><a style='float: left;' id='tabs-image-<%= idImage %>' href='#tabs-image-<%= idProject %>-<%= idImage %>-' data-toggle='tab'><i class='icon-search' /> <%= filename %> </a></li>";
+        $(".nav-tabs").append(_.template(tabTpl,{ idProject : window.app.status.currentProject, idImage : this.model.get('id'), filename : this.model.get('filename')}));
+        var dropdownTpl ='<li class="dropdown"><a href="#" id="tabs-image-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab"><i class="icon-remove" /> Close</a></li></ul></li>';
+        $(".nav-tabs").append(_.template(dropdownTpl, { idProject : window.app.status.currentProject, idImage : this.model.get('id'), filename : this.model.get('filename')}));
         this.initToolbar();
         this.initMap();
         this.initAnnotationsTabs();
@@ -289,8 +292,10 @@ var BrowseImageView = Backbone.View.extend({
                             magnification = maxMagnification / (Math.pow(2,deltaZoom));
                         magnification = Math.round(magnification * 100) / 100;
                         $("#zoomInfoPanel"+self.model.id).html(magnification + "X");
+                        self.broadcastPosition();
                     },
                     "moveend": function() {
+                        self.broadcastPosition();
                     }
                 }
             };
@@ -387,7 +392,6 @@ var BrowseImageView = Backbone.View.extend({
                 idealZoom--;
             }
             self.map.zoomTo(idealZoom);
-
         }
 
         var t_width  = self.model.get("width");
@@ -410,7 +414,15 @@ var BrowseImageView = Backbone.View.extend({
             }
         });
     },
-
+    broadcastPosition : function(){
+        var image = this.model.get("id");
+        var lonLat = this.map.getExtent().getCenterLonLat();
+        var lon = lonLat.lon;
+        var lat = lonLat.lat;
+        var zoom = this.map.zoom;
+        if (zoom == null || lon == null || lat == null) return; //map not yet initialized
+        new UserPositionModel({ lon : lon, lat : lat, zoom : zoom, image : image}).save();
+    },
     reloadAnnotation : function(idAnnotation) {
         var self = this;
         self.removeFeature(idAnnotation);

@@ -36,7 +36,7 @@ class UploadController {
             def ext = getExtensionFromFilename(f.originalFilename)
             def tmpFile = File.createTempFile(f.originalFilename, ext)
             tmpFile.deleteOnExit()
-            f.transferTo(tmpFile)
+            f.transferTo(tmpFile)            
             println "Tmp file created " + tmpFile.getPath()
 
             /*def aimage = new AbstractImage(

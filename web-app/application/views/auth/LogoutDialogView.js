@@ -12,9 +12,15 @@ var LogoutDialogView = Backbone.View.extend({
             }
         }).render();
 
-        $("#submit-logout").click(function(){
+        $("#submit-logout").click(function(e){
+            e.preventDefault();
             window.location = "logout";
-            return false;
+        });
+
+        $("#cancel-logout").click(function(e){
+            e.preventDefault();
+            $("#logout-confirm").modal('hide');
+            $("#logout-confirm").remove();
         });
 
         return this;

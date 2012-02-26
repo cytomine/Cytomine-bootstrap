@@ -142,8 +142,8 @@ class AnnotationAPI extends DomainAPI {
     }
 
     static def updateAnnotation(Annotation annotation, String username, String password) {
-        String oldGeom = "POINT (1111 1111)"
-        String newGeom = "POINT (9999 9999)"
+        String oldGeom = "POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"
+        String newGeom = "POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))"
 
         Double oldZoomLevel = 1
         Double newZoomLevel = 9

@@ -143,7 +143,7 @@ class BasicInstance {
     static Annotation createOrGetBasicAnnotation() {
         log.debug "createOrGetBasicAnnotation()"
         def image = createOrGetBasicImageInstance()
-        def annotation = new Annotation(location: new WKTReader().read("POINT(17573.5 21853.5)"), name: "test", image: image, user: User.findByUsername(Infos.GOODLOGIN),project:image.project)
+        def annotation = new Annotation(location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"), name: "test", image: image, user: User.findByUsername(Infos.GOODLOGIN),project:image.project)
         annotation.validate()
         log.debug("annotation.errors=" + annotation.errors)
         annotation.save(flush: true)
@@ -164,7 +164,7 @@ class BasicInstance {
             annotation = Annotation.findByName(randomInt + "")
         }
         def image = createOrGetBasicImageInstance()
-        annotation = new Annotation(location: new WKTReader().read("POINT(17573.5 21853.5)"), name: randomInt, image:image, user: User.findByUsername(Infos.GOODLOGIN), project:image.project)
+        annotation = new Annotation(location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"), name: randomInt, image:image, user: User.findByUsername(Infos.GOODLOGIN), project:image.project)
         annotation.validate()
         annotation
     }

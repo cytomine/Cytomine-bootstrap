@@ -236,6 +236,8 @@ class Annotation extends CytomineDomain implements Serializable {
         try {
             annotation.name = jsonAnnotation.name
             annotation.location = new WKTReader().read(jsonAnnotation.location)
+            if (annotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geometry is empty:" + annotation.location.getNumPoints() + " points")
+            if (annotation.location.getNumPoints() < 3) throw new WrongArgumentException("Geometry is not a polygon :" + annotation.location.getNumPoints() + " points")
             //annotation.location = DouglasPeuckerSimplifier.simplify(annotation.location,50)
             annotation.image = ImageInstance.get(jsonAnnotation.image);
             println "Annotation image = " + annotation.image + "($jsonAnnotation.image)"
@@ -250,7 +252,7 @@ class Annotation extends CytomineDomain implements Serializable {
             annotation.created = (!jsonAnnotation.created.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.created)) : null
             annotation.updated = (!jsonAnnotation.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.updated)) : null
             if (!annotation.location) throw new WrongArgumentException("Geo is null: 0 points")
-            if (annotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geo is empty:" + annotation.location.getNumPoints() + " points")
+
         } catch (com.vividsolutions.jts.io.ParseException ex) {
             throw new WrongArgumentException(ex.toString())
         }

@@ -91,10 +91,12 @@ class ImageProcessingService {
         }
         Wand w = new Wand(ip)
         double t1 = ip.getMinThreshold()
-        if (t1==ImageProcessor.NO_THRESHOLD || (ip.getLutUpdateMode()==ImageProcessor.NO_LUT_UPDATE&& tolerance>0.0))
+        if (t1==ImageProcessor.NO_THRESHOLD || (ip.getLutUpdateMode()==ImageProcessor.NO_LUT_UPDATE&& tolerance>0.0)) {
+            println " w.autoOutline(x, y, tolerance, imode)"
             w.autoOutline(x, y, tolerance, imode)
-        else
+        } else {
             w.autoOutline(x, y, t1, ip.getMaxThreshold(), imode)
+        }
 
         if (w.npoints>0) {
             int type = Wand.allPoints()?Roi.FREEROI:Roi.TRACED_ROI
