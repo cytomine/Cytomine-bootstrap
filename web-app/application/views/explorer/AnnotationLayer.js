@@ -275,7 +275,7 @@ AnnotationLayer.prototype = {
 
                         var termsList = collection.get('term');
 
-                        var termsCollection = new TermCollection(termsList);
+                        //var termsCollection = new TermCollection(termsList);
 
                         var bestTerm1Object;
                         var bestTerm2Object;
@@ -283,8 +283,8 @@ AnnotationLayer.prototype = {
                         var sum = 0;
                         var i = 0;
 
-                        termsCollection.each(function(term) {
-                            sum = sum + term.get('rate');
+                        _.each(termsList,function(term) {
+                            sum = sum + term.rate;
                             if(i==0) bestTerm1Object = term;
                             if(i==1) bestTerm2Object = term;
                             i++;
@@ -296,12 +296,12 @@ AnnotationLayer.prototype = {
                         var bestTerm2Value = 0;
                         if(bestTerm1Object!=undefined) {
                             bestTerm1 = bestTerm1Object.id
-                            bestTerm1Value = bestTerm1Object.get('rate');
+                            bestTerm1Value = bestTerm1Object.rate;
                             if(bestTerm1Value==0) bestTerm1 = undefined;
                         }
                         if(bestTerm2Object!=undefined) {
                             bestTerm2 = bestTerm2Object.id
-                            bestTerm2Value = bestTerm2Object.get('rate');
+                            bestTerm2Value = bestTerm2Object.rate;
                             if(bestTerm2Value==0) bestTerm2 = undefined;
                         }
 
