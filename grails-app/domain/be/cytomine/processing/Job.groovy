@@ -49,6 +49,9 @@ class Job extends CytomineDomain  {
             
             job.project = it.project?.id
             job.software = it.software?.id
+
+            job.created = it.created ? it.created.time.toString() : null
+            job.updated = it.updated ? it.updated.time.toString() : null
             
             try {job.jobParameter = JobParameter.findAllByJob(it) } catch(Exception e) {}
 

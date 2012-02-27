@@ -25,7 +25,7 @@ class RestJobController extends RestController {
     def list = {
         log.info "list all job"
         if(params.software!=null) {
-            Software software = Software.findByServiceNameIlike(params.software)
+            Software software = Software.read(params.software)
             if(software) responseSuccess(jobService.list(software))
             else responseNotFound("Job", "Software", params.software)
         } else responseSuccess(jobService.list())
@@ -37,7 +37,7 @@ class RestJobController extends RestController {
         if(project) {
             log.info "project="+project.id + " software="+params.software
             if(params.software!=null) {
-                Software software = Software.findByServiceNameIlike(params.software)
+                Software software = Software.read(params.software)
                 if(software) responseSuccess(jobService.list(software,project))
                 else responseNotFound("Job", "Software", params.software)
             } else responseSuccess(jobService.list(project))
@@ -88,7 +88,9 @@ class RestJobController extends RestController {
         Project project = projectService.read(params.long('id'),new Project());
         if (!project) responseNotFound("Job", "Project", params.id)
         else {
-            if(params.software.equals("retrievalSuggestedTermJobService")) {
+            Long idSoftware = Long.parseLong(params.software)
+            //TODO: execute retrieval should be a generic method execute
+            if(idSoftware==Software.findByServiceNameIlike("retrievalSuggestedTermJobService").id) {
                 def resp = executeRetrieval(project)
                 responseSuccess(resp)
             }

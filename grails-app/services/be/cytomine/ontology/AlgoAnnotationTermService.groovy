@@ -20,6 +20,7 @@ import be.cytomine.utils.ValueComparator
 import be.cytomine.utils.Utils
 import java.util.TreeMap.Entry
 import be.cytomine.security.UserJob
+import be.cytomine.processing.Software
 
 class AlgoAnnotationTermService extends ModelService {
 
@@ -176,26 +177,47 @@ class AlgoAnnotationTermService extends ModelService {
         return domain
     }
 
-     SecUser getLastUserJob(Project project) {
-        def users = getAllLastUserJobWithDate(project)
-        return users.isEmpty() ? null : users.first().first()
+//     SecUser getLastUserJob(Project project) {
+//        def users = getAllLastUserJobWithDate(project)
+//        return users.isEmpty() ? null : users.first().first()
+//    }
+
+//     List getAllLastUserJobWithDate(Project project) {
+//        def users = AlgoAnnotationTerm.createCriteria().list {
+//            createAlias("userJob", "u")
+//            eq("project", project)
+//            join("u")
+//            order "u.created", "desc"
+//            projections {
+//                groupProperty('userJob')
+//                groupProperty('u.created')
+//            }
+//        }
+//        return users
+//    }
+
+     List<UserJob> getAllLastUserJob(Project project, int max) {
+         List<Job> jobs = Job.findAllBySoftwareAndSuccessful(Software.findByName("Retrieval-Suggest-Term"),true)
+         //TODO: inlist bad performance
+         List<UserJob> userJob = UserJob.findAllByJobInList(jobs,[max:max,sort:'created', order:"desc"])
+         return userJob
     }
 
-     List getAllLastUserJobWithDate(Project project) {
-        def users = AlgoAnnotationTerm.createCriteria().list {
-            createAlias("userJob", "u")
-            eq("project", project)
-            join("u")
-            order "u.created", "desc"
-            projections {
-                groupProperty('userJob')
-                groupProperty('u.created')
-            }
-        }
-        return users
+     List<UserJob> getAllLastUserJob(Project project) {
+         //TODO: inlist bad performance
+         List<Job> jobs = Job.findAllBySoftwareAndSuccessful(Software.findByName("Retrieval-Suggest-Term"),true)
+         List<UserJob>  userJob = UserJob.findAllByJobInList(jobs,[sort:'created', order:"desc"])
+         return userJob
     }
+
+     UserJob getLastUserJob(Project project) {
+         List<UserJob> userJobs = getAllLastUserJob(project)
+         return userJobs.isEmpty()? null : userJobs.first()
+    }
+
+
      double computeAVG(def userJob) {
-
+        println "userJob="+userJob
         def nbTermNotCorrect = AlgoAnnotationTerm.createCriteria().count {
             eq("userJob", userJob)
             isNotNull("term")
@@ -207,6 +229,7 @@ class AlgoAnnotationTermService extends ModelService {
             isNotNull("term")
             isNotNull("expectedTerm")
         }
+         println "nbTermNotCorrect="+nbTermNotCorrect +" nbTermTotal="+nbTermTotal
         return (double) (nbTermNotCorrect / nbTermTotal)
     }
 
@@ -236,11 +259,11 @@ class AlgoAnnotationTermService extends ModelService {
     def listAVGEvolution(Project project) {
         def data = []
         //Get all project userJob
-        List userJobs = getAllLastUserJobWithDate(project)
+        List userJobs = getAllLastUserJob(project)
         if(userJobs.isEmpty()) return null
         println userJobs
         userJobs.each {
-            def userJob = it.first()
+            def userJob = it
             def item = [:]
             item.date = userJob.created.getTime()
             item.avg = computeAVG(userJob)*100

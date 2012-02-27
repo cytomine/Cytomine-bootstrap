@@ -180,8 +180,29 @@
     </div>
 </div>
 <div class="tab-pane" id="tabs-algos-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding: 20px;">
-    <div class="container-fluid">
-        <div class="hero-unit">
+    <div class="container-fluid" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding : 20px;">
+
+        <div class="row" style="padding-top: 15px;padding-left: 30px;">
+            <div id="menuAlgoSoftware" style="padding : 15px; margin-right:5px;min-width: 15%;max-width:18%;"  class="span5 hero-unit">
+                <h3>Software available</h3>
+                <ul id="projectSoftwareListUl">
+                    <!--<li>Image Filter</li>
+                    <li>Retrieval algo</li>
+                    <li>...</li>  -->
+                </ul>
+            </div>
+
+            <div id="panelAlgoSoftware" style="padding : 15px;margin-right:5px;min-width: 65%;max-width:80%;"  class="span5 hero-unit">
+                <h3>Software information</h3>
+                <div>
+                    <div id="panelSoftwareInfo"></div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!--<div class="hero-unit">
             <h3>Algo retrieval</h3>
             <button id="launchRetrievalAlgoButton" class="btn">Launch new Algo</button>
             <table id="listAlgoRetrieval"></table>
@@ -191,7 +212,12 @@
             <h3>Image filters</h3>
             <ul class="image-filters"></ul>
             <select id="addImageFilter"></select> <button id="addImageFilterButton" class="btn">Add</button>
-        </div>
+        </div> -->
+
+
+
+
+
         <!--<div class="hero-unit" >
             <h3>Batch processing</h3>
             <ul class="batch-processing"></ul>
