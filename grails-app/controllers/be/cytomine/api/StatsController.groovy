@@ -11,14 +11,6 @@ import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.utils.ValueComparator
 import be.cytomine.utils.Utils
 import java.util.TreeMap.Entry
-import be.cytomine.security.UserJob
-import java.nio.ByteBuffer
-import org.xhtmlrenderer.pdf.ITextRenderer
-import org.xhtmlrenderer.resource.XMLResource
-import org.w3c.dom.Document
-import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.parsers.DocumentBuilder
-import org.xhtmlrenderer.resource.FSEntityResolver
 
 class StatsController extends RestController {
 
