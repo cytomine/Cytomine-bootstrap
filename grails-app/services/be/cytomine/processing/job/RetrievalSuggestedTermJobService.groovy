@@ -14,7 +14,7 @@ import be.cytomine.processing.SoftwareParameter
 import be.cytomine.processing.JobParameter
 import be.cytomine.Exception.WrongArgumentException
 
-class RetrievalSuggestedTermJobService  {
+class RetrievalSuggestedTermJobService extends AbstractJobService {
 
     static transactional = true
     def cytomineService
@@ -22,84 +22,25 @@ class RetrievalSuggestedTermJobService  {
     def domainService
 
     def execute(Job job) {
+
         String applicPath = "/home/lrollus/Cytomine/subversion/wiki/cytomine/algo/retrieval/ValidateAnnotationAlgo/out/artifacts/ValidateAnnotationAlgo_jar7/ValidateAnnotationAlgo.jar"
 
-         println "*******************************"
-         println "****** Execute Retrieval ******"
-         println "*******************************"
-         println "Parameter="
-         def params = SoftwareParameter.findAllBySoftware(job.software,[sort: "index",order: "asc"])
-         String[] args = new String[params.size()+4]
-
+        //get job params
+        String[] jobParams = getParams(job)
+        String[] args = new String[jobParams.length+4]
+         //build software params
          args[0] = "java"
          args[1] = "-Xmx2G"
          args[2] = "-jar"
          args[3] = applicPath
 
-         params.eachWithIndex {it, i->
-             SoftwareParameter softParam = it
-             JobParameter jobParam =  JobParameter.findByJobAndSoftwareParameter(job,softParam)
-
-             String value = softParam.defaultValue
-             if(jobParam) value = jobParam.value
-             else if(softParam.required) throw new WrongArgumentException("Argument "+softParam.name+" is required!")
-             args[i+4] = value
-             println softParam.name + "=" + value
-         }
-
-         println "*******************************"
-         println "****** Launch Applic"
-         for(int i=0;i<args.length;i++) {
-             println "args["+(i-1)+"]="+args[i]
-         }
-         println "*******************************"
-         Runtime runtime = Runtime.getRuntime();
-         final Process process = runtime.exec(args);
+        for(int i=0;i<jobParams.length;i++) {
+            args[i+4] = jobParams[i]
+        }
 
 
-             // See algo log in Cytomine log (for debug!)
-             new Thread() {
-                 public void run() {
-                     try {
-                         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                         String line = "";
-                         try {
-                             while((line = reader.readLine()) != null) {
-                                 println line
-                             }
-                         } finally {
-                             reader.close();
-                         }
-                     } catch(IOException ioe) {
-                         ioe.printStackTrace();
-                     }
-                 }
-             }.start();
-
-             new Thread() {
-                 public void run() {
-                     try {
-                         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-                         String line = "";
-                         try {
-                             while((line = reader.readLine()) != null) {
-                                 println line
-                             }
-                         } finally {
-                             reader.close();
-                         }
-                     } catch(IOException ioe) {
-                         ioe.printStackTrace();
-                     }
-                 }
-             }.start();
-            process.waitFor();
-
-         println "###################################################################################"
-         println "###################################################################################"
-         println "################## ALGO IS FINISH ######################"
-         println "###################################################################################"
-         println "###################################################################################"
-
+        printStartJobInfo(job,args)
+        launchAndWaitSoftware(args)
+        printStopJobInfo(job,args)
     }
 }
