@@ -369,3 +369,28 @@ span .ui-icon {
 .dropdown-menu {
   z-index: 2500;
 }
+
+td.confusionMatrixHeader{
+   text-align :center;
+   font-weight: bold;
+}
+
+td.confusionMatrixSimple{
+   text-align :center;
+}
+
+td.confusionMatrixDiagonal{
+   text-align :center;
+   font-weight: bold;
+   background-color:#90c140;
+}
+
+td.confusionMatrixBadValue{
+   text-align :center;
+   font-weight: bold;
+   background-color:#ff5800;
+}
+
+.table tbody tr:hover td, .table tbody tr:hover th {
+  background-color: #6C8690;
+}

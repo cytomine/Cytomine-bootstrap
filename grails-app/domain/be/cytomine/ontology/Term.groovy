@@ -5,7 +5,7 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
 
-class Term extends CytomineDomain implements Serializable {
+class Term extends CytomineDomain implements Serializable, Comparable {
 
     String name
     String comment
@@ -150,5 +150,9 @@ class Term extends CytomineDomain implements Serializable {
     
     String toString() {
         name
+    }
+
+    int compareTo(Object t) {
+        return this.name.compareTo(((Term)t).name)
     }
 }

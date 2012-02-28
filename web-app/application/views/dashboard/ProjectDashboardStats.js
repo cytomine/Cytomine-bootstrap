@@ -488,6 +488,7 @@ var ProjectDashboardStats = Backbone.View.extend({
     },
     initMatrixDialog: function(terms) {
         var self = this;
+        $('#userRetrievalSuggestMatrixDataTable').empty();
       new StatsRetrievalSuggestionMatrixModel({project:self.model.get('id')}).fetch({
          success : function(model, response) {
             self.drawRetrievalSuggestionTable(model,response, terms);
@@ -505,7 +506,130 @@ var ProjectDashboardStats = Backbone.View.extend({
          }
       });
     },
+    tableElement : 'userRetrievalSuggestMatrixDataTable',
+    tableElementHtml : 'userRetrievalSuggestMatrixDataTableHtml',
+    addLine: function(idLine) {
+        console.log('<tr id="' + idLine + '" class="confusionMatrixRow"></tr>');
+       $('#userRetrievalSuggestMatrixDataTableHtml').append('<tr onMouseOver="this.className=\'confusionMatrixBadValueHover\'" id="' + idLine + '" class="confusionMatrixRow"></tr>');
+    },
+    addCell: function(idLine, idColumn, value,style) {
+       this.addCell(idLine,idColumn,value,style,'');
+    },
+    addCell: function(idLine, idColumn, value,style,tooltip) {
+       console.log('<td id="' + idColumn + '">'+value+'</td> => add to tr#'+idLine);
+       $("#userRetrievalSuggestMatrixDataTableHtml").find("tr#"+idLine).append('<td id="' + idColumn + '"title="'+tooltip+'" class="'+style+'">'+value+'</td>');
+        var elem = $("#userRetrievalSuggestMatrixDataTableHtml").find("tr#"+idLine).find("td#"+idColumn);
+        if(tooltip!='' && tooltip!=undefined) {
+            elem.tooltip();
+        }
+
+        if(idLine>0 && idColumn>0 && value!='') {
+            console.log("term="+this.terms.get(idLine) + " suggest="+this.terms.get(idColumn));
+            this.linkAnnotationMapWithBadTerm(elem,idLine,idColumn,this.terms)
+        }
+    },
+    terms : null,
    drawRetrievalSuggestionTable: function(model, response, terms){
+       var self = this;
+       this.terms = terms;
+       var matrixJSON = model.get('matrix');
+
+       if(matrixJSON==undefined) return;
+
+       var matrix = eval('('+matrixJSON +')');
+
+       $('#userRetrievalSuggestMatrixDataTable').append('<table id="userRetrievalSuggestMatrixDataTableHtml" class="table table-condensed"></table>');
+       //add title line
+       self.addLine(-1);
+
+       //add topleft cell
+       self.addCell(-1,-1,'X','confusionMatrixHeader');
+
+       //add each header cell
+       for(var i = 1; i<matrix[0].length-1;i++){
+           var termName ="";
+           var term = terms.get(matrix[0][i]);
+           if(term!=undefined) termName = self.reduceTermName(term.get('name'));
+           self.addCell(-1,term.id,termName,'confusionMatrixHeader',term.get('name'));
+           self.addLine(term.id);
+           self.addCell(term.id,-1,termName,'confusionMatrixHeader',term.get('name'));
+       }
+       self.addCell(-1, 'total', 'total','confusionMatrixHeader');
+
+       for(i = 0; i<matrix.length-1;i++){
+
+           var indx = i+1;
+
+           for(j=0; j<matrix[indx].length;j++) {
+
+               //diagonal
+               if(indx==j) {
+                   self.addCell(matrix[0][j],matrix[indx][0],'<a>'+matrix[indx][j]+'</a>','confusionMatrixDiagonal',"Suggest Term " + terms.get(matrix[0][j]).get('name') + " for annotation " + terms.get(matrix[indx][0]).get('name'));
+
+               }
+               else if(j==0) {
+                   //first column
+                   var idTerm = matrix[indx][j];
+                   var term = terms.get(idTerm);
+                   //data.setCell(i, j,term.get('name'));
+                   console.log("ADD COLUMN "+term.get('name') +" id="+term.id);
+                   self.addCell(matrix[0][j],matrix[indx][0],term.get('name'),'confusionMatrixHeader');
+
+               }
+               else if(j==matrix[indx].length-1) {
+                   //total column, fill at the end
+               }
+               else {
+               //value
+                    if(matrix[indx][j]>0 && j>0) {
+                        //bad value, should be 0
+                        self.addCell(matrix[indx][0],matrix[0][j],'<a>'+matrix[indx][j]+'</a>','confusionMatrixBadValue',"Suggest Term " + terms.get(matrix[0][j]).get('name') + " for annotation " + terms.get(matrix[indx][0]).get('name'));
+                    }else {
+                        self.addCell(matrix[indx][0],matrix[0][j],'','confusionMatrixSimple',"Suggest Term " + terms.get(matrix[0][j]).get('name') + " for annotation " + terms.get(matrix[indx][0]).get('name'));
+                        }
+                    }
+             }
+       }
+       var indx = matrix.length-1;
+       console.log(matrix);
+       console.log(matrix[matrix.length-1]);
+       console.log(matrix[matrix.length-2]);
+       for(i=0; i<matrix.length;i++) {
+           var printValue =""
+           var value = matrix[i][matrix[i].length-1];
+           if(value!=-1) {
+               printValue = Math.round(value*100)+"%";
+           }
+           self.addCell(matrix[0][i],'total',printValue,'confusionMatrixSimple');
+       }
+
+
+
+
+
+//       var width = Math.round($(window).width() - 95);
+//      google.visualization.events.addListener(visualization, 'select', function() {
+//                console.log(visualization.getSelection());
+//                  var selection  = visualization.getSelection();
+//                  for (var i = 0; i < selection.length; i++) {
+//                        var item = selection[i];
+//                        console.log("item.row="+item.row +" item.column="+item.column);
+//                      //TODO: cannot GET COLUMN ID!!! (item.row => OK, item.column = undefined
+////                        if (item.row != null && item.column != null) {
+////
+////                        }
+//                  }
+//
+//        });
+//      visualization.draw(data, {title:"",
+//             legend : "none",
+//             //backgroundColor : "whiteSmoke",
+//             width:"98%",
+//             allowHtml : true
+//          });
+
+   },
+   drawRetrievalSuggestionTableGoogleCharts: function(model, response, terms){
       var self = this;
        var visualization = new google.visualization.Table(document.getElementById('userRetrievalSuggestMatrixDataTable'));
         var matrixJSON = model.get('matrix');

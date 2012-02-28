@@ -264,6 +264,10 @@ class UrlMappings {
             action = [GET:"list"]
         }
 
+        "/api/downloadPDF" (controller : "stats") {
+            action = [GET:"convertHtmlContentToPDF"]
+        }
+
 
 
     }
