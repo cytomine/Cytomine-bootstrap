@@ -28,6 +28,7 @@ class AlgoAnnotationTermService extends ModelService {
     def cytomineService
     def commandService
     def domainService
+    def jobService
 
     boolean saveOnUndoRedoStack = true
 
@@ -196,24 +197,7 @@ class AlgoAnnotationTermService extends ModelService {
 //        return users
 //    }
 
-     List<UserJob> getAllLastUserJob(Project project, int max) {
-         List<Job> jobs = Job.findAllBySoftwareAndSuccessful(Software.findByName("Retrieval-Suggest-Term"),true)
-         //TODO: inlist bad performance
-         List<UserJob> userJob = UserJob.findAllByJobInList(jobs,[max:max,sort:'created', order:"desc"])
-         return userJob
-    }
 
-     List<UserJob> getAllLastUserJob(Project project) {
-         //TODO: inlist bad performance
-         List<Job> jobs = Job.findAllBySoftwareAndSuccessful(Software.findByName("Retrieval-Suggest-Term"),true)
-         List<UserJob>  userJob = UserJob.findAllByJobInList(jobs,[sort:'created', order:"desc"])
-         return userJob
-    }
-
-     UserJob getLastUserJob(Project project) {
-         List<UserJob> userJobs = getAllLastUserJob(project)
-         return userJobs.isEmpty()? null : userJobs.first()
-    }
 
 
      double computeAVG(def userJob) {
@@ -261,18 +245,18 @@ class AlgoAnnotationTermService extends ModelService {
         return sum
     }
 
-    def listAVGEvolution(Project project) {
+    def listAVGEvolution(UserJob userJob) {
         def data = []
         //Get all project userJob
-        List userJobs = getAllLastUserJob(project)
+        List userJobs = jobService.getAllLastUserJob(userJob?.job?.project,userJob?.job?.software)
         if(userJobs.isEmpty()) return null
         println userJobs
         userJobs.each {
-            def userJob = it
+            def userJobIt = it
             def item = [:]
             try {
-                item.date = userJob.created.getTime()
-                item.avg = computeAVG(userJob)*100
+                item.date = userJobIt.created.getTime()
+                item.avg = computeAVG(userJobIt)*100
                 data << item
             } catch(Exception e) {
                 log.info e

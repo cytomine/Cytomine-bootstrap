@@ -127,6 +127,7 @@
         <script type="text/javascript" src="application/views/dashboard/ProjectDashboardAnnotations.js" ></script>
         <script type="text/javascript" src="application/views/dashboard/ProjectDashboardAlgos.js" ></script>
 
+        <script type="text/javascript" src="application/views/processing/RetrievalAlgoResult.js" ></script>
 
         <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
         <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>

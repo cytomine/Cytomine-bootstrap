@@ -11,39 +11,58 @@ import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.utils.ValueComparator
 import be.cytomine.utils.Utils
 import java.util.TreeMap.Entry
+import be.cytomine.security.UserJob
+import be.cytomine.processing.Job
+import be.cytomine.processing.Software
 
 class StatsController extends RestController {
 
     def annotationService
     def termService
     def algoAnnotationTermService
+    def jobService
+
+    /**
+     * If params.project && params.software, get the last userJob from this software from this project
+     * If params.job, get userjob with job
+     * @param params
+     * @return
+     */
+    UserJob retrieveUserJobFromParams(def params) {
+        log.info "retrieveUserJobFromParams:" + params
+        SecUser userJob = null
+        if (params.project != null && params.software != null) {
+            Project project = Project.read(params.project)
+            Software software = Software.read(params.software)
+            if(project && software) userJob = jobService.getLastUserJob(project, software)
+        } else if (params.job != null) {
+            userJob = UserJob.findByJob(Job.read(params.long('job')))
+        }
+        return userJob
+    }
 
     def statRetrievalAVG = {
-        Project project = Project.read(params.id)
-        if (project == null) {
-            responseNotFound("Project", params.id)
-            return
+
+        UserJob userJob = retrieveUserJobFromParams(params)
+        if(!userJob) {
+            responseNotFound("UserJob","Params", params)
+            return null
         }
-        SecUser lastUserJob = algoAnnotationTermService.getLastUserJob(project)
-        double avg = algoAnnotationTermService.computeAVG(lastUserJob)
+        double avg = algoAnnotationTermService.computeAVG(userJob)
         def data = ['avg': avg]
         responseSuccess(data)
     }
 
     def statRetrievalConfusionMatrix = {
         def data = []
-        println "statRetrievalConfusionMatrix"
-        Project project = Project.read(params.id)
-        if (project == null) {
-            responseNotFound("Project", params.id)
-            return
+        UserJob userJob = retrieveUserJobFromParams(params)
+        if(!userJob) {
+            responseNotFound("UserJob","Params", params)
+            return null
         }
-        SecUser lastUserJob = algoAnnotationTermService.getLastUserJob(project)
-        if (lastUserJob) {
-            ConfusionMatrix matrix = algoAnnotationTermService.computeConfusionMatrix(termService.list(project), lastUserJob)
-            String matrixJSON = matrix.toJSON()
-            data = ['matrix': matrixJSON]
-        }
+        ConfusionMatrix matrix = algoAnnotationTermService.computeConfusionMatrix(termService.list(userJob?.job?.project), userJob)
+        String matrixJSON = matrix.toJSON()
+        data = ['matrix': matrixJSON]
         responseSuccess(data)
     }
 
@@ -62,7 +81,6 @@ class StatsController extends RestController {
 //
 //        os.close();
 
-
 //       final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 //        documentBuilderFactory.setValidating(false);
 //        DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
@@ -78,74 +96,65 @@ class StatsController extends RestController {
 //        renderer.createPDF(os);
 
         //Return PDF data as file
-      byte[] pdf = os.decodeBase64();
-      response.setHeader "Content-disposition", "attachment; filename=test.PDF"
-      response.contentType = "application/octet-stream"
-      response.outputStream << pdf
+        byte[] pdf = os.decodeBase64();
+        response.setHeader "Content-disposition", "attachment; filename=test.PDF"
+        response.contentType = "application/octet-stream"
+        response.outputStream << pdf
     }
 
     def statRetrievalWorstTerm = {
         def data = []
-        Project project = Project.read(params.id)
-        if (project == null) {
-            responseNotFound("Project", params.id)
-            return
+        UserJob userJob = retrieveUserJobFromParams(params)
+        if(!userJob) {
+            responseNotFound("UserJob","Params", params)
+            return null
         }
-        SecUser lastUserJob = algoAnnotationTermService.getLastUserJob(project)
-        if (lastUserJob) {
-            def worstTerms = listWorstTerm(lastUserJob, project)
-            data = ['worstTerms': worstTerms]
-        }
+        def worstTerms = listWorstTerm(userJob)
+        data = ['worstTerms': worstTerms]
         responseSuccess(data)
     }
 
     def statWorstTermWithSuggestedTerm = {
         def data = []
         log.info "statWorstTermWithSuggestedTerm"
-        Project project = Project.read(params.id)
-        if (project == null) {
-            responseNotFound("Project", params.id)
-            return
+        UserJob userJob = retrieveUserJobFromParams(params)
+        if(!userJob) {
+            responseNotFound("UserJob","Params", params)
+            return null
         }
-        SecUser lastUserJob = algoAnnotationTermService.getLastUserJob(project)
-        if (lastUserJob) {
-            def worstTerms = listWorstTermWithSuggestedTerm(lastUserJob, project)
-            data = ['worstTerms': worstTerms]
-        }
+        def worstTerms = listWorstTermWithSuggestedTerm(userJob)
+        data = ['worstTerms': worstTerms]
         responseSuccess(data)
     }
 
     def statRetrievalWorstAnnotation = {
         def data = []
-        Project project = Project.read(params.id)
-        if (project == null) {
-            responseNotFound("Project", params.id)
-            return
+        UserJob userJob = retrieveUserJobFromParams(params)
+        if(!userJob) {
+            responseNotFound("UserJob","Params", params)
+            return null
         }
-        SecUser lastUserJob = algoAnnotationTermService.getLastUserJob(project)
-        if (lastUserJob) {
-            def worstTerms = listWorstAnnotationTerm(lastUserJob, 30)
-            data = ['worstAnnotations': worstTerms]
-        }
+        def worstTerms = listWorstAnnotationTerm(userJob, 30)
+        data = ['worstAnnotations': worstTerms]
 
         responseSuccess(data)
     }
 
     def statRetrievalEvolution = {
-        Project project = Project.read(params.id)
-        if (project == null) {
-            responseNotFound("Project", params.id)
-            return
+        UserJob userJob = retrieveUserJobFromParams(params)
+        if(!userJob) {
+            responseNotFound("UserJob","Params", params)
+            return null
         }
         def data = []
-        def evolution = algoAnnotationTermService.listAVGEvolution(project)
-        if(evolution) data = ['evolution': evolution]
+        def evolution = algoAnnotationTermService.listAVGEvolution(userJob)
+        if (evolution) data = ['evolution': evolution]
         responseSuccess(data)
     }
 
-     def listWorstTerm(def userJob, Project project) {
+    def listWorstTerm(UserJob userJob) {
         Map<Term, Integer> termMap = new HashMap<Term, Integer>()
-        List<Term> termList = termService.list(project)
+        List<Term> termList = termService.list(userJob?.job?.project)
         termList.each {termMap.put(it, 0)}
 
         def algoAnnotationsTerm = AlgoAnnotationTerm.createCriteria().list {
@@ -164,9 +173,9 @@ class StatsController extends RestController {
         return termList
     }
 
-     def listWorstTermWithSuggestedTerm(def userJob, Project project) {
+    def listWorstTermWithSuggestedTerm(def userJob) {
         TreeMap<Long, TreeMap<Long, Integer>> termMap = new TreeMap<Long, TreeMap<Long, Integer>>()
-        List<Term> termList = termService.list(project)
+        List<Term> termList = termService.list(userJob?.job?.project)
         termList.each {
             termMap.put(it.id, new TreeMap<Long, Integer>())
 
@@ -196,7 +205,7 @@ class StatsController extends RestController {
             mapSorted.each { entry ->
                 //log.info "entry="+entry
                 Map map = [:]
-                map[entry.key] = Math.round(((entry.value/sum)*100))
+                map[entry.key] = Math.round(((entry.value / sum) * 100))
                 data[it.key].add(map)
 
             }
@@ -204,6 +213,7 @@ class StatsController extends RestController {
         }
         return data
     }
+
     def listWorstAnnotationTerm(def userJob, def max) {
         def results = []
 

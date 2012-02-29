@@ -319,7 +319,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             //change color of already selected image
             self.imagesProject.each(function(image) {
                $("#"+self.listmanageall).find("#" + image.get('baseImage')).find("td").css("background-color", "a0dc4f");
-               $("#"+self.listmanageall).find("#" + image.get('baseImage')).find(".cbox").attr('disabled', true)
+               $("#"+self.listmanageall).find("#" + image.get('baseImage')).find(".cbox").attr('disabled', true);
                $("#"+self.listmanageall).find("#" + image.get('baseImage')).find(".cbox").css("visible", false);
             });
          },

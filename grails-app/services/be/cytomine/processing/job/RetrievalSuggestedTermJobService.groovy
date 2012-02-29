@@ -23,8 +23,10 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
 
     def execute(Job job) {
 
-        String applicPath = "/home/lrollus/Cytomine/subversion/wiki/cytomine/algo/retrieval/ValidateAnnotationAlgo/out/artifacts/ValidateAnnotationAlgo_jar7/ValidateAnnotationAlgo.jar"
+        String applicPath = "algo/retrievalSuggest/ValidateAnnotationAlgo.jar"
 
+        File dir1 = new File (".");
+        System.out.println ("Current dir : " + dir1.getCanonicalPath());
         //get job params
         String[] jobParams = getParams(job)
         String[] args = new String[jobParams.length+4]

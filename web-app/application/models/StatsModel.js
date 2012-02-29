@@ -25,45 +25,61 @@ var StatsModel = Backbone.Model.extend({
 
 var StatsRetrievalSuggestionAVGModel = Backbone.Model.extend({
 	url : function() {
-        if (this.project != undefined) {
-            return "api/project/" + this.project + "/stats/retrieval/avg.json";
+        if (this.project != undefined && this.software != undefined) {
+            return "api/stats/retrieval/avg.json?project="+this.project+"&software="+this.software;
+        } else if (this.job != undefined) {
+            return "api/stats/retrieval/avg.json?job="+this.job;
         }
 	},
     initialize: function (options) {
         this.project = options.project;
+        this.software = options.software;
+        this.job=options.job;
     }
 });
 
 var StatsRetrievalSuggestionMatrixModel = Backbone.Model.extend({
 	url : function() {
-        if (this.project != undefined) {
-            return "api/project/" + this.project + "/stats/retrieval/confusionmatrix.json";
+        if (this.project != undefined && this.software != undefined) {
+            return "api/stats/retrieval/confusionmatrix.json?project="+this.project+"&software="+this.software;
+        } else if (this.job != undefined) {
+            return "api/stats/retrieval/confusionmatrix.json?job="+this.job;
         }
 	},
     initialize: function (options) {
         this.project = options.project;
+        this.software = options.software;
+        this.job=options.job;
     }
 });
 
 var StatsRetrievalSuggestionWorstTermModel = Backbone.Model.extend({
 	url : function() {
-        if (this.project != undefined) {
-            return "api/project/" + this.project + "/stats/retrieval/worstTerm.json";
+        if (this.project != undefined && this.software != undefined) {
+            return "api/stats/retrieval/worstTerm.json?project="+this.project+"&software="+this.software;
+        } else if (this.job != undefined) {
+            return "api/stats/retrieval/worstTerm.json?job="+this.job;
         }
 	},
     initialize: function (options) {
         this.project = options.project;
+        this.software = options.software;
+        this.job=options.job;
     }
 });
 
 var StatsRetrievalSuggestionWorstTermWithSuggest = Backbone.Model.extend({
 	url : function() {
-        if (this.project != undefined) {
-            return "api/project/" + this.project + "/stats/retrieval/worstTermWithSuggest.json";
+        if (this.project != undefined && this.software != undefined) {
+            return "api/stats/retrieval/worstTermWithSuggest.json?project="+this.project+"&software="+this.software;
+        } else if (this.job != undefined) {
+            return "api/stats/retrieval/worstTermWithSuggest.json?job="+this.job;
         }
 	},
     initialize: function (options) {
         this.project = options.project;
+        this.software = options.software;
+        this.job=options.job;
     }
 });
 
@@ -71,23 +87,31 @@ var StatsRetrievalSuggestionWorstTermWithSuggest = Backbone.Model.extend({
 
 var StatsRetrievalSuggestionWorstAnnotationModel = Backbone.Model.extend({
 	url : function() {
-        if (this.project != undefined) {
-            return "api/project/" + this.project + "/stats/retrieval/worstAnnotation.json";
+        if (this.project != undefined && this.software != undefined) {
+            return "api/stats/retrieval/worstAnnotation.json?project="+this.project+"&software="+this.software;
+        } else if (this.job != undefined) {
+            return "api/stats/retrieval/worstAnnotation.json?job="+this.job;
         }
 	},
     initialize: function (options) {
         this.project = options.project;
+        this.software = options.software;
+        this.job=options.job;
     }
 });
 
 var StatsRetrievalSuggestionEvolutionModel = Backbone.Model.extend({
 	url : function() {
-        if (this.project != undefined) {
-            return "api/project/" + this.project + "/stats/retrieval/evolution.json";
+        if (this.project != undefined && this.software != undefined) {
+            return "api/stats/retrieval/evolution.json?project="+this.project+"&software="+this.software;
+        } else if (this.job != undefined) {
+            return "api/stats/retrieval/evolution.json?job="+this.job;
         }
 	},
     initialize: function (options) {
         this.project = options.project;
+        this.software = options.software;
+        this.job=options.job;
     }
 });
 

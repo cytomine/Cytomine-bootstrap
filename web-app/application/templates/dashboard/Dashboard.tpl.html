@@ -68,35 +68,7 @@
         <!--<div id="worstAnnotationTable"><br /><br /><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>-->
         <!--</div>-->
         <!--</div>-->
-        <div id="worstAnnotationPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
-            <h3>Most Questionable Annotation Term</h3>
-            <div>
-                <div>
-                    <ul>
-                        <div id="worstannotationitem" style="max-height: 350px;overflow-y: auto;" ></div>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div id="worstTermPieChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
-            <h3>Most Questionable Terms (pie)</h3>
-            <div>
-                <div id="worstTermprojectPieChart" style="height: 350px"><br /><br /><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
-            </div>
-        </div>
-        <div id="avgEvolutionLineChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
-            <h3>AVG of success rate for retrieval algo</h3>
-            <div>
-                <div id="avgEvolutionLineChart" style="height: 350px"><br /><br /><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
-            </div>
-        </div>
-        <div id="worstTermListPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
-            <h3>Success for retrieval algo with term suggestion</h3>
-            <div>
-                <div id="worstTermList" style="height: 350px"><br /><br /><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
-                <div id="userRetrievalSuggestMatrixDataTable"></div>
-            </div>
-        </div>
+
         <!--<div id="userRetrievalSuggestMatrixDataTablePanel" style="padding : 15px;margin-right:5px;min-width:95%;"  class="span5 hero-unit">-->
         <!--<h3>Confusion Matrix</h3>-->
         <!--<div>-->
@@ -179,7 +151,7 @@
     <div class="container-fluid" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding : 20px;">
 
         <div class="row" style="padding-top: 15px;padding-left: 30px;">
-            <div id="menuAlgoSoftware" style="padding : 15px; margin-right:5px;min-width: 15%;max-width:18%;"  class="span5 hero-unit">
+            <div id="menuAlgoSoftware" style="padding : 15px; margin-right:5px;min-width: 15%;max-width:15%;"  class="span5 hero-unit">
                 <h3>Software available</h3>
                 <ul id="projectSoftwareListUl">
                     <!--<li>Image Filter</li>
@@ -188,10 +160,11 @@
                 </ul>
             </div>
 
-            <div id="panelAlgoSoftware" style="padding : 15px;margin-right:5px;min-width: 65%;max-width:80%;"  class="span5 hero-unit">
+            <div id="panelAlgoSoftware" style="padding : 15px;margin-right:5px;min-width: 70%;max-width:70%;"  class="span5 hero-unit">
                 <h3>Software information</h3>
                 <div>
-                    <div id="panelSoftwareInfo"></div>
+                    <div id="panelSoftwareInfo" class="hero-unit">
+                    </div>
                 </div>
             </div>
         </div>

@@ -39,93 +39,192 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var self = this;
         //add button to launch algo
         $("#panelSoftwareInfo").empty();
-        $("#panelSoftwareInfo").append('<button id="launchSoftwareButton" class="btn">Launch new Algo</button>');
 
-        //button click
-        $("#launchSoftwareButton").click(function() {
-            console.log("project=" + self.model.id + " software.id=" + software.id);
-            new JobModel({ project : self.model.id, software : software.id}).save({}, {
-                success : function (job, response) {
-                    console.log("SUCCESS JOB");
-                },
-                error : function (response) {
-                    console.log("BAD JOB");
+
+        $("#panelSoftwareInfo").append('<div id="softwareInfoAccordeon"></div>');
+
+        $("#softwareInfoAccordeon").append('<h3><a href="#">Job List</a></h3><div id="jobListDiv"></div>');
+        $("#softwareInfoAccordeon").append('<h3><a href="#">Job Result</a></h3><div id="jobResultDiv"></div>');
+
+
+        self.printJobListingPanel(software);
+
+       // $("#softwareInfoAccordeon").accordion();
+
+
+                 $("#softwareInfoAccordeon").accordion({ clearStyle: true });
+//                $("#tabsontology h3 a").click(function() {
+//                   window.location = $(this).attr('href'); //follow link
+//                   return false;
+//                });
+
+             //self.select(self.idOntology,self.idTerm);
+             $("#softwareInfoAccordeon").css("height", "auto");
+             $("#softwareInfoAccordeon").css("width", "auto");
+    },
+    printJobListingPanel : function (software) {
+        var self = this;
+        console.log("printJobListingPanel: software=" + software.id);
+
+        $("#jobListDiv").append('<button id="launchSoftwareButton" class="btn">Launch new Algo</button>');
+
+              //button click
+              $("#launchSoftwareButton").click(function() {
+                  console.log("project=" + self.model.id + " software.id=" + software.id);
+                  new JobModel({ project : self.model.id, software : software.id}).save({}, {
+                      success : function (job, response) {
+                          console.log("SUCCESS JOB");
+                      },
+                      error : function (response) {
+                          console.log("BAD JOB");
+                      }
+                  });
+              });
+
+              //add list+pager
+              $("#jobListDiv").append('<table id="listAlgoInfo"></table><div id="pagerAlgoInfo"></div>');
+              var width = Math.round($(window).width() * 0.6);
+              $("#listAlgoInfo").jqGrid({
+                  datatype: "local",
+                  height: 600,
+                  width: width,
+                  colNames:['id','result','running', 'indeterminate', 'progress','successful',"created"],
+                  colModel:[
+                      {name:'id',index:'id', width:50,align:"center"},
+                      {name:'result',index:'result', width:60,align:"center"},
+                      {name:'running',index:'running', width:30, editable: true, edittype: 'checkbox',formatter:'checkbox',align:"center"},
+                      {name:'indeterminate',index:'indeterminate', width:30, editable: true, edittype: 'checkbox',formatter:'checkbox',align:"center"},
+                      {name:'progress',index:'progress', width:70,align:"center"},
+                      {name:'successful',index:'successful', width:30, editable: true, edittype: 'checkbox',formatter:'checkbox',align:"center"},
+                      {name:'created',index:'created', width:75,align:"center"}
+                  ],
+                  caption: "Manipulating Array Data",
+                  subGrid: true,
+                  shrinkToFit:true,
+                  viewrecords : true,
+                  pager: 'pagerAlgoInfo',
+                  subGridRowExpanded: function(subgrid_id, row_id) {
+                      var idJob = $("#listAlgoInfo").jqGrid('getCell', row_id, 2);
+
+                      if (!_.include(self.openParameterGrid, idJob)) {
+                          self.openParameterGrid.push(idJob);
+                      }
+
+                      self.printJobParameter(subgrid_id, row_id, idJob);
+                      console.log("openParameterGrid=" + self.openParameterGrid);
+                  },
+                  subGridRowColapsed: function(subgrid_id, row_id) {
+                      var idJob = $("#listAlgoInfo").jqGrid('getCell', row_id, 2);
+                      self.openParameterGrid = _.without(self.openParameterGrid, idJob);
+                      console.log("openParameterGrid=" + self.openParameterGrid);
+                      // this function is called before removing the data
+                      //var subgrid_table_id;
+                      //subgrid_table_id = subgrid_id+"_t";
+                      //jQuery("#"+subgrid_table_id).remove();
+                  }
+              });
+
+              console.log("listAlgoInfo2");
+              var refreshData = function() {
+
+                  new JobCollection({ project : self.model.id, software :software.id}).fetch({
+                      success : function (jobs, response) {
+                          self.jobCollection = jobs;
+                          var i = 0;
+                          $("#listAlgoInfo").jqGrid('clearGridData');
+                          jobs.each(function (job) {
+                              var createdDate = new Date();
+                              createdDate.setTime(job.get('created'));
+
+                              //date format
+                              var year = createdDate.getFullYear();
+                              var month = (createdDate.getMonth()+1)  < 10 ? "0"+(createdDate.getMonth()+1) : (createdDate.getMonth()+1);
+                              var day =  (createdDate.getDate())  < 10 ? "0"+(createdDate.getDate()) : (createdDate.getDate());
+
+                              var hour =  (createdDate.getHours())  < 10 ? "0"+(createdDate.getHours()) : (createdDate.getHours());
+                              var min =  (createdDate.getMinutes())  < 10 ? "0"+(createdDate.getMinutes()) : (createdDate.getMinutes());
+
+                              var dateStr = year + "-" + month +"-" + day + " " + hour + "h" + min;
+
+                              //button format
+                              var buttonStr = '<button id="seeResult'+job.id+'">See algo result</button>';
+
+
+                              var data = {
+                                  id:job.id,
+                                  result: buttonStr,
+                                  running:job.get('running'),
+                                  indeterminate:job.get('indeterminate'),
+                                  progress:'<div class="progBar">' + job.get('progress') + '</div>',
+                                  successful:job.get('successful'),
+                                  software:job.get('software'),
+                                  created:dateStr
+                              };
+                              $("#listAlgoInfo").jqGrid('addRowData', i + 1, data);
+                              $("#seeResult"+job.id).button().click(function() {
+                                  self.printJobResul(job);
+                              });
+                              i++;
+                          });
+                          $('div.progBar').each(function(index) {
+                              var progVal = eval($(this).text());
+                              $(this).text('');
+                              $(this).progressbar({
+                                  value: progVal
+                              });
+                          });
+                          self.reloadJobParameter();
+                      }
+
+                  });
+              };
+              refreshData();
+              setInterval(refreshData, 5000);
+
+    },
+    printJobResul: function(job) {
+        var self = this;
+        console.log("Print result for job="+job.id);
+        $("#softwareInfoAccordeon").accordion("activate",1);
+        $("html, body").animate({ scrollTop: 0 }, "slow");
+        console.log("Annotations:");
+        console.log(window.app.status.currentTermsCollection);
+        console.log("terms:");
+        console.log(window.app.status.currentAnnotationsCollection);
+
+
+        if(window.app.status.currentTermsCollection==undefined || window.app.status.currentAnnotationsCollection==undefined) {
+            console.log("Collection are undefined");
+             new AnnotationCollection({project:self.model.id}).fetch({
+                success : function (collection, response) {
+
+                    console.log("AnnotationCollection ok");
+                    window.app.status.currentAnnotationsCollection = collection;
+                    new TermCollection({idProject:self.model.id}).fetch({
+                        success : function (terms, response) {
+                            console.log("TermCollection ok:"+terms.length);
+                            window.app.status.currentTermsCollection = terms;
+                            //self.fetchWorstAnnotations(collection,terms);
+                            self.initJobResult(job);
+
+                        }
+                    });
                 }
             });
-        });
+        } else {
+            self.initJobResult(job);
+        }
 
-        //add list+pager
-        $("#panelSoftwareInfo").append('<table id="listAlgoInfo"></table><div id="pagerAlgoInfo"></div>');
-        var width = Math.round($(window).width() * 0.7);
-        $("#listAlgoInfo").jqGrid({
-            datatype: "local",
-            height: 600,
-            width: width,
-            colNames:['id','running', 'indeterminate', 'progress','successful','software',"created"],
-            colModel:[
-                {name:'id',index:'id', width:55,align:"center"},
-                {name:'running',index:'running', width:50, editable: true, edittype: 'checkbox',formatter:'checkbox',align:"center"},
-                {name:'indeterminate',index:'indeterminate', width:50, editable: true, edittype: 'checkbox',formatter:'checkbox',align:"center"},
-                {name:'progress',index:'progress', width:100,align:"center"},
-                {name:'successful',index:'successful', width:50, editable: true, edittype: 'checkbox',formatter:'checkbox',align:"center"},
-                {name:'software',index:'software', width:80,align:"center"},
-                {name:'created',index:'created', width:200,align:"center"}
-            ],
-            multiselect: true,
-            caption: "Manipulating Array Data",
-            subGrid: true,
-            subGridRowExpanded: function(subgrid_id, row_id) {
-                var idJob = $("#listAlgoInfo").jqGrid('getCell', row_id, 2);
 
-                if (!_.include(self.openParameterGrid, idJob)) {
-                    self.openParameterGrid.push(idJob);
-                }
 
-                self.printJobParameter(subgrid_id, row_id, idJob);
-                console.log("openParameterGrid=" + self.openParameterGrid);
-            },
-            subGridRowColapsed: function(subgrid_id, row_id) {
-                var idJob = $("#listAlgoInfo").jqGrid('getCell', row_id, 2);
-                self.openParameterGrid = _.without(self.openParameterGrid, idJob);
-                console.log("openParameterGrid=" + self.openParameterGrid);
-                // this function is called before removing the data
-                //var subgrid_table_id;
-                //subgrid_table_id = subgrid_id+"_t";
-                //jQuery("#"+subgrid_table_id).remove();
-            }
-        });
-
-        console.log("listAlgoInfo");
-        var refreshData = function() {
-
-            new JobCollection({ project : self.model.id, software :software.id}).fetch({
-                success : function (jobs, response) {
-                    self.jobCollection = jobs;
-                    var i = 0;
-                    $("#listAlgoInfo").jqGrid('clearGridData');
-                    jobs.each(function (job) {
-                        var createdDate = new Date();
-                        createdDate.setTime(job.get('created'));
-
-                        var data = {id:job.id,running:job.get('running'),indeterminate:job.get('indeterminate'),progress:'<div class="progBar">' + job.get('progress') + '</div>',successful:job.get('successful'),software:job.get('software'),created:createdDate}
-                        $("#listAlgoInfo").jqGrid('addRowData', i + 1, data);
-                        i++;
-                    });
-                    $('div.progBar').each(function(index) {
-                        var progVal = eval($(this).text());
-                        $(this).text('');
-                        $(this).progressbar({
-                            value: progVal
-                        });
-                    });
-                    self.reloadJobParameter();
-                }
-
-            });
-        };
-        refreshData();
-        setInterval(refreshData, 5000);
-
+    },
+    initJobResult : function(job) {
+        var result = new RetrievalAlgoResult({
+            model : job,
+            terms : window.app.status.currentTermsCollection,
+            annotations: window.app.status.currentAnnotationsCollection,
+            el : $("#jobResultDiv")
+        }).render();
     },
     reloadJobParameter: function() {
         var self = this;

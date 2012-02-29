@@ -9,6 +9,7 @@ import be.cytomine.project.Project
 import be.cytomine.command.EditCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.security.SecUser
+import be.cytomine.security.UserJob
 
 class JobService extends ModelService {
 
@@ -130,5 +131,25 @@ class JobService extends ModelService {
         Job job = Job.get(json.id)
         if (!job) throw new ObjectNotFoundException("Job " + json.id + " not found")
         return job
+    }
+
+     List<UserJob> getAllLastUserJob(Project project, Software software, int max) {
+         //List<Job> jobs = Job.findAllBySoftwareAndSuccessful(software,true)
+         List<Job> jobs = Job.findAllWhere('software':software,'successful':true, 'project':project)
+         //TODO: inlist bad performance
+         List<UserJob> userJob = UserJob.findAllByJobInList(jobs,[max:max,sort:'created', order:"desc"])
+         return userJob
+    }
+
+     List<UserJob> getAllLastUserJob(Project project, Software software) {
+         //TODO: inlist bad performance
+         List<Job> jobs = Job.findAllWhere('software':software,'successful':true, 'project':project)
+         List<UserJob>  userJob = UserJob.findAllByJobInList(jobs,[sort:'created', order:"desc"])
+         return userJob
+    }
+
+     UserJob getLastUserJob(Project project, Software software) {
+         List<UserJob> userJobs = getAllLastUserJob(project,software)
+         return userJobs.isEmpty()? null : userJobs.first()
     }
 }

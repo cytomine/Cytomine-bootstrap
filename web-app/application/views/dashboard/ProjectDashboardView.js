@@ -91,6 +91,7 @@ var ProjectDashboardView = Backbone.View.extend({
             new AnnotationCollection({project:self.model.id}).fetch({
                 success : function (collection, response) {
                     self.fetchCommands(collection);
+                    window.app.status.currentAnnotationsCollection = collection;
                     new TermCollection({idProject:self.model.id}).fetch({
                         success : function (terms, response) {
                             window.app.status.currentTermsCollection = terms;

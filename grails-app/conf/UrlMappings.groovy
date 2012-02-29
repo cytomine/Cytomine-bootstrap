@@ -107,25 +107,25 @@ class UrlMappings {
             action = [GET:"lastAction"]
         }
 
-        "/api/project/$id/stats/retrieval/avg"(controller:"stats"){
+        "/api/stats/retrieval/avg"(controller:"stats"){
             action = [GET:"statRetrievalAVG"]
         }
-        "/api/project/$id/stats/retrieval/confusionmatrix"(controller:"stats"){
+        "/api/stats/retrieval/confusionmatrix"(controller:"stats"){
             action = [GET:"statRetrievalConfusionMatrix"]
         }
-        "/api/project/$id/stats/retrieval/worstTerm"(controller:"stats"){
+        "/api/stats/retrieval/worstTerm"(controller:"stats"){
             action = [GET:"statRetrievalWorstTerm"]
         }
-        "/api/project/$id/stats/retrieval/worstTermWithSuggest"(controller:"stats"){
+        "/api/stats/retrieval/worstTermWithSuggest"(controller:"stats"){
             action = [GET:"statWorstTermWithSuggestedTerm"]
         }
 
 
-        "/api/project/$id/stats/retrieval/worstAnnotation"(controller:"stats"){
+        "/api/stats/retrieval/worstAnnotation"(controller:"stats"){
             action = [GET:"statRetrievalWorstAnnotation"]
         }
 
-        "/api/project/$id/stats/retrieval/evolution"(controller:"stats"){
+        "/api/stats/retrieval/evolution"(controller:"stats"){
             action = [GET:"statRetrievalEvolution"]
         }
 

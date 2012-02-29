@@ -137,7 +137,7 @@ class RestJobController extends RestController {
             jobParameterService.add(JSON.parse(createParam("privateKey",job,userJob.privateKey).encodeAsJSON()))
             jobParameterService.add(JSON.parse(createParam("N",job, "500").encodeAsJSON()))
             jobParameterService.add(JSON.parse(createParam("T",job, "5").encodeAsJSON()))
-            jobParameterService.add(JSON.parse(createParam("workingDir",job, "/home/lrollus/Cytomine/algo/suggest/").encodeAsJSON()))
+            jobParameterService.add(JSON.parse(createParam("workingDir",job, "algo/retrievalSuggest/suggest/").encodeAsJSON()))
             jobParameterService.add(JSON.parse(createParam("cytomineHost",job, "http://localhost:8080").encodeAsJSON()))
             jobParameterService.add(JSON.parse(createParam("forceDownloadCrop",job, "false").encodeAsJSON()))
             jobParameterService.add(JSON.parse(createParam("storeName",job, "KYOTOSINGLEFILE").encodeAsJSON()))
