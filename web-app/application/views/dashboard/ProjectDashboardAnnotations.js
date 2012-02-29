@@ -267,6 +267,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     initDropZone : function () {
         var self = this;
         var dropHandler = function(event, ui) {
+
             $(this).css("background-color", "");
             var annotation = $(ui.draggable).attr("data-annotation");
             var term = $(ui.draggable).attr("data-term");
@@ -275,9 +276,11 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             $(ui.draggable).hide();
             new AnnotationTermModel({term : newTerm, annotation : annotation, clear : true}).save({},{
                 success : function(model, response) {
+                    $("#tabsterm-"+self.model.id+"-"+newTerm).append($(ui.draggable));
+                    setTimeout(function(){$(ui.draggable).fadeIn('slow');}, 1000);
                     window.app.view.message(response.message, null,"success");
-                    $(ui.draggable).remove();
-                    self.refreshSelectedTermsWithUserFilter();
+                    //$(ui.draggable).remove();
+                    //self.refreshSelectedTermsWithUserFilter();
                 },
                 error : function(model, response) {
                     $(ui.draggable).show();

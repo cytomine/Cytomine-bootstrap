@@ -76,6 +76,10 @@ var ProjectPanelView = Backbone.View.extend({
       //json.ontology = window.app.models.ontologies.get(idOntology).get('name');
        if(window.app.models.users.get(json.creator)!=undefined) json.creator = window.app.models.users.get(json.creator).prettyName();
 
+      var title = json.name;
+      if (title.length > 30) title = title.substr(0, 27) + "...";
+      json.title = title;
+
       var users = [];
       _.each(self.model.get('users'), function (idUser) {
          users.push(window.app.models.users.get(idUser).prettyName());
@@ -103,7 +107,7 @@ var ProjectPanelView = Backbone.View.extend({
 
 
       if(json.disciplineName==undefined) {
-          json.disciplineName="";
+          json.disciplineName="Undefined";
       }
 
       json.ontologyId = idOntology;

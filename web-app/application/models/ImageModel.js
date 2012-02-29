@@ -13,6 +13,9 @@ var ImagePropertyCollection = Backbone.Collection.extend({
     },
     url : function() {
         return 'api/image/'+this.image+"/property.json";
+    },
+    comparator : function(model) {
+        return model.get("key");
     }
 });
 

@@ -18,7 +18,7 @@ class RestUserPositionController extends RestController {
                 latitude : request.JSON.lat,
                 zoom : request.JSON.zoom,
                 image : imageInstanceService.read(request.JSON.image)
-        ).save();
+        ).save()
         responseSuccess(userPosition)
     }
 

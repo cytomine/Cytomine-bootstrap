@@ -27,7 +27,7 @@ var BrowseImageView = Backbone.View.extend({
         var self = this;
         var templateData = this.model.toJSON();
         templateData.project = window.app.status.currentProject;
-        setTimeout(function(){window.app.view.applyPreferences();},2000);
+        setTimeout(function(){window.app.view.applyPreferences();},1500);
         $(this.el).append(_.template(tpl, templateData));
         var tabTpl = "<li><a style='float: left;' id='tabs-image-<%= idImage %>' href='#tabs-image-<%= idProject %>-<%= idImage %>-' data-toggle='tab'><i class='icon-search' /> <%= filename %> </a></li>";
         $(".nav-tabs").append(_.template(tabTpl,{ idProject : window.app.status.currentProject, idImage : this.model.get('id'), filename : this.model.get('filename')}));
@@ -456,7 +456,7 @@ var BrowseImageView = Backbone.View.extend({
             );
 
         }
-        self.map.events.register("click", self.getUserLayer().vectorsLayer, handleMapClick);
+        if (self.getUserLayer() != undefined) self.map.events.register("click", self.getUserLayer().vectorsLayer, handleMapClick);
     },
     /**
      * Init the toolbar

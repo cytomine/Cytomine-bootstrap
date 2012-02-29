@@ -91,10 +91,8 @@ var ProjectDashboardView = Backbone.View.extend({
             new AnnotationCollection({project:self.model.id}).fetch({
                 success : function (collection, response) {
                     self.fetchCommands(collection);
-                    console.log("AnnotationCollection ok");
                     new TermCollection({idProject:self.model.id}).fetch({
                         success : function (terms, response) {
-                            console.log("TermCollection ok:"+terms.length);
                             window.app.status.currentTermsCollection = terms;
                             //self.fetchWorstAnnotations(collection,terms);
                             new ProjectDashboardStats({model : self.model}).fetchStats(terms,collection);
@@ -160,6 +158,12 @@ var ProjectDashboardView = Backbone.View.extend({
                     var commandCollection = new CommandCollection({project:self.model.get('id'),max:self.maxCommandsView});
                     var commandCallback = function(collection, response) {
                         $("#lastactionitem").empty();
+                        if (collection.size() == 0) {
+                            var noDataAlert = _.template("<br /><br /><div class='alert alert-block'>No data to display</div>",{});
+                            $("#lastactionitem").append(noDataAlert);
+                        }
+                        $("#lastactionitem").append("<ul></ul>");
+                        var ulContainer = $("#lastactionitem").find("ul");
                         collection.each(function(commandHistory) {
                             var command = commandHistory.get("command");
                             var dateCreated = new Date();
@@ -229,7 +233,7 @@ var ProjectDashboardView = Backbone.View.extend({
                                 action = _.template(commandImageInstanceTpl, {idProject : self.model.id, idImage : jsonCommand.id, imageFilename : jsonCommand.filename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
 
                             }
-                            $("#lastactionitem").append(action);
+                            ulContainer.append(action);
                         });
                     }
                     commandCollection.fetch({

@@ -16,7 +16,7 @@ class RestAnnotationFilterController extends RestController {
         if (!params.long('project')) responseNotFound("Project", "undefined")
         Long idProject = params.long('project');
         projectService.checkAuthorization(idProject, new AnnotationFilter())
-        Project project = projectService.read(idProject)
+        Project project = projectService.read(idProject, new Project())
         responseSuccess(annotationFilterService.listByProject(project))
     }
 

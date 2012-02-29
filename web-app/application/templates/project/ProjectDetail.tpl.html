@@ -1,9 +1,10 @@
 <div id='projectlist<%= id %>' class="well span4" style="padding: 5px;">
-    <h3 style="padding-left : 10px;display:inline"><a href="#tabs-dashboard-<%= id %>" style="color:#000;"><%= name %></a></h3>
+    <h3 style="padding-left : 10px;display:inline"><a href="#tabs-dashboard-<%= id %>" style="color:#000;"><%= title %></a></h3>
     <hr />
     <div class="row">
         <div class="span4">
             <ul>
+                <li>Name : <a href="#tabs-dashboard-<%= id %>"><%= name %></a></li>
                 <li>Discipline : <%= disciplineName %></li>
                 <li>Ontology : <a href="#ontology/<%= ontology %>"><%= ontologyName %></a></li>
                 <li>Creator : <%= creator %></li>

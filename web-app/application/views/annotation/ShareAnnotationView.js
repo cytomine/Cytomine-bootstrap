@@ -3,13 +3,14 @@ var ShareAnnotationView = Backbone.View.extend({
     initialize: function(options) {
         this.image = options.image;
         this.project = options.project;
+        this.dialog = null;
     },
 
     doLayout: function(shareAnnotationViewTpl, shareAnnotationMailTpl) {
         var self = this;
         this.model.set({ "username" :  window.app.models.users.get(this.model.get("user")).prettyName()});
         this.model.set({ "terms" :  "undefined"});
-        var dialog = new ConfirmDialogView({
+        this.dialog = new ConfirmDialogView({
             el:'#dialogs',
             template : _.template(shareAnnotationViewTpl, this.model.toJSON()),
             dialogAttr : {
@@ -85,7 +86,8 @@ var ShareAnnotationView = Backbone.View.extend({
         });
 
         $("#shareCancelButton"+self.model.id).click(function(){
-            self.close();
+            self.dialog.close();
+            window.history.back();
             return false;
         });
 
@@ -126,7 +128,8 @@ var ShareAnnotationView = Backbone.View.extend({
                 success : function (model, response) {
                     shareButton.html("Share");
                     window.app.view.message("Success", response.message, "success");
-                    self.close();
+                    self.dialog.close();
+                    window.history.back();
                 },
                 error : function (model, response) {
                     shareButton.html("Share");
@@ -144,10 +147,5 @@ var ShareAnnotationView = Backbone.View.extend({
             "text!application/templates/annotation/ShareAnnotationMail.tpl.html"], function(shareAnnotationViewTpl, shareAnnotationMailTpl) {
             self.doLayout(shareAnnotationViewTpl, shareAnnotationMailTpl);
         });
-    },
-    close : function() {
-        $("#share-confirm").modal('hide');
-        $("#share-confirm").remove();
-        window.history.back();
     }
 });

@@ -13,7 +13,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.imageID = imageID;
     this.userID = userID;
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
-        styleMap: styleMap,
+        /*styleMap: styleMap,*/
         rendererOptions: {
             zIndexing: true
         }
@@ -455,17 +455,9 @@ AnnotationLayer.prototype = {
 
         annotation.save({}, {
             success: function (annotation, response) {
-
                 var annotation = new AnnotationModel();
-                for (property in response.annotation) {
-                    annotation.set(property, response.annotation[property]);
-                }
-                console.log("ANNOTATION EXTRACTED " + annotation.toJSON());
+                annotation.set(response.annotation);
                 var message = response.message;
-
-                /*new AnnotationModel({id:annotationID}).fetch({
-                 success : function (annotation, response) {
-                 */
                 self.vectorsLayer.removeFeatures([feature]);
                 var newFeature = self.createFeatureFromAnnotation(annotation);
                 self.addFeature(newFeature);
@@ -475,11 +467,6 @@ AnnotationLayer.prototype = {
                 var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url : cropURL, alt : cropURL});
                 var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message : message, cropImage : cropImage});
                 window.app.view.message("Annotation added", alertMessage, "success");
-                //self.browseImageView.refreshAnnotationTabs(undefined);
-                /*},
-                 error : function(model, response) {
-                 }
-                 });   */
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -504,7 +491,7 @@ AnnotationLayer.prototype = {
         //default style for annotations with 0 terms associated
         var defaultColor = "#333333";
         feature.style = {
-            strokeColor : defaultColor,
+            strokeColor : "#000",
             fillColor :  defaultColor,
             fillOpacity : 0.6
         }
@@ -520,7 +507,7 @@ AnnotationLayer.prototype = {
                 var term = window.app.status.currentTermsCollection.get(idTerm);
                 if (term == undefined) return;
                 feature.style = {
-                    strokeColor : window.app.status.currentTermsCollection.get(idTerm).get('color'),
+                    strokeColor : "#000",
                     fillColor :  window.app.status.currentTermsCollection.get(idTerm).get('color'),
                     fillOpacity : 0.6
                 }
@@ -538,13 +525,6 @@ AnnotationLayer.prototype = {
         new AnnotationModel({id:feature.attributes.idAnnotation}).destroy({
             success: function (model, response) {
                 window.app.view.message("Annotation", response.message, "success");
-                //self.browseImageView.refreshAnnotationTabs(undefined);
-
-                /*collection.each(function(term) {
-                 console.log("term="+term.id);
-
-
-                 });*/
                 self.browseImageView.refreshAnnotationTabs(undefined);
 
             },
@@ -569,7 +549,6 @@ AnnotationLayer.prototype = {
                         var message = response.message;
                         var alertMessage = _.template("<p><%=   message %></p>", { message : message});
                         window.app.view.message("Annotation edited", alertMessage, "success");
-                        //self.browseImageView.refreshAnnotationTabs(undefined);
                     },
                     error : function(model, response) {
                         var json = $.parseJSON(response.responseText);
@@ -579,26 +558,6 @@ AnnotationLayer.prototype = {
             }
         });
     },
-    /** Triggered when add new feature **/
-    /*onFeatureAdded : function (evt) {
-
-     // Check if feature must throw a listener when it is added
-     // true: annotation already in database (no new insert!)
-     // false: new annotation that just have been draw (need insert)
-     //
-     if(evt.feature.attributes.listener!='NO')
-     {
-
-     alias.addAnnotation(evt.feature);
-     }
-     },*/
-
-    /** Triggered when update feature **/
-    /* onFeatureUpdate : function (evt) {
-
-
-     this.updateAnnotation(evt.feature);
-     },*/
     toggleRotate: function () {
         this.resize = false;
         this.drag = false;
@@ -717,36 +676,23 @@ AnnotationLayer.prototype = {
     /* Callbacks undo/redo */
     annotationAdded: function (idAnnotation) {
         var self = this;
-
         var deleteOnSelectBackup = self.deleteOnSelect;
         self.deleteOnSelect = false;
-
-        var annotation = new AnnotationModel({
+        new AnnotationModel({
             id: idAnnotation
         }).fetch({
             success: function (model) {
                 var feature = self.createFeatureFromAnnotation(model);
-                /*var format = new OpenLayers.Format.WKT();
-                 var location = format.read(model.get('location'));
-                 var feature = new OpenLayers.Feature.Vector(location.geometry);
-                 feature.attributes = {
-                 idAnnotation: model.get('id'),
-                 listener: 'NO',
-                 measure : 'NO',
-                 importance: 10
-                 };*/
                 self.addFeature(feature);
                 self.selectFeature(feature);
                 self.controls.select.activate();
                 self.deleteOnSelect = deleteOnSelectBackup;
-                //self.browseImageView.refreshAnnotationTabs(undefined);
             }
         });
 
     },
     annotationRemoved: function (idAnnotation) {
         this.removeFeature(idAnnotation);
-        //this.browseImageView.refreshAnnotationTabs(undefined);
     },
     annotationUpdated: function (idAnnotation, idImage) {
         this.annotationRemoved(idAnnotation);

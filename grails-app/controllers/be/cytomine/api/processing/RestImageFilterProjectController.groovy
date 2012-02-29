@@ -22,7 +22,7 @@ class RestImageFilterProjectController extends RestController {
 
     def add = {
 		println request.JSON
-        Project project = projectService.read(Long.parseLong(request.JSON.project.toString()))
+        Project project = projectService.read(Long.parseLong(request.JSON.project.toString()), new Project())
 		if (!project) responseNotFound("Project", "Project", request.JSON.project)
         ImageFilter imageFilter = imageFilterService.read(request.JSON.imageFilter)
 		if (!imageFilter) responseNotFound("ImageFilter", "ImageFilter", request.JSON.imageFilter)
@@ -31,7 +31,7 @@ class RestImageFilterProjectController extends RestController {
     }
 
     def delete = {
-        Project project = projectService.read(params.long('project'))
+        Project project = projectService.read(params.long('project'), new Project())
         ImageFilter imageFilter = imageFilterService.read(params.long('imageFilter'))
         imageFilterProjectService.delete(project, imageFilter)
         responseSuccess([])

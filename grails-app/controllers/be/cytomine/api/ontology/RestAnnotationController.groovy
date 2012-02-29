@@ -48,11 +48,11 @@ class RestAnnotationController extends RestController {
     }
 
 //    def listByUser = {
-//        User user = userService.read(params.long('id'))
-//        //TODO: Security with postfilter = (very) bad performance!
-//        if (user) responseSuccess(annotationService.list(user))
-//        else responseNotFound("User", params.id)
-//    }
+    //        User user = userService.read(params.long('id'))
+    //        //TODO: Security with postfilter = (very) bad performance!
+    //        if (user) responseSuccess(annotationService.list(user))
+    //        else responseNotFound("User", params.id)
+    //    }
 
     def listByProject = {
         Project project = projectService.read(params.long('id'), new Project())
@@ -155,11 +155,19 @@ class RestAnnotationController extends RestController {
             def exportResult = []
             annotationTerms.each { annotationTerm ->
                 Annotation annotation = annotationTerm.annotation
+                def centroid = annotation.getCentroid()
                 Term term = annotationTerm.term
                 def data = [:]
                 data.id = annotation.id
                 data.area = annotation.computeArea()
                 data.perimeter = annotation.computePerimeter()
+                if (centroid != null) {
+                    data.XCentroid = (int) Math.floor(centroid.x)
+                    data.YCentroid = (int) Math.floor(centroid.y)
+                } else {
+                    data.XCentroid = "undefined"
+                    data.YCentroid = "undefined"
+                }
                 data.image = annotation.image.id
                 data.filename = annotation.getFilename()
                 data.user = annotation.user.toString()
@@ -168,10 +176,10 @@ class RestAnnotationController extends RestController {
                 data.cropGOTO = UrlApi.getAnnotationURL(annotation.image.getIdProject(), annotation.image.id, annotation.id)
                 exportResult.add(data)
             }
-            List fields = ["id", "area", "perimeter", "image", "filename", "user", "term", "cropURL", "cropGOTO"]
-            Map labels = ["id": "Id", "area": "Area (µm²)", "perimeter": "Perimeter (µm)", "image": "Image Id", "filename": "Image Filename", "user": "User", "term": "Term", "cropURL": "View annotation picture", "cropGOTO": "View annotation on image"]
+            List fields = ["id", "area", "perimeter", "XCentroid", "YCentroid", "image", "filename", "user", "term", "cropURL", "cropGOTO"]
+            Map labels = ["id": "Id", "area": "Area (µm²)", "perimeter": "Perimeter (µm)", "XCentroid" : "X", "YCentroid" : "Y", "image": "Image Id", "filename": "Image Filename", "user": "User", "term": "Term", "cropURL": "View annotation picture", "cropGOTO": "View annotation on image"]
             String title = "Annotations in " + project.getName() + " created by " + usersName.join(" or ") + " and associated with " + termsName.join(" or ") + " @ " + (new Date()).toLocaleString()
-            exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04,0.06,0.06,0.04,0.08,0.06,0.06,0.25,0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
+            exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04,0.06,0.06,0.04, 0.04, 0.04,0.08,0.06,0.06,0.25,0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
         }
     }
 
@@ -270,8 +278,8 @@ class RestAnnotationController extends RestController {
     }
 
 //    def update = {
-//        update(annotationService, request.JSON)
-//    }
+    //        update(annotationService, request.JSON)
+    //    }
 
     def update= {
         def json = request.JSON

@@ -37,6 +37,10 @@ var ConfirmDialogView = Backbone.View.extend({
             this.doLayout(this.template);
         }
         return this;
+    },
+     close : function() {
+        $(this.dialogAttr.dialogID).modal('hide');
+        $(this.dialogAttr.dialogID).remove();
     }
 
 
