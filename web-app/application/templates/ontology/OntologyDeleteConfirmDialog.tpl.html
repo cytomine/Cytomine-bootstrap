@@ -4,13 +4,11 @@
         <h3>Delete an ontology</h3>
     </div>
     <div class="modal-body">
-        <p>
-            Do you really want to delete ontology <%= ontology %>?  <br>
-            There is no project with this ontology. <br>
-        </p>
-        <div id="delete-ontology-error-label" class="ui-state-error ui-corner-all" style="padding: 0 .7em; display: none;">
-            <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                <strong>Error:</strong><div id="delete-ontology-error-message"></div></p>
+        <div class="alert">
+            <p>Do you really want to delete ontology <%= ontology %> ? There is no project associated with this ontology</p>
+        </div>
+        <div id="delete-ontology-error-label" class="alert alert-error" style="display: none;">
+            <i class="icon-warning-sign" /> <div id="delete-ontology-error-message"></div>
         </div>
         <form id="delete-ontology-form">
         </form>

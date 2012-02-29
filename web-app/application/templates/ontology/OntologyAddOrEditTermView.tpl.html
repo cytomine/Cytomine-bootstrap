@@ -6,24 +6,37 @@
     <div class="modal-body">
         <form id="form-<%= action %>-ontology-term">
             <div class="row">
-                 <div class="span4" style="min-height: 400px;width : 400px;">
-                    <legend style="font-weight: bold;padding-bottom: 3px;">Parent (Drag & Drop)</legend>
-                    <div id="<%= action %>ontologytermtree"></div>
+                <div class="span4" style="min-height: 400px;width : 400px;">
+                    <div class="control-group">
+                        <label class="control-label">Parent (Drag & Drop)</label>
+                        <div class="controls">
+                            <div id="<%= action %>ontologytermtree"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="span4" >
-                    <div id="<%= action %>ontologytermerrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-                        <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                            <strong>Error:</strong><div id="<%= action %>ontologytermerrormessage"></div></p>
+                    <div id="<%= action %>ontologytermerrorlabel" class="alert alert-error" style="display: none;">
+                        <i class="icon-warning-sign" /> <div id="<%= action %>ontologytermerrormessage"></div>
                     </div>
-                    <legend style="font-weight: bold;padding-bottom: 3px;">Name</legend>
-                    <input type="text"  id="<%= action %>termname" name="name" />
-                    <legend style="font-weight: bold;padding-bottom: 3px;">Color</legend>
-                    <div class="colorpickerAddOrEditTerm">
-                        <div id="colorpicker1AddOrEditTerm"></div>
-                        <legend style="font-weight: bold;padding-bottom: 3px;">Old color</legend>
-                        <input type="text" id="oldcolorAddOrEditTerm"  value="<%= oldColor %>"/>
-                        <legend style="font-weight: bold;padding-bottom: 3px;">New Color</legend>
-                        <input type="text" id="color1AddOrEditTerm" value="<%= oldColor %>"/>
+                    <div class="control-group">
+                        <label class="control-label">Name</label>
+                        <div class="controls">
+                            <input type="text"  id="<%= action %>termname" name="name" />
+                        </div>
+                        <label class="control-label">Color</label>
+                        <div class="controls">
+                            <div class="colorpickerAddOrEditTerm">
+                                <div id="colorpicker1AddOrEditTerm"></div>
+                            </div>
+                        </div>
+                        <label class="control-label">Old color</label>
+                        <div class="controls">
+                            <input type="text" id="oldcolorAddOrEditTerm"  value="<%= oldColor %>"/>
+                        </div>
+                        <label class="control-label">New Color</label>
+                        <div class="controls">
+                            <input type="text" id="color1AddOrEditTerm" value="<%= oldColor %>"/>
+                        </div>
                     </div>
                 </div>
 
@@ -33,7 +46,7 @@
         </form>
     </div>
     <div class="modal-footer">
-        <a href="#" id="AddOrEditTermButton" class="btn primary">Save</a>
+        <a href="#" id="AddOrEditTermButton" class="btn btn-primary">Save</a>
         <a href="#" id="closeAddOrEditTermDialog" class="btn">Cancel</a>
     </div>
 </div>

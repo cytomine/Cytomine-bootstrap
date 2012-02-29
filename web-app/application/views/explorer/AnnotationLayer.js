@@ -3,9 +3,9 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 
     var styleMap = new OpenLayers.StyleMap({
         "default" : OpenLayers.Util.applyDefaults({fillColor: color, fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
-            OpenLayers.Feature.Vector.style["default"]),
+                OpenLayers.Feature.Vector.style["default"]),
         "select" : OpenLayers.Util.applyDefaults({fillColor: "#25465D", fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
-            OpenLayers.Feature.Vector.style["default"])
+                OpenLayers.Feature.Vector.style["default"])
     });
     this.ontologyTreeView = ontologyTreeView;
     this.name = name;
@@ -31,7 +31,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.popup = null;
     this.hoverControl = null;
     this.triggerUpdateOnUnselect = true,
-        this.isOwner = null;
+            this.isOwner = null;
     this.deleteOnSelect = false; //true if select tool checked
     this.measureOnSelect = false;
     this.magicOnClick = false;
@@ -78,6 +78,11 @@ AnnotationLayer.prototype = {
                 //alias.ontologyTreeView.refresh(null);
             },
             'featureadded': function (evt) {
+                //Abort if the geometry contains less than 3 vertices
+                if (evt.feature.geometry.getVertices().length < 3) {
+                    self.vectorsLayer.removeFeatures(evt.feature);
+                    return;
+                }
 
                 /* Check if feature must throw a listener when it is added
                  * true: annotation already in database (no new insert!)
@@ -242,10 +247,10 @@ AnnotationLayer.prototype = {
 
                     var content = _.template(tpl, annotation.toJSON());
                     self.popup = new OpenLayers.Popup("",
-                        new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
-                        new OpenLayers.Size(300, 200),
-                        content,
-                        false);
+                            new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
+                            new OpenLayers.Size(300, 200),
+                            content,
+                            false);
                     self.popup.setBackgroundColor("transparent");
                     self.popup.setBorder(0);
                     self.popup.padding = 0;
@@ -391,10 +396,10 @@ AnnotationLayer.prototype = {
             }
             var content = _.template(tpl, {length:length});
             self.popup = new OpenLayers.Popup("chicken",
-                new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
-                new OpenLayers.Size(200, 60),
-                content,
-                false);
+                    new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
+                    new OpenLayers.Size(200, 60),
+                    content,
+                    false);
             self.popup.setBackgroundColor("transparent");
             self.popup.setBorder(0);
             self.popup.padding = 0;
@@ -450,24 +455,31 @@ AnnotationLayer.prototype = {
 
         annotation.save({}, {
             success: function (annotation, response) {
-                var annotationID = response.annotation.id;
+
+                var annotation = new AnnotationModel();
+                for (property in response.annotation) {
+                    annotation.set(property, response.annotation[property]);
+                }
+                console.log("ANNOTATION EXTRACTED " + annotation.toJSON());
                 var message = response.message;
-                new AnnotationModel({id:annotationID}).fetch({
-                    success : function (annotation, response) {
-                        self.vectorsLayer.removeFeatures([feature]);
-                        var newFeature = self.createFeatureFromAnnotation(annotation);
-                        self.addFeature(newFeature);
-                        self.controls.select.unselectAll();
-                        self.controls.select.select(newFeature);
-                        var cropURL = annotation.get('cropURL');
-                        var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url : cropURL, alt : cropURL});
-                        var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message : message, cropImage : cropImage});
-                        window.app.view.message("Annotation added", alertMessage, "success");
-                        //self.browseImageView.refreshAnnotationTabs(undefined);
-                    },
-                    error : function(model, response) {
-                    }
-                });
+
+                /*new AnnotationModel({id:annotationID}).fetch({
+                 success : function (annotation, response) {
+                 */
+                self.vectorsLayer.removeFeatures([feature]);
+                var newFeature = self.createFeatureFromAnnotation(annotation);
+                self.addFeature(newFeature);
+                self.controls.select.unselectAll();
+                self.controls.select.select(newFeature);
+                var cropURL = annotation.get('cropURL');
+                var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url : cropURL, alt : cropURL});
+                var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message : message, cropImage : cropImage});
+                window.app.view.message("Annotation added", alertMessage, "success");
+                //self.browseImageView.refreshAnnotationTabs(undefined);
+                /*},
+                 error : function(model, response) {
+                 }
+                 });   */
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);

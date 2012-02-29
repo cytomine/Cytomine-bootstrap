@@ -57,24 +57,22 @@ span.version {
 
 div.olControlOverviewMapElement {
     z-index : 2010;
-
-    align : center;
-    padding: 10px;
+    padding: 0px;
     background-color: transparent;
-    /*margin : 12px;*/
+    overflow: hidden;
+    padding: 5px;
+
 }
 
 
 div .overviewPanel {
-    align : center;
     position : absolute;
-    /*right : 20px;
-    top : 300px;*/
     z-index : 2020;
     background-color: rgba(0, 0, 0, 0.7);
     color : #fff;
-    padding: 2px;
+    padding: 0px;
     margin : 0px;
+
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
@@ -153,21 +151,13 @@ td {
 
 
 div .ontologypanel {
-    align : center;
-    width:auto;
-    max-width: 500px;
     position : absolute;
-    /*left : 20px;
-    top : 325px;*/
+    max-width: 500px;
     max-height: 500px;
     z-index : 2021;
     background-color: rgba(0, 0, 0, 0.7);
     color : #fff;
-    padding-left: 0px;
-    padding-right : 10px;
-    padding-top : 10px;
-    padding-bottom : 10px;
-    margin : 0px;
+    padding: 0px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
@@ -229,8 +219,8 @@ div .ontologypanel a {
 div .toolbar {
     position : absolute;
     width:auto;
-    left : 120px;
-    top : 100px;
+    /*left : 120px;
+    top : 100px;*/
     z-index : 2021;
     background-color: black;
     color : #fff;
@@ -264,13 +254,13 @@ div .layerSwitcherPanel {
     /*right : 20px;
     top : 100px;*/
     z-index : 2030;
-    background-color: black;
+
     color : #fff;
-    padding: 10px;
+    padding: 0px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
-    opacity: 0.7;
+    background-color: rgba(0, 0, 0, 0.7);
     width : 250px;
 
 }
@@ -281,13 +271,13 @@ div .imageFiltersPanel {
     /*right : 10px;
     bottom : 15px;*/
     z-index : 2030;
-    background-color: black;
+
     color : #fff;
-    padding: 10px;
+    padding: 0px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     border-radius: 6px;
-    opacity: 0.7;
+    background-color: rgba(0, 0, 0, 0.7);
     width : 250px;
 }
 
@@ -348,7 +338,7 @@ label.ui-corner-all {
 
 
 .modal-body {
-     /*max-height: 700px;
+    /*max-height: 700px;
    overflow-y: auto;*/
 }
 
@@ -367,7 +357,26 @@ span .ui-icon {
 }
 
 .dropdown-menu {
-  z-index: 2500;
+    z-index: 2500;
+}
+
+.control-label {
+    font-weight: bold;
+}
+
+.minimized {
+    display: none;
+    font-weight:bold;
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+    font-size: 9px;
+    /*writing-mode: tb-rl;
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);*/
 }
 
 td.confusionMatrixHeader{

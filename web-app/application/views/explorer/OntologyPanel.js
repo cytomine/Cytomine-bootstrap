@@ -23,7 +23,7 @@ var OntologyPanel = Backbone.View.extend({
         */
        render : function() {
           var self =this;
-          var ontology = new ProjectModel({id:window.app.status.currentProject}).fetch({
+          new ProjectModel({id:window.app.status.currentProject}).fetch({
                  success : function(model, response) {
                     var idOntology = model.get('ontology');
                     var ontology = new OntologyModel({id:idOntology}).fetch({

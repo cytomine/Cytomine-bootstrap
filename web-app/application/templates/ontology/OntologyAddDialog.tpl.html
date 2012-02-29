@@ -5,18 +5,23 @@
     </div>
     <div class="modal-body">
         <form id="login-form-add-ontology">
-            <div id="ontologyerrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                    <strong>Error:</strong><div id="errormessage"></div></p>
+            <div id="ontologyerrorlabel" class="alert alert-error" style="display: none;">
+                <i class="icon-warning-sign" /> <div id="errormessage"></div>
             </div>
-            <legend style="font-weight: bold;padding-bottom: 3px;">Name</legend>
-            <input type="text" size="20" id="ontology-name" value="" >
-            <legend style="font-weight: bold;padding-bottom: 3px;padding-top: 5px;">User</legend>
-            <div id="ontologyuser"></div>
+            <div class="control-group">
+                <label class="control-label">Name</label>
+                <div class="controls">
+                    <input type="text" size="20" id="ontology-name" value="" />
+                </div>
+                <label class="control-label">User</label>
+                <div class="controls">
+                    <div id="ontologyuser"></div>
+                </div>
+            </div>
         </form>
     </div>
     <div class="modal-footer">
-        <a href="#" id="saveOntologyButton" class="btn primary">Save</a>
+        <a href="#" id="saveOntologyButton" class="btn btn-primary">Save</a>
         <a href="#" id="closeAddOntologyDialog" class="btn">Cancel</a>
     </div>
 </div>

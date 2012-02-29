@@ -1,49 +1,35 @@
 <div id="share-confirm" class="xbigModal modal hide">
     <div class="modal-header">
-        <h2>Comment an annotation</h2>
+        <h2>Comment/Share an annotation</h2>
     </div>
     <div class="modal-body">
         <div class="row" style="min-height: 250px;">
-            <div class="span9">
+            <div class="span3">
                 <form>
                     <fieldset>
-                        <div class="clearfix">
-                            <label id="">Annotation</label>
-                            <div class="input">
-                                <img src="<%= cropURL %>" style="max-height: 150px;max-width: 150px;"/>
-                            </div>
-                        </div>
-                        <div class="clearfix">
-                            <label id="optionsCheckboxes">Share with</label>
-                            <div class="input">
-                                <ul class="inputs-list">
-                                    <li>
-                                        <label>
-                                            <input type="radio" name="shareWithOption" value="everyone" checked>
-                                            <span>Everyone</span>
-                                        </label>
-                                    </li>
-                                    <li>
-                                        <label>
-                                            <input type="radio" name="shareWithOption" value="somebody">
-                                            <span>One person in particular</span>
-                                        </label>
-                                    </li>
-                                    <li>
-                                        <label>
-                                            <select id="selectUserShare<%= id %>" name="selectUserShare<%= id %>" disabled />
-                                        </label>
-                                    </li>
+                        <div class="control-group">
+                            <label class="control-label" id="optionsCheckboxes">Share with</label>
+                            <div class="controls">
+                                <label class="radio">
+                                    <input type="radio" name="shareWithOption" value="everyone" checked>
+                                    One person in particular
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="shareWithOption" value="somebody">
+                                    Everyone
+                                </label>
+                                <label>
+                                    <select id="selectUserShare<%= id %>" name="selectUserShare<%= id %>" disabled />
+                                </label>
 
-                                </ul>
                             </div>
                         </div>
 
-                        <div class="clearfix">
+                        <div class="control-group">
                             <label for="annotationComment<%= id %>">Your comment</label>
                             <div class="input">
                                 <ul class="inputs-list">
-                                    <textarea class="xlarge" id="annotationComment<%= id %>" name="annotationComment<%= id %>" rows="6"></textarea>
+                                    <textarea class="xlarge" id="annotationComment<%= id %>" name="annotationComment<%= id %>" rows="8"></textarea>
                                 </ul>
                             </div>
                         </div>
@@ -51,18 +37,19 @@
                 </form>
             </div>
             <div class="span4">
-                <div class="row">
-                    <h2>Comments</h2>
-                    <ul id="comments<%= id %>">
+                <h2>Comments</h2>
+                <ul id="comments<%= id %>">
 
-                    </ul>
-                </div>
+                </ul>
+            </div>
+            <div class="span2">
+                <img src="<%= cropURL %>" style="max-height: 150px;max-width: 150px;"/>
             </div>
         </div>
 
     </div>
     <div class="modal-footer">
         <a href="#" id="shareCancelButton<%= id %>" class="btn" tabindex="4">Cancel</a>
-        <a href="#" id="shareButton<%= id %>" class="btn primary" tabindex="4">Share</a>
+        <a href="#" id="shareButton<%= id %>" class="btn btn-primary" tabindex="4">Share</a>
     </div>
 </div>

@@ -27,7 +27,7 @@ var BrowseImageView = Backbone.View.extend({
         var self = this;
         var templateData = this.model.toJSON();
         templateData.project = window.app.status.currentProject;
-        setTimeout(function(){window.app.view.applyPreferences();},1700);
+        setTimeout(function(){window.app.view.applyPreferences();},2000);
         $(this.el).append(_.template(tpl, templateData));
         var tabTpl = "<li><a style='float: left;' id='tabs-image-<%= idImage %>' href='#tabs-image-<%= idProject %>-<%= idImage %>-' data-toggle='tab'><i class='icon-search' /> <%= filename %> </a></li>";
         $(".nav-tabs").append(_.template(tabTpl,{ idProject : window.app.status.currentProject, idImage : this.model.get('id'), filename : this.model.get('filename')}));
@@ -307,11 +307,11 @@ var BrowseImageView = Backbone.View.extend({
                     new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight)
             );
 
-
+             self.createOverviewMap();
             var overviewMapControl = new OpenLayers.Control.OverviewMap({
                 size: new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight),
                 layers: [overviewMap],
-                div: document.getElementById('overviewMap' + self.model.get('id')),
+                div: document.getElementById('overviewmapcontent' + self.model.get('id')),
                 minRatio: 1,
                 maxRatio: 1024,
                 mapOptions : {
@@ -376,7 +376,7 @@ var BrowseImageView = Backbone.View.extend({
             });
 
             self.addBaseLayer(baseLayer);
-            self.createOverviewMap();
+
             self.map.zoomToMaxExtent();
             self.map.addControl(overviewMapControl);
 
@@ -462,7 +462,6 @@ var BrowseImageView = Backbone.View.extend({
      * Init the toolbar
      */
     initToolbar: function () {
-        console.log("initToolbar");
         var toolbar = $('#toolbar' + this.model.get('id'));
         var self = this;
         $('a[id=none' + this.model.get('id') + ']').click(function () {

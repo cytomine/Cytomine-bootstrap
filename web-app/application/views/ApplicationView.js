@@ -1,4 +1,4 @@
-Storage.prototype.setObject = function(key, value) {    
+Storage.prototype.setObject = function(key, value) {
     this.setItem(key, JSON.stringify(value));
 }
 
@@ -12,11 +12,14 @@ var ApplicationView = Backbone.View.extend({
     className : "layout",
     components : {},
     panelsConfiguration : [
-        {key : "toggle-toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { left : 120, top : 100}}},
+        {key : "toggle-toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { top : 75}, align : "center"}},
         {key : "toggle-overview-panel", linkID : "toggle-overview-panel", name : "Overview", className : "overviewPanel", value : { visible : true , position : { right : 20, top : 325}}},
         {key : "toggle-ontology-panel", linkID : "toggle-ontology-panel", name : "Ontology", className : "ontologypanel", value : { visible : true , position : { left : 20, top : 280}}},
         {key : "toggle-layer-panel", linkID : "toggle-layer-panel", name : "Layer switcher", className : "layerSwitcherPanel", value : { visible : false , position : { right : 20, top : 100}}},
         {key : "toggle-filters-panel", linkID : "toggle-filters-panel", name : "Filters", className : "imageFiltersPanel", value : { visible : false , position : { right : 20, bottom : 15}}}
+    ],
+    layoutsConfiguration : [
+        {key : "toggle-floating-panel", linkID : "toggle-floating-panel", name : "Toggle Floating Panels", value : { activated : true} }
     ],
     events: {
         "click #undo":          "undo",
@@ -48,17 +51,17 @@ var ApplicationView = Backbone.View.extend({
         if (preference != undefined && preference.visible != undefined && preference.visible == true) {
             $("#"+item.linkID).html("<i class='icon-eye-close' /> " + item.name);
             $("."+item.className).each(
-                 function( intIndex ){
-                    $(this).show('fast');
-                 }
+                    function( intIndex ){
+                        $(this).show('fast');
+                    }
             );
         }
         else {
             $("#"+item.linkID).html("<i class='icon-eye-open' /> " + item.name);
-             $("."+item.className).each(
-                 function( intIndex ){
-                    $(this).hide('fast');
-                 }
+            $("."+item.className).each(
+                    function( intIndex ){
+                        $(this).hide('fast');
+                    }
             );
         }
     },
@@ -100,17 +103,34 @@ var ApplicationView = Backbone.View.extend({
             if (localStorage.getObject(item.key)) return;
             localStorage.setObject(item.key, item.value);
         });
+        _.each(this.layoutsConfiguration, function (item) {
+            if (localStorage.getObject(item.key)) return;
+            localStorage.setObject(item.key, item.value);
+        });
     },
     applyPreferences : function() {
         var self = this;
         _.each(self.panelsConfiguration, function (item) {
+            self.updatePanelPosition(item, true);
             self.updateMenuItem(item);
-            self.updatePanelPosition(item);
         });
+        self.refreshLayout();
     },
-    updatePanelPosition : function (item) {
+    updatePanelPosition : function (item, triggerMoveEvent) {
         var preference = localStorage.getObject(item.key);
-		if (preference == undefined) return;
+        if (preference == undefined) return;
+
+        // Alignment
+        if (preference.align != undefined && preference.align == "center") {
+            var panelWidth = $("."+item.className).width();
+            var windowWidth = $(window).width();
+            var leftPosition = (windowWidth / 2) - (panelWidth / 2);
+            preference.position.left = leftPosition;
+            localStorage.setObject(item.key, preference);
+            //$("."+item.className).css("left", leftPosition);
+        }
+
+        // Position
         var position = preference.position;
         if (position.top == undefined) position.top = '';
         $("."+item.className).css("top", position.top);
@@ -120,9 +140,10 @@ var ApplicationView = Backbone.View.extend({
         $("."+item.className).css("right", position.right);
         if (position.bottom == undefined) position.bottom = '';
         $("."+item.className).css("bottom", position.bottom);
+
+        if (triggerMoveEvent) $("."+item.className).trigger("movedProgramatically");
     },
-    updatePosition : function (className, position) {
-        console.log("update " + className);
+    updatePosition : function (className, position, triggerMoveEvent) {
         var self = this;
         var panelConfig = _.find(self.panelsConfiguration, function (item) {
             return item.className == className;
@@ -131,7 +152,7 @@ var ApplicationView = Backbone.View.extend({
         var preference = localStorage.getObject(panelConfig.key);
         preference.position = position;
         localStorage.setObject(panelConfig.key, preference);
-        self.updatePanelPosition(panelConfig);
+        self.updatePanelPosition(panelConfig, triggerMoveEvent);
     },
     initUserMenu : function () {
         var self = this;
@@ -149,10 +170,30 @@ var ApplicationView = Backbone.View.extend({
                 self.updateMenuItem(item);
                 $("#"+item.linkID).on('click',function(){
                     self.toggleVisibility(item);
-                    self.updatePanelPosition(item);
+                    self.updatePanelPosition(item, true);
                 });
             });
+            $("#toggle-floating-panel").on("click", function(){
+                var key = "toggle-floating-panel";
+                var preference = localStorage.getObject(key);
+                preference.activated = !preference.activated;
+                localStorage.setObject(key, preference);
+                self.refreshLayout();
+            });
         });
+    },
+    refreshLayout : function () {
+        /* Work in progress */
+        /*var self = this;
+         var key = "toggle-floating-panel";
+         var preference = localStorage.getObject(key);
+         if (!preference.activated) {
+         _.each(self.panelsConfiguration, function (item) {
+         $("."+item.className).hide();
+         $("."+item.className).css("position", "relative");
+
+         });
+         }*/
     },
     /**
      * Initialize the components of the application

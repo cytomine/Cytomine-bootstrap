@@ -5,7 +5,7 @@
                 <img src='<%=  cropURL  %>' alt='alt |<%=  name  %>|' style="max-height:150px; max-width:150px; "  />
             </div>
             <div class="caption">
-                <a  class="btn btn-info btn-small"  href="#share-annotation/<%= id %>"><i class="icon-comment icon-white" /> Comment (<%= nbComments %>)</a> <a  class="btn btn-info btn-small" href='#tabs-image-<%= project %>-<%=  image  %>-<%= id %>'><i class="icon-eye-open icon-white" /> View</a> <a  class="btn btn-warning btn-small"  href="#delete-annotation/<%= id %>"><i class="icon-trash icon-white" /> </a>
+                <a  class="btn btn-info btn-small"  href="#share-annotation/<%= id %>"><i class="icon-comment icon-white" /> Comment (<%= nbComments %>)</a> <a  class="btn btn-info btn-small" href='#tabs-image-<%= project %>-<%=  image  %>-<%= id %>'><i class="icon-eye-open icon-white" /> View</a> <a  class="btn btn-warning btn-small" style="display: none;" href="#delete-annotation/<%= id %>"><i class="icon-trash icon-white" /> </a>
 
             </div>
         </div>
