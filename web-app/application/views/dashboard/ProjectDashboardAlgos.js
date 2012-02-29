@@ -104,7 +104,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                   viewrecords : true,
                   pager: 'pagerAlgoInfo',
                   subGridRowExpanded: function(subgrid_id, row_id) {
-                      var idJob = $("#listAlgoInfo").jqGrid('getCell', row_id, 2);
+                      var idJob = $("#listAlgoInfo").jqGrid('getCell', row_id, 1);
 
                       if (!_.include(self.openParameterGrid, idJob)) {
                           self.openParameterGrid.push(idJob);
@@ -261,6 +261,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
 
         var i = 0;
         $("#" + subgrid_table_id).jqGrid('clearGridData');
+        console.log(self.jobCollection);
+        console.log(self.jobCollection.get(idJob));
         _.each(self.jobCollection.get(idJob).get('jobParameter'), function(jobparam) {
             var data = {name:jobparam.name,value:jobparam.value,type:jobparam.type}
             $("#" + subgrid_table_id).jqGrid('addRowData', i + 1, data);
