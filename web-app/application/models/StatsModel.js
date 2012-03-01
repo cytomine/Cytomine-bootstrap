@@ -40,6 +40,7 @@ var StatsRetrievalSuggestionAVGModel = Backbone.Model.extend({
 
 var StatsRetrievalSuggestionMatrixModel = Backbone.Model.extend({
 	url : function() {
+        console.log("StatsRetrievalSuggestionMatrixModel="+ this.project+"#"+this.software+"#"+this.job);
         if (this.project != undefined && this.software != undefined) {
             return "api/stats/retrieval/confusionmatrix.json?project="+this.project+"&software="+this.software;
         } else if (this.job != undefined) {

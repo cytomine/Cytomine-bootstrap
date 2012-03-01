@@ -7,7 +7,7 @@
  */
 var JobModel = Backbone.Model.extend({
    url : function() {
-       if (this.project != undefined &&  this.software!=undefined) {
+      if (this.project != undefined &&  this.software!=undefined) {
           return "api/project/" + this.project + "/job.json?software="+ this.software;
        } else {
           var base = 'api/job';
@@ -19,6 +19,8 @@ var JobModel = Backbone.Model.extend({
    initialize: function (options) {
       this.project = options.project;
       this.software = options.software;
+      this.light = options.light;
+      this.max = options.max;
    }
 });
 
@@ -28,8 +30,10 @@ var JobCollection = Backbone.Collection.extend({
 
    url: function() {
       if (this.project != undefined &&  this.software!=undefined) {
-         return "api/project/" + this.project + "/job.json?software="+ this.software;
-      }else if (this.project != undefined) {
+           var l =  this.light==undefined? "": "&light="+this.light;
+           var m =  this.max==undefined? "": "&max="+this.max;
+          return "api/project/" + this.project + "/job.json?software="+ this.software+l+m;
+       }else if (this.project != undefined) {
          return "api/project/" + this.project + "/job.json";
       }else {
          return "api/job.json";
@@ -38,6 +42,8 @@ var JobCollection = Backbone.Collection.extend({
    initialize: function (options) {
       this.project = options.project;
       this.software = options.software;
+      this.light = options.light;
+      this.max = options.max;
    },
    comparator : function (job) {
       return -job.get("id");

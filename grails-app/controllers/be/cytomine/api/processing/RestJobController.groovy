@@ -26,27 +26,31 @@ class RestJobController extends RestController {
         log.info "list all job"
         if(params.software!=null) {
             Software software = Software.read(params.software)
-            if(software) responseSuccess(jobService.list(software))
+            if(software) responseSuccess(jobService.list(software,false,Integer.MAX_VALUE))
             else responseNotFound("Job", "Software", params.software)
         } else responseSuccess(jobService.list())
     }
 
     def listByProject = {
         log.info "list all job by project"
+        boolean light = params.light==null? false : params.boolean('light')
+        int max = params.max==null? Integer.MAX_VALUE : params.int('max')
+
         Project project = projectService.read(params.long('id'), new Project())
         if(project) {
             log.info "project="+project.id + " software="+params.software
             if(params.software!=null) {
                 Software software = Software.read(params.software)
-                if(software) responseSuccess(jobService.list(software,project))
+                if(software) responseSuccess(jobService.list(software,project,light,max))
                 else responseNotFound("Job", "Software", params.software)
-            } else responseSuccess(jobService.list(project))
+            }
+            else responseSuccess(jobService.list(project,light,max))
         } else responseNotFound("Job", "Project", params.id)
     }
 
     def listBySoftware = {
         Software software = softwareService.read(params.long('id'));
-        if (software) responseSuccess(jobService.list(software))
+        if (software) responseSuccess(jobService.list(software,false,Integer.MAX_VALUE))
         else responseNotFound("Job", "Software", params.id)
     }
 
@@ -55,7 +59,7 @@ class RestJobController extends RestController {
         Project project = projectService.read(params.long('idProject'), new Project());
         if (!software) responseNotFound("Job", "Software", params.idSoftware)
         if (!project) responseNotFound("Job", "Project", params.idProject)
-        else responseSuccess(jobService.list(software, project))
+        else responseSuccess(jobService.list(software, project,false,Integer.MAX_VALUE))
     }
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])

@@ -58,6 +58,17 @@ var ProjectDashboardView = Backbone.View.extend({
         this.projectDashboardAlgos.refresh();
 
     },
+    refreshConfig : function() {
+        if (this.ProjectDashboardConfig == null) {
+            this.ProjectDashboardConfig = new ProjectDashboardConfig({
+                model : this.model
+            });
+        }
+
+        this.ProjectDashboardConfig.refresh();
+
+    },
+
     refreshImagesTable : function() {
         if (this.projectDashboardImages == null)
             this.projectDashboardImages = new ProjectDashboardImages({ model : this.model});

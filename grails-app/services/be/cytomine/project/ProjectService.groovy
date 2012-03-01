@@ -17,6 +17,7 @@ import org.springframework.security.acls.model.Permission
 import be.cytomine.test.Infos
 import grails.converters.JSON
 import be.cytomine.security.SecUser
+import be.cytomine.processing.Software
 
 class ProjectService extends ModelService {
 

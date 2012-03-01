@@ -26,16 +26,33 @@ class JobService extends ModelService {
         Job.read(id)
     }
 
-    def list(Software software) {
-        Job.findAllBySoftware(software)
+    def list(Software software, boolean light, def max) {
+        def jobs = Job.findAllBySoftware(software, [max: max, sort: "created", order: "desc"])
+        if(!light) return jobs
+        else getJOBResponseList(jobs)
     }
 
-    def list(Project project) {
-        Job.findAllByProject(project)
+    def list(Project project, boolean light, def max) {
+        def jobs = Job.findAllByProject(project, [max: max, sort: "created", order: "desc"])
+        if(!light) return jobs
+        else getJOBResponseList(jobs)
     }
 
-    def list(Software software, Project project) {
-        Job.findAllBySoftwareAndProject(software, project)
+    def list(Software software, Project project, boolean light, def max) {
+        def jobs = Job.findAllBySoftwareAndProject(software, project, [max: max, sort: "created", order: "desc"])
+        if(!light) return jobs
+        else getJOBResponseList(jobs)
+    }
+
+    private def getJOBResponseList(List<Job> jobs) {
+        def data = []
+        jobs.each {
+           def job = [:]
+            job.id = it.id
+            job.created = it.created ? it.created.time.toString() : null
+            data << job
+        }
+        return data
     }
 
     def add(def json) {

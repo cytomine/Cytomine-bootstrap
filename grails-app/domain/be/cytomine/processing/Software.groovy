@@ -11,6 +11,7 @@ class Software extends CytomineDomain {
     String name
     String serviceName
     def service
+    def projectService
 
     static hasMany = [softwareProjects: SoftwareProject, softwareParameters : SoftwareParameter]
 
@@ -36,6 +37,12 @@ class Software extends CytomineDomain {
             software.name = it.name
             software.parameters = it.softwareParameters
             software.serviceName = it.serviceName
+            try {
+                software.numberOfJob = Job.countBySoftware(it);
+                software.numberOfJobSuccesfull = software.numberOfJob==0? 0 : Job.countBySoftwareAndSuccessful(it,true);
+                software.ratioOfJobSuccesfull = software.numberOfJob==0? 0 :  (double)(software.numberOfJobSuccesfull/software.numberOfJob)
+            } catch(Exception e) { println e; e.printStackTrace()}
+
             return software
         }
     }

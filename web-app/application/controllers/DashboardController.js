@@ -10,6 +10,7 @@ var DashboardController = Backbone.Router.extend({
         "tabs-annotations-:project-:terms-:users"  : "annotations",
         "tabs-annotations-:project"  : "annotations",
         "tabs-dashboard-:project"  : "dashboard",
+        "tabs-config-:project"  : "config",
         "tabs-algos-:project"  : "algos"
     },
 
@@ -93,6 +94,16 @@ var DashboardController = Backbone.Router.extend({
             self.view.refreshAlgos();
             var tabs = $("#explorer > .browser").find(".nav-tabs");
             tabs.find('a[href=#tabs-algos-'+window.app.status.currentProject+']').click();
+        };
+        this.init(project, func);
+    },
+
+    config : function(project) {
+        var self = this;
+        var func = function() {
+            self.view.refreshConfig();
+            var tabs = $("#explorer > .browser").find(".nav-tabs");
+            tabs.find('a[href=#tabs-config-'+window.app.status.currentProject+']').click();
         };
         this.init(project, func);
     },

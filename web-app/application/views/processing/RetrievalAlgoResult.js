@@ -168,7 +168,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
     initMatrixDialog: function(terms) {
         var self = this;
         $('#userRetrievalSuggestMatrixDataTable').empty();
-      new StatsRetrievalSuggestionMatrixModel({project:self.model.get('id')}).fetch({
+      new StatsRetrievalSuggestionMatrixModel({job:self.model.id}).fetch({
          success : function(model, response) {
             self.drawRetrievalSuggestionTable(model,response, terms);
              $("#userRetrievalSuggestMatrixDataTable").dialog({
@@ -279,88 +279,6 @@ var RetrievalAlgoResult = Backbone.View.extend({
        }
 
    },
-   drawRetrievalSuggestionTableGoogleCharts: function(model, response, terms){
-      var self = this;
-       var visualization = new google.visualization.Table(document.getElementById('userRetrievalSuggestMatrixDataTable'));
-        var matrixJSON = model.get('matrix');
-       if(matrixJSON==undefined) return;
-
-        var matrix = eval('('+matrixJSON +')');
-       var data = new google.visualization.DataTable();
-       //add column
-       data.addColumn('string', 'X');
-       for(var i = 1; i<matrix[0].length-1;i++){
-           var termName ="";
-           var term = terms.get(matrix[0][i]);
-           if(term!=undefined) termName = self.reduceTermName(term.get('name'));
-           data.addColumn('number', termName);
-       }
-       data.addColumn('string', matrix[0][matrix[0].length-1]);
-       data.addRows((matrix.length-1));
-
-//       data.setColumnProperties(2, {style: 'font-style:bold; width : 500px;'});  => dosen't work :-(
-//       data.setColumnProperty(2, "width", "500px");     => dosen't work :-(
-
-         for(i = 0; i<matrix.length-1;i++){
-             var indx = i+1;
-             //console.log("i:"+i);
-
-             for(j=0; j<matrix[indx].length;j++) {
-                 //console.log("j:"+j);
-                var value = matrix[indx][j];
-                 //console.log("value:"+value);
-
-                    if(indx==j) {
-                        //diagonal
-                        data.setCell(i, j, matrix[indx][j],undefined,{style: 'font-style:bold; background-color:#90c140;'});
-                    } else if(j==0) {
-                        //first column
-                        var idTerm = matrix[indx][j];
-                        var term = terms.get(idTerm);
-                        data.setCell(i, j,term.get('name'));
-                    } else if(j==matrix[indx].length-1) {
-                        //last column
-                        var printValue =""
-                        var value = matrix[indx][j];
-                        if(value!=-1) {
-                           printValue = Math.round(value*100)+"%";
-                        }
-                        data.setCell(i, j, printValue);
-                    }
-                    else {
-                        //value
-                        if(matrix[indx][j]>0 && j>0) {
-                            //bad value, should be 0
-                            data.setCell(i, j, matrix[indx][j],undefined,{style: 'font-style:bold; background-color:#ff5800;'});
-                        }else {
-                            //good value (=0)
-                            //don't print 0
-                        }
-                    }
-             }
-       }
-       var width = Math.round($(window).width() - 95);
-      google.visualization.events.addListener(visualization, 'select', function() {
-                console.log(visualization.getSelection());
-                  var selection  = visualization.getSelection();
-                  for (var i = 0; i < selection.length; i++) {
-                        var item = selection[i];
-                        console.log("item.row="+item.row +" item.column="+item.column);
-                      //TODO: cannot GET COLUMN ID!!! (item.row => OK, item.column = undefined
-//                        if (item.row != null && item.column != null) {
-//
-//                        }
-                  }
-
-        });
-      visualization.draw(data, {title:"",
-             legend : "none",
-             //backgroundColor : "whiteSmoke",
-             width:"98%",
-             allowHtml : true
-          });
-
-   },
    drawWorstTermPieChart : function (model, response, terms) {
       $("#worstTermprojectPieChart").empty();
       var dataJSON = model.get('worstTerms');
@@ -433,25 +351,12 @@ var RetrievalAlgoResult = Backbone.View.extend({
         var data = new google.visualization.DataTable();
         data.addColumn('date', 'Date');
         data.addColumn('number', 'Success rate (%)');
-//        var date1 = new Date();
-//        date1.setTime(1325576699000);
-//        var date2 = new Date(2012, 0, 10);
-//        var date3 = new Date(2012, 0, 15);
-//        var date4 = new Date(2012, 1, 10);
 
         for(var i=0;i<evolution.length;i++) {
             var date = new Date();
             date.setTime(evolution[i].date);
             data.addRow([date, evolution[i].avg]);
         }
-//        data.addRow([date1, 60]);
-//        data.addRow([date2, 70]);
-//        data.addRow([date3, 72]);
-//        data.addRow([date4, 79]);
-//        data.addRow([new Date(2012, 0, 1), 10]);
-//        data.addRow([new Date(2012, 0, 10), 15]);
-//        data.addRow([new Date(2012, 0, 15), 40]);
-//        data.addRow([new Date(2012, 1, 10), 50]);
 
          var width = Math.round($(window).width()/2 - 95);
         // Create and draw the visualization.

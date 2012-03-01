@@ -14,6 +14,11 @@ class SoftwareProject extends CytomineDomain implements Serializable{
         id(generator: 'assigned', unique: true)
     }
 
+    def getIdProject() {
+        if (this.projectId) return this.projectId
+        else return this.project?.id
+    }
+
     static SoftwareProject link(Software software, Project project) {
         def softwareProjects = SoftwareProject.findBySoftwareAndProject(software, project)
         println "1="+softwareProjects?.id

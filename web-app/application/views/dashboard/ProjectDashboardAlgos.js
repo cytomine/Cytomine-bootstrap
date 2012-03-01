@@ -6,9 +6,29 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         this.el = "#tabs-algos-" + this.model.id;
     },
     render : function() {
-        this.initProjectSoftwareList();
+          var self = this;
+          require([
+             "text!application/templates/processing/SoftwareInfo.tpl.html"
+          ],
+              function(tpl) {
+                 self.doLayout(tpl);
+              });
         this.rendered = true;
+          return this;
     },
+
+   doLayout: function(tpl) {
+
+      var self = this;
+      $(this.el).append(_.template(tpl, {}));
+
+      self.initProjectSoftwareList();
+
+      return this;
+   },
+
+
+
     refresh : function() {
         if (!this.rendered) this.render();
     },
@@ -17,6 +37,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         //todo: add image filter as a software?
         $("#projectSoftwareListUl").append('<li id="consultSoftware-0"><a>Image Filter</a></li>');
         $("#consultSoftware-0").click(function() {
+            $("#projectSoftwareListUl").children().removeClass("active");
+            $("#consultSoftware-0").addClass("active");
             self.printImageFilterInfo();
         });
 
@@ -24,8 +46,10 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         new SoftwareCollection({ project : self.model.id}).fetch({
             success : function (collection, response) {
                 collection.each(function (software) {
-                    $("#projectSoftwareListUl").append('<a><li id="consultSoftware-' + software.id + '">' + software.get('name') + '</li></a>');
+                    $("#projectSoftwareListUl").append('<li id="consultSoftware-' + software.id + '"><a>' + software.get('name') + '</a></li>');
                     $("#consultSoftware-" + software.id).click(function() {
+                        $("#projectSoftwareListUl").children().removeClass("active");
+                        $("#consultSoftware-" + software.id).addClass("active");
                         self.printProjectSoftwareInfo(software);
                     });
                 });
@@ -37,6 +61,24 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     printProjectSoftwareInfo : function(software) {
         console.log("printProjectSoftwareInfo: software=" + software.id);
         var self = this;
+
+        self.printProjectSoftwareDetails(software);
+        self.fillSelectJob(software);
+
+
+        new JobCollection({ project : self.model.id, software: software.id, max: 5}).fetch({
+            success : function (collection, response) {
+                //self.fillLastRunOrInProgress(collection.get(0));
+                self.fillNLastRun(collection);
+            }
+        });
+
+
+
+
+        //TODO: clean code below V
+
+
         //add button to launch algo
         $("#panelSoftwareInfo").empty();
 
@@ -52,15 +94,73 @@ var ProjectDashboardAlgos = Backbone.View.extend({
        // $("#softwareInfoAccordeon").accordion();
 
 
-                 $("#softwareInfoAccordeon").accordion({ clearStyle: true });
-//                $("#tabsontology h3 a").click(function() {
-//                   window.location = $(this).attr('href'); //follow link
-//                   return false;
-//                });
-
-             //self.select(self.idOntology,self.idTerm);
+             $("#softwareInfoAccordeon").accordion({ clearStyle: true });
              $("#softwareInfoAccordeon").css("height", "auto");
              $("#softwareInfoAccordeon").css("width", "auto");
+    },
+    printProjectSoftwareDetails : function(software) {
+
+        console.log($("#panelSoftwareResume").find('.nameSoftware').length);
+
+        $("#panelSoftwareResume").find('.softwareMainInfo').empty();
+        $("#panelSoftwareResume").find('.softwareMainInfo').append('<li><h2>'+software.get('name')+'</h2></li>');
+
+        $("#panelSoftwareResume").find('.numberOfJob').empty();
+        $("#panelSoftwareResume").find('.numberOfJob').append('<li> Number of Job: '+software.get('numberOfJob') +"</li>");
+        $("#panelSoftwareResume").find('.numberOfJob').append('<li> Number of Succesfull Job: '+software.get('numberOfJobSuccesfull')+'</li>');
+        $("#panelSoftwareResume").find('.numberOfJob').append('<li> Ratio of Succesfull Job: '+Math.min(Math.round(software.get('ratioOfJobSuccesfull')*100),100)+'%</li>');
+
+    },
+    fillSelectJob : function(software) {
+        var self = this;
+        $("#panelSoftwareResume").find('.chosseJob').empty();
+        $("#panelSoftwareResume").find('.chosseJob').append('Select a job: <br>');
+        $("#panelSoftwareResume").find('.chosseJob').append('<select id="chosseJobSelect"></select>');
+        new JobCollection({ project : self.model.id, software: software.id, light:true}).fetch({
+            success : function (collection, response) {
+                collection.each(function (job) {
+                    $("#panelSoftwareResume").find('#chosseJobSelect').append('<option>'+self.convertLongToDate(job.get('created'))+'</option>')
+                });
+            }
+        });
+
+    },
+    fillNLastRun : function (jobs) {
+        var self = this;
+        $("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').empty();
+        jobs.each(function (job) {
+
+            $("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').append('<li id="'+job.id+'"><li>');
+
+            var successfulIcon = job.get('successful') ? "icon-star" : "icon-star-empty";
+
+            var item = $("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').find('#'+job.id);
+            item.append('<hr/>');
+            item.append('<i class="'+successfulIcon+'"></i> ');
+            item.append('<h4 style="display:inline;">Job ' + job.id + "<br><h4>");
+            item.append('Launch at ' + self.convertLongToDate(job.get('created')) + "<br>");
+            job.get('successful')? item.append('<div class="btn-success" style="text-align:center;">Success!</div>') : item.append('<div class="btn-danger" style="text-align:center;">Fail!</div>');
+
+
+        });
+
+    },
+
+
+    convertLongToDate : function (longDate) {
+          var createdDate = new Date();
+          createdDate.setTime(longDate);
+
+          //date format
+          var year = createdDate.getFullYear();
+          var month = (createdDate.getMonth()+1)  < 10 ? "0"+(createdDate.getMonth()+1) : (createdDate.getMonth()+1);
+          var day =  (createdDate.getDate())  < 10 ? "0"+(createdDate.getDate()) : (createdDate.getDate());
+
+          var hour =  (createdDate.getHours())  < 10 ? "0"+(createdDate.getHours()) : (createdDate.getHours());
+          var min =  (createdDate.getMinutes())  < 10 ? "0"+(createdDate.getMinutes()) : (createdDate.getMinutes());
+
+          var dateStr = year + "-" + month +"-" + day + " " + hour + "h" + min;
+        return dateStr;
     },
     printJobListingPanel : function (software) {
         var self = this;
@@ -133,18 +233,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                           var i = 0;
                           $("#listAlgoInfo").jqGrid('clearGridData');
                           jobs.each(function (job) {
-                              var createdDate = new Date();
-                              createdDate.setTime(job.get('created'));
 
-                              //date format
-                              var year = createdDate.getFullYear();
-                              var month = (createdDate.getMonth()+1)  < 10 ? "0"+(createdDate.getMonth()+1) : (createdDate.getMonth()+1);
-                              var day =  (createdDate.getDate())  < 10 ? "0"+(createdDate.getDate()) : (createdDate.getDate());
-
-                              var hour =  (createdDate.getHours())  < 10 ? "0"+(createdDate.getHours()) : (createdDate.getHours());
-                              var min =  (createdDate.getMinutes())  < 10 ? "0"+(createdDate.getMinutes()) : (createdDate.getMinutes());
-
-                              var dateStr = year + "-" + month +"-" + day + " " + hour + "h" + min;
+                              var dateStr = self.convertLongToDate(job.get('created'));
 
                               //button format
                               var buttonStr = '<button id="seeResult'+job.id+'">See algo result</button>';
@@ -179,7 +269,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                   });
               };
               refreshData();
-              setInterval(refreshData, 5000);
+              //setInterval(refreshData, 5000);
 
     },
     printJobResul: function(job) {
