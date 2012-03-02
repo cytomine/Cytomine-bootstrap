@@ -13,10 +13,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.imageID = imageID;
     this.userID = userID;
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
-        /*styleMap: styleMap,*/
-        rendererOptions: {
-            zIndexing: true
-        }
+        renderers: ["Canvas", "SVG", "VML"]
     });
     this.features = [];
     this.controls = null;
@@ -25,7 +22,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.resize = false;
     this.drag = false;
     this.irregular = false;
-    this.aspectRatio = false;
+    this.aspectRatio = false;    
     this.browseImageView = browseImageView;
     this.map = browseImageView.map;
     this.popup = null;

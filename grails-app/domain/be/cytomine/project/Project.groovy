@@ -206,12 +206,11 @@ class Project extends CytomineDomain {
             returnArray['ontologyName'] = it.ontology ? it.ontology.name : null
             returnArray['discipline'] = it.getIdDiscipline()
             returnArray['disciplineName'] = it.discipline ? it.discipline.name : null
-
-            returnArray['ontologyURL'] = UrlApi.getOntologyURLWithOntologyId(it.ontology?.id)
+            /*returnArray['ontologyURL'] = UrlApi.getOntologyURLWithOntologyId(it.ontology?.id)
             returnArray['abstractimageURL'] = UrlApi.getAbstractImageURLWithProjectId(it.id)
             returnArray['imageinstanceURL'] = UrlApi.getImageInstanceURLWithProjectId(it.id)
             returnArray['termURL'] = UrlApi.getTermsURLWithOntologyId(it.ontologyId)
-            returnArray['userURL'] = UrlApi.getUsersURLWithProjectId(it.id)
+            returnArray['userURL'] = UrlApi.getUsersURLWithProjectId(it.id)*/
              try {returnArray['creator'] = it.creator().collect { it.id }} catch (Exception e) {println "creator:"+e}
              try {returnArray['admins'] = it.admins().collect { it.id }} catch (Exception e) {println "admins:"+e}
              try {returnArray['users'] = it.users().collect { it.id } } catch (Exception e) {println "users:"+e}

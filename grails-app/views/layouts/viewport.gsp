@@ -197,10 +197,10 @@
 
     <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
         <script type="text/javascript">
-            /*setTimeout(function(){
+            setTimeout(function(){
                 $("#j_username").val("stevben");
                 $("#j_password").val("sB$2011");
-            }, 1000);*/
+            }, 1000);
         </script>
     </g:if>
 </head>

@@ -44,7 +44,7 @@ grails.converters.encoding = "UTF-8"
 grails.converters.json.default.deep = false
 //grails.converters.json.date = "javascript"
 //grails.converters.xml.date = "javascript"
-grails.converters.default.pretty.print = true
+
 
 
 // enable Sitemesh preprocessing of GSP pages
@@ -71,6 +71,7 @@ environments {
     }
     development {
         grails.serverURL = "http://localhost:8080"
+        grails.converters.default.pretty.print = true
     }
     test {
         grails.serverURL = "http://localhost:8090"

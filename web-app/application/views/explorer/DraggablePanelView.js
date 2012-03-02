@@ -47,7 +47,7 @@ var DraggablePanelView = Backbone.View.extend({
                 maximize();
                 $("."+context.className).css("width", width);
                 $("."+context.className).css("height", height);
-                $("."+context.className).css("padding-left", "60px");
+                $("."+context.className).css("padding-left", "80px");
             }
         }
 
@@ -62,21 +62,21 @@ var DraggablePanelView = Backbone.View.extend({
         }
 
         var drag = function(el, position, context) {
-            /*var leftPositionValue = parseInt(position.left);
+            var leftPositionValue = parseInt(position.left);
             if (!minimized && leftPositionValue <= 0) {  //left minimize
                 minimized = true;
                 minimize();
+                resizeDraggablePanel(el);
             } else if (leftPositionValue > 0 && minimized) {
                 minimized = false;
                 maximize();
+                resizeDraggablePanel(el);
             }
-            resizeDraggablePanel(el);
-            */
         }
 
         var start = function(el, position, context) {
             $(el).css("overflow", "hidden");
-            /*if (!minimized) {
+            if (!minimized) {
                 width = $(context.el).width();
                 height = $(context.el).height();
             }
@@ -86,7 +86,7 @@ var DraggablePanelView = Backbone.View.extend({
             });
             $(context.el).off("mouseleave", function(){
                 mouseleaveDraggablePanel(self);
-            })*/;
+            });
         }
 
         var stop = function(el, position, context) {
@@ -94,16 +94,18 @@ var DraggablePanelView = Backbone.View.extend({
             var leftPosition = Math.max(0, parseInt(position.left));
             var topPosition = Math.max(0, parseInt(position.top));
             if (context.className) window.app.view.updatePosition(self.className, { left : leftPosition, top : topPosition}, false);
-            /*$(context.el).on("mouseenter", function(){
+            $(context.el).on("mouseenter", function(){
                 mousenterDraggablePanel(self);
             });
             $(context.el).on("mouseleave", function(){
                 mouseleaveDraggablePanel(self);
-            });*/
+            });
+            resizeDraggablePanel(el);
         }
 
         $(this.el).draggable({
             cancel: 'input olControlOverviewMapElement',
+            handle: '.dragHandle',
             start: function(event, ui) {
                 start(this, ui.helper.position(), self);
 

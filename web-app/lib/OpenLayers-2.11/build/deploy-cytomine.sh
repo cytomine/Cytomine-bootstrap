@@ -1,1 +1,1 @@
-python build.py -c closure cytomine ../OpenLayers-Cytomine.js
+python build.py -c closure cytomine ./OpenLayers-Cytomine.js

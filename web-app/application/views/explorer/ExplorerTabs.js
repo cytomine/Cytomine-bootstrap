@@ -122,7 +122,7 @@ var ExplorerTabs = Backbone.View.extend({
         $(".nav-tabs").append(_.template("<li><a href='#tabs-images-<%= idProject %>' data-toggle='tab'><i class='icon-picture' /> Images</a></li>",{ idProject : window.app.status.currentProject}));
         $(".nav-tabs").append(_.template("<li><a href='#tabs-annotations-<%= idProject %>' data-toggle='tab'><i class='icon-pencil' /> Annotations</a></li>",{ idProject : window.app.status.currentProject}));
         $(".nav-tabs").append(_.template("<li><a href='#tabs-algos-<%= idProject %>' data-toggle='tab'><i class='icon-cog' /> Software</a></li>",{ idProject : window.app.status.currentProject}));
-        $(".nav-tabs").append(_.template("<li><a href='#tabs-config-<%= idProject %>' data-toggle='tab'><i class='icon-cog' /> Configuration</a></li>",{ idProject : window.app.status.currentProject}));
+        $(".nav-tabs").append(_.template("<li><a href='#tabs-config-<%= idProject %>' data-toggle='tab'><i class=' icon-play-circle' /> Configuration</a></li>",{ idProject : window.app.status.currentProject}));
 
 
         $('a[data-toggle="tab"]').live('show', function (e) {

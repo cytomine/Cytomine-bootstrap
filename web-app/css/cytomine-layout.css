@@ -370,7 +370,9 @@ span .ui-icon {
     text-align: center;
     padding: 0px;
     margin: 0px;
-    font-size: 9px;
+    font-size: 12px;
+    width : 80px;
+    font-weight: bold;
     /*writing-mode: tb-rl;
     -webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
@@ -402,4 +404,18 @@ td.confusionMatrixBadValue{
 
 .table tbody tr:hover td, .table tbody tr:hover th {
   background-color: #6C8690;
+}
+
+div.olControlZoomPanel {
+    height: 108px;
+    width: 36px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+.olTileImage {
+    -webkit-transition: opacity 0.2s linear;
+    -moz-transition: opacity 0.2s linear;
+    -o-transition: opacity 0.2s linear;
+    transition: opacity 0.2s linear;
 }

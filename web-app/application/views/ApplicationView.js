@@ -12,14 +12,11 @@ var ApplicationView = Backbone.View.extend({
     className : "layout",
     components : {},
     panelsConfiguration : [
-        {key : "toggle-toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { top : 75}, align : "center"}},
-        {key : "toggle-overview-panel", linkID : "toggle-overview-panel", name : "Overview", className : "overviewPanel", value : { visible : true , position : { right : 20, top : 325}}},
-        {key : "toggle-ontology-panel", linkID : "toggle-ontology-panel", name : "Ontology", className : "ontologypanel", value : { visible : true , position : { left : 20, top : 280}}},
-        {key : "toggle-layer-panel", linkID : "toggle-layer-panel", name : "Layer switcher", className : "layerSwitcherPanel", value : { visible : false , position : { right : 20, top : 100}}},
-        {key : "toggle-filters-panel", linkID : "toggle-filters-panel", name : "Filters", className : "imageFiltersPanel", value : { visible : false , position : { right : 20, bottom : 15}}}
-    ],
-    layoutsConfiguration : [
-        {key : "toggle-floating-panel", linkID : "toggle-floating-panel", name : "Toggle Floating Panels", value : { activated : true} }
+        {key : "toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { top : 75}, align : "center"}},
+        {key : "overview-panel", linkID : "toggle-overview-panel", name : "Overview", className : "overviewPanel", value : { visible : true , position : { right : 20, top : 325}}},
+        {key : "ontology-panel", linkID : "toggle-ontology-panel", name : "Ontology", className : "ontologypanel", value : { visible : true , position : { left : 20, top : 280}}},
+        {key : "layer-panel", linkID : "toggle-layer-panel", name : "Layer switcher", className : "layerSwitcherPanel", value : { visible : false , position : { right : 20, top : 100}}},
+        {key : "filters-panel", linkID : "toggle-filters-panel", name : "Filters", className : "imageFiltersPanel", value : { visible : false , position : { right : 20, bottom : 15}}}
     ],
     events: {
         "click #undo":          "undo",
@@ -103,10 +100,6 @@ var ApplicationView = Backbone.View.extend({
             if (localStorage.getObject(item.key)) return;
             localStorage.setObject(item.key, item.value);
         });
-        _.each(this.layoutsConfiguration, function (item) {
-            if (localStorage.getObject(item.key)) return;
-            localStorage.setObject(item.key, item.value);
-        });
     },
     applyPreferences : function() {
         var self = this;
@@ -114,7 +107,6 @@ var ApplicationView = Backbone.View.extend({
             self.updatePanelPosition(item, true);
             self.updateMenuItem(item);
         });
-        self.refreshLayout();
     },
     updatePanelPosition : function (item, triggerMoveEvent) {
         var preference = localStorage.getObject(item.key);
@@ -127,7 +119,6 @@ var ApplicationView = Backbone.View.extend({
             var leftPosition = (windowWidth / 2) - (panelWidth / 2);
             preference.position.left = leftPosition;
             localStorage.setObject(item.key, preference);
-            //$("."+item.className).css("left", leftPosition);
         }
 
         // Position
@@ -178,22 +169,9 @@ var ApplicationView = Backbone.View.extend({
                 var preference = localStorage.getObject(key);
                 preference.activated = !preference.activated;
                 localStorage.setObject(key, preference);
-                self.refreshLayout();
             });
         });
-    },
-    refreshLayout : function () {
-        /* Work in progress */
-        /*var self = this;
-         var key = "toggle-floating-panel";
-         var preference = localStorage.getObject(key);
-         if (!preference.activated) {
-         _.each(self.panelsConfiguration, function (item) {
-         $("."+item.className).hide();
-         $("."+item.className).css("position", "relative");
 
-         });
-         }*/
     },
     /**
      * Initialize the components of the application

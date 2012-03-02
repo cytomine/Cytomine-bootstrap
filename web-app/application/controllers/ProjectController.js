@@ -43,8 +43,6 @@ var ProjectController = Backbone.Router.extend({
         if (!this.view) {
             this.initView(function(){self.view.container.show(self.view, "#warehouse > .sidebar", "project");window.app.view.showComponent(window.app.view.components.warehouse);});
             return;
-        } else {
-            self.view.refresh();
         }
         self.view.container.show(self.view, "#warehouse > .sidebar", "project");
         window.app.view.showComponent(window.app.view.components.warehouse);
