@@ -65,8 +65,8 @@ class RestImageInstanceController extends RestController {
 
     def listByProject = {
         Project project = projectService.read(params.long('id'), new Project())
-
-        if (project) responseSuccess(imageInstanceService.list(project))
+        if (project && !params.dataTables) responseSuccess(imageInstanceService.list(project))
+        if (project && params.dataTables) responseSuccess(imageInstanceService.listDatatables(project))
         else responseNotFound("ImageInstance", "Project", params.id)
     }
 

@@ -300,14 +300,14 @@ var ProjectDashboardView = Backbone.View.extend({
     showImagesThumbs : function() {
         $("#tabs-projectImageThumb"+this.model.id).show();
         $("#tabs-projectImageListing"+this.model.id).hide();
-        $('#imageThumbs'+this.model.id).button( "disable" );
-        $('#imageArray'+this.model.id).button( "enable");
+        $('#imageThumbs'+this.model.id).attr("disabled", "disabled");
+        $('#imageArray'+this.model.id).removeAttr("disabled");
     },
     showImagesTable : function() {
         $("#tabs-projectImageThumb"+this.model.id).hide();
         $("#tabs-projectImageListing"+this.model.id).show();
-        $('#imageThumbs'+this.model.id).button( "enable" );
-        $('#imageArray'+this.model.id).button( "disable");
+        $('#imageThumbs'+this.model.id).removeAttr("disabled");
+        $('#imageArray'+this.model.id).attr("disabled", "disabled");
     }
 
 });

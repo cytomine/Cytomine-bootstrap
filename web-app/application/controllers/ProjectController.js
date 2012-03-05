@@ -9,28 +9,41 @@ var ProjectController = Backbone.Router.extend({
     initView : function(callback) {
         var self = this;
 
+        var ontologies = null;
+        var disciplines = null;
+        var projects = null;
+
+        var loadHandler = function() {
+            if (ontologies == null || disciplines == null || projects == null) return;
+            self.view = new ProjectView({
+                model : projects,
+                ontologies : ontologies,
+                disciplines : disciplines,
+                el:$("#warehouse > .project"),
+                container : window.app.view.components.warehouse
+            }).render();
+
+            self.view.container.views.project = self.view;
+
+            if (_.isFunction(callback)) callback.call();
+        }
+
         new OntologyCollection({ light : true }).fetch({
-            success : function (ontologies, response) {
+            success : function (collection, response) {
+                ontologies = collection;
+                loadHandler();
+            }});
 
         window.app.models.disciplines.fetch({
-            success : function (disciplines, response) {
+            success : function (collection, response) {
+                disciplines = collection;
+                loadHandler();
+            }});
 
-
-                window.app.models.projects.fetch({
-                    success : function (collection, response) {
-                        self.view = new ProjectView({
-                            model : collection,
-                            ontologies : ontologies,
-                            disciplines : disciplines,
-                            el:$("#warehouse > .project"),
-                            container : window.app.view.components.warehouse
-                        }).render();
-
-                        self.view.container.views.project = self.view;
-
-                        if (_.isFunction(callback)) callback.call();
-                    }});
-                 }});
+        window.app.models.projects.fetch({
+            success : function (collection, response) {
+                projects = collection;
+                loadHandler();
             }});
     },
 

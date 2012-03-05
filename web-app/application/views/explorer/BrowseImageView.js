@@ -27,7 +27,6 @@ var BrowseImageView = Backbone.View.extend({
         var self = this;
         var templateData = this.model.toJSON();
         templateData.project = window.app.status.currentProject;
-        setTimeout(function(){window.app.view.applyPreferences();},1500);
         $(this.el).append(_.template(tpl, templateData));
         var tabTpl = "<li><a style='float: left;' id='tabs-image-<%= idImage %>' href='#tabs-image-<%= idProject %>-<%= idImage %>-' data-toggle='tab'><i class='icon-search' /> <%= filename %> </a></li>";
         $(".nav-tabs").append(_.template(tabTpl,{ idProject : window.app.status.currentProject, idImage : this.model.get('id'), filename : this.model.get('filename')}));
@@ -307,7 +306,7 @@ var BrowseImageView = Backbone.View.extend({
                     new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight)
             );
 
-             self.createOverviewMap();
+            self.createOverviewMap();
             var overviewMapControl = new OpenLayers.Control.OverviewMap({
                 size: new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight),
                 layers: [overviewMap],
@@ -340,7 +339,7 @@ var BrowseImageView = Backbone.View.extend({
                     zoomify_urls,
                     new OpenLayers.Size( metadata.width, metadata.height)
             );
-            baseLayer.transitionEffect = 'resize';
+            /*baseLayer.transitionEffect = 'resize';*/
             baseLayer.getImageSize = function() {
                 if (arguments.length > 0) {
                     bounds = this.adjustBounds(arguments[0]);
@@ -392,6 +391,8 @@ var BrowseImageView = Backbone.View.extend({
                 idealZoom--;
             }
             self.map.zoomTo(idealZoom);
+
+            window.app.view.applyPreferences();
         }
 
         var t_width  = self.model.get("width");

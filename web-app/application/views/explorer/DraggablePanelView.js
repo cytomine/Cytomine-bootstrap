@@ -10,26 +10,28 @@ var DraggablePanelView = Backbone.View.extend({
         var self = this;
         $(this.el).html(this.template);
         if (this.iPad) return this;
-        var width = $(this.el).width();
-        var height = $(this.el).height();
-        var minizedWidth = width;
-        var minizedHeight = height;
+        var width = null;
+        var height = null;
+        var minizedWidth = null;
+        var minizedHeight = null;
         var windowWidth = $(window).width();
         var minimized = false;
-
-        var minimize = function() {
+        var dragInProgress = false;
+        var minimize = function(el, context) {
             var minizedEl = $("."+self.className).find(".minimized");
             $("."+self.className).children().hide();
             minizedEl.show();
             minizedWidth = Math.max(58, minizedEl.width());
             minizedHeight = Math.max(18, minizedEl.height());
+            resizeDraggablePanel(el);
         };
 
-        var maximize = function() {
+        var maximize = function(el, context) {
             var minizedEl = $("."+self.className).find(".minimized");
             $("."+self.className).children().show();
             $("."+self.className).css("padding-left", "0px");
             minizedEl.hide();
+            resizeDraggablePanel(el);
         };
 
         var resizeDraggablePanel = function(el) {
@@ -37,70 +39,83 @@ var DraggablePanelView = Backbone.View.extend({
                 $(el).css("width", minizedWidth);
                 $(el).css("height", minizedHeight);
             } else {
+                console.log("RESET WIDTH = " + width);
+                console.log("RESET HEIGHT = " + height);
                 $(el).css("width", width);
                 $(el).css("height", height);
             }
         }
 
         var mousenterDraggablePanel = function(context) {
+            if (dragInProgress) return;
             if (minimized) {
-                maximize();
-                $("."+context.className).css("width", width);
-                $("."+context.className).css("height", height);
-                $("."+context.className).css("padding-left", "80px");
+                window.app.view.hideFloatingPanels();
+                maximize(context);
+                var floatingPanel = $("."+context.className);
+                floatingPanel.show();
+                floatingPanel.animate({
+                    "width" : width,
+                    "height" : height
+                }, 100);
             }
         }
 
         var mouseleaveDraggablePanel = function(context) {
+            if (dragInProgress) return;
             if (minimized) {
-                minimize();
-                $("."+context.className).css("padding-left", "0px");
-                $("."+context.className).css("width", minizedWidth);
-                $("."+context.className).css("height", minizedHeight);
-
+                window.app.view.showFloatingPanels();
+                minimize(context);
+                var floatingPanel = $("."+context.className);
+                floatingPanel.animate({
+                    "width" : minizedWidth,
+                    "height" : minizedHeight
+                },100);
             }
         }
 
         var drag = function(el, position, context) {
-            var leftPositionValue = parseInt(position.left);
-            if (!minimized && leftPositionValue <= 0) {  //left minimize
-                minimized = true;
-                minimize();
-                resizeDraggablePanel(el);
-            } else if (leftPositionValue > 0 && minimized) {
-                minimized = false;
-                maximize();
-                resizeDraggablePanel(el);
-            }
+
         }
 
         var start = function(el, position, context) {
+            dragInProgress = true;
             $(el).css("overflow", "hidden");
+            window.app.view.showFloatingPanels();
             if (!minimized) {
                 width = $(context.el).width();
                 height = $(context.el).height();
+            } else {
+                minizedWidth =  $(context.el).width();
+                minizedHeight = $(context.el).height();
             }
+            console.log(self.className);
             windowWidth = $(window).width();
-            $(context.el).off("mouseenter", function(){
-                mousenterDraggablePanel(self);
-            });
-            $(context.el).off("mouseleave", function(){
-                mouseleaveDraggablePanel(self);
-            });
+            /*$(context.el).off("mouseenter", function(){
+             mousenterDraggablePanel(self);
+             });
+             $(context.el).off("mouseleave", function(){
+             mouseleaveDraggablePanel(self);
+             });*/
+            if (minimized) {
+                maximize(el, context);
+            }
         }
 
         var stop = function(el, position, context) {
+            dragInProgress = false;
+            var leftPositionValue = parseInt(position.left);
+            if (!minimized && leftPositionValue <= 0) {  //left minimize
+                minimized = true;
+                minimize(el, context);
+            } else if (leftPositionValue > 0 && minimized) {
+                minimized = false;
+                maximize(el, context);
+            }
             $(el).css("overflow", "auto");
             var leftPosition = Math.max(0, parseInt(position.left));
             var topPosition = Math.max(0, parseInt(position.top));
             if (context.className) window.app.view.updatePosition(self.className, { left : leftPosition, top : topPosition}, false);
-            $(context.el).on("mouseenter", function(){
-                mousenterDraggablePanel(self);
-            });
-            $(context.el).on("mouseleave", function(){
-                mouseleaveDraggablePanel(self);
-            });
-            resizeDraggablePanel(el);
+
         }
 
         $(this.el).draggable({
@@ -108,7 +123,6 @@ var DraggablePanelView = Backbone.View.extend({
             handle: '.dragHandle',
             start: function(event, ui) {
                 start(this, ui.helper.position(), self);
-
             },
             stop : function(event, ui) {
                 stop(this,  ui.helper.position(), self);
@@ -117,9 +131,17 @@ var DraggablePanelView = Backbone.View.extend({
                 drag(this, ui.helper.position(), self);
             }
         });
+        $(this.el).on("mouseenter", function(){
+            mousenterDraggablePanel(self);
+        });
+        $(this.el).on("mouseleave", function(){
+            mouseleaveDraggablePanel(self);
+        });
         $(this.el).draggable( "option", "opacity", 0.35 );
 
-        $(this.el).bind("movedProgramatically", function(e){
+
+        $("."+this.className).bind("movedProgramatically", function(e){
+            console.log("movedProgramatically");
             var left = $(self.el).css("left");
             left = (left == undefined || left == "auto") ? undefined : parseInt(left.substr(0, left.length - 2));
             var right = $(self.el).css("right");

@@ -12,13 +12,10 @@ var ExplorerController = Backbone.Router.extend({
     },
 
     initTabs : function() { //SHOULD BE OUTSIDE OF THIS CONTROLLER
-        //create tabs if not exist
-        if (this.tabs == null) {
-            this.tabs = new ExplorerTabs({
-                el:$("#explorer > .browser"),
-                container : window.app.view.components.explorer
-            }).render();
-        }
+        this.tabs = new ExplorerTabs({
+            el:$("#explorer > .browser"),
+            container : window.app.view.components.explorer
+        }).render();
     },
     browse : function (idProject, idImage, idAnnotation) {
         /*
@@ -27,9 +24,11 @@ var ExplorerController = Backbone.Router.extend({
          }
          */
         var self = this;
-        this.initTabs();
+        //create tabs if not exist
+        if (this.tabs == null) {
+            this.initTabs();
+        }
         var createBrowseImageViewTab = function() {
-            console.log("createBrowseImageViewTab"+idImage);
             var browseImageViewInitOptions = {};
             if (idAnnotation != "") {
                 browseImageViewInitOptions.goToAnnotation = {value : idAnnotation};
@@ -45,11 +44,8 @@ var ExplorerController = Backbone.Router.extend({
 
         if (window.app.status.currentProject == undefined) {//direct access -> create dashboard
             window.app.controllers.dashboard.dashboard(idProject, createBrowseImageViewTab);
-
-            /*setTimeout(createBrowseImageViewTab, 0);*/
             return;
         }
-
 
         createBrowseImageViewTab();
 
@@ -57,7 +53,6 @@ var ExplorerController = Backbone.Router.extend({
     },
     closeAll : function () {
         if (this.tabs == null) return;
-
         this.tabs = null;
         $("#explorer > .browser").empty();
     },

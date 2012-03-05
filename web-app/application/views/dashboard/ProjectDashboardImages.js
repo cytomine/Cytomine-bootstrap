@@ -8,7 +8,7 @@ var ProjectDashboardImages = Backbone.View.extend({
     * Get and Print ALL images (use for the first time)
     */
    fetchImages : function() {
-      $('#imageThumbs'+this.model.id).button({
+      /*$('#imageThumbs'+this.model.id).button({
          text: false,
          icons: {
             primary: "ui-icon-image"
@@ -21,7 +21,7 @@ var ProjectDashboardImages = Backbone.View.extend({
             primary: "ui-icon-calculator"
 
          }
-      });
+      });*/
       var self = this;
 
       new ImageInstanceCollection({project:self.model.get('id')}).fetch({

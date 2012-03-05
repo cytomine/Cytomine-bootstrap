@@ -81,6 +81,8 @@
             <fileset dir="${src.dir}" includes="lib/colorpicker/js/colorpicker.js"  />
             <fileset dir="${src.dir}" includes="lib/jqgrid/js/i18n/grid.locale-en.js"  />
             <fileset dir="${src.dir}" includes="lib/jqgrid/js/jquery.jqGrid.src.js"  />
+            <fileset dir="${src.dir}" includes="lib/DataTables-1.9.0/media/js/jquery.dataTables.js"  />
+
         </concat>
     </target>
 

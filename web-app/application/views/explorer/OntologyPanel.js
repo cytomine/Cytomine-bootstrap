@@ -53,7 +53,7 @@ var OntologyPanel = Backbone.View.extend({
        doLayout: function(tpl) {
           new DraggablePanelView({
                  el : $('#ontologyTree' + this.model.get('id')),
-                 className : "ontologypanel",
+                 className : "ontologyPanel",
                  template : _.template(tpl, {id : this.model.get('id')})
               }).render();
        }

@@ -150,7 +150,7 @@ td {
  */
 
 
-div .ontologypanel {
+div .ontologyPanel {
     position : absolute;
     max-width: 500px;
     max-height: 500px;
@@ -167,7 +167,7 @@ div .ontologypanel {
 
 
 
-div.ontologypanel > .tree > ul.dynatree-container
+div.ontologyPanel > .tree > ul.dynatree-container
 {
 
 
@@ -181,7 +181,7 @@ div.ontologypanel > .tree > ul.dynatree-container
     overflow: hidden;
 }
 
-div.ontologypanel > .tree > ul.dynatree-container a
+div.ontologyPanel > .tree > ul.dynatree-container a
     /*, ul.dynatree-container a:visited*/
 {
     color: white; /* inherit doesn't work on IE */
@@ -192,7 +192,7 @@ div.ontologypanel > .tree > ul.dynatree-container a
     /*	outline: 0; /* @ Firefox, prevent dotted border after click */
 }
 
-div.ontologypanel > .tree > ul.dynatree-container a:hover
+div.ontologyPanel > .tree > ul.dynatree-container a:hover
 {
     background: none;
     border: 0px;
@@ -202,7 +202,7 @@ div.ontologypanel > .tree > ul.dynatree-container a:hover
 }
 
 
-div.ontologypanel > .tree > li > span.dynatree-selected a
+div.ontologyPanel > .tree > li > span.dynatree-selected a
 {
     background-color : green;
     color: white;
@@ -212,7 +212,7 @@ div.ontologypanel > .tree > li > span.dynatree-selected a
 
 
 
-div .ontologypanel a {
+div .ontologyPanel a {
     color : #fff;
 }
 
@@ -365,20 +365,15 @@ span .ui-icon {
 }
 
 .minimized {
+    background-color: rgba(0, 0, 0, 0.7);
     display: none;
     font-weight:bold;
     text-align: center;
     padding: 0px;
     margin: 0px;
     font-size: 12px;
-    width : 80px;
+    width : 90px;
     font-weight: bold;
-    /*writing-mode: tb-rl;
-    -webkit-transform: rotate(90deg);
-    -moz-transform: rotate(90deg);
-    -ms-transform: rotate(90deg);
-    -o-transform: rotate(90deg);
-    transform: rotate(90deg);*/
 }
 
 td.confusionMatrixHeader{
@@ -402,9 +397,9 @@ td.confusionMatrixBadValue{
    background-color:#ff5800;
 }
 
-.table tbody tr:hover td, .table tbody tr:hover th {
+/*.table tbody tr:hover td, .table tbody tr:hover th {
   background-color: #6C8690;
-}
+} */
 
 div.olControlZoomPanel {
     height: 108px;
@@ -418,4 +413,53 @@ div.olControlZoomPanel {
     -moz-transition: opacity 0.2s linear;
     -o-transition: opacity 0.2s linear;
     transition: opacity 0.2s linear;
+}
+
+/* Datatables */
+
+div.dataTables_length label {
+	float: left;
+	text-align: left;
+}
+
+div.dataTables_length select {
+	width: 75px;
+}
+
+div.dataTables_filter label {
+	float: right;
+}
+
+div.dataTables_info {
+	padding-top: 8px;
+}
+
+div.dataTables_paginate {
+	float: right;
+	margin: 0;
+}
+
+table.table {
+	clear: both;
+	margin-bottom: 6px !important;
+}
+
+table.table thead .sorting,
+table.table thead .sorting_asc,
+table.table thead .sorting_desc,
+table.table thead .sorting_asc_disabled,
+table.table thead .sorting_desc_disabled {
+	cursor: pointer;
+	*cursor: hand;
+}
+
+table.table thead .sorting { background: url('../images/datatables/sort_both.png') no-repeat center right; }
+table.table thead .sorting_asc { background: url('../images/datatables/sort_asc.png') no-repeat center right; }
+table.table thead .sorting_desc { background: url('../images/datatables/sort_desc.png') no-repeat center right; }
+
+table.table thead .sorting_asc_disabled { background: url('../images/datatables/sort_asc_disabled.png') no-repeat center right; }
+table.table thead .sorting_desc_disabled { background: url('../images/datatables/sort_desc_disabled.png') no-repeat center right; }
+
+table.dataTable th:active {
+	outline: none;
 }

@@ -58,10 +58,34 @@ class ImageInstanceService extends ModelService {
             fetchMode 'baseImage', FetchMode.JOIN
             fetchMode 'baseImage.storageAbstractImages', FetchMode.JOIN
 //            fetchMode 'baseImage.mim', FetchMode.JOIN
-//            fetchMode 'baseImage.mim.mis', FetchMode.JOIN
-//            fetchMode 'baseImage.mim.mis.imageServer', FetchMode.JOIN
+            //            fetchMode 'baseImage.mim.mis', FetchMode.JOIN
+            //            fetchMode 'baseImage.mim.mis.imageServer', FetchMode.JOIN
         }.unique()
         return images
+    }
+
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    def listDatatables(Project project) {
+        //TO DO with plugin searchable ?
+        /*def availablesCols = ["baseImage.thumbURL", "filename", "mime.extension", "width", "height", "magnification", "resolution", "countImageAnnotations", "created", "action"]
+        def search = params.sSearch
+        def colSort = Integer.parseInt(params.iSortCol_0)
+        def col = availablesCols[colSort]
+        def order = params.sSortDir_0
+        def first = params.iDisplayStart
+        def max  = params.iDisplayLength
+        println "col = " + col
+        println "order = " + order
+        println "first = " + first
+        println "max = " + max
+
+        def images = ImageInstance.createCriteria().list(offset: first, max: max, sort: col, order: order) {
+            eq("project", project)
+            fetchMode 'baseImage', FetchMode.JOIN
+            fetchMode 'baseImage.storageAbstractImages', FetchMode.JOIN
+        }
+        return images*/
+        []
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")

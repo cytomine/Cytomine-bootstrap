@@ -23,9 +23,9 @@ var ImageView = Backbone.View.extend({
          if (self.appendingThumbs) return;
 
          if  (($(window).scrollTop() + 50) >= $(document).height() - $(window).height()){
-            console.log("$(window).scrollTop() : " + $(window).scrollTop());
+            /*console.log("$(window).scrollTop() : " + $(window).scrollTop());
             console.log("$(document).height()- $(window).height() " + ($(document).height() - $(window).height()));
-
+            */
 
             self.appendingThumbs = true;
             self.appendThumbs(++self.page);

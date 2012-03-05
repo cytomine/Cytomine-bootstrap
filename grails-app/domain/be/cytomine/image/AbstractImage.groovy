@@ -38,7 +38,7 @@ class AbstractImage extends CytomineDomain {
 
     static hasMany = [abstractimagegroup: AbstractImageGroup, storageAbstractImages: StorageAbstractImage, imageProperties: ImageProperty]
 
-    static transients = ["zoomLevels"]
+    static transients = ["zoomLevels", "thumbURL"]
 
     static constraints = {
         filename(blank: false, unique: true)

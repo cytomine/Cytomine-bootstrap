@@ -14,7 +14,7 @@ var ApplicationView = Backbone.View.extend({
     panelsConfiguration : [
         {key : "toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { top : 75}, align : "center"}},
         {key : "overview-panel", linkID : "toggle-overview-panel", name : "Overview", className : "overviewPanel", value : { visible : true , position : { right : 20, top : 325}}},
-        {key : "ontology-panel", linkID : "toggle-ontology-panel", name : "Ontology", className : "ontologypanel", value : { visible : true , position : { left : 20, top : 280}}},
+        {key : "ontology-panel", linkID : "toggle-ontology-panel", name : "Ontology", className : "ontologyPanel", value : { visible : true , position : { left : 20, top : 280}}},
         {key : "layer-panel", linkID : "toggle-layer-panel", name : "Layer switcher", className : "layerSwitcherPanel", value : { visible : false , position : { right : 20, top : 100}}},
         {key : "filters-panel", linkID : "toggle-filters-panel", name : "Filters", className : "imageFiltersPanel", value : { visible : false , position : { right : 20, bottom : 15}}}
     ],
@@ -35,7 +35,18 @@ var ApplicationView = Backbone.View.extend({
     redo : function () {
         window.app.controllers.command.redo();
     },
-
+    hideFloatingPanels : function() {
+       _.each(this.panelsConfiguration, function (item) {
+           if (item.key == "toolbar-panel") return;
+            $("."+item.className).hide();
+        });
+    },
+    showFloatingPanels : function() {
+       _.each(this.panelsConfiguration, function (item) {
+           if (item.key == "toolbar-panel") return;
+            $("."+item.className).show();
+        });
+    },
     toggleVisibility : function (item) {
         var preference = localStorage.getObject(item.key);
         preference.visible = !preference.visible;
@@ -73,7 +84,7 @@ var ApplicationView = Backbone.View.extend({
      * @param tpl
      */
     doLayout: function(tpl, renderCallback) {
-        $(this.el).html(_.template(tpl, {}));
+        $("body").prepend(_.template(tpl, {}));
         _.each(this.components, function (component) {
             component.render();
         });
@@ -308,9 +319,8 @@ ApplicationView.prototype.message =  function(title, message, type) {
     $("#alerts").append(_.template(tpl, { alert : title, message : message, timestamp : timestamp, type : type}));
     $("#alert"+timestamp).alert();
     setTimeout(function(){
-        //$("#alert"+timestamp).alert('close');
         $("#alert"+timestamp).remove();
-    }, 3000);
+    }, 1500);
 
 }
 

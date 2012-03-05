@@ -51,7 +51,6 @@ var ProjectSearchPanel = Backbone.View.extend({
         $(this.el).empty();
         $(this.el).append(search);
 
-
         require([
             "text!application/templates/project/OntologiesChoices.tpl.html","text!application/templates/project/DisciplinesChoices.tpl.html"
         ],
