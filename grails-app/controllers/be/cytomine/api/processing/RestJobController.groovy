@@ -11,6 +11,8 @@ import be.cytomine.processing.SoftwareParameter
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import be.cytomine.security.SecUserSecRole
+import groovyx.gpars.Asynchronizer
+import java.util.concurrent.Future
 
 class RestJobController extends RestController {
 
@@ -20,6 +22,7 @@ class RestJobController extends RestController {
     def jobParameterService
     def retrievalSuggestTermJobService
     def userService
+    def backgroundService
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
@@ -110,14 +113,11 @@ class RestJobController extends RestController {
 
             //create Job
             log.info "Create Job..."
-            Job job = new Job(project: project, software: software)
+            Job job = new Job(project: project, software: software, running:true)
             def result = jobService.add(JSON.parse(job.encodeAsJSON()))
             log.info "result=" + result
             log.info "result=" + Long.parseLong(result.data.job.id.toString())
             job = Job.get(Long.parseLong(result.data.job.id.toString()))
-            Job.list().each {
-                println "JOB=" + it.id + " " + it.class
-            }
             log.info "result=" + job
 
             //Create User-job
@@ -147,9 +147,14 @@ class RestJobController extends RestController {
             jobParameterService.add(JSON.parse(createParam("storeName",job, "KYOTOSINGLEFILE").encodeAsJSON()))
             jobParameterService.add(JSON.parse(createParam("indexProject",job, "57").encodeAsJSON()))
             jobParameterService.add(JSON.parse(createParam("searchProject",job, "57").encodeAsJSON()))
+
             //Execute Job
-            log.info "Execute Job..."
-            software.service.execute(job)
+            log.info "### Launch asynchronous..."
+            backgroundService.execute("Retrieval-suggest asynchronously", {
+                log.info "Launch thread";
+                software.service.execute(job)
+            })
+            log.info "### Return response..."
             job
     }
 

@@ -5,7 +5,7 @@
        <div style="padding : 15px; margin-right:5px;min-width: 95%;max-width:95%;" class="container-fluid" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding : 20px;">
 
            <div class="row" style="padding-top: 15px;padding-left: 30px;">
-            <div id="menuAlgoSoftware" style="min-width: 15%;max-width:15%;" class="span5 hero-unit">
+            <div id="menuAlgoSoftware" style="min-width: 15%;max-width:20%;float:left;" class="span5 hero-unit">
 
                     <h3>Choose a Software</h3>
                     <ul class="nav nav-list" id="projectSoftwareListUl">
@@ -17,7 +17,7 @@
 
 
             </div>
-            <div id="panelSoftwareResume"  style="min-width: 35%;max-width:50%;margin:5px 5px 5px 5px;" class="span5 hero-unit container-fluid">
+            <div id="panelSoftwareResume"  style="min-width: 40%;max-width:40%;" class="span5 hero-unit container-fluid">
                     <!--<div class="span4" style="min-width: 30%;max-width:30%;text-align:center;overflow : auto;">-->
                         <ul class="softwareMainInfo" style="min-width: 100%;max-width:100%;text-align:center;overflow : auto;margin-left:0;margin:5px 5px 5px 5px;">
 
@@ -25,7 +25,7 @@
 
                          <div class="row">
                                 <div id="softwareInfoDLaunch" style="min-width: 40%;max-width:40%;text-align:center;overflow : auto;margin-left:0; float:left">
-                                       <button id="softwareLaunchJobButton" style="min-width:100px;min-height:100px;background-color:#5ebc5e;"><i class="icon-play"></i></button>
+                                       <button id="softwareLaunchJobButton" style="min-width:100px;min-height:100px;" class="btn-success"><i class="icon-play"></i></button>
                                </div>
                                 <div id="softwareInfoDiagram" style="min-width: 40%;max-width:40%;text-align:center;overflow : auto;margin-left:0; float:right">
 
@@ -44,7 +44,7 @@
                     <!--&lt;!&ndash;</div>&ndash;&gt;-->
                 <!--</div>-->
                 </div>
-            <div id="panelSoftwareLastJob"  style="min-width: 200px;max-width:20%;padding : 2px;" class="span5 hero-unit">
+            <div id="panelSoftwareLastJob"  style="min-width: 200px;max-width:20%;padding : 2px;float:right;" class="span5 hero-unit">
                 <h3>Last Job</h3>
                     <div id="panelSoftwareLastRunList"  style="min-width: 95%;max-width:95%;text-align:center;overflow : auto;padding : 0; margin:0 auto;" align="center">
 
@@ -57,40 +57,12 @@
                     <!--</div>-->
                 </div>
             </div>
-
-
-
-
-
         </div>
 
        <div id="panelAlgoSoftware" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');padding : 5px;margin-right:5px;min-width: 99%;max-width:99%;"  class="span5 hero-unit">
 
                     <div class="row" style="padding-top: 15px;padding-left: 30px;">
-                        <!--<div id="panelSoftwareResume" class="hero-unit"  style="padding : 15px; margin-right:5px;"  class="span5 hero-unit">-->
-                            <!--<h3>Software Info</h3>-->
-                            <!--<hr/>-->
-                            <!--<div class="row">-->
-                                <!--<div class="span4" style="min-width: 60%;max-width:65%;text-align:center;">-->
-                                    <!--<ul class="softwareMainInfo">-->
 
-                                   <!--</ul>-->
-                                    <!--<div style="min-width: 100%;max-width:100%;text-align:center;">-->
-                                        <!--<ul class="chosseJob" >-->
-
-                                        <!--</ul>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="span4" style="min-width: 30%;max-width:35%;text-align:center;">-->
-                                    <!--<div>-->
-                                       <!--<ul class="lastRunDetails">-->
-
-                                       <!--</ul>-->
-                                    <!--</div>-->
-
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
                         <div id="panelJobDetails" class="hero-unit"  style="padding : 5px; margin-right:5px;text-align:center;"  class="span5 hero-unit">
                             <h3>Selected Job details</h3>
                             <div class="row">
@@ -111,18 +83,28 @@
 
                                    </ul>
                                 </div>
-                                <div class="span4" style="min-width: 30%;max-width:30%;text-align:center;">
+                                <div class="span4 selectRunParams" style="min-width: 30%;max-width:30%;text-align:center;">
 
-                                    <ul class="selectRunParams">
 
-                                   </ul>
+                                            <table width="100%" style="width:100%;max-width:100%" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="selectRunParamsTable" >
+                                                <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Value</th>
+                                                    <th>Type</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                             </table>
+
                                 </div>
 
                            </div>
                         </div>
                         <div id="panelJobResults" class="hero-unit"  style="padding : 5px; margin-right:5px;text-align:center;"  class="span5 hero-unit">
                             <h3>Selected Job results</h3>
-                            <div id="panelJobResultsDiv" class="tab-pane" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding : 5px;"></div>
+                            <div id="panelJobResultsDiv" class="tab-pane" style="overflow : auto;padding : 5px;"></div>
                         </div>
                     </div>
 

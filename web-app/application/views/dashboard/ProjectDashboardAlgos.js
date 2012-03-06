@@ -39,6 +39,9 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                console.log("1. self.idJob="+self.idJob);
               self.printProjectSoftwareInfo();
        }});
+
+
+
       return this;
    },
     refresh : function() {
@@ -85,27 +88,29 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         //Print last job + n last job details
         self.printLastNRun();
 
-
         //Print selected job from this software
         self.printProjectJobInfo( self.idJob);
 
-
-          //button click run software
+        //button click run software
+        self.printSoftwareLaunchButton();
+    },
+    printSoftwareLaunchButton : function() {
+        var self = this;
           $("#softwareLaunchJobButton").click(function() {
               console.log("project=" + self.model.id + " software.id=" +  self.software.id);
               new JobModel({ project : self.model.id, software :  self.software.id}).save({}, {
                   success : function (job, response) {
                       console.log("SUCCESS JOB");
                       //TODO: go to job!
-
+                      self.idJob = job.id
+                      window.location = '#tabs-algos-'+self.model.id + '-' + self.idSoftware + '-' + self.idJob;
+                      //self.printProjectJobInfo(self.idJob);
                   },
                   error : function (response) {
                       console.log("BAD JOB");
                   }
               });
           });
-
-
     },
     printLastNRun : function() {
         var self = this;
@@ -186,7 +191,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var self = this;
         var elem = $("#fullSoftwareDashboard").find('.chosseJob');
         $("#fullSoftwareDashboard").find('.chosseJob').empty();
-        //$("#menuAlgoSoftware").find('.chosseJob').append('<br><br><h3>Select a job: </h3><br>');
         $("#fullSoftwareDashboard").find('.chosseJob').append('<select id="chosseJobSelect" style="min-width: 50%;max-width:75%;text-align:center;"></select>');
         var selectElem = $("#fullSoftwareDashboard").find('#chosseJobSelect');
         new JobCollection({ project : self.model.id, software: software.id, light:true}).fetch({
@@ -196,7 +200,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                     if(job.get('running')) classSucess = "btn-primary";
                     else if(job.get('successful')) classSucess = "btn-success";
                     console.log("#####" + job.get('running'));
-                    var textOption = self.convertLongToDate(job.get('created')) + " (Job " + job.id +")";
+
+                    var textOption = window.app.convertLongToDate(job.get('created')) + " (Job " + job.id +")";
                     $("#fullSoftwareDashboard").find('#chosseJobSelect').append('<option value="'+job.id+'" class="'+classSucess+'" style="text-align:left;">'+textOption+'</option>');
                 });
                 //color the select with the same color as the selected options
@@ -227,6 +232,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         self.disableSelect = true;
         var selectElem = $("#fullSoftwareDashboard").find('#chosseJobSelect');
         console.log("val disableSelect="+self.disableSelect);
+        console.log("############# SELECT:"+idJob);
         selectElem.val(idJob);
         $("#fullSoftwareDashboard").find('#chosseJobSelect option[value='+idJob+']').attr("selected", "selected");
 
@@ -262,8 +268,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var i = 0;
         jobs.each(function (job) {
             $("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').append('<div style="margin: 0px auto;min-width:150px;max-width:200px" id="'+job.id+'"></div>');
-            self.buildJobInfoElem(job,$("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').find('#'+job.id));
-            i++;
+            self.buildJobInfoElem(job,$("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').find('#'+job.id));           i++;
 
         });
 
@@ -272,11 +277,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var self = this;
         if(job==undefined) return;
         self.idJob = job.id;
-
-        console.log("Print info for job="+job);
-//        if(job!=undefined) window.location = '#tabs-algos-'+self.model.id +"-" + self.idSoftware + "-" + job.id;
-//        else window.location = '#tabs-algos-'+self.model.id +"-" + self.idSoftware + "-" + job;;
-
          var refreshData = function() {
                 var selectRunElem = $("#panelJobDetails").find('.selectRunDetails');
                 new JobModel({ id : self.idJob}).fetch({
@@ -289,9 +289,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         refreshData();
         setInterval(refreshData, 5000);
 
-
-
-        var selectRunParamElem = $("#panelJobDetails").find('.selectRunParams');
+        var selectRunParamElem = $('#selectRunParamsTable').find('tbody').empty();
          selectRunParamElem.empty();
         self.buildJobParamElem(job,selectRunParamElem);
         self.printJobResult(job);
@@ -323,13 +321,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
            }
            subelem.append('<li><div class="'+classSucess+'" style="margin:0 auto;min-width:'+width+';max-width:'+width+';">'+textSucces+'</div></li>');
         }
-       subelem.append('<li>Launch: '+self.convertLongToDate(job.get('created'))+'</li>');
-//       subelem.append('<li>Last update: <br>'+self.convertLongToDate(job.get('updated'))+'</li>');
-
-        //TODO: make a resume + dialog?
-//       subelem.append('<li>See full parameter list...</li>');
-
-
+       subelem.append('<li>Launch: '+window.app.convertLongToDate(job.get('created'))+'</li>');
 
        subelem.find('div#progBar').each(function(index) {
           var progVal = eval($(this).text());
@@ -342,39 +334,38 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     buildJobParamElem: function(job, ulElem) {
         if(job==undefined) return;
-        _.each(job.get('jobParameter'), function(param) {
-             ulElem.append("<li>"+param.name + ": "+param.value+"</li>");
 
+        var datatable = $('#selectRunParamsTable').dataTable();
+        datatable.fnClearTable();
+        //print data from project image table
+        var tbody = $('#selectRunParamsTable').find("tbody");
+
+         _.each(job.get('jobParameter'), function (param) {
+            tbody.append('<tr><td>'+param.name+'</td><td>'+param.value+'</td><td>'+param.type+'</td></tr>');
+         });
+        $('#selectRunParamsTable').dataTable( {
+            "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+            "sPaginationType": "bootstrap",
+            "oLanguage": {
+                "sLengthMenu": "_MENU_ records per page"
+            },
+            "iDisplayLength": 5 ,
+            "bLengthChange" : false,
+            bDestroy: true
         });
-
-//         "id": 530355,
-//        "value": "cytomine",
-//        "job": 530348,
-//        "softwareParameter": 133677,
-//        "name": "execType",
-//        "type": "String"
     },
     printJobResult: function(job) {
         //panelJobResultsDiv
         if(job==undefined) return;
         var self = this;
-        console.log("Print result for job="+job.id);
-        console.log(window.app.status.currentTermsCollection);
-        console.log(window.app.status.currentAnnotationsCollection);
-
 
         if(window.app.status.currentTermsCollection==undefined || window.app.status.currentAnnotationsCollection==undefined) {
-            console.log("Collection are undefined");
              new AnnotationCollection({project:self.model.id}).fetch({
                 success : function (collection, response) {
-
-                    console.log("AnnotationCollection ok");
                     window.app.status.currentAnnotationsCollection = collection;
                     new TermCollection({idProject:self.model.id}).fetch({
                         success : function (terms, response) {
-                            console.log("TermCollection ok:"+terms.length);
                             window.app.status.currentTermsCollection = terms;
-                            //self.fetchWorstAnnotations(collection,terms);
                             self.initJobResult(job);
 
                         }
@@ -386,26 +377,12 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         }
     },
     initJobResult : function(job) {
-//        var result = new RetrievalAlgoResult({
-//            model : job,
-//            terms : window.app.status.currentTermsCollection,
-//            annotations: window.app.status.currentAnnotationsCollection,
-//            el : $("#panelJobResultsDiv")
-//        }).render();
-    },
-    convertLongToDate : function (longDate) {
-          var createdDate = new Date();
-          createdDate.setTime(longDate);
-
-          //date format
-          var year = createdDate.getFullYear();
-          var month = (createdDate.getMonth()+1)  < 10 ? "0"+(createdDate.getMonth()+1) : (createdDate.getMonth()+1);
-          var day =  (createdDate.getDate())  < 10 ? "0"+(createdDate.getDate()) : (createdDate.getDate());
-
-          var hour =  (createdDate.getHours())  < 10 ? "0"+(createdDate.getHours()) : (createdDate.getHours());
-          var min =  (createdDate.getMinutes())  < 10 ? "0"+(createdDate.getMinutes()) : (createdDate.getMinutes());
-
-          var dateStr = year + "-" + month +"-" + day + " " + hour + "h" + min;
-        return dateStr;
+        var result = new RetrievalAlgoResult({
+            model : job,
+            terms : window.app.status.currentTermsCollection,
+            annotations: window.app.status.currentAnnotationsCollection,
+            el : $("#panelJobResultsDiv")
+        }).render();
     }
+
 });

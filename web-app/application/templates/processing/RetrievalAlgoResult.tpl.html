@@ -1,6 +1,6 @@
 <div id="resultPanelInfo" style="padding-top: 15px;padding-left: 2px;overflow : auto;">
      <div class="row" style="padding-top: 15px;padding-left: 2px;">
-        <div id="worstAnnotationPanel" style="padding : 2px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
+        <div id="worstAnnotationPanel" style="padding : 2px;margin-right:5px;min-width: <%= width %>;min-height: <%= height %>;"  class="span5 hero-unit">
             <h3>Most Questionable Annotation Term</h3>
             <div>
                 <div>
@@ -10,23 +10,24 @@
                 </div>
             </div>
         </div>
-        <div id="worstTermPieChartPanel" style="padding : 2px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
-            <h3>Most Questionable Terms (pie)</h3>
+
+        <div id="worstTermListPanel" style="padding : 2px;margin-right:5px;min-width: <%= width %>;min-height: <%= height %>;"  class="span5 hero-unit">
+            <h3>Success for retrieval algo with term suggestion</h3>
             <div>
-                <div id="worstTermprojectPieChart">No data to display</div>
+                <div id="worstTermList">No data to display</div>
+                <div id="userRetrievalSuggestMatrixDataTable"></div>
             </div>
         </div>
-        <div id="avgEvolutionLineChartPanel" style="padding : 2px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
+        <div id="avgEvolutionLineChartPanel" style="padding : 2px;margin-right:5px;min-width: <%= width %>;min-height: <%= height %>;"  class="span5 hero-unit">
             <h3>AVG of success rate for retrieval algo</h3>
             <div>
                 <div id="avgEvolutionLineChart">No data to display</div>
             </div>
         </div>
-        <div id="worstTermListPanel" style="padding : 2px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
-            <h3>Success for retrieval algo with term suggestion</h3>
+        <div id="worstTermPieChartPanel" style="padding : 2px;margin-right:5px;min-width: <%= width %>;min-height: <%= height %>;"  class="span5 hero-unit">
+            <h3>Most Questionable Terms (pie)</h3>
             <div>
-                <div id="worstTermList">No data to display</div>
-                <div id="userRetrievalSuggestMatrixDataTable"></div>
+                <div id="worstTermprojectPieChart">No data to display</div>
             </div>
         </div>
      </div>
