@@ -3,6 +3,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
     //terms
     //annotations
     //el
+    width : null,
 
     annotations : null,
     terms : null,
@@ -24,9 +25,11 @@ var RetrievalAlgoResult = Backbone.View.extend({
       var self = this;
       console.log("loadResult for job="+self.model.id);
        console.log("width="+ $(self.el).width());
+       var width = ((($(self.el).width()-125)/2))+"px"
       var content = _.template(retrievalAlgoViewTpl, {
-         width :  ($(self.el).width()-10)+"px"
+         width : width
       });
+       self.width = width;
        console.log("elem="+$(self.el));
       $(self.el).empty();
       $(self.el).append(content);
@@ -299,10 +302,10 @@ var RetrievalAlgoResult = Backbone.View.extend({
          data.setValue(i,0, dataJSON[i].name);
          data.setValue(i,1, dataJSON[i].rate);
        }
-      var width = Math.round($(window).width()/2 - 95);
+
       // Create and draw the visualization.
       new google.visualization.PieChart(document.getElementById('worstTermprojectPieChart')).
-          draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
+          draw(data, {width: this.width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
    },
 
     drawWorstAnnotationsTable : function (model, response,terms, annotations) {
@@ -358,12 +361,12 @@ var RetrievalAlgoResult = Backbone.View.extend({
             data.addRow([date, evolution[i].avg]);
         }
 
-         var width = Math.round($(window).width()/2 - 95);
+         var width = Math.round($(window).width()/2 - 150);
         // Create and draw the visualization.
         var chart = new google.visualization.AreaChart(
             document.getElementById('avgEvolutionLineChart'));
         chart.draw(data, {title: '',
-                          width: width, height: 350,
+                          width: this.width, height: 350,
                           vAxis: {title: "Success rate",minValue:0,maxValue:100},
                           hAxis: {title: "Time"},
                           backgroundColor : "whiteSmoke",

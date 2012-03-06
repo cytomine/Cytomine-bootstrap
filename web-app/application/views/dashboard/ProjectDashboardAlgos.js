@@ -1,11 +1,17 @@
 var ProjectDashboardAlgos = Backbone.View.extend({
     rendered : false,
     jobCollection : null,
-    openParameterGrid : [],
+    softwares : null,
+    disableSelect : false,
+    software : null,
     initialize : function (options) {
         this.el = "#tabs-algos-" + this.model.id;
+        this.idJob = options.idJob;
+        this.idSoftware = options.idSoftware;
+        this.software = options.software;
     },
     render : function() {
+        console.log('render');
           var self = this;
           require([
              "text!application/templates/processing/SoftwareInfo.tpl.html"
@@ -13,273 +19,347 @@ var ProjectDashboardAlgos = Backbone.View.extend({
               function(tpl) {
                  self.doLayout(tpl);
               });
-        this.rendered = true;
+           this.rendered = true;
           return this;
     },
-
    doLayout: function(tpl) {
-
+      console.log("this.idJob="+this.idJob);
+      console.log("this.idSoftware="+this.idSoftware);
       var self = this;
+      $(this.el).empty();
       $(this.el).append(_.template(tpl, {}));
 
-      self.initProjectSoftwareList();
-
+       //get all software from project and print menu
+       new SoftwareCollection({ project : self.model.id}).fetch({
+           success : function (collection, response) {
+              self.software = collection.get(self.idSoftware);
+              self.softwares = collection;
+              self.initProjectSoftwareList();
+              var softModel = collection.get(self.idSoftware);
+               console.log("1. self.idJob="+self.idJob);
+              self.printProjectSoftwareInfo();
+       }});
       return this;
    },
-
-
-
     refresh : function() {
+        console.log("refresh()" + this.idJob);
         if (!this.rendered) this.render();
+        //this.printProjectJobInfo(this.idJob);
+        this.software = this.softwares.get(this.idSoftware);
+        this.printProjectSoftwareInfo();
+    },
+    refresh : function(idSoftware,idJob) {
+        console.log("refresh(idSoftware,idJob)" + this.idJob);
+        this.idSoftware = idSoftware;
+        this.idJob = idJob;
+        //this.render();
+//        if(idSoftware!=this.idSoftware) {
+//            this.idSoftware = idSoftware;
+//            this.printProjectSoftwareInfo(this.idSoftware,idJob);
+//        }
+        this.software = this.softwares.get(this.idSoftware);
+        this.printProjectSoftwareInfo();
+        //this.printProjectJobInfo(idJob);
     },
     initProjectSoftwareList : function () {
         var self = this;
-        //todo: add image filter as a software?
-        $("#projectSoftwareListUl").append('<li id="consultSoftware-0"><a>Image Filter</a></li>');
-        $("#consultSoftware-0").click(function() {
+
+        self.softwares.each(function (software) {
+            $("#projectSoftwareListUl").append('<li id="consultSoftware-' + software.id + '"><a href="#tabs-algos-'+self.model.id + '-' +software.id + '-">' + software.get('name') + '</a></li>');
             $("#projectSoftwareListUl").children().removeClass("active");
-            $("#consultSoftware-0").addClass("active");
-            self.printImageFilterInfo();
-        });
+            console.log('COMPARE: |' + software.id + '|' + self.idSoftware + '|' + (software.id==self.idSoftware));
 
-        //list software choice list
-        new SoftwareCollection({ project : self.model.id}).fetch({
-            success : function (collection, response) {
-                collection.each(function (software) {
-                    $("#projectSoftwareListUl").append('<li id="consultSoftware-' + software.id + '"><a>' + software.get('name') + '</a></li>');
-                    $("#consultSoftware-" + software.id).click(function() {
-                        $("#projectSoftwareListUl").children().removeClass("active");
-                        $("#consultSoftware-" + software.id).addClass("active");
-                        self.printProjectSoftwareInfo(software);
-                    });
-                });
-                //just for dev, click on retrieval software
-                $('#consultSoftware-133673').click();
+            if(software.id==self.idSoftware) {
+                 $("#consultSoftware-" + software.id).addClass("active");
             }
         });
     },
-    printProjectSoftwareInfo : function(software) {
-        console.log("printProjectSoftwareInfo: software=" + software.id);
+    printProjectSoftwareInfo : function() {
+
         var self = this;
+        console.log("printProjectSoftwareInfo: software=" + self.software.id);
 
-        self.printProjectSoftwareDetails(software);
-        self.fillSelectJob(software);
+        //Print software details
+        self.printProjectSoftwareDetails( self.software);
 
-
-        new JobCollection({ project : self.model.id, software: software.id, max: 5}).fetch({
-            success : function (collection, response) {
-                //self.fillLastRunOrInProgress(collection.get(0));
-                self.fillNLastRun(collection);
-            }
-        });
+        //Print last job + n last job details
+        self.printLastNRun();
 
 
+        //Print selected job from this software
+        self.printProjectJobInfo( self.idJob);
 
 
-        //TODO: clean code below V
+          //button click run software
+          $("#softwareLaunchJobButton").click(function() {
+              console.log("project=" + self.model.id + " software.id=" +  self.software.id);
+              new JobModel({ project : self.model.id, software :  self.software.id}).save({}, {
+                  success : function (job, response) {
+                      console.log("SUCCESS JOB");
+                      //TODO: go to job!
+
+                  },
+                  error : function (response) {
+                      console.log("BAD JOB");
+                  }
+              });
+          });
 
 
-        //add button to launch algo
-        $("#panelSoftwareInfo").empty();
-
-
-        $("#panelSoftwareInfo").append('<div id="softwareInfoAccordeon"></div>');
-
-        $("#softwareInfoAccordeon").append('<h3><a href="#">Job List</a></h3><div id="jobListDiv"></div>');
-        $("#softwareInfoAccordeon").append('<h3><a href="#">Job Result</a></h3><div id="jobResultDiv"></div>');
-
-
-        self.printJobListingPanel(software);
-
-       // $("#softwareInfoAccordeon").accordion();
-
-
-             $("#softwareInfoAccordeon").accordion({ clearStyle: true });
-             $("#softwareInfoAccordeon").css("height", "auto");
-             $("#softwareInfoAccordeon").css("width", "auto");
     },
+    printLastNRun : function() {
+        var self = this;
+         var refreshData = function() {
+                new JobCollection({ project : self.model.id, software:  self.software.id, max: 3}).fetch({
+                    success : function (collection, response) {
+                        var job = collection.models.length>0? collection.models[0] : undefined;
+                        //self.fillLastRun(job);
+                        self.fillNLastRun(collection);
+                    }
+                });
+         };
+        refreshData();
+        setInterval(refreshData, 5000);
+    },
+    printProjectJobInfo : function(idJob) {
+         var self = this;
+        self.updateJobSelect(idJob);
+        console.log("---" +idJob);
+        //Print selected job details (if undefined, last job
+        if(idJob==undefined) {
+            //print info/result from last job
+            new JobCollection({ project : self.model.id, software: self.idSoftware, max: 1}).fetch({
+                success : function (collection, response) {
+                    var job = collection.models.length>0? collection.models[0] : undefined;
+                    self.fillSelectedJobDetails(job);
+                }
+            });
+        } else {
+            //print info/result from job
+            new JobModel({ id : idJob}).fetch({
+                success : function (model, response) {
+
+                    self.fillSelectedJobDetails(model);
+                }
+            });
+        }
+
+    },
+    printAcitivtyDiagram : function(success, total) {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Success');
+        data.addColumn('number', 'Succes rate');
+         console.log("printAcitivtyDiagram="+success+"#"+total);
+         data.addRows([
+              ['Success',    success],
+              ['Fail',      total-success]
+        ]);
+
+        var options = {
+          title: 'Algorithm success rate',
+          width: 200, height: 150,
+          vAxis: {title: "Success rate"},
+          hAxis: {title: "#"},
+          backgroundColor : "whiteSmoke",
+            strictFirstColumnType: false,
+            is3D: true,
+          lineWidth: 1,
+          colors : ["#5ebc5e","#d34842"]
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('softwareInfoDiagram'));
+        chart.draw(data, options);
+    },
+
+
+
     printProjectSoftwareDetails : function(software) {
-
-        console.log($("#panelSoftwareResume").find('.nameSoftware').length);
-
         $("#panelSoftwareResume").find('.softwareMainInfo').empty();
         $("#panelSoftwareResume").find('.softwareMainInfo').append('<li><h2>'+software.get('name')+'</h2></li>');
-
-        $("#panelSoftwareResume").find('.numberOfJob').empty();
-        $("#panelSoftwareResume").find('.numberOfJob').append('<li> Number of Job: '+software.get('numberOfJob') +"</li>");
-        $("#panelSoftwareResume").find('.numberOfJob').append('<li> Number of Succesfull Job: '+software.get('numberOfJobSuccesfull')+'</li>');
-        $("#panelSoftwareResume").find('.numberOfJob').append('<li> Ratio of Succesfull Job: '+Math.min(Math.round(software.get('ratioOfJobSuccesfull')*100),100)+'%</li>');
-
+        $("#panelSoftwareResume").find('.softwareMainInfo').append('<li>'+ software.get('numberOfJob') +' job has been run ('+ software.get('numberOfJobSuccesfull')+' success)</li>');
+//        $("#panelSoftwareResume").find('.softwareMainInfo').append('<li> Number of Succesfull Job: '+software.get('numberOfJobSuccesfull')+'</li>');
+//        $("#panelSoftwareResume").find('.softwareMainInfo').append('<li> Ratio of Succesfull Job: '+Math.min(Math.round(software.get('ratioOfJobSuccesfull')*100),100)+'%</li>');
+        this.printAcitivtyDiagram(software.get('numberOfJobSuccesfull'),software.get('numberOfJob'));
+        this.fillSelectJob(software);
     },
     fillSelectJob : function(software) {
         var self = this;
-        $("#panelSoftwareResume").find('.chosseJob').empty();
-        $("#panelSoftwareResume").find('.chosseJob').append('Select a job: <br>');
-        $("#panelSoftwareResume").find('.chosseJob').append('<select id="chosseJobSelect"></select>');
+        var elem = $("#fullSoftwareDashboard").find('.chosseJob');
+        $("#fullSoftwareDashboard").find('.chosseJob').empty();
+        //$("#menuAlgoSoftware").find('.chosseJob').append('<br><br><h3>Select a job: </h3><br>');
+        $("#fullSoftwareDashboard").find('.chosseJob').append('<select id="chosseJobSelect" style="min-width: 50%;max-width:75%;text-align:center;"></select>');
+        var selectElem = $("#fullSoftwareDashboard").find('#chosseJobSelect');
         new JobCollection({ project : self.model.id, software: software.id, light:true}).fetch({
             success : function (collection, response) {
                 collection.each(function (job) {
-                    $("#panelSoftwareResume").find('#chosseJobSelect').append('<option>'+self.convertLongToDate(job.get('created'))+'</option>')
+                    var classSucess = "btn-danger";
+                    if(job.get('running')) classSucess = "btn-primary";
+                    else if(job.get('successful')) classSucess = "btn-success";
+                    console.log("#####" + job.get('running'));
+                    var textOption = self.convertLongToDate(job.get('created')) + " (Job " + job.id +")";
+                    $("#fullSoftwareDashboard").find('#chosseJobSelect').append('<option value="'+job.id+'" class="'+classSucess+'" style="text-align:left;">'+textOption+'</option>');
                 });
+                //color the select with the same color as the selected options
+                self.refreshSelectJobStyle();
+                selectElem.change(function() {
+                    console.log("change disableSelect="+self.disableSelect);
+                     //if(!self.disableSelect) self.printProjectJobInfo(selectElem.val());
+                    if(!self.disableSelect) window.location = '#tabs-algos-'+self.model.id + '-' +software.id + '-' + selectElem.val();
+                });
+
             }
         });
 
+
+        $("#avancedJobSearchLink").click(function() {
+            console.log("Open job listing");
+            var result = new JobListingView({
+            software : self.software,
+            project : self.model,
+            el : $("#jobListingDialogParent"),
+            parent : self
+        }).render();
+        });
+
+    },
+    updateJobSelect: function(idJob){
+        var self = this;
+        self.disableSelect = true;
+        var selectElem = $("#fullSoftwareDashboard").find('#chosseJobSelect');
+        console.log("val disableSelect="+self.disableSelect);
+        selectElem.val(idJob);
+        $("#fullSoftwareDashboard").find('#chosseJobSelect option[value='+idJob+']').attr("selected", "selected");
+
+        console.log("val ok disableSelect="+self.disableSelect);
+        self.refreshSelectJobStyle();
+        console.log("refreshSelectJobStyle disableSelect="+self.disableSelect);
+        self.disableSelect = false;
+    },
+    refreshSelectJobStyle : function () {
+        //todo: check if running and put correct style
+        var selectElem = $("#fullSoftwareDashboard").find('#chosseJobSelect');
+        console.log("selectElem refrsh");
+        selectElem.removeClass('btn-success btn-success');
+        var selectElemId = selectElem.val();
+        var selectElemOption = selectElem.find('option[value="'+selectElemId+'"]');
+        var choiceClass = selectElemOption.attr('class');
+        selectElem.addClass(choiceClass);
+    },
+    fillLastRun : function (job) {
+        var self = this;
+       var lastRunElem = $("#panelSoftwareResume").find('.lastRunDetails');
+       lastRunElem.empty();
+       if(job==undefined) return;
+       console.log(job);
+
+       lastRunElem.append('<h4>Last Run Info</h4>');
+       self.buildJobInfoElem(job,lastRunElem);
     },
     fillNLastRun : function (jobs) {
         var self = this;
+
         $("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').empty();
+        var i = 0;
         jobs.each(function (job) {
-
-            $("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').append('<li id="'+job.id+'"><li>');
-
-            var successfulIcon = job.get('successful') ? "icon-star" : "icon-star-empty";
-
-            var item = $("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').find('#'+job.id);
-            item.append('<hr/>');
-            item.append('<i class="'+successfulIcon+'"></i> ');
-            item.append('<h4 style="display:inline;">Job ' + job.id + "<br><h4>");
-            item.append('Launch at ' + self.convertLongToDate(job.get('created')) + "<br>");
-            job.get('successful')? item.append('<div class="btn-success" style="text-align:center;">Success!</div>') : item.append('<div class="btn-danger" style="text-align:center;">Fail!</div>');
-
+            $("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').append('<div style="margin: 0px auto;min-width:150px;max-width:200px" id="'+job.id+'"></div>');
+            self.buildJobInfoElem(job,$("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').find('#'+job.id));
+            i++;
 
         });
 
     },
-
-
-    convertLongToDate : function (longDate) {
-          var createdDate = new Date();
-          createdDate.setTime(longDate);
-
-          //date format
-          var year = createdDate.getFullYear();
-          var month = (createdDate.getMonth()+1)  < 10 ? "0"+(createdDate.getMonth()+1) : (createdDate.getMonth()+1);
-          var day =  (createdDate.getDate())  < 10 ? "0"+(createdDate.getDate()) : (createdDate.getDate());
-
-          var hour =  (createdDate.getHours())  < 10 ? "0"+(createdDate.getHours()) : (createdDate.getHours());
-          var min =  (createdDate.getMinutes())  < 10 ? "0"+(createdDate.getMinutes()) : (createdDate.getMinutes());
-
-          var dateStr = year + "-" + month +"-" + day + " " + hour + "h" + min;
-        return dateStr;
-    },
-    printJobListingPanel : function (software) {
+    fillSelectedJobDetails : function(job) {
         var self = this;
-        console.log("printJobListingPanel: software=" + software.id);
+        if(job==undefined) return;
+        self.idJob = job.id;
 
-        $("#jobListDiv").append('<button id="launchSoftwareButton" class="btn">Launch new Algo</button>');
+        console.log("Print info for job="+job);
+//        if(job!=undefined) window.location = '#tabs-algos-'+self.model.id +"-" + self.idSoftware + "-" + job.id;
+//        else window.location = '#tabs-algos-'+self.model.id +"-" + self.idSoftware + "-" + job;;
 
-              //button click
-              $("#launchSoftwareButton").click(function() {
-                  console.log("project=" + self.model.id + " software.id=" + software.id);
-                  new JobModel({ project : self.model.id, software : software.id}).save({}, {
-                      success : function (job, response) {
-                          console.log("SUCCESS JOB");
-                      },
-                      error : function (response) {
-                          console.log("BAD JOB");
-                      }
-                  });
-              });
-
-              //add list+pager
-              $("#jobListDiv").append('<table id="listAlgoInfo"></table><div id="pagerAlgoInfo"></div>');
-              var width = Math.round($(window).width() * 0.6);
-              $("#listAlgoInfo").jqGrid({
-                  datatype: "local",
-                  height: 600,
-                  width: width,
-                  colNames:['id','result','running', 'indeterminate', 'progress','successful',"created"],
-                  colModel:[
-                      {name:'id',index:'id', width:50,align:"center"},
-                      {name:'result',index:'result', width:60,align:"center"},
-                      {name:'running',index:'running', width:30, editable: true, edittype: 'checkbox',formatter:'checkbox',align:"center"},
-                      {name:'indeterminate',index:'indeterminate', width:30, editable: true, edittype: 'checkbox',formatter:'checkbox',align:"center"},
-                      {name:'progress',index:'progress', width:70,align:"center"},
-                      {name:'successful',index:'successful', width:30, editable: true, edittype: 'checkbox',formatter:'checkbox',align:"center"},
-                      {name:'created',index:'created', width:75,align:"center"}
-                  ],
-                  caption: "Manipulating Array Data",
-                  subGrid: true,
-                  shrinkToFit:true,
-                  viewrecords : true,
-                  pager: 'pagerAlgoInfo',
-                  subGridRowExpanded: function(subgrid_id, row_id) {
-                      var idJob = $("#listAlgoInfo").jqGrid('getCell', row_id, 1);
-
-                      if (!_.include(self.openParameterGrid, idJob)) {
-                          self.openParameterGrid.push(idJob);
-                      }
-
-                      self.printJobParameter(subgrid_id, row_id, idJob);
-                      console.log("openParameterGrid=" + self.openParameterGrid);
-                  },
-                  subGridRowColapsed: function(subgrid_id, row_id) {
-                      var idJob = $("#listAlgoInfo").jqGrid('getCell', row_id, 2);
-                      self.openParameterGrid = _.without(self.openParameterGrid, idJob);
-                      console.log("openParameterGrid=" + self.openParameterGrid);
-                      // this function is called before removing the data
-                      //var subgrid_table_id;
-                      //subgrid_table_id = subgrid_id+"_t";
-                      //jQuery("#"+subgrid_table_id).remove();
-                  }
-              });
-
-              console.log("listAlgoInfo2");
-              var refreshData = function() {
-
-                  new JobCollection({ project : self.model.id, software :software.id}).fetch({
-                      success : function (jobs, response) {
-                          self.jobCollection = jobs;
-                          var i = 0;
-                          $("#listAlgoInfo").jqGrid('clearGridData');
-                          jobs.each(function (job) {
-
-                              var dateStr = self.convertLongToDate(job.get('created'));
-
-                              //button format
-                              var buttonStr = '<button id="seeResult'+job.id+'">See algo result</button>';
+         var refreshData = function() {
+                var selectRunElem = $("#panelJobDetails").find('.selectRunDetails');
+                new JobModel({ id : self.idJob}).fetch({
+                    success : function (model, response) {
+                        selectRunElem.empty();
+                        self.buildJobInfoElem(model,selectRunElem);
+                    }
+                });
+         };
+        refreshData();
+        setInterval(refreshData, 5000);
 
 
-                              var data = {
-                                  id:job.id,
-                                  result: buttonStr,
-                                  running:job.get('running'),
-                                  indeterminate:job.get('indeterminate'),
-                                  progress:'<div class="progBar">' + job.get('progress') + '</div>',
-                                  successful:job.get('successful'),
-                                  software:job.get('software'),
-                                  created:dateStr
-                              };
-                              $("#listAlgoInfo").jqGrid('addRowData', i + 1, data);
-                              $("#seeResult"+job.id).button().click(function() {
-                                  self.printJobResul(job);
-                              });
-                              i++;
-                          });
-                          $('div.progBar').each(function(index) {
-                              var progVal = eval($(this).text());
-                              $(this).text('');
-                              $(this).progressbar({
-                                  value: progVal
-                              });
-                          });
-                          self.reloadJobParameter();
-                      }
 
-                  });
-              };
-              refreshData();
-              //setInterval(refreshData, 5000);
-
+        var selectRunParamElem = $("#panelJobDetails").find('.selectRunParams');
+         selectRunParamElem.empty();
+        self.buildJobParamElem(job,selectRunParamElem);
+        self.printJobResult(job);
     },
-    printJobResul: function(job) {
+    //Print job view
+    buildJobInfoElem : function (job, elem) {
+        var self = this;
+        if(job==undefined) return;
+        var width = $('#panelSoftwareLastRunList').find('#'+job.id).width()-5;
+        elem.append('<ul  style="display:inline;" id="'+job.id+'"></ul>');
+        var subelem = elem.find('#'+job.id);
+        var successfulIcon = job.get('successful') ? "icon-star" : "icon-star-empty";
+
+       subelem.append('<li><i class="'+successfulIcon+'"></i><h4 style="display:inline;"><a href="#tabs-algos-'+self.model.id + "-" + self.idSoftware + "-" +job.id+'" id="'+job.id+'">Job ' + job.id + '<br></a></h4></li>');
+       subelem.find("#"+job.id).click(function() {
+            self.printProjectJobInfo(job.id);
+        });
+
+        if(job.get('running')) {
+            //job is still running
+            subelem.append('<li><div id="progresstext">Progress </div><div id="progBar" style="margin:0 auto;min-width:'+width+';max-width:'+width+';">'+job.get('progress')+'</div></li>');
+        } else {
+            //job is not running: success or fail
+           var classSucess = "btn-danger";
+           var textSucces = "Fail!";
+           if(job.get('successful')) {
+               classSucess = "btn-success";
+               textSucces = "Success!";
+           }
+           subelem.append('<li><div class="'+classSucess+'" style="margin:0 auto;min-width:'+width+';max-width:'+width+';">'+textSucces+'</div></li>');
+        }
+       subelem.append('<li>Launch: '+self.convertLongToDate(job.get('created'))+'</li>');
+//       subelem.append('<li>Last update: <br>'+self.convertLongToDate(job.get('updated'))+'</li>');
+
+        //TODO: make a resume + dialog?
+//       subelem.append('<li>See full parameter list...</li>');
+
+
+
+       subelem.find('div#progBar').each(function(index) {
+          var progVal = eval($(this).text());
+          $(this).text('');
+          $(this).progressbar({
+              value: progVal
+          });
+      });
+      subelem.find('div#progresstext').append(job.get('progress') + "%");
+    },
+    buildJobParamElem: function(job, ulElem) {
+        if(job==undefined) return;
+        _.each(job.get('jobParameter'), function(param) {
+             ulElem.append("<li>"+param.name + ": "+param.value+"</li>");
+
+        });
+
+//         "id": 530355,
+//        "value": "cytomine",
+//        "job": 530348,
+//        "softwareParameter": 133677,
+//        "name": "execType",
+//        "type": "String"
+    },
+    printJobResult: function(job) {
+        //panelJobResultsDiv
+        if(job==undefined) return;
         var self = this;
         console.log("Print result for job="+job.id);
-        $("#softwareInfoAccordeon").accordion("activate",1);
-        $("html, body").animate({ scrollTop: 0 }, "slow");
-        console.log("Annotations:");
         console.log(window.app.status.currentTermsCollection);
-        console.log("terms:");
         console.log(window.app.status.currentAnnotationsCollection);
 
 
@@ -304,171 +384,28 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         } else {
             self.initJobResult(job);
         }
-
-
-
     },
     initJobResult : function(job) {
-        var result = new RetrievalAlgoResult({
-            model : job,
-            terms : window.app.status.currentTermsCollection,
-            annotations: window.app.status.currentAnnotationsCollection,
-            el : $("#jobResultDiv")
-        }).render();
+//        var result = new RetrievalAlgoResult({
+//            model : job,
+//            terms : window.app.status.currentTermsCollection,
+//            annotations: window.app.status.currentAnnotationsCollection,
+//            el : $("#panelJobResultsDiv")
+//        }).render();
     },
-    reloadJobParameter: function() {
-        var self = this;
-        console.log("reloadJobParameter");
-        _.each(self.openParameterGrid, function(idJob) {
-            var gridButton = $("td[title='" + idJob + "']").prev().find("a");
-            gridButton.click();
-        });
-    },
-    printJobParameter : function(subgrid_id, row_id, idJob) {
-        var self = this;
-        console.log("printJobParameter=" + subgrid_id + "|" + row_id);
-        var subgrid_table_id, pager_id;
-        subgrid_table_id = subgrid_id + "_t";
-        pager_id = "p_" + subgrid_table_id;
-        $("#" + subgrid_id).html("<table id='" + subgrid_table_id + "' class='scroll'></table><div id='" + pager_id + "' class='scroll'></div>");
-        var width = Math.round($(window).width() * 0.5);
-        $("#" + subgrid_table_id).jqGrid({
-            datatype: "local",
-            colNames: ['name','value','type'],
-            colModel: [
-                {name:"name",index:"name",width:100,key:true,sortable:false},
-                {name:"value",index:"value",width:300,sortable:false},
-                {name:"type",index:"type",width:70,sortable:false}
-            ],
-            rowNum:20,
-            pager: pager_id,
-            sortname: 'name',
-            sortorder: "asc",
-            height: '100%',
-            width: width
-        });
-        $("#" + subgrid_table_id).jqGrid('navGrid', "#" + pager_id, {edit:false,add:false,del:false});
+    convertLongToDate : function (longDate) {
+          var createdDate = new Date();
+          createdDate.setTime(longDate);
 
-        var i = 0;
-        $("#" + subgrid_table_id).jqGrid('clearGridData');
-        console.log(self.jobCollection);
-        console.log(self.jobCollection.get(idJob));
-        _.each(self.jobCollection.get(idJob).get('jobParameter'), function(jobparam) {
-            var data = {name:jobparam.name,value:jobparam.value,type:jobparam.type}
-            $("#" + subgrid_table_id).jqGrid('addRowData', i + 1, data);
-            i++;
-        });
+          //date format
+          var year = createdDate.getFullYear();
+          var month = (createdDate.getMonth()+1)  < 10 ? "0"+(createdDate.getMonth()+1) : (createdDate.getMonth()+1);
+          var day =  (createdDate.getDate())  < 10 ? "0"+(createdDate.getDate()) : (createdDate.getDate());
 
-        $("#" + subgrid_table_id).jqGrid('navGrid', "#" + pager_id, {edit:false,add:false,del:false});
-        $("#" + subgrid_table_id).trigger("reloadGrid");
+          var hour =  (createdDate.getHours())  < 10 ? "0"+(createdDate.getHours()) : (createdDate.getHours());
+          var min =  (createdDate.getMinutes())  < 10 ? "0"+(createdDate.getMinutes()) : (createdDate.getMinutes());
 
-        //trigger(“reloadGrid”)
-    },
-    printImageFilterInfo : function() {
-        $("#panelSoftwareInfo").empty();
-        //recopier le contenu imagefilter
-        $("#panelSoftwareInfo").append('<h3>Image filters</h3><ul class="image-filters"></ul><select id="addImageFilter"></select> <button id="addImageFilterButton" class="btn">Add</button></div>')
-        this.initImageFilters();
-    },
-
-    removeImageFilter : function (imageFilter) {
-        var self = this;
-        //use fake ID since backbone > 0.5 : we should destroy only object saved or fetched
-        new ProjectImageFilterModel({ id : 1, project : self.model.id, imageFilter : imageFilter.get("id")}).destroy({
-            success : function (model, response) {
-                $(self.el).find("li.imageFilter" + imageFilter.get("id")).remove();
-            }
-        });
-        return false;
-    },
-    renderFilters : function() {
-        var self = this;
-        var el = $(this.el).find(".image-filters");
-        el.empty();
-        new ProjectImageFilterCollection({ project : self.model.id}).fetch({
-            success : function (imageFilters, response) {
-                imageFilters.each(function (imageFilter) {
-                    self.renderImageFilter(imageFilter, el);
-                });
-            }
-        });
-    },
-    renderImageFilter : function (imageFilter, el) {
-        var self = this;
-        var tpl = _.template("<li class='imageFilter<%=   id %>'><%=   name %> <a class='removeImageFilter<%=   id %>' href='#'><span class='label label-important'>Remove</span></a></li>", imageFilter.toJSON());
-        $(el).append(tpl);
-        $(this.el).find("a.removeImageFilter" + imageFilter.get("id")).click(function() {
-            self.removeImageFilter(imageFilter);
-            return false;
-        });
-    },
-    initImageFilters : function() {
-        var self = this;
-        var el = $(this.el).find(".image-filters");
-
-        new ImageFilterCollection().fetch({
-            success : function (imageFilters, response) {
-                imageFilters.each(function (imageFilter) {
-                    var option = _.template("<option value='<%=   id %>'><%=   name %></option>", imageFilter.toJSON());
-                    $(self.el).find("#addImageFilter").append(option);
-
-                });
-                $(self.el).find("#addImageFilterButton").click(function() {
-                    new ProjectImageFilterModel({ project : self.model.id, imageFilter : $(self.el).find("#addImageFilter").val()}).save({}, {
-                        success : function (imageFilter, response) {
-                            self.renderImageFilter(imageFilter, el);
-                        },
-                        error : function (response) {
-
-                        }
-                    });
-                    return false;
-                });
-            }
-        });
-
-        self.renderFilters();
-
-    },
-    initBatchProcessing : function () {
-        console.log("initBatchProcessing");
-        $(this.el).find(".batch-processing").append(":-) !");
+          var dateStr = year + "-" + month +"-" + day + " " + hour + "h" + min;
+        return dateStr;
     }
-    /*
-     * ALGO RETRIEVAL TEST
-     */
-
-
-
-//     $("#listAlgoRetrieval").jqGrid({
-//        url:'api/project/' + self.model.id + "/job.json?software=retrieval",
-//        datatype: "json",
-//        colNames:['id'],//'running', 'indeterminate', 'progress','successful','software'],
-//        colModel:[
-//            {name:'id',index:'id', width:55}
-////            {name:'running',index:'running', width:90},
-////            {name:'indeterminate',index:'indeterminate', width:100},
-////            {name:'progress',index:'progress', width:80, align:"right"},
-////            {name:'successful',index:'successful', width:80, align:"right"},
-////            {name:'software',index:'software', width:80,align:"right"}
-//        ],
-//         loadComplete: function(data) {
-//             console.log("LOAD COMPLETE");
-//             console.log(data);
-//        },
-//        rowNum:10,
-//        rowList:[10,20,30],
-//        pager: '#pagerAlgoRetrieval',
-//        sortname: 'id',
-//        viewrecords: true,
-//        sortorder: "desc",
-//        caption:"Algo Retrieval",
-//         loadonce: true,
-//         jsonReader: {
-//            repeatitems : false,
-//            id: "0"
-//         }
-//    });
-//    $("#listAlgoRetrieval").jqGrid('navGrid','#pagerAlgoRetrieval',{edit:false,add:false,del:false});
-
 });

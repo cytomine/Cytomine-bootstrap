@@ -48,14 +48,16 @@ var ProjectDashboardView = Backbone.View.extend({
         this.projectDashboardImages.refreshImagesThumbs();
 
     },
-    refreshAlgos : function() {
-        if (this.projectDashboardAlgos == null) {
+    refreshAlgos : function(idSoftware,idJob) {
+        console.log("refreshAlgos this.projectDashboardAlgos=="+this.projectDashboardAlgos);
+        if (this.projectDashboardAlgos == null || this.projectDashboardAlgos==undefined) {
             this.projectDashboardAlgos = new ProjectDashboardAlgos({
-                model : this.model
-            });
+                model : this.model,
+                idSoftware: idSoftware,
+                idJob : idJob
+            }).render();
         }
-
-        this.projectDashboardAlgos.refresh();
+        else this.projectDashboardAlgos.refresh(idSoftware,idJob);
 
     },
     refreshConfig : function() {

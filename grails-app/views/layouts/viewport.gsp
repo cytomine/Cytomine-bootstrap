@@ -159,16 +159,19 @@ body {
     <script type="text/javascript" src="application/views/ontology/OntologyEditDialog.js" ></script>
     <script type="text/javascript" src="application/views/ontology/OntologyAddDialog.js" ></script>
 
-    <script type="text/javascript" src="application/views/project/ProjectView.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectPanelView.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectManageSlideDialog.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectAddDialog.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectEditDialog.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectSearchPanel.js" ></script>
+        <script type="text/javascript" src="application/views/processing/JobListingView.js" ></script>
 
-    <script type="text/javascript" src="application/views/project/ProjectAddImageListingDialog.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectAddImageThumbDialog.js" ></script>
-    <script type="text/javascript" src="application/views/project/ProjectAddImageSearchPanel.js" ></script>
+        <script type="text/javascript" src="application/views/processing/result/RetrievalAlgoResult.js" ></script>
+
+        <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/DraggablePanelView.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/ExplorerTabs.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/AnnotationsPanel.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/LayerSwitcherPanel.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/ImageFiltersPanel.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/OverviewMapPanel.js" ></script>
+        <script type="text/javascript" src="application/views/explorer/OntologyPanel.js" ></script>
 
 
     <script type="text/javascript" src="application/views/annotation/AnnotationListView.js" ></script>

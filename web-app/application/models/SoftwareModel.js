@@ -21,5 +21,7 @@ var SoftwareCollection = Backbone.Collection.extend({
 	},
     initialize: function (options) {
         this.project = options.project;
+    },comparator : function(software) {
+        return software.get("name");
     }
 });

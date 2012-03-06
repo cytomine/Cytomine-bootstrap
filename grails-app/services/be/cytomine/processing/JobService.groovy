@@ -49,7 +49,9 @@ class JobService extends ModelService {
         jobs.each {
            def job = [:]
             job.id = it.id
+            job.successful = it.successful
             job.created = it.created ? it.created.time.toString() : null
+            job.running = it.running
             data << job
         }
         return data
