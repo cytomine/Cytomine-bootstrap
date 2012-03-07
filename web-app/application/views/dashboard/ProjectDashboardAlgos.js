@@ -128,7 +128,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     printProjectJobInfo : function(idJob) {
          var self = this;
-        self.updateJobSelect(idJob);
+        //self.updateJobSelect(idJob);
         console.log("---" +idJob);
         //Print selected job details (if undefined, last job
         if(idJob==undefined) {
@@ -185,71 +185,27 @@ var ProjectDashboardAlgos = Backbone.View.extend({
 //        $("#panelSoftwareResume").find('.softwareMainInfo').append('<li> Number of Succesfull Job: '+software.get('numberOfJobSuccesfull')+'</li>');
 //        $("#panelSoftwareResume").find('.softwareMainInfo').append('<li> Ratio of Succesfull Job: '+Math.min(Math.round(software.get('ratioOfJobSuccesfull')*100),100)+'%</li>');
         this.printAcitivtyDiagram(software.get('numberOfJobSuccesfull'),software.get('numberOfJob'));
-        this.fillSelectJob(software);
+        //this.fillSelectJob(software);
+        this.fillJobSelectView();
     },
-    fillSelectJob : function(software) {
+    fillJobSelectView : function() {
         var self = this;
-        var elem = $("#fullSoftwareDashboard").find('.chosseJob');
-        $("#fullSoftwareDashboard").find('.chosseJob').empty();
-        $("#fullSoftwareDashboard").find('.chosseJob').append('<select id="chosseJobSelect" style="min-width: 50%;max-width:75%;text-align:center;"></select>');
-        var selectElem = $("#fullSoftwareDashboard").find('#chosseJobSelect');
-        new JobCollection({ project : self.model.id, software: software.id, light:true}).fetch({
+
+        new JobCollection({ project : self.model.id, software: self.idSoftware, light:true}).fetch({
             success : function (collection, response) {
-                collection.each(function (job) {
-                    var classSucess = "btn-danger";
-                    if(job.get('running')) classSucess = "btn-primary";
-                    else if(job.get('successful')) classSucess = "btn-success";
-                    console.log("#####" + job.get('running'));
 
-                    var textOption = window.app.convertLongToDate(job.get('created')) + " (Job " + job.id +")";
-                    $("#fullSoftwareDashboard").find('#chosseJobSelect').append('<option value="'+job.id+'" class="'+classSucess+'" style="text-align:left;">'+textOption+'</option>');
-                });
-                //color the select with the same color as the selected options
-                self.refreshSelectJobStyle();
-                selectElem.change(function() {
-                    console.log("change disableSelect="+self.disableSelect);
-                     //if(!self.disableSelect) self.printProjectJobInfo(selectElem.val());
-                    if(!self.disableSelect) window.location = '#tabs-algos-'+self.model.id + '-' +software.id + '-' + selectElem.val();
-                });
-
+                var result = new JobSelectionView({
+                    software : self.software,
+                    project : self.model,
+                    el : $("#panelAlgoSoftware").find('#jobSelection'),
+                    parent : self,
+                    jobs: collection
+                }).render();
             }
         });
 
 
-        $("#avancedJobSearchLink").click(function() {
-            console.log("Open job listing");
-            var result = new JobListingView({
-            software : self.software,
-            project : self.model,
-            el : $("#jobListingDialogParent"),
-            parent : self
-        }).render();
-        });
 
-    },
-    updateJobSelect: function(idJob){
-        var self = this;
-        self.disableSelect = true;
-        var selectElem = $("#fullSoftwareDashboard").find('#chosseJobSelect');
-        console.log("val disableSelect="+self.disableSelect);
-        console.log("############# SELECT:"+idJob);
-        selectElem.val(idJob);
-        $("#fullSoftwareDashboard").find('#chosseJobSelect option[value='+idJob+']').attr("selected", "selected");
-
-        console.log("val ok disableSelect="+self.disableSelect);
-        self.refreshSelectJobStyle();
-        console.log("refreshSelectJobStyle disableSelect="+self.disableSelect);
-        self.disableSelect = false;
-    },
-    refreshSelectJobStyle : function () {
-        //todo: check if running and put correct style
-        var selectElem = $("#fullSoftwareDashboard").find('#chosseJobSelect');
-        console.log("selectElem refrsh");
-        selectElem.removeClass('btn-success btn-success');
-        var selectElemId = selectElem.val();
-        var selectElemOption = selectElem.find('option[value="'+selectElemId+'"]');
-        var choiceClass = selectElemOption.attr('class');
-        selectElem.addClass(choiceClass);
     },
     fillLastRun : function (job) {
         var self = this;

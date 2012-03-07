@@ -134,6 +134,7 @@ body {
 
 
   <script type="text/javascript" src="application/views/processing/JobListingView.js" ></script>
+  <script type="text/javascript" src="application/views/processing/JobSelectionView.js" ></script>
   <script type="text/javascript" src="application/views/processing/result/RetrievalAlgoResult.js" ></script>
 
    <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
