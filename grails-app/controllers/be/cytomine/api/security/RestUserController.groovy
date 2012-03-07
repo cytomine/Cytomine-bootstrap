@@ -185,35 +185,5 @@ class RestUserController extends RestController {
         render jsonData as JSON
     }
 
-    def test = {
-        //get project
-        Project project = Project.read(57);
-
-        //get user
-        User user1 = User.findByUsername("lrollus")
-
-        //get bad user
-        User user2 = User.findByUsername("isalmon")
-
-        //test if user has permission
-        println "1 true="+user1.hasReadPermission(project)
-
-        //test if bad user has permission
-        println "2 false="+user2.hasReadPermission(project)
-
-        //get user job
-        UserJob user3 = UserJob.read(181548)
-
-        //get bad user job
-        UserJob user4 = new UserJob(user:user2,job:null)
-
-        //test if user job has permisssion
-        println "3 true="+user3.hasReadPermission(project)
-
-        //test if bad user job has permission
-        println "4 false="+user4.hasReadPermission(project)
-
-
-    }
 
 }

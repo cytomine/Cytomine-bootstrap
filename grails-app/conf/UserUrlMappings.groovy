@@ -28,8 +28,5 @@ class UserUrlMappings {
             action = [GET:"showUserJob"]
         }
 
-        "/api/userJob/test/"(controller:"restUser"){
-            action = [GET:"test"]
-        }
     }
 }

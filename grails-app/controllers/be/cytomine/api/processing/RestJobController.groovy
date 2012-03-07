@@ -6,8 +6,7 @@ import grails.plugins.springsecurity.Secured
 import grails.converters.JSON
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
-import be.cytomine.processing.JobParameter
-import be.cytomine.processing.SoftwareParameter
+
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import be.cytomine.security.SecUserSecRole
@@ -97,72 +96,44 @@ class RestJobController extends RestController {
         else {
             Long idSoftware = Long.parseLong(params.software)
             //TODO: execute retrieval should be a generic method execute
-            if(idSoftware==Software.findByServiceNameIlike("retrievalSuggestedTermJobService").id) {
-                def resp = executeRetrieval(project)
+            /*if(idSoftware==Software.findByServiceNameIlike("retrievalSuggestedTermJobService").id) {
+                Software software = Software.findByName("Retrieval-Suggest-Term")
+                def resp = createAndExecuteJob(project, software)
                 responseSuccess(resp)
             }
-            else responseNotFound("Job", "Software", params.id)
+            if(idSoftware==Software.findByServiceNameIlike("pyxitSuggestedTermJobService").id) {
+                Software software = Software.findByName("Pyxit KFOLDS")
+                def resp = createAndExecuteJob(project, software)
+                responseSuccess(resp)
+            }*/
+            Software software = Software.read(idSoftware)
+            if (!software) responseNotFound("Job", "Software", params.id)
+            def resp = createAndExecuteJob(project, software)
+            responseSuccess(resp)
         }
     }
 
-    def executeRetrieval(Project project) {
+    private def createAndExecuteJob(Project project, Software software) {
+        //create Job
+        log.info "Create Job..."
+        Job job = new Job(project: project, software: software)
+        def result = jobService.add(JSON.parse(job.encodeAsJSON()))
+        log.info "result=" + result
+        log.info "result=" + Long.parseLong(result.data.job.id.toString())
+        job = Job.get(Long.parseLong(result.data.job.id.toString()))
+        Job.list().each {
+            println "JOB=" + it.id + " " + it.class
+        }
+        log.info "result=" + job
 
-            //Retrieve software retrieval-suggest-algo
-            log.info "Retrieve software: Retrieval-Suggest-Term..."
-            Software software = Software.findByName("Retrieval-Suggest-Term")
-
-            //create Job
-            log.info "Create Job..."
-            Job job = new Job(project: project, software: software, running:true)
-            def result = jobService.add(JSON.parse(job.encodeAsJSON()))
-            log.info "result=" + result
-            log.info "result=" + Long.parseLong(result.data.job.id.toString())
-            job = Job.get(Long.parseLong(result.data.job.id.toString()))
-            log.info "result=" + job
-
-            //Create User-job
-            UserJob userJob = createUserJob(User.read(springSecurityService.principal.id), job)
-            /*
-                * 0: type (=> cytomine) or standalone if execute with ide/java -jar  => STRING
-                * 1: public key
-                * 2: private key
-                * 3: N value
-                * 4: T value
-                * 5: Working dir
-                * 6: Cytomine Host
-                * 7: Force download crop (even if already exist) => BOOLEAN
-                * 8: storeName (KYOTOSINGLEFILE)
-                * 9: index project (list: x,y,z)
-                * 10: search project (only one)
-             */
-            //Create Job-parameter
-            jobParameterService.add(JSON.parse(createParam("execType",job,"cytomine").encodeAsJSON()))
-            jobParameterService.add(JSON.parse(createParam("publicKey",job,userJob.publicKey).encodeAsJSON()))
-            jobParameterService.add(JSON.parse(createParam("privateKey",job,userJob.privateKey).encodeAsJSON()))
-            jobParameterService.add(JSON.parse(createParam("N",job, "500").encodeAsJSON()))
-            jobParameterService.add(JSON.parse(createParam("T",job, "5").encodeAsJSON()))
-            jobParameterService.add(JSON.parse(createParam("workingDir",job, "algo/retrievalSuggest/suggest/").encodeAsJSON()))
-            jobParameterService.add(JSON.parse(createParam("cytomineHost",job, "http://localhost:8080").encodeAsJSON()))
-            jobParameterService.add(JSON.parse(createParam("forceDownloadCrop",job, "false").encodeAsJSON()))
-            jobParameterService.add(JSON.parse(createParam("storeName",job, "KYOTOSINGLEFILE").encodeAsJSON()))
-            jobParameterService.add(JSON.parse(createParam("indexProject",job, "57").encodeAsJSON()))
-            jobParameterService.add(JSON.parse(createParam("searchProject",job, "57").encodeAsJSON()))
-
-            //Execute Job
-            log.info "### Launch asynchronous..."
-            backgroundService.execute("Retrieval-suggest asynchronously", {
-                log.info "Launch thread";
-                software.service.execute(job)
-            })
-            log.info "### Return response..."
-            job
+        //Create User-job
+        UserJob userJob = createUserJob(User.read(springSecurityService.principal.id), job)
+        software.service.init(job, userJob)
+        software.service.execute(job)
+        job
     }
 
-    public JobParameter createParam(String name, Job job, String value) {
-        SoftwareParameter softwareParameter = SoftwareParameter.findBySoftwareAndName(job.software, name)
-        JobParameter jobParam = new JobParameter(value: value, job: job, softwareParameter: softwareParameter)
-        return  jobParam
-    }
+
 
 
     public UserJob createUserJob(User user, Job job) {

@@ -39,8 +39,6 @@ var DraggablePanelView = Backbone.View.extend({
                 $(el).css("width", minizedWidth);
                 $(el).css("height", minizedHeight);
             } else {
-                console.log("RESET WIDTH = " + width);
-                console.log("RESET HEIGHT = " + height);
                 $(el).css("width", width);
                 $(el).css("height", height);
             }
@@ -53,10 +51,8 @@ var DraggablePanelView = Backbone.View.extend({
                 maximize(context);
                 var floatingPanel = $("."+context.className);
                 floatingPanel.show();
-                floatingPanel.animate({
-                    "width" : width,
-                    "height" : height
-                }, 100);
+                floatingPanel.css("width", width);
+                floatingPanel.css("height", width);
             }
         }
 
@@ -66,10 +62,8 @@ var DraggablePanelView = Backbone.View.extend({
                 window.app.view.showFloatingPanels();
                 minimize(context);
                 var floatingPanel = $("."+context.className);
-                floatingPanel.animate({
-                    "width" : minizedWidth,
-                    "height" : minizedHeight
-                },100);
+                floatingPanel.css("width", minizedWidth);
+                floatingPanel.css("height", minizedHeight);
             }
         }
 

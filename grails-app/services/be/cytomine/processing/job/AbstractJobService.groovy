@@ -9,22 +9,36 @@ abstract class AbstractJobService {
 
     static transactional = true
 
-    String[] getParams(Job job) throws WrongArgumentException{
 
-         def params = SoftwareParameter.findAllBySoftware(job.software,[sort: "index",order: "asc"])
-         String[] args = new String[params.size()]
 
-         params.eachWithIndex {it, i->
-             SoftwareParameter softParam = it
+    String[] getParameters(Job job) throws WrongArgumentException{
+
+         Collection<SoftwareParameter> parameters = SoftwareParameter.findAllBySoftware(job.software,[sort: "index",order: "asc"])
+         String[] args = new String[parameters.size()*2]
+         parameters.eachWithIndex {softParam, i->
              JobParameter jobParam =  JobParameter.findByJobAndSoftwareParameter(job,softParam)
+             String value = softParam.defaultValue
+             if(jobParam) value = jobParam.value
+             else if(softParam.required) throw new WrongArgumentException("Argument "+softParam.name+" is required!")
+             args[i*2] = "--"+softParam.getName()
+             args[i*2+1] = value
+         }
+        return args
+    }
 
+    String[] getParametersValues(Job job) throws WrongArgumentException{
+
+         Collection<SoftwareParameter> parameters = SoftwareParameter.findAllBySoftware(job.software,[sort: "index",order: "asc"])
+         String[] args = new String[parameters.size()]
+
+         parameters.eachWithIndex {softParam, i->
+             JobParameter jobParam =  JobParameter.findByJobAndSoftwareParameter(job,softParam)
              String value = softParam.defaultValue
              if(jobParam) value = jobParam.value
              else if(softParam.required) throw new WrongArgumentException("Argument "+softParam.name+" is required!")
              args[i] = value
              println softParam.name + "=" + value
          }
-
         return args
     }
 

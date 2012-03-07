@@ -11,7 +11,5 @@ class SoftwareParameterUrlMappings {
         "/api/software/$id/parameter"(controller:"restSoftwareParameter"){
             action = [GET: "listBySoftware"]
         }
-
-
     }
 }

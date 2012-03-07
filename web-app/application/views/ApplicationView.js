@@ -36,14 +36,14 @@ var ApplicationView = Backbone.View.extend({
         window.app.controllers.command.redo();
     },
     hideFloatingPanels : function() {
-       _.each(this.panelsConfiguration, function (item) {
-           if (item.key == "toolbar-panel") return;
+        _.each(this.panelsConfiguration, function (item) {
+            if (item.key == "toolbar-panel") return;
             $("."+item.className).hide();
         });
     },
     showFloatingPanels : function() {
-       _.each(this.panelsConfiguration, function (item) {
-           if (item.key == "toolbar-panel") return;
+        _.each(this.panelsConfiguration, function (item) {
+            if (item.key == "toolbar-panel") return;
             $("."+item.className).show();
         });
     },
@@ -59,17 +59,17 @@ var ApplicationView = Backbone.View.extend({
         if (preference != undefined && preference.visible != undefined && preference.visible == true) {
             $("#"+item.linkID).html("<i class='icon-eye-close' /> " + item.name);
             $("."+item.className).each(
-                    function( intIndex ){
-                        $(this).show('fast');
-                    }
+                function( intIndex ){
+                    $(this).show('fast');
+                }
             );
         }
         else {
             $("#"+item.linkID).html("<i class='icon-eye-open' /> " + item.name);
             $("."+item.className).each(
-                    function( intIndex ){
-                        $(this).hide('fast');
-                    }
+                function( intIndex ){
+                    $(this).hide('fast');
+                }
             );
         }
     },
@@ -84,11 +84,14 @@ var ApplicationView = Backbone.View.extend({
      * @param tpl
      */
     doLayout: function(tpl, renderCallback) {
+        var self = this;
         $("body").prepend(_.template(tpl, {}));
         _.each(this.components, function (component) {
             component.render();
         });
-
+        $(window).resize(function(){
+            self.applyPreferences()
+        });
         renderCallback.call();
         return this;
     },
@@ -101,9 +104,9 @@ var ApplicationView = Backbone.View.extend({
         require([
             "text!application/templates/BaseLayout.tpl.html"
         ],
-                function(tpl) {
-                    self.doLayout(tpl, renderCallback);
-                });
+            function(tpl) {
+                self.doLayout(tpl, renderCallback);
+            });
         return this;
     },
     initPreferences : function () {
@@ -123,14 +126,29 @@ var ApplicationView = Backbone.View.extend({
         var preference = localStorage.getObject(item.key);
         if (preference == undefined) return;
 
+        var panelWidth = $("."+item.className).width();
+        var panelHeight = $("."+item.className).width();
+        var windowWidth = $(window).width();
+        var windowHeight = $(window).height();
+        console.log("windowHeight="+windowHeight);
+        console.log("windowWidth="+windowWidth);
         // Alignment
         if (preference.align != undefined && preference.align == "center") {
             var panelWidth = $("."+item.className).width();
-            var windowWidth = $(window).width();
             var leftPosition = (windowWidth / 2) - (panelWidth / 2);
             preference.position.left = leftPosition;
-            localStorage.setObject(item.key, preference);
         }
+
+        // Check if out of bounds
+        if (preference.position.left + panelWidth > windowWidth) {
+            preference.position.left = windowWidth - panelWidth
+        }
+        if (preference.position.top + panelHeight > windowHeight) {
+            preference.position.top = windowHeight - panelHeight
+        }
+
+        // Update values
+        localStorage.setObject(item.key, preference);
 
         // Position
         var position = preference.position;
@@ -196,100 +214,100 @@ var ApplicationView = Backbone.View.extend({
             "text!application/templates/AdminComponent.tpl.html",
             "text!application/templates/activity/ActivityComponent.tpl.html"
         ],
-                function(uploadTpl, warehouseTpl, explorerTpl, adminTpl, activityTpl) {
-                    self.components.activity = new Component({
-                        el : "#content",
-                        template : _.template(activityTpl, {}),
-                        buttonAttr : {
-                            elButton : "activity-button",
-                            buttonText : "Activity",
-                            buttonWrapper : "#menu",
-                            dataContent : "Activity feed !",
-                            dataTitle : "Activity",
-                            icon : "ui-icon-circle-arrow-s",
-                            route : "#activity"
-                        },
-                        divId : "activity"
-                    });
-                    self.components.upload = new Component({
-                        el : "#content",
-                        template : _.template(uploadTpl, {}),
-                        buttonAttr : {
-                            elButton : "upload-button",
-                            buttonText : "Upload",
-                            buttonWrapper : "#menu",
-                            dataContent : "Send your data !",
-                            dataTitle : "Upload",
-                            icon : "ui-icon-circle-arrow-s",
-                            route : "#upload"
-                        },
-                        divId : "upload"
-                    });
-                    self.components.warehouse = new Component({
-                        el : "#content",
-                        template : _.template(warehouseTpl, {}),
-                        buttonAttr : {
-                            elButton : "warehouse-button",
-                            buttonText : "Organize",
-                            buttonWrapper : "#menu",
-                            dataContent : "Organize your projects, images, etc...",
-                            dataTitle : "Organize",
-                            icon : "ui-icon-wrench",
-                            route : "#project"
-                        },
-                        divId : "warehouse"
-                    });
-                    self.components.explorer = new Component({
-                        el : "#content",
-                        template : _.template(explorerTpl, {}),
-                        buttonAttr : {
-                            elButton : "explorer-button",
-                            buttonText : "Explore",
-                            buttonWrapper : "#menu",
-                            dataContent : "View your data",
-                            dataTitle : "Explore",
-                            icon : "ui-icon-image",
-                            route : "#explorer"
-                        },
-                        divId : "explorer",
-                        activate: function () {
-                            if (window.app.status.currentProject == undefined)
-                                $("#explorer > .noProject").show();
-                            else
-                                $("#explorer > .noProject").hide();
-                            $("#" + this.divId).show();
-                            $("#" + this.buttonAttr.elButton).addClass("ui-state-disabled");
-                        }
-                    });
-                    /*self.components.admin = new Component({
-                     el : "#content",
-                     template : _.template(adminTpl, {}),
-                     buttonAttr : {
-                     elButton : "admin-button",
-                     buttonText : "Admin",
-                     buttonWrapper : "#menu",
-                     icon : "ui-icon-wrench",
-                     route : "#admin/users"
-                     },
-                     divId : "admin"
-                     });*/
-
-                    /*self.components.logout = new Component({
-                     el : "#content",
-                     template : "",
-                     buttonAttr : {
-                     elButton : "user-button",
-                     buttonText :,
-                     buttonWrapper : "#menu",
-                     dataContent : "we have to delete this popover for logout",
-                     dataTitle : "huhu",
-                     icon : "ui-icon-power",
-                     route : "#",
-                     click :
-                     },
-                     divId : "logout"
-                     });*/
+            function(uploadTpl, warehouseTpl, explorerTpl, adminTpl, activityTpl) {
+                self.components.activity = new Component({
+                    el : "#content",
+                    template : _.template(activityTpl, {}),
+                    buttonAttr : {
+                        elButton : "activity-button",
+                        buttonText : "Activity",
+                        buttonWrapper : "#menu",
+                        dataContent : "Activity feed !",
+                        dataTitle : "Activity",
+                        icon : "ui-icon-circle-arrow-s",
+                        route : "#activity"
+                    },
+                    divId : "activity"
                 });
+                self.components.upload = new Component({
+                    el : "#content",
+                    template : _.template(uploadTpl, {}),
+                    buttonAttr : {
+                        elButton : "upload-button",
+                        buttonText : "Upload",
+                        buttonWrapper : "#menu",
+                        dataContent : "Send your data !",
+                        dataTitle : "Upload",
+                        icon : "ui-icon-circle-arrow-s",
+                        route : "#upload"
+                    },
+                    divId : "upload"
+                });
+                self.components.warehouse = new Component({
+                    el : "#content",
+                    template : _.template(warehouseTpl, {}),
+                    buttonAttr : {
+                        elButton : "warehouse-button",
+                        buttonText : "Organize",
+                        buttonWrapper : "#menu",
+                        dataContent : "Organize your projects, images, etc...",
+                        dataTitle : "Organize",
+                        icon : "ui-icon-wrench",
+                        route : "#project"
+                    },
+                    divId : "warehouse"
+                });
+                self.components.explorer = new Component({
+                    el : "#content",
+                    template : _.template(explorerTpl, {}),
+                    buttonAttr : {
+                        elButton : "explorer-button",
+                        buttonText : "Explore",
+                        buttonWrapper : "#menu",
+                        dataContent : "View your data",
+                        dataTitle : "Explore",
+                        icon : "ui-icon-image",
+                        route : "#explorer"
+                    },
+                    divId : "explorer",
+                    activate: function () {
+                        if (window.app.status.currentProject == undefined)
+                            $("#explorer > .noProject").show();
+                        else
+                            $("#explorer > .noProject").hide();
+                        $("#" + this.divId).show();
+                        $("#" + this.buttonAttr.elButton).addClass("ui-state-disabled");
+                    }
+                });
+                /*self.components.admin = new Component({
+                 el : "#content",
+                 template : _.template(adminTpl, {}),
+                 buttonAttr : {
+                 elButton : "admin-button",
+                 buttonText : "Admin",
+                 buttonWrapper : "#menu",
+                 icon : "ui-icon-wrench",
+                 route : "#admin/users"
+                 },
+                 divId : "admin"
+                 });*/
+
+                /*self.components.logout = new Component({
+                 el : "#content",
+                 template : "",
+                 buttonAttr : {
+                 elButton : "user-button",
+                 buttonText :,
+                 buttonWrapper : "#menu",
+                 dataContent : "we have to delete this popover for logout",
+                 dataTitle : "huhu",
+                 icon : "ui-icon-power",
+                 route : "#",
+                 click :
+                 },
+                 divId : "logout"
+                 });*/
+            });
     },
     /**
      * Show a component
