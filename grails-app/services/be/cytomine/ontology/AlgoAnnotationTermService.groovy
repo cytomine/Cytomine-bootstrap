@@ -203,7 +203,7 @@ class AlgoAnnotationTermService extends ModelService {
      double computeAVG(def userJob) {
         println "userJob="+userJob
         println "userJob.id="+userJob.id
-        def nbTermNotCorrect = AlgoAnnotationTerm.createCriteria().count {
+        def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
             eq("userJob", userJob)
             isNotNull("term")
             isNotNull("expectedTerm")
@@ -215,8 +215,8 @@ class AlgoAnnotationTermService extends ModelService {
             isNotNull("expectedTerm")
         }
          if(nbTermTotal==0) throw new Exception("UserJob has no algo-annotation-term!")
-         println "nbTermNotCorrect="+nbTermNotCorrect +" nbTermTotal="+nbTermTotal
-        return (double) (nbTermNotCorrect / nbTermTotal)
+         println "nbTermNotCorrect="+nbTermCorrect +" nbTermTotal="+nbTermTotal
+        return (double) (nbTermCorrect / nbTermTotal)
     }
 
      ConfusionMatrix computeConfusionMatrix(List<Term> projectTerms, def userJob) {

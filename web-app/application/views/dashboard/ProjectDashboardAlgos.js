@@ -4,6 +4,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     softwares : null,
     disableSelect : false,
     software : null,
+    jobSelectView : undefined,
     initialize : function (options) {
         this.el = "#tabs-algos-" + this.model.id;
         this.idJob = options.idJob;
@@ -38,10 +39,12 @@ var ProjectDashboardAlgos = Backbone.View.extend({
               var softModel = collection.get(self.idSoftware);
                console.log("1. self.idJob="+self.idJob);
               self.printProjectSoftwareInfo();
+
+                //button click run software
+                self.printSoftwareLaunchButton();
        }});
 
-
-
+       self.fillJobSelectView();
       return this;
    },
     refresh : function() {
@@ -53,16 +56,30 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     refresh : function(idSoftware,idJob) {
         console.log("refresh(idSoftware,idJob)" + this.idJob);
-        this.idSoftware = idSoftware;
         this.idJob = idJob;
-        //this.render();
-//        if(idSoftware!=this.idSoftware) {
-//            this.idSoftware = idSoftware;
-//            this.printProjectSoftwareInfo(this.idSoftware,idJob);
-//        }
-        this.software = this.softwares.get(this.idSoftware);
+        this.software = this.softwares.get(idSoftware);
+        if(idSoftware!=this.idSoftware)
+        {   this.idSoftware = idSoftware;
+            this.changeSoftware();
+        } else {
+            this.idSoftware = idSoftware;
+        }
+
         this.printProjectSoftwareInfo();
-        //this.printProjectJobInfo(idJob);
+    },
+    changeSoftware : function() {
+        var self = this;
+        self.softwares.each(function (software) {
+            $("#consultSoftware-" + software.id).removeClass("active");
+        });
+        $("#consultSoftware-" + self.software.id).addClass("active");
+        //clean param list
+        $('#selectRunParamsTable').find('tbody').empty();
+        //clean result
+        $("#panelJobResultsDiv").empty();
+        //load result
+        console.log("changeSoftware") ;
+        self.fillJobSelectView();
     },
     initProjectSoftwareList : function () {
         var self = this;
@@ -78,9 +95,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         });
     },
     printProjectSoftwareInfo : function() {
-
         var self = this;
-        console.log("printProjectSoftwareInfo: software=" + self.software.id);
 
         //Print software details
         self.printProjectSoftwareDetails( self.software);
@@ -91,8 +106,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         //Print selected job from this software
         self.printProjectJobInfo( self.idJob);
 
-        //button click run software
-        self.printSoftwareLaunchButton();
     },
     printSoftwareLaunchButton : function() {
         var self = this;
@@ -105,6 +118,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                       self.idJob = job.id
                       window.location = '#tabs-algos-'+self.model.id + '-' + self.idSoftware + '-' + self.idJob;
                       //self.printProjectJobInfo(self.idJob);
+
+                      if(self.jobSelectView!=undefined) self.jobSelectView.refresh();
                   },
                   error : function (response) {
                       console.log("BAD JOB");
@@ -118,7 +133,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                 new JobCollection({ project : self.model.id, software:  self.software.id, max: 3}).fetch({
                     success : function (collection, response) {
                         var job = collection.models.length>0? collection.models[0] : undefined;
-                        //self.fillLastRun(job);
                         self.fillNLastRun(collection);
                     }
                 });
@@ -128,8 +142,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     printProjectJobInfo : function(idJob) {
          var self = this;
-        //self.updateJobSelect(idJob);
-        console.log("---" +idJob);
         //Print selected job details (if undefined, last job
         if(idJob==undefined) {
             //print info/result from last job
@@ -175,26 +187,18 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var chart = new google.visualization.PieChart(document.getElementById('softwareInfoDiagram'));
         chart.draw(data, options);
     },
-
-
-
     printProjectSoftwareDetails : function(software) {
         $("#panelSoftwareResume").find('.softwareMainInfo').empty();
         $("#panelSoftwareResume").find('.softwareMainInfo').append('<li><h2>'+software.get('name')+'</h2></li>');
         $("#panelSoftwareResume").find('.softwareMainInfo').append('<li>'+ software.get('numberOfJob') +' job has been run ('+ software.get('numberOfJobSuccesfull')+' success)</li>');
-//        $("#panelSoftwareResume").find('.softwareMainInfo').append('<li> Number of Succesfull Job: '+software.get('numberOfJobSuccesfull')+'</li>');
-//        $("#panelSoftwareResume").find('.softwareMainInfo').append('<li> Ratio of Succesfull Job: '+Math.min(Math.round(software.get('ratioOfJobSuccesfull')*100),100)+'%</li>');
         this.printAcitivtyDiagram(software.get('numberOfJobSuccesfull'),software.get('numberOfJob'));
-        //this.fillSelectJob(software);
-        this.fillJobSelectView();
+
     },
     fillJobSelectView : function() {
         var self = this;
-
         new JobCollection({ project : self.model.id, software: self.idSoftware, light:true}).fetch({
             success : function (collection, response) {
-
-                var result = new JobSelectionView({
+                self.jobSelectView = new JobSelectionView({
                     software : self.software,
                     project : self.model,
                     el : $("#panelAlgoSoftware").find('#jobSelection'),
@@ -203,19 +207,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                 }).render();
             }
         });
-
-
-
-    },
-    fillLastRun : function (job) {
-        var self = this;
-       var lastRunElem = $("#panelSoftwareResume").find('.lastRunDetails');
-       lastRunElem.empty();
-       if(job==undefined) return;
-       console.log(job);
-
-       lastRunElem.append('<h4>Last Run Info</h4>');
-       self.buildJobInfoElem(job,lastRunElem);
     },
     fillNLastRun : function (jobs) {
         var self = this;
@@ -224,14 +215,19 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var i = 0;
         jobs.each(function (job) {
             $("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').append('<div style="margin: 0px auto;min-width:150px;max-width:200px" id="'+job.id+'"></div>');
-            self.buildJobInfoElem(job,$("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').find('#'+job.id));           i++;
+            self.buildJobInfoElem(job,$("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').find('#'+job.id));
+            i++;
 
         });
 
     },
     fillSelectedJobDetails : function(job) {
         var self = this;
-        if(job==undefined) return;
+        if(job==undefined) {
+            $('#selectRunParamsTable').find('tbody').empty();
+            $("#panelJobResultsDiv").empty();
+            return;
+        }
         self.idJob = job.id;
          var refreshData = function() {
                 var selectRunElem = $("#panelJobDetails").find('.selectRunDetails');
@@ -250,7 +246,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         self.buildJobParamElem(job,selectRunParamElem);
         self.printJobResult(job);
     },
-    //Print job view
     buildJobInfoElem : function (job, elem) {
         var self = this;
         if(job==undefined) return;
@@ -311,8 +306,9 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         });
     },
     printJobResult: function(job) {
-        //panelJobResultsDiv
-        if(job==undefined) return;
+        if(job==undefined) {
+            return;
+        }
         var self = this;
 
         if(window.app.status.currentTermsCollection==undefined || window.app.status.currentAnnotationsCollection==undefined) {
