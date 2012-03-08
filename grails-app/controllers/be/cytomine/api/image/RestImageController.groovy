@@ -32,8 +32,6 @@ class RestImageController extends RestController {
         else responseNotFound("User", params.id)
     }
 
-
-
     def listByGroup = {
         Group group = Group.read(params.idgroup)
         if (group) responseSuccess(abstractImageService.list(group))

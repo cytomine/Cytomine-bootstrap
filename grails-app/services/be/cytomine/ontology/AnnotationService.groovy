@@ -25,6 +25,7 @@ import be.cytomine.security.UserJob
 import be.cytomine.security.SecUser
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 import be.cytomine.security.SecUser
+import be.cytomine.processing.Job
 
 class AnnotationService extends ModelService {
 
@@ -121,11 +122,11 @@ class AnnotationService extends ModelService {
 
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Project project, List<User> userList, Term realTerm, Term suggestedTerm) {
+    def list(Project project, List<User> userList, Term realTerm, Term suggestedTerm, Job job) {
         // POUR realTerm == null => voir dans la fonction précédente le bloc else if (noTerm) {
         log.info "list with suggestedTerm"
         //Get last userjob
-        SecUser user = algoAnnotationTermService.getLastUserJob(project)
+        SecUser user = UserJob.findByJob(job)
 
         //Get all annotation from this project with this term
         def criteria = Annotation.withCriteria() {

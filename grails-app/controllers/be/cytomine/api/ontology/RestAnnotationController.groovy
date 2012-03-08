@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import be.cytomine.security.UserJob
+import be.cytomine.processing.Job
 
 class RestAnnotationController extends RestController {
 
@@ -112,13 +113,11 @@ class RestAnnotationController extends RestController {
         log.info "annotationService.list: " + project + " # " + term + " # " + userList
         def annotationFromTermAndProject=[]
         if(!params.suggestTerm) {
-            log.info "params.suggestTerm="+params.suggestTerm
             annotationFromTermAndProject = annotationService.list(project, term, userList)
         }
         else {
-            log.info "params.suggestTerm="+params.suggestTerm
             Term suggestedTerm = termService.read(params.suggestTerm)
-            annotationFromTermAndProject = annotationService.list(project, userList, term, suggestedTerm)
+            annotationFromTermAndProject = annotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')))
         }
         responseSuccess(annotationFromTermAndProject)
     }

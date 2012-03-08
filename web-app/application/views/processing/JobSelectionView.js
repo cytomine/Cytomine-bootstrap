@@ -167,6 +167,9 @@ var JobSelectionView = Backbone.View.extend({
                     cellSee = '<a id="select'+job.id+'">Compare</a>'
                  }  else {
                      //else if comparator then print "see details" and click must select job
+                     console.log("self.project="+self.project);
+                     console.log("self.software="+self.software);
+                     console.log("job.id="+job);
                     cellSee = '<a href="#tabs-algos-'+self.project.id + "-" + self.software.id + "-" +job.id+'" id="'+job.id+'">See details<br></a>'
                  }
                 tbody.append('<tr><td>'+cellIcon+'</td><td>'+cellId+'</td><td>'+cellDate+'</td><td>'+cellState+'</td><td>'+cellSee+'</td></tr>');

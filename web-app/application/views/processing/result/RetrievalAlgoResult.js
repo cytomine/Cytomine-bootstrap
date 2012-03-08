@@ -136,7 +136,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
             $(self.el).find("#annotationQuestionableMain").empty();
             $(self.el).find("#annotationQuestionableMain").append("<div id=\"annotationQuestionable\"></div>");
 
-           new AnnotationCollection({project:self.project.id,term:term, suggestTerm:suggestTerm}).fetch({
+           new AnnotationCollection({project:self.project.id,term:term, suggestTerm:suggestTerm, job:self.model.id}).fetch({
              success : function(collection, response) {
                     var panel = new AnnotationQuestionableView({
                         model : collection,
