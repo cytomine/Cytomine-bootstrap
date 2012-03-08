@@ -92,6 +92,8 @@ class RestAnnotationController extends RestController {
     def listAnnotationByProjectAndTerm = {
         Term term = termService.read(params.long('idterm'))
         Project project = projectService.read(params.long('idproject'), new Project())
+        println "project="+project
+        println "project="+params['idproject']
         List<User> userList = userService.list(project)
 
         if (params.users) {

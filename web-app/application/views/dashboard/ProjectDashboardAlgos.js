@@ -33,6 +33,10 @@ var ProjectDashboardAlgos = Backbone.View.extend({
        //get all software from project and print menu
        new SoftwareCollection({ project : self.model.id}).fetch({
            success : function (collection, response) {
+               if(self.idSoftware==undefined) {
+                   var lastSoftware = collection.last();
+                   self.idSoftware = lastSoftware.id;
+               }
               self.software = collection.get(self.idSoftware);
               self.softwares = collection;
               self.initProjectSoftwareList();
@@ -42,6 +46,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
 
                 //button click run software
                 self.printSoftwareLaunchButton();
+                self.printComparatorLaunch();
        }});
 
        self.fillJobSelectView();
@@ -93,6 +98,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                  $("#consultSoftware-" + software.id).addClass("active");
             }
         });
+
     },
     printProjectSoftwareInfo : function() {
         var self = this;
@@ -126,6 +132,24 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                   }
               });
           });
+    },
+    printComparatorLaunch : function() {
+        var self = this;
+
+       $("#launchComparator").click(function() {
+            new JobCollection({ project : self.model.id, software: self.idSoftware, light:true}).fetch({
+                success : function (collection, response) {
+                      console.log("project=" + self.model.id + " software.id=" +  self.software.id);
+                        new JobComparatorView({
+                            software : self.software,
+                            project : self.model,
+                            el : $("#jobComparatorDialogParent"),
+                            parent : self,
+                            jobs: collection
+                        }).render();
+                }
+                });
+            });
     },
     printLastNRun : function() {
         var self = this;
@@ -203,7 +227,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                     project : self.model,
                     el : $("#panelAlgoSoftware").find('#jobSelection'),
                     parent : self,
-                    jobs: collection
+                    jobs: collection,
+                    comparator : false
                 }).render();
             }
         });
@@ -214,7 +239,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         $("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').empty();
         var i = 0;
         jobs.each(function (job) {
-            $("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').append('<div style="margin: 0px auto;min-width:150px;max-width:200px" id="'+job.id+'"></div>');
+            $("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').append('<div style="margin: 0px auto;min-width:100px;max-width:200px" id="'+job.id+'"></div>');
             self.buildJobInfoElem(job,$("#fullSoftwareDashboard").find('#panelSoftwareLastRunList').find('#'+job.id));
             i++;
 
@@ -272,7 +297,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
            }
            subelem.append('<li><div class="'+classSucess+'" style="margin:0 auto;min-width:'+width+';max-width:'+width+';">'+textSucces+'</div></li>');
         }
-       subelem.append('<li>Launch: '+window.app.convertLongToDate(job.get('created'))+'</li>');
+       subelem.append('<li>'+window.app.convertLongToDate(job.get('created'))+'</li>');
 
        subelem.find('div#progBar').each(function(index) {
           var progVal = eval($(this).text());
@@ -295,14 +320,19 @@ var ProjectDashboardAlgos = Backbone.View.extend({
             tbody.append('<tr><td>'+param.name+'</td><td>'+param.value+'</td><td>'+param.type+'</td></tr>');
          });
         $('#selectRunParamsTable').dataTable( {
-            "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+            //"sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
             "sPaginationType": "bootstrap",
             "oLanguage": {
                 "sLengthMenu": "_MENU_ records per page"
             },
             "iDisplayLength": 5 ,
             "bLengthChange" : false,
-            bDestroy: true
+            bDestroy: true,
+                 "aoColumnDefs": [
+                { "sWidth": "40%", "aTargets": [ 0 ] },
+                { "sWidth": "40%", "aTargets": [ 1 ] },
+                { "sWidth": "20%", "aTargets": [ 2 ] }
+             ]
         });
     },
     printJobResult: function(job) {
@@ -329,10 +359,12 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         }
     },
     initJobResult : function(job) {
+        var self = this;
         var result = new RetrievalAlgoResult({
             model : job,
             terms : window.app.status.currentTermsCollection,
             annotations: window.app.status.currentAnnotationsCollection,
+            project : self.model,
             el : $("#panelJobResultsDiv")
         }).render();
     }

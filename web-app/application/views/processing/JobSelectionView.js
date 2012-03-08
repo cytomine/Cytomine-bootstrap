@@ -8,12 +8,15 @@ var JobSelectionView = Backbone.View.extend({
     table : null,
     disableDateChangeEvent : false,
     currentDate : undefined,
+    comparator : false,
+    selectedJob : null,
    initialize: function(options) {
        var self = this;
         this.software = options.software;
         this.project = options.project;
         this.parent = options.parent;
         this.jobs = options.jobs;
+       this.comparator = options.comparator;
         this.loadDateArray();
    },
    render : function() {
@@ -29,12 +32,13 @@ var JobSelectionView = Backbone.View.extend({
    loadResult : function (jobSelectionViewTpl) {
       var self = this;
       var content = _.template(jobSelectionViewTpl, {});
-       console.log("LOAD RESULT");
+      self.printLog("loadResult");
       $(self.el).empty();
       $(self.el).append(content);
       self.printDatatables(self.jobs.models);
       self.printDataPicker(undefined);
 
+       self.printLog("seeAllButton");
        $(self.el).find("#seeAllButton").click(function() {
            self.currentDate = undefined;
            self.disableDateChangeEvent = true;
@@ -43,6 +47,7 @@ var JobSelectionView = Backbone.View.extend({
            self.refresh();
        });
 
+       self.printLog("refreshButton");
        $(self.el).find("#refreshButton").click(function() {
            self.refreshWithDate(self.currentDate);
            $(self.el).find("#datepicker").datepicker('setDate', self.currentDate);
@@ -54,13 +59,12 @@ var JobSelectionView = Backbone.View.extend({
     },
     refreshWithDate : function(date) {
         var self = this;
-        console.log("refreshWithDate="+date);
+        self.printLog("refreshWithDate="+date);
         new JobCollection({ project : self.project.id, software: self.software.id, light:true}).fetch({
             success : function (collection, response) {
                self.jobs = collection;
                self.loadDateArray();
                self.printDatatables(self.jobs.models,date);
-               console.log("refreshWithDate="+date);
                 self.printDataPicker(date);
                 $(self.el).find("#datepicker").datepicker('setDate', date);
                 self.refreshDatePicker();
@@ -79,11 +83,13 @@ var JobSelectionView = Backbone.View.extend({
             self.availableDate.push(createdDate.getTime());
         });
     },
-
+    printLog : function(str) {
+      console.log($(this.el));
+      console.log(str);
+    },
    printDataPicker : function(date) {
        var self = this;
-       console.log("printDataPicker:"+date);
-
+       self.printLog("printDataPicker:"+date);
        $(self.el).find("#datepicker").datepicker({
                 beforeShowDay: function(date)
                 {
@@ -94,7 +100,7 @@ var JobSelectionView = Backbone.View.extend({
                    }
                 },
                 onSelect: function(dateStr) {
-                    console.log("onSelect event!");
+                   self.printLog("onSelect:"+dateStr);
                    self.refreshDatePicker();
                 }
         });
@@ -107,9 +113,10 @@ var JobSelectionView = Backbone.View.extend({
    },
    refreshDatePicker : function() {
        var self = this;
-        console.log("onSelect event!");
+        self.printLog("refreshDatePicker");
         if(!self.disableDateChangeEvent) {
            var date = $(self.el).find("#datepicker").datepicker( "getDate" );
+            self.printLog("date selected="+date);
             if(date!=null) {
                self.currentDate = date;
                console.log("self.currentDate="+self.currentDate);
@@ -142,22 +149,38 @@ var JobSelectionView = Backbone.View.extend({
    },
    printDatatables : function(jobs,date) {
        var self = this;
-       var selectRunParamElem = $('#selectJobTable').find('tbody').empty();
-       var datatable = $('#selectJobTable').dataTable();
+       self.printLog("printDatatables");
+       var selectRunParamElem = $(self.el).find('#selectJobTable').find('tbody').empty();
+       var datatable = $(self.el).find('#selectJobTable').dataTable();
         datatable.fnClearTable();
         //print data from project image table
-        var tbody = $('#selectJobTable').find("tbody");
+        var tbody = $(self.el).find('#selectJobTable').find("tbody");
        if(jobs!=undefined) {
              _.each(jobs, function (job) {
                 var cellIcon = '<i class="icon-plus"></i>';
                 var cellId = job.id;
                 var cellDate = window.app.convertLongToDate(job.get('created'));
                 var cellState = self.getStateElement(job);
-                var cellSee = '<h4 style="display:inline;"><a href="#tabs-algos-'+self.project.id + "-" + self.software.id + "-" +job.id+'" id="'+job.id+'">See details <br></a></h4>'
+                 var cellSee= "";
+                 if(self.comparator) {
+                     //if comparator then print "compare" and click must refresh parent
+                    cellSee = '<a id="select'+job.id+'">Compare</a>'
+                 }  else {
+                     //else if comparator then print "see details" and click must select job
+                    cellSee = '<a href="#tabs-algos-'+self.project.id + "-" + self.software.id + "-" +job.id+'" id="'+job.id+'">See details<br></a>'
+                 }
                 tbody.append('<tr><td>'+cellIcon+'</td><td>'+cellId+'</td><td>'+cellDate+'</td><td>'+cellState+'</td><td>'+cellSee+'</td></tr>');
+
+                 if(self.comparator) {
+                     tbody.find("#select"+job.id).click(function() {
+                        console.log("COMPARE:"+job.id);
+                        self.selectedJob = job.id;
+                        //self.parent.refresh();
+                     });
+                 }
              });
        }
-       self.table = $('#selectJobTable').dataTable( {
+       self.table = $(self.el).find('#selectJobTable').dataTable( {
            "bFilter": false,
             "sDom": '<"toolbar">frtip',
             "sPaginationType": "bootstrap",
@@ -197,7 +220,7 @@ var JobSelectionView = Backbone.View.extend({
     initSubGridDatatables : function() {
         var self = this;
 
-        $('#selectJobTable tbody td i').live( 'click', function () {
+        $(self.el).find('#selectJobTable tbody td i').live( 'click', function () {
             console.log('CLICK:' + self.table.fnIsOpen(nTr));
             var nTr = $(this).parents('tr')[0];
             if ( self.table.fnIsOpen(nTr) )
@@ -215,9 +238,7 @@ var JobSelectionView = Backbone.View.extend({
                 console.log("aData[1]="+aData[1]);
                 new JobModel({ id : aData[1]}).fetch({
                     success : function (model, response) {
-                        console.log('SUCCESS');
-                        console.log(model.get('jobParameter'));
-                        var tableParam = $('#selectJobTable').find('table[id='+aData[1]+']');
+                        var tableParam = $(self.el).find('#selectJobTable').find('table[id='+aData[1]+']');
                         _.each(model.get('jobParameter'),function(param) {
                              tableParam.append('<tr><td>'+param.name+'</td><td>'+param.value+'</td><td>'+param.type+'</td></tr>');
                         });

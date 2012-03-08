@@ -11,8 +11,9 @@ var DashboardController = Backbone.Router.extend({
         "tabs-annotations-:project"  : "annotations",
         "tabs-dashboard-:project"  : "dashboard",
         "tabs-config-:project"  : "config",
-        "tabs-algos-:project-:software-:job"  : "algos",
-        "tabs-algos"  : "algostest"
+        "tabs-algos-:project"  : "algos",
+        "tabs-algos-:project-:software"  : "algos",
+        "tabs-algos-:project-:software-:job"  : "algos"
     },
 
     init : function (project, callback) {
@@ -87,9 +88,6 @@ var DashboardController = Backbone.Router.extend({
 
         };
         this.init(project, func);
-    },
-    algostest: function(project) {
-        console.log("Dashboard algos:"+project);
     },
     algos : function(project,software,job) {
         console.log("Dashboard algos:"+project+"-"+software+"-"+job);
