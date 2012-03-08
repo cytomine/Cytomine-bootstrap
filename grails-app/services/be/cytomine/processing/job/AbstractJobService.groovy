@@ -9,7 +9,11 @@ abstract class AbstractJobService {
 
     static transactional = true
 
-
+    public JobParameter createJobParameter(String name, Job job, String value) {
+                SoftwareParameter softwareParameter = SoftwareParameter.findBySoftwareAndName(job.software, name)
+            JobParameter jobParam = new JobParameter(value: value, job: job, softwareParameter: softwareParameter)
+                return  jobParam
+ 	}
 
     String[] getParameters(Job job) throws WrongArgumentException{
 

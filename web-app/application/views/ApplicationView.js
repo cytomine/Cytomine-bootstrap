@@ -130,8 +130,6 @@ var ApplicationView = Backbone.View.extend({
         var panelHeight = $("."+item.className).width();
         var windowWidth = $(window).width();
         var windowHeight = $(window).height();
-        console.log("windowHeight="+windowHeight);
-        console.log("windowWidth="+windowWidth);
         // Alignment
         if (preference.align != undefined && preference.align == "center") {
             var panelWidth = $("."+item.className).width();

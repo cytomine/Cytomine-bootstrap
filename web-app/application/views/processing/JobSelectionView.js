@@ -32,13 +32,11 @@ var JobSelectionView = Backbone.View.extend({
    loadResult : function (jobSelectionViewTpl) {
       var self = this;
       var content = _.template(jobSelectionViewTpl, {});
-      self.printLog("loadResult");
       $(self.el).empty();
       $(self.el).append(content);
       self.printDatatables(self.jobs.models);
       self.printDataPicker(undefined);
 
-       self.printLog("seeAllButton");
        $(self.el).find("#seeAllButton").click(function() {
            self.currentDate = undefined;
            self.disableDateChangeEvent = true;
@@ -47,7 +45,6 @@ var JobSelectionView = Backbone.View.extend({
            self.refresh();
        });
 
-       self.printLog("refreshButton");
        $(self.el).find("#refreshButton").click(function() {
            self.refreshWithDate(self.currentDate);
            $(self.el).find("#datepicker").datepicker('setDate', self.currentDate);
@@ -59,7 +56,6 @@ var JobSelectionView = Backbone.View.extend({
     },
     refreshWithDate : function(date) {
         var self = this;
-        self.printLog("refreshWithDate="+date);
         new JobCollection({ project : self.project.id, software: self.software.id, light:true}).fetch({
             success : function (collection, response) {
                self.jobs = collection;
@@ -83,13 +79,8 @@ var JobSelectionView = Backbone.View.extend({
             self.availableDate.push(createdDate.getTime());
         });
     },
-    printLog : function(str) {
-      console.log($(this.el));
-      console.log(str);
-    },
    printDataPicker : function(date) {
        var self = this;
-       self.printLog("printDataPicker:"+date);
        $(self.el).find("#datepicker").datepicker({
                 beforeShowDay: function(date)
                 {
@@ -100,7 +91,6 @@ var JobSelectionView = Backbone.View.extend({
                    }
                 },
                 onSelect: function(dateStr) {
-                   self.printLog("onSelect:"+dateStr);
                    self.refreshDatePicker();
                 }
         });
@@ -113,10 +103,8 @@ var JobSelectionView = Backbone.View.extend({
    },
    refreshDatePicker : function() {
        var self = this;
-        self.printLog("refreshDatePicker");
         if(!self.disableDateChangeEvent) {
            var date = $(self.el).find("#datepicker").datepicker( "getDate" );
-            self.printLog("date selected="+date);
             if(date!=null) {
                self.currentDate = date;
                console.log("self.currentDate="+self.currentDate);
@@ -149,7 +137,6 @@ var JobSelectionView = Backbone.View.extend({
    },
    printDatatables : function(jobs,date) {
        var self = this;
-       self.printLog("printDatatables");
        var selectRunParamElem = $(self.el).find('#selectJobTable').find('tbody').empty();
        var datatable = $(self.el).find('#selectJobTable').dataTable();
         datatable.fnClearTable();
@@ -172,7 +159,7 @@ var JobSelectionView = Backbone.View.extend({
                      console.log("job.id="+job);
                     cellSee = '<a href="#tabs-algos-'+self.project.id + "-" + self.software.id + "-" +job.id+'" id="'+job.id+'">See details<br></a>'
                  }
-                tbody.append('<tr><td>'+cellIcon+'</td><td>'+cellId+'</td><td>'+cellDate+'</td><td>'+cellState+'</td><td>'+cellSee+'</td></tr>');
+                tbody.append('<tr><td>'+cellIcon+'</td><td  style="text-align:left;">'+cellId+'</td><td  style="text-align:center;">'+cellDate+'</td><td  style="text-align:center;">'+cellState+'</td><td>'+cellSee+'</td></tr>');
 
                  if(self.comparator) {
                      tbody.find("#select"+job.id).click(function() {
