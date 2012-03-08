@@ -116,7 +116,7 @@ class RestJobController extends RestController {
     private def createAndExecuteJob(Project project, Software software) {
         //create Job
         log.info "Create Job..."
-        Job job = new Job(project: project, software: software)
+        Job job = new Job(project: project, software: software,running:true)
         def result = jobService.add(JSON.parse(job.encodeAsJSON()))
         log.info "result=" + result
         log.info "result=" + Long.parseLong(result.data.job.id.toString())
@@ -129,7 +129,13 @@ class RestJobController extends RestController {
         //Create User-job
         UserJob userJob = createUserJob(User.read(springSecurityService.principal.id), job)
         software.service.init(job, userJob)
-        software.service.execute(job)
+
+        log.info "### Launch asynchronous..."
+        backgroundService.execute("Retrieval-suggest asynchronously", {
+            log.info "Launch thread";
+            software.service.execute(job)
+        })
+        log.info "### Return response..."
         job
     }
 
