@@ -7,10 +7,14 @@ var RetrievalAlgoResult = Backbone.View.extend({
     project : null,
     annotations : null,
     terms : null,
+    jobs: null,
+    software : null,
    initialize: function(options) {
       this.annotations = options.annotations;
       this.terms = options.terms;
        this.project = options.project;
+       this.jobs = options.jobs;
+       this.software = options.software;
    },
    render : function() {
       var self = this;
@@ -322,6 +326,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
                 );
     },
     drawAVGEvolution : function (model, response) {
+        var self = this;
         // Create and populate the data table.
         var evolution = model.get('evolution');
         if(evolution==undefined) {
@@ -339,9 +344,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
         for(var i=0;i<evolution.length;i++) {
             var date = new Date();
             date.setTime(evolution[i].date);
-            console.log(dateSelect.getTime()+"=="+date.getTime());
             if(dateSelect.getTime()==date.getTime()) {
-                console.log("indiceJob="+i);
                 indiceJob = i;
             }
             data.addRow([date, evolution[i].avg]);
@@ -349,19 +352,33 @@ var RetrievalAlgoResult = Backbone.View.extend({
 
          var width = Math.round($(window).width()/2 - 150);
         // Create and draw the visualization.
-        var chart = new google.visualization.AreaChart($(this.el).find('#avgEvolutionLineChart')[0]);
-        chart.draw(data, {title: '',
+        var evolChart = new google.visualization.AreaChart($(this.el).find('#avgEvolutionLineChart')[0]);
+        evolChart.draw(data, {title: '',
                           width: this.width, height: 350,
                           vAxis: {title: "Success rate",minValue:0,maxValue:100},
                           hAxis: {title: "Time"},
                           backgroundColor : "whiteSmoke",
                           lineWidth: 1}
                   );
+        evolChart.setSelection([{row:indiceJob,column:1}]);
+        var handleClick = function(){
+            var row = evolChart.getSelection()[0]['row'];
+            var col = evolChart.getSelection()[0]['column'];
+            var dateSelected  = new Date();
+            dateSelected.setTime(evolution[row].date);
+            if(self.jobs!=null) {
+                var jobSelected=null;
+                self.jobs.each(function(job) {
+                    var dateSelection = new Date();
+                    dateSelection.setTime(job.get('created'));
+                    if(dateSelection.getTime()==dateSelected.getTime()) {
+                        jobSelected = job;
+                    }
+                });
+                window.location = '#tabs-algos-'+self.project.id + '-' + self.software.id + '-' + jobSelected.id;
+            }
+        };
+        google.visualization.events.addListener(evolChart,'select', handleClick);
 
-        console.log("SELECT "+dateSelect);
-        chart.setSelection([{row:indiceJob,column:1}]);
-        console.log(chart.getSelection());
-        //          draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
     }
-    //drawWorstAnnotationsTable
 });

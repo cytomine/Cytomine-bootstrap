@@ -5,6 +5,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     disableSelect : false,
     software : null,
     jobSelectView : undefined,
+    jobsLight : null,
     initialize : function (options) {
         this.el = "#tabs-algos-" + this.model.id;
         this.idJob = options.idJob;
@@ -46,10 +47,20 @@ var ProjectDashboardAlgos = Backbone.View.extend({
 
                 //button click run software
                 self.printSoftwareLaunchButton();
-                self.printComparatorLaunch();
+
+
+                new JobCollection({ project : self.model.id, software: self.idSoftware, light:true}).fetch({
+                    success : function (collection, response) {
+                        self.jobsLight = collection;
+                        self.printComparatorLaunch();
+                        self.fillJobSelectView();
+                    }
+                });
+
+
        }});
 
-       self.fillJobSelectView();
+
       return this;
    },
     refresh : function() {
@@ -137,7 +148,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var self = this;
 
        $("#launchComparator").click(function() {
-            new JobCollection({ project : self.model.id, software: self.idSoftware, light:true}).fetch({
+            self.jobsLight.fetch({
                 success : function (collection, response) {
                       console.log("project=" + self.model.id + " software.id=" +  self.software.id);
                         new JobComparatorView({
@@ -163,7 +174,10 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                 });
          };
         refreshData();
-        setInterval(refreshData, 5000);
+        var interval = setInterval(refreshData, 5000);
+        $(window).bind('hashchange', function() {
+          clearInterval(interval);
+        });
     },
     printProjectJobInfo : function(idJob) {
          var self = this;
@@ -221,7 +235,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     fillJobSelectView : function() {
         var self = this;
-        new JobCollection({ project : self.model.id, software: self.idSoftware, light:true}).fetch({
+        self.jobsLight.fetch({
             success : function (collection, response) {
                 self.jobSelectView = new JobSelectionView({
                     software : self.software,
@@ -265,7 +279,10 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                 });
          };
         refreshData();
-        setInterval(refreshData, 5000);
+        var interval = setInterval(refreshData, 5000);
+        $(window).bind('hashchange', function() {
+          clearInterval(interval);
+        });
 
         var selectRunParamElem = $('#selectRunParamsTable').find('tbody').empty();
          selectRunParamElem.empty();
@@ -366,7 +383,9 @@ var ProjectDashboardAlgos = Backbone.View.extend({
             terms : window.app.status.currentTermsCollection,
             annotations: window.app.status.currentAnnotationsCollection,
             project : self.model,
-            el : $("#panelJobResultsDiv")
+            el : $("#panelJobResultsDiv"),
+            jobs : self.jobsLight,
+            software : self.software
         }).render();
     }
 
