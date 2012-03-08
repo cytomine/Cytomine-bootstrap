@@ -255,7 +255,7 @@ class AlgoAnnotationTermService extends ModelService {
             def userJobIt = it
             def item = [:]
             try {
-                item.date = userJobIt.created.getTime()
+                item.date = userJobIt.job.created.getTime()
                 item.avg = computeAVG(userJobIt)*100
                 data << item
             } catch(Exception e) {

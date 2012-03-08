@@ -332,9 +332,18 @@ var RetrievalAlgoResult = Backbone.View.extend({
         data.addColumn('date', 'Date');
         data.addColumn('number', 'Success rate (%)');
 
+        var indiceJob = 0;
+        var dateSelect = new Date();
+        dateSelect.setTime(this.model.get('created'));
+
         for(var i=0;i<evolution.length;i++) {
             var date = new Date();
             date.setTime(evolution[i].date);
+            console.log(dateSelect.getTime()+"=="+date.getTime());
+            if(dateSelect.getTime()==date.getTime()) {
+                console.log("indiceJob="+i);
+                indiceJob = i;
+            }
             data.addRow([date, evolution[i].avg]);
         }
 
@@ -348,6 +357,10 @@ var RetrievalAlgoResult = Backbone.View.extend({
                           backgroundColor : "whiteSmoke",
                           lineWidth: 1}
                   );
+
+        console.log("SELECT "+dateSelect);
+        chart.setSelection([{row:indiceJob,column:1}]);
+        console.log(chart.getSelection());
         //          draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
     }
     //drawWorstAnnotationsTable
