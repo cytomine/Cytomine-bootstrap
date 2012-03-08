@@ -145,7 +145,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                             project : self.model,
                             el : $("#jobComparatorDialogParent"),
                             parent : self,
-                            jobs: collection
+                            jobs: collection,
+                            job1: collection.get(self.idJob)
                         }).render();
                 }
                 });

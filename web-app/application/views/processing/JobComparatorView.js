@@ -37,8 +37,17 @@ var JobComparatorView = Backbone.View.extend({
         $(self.el).dialog({ width: width, height: height, modal:true });
         self.printJobSelection($("#comparatorJobSelection"));
 
-        $("#comparatorJobSelection").find('.job1').find('select').val(self.jobs.at(0).id);
-        $("#comparatorJobSelection").find('.job2').find('select').val(self.jobs.at(1).id);
+        if(self.job1!=null && self.job1!=undefined) {
+           $("#comparatorJobSelection").find('.job1').find('select').val(self.job1.id);
+           if(self.job1.id!=self.jobs.at(0).id) $("#comparatorJobSelection").find('.job2').find('select').val(self.jobs.at(0).id);
+            else $("#comparatorJobSelection").find('.job2').find('select').val(self.jobs.at(1).id);
+        }
+        else {
+            //if no job pre-selected, select the first (last in date) and seconde
+            $("#comparatorJobSelection").find('.job1').find('select').val(self.jobs.at(0).id);
+            $("#comparatorJobSelection").find('.job2').find('select').val(self.jobs.at(1).id);
+        }
+
 
         self.refreshCompareJob();
     },
@@ -102,7 +111,7 @@ var JobComparatorView = Backbone.View.extend({
         var self = this;
         elemParent.append('<select></select>');
         self.jobs.each(function(job) {
-            elemParent.find("select").append('<option value="'+ job.id +'">'+job.id+'</option>');
+            elemParent.find("select").append('<option value="'+ job.id +'">Job '+job.id + ' ('  + window.app.convertLongToDate(job.get('created')) +')'+'</option>');
         });
         elemParent.find("select").change(function() {
             self.refreshCompareJob();
