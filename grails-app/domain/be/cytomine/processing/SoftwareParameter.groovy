@@ -17,7 +17,7 @@ class SoftwareParameter extends CytomineDomain {
 
     static constraints = {
         name (nullable: false, blank : false)
-        type (inList: ["String", "Boolean", "Number"])
+        type (inList: ["String", "Boolean", "Number","List"])
         defaultValue (nullable: true, blank : true)
     }
 
@@ -50,7 +50,7 @@ class SoftwareParameter extends CytomineDomain {
             softwareParameter.id = it.id
             softwareParameter.name = it.name
             softwareParameter.type = it.type
-            softwareParameter.defaultValue = it.defaultValue
+            softwareParameter.defaultParamValue = it.defaultValue  //defaultValue & default are reserved
             softwareParameter.required = it.required
             softwareParameter.software = it.getIdSoftware()
             softwareParameter.index = it.index

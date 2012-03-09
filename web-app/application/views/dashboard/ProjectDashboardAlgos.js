@@ -135,23 +135,36 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     printSoftwareLaunchButton : function() {
         var self = this;
+//          $("#softwareLaunchJobButton").click(function() {
+//              console.log("project=" + self.model.id + " software.id=" +  self.software.id);
+//              new JobModel({ project : self.model.id, software :  self.software.id}).save({}, {
+//                  success : function (job, response) {
+//                      console.log("SUCCESS JOB");
+//                      //TODO: go to job!
+//                      self.idJob = job.id
+//                      window.location = '#tabs-algos-'+self.model.id + '-' + self.idSoftware + '-' + self.idJob;
+//                      //self.printProjectJobInfo(self.idJob);
+//
+//                      if(self.jobSelectView!=undefined) self.jobSelectView.refresh();
+//                  },
+//                  error : function (response) {
+//                      console.log("BAD JOB");
+//                  }
+//              });
+//          });
+
+        //jobLaunchDialogParent
           $("#softwareLaunchJobButton").click(function() {
               console.log("project=" + self.model.id + " software.id=" +  self.software.id);
-              new JobModel({ project : self.model.id, software :  self.software.id}).save({}, {
-                  success : function (job, response) {
-                      console.log("SUCCESS JOB");
-                      //TODO: go to job!
-                      self.idJob = job.id
-                      window.location = '#tabs-algos-'+self.model.id + '-' + self.idSoftware + '-' + self.idJob;
-                      //self.printProjectJobInfo(self.idJob);
-
-                      if(self.jobSelectView!=undefined) self.jobSelectView.refresh();
-                  },
-                  error : function (response) {
-                      console.log("BAD JOB");
-                  }
-              });
+               new LaunchJobView({
+                    software : self.software,
+                    project : self.model,
+                    el : $("#jobComparatorDialogParent"),
+                    parent : self
+                }).render();
           });
+
+
     },
     printComparatorLaunch : function() {
         var self = this;

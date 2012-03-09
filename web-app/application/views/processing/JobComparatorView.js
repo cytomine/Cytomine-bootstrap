@@ -37,9 +37,9 @@ var JobComparatorView = Backbone.View.extend({
         $(self.el).dialog({ width: width, height: height, modal:true });
         self.printJobSelection($("#comparatorJobSelection"));
 
-        if(self.job1!=null && self.job1!=undefined) {
-           $("#comparatorJobSelection").find('.job1').find('select').val(self.job1.id);
-           if(self.job1.id!=self.jobs.at(0).id) $("#comparatorJobSelection").find('.job2').find('select').val(self.jobs.at(0).id);
+        if (self.job1 != null && self.job1 != undefined) {
+            $("#comparatorJobSelection").find('.job1').find('select').val(self.job1.id);
+            if (self.job1.id != self.jobs.at(0).id) $("#comparatorJobSelection").find('.job2').find('select').val(self.jobs.at(0).id);
             else $("#comparatorJobSelection").find('.job2').find('select').val(self.jobs.at(1).id);
         }
         else {
@@ -53,7 +53,7 @@ var JobComparatorView = Backbone.View.extend({
         self.refreshCompareJob();
     },
     retrieveSelectedJob : function(num) {
-        return $("#comparatorJobSelection").find('.job'+num).find('select').val();
+        return $("#comparatorJobSelection").find('.job' + num).find('select').val();
     },
     cleanCompareJob : function() {
         $("#comparatorJobInfo").find(".job1").empty();
@@ -70,20 +70,20 @@ var JobComparatorView = Backbone.View.extend({
         var idJob1 = self.retrieveSelectedJob('1');
         var idJob2 = self.retrieveSelectedJob('2');
 
-         if (idJob1 == undefined || idJob2 == undefined) return;
-            new JobModel({ id : idJob1}).fetch({
-                success : function (job1, response) {
-                    new JobModel({ id : idJob2}).fetch({
-                        success : function (job2, response) {
-                             self.job1 = job1;
-                             self.job2 = job2;
-                            self.printJobInfo($("#comparatorJobInfo"));
-                            self.printParamJob($("#comparatorJobParam"));
-                            self.printResultJob($("#comparatorJobResult"));
-                        }
-                   });
-                }
-           });
+        if (idJob1 == undefined || idJob2 == undefined) return;
+        new JobModel({ id : idJob1}).fetch({
+            success : function (job1, response) {
+                new JobModel({ id : idJob2}).fetch({
+                    success : function (job2, response) {
+                        self.job1 = job1;
+                        self.job2 = job2;
+                        self.printJobInfo($("#comparatorJobInfo"));
+                        self.printParamJob($("#comparatorJobParam"));
+                        self.printResultJob($("#comparatorJobResult"));
+                    }
+                });
+            }
+        });
 
     },
     printJobSelection : function(elemParent) {
@@ -93,50 +93,50 @@ var JobComparatorView = Backbone.View.extend({
     },
     printJobInfo : function(elemParent) {
         var self = this;
-        self.addJobView(elemParent.find('.job1'),self.job1);
-        self.addJobView(elemParent.find('.job2'),self.job2);
+        self.addJobView(elemParent.find('.job1'), self.job1);
+        self.addJobView(elemParent.find('.job2'), self.job2);
     },
     printParamJob : function(elemParent) {
-        var self= this;
-        self.addParamView(elemParent.find('.job1'),self.job1);
-        self.addParamView(elemParent.find('.job2'),self.job2);
+        var self = this;
+        self.addParamView(elemParent.find('.job1'), self.job1);
+        self.addParamView(elemParent.find('.job2'), self.job2);
     },
     printResultJob : function(elemParent) {
         var self = this;
-        self.addResultView(elemParent.find('.job1'),self.job1);
-        self.addResultView(elemParent.find('.job2'),self.job2);
+        self.addResultView(elemParent.find('.job1'), self.job1);
+        self.addResultView(elemParent.find('.job2'), self.job2);
     },
     addSelectionView : function(elemParent) {
         var self = this;
         elemParent.append('<select></select>');
         self.jobs.each(function(job) {
             var className = self.getClassName(job);
-            elemParent.find("select").append('<option class="'+className+'" value="'+ job.id +'">Job '+job.id + ' ('  + window.app.convertLongToDate(job.get('created')) +')'+'</option>');
+            elemParent.find("select").append('<option class="' + className + '" value="' + job.id + '">Job ' + job.id + ' (' + window.app.convertLongToDate(job.get('created')) + ')' + '</option>');
         });
         elemParent.find("select").change(function() {
             self.refreshSelectStyle(elemParent);
             self.refreshCompareJob();
         });
     },
-    refreshSelectStyle : function(elemParent)  {
+    refreshSelectStyle : function(elemParent) {
         var value = elemParent.find("select").val();
-        elemParent.find('select').attr("class","");
-        var className = elemParent.find('option[value="'+value+'"]').attr("class");
+        elemParent.find('select').attr("class", "");
+        var className = elemParent.find('option[value="' + value + '"]').attr("class");
         elemParent.find("select").addClass(className);
     },
     getClassName : function(job) {
-        if(job.get('running')) return "btn-primary";
-         else {
-           if(job.get('successful')) return "btn-success";
-           else return "btn-danger";
+        if (job.get('running')) return "btn-primary";
+        else {
+            if (job.get('successful')) return "btn-success";
+            else return "btn-danger";
         }
     },
-    addJobView : function(elemParent,job) {
+    addJobView : function(elemParent, job) {
         var self = this;
-        elemParent.append('<div style="margin: 0px auto;min-width:100px;max-width:200px" id="'+job.id+'"></div>');
-        self.parent.buildJobInfoElem(job,elemParent.find("#"+job.id));
+        elemParent.append('<div style="margin: 0px auto;min-width:100px;max-width:200px" id="' + job.id + '"></div>');
+        self.parent.buildJobInfoElem(job, elemParent.find("#" + job.id));
     },
-    addParamView : function(elemParent,job) {
+    addParamView : function(elemParent, job) {
         var self = this;
 
         elemParent.append('<table width="100%" style="width:100%;max-width:100%" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="runParamsTable" ></table>');
@@ -148,10 +148,10 @@ var JobComparatorView = Backbone.View.extend({
         //print data from project image table
         var tbody = elemParent.find('#runParamsTable').find("tbody");
 
-         _.each(job.get('jobParameter'), function (param) {
-            tbody.append('<tr><td>'+param.name+'</td><td>'+param.value+'</td><td>'+param.type+'</td></tr>');
-         });
-        elemParent.find('#runParamsTable').dataTable( {
+        _.each(job.get('jobParameter'), function (param) {
+            tbody.append('<tr><td>' + param.name + '</td><td>' + param.value + '</td><td>' + param.type + '</td></tr>');
+        });
+        elemParent.find('#runParamsTable').dataTable({
             //"sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
             "sPaginationType": "bootstrap",
             "oLanguage": {
@@ -160,34 +160,34 @@ var JobComparatorView = Backbone.View.extend({
             "iDisplayLength": 10 ,
             "bLengthChange" : false,
             bDestroy: true,
-                 "aoColumnDefs": [
+            "aoColumnDefs": [
                 { "sWidth": "40%", "aTargets": [ 0 ] },
                 { "sWidth": "40%", "aTargets": [ 1 ] },
                 { "sWidth": "20%", "aTargets": [ 2 ] }
-             ]
+            ]
         });
     },
-    addResultView: function(elemParent,job) {
+    addResultView: function(elemParent, job) {
         var self = this;
 
-        if(window.app.status.currentTermsCollection==undefined || window.app.status.currentAnnotationsCollection==undefined) {
-             new AnnotationCollection({project:self.project.id}).fetch({
+        if (window.app.status.currentTermsCollection == undefined || window.app.status.currentAnnotationsCollection == undefined) {
+            new AnnotationCollection({project:self.project.id}).fetch({
                 success : function (collection, response) {
                     window.app.status.currentAnnotationsCollection = collection;
                     new TermCollection({idProject:self.project.id}).fetch({
                         success : function (terms, response) {
                             window.app.status.currentTermsCollection = terms;
-                            self.initJobResult(job,elemParent);
+                            self.initJobResult(job, elemParent);
 
                         }
                     });
                 }
             });
         } else {
-            self.initJobResult(job,elemParent);
+            self.initJobResult(job, elemParent);
         }
     },
-    initJobResult : function(job,elemParent) {
+    initJobResult : function(job, elemParent) {
         var self = this;
         var result = new RetrievalAlgoResult({
             model : job,
