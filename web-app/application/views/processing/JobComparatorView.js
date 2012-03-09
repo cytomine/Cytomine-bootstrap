@@ -48,14 +48,14 @@ var JobComparatorView = Backbone.View.extend({
             $("#comparatorJobSelection").find('.job2').find('select').val(self.jobs.at(1).id);
         }
 
-
+        self.refreshSelectStyle($("#comparatorJobSelection").find('.job1'));
+        self.refreshSelectStyle($("#comparatorJobSelection").find('.job2'));
         self.refreshCompareJob();
     },
     retrieveSelectedJob : function(num) {
         return $("#comparatorJobSelection").find('.job'+num).find('select').val();
     },
     cleanCompareJob : function() {
-         console.log("cleanCompareJob");
         $("#comparatorJobInfo").find(".job1").empty();
         $("#comparatorJobInfo").find(".job2").empty();
         $("#comparatorJobParam").find(".job1").empty();
@@ -66,7 +66,6 @@ var JobComparatorView = Backbone.View.extend({
     },
     refreshCompareJob : function() {
         var self = this;
-        console.log("refreshCompareJob");
         self.cleanCompareJob();
         var idJob1 = self.retrieveSelectedJob('1');
         var idJob2 = self.retrieveSelectedJob('2');
@@ -111,19 +110,31 @@ var JobComparatorView = Backbone.View.extend({
         var self = this;
         elemParent.append('<select></select>');
         self.jobs.each(function(job) {
-            elemParent.find("select").append('<option value="'+ job.id +'">Job '+job.id + ' ('  + window.app.convertLongToDate(job.get('created')) +')'+'</option>');
+            var className = self.getClassName(job);
+            elemParent.find("select").append('<option class="'+className+'" value="'+ job.id +'">Job '+job.id + ' ('  + window.app.convertLongToDate(job.get('created')) +')'+'</option>');
         });
         elemParent.find("select").change(function() {
+            self.refreshSelectStyle(elemParent);
             self.refreshCompareJob();
         });
     },
+    refreshSelectStyle : function(elemParent)  {
+        var value = elemParent.find("select").val();
+        elemParent.find('select').attr("class","");
+        var className = elemParent.find('option[value="'+value+'"]').attr("class");
+        elemParent.find("select").addClass(className);
+    },
+    getClassName : function(job) {
+        if(job.get('running')) return "btn-primary";
+         else {
+           if(job.get('successful')) return "btn-success";
+           else return "btn-danger";
+        }
+    },
     addJobView : function(elemParent,job) {
         var self = this;
-        console.log(elemParent.length);
         elemParent.append('<div style="margin: 0px auto;min-width:100px;max-width:200px" id="'+job.id+'"></div>');
-        console.log(elemParent);
         self.parent.buildJobInfoElem(job,elemParent.find("#"+job.id));
-        console.log(elemParent);
     },
     addParamView : function(elemParent,job) {
         var self = this;

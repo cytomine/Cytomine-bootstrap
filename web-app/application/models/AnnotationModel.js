@@ -62,7 +62,7 @@ var AnnotationCollection = Backbone.Collection.extend({
                 return url;
             }
             if (this.suggestTerm!=undefined) { //ask annotation with suggest term diff than correct term
-                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?suggestTerm="+ this.suggestTerm;
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?suggestTerm="+ this.suggestTerm + "&job="+this.job;
             }
 
             if (this.term >= "0" && this.users==undefined) return "api/term/" + this.term + "/project/" + this.project + "/annotation.json";
@@ -92,6 +92,7 @@ var AnnotationCollection = Backbone.Collection.extend({
         this.term = options.term;
         this.users = options.users;
         this.suggestTerm = options.suggestTerm;
+        this.job = options.job;
     }/*,
     comparator : function (annotation) {
         return -annotation.get("id"); //id or created (chronology?)

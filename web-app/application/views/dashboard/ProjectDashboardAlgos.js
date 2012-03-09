@@ -34,6 +34,13 @@ var ProjectDashboardAlgos = Backbone.View.extend({
        //get all software from project and print menu
        new SoftwareCollection({ project : self.model.id}).fetch({
            success : function (collection, response) {
+
+               if(collection.length==0) {
+                   $(self.el).empty();
+                   $(self.el).append('<br/><divstyle="text-align:left;"><h2>No software available for this project!</h2></div>');
+                   return;
+               }
+
                if(self.idSoftware==undefined) {
                    var lastSoftware = collection.last();
                    self.idSoftware = lastSoftware.id;
@@ -66,12 +73,14 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     refresh : function() {
         console.log("refresh()" + this.idJob);
         if (!this.rendered) this.render();
+        if(this.softwares==null) return;
         //this.printProjectJobInfo(this.idJob);
         this.software = this.softwares.get(this.idSoftware);
         this.printProjectSoftwareInfo();
     },
     refresh : function(idSoftware,idJob) {
         console.log("refresh(idSoftware,idJob)" + this.idJob);
+        if(this.softwares==null) return;
         this.idJob = idJob;
         this.software = this.softwares.get(idSoftware);
         if(idSoftware!=this.idSoftware)
@@ -82,20 +91,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         }
 
         this.printProjectSoftwareInfo();
-    },
-    changeSoftware : function() {
-        var self = this;
-        self.softwares.each(function (software) {
-            $("#consultSoftware-" + software.id).removeClass("active");
-        });
-        $("#consultSoftware-" + self.software.id).addClass("active");
-        //clean param list
-        $('#selectRunParamsTable').find('tbody').empty();
-        //clean result
-        $("#panelJobResultsDiv").empty();
-        //load result
-        console.log("changeSoftware") ;
-        self.fillJobSelectView();
     },
     initProjectSoftwareList : function () {
         var self = this;
@@ -110,6 +105,20 @@ var ProjectDashboardAlgos = Backbone.View.extend({
             }
         });
 
+    },
+    changeSoftware : function() {
+        var self = this;
+        self.softwares.each(function (software) {
+            $("#consultSoftware-" + software.id).removeClass("active");
+        });
+        $("#consultSoftware-" + self.software.id).addClass("active");
+        //clean param list
+        $('#selectRunParamsTable').find('tbody').empty();
+        //clean result
+        $("#panelJobResultsDiv").empty();
+        //load result
+        console.log("changeSoftware") ;
+        self.fillJobSelectView();
     },
     printProjectSoftwareInfo : function() {
         var self = this;

@@ -160,8 +160,10 @@ var RetrievalAlgoResult = Backbone.View.extend({
         $(self.el).find('#userRetrievalSuggestMatrixDataTable').empty();
       new StatsRetrievalSuggestionMatrixModel({job:self.model.id}).fetch({
          success : function(model, response) {
+            console.log("build matrix");
             self.drawRetrievalSuggestionTable(model,response, terms);
-             $(self.el).find("#userRetrievalSuggestMatrixDataTable").dialog({
+             console.log("build dialog:" + $("#userRetrievalSuggestMatrixDataTable").length);
+             $("#userRetrievalSuggestMatrixDataTable").dialog({
                  modal : true,
                  minWidth : Math.round($(window).width() - 75),
                  minHeight : Math.round($(window).height() - 75),
@@ -170,7 +172,8 @@ var RetrievalAlgoResult = Backbone.View.extend({
                     text: "Ok",
                     click: function() { $(this).dialog("close"); }
                 }
-            ] });
+                 ],close: function(event, ui) { $("#userRetrievalSuggestMatrixDataTable").empty(); }
+             });
 
          }
       });
@@ -178,14 +181,14 @@ var RetrievalAlgoResult = Backbone.View.extend({
     tableElement : 'userRetrievalSuggestMatrixDataTable',
     tableElementHtml : 'userRetrievalSuggestMatrixDataTableHtml',
     addLine: function(idLine) {
-       $(this.el).find('#userRetrievalSuggestMatrixDataTableHtml').append('<tr onMouseOver="this.className=\'confusionMatrixBadValueHover\'" id="' + idLine + '" class="confusionMatrixRow"></tr>');
+       $('#userRetrievalSuggestMatrixDataTableHtml').append('<tr onMouseOver="this.className=\'confusionMatrixBadValueHover\'" id="' + idLine + '" class="confusionMatrixRow"></tr>');
     },
     addCell: function(idLine, idColumn, value,style) {
        this.addCell(idLine,idColumn,value,style,'');
     },
     addCell: function(idLine, idColumn, value,style,tooltip) {
-       $(this.el).find("#userRetrievalSuggestMatrixDataTableHtml").find("tr#"+idLine).append('<td id="' + idColumn + '"title="'+tooltip+'" class="'+style+'">'+value+'</td>');
-        var elem = $(self.el).find("#userRetrievalSuggestMatrixDataTableHtml").find("tr#"+idLine).find("td#"+idColumn);
+       $("#userRetrievalSuggestMatrixDataTableHtml").find("tr#"+idLine).append('<td id="' + idColumn + '"title="'+tooltip+'" class="'+style+'">'+value+'</td>');
+        var elem = $("#userRetrievalSuggestMatrixDataTableHtml").find("tr#"+idLine).find("td#"+idColumn);
         if(tooltip!='' && tooltip!=undefined) {
             elem.tooltip();
         }
@@ -203,7 +206,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
 
        var matrix = eval('('+matrixJSON +')');
 
-       $(self.el).find('#userRetrievalSuggestMatrixDataTable').append('<table id="userRetrievalSuggestMatrixDataTableHtml" class="table table-condensed"></table>');
+       $('#userRetrievalSuggestMatrixDataTable').append('<table id="userRetrievalSuggestMatrixDataTableHtml" class="table table-condensed"></table>');
        //add title line
        self.addLine(-1);
 
