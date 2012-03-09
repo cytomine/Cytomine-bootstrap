@@ -10,9 +10,6 @@ class Ontology extends CytomineDomain implements Serializable {
 
     String name
     User user
-    List test1
-    SortedSet test2
-    String[] test3
 
     static constraints = {
         name(blank: false, unique: true)
