@@ -377,24 +377,24 @@ span .ui-icon {
 }
 
 td.confusionMatrixHeader{
-   text-align :center;
-   font-weight: bold;
+    text-align :center;
+    font-weight: bold;
 }
 
 td.confusionMatrixSimple{
-   text-align :center;
+    text-align :center;
 }
 
 td.confusionMatrixDiagonal{
-   text-align :center;
-   font-weight: bold;
-   background-color:#90c140;
+    text-align :center;
+    font-weight: bold;
+    background-color:#90c140;
 }
 
 td.confusionMatrixBadValue{
-   text-align :center;
-   font-weight: bold;
-   background-color:#ff5800;
+    text-align :center;
+    font-weight: bold;
+    background-color:#ff5800;
 }
 
 /*.table tbody tr:hover td, .table tbody tr:hover th {
@@ -413,35 +413,37 @@ div.olControlZoomPanel {
     -moz-transition: opacity 0.2s linear;
     -o-transition: opacity 0.2s linear;
     transition: opacity 0.2s linear;
+    /* Hack to vastly improve pinch-zoom-performance */
+    -webkit-transform: translate3d(0, 0, 0);
 }
 
 /* Datatables */
 
 div.dataTables_length label {
-	float: left;
-	text-align: left;
+    float: left;
+    text-align: left;
 }
 
 div.dataTables_length select {
-	width: 75px;
+    width: 75px;
 }
 
 div.dataTables_filter label {
-	float: right;
+    float: right;
 }
 
 div.dataTables_info {
-	padding-top: 8px;
+    padding-top: 8px;
 }
 
 div.dataTables_paginate {
-	float: right;
-	margin: 0;
+    float: right;
+    margin: 0;
 }
 
 table.table {
-	clear: both;
-	margin-bottom: 6px !important;
+    clear: both;
+    margin-bottom: 6px !important;
 }
 
 table.table thead .sorting,
@@ -449,8 +451,8 @@ table.table thead .sorting_asc,
 table.table thead .sorting_desc,
 table.table thead .sorting_asc_disabled,
 table.table thead .sorting_desc_disabled {
-	cursor: pointer;
-	*cursor: hand;
+    cursor: pointer;
+    *cursor: hand;
 }
 
 table.table thead .sorting { background: url('../images/datatables/sort_both.png') no-repeat center right; }
@@ -461,5 +463,6 @@ table.table thead .sorting_asc_disabled { background: url('../images/datatables/
 table.table thead .sorting_desc_disabled { background: url('../images/datatables/sort_desc_disabled.png') no-repeat center right; }
 
 table.dataTable th:active {
-	outline: none;
+    outline: none;
 }
+

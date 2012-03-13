@@ -3,7 +3,6 @@ package be.cytomine.processing
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
-import be.cytomine.security.User
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.project.Project
 import be.cytomine.command.EditCommand

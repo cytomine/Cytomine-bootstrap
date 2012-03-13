@@ -54,10 +54,14 @@ class UrlMappings {
         "/api/project/imagefilter/$id"(controller: "restImageFilter"){
             action = [GET:"show"]
         }
-        "/api/project/$project/imagefilter"(controller: "restImageFilterProject"){
+
+        "/api/project/$project/imagefilterproject"(controller: "restImageFilterProject"){
+            action = [GET:"listByProject"]
+        }
+        "/api/imagefilterproject" (controller: "restImageFilterProject"){
             action = [GET:"list", POST : "add"]
         }
-        "/api/project/$project/imagefilter/$imageFilter"(controller: "restImageFilterProject"){
+        "/api/imagefilterproject/$id"(controller: "restImageFilterProject"){
             action = [DELETE : "delete"]
         }
 

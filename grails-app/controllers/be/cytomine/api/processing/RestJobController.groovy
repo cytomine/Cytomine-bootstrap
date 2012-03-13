@@ -36,7 +36,7 @@ class RestJobController extends RestController {
 
     def listByProject = {
         log.info "list all job by project"
-        boolean light = params.light==null? false : params.boolean('light')
+        boolean light = params.light==null ? false : params.boolean('light')
         int max = params.max==null? Integer.MAX_VALUE : params.int('max')
 
         Project project = projectService.read(params.long('id'), new Project())

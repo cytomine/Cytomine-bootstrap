@@ -28,7 +28,6 @@
 <style type="text/css">
 body {
    padding-top: 40px;
-   padding-bottom: 40px;
 }
 </style>
 <link rel="stylesheet" href="lib/bootstrap-2.0/css/bootstrap-responsive.css">

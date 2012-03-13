@@ -1,4 +1,4 @@
-<div class="tab-pane"  id="tabs-dashboard-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding : 20px;">
+<div class="tab-pane"  id="tabs-dashboard-<%= id %>" style="overflow : auto;padding : 20px;">
     <div class="row" style="padding-top: 15px;padding-left: 30px;">
         <div id="projectInfoPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;min-height: 250px;" class="span5 hero-unit">
             <h3>Project Info</h3>
@@ -78,7 +78,7 @@
 
     </div>
 </div>
-<div class="tab-pane" id="tabs-images-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding: 5px;">
+<div class="tab-pane" id="tabs-images-<%= id %>" style="overflow : auto;padding: 5px;">
     <div align="center" style="margin: 5px;">
         <a id="imageThumbs<%= id %>" href="#tabs-thumbs-<%= id %>" class="btn btn-inverse"><i class="icon-th-large icon-white"></i></a>
         <a id="imageArray<%= id %>" href="#tabs-imagesarray-<%= id %>" class="btn btn-inverse"><i class="icon-th-list icon-white"></i></a>
@@ -115,8 +115,8 @@
     </div>
 </div>
 
-<div class="tab-pane" id="tabs-annotations-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;">
-    <div class="container-fluid" style="padding-top: 10px;">   80
+<div class="tab-pane" id="tabs-annotations-<%= id %>" style="overflow : auto;">
+    <div class="container-fluid" style="padding-top: 10px;">
         <div class="row-fluid">
             <div class="span3">
                 <div class="well sidebar-nav">
@@ -167,14 +167,21 @@
         </div><!--/row-->
     </div>
 </div>
-<div class="tab-pane" id="tabs-config-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding: 20px;">
-    <div class="hero-unit">
-        <h3>Image filters</h3>
-        <ul class="image-filters"></ul>
-        <select id="addImageFilter"></select> <button id="addImageFilterButton" class="btn">Add</button>
+<div class="tab-pane" id="tabs-config-<%= id %>" style="overflow : auto;padding: 20px;">
+    <div class="row" style="padding : 20px;">
+        <div class="span4 well">
+            <h2>Image filters</h2>
+            <ul class="image-filters">
+                <li><button id="addImageFilterButton" class="btn btn-primary"><i class="icon-plus icon-white" /> Add&nbsp;&nbsp;&nbsp;</button> <select id="addImageFilter"></select></ul></li>
+        </div>
+        <div class="span4 well">
+            <h2>Softwares</h2>
+            <ul class="softwares">
+                <li><button id="addSoftwareButton" class="btn btn-primary"><i class="icon-plus icon-white" /> Add&nbsp;&nbsp;&nbsp;</button> <select id="addSoftware"></select></li>
+            </ul>
+
+        </div>
     </div>
 </div>
-<div class="tab-pane" id="tabs-algos-<%= id %>" style="background-image: url('http://subtlepatterns.com/patterns/whitey.png');overflow : auto;padding: 20px;">
-
-</div>
+<div class="tab-pane" id="tabs-algos-<%= id %>" style="overflow : auto;padding: 20px;"></div>
 

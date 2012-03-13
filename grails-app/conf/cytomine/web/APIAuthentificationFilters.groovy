@@ -83,9 +83,11 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
             byte[] signatureBytes = Base64.encode(rawHmac)
             signature = new String(signatureBytes)
             if (authorizationSign == signature) {
+                print "authorizationSign == signature : " + authorizationSign + " == " + signature
                 SpringSecurityUtils.reauthenticate user.getUsername(), null
                 return true
             } else {
+                print "authorizationSign != signature : " + authorizationSign + " != " + signature
                 return false
             }
 

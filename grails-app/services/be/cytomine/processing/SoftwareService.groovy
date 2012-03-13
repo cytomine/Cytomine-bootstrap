@@ -11,6 +11,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.security.SecUser
+import be.cytomine.project.Project
 
 class SoftwareService extends ModelService {
 
@@ -26,11 +27,15 @@ class SoftwareService extends ModelService {
         Software.list()
     }
 
+    def list(Project project) {
+        project.softwareProjects.collect {it.software}
+    }
+
     def read(def id) {
         Software.read(id)
     }
 
-   def add(def json) throws CytomineException {
+    def add(def json) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)

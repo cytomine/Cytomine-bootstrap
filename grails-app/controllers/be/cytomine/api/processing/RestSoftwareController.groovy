@@ -4,6 +4,7 @@ import be.cytomine.api.RestController
 import be.cytomine.processing.Software
 import grails.plugins.springsecurity.Secured
 import grails.converters.JSON
+import be.cytomine.project.Project
 
 class RestSoftwareController extends RestController {
 
@@ -12,6 +13,13 @@ class RestSoftwareController extends RestController {
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
         responseSuccess(softwareService.list())
+    }
+
+    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
+    def listByProject = {
+        Project project = Project.read(params.long('id'))
+        if(project) responseSuccess(softwareService.list(project))
+        else responseNotFound("Project", params.id)
     }
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])

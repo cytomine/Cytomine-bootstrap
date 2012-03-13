@@ -319,16 +319,16 @@ var BrowseImageView = Backbone.View.extend({
                 }
             });
 
-            $("#map" + self.model.get('id')).css("width", "100%");
-            $("#map" + self.model.get('id')).css("height", "100%");
+
+
             self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
 
             self.initOntology();
-            //Set the height of the map manually
-            var paddingTop = 79;
+            //HACK : Set the height of the map manually
+            var paddingTop = 75;
             var height = $(window).height() - paddingTop;
-
             $("#map"+self.model.get('id')).css("height",height);
+            $("#map" + self.model.get('id')).css("width", "100%");
             $(window).resize(function() {
                 var height = $(window).height() - paddingTop;
                 $("#map"+self.model.get('id')).css("height",height);

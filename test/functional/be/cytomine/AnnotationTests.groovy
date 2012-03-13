@@ -211,8 +211,8 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testEditAnnotationNotExist() {
 
-        String oldGeom = "POINT (1111 1111)"
-        String newGeom = "POINT (9999 9999)"
+        String oldGeom = "POLYGON ((548 1611, 716 1737, 678 1527, 548 1611))"
+        String newGeom = "POLYGON ((548 1611, 678 1527, 716 1737, 548 1611))"
 
         /* Create a old annotation with point 1111 1111 */
         log.info("create annotation")
@@ -237,16 +237,15 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testEditAnnotationWithBadGeometry() {
 
-        String oldGeom = "POINT (1111 1111)"
+        String oldGeom = "POLYGON ((548 1611, 716 1737, 678 1527, 548 1611))"
         String newGeom = "POINT (BAD GEOMETRY)"
 
-        /* Create a old annotation with point 1111 1111 */
+
         log.info("create annotation")
         Annotation annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
         annotationToAdd.location = new WKTReader().read(oldGeom)
         annotationToAdd.save(flush: true)
 
-        /* Encode a niew annotation with point 9999 9999 */
         Annotation annotationToEdit = Annotation.get(annotationToAdd.id)
         def jsonAnnotation = annotationToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonAnnotation)

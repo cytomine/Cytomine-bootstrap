@@ -8,6 +8,9 @@ class SoftwareUrlMappings {
         "/api/software/$id"(controller:"restSoftware"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
+        "/api/project/$id/software"(controller:"restSoftware"){
+            action = [GET: "listByProject"]
+        }
 
     }
 }

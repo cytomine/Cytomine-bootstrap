@@ -335,11 +335,11 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         else if(job.isWait()) return self.getJobProgress(job,"progress-danger",'Wait ',width); //progress-warnoing doesn't work (<> doc) :-/
         else return "no supported";
     },
-    getJobLabel : function(class,text,width) {
-       return '<li><div class="'+class+'" style="margin:0 auto;min-width:'+width+';max-width:'+width+';">'+text+'</div></li>';
+    getJobLabel : function(className,text,width) {
+       return '<li><div class="'+className+'" style="margin:0 auto;min-width:'+width+';max-width:'+width+';">'+text+'</div></li>';
     },
-    getJobProgress : function(job, class, text, width) {   //todo: add class " progress-striped"
-        return '<li><div id="progresstext">'+text+' </div><div class="progress '+class+'"><div class="bar" style="width: '+job.get('progress')+'%;"></div></div></li>'
+    getJobProgress : function(job, className, text, width) {   //todo: add class " progress-striped"
+        return '<li><div id="progresstext">'+text+' </div><div class="progress '+className+'"><div class="bar" style="width: '+job.get('progress')+'%;"></div></div></li>'
     },
     buildJobParamElem: function(job, ulElem) {
         if(job==undefined) return;

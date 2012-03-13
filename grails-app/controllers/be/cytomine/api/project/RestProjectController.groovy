@@ -8,6 +8,8 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import be.cytomine.Exception.CytomineException
 import grails.plugins.springsecurity.Secured
+import be.cytomine.processing.Software
+
 class RestProjectController extends RestController {
 
     def springSecurityService
@@ -23,6 +25,11 @@ class RestProjectController extends RestController {
         responseSuccess(projectService.list())
     }
 
+    def listBySoftware = {
+        Software software = Software.read(params.long('id'))
+        if(software) responseSuccess(projectService.list(software))
+        else responseNotFound("Software", params.id)
+    }
 
     def listByOntology = {
         log.info "listByOntology with ontology id:" + params.id

@@ -72,6 +72,7 @@ environments {
     development {
         grails.serverURL = "http://localhost:8080"
         grails.converters.default.pretty.print = true
+        grails.plugins.springsecurity.useBasicAuth = true
     }
     test {
         grails.serverURL = "http://localhost:8090"

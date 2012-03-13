@@ -266,6 +266,7 @@ class Annotation extends CytomineDomain implements Serializable {
 
     def getCallBack() {
         return [annotationID: this.id, imageID: this.image.id]
+
     }
 
     static void registerMarshaller() {
@@ -308,8 +309,10 @@ class Annotation extends CytomineDomain implements Serializable {
             //retrieval
             try {if (it?.similarity) returnArray['similarity'] = it.similarity} catch (Exception e) {}
 
-            returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
-            returnArray['url'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
+            /*returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
+            returnArray['url'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)*/
+            returnArray['cropURL'] = it.getCropURL()
+
             returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.getIdProject(), imageinstance.id, it.id)
 
 

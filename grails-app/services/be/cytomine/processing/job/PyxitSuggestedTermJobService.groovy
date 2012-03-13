@@ -17,7 +17,7 @@ class PyxitSuggestedTermJobService extends AbstractJobService {
         Map<String, String> parametersValues = new HashMap<String, String>()
         parametersValues.put("public_key", userJob.getPublicKey())
         parametersValues.put("private_key", userJob.getPrivateKey())
-        parametersValues.put("clf_n_subwindows", 50.toString())
+        parametersValues.put("clf_n_subwindows", 25.toString())
         parametersValues.put("clf_min_size", 0.5.toString())
         parametersValues.put("clf_max_size", 1.toString())
         parametersValues.put("clf_target_width", 16.toString())

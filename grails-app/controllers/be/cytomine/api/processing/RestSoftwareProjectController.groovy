@@ -10,21 +10,15 @@ import be.cytomine.processing.SoftwareProject
 class RestSoftwareProjectController extends RestController{
 
     def softwareProjectService
-
+    def projectService
 
     def list = {
         responseSuccess(softwareProjectService.list())
     }
 
-    def listBySoftware = {
-        Software software = Software.read(params.long('id'))
-        if(software) responseSuccess(softwareProjectService.list(software))
-        else responseNotFound("Software", params.id)
-    }
-
     def listByProject = {
-        Project project = Project.read(params.long('id'))
-        if(project) responseSuccess(softwareProjectService.list(project))
+        Project project = projectService.read(params.long('id'), new Project())
+        if (project) responseSuccess(softwareProjectService.list(project))
         else responseNotFound("Project", params.id)
     }
 

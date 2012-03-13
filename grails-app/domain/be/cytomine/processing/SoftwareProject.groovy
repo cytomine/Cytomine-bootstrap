@@ -20,29 +20,7 @@ class SoftwareProject extends CytomineDomain implements Serializable{
     }
 
     static SoftwareProject link(Software software, Project project) {
-        def softwareProjects = SoftwareProject.findBySoftwareAndProject(software, project)
-        println "1="+softwareProjects?.id
-            println "softwareProjects.software="+software?.id
-            println "softwareProjects.project="+project?.id
-        if (!softwareProjects) {
-            softwareProjects = new SoftwareProject()
-            println "2="+softwareProjects?.id
-            software?.addToSoftwareProjects(softwareProjects)
-            println "3="+softwareProjects?.id
-            project?.addToSoftwareProjects(softwareProjects)
-
-            project.refresh()
-            software.refresh()
-            println "4="+softwareProjects?.id
-            println "softwareProjects="+softwareProjects
-            println "softwareProjects exist="+SoftwareProject.findBySoftwareAndProject(software,project)
-            println "softwareProjects.software="+softwareProjects.software
-            println "softwareProjects.project="+softwareProjects.project
-            softwareProjects.save(flush: true)
-            println "5="+softwareProjects?.id
-        }
-        println "6="+softwareProjects?.id
-        return softwareProjects
+        link(null, software, project)
     }
 
     static SoftwareProject link(def id,Software software, Project project) {
@@ -50,6 +28,8 @@ class SoftwareProject extends CytomineDomain implements Serializable{
         if (!softwareProjects) {
             softwareProjects = new SoftwareProject()
             softwareProjects.id = id
+            softwareProjects.software = software
+            softwareProjects.project = project
             software?.addToSoftwareProjects(softwareProjects)
             project?.addToSoftwareProjects(softwareProjects)
             project.refresh()
@@ -79,7 +59,7 @@ class SoftwareProject extends CytomineDomain implements Serializable{
         getFromData(softwareProject, jsonSoftwareParameter)
     }
 
-    static SoftwareProject getFromData(softwareProject, jsonSoftwareParameter) {
+    static SoftwareProject getFromData(SoftwareProject softwareProject, jsonSoftwareParameter) {
         println "jsonSoftwareParameter=" + jsonSoftwareParameter.toString()
         try {
             println "jsonSoftwareParameter.xxx.id"
@@ -103,6 +83,7 @@ class SoftwareProject extends CytomineDomain implements Serializable{
             returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['software'] = it.software?.id
+            returnArray['name'] = it.software?.name
             returnArray['project'] = it.project?.id
             return returnArray
         }

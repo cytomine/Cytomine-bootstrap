@@ -74,7 +74,7 @@ var DraggablePanelView = Backbone.View.extend({
         var start = function(el, position, context) {
             dragInProgress = true;
             $(el).css("overflow", "hidden");
-            window.app.view.showFloatingPanels();
+            /*window.app.view.showFloatingPanels();
             if (!minimized) {
                 width = $(context.el).width();
                 height = $(context.el).height();
@@ -82,29 +82,22 @@ var DraggablePanelView = Backbone.View.extend({
                 minizedWidth =  $(context.el).width();
                 minizedHeight = $(context.el).height();
             }
-            console.log(self.className);
             windowWidth = $(window).width();
-            /*$(context.el).off("mouseenter", function(){
-             mousenterDraggablePanel(self);
-             });
-             $(context.el).off("mouseleave", function(){
-             mouseleaveDraggablePanel(self);
-             });*/
             if (minimized) {
                 maximize(el, context);
-            }
+            }*/
         }
 
         var stop = function(el, position, context) {
             dragInProgress = false;
-            var leftPositionValue = parseInt(position.left);
+            /*var leftPositionValue = parseInt(position.left);
             if (!minimized && leftPositionValue <= 0) {  //left minimize
                 minimized = true;
                 minimize(el, context);
             } else if (leftPositionValue > 0 && minimized) {
                 minimized = false;
                 maximize(el, context);
-            }
+            }*/
             $(el).css("overflow", "auto");
             var leftPosition = Math.max(0, parseInt(position.left));
             var topPosition = Math.max(0, parseInt(position.top));

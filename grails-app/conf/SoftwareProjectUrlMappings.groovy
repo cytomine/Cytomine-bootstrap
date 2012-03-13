@@ -8,12 +8,8 @@ class SoftwareProjectUrlMappings {
         "/api/softwareproject/$id"(controller:"restSoftwareProject"){
             action = [GET:"show", DELETE:"delete"]
         }
-        "/api/software/$id/project"(controller:"restSoftwareProject"){
-            action = [GET: "listBySoftware"]
-        }
-        "/api/project/$id/software"(controller:"restSoftwareProject"){
+        "/api/project/$id/softwareproject"(controller:"restSoftwareProject"){
             action = [GET: "listByProject"]
         }
-
     }
 }

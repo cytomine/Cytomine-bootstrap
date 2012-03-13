@@ -155,7 +155,9 @@ class StatsController extends RestController {
     def listWorstTerm(UserJob userJob) {
         Map<Term, Integer> termMap = new HashMap<Term, Integer>()
         List<Term> termList = termService.list(userJob?.job?.project)
-        termList.each {termMap.put(it, 0)}
+        termList.each {
+            termMap.put(it, 0)
+        }
 
         def algoAnnotationsTerm = AlgoAnnotationTerm.createCriteria().list {
             eq("userJob", userJob)
@@ -163,9 +165,11 @@ class StatsController extends RestController {
         }
 
         algoAnnotationsTerm.each {
-            termMap.put(it.term, termMap.get(it.term) + 1);
+            termMap.put(it.expectedTerm, termMap.get(it.expectedTerm) + 1);
         }
+
         termList.clear()
+
         termMap.each {  key, value ->
             key.rate = value
             termList.add(key)
@@ -183,7 +187,6 @@ class StatsController extends RestController {
 
         def algoAnnotationsTerm = AlgoAnnotationTerm.createCriteria().list {
             eq("userJob", userJob)
-            //neProperty("term","expectedTerm")
         }
 
         algoAnnotationsTerm.each {
@@ -200,14 +203,10 @@ class StatsController extends RestController {
             data[it.key] = []
             long sum = algoAnnotationTermService.computeSumOfValue(mapSorted)
 
-
-
             mapSorted.each { entry ->
-                //log.info "entry="+entry
                 Map map = [:]
                 map[entry.key] = Math.round(((entry.value / sum) * 100))
                 data[it.key].add(map)
-
             }
             ///log.info "mapSorted= " + mapSorted
         }

@@ -14,5 +14,8 @@ class ProjectUrlMappings {
         "/api/project/$id"(controller: "restProject"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
+        "/api/software/$id/project"(controller:"restProject"){
+            action = [GET: "listBySoftware"]
+        }
     }
 }

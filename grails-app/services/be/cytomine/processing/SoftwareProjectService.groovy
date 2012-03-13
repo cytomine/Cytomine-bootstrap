@@ -30,12 +30,8 @@ class SoftwareProjectService extends ModelService{
         SoftwareProject.read(id)
     }
 
-    def list(Software software) {
-        software.softwareProjects.collect {it.project}
-    }
-
     def list(Project project) {
-        project.softwareProjects.collect {it.software}
+        project.softwareProjects
     }
 
    def add(def json) throws CytomineException {

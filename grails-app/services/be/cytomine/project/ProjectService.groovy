@@ -36,31 +36,31 @@ class ProjectService extends ModelService {
     boolean saveOnUndoRedoStack = false
 
     void addPermission(Project project, String username, int permission) {
-       addPermission(project, username, aclPermissionFactory.buildFromMask(permission))
+        addPermission(project, username, aclPermissionFactory.buildFromMask(permission))
     }
 
     @PreAuthorize("#project.hasPermission('ADMIN') or hasRole('ROLE_ADMIN')")
     void addPermission(Project project, String username, Permission permission) {
         log.info "Add Permission " +  permission.toString() + " for " + username + " to " + project?.name
-       aclUtilService.addPermission(project, username, permission)
+        aclUtilService.addPermission(project, username, permission)
     }
 
-   @Transactional
-   @PreAuthorize("#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
-   void deletePermission(Project project, SecUser user, Permission permission) {
-      def acl = aclUtilService.readAcl(project)
+    @Transactional
+    @PreAuthorize("#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
+    void deletePermission(Project project, SecUser user, Permission permission) {
+        def acl = aclUtilService.readAcl(project)
 
-      // Remove all permissions associated with this particular recipient
-      acl.entries.eachWithIndex { entry, i ->
-          log.debug "entry.permission.equals(permission)="+entry.permission.equals(permission) + " entry.sid="+entry.sid.getPrincipal()
-         if (entry.sid.getPrincipal().equals(user.username) && entry.permission.equals(permission)) {
-             log.debug "REMOVE PERMISSION FOR"
-            acl.deleteAce(i)
-         }
-      }
+        // Remove all permissions associated with this particular recipient
+        acl.entries.eachWithIndex { entry, i ->
+            log.debug "entry.permission.equals(permission)="+entry.permission.equals(permission) + " entry.sid="+entry.sid.getPrincipal()
+            if (entry.sid.getPrincipal().equals(user.username) && entry.permission.equals(permission)) {
+                log.debug "REMOVE PERMISSION FOR"
+                acl.deleteAce(i)
+            }
+        }
 
-      aclService.updateAcl(acl)
-   }
+        aclService.updateAcl(acl)
+    }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
@@ -96,6 +96,10 @@ class ProjectService extends ModelService {
         Project.get(id)
     }
 
+    def list(Software software) {
+        software.softwareProjects.collect {it.project}
+    }
+
     def lastAction(Project project, def max) {
         return CommandHistory.findAllByProject(project, [sort: "created", order: "desc", max: max])
     }
@@ -112,7 +116,7 @@ class ProjectService extends ModelService {
         SecUser currentUser = cytomineService.getCurrentUser()
         def response = executeCommand(new EditCommand(user: currentUser), json)
         String newName = Project.get(json.id)?.name
-         //Validate and save domain
+        //Validate and save domain
         log.debug "oldName = " + oldName
         Group group = Group.findByName(oldName)
         log.info "rename group " + group?.name + "(" + group + ") by " + newName
@@ -182,7 +186,7 @@ class ProjectService extends ModelService {
         }
         def groups = domain.groups()
 //        def l = []
-//        l += groups
+        //        l += groups
         log.info "groups="+groups
         groups.each { group ->
             //for each group, delete user link
