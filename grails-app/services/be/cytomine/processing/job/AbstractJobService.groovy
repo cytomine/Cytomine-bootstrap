@@ -60,7 +60,7 @@ abstract class AbstractJobService {
                          String line = "";
                          try {
                              while((line = reader.readLine()) != null) {
-                                 //println line
+                                 println "############# JOB:" + line
                              }
                          } finally {
                              reader.close();

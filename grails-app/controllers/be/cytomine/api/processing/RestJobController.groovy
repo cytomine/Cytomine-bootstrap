@@ -12,6 +12,7 @@ import be.cytomine.security.UserJob
 import be.cytomine.security.SecUserSecRole
 import groovyx.gpars.Asynchronizer
 import java.util.concurrent.Future
+import be.cytomine.Exception.CytomineException
 
 class RestJobController extends RestController {
 
@@ -72,7 +73,35 @@ class RestJobController extends RestController {
     }
 
     def add = {
-        add(jobService, request.JSON)
+        try {
+            log.debug("add")
+            def result = jobService.add(request.JSON)
+            log.debug("result="+result)
+            def idJob = result?.data?.job?.id
+            log.debug("idJob="+idJob)
+            executeJob(Job.get(idJob))
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error("add error:" + e.msg)
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+    }
+
+    private def executeJob(Job job) {
+        //create Job
+        log.info "Execute Job..."
+        //Create User-job
+        UserJob userJob = createUserJob(User.read(springSecurityService.principal.id), job)
+        job.software.service.init(job, userJob)
+
+        log.info "### Launch asynchronous..."
+        backgroundService.execute("RunJobAsynchronously", {
+            log.info "Launch thread";
+            job.software.service.execute(job)
+        })
+        log.info "### Return response..."
+        job
     }
 
     def update = {

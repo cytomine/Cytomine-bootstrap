@@ -10,6 +10,7 @@ import be.cytomine.command.EditCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
+import be.cytomine.command.Transaction
 
 class JobService extends ModelService {
 
@@ -17,6 +18,8 @@ class JobService extends ModelService {
     def cytomineService
     def commandService
     def domainService
+    def transactionService
+    def jobParameterService
 
     def list() {
         Job.list()
@@ -61,10 +64,37 @@ class JobService extends ModelService {
         log.info "json="+json
         log.info "cytomineService="+cytomineService
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new AddCommand(user: currentUser), json)
+
+        //Start transaction
+        Transaction transaction = transactionService.start()
+
+        //Synchronzed this part of code, prevent two job to be add at the same time
+        synchronized (this.getClass()) {
+            //Add Job
+            log.debug this.toString()
+            def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
+            def job = result?.data?.job?.id
+            log.info "job=" + job + " json.params=" + json.params
+            //Add annotation-term if term
+            if (job) {
+                def params = json.params;
+                if (params) {
+                    params.each { param ->
+                        log.info "add param = " + param
+                        jobParameterService.addJobParameter(job,param.softwareParameter,param.value, currentUser, transaction)
+                    }
+                }
+            }
+
+        //Stop transaction
+        transactionService.stop()
+
+        return result
+        }
     }
 
-    def update(def domain, Object json) {
+    def update(def domain, def json) {
+        log.info "update job:"+json
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }

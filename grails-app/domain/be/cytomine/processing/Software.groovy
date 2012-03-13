@@ -35,9 +35,9 @@ class Software extends CytomineDomain {
             def software = [:]
             software.id = it.id
             software.name = it.name
-            software.parameters = it.softwareParameters
             software.serviceName = it.serviceName
             try {
+                software.parameters = SoftwareParameter.findAllBySoftware(it,[sort: "name",order: "asc"])
                 software.numberOfJob = Job.countBySoftware(it);
                 software.numberOfJobSuccesfull = software.numberOfJob==0? 0 : Job.countBySoftwareAndSuccessful(it,true);
                 software.ratioOfJobSuccesfull = software.numberOfJob==0? 0 :  (double)(software.numberOfJobSuccesfull/software.numberOfJob)

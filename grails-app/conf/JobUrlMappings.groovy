@@ -6,7 +6,7 @@ class JobUrlMappings {
             action = [GET: "list",POST:"add"]
         }
         "/api/project/$id/job"(controller:"restJob"){
-            action = [GET: "listByProject",POST: "execute"]
+            action = [GET: "listByProject",POST: "add"]
         }
         "/api/job/$id"(controller:"restJob"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]

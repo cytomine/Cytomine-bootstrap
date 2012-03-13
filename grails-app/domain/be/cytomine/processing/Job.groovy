@@ -10,9 +10,10 @@ import be.cytomine.ResponseService
 
 class Job extends CytomineDomain  {
 
+
+    int progress = 0
     Boolean running = false
     Boolean indeterminate = true
-    int progress = 0
     Boolean successful = false
     Project project
 

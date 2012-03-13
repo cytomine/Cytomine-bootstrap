@@ -10,6 +10,8 @@ import be.cytomine.security.User
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.security.SecUser
+import be.cytomine.command.Transaction
+import grails.converters.JSON
 
 class JobParameterService extends ModelService {
 
@@ -45,6 +47,12 @@ class JobParameterService extends ModelService {
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
+    //jobParameterService.addJobParameter(param.softwareParameter,param.value, currentUser, transaction);
+    def addJobParameter(def idJob, def idSoftwareParameter, def value,User currentUser,Transaction transaction) {
+        def json = JSON.parse("{softwareParameter: $idSoftwareParameter, value: $value, job: $idJob}")
+        return executeCommand(new AddCommand(user: currentUser,transaction:transaction), json)
+    }
+
     /**
      * Restore domain which was previously deleted
      * @param json domain info
@@ -57,7 +65,7 @@ class JobParameterService extends ModelService {
     }
 
     def create(JobParameter domain, boolean printMessage) {
-        if(JobParameter.findByJobAndSoftwareParameter(domain.job, domain.softwareParameter)) throw new WrongArgumentException("Job parameter still exist for this job/softwareparameter")
+        if(JobParameter.findByJobAndSoftwareParameter(domain.job, domain.softwareParameter)) throw new WrongArgumentException("Job parameter still exist for this job ${domain?.job?.id}/softwareparameter ${domain?.softwareParameter?.name}")
         //Save new object
         domainService.saveDomain(domain)
         //Build response message

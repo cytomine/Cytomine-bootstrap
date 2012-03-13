@@ -3,6 +3,8 @@ package be.cytomine.processing.job
 import be.cytomine.processing.Job
 import be.cytomine.security.UserJob
 import grails.converters.JSON
+import be.cytomine.processing.Software
+import be.cytomine.processing.SoftwareParameter
 
 class RetrievalSuggestedTermJobService extends AbstractJobService {
 
@@ -28,17 +30,17 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
            * 10: search project (only one)
         */
         //Create Job-parameter
-        jobParameterService.add(JSON.parse(createJobParameter("execType",job,"cytomine").encodeAsJSON()))
+//        jobParameterService.add(JSON.parse(createJobParameter("execType",job,"cytomine").encodeAsJSON()))
         jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()))
         jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("N",job, "500").encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("T",job, "5").encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("workingDir",job, "algo/retrievalSuggest/suggest/").encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("cytomineHost",job, "http://localhost:8080").encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("forceDownloadCrop",job, "false").encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("storeName",job, "KYOTOSINGLEFILE").encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("indexProject",job, "57").encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("searchProject",job, "57").encodeAsJSON()))
+//        jobParameterService.add(JSON.parse(createJobParameter("N",job, "500").encodeAsJSON()))
+//        jobParameterService.add(JSON.parse(createJobParameter("T",job, "5").encodeAsJSON()))
+//        jobParameterService.add(JSON.parse(createJobParameter("workingDir",job, "algo/retrievalSuggest/suggest/").encodeAsJSON()))
+//        jobParameterService.add(JSON.parse(createJobParameter("cytomineHost",job, "http://localhost:8080").encodeAsJSON()))
+//        jobParameterService.add(JSON.parse(createJobParameter("forceDownloadCrop",job, "false").encodeAsJSON()))
+//        jobParameterService.add(JSON.parse(createJobParameter("storeName",job, "KYOTOSINGLEFILE").encodeAsJSON()))
+//        jobParameterService.add(JSON.parse(createJobParameter("indexProject",job, "57").encodeAsJSON()))
+//        jobParameterService.add(JSON.parse(createJobParameter("searchProject",job, "57").encodeAsJSON()))
         //Execute Job
         log.info "Execute Job..."
     }
