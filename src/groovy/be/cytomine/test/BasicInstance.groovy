@@ -1022,7 +1022,6 @@ class BasicInstance {
 
     static void compareJob(map, json) {
         assert map.progress.equals(json.progress)
-        assert map.successful.equals(json.successful)
     }
 
     static void compareSoftware(map, json) {

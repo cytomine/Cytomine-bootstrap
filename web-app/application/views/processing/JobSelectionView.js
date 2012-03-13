@@ -126,10 +126,7 @@ var JobSelectionView = Backbone.View.extend({
     findJobByIndice : function (indiceArray) {
         var self = this;
         var jobArray = [];
-        console.log(self.jobs);
         _.each(indiceArray, function(indx) {
-            console.log(indx);
-            console.log(self.jobs.at(indx));
             jobArray.push(self.jobs.at(indx));
         });
         return jobArray;
@@ -153,16 +150,12 @@ var JobSelectionView = Backbone.View.extend({
                     cellSee = '<a id="select' + job.id + '">Compare</a>'
                 } else {
                     //else if comparator then print "see details" and click must select job
-                    console.log("self.project=" + self.project);
-                    console.log("self.software=" + self.software);
-                    console.log("job.id=" + job);
                     cellSee = '<a href="#tabs-algos-' + self.project.id + "-" + self.software.id + "-" + job.id + '" id="' + job.id + '">See details<br></a>'
                 }
                 tbody.append('<tr><td>' + cellIcon + '</td><td  style="text-align:left;">' + cellId + '</td><td  style="text-align:center;">' + cellDate + '</td><td  style="text-align:center;">' + cellState + '</td><td>' + cellSee + '</td></tr>');
 
                 if (self.comparator) {
                     tbody.find("#select" + job.id).click(function() {
-                        console.log("COMPARE:" + job.id);
                         self.selectedJob = job.id;
                         //self.parent.refresh();
                     });
@@ -180,10 +173,10 @@ var JobSelectionView = Backbone.View.extend({
             "bLengthChange" : false,
             bDestroy: true,
             "aoColumnDefs": [
-                { "sWidth": "10%", "aTargets": [ 0 ] },
+                { "sWidth": "5%", "aTargets": [ 0 ] },
                 { "sWidth": "10%", "aTargets": [ 1 ] },
-                { "sWidth": "30%", "aTargets": [ 2 ] },
-                { "sWidth": "20%", "aTargets": [ 3 ] },
+                { "sWidth": "25%", "aTargets": [ 2 ] },
+                { "sWidth": "30%", "aTargets": [ 3 ] },
                 { "sWidth": "30%", "aTargets": [ 3 ] }
             ]
         });
@@ -191,20 +184,14 @@ var JobSelectionView = Backbone.View.extend({
 
     },
     getStateElement : function(job) {
-        if (job.get('running')) {
-            //return progress
-            return '<span class="label btn-primary">Progress!</span> '
-        } else {
-            if (job.get('successful')) {
-                //return success
-                return '<span class="label btn-success">Success!</span>';
-            }
-            else {
-                //return fail
-                return '<span class="label btn-danger">Fail!</span>'
-            }
-
-        }
+        if(job.isNotLaunch()) return '<span class="label btn-inverse">Not Launch!</span> ';
+        else if(job.isInQueue()) return '<span class="label btn-info">In queue!</span> ' ;
+        else if(job.isRunning()) return '<span class="label btn-primary">Running!</span> ' ;
+        else if(job.isSuccess()) return '<span class="label btn-success">Success!</span> ';
+        else if(job.isFailed()) return '<span class="label btn-danger">Failed!</span> ';
+        else if(job.isIndeterminate()) return '<span class="label btn-inverse">Indetereminate!</span> ' ;
+        else if(job.isWait()) return '<span class="label btn-warning">Wait!</span> ' ;
+        else return "no supported";
     },
     initSubGridDatatables : function() {
         var self = this;

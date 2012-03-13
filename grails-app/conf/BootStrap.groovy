@@ -35,9 +35,6 @@ import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
-
-
-
 class BootStrap {
     def springSecurityService
     def sequenceService
@@ -105,7 +102,7 @@ class BootStrap {
         createAnnotationGrant()
         */
 
-
+        updateJobStatus()
 
         stopWatch.stop("initData");
         //end of init
@@ -170,10 +167,16 @@ class BootStrap {
         //end of init
     }
 
-
-
-
-
+    def updateJobStatus() {
+//         Job.list().each { job ->
+//             if(job.running) job.status = 2
+//             else if(job.indeterminate) job.status = 5
+//             else if(job.successful) job.status = 3
+//             else if(!job.successful) job.status = 4
+//             job.save(flush:true)
+//         }
+//       //NOTLAUNCH = 0, INQUEUE = 1, RUNNING = 2, SUCCESS = 3, FAILED = 4, INDETERMINATE = 5
+    }
 
     private def createProjectGrant() {
         //Remove admin ritht for non-giga user

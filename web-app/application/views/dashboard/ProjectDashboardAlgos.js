@@ -98,7 +98,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         self.softwares.each(function (software) {
             $("#projectSoftwareListUl").append('<li id="consultSoftware-' + software.id + '"><a href="#tabs-algos-'+self.model.id + '-' +software.id + '-">' + software.get('name') + '</a></li>');
             $("#projectSoftwareListUl").children().removeClass("active");
-            console.log('COMPARE: |' + software.id + '|' + self.idSoftware + '|' + (software.id==self.idSoftware));
 
             if(software.id==self.idSoftware) {
                  $("#consultSoftware-" + software.id).addClass("active");
@@ -305,26 +304,15 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var width = $('#panelSoftwareLastRunList').find('#'+job.id).width()-5;
         elem.append('<ul  style="display:inline;" id="'+job.id+'"></ul>');
         var subelem = elem.find('#'+job.id);
-        var successfulIcon = job.get('successful') ? "icon-star" : "icon-star-empty";
+        var successfulIcon = job.get('status')==JobModel.SUCCESS ? "icon-star" : "icon-star-empty";
 
        subelem.append('<li><i class="'+successfulIcon+'"></i><h4 style="display:inline;"><a href="#tabs-algos-'+self.model.id + "-" + self.idSoftware + "-" +job.id+'" id="'+job.id+'">Job ' + job.id + '<br></a></h4></li>');
        subelem.find("#"+job.id).click(function() {
             self.printProjectJobInfo(job.id);
         });
 
-        if(job.get('running')) {
-            //job is still running
-            subelem.append('<li><div id="progresstext">Progress </div><div id="progBar" style="margin:0 auto;min-width:'+width+';max-width:'+width+';">'+job.get('progress')+'</div></li>');
-        } else {
-            //job is not running: success or fail
-           var classSucess = "btn-danger";
-           var textSucces = "Fail!";
-           if(job.get('successful')) {
-               classSucess = "btn-success";
-               textSucces = "Success!";
-           }
-           subelem.append('<li><div class="'+classSucess+'" style="margin:0 auto;min-width:'+width+';max-width:'+width+';">'+textSucces+'</div></li>');
-        }
+        subelem.append(self.getStatusElement(job,width));
+
        subelem.append('<li>'+window.app.convertLongToDate(job.get('created'))+'</li>');
 
        subelem.find('div#progBar').each(function(index) {
@@ -335,6 +323,23 @@ var ProjectDashboardAlgos = Backbone.View.extend({
           });
       });
       subelem.find('div#progresstext').append(job.get('progress') + "%");
+    },
+    getStatusElement : function(job,width) {
+        var self = this;
+        if(job.isNotLaunch()) return self.getJobLabel("btn-inverse","Not Launch!",width);
+        else if(job.isInQueue()) return self.getJobLabel("btn-info","In queue!",width);
+        else if(job.isRunning()) return self.getJobProgress(job,"active",'Progress ',width); //progress-bar not blue by default if  progress-striped (<> doc)
+        else if(job.isSuccess()) return self.getJobLabel("btn-success","Success!",width);
+        else if(job.isFailed()) return self.getJobLabel("btn-danger","Failed!",width);
+        else if(job.isIndeterminate()) return self.getJobLabel("btn-warning","Indetereminate!",width);
+        else if(job.isWait()) return self.getJobProgress(job,"progress-danger",'Wait ',width); //progress-warnoing doesn't work (<> doc) :-/
+        else return "no supported";
+    },
+    getJobLabel : function(class,text,width) {
+       return '<li><div class="'+class+'" style="margin:0 auto;min-width:'+width+';max-width:'+width+';">'+text+'</div></li>';
+    },
+    getJobProgress : function(job, class, text, width) {   //todo: add class " progress-striped"
+        return '<li><div id="progresstext">'+text+' </div><div class="progress '+class+'"><div class="bar" style="width: '+job.get('progress')+'%;"></div></div></li>'
     },
     buildJobParamElem: function(job, ulElem) {
         if(job==undefined) return;

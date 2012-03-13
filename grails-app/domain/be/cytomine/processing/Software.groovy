@@ -39,7 +39,7 @@ class Software extends CytomineDomain {
             try {
                 software.parameters = SoftwareParameter.findAllBySoftware(it,[sort: "name",order: "asc"])
                 software.numberOfJob = Job.countBySoftware(it);
-                software.numberOfJobSuccesfull = software.numberOfJob==0? 0 : Job.countBySoftwareAndSuccessful(it,true);
+                software.numberOfJobSuccesfull = software.numberOfJob==0? 0 : Job.countBySoftwareAndStatus(it,Job.SUCCESS);
                 software.ratioOfJobSuccesfull = software.numberOfJob==0? 0 :  (double)(software.numberOfJobSuccesfull/software.numberOfJob)
             } catch(Exception e) { println e; e.printStackTrace()}
 

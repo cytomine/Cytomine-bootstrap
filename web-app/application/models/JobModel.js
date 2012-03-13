@@ -21,7 +21,14 @@ var JobModel = Backbone.Model.extend({
       this.software = options.software;
       this.light = options.light;
       this.max = options.max;
-   }
+   },
+   isNotLaunch : function() { return (this.get('status')==0) },
+   isInQueue : function() { return (this.get('status')==1) },
+   isRunning : function() { return (this.get('status')==2) },
+   isSuccess : function() { return (this.get('status')==3) },
+   isFailed : function() { return (this.get('status')==4) },
+   isIndeterminate : function() { return (this.get('status')==5) },
+   isWait : function() { return (this.get('status')==6) }
 });
 
 // define our collection

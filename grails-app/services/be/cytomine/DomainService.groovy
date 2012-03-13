@@ -9,7 +9,10 @@ class DomainService {
     static transactional = true
 
     def saveDomain(def newObject) {
+        println "newObject="+newObject
         if (!newObject.validate()) {
+            println "NOT VALIDATE =" +newObject
+            println newObject.errors
             println newObject.retrieveErrors().toString()
             CytomineException cyto = new WrongArgumentException(newObject.retrieveErrors().toString())
             log.debug "cyto="+cyto.msg

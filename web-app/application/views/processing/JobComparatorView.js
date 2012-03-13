@@ -125,11 +125,14 @@ var JobComparatorView = Backbone.View.extend({
         elemParent.find("select").addClass(className);
     },
     getClassName : function(job) {
-        if (job.get('running')) return "btn-primary";
-        else {
-            if (job.get('successful')) return "btn-success";
-            else return "btn-danger";
-        }
+        if(job.isNotLaunch()) return "btn-inverse";
+        else if(job.isInQueue()) return "btn-info";
+        else if(job.isRunning()) return "btn-primary";
+        else if(job.isSuccess()) return "btn-success";
+        else if(job.isFailed()) return "btn-danger";
+        else if(job.isIndeterminate()) return "btn-inverse";
+        else if(job.isWait()) return "btn-primary";
+        else return "no supported";
     },
     addJobView : function(elemParent, job) {
         var self = this;

@@ -9,12 +9,17 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ResponseService
 
 class Job extends CytomineDomain  {
-
+    //enum type are too heavy with GORM
+    public static int NOTLAUNCH = 0
+    public static int INQUEUE = 1
+    public static int RUNNING = 2
+    public static int SUCCESS = 3
+    public static int FAILED = 4
+    public static int INDETERMINATE = 5
+    public static int WAIT = 6
 
     int progress = 0
-    Boolean running = false
-    Boolean indeterminate = true
-    Boolean successful = false
+    int status = 0 //enum type are too heavy with GORM
     Project project
 
     static transients = ["url"]
@@ -26,6 +31,7 @@ class Job extends CytomineDomain  {
     static constraints = {
         progress(min: 0, max: 100)
         project(nullable:true)
+        status(range: 0..6)
     }
 
     static mapping = {
@@ -43,10 +49,8 @@ class Job extends CytomineDomain  {
             def job = [:]
             job.id = it.id
             job.algoType = ResponseService.getClassName(it).toLowerCase()
-            job.running = it.running
-            job.indeterminate = it.indeterminate
             job.progress = it.progress
-            job.successful = it.successful
+            job.status = it.status
 
             job.project = it.project?.id
             job.software = it.software?.id
@@ -73,14 +77,10 @@ class Job extends CytomineDomain  {
 
     static def getFromData(job, jsonJob) {
         try {
-            if (!jsonJob.running.toString().equals("null"))
-                job.running = Boolean.parseBoolean(jsonJob.running.toString())
-            if (!jsonJob.indeterminate.toString().equals("null"))
-                job.indeterminate = Boolean.parseBoolean(jsonJob.indeterminate.toString())
+            if (!jsonJob.status.toString().equals("null"))
+                job.status = Integer.parseInt(jsonJob.status.toString())
             if (!jsonJob.progress.toString().equals("null"))
                 job.progress = Integer.parseInt(jsonJob.progress.toString())
-            if (!jsonJob.successful.toString().equals("null"))
-                job.successful = Boolean.parseBoolean(jsonJob.successful.toString())
 
             String projectId = jsonJob.project.toString()
             if (!projectId.equals("null")) {

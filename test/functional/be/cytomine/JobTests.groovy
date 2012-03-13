@@ -173,17 +173,13 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         Integer oldProgress = 0
         Integer newProgress = 100
 
-        Boolean oldSuccessful = false
-        Boolean newSuccessful = true
-
-        def mapNew = ["progress": newProgress, "successful": newSuccessful]
-        def mapOld = ["progress": oldProgress, "successful": oldSuccessful]
+        def mapNew = ["progress": newProgress]
+        def mapOld = ["progress": oldProgress]
 
         /* Create a Name1 job */
         log.info("create job")
         Job jobToAdd = BasicInstance.createOrGetBasicJob()
         jobToAdd.progress = oldProgress
-        jobToAdd.successful = oldSuccessful
         assert (jobToAdd.save(flush: true) != null)
 
         /* Encode a niew job Name2*/
@@ -191,7 +187,6 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         def jsonJob = jobToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonJob)
         jsonUpdate.progress = newProgress
-        jsonUpdate.successful = newSuccessful
         jsonJob = jsonUpdate.encodeAsJSON()
 
         log.info("put job:" + jsonJob.replace("\n", ""))

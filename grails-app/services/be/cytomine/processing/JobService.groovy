@@ -52,9 +52,8 @@ class JobService extends ModelService {
         jobs.each {
            def job = [:]
             job.id = it.id
-            job.successful = it.successful
+            job.status = it.status
             job.created = it.created ? it.created.time.toString() : null
-            job.running = it.running
             data << job
         }
         return data
@@ -155,6 +154,7 @@ class JobService extends ModelService {
     }
 
     def edit(Job domain, boolean printMessage) {
+        println "edit="+domain
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, Job], printMessage, "Edit", domain.getCallBack())
         //Save update
@@ -177,14 +177,16 @@ class JobService extends ModelService {
      * @return domain retrieve thanks to json
      */
     def retrieve(JSONObject json) {
+        println "retrieve="+json
         Job job = Job.get(json.id)
+        println "job="+job
         if (!job) throw new ObjectNotFoundException("Job " + json.id + " not found")
         return job
     }
 
      List<UserJob> getAllLastUserJob(Project project, Software software, int max) {
          //List<Job> jobs = Job.findAllBySoftwareAndSuccessful(software,true)
-         List<Job> jobs = Job.findAllWhere('software':software,'successful':true, 'project':project)
+         List<Job> jobs = Job.findAllWhere('software':software,'status':Job.SUCCESS, 'project':project)
          //TODO: inlist bad performance
          List<UserJob> userJob = UserJob.findAllByJobInList(jobs,[max:max,sort:'created', order:"desc"])
          return userJob
@@ -192,7 +194,7 @@ class JobService extends ModelService {
 
      List<UserJob> getAllLastUserJob(Project project, Software software) {
          //TODO: inlist bad performance
-         List<Job> jobs = Job.findAllWhere('software':software,'successful':true, 'project':project)
+         List<Job> jobs = Job.findAllWhere('software':software,'status':Job.SUCCESS, 'project':project)
          List<UserJob>  userJob = UserJob.findAllByJobInList(jobs,[sort:'created', order:"desc"])
          return userJob
     }
