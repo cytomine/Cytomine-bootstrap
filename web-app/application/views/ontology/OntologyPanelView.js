@@ -157,7 +157,7 @@ var OntologyPanelView = Backbone.View.extend({
                 el:'#dialogsDeleteOntologyRefuse',
                 template : _.template(tpl, {name : self.model.get('name'),numberOfProject:numberOfProject}),
                 dialogAttr : {
-                    backdrop : false,
+                    backdrop : true,
                     dialogID : '#delete-ontology-refuse'
                 }
             }).render();
@@ -209,7 +209,7 @@ var OntologyPanelView = Backbone.View.extend({
                 el:'#dialogsTerm',
                 template : _.template(tpl, {term : term.get('name'),ontology : self.model.get('name')}),
                 dialogAttr : {
-                    backdrop : false,
+                    backdrop : true,
                     dialogID : '#delete-term-confirm'
                 }
             }).render();
@@ -237,7 +237,7 @@ var OntologyPanelView = Backbone.View.extend({
                 el:'#dialogsTerm',
                 template : _.template(tpl, {term : term.get('name'),ontology : self.model.get('name'),numberOfAnnotation:numberOfAnnotation}),
                 dialogAttr : {
-                    backdrop : false,
+                    backdrop : true,
                     dialogID : '#delete-term-with-annotation-confirm',
                     close :function (event) {
                     }

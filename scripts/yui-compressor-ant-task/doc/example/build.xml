@@ -80,6 +80,7 @@
             <fileset dir="${src.dir}" includes="application/controllers/AnnotationController.js" />
             <fileset dir="${src.dir}" includes="application/controllers/AdminController.js" />
             <fileset dir="${src.dir}" includes="application/controllers/ActivityController.js" />
+            <fileset dir="${src.dir}" includes="application/controllers/AccountController.js" />
             <fileset dir="${src.dir}" includes="application/models/AnnotationsFilterModel.js" />
             <fileset dir="${src.dir}" includes="application/models/ImageModel.js" />
             <fileset dir="${src.dir}" includes="application/models/TermModel.js" />
@@ -98,6 +99,7 @@
             <fileset dir="${src.dir}" includes="application/models/RelationModel.js" />
             <fileset dir="${src.dir}" includes="application/models/SecRoleModel.js" />
             <fileset dir="${src.dir}" includes="application/views/activity/ActivityView.js" />
+            <fileset dir="${src.dir}" includes="application/views/account/AccountDetails.js" />
             <fileset dir="${src.dir}" includes="application/views/auth/LoginDialogView.js" />
             <fileset dir="${src.dir}" includes="application/views/auth/LoadingDialogView.js" />
             <fileset dir="${src.dir}" includes="application/views/auth/LogoutDialogView.js" />

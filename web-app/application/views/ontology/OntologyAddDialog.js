@@ -36,7 +36,7 @@ var AddOntologyDialog = Backbone.View.extend({
         //Build dialog
         self.addOntologyDialog = $("#addontology").modal({
             keyboard :true,
-            backdrop : false
+            backdrop : true
         });
         $('#saveOntologyButton').click(function(){$("#login-form-add-ontology").submit();return false;});
         $('#closeAddOntologyDialog').click(function(){$("#addontology").modal("hide");$("#addontology").remove();return false;});
@@ -49,7 +49,6 @@ var AddOntologyDialog = Backbone.View.extend({
     open: function() {
         var self = this;
         self.clearAddOntologyPanel();
-        $("#addontology").modal("show");
     },
     clearAddOntologyPanel : function() {
         $("#errormessage").empty();

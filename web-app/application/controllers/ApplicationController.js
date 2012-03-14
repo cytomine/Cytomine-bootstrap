@@ -66,8 +66,8 @@ var ApplicationController = Backbone.Router.extend({
         window.app.controllers.upload       = new UploadController();
         window.app.controllers.command      = new CommandController();
         window.app.controllers.annotation   = new AnnotationController();
-        window.app.controllers.activity      = new ActivityController();
-
+        window.app.controllers.activity     = new ActivityController();
+        window.app.controllers.account      = new AccountController();
         //window.app.controllers.admin        = new AdminController();
         //Start the history
         window.app.view.initPreferences();

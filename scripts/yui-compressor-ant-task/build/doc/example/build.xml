@@ -104,6 +104,12 @@
             <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardImages.js" />
             <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAnnotations.js" />
             <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAlgos.js" />
+            <fileset dir="${src.dir}" includes="application/views/processing/JobListingView.js" />
+            <fileset dir="${src.dir}" includes="application/views/processing/JobComparatorView.js" />
+            <fileset dir="${src.dir}" includes="application/views/processing/JobSelectionView.js" />
+            <fileset dir="${src.dir}" includes="application/views/processing/LaunchJobView.js" />
+            <fileset dir="${src.dir}" includes="application/views/processing/JobResultView.js" />
+            <fileset dir="${src.dir}" includes="application/views/processing/result/RetrievalAlgoResult.js" />
 
             <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationLayer.js" />
             <fileset dir="${src.dir}" includes="application/views/explorer/BrowseImageView.js" />

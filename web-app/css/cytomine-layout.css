@@ -483,7 +483,11 @@ table.dataTable th:active {
 }
 .navbar-fixed-top .brand:hover {
     text-decoration: none;
-    color: #49AFCD;
+    color: #0085cc;
+}
+
+.tab-pane {
+    background-image: url('../images/whitey-2.png');
 }
 
 

@@ -177,6 +177,10 @@ class User extends SecUser {
             returnArray['lastname'] = it.lastname
             returnArray['email'] = it.email
             returnArray['password'] = "******"
+            if (it.id == it.springSecurityService.principal.id) {
+                returnArray['publicKey'] = it.publicKey
+                returnArray['privateKey'] = it.privateKey
+            }
             returnArray['color'] = it.color
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null

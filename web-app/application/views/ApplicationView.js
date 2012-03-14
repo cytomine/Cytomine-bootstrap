@@ -211,20 +211,15 @@ var ApplicationView = Backbone.View.extend({
             "text!application/templates/ontology/OntologyComponent.tpl.html",
             "text!application/templates/explorer/ExplorerComponent.tpl.html",
             "text!application/templates/AdminComponent.tpl.html",
-            "text!application/templates/activity/ActivityComponent.tpl.html"
+            "text!application/templates/activity/ActivityComponent.tpl.html",
+            "text!application/templates/account/AccountComponent.tpl.html"
         ],
-                function(uploadTpl, projectTpl, ontologyTpl, explorerTpl, adminTpl, activityTpl) {
+                function(uploadTpl, projectTpl, ontologyTpl, explorerTpl, adminTpl, activityTpl, accountTpl) {
                     self.components.activity = new Component({
                         el : "#content",
                         template : _.template(activityTpl, {}),
                         buttonAttr : {
-                            elButton : "activity-button",
-                            buttonText : "Activity",
-                            buttonWrapper : "#menu",
-                            dataContent : "Activity feed !",
-                            dataTitle : "Activity",
-                            icon : "ui-icon-circle-arrow-s",
-                            route : "#activity"
+                            elButton : "activity-button"
                         },
                         divId : "activity"
                     });
@@ -232,27 +227,23 @@ var ApplicationView = Backbone.View.extend({
                         el : "#content",
                         template : _.template(uploadTpl, {}),
                         buttonAttr : {
-                            elButton : "upload-button",
-                            buttonText : "Upload",
-                            buttonWrapper : "#menu",
-                            dataContent : "Send your data !",
-                            dataTitle : "Upload",
-                            icon : "ui-icon-circle-arrow-s",
-                            route : "#upload"
+                            elButton : "upload-button"
                         },
                         divId : "upload"
+                    });
+                    self.components.account = new Component({
+                        el : "#content",
+                        template : _.template(accountTpl, {}),
+                        buttonAttr : {
+                            elButton : "upload-button"
+                        },
+                        divId : "account"
                     });
                     self.components.project = new Component({
                         el : "#content",
                         template : _.template(projectTpl, {}),
                         buttonAttr : {
-                            elButton : "project-button",
-                            buttonText : "Organize",
-                            buttonWrapper : "#menu",
-                            dataContent : "Organize your projects, images, etc...",
-                            dataTitle : "Organize",
-                            icon : "ui-icon-wrench",
-                            route : "#project"
+                            elButton : "project-button"
                         },
                         divId : "project"
                     });
@@ -260,13 +251,7 @@ var ApplicationView = Backbone.View.extend({
                         el : "#content",
                         template : _.template(ontologyTpl, {}),
                         buttonAttr : {
-                            elButton : "ontology-button",
-                            buttonText : "Organize",
-                            buttonWrapper : "#menu",
-                            dataContent : "Organize your projects, images, etc...",
-                            dataTitle : "Organize",
-                            icon : "ui-icon-wrench",
-                            route : "#ontology"
+                            elButton : "ontology-button"
                         },
                         divId : "ontology"
                     });
@@ -274,13 +259,7 @@ var ApplicationView = Backbone.View.extend({
                         el : "#content",
                         template : _.template(explorerTpl, {}),
                         buttonAttr : {
-                            elButton : "explorer-button",
-                            buttonText : "Explore",
-                            buttonWrapper : "#menu",
-                            dataContent : "View your data",
-                            dataTitle : "Explore",
-                            icon : "ui-icon-image",
-                            route : "#explorer"
+                            elButton : "explorer-button"
                         },
                         divId : "explorer",
                         activate: function () {
@@ -289,7 +268,7 @@ var ApplicationView = Backbone.View.extend({
                             else
                                 $("#explorer > .noProject").hide();
                             $("#" + this.divId).show();
-                            $("#" + this.buttonAttr.elButton).addClass("ui-state-disabled");
+                            $("#" + this.buttonAttr.elButton).parent().addClass("active");
                         }
                     });
                     /*self.components.admin = new Component({

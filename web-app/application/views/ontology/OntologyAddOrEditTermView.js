@@ -88,7 +88,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         //Build dialog
         self.ontologyDialog = $(self.$termDialog).modal({
             keyboard : true,
-            backdrop : false
+            backdrop : true
         });
         $("#AddOrEditTermButton").click(function(){
             self.$from.submit();
@@ -243,7 +243,6 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
     open: function() {
         var self = this;
         self.clearOntologyTermPanel();
-        self.ontologyDialog.modal("show") ;
     },
     clearOntologyTermPanel : function() {
         var self = this;
