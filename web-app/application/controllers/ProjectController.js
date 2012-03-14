@@ -19,8 +19,8 @@ var ProjectController = Backbone.Router.extend({
                 model : projects,
                 ontologies : ontologies,
                 disciplines : disciplines,
-                el:$("#warehouse > .project"),
-                container : window.app.view.components.warehouse
+                el:$("#project"),
+                container : window.app.view.components.project
             }).render();
 
             self.view.container.views.project = self.view;
@@ -54,11 +54,11 @@ var ProjectController = Backbone.Router.extend({
         $("#addimagediv").hide();
         $("#projectdiv").show();
         if (!this.view) {
-            this.initView(function(){self.view.container.show(self.view, "#warehouse > .sidebar", "project");window.app.view.showComponent(window.app.view.components.warehouse);});
+            this.initView(function(){self.view.container.show(self.view, "#warehouse > .sidebar", "project");window.app.view.showComponent(window.app.view.components.project);});
             return;
         }
         self.view.container.show(self.view, "#warehouse > .sidebar", "project");
-        window.app.view.showComponent(window.app.view.components.warehouse);
+        window.app.view.showComponent(window.app.view.components.project);
     },
 
     manage : function(idProject) {

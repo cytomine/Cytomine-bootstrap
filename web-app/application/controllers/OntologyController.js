@@ -26,21 +26,21 @@ var OntologyController = Backbone.Router.extend({
           if (!self.view) {
              self.view = new OntologyView({
                     model : window.app.models.ontologies,
-                    el:$("#warehouse > .ontology"),
-                    container : window.app.view.components.warehouse,
+                    el:$("#ontology"),
+                    container : window.app.view.components.ontology,
                     idOntology : idOntology, //selected ontology
                     idTerm : idTerm
                  }).render();
              self.view.container.views.ontology = self.view;
              self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
              $("#warehouse-button").attr("href", "#ontology");
-             window.app.view.showComponent(window.app.view.components.warehouse);
+             window.app.view.showComponent(window.app.view.components.ontology);
              self.view.refresh(idOntology, idTerm);
 
           }
           else {
              self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
-             window.app.view.showComponent(window.app.view.components.warehouse);
+             window.app.view.showComponent(window.app.view.components.ontology);
 
              if(refresh) {
                 window.app.models.ontologies.fetch({

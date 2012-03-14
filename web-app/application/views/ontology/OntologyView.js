@@ -70,7 +70,7 @@ var OntologyView = Backbone.View.extend({
     doLayout: function(tpl) {
         var self = this;
         $(this.el).html(_.template(tpl, {}));
-        self.$tabsOntologies = $(self.el).find("#tabsontology");
+        self.$tabsOntologies = $(self.el).find("#ontology");
         self.initOntologyTabs();
         return this;
     },
@@ -113,7 +113,7 @@ var OntologyView = Backbone.View.extend({
             });
 
             if(!self.alreadyBuild) {
-                $("#tabsontology h3 a").click(function() {
+                $("#ontology h3 a").click(function() {
                     window.location = $(this).attr('href'); //follow link
                     return false;
                 });
