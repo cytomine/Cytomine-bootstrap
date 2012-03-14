@@ -12,6 +12,7 @@ abstract class CytomineDomain {
 
     def cytomineService
     def sequenceService
+    def jsonService
     def grailsApplication
     Long id
     Date created

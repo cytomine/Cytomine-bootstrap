@@ -3,7 +3,7 @@ var ProjectDashboardStats = Backbone.View.extend({
     initialize : function () {
         this.noDataAlert = _.template("<br /><br /><div class='alert alert-block'>No data to display</div>",{});
     },
-    fetchStats : function (terms, annotations) {
+    fetchStats : function (terms) {
         var self = this;
 
         //Annotations by terms
@@ -42,33 +42,6 @@ var ProjectDashboardStats = Backbone.View.extend({
                 self.drawUserSlideChart(collection, response);
             }
         });
-
-
-//      new StatsRetrievalSuggestionModel({project:self.model.get('id')}).fetch({
-//         success : function(model, response) {
-//             console.log("terms="+terms);
-////             window.app.models.terms.fetch({
-////                 success : function(terms, response) {
-//                     self.drawRetrievalSuggestionTable(model,response, terms);
-//                     self.drawWorstTermPieChart(model,response, terms);
-//                     self.drawWorstAnnotationsTable(model,response, terms,annotations);
-//                     self.drawAVGEvolution(model,response);
-////              }
-////            });
-//
-//         }
-//      });
-
-
-//      new StatsRetrievalSuggestionMatrixModel({project:self.model.get('id')}).fetch({
-//         success : function(model, response) {
-//            self.drawRetrievalSuggestionTable(model,response, terms);
-//
-//         }
-//      });
-
-
-
 
    },
    drawUserAnnotationsChart : function (collection, currentUser, response) {

@@ -7,7 +7,6 @@ import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
 import be.cytomine.Exception.CytomineException
-import grails.plugins.springsecurity.Secured
 import be.cytomine.processing.Software
 
 class RestProjectController extends RestController {

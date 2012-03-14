@@ -22,15 +22,8 @@ class SecurityService {
     }
 
     User getCreator(def domain) {
-        User user
-        try {
-            AclObjectIdentity aclObject = AclObjectIdentity.findByObjectId(domain.id)
-            if (aclObject) {
-                Acl acl = aclUtilService.readAcl(domain)
-                def owner = acl.getOwner()
-                user = User.findByUsername(owner.getPrincipal())
-            }
-        } catch (Exception e) {e.printStackTrace()}
+        List<User> users = SecUser.executeQuery("select secUser from AclObjectIdentity as aclObjectId, AclSid as aclSid, SecUser as secUser where aclObjectId.objectId = "+domain.id+" and aclObjectId.owner = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
+        User user = users.isEmpty() ? null : users.first()
         return user
     }
 

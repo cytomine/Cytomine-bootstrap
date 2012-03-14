@@ -101,20 +101,17 @@ var ProjectDashboardView = Backbone.View.extend({
             self.fetchProjectInfo();
             self.model = model;
             //TODO: must be improve!
-            new AnnotationCollection({project:self.model.id}).fetch({
-                success : function (collection, response) {
-                    self.fetchCommands(collection);
-                    window.app.status.currentAnnotationsCollection = collection;
+
+                    self.fetchCommands();
                     new TermCollection({idProject:self.model.id}).fetch({
                         success : function (terms, response) {
                             window.app.status.currentTermsCollection = terms;
                             //self.fetchWorstAnnotations(collection,terms);
-                            new ProjectDashboardStats({model : self.model}).fetchStats(terms,collection);
+                            new ProjectDashboardStats({model : self.model}).fetchStats(terms);
 
                         }
                     });
-                }
-            });
+
             //new ProjectDashboardStats({model : self.model}).fetchStats();
         }
         var fetchInformations = function () {
@@ -162,7 +159,7 @@ var ProjectDashboardView = Backbone.View.extend({
         });
         $("#projectInfoUserList").html(users.join(", "));
     },
-    fetchCommands : function (annotations) {
+    fetchCommands : function () {
         var self = this;
         require([
             "text!application/templates/dashboard/CommandAnnotation.tpl.html",
@@ -188,10 +185,10 @@ var ProjectDashboardView = Backbone.View.extend({
                             if(command.serviceName=="annotationService" && command.CLASSNAME=="be.cytomine.command.AddCommand") {
                                 var cropStyle = "block";
                                 var cropURL = jsonCommand.cropURL;
-                                if (annotations.get(jsonCommand.id) == undefined) {
-                                    cropStyle = "none";
-                                    cropURL = "";
-                                }
+//                                if (annotations.get(jsonCommand.id) == undefined) {
+//                                    cropStyle = "none";
+//                                    cropURL = "";
+//                                }
                                 action = _.template(commandAnnotationTpl,
                                         {   idProject : self.model.id,
                                             idAnnotation : jsonCommand.id,
@@ -207,19 +204,19 @@ var ProjectDashboardView = Backbone.View.extend({
                             else if(command.serviceName=="annotationService" && command.CLASSNAME=="be.cytomine.command.EditCommand") {
                                 var cropStyle = "";
                                 var cropURL = jsonCommand.newAnnotation.cropURL;
-                                if (annotations.get(jsonCommand.newAnnotation.id) == undefined) {
-                                    cropStyle = "display : none;";
-                                    cropURL = "";
-                                }
+//                                if (annotations.get(jsonCommand.newAnnotation.id) == undefined) {
+//                                    cropStyle = "display : none;";
+//                                    cropURL = "";
+//                                }
                                 action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.newAnnotation.id, idImage : jsonCommand.newAnnotation.image,imageFilename : jsonCommand.newAnnotation.imageFilename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
                             }
                             else if(command.serviceName=="annotationService" && command.CLASSNAME=="be.cytomine.command.DeleteCommand") {
                                 var cropStyle = "";
                                 var cropURL = jsonCommand.cropURL;
-                                if (annotations.get(jsonCommand.id) == undefined) {
-                                    cropStyle = "display : none;";
-                                    cropURL = "";
-                                }
+//                                if (annotations.get(jsonCommand.id) == undefined) {
+//                                    cropStyle = "display : none;";
+//                                    cropURL = "";
+//                                }
                                 action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.id, idImage : jsonCommand.image,imageFilename : jsonCommand.imageFilename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
 
                             }
@@ -256,48 +253,6 @@ var ProjectDashboardView = Backbone.View.extend({
                         }
                     });
                 });
-    },
-
-    fetchWorstAnnotations : function (annotations, terms) {
-        console.log("fetchWorstAnnotations");
-//        var self = this;
-//        require([
-//            "text!application/templates/dashboard/SuggestedAnnotationTerm.tpl.html"],
-//                function(suggestedAnnotationTermTpl) {
-//
-//                    var suggestedCollection = new SuggestedAnnotationTermCollection({project:self.model.get('id'),max:self.maxSuggestView});
-//                    var suggestedCallback = function(collection, response) {
-//                        $("#worstannotationitem").empty();
-//
-//                        if(collection.length==0) {
-//                            $("#worstannotationitem").append("You must run Retrieval Validate Algo for this project...");
-//                        }
-//
-//                        collection.each(function(suggest) {
-//                            var json = suggest.toJSON()
-//                            var rate = Math.round(json.rate*100)-1+"%"
-//                            var annotation = annotations.get(json.annotation);
-//                            var suggestedTerm =  terms.get(json.term).get('name');
-//                            var realTerms = new Array();
-//                            _.each(annotation.get('term'), function(idTerm){ realTerms.push(terms.get(idTerm).get('name')); });
-//                            var termsAnnotation =  realTerms.join();
-//                            var text = "<b>" + suggestedTerm +"</b> for annotation " + annotation.id + " instead of <b>" + termsAnnotation +"</b>";
-//
-//                            var cropStyle = "block";
-//                            var cropURL = annotation.get("cropURL");
-//
-//                            var action = _.template(suggestedAnnotationTermTpl, {idProject : self.model.id, idAnnotation : annotation.id, idImage : annotation.get('image'), icon:"add.png",text:text,rate:rate,cropURL:cropURL, cropStyle:cropStyle});
-//                            $("#worstannotationitem").append(action);
-//
-//
-//                        });
-//                    }
-//                    suggestedCollection.fetch({
-//                        success : function(model, response) {
-//                            suggestedCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-//                        }
-//                    });
-//                });
     },
     showImagesThumbs : function() {
         $("#tabs-projectImageThumb"+this.model.id).show();

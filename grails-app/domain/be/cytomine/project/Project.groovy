@@ -197,28 +197,23 @@ class Project extends CytomineDomain {
 
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + Project.class
-        JSON.registerObjectMarshaller(Project) {
+        JSON.registerObjectMarshaller(Project) { project ->
             def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['name'] = it.name
-            returnArray['ontology'] = it.getIdOntology()
-            returnArray['ontologyName'] = it.ontology ? it.ontology.name : null
-            returnArray['discipline'] = it.getIdDiscipline()
-            returnArray['disciplineName'] = it.discipline ? it.discipline.name : null
-            /*returnArray['ontologyURL'] = UrlApi.getOntologyURLWithOntologyId(it.ontology?.id)
-            returnArray['abstractimageURL'] = UrlApi.getAbstractImageURLWithProjectId(it.id)
-            returnArray['imageinstanceURL'] = UrlApi.getImageInstanceURLWithProjectId(it.id)
-            returnArray['termURL'] = UrlApi.getTermsURLWithOntologyId(it.ontologyId)
-            returnArray['userURL'] = UrlApi.getUsersURLWithProjectId(it.id)*/
-             try {returnArray['creator'] = it.creator().collect { it.id }} catch (Exception e) {println "creator:"+e}
-             try {returnArray['admins'] = it.admins().collect { it.id }} catch (Exception e) {println "admins:"+e}
-             try {returnArray['users'] = it.users().collect { it.id } } catch (Exception e) {println "users:"+e}
-            try {returnArray['numberOfSlides'] = it.countSlides()} catch (Exception e) {returnArray['numberOfSlides'] = -1}
-            try {returnArray['numberOfImages'] = it.countImageInstance()} catch (Exception e) {returnArray['numberOfImages'] = -1}
-            try {returnArray['numberOfAnnotations'] = it.countAnnotations()} catch (Exception e) {e.printStackTrace(); returnArray['numberOfAnnotations'] = -1}
-            returnArray['created'] = it.created ? it.created.time.toString() : null
-            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
+            returnArray['class'] = project.class
+            returnArray['id'] = project.id
+            returnArray['name'] = project.name
+            returnArray['ontology'] = project.getIdOntology()
+            returnArray['ontologyName'] = project.ontology ? project.ontology.name : null
+            returnArray['discipline'] = project.getIdDiscipline()
+            returnArray['disciplineName'] = project.discipline ? project.discipline.name : null
+            try {returnArray['creator'] = project.creator().id} catch (Exception e) {println "creator:"+e}
+            try {returnArray['admins'] = project.admins().collect { it.id }} catch (Exception e) {println "admins:"+e}
+            try {returnArray['users'] = project.users().collect { it.id } } catch (Exception e) {println "users:"+e}
+            try {returnArray['numberOfSlides'] = project.countSlides()} catch (Exception e) {returnArray['numberOfSlides'] = -1}
+            try {returnArray['numberOfImages'] = project.countImageInstance()} catch (Exception e) {returnArray['numberOfImages'] = -1}
+            try {returnArray['numberOfAnnotations'] = project.countAnnotations()} catch (Exception e) {e.printStackTrace(); returnArray['numberOfAnnotations'] = -1}
+            returnArray['created'] = project.created ? project.created.time.toString() : null
+            returnArray['updated'] = project.updated ? project.updated.time.toString() : null
             return returnArray
         }
     }

@@ -169,7 +169,7 @@ class Annotation extends CytomineDomain implements Serializable {
         int width = coordinates[1].x - coordinates[0].x
         int height = coordinates[3].y - coordinates[0].y
 
-        log.debug "topLeftX :" + topLeftX + " topLeftY :" + topLeftY + " width :" + width + " height :" + height
+        //log.debug "topLeftX :" + topLeftX + " topLeftY :" + topLeftY + " width :" + width + " height :" + height
         return [topLeftX: topLeftX, topLeftY: topLeftY, width: width, height: height]
     }
 
@@ -271,52 +271,40 @@ class Annotation extends CytomineDomain implements Serializable {
 
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + Annotation.class
-        JSON.registerObjectMarshaller(Annotation) {
+        JSON.registerObjectMarshaller(Annotation) { annotation ->
             def returnArray = [:]
-
-            ImageInstance imageinstance = it.image
+            ImageInstance imageinstance = annotation.image
             AbstractImage image = imageinstance?.baseImage
-
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['name'] = it.name != "" ? it.name : "Annotation " + it.id
-            returnArray['location'] = it.location.toString()
-            returnArray['image'] = it.getIdImage()
-
+            returnArray['class'] = annotation.class
+            returnArray['id'] = annotation.id
+            returnArray['name'] = annotation.name != "" ? annotation.name : "Annotation " + annotation.id
+            returnArray['location'] = annotation.location.toString()
+            returnArray['image'] = annotation.getIdImage()
             returnArray['imageFilename'] = image?.filename
-            returnArray['zoomLevel'] = it.zoomLevel
-            returnArray['geometryCompression'] = it.geometryCompression
-            returnArray['channels'] = it.channels
-            returnArray['project'] = it.project.id
-            returnArray['container'] = it.project.id
 
+            returnArray['zoomLevel'] = annotation.zoomLevel
 
-            if (it.userId) returnArray['user'] = it.userId
-            else returnArray['user'] = it.user?.id
-            returnArray['nbComments'] = it.countComments
-            returnArray['area'] = it.computeArea()
-            returnArray['perimeter'] = it.computePerimeter()
-            returnArray['centroid'] = it.getCentroid()
+            returnArray['geometryCompression'] = annotation.geometryCompression
+            returnArray['channels'] = annotation.channels
+            returnArray['project'] = annotation.project.id
+            returnArray['container'] = annotation.project.id
 
-            returnArray['created'] = it.created ? it.created.time.toString() : null
-            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
+            if (annotation.userId) returnArray['user'] = annotation.userId
+            else returnArray['user'] = annotation.user?.id
 
-
-            returnArray['term'] = it.termsId()
-
-            returnArray['userByTerm'] = it.usersIdByTerm()
-
+            returnArray['nbComments'] = annotation.countComments
+            returnArray['area'] = annotation.computeArea()
+            returnArray['perimeter'] = annotation.computePerimeter()
+            returnArray['centroid'] = annotation.getCentroid()
+            returnArray['created'] = annotation.created ? annotation.created.time.toString() : null
+            returnArray['updated'] = annotation.updated ? annotation.updated.time.toString() : null
+            returnArray['term'] = annotation.termsId()
+            returnArray['userByTerm'] = annotation.usersIdByTerm()
             //retrieval
-            try {if (it?.similarity) returnArray['similarity'] = it.similarity} catch (Exception e) {}
+            try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
+            returnArray['cropURL'] = annotation.getCropURL()
 
-            /*returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)
-            returnArray['url'] = UrlApi.getAnnotationCropWithAnnotationId(it.id)*/
-            returnArray['cropURL'] = it.getCropURL()
-
-            returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.getIdProject(), imageinstance.id, it.id)
-
-
-
+            returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.getIdProject(), imageinstance.id, annotation.id)
             return returnArray
         }
     }
