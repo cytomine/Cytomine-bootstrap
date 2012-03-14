@@ -1,29 +1,27 @@
 var ProjectDashboardConfig = Backbone.View.extend({
-    rendered : false,
-    openParameterGrid : [],
     initialize : function (options) {
         this.el = "#tabs-config-" + this.model.id;
+        this.rendered = false;
     },
     render : function() {
-        console.log("ProjectDashboardConfig.render:"+this.el);
-        console.log($(this.el));
-        this.initImageFilters();
-        this.initSoftwares();
+        this.imageFiltersProjectPanel = new ImageFiltersProjectPanel({
+            el : this.el,
+            model : this.model
+        }).render();
+        this.softwareProjectPanels = new SoftwareProjectPanel({
+            el : this.el,
+            model : this.model
+        }).render();
         this.rendered = true;
     },
     refresh : function() {
         if (!this.rendered) this.render();
-    },
-    removeImageFilter : function (idImageFilter) {
-        var self = this;
-        new ProjectImageFilterModel({ id : idImageFilter}).destroy({
-            success : function (model, response) {
-                $(self.el).find("li.imageFilter"+idImageFilter).remove();
-                window.app.view.message("", response.message, "success");
-            }
-        });
-        return false;
-    },
+    }
+
+});
+
+var SoftwareProjectPanel = Backbone.View.extend({
+
     removeSoftware : function (idSoftwareProject) {
         var self = this;
         new SoftwareProjectModel({ id : idSoftwareProject }).destroy({
@@ -37,18 +35,7 @@ var ProjectDashboardConfig = Backbone.View.extend({
         });
         return false;
     },
-    renderFilters : function() {
-        var self = this;
-        var el = $(this.el).find(".image-filters");
-        new ProjectImageFilterCollection({ project : self.model.id}).fetch({
-            success : function (imageFilters, response) {
-                imageFilters.each(function (imageFilter) {
-                    self.renderImageFilter(imageFilter, el);
-                    window.app.view.message("", response.message, "success");
-                });
-            }
-        });
-    },
+
     renderSoftwares : function() {
         var self = this;
         var el = $(this.el).find(".softwares");
@@ -62,49 +49,11 @@ var ProjectDashboardConfig = Backbone.View.extend({
 
     },
     renderSoftware :function(softwareProject, el){
-        var tpl = _.template("<li class='software<%= id %>' style='padding-bottom : 3px;'><a class='btn btn-danger removeSoftware' data-id='<%= id %>' href='#'><i class='icon-trash icon-white' /> Delete</a> <%= name %></li>", softwareProject.toJSON());
+        var tpl = _.template("<li class='software<%= id %>' style='padding-bottom : 3px;'><a class='btn  btn-small btn-danger removeSoftware' data-id='<%= id %>' href='#'><i class='icon-trash icon-white' /> Delete</a> <%= name %></li>", softwareProject.toJSON());
         $(el).append(tpl);
     },
-    renderImageFilter : function (imageFilter, el) {
-        var tpl = _.template("<li class='imageFilter<%= id %>' style='padding-bottom : 3px;'> <a class='btn btn-danger removeImageFilter' data-id='<%= id %>' href='#'><i class=' icon-trash icon-white' /> Delete</a> <%= name %></li>", imageFilter.toJSON());
-        $(el).append(tpl);
-    },
-    initImageFilters : function() {
-        var self = this;
-        var el = $(this.el).find(".image-filters");
 
-        new ImageFilterCollection().fetch({
-            success : function (imageFilters, response) {
-                imageFilters.each(function (imageFilter) {
-                    var option = _.template("<option value='<%=  id %>'><%=   name %></option>", imageFilter.toJSON());
-                    $(self.el).find("#addImageFilter").append(option);
-
-                });
-                $(self.el).find("#addImageFilterButton").click(function(){
-                    new ProjectImageFilterModel({ project : self.model.id, imageFilter : $(self.el).find("#addImageFilter").val()}).save({},{
-                        success : function (imageFilter, response) {
-                            self.renderImageFilter(new ImageFilterModel(imageFilter.toJSON().imagefilterproject), el);
-                            window.app.view.message("", response.message, "success");
-                        },
-                        error : function (response) {
-                            window.app.view.message("", $.parseJSON(response.responseText).errors, "error");
-                        }
-                    });
-                    return false;
-                });
-            }
-        });
-
-        self.renderFilters();
-
-        $(this.el).find("a.removeImageFilter").live('click',function() {
-            var idImageFilter = $(this).attr("data-id");
-            self.removeImageFilter(idImageFilter);
-            return false;
-        });
-
-    },
-    initSoftwares : function () {
+    render : function () {
         var self = this;
         var el = $(this.el).find(".softwares");
         new SoftwareCollection().fetch({
@@ -135,5 +84,73 @@ var ProjectDashboardConfig = Backbone.View.extend({
             self.removeSoftware(idSoftwareProject);
             return false;
         });
+
+        return this;
+    }
+
+});
+
+var ImageFiltersProjectPanel = Backbone.View.extend({
+    removeImageFilter : function (idImageFilter) {
+        var self = this;
+        new ProjectImageFilterModel({ id : idImageFilter}).destroy({
+            success : function (model, response) {
+                $(self.el).find("li.imageFilter"+idImageFilter).remove();
+                window.app.view.message("", response.message, "success");
+            }
+        });
+        return false;
+    },
+    renderFilters : function() {
+        var self = this;
+        var el = $(this.el).find(".image-filters");
+        new ProjectImageFilterCollection({ project : self.model.id}).fetch({
+            success : function (imageFilters, response) {
+                imageFilters.each(function (imageFilter) {
+                    self.renderImageFilter(imageFilter, el);
+                    window.app.view.message("", response.message, "success");
+                });
+            }
+        });
+    },
+    renderImageFilter : function (imageFilter, el) {
+        var tpl = _.template("<li class='imageFilter<%= id %>' style='padding-bottom : 3px;'> <a class='btn  btn-small btn-danger removeImageFilter' data-id='<%= id %>' href='#'><i class=' icon-trash icon-white' /> Delete</a> <%= name %></li>", imageFilter.toJSON());
+        $(el).append(tpl);
+    },
+    render : function() {
+        var self = this;
+        var el = $(this.el).find(".image-filters");
+        new ImageFilterCollection().fetch({
+            success : function (imageFilters, response) {
+                imageFilters.each(function (imageFilter) {
+                    var option = _.template("<option value='<%=  id %>'><%=   name %></option>", imageFilter.toJSON());
+                    $(self.el).find("#addImageFilter").append(option);
+
+                });
+                $(self.el).find("#addImageFilterButton").click(function(){
+                    new ProjectImageFilterModel({ project : self.model.id, imageFilter : $(self.el).find("#addImageFilter").val()}).save({},{
+                        success : function (imageFilter, response) {
+                            self.renderImageFilter(new ImageFilterModel(imageFilter.toJSON().imagefilterproject), el);
+                            window.app.view.message("", response.message, "success");
+                        },
+                        error : function (response) {
+                            window.app.view.message("", $.parseJSON(response.responseText).errors, "error");
+                        }
+                    });
+                    return false;
+                });
+            }
+        });
+
+        self.renderFilters();
+
+        $(this.el).find("a.removeImageFilter").live('click',function() {
+            var idImageFilter = $(this).attr("data-id");
+            self.removeImageFilter(idImageFilter);
+            return false;
+        });
+
+        return this;
+
     }
 });

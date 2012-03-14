@@ -41,7 +41,7 @@ class RestTermController extends RestController {
 
     def statProject = {
         Term term = Term.read(params.id)
-        if (term) termService.statProject(term)
+        if (term) responseSuccess(termService.statProject(term))
         else responseNotFound("Project", params.id)
     }
 

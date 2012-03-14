@@ -44,10 +44,15 @@ var AddProjectDialog = Backbone.View.extend({
             $("#projectdiscipline").append(choice);
         });
         $("#projectontology").empty();
-        self.ontologies.each(function(ontology){
-            var choice = _.template(ontologiesChoicesRadioTpl, {id:ontology.id,name:ontology.get("name")});
-            $("#projectontology").append(choice);
+        self.ontologies.fetch({
+            success : function (collection, response) {
+                collection.each(function(ontology){
+                    var choice = _.template(ontologiesChoicesRadioTpl, {id:ontology.id,name:ontology.get("name")});
+                    $("#projectontology").append(choice);
+                });
+            }
         });
+
 
 
         self.createUserList(usersChoicesTpl);
