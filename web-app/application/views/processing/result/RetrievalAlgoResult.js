@@ -10,8 +10,8 @@ var RetrievalAlgoResult = Backbone.View.extend({
     jobs: null,
     software : null,
     initialize: function(options) {
-        this.annotations = options.annotations;
-        this.terms = options.terms;
+        this.annotations = window.app.status.currentAnnotationsCollection;
+        this.terms = window.app.status.currentTermsCollection;
         this.project = options.project;
         this.jobs = options.jobs;
         this.software = options.software;

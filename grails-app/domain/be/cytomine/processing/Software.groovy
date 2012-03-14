@@ -12,17 +12,16 @@ class Software extends CytomineDomain {
     String serviceName
     def service
     def projectService
+    String resultName
 
     static hasMany = [softwareProjects: SoftwareProject, softwareParameters : SoftwareParameter]
 
     static constraints = {
         name(nullable: false, unique: true)
+        resultName(nullable:true)
     }
 
      def afterLoad = {
-         println "ON LOAD:" + id
-         println "ON LOAD:" + name
-         println "ON LOAD:" + serviceName
             if (!service) {
                 service = ApplicationHolder.application.getMainContext().getBean(serviceName)
             }
@@ -36,11 +35,19 @@ class Software extends CytomineDomain {
             software.id = it.id
             software.name = it.name
             software.serviceName = it.serviceName
+            software.resultName = it.resultName
             try {
                 software.parameters = SoftwareParameter.findAllBySoftware(it,[sort: "name",order: "asc"])
                 software.numberOfJob = Job.countBySoftware(it);
-                software.numberOfJobSuccesfull = software.numberOfJob==0? 0 : Job.countBySoftwareAndStatus(it,Job.SUCCESS);
-                software.ratioOfJobSuccesfull = software.numberOfJob==0? 0 :  (double)(software.numberOfJobSuccesfull/software.numberOfJob)
+
+                software.numberOfNotLaunch = Job.countBySoftwareAndStatus(it,Job.NOTLAUNCH);
+                software.numberOfInQueue = Job.countBySoftwareAndStatus(it,Job.INQUEUE);
+                software.numberOfRunning = Job.countBySoftwareAndStatus(it,Job.RUNNING);
+                software.numberOfSuccess = Job.countBySoftwareAndStatus(it,Job.SUCCESS);
+                software.numberOfFailed = Job.countBySoftwareAndStatus(it,Job.FAILED);
+                software.numberOfIndeterminate = Job.countBySoftwareAndStatus(it,Job.INDETERMINATE);
+                software.numberOfWait = Job.countBySoftwareAndStatus(it,Job.WAIT);
+
             } catch(Exception e) { println e; e.printStackTrace()}
 
             return software

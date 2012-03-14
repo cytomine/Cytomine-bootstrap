@@ -210,26 +210,31 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         }
 
     },
-    printAcitivtyDiagram : function(success, total) {
+    printAcitivtyDiagram : function(software) {
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Success');
         data.addColumn('number', 'Succes rate');
-         console.log("printAcitivtyDiagram="+success+"#"+total);
+         console.log("printAcitivtyDiagram="+software.id);
          data.addRows([
-              ['Success',    success],
-              ['Fail',      total-success]
+             ['Not Launch',software.get('numberOfNotLaunch')],
+             ['In Queue',software.get('numberOfInQueue')],
+             ['Running',software.get('numberOfRunning')],
+             ['Success',software.get('numberOfSuccess')],
+             ['Failed',software.get('numberOfFailed')],
+             ['Indeterminate',software.get('numberOfIndeterminate')],
+             ['Wait',software.get('numberOfWait')]
         ]);
-
+        var width = $("#softwareInfoDiagram").width()-100;
         var options = {
-          title: 'Algorithm success rate',
-          width: 200, height: 150,
+          title: 'Job software status for all project',
+          width: width, height: 150,
           vAxis: {title: "Success rate"},
           hAxis: {title: "#"},
           backgroundColor : "whiteSmoke",
             strictFirstColumnType: false,
             is3D: true,
           lineWidth: 1,
-          colors : ["#5ebc5e","#d34842"]
+          colors : ["#434141","#65d7f8","#005ccc","#52a652","#c43c35","#434343","#faaa38"]
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('softwareInfoDiagram'));
@@ -238,8 +243,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     printProjectSoftwareDetails : function(software) {
         $("#panelSoftwareResume").find('.softwareMainInfo').empty();
         $("#panelSoftwareResume").find('.softwareMainInfo').append('<li><h2>'+software.get('name')+'</h2></li>');
-        $("#panelSoftwareResume").find('.softwareMainInfo').append('<li>'+ software.get('numberOfJob') +' job has been run ('+ software.get('numberOfJobSuccesfull')+' success)</li>');
-        this.printAcitivtyDiagram(software.get('numberOfJobSuccesfull'),software.get('numberOfJob'));
+        $("#panelSoftwareResume").find('.softwareMainInfo').append('<li>'+ software.get('numberOfJob') +' job has been run</li>');
+        this.printAcitivtyDiagram(software);
 
     },
     fillJobSelectView : function() {
@@ -393,10 +398,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     initJobResult : function(job) {
         var self = this;
-        var result = new RetrievalAlgoResult({
+        var result = new JobResultView({
             model : job,
-            terms : window.app.status.currentTermsCollection,
-            annotations: window.app.status.currentAnnotationsCollection,
             project : self.model,
             el : $("#panelJobResultsDiv"),
             jobs : self.jobsLight,
