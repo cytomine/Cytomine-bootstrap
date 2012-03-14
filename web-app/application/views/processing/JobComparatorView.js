@@ -111,7 +111,7 @@ var JobComparatorView = Backbone.View.extend({
         elemParent.append('<select></select>');
         self.jobs.each(function(job) {
             var className = self.getClassName(job);
-            elemParent.find("select").append('<option class="' + className + '" value="' + job.id + '">Job ' + job.id + ' (' + window.app.convertLongToDate(job.get('created')) + ')' + '</option>');
+            elemParent.find("select").append('<option class="' + className + '" value="' + job.id + '">Job ' + job.get('number') + ' (' + window.app.convertLongToDate(job.get('created')) + ')' + '</option>');
         });
         elemParent.find("select").change(function() {
             self.refreshSelectStyle(elemParent);
@@ -200,13 +200,4 @@ var JobComparatorView = Backbone.View.extend({
             el : elemParent
         }).render();
     }
-
-
-
-//        <div id="comparatorJobResult" style="padding : 2px;margin-right:5px;min-width:90%;"  class="span5 hero-unit">
-//            <div class="job1" style="float:left"></div>
-//            <div class="job2" style="float:right"></div>
-//       </div>
-
-
 });

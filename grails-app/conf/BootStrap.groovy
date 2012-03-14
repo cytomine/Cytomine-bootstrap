@@ -176,6 +176,14 @@ class BootStrap {
 //             job.save(flush:true)
 //         }
 //       //NOTLAUNCH = 0, INQUEUE = 1, RUNNING = 2, SUCCESS = 3, FAILED = 4, INDETERMINATE = 5
+
+         Job.findAll([sort: "created", order: "asc"]).each { job ->
+            List<Job> previousJob = Job.findAllBySoftwareAndProject(job.software,job.project,[max: 1, sort: "number", order: "desc"])
+            int number = 1
+            if(!previousJob.isEmpty()) job.number = previousJob.first().number+1
+            else job.number = number
+            job.save(flush:true)
+         }
     }
 
     private def createProjectGrant() {

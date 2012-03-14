@@ -52,6 +52,7 @@ class JobService extends ModelService {
            def job = [:]
             job.id = it.id
             job.status = it.status
+            job.number = it.number
             job.created = it.created ? it.created.time.toString() : null
             data << job
         }

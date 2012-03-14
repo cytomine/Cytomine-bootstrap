@@ -306,7 +306,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var subelem = elem.find('#'+job.id);
         var successfulIcon = job.get('status')==JobModel.SUCCESS ? "icon-star" : "icon-star-empty";
 
-       subelem.append('<li><i class="'+successfulIcon+'"></i><h4 style="display:inline;"><a href="#tabs-algos-'+self.model.id + "-" + self.idSoftware + "-" +job.id+'" id="'+job.id+'">Job ' + job.id + '<br></a></h4></li>');
+       subelem.append('<li><i class="'+successfulIcon+'"></i><h4 style="display:inline;"><a href="#tabs-algos-'+self.model.id + "-" + self.idSoftware + "-" +job.id+'" id="'+job.id+'">Job ' + job.get('number') + '<br></a></h4></li>');
        subelem.find("#"+job.id).click(function() {
             self.printProjectJobInfo(job.id);
         });

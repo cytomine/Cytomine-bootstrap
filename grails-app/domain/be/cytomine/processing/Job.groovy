@@ -20,6 +20,9 @@ class Job extends CytomineDomain  {
 
     int progress = 0
     int status = 0 //enum type are too heavy with GORM
+    int number
+
+
     Project project
 
     static transients = ["url"]
@@ -39,6 +42,13 @@ class Job extends CytomineDomain  {
         id(generator: 'assigned', unique: true)
     }
 
+    public beforeInsert() {
+        super.beforeInsert()
+        Job previousJob = Job.findBySoftwareAndProject(software,project,[sort: "number", order: "desc"])
+        if(previousJob) number = previousJob.number+1
+        else number = 1;
+    }
+
     def getUrl() {
         ConfigurationHolder.config.grails.serverURL
     }
@@ -51,6 +61,7 @@ class Job extends CytomineDomain  {
             job.algoType = ResponseService.getClassName(it).toLowerCase()
             job.progress = it.progress
             job.status = it.status
+            job.number = it.number
 
             job.project = it.project?.id
             job.software = it.software?.id

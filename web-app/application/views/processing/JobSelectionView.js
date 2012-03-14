@@ -133,15 +133,23 @@ var JobSelectionView = Backbone.View.extend({
     },
     printDatatables : function(jobs, date) {
         var self = this;
+
+        //rebuilt table
         var selectRunParamElem = $(self.el).find('#selectJobTable').find('tbody').empty();
         var datatable = $(self.el).find('#selectJobTable').dataTable();
+
+        //show hidden column (if not done, datatable is not filled)
+        datatable.fnSetColumnVis( 1, true);
+
         datatable.fnClearTable();
         //print data from project image table
         var tbody = $(self.el).find('#selectJobTable').find("tbody");
         if (jobs != undefined) {
             _.each(jobs, function (job) {
+                console.log("job.id="+job.id);
                 var cellIcon = '<i class="icon-plus"></i>';
                 var cellId = job.id;
+                var cellNumber = job.get('number');
                 var cellDate = window.app.convertLongToDate(job.get('created'));
                 var cellState = self.getStateElement(job);
                 var cellSee = "";
@@ -152,7 +160,7 @@ var JobSelectionView = Backbone.View.extend({
                     //else if comparator then print "see details" and click must select job
                     cellSee = '<a href="#tabs-algos-' + self.project.id + "-" + self.software.id + "-" + job.id + '" id="' + job.id + '">See details<br></a>'
                 }
-                tbody.append('<tr><td>' + cellIcon + '</td><td  style="text-align:left;">' + cellId + '</td><td  style="text-align:center;">' + cellDate + '</td><td  style="text-align:center;">' + cellState + '</td><td>' + cellSee + '</td></tr>');
+                tbody.append('<tr><td>' + cellIcon + '</td><td  style="text-align:left;">' + cellId + '</td><td  style="text-align:center;">' + cellNumber + '</td><td  style="text-align:center;">' + cellDate + '</td><td  style="text-align:center;">' + cellState + '</td><td>' + cellSee + '</td></tr>');
 
                 if (self.comparator) {
                     tbody.find("#select" + job.id).click(function() {
@@ -174,14 +182,19 @@ var JobSelectionView = Backbone.View.extend({
             bDestroy: true,
             "aoColumnDefs": [
                 { "sWidth": "5%", "aTargets": [ 0 ] },
-                { "sWidth": "10%", "aTargets": [ 1 ] },
-                { "sWidth": "25%", "aTargets": [ 2 ] },
-                { "sWidth": "30%", "aTargets": [ 3 ] },
-                { "sWidth": "30%", "aTargets": [ 3 ] }
+                { "sWidth": "10%", "aTargets": [ 1 ]},
+                { "sWidth": "10%", "aTargets": [ 2 ] },
+                { "sWidth": "25%", "aTargets": [ 3 ] },
+                { "sWidth": "20%", "aTargets": [ 4 ] },
+                { "sWidth": "30%", "aTargets": [ 5 ] }
             ]
         });
+
+
         self.initSubGridDatatables();
 
+        //hide id column
+        self.table.fnSetColumnVis( 1, false);
     },
     getStateElement : function(job) {
         if(job.isNotLaunch()) return '<span class="label btn-inverse">Not Launch!</span> ';
