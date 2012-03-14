@@ -128,7 +128,6 @@ var DraggablePanelView = Backbone.View.extend({
 
 
         $("."+this.className).bind("movedProgramatically", function(e){
-            console.log("movedProgramatically");
             var left = $(self.el).css("left");
             left = (left == undefined || left == "auto") ? undefined : parseInt(left.substr(0, left.length - 2));
             var right = $(self.el).css("right");

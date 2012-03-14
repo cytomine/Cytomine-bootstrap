@@ -127,7 +127,7 @@ var ExplorerTabs = Backbone.View.extend({
 
         $('a[data-toggle="tab"]').live('show', function (e) {
             var hash = this.href.split("#")[1];
-            $("#"+hash).attr('style', 'width:100%;height:100%;overflow:hidden;');
+            $("#"+hash).attr('style', 'width:100%;height:500;overflow:hidden;');
             if (self.triggerRoute) window.app.controllers.browse.navigate("#"+hash, self.triggerRoute);
         });
 

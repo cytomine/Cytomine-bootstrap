@@ -22,7 +22,7 @@ class ProcessingController extends RestController {
     private static def ROI_SIZE = 750 //MAX ALLOWED SIZE IS MAX CVT IN IIP CONFIG FILE !
 
     def detect = {
-        String method = params.method  != null ? params.method : "MaxEntropy"
+        String method = params.method  != null ? params.method : "Otsu"
 
         //int scale = params.scale != null ? Integer.parseInt(params.scale) : 1
         int scale = 1
@@ -83,7 +83,7 @@ class ProcessingController extends RestController {
     }
 
     def show = {
-        String method = params.method  != null ? params.method : "Triangle"
+        String method = params.method  != null ? params.method : "MaxEntropy"
         int middleROI = ProcessingController.ROI_SIZE / 2
         def idImage = Integer.parseInt(params.image)
         AbstractImage image = ImageInstance.read(idImage).getBaseImage()

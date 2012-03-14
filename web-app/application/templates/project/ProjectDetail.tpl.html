@@ -1,4 +1,4 @@
-<div id='projectlist<%= id %>' class="well span3" style="padding: 5px;margin: 0 15px 15px 0px;min-width: 320px;">
+<div id='projectlist<%= id %>' class="well span2" style="padding: 5px;margin: 0 15px 15px 0px;min-width: 280px;font-size: 12px">
     <h3 style="padding-left : 10px;display:inline"><a href="#tabs-dashboard-<%= id %>" style="color:#000;"><%= title %></a></h3>
     <hr />
     <div class="row">
@@ -16,7 +16,7 @@
             <ul>
                 <li>Number of samples : <a href="#tabs-images-<%= id %>"><%= numberOfSlides %></a></li>
                 <li>Number of images : <a  href="#tabs-images-<%= id %>"><%= numberOfImages %></a></li>
-                <li>Number of annotations : <a  href="#tabs-annotations-<%= id %>"><%= numberOfAnnotations %></a></li>
+                <li>Number of annotations : <% if (numberOfAnnotations == 0) { %> <span class="badge badge-error"><%= numberOfAnnotations %></span> <% } else if (numberOfAnnotations < 250) { %><span class="badge badge-warning"><%= numberOfAnnotations %></span> <% } else { %><span class="badge badge-success"><%= numberOfAnnotations %></span> <% } %></li>
             </ul>
         </div>
     </div>

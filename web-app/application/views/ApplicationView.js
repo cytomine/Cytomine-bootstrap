@@ -19,8 +19,7 @@ var ApplicationView = Backbone.View.extend({
         {key : "filters-panel", linkID : "toggle-filters-panel", name : "Filters", className : "imageFiltersPanel", value : { visible : false , position : { right : 20, bottom : 15}}}
     ],
     events: {
-        "click #undo":          "undo",
-        "click #redo":          "redo"
+
     },
     /**
      *  UNDO the last command
@@ -89,11 +88,16 @@ var ApplicationView = Backbone.View.extend({
         _.each(this.components, function (component) {
             component.render();
         });
-        $(window).resize(function(){
+        /*/$(window).resize(function(){
             self.applyPreferences()
-        });
+        });*/
+        self.initEvents();
         renderCallback.call();
         return this;
+    },
+    initEvents : function (){
+        $("#undo").live('click', this.undo);
+        $("#redo").live('click', this.redo);
     },
     /**
      * Grab the layout and call ask for render

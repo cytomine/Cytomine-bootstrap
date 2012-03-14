@@ -24,7 +24,6 @@ var OntologyPanelView = Backbone.View.extend({
 
         self.buildOntologyTree();
         self.buildInfoOntologyPanel();
-        self.buildInfoTermPanel();
 
         self.initEvents();
 
@@ -307,10 +306,6 @@ var OntologyPanelView = Backbone.View.extend({
         });
 
     },
-    buildInfoTermPanel : function() {
-
-    },
-
     buildOntologyTree : function() {
         var self = this;
         var currentTime = new Date();

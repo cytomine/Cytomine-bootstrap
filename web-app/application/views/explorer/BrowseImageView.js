@@ -325,7 +325,7 @@ var BrowseImageView = Backbone.View.extend({
 
             self.initOntology();
             //HACK : Set the height of the map manually
-            var paddingTop = 75;
+            var paddingTop = 77;
             var height = $(window).height() - paddingTop;
             $("#map"+self.model.get('id')).css("height",height);
             $("#map" + self.model.get('id')).css("width", "100%");

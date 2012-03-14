@@ -32,6 +32,12 @@ var ProjectView = Backbone.View.extend({
         var self = this;
         $(this.el).find("#projectdiv").html(_.template(tpl, {}));
 
+        //clear de list
+        $(self.projectListElem).empty();
+
+        //print addProjectPanel
+        //self.generateAddProjectPanel();
+
         //print search panel
         self.loadSearchProjectPanel();
 
@@ -61,6 +67,17 @@ var ProjectView = Backbone.View.extend({
 
 
     },
+    generateAddProjectPanel : function () {
+        var self = this;
+        require([
+            "text!application/templates/project/AddProjectPanel.tpl.html"
+        ],
+                function(tpl) {
+                    $(self.projectListElem).append(_.template(tpl, {}));
+                });
+
+        return this;
+    },
     /**
      * Create search project panel
      */
@@ -83,8 +100,11 @@ var ProjectView = Backbone.View.extend({
      */
     loadProjectsListing : function() {
         var self = this;
-        //clear de list
-        $(self.projectListElem).empty();
+
+
+        /* Create new Project span */
+
+
         self.projectList = new Array();
 
         //print each project panel

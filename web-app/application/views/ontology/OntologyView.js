@@ -96,29 +96,36 @@ var OntologyView = Backbone.View.extend({
      */
     initOntologyTabs : function(){
         var self = this;
-        require(["text!application/templates/ontology/OntologyTab.tpl.html", "text!application/templates/ontology/OntologyTabContent.tpl.html"], function(ontologyTabTpl, ontologyTabContentTpl) {
-            self.ontologiesPanel = new Array();
-            //add "All annotation from all term" tab
-            self.model.each(function(ontology) {
-                var elem = self.addOntologyToTab(ontologyTabTpl, ontologyTabContentTpl, { id : ontology.get("id"), name : ontology.get("name")});
-                //create project search panel
-                var view = new OntologyPanelView({
-                    model : ontology,
-                    el:elem,
-                    container : self,
-                    ontologiesPanel : self
-                });
-                view.render();
-                self.ontologiesPanel.push(view);
-            });
+        require(["text!application/templates/ontology/OntologyTab.tpl.html", "text!application/templates/ontology/OntologyTabContent.tpl.html"],
+                function(ontologyTabTpl, ontologyTabContentTpl) {
+                    self.ontologiesPanel = new Array();
+                    //add "All annotation from all term" tab
+                    self.model.each(function(ontology) {
+                        var elem = self.addOntologyToTab(ontologyTabTpl, ontologyTabContentTpl, { id : ontology.get("id"), name : ontology.get("name")});
+                        //create project search panel
+                        var view = new OntologyPanelView({
+                            model : ontology,
+                            el:elem,
+                            container : self,
+                            ontologiesPanel : self
+                        });
+                        view.render();
+                        self.ontologiesPanel.push(view);
+                    });
 
-            if(!self.alreadyBuild) {
-                $("#ontology h3 a").click(function() {
-                    window.location = $(this).attr('href'); //follow link
-                    return false;
+                    //Hack loading...
+                    setTimeout(function(){
+                        $("#ontologyLoading").remove();
+                    },1500);
+
+
+                    if(!self.alreadyBuild) {
+                        $("#ontology h3 a").click(function() {
+                            window.location = $(this).attr('href'); //follow link
+                            return false;
+                        });
+                    }
                 });
-            }
-        });
     },
     /**
      * Add the the tab with ontology info
