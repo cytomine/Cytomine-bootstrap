@@ -82,6 +82,7 @@ var ImageTabsView = Backbone.View.extend({
                  var thumImg = _.template(thumbImgTpl,{ thumb : image.get("thumb"), filename : image.get("filename")});
                  image.set({"action" : exploreButton});
                  image.set({"thumImg" : thumImg});
+                 image.set({"created":window.app.convertLongToDate(image.get("created"))});
                  tbody.append(_.template(rowTpl, image.toJSON()));
                  });
 
