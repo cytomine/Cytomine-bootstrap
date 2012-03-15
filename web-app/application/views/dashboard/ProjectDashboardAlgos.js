@@ -80,8 +80,11 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     refresh : function(idSoftware,idJob) {
         console.log("refresh(idSoftware,idJob)" + this.idJob);
-        if(this.softwares==null) return;
+        if(this.softwares==null || this.softwares.length<1) return;
         this.idJob = idJob;
+        if(idSoftware==undefined) {
+            idSoftware = this.softwares.at(0).id;
+        }
         this.software = this.softwares.get(idSoftware);
         if(idSoftware!=this.idSoftware)
         {   this.idSoftware = idSoftware;
