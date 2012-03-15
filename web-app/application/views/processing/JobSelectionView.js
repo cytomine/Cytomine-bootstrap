@@ -32,6 +32,7 @@ var JobSelectionView = Backbone.View.extend({
     loadResult : function (jobSelectionViewTpl) {
         var self = this;
         var content = _.template(jobSelectionViewTpl, {});
+        console.log("loadResult");
         $(self.el).empty();
         $(self.el).append(content);
         self.printDatatables(self.jobs.models);
@@ -146,7 +147,6 @@ var JobSelectionView = Backbone.View.extend({
         var tbody = $(self.el).find('#selectJobTable').find("tbody");
         if (jobs != undefined) {
             _.each(jobs, function (job) {
-                console.log("job.id="+job.id);
                 var cellIcon = '<i class="icon-plus"></i>';
                 var cellId = job.id;
                 var cellNumber = job.get('number');

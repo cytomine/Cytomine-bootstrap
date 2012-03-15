@@ -131,6 +131,23 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         //Print selected job from this software
         self.printProjectJobInfo( self.idJob);
 
+       $("#softwareCompareJobButton").click(function() {
+            self.jobsLight.fetch({
+                success : function (collection, response) {
+                      console.log("project=" + self.model.id + " software.id=" +  self.software.id);
+                        new JobComparatorView({
+                            software : self.software,
+                            project : self.model,
+                            el : $("#jobComparatorDialogParent"),
+                            parent : self,
+                            jobs: collection,
+                            job1: undefined,
+                            softwares : self.softwares
+                        }).render();
+                }
+                });
+            });
+
     },
     changeJobSelection : function(idJob)  {
         var self = this;
@@ -250,9 +267,14 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     fillJobSelectView : function() {
         var self = this;
-        self.jobsLight.fetch({
+        console.log("fillJobSelectView:"+self.software.get('name'));
+        $('#jobSelection').empty();
+
+
+        new JobCollection({ project : self.model.id, software: self.software.id, light:true}).fetch({
             success : function (collection, response) {
-                self.jobSelectView = new JobSelectionView({
+                self.jobsLight = collection;
+                 self.jobSelectView = new JobSelectionView({
                     software : self.software,
                     project : self.model,
                     el : $("#panelAlgoSoftware").find('#jobSelection'),
