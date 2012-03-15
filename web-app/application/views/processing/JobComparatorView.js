@@ -1,18 +1,26 @@
 var JobComparatorView = Backbone.View.extend({
     width : null,
-    software: null,
+    software: null, //current software
+    softwares : null, //softwares from project
     project : null,
-    job1 : null,
+    software1: null, //selected software
+    software2: null,
+    job1 : null, //selected job
     job2 : null,
-    jobs : null,
+    jobs1 : null, //job list
+    jobs2 : null,
     parent : null,
     initialize: function(options) {
         this.width = options.width;
         this.software = options.software;
+        this.software1 = options.software;
+        this.software2 = options.software;
+        this.softwares = options.softwares;
         this.project = options.project;
         this.job1 = options.job1;
         this.job2 = options.job2;
-        this.jobs = options.jobs;
+        this.jobs1 = options.jobs;
+        this.jobs2 = options.jobs;
         this.parent = options.parent;
 
     },
@@ -29,31 +37,60 @@ var JobComparatorView = Backbone.View.extend({
     loadResult : function (JobComparatorTpl) {
         var self = this;
         var content = _.template(JobComparatorTpl, {});
+        if(self.jobs1.length<2) return;
         $(self.el).empty();
         $(self.el).append(content);
+
 
         var width = ($(window).width() - 200);
         var height = ($(window).height() - 200);
         $(self.el).dialog({ width: width, height: height, modal:true });
+        self.printSoftwareSelection($("#comparatorSoftwareSelection"));
+        self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job1'),self.software1.id);
+        self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job2'),self.software2.id);
         self.printJobSelection($("#comparatorJobSelection"));
 
-        if (self.job1 != null && self.job1 != undefined) {
-            $("#comparatorJobSelection").find('.job1').find('select').val(self.job1.id);
-            if (self.job1.id != self.jobs.at(0).id) $("#comparatorJobSelection").find('.job2').find('select').val(self.jobs.at(0).id);
-            else $("#comparatorJobSelection").find('.job2').find('select').val(self.jobs.at(1).id);
-        }
-        else {
-            //if no job pre-selected, select the first (last in date) and seconde
-            $("#comparatorJobSelection").find('.job1').find('select').val(self.jobs.at(0).id);
-            $("#comparatorJobSelection").find('.job2').find('select').val(self.jobs.at(1).id);
-        }
+        self.changeSelection();
 
         self.refreshSelectStyle($("#comparatorJobSelection").find('.job1'));
         self.refreshSelectStyle($("#comparatorJobSelection").find('.job2'));
         self.refreshCompareJob();
     },
+    changeSelection : function() {
+        var self = this;
+
+        if(self.jobs1.get(self.job1)!=undefined) {
+           self.changeSelectionValue($("#comparatorJobSelection").find('.job1'),self.job1.id);
+        } else {
+          self.changeSelectionValue($("#comparatorJobSelection").find('.job1'),self.jobs1.at(0).id);
+        }
+
+        if(self.jobs2.get(self.job2)!=undefined) {
+           self.changeSelectionValue($("#comparatorJobSelection").find('.job2'),self.job2.id);
+        } else {
+          self.changeSelectionValue($("#comparatorJobSelection").find('.job2'),self.jobs2.at(0).id);
+        }
+
+//
+//        if (self.job1 != null && self.job1 != undefined) {
+//            self.changeSelectionValue($("#comparatorJobSelection").find('.job1'),self.job1.id);
+//            if (self.job1.id != self.jobs2.at(0).id) self.changeSelectionValue($("#comparatorJobSelection").find('.job2'),self.jobs2.at(0).id);
+//            else self.changeSelectionValue($("#comparatorJobSelection").find('.job2'),self.jobs2.at(1).id);
+//        }
+//        else {
+//            //if no job pre-selected, select the first (last in date) and second
+//            self.changeSelectionValue($("#comparatorJobSelection").find('.job1'),self.jobs1.at(0).id);
+//            self.changeSelectionValue($("#comparatorJobSelection").find('.job2'),self.jobs2.at(1).id);
+//        }
+    },
+    changeSelectionValue : function(elem, value) {
+        elem.find('select').val(value);
+    },
     retrieveSelectedJob : function(num) {
         return $("#comparatorJobSelection").find('.job' + num).find('select').val();
+    },
+    retrieveSelectedSoftware : function(num) {
+        return $("#comparatorSoftwareSelection").find('.job' + num).find('select').val();
     },
     cleanCompareJob : function() {
         $("#comparatorJobInfo").find(".job1").empty();
@@ -63,6 +100,19 @@ var JobComparatorView = Backbone.View.extend({
         $("#comparatorJobResult").find(".job1").empty();
         $("#comparatorJobResult").find(".job2").empty();
 
+    },
+    reloadSelection : function() {
+        var self = this;
+        $("#comparatorJobSelection").find('.job1').empty();
+        $("#comparatorJobSelection").find('.job2').empty();
+        $("#comparatorSoftwareSelection").find('.job1').empty();
+        $("#comparatorSoftwareSelection").find('.job2').empty();
+        self.printSoftwareSelection($("#comparatorSoftwareSelection"));
+        self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job1'),self.software1.id);
+        self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job2'),self.software2.id);
+        self.printJobSelection($("#comparatorJobSelection"));
+        self.changeSelection();
+        self.refreshCompareJob();
     },
     refreshCompareJob : function() {
         var self = this;
@@ -88,8 +138,13 @@ var JobComparatorView = Backbone.View.extend({
     },
     printJobSelection : function(elemParent) {
         var self = this;
-        self.addSelectionView(elemParent.find('.job1'));
-        self.addSelectionView(elemParent.find('.job2'));
+        self.addSelectionView(elemParent.find('.job1'),self.jobs1);
+        self.addSelectionView(elemParent.find('.job2'),self.jobs2);
+    },
+    printSoftwareSelection : function(elemParent) {
+        var self = this;
+        self.addSelectionSoftwareView(elemParent.find('.job1'));
+        self.addSelectionSoftwareView(elemParent.find('.job2'));
     },
     printJobInfo : function(elemParent) {
         var self = this;
@@ -106,16 +161,52 @@ var JobComparatorView = Backbone.View.extend({
         self.addResultView(elemParent.find('.job1'), self.job1);
         self.addResultView(elemParent.find('.job2'), self.job2);
     },
-    addSelectionView : function(elemParent) {
+    addSelectionView : function(elemParent, collection) {
         var self = this;
         elemParent.append('<select></select>');
-        self.jobs.each(function(job) {
+        collection.each(function(job) {
             var className = self.getClassName(job);
             elemParent.find("select").append('<option class="' + className + '" value="' + job.id + '">Job ' + job.get('number') + ' (' + window.app.convertLongToDate(job.get('created')) + ')' + '</option>');
         });
         elemParent.find("select").change(function() {
             self.refreshSelectStyle(elemParent);
             self.refreshCompareJob();
+        });
+    },
+    addSelectionSoftwareView : function(elemParent) {
+        var self = this;
+        elemParent.append('<select></select>');
+        self.softwares.each(function(software) {
+            if(software.get('resultName')==software.get('resultName'))
+                elemParent.find("select").append('<option value="' + software.id + '">Software ' + software.get('name') + '</option>');
+        });
+        elemParent.find("select").change(function() {
+            self.refreshJobList();
+
+        });
+    },
+    refreshJobList : function() {
+        var self = this;
+        self.cleanCompareJob();
+        //retrieve software 1 & 2
+        var idSoftware1 = self.retrieveSelectedSoftware('1');
+        self.software1 = self.softwares.get(idSoftware1);
+        var idSoftware2 = self.retrieveSelectedSoftware('2');
+        self.software2 = self.softwares.get(idSoftware2);
+        console.log("Selected software: 1#" + self.software1.id + "- 2#"+ self.software2.id);
+        //retrieve job from software selection 1
+        new JobCollection({ project : self.project.id, software: self.software1.id, light:true}).fetch({
+                success : function (collection, response) {
+                    self.jobs1 = collection;
+
+                        //retrieve job from software selection 2
+                        new JobCollection({ project : self.project.id, software: self.software2.id, light:true}).fetch({
+                                success : function (collection, response) {
+                                    self.jobs2 = collection;
+                                     self.reloadSelection();
+                                }
+                        });
+                }
         });
     },
     refreshSelectStyle : function(elemParent) {
