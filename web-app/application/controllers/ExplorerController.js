@@ -33,6 +33,7 @@ var ExplorerController = Backbone.Router.extend({
             if (idAnnotation != "") {
                 browseImageViewInitOptions.goToAnnotation = {value : idAnnotation};
             }
+
             self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions);
             self.tabs.triggerRoute = false;
             var tabs = $("#explorer > .browser").find(".nav-tabs");

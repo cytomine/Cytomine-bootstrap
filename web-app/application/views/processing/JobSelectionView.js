@@ -214,12 +214,14 @@ var JobSelectionView = Backbone.View.extend({
             var nTr = $(this).parents('tr')[0];
             if (self.table.fnIsOpen(nTr)) {
                 /* This row is already open - close it */
-                this.class = "icon-plus";
+                $(this).removeClass("class","icon-minus");
+                $(this).addClass("class","icon-plus");
                 self.table.fnClose(nTr);
             }
             else {
                 /* Open this row */
-                this.class = "icon-minus";
+                $(this).removeClass("class","icon-plus");
+                $(this).addClass("class","icon-minus");
                 self.table.fnOpen(nTr, self.seeDetails(nTr), 'details');
                 var aData = self.table.fnGetData(nTr);
                 console.log("aData[1]=" + aData[1]);

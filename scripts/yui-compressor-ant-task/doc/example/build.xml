@@ -81,6 +81,7 @@
             <fileset dir="${src.dir}" includes="application/controllers/AdminController.js" />
             <fileset dir="${src.dir}" includes="application/controllers/ActivityController.js" />
             <fileset dir="${src.dir}" includes="application/controllers/AccountController.js" />
+
             <fileset dir="${src.dir}" includes="application/models/AnnotationsFilterModel.js" />
             <fileset dir="${src.dir}" includes="application/models/ImageModel.js" />
             <fileset dir="${src.dir}" includes="application/models/TermModel.js" />
@@ -98,11 +99,16 @@
             <fileset dir="${src.dir}" includes="application/models/CommandModel.js" />
             <fileset dir="${src.dir}" includes="application/models/RelationModel.js" />
             <fileset dir="${src.dir}" includes="application/models/SecRoleModel.js" />
+            <fileset dir="${src.dir}" includes="application/models/JobModel.js" />
+
             <fileset dir="${src.dir}" includes="application/views/activity/ActivityView.js" />
+
             <fileset dir="${src.dir}" includes="application/views/account/AccountDetails.js" />
+
             <fileset dir="${src.dir}" includes="application/views/auth/LoginDialogView.js" />
             <fileset dir="${src.dir}" includes="application/views/auth/LoadingDialogView.js" />
             <fileset dir="${src.dir}" includes="application/views/auth/LogoutDialogView.js" />
+
             <fileset dir="${src.dir}" includes="application/views/dashboard/AnnotationThumbView.js" />
             <fileset dir="${src.dir}" includes="application/views/dashboard/AnnotationView.js" />
             <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardView.js" />
@@ -110,6 +116,7 @@
             <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardImages.js" />
             <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAnnotations.js" />
             <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAlgos.js" />
+            <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardConfig.js" />
 
             <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationLayer.js" />
             <fileset dir="${src.dir}" includes="application/views/explorer/BrowseImageView.js" />
@@ -120,7 +127,15 @@
             <fileset dir="${src.dir}" includes="application/views/explorer/OverviewMapPanel.js" />
             <fileset dir="${src.dir}" includes="application/views/explorer/OntologyPanel.js" />
 
+
             <fileset dir="${src.dir}" includes="application/views/upload/UploadFormView.js" />
+
+            <fileset dir="${src.dir}" includes="application/views/processing/JobListingView.js" />
+            <fileset dir="${src.dir}" includes="application/views/processing/JobComparatorView.js" />
+            <fileset dir="${src.dir}" includes="application/views/processing/JobSelectionView.js" />
+            <fileset dir="${src.dir}" includes="application/views/processing/LaunchJobView.js" />
+            <fileset dir="${src.dir}" includes="application/views/processing/JobResultView.js" />
+            <fileset dir="${src.dir}" includes="application/views/processing/result/RetrievalAlgoResult.js" />
 
             <fileset dir="${src.dir}" includes="application/views/image/ImageThumbView.js" />
             <fileset dir="${src.dir}" includes="application/views/image/ImageSelectView.js" />
@@ -134,6 +149,7 @@
             <fileset dir="${src.dir}" includes="application/views/ontology/OntologyTreeView.js" />
             <fileset dir="${src.dir}" includes="application/views/ontology/OntologyEditDialog.js" />
             <fileset dir="${src.dir}" includes="application/views/ontology/OntologyAddDialog.js" />
+
             <fileset dir="${src.dir}" includes="application/views/project/ProjectView.js" />
             <fileset dir="${src.dir}" includes="application/views/project/ProjectPanelView.js" />
             <fileset dir="${src.dir}" includes="application/views/project/ProjectManageSlideDialog.js" />
@@ -143,9 +159,12 @@
             <fileset dir="${src.dir}" includes="application/views/project/ProjectAddImageListingDialog.js" />
             <fileset dir="${src.dir}" includes="application/views/project/ProjectAddImageThumbDialog.js" />
             <fileset dir="${src.dir}" includes="application/views/project/ProjectAddImageSearchPanel.js" />
+
             <fileset dir="${src.dir}" includes="application/views/utils/CrudGridView.js" />
             <fileset dir="${src.dir}" includes="application/views/annotation/AnnotationListView.js" />
+            <fileset dir="${src.dir}" includes="application/views/annotation/AnnotationQuestionableView.js" />
             <fileset dir="${src.dir}" includes="application/views/annotation/AnnotationRetrievalView.js" />
+
             <fileset dir="${src.dir}" includes="application/views/annotation/ShareAnnotationView.js" />
             <fileset dir="${src.dir}" includes="application/views/Component.js" />
             <fileset dir="${src.dir}" includes="application/views/ApplicationView.js" />

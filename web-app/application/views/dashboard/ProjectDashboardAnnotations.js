@@ -162,7 +162,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             $("#liSaveAnnotationFilter").hide();
             $("#liConfirmAnnotationFilter").css("display", "inline");
             $("#inputAnnotationFilterName").focus();
-            $("#inputAnnotationFilterName").tooltip();
+            //$("#inputAnnotationFilterName").tooltip();
         }
         var hideConfirm = function () {
             $("#liSaveAnnotationFilter").css("display", "inline");

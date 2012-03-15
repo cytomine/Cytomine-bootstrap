@@ -66,17 +66,15 @@
         <concat destfile="${result.file}" force="no">
             <!-- Order in which these files are concatenated _IS_ IMPORTANT! -->
             <fileset dir="${src.dir}" includes="lib/requirejs/require.js" />
-            <fileset dir="${src.dir}" includes="lib/bootstrap-1.3/bootstrap-modal.js" />
-            <fileset dir="${src.dir}" includes="lib/bootstrap-1.3/bootstrap-dropdown.js" />
-            <fileset dir="${src.dir}" includes="lib/bootstrap-1.3/bootstrap-twipsy.js" />
-            <fileset dir="${src.dir}" includes="lib/bootstrap-1.3/bootstrap-popover.js" />
-            <fileset dir="${src.dir}" includes="lib/bootstrap-1.3/bootstrap-alerts.js" />
+            <fileset dir="${src.dir}" includes="lib/bootstrap-2.0/js/bootstrap.js" />
             <fileset dir="${src.dir}" includes="lib/underscore.js" />
             <fileset dir="${src.dir}" includes="lib/backbone.js"  />
-            <fileset dir="${src.dir}" includes="lib/fileupload/jquery.fileupload-ui.js"  />
-            <fileset dir="${src.dir}" includes="lib/fileupload/jquery.fileupload.js"  />
-            <fileset dir="${src.dir}" includes="lib/ui.panel/ui.panel.min.js"  />
+            <fileset dir="${src.dir}" includes="lib/fileupload2/vendor/jquery.ui.widget.js"  />
+            <fileset dir="${src.dir}" includes="lib/fileupload2/jquery.iframe-transport.js"  />
+            <fileset dir="${src.dir}" includes="lib/fileupload2/jquery.fileupload.js"  />
+            <fileset dir="${src.dir}" includes="lib/fileupload2/cors/jquery.xdr-transport.js"  />
             <fileset dir="${src.dir}" includes="lib/dynatree/jquery.dynatree.js"  />
+            <fileset dir="${src.dir}" includes="lib/ui.panel/ui.panel.min.js"  />
             <fileset dir="${src.dir}" includes="lib/farbtastic/farbtastic.js"  />
             <fileset dir="${src.dir}" includes="lib/colorpicker/js/colorpicker.js"  />
             <fileset dir="${src.dir}" includes="lib/jqgrid/js/i18n/grid.locale-en.js"  />

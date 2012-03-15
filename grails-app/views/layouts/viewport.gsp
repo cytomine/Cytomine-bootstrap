@@ -113,6 +113,7 @@ body {
     <script type="text/javascript" src="application/views/activity/ActivityView.js" ></script>
 
     <script type="text/javascript" src="application/views/account/AccountDetails.js" ></script>
+
     <script type="text/javascript" src="application/views/auth/LoginDialogView.js" ></script>
     <script type="text/javascript" src="application/views/auth/LoadingDialogView.js" ></script>
     <script type="text/javascript" src="application/views/auth/LogoutDialogView.js" ></script>
@@ -132,16 +133,6 @@ body {
     <script type="text/javascript" src="application/views/processing/LaunchJobView.js" ></script>
     <script type="text/javascript" src="application/views/processing/JobResultView.js" ></script>
     <script type="text/javascript" src="application/views/processing/result/RetrievalAlgoResult.js"></script>
-
-    <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/DraggablePanelView.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/ExplorerTabs.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/AnnotationsPanel.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/LayerSwitcherPanel.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/ImageFiltersPanel.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/OverviewMapPanel.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/OntologyPanel.js" ></script>
 
     <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
     <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>
@@ -183,14 +174,14 @@ body {
     <script type="text/javascript" src="application/views/annotation/AnnotationListView.js" ></script>
     <script type="text/javascript" src="application/views/annotation/AnnotationRetrievalView.js" ></script>
     <script type="text/javascript" src="application/views/annotation/AnnotationQuestionableView.js" ></script>
-
+    <script type="text/javascript" src="application/views/annotation/ShareAnnotationView.js" ></script>
 
     <script type="text/javascript" src="application/views/utils/CrudGridView.js" ></script>
     <script type="text/javascript" src="application/views/Component.js" ></script>
     <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
     <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
 
-    <script type="text/javascript" src="application/views/annotation/ShareAnnotationView.js" ></script>
+
 
 </g:if>
 <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">

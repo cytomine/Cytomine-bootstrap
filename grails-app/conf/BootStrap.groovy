@@ -92,7 +92,7 @@ class BootStrap {
         }
 
         StopWatch stopWatch = new LoggingStopWatch();
-        initData(GrailsUtil.environment)
+        //initData(GrailsUtil.environment)
         countersService.updateCounters()
         //updateImageProperties()
 

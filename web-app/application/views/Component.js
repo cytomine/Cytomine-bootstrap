@@ -25,7 +25,7 @@ var Component = Backbone.View.extend({
       $(this.el).append(this.template);
 
       //Init menu
-      $("#project-button").tooltip({
+      /*$("#project-button").tooltip({
          placement : "bottom"
       });
        $("#ontology-button").tooltip({
@@ -39,7 +39,7 @@ var Component = Backbone.View.extend({
       });
        $("#activity-button").tooltip({
          placement : "bottom"
-      });
+      });*/
       return this;
    },
    /**
