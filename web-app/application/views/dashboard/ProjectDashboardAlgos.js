@@ -300,7 +300,9 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     fillSelectedJobDetails : function(job) {
         var self = this;
+        console.log("fillSelectedJobDetails="+job);
         if(job==undefined) {
+            $('.selectRunDetails').empty();
             $('#selectRunParamsTable').find('tbody').empty();
             $("#panelJobResultsDiv").empty();
             return;

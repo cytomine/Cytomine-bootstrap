@@ -37,7 +37,7 @@ var JobComparatorView = Backbone.View.extend({
     loadResult : function (JobComparatorTpl) {
         var self = this;
         var content = _.template(JobComparatorTpl, {});
-        if(self.jobs1.length<2) return;
+        if(self.jobs1.length<1 || self.jobs2.length<1) return;
         $(self.el).empty();
         $(self.el).append(content);
 
