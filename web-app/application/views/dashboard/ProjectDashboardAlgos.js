@@ -83,7 +83,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         if(this.softwares==null || this.softwares.length<1) return;
         this.idJob = idJob;
         if(idSoftware==undefined) {
-            idSoftware = this.softwares.at(0).id;
+            idSoftware = this.idSoftware;
         }
         this.software = this.softwares.get(idSoftware);
         if(idSoftware!=this.idSoftware)
