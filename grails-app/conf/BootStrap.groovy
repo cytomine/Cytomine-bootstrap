@@ -92,7 +92,9 @@ class BootStrap {
         }
 
         StopWatch stopWatch = new LoggingStopWatch();
-        //initData(GrailsUtil.environment)
+        if (GrailsUtil.environment == BootStrap.test) { //scripts are not present in productions mode
+            initData(GrailsUtil.environment)
+        }
         countersService.updateCounters()
         //updateImageProperties()
 
