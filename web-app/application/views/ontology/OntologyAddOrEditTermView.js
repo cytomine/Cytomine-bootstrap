@@ -88,7 +88,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         //Build dialog
         self.ontologyDialog = $(self.$termDialog).modal({
             keyboard : true,
-            backdrop : true
+            backdrop : false
         });
         $("#AddOrEditTermButton").click(function(){
             self.$from.submit();

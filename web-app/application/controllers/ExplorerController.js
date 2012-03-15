@@ -35,10 +35,10 @@ var ExplorerController = Backbone.Router.extend({
             }
 
             self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions);
-            self.tabs.triggerRoute = false;
+            /*self.tabs.triggerRoute = false;
             var tabs = $("#explorer > .browser").find(".nav-tabs");
             tabs.find('a[href=#tabs-image-'+window.app.status.currentProject+'-'+idImage+'-]').click();
-            self.tabs.triggerRoute = true;
+            self.tabs.triggerRoute = true;*/
             window.app.view.showComponent(self.tabs.container);
             self.showView();
         };

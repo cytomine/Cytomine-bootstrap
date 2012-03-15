@@ -38,7 +38,7 @@ var ExplorerTabs = Backbone.View.extend({
         var self = this;
         var tab = this.getBrowseImageView(idImage);
         if (tab != null) {
-            //tab.view.show(options);
+            tab.view.show(options);
             return;
         }
         var tabs = $("#explorer-tab-content");

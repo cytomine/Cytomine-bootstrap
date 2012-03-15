@@ -62,7 +62,7 @@ var AddProjectDialog = Backbone.View.extend({
 
         self.addProjectDialog = $("#addproject").modal({
             keyboard : true,
-            backdrop : true
+            backdrop : false
         });
 
         $("#saveProjectButton").click(function(){$("#login-form-add-project").submit();return false;});

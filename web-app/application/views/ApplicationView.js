@@ -12,7 +12,7 @@ var ApplicationView = Backbone.View.extend({
     className : "layout",
     components : {},
     panelsConfiguration : [
-        {key : "toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { top : 75}, align : "center"}},
+        {key : "toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { top : 80}, align : "center"}},
         {key : "overview-panel", linkID : "toggle-overview-panel", name : "Overview", className : "overviewPanel", value : { visible : true , position : { right : 20, top : 325}}},
         {key : "ontology-panel", linkID : "toggle-ontology-panel", name : "Ontology", className : "ontologyPanel", value : { visible : true , position : { left : 20, top : 280}}},
         {key : "layer-panel", linkID : "toggle-layer-panel", name : "Layer switcher", className : "layerSwitcherPanel", value : { visible : false , position : { right : 20, top : 100}}},
@@ -131,21 +131,22 @@ var ApplicationView = Backbone.View.extend({
         if (preference == undefined) return;
 
         var panelWidth = $("."+item.className).width();
+
         var panelHeight = $("."+item.className).height();
         var windowWidth = $(window).width();
         var windowHeight = $(window).height();
         // Alignment
-        if (preference.align != undefined && preference.align == "center") {
+        if (panelWidth != 0 && preference.align != undefined && preference.align == "center") {
             var panelWidth = $("."+item.className).width();
             var leftPosition = (windowWidth / 2) - (panelWidth / 2);
             preference.position.left = leftPosition;
         }
 
         // Check if out of bounds
-        if (preference.position.left + panelWidth > windowWidth) {
+        if (panelWidth != 0 && preference.position.left + panelWidth > windowWidth) {
             preference.position.left = windowWidth - panelWidth
         }
-        if (preference.position.top + panelHeight > windowHeight) {
+        if (panelHeight != 0 && preference.position.top + panelHeight > windowHeight) {
             preference.position.top = windowHeight - panelHeight
         }
 
