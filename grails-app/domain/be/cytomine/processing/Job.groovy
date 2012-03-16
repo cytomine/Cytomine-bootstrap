@@ -44,8 +44,8 @@ class Job extends CytomineDomain  {
 
     public beforeInsert() {
         super.beforeInsert()
-        Job previousJob = Job.findBySoftwareAndProject(software,project,[sort: "number", order: "desc"])
-        if(previousJob) number = previousJob.number+1
+        List<Job> previousJob = Job.findAllBySoftwareAndProject(software,project,[sort: "number", order: "desc"])
+        if(!previousJob.isEmpty()) number = previousJob.get(0).number+1
         else number = 1;
     }
 
