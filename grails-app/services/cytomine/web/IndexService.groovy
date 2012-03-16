@@ -42,6 +42,7 @@ class IndexService {
              */
             createIndex(statement, "annotation", "image_id");
             createIndex(statement, "annotation", "created");
+            createIndex(statement, "annotation", "project_id");
             /**
              * Annotation_term
              */
