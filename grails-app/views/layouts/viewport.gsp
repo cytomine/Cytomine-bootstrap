@@ -132,7 +132,9 @@ body {
     <script type="text/javascript" src="application/views/processing/JobSelectionView.js" ></script>
     <script type="text/javascript" src="application/views/processing/LaunchJobView.js" ></script>
     <script type="text/javascript" src="application/views/processing/JobResultView.js" ></script>
+    <script type="text/javascript" src="application/views/processing/SoftwareDetailsView.js"></script>
     <script type="text/javascript" src="application/views/processing/result/RetrievalAlgoResult.js"></script>
+
 
     <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
     <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>

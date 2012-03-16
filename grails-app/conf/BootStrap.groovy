@@ -104,9 +104,6 @@ class BootStrap {
         createProjectOwner()
         createAnnotationGrant()
         */
-
-        updateJobStatus()
-
         stopWatch.stop("initData");
         //end of init
 
@@ -117,8 +114,6 @@ class BootStrap {
 
         println "========= C O M P I L E == J S ========= "
         ViewPortToBuildXML.process()
-
-
         def proc = "./scripts/yui-compressor-ant-task/doc/example/deploy.sh".execute()
         proc.in.eachLine { line -> println line }
         proc = "./scripts/yui-compressor-ant-task/doc/lib/deploy.sh".execute()
@@ -172,31 +167,6 @@ class BootStrap {
         def destroy = {
         }
         //end of init
-    }
-
-    def updateJobStatus() {
-        Software.list().each {
-            it.resultName = "ValidateAnnotation"
-            it.save(flush:true)
-        }
-
-
-//         Job.list().each { job ->
-//             if(job.running) job.status = 2
-//             else if(job.indeterminate) job.status = 5
-//             else if(job.successful) job.status = 3
-//             else if(!job.successful) job.status = 4
-//             job.save(flush:true)
-//         }
-//       //NOTLAUNCH = 0, INQUEUE = 1, RUNNING = 2, SUCCESS = 3, FAILED = 4, INDETERMINATE = 5
-//
-//         Job.findAll([sort: "created", order: "asc"]).each { job ->
-//            List<Job> previousJob = Job.findAllBySoftwareAndProject(job.software,job.project,[max: 1, sort: "number", order: "desc"])
-//            int number = 1
-//            if(!previousJob.isEmpty()) job.number = previousJob.first().number+1
-//            else job.number = number
-//            job.save(flush:true)
-//         }
     }
 
     private def createProjectGrant() {
