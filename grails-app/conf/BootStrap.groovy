@@ -34,6 +34,7 @@ import be.cytomine.project.ProjectGroup
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import be.cytomine.ViewPortToBuildXML
 
 class BootStrap {
     def springSecurityService
@@ -113,7 +114,11 @@ class BootStrap {
     }
 
     private def compileJS() {
+
         println "========= C O M P I L E == J S ========= "
+        ViewPortToBuildXML.process()
+
+
         def proc = "./scripts/yui-compressor-ant-task/doc/example/deploy.sh".execute()
         proc.in.eachLine { line -> println line }
         proc = "./scripts/yui-compressor-ant-task/doc/lib/deploy.sh".execute()

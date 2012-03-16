@@ -14,23 +14,23 @@
 <head>
 <title>Cytomine</title>
 
-<link rel="icon" type="image/png" href="favicon.ico">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="favicon.ico"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <!-- Styles -->
 
 <link rel='stylesheet' href='css/bootstrap/jquery-ui-1.8.16.custom.css' type='text/css'/>
 <link rel='stylesheet' href='lib/ui.panel/ui.panel.css' type='text/css'/>
-<link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css">
+<link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
 
 <!--<link rel="stylesheet" href="lib/bootstrap-1.3/bootstrap.min.css">-->
-<link rel="stylesheet" href="lib/bootstrap-2.0/css/bootstrap.css">
+<link rel="stylesheet" href="lib/bootstrap-2.0/css/bootstrap.css"/>
 <style type="text/css">
 body {
     padding-top: 40px;
 }
 </style>
-<link rel="stylesheet" href="lib/bootstrap-2.0/css/bootstrap-responsive.css">
+<link rel="stylesheet" href="lib/bootstrap-2.0/css/bootstrap-responsive.css"/>
 
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
 <link rel='stylesheet' href='lib/fileupload2/jquery.fileupload-ui.css' type='text/css'/>
@@ -64,7 +64,7 @@ body {
 
     <script type="text/javascript" src="lib/farbtastic/farbtastic.js"></script>
 
-    <link href="lib/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css">
+    <link href="lib/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>
 
     <!--jqgrid -->

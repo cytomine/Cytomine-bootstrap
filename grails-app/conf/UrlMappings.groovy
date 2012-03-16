@@ -272,7 +272,5 @@ class UrlMappings {
             action = [GET:"convertHtmlContentToPDF"]
         }
 
-
-
     }
 }
