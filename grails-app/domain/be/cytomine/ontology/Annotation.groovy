@@ -303,7 +303,7 @@ class Annotation extends CytomineDomain implements Serializable {
             //retrieval
             try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
             returnArray['cropURL'] = annotation.getCropURL()
-
+            returnArray['url'] = UrlApi.getAnnotationCropWithAnnotationId(annotation.id)
             returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.getIdProject(), imageinstance.id, annotation.id)
             return returnArray
         }
