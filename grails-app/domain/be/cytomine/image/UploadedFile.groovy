@@ -9,8 +9,9 @@ class UploadedFile {
     Project project
     String filename
     String originalFilename
+    String path
 
     static constraints = {
-
+          project (nullable : true)
     }
 }

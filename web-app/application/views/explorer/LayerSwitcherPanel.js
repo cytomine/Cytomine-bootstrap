@@ -68,6 +68,11 @@ var LayerSwitcherPanel = Backbone.View.extend({
             return _.include(project.get("users"), user.id);
         });
         projectUsers = _.pluck(projectUsers, 'id');
+        //check if the the user we are following is always connected, if not disconneted
+        if (!_.include(onlineUsers, self.userFollowed)) {
+            userList.find("li[data-id="+self.userFollowed+"]").find('input.followUser').removeAttr('checked');
+            self.stopFollowing();
+        }
         _.each(projectUsers, function (userID) {
             if (!_.include(onlineUsers, userID)) {
                 userList.find("li[data-id="+userID+"]").find('span').css('color', 'white');
@@ -78,6 +83,29 @@ var LayerSwitcherPanel = Backbone.View.extend({
             userList.find("li[data-id="+userID+"]").find('span').css('color', '#46a546');
             userList.find("li[data-id="+userID+"]").find('input.followUser').removeAttr("disabled");
         });
+    },
+    startFollowing : function () {
+        var self = this;
+        window.app.view.message("","Start following " + window.app.models.users.get(self.userFollowed).prettyName(), "success");
+        var image = this.model.get("id");
+        this.followInterval = setInterval(function() {
+            new UserPositionModel({ image : image, user : self.userFollowed }).fetch({
+                success : function (model, response) {
+                    self.browseImageView.map.moveTo(new OpenLayers.LonLat(model.get("longitude"), model.get("latitude")), model.get("zoom"));
+                },
+                error : function(model, response ) {
+                }
+            });
+        }, 1000);
+    },
+    stopFollowing: function() {
+        var self = this;
+        if (self.followInterval != undefined) {
+            window.app.view.message("","Stop following " + window.app.models.users.get(self.userFollowed).prettyName(), "success");
+            clearInterval(self.followInterval);
+            self.followInterval = null;
+            self.userFollowed = null;
+        }
     },
     /**
      * Render the html into the DOM element associated to the view
@@ -104,23 +132,11 @@ var LayerSwitcherPanel = Backbone.View.extend({
                 $(this).attr('checked', false);
             });
             $(this).attr('checked', followUser);
-            if (self.followInterval != undefined) {
-                clearInterval(self.followInterval);
-                self.followInterval = null;
-            }
+            self.stopFollowing();
             if (!followUser) return;
             var user = $(this).attr("data-user-id");
             self.userFollowed = user;
-            var image = self.model.get("id");
-            self.followInterval = setInterval(function() {
-                new UserPositionModel({ image : image, user : user}).fetch({
-                    success : function (model, response) {
-                        self.browseImageView.map.moveTo(new OpenLayers.LonLat(model.get("longitude"), model.get("latitude")), model.get("zoom"));
-                    },
-                    error : function(model, response ) {
-                    }
-                });
-            }, 2000);
+            self.startFollowing();
 
         });
 

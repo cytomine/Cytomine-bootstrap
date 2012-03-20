@@ -29,6 +29,10 @@ class UrlMappings {
             action = [GET:"listByUser"]
         }
 
+        "/api/uploadedfile" (controller:"restUploadedFile"){
+            action = [POST : "add"]
+        }
+
         "/api/user/$id/project"(controller:"restProject"){
             action = [GET:"listByUser"]
         }
