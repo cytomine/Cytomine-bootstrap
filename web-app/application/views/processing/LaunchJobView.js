@@ -139,14 +139,13 @@ var LaunchJobView = Backbone.View.extend({
     retrieveParams : function() {
         var self = this;
         var jobParams = [];
-        $('#launchJobParamsTable tbody tr').each( function (index,elem) {
-            var trElem = $(this);
-            var softwareParam = self.params[index];
-            var value = self.getValue(softwareParam,trElem);
-            console.log(softwareParam);
-            var param = {value:'"'+value+'"', softwareParameter: softwareParam.id};
-            jobParams.push(param);
-        });
+
+         _.each(self.paramsViews, function (paramView) {
+               var softwareParam = paramView.param;
+               var value = paramView.getStringValue();
+                var param = {value:'"'+value+'"', softwareParameter: softwareParam.id};
+             jobParams.push(param);
+         });
         return jobParams;
     },
     saveJobModel : function(job) {
@@ -201,6 +200,9 @@ var InputTextView = Backbone.View.extend( {
     getValue : function() {
         return this.trElem.find("input").val();
     },
+   getStringValue : function() {
+        return this.getValue();
+    },
     changeStyle : function(elem, success, message) {
         InputView.changeStyle(elem,success,message);
     }
@@ -240,6 +242,9 @@ var InputNumberView = Backbone.View.extend( {
     getValue : function() {
         return this.trElem.find("input").val();
     },
+   getStringValue : function() {
+        return this.getValue();
+    },
     changeStyle : function(elem, success, message) {
         InputView.changeStyle(elem,success,message);
     }
@@ -275,6 +280,9 @@ var InputBooleanView = Backbone.View.extend( {
     },
     getValue : function() {
         return this.trElem.find("input").is(":checked");
+    },
+   getStringValue : function() {
+        return this.getValue()+'';
     },
     changeStyle : function(elem, success, message) {
         InputView.changeStyle(elem,success,message);
@@ -351,6 +359,9 @@ var InputListView = Backbone.View.extend( {
                valueArray.push($(this).attr("value"));
             });
             return valueArray.join(',');
+    },
+    getStringValue : function() {
+        return this.getValue();
     },
     changeStyle : function(elem, success, message) {
         InputView.changeStyle(elem,success,message);
@@ -500,6 +511,12 @@ var InputListDomainView = Backbone.View.extend( {
         var values = self.trElem.find(".domainList").val();
         if(values==undefined) return [];
         else return values;
+    },
+    getStringValue : function() {
+        var self = this;
+        var values = self.trElem.find(".domainList").val();
+        if(values==undefined) return "";
+        else return values.join(",");
     },
     changeStyle : function(elem, success, message) {
         var labelElem = elem.find('.errorMessage');
