@@ -140,6 +140,7 @@ class ImageInstance extends CytomineDomain {
 
             
             returnArray['filename'] = it.baseImage ? it.baseImage.filename : null
+            returnArray['originalFilename'] = it.baseImage ? it.baseImage.originalFilename : null
 
             if (it.slideId) returnArray['slide'] = it.slideId
             else returnArray['slide'] = it.slide?.id

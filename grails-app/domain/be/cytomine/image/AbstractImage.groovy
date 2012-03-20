@@ -17,6 +17,7 @@ class AbstractImage extends CytomineDomain {
 
     def imagePropertiesService
 
+    String originalFilename
     String filename
     Scanner scanner
     Slide slide
@@ -41,6 +42,7 @@ class AbstractImage extends CytomineDomain {
     static transients = ["zoomLevels", "thumbURL"]
 
     static constraints = {
+        originalFilename(nullable: true, blank: false, unique: false)
         filename(blank: false, unique: true)
 
         scanner(nullable: true)
@@ -145,6 +147,7 @@ class AbstractImage extends CytomineDomain {
             returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['filename'] = it.filename
+            returnArray['originalFilename'] = it.originalFilename
             returnArray['scanner'] = it.getIdScanner()
             returnArray['slide'] = it.getIdSlide()
             returnArray['path'] = it.path

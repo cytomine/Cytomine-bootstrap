@@ -230,4 +230,5 @@ body {
 </script>
 <!-- OpenLayers -->
 <script type="text/javascript" src="lib/OpenLayers-2.11/OpenLayers.js"></script>
+<script type="text/javascript" src="http://download.skype.com/share/skypebuttons/js/skypeCheck.js"></script>
 </html>

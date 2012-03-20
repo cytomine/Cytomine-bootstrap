@@ -16,6 +16,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
     initialize: function(options) {
         this.browseImageView = options.browseImageView;
         this.followInterval = null;
+        this.userFollowed = null;
     },
     /**
      * Grab the layout and call ask for render
@@ -46,18 +47,37 @@ var LayerSwitcherPanel = Backbone.View.extend({
         var color = window.app.models.users.get(userID).get('color');
         var layerOptionTpl;
         if (layer.isOwner) {
-            layerOptionTpl = _.template("<li><input id='<%=   id %>' type='checkbox' value='<%=   name %>' checked /><span style='color : #ffffff;'> <%=   name %></span></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
+            layerOptionTpl = _.template("<li><input id='<%=   id %>' type='checkbox' checked />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color : #ffffff;'> <%=   name %></span></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
         } else {
             /*layerOptionTpl = _.template("<li><input id='<%= id %>' type='checkbox' value='<%=   name %>' /> <span style='color : #ffffff;'><%=   name %></span> <a class='followUser' data-user-id='<%= userID %>' href='#'>Follow</a></li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});*/
-			layerOptionTpl = _.template("<li><input id='<%= id %>' type='checkbox' value='<%=   name %>' /> <span style='color : #ffffff;'><%=   name %></span></li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});
+            layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' type='checkbox' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : #ffffff;'><%=   name %></span> </li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});
         }
         $("#layerSwitcher"+model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
 
         $("#"+layerID).click(function(){
             var checked = $(this).attr("checked");
-            layer.vectorsLayer.setVisibility(checked);          
+            layer.vectorsLayer.setVisibility(checked);
         });
 
+    },
+    updateOnlineUsers : function (onlineUsers) {
+        var self = this;
+        var userList = $("#layerSwitcher"+this.model.get("id")).find("ul.annotationLayers");
+        var project = window.app.status.currentProjectModel;
+        var projectUsers = window.app.models.users.select(function(user){
+            return _.include(project.get("users"), user.id);
+        });
+        projectUsers = _.pluck(projectUsers, 'id');
+        _.each(projectUsers, function (userID) {
+            if (!_.include(onlineUsers, userID)) {
+                userList.find("li[data-id="+userID+"]").find('span').css('color', 'white');
+                userList.find("li[data-id="+userID+"]").find('input.followUser').attr("disabled", "disabled")
+            }
+        });
+        _.each(onlineUsers, function (userID) {
+            userList.find("li[data-id="+userID+"]").find('span').css('color', '#46a546');
+            userList.find("li[data-id="+userID+"]").find('input.followUser').removeAttr("disabled");
+        });
     },
     /**
      * Render the html into the DOM element associated to the view
@@ -79,13 +99,18 @@ var LayerSwitcherPanel = Backbone.View.extend({
         });
 
         $("#layerSwitcher"+self.model.get("id")).find(".followUser").live('click', function (e){
-            e.preventDefault();
-
+            var followUser = $(this).attr("checked") == "checked";
+            $("#layerSwitcher"+self.model.get("id")).find('.followUser:checked').each(function () {
+                $(this).attr('checked', false);
+            });
+            $(this).attr('checked', followUser);
             if (self.followInterval != undefined) {
                 clearInterval(self.followInterval);
                 self.followInterval = null;
             }
+            if (!followUser) return;
             var user = $(this).attr("data-user-id");
+            self.userFollowed = user;
             var image = self.model.get("id");
             self.followInterval = setInterval(function() {
                 new UserPositionModel({ image : image, user : user}).fetch({

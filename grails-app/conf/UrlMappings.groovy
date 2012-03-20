@@ -16,7 +16,7 @@ class UrlMappings {
 
         /* Errors */
 //        "/500" (view:'/error')
-//        "/403" (view:'/forbidden')
+        //        "/403" (view:'/forbidden')
         "403"(controller: "errors", action: "error403")
         //"404"(controller: "errors", action: "error404")
         "500"(controller: "errors", action: "error500")
@@ -78,9 +78,14 @@ class UrlMappings {
             action = [POST:"add"]
         }
         "/api/imageinstance/$id/position/$user" (controller : "restUserPosition") {
-            action = [GET:"list"]
+            action = [GET:"lastPositionByUser"]
         }
-
+        "/api/imageinstance/$id/online"(controller: "restUserPosition"){
+            action = [GET:"listOnlineUsersByImage"]
+        }
+        "/api/project/$id/online"(controller:"restUserPosition") {
+            action = [GET : "listLastUserPositionsByProject"]
+        }
         "/api/imageinstance/$id/term"(controller:"restTerm"){
             action = [GET:"listByImageInstance"]
         }

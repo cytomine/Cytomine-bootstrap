@@ -15,12 +15,14 @@ class User extends SecUser {
     String lastname
     String email
     String color
+    String skypeAccount
 
     int transaction
 
     static constraints = {
         firstname blank: false
         lastname blank: false
+        skypeAccount(nullable: true, blank:false)
         email(blank: false, email: true)
         color(blank: false, nullable: true)
     }

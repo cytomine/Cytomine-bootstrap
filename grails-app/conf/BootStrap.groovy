@@ -93,12 +93,12 @@ class BootStrap {
         }
 
         StopWatch stopWatch = new LoggingStopWatch();
-        if (GrailsUtil.environment == BootStrap.test) { //scripts are not present in productions mode
+        if (GrailsUtil.environment == BootStrap.test) { //scripts are not present in productions mode and dev mode
             initData(GrailsUtil.environment)
         }
         countersService.updateCounters()
         //updateImageProperties()
-
+        generateAbstractImageOriginalFilename()
         /*
         createProjectGrant()
         createProjectOwner()
@@ -167,6 +167,20 @@ class BootStrap {
         def destroy = {
         }
         //end of init
+    }
+
+    private def generateAbstractImageOriginalFilename () {
+        AbstractImage.findAllByOriginalFilenameIsNull().each { image ->
+            String filename = image.getFilename()
+            filename = filename.replace(".vips.tiff", "")
+            filename = filename.replace(".vips.tif", "")
+            if (filename.lastIndexOf("/") != -1 && filename.lastIndexOf("/") != filename.size())
+                filename = filename.substring(filename.lastIndexOf("/")+1, filename.size())
+
+            println image.getFilename() + " => " + filename
+            image.originalFilename = filename
+            image.save(flush : true)
+        }
     }
 
     private def createProjectGrant() {

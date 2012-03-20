@@ -54,7 +54,7 @@ var ProjectController = Backbone.Router.extend({
         $("#addimagediv").hide();
         $("#projectdiv").show();
         if (!this.view) {
-            this.initView(function(){self.view.container.show(self.view, "#warehouse > .sidebar", "project");window.app.view.showComponent(window.app.view.components.project);});
+            this.initView(function(){self.view.container.show(self.view, "#project", "project");window.app.view.showComponent(window.app.view.components.project);});
             return;
         }
         self.view.container.show(self.view, "#warehouse > .sidebar", "project");
@@ -71,7 +71,7 @@ var ProjectController = Backbone.Router.extend({
         $("#addimagediv").show();
         new ProjectModel({id:idProject}).fetch({
             success : function (model, response) {
-                self.manageView = new ProjectManageSlideDialog({model:model,projectPanel:null,el:$("#warehouse > .project")}).render();
+                self.manageView = new ProjectManageSlideDialog({model:model,projectPanel:null,el:$("#project")}).render();
             }});
     }
 });

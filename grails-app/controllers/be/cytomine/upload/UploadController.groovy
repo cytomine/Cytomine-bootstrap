@@ -30,6 +30,7 @@ class UploadController {
     def image = {
         println "UPLOAD REQUESTED"
         User currentUser = User.read(springSecurityService.principal.id)
+        String errorMessage = ""
         def f = request.getFile('files[]')
         if (!f.empty) {
             println "not empty"
@@ -37,13 +38,19 @@ class UploadController {
             def tmpFile = File.createTempFile(f.originalFilename, ext)
             tmpFile.deleteOnExit()
             f.transferTo(tmpFile)            
-            println "Tmp file created " + tmpFile.getPath()
 
-            /*def aimage = new AbstractImage(
-                    filename: f.originalFilename,
+            long timestamp = new Date().getTime()
+
+            Slide slide = new Slide(name : timestamp.toString()+"_"+f.originalFilename, index : 0)
+            slide.save()
+
+            String finalPath = timestamp.toString() + "_" + f.originalFilename
+
+            AbstractImage aimage = new AbstractImage(
+                    filename: timestamp+"_"+f.originalFilename,
                     scanner: Scanner.list().first(),
-                    slide: Slide.list().first(),
-                    path: f.originalFilename,
+                    slide: slide,
+                    path: finalPath,
                     mime: Mime.findByExtension(ext))
 
             if (aimage.validate()) {
@@ -51,19 +58,23 @@ class UploadController {
                 Group group = Group.findByName(currentUser.getUsername())
                 AbstractImageGroup.link(aimage, group)
                 Storage.list().each { storage ->
+                    try {
                     remoteCopyService.copy(storage, aimage, tmpFile.getPath()) //TO DO : iterate on all servers (not accessibles from here)
                     StorageAbstractImage.link(storage, aimage)
+                    } catch (java.net.ConnectException e) {
+                        errorMessage = "Operation timed out"
+                    }
                 }
                 imagePropertiesService.extractUseful(aimage)
             } else {
                 aimage.errors.each {
                     println it
                 }
-            }   */
+            }
         }
         else {
             response.status = 400;
-            render ""
+            render errorMessage
         }
 
         def content = [:]

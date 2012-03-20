@@ -84,3 +84,14 @@ var UserPositionModel = Backbone.Model.extend({
         this.user = options.user;
     }
 });
+
+var UserOnlineModel = Backbone.Model.extend({
+    url : function() {
+        return 'api/imageinstance/' + this.image +'/online';
+    },
+    initialize: function (options) {
+        this.image = options.image;
+    }
+});
+
+

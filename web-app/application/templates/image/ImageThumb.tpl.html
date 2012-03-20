@@ -1,10 +1,10 @@
 <div class="span3 well" style="text-align: center;min-height : 270px;padding: 0px;">
     <div class="thumbnail">
         <div style="min-height: 256px;">
-            <a href='#tabs-image-<%= project %>-<%=  id  %>-'><img src='<%=  thumb  %>' alt='<%=  filename  %>'  style="max-height:260px; max-width:100%;"  /></a>
+            <a href='#tabs-image-<%= project %>-<%=  id  %>-'><img src='<%=  thumb  %>' alt='<%=  originalFilename  %>'  style="max-height:260px; max-width:100%;"  /></a>
         </div>
         <div class="caption">
-            <a class="title-thumb-<%= id %>" rel="tooltip" data-original-title=" <%= filename %> " href='#tabs-image-<%= project %>-<%=  id  %>-'><%= title %></a>
+            <a class="title-thumb-<%= id %>" rel="tooltip" data-original-title="<%= originalFilename %> " href='#tabs-image-<%= project %>-<%=  id  %>-'><%= originalFilename %></a>
             <p><b>Magnification</b> : <%= magnification %> X<br />
                 <b>Resolution</b> : <%= resolution %><br />
                 <b>Width</b> : <%= width %><br />

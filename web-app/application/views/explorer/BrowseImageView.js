@@ -13,6 +13,7 @@ var BrowseImageView = Backbone.View.extend({
         this.layersLoaded = 0;
         this.baseLayers = [];
         this.broadcastPositionInterval = null;
+        this.watchOnlineUsersInterval = null;
         this.annotationsPanel = null;
         this.map = null;
         this.currentAnnotation = null;
@@ -28,8 +29,8 @@ var BrowseImageView = Backbone.View.extend({
         var templateData = this.model.toJSON();
         templateData.project = window.app.status.currentProject;
         $(this.el).append(_.template(tpl, templateData));
-        var tabTpl = "<li><a style='float: left;' id='tabs-image-<%= idImage %>' href='#tabs-image-<%= idProject %>-<%= idImage %>-' data-toggle='tab'><i class='icon-search' /> <%= filename %> </a></li>";
-        $(".nav-tabs").append(_.template(tabTpl,{ idProject : window.app.status.currentProject, idImage : this.model.get('id'), filename : this.model.get('filename')}));
+        var tabTpl = "<li><a style='float: left;' id='tabs-image-<%= idImage %>' href='#tabs-image-<%= idProject %>-<%= idImage %>-' data-toggle='tab'><i class='icon-search' /> <%= originalFilename %> </a></li>";
+        $(".nav-tabs").append(_.template(tabTpl,{ idProject : window.app.status.currentProject, idImage : this.model.get('id'), originalFilename : this.model.get('originalFilename')}));
         var dropdownTpl ='<li class="dropdown"><a href="#" id="tabs-image-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab"><i class="icon-remove" /> Close</a></li></ul></li>';
         $(".nav-tabs").append(_.template(dropdownTpl, { idProject : window.app.status.currentProject, idImage : this.model.get('id'), filename : this.model.get('filename')}));
         this.initToolbar();
@@ -393,6 +394,11 @@ var BrowseImageView = Backbone.View.extend({
             self.map.zoomTo(idealZoom);
 
             window.app.view.applyPreferences();
+
+            //broadcast position every 5 seconds even if user id idle
+            self.initBroadcastingInterval();
+            //check users online of this image
+            self.initWatchOnlineUsersInterval();
         }
 
         var t_width  = self.model.get("width");
@@ -435,7 +441,29 @@ var BrowseImageView = Backbone.View.extend({
             }
         });
     },
-
+    initBroadcastingInterval : function() {
+        var self = this;
+        this.broadcastPositionInterval = setInterval(function(){
+            self.broadcastPosition();
+        }, 5000);
+    },
+    stopBroadcastingInterval : function() {
+        clearInterval(this.broadcastPositionInterval);
+    },
+    initWatchOnlineUsersInterval : function () {
+        var self = this;
+        this.watchOnlineUsersInterval = setInterval(function(){
+            new UserOnlineModel({image : self.model.get("id")}).fetch({
+                success : function(model, response) {
+                    var usersOnlineArray = model.get("users").split(",");
+                    self.layerSwitcherPanel.updateOnlineUsers(usersOnlineArray);
+                }
+            });
+        }, 5000);
+    },
+    stopWatchOnlineUsersInterval : function() {
+        clearInterval(this.watchOnlineUsersInterval);
+    },
     initAutoAnnoteTools : function () {
 
         var self = this;
