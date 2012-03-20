@@ -548,7 +548,7 @@ var UploadFormView = Backbone.View.extend({
         });
     },
     appendUploadedFile : function (model, target) {
-        var rowTpl = "<tr><td><%= originalFilename %></td><td><%= created %></td><td><%= status %></td><td>to do</td></tr>";
+        var rowTpl = "<tr><td><%= originalFilename %></td><td><%= created %></td><td><%= size %></td><td><%= contentType %></td><td><% if (uploaded) { %><i class='icon icon-ok' /> <% } else { %><i class='icon icon-remove' /> <% } %></td><td><% if (deployed) { %><i class='icon icon-ok' /> <% } else { %><i class='icon icon-remove' /> <% } %></td></tr>";
         target.append(_.template(rowTpl, model.toJSON()));
     },
     renderUploadedFiles : function() {
