@@ -1,7 +1,14 @@
 var UploadFormView = Backbone.View.extend({
 
     initialize: function(options) {
-
+        this.fileUploadErrors = {
+            maxFileSize: 'File is too big',
+            minFileSize: 'File is too small',
+            acceptFileTypes: 'Filetype not allowed',
+            maxNumberOfFiles: 'Max number of files exceeded',
+            uploadedBytes: 'Uploaded bytes exceed file size',
+            emptyResult: 'Empty file upload result'
+        };
     },
     events:{
 
@@ -18,6 +25,7 @@ var UploadFormView = Backbone.View.extend({
         return this;
     },
     defineFileUpload : function(uploadTpl, downloadTpl) {
+        var uploadFormView = this;
         $.widget('cytomine.fileupload', $.blueimp.fileupload, {
 
             options: {
@@ -134,6 +142,7 @@ var UploadFormView = Backbone.View.extend({
                         that._reflow = that._transition && template[0].offsetWidth;
                         template.addClass('in');
                     }
+                    uploadFormView.renderUploadedFiles();
                 },
                 // Callback for failed (abort or error) uploads:
                 fail: function (e, data) {
@@ -304,7 +313,8 @@ var UploadFormView = Backbone.View.extend({
                 var nodes = _.template(tpl, { o : {
                     files: files,
                     formatFileSize: this._formatFileSize,
-                    options: this.options
+                    options: this.options,
+                    fileUploadErrors : uploadFormView.fileUploadErrors
                 }});
                 return $(this.options.templateContainer).html(nodes).children();
             },
@@ -537,8 +547,55 @@ var UploadFormView = Backbone.View.extend({
 
         });
     },
+    appendUploadedFile : function (model, target) {
+        var rowTpl = "<tr><td><%= originalFilename %></td><td><%= created %></td><td><%= status %></td><td>to do</td></tr>";
+        target.append(_.template(rowTpl, model.toJSON()));
+    },
+    renderUploadedFiles : function() {
+        var self = this;
+        var uploadTable = $('#uploaded_files');
+        var loadingDiv = $("#loadingUploadedFiles");
+        uploadTable.hide();
+        uploadTable.find("tbody").empty();
+        loadingDiv.show();
+        uploadTable.dataTable();
+        uploadTable.fnClearTable();
+        new UploadedFileCollection({}).fetch({
+            success : function (collection, response) {
+                var target = uploadTable.find("tbody");
+                collection.each (function (uploadedFile) {
+                    self.appendUploadedFile(uploadedFile, target);
+                });
+                uploadTable.dataTable( {
+                    "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+                    "sPaginationType": "bootstrap",
+                    "oLanguage": {
+                        "sLengthMenu": "_MENU_ records per page"
+                    },
+                    "iDisplayLength": 25,
+                    "bDestroy" : true,
+                    "aoColumnDefs": [
+                        { "sWidth": "25%", "aTargets": [ 0 ] },
+                        { "sWidth": "25%", "aTargets": [ 1 ] },
+                        { "sWidth": "25%", "aTargets": [ 2 ] },
+                        { "sWidth": "25%", "aTargets": [ 3 ] }
+                    ]
+                });
+                uploadTable.show();
+                loadingDiv.hide();
+            },
+            response : function (collection, response) {}
+        });
+
+        $("#refreshUploadedFiles").live("click", function(e){
+            e.preventDefault();
+            self.renderUploadedFiles();
+        });
+    },
     doLayout : function(tpl) {
         var self = this;
+
+
         var _formatFileSize = function (bytes) {
             if (typeof bytes !== 'number') {
                 return '';
@@ -552,57 +609,15 @@ var UploadFormView = Backbone.View.extend({
             return (bytes / 1000).toFixed(2) + ' KB';
         }
         $(this.el).html(tpl);
+        // Render uploaded file
+        this.renderUploadedFiles();
+        // Render Upload Form
         require(["text!application/templates/upload/upload.tpl.html", "text!application/templates/upload/download.tpl.html"], function(uploadTpl, downloadTpl){
             self.defineFileUpload(uploadTpl, downloadTpl);
-            $('#fileupload').fileupload();
-            return;
             $('#fileupload').fileupload({
-                /*autoUpload : false,
-                 paramName : 'file',
-                 dataType : 'json',
-                 url: 'upload/image',   */
-                add: function (e, data) {
-                    var tpl = _.template(uploadTpl, {
-                        o : {
-                            files : data.files,
-                            formatFileSize : _formatFileSize
-                        }
-                    });
-                    $(".files-list").append(tpl);
-                },
-                done: function (e, data) {
-                    $(".files-list").append(data.result.name);
-                },
-                // Callback for the start of each file upload request:
-                send: function (e, data) {
-                    if (!data.isValidated) {
-                        var that = $(this).data('fileupload');
-                        if (!data.isAdjusted) {
-                            that._adjustMaxNumberOfFiles(-data.files.length);
-                        }
-                        if (!that._validate(data.files)) {
-                            return false;
-                        }
-                    }
-                    if (data.context && data.dataType &&
-                            data.dataType.substr(0, 6) === 'iframe') {
-                        // Iframe Transport does not support progress events.
-                        // In lack of an indeterminate progress bar, we set
-                        // the progress to 100%, showing the full animated bar:
-                        data.context.find('.progressbar div').css(
-                                'width',
-                                parseInt(100, 10) + '%'
-                        );
-                    }
-                },
-                progress: function (e, data) {
-                    if (data.context) {
-                        data.context.find('.progressbar div').css(
-                                'width',
-                                parseInt(data.loaded / data.total * 100, 10) + '%'
-                        );
-                    }
-                }
+                limitConcurrentUploads : 10,
+                maxFileSize : 5000000000
+                /*acceptFileTypes : "/(\.|\/)(gif|jpe?g|png|tif|tiff|svs|vms|mrxs|scn|ndpi|jp2)$/i",*/
             });
 
             // Enable iframe cross-domain access via redirect page:
@@ -635,9 +650,6 @@ var UploadFormView = Backbone.View.extend({
                                 .appendTo(document.body);
                     }
             );
-
-            //TEMP DISACTIVATED
-            $('#fileupload .files').hide();
         });
 
 

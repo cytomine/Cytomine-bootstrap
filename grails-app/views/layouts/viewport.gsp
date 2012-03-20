@@ -95,6 +95,7 @@ body {
     <script type="text/javascript" src="application/controllers/ActivityController.js" ></script>
     <script type="text/javascript" src="application/controllers/AccountController.js" ></script>
     <!-- Models -->
+    <script type="text/javascript" src="application/models/UploadedFileModel.js" ></script>
     <script type="text/javascript" src="application/models/AnnotationsFilterModel.js" ></script>
     <script type="text/javascript" src="application/models/ImageModel.js" ></script>
     <script type="text/javascript" src="application/models/TermModel.js" ></script>

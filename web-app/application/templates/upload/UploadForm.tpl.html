@@ -3,39 +3,54 @@
         <div class="page-header">
             <h2>Upload</h2>
         </div>
-
-        <br>
+        <div class="well">
+            <h3>Notes</h3>
+            <ul>
+                <li>The maximum file size for uploads is <strong>5 GB</strong></li>
+                <li>Only image files (<strong>JP(E)G, GIF, PNG, TIF, TIFF, JP2, SVS, MRXS, VMS, NDPI, SCN</strong>) are allowed</li>
+                <li>You can <strong>drag &amp; drop</strong> files from your desktop on this webpage with Google Chrome, Mozilla Firefox and Apple Safari.</li>
+            </ul>
+        </div>
         <form id="fileupload" action="api/uploadedfile" method="POST" enctype="multipart/form-data">
             <div class="row">
                 <div class="span16 fileupload-buttonbar">
                     <div class="progressbar fileupload-progressbar fade"><div style="width:0%;"></div></div>
-                <span class="btn success fileinput-button">
-                    <span>Add files...</span>
+                <span class="btn btn-success fileinput-button">
+                    <span><i class="icon icon-plus icon-white" /> Add files...</span>
                     <input type="file" name="files[]" multiple>
                 </span>
-                    <button type="submit" class="btn btn-primary start">Start upload</button>
-                    <button type="reset" class="btn btn-info cancel">Cancel upload</button>
-                    <button type="button" class="btn btn-danger delete">Delete selected</button>
+                    <button type="submit" class="btn btn-primary start"><i class="icon icon-plus icon-white" /> Start upload</button>
+                    <button type="reset" class="btn btn-warning cancel"><i class="icon-ban-circle icon-white"></i> Cancel upload</button>
+                    <button type="button" class="btn btn-danger delete"><i class="icon-trash icon-white"></i> Hide selected</button>
                     <input type="checkbox" class="toggle">
                 </div>
             </div>
             <br>
             <div class="row">
                 <div class="span16">
-                       <table class="zebra-striped"><tbody class="files-list"></tbody></table>
+                    <table class="zebra-striped"><tbody class="files-list"></tbody></table>
                 </div>
             </div>
         </form>
     </div>
+    <div class="hero-unit">
+        <div class="page-header">
+            <h2>Uploaded files</h2>
+            <p><a id="refreshUploadedFiles" class="btn" href="#"><i class="icon icon-refresh" /> Refresh</a></p>
+            <div id="loadingUploadedFiles" class="alert alert-info"><i class="icon-refresh" /> Loading...</div>
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="uploaded_files" style="display: none;">
+                <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Added</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-<script>
-    var fileUploadErrors = {
-        maxFileSize: 'File is too big',
-        minFileSize: 'File is too small',
-        acceptFileTypes: 'Filetype not allowed',
-        maxNumberOfFiles: 'Max number of files exceeded',
-        uploadedBytes: 'Uploaded bytes exceed file size',
-        emptyResult: 'Empty file upload result'
-    };
-</script>

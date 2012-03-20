@@ -1,17 +1,20 @@
 <div id="login-confirm" class="modal hide">
     <div class="modal-header">
-        <h3>Cytomine Authentication</h3>
+        <h3>Sign in to Cytomine</h3>
     </div>
     <div class="modal-body" style="text-align: center;padding-top: 40px;">
-        <form id="login-form" class="form-inline form-search">
-            <input id="j_username" name="j_username"  type="text" class="input-medium" placeholder="Username">
-            <input id="j_password" name="j_password"  type="password" class="input-medium" placeholder="Password">
-            <label class="checkbox" style="display: none;">
-                <input id="remember_me" name="remember_me" type="checkbox" checked> Remember?
-            </label>
-            <button  id="submit-login" type="submit" class="btn btn-inverse">Sign in</button>
-            <br/>
-            <a href="mailto:raphael.maree@ulg.ac.be"><span class="help-inline">Forgot your username/password ?</span></a>
+        <form id="login-form" class="form-vertical">
+            <div class="control-group">
+                <input id="j_username" name="j_username"  type="text" class="input-large" placeholder="Username">
+            </div>
+            <div class="control-group">
+                <input id="j_password" name="j_password"  type="password" class="input-large" placeholder="Password">
+            </div>
+            <div class="control-group">
+                <button  id="submit-login" type="submit" class="btn btn-inverse">Sign in</button>&nbsp;&nbsp;&nbsp;
+                <input id="remember_me" name="remember_me" type="checkbox" checked> Remember me
+            </div>
+            <br /><span class="help-inline">Forgot your <a href="mailto:raphael.maree@ulg.ac.be">username</a> or your <a href="mailto:raphael.maree@ulg.ac.be">password</a> ?</span>
         </form>
     </div>
     <div class="modal-footer">

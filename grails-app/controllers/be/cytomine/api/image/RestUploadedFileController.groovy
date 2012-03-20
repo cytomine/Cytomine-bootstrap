@@ -1,20 +1,13 @@
 package be.cytomine.api.image
 
-import be.cytomine.image.AbstractImage
-import be.cytomine.image.AbstractImageGroup
-import be.cytomine.image.Mime
-import be.cytomine.image.acquisition.Scanner
-import be.cytomine.image.server.Storage
-import be.cytomine.image.server.StorageAbstractImage
-import be.cytomine.project.Slide
-import be.cytomine.security.Group
 import be.cytomine.security.User
 import grails.converters.JSON
 import be.cytomine.image.UploadedFile
+import be.cytomine.api.RestController
 
-class RestUploadedFileController {
+class RestUploadedFileController extends RestController {
 
-
+    def cytomineService
     def remoteCopyService
     def storageService
     def imagePropertiesService
@@ -29,35 +22,54 @@ class RestUploadedFileController {
         return returned_value
     }
 
+    def list = {
+        def uploadedFiles = UploadedFile.createCriteria().list(sort : "created", order : "desc") {
+            eq("user", cytomineService.getCurrentUser())
+        }
+        responseSuccess(uploadedFiles)
+    }
+
+    def show = {
+        def uploadedFile = UploadedFile.findById(params.id)
+        responseSuccess(uploadedFile)
+    }
+
     def add = {
         def destPath = "/tmp/cytominebuffer"
-        println "UPLOAD REQUESTED"
         User currentUser = User.read(springSecurityService.principal.id)
         String errorMessage = ""
         def f = request.getFile('files[]')
+
+        def uploadedFile = null
         if (!f.empty) {
 
-            def ext = getExtensionFromFilename(f.originalFilename)
-            /*def tmpFile = File.createTempFile(f.originalFilename, ext)
+             def ext = getExtensionFromFilename(f.originalFilename)
+/*           def tmpFile = File.createTempFile(f.originalFilename, ext)
             tmpFile.deleteOnExit()
             f.transferTo(tmpFile) */
             long timestamp = new Date().getTime()
-            println "createDirectory :"
+
             def fullDestPath = destPath + "/" + timestamp.toString()
+
             def mkdirCommand = "mkdir -p " + fullDestPath
+                        println "mkdirCommand = " + mkdirCommand
             mkdirCommand.execute()
             String pathFile = fullDestPath + "/" + f.originalFilename
             File destFile = new File(pathFile)
             f.transferTo(destFile)
-                     println "pathFile="+pathFile
-            new UploadedFile(
+            println "transferTo = " + destFile
+            uploadedFile = new UploadedFile(
                     originalFilename: f.originalFilename,
                     filename : f.originalFilename,
                     path : pathFile,
+                    ext : ext,
+                    size : f.size,
+                    contentType : f.contentType,
                     project : params.project,
                     user : currentUser
             )
-
+            println "save uploadedFile = " + destFile
+            uploadedFile.save()
         }
         else {
             response.status = 400;
@@ -69,12 +81,13 @@ class RestUploadedFileController {
         content.name = f.originalFilename
         content.size = f.size
         content.type = f.contentType
+        content.uploadFile = uploadedFile
         def response = [content]
         render response as JSON
     }
 
     def deploy = {
-        Slide slide = new Slide(name : timestamp.toString()+"_"+f.originalFilename, index : 0)
+        /*Slide slide = new Slide(name : timestamp.toString()+"_"+f.originalFilename, index : 0)
         slide.save()
 
         String finalPath = timestamp.toString() + "_" + f.originalFilename
@@ -99,6 +112,6 @@ class RestUploadedFileController {
                 }
             }
             imagePropertiesService.extractUseful(aimage)
-        }
+        } */
     }
 }

@@ -28,11 +28,12 @@ class UrlMappings {
         "/api/user/$id/image"(controller:"restImage"){
             action = [GET:"listByUser"]
         }
-
         "/api/uploadedfile" (controller:"restUploadedFile"){
-            action = [POST : "add"]
+            action = [POST : "add", GET : "list"]
         }
-
+        "/api/uploadedfile/$id" (controller:"restUploadedFile"){
+            action = [GET : "show"]
+        }
         "/api/user/$id/project"(controller:"restProject"){
             action = [GET:"listByUser"]
         }
