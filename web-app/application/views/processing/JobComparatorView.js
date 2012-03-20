@@ -119,7 +119,7 @@ var JobComparatorView = Backbone.View.extend({
         self.cleanCompareJob();
         var idJob1 = self.retrieveSelectedJob('1');
         var idJob2 = self.retrieveSelectedJob('2');
-
+        console.log("idJob1="+idJob1 +" idJob2="+idJob2);
         if (idJob1 == undefined || idJob2 == undefined) return;
         new JobModel({ id : idJob1}).fetch({
             success : function (job1, response) {
@@ -148,6 +148,7 @@ var JobComparatorView = Backbone.View.extend({
     },
     printJobInfo : function(elemParent) {
         var self = this;
+        console.log("PRINT JOB INFO");
         self.addJobView(elemParent.find('.job1'), self.job1);
         self.addJobView(elemParent.find('.job2'), self.job2);
     },
@@ -227,6 +228,7 @@ var JobComparatorView = Backbone.View.extend({
     },
     addJobView : function(elemParent, job) {
         var self = this;
+        console.log("addJobView");
         elemParent.append('<div style="margin: 0px auto;min-width:100px;max-width:200px" id="' + job.id + '"></div>');
         self.parent.buildJobInfoElem(job, elemParent.find("#" + job.id));
     },
@@ -243,7 +245,7 @@ var JobComparatorView = Backbone.View.extend({
         var tbody = elemParent.find('#runParamsTable').find("tbody");
 
         _.each(job.get('jobParameter'), function (param) {
-            tbody.append('<tr><td>' + param.name + '</td><td>' + param.value + '</td><td>' + param.type + '</td></tr>');
+            tbody.append('<tr><td>' + param.name + '</td><td>' + self.getJobParamValue(param) + '</td><td>' + param.type + '</td></tr>');
         });
         elemParent.find('#runParamsTable').dataTable({
             //"sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
@@ -260,6 +262,17 @@ var JobComparatorView = Backbone.View.extend({
                 { "sWidth": "20%", "aTargets": [ 2 ] }
             ]
         });
+    },
+    getJobParamValue : function(param) {
+        if(param.type=="List") {
+            var valueStr = "<select>";
+            var values = param.value.split(',');
+            _.each(values,function(value) {
+                valueStr = valueStr + "<option>"+value+"</option>";
+            });
+            valueStr = valueStr + "</select>";
+            return valueStr;
+        } else return param.value
     },
     addResultView: function(elemParent, job) {
         var self = this;

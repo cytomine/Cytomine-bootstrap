@@ -4,6 +4,7 @@ var LaunchJobView = Backbone.View.extend({
     project : null,
     parent : null,
     params : [],
+    paramsViews : [],
     initialize: function(options) {
         this.width = options.width;
         this.software = options.software;
@@ -26,6 +27,7 @@ var LaunchJobView = Backbone.View.extend({
         $(self.el).empty();
         $(self.el).append(content);
         self.params = [];
+        self.paramsViews = [];
 
         var width = ($(window).width() - 200);
         var height = ($(window).height() - 200);
@@ -52,24 +54,37 @@ var LaunchJobView = Backbone.View.extend({
             }
         });
         $("#jobTitle").append("<h3>Run job from " + self.software.get('name') + " on project " + self.project.get('name') +" </h3>");
+
          _.each(self.software.get('parameters'), function (param) {
             if(param.name.toLowerCase() != "privatekey" && param.name.toLowerCase() != "publickey")
                self.params.push(param);
+               self.paramsViews.push(self.getParamView(param));
             });
+
         self.printSoftwareParams();
-        self.checkEntryValidation();
+//        self.checkEntryValidation();
+    },
+    getParamView : function(param) {
+        if(param.type=="String") return new InputTextView({param:param});
+        if(param.type=="Number") return new InputNumberView({param:param});
+        if(param.type=="Boolean") return new InputBooleanView({param:param});
+        if(param.type=="List") return new InputListView({param:param});
+
+        else return new InputTextView({param:param});
     },
     printSoftwareParams: function() {
         var self = this;
         if(self.software==undefined) return;
+
+        //build datatables
         $('#launchJobParamsTable').find('tbody').empty();
         var datatable = $('#launchJobParamsTable').dataTable();
         datatable.fnClearTable();
-        //print data from project image table
         var tbody = $('#launchJobParamsTable').find("tbody");
 
-         _.each(self.params, function (param) {
-               tbody.append('<tr><td style="text-align:left;">'+param.name+ '</td><td style="text-align:center;">'+self.getEntryByType(param)+'</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
+         _.each(self.paramsViews, function (paramView) {
+               paramView.addRow(tbody);
+               paramView.checkEntryValidation();
          });
         $('#launchJobParamsTable').dataTable( {
             "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
@@ -87,100 +102,144 @@ var LaunchJobView = Backbone.View.extend({
              ]
         });
 
-        $('#launchJobParamsTable').find('input').keyup(function() {
-             self.checkEntryValidation();
-        });
-
+//        $('#launchJobParamsTable').find('input').keyup(function() {
+//             self.checkEntryValidation();
+//        });
+//
+//        $('#launchJobParamsTable').find('.icon-plus-sign').click(function() {
+//            console.log("Add entry");
+//            var value = $(this).parent().find("input").val();
+//            $(this).parent().find("select").append('<option value="'+value+'">'+value+'</option>');
+//            $(this).parent().find("input").val("");
+//            $(this).parent().find("select").val(value);
+//            self.checkEntryValidation();
+//        });
+//
+//        $('#launchJobParamsTable').find('.icon-minus-sign').click(function() {
+//
+//            var value = $(this).parent().find("select").val();
+//            console.log("delete entry:"+value);
+//            console.log("delete entry:"+$(this).parent().find("select").find('[value="'+value+'"]').length);
+//            $(this).parent().find("select").find('[value="'+value+'"]').remove();
+//            self.checkEntryValidation();
+//        });
+//
+//        var fn = function(numChecked, numTotal, checkedItem) {
+//            var selectTitle = [];
+//            $(checkedItem).each(function() {
+//               selectTitle.push($(this).attr("title"));
+//            });
+//            var selectText = selectTitle.join(", ");
+//            selectText = selectText.substring(0,Math.min(15,selectText.length));
+//            return numChecked + " selected: " + selectText + "...";
+//        };
+//
+//        var fn2 = function(numChecked, numTotal, checkedItem) {
+//            if(numChecked==0) return "0 selected";
+//            var selectTitle = [];
+//            $(checkedItem).each(function() {
+//               selectTitle.push($(this).attr("title"));
+//            });
+//            var selectText = selectTitle.join(", ");
+//            selectText = selectText.substring(0,Math.min(15,selectText.length));
+//            return selectText;
+//        };
+//
+//
+//        $('#launchJobParamsTable').find(".projectListN").multiselect({'autoOpen':false,'height':200,'selectedText':fn}).multiselectfilter();
+//        $('#launchJobParamsTable').find(".projectList1").multiselect({'autoOpen':false,'height':200,'multiple':false,'selectedText':fn2}).multiselectfilter();
+//        $('#launchJobParamsTable').find(".ui-multiselect-menu").find("span").css("display","inline");
+//        $('#launchJobParamsTable').find(".ui-multiselect-menu").find(".ui-multiselect-header").find("li").css("display","inline");
+//        $('#launchJobParamsTable').find(".ui-multiselect-menu").find(".ui-multiselect-header").find("li").eq(0).css("float","left");
+//        $('#launchJobParamsTable').find(".ui-multiselect-menu").find(".ui-multiselect-header").find("li").eq(1).css("float","right");
+//        //$('#launchJobParamsTable').find(".ui-multiselect-menu").find("label").css("float","left");
+//        $('#launchJobParamsTable').find(".ui-multiselect-menu").find("li").css("display","block");
+//        console.log("############################################################");
+//        console.log($('#launchJobParamsTable').find(".ui-multiselect-menu").find("span").length);
+//
+//
+//            $('#launchJobParamsTable').find("ul.ui-multiselect-checkboxes").css('overflow-y','scroll');
+//        $('#launchJobParamsTable').find("ul.ui-multiselect-checkboxes").css('overflow-x','hidden');
+//        $('#launchJobParamsTable').find('button.ui-multiselect').click();
+//        $('#launchJobParamsTable').find('button.ui-multiselect').click();
     },
-    getEntryByType : function(param) {
-        var self = this;
-        console.log("defaultValue=" + param.defaultParamValue);
-        var classRequier = ""
-        if(param.required)  classRequier = 'border-style: solid; border-width: 2px;'
-        else classRequier = 'border-style: dotted;border-width: 2px;'
-
-        //TODO: décoder les variables (style $currentProject)
-
-        if (param.type == "String") {
-            return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue(param) + '" style="text-align:center;'+classRequier+'"></div></div>';
-        }
-        if (param.type == "Number") {
-            return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue(param) + '" style="text-align:center;'+classRequier+'" ></div></div>';
-        }
-        if (param.type == "Boolean") {
-            return '<input type="checkbox" class="span3" ' + self.getDefaultValue(param) + ' />';
-        }
-    },
-    getDefaultValue : function(param) {
-        var self = this;
-        if(param.type=="Boolean" && param.defaultParamValue!=undefined && param.defaultParamValue.toLowerCase()=="true") return 'checked="checked"';
-        if(param.defaultParamValue=="$currentProject") return self.project.id;
-        if(param.defaultParamValue=="$cytomineHost") return window.location.protocol + "//" + window.location.host;
-        return param.defaultParamValue;
-    },
-    checkEntryValidation : function() {
-        //browse software param and // datatables
-        var self = this;
-        $('#launchJobParamsTable tbody tr').each( function (index,elem) {
-            var trElem = $(this);
-            var param = self.params[index];
-
-            var value = self.getValue(param,trElem);
-            console.log("value="+value);
-            if(!self.checkRequire(param, value)) {
-                self.changeInputRender(trElem,false);
-                self.changeLabelRender(trElem,false,"Field require");
-            }
-            else if(!self.checkType(param, value)) {
-                self.changeInputRender(trElem,false);
-                self.changeLabelRender(trElem,false,"Must be valid " + param.type);
-            }
-            else {
-                self.changeInputRender(trElem,true);
-                self.changeLabelRender(trElem,true,"");
-            }
-        });
-
-    },
-    checkRequire : function(param, value) {
-        return !(param.required && value.trim()=="");
-    },
-    checkType : function(param, value) {
-        if (param.type == "Number") return !isNaN(value);
-        return true;
-    },
-    getValue: function (param,elem) {
-        console.log("getValue="+elem.find("input").val());
-        if(param.type=="String") return elem.find("input").val();
-        if(param.type=="Number") return elem.find("input").val();
-        if(param.type=="Boolean") {
-            console.log(elem.find("input").is(":checked"));
-            if(elem.find("input").is(":checked")) return true;
-            else return false;
-        }
-        return "";
-    },
-    changeInputRender :function(elem,success) {
-        var className = "";
-        //color input
-        if(success) className = "success";
-        else  className = "error";
-        var valueElem = elem.children().eq(1).children().eq(0);
-        valueElem.removeClass("success");
-        valueElem.removeClass("error");
-        valueElem.addClass(className);
-    },
-    changeLabelRender :function(elem,success,message) {
-        var labelElem = elem.find('span');
-        if(success) {
-            labelElem.addClass("hidden");
-            labelElem.text("");
-        }else {
-            labelElem.removeClass("hidden");
-            labelElem.text("");
-            labelElem.text(message);
-        }
-    },
+//    getEntryByType : function(param) {
+//        var self = this;
+//        console.log("defaultValue=" + param.defaultParamValue);
+//        var classRequier = ""
+//        if(param.required)  classRequier = 'border-style: solid; border-width: 2px;'
+//        else classRequier = 'border-style: dotted;border-width: 2px;'
+//
+//        //TODO: décoder les variables (style $currentProject)
+//
+//        if (param.type == "String") {
+//            return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue(param) + '" style="text-align:center;'+classRequier+'"></div></div>';
+//        }
+//        if (param.type == "Number") {
+//            return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue(param) + '" style="text-align:center;'+classRequier+'" ></div></div>';
+//        }
+//        if (param.type == "Boolean") {
+//            return '<input type="checkbox" class="span3" ' + self.getDefaultValue(param) + ' />';
+//        }
+//        //
+//        if(param.type == "List") {
+//            var defaultValues = [self.getDefaultValue(param)];
+//            var valueStr = '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + "" + '" style="text-align:center;'+classRequier+'"><i class="icon-plus-sign"></i><select>';
+//            _.each(defaultValues,function(value) {
+//                valueStr = valueStr + '<option value="'+value+'">'+value+'</option>';
+//            });
+//            valueStr = valueStr + '</select><i class="icon-minus-sign"></i></div></div>';
+//            return valueStr;
+//        }
+//
+//        if(param.type == "ListProject") {
+//
+//               return '<select id="countries" class="projectListN" multiple="multiple" name="countries[]"></select>';
+//
+//
+//                  '<option value="AFG">Afghanistan</option>' +
+//                  '<option value="ALB">Albania</option>' +
+//                  '<option value="DZA">Algeria</option>' +
+//                  '<option value="AND">Andorra</option>' +
+//                  '<option value="ARG">Argentina</option>' +
+//                  '<option value="ARM">Armenia</option>'+
+//                  '<option value="ABW">Aruba</option>' +
+//                  '<option value="AUS">Australia</option>' +
+//                       '<option value="AUS">AZ1</option>' +
+//                       '<option value="AUS">AZ2</option>' +
+//                  '<option value="AUT" selected="selected">Austria</option>'+ '</select>';
+//
+//                     ///if(window.app.models.projects==undefined || window.app.models.projects==null) {
+//
+//         //}
+//
+//
+//        }
+//
+//        if(param.type == "Project") {
+//               return '<select id="countries" class="projectList1" multiple="multiple" name="countries[]">' +
+//                  '<option value="AFG">Afghanistan</option>' +
+//                  '<option value="ALB">Albania</option>' +
+//                  '<option value="DZA">Algeria</option>' +
+//                  '<option value="AND">Andorra</option>' +
+//                  '<option value="ARG">Argentina</option>' +
+//                  '<option value="ARM">Armenia</option>'+
+//                  '<option value="ABW">Aruba</option>' +
+//                  '<option value="AUS">Australia</option>' +
+//                       '<option value="AUS">AZ1</option>' +
+//                       '<option value="AUS">AZ2</option>' +
+//                  '<option value="AUT">Austria</option>'+ '</select>';
+//        }
+//
+//
+//    },
+//    getDefaultValue : function(param) {
+//        var self = this;
+//        if(param.type=="Boolean" && param.defaultParamValue!=undefined && param.defaultParamValue.toLowerCase()=="true") return 'checked="checked"';
+//        if(param.defaultParamValue=="$currentProject") return self.project.id;
+//        if(param.defaultParamValue=="$cytomineHost") return window.location.protocol + "//" + window.location.host;
+//        return param.defaultParamValue;
+//    },
     createJobFromParam :function() {
         var self = this;
         //retrieve an array of param
@@ -238,3 +297,229 @@ var LaunchJobView = Backbone.View.extend({
         });
     }
 });
+
+
+
+var InputTextView = Backbone.View.extend( {
+    param : null,
+    parent : null,
+    trElem : null,
+    initialize: function(options) {
+        this.param = options.param;
+        this.parent = options.parent;
+    },
+    addRow : function(tbody) {
+        var self = this;
+         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;">'+self.param.name+ '</td><td style="text-align:center;">'+self.getHtmlElem()+'</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
+        self.trElem = $('tr#'+self.param.id);
+        self.trElem.find('input').keyup(function() {
+             self.checkEntryValidation();
+        });
+    },
+    getHtmlElem : function() {
+        var self = this;
+        var classRequier = "";
+        if(self.param.required)  classRequier = 'border-style: solid; border-width: 2px;';
+        else classRequier = 'border-style: dotted;border-width: 2px;';
+        return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue() + '" style="text-align:center;'+classRequier+'"></div></div>';
+    },
+    getDefaultValue : function() {return InputView.getDefaultValueWithVariable(this.param.defaultParamValue)},
+    checkEntryValidation : function() {
+        var self = this;
+        console.log("checkEntryValidation");
+        if(self.param.required && self.getValue().trim()=="") self.changeStyle(self.trElem,false,"Field require");
+        else self.changeStyle(self.trElem,true,"");
+    },
+    getValue : function() {
+        return this.trElem.find("input").val();
+    },
+    changeStyle : function(elem, success, message) {
+        InputView.changeStyle(elem,success,message);
+    }
+});
+
+var InputNumberView = Backbone.View.extend( {
+    param : null,
+    parent : null,
+    trElem : null,
+    initialize: function(options) {
+        this.param = options.param;
+        this.parent = options.parent;
+    },
+    addRow : function(tbody) {
+        var self = this;
+         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;">'+self.param.name+ '</td><td style="text-align:center;">'+self.getHtmlElem()+'</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
+        self.trElem = $('tr#'+self.param.id);
+        self.trElem.find('input').keyup(function() {
+             self.checkEntryValidation();
+        });
+    },
+    getHtmlElem : function() {
+        var self = this;
+        var classRequier = "";
+        if(self.param.required)  classRequier = 'border-style: solid; border-width: 2px;';
+        else classRequier = 'border-style: dotted;border-width: 2px;';
+        return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue() + '" style="text-align:center;'+classRequier+'"></div></div>';
+    },
+    getDefaultValue : function() {return InputView.getDefaultValueWithVariable(this.param.defaultParamValue)},
+    checkEntryValidation : function() {
+        var self = this;
+        console.log("checkEntryValidation");
+        if(self.param.required && self.getValue().trim()=="") self.changeStyle(self.trElem,false,"Field require");
+        else if(self.getValue().trim()!="" && isNaN(self.getValue())) self.changeStyle(self.trElem,false,"Not valid number");
+        else self.changeStyle(self.trElem,true,"");
+    },
+    getValue : function() {
+        return this.trElem.find("input").val();
+    },
+    changeStyle : function(elem, success, message) {
+        InputView.changeStyle(elem,success,message);
+    }
+});
+
+var InputBooleanView = Backbone.View.extend( {
+    param : null,
+    parent : null,
+    trElem : null,
+    initialize: function(options) {
+        this.param = options.param;
+        this.parent = options.parent;
+    },
+    addRow : function(tbody) {
+        var self = this;
+         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;">'+self.param.name+ '</td><td style="text-align:center;">'+self.getHtmlElem()+'</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
+        self.trElem = $('tr#'+self.param.id);
+        self.trElem.find('input').keyup(function() {
+             self.checkEntryValidation();
+        });
+    },
+    getHtmlElem : function() {
+        return '<input type="checkbox" class="span3" ' + this.getDefaultValue() + ' />';
+    },
+    getDefaultValue : function() {
+        if(this.param.type=="Boolean" && this.param.defaultParamValue!=undefined && this.param.defaultParamValue.toLowerCase()=="true") return 'checked="checked"';
+        return "";
+    },
+    checkEntryValidation : function() {
+        var self = this;
+        console.log("checkEntryValidation");
+        self.changeStyle(self.trElem,true,"");
+    },
+    getValue : function() {
+        return this.trElem.find("input").is(":checked");
+    },
+    changeStyle : function(elem, success, message) {
+        InputView.changeStyle(elem,success,message);
+    }
+});
+
+var InputListView = Backbone.View.extend( {
+    param : null,
+    parent : null,
+    trElem : null,
+    initialize: function(options) {
+        this.param = options.param;
+        this.parent = options.parent;
+    },
+    addRow : function(tbody) {
+        var self = this;
+         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;">'+self.param.name+ '</td><td style="text-align:center;">'+self.getHtmlElem()+'</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
+        self.trElem = $('tr#'+self.param.id);
+        self.trElem.find('.icon-plus-sign').click(function() {
+            console.log("Add entry");
+            var value = $(this).parent().find("input").val();
+            if(value.trim()!="") {
+                $(this).parent().find("select").append('<option value="'+value+'">'+value+'</option>');
+                $(this).parent().find("input").val("");
+                $(this).parent().find("select").val(value);
+                self.checkEntryValidation();
+            }
+        });
+
+        self.trElem.find('.icon-minus-sign').click(function() {
+
+            var value = $(this).parent().find("select").val();
+            console.log("delete entry:"+value);
+            console.log("delete entry:"+$(this).parent().find("select").find('[value="'+value+'"]').length);
+            $(this).parent().find("select").find('[value="'+value+'"]').remove();
+            self.checkEntryValidation();
+        });
+    },
+    getHtmlElem : function() {
+        var self = this;
+        var classRequier = ""
+        if(self.param.required)  classRequier = 'border-style: solid; border-width: 2px;'
+        else classRequier = 'border-style: dotted;border-width: 2px;'
+            var defaultValues = self.getDefaultValue();
+            var valueStr = '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + "" + '" style="text-align:center;'+classRequier+'"><i class="icon-plus-sign"></i><select>';
+            _.each(defaultValues,function(value) {
+                valueStr = valueStr + '<option value="'+value+'">'+value+'</option>';
+            });
+            valueStr = valueStr + '</select><i class="icon-minus-sign"></i></div></div>';
+            return valueStr;
+    },
+    getDefaultValue : function() {
+        var self = this;
+        var split = self.param.defaultParamValue.split(",");
+        var values = [];
+        console.log(split);
+        _.each(split, function(s) {
+            console.log(s);
+           values.push(InputView.getDefaultValueWithVariable(s));
+        });
+        console.log(values);
+        return values;
+    },
+    checkEntryValidation : function() {
+        var self = this;
+        console.log("checkEntryValidation");
+        if(self.trElem.find("select").children().length==0) self.changeStyle(self.trElem,false,"Field require");
+        else self.changeStyle(self.trElem,true,"");
+    },
+    getValue : function() {
+        var self = this;
+            var valueArray = [];
+            self.trElem.find("select").find("option").each(function() {
+               valueArray.push($(this).attr("value"));
+            });
+            return valueArray.join(',');
+    },
+    changeStyle : function(elem, success, message) {
+        InputView.changeStyle(elem,success,message);
+    }
+});
+
+
+
+
+
+
+
+var InputView = {
+    changeStyle : function(elem, success, message) {
+        var className = "";
+        //color input
+        if(success) className = "success";
+        else  className = "error";
+        var valueElem = elem.children().eq(1).children().eq(0);
+        valueElem.removeClass("success");
+        valueElem.removeClass("error");
+        valueElem.addClass(className);
+
+        var labelElem = elem.find('span');
+        if(success) {
+            labelElem.addClass("hidden");
+            labelElem.text("");
+        }else {
+            labelElem.removeClass("hidden");
+            labelElem.text("");
+            labelElem.text(message);
+        }
+    },
+    getDefaultValueWithVariable : function(value) {
+        var self = this;
+         if(value=="$currentProject") return window.app.status.currentProject;
+         else if(value=="$cytomineHost") return window.location.protocol + "//" + window.location.host;
+         else return value;
+    }
+};
