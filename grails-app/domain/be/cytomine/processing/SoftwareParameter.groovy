@@ -17,7 +17,7 @@ class SoftwareParameter extends CytomineDomain {
 
     static constraints = {
         name (nullable: false, blank : false)
-        type (inList: ["String", "Boolean", "Number","List"])
+        type (inList: ["String", "Boolean", "Number","List","ListProject","Project"])
         defaultValue (nullable: true, blank : true)
     }
 
@@ -39,8 +39,9 @@ class SoftwareParameter extends CytomineDomain {
     }
 
     def getIdSoftware() {
-        if (this.softwareId) return this.softwareId
-        else return this.software?.id
+//        if (this.softwareId) return this.softwareId
+//        else return this.software?.id
+        return this.software?.id
     }
 
      static void registerMarshaller() {

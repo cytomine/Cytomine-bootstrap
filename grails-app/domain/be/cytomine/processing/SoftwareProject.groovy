@@ -15,8 +15,9 @@ class SoftwareProject extends CytomineDomain implements Serializable{
     }
 
     def getIdProject() {
-        if (this.projectId) return this.projectId
-        else return this.project?.id
+//        if (this.projectId) return this.projectId
+//        else return this.project?.id
+        return this.project?.id
     }
 
     static SoftwareProject link(Software software, Project project) {

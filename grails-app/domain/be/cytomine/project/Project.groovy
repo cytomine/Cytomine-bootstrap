@@ -161,13 +161,15 @@ class Project extends CytomineDomain {
     }
 
     def getIdOntology() {
-        if (this.ontologyId) return this.ontologyId
-        else return this.ontology?.id
+//        if (this.ontologyId) return this.ontologyId
+//        else return this.ontology?.id
+        return this.ontology?.id
     }
 
     def getIdDiscipline() {
-        if (this.disciplineId) return this.disciplineId
-        else return this.discipline?.id
+//        if (this.disciplineId) return this.disciplineId
+//        else return this.discipline?.id
+        return this.discipline?.id
     }
 
     def creator() {
