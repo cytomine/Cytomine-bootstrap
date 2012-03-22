@@ -106,18 +106,21 @@ class ImageInstance extends CytomineDomain {
     }
 
     def getIdBaseImage() {
-        if (this.baseImageId) return this.baseImageId
-        else return this.baseImage?.id
+//        if (this.baseImageId) return this.baseImageId
+//        else return this.baseImage?.id
+        return this.baseImage?.id
     }
 
     def getIdProject() {
-        if (this.projectId) return this.projectId
-        else return this.project?.id
+//        if (this.projectId) return this.projectId
+//        else return this.project?.id
+        return this.project?.id
     }
 
     def getIdUser() {
-        if (this.userId) return this.userId
-        else return this.user?.id
+//        if (this.userId) return this.userId
+//        else return this.user?.id
+        return this.user?.id
     }
 
 

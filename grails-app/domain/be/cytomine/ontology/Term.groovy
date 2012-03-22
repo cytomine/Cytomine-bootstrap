@@ -115,8 +115,9 @@ class Term extends CytomineDomain implements Serializable, Comparable {
     }
 
     def getIdOntology() {
-        if (this.ontologyId) return this.ontologyId
-        else return this.ontology?.id
+//        if (this.ontologyId) return this.ontologyId
+//        else return this.ontology?.id
+        return this.ontology?.id
     }
 
     def getCallBack() {

@@ -90,28 +90,33 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
 
 
     def getIdAnnotation() {
-        if (this.annotationId) return this.annotationId
-        else return this.annotation?.id
+//        if (this.annotationId) return this.annotationId
+//        else return this.annotation?.id
+        return this.annotation?.id
     }
 
     def getIdTerm() {
-        if (this.termId) return this.termId
-        else return this.term?.id
+//        if (this.termId) return this.termId
+//        else return this.term?.id
+        return this.term?.id
     }
 
     def getIdExpectedTerm() {
-        if (this.expectedTermId) return this.expectedTermId
-        else return this.expectedTerm?.id
+//        if (this.expectedTermId) return this.expectedTermId
+//        else return this.expectedTerm?.id
+        return this.expectedTerm?.id
     }
 
     def getIdUserJob() {
-        if (this.userJobId) return this.userJobId
-        else return this.userJob?.id
+//        if (this.userJobId) return this.userJobId
+//        else return this.userJob?.id
+        return this.userJob?.id
     }
 
     def getIdProject() {
-        if (this.projectId) return this.projectId
-        else return this.project?.id
+//        if (this.projectId) return this.projectId
+//        else return this.project?.id
+        return this.project?.id
     }
 
     static void registerMarshaller() {

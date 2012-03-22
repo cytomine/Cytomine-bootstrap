@@ -267,10 +267,12 @@ class StatsController extends RestController {
             result.put(user.id, item)
         }
         nbAnnotationsByUserAndTerms.each { stat ->
-            def item = result.get(stat[0])
-            item.terms.each {
-                if (it.id == stat[1]) {
-                    it.value = stat[2]
+            def user = result.get(stat[0])
+            if(user) {
+                user.terms.each {
+                    if (it.id == stat[1]) {
+                        it.value = stat[2]
+                    }
                 }
             }
         }
@@ -297,7 +299,8 @@ class StatsController extends RestController {
             result.put(item.id, item)
         }
         userAnnotations.each { item ->
-            result.get(item[1]).value = item[0]
+            def user = result.get(item[1])
+            if(user) user.value = item[0]
         }
 
         responseSuccess(result.values())
@@ -395,8 +398,8 @@ class StatsController extends RestController {
             result.put(item.id, item)
         }
         annotations.each { item ->
-            def user = item[1].id
-            result.get(user).value++;
+            def user = result.get(item[1].id)
+            if(user) user.value++;
         }
 
         responseSuccess(result.values())

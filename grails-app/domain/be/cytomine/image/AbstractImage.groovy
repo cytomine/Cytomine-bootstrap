@@ -128,14 +128,16 @@ class AbstractImage extends CytomineDomain {
     }
 
     def getIdScanner() {
-        if (this.scannerId) return this.scannerId
-        else return this.scanner?.id
+//        if (this.scannerId) return this.scannerId
+//        else return this.scanner?.id
+        return this.scanner?.id
 
     }
 
     def getIdSlide() {
-        if (this.slideId) return this.slideId
-        else return this.slide?.id
+//        if (this.slideId) return this.slideId
+//        else return this.slide?.id
+        return this.slide?.id
     }
 
 
@@ -240,7 +242,13 @@ class AbstractImage extends CytomineDomain {
         }
         def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getCropURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(), topLeftX, topLeftY, width, height, this.getWidth(), this.getHeight())
+        def baseUrl = imageServers[index].getBaseUrl()
+        def storage = imageServers[index].getStorage()
+        def basePath = storage.getBasePath()
+        def path = getPath()
+        def widthImg =  this.getWidth()
+        def heightImg = this.getHeight()
+        String url = resolver.getCropURL(baseUrl, basePath + path, topLeftX, topLeftY, width, height, widthImg,heightImg)
         return url
     }
 

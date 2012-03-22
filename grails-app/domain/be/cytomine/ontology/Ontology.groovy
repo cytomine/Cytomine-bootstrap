@@ -99,8 +99,9 @@ class Ontology extends CytomineDomain implements Serializable {
     }
 
     def getIdUser() {
-        if (this.userId) return this.userId
-        else return this.user?.id
+//        if (this.userId) return this.userId
+//        else return this.user?.id
+        return this.user?.id
     }
 
     static void registerMarshaller() {

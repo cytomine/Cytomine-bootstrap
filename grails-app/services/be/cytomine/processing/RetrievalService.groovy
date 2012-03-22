@@ -14,6 +14,10 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.OntologyService
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException
+import groovyx.net.http.*
+import static groovyx.net.http.Method.*
+import static groovyx.net.http.ContentType.*
+import be.cytomine.api.UrlApi
 
 class RetrievalService {
 
@@ -78,9 +82,8 @@ class RetrievalService {
     private def loadAnnotationSimilarities(Annotation searchAnnotation) {
         log.info "get similarities for annotation " + searchAnnotation.id
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
-        String URL = server.url + "/search.json"
-
-        def json = JSON.parse(getPostSearchResponse(URL, searchAnnotation))
+        def response = getPostSearchResponse(server.url,'/retrieval-web/api/resource/search.json', searchAnnotation)
+        def json = JSON.parse(response)
         def data = []
 
         for (int i = 0; i < json.length(); i++) {
@@ -94,177 +97,211 @@ class RetrievalService {
                     data << annotation
                 }
             }
-            catch(AccessDeniedException ex) {log.info "User cannot have access to this annotation"}
-            catch(NotFoundException ex) {log.info "User cannot have access to this annotation"}
+            catch (AccessDeniedException ex) {log.info "User cannot have access to this annotation"}
+            catch (NotFoundException ex) {log.info "User cannot have access to this annotation"}
         }
         return data
     }
 
-    public String getPostSearchResponse(String URL, Annotation annotation) {
-        HttpClient client = new HttpClient();
-        client.connect(URL, "xxx", "xxx");
+    public String getPostSearchResponse(String URL, String resource, Annotation annotation) {
 
-        //Get project id with same ontology
-        List<Long> projectWithSameOntology = projectService.list( annotation.project.ontology).collect {it.id}
+        List<Long> projectWithSameOntology = projectService.list(annotation.project.ontology).collect {it.id}
 
-//        def json = ["id": annotation.id, "url" : annotation.getCropURL(), "container" : projectWithSameOntology]
-//        println json.toString()
+        def http = new HTTPBuilder(URL)
+        http.auth.basic 'xxx', 'xxx'
+        def params = ["id": annotation.id, "url": UrlApi.getAnnotationCropWithAnnotationId(annotation.id), "containers": projectWithSameOntology]
+        def paramsJSON = params as JSON
 
-        def json = JSON.parse(annotation.encodeAsJSON())
-        json.containers = projectWithSameOntology
-        println json.toString()
-        client.post(json.toString())
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return response
-    }
+        http.request(POST) {
+            uri.path = resource
+            send ContentType.JSON, paramsJSON.toString()
 
-    public static String getPostResponse(String URL, Annotation annotation) {
-        HttpClient client = new HttpClient();
-        client.connect(URL, "xxx", "xxx");
-        client.post(annotation.encodeAsJSON())
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return response
-    }
-
-    public static String getDeleteResponse(String URL) {
-        HttpClient client = new HttpClient();
-        client.connect(URL, "xxx", "xxx");
-        client.delete()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return response
-    }
-
-    public static def indexAnnotationSynchronous(Annotation annotation) {
-        println "index synchronous"
-        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
-        String URL = server.url + "/index.json"
-        getPostResponse(URL, annotation)
-    }
-
-    public static def indexAnnotationSynchronous(Long id) {
-        println "index synchronous"
-        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
-        String URL = server.url + "/index.json"
-        getPostResponse(URL, Annotation.read(id))
-    }
-
-    public static def deleteAnnotationSynchronous(Long id) {
-        println "delete synchronous"
-        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
-        String URL = server.url + "/" + id + ".json"
-        getDeleteResponse(URL)
-    }
-
-    public static def deleteContainerSynchronous(Long id) {
-        println "delete container synchronous"
-        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
-        String URL = server.url + "/container/" + id + ".json"
-        getDeleteResponse(URL)
-    }
-
-    public static def updateAnnotationSynchronous(Long id) {
-        println "update synchronous"
-        deleteAnnotationSynchronous(id)
-        indexAnnotationSynchronous(id)
-    }
-
-    public static def indexAnnotationAsynchronous(Annotation annotation) {
-        //indexAnnotationSynchronous(annotation)
-        println "index asynchronous"
-        Asynchronizer.withAsynchronizer() {
-            Closure indexAnnotation = {try {indexAnnotationSynchronous(annotation)} catch (Exception e) {e.printStackTrace()}}
-            Closure annotationIndexing = indexAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
-            Future result = annotationIndexing()
-        }
-    }
-
-    public static def deleteAnnotationAsynchronous(Long id) {
-        println "delete asynchronous"
-        Asynchronizer.withAsynchronizer() {
-            Closure deleteAnnotation = {
-                try {
-                    deleteAnnotationSynchronous(id)
-                } catch (Exception e) {e.printStackTrace()}
+            response.success = { resp, json ->
+                println "response succes: ${resp.statusLine}"
+                return json.toString()
             }
-            Closure annotationDeleting = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
-            Future result = annotationDeleting()
-        }
-    }
-
-    public static def deleteContainerAsynchronous(Long id) {
-        println "delete asynchronous"
-        Asynchronizer.withAsynchronizer() {
-            Closure deleteContainer = {
-                try {
-                    deleteContainerSynchronous(id)
-                } catch (Exception e) {e.printStackTrace()}
-            }
-            Closure containerDeleting = deleteContainer.async()  //create a new closure, which starts the original closure on a thread pool
-            Future result = containerDeleting()
-        }
-    }
-
-
-    public static def updateAnnotationAsynchronous(Long id) {
-        println "update asynchronous"
-        Asynchronizer.doParallel() {
-            Closure deleteAnnotation = {
-                try {
-                    deleteAnnotationSynchronous(id)
-                    indexAnnotationSynchronous(id)
-                } catch (Exception e) {e.printStackTrace()}
-            }
-            Closure annotationUpdating = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
-            Future result = annotationUpdating()
-        }
-    }
-
-
-    public void indexMissingAnnotation() {
-        //Get indexed resources
-        List<Long> resources = getIndexedResource()
-        //Check if each annotation is well indexed
-        def annotations = Annotation.list()
-        int i = 1
-        annotations.each { annotation ->
-            log.debug "Annotation $i/" + annotations.size()
-            if (!resources.contains(annotation.id)) {
-                log.debug "Annotation $annotation.id IS NOT INDEXED"
-                try {indexAnnotationSynchronous(annotation)} catch (Exception e) {e.printStackTrace()}
-            } else {
-                log.debug "Annotation $annotation.id IS INDEXED"
-            }
-            i++
-        }
-    }
-
-    List<Long> getIndexedResource() {
-        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
-        String URL = server.url + ".json"
-        List json = JSON.parse(getGetResponse(URL))
-        List<Long> resources = new ArrayList<Long>()
-        json.each { subserver ->
-            subserver.each { resource ->
-                log.debug "resource=" + Long.parseLong(resource.key)
-                resources.add(Long.parseLong(resource.key))
+            response.failure = { resp ->
+                println "response error: ${resp.statusLine}"
+                return ""
             }
         }
-        resources
     }
 
-    public static String getGetResponse(String URL) {
-        HttpClient client = new HttpClient();
-        client.connect(URL, "xxx", "xxx");
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return response
+public static String getPostResponse(String URL, String resource, def jsonStr) {
+
+        def http = new HTTPBuilder(URL)
+        http.auth.basic 'xxx', 'xxx'
+
+        http.request(POST) {
+            uri.path = resource
+            send ContentType.JSON, jsonStr
+
+            response.success = { resp, json ->
+                println "response succes: ${resp.statusLine}"
+                return json.toString()
+            }
+            response.failure = { resp ->
+                println "response error: ${resp.statusLine}"
+                return ""
+            }
+        }
+}
+
+public static String getDeleteResponse(String URL, String resource) {
+//    HttpClient client = new HttpClient();
+//    client.connect(URL, "xxx", "xxx");
+//    client.delete()
+//    int code = client.getResponseCode()
+//    String response = client.getResponseData()
+//    client.disconnect();
+//    return response
+
+        def http = new HTTPBuilder(URL)
+        http.auth.basic 'xxx', 'xxx'
+
+        http.request(DELETE) {
+            uri.path = resource
+
+            response.success = { resp, json ->
+                println "response succes: ${resp.statusLine}"
+                return json
+            }
+            response.failure = { resp ->
+                println "response error: ${resp.statusLine}"
+                return ""
+            }
+        }
+
+}
+
+public static def indexAnnotationSynchronous(String json) {
+    println "index synchronous json"
+    RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+    String res = "/retrieval-web/api/resource/index.json"
+    getPostResponse(server.url, res, json)
+}
+
+public static def indexAnnotationSynchronous(Long id) {
+    println "index synchronous id"
+    RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+    String res = "/retrieval-web/api/resource/index.json"
+    getPostResponse(server.url, res, Annotation.read(id))
+}
+
+public static def deleteAnnotationSynchronous(Long id) {
+    println "delete synchronous"
+    RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+    String res = "/retrieval-web/api/resource/"+id+".json"
+    getDeleteResponse(server.url,res)
+}
+
+public static def deleteContainerSynchronous(Long id) {
+    println "delete container synchronous"
+    RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+    String res = "/container/" + id + ".json"
+    getDeleteResponse(server.url,res)
+}
+
+public static def updateAnnotationSynchronous(Long id) {
+    println "update synchronous"
+    deleteAnnotationSynchronous(id)
+    indexAnnotationSynchronous(id)
+}
+
+public static def indexAnnotationAsynchronous(Annotation annotation) {
+    //indexAnnotationSynchronous(annotation)
+    println "index asynchronous"
+    def json = annotation.encodeAsJSON()
+    println "json="+json
+    Asynchronizer.withAsynchronizer() {
+        Closure indexAnnotation = {try {indexAnnotationSynchronous(json)} catch (Exception e) {e.printStackTrace()}}
+        Closure annotationIndexing = indexAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
+        Future result = annotationIndexing()
     }
+}
+
+public static def deleteAnnotationAsynchronous(Long id) {
+    println "delete asynchronous"
+    Asynchronizer.withAsynchronizer() {
+        Closure deleteAnnotation = {
+            try {
+                deleteAnnotationSynchronous(id)
+            } catch (Exception e) {e.printStackTrace()}
+        }
+        Closure annotationDeleting = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
+        Future result = annotationDeleting()
+    }
+}
+
+public static def deleteContainerAsynchronous(Long id) {
+    println "delete asynchronous"
+    Asynchronizer.withAsynchronizer() {
+        Closure deleteContainer = {
+            try {
+                deleteContainerSynchronous(id)
+            } catch (Exception e) {e.printStackTrace()}
+        }
+        Closure containerDeleting = deleteContainer.async()  //create a new closure, which starts the original closure on a thread pool
+        Future result = containerDeleting()
+    }
+}
+
+
+public static def updateAnnotationAsynchronous(Long id) {
+    println "update asynchronous"
+    Asynchronizer.doParallel() {
+        Closure deleteAnnotation = {
+            try {
+                deleteAnnotationSynchronous(id)
+                indexAnnotationSynchronous(id)
+            } catch (Exception e) {e.printStackTrace()}
+        }
+        Closure annotationUpdating = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
+        Future result = annotationUpdating()
+    }
+}
+
+
+public void indexMissingAnnotation() {
+    //Get indexed resources
+    List<Long> resources = getIndexedResource()
+    //Check if each annotation is well indexed
+    def annotations = Annotation.list()
+    int i = 1
+    annotations.each { annotation ->
+        log.debug "Annotation $i/" + annotations.size()
+        if (!resources.contains(annotation.id)) {
+            log.debug "Annotation $annotation.id IS NOT INDEXED"
+            try {indexAnnotationSynchronous(annotation)} catch (Exception e) {e.printStackTrace()}
+        } else {
+            log.debug "Annotation $annotation.id IS INDEXED"
+        }
+        i++
+    }
+}
+
+List<Long> getIndexedResource() {
+    RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+    String URL = server.url + ".json"
+    List json = JSON.parse(getGetResponse(URL))
+    List<Long> resources = new ArrayList<Long>()
+    json.each { subserver ->
+        subserver.each { resource ->
+            log.debug "resource=" + Long.parseLong(resource.key)
+            resources.add(Long.parseLong(resource.key))
+        }
+    }
+    resources
+}
+
+public static String getGetResponse(String URL) {
+    HttpClient client = new HttpClient();
+    client.connect(URL, "xxx", "xxx");
+    client.get()
+    int code = client.getResponseCode()
+    String response = client.getResponseData()
+    client.disconnect();
+    return response
+}
+
 }

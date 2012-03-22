@@ -21,13 +21,15 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     def getIdTerm() {
-        if (this.termId) return this.termId
-        else return this.term?.id
+//        if (this.termId) return this.termId
+//        else return this.term?.id
+        return this.term?.id
     }
 
     def getIdUser() {
-        if (this.userId) return this.userId
-        else return this.user?.id
+//        if (this.userId) return this.userId
+//        else return this.user?.id
+        return this.user?.id
     }
 
     static AnnotationTerm link(Annotation annotation, Term term,SecUser user) {
