@@ -20,15 +20,24 @@ class ImportController {
         println "Extract images properties"
         int i = 0;
         AbstractImage.withCriteria {
-            isNull('width')
+            or {
+                isNull('width')
+                eq('width', 1)
+            }
+
         }.each { image ->
             if (i % 10 == 0) { println i }
             i++;
 
-            if (image.imageProperties?.size() == 0) {
-                imagePropertiesService.populate(image)
+            try {
+                if (image.imageProperties?.size() == 0) {
+                    imagePropertiesService.populate(image)
+                }
+                print image.filename
+                imagePropertiesService.extractUseful(image)
+            } catch (Exception e) {
+                e.printStackTrace()
             }
-            imagePropertiesService.extractUseful(image)
 
         }
     }
@@ -101,7 +110,7 @@ class ImportController {
                 Term term = Term.findByNameAndOntology(remoteTerm.name, project.ontology)
                 log.info("name=" + remoteTerm.name + " and " + project.ontology.id)
                 log.info("term=" + term)
-               // AnnotationTerm.link(annotation, term)
+                // AnnotationTerm.link(annotation, term)
             }
         }
 

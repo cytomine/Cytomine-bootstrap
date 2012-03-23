@@ -50,7 +50,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
             layerOptionTpl = _.template("<li><input id='<%=   id %>' type='checkbox' checked />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color : #ffffff;'> <%=   name %></span></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
         } else {
             /*layerOptionTpl = _.template("<li><input id='<%= id %>' type='checkbox' value='<%=   name %>' /> <span style='color : #ffffff;'><%=   name %></span> <a class='followUser' data-user-id='<%= userID %>' href='#'>Follow</a></li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});*/
-            layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' type='checkbox' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : #ffffff;'><%=   name %></span><a href='skype:stevens.ben?call'><img src='http://download.skype.com/share/skypebuttons/buttons/call_blue_transparent_34x34.png' style='border: none;' width='34' height='34' alt='Skype Me™!' /></a> </li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});
+            layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' type='checkbox' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : #ffffff;'><%=   name %></span></a> </li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});
         }
         $("#layerSwitcher"+model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
 

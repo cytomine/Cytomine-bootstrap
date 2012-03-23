@@ -39,12 +39,12 @@ class TriggerService {
     String getAnnotationCommentTriggerIncr() {
         String createFunction = """
         CREATE OR REPLACE FUNCTION incrementAnnotationComment() RETURNS trigger as '
-        BEGIN UPDATE annotation SET count_comments = count_comments + 1 WHERE id = NEW.id; RETURN NEW; END ;'
+        BEGIN UPDATE annotation SET count_comments = count_comments + 1 WHERE id = NEW.annotation_id; RETURN NEW; END ;'
         LANGUAGE plpgsql;"""
 
-        String dropTrigger = "DROP TRIGGER IF EXISTS incrementAnnotationComment on shared_annotation;"
+        String dropTrigger = "DROP TRIGGER IF EXISTS countIncrementAnnotationComment on shared_annotation;"
 
-        String createTrigger = "CREATE TRIGGER incrementAnnotationComment AFTER INSERT ON shared_annotation FOR EACH ROW EXECUTE PROCEDURE incrementAnnotationComment();"
+        String createTrigger = "CREATE TRIGGER countIncrementAnnotationComment AFTER INSERT ON shared_annotation FOR EACH ROW EXECUTE PROCEDURE incrementAnnotationComment();"
 
 
         println createFunction

@@ -35,6 +35,19 @@ class AbstractImage extends CytomineDomain {
     * -Update functionnal test (add/edit test)
     */
 
+    public beforeInsert() {
+        super.beforeInsert()
+        if (originalFilename == null || originalFilename == "") {
+            String filename = getFilename()
+            filename = filename.replace(".vips.tiff", "")
+            filename = filename.replace(".vips.tif", "")
+            if (filename.lastIndexOf("/") != -1 && filename.lastIndexOf("/") != filename.size())
+                filename = filename.substring(filename.lastIndexOf("/")+1, filename.size())
+            originalFilename = filename
+        }
+
+
+    }
     static belongsTo = Slide
 
     static hasMany = [abstractimagegroup: AbstractImageGroup, storageAbstractImages: StorageAbstractImage, imageProperties: ImageProperty]

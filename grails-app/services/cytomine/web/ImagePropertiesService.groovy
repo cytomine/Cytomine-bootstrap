@@ -27,6 +27,7 @@ class ImagePropertiesService {
 
     def populate(AbstractImage image) {
         Collection<ImageServer> imageServers = image.getImageServers()
+        if (imageServers == null || imageServers.size() == 0) return
         def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
         def imageServer = imageServers.get(index)
         Resolver resolver = Resolver.getResolver(imageServer.className)
