@@ -47,10 +47,10 @@ var LayerSwitcherPanel = Backbone.View.extend({
         var color = window.app.models.users.get(userID).get('color');
         var layerOptionTpl;
         if (layer.isOwner) {
-            layerOptionTpl = _.template("<li><input id='<%=   id %>' type='checkbox' checked />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color : #ffffff;'> <%=   name %></span></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
+            layerOptionTpl = _.template("<li><input id='<%=   id %>' type='checkbox'  value='<%= name %>' checked />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color : #ffffff;'> <%=   name %></span></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
         } else {
             /*layerOptionTpl = _.template("<li><input id='<%= id %>' type='checkbox' value='<%=   name %>' /> <span style='color : #ffffff;'><%=   name %></span> <a class='followUser' data-user-id='<%= userID %>' href='#'>Follow</a></li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});*/
-            layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' type='checkbox' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : #ffffff;'><%=   name %></span></a> </li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});
+            layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : #ffffff;'><%= name %></span></a> </li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});
         }
         $("#layerSwitcher"+model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
 

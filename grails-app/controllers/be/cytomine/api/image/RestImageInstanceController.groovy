@@ -148,9 +148,9 @@ class RestImageInstanceController extends RestController {
 
         try {
             //Get the image, compute ratio between asked and received
-            //String url = abstractImage.getCropURL(x, abstractImage.getHeight() - y, w, h)
-            //BufferedImage window = getImageFromURL(url)
-            BufferedImage window = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB)
+            String url = abstractImage.getCropURL(x, abstractImage.getHeight() - y, w, h)
+            BufferedImage window = getImageFromURL(url)
+            BufferedImage mask = new BufferedImage(window.getWidth(),window.getHeight(),BufferedImage.TYPE_INT_RGB)
             double x_ratio = window.getWidth() / w
             double y_ratio = window.getHeight() / h
 
@@ -184,8 +184,8 @@ class RestImageInstanceController extends RestController {
                     intersectGeometries.add(annotation.getLocation())
                 }
             }
-            window = segmentationService.colorizeWindow(abstractImage, window, intersectGeometries, Color.decode(term.color), x, y, x_ratio, y_ratio)
-            responseBufferedImage(window)
+            mask = segmentationService.colorizeWindow(abstractImage, mask, intersectGeometries, Color.decode(term.color), x, y, x_ratio, y_ratio)
+            responseBufferedImage(mask)
         } catch (Exception e) {
             log.error("GetThumb:" + e)
         }

@@ -150,22 +150,7 @@ class RestController {
     def responseBufferedImage(BufferedImage bufferedImage) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         withFormat {
-            jpg {
-                if (request.method == 'HEAD') {
-                    render(text: "", contentType: "image/jpeg");
-                }
-                else {
-                    ImageIO.write(bufferedImage, "jpg", baos);
-                    byte[] bytesOut = baos.toByteArray();
-                    response.contentLength = baos.size();
-                    response.setHeader("Connection", "Keep-Alive")
-                    response.setHeader("Accept-Ranges", "bytes")
-                    response.setHeader("Content-Type", "image/jpeg")
-                    //response.contentType = "image/jpeg"
-                    response.getOutputStream() << bytesOut
-                    response.getOutputStream().flush()
-                }
-            }
+
             png {
                 if (request.method == 'HEAD') {
                     render(text: "", contentType: "image/png")
@@ -177,6 +162,22 @@ class RestController {
                     response.setHeader("Connection", "Keep-Alive")
                     response.setHeader("Accept-Ranges", "bytes")
                     response.setHeader("Content-Type", "image/png")
+                    //response.contentType = "image/jpeg"
+                    response.getOutputStream() << bytesOut
+                    response.getOutputStream().flush()
+                }
+            }
+            jpg {
+                if (request.method == 'HEAD') {
+                    render(text: "", contentType: "image/jpeg");
+                }
+                else {
+                    ImageIO.write(bufferedImage, "jpg", baos);
+                    byte[] bytesOut = baos.toByteArray();
+                    response.contentLength = baos.size();
+                    response.setHeader("Connection", "Keep-Alive")
+                    response.setHeader("Accept-Ranges", "bytes")
+                    response.setHeader("Content-Type", "image/jpeg")
                     //response.contentType = "image/jpeg"
                     response.getOutputStream() << bytesOut
                     response.getOutputStream().flush()

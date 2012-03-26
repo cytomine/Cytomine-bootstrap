@@ -274,7 +274,6 @@ class Annotation extends CytomineDomain implements Serializable {
         println "Register custom JSON renderer for " + Annotation.class
         JSON.registerObjectMarshaller(Annotation) { annotation ->
             def returnArray = [:]
-            println annotation
             ImageInstance imageinstance = annotation.image
             AbstractImage image = imageinstance?.baseImage
             returnArray['class'] = annotation.class

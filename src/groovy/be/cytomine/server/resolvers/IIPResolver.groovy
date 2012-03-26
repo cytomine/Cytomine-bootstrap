@@ -80,7 +80,7 @@ class IIPResolver extends Resolver{
         W : 1/(34092/400) = 0.01173295788
         H : 1/(34207/600) = 0.01754026954*/
         def scaledWidth = width
-        def targetWidth = 1536
+        def targetWidth = 5000
         if (width > targetWidth) {
             def shouldScale = true
             while (shouldScale) {

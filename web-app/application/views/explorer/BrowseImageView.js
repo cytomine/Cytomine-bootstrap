@@ -71,8 +71,12 @@ var BrowseImageView = Backbone.View.extend({
         this.annotationsPanel.refreshAnnotationTabs(idTerm);
     },
     setLayerVisibility : function(layer, visibility) {
-        // manually check (or uncheck) the third checkbox in the menu:
+        console.log("setLayerVisibility");
+        // manually check (or uncheck) the checkbox in the menu:
         $("#layerSwitcher"+this.model.get("id")).find("ul.annotationLayers").find(":checkbox").each(function(){
+            console.log("Layer name = " + layer.name);
+            console.log("Layer value = " + $(this).attr("value"));
+
             if (layer.name != $(this).attr("value")) return;
             if (visibility) {
                 if ($(this).attr("checked") != "checked") {
@@ -98,10 +102,12 @@ var BrowseImageView = Backbone.View.extend({
     goToAnnotation : function(layer, idAnnotation) {
         var self = this;
         var feature = layer.getFeature(idAnnotation);
+
         if (feature != undefined) {
             layer.showFeature(feature);
             self.setLayerVisibility(layer, true);
-            var bounds = feature.geometry.bounds;
+
+            var bounds = feature.geometry.getBounds();
             //Compute the ideal zoom to view the feature
             var featureWidth = bounds.right  - bounds.left;
             var featureHeight = bounds.top - bounds.bottom;
@@ -115,6 +121,7 @@ var BrowseImageView = Backbone.View.extend({
                 tmpHeight /= 2;
                 zoom--;
             }
+
             //Simulate click on select button
             var toolbar = $('#toolbar' + this.model.get('id'));
             toolbar.find('input[id=select' + self.model.get('id') + ']').click();
