@@ -168,7 +168,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
         client.disconnect();
 
         log.info("check response")
-        assertEquals(400, code)
+        assertEquals(409, code)
     }
 
     void testAddSoftwareWithBadName() {
@@ -362,7 +362,6 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, code)
     }
 
-
     void testUpdateSoftwareCorrect() {
 
         String oldName = "Name1"
@@ -535,7 +534,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
         client.disconnect();
 
         log.info("check response")
-        assertEquals(400, code)
+        assertEquals(409, code)
 
     }
 

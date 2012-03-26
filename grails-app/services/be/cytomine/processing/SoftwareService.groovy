@@ -12,6 +12,8 @@ import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.security.SecUser
 import be.cytomine.project.Project
+import be.cytomine.Exception.AlreadyExistException
+import org.hibernate.FlushMode
 
 class SoftwareService extends ModelService {
 
@@ -83,6 +85,7 @@ class SoftwareService extends ModelService {
     }
 
     def create(Software domain, boolean printMessage) {
+
         //Save new object
         domainService.saveDomain(domain)
         //Build response message

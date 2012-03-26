@@ -87,20 +87,20 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase {
         def result = ImageInstanceAPI.createImageInstance(imageToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         result = ImageInstanceAPI.createImageInstance(imageToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         log.info("check response")
-        assertEquals(400, result.code)
+        assertEquals(409, result.code)
     }
 
     void testaddImageInstanceWithUnexistingAbstractImage() {
 
         log.info("create imageinstance")
-        def imageToAdd = BasicInstance.createOrGetBasicImageInstance()
+        def imageToAdd = BasicInstance.getBasicImageInstanceNotExist()
         String jsonImage = imageToAdd.encodeAsJSON()
         def updateImage = JSON.parse(jsonImage)
         updateImage.baseImage = -99
         jsonImage = updateImage.encodeAsJSON()
 
-        def result = ImageInstanceAPI.createImageInstance(imageToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        result = ImageInstanceAPI.createImageInstance(imageToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.createImageInstance(jsonImage.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        //result = ImageInstanceAPI.createImageInstance(imageToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         log.info("check response")
         assertEquals(400, result.code)
 
@@ -120,7 +120,6 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(400, result.code)
 
     }
-
 
     void testEditImageInstance() {
 
@@ -151,7 +150,6 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase {
         json = JSON.parse(showResult.data)
         BasicInstance.compareImageInstance(result.mapNew, json)
     }
-
 
     void testEditImageInstanceWithBadProject() {
         Project oldProject = BasicInstance.createOrGetBasicProject()
@@ -222,7 +220,6 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(400, result.code)
 
     }
-
 
     void testDeleteImageInstance() {
         log.info("create project")

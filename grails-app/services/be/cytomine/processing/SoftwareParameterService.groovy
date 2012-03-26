@@ -10,6 +10,7 @@ import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.Exception.AlreadyExistException
 
 class SoftwareParameterService extends ModelService{
 
@@ -62,7 +63,6 @@ class SoftwareParameterService extends ModelService{
     }
 
     def create(SoftwareParameter domain, boolean printMessage) {
-        if(SoftwareParameter.findByNameAndSoftware(domain.name,domain.software)) throw new WrongArgumentException("Parameter "+domain.name + " already exist for software " + domain.software?.name )
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
@@ -99,7 +99,6 @@ class SoftwareParameterService extends ModelService{
     }
 
     def edit(SoftwareParameter domain, boolean printMessage) {
-        if(SoftwareParameter.findByNameAndSoftware(domain.name,domain.software)) throw new WrongArgumentException("Parameter "+domain.name + " already exist for software " + domain.software?.name )
         //Build response message
         def response = responseService.createResponseMessage(domain,  [domain.name, domain.type, domain.software?.name], printMessage, "Edit", domain.getCallBack())
         //Save update

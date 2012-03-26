@@ -3,6 +3,7 @@ package be.cytomine.project
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
+import be.cytomine.Exception.AlreadyExistException
 
 class Discipline extends CytomineDomain {
 
@@ -23,6 +24,13 @@ class Discipline extends CytomineDomain {
             returnArray['id'] = it.id
             returnArray['name'] = it.name
             return returnArray
+        }
+    }
+
+    void checkAlreadyExist() {
+        Discipline.withNewSession {
+            Discipline disciplineAlreadyExist = Discipline.findByName(name)
+            if(disciplineAlreadyExist && (disciplineAlreadyExist.id!=id))  throw new AlreadyExistException("Discipline "+name + " already exist!")
         }
     }
 

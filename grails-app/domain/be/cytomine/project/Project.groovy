@@ -11,6 +11,7 @@ import be.cytomine.processing.ImageFilterProject
 import be.cytomine.processing.SoftwareProject
 
 import grails.converters.JSON
+import be.cytomine.Exception.AlreadyExistException
 
 class Project extends CytomineDomain {
 
@@ -33,6 +34,13 @@ class Project extends CytomineDomain {
         discipline(nullable: true)
         //  return !Project.findByNameIlike(it)
         //})
+    }
+
+    void checkAlreadyExist() {
+        Project.withNewSession {
+            Project projectAlreadyExist = Project.findByName(name)
+            if(projectAlreadyExist && (projectAlreadyExist.id!=id))  throw new AlreadyExistException("Project "+projectAlreadyExist?.name + " already exist!")
+        }
     }
 
     static mapping = {

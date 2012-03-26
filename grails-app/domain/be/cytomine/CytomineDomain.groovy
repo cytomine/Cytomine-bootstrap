@@ -41,6 +41,10 @@ abstract class CytomineDomain {
         updated = new Date()
     }
 
+    void checkAlreadyExist() {
+        //do nothing ; if override by a sub-class, should throw AlreadyExist exception
+    }
+
     /**
      * Return domain project (annotation project, ...)
      * By default, a domain has no project.

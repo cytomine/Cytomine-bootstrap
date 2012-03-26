@@ -24,9 +24,6 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
   void testGetImagesWithCredential() {
 
-    log.info("create annotation")
-
-    log.info("get annotation")
     String URL = Infos.CYTOMINEURL+"api/image.json"
     HttpClient client = new HttpClient();
     client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
@@ -202,30 +199,6 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-//  void testaddImageWithBadGeometry() {
-//
-//    log.info("create image")
-//    def imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
-//    String jsonImage = imageToAdd.encodeAsJSON()
-//    def updateImage = JSON.parse(jsonImage)
-//    jsonImage = updateImage.encodeAsJSON()
-//
-//    log.info("post image:"+jsonImage.replace("\n",""))
-//    String URL = Infos.CYTOMINEURL+"api/image.json"
-//    HttpClient client = new HttpClient()
-//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-//    client.post(jsonImage)
-//    int code  = client.getResponseCode()
-//    String response = client.getResponseData()
-//    client.disconnect();
-//
-//    log.info("check response")
-//    assertEquals(400,code)
-//    def json = JSON.parse(response)
-//    assert json instanceof JSONObject
-//
-//  }
-
   void testaddImageWithUnexistingScanner() {
 
     log.info("create image")
@@ -330,7 +303,6 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     assert json instanceof JSONObject
 
   }
-
 
   void testEditImage() {
 
@@ -492,8 +464,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testEditImageWithBadSlide()
-  {
+  void testEditImageWithBadSlide() {
     Slide oldSlide = BasicInstance.createOrGetBasicSlide()
     Slide newSlide = BasicInstance.getBasicSlideNotExist()
 
@@ -525,8 +496,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(400,code)
   }
 
-  void testEditImageWithBadMime()
-  {
+  void testEditImageWithBadMime()  {
     Mime oldMime = BasicInstance.createOrGetBasicMime() //TODO: replace by a mime different with image server
     Mime newMime = BasicInstance.createOrGetBasicMime()  //jp2
 
@@ -557,8 +527,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(400,code)
   }
 
-  void testEditImageWithBadScanner()
-  {
+  void testEditImageWithBadScanner()  {
     Scanner oldScanner = BasicInstance.createOrGetBasicScanner()
 
     /* Create a old image */
@@ -589,8 +558,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(400,code)
   }
 
-  void testDeleteImage()
-  {
+  void testDeleteImage()  {
 
     log.info("create image")
     def imageToDelete = BasicInstance.getBasicAbstractImageNotExist()
@@ -669,8 +637,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
   }
 
-  void testDeleteImageWithData()
-  {
+  void testDeleteImageWithData()  {
     log.info("create image")
     def imageToDelete = BasicInstance.createOrGetBasicImageInstance()
     def annotation = BasicInstance.createOrGetBasicAnnotation()
@@ -690,8 +657,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     assertEquals(404,code)
   }
 
-  void testDeleteImageNoExist()
-  {
+  void testDeleteImageNoExist()  {
     log.info("create image")
     def imageToDelete = BasicInstance.createOrGetBasicAbstractImage()
     String jsonImage = imageToDelete.encodeAsJSON()
@@ -707,6 +673,5 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     log.info("check response")
     assertEquals(404,code)
   }
-
 
 }

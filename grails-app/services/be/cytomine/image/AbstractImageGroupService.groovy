@@ -64,8 +64,6 @@ class AbstractImageGroupService extends ModelService {
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
-        log.debug "json=" + json
-
         destroy(retrieve(json), printMessage)
     }
 

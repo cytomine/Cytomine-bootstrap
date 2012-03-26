@@ -10,6 +10,7 @@ import be.cytomine.command.EditCommand
 import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.project.Project
+import be.cytomine.Exception.AlreadyExistException
 
 class SoftwareProjectService extends ModelService{
 
@@ -61,7 +62,7 @@ class SoftwareProjectService extends ModelService{
     }
 
     def create(SoftwareProject domain, boolean printMessage) {
-        if(SoftwareProject.findBySoftwareAndProject(domain.software,domain.project)) throw new WrongArgumentException("Software  "+domain.software?.name + " already map with project "+domain.project?.name)
+        if(SoftwareProject.findBySoftwareAndProject(domain.software,domain.project)) throw new AlreadyExistException("Software  "+domain.software?.name + " already map with project "+domain.project?.name)
         //Save new object
         domain = SoftwareProject.link(domain.id,domain.software,domain.project)
         log.info "1. new domain="+ domain?.id

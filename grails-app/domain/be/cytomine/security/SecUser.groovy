@@ -5,6 +5,7 @@ import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 import java.security.acl.Acl
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
+import be.cytomine.Exception.AlreadyExistException
 
 class SecUser extends CytomineDomain {
 
@@ -22,6 +23,12 @@ class SecUser extends CytomineDomain {
 
     //Map userGroup
     //static hasMany = [userGroup: UserGroup]
+    void checkAlreadyExist() {
+        SecUser.withNewSession {
+            SecUser user = SecUser.findByUsername(username)
+            if(user && (user.id!=id))  throw new AlreadyExistException("User "+username + " already exist!")
+        }
+    }
 
     static constraints = {
         username blank: false, unique: true

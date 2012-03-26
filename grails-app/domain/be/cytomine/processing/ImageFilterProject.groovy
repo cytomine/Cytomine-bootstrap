@@ -4,6 +4,7 @@ import be.cytomine.project.Project
 import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.AlreadyExistException
 
 class ImageFilterProject extends CytomineDomain implements Serializable{
 
@@ -26,7 +27,7 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
             project.refresh()
             imageFilter.refresh()
             imageFilterProject.save(flush: true)
-        }
+        } else throw new AlreadyExistException("Image Filter " + imageFilter?.name + " already map with project " + project?.name)
         imageFilterProject
     }
 

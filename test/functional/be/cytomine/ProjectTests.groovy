@@ -72,16 +72,16 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
     }
 
-    void testAddProjectWithBadName() {
+    void testAddProjectWithNameAlreadyExist() {
         log.info("init project with bad name")
         def projectToAdd = BasicInstance.createOrGetBasicProject()
         String jsonProject = projectToAdd.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonProject)
-        jsonUpdate.name = null
+        //jsonUpdate.name = null
         log.info("create project")
         def result = ProjectAPI.createProject(jsonUpdate.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         log.info("check response:" + response)
-        assertEquals(400, result.code)
+        assertEquals(409, result.code)
     }
 
     void testEditProjectCorrect() {
@@ -127,7 +127,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
         jsonProject = jsonUpdate.encodeAsJSON()
         log.info("update project")
         def result = ProjectAPI.updateProject(projectToEdit.id, jsonProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assertEquals(409, result.code)
     }
 
     void testEditProjectNotExist() {

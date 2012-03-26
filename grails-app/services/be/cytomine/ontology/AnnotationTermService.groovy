@@ -165,8 +165,6 @@ class AnnotationTermService extends ModelService {
         //Build response message
         log.debug "domain=" + domain + " responseService=" + responseService
         //Save new object
-
-        log.info '##### INSERT annotation': domain?.annotation?.id, 'term': domain?.term?.id, 'user': domain?.user?.id
         //domainService.saveDomain(domain)
         domain = AnnotationTerm.link(domain.annotation, domain.term,domain.user)
         def response = responseService.createResponseMessage(domain, [domain.id, domain.annotation.id, domain.term.name, domain.user?.username], printMessage, "Add", domain.getCallBack())
@@ -188,12 +186,6 @@ class AnnotationTermService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.annotation.id, domain.term.name, domain.user?.username], printMessage, "Delete", domain.getCallBack())
         //Delete new object
-
-        log.info "##############################################"
-        log.info "DELETE DOMAIN:" + domain
-        log.info "ANNOTATION LINK:" + domain?.annotation?.annotationTerm
-        log.info "TERM LINK:" + domain?.term?.annotationTerm
-        log.info "##############################################"
         AnnotationTerm.unlink(domain.annotation, domain.term, domain.user)
         //domainService.deleteDomain(domain)
         return response
@@ -207,7 +199,6 @@ class AnnotationTermService extends ModelService {
         Annotation annotation = Annotation.get(json.annotation)
         Term term = Term.get(json.term)
         User user = User.get(json.user)
-        log.info '##### SELECT annotation': annotation?.id, 'term': term?.id, 'user': user?.id
         AnnotationTerm relation = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
         if (!relation) throw new ObjectNotFoundException("Annotation term not found ($annotation,$term,$user)")
         return relation

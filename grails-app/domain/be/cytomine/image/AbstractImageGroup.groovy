@@ -4,6 +4,7 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.security.Group
 import grails.converters.JSON
+import be.cytomine.Exception.AlreadyExistException
 
 class AbstractImageGroup extends CytomineDomain implements Serializable {
 
@@ -22,7 +23,7 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
         if (!abstractimage) throw new WrongArgumentException("AbstractImage cannot be null")
         if (!group) throw new WrongArgumentException("Group cannot be null")
         def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-        if (abstractimageGroup) throw new WrongArgumentException("AbstractImage - group already exist")
+        if (abstractimageGroup) throw new AlreadyExistException("AbstractImage - group already exist")
         //AbstractImage.withTransaction {
         if (!abstractimageGroup) {
             abstractimageGroup = new AbstractImageGroup()
@@ -42,7 +43,7 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
         if (!abstractimage) throw new WrongArgumentException("AbstractImage cannot be null")
         if (!group) throw new WrongArgumentException("Group cannot be null")
         def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-        if (abstractimageGroup) throw new WrongArgumentException("AbstractImage - group already exist")
+        if (abstractimageGroup) throw new AlreadyExistException("AbstractImage - group already exist")
 
         if (!abstractimageGroup) {
             abstractimageGroup = new AbstractImageGroup()

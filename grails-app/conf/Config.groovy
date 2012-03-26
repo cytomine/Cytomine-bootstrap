@@ -80,7 +80,7 @@ environments {
     }
 
 }
-       /*
+
 // log4j configuration
 log4j = {
     // Example of changing the log pattern for the default console
@@ -154,7 +154,7 @@ log4j = {
     //debug 'org.hibernate.SQL'
     //trace 'org.hibernate.type'
 }
- */
+
 
 // Added by the Spring Security Core plugin:
 grails.plugins.springsecurity.userLookup.userDomainClassName = 'be.cytomine.security.SecUser'

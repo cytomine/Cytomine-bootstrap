@@ -8,6 +8,7 @@ import be.cytomine.project.Project
 import be.cytomine.project.Slide
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.Exception.AlreadyExistException
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,6 +36,13 @@ class ImageInstance extends CytomineDomain {
     static mapping = {
         id generator: "assigned"
         baseImage fetch: 'join'
+    }
+
+    void checkAlreadyExist() {
+        ImageInstance.withNewSession {
+            ImageInstance imageAlreadyExist=ImageInstance.findByBaseImageAndProject(baseImage, project)
+            if(imageAlreadyExist!=null && (imageAlreadyExist.id!=id))  throw new AlreadyExistException("Image " + baseImage?.filename + " already map with project " + project.name)
+        }
     }
 
     def terms() {

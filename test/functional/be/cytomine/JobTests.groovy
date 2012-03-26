@@ -424,28 +424,4 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(404, code)
 
     }
-
-    void testDeleteJobWithJob() {
-
-        //TODO: implement this
-
-//    log.info("create software")
-//    //create project and try to delete his software
-//    def project = BasicInstance.createOrGetBasicProject()
-//    def softwareToDelete = project.software
-//    assert softwareToDelete.save(flush:true)!=null
-//    String jsonSoftware = softwareToDelete.encodeAsJSON()
-//    int idSoftware = softwareToDelete.id
-//    log.info("delete software:"+jsonSoftware.replace("\n",""))
-//    String URL = Infos.CYTOMINEURL+"api/software/"+idSoftware+".json"
-//    HttpClient client = new HttpClient()
-//    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-//    client.delete()
-//    int code  = client.getResponseCode()
-//    client.disconnect();
-//
-//    log.info("check response")
-//    assertEquals(400,code)
-
-    }
 }

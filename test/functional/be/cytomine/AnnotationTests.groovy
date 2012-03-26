@@ -42,17 +42,6 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assert json instanceof JSONArray
     }
 
-//    void testListAnnotationsByUserWithCredential() {
-//        log.info("create annotation")
-//        Annotation annotation = BasicInstance.createOrGetBasicAnnotation()
-//        User user = BasicInstance.createOrGetBasicUser()
-//        def result = AnnotationAPI.listAnnotationByUser(user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-//        log.info("check response")
-//        assertEquals(200, result.code)
-//        def json = JSON.parse(result.data)
-//        assert json instanceof JSONArray
-//    }
-
     void testListAnnotationsByImageWithCredential() {
         log.info("create annotation")
         Annotation annotation = BasicInstance.createOrGetBasicAnnotation()

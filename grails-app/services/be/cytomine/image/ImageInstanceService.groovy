@@ -16,6 +16,7 @@ import be.cytomine.test.Infos
 import org.hibernate.FetchMode
 import be.cytomine.command.Transaction
 import be.cytomine.security.SecUser
+import be.cytomine.Exception.AlreadyExistException
 
 class ImageInstanceService extends ModelService {
 
@@ -149,8 +150,6 @@ class ImageInstanceService extends ModelService {
     }
 
     def create(ImageInstance domain, boolean printMessage) {
-        if (ImageInstance.findByBaseImageAndProject(domain.baseImage, domain.project))
-            throw new WrongArgumentException("Image " + domain?.baseImage?.filename + " already map with project " + domain.project.name)
         //Save new object
         domainService.saveDomain(domain)
         //Build response message

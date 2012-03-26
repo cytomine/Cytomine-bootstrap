@@ -5,6 +5,7 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.Exception.AlreadyExistException
 
 class Ontology extends CytomineDomain implements Serializable {
 
@@ -16,6 +17,13 @@ class Ontology extends CytomineDomain implements Serializable {
     }
     static mapping = {
         id(generator: 'assigned', unique: true)
+    }
+
+    void checkAlreadyExist() {
+        Ontology.withNewSession {
+            Ontology ontology = Ontology.findByName(name)
+            if(ontology!=null && (ontology.id!=id))  throw new AlreadyExistException("Ontology " + ontology.name + " already exist!")
+        }
     }
 
     def users() {

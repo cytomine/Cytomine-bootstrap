@@ -6,6 +6,7 @@ import grails.converters.JSON
 import be.cytomine.security.SecUser
 import be.cytomine.project.Project
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.AlreadyExistException
 
 class AnnotationTerm extends CytomineDomain implements Serializable {
 
@@ -37,7 +38,7 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         if (!term) throw new WrongArgumentException("Term cannot be null")
         if (!user) throw new WrongArgumentException("User cannot be null")
         def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term,'user': user)
-        if (annotationTerm) throw new WrongArgumentException("Annotation - term already exist")
+        if (annotationTerm) throw new AlreadyExistException("Annotation - term already exist")
         //Annotation.withTransaction {
         if (!annotationTerm) {
             annotationTerm = new AnnotationTerm(user: user)
@@ -59,7 +60,7 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         if (!term) throw new WrongArgumentException("Term cannot be null")
         if (!user) throw new WrongArgumentException("User cannot be null")
         def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term,'user': user)
-        if (annotationTerm) throw new WrongArgumentException("Annotation - term already exist")
+        if (annotationTerm) throw new AlreadyExistException("Annotation - term already exist")
 
         if (!annotationTerm) {
             annotationTerm = new AnnotationTerm(user: user)

@@ -3,6 +3,7 @@ package be.cytomine
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.AlreadyExistException
 
 class DomainService {
 
@@ -10,6 +11,7 @@ class DomainService {
 
     def saveDomain(def newObject) {
         println "newObject="+newObject
+        newObject.checkAlreadyExist()
         if (!newObject.validate()) {
             println "NOT VALIDATE =" +newObject
             println newObject.errors
@@ -38,6 +40,7 @@ class DomainService {
         } else {
             newObject.id = postData.id
         }
+        newObject.checkAlreadyExist()
         if (!newObject.validate()) throw new WrongArgumentException(newObject.errors.toString())
         if (!newObject.save(flush: true)) throw new InvalidRequestException(newObject.errors.toString())
     }

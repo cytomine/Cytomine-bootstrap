@@ -3,6 +3,7 @@ package be.cytomine.processing
 import grails.converters.JSON
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.Exception.AlreadyExistException
 
 class JobParameter extends CytomineDomain{
 
@@ -11,6 +12,15 @@ class JobParameter extends CytomineDomain{
     static belongsTo = [job: Job, softwareParameter : SoftwareParameter]
 
     static constraints = {
+    }
+
+
+    //if(JobParameter.findByJobAndSoftwareParameter(domain.job, domain.softwareParameter)) throw new AlreadyExistException("Job parameter still exist for this job ${domain?.job?.id}/softwareparameter ${domain?.softwareParameter?.name}")
+    void checkAlreadyExist() {
+        JobParameter.withNewSession {
+            JobParameter jobParamAlreadyExist=JobParameter.findByJobAndSoftwareParameter(job,softwareParameter)
+            if(jobParamAlreadyExist!=null && (jobParamAlreadyExist.id!=id))  throw new AlreadyExistException("Parameter " + softwareParameter?.name + " already exist fro job " + job?.id)
+        }
     }
 
     static void registerMarshaller() {

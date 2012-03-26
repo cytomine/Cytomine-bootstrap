@@ -12,6 +12,7 @@ import be.cytomine.command.DeleteCommand
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.Exception.AlreadyExistException
 
 
 class ImageFilterProjectService extends ModelService {
@@ -78,7 +79,6 @@ class ImageFilterProjectService extends ModelService {
     }
 
     def create(ImageFilterProject domain, boolean printMessage) {
-        if(ImageFilterProject.findByImageFilterAndProject(domain.imageFilter,domain.project)) throw new WrongArgumentException("ImageFilter  "+domain.imageFilter?.name + " already map with project "+domain.project?.name)
         //Save new object
         domain = ImageFilterProject.link(domain.id, domain.imageFilter,domain.project)
 

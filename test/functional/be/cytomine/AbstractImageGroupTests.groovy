@@ -79,8 +79,6 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
     assert json instanceof JSONArray
   }
 
-
-
   /*void testListAbstractImageGroupByCurrentUser() {
 
     log.info("get by group")
@@ -97,7 +95,6 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
     def json = JSON.parse(response)
     assert json instanceof JSONArray
   }*/
-
 
   void testListAbstractImageGroupByGroupWithAbstractImageNotExist() {
 
@@ -118,7 +115,6 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
 
   }
 
-
   void testGetAbstractImageGroupWithCredential() {
 
     def abstractimageGroupToAdd = BasicInstance.createOrGetBasicAbstractImageGroup()
@@ -138,7 +134,6 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
     assert json instanceof JSONObject
 
   }
-
 
   void testAddAbstractImageGroupCorrect() {
 
@@ -240,7 +235,7 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)
+    assertEquals(409,code)
   }
   void testAddAbstractImageGroupWithAbstractImageNotExist() {
 

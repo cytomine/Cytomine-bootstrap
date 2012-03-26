@@ -5,6 +5,7 @@ import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import grails.util.GrailsNameUtils
+import be.cytomine.Exception.AlreadyExistException
 
 class Software extends CytomineDomain {
 
@@ -27,6 +28,13 @@ class Software extends CytomineDomain {
             }
 
      }
+
+    void checkAlreadyExist() {
+        Software.withNewSession {
+            Software softwareSameName = Software.findByName(name)
+            if(softwareSameName && (softwareSameName.id!=id))  throw new AlreadyExistException("Software "+softwareSameName.name + " already exist!")
+        }
+    }
 
     static void registerMarshaller() {
         println "Register custom JSON renderer for " + Software.class

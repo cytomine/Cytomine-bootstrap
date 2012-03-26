@@ -95,7 +95,6 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
   }
 
-
   void testListTermByImageWithCredential() {
 
     AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
@@ -132,9 +131,6 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     def json = JSON.parse(response)
 
   }
-
-
-
 
   void testListTermWithCredential() {
 
@@ -187,7 +183,6 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     def json = JSON.parse(response)
     assert json instanceof JSONObject
   }
-
 
   void testAddTermCorrect() {
 
@@ -271,12 +266,8 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
   void testAddTermWithBadName() {
 
     log.info("create term")
-    def termToAdd = BasicInstance.getBasicTermNotExist()
+    def termToAdd = BasicInstance.createOrGetAnotherBasicTerm()
     String jsonTerm = termToAdd.encodeAsJSON()
-
-    def jsonUpdate = JSON.parse(jsonTerm)
-    jsonUpdate.name = null
-    jsonTerm = jsonUpdate.encodeAsJSON()
 
     log.info("post term:"+jsonTerm.replace("\n",""))
     String URL = Infos.CYTOMINEURL+"api/term.json"
@@ -289,11 +280,9 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)
+    assertEquals(409,code)
 
   }
-
-
 
   void testEditTermCorrect() {
 
@@ -434,13 +423,15 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
     /* Create a Name1 term */
     log.info("create term")
+    Term term= BasicInstance.getBasicTermNotExist()
+    term.save(flush:true)
     Term termToAdd = BasicInstance.createOrGetBasicTerm()
 
     /* Encode a niew term Name2*/
     Term termToEdit = Term.get(termToAdd.id)
     def jsonTerm = termToEdit.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonTerm)
-    jsonUpdate.name = null
+    jsonUpdate.name = term.name
     jsonTerm = jsonUpdate.encodeAsJSON()
 
     log.info("put term:"+jsonTerm.replace("\n",""))
@@ -452,10 +443,9 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)
+    assertEquals(409,code)
 
   }
-
 
   void testDeleteTerm() {
 
@@ -563,25 +553,19 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(200,code)
   }
 
-
-  void testAddTermAnnotationMapping()
-  {
+  void testAddTermAnnotationMapping() {
 
   }
 
-  void testAddTermAnnotationMappingAlreadyExist()
-  {
+  void testAddTermAnnotationMappingAlreadyExist() {
 
   }
 
-
-  void testAddTermNoExistToAnnotationMapping()
-  {
+  void testAddTermNoExistToAnnotationMapping()  {
 
   }
 
-  void testAddTermToAnnotationNotExistMapping()
-  {
+  void testAddTermToAnnotationNotExistMapping() {
 
   }
 

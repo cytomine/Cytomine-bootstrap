@@ -167,7 +167,7 @@ class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)
+    assertEquals(409,code)
   }
 
   void testAddDisciplineWithBadName() {
@@ -362,7 +362,7 @@ class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)
+    assertEquals(409,code)
 
   }
 
@@ -502,6 +502,5 @@ class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(400,code)
 
   }
-
 
 }

@@ -67,32 +67,6 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
     assert json instanceof JSONObject
   }
 
-/*    @Secured(['ROLE_ADMIN'])
-    def addChild = {
-       def json = request.JSON
-       User user = User.get(json.parent)
-
-       String username = json.username
-
-       UserJob newUser = new UserJob()
-       newUser.username = username
-       newUser.password = user.password
-       newUser.publicKey = user.publicKey
-       newUser.privateKey = user.privateKey
-       newUser.enabled = user.enabled
-       newUser.accountExpired = user.accountExpired
-       newUser.accountLocked = user.accountLocked
-       newUser.passwordExpired = user.passwordExpired
-       newUser.user = user
-
-        newUser.save(flush:true)
-
-        def ret = [data: [user: newUser], status: 200]
-        response(ret)
-
-    }*/
-
-
   void testAddUserChildCorrect() {
     log.info("create user")
     def parent = User.findByUsername(Infos.GOODLOGIN);
@@ -125,13 +99,6 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
 //    assertEquals(200,code)
 
   }
-
-
-
-
-
-
-
 
   void testAddUserCorrect() {
     log.info("create user")
@@ -255,7 +222,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)
+    assertEquals(409,code)
 
   }
 
@@ -441,7 +408,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)
+    assertEquals(409,code)
 
   }
 

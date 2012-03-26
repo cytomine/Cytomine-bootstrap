@@ -4,6 +4,7 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
+import be.cytomine.Exception.AlreadyExistException
 
 class Term extends CytomineDomain implements Serializable, Comparable {
 
@@ -28,6 +29,13 @@ class Term extends CytomineDomain implements Serializable, Comparable {
     }
     static mapping = {
         id(generator: 'assigned', unique: true)
+    }
+
+    void checkAlreadyExist() {
+        Term.withNewSession {
+            Term termAlreadyExist=Term.findByName(name)
+            if(termAlreadyExist!=null && (termAlreadyExist.id!=id))  throw new AlreadyExistException("Term " + termAlreadyExist?.name + " already exist!")
+        }
     }
 
     def annotations() {

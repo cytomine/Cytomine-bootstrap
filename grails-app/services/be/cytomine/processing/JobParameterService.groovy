@@ -12,6 +12,7 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.security.SecUser
 import be.cytomine.command.Transaction
 import grails.converters.JSON
+import be.cytomine.Exception.AlreadyExistException
 
 class JobParameterService extends ModelService {
 
@@ -65,7 +66,6 @@ class JobParameterService extends ModelService {
     }
 
     def create(JobParameter domain, boolean printMessage) {
-        if(JobParameter.findByJobAndSoftwareParameter(domain.job, domain.softwareParameter)) throw new WrongArgumentException("Job parameter still exist for this job ${domain?.job?.id}/softwareparameter ${domain?.softwareParameter?.name}")
         //Save new object
         domainService.saveDomain(domain)
         //Build response message

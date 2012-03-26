@@ -70,6 +70,7 @@ class AbstractImage extends CytomineDomain {
         magnification(nullable: true)
     }
 
+
     def groups() {
         return abstractimagegroup.collect {
             it.group

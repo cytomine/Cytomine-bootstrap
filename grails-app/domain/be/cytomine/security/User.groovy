@@ -29,6 +29,7 @@ class User extends SecUser {
 
     static hasMany = [softwareProjects: SoftwareProject]
 
+
     String realUsername() {
         return username
     }

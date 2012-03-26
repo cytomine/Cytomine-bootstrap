@@ -3,6 +3,7 @@ package be.cytomine.ontology
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
+import be.cytomine.Exception.AlreadyExistException
 
 class RelationTerm extends CytomineDomain implements Serializable {
 
@@ -43,7 +44,7 @@ class RelationTerm extends CytomineDomain implements Serializable {
             println "relationTerm.id=" + relationTerm.id
             relationTerm.save(flush: true)
             println "relationTerm.id=" + relationTerm.id
-        } else throw new WrongArgumentException("Term1 " + term1.id + " and " + term2.id + " are already mapped with relation " + relation.id)
+        } else throw new AlreadyExistException("Term1 " + term1.id + " and " + term2.id + " are already mapped with relation " + relation.id)
         return relationTerm
     }
 

@@ -71,6 +71,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     def json = JSON.parse(response)
     assert json instanceof JSONArray
   }
+
   void testListRelationTermByTerm2() {
 
     RelationTerm relationTerm = BasicInstance.createOrGetBasicRelationTerm()
@@ -90,6 +91,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     assert json instanceof JSONArray
 
   }
+
   void testAddRelationTermCorrect() {
 
     log.info("create RelationTerm")
@@ -195,7 +197,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)
+    assertEquals(409,code)
   }
 
   void testAddRelationTermWithRelationNotExist() {

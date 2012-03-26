@@ -3,6 +3,7 @@ package be.cytomine.processing
 import grails.converters.JSON
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.Exception.AlreadyExistException
 
 class SoftwareParameter extends CytomineDomain {
 
@@ -32,6 +33,14 @@ class SoftwareParameter extends CytomineDomain {
         }
 
 
+    }
+
+   void checkAlreadyExist() {
+        SoftwareParameter.withNewSession {
+            SoftwareParameter softwareParamAlreadyExist=SoftwareParameter.findBySoftwareAndName(software,name)
+            if(softwareParamAlreadyExist!=null && (softwareParamAlreadyExist.id!=id))
+                throw new AlreadyExistException("Parameter " + softwareParamAlreadyExist?.name + " already exist for software " + softwareParamAlreadyExist?.software?.name)
+        }
     }
 
     String toString() {

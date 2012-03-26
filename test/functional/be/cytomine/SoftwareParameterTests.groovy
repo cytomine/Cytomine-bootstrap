@@ -54,8 +54,6 @@ class SoftwareParameterTests extends functionaltestplugin.FunctionalTestCase {
 
   }
 
-
-
   void testShowSoftwareparameterWithCredential() {
 
     SoftwareParameter softwareparameter = BasicInstance.createOrGetBasicSoftwareParameter()
@@ -172,7 +170,7 @@ class SoftwareParameterTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)
+    assertEquals(409,code)
   }
 
   void testAddSoftwareParameterWithBadName() {
@@ -367,7 +365,7 @@ class SoftwareParameterTests extends functionaltestplugin.FunctionalTestCase {
     client.disconnect();
 
     log.info("check response")
-    assertEquals(400,code)
+    assertEquals(409,code)
 
   }
 
