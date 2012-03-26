@@ -12,7 +12,7 @@ var ApplicationView = Backbone.View.extend({
     className : "layout",
     components : {},
     panelsConfiguration : [
-        {key : "toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { top : 80}, align : "center"}},
+        {key : "toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { top : 100}, align : "center"}},
         {key : "overview-panel", linkID : "toggle-overview-panel", name : "Overview", className : "overviewPanel", value : { visible : true , position : { right : 20, top : 325}}},
         {key : "ontology-panel", linkID : "toggle-ontology-panel", name : "Ontology", className : "ontologyPanel", value : { visible : true , position : { left : 20, top : 280}}},
         {key : "layer-panel", linkID : "toggle-layer-panel", name : "Layer switcher", className : "layerSwitcherPanel", value : { visible : false , position : { right : 20, top : 100}}},

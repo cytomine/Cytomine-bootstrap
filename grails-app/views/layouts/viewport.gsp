@@ -24,13 +24,13 @@
 <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
 
 <!--<link rel="stylesheet" href="lib/bootstrap-1.3/bootstrap.min.css">-->
-<link rel="stylesheet" href="lib/bootstrap-2.0/css/bootstrap.css"/>
+<link rel="stylesheet" href="lib/bootstrap-2.0/css/bootstrap.min.css"/>
 <style type="text/css">
 body {
     padding-top: 40px;
 }
 </style>
-<link rel="stylesheet" href="lib/bootstrap-2.0/css/bootstrap-responsive.css"/>
+<link rel="stylesheet" href="lib/bootstrap-2.0/css/bootstrap-responsive.min.css"/>
 
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
 <link rel='stylesheet' href='lib/fileupload2/jquery.fileupload-ui.css' type='text/css'/>
@@ -190,19 +190,7 @@ body {
 
 
 </g:if>
-<g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">
-    <script type="text/javascript" src="lib.js" ></script>
-    <script type="text/javascript" src="application.js" ></script>
-</g:if>
 
-<script type="text/javascript">
-    $(function() {
-        require(
-                { urlArgs: "bust=" + (new Date()).getTime() }
-        );
-        window.app = new ApplicationController();
-    });
-</script>
 
 
 <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
@@ -227,6 +215,19 @@ body {
 <div id='dialogs'></div>
 <div id="alerts"></div>
 </body>
+<g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">
+    <script type="text/javascript" src="lib.js" ></script>
+    <script type="text/javascript" src="application.js" ></script>
+</g:if>
+
+<script type="text/javascript">
+    $(function() {
+        require(
+                { urlArgs: "bust=" + (new Date()).getTime() }
+        );
+        window.app = new ApplicationController();
+    });
+</script>
 <!-- Google Charts -->
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript">
@@ -234,5 +235,4 @@ body {
 </script>
 <!-- OpenLayers -->
 <script type="text/javascript" src="lib/OpenLayers-2.11/OpenLayers.js"></script>
-<script type="text/javascript" src="http://download.skype.com/share/skypebuttons/js/skypeCheck.js"></script>
 </html>

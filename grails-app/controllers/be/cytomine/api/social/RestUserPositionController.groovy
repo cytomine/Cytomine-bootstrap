@@ -62,7 +62,7 @@ class RestUserPositionController extends RestController {
     def listOnlineUsersByImage = {
         ImageInstance image = imageInstanceService.read(params.id)
         DateTime tenSecondsAgo = new DateTime()
-        tenSecondsAgo = tenSecondsAgo.minusSeconds(10)
+        tenSecondsAgo = tenSecondsAgo.minusSeconds(30)
         def userPositions = UserPosition.createCriteria().list(sort : "created", order : "desc") {
             eq("image", image)
             gt("created", tenSecondsAgo.toDate())
@@ -73,7 +73,7 @@ class RestUserPositionController extends RestController {
 
     def listLastUserPositionsByProject = {
         DateTime tenSecondsAgo = new DateTime()
-        tenSecondsAgo = tenSecondsAgo.minusSeconds(10)
+        tenSecondsAgo = tenSecondsAgo.minusSeconds(30)
         def userPositions = UserPosition.createCriteria().list(sort : "created", order : "desc") {
             gt("created", tenSecondsAgo.toDate())
             groupProperty("image")
