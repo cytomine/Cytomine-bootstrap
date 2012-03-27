@@ -185,6 +185,7 @@ var UploadFormView = Backbone.View.extend({
                         data.context.addClass('in');
                     }
                 },
+
                 // Callback for upload progress events:
                 progress: function (e, data) {
                     if (data.context) {
@@ -429,7 +430,7 @@ var UploadFormView = Backbone.View.extend({
             },
 
             _initButtonBarEventHandlers: function () {
-                var fileUploadButtonBar = this.element.find('.fileupload-buttonbar'),
+                var fileUploadButtonBar = $('.fileupload-buttonbar'),
                         filesList = this._files,
                         ns = this.options.namespace;
                 fileUploadButtonBar.find('.start')
@@ -544,7 +545,6 @@ var UploadFormView = Backbone.View.extend({
                 this._disableFileInputButton();
                 $.blueimp.fileupload.prototype.disable.call(this);
             }
-
         });
     },
     appendUploadedFile : function (model, target) {
@@ -594,21 +594,30 @@ var UploadFormView = Backbone.View.extend({
     },
     doLayout : function(tpl) {
         var self = this;
-
-
-        var _formatFileSize = function (bytes) {
-            if (typeof bytes !== 'number') {
-                return '';
-            }
-            if (bytes >= 1000000000) {
-                return (bytes / 1000000000).toFixed(2) + ' GB';
-            }
-            if (bytes >= 1000000) {
-                return (bytes / 1000000).toFixed(2) + ' MB';
-            }
-            return (bytes / 1000).toFixed(2) + ' KB';
-        }
         $(this.el).html(tpl);
+
+        var linkProjectSelect = $("#linkProjectSelect");
+        var linkWithProject = $("#linkWithProject");
+        linkProjectSelect.attr("disabled", "disabled");
+        linkWithProject.removeAttr("checked");
+
+        linkWithProject.off('change');
+        linkWithProject.on('change', function (event) {
+            if ($(this).attr("checked") == "checked") {
+                linkProjectSelect.removeAttr("disabled");
+            } else {
+                linkProjectSelect.attr("disabled", "disabled");
+            }
+        });
+        new ProjectCollection().fetch({
+            success : function (collection, response) {
+                var optionTpl = "<option value='<%= id %>'><%= name %></option>";
+                collection.each(function (project){
+                    var selectOption = _.template(optionTpl, project.toJSON());
+                    linkProjectSelect.append(selectOption);
+                });
+            }
+        });
         // Render uploaded file
         this.renderUploadedFiles();
         // Render Upload Form
@@ -626,6 +635,16 @@ var UploadFormView = Backbone.View.extend({
                     '/cors/result.html?%s'
             );
 
+            $('#fileupload').bind('fileuploadsubmit', function (e, data) {
+                var linkProjectSelect = $("#linkProjectSelect");
+                var linkWithProject = $("#linkWithProject");
+                var idProject = null;
+                if (linkWithProject.attr("checked") == "checked") {
+                   idProject = linkProjectSelect.val();
+                }
+                data.formData = {idProject: idProject};
+                return true;
+            });
             $('#fileupload').bind('fileuploadsend', function (e, data) {
                 if (data.dataType.substr(0, 6) === 'iframe') {
                     var target = $('<a/>').prop('href', data.url)[0];

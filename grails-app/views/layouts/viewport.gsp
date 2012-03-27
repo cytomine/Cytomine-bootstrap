@@ -60,15 +60,15 @@ body {
 
     <script src="lib/dynatree/jquery.dynatree.js" type="text/javascript"></script>
 
-    <script src="lib/ui.panel/ui.panel.min.js" type="text/javascript"></script>
+    <!--<script src="lib/ui.panel/ui.panel.min.js" type="text/javascript"></script>-->
 
     <script type="text/javascript" src="lib/farbtastic/farbtastic.js"></script>
 
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.js"></script>
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.filter.js"></script>
 
-    <link href="lib/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>
+    <!--<link href="lib/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>-->
 
     <!--jqgrid -->
     <script src="lib/jqgrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>

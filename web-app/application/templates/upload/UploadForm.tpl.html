@@ -3,35 +3,62 @@
         <div class="page-header">
             <h2>Upload</h2>
         </div>
-        <div class="well">
-            <h3>Notes</h3>
-            <ul>
-                <li>The maximum file size for uploads is <strong>5 GB</strong></li>
-                <li>Only image files (<strong>JP(E)G, GIF, PNG, TIF, TIFF, JP2, SVS, MRXS, VMS, NDPI, SCN</strong>) are allowed</li>
-                <li>You can <strong>drag &amp; drop</strong> files from your desktop on this webpage with Google Chrome, Mozilla Firefox and Apple Safari.</li>
-            </ul>
+        <div class="page-content">
+            <div class="well">
+                <h3>Notes</h3>
+                <ul>
+                    <li>The maximum file size for uploads is <strong>5 GB</strong></li>
+                    <li>Only image files (<strong>JP(E)G, GIF, PNG, TIF, TIFF, JP2, SVS, MRXS, VMS, NDPI, SCN</strong>) are allowed</li>
+                    <li>You can <strong>drag &amp; drop</strong> files from your desktop on the 'Add files...' button with Google Chrome, Mozilla Firefox and Apple Safari.</li>
+                    <li>You are also able to link images with project manually after upload is done.</li>
+                </ul>
+            </div>
+
+            <form class="form-horizontal" id="fileupload" action="api/uploadedfile" method="POST" enctype="multipart/form-data">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label">Project</label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <input type="checkbox" id="linkWithProject" value="true">
+                                Link automatically uploaded file with selected project
+                            </label>
+                            <select class="span3" id="linkProjectSelect">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Files</label>
+                        <div class="controls ">
+                            <div class="progressbar fileupload-progressbar fade">
+                                <div style="width:0%;"></div>
+                            </div>
+                            <span class="btn btn-success fileinput-button">
+                            <span><i class="icon icon-plus icon-white" /> Add files...</span>
+                                <input type="file" name="files[]" multiple>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <table class="zebra-striped"><tbody class="files-list"></tbody></table>
+                        </div>
+                    </div>
+                    <div class="form-actions fileupload-buttonbar">
+                        <button type="submit" class="btn btn-primary start"><i class="icon icon-plus icon-white" /> Start upload</button>
+                        <button type="reset" class="btn btn-warning cancel"><i class="icon-ban-circle icon-white"></i> Cancel upload</button>
+                        <button type="button" class="btn btn-danger delete"><i class="icon-trash icon-white"></i> Hide selected</button>
+                        <!--<input type="checkbox" class="toggle">-->
+                    </div>
+
+                </fieldset>
+            </form>
         </div>
-        <form id="fileupload" action="api/uploadedfile" method="POST" enctype="multipart/form-data">
-            <div class="row">
-                <div class="span16 fileupload-buttonbar">
-                    <div class="progressbar fileupload-progressbar fade"><div style="width:0%;"></div></div>
-                <span class="btn btn-success fileinput-button">
-                    <span><i class="icon icon-plus icon-white" /> Add files...</span>
-                    <input type="file" name="files[]" multiple>
-                </span>
-                    <button type="submit" class="btn btn-primary start"><i class="icon icon-plus icon-white" /> Start upload</button>
-                    <button type="reset" class="btn btn-warning cancel"><i class="icon-ban-circle icon-white"></i> Cancel upload</button>
-                    <button type="button" class="btn btn-danger delete"><i class="icon-trash icon-white"></i> Hide selected</button>
-                    <input type="checkbox" class="toggle">
-                </div>
-            </div>
-            <br>
-            <div class="row">
-                <div class="span16">
-                    <table class="zebra-striped"><tbody class="files-list"></tbody></table>
-                </div>
-            </div>
-        </form>
     </div>
     <div class="hero-unit">
         <div class="page-header">

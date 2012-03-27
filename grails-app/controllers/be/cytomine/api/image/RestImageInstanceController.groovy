@@ -158,7 +158,7 @@ class RestImageInstanceController extends RestController {
             Term term = Term.read(termID)
 
             Collection<Annotation> annotations = (Collection<Annotation>) AnnotationTerm.createCriteria().list {
-                //inList("term", terms)
+                inList("term", [term])
                 join("annotation")
                 createAlias("annotation", "a")
                 projections {

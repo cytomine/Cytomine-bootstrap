@@ -4,6 +4,7 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import be.cytomine.image.UploadedFile
 import be.cytomine.api.RestController
+import be.cytomine.project.Project
 
 class RestUploadedFileController extends RestController {
 
@@ -12,6 +13,7 @@ class RestUploadedFileController extends RestController {
     def storageService
     def imagePropertiesService
     def springSecurityService
+    def projectService
 
     static allowedMethods = [image: 'POST']
 
@@ -38,6 +40,11 @@ class RestUploadedFileController extends RestController {
         def destPath = "/tmp/cytominebuffer"
         User currentUser = User.read(springSecurityService.principal.id)
         String errorMessage = ""
+        String projectParam = request.getParameter("idProject")
+        Project project = null
+        if (projectParam != null && projectParam != "undefined" && projectParam != "null") {
+             project = projectService.read(Integer.parseInt(projectParam), new Project())
+        }
         def f = request.getFile('files[]')
 
         def uploadedFile = null
@@ -65,7 +72,7 @@ class RestUploadedFileController extends RestController {
                     ext : ext,
                     size : f.size,
                     contentType : f.contentType,
-                    project : params.project,
+                    project : project,
                     user : currentUser
             )
             println "save uploadedFile = " + destFile
