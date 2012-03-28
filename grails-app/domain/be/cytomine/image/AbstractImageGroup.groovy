@@ -104,7 +104,7 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
         return callback
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + AbstractImageGroup.class
         JSON.registerObjectMarshaller(AbstractImageGroup) {
             def returnArray = [:]

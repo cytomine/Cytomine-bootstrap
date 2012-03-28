@@ -15,7 +15,7 @@ class ImageProperty {
         image(nullable: false)
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
 
         println "Register custom JSON renderer for " + AbstractImage.class
         JSON.registerObjectMarshaller(ImageProperty) {

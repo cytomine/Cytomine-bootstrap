@@ -53,7 +53,7 @@ class SoftwareParameter extends CytomineDomain {
         return this.software?.id
     }
 
-     static void registerMarshaller() {
+     static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + SoftwareParameter.class
         JSON.registerObjectMarshaller(SoftwareParameter) {
             def softwareParameter = [:]

@@ -25,6 +25,7 @@ import be.cytomine.processing.Job
 class RestAnnotationController extends RestController {
 
     def exportService
+    def grailsApplication
     def annotationService
     def termService
     def imageInstanceService
@@ -140,7 +141,7 @@ class RestAnnotationController extends RestController {
         if (params?.format && params.format != "html") {
             def exporterIdentifier = params.format;
             if (exporterIdentifier == "xls") exporterIdentifier = "excel"
-            response.contentType = ConfigurationHolder.config.grails.mime.types[params.format]
+            response.contentType = grailsApplication.config.grails.mime.types[params.format]
             SimpleDateFormat  simpleFormat = new SimpleDateFormat("yyyyMMdd_hhmmss");
             String datePrefix = simpleFormat.format(new Date())
             response.setHeader("Content-disposition", "attachment; filename=${datePrefix}_annotations_project${project.id}.${params.format}")

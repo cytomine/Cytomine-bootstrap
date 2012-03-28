@@ -63,7 +63,7 @@ class Group extends CytomineDomain {
         }
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Group.class
         JSON.registerObjectMarshaller(Group) {
             def returnArray = [:]

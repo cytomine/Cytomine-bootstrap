@@ -53,7 +53,7 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
         getFromData(new SecUserSecRole(), data)
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + SecUserSecRole.class
         JSON.registerObjectMarshaller(SecUserSecRole) {
             def returnArray = [:]

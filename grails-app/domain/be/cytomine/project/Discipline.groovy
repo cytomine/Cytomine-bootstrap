@@ -16,7 +16,7 @@ class Discipline extends CytomineDomain {
         id(generator: 'assigned', unique: true)
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Discipline.class
         JSON.registerObjectMarshaller(Discipline) {
             def returnArray = [:]

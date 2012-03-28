@@ -175,7 +175,7 @@ class User extends SecUser {
         return domain
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + User.class
         JSON.registerObjectMarshaller(User) {
             def returnArray = [:]

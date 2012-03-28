@@ -133,7 +133,7 @@ class ImageInstance extends CytomineDomain {
 
 
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + ImageInstance.class
         JSON.registerObjectMarshaller(ImageInstance) {
             def returnArray = [:]
@@ -174,7 +174,7 @@ class ImageInstance extends CytomineDomain {
 			try {returnArray['preview'] = it.baseImage ? it.baseImage.getPreviewURL() : null} catch (Exception e) {returnArray['preview'] = 'NO preview:' + e.toString()}
 			try {returnArray['thumb'] = it.baseImage ? it.baseImage.getThumbURL() : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
             //returnArray['thumb'] = UrlApi.getThumbURLWithImageId(it.id)
-            returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.baseImage.id)
+            returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(cytomineBaseUrl,it.baseImage.id)
 
             try {returnArray['numberOfAnnotations'] = it.countImageAnnotations} catch (Exception e) {e.printStackTrace(); returnArray['numberOfAnnotations'] = -1}
             //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id

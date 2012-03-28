@@ -132,7 +132,7 @@ class Term extends CytomineDomain implements Serializable, Comparable {
         return [ontologyID: this?.ontology?.id]
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Term.class
         JSON.registerObjectMarshaller(Term) {
             def returnArray = [:]

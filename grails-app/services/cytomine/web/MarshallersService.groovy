@@ -12,7 +12,8 @@ class MarshallersService {
                     def domainFullName = domain.packageName + "." + domain.name
                     println "Init Marshaller for domain class : " + domainFullName
                     def domainInstance = grailsApplication.getDomainClass(domainFullName).newInstance()
-                    domainInstance.registerMarshaller()
+                        domainInstance.registerMarshaller(grailsApplication.config.grails.serverURL)
+
                 }
 
             }

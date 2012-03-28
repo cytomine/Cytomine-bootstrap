@@ -77,7 +77,7 @@ class SoftwareProject extends CytomineDomain implements Serializable{
         return softwareProject;
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + SoftwareProject.class
         JSON.registerObjectMarshaller(SoftwareProject) {
             def returnArray = [:]

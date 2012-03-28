@@ -268,11 +268,15 @@ class Annotation extends CytomineDomain implements Serializable {
         return [annotationID: this.id, imageID: this.image.id]
 
     }
+    
 
-    static void registerMarshaller() {
+
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Annotation.class
         JSON.registerObjectMarshaller(Annotation) { annotation ->
             def returnArray = [:]
+
+            Date start = new Date()
             ImageInstance imageinstance = annotation.image
             AbstractImage image = imageinstance?.baseImage
             returnArray['class'] = annotation.class
@@ -283,7 +287,6 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['imageFilename'] = image?.filename
 
             returnArray['zoomLevel'] = annotation.zoomLevel
-
             returnArray['geometryCompression'] = annotation.geometryCompression
             returnArray['channels'] = annotation.channels
             returnArray['project'] = annotation.project.id
@@ -291,7 +294,6 @@ class Annotation extends CytomineDomain implements Serializable {
 
             if (annotation.userId) returnArray['user'] = annotation.userId
             else returnArray['user'] = annotation.user?.id
-
             returnArray['nbComments'] = annotation.countComments
             returnArray['area'] = annotation.computeArea()
             returnArray['perimeter'] = annotation.computePerimeter()
@@ -303,8 +305,11 @@ class Annotation extends CytomineDomain implements Serializable {
             //retrieval
             try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
             returnArray['cropURL'] = annotation.getCropURL()
-            returnArray['url'] = UrlApi.getAnnotationCropWithAnnotationId(annotation.id)
-            returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.getIdProject(), imageinstance.id, annotation.id)
+
+            //println grailsApplication.config.grails.serverURL
+
+            returnArray['url'] = UrlApi.getAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
+            returnArray['imageURL'] = UrlApi.getAnnotationURL(cytomineBaseUrl,imageinstance.getIdProject(), imageinstance.id, annotation.id)
             return returnArray
         }
     }

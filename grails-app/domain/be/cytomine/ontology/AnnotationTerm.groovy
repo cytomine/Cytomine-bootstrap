@@ -123,7 +123,7 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         callback.put("imageID", this.annotation.image.id)
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + AnnotationTerm.class
         JSON.registerObjectMarshaller(AnnotationTerm) {
             def returnArray = [:]

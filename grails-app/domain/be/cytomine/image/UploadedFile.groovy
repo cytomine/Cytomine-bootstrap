@@ -25,7 +25,7 @@ class UploadedFile extends CytomineDomain {
           project (nullable : true)
     }
 
-     static void registerMarshaller() {
+     static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + UploadedFile.class
         JSON.registerObjectMarshaller(UploadedFile) {
             def returnArray = [:]

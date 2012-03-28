@@ -119,7 +119,7 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
         return this.project?.id
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + AlgoAnnotationTerm.class
         JSON.registerObjectMarshaller(AlgoAnnotationTerm) {
             def returnArray = [:]

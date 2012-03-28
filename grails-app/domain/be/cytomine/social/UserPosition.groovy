@@ -19,7 +19,7 @@ class UserPosition extends CytomineDomain {
     double latitude
     int zoom
 
-     static void registerMarshaller() {
+     static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + UserPosition.class
         JSON.registerObjectMarshaller(UserPosition) {
             def returnArray = [:]

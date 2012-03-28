@@ -23,7 +23,7 @@ class JobParameter extends CytomineDomain{
         }
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + JobParameter.class
         JSON.registerObjectMarshaller(JobParameter) {
             def jobParameter = [:]

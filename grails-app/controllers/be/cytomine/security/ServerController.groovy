@@ -15,7 +15,7 @@ class ServerController {
         data.alive = true
         data.authenticated = springSecurityService.isLoggedIn()
         data.version = grailsApplication.metadata['app.version']
-        data.serverURL = ConfigurationHolder.config.grails.serverURL
+        data.serverURL = grailsApplication.config.grails.serverURL
 
         if (data.authenticated)
             data.user = springSecurityService.principal.id

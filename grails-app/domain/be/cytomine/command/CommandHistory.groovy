@@ -32,7 +32,7 @@ class CommandHistory extends CytomineDomain {
         project(nullable: true)
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + CommandHistory.class
         JSON.registerObjectMarshaller(CommandHistory) {
             def returnArray = [:]

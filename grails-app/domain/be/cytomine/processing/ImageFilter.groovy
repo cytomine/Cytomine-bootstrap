@@ -14,7 +14,7 @@ class ImageFilter {
         baseUrl(blank: false, nullable: false)
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + ImageFilter.class
         JSON.registerObjectMarshaller(ImageFilter) {
             def returnArray = [:]

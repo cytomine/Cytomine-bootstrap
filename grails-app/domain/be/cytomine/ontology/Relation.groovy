@@ -39,7 +39,7 @@ class Relation extends CytomineDomain implements Serializable {
         return relation;
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Relation.class
         JSON.registerObjectMarshaller(Relation) {
             def returnArray = [:]

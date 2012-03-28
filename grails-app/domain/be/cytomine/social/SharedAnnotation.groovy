@@ -22,7 +22,7 @@ class SharedAnnotation extends CytomineDomain {
         "Annotation " + annotation + " shared by " + sender
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
 
         println "Register custom JSON renderer for " + SharedAnnotation.class
         JSON.registerObjectMarshaller(SharedAnnotation) {

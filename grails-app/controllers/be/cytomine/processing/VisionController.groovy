@@ -19,10 +19,11 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
 class VisionController extends RestController {
 
     def imageProcessingService
+    def grailsApplication
 
     def process = {
         def split = request.queryString.split("url=http://")
-        String imageURL = ConfigurationHolder.config.grails.serverURL + "/images/notavailable.jpg"
+        String imageURL = grailsApplication.config.grails.serverURL + "/images/notavailable.jpg"
         if (split.size() > 0) {
             imageURL = "http://" + split[1]
         }
@@ -249,7 +250,7 @@ class VisionController extends RestController {
             responseBufferedImage(bufferedImage)
 
         } catch (Exception e) {
-            BufferedImage bufferedImage = getImageFromURL(ConfigurationHolder.config.grails.serverURL + "/images/notavailable.jpg")
+            BufferedImage bufferedImage = getImageFromURL(grailsApplication.config.grails.serverURL + "/images/notavailable.jpg")
             responseBufferedImage(bufferedImage)
         }
     }

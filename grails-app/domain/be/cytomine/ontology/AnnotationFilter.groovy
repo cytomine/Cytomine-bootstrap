@@ -53,7 +53,7 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
     }
 
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + AnnotationFilter.class
         JSON.registerObjectMarshaller(AnnotationFilter) {
             def returnArray = [:]

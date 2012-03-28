@@ -137,10 +137,6 @@ class AbstractImage extends CytomineDomain {
         return image;
     }
 
-    def getTermsURL() {
-        return ConfigurationHolder.config.grails.serverURL + '/api/annotation/' + this.id + '/term.json';
-    }
-
     def getIdScanner() {
 //        if (this.scannerId) return this.scannerId
 //        else return this.scanner?.id
@@ -155,7 +151,7 @@ class AbstractImage extends CytomineDomain {
     }
 
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
 
         println "Register custom JSON renderer for " + AbstractImage.class
         JSON.registerObjectMarshaller(AbstractImage) {
@@ -179,7 +175,7 @@ class AbstractImage extends CytomineDomain {
             //returnArray['annotations'] = it.annotations
             /*returnArray['thumb'] = it.getThumbURL()*/
             returnArray['thumb'] = it.getThumbURL()
-            returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.id)
+            returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(cytomineBaseUrl,it.id)
             //returnArray['imageServerInfos'] = UrlApi.getImageServerInfosWithImageId(it.id)
             //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
             //returnArray['imageServerBaseURL'] = it.getMime().imageServers().collect { it.getZoomifyUrl() }

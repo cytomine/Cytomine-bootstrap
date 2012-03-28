@@ -48,7 +48,7 @@ class Slide extends CytomineDomain {
         return slide;
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Slide.class
         JSON.registerObjectMarshaller(Slide) {
             def returnArray = [:]

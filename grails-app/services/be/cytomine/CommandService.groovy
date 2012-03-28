@@ -11,6 +11,7 @@ import be.cytomine.security.SecUser
 class CommandService {
 
     def springSecurityService
+    def grailsApplication
     int idUser
 
     static int SUCCESS_ADD_CODE = 200
@@ -41,7 +42,7 @@ class CommandService {
         log.info "processCommand:" + json
         c.setJson(json)
         String postData = json.toString()
-        def maxRequestSize = ConfigurationHolder.config.cytomine.maxRequestSize
+        def maxRequestSize = grailsApplication.config.cytomine.maxRequestSize
 
 
         if (postData.size() >= maxRequestSize) {

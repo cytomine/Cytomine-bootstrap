@@ -112,7 +112,7 @@ class Ontology extends CytomineDomain implements Serializable {
         return this.user?.id
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Ontology.class
         JSON.registerObjectMarshaller(Ontology) {
             def returnArray = [:]

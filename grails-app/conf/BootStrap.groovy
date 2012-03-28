@@ -14,8 +14,6 @@ import com.vividsolutions.jts.geom.Polygon
 import com.vividsolutions.jts.io.WKTReader
 import grails.util.GrailsUtil
 import java.lang.management.ManagementFactory
-import org.perf4j.LoggingStopWatch
-import org.perf4j.StopWatch
 import be.cytomine.data.*
 import be.cytomine.image.server.*
 import be.cytomine.ontology.*
@@ -55,6 +53,7 @@ class BootStrap {
     def sessionFactory
 
 
+
     static def development = "development"
     static def production = "production"
     static def test = "test"
@@ -64,7 +63,7 @@ class BootStrap {
         //Register API Authentifier
 
         SpringSecurityUtils.clientRegisterFilter( 'apiAuthentificationFilter', SecurityFilterPosition.DIGEST_AUTH_FILTER.order + 1)
-        println "###################" + ConfigurationHolder.config.grails.serverURL + "##################"
+        println "###################" + grailsApplication.config.grails.serverURL + "##################"
 
         println "GrailsUtil.environment= " + GrailsUtil.environment + " BootStrap.development=" + BootStrap.development
         if (GrailsUtil.environment == BootStrap.development) { //scripts are not present in productions mode
@@ -93,7 +92,6 @@ class BootStrap {
             println inputArgs.get(i)
         }
 
-        StopWatch stopWatch = new LoggingStopWatch();
         if (GrailsUtil.environment == BootStrap.test) { //scripts are not present in productions mode and dev mode
             initData(GrailsUtil.environment)
         }
@@ -105,7 +103,6 @@ class BootStrap {
         createProjectOwner()
         createAnnotationGrant()
         */
-        stopWatch.stop("initData");
         //end of init
 
 
@@ -332,7 +329,6 @@ class BootStrap {
 
     def createSlidesAndAbstractImages(abstractImages) {
 
-        StopWatch stopWatch = new LoggingStopWatch();
         //Storage storage = Storage.findByName("cytomine")
         Group giga = Group.findByName('GIGA')
         User user = User.findByUsername("rmaree")

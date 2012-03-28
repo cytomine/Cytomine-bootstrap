@@ -72,7 +72,7 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
         return imageFilterProject;
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + ImageFilterProject.class
         JSON.registerObjectMarshaller(ImageFilterProject) {
             def returnArray = [:]

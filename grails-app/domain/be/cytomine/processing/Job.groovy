@@ -49,11 +49,7 @@ class Job extends CytomineDomain  {
         else number = 1;
     }
 
-    def getUrl() {
-        ConfigurationHolder.config.grails.serverURL
-    }
-
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Job.class
         JSON.registerObjectMarshaller(Job) {
             def job = [:]

@@ -70,31 +70,7 @@ class UserJob extends SecUser {
         user.slides(max,first,col,order)
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + UserJob.class
         JSON.registerObjectMarshaller(UserJob) {
             def returnArray = [:]

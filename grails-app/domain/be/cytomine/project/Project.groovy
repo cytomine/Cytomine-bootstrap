@@ -205,7 +205,7 @@ class Project extends CytomineDomain {
 //        return users
     }
 
-    static void registerMarshaller() {
+    static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Project.class
         JSON.registerObjectMarshaller(Project) { project ->
             def returnArray = [:]
