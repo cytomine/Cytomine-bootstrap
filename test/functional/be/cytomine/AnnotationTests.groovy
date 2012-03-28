@@ -46,7 +46,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         def result = AnnotationAPI.showAnnotation(annotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         log.info("check response")
-        assertEquals(200, result.code)
+        assertEquals(400, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
