@@ -35,26 +35,19 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
      * http://code.google.com/apis/storage/docs/reference/v1/developer-guidev1.html#authentication
      */
     private boolean tryAPIAuthentification(HttpServletRequest request, HttpServletResponse response) {
-        println "tryAPIAuthentification"
         String authorization = request.getHeader("authorization")
-        println "authorization="+authorization
         if (request.getHeader("date") == null) {
-            println "Date Header Must be set"
             return false
         }
         if (request.getHeader("host") == null) {
-            println "Host Header Must be set"
             return false
         }
         if (authorization == null) {
-            println "Authorization Header must be set"
             return false
         }
         if (!authorization.startsWith("CYTOMINE") || !authorization.indexOf(" ") == -1 || !authorization.indexOf(":") == -1) {
-            println "Authorization Header is not valid"
             return false
         }
-        println "ok"
         try {
 
             String content_md5 = (request.getHeader("content-MD5") != null) ? request.getHeader("content-MD5") : ""
