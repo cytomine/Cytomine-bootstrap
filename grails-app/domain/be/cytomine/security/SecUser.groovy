@@ -1,10 +1,7 @@
 package be.cytomine.security
 
 import be.cytomine.CytomineDomain
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
-import java.security.acl.Acl
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
+
 import be.cytomine.Exception.AlreadyExistException
 
 class SecUser extends CytomineDomain {

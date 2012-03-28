@@ -23,9 +23,6 @@ import org.springframework.web.multipart.MultipartFile
 import javax.imageio.ImageIO
 import ij.ImagePlus
 
-import com.vividsolutions.jts.geom.CoordinateFilter
-import be.cytomine.CytomineDomain
-
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus

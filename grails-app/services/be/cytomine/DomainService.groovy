@@ -26,6 +26,10 @@ class DomainService {
 
     def deleteDomain(def oldObject) {
         try {
+            println "*** deleteDomain.vesion=" + oldObject.version
+            println "*** object=" + oldObject
+            println "*** recup=" + oldObject.read(oldObject.id)
+            println "*** refresh=" + oldObject.refresh()
             oldObject.delete(flush: true, failOnError: true)
         } catch (Exception e) {
             log.error e.toString()

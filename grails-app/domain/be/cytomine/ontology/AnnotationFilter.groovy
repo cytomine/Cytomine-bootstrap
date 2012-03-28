@@ -3,7 +3,7 @@ package be.cytomine.ontology
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.WrongArgumentException
+
 import be.cytomine.security.SecUser
 import be.cytomine.CytomineDomain
 import grails.converters.JSON

@@ -13,4 +13,9 @@ class Scanner extends Instrument {
         brand + "-" + model + " with maxResolution = " + maxResolution
     }
 
+  def beforeInsert() {
+    println "Scanner.beforeInsert()"
+      super.beforeInsert()
+  }
+
 }

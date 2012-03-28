@@ -4,7 +4,7 @@ import be.cytomine.CytomineDomain
 import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
 import org.codehaus.groovy.grails.commons.ApplicationHolder
-import grails.util.GrailsNameUtils
+
 import be.cytomine.Exception.AlreadyExistException
 
 class Software extends CytomineDomain {

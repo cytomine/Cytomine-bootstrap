@@ -27,6 +27,11 @@ class User extends SecUser {
         color(blank: false, nullable: true)
     }
 
+  static mapping = {
+      id(generator: 'assigned', unique: true)
+  }
+
+
     static hasMany = [softwareProjects: SoftwareProject]
 
 
@@ -192,6 +197,7 @@ class User extends SecUser {
     }
 
     def beforeInsert() {
+      println "User.beforeInsert()"
         super.beforeInsert()
     }
 

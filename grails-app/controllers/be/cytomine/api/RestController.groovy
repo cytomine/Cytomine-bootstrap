@@ -50,14 +50,14 @@ class RestController {
         }
     }
 
-    def response(data) {
+  protected def response(data) {
         withFormat {
             json { render data as JSON }
             xml { render data as XML}
         }
     }
 
-    def responseResult(result) {
+  protected  def responseResult(result) {
         log.info "result.status="+result.status
         response.status = result.status
         withFormat {
@@ -66,20 +66,20 @@ class RestController {
         }
     }
 
-    def responseSuccess(data, code) {
+  protected def responseSuccess(data, code) {
         response(data, code)
     }
 
-    def responseSuccess(data) {
+  protected  def responseSuccess(data) {
         response(data)
     }
 
-    def response(data, code) {
+  protected  def response(data, code) {
         response.status = code
         response(data)
     }
 
-    def responseNotFound(className, id) {
+  protected  def responseNotFound(className, id) {
         log.error className + " Id " + id + " don't exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
@@ -87,7 +87,7 @@ class RestController {
         }
     }
 
-    def responseNotFound(className, filter, id) {
+  protected def responseNotFound(className, filter, id) {
         log.error className + ": " + filter + " " + id + " don't exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
@@ -95,7 +95,7 @@ class RestController {
         }
     }
 
-    def responseNotFound(className, filter1, filter2, id1, id2) {
+  protected def responseNotFound(className, filter1, filter2, id1, id2) {
         log.error className + ": " + filter1 + " " + id1 + ", " + filter2 + " " + id2 + " don't exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
@@ -103,7 +103,7 @@ class RestController {
         }
     }
 
-    def responseNotFound(className, filter1, id1, filter2, id2, filter3, id3) {
+  protected def responseNotFound(className, filter1, id1, filter2, id2, filter3, id3) {
         log.error className + ": " + filter1 + " " + id1 + ", " + filter2 + " " + id2 + " and " + filter3 + " " + id3 + " don't exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
@@ -111,7 +111,7 @@ class RestController {
         }
     }
 
-    def responseImage(String url) {
+  protected def responseImage(String url) {
         def out = new ByteArrayOutputStream()
         withFormat {
             png {
@@ -140,14 +140,14 @@ class RestController {
         }
     }
 
-    BufferedImage getImageFromURL(String url) {
+  protected BufferedImage getImageFromURL(String url) {
         def out = new ByteArrayOutputStream()
         out << new URL(url).openStream()
         InputStream inputStream = new ByteArrayInputStream(out.toByteArray());
         return ImageIO.read(inputStream);
     }
 
-    def responseBufferedImage(BufferedImage bufferedImage) {
+  protected def responseBufferedImage(BufferedImage bufferedImage) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         withFormat {
 

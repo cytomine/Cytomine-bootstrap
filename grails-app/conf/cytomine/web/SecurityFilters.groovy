@@ -8,6 +8,8 @@ class SecurityFilters {
     def filters = {
         all(uri:'/api/**') {
             before = {
+                println "SecurityFilters.before()"
+                println "springSecurityService.isLoggedIn()="+springSecurityService.isLoggedIn()
                 if(!springSecurityService.isLoggedIn()) {
                     redirect(uri:'/')
                     return false

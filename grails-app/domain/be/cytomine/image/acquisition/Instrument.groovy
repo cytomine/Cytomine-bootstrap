@@ -15,5 +15,9 @@ abstract class Instrument extends CytomineDomain {
         brand + "-" + model
     }
 
+  def beforeInsert() {
+    println "Instrument.beforeInsert()"
+      super.beforeInsert()
+  }
 
 }

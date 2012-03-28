@@ -62,6 +62,7 @@ class BootStrap {
 
     def init = { servletContext ->
         //Register API Authentifier
+
         SpringSecurityUtils.clientRegisterFilter( 'apiAuthentificationFilter', SecurityFilterPosition.DIGEST_AUTH_FILTER.order + 1)
         println "###################" + ConfigurationHolder.config.grails.serverURL + "##################"
 
@@ -475,11 +476,14 @@ class BootStrap {
                     password: item.password,
                     enabled: true)
             user.generateKeys()
+            println "Before validating ${user.username}..."
             if (user.validate()) {
                 println "Creating user ${user.username}..."
                 // user.addToTransactions(new Transaction())
                 //user.encodePassword()
                 user.save(flush: true)
+
+              println "Save ${user.username}..."
 
                 /* Create a special group the user */
                 def userGroupName = item.username
@@ -516,7 +520,6 @@ class BootStrap {
         scannersSamples.each { item ->
             if (Scanner.findByBrandAndModel(item.brand, item.model)) return
             Scanner scanner = new Scanner(brand: item.brand, model: item.model)
-
             if (scanner.validate()) {
                 println "Creating scanner ${scanner.brand} - ${scanner.model}..."
                 scanner.save(flush: true)
@@ -590,7 +593,6 @@ class BootStrap {
 
                 if (imageServer.validate()) {
                     println "Creating image server ${imageServer.name}... : ${imageServer.url}"
-
                     imageServer.save(flush: true)
 
                     /* Link with MIME Types */

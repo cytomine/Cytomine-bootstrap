@@ -85,7 +85,7 @@ class ImageInstanceAPI extends DomainAPI {
         log.info("check response")
 //        assertEquals(200, code)
         def json = JSON.parse(response)
-        int idImage = json?.imageinstance?.id
+        Long idImage = json?.imageinstance?.id
         return [data: ImageInstance.get(idImage), code: code]
     }
 

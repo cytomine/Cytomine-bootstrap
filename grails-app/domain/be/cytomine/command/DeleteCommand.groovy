@@ -28,13 +28,16 @@ class DeleteCommand extends Command {
         initService()
         //Create new domain
         println "retrieve:"+json
+
         def oldDomain = service.retrieve(json)
+        println "*** execute1.vesion=" + oldDomain.version
         println "oldDomain:"+oldDomain
         def backup = oldDomain.encodeAsJSON()
         println "backup:"+backup
+        println "*** execute2.vesion=" + oldDomain.version
         //Init command info
         super.initCurrentCommantProject(oldDomain?.projectDomain())
-        println "initCurrentCommantProject ok"
+        println "*** execute3.vesion=" + oldDomain.version
         def response = service.destroy(oldDomain, printMessage)
 
         fillCommandInfoJSON(backup, response.data.message)

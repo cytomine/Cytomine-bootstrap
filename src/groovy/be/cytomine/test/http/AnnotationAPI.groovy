@@ -137,7 +137,7 @@ class AnnotationAPI extends DomainAPI {
         client.disconnect();
         log.info("check response")
         def json = JSON.parse(response)
-        int idAnnotation = json?.annotation?.id
+        Long idAnnotation = json?.annotation?.id
         return [data: Annotation.get(idAnnotation), code: code]
     }
 

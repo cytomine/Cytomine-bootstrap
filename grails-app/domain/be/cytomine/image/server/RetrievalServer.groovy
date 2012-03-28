@@ -16,4 +16,13 @@ class RetrievalServer extends CytomineDomain {
 
     String toString() { return url; }
 
+
+    def beforeInsert() {
+      super.beforeInsert()
+    }
+
+  def beforeValidate() {
+    super.beforeValidate()
+  }
+
 }

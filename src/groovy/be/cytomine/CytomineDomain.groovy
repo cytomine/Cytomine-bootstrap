@@ -19,6 +19,7 @@ abstract class CytomineDomain {
     Date updated
 
     static mapping = {
+        tablePerHierarchy false
         id generator: "assigned"
     }
 
@@ -34,8 +35,16 @@ abstract class CytomineDomain {
         if (id == null) {
             id = sequenceService.generateID(this)
         }
-
     }
+
+  def beforeValidate() {
+      if (!created) {
+          created = new Date()
+      }
+      if (id == null) {
+          id = sequenceService.generateID(this)
+      }
+  }
 
     public beforeUpdate() {
         updated = new Date()

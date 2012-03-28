@@ -85,7 +85,7 @@ class ProjectAPI extends DomainAPI {
         log.info("check response")
 //        assertEquals(200, code)
         def json = JSON.parse(response)
-        int idProject = json?.project?.id
+        Long idProject = json?.project?.id
 
 
 //        log.info("check if object "+ idProject +" exist in DB")

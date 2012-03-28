@@ -12,6 +12,8 @@ import be.cytomine.image.AbstractImage
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.image.ImageInstance
 import be.cytomine.test.http.AnnotationAPI
+import be.cytomine.security.SecUser
+import org.codehaus.groovy.grails.commons.ApplicationHolder
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,11 +23,28 @@ import be.cytomine.test.http.AnnotationAPI
  * To change this template use File | Settings | File Templates.
  */
 class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
-
+    def springSecurityService
     void testGetAnnotationWithCredential() {
         log.info("create annotation")
+        log.fatal("LOG FATAL enable");
+        log.error("LOG ERROR enable");
+        log.warn("LOG WARN enable");
+        log.debug("LOG DEBUG enable");
+        log.info("LOG INFO enable");
+        
+        User.list().each {
+            println "||| USER " + it.username + " => " + it.password
+        }
+
         Annotation annotation = BasicInstance.createOrGetBasicAnnotation()
-        def result = AnnotationAPI.showAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+
+        SecUser user = SecUser.findByUsername(Infos.GOODLOGIN)
+        def springSecurityService = ApplicationHolder.application.getMainContext().getBean("springSecurityService")
+        println "######## User = " + user.username + " password = " + user.password
+        println "######## User = " + Infos.GOODLOGIN + " password = " + springSecurityService.encodePassword(Infos.GOODPASSWORD)
+
+
+        def result = AnnotationAPI.showAnnotation(annotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         log.info("check response")
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
