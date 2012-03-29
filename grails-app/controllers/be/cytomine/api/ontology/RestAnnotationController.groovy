@@ -125,6 +125,7 @@ class RestAnnotationController extends RestController {
         log.info params
         Project project = projectService.read(params.long('id'),new Project())
         if (!project) responseNotFound("Project", params.long('id'))
+        log.info "check authorization on project " + project
         projectService.checkAuthorization(project)
         def users = []
         params.users.split(",").each { id ->
@@ -136,6 +137,7 @@ class RestAnnotationController extends RestController {
         }
         def termsName = Term.findAllByIdInList(terms).collect{ it.toString() }
         def usersName = SecUser.findAllByIdInList(users).collect{ it.toString() }
+        log.info "termsName="+termsName + " usersName=" +usersName
         if (params?.format && params.format != "html") {
             def exporterIdentifier = params.format;
             if (exporterIdentifier == "xls") exporterIdentifier = "excel"
@@ -143,15 +145,18 @@ class RestAnnotationController extends RestController {
             SimpleDateFormat  simpleFormat = new SimpleDateFormat("yyyyMMdd_hhmmss");
             String datePrefix = simpleFormat.format(new Date())
             response.setHeader("Content-disposition", "attachment; filename=${datePrefix}_annotations_project${project.id}.${params.format}")
+            log.info "request header"
             def annotations = Annotation.createCriteria().list {
                 eq("project", project)
                 inList("user.id", users)
             }
+            log.info "annotation request"
             def annotationTerms = AnnotationTerm.createCriteria().list {
                 inList("annotation", annotations)
                 inList("term.id", terms)
                 order("term.id", "asc")
             }
+            log.info "annotation term request"
             def exportResult = []
             annotationTerms.each { annotationTerm ->
                 Annotation annotation = annotationTerm.annotation
@@ -176,9 +181,11 @@ class RestAnnotationController extends RestController {
                 data.cropGOTO = UrlApi.getAnnotationURL(grailsApplication.config.grails.serverURL,annotation.image.getIdProject(), annotation.image.id, annotation.id)
                 exportResult.add(data)
             }
+            log.info "export result"
             List fields = ["id", "area", "perimeter", "XCentroid", "YCentroid", "image", "filename", "user", "term", "cropURL", "cropGOTO"]
             Map labels = ["id": "Id", "area": "Area (µm²)", "perimeter": "Perimeter (µm)", "XCentroid" : "X", "YCentroid" : "Y", "image": "Image Id", "filename": "Image Filename", "user": "User", "term": "Term", "cropURL": "View annotation picture", "cropGOTO": "View annotation on image"]
             String title = "Annotations in " + project.getName() + " created by " + usersName.join(" or ") + " and associated with " + termsName.join(" or ") + " @ " + (new Date()).toLocaleString()
+            log.info "export service"
             exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04,0.06,0.06,0.04, 0.04, 0.04,0.08,0.06,0.06,0.25,0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
         }
     }
