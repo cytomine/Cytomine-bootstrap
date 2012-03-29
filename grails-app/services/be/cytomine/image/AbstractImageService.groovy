@@ -85,7 +85,8 @@ class AbstractImageService extends ModelService {
         SecUser currentUser = cytomineService.getCurrentUser()
 
         def res = executeCommand(new AddCommand(user: currentUser), json)
-        AbstractImage abstractImage = (AbstractImage) res.data.abstractimage
+        //AbstractImage abstractImage = retrieve(res.data.abstractimage)
+        AbstractImage abstractImage = res.object
         Group group = Group.findByName(currentUser.getUsername())
         AbstractImageGroup.link(abstractImage, group)
         json.storage.each { storageID ->
@@ -105,7 +106,7 @@ class AbstractImageService extends ModelService {
         Transaction transaction = transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
         def res = executeCommand(new EditCommand(user: currentUser), json)
-        AbstractImage abstractImage = (AbstractImage) res.data.abstractimage
+        AbstractImage abstractImage = res.object
         StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
               StorageAbstractImage.unlink(storageAbstractImage.storage, abstractImage)
         }

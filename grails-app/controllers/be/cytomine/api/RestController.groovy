@@ -5,6 +5,7 @@ import grails.converters.JSON
 import grails.converters.XML
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
+import org.apache.commons.io.IOUtils
 
 class RestController {
 
@@ -142,7 +143,15 @@ class RestController {
 
   protected BufferedImage getImageFromURL(String url) {
         def out = new ByteArrayOutputStream()
-        out << new URL(url).openStream()
+        try {
+            out << new URL(url).openStream()
+        } catch(Exception e) {
+            //out = IOUtils.toByteArray(new FileInputStream(url));
+            IOUtils.copy(new FileInputStream(url),out);
+
+         //            InputStream input = new BufferedInputStream(new FileInputStream(url));
+//            input.read(out)
+        }
         InputStream inputStream = new ByteArrayInputStream(out.toByteArray());
         return ImageIO.read(inputStream);
     }

@@ -31,6 +31,7 @@ class SharedAnnotation extends CytomineDomain {
             returnArray['id'] = it.id
             returnArray['comment'] = it.comment
             returnArray['sender'] = it.sender.toString()
+            returnArray['annotation'] = it.annotation.id
             returnArray['receiver'] = it.receiver.collect { it.toString() }
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null

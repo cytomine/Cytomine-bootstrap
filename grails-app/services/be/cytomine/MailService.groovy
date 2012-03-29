@@ -29,7 +29,7 @@ class MailService {
         helper.setReplyTo("noreply@cytomine.be")
         helper.setFrom(from)
         helper.setTo(to)
-        helper.setCc(cc)
+        //helper.setCc(cc)
         helper.setSubject(subject)
         helper.setText("",message)
         attachment.each {

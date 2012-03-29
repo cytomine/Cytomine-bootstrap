@@ -94,8 +94,7 @@ class RestAnnotationController extends RestController {
     def listAnnotationByProjectAndTerm = {
         Term term = termService.read(params.long('idterm'))
         Project project = projectService.read(params.long('idproject'), new Project())
-        println "project="+project
-        println "project="+params['idproject']
+
         List<User> userList = userService.list(project)
 
         if (params.users) {
@@ -106,25 +105,24 @@ class RestAnnotationController extends RestController {
             }
             userList = userListTemp;
         }
+       
         log.info "List by idTerm " + term.id + " with user:" + userList
-
-
-        if (term == null) responseNotFound("Term", params.idterm)
-        if (project == null) responseNotFound("Project", params.idproject)
         log.info "annotationService.list: " + project + " # " + term + " # " + userList
-        def annotationFromTermAndProject=[]
-        if(!params.suggestTerm) {
-            annotationFromTermAndProject = annotationService.list(project, term, userList)
+        if (term == null) responseNotFound("Term", params.idterm)
+        else if (project == null) responseNotFound("Project", params.idproject)
+        else if (userList.isEmpty()) responseNotFound("Users", params.users)
+        else if(!params.suggestTerm) {
+            responseSuccess(annotationService.list(project, term, userList))
         }
         else {
             Term suggestedTerm = termService.read(params.suggestTerm)
-            annotationFromTermAndProject = annotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')))
+            responseSuccess(annotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job'))))
         }
-        responseSuccess(annotationFromTermAndProject)
     }
 
     def downloadDocumentByProject = {  //and filter by users and terms !
         // Export service provided by Export plugin
+        log.info params
         Project project = projectService.read(params.long('id'),new Project())
         if (!project) responseNotFound("Project", params.long('id'))
         projectService.checkAuthorization(project)
@@ -174,8 +172,8 @@ class RestAnnotationController extends RestController {
                 data.filename = annotation.getFilename()
                 data.user = annotation.user.toString()
                 data.term = term.name
-                data.cropURL =UrlApi.getAnnotationCropWithAnnotationId(annotation.id)
-                data.cropGOTO = UrlApi.getAnnotationURL(annotation.image.getIdProject(), annotation.image.id, annotation.id)
+                data.cropURL =UrlApi.getAnnotationCropWithAnnotationId(grailsApplication.config.grails.serverURL,annotation.id)
+                data.cropGOTO = UrlApi.getAnnotationURL(grailsApplication.config.grails.serverURL,annotation.image.getIdProject(), annotation.image.id, annotation.id)
                 exportResult.add(data)
             }
             List fields = ["id", "area", "perimeter", "XCentroid", "YCentroid", "image", "filename", "user", "term", "cropURL", "cropGOTO"]
@@ -190,6 +188,7 @@ class RestAnnotationController extends RestController {
         //try {
         User sender = User.read(springSecurityService.principal.id)
         Annotation annotation = Annotation.read(request.JSON.annotation)
+        log.info "add comment from " + sender + " and annotation " + annotation
         BufferedImage bufferedImage = getImageFromURL(annotation.getCropURL())
         File annnotationCrop = File.createTempFile("temp", ".jpg")
         annnotationCrop.deleteOnExit()
@@ -202,6 +201,7 @@ class RestAnnotationController extends RestController {
         for (int i = 0; i < receivers.size(); i++) {
             receiversEmail[i] = receivers[i].getEmail();
         }
+        log.info "send mail to " + receiversEmail
         def sharedAnnotation = new SharedAnnotation(
                 sender : sender,
                 receiver : receivers,
@@ -252,7 +252,9 @@ class RestAnnotationController extends RestController {
     }
 
     def show = {
+        log.info "Show controller " + params.long('id')
         Annotation annotation = annotationService.read(params.long('id'))
+        log.info "Annotation = " + annotation
         if (annotation) {
             annotationService.checkAuthorization(annotation.project)
             responseSuccess(annotation)
@@ -263,12 +265,22 @@ class RestAnnotationController extends RestController {
     def add = {
         def json = request.JSON
         try {
-            if(!json.project) {
+            if(!json.project || json.isNull('project')) {
+                log.debug "No project was set"
                 ImageInstance image = ImageInstance.read(json.image)
+                log.debug "Get image = "+image
+                log.debug "Get poroject = "+image.project
                 if(image) json.project = image.project.id
+                log.debug "Get poroject 2 = "+json.project
             }
-            if(!json.project || !Project.read(json.project) || json.location == null || json.location == "null") throw new WrongArgumentException("Annotation must have a valide project:"+json.project)
-            log.info "json.project="+json.project
+            log.debug "json.project="+json.project + " (" + json.isNull('project') + ")"
+            log.debug "json.location="+json.location + " (" + json.isNull('location') + ")"
+            if(json.isNull('project')) throw new WrongArgumentException("Annotation must have a valide project:"+json.project)
+            if(json.isNull('location')) {
+                log.debug "json location is null!"
+                throw new WrongArgumentException("Annotation must have a valide geometry:"+json.location)
+            }
+
             annotationService.checkAuthorization(Long.parseLong(json.project.toString()), new Annotation())
             def result = annotationService.add(json)
             responseResult(result)
@@ -278,10 +290,6 @@ class RestAnnotationController extends RestController {
             response([success: false, errors: e.msg], e.code)
         }
     }
-
-//    def update = {
-    //        update(annotationService, request.JSON)
-    //    }
 
     def update= {
         def json = request.JSON

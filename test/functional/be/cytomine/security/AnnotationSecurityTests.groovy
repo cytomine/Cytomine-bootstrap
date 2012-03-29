@@ -36,7 +36,7 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         //Add annotation 1 with cytomine admin
         Annotation annotation1 = BasicInstance.getBasicAnnotationNotExist()
         annotation1.image = image
-        annotation1.project = image.project
+        annotation1.project = project
         def result = AnnotationAPI.create(annotation1, be.cytomine.SecurityTestsAbstract.USERNAMEADMIN, be.cytomine.SecurityTestsAbstract.PASSWORDADMIN)
         assertEquals(200, result.code)
         annotation1 = result.data
@@ -44,7 +44,7 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         //Add annotation 2 with user 1
         Annotation annotation2 = BasicInstance.getBasicAnnotationNotExist()
         annotation2.image = image
-        annotation2.project = image.project
+        annotation2.project = project
         Infos.printRight(annotation2.project)
         result = AnnotationAPI.create(annotation2, be.cytomine.SecurityTestsAbstract.USERNAME1, be.cytomine.SecurityTestsAbstract.PASSWORD1)
         assertEquals(200, result.code)
@@ -80,8 +80,6 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         def result = AnnotationAPI.create(annotation, be.cytomine.SecurityTestsAbstract.USERNAME1, be.cytomine.SecurityTestsAbstract.PASSWORD1)
         assertEquals(200, result.code)
         annotation = result.data
-        log.info("### " + annotation.user.username + " " + annotation.user.id)
-        log.info("### " + User.findByUsername(be.cytomine.SecurityTestsAbstract.USERNAME1).username + " " + User.findByUsername(be.cytomine.SecurityTestsAbstract.USERNAME1).id)
 
         //Get/List annotation 1 with user 1
         assertEquals(200, AnnotationAPI.show(annotation.id, be.cytomine.SecurityTestsAbstract.USERNAME1, be.cytomine.SecurityTestsAbstract.PASSWORD1).code)
@@ -90,14 +88,11 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         assertTrue(AnnotationAPI.containsInJSONList(annotation.id, JSON.parse(result.data)))
 
         //update annotation 1 with user 1
-        log.info("### " + annotation.user.username + " " + annotation.user.id)
         annotation.refresh()
-        log.info("### " + annotation.user.username + " " + annotation.user.id)
         assertEquals(200, AnnotationAPI.update(annotation, be.cytomine.SecurityTestsAbstract.USERNAME1, be.cytomine.SecurityTestsAbstract.PASSWORD1).code)
 
         //Delete annotation 1 with user 1
         assertEquals(200, AnnotationAPI.delete(annotation.id, be.cytomine.SecurityTestsAbstract.USERNAME1, be.cytomine.SecurityTestsAbstract.PASSWORD1).code)
-
     }
 
     void testAnnotationSecurityForProjectUser() {
@@ -161,7 +156,6 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         assertEquals(403, AnnotationAPI.show(annotation.id, be.cytomine.SecurityTestsAbstract.USERNAME2, be.cytomine.SecurityTestsAbstract.PASSWORD2).code)
         result = AnnotationAPI.listByProject(project.id, be.cytomine.SecurityTestsAbstract.USERNAME2, be.cytomine.SecurityTestsAbstract.PASSWORD2)
         assertEquals(403, result.code)
-        //assertTrue(AnnotationAPI.containsInJSONList(annotation.id, JSON.parse(result.data)))
 
         //update annotation 1 with user 2
         assertEquals(403, AnnotationAPI.update(annotation, be.cytomine.SecurityTestsAbstract.USERNAME2, be.cytomine.SecurityTestsAbstract.PASSWORD2).code)

@@ -81,6 +81,30 @@ class AnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def listByTerm(Long id, String username, String password) {
+        log.info "list annotation by term " + id
+        String URL = Infos.CYTOMINEURL + "api/term/$id/annotation.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+    static def listByProjectAndTerm(Long idProject, Long idTerm, Long idUser,String username, String password) {
+        log.info "list annotation by project $idProject and term $idTerm"
+        String URL = Infos.CYTOMINEURL + "api/term/$idTerm/project/$idProject/annotation.json?users="+idUser
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
     static def listByImageAndUser(Long idImage,Long idUser, String username, String password) {
         log.info "list annotation by user " + idUser + " and image " + idImage
         String URL = Infos.CYTOMINEURL+"api/user/"+ idUser +"/imageinstance/"+idImage+"/annotation.json"
@@ -93,6 +117,28 @@ class AnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def listByProjectAndUsers(Long id,Long idUser, String username, String password) {
+        log.info "list annotation by user " + idUser + " and project " + id
+        String URL = Infos.CYTOMINEURL+"api/project/"+ id +"/annotation.json?users=" +idUser
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+    static def downloadDocumentByProject(Long idProject,Long idUser, Long idTerm, String username, String password) {
+        log.info "download annotation by user " + idUser + " and project " + idProject + " and term " + idTerm
+        String URL = Infos.CYTOMINEURL+"api/project/"+ idProject +"/annotation/download?users=" +idUser + "&terms=" + idTerm +"&format=pdf"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        client.disconnect();
+        return [code: code]
+    }
     static def create(Annotation annotationToAdd, User user) {
        create(annotationToAdd.encodeAsJSON(),user.username,user.password)
     }

@@ -7,6 +7,7 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.test.Infos
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.test.http.AnnotationAPI
+import be.cytomine.ontology.AnnotationTerm
 
 /**
  * Created by IntelliJ IDEA.
@@ -48,6 +49,43 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
+    void testListAnnotationsByProjectAndTermAndUserWithCredential() {
+        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+        Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.annotation.project)
+        def result = AnnotationAPI.listByProjectAndTerm(annotationTerm.annotation.project.id, annotationTerm.term.id, annotationTerm.annotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
+    
+    void testListAnnotationsByProjectAndTermWithUserNullWithCredential() {
+        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+        def result = AnnotationAPI.listByProjectAndTerm(annotationTerm.annotation.project.id, annotationTerm.term.id, null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }    
+
+    void testListAnnotationsByProjectAndUsersWithCredential() {
+        Annotation annotation = BasicInstance.createOrGetBasicAnnotation()
+        def result = AnnotationAPI.listByProjectAndUsers(annotation.project.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
+
+    void testListAnnotationsByTerm() {
+        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+
+        def result = AnnotationAPI.listByTerm(annotationTerm.term.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
+    
+    void testDownloadAnnotationsDocument() {
+        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+        def result = AnnotationAPI.downloadDocumentByProject(annotationTerm.annotation.project.id,annotationTerm.annotation.user.id,annotationTerm.term.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
 
     void testAddAnnotationCorrect() {
         def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
@@ -68,6 +106,14 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
 
         result = AnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
+    void testAddAnnotationCorrectWithoutProject() {
+        def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
+        def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
+        updateAnnotation.project = null
+        def result = AnnotationAPI.create(updateAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
     }
 
@@ -116,6 +162,14 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = 'POLYGON EMPTY'
+        def result = AnnotationAPI.create(updateAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(400, result.code)
+    }
+
+    void testAddAnnotationBadGeomNull() {
+        def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
+        def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
+        updateAnnotation.location = null
         def result = AnnotationAPI.create(updateAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(400, result.code)
     }

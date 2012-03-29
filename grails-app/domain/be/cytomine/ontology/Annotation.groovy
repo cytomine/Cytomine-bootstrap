@@ -61,16 +61,6 @@ class Annotation extends CytomineDomain implements Serializable {
         name = name && !name.trim().equals("") ? name : "Annotation " + id
         project = image.project
     }
-    /*public afterInsert() {
-      println "Annotation.afterInsert"
-        Project project = image.project;
-        project.countAnnotations++
-    }
-    public def afterDelete()  {
-      println "Annotation.afterDelete"
-        Project project = image.project;
-        project.countAnnotations--
-    }*/
     /**
      * Get all terms map with the annotation
      * @return list of terms
@@ -81,32 +71,8 @@ class Annotation extends CytomineDomain implements Serializable {
         }
     }
 
-    private def getTermsname() {
-        return annotationTerm.collect {
-            it.term.name
-        }
-    }
-
     def termsId() {
         return annotationTerm.collect{it.getIdTerm()}.unique()
-    }
-
-    def termsIdByUser() {
-        Map<Long, List<Long>> usersAnnotation = [:]
-        annotationTerm.each { annotationTerm ->
-            if (usersAnnotation.containsKey(annotationTerm.user.id)) {
-                //if user is already there, add term to the list
-                List<Long> terms = usersAnnotation.get(annotationTerm.user.id)
-                terms.add(annotationTerm.term.id)
-                usersAnnotation.put(annotationTerm.user.id, terms)
-            } else {
-                //if user is not there create list with term id
-                List<Long> terms = new ArrayList<Long>();
-                terms.add(annotationTerm.term.id)
-                usersAnnotation.put(annotationTerm.user.id, terms)
-            }
-        }
-        usersAnnotation
     }
 
     def usersIdByTerm() {
@@ -176,21 +142,6 @@ class Annotation extends CytomineDomain implements Serializable {
         def boundaries = getBoundaries()
         return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height)
     }
-
-    def crop = { domain, value ->
-
-    }
-
-
-    def getURLForCrop() {
-        return UrlApi.getAnnotationCropWithAnnotationId(this.id)
-    }
-
-    def getURLForServerGoTo() {
-        return UrlApi.getAnnotationURL(this.image.getIdProject(), this.image.id, this.id)
-    }
-
-
 
     def getCropURL(int zoom) {
         def boundaries = getBoundaries()

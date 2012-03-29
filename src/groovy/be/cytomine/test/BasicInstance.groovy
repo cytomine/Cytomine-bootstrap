@@ -30,6 +30,7 @@ import be.cytomine.security.UserJob
 import be.cytomine.processing.SoftwareParameter
 import be.cytomine.processing.SoftwareProject
 import be.cytomine.processing.JobParameter
+import be.cytomine.social.SharedAnnotation
 
 /**
  * Created by IntelliJ IDEA.
@@ -101,6 +102,48 @@ class BasicInstance {
         annotation
     }
 
+    static SharedAnnotation createOrGetBasicSharedAnnotation() {
+        log.debug "createOrGetBasicSharedAnnotation()"
+
+        def sharedannotation = SharedAnnotation.findOrCreateWhere(
+                sender: User.findByUsername(Infos.GOODLOGIN),
+                comment: "This is a test",
+                annotation: createOrGetBasicAnnotation()
+        )
+
+        if(!sharedannotation.validate()) {
+            log.debug "sharedannotation.errors=" + sharedannotation.errors
+            assert false
+        }
+
+        if(!sharedannotation.save(flush: true)) {
+            log.debug "sharedannotation.errors=" + sharedannotation.errors
+            assert false
+        }        
+        assert sharedannotation != null
+        sharedannotation
+    }
+
+    static SharedAnnotation getBasicSharedAnnotationNotExist() {
+        log.debug "getBasicSharedAnnotationNotExist()"
+        def sharedannotation = new SharedAnnotation(
+                sender: User.findByUsername(Infos.GOODLOGIN),
+                comment: "This is a test",
+                annotation: createOrGetBasicAnnotation()
+        )
+
+        if(!sharedannotation.validate()) {
+            log.debug "sharedannotation.errors=" + sharedannotation.errors
+            assert false
+        }
+
+        if(!sharedannotation.save(flush: true)) {
+            log.debug "sharedannotation.errors=" + sharedannotation.errors
+            assert false
+        }
+        assert sharedannotation != null
+        sharedannotation
+    }
 
 
 

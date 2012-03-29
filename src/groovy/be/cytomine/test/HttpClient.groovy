@@ -60,22 +60,22 @@ class HttpClient {
 
   void get()
   {
-    log.debug("Get " + URL.getPath())
-    HttpGet httpGet = new HttpGet(URL.getPath());
+    log.debug("Get " + URL.toString())
+    HttpGet httpGet = new HttpGet(URL.toString());
     response = client.execute(targetHost, httpGet, localcontext);
   }
 
   void delete()
   {
-    log.debug("Delete " + URL.getPath())
-    HttpDelete httpDelete = new HttpDelete(URL.getPath());
+    log.debug("Delete " + URL.toString())
+    HttpDelete httpDelete = new HttpDelete(URL.toString());
     response = client.execute(targetHost, httpDelete, localcontext);
   }
 
   void post(String data)
   {
-    log.debug("Post " + URL.getPath())
-    HttpPost httpPost = new HttpPost(URL.getPath());
+    log.debug("Post " + URL.toString())
+    HttpPost httpPost = new HttpPost(URL.toString());
     log.debug("Post send :" + data.replace("\n",""))
     //write data
     ContentProducer cp = new ContentProducer() {
@@ -93,8 +93,8 @@ class HttpClient {
 
   void put(String data)
   {
-    log.debug("Put " + URL.getPath())
-    HttpPut httpPut = new HttpPut(URL.getPath());
+    log.debug("Put " + URL.toString())
+    HttpPut httpPut = new HttpPut(URL.toString());
     log.debug("Put send :" + data.replace("\n",""))
     //write data
     ContentProducer cp = new ContentProducer() {

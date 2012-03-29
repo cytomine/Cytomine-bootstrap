@@ -167,6 +167,7 @@ class AnnotationService extends ModelService {
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, List<SecUser> userList) {
+        log.debug "list annotation by project = $project and term $term and users $userList"
         def criteria = Annotation.withCriteria() {
             eq('project', project)
             annotationTerm {

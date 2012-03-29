@@ -61,7 +61,7 @@ class CommandService {
             }
         }
 
-        log.debug "result.status=" + result.status + " result.data=" + result.data
+        log.debug "result.status=" + result.status
         //result = (status: + data:)
         return result
     }

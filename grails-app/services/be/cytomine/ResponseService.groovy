@@ -1,5 +1,7 @@
 package be.cytomine
 
+import grails.converters.JSON
+
 class ResponseService {
 
     static transactional = true
@@ -41,13 +43,37 @@ class ResponseService {
         params.put('message', message)
         params.put('callback', paramsCallback)
         params.put('printMessage', printMessage)
-        params.put(objectName.toLowerCase(), object)
+        params.put(objectName.toLowerCase(), JSON.parse((String)object.encodeAsJSON()))
 
         return [data: params, status: 200, object:object];
     }
 
 
-
+//    public def createResponseMessageDelete(def object, def messageParams, boolean printMessage, String commandType) {
+//        createResponseMessage(object, messageParams, printMessage, commandType, null)
+//    }
+//
+//    public def createResponseMessageDelete(def object, def messageParams, boolean printMessage, String commandType, HashMap<String, Object> additionalCallbackParams) {
+//        String objectName = getClassName(object)
+//        String command = "be.cytomine." + commandType + objectName + "Command"
+//        String idName = objectName.toLowerCase() + "ID" //termID, annotationID,...
+//        String id = object.id
+//        HashMap<String, Object> paramsCallback = new HashMap<String, Object>()
+//        paramsCallback.put('method', command)
+//        paramsCallback.put(idName, id)
+//        if (additionalCallbackParams)
+//            paramsCallback.putAll(additionalCallbackParams);
+//
+//        def message = messageSource.getMessage(command, messageParams as Object[], Locale.ENGLISH)
+//
+//        HashMap<String, Object> params = new HashMap<String, Object>()
+//        params.put('message', message)
+//        params.put('callback', paramsCallback)
+//        params.put('printMessage', printMessage)
+//        params.put(objectName.toLowerCase(), object.encodeAsJSON())
+//
+//        return [data: params, status: 200, object:object.encodeAsJSON()];
+//    }
 
 
 
