@@ -9,14 +9,12 @@ import be.cytomine.utils.ValueComparator
 import grails.converters.JSON
 import groovyx.gpars.Asynchronizer
 import java.util.concurrent.Future
-import org.codehaus.groovy.grails.web.json.JSONArray
-import be.cytomine.ontology.Ontology
-import be.cytomine.ontology.OntologyService
+
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException
 import groovyx.net.http.*
 import static groovyx.net.http.Method.*
-import static groovyx.net.http.ContentType.*
+
 import be.cytomine.api.UrlApi
 
 class RetrievalService {

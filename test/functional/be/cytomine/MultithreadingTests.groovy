@@ -1,16 +1,9 @@
 package be.cytomine
 
-import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.Annotation
-import be.cytomine.security.User
 import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AnnotationAPI
-import com.vividsolutions.jts.io.WKTReader
-import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONArray
-import org.codehaus.groovy.grails.web.json.JSONObject
-import java.util.concurrent.atomic.AtomicInteger
+
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import be.cytomine.test.http.ImageInstanceAPI
@@ -98,7 +91,7 @@ class AnnotationAddConcurrent extends Thread {
     public void run() {
         log.info("start thread")
         log.info("create annotation")
-        def result = AnnotationAPI.createAnnotation(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         log.info("check response")
         code = result.code
         log.info("end thread")

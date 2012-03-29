@@ -41,7 +41,6 @@ class UndoStackItem extends CytomineDomain implements Comparable {
     }
 
     static constraints = {
-        isFromRedo(nullable: true)
         transaction(nullable: true)
     }
 

@@ -1,6 +1,5 @@
 package be.cytomine.test.http
 
-import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstance
@@ -20,6 +19,20 @@ import be.cytomine.image.AbstractImage
 class ImageInstanceAPI extends DomainAPI {
 
     private static final log = LogFactory.getLog(this)
+
+    static ImageInstance buildBasicImage(String username, String password) {
+        //Create project with user 1
+        def result = ProjectAPI.createProject(BasicInstance.getBasicProjectNotExist(), username, password)
+        assert 200==result.code
+        Project project = result.data
+        //Add image with user 1
+        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        image.project = project
+        result = ImageInstanceAPI.createImageInstance(image, username, password)
+        assert 200==result.code
+        image = result.data
+        return image
+    }
 
     static def listImageInstanceByProject(Long id, String username, String password) {
         log.info("list project")

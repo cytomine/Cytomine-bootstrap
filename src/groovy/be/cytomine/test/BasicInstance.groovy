@@ -44,6 +44,74 @@ class BasicInstance {
 
     private static Log log = LogFactory.getLog(BasicInstance.class)
 
+    static Annotation createOrGetBasicAnnotation() {
+        log.debug "createOrGetBasicAnnotation()"
+
+        def image = createOrGetBasicImageInstance()
+        def annotation = Annotation.findOrCreateWhere(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                 name: "test",
+                image: image,
+                user: User.findByUsername(Infos.GOODLOGIN),
+                project:image.project
+        )
+
+        if(!annotation.validate()) {
+            log.debug "annotation.errors=" + annotation.errors
+            assert false
+        }
+
+        if(!annotation.save(flush: true)) {
+            log.debug "annotation.errors=" + annotation.errors
+            assert false
+        }        
+        assert annotation != null
+        annotation
+    }
+
+    static Annotation getBasicAnnotationNotExist() {
+        log.debug "getBasicAnnotationNotExist()"
+        def randomInt = Math.random()
+        def annotation = Annotation.findByName(randomInt + "")
+
+        while (annotation) {
+            randomInt = Math.random()
+            annotation = Annotation.findByName(randomInt + "")
+        }
+
+        def image = createOrGetBasicImageInstance()
+        annotation = new Annotation(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                name: randomInt,
+                image:image,
+                user: User.findByUsername(Infos.GOODLOGIN),
+                project:image.project
+        )
+
+        if(!annotation.validate()) {
+            log.debug "annotation.errors=" + annotation.errors
+            assert false
+        }
+
+        if(!annotation.save(flush: true)) {
+            log.debug "annotation.errors=" + annotation.errors
+            assert false
+        }
+        assert annotation != null
+        annotation
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     static Relation createOrGetBasicRelation() {
 
         log.debug "createOrGetBasicRelation()"
@@ -140,34 +208,6 @@ class BasicInstance {
         mime
     }
 
-    static Annotation createOrGetBasicAnnotation() {
-        log.debug "createOrGetBasicAnnotation()"
-        def image = createOrGetBasicImageInstance()
-        def annotation = new Annotation(location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"), name: "test", image: image, user: User.findByUsername(Infos.GOODLOGIN),project:image.project)
-        annotation.validate()
-        log.debug("annotation.errors=" + annotation.errors)
-        annotation.save(flush: true)
-        log.debug("annotation.errors=" + annotation.errors)
-        assert annotation != null
-        annotation
-    }
-
-    static Annotation getBasicAnnotationNotExist() {
-
-        log.debug "getBasicAnnotationNotExist()"
-        def random = new Random()
-        def randomInt = random.nextInt()
-        def annotation = Annotation.findByName(randomInt + "")
-
-        while (annotation) {
-            randomInt = random.nextInt()
-            annotation = Annotation.findByName(randomInt + "")
-        }
-        def image = createOrGetBasicImageInstance()
-        annotation = new Annotation(location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"), name: randomInt, image:image, user: User.findByUsername(Infos.GOODLOGIN), project:image.project)
-        annotation.validate()
-        annotation
-    }
 
     static ImageInstance getBasicImageInstanceNotExist() {
 

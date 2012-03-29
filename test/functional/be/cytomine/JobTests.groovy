@@ -1,6 +1,5 @@
 package be.cytomine
 
-import be.cytomine.processing.Software
 import be.cytomine.test.BasicInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos

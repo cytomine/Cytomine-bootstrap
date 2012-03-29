@@ -1,6 +1,5 @@
 package be.cytomine.test.http
 
-import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstance
@@ -22,24 +21,8 @@ class AnnotationAPI extends DomainAPI {
 
     private static final log = LogFactory.getLog(this)
 
-    static ImageInstance buildBasicImage(String username, String password) {
-        //Create project with user 1
-        def result = ProjectAPI.createProject(BasicInstance.getBasicProjectNotExist(), username, password)
-        assert 200==result.code
-        Project project = result.data
-
-        //Add image with user 1
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
-        image.project = project
-        result = ImageInstanceAPI.createImageInstance(image, username, password)
-        assert 200==result.code
-        image = result.data
-        return image
-    }
-
-
-    static def showAnnotation(Long id, String username, String password) {
-        log.info("show Annotation:" + id)
+    static def show(Long id, String username, String password) {
+        log.info "show annotation " + id
         String URL = Infos.CYTOMINEURL + "api/annotation/" + id + ".json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -50,8 +33,8 @@ class AnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def listAnnotation(String username, String password) {
-        log.info("list annotation")
+    static def list(String username, String password) {
+        log.info "list annotation"
         String URL = Infos.CYTOMINEURL + "api/annotation.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -62,8 +45,8 @@ class AnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def listAnnotationByUser(Long id, String username, String password) {
-        log.info("list annotation by user")
+    static def listByUser(Long id, String username, String password) {
+        log.info "list annotation by user " + id
         String URL = Infos.CYTOMINEURL + "api/user/$id/annotation.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -74,8 +57,8 @@ class AnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def listAnnotationByProject(Long id, String username, String password) {
-        log.info("list annotation by project")
+    static def listByProject(Long id, String username, String password) {
+        log.info "list annotation by project " + id
         String URL = Infos.CYTOMINEURL + "api/project/$id/annotation.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -86,8 +69,8 @@ class AnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def listAnnotationByImage(Long id, String username, String password) {
-        log.info("list annotation by user")
+    static def listByImage(Long id, String username, String password) {
+        log.info "list annotation by image " + id
         String URL = Infos.CYTOMINEURL + "api/imageinstance/$id/annotation.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -98,8 +81,8 @@ class AnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def listAnnotationByImageAndUser(Long idImage,Long idUser, String username, String password) {
-        log.info("list annotation by user")
+    static def listByImageAndUser(Long idImage,Long idUser, String username, String password) {
+        log.info "list annotation by user " + idUser + " and image " + idImage
         String URL = Infos.CYTOMINEURL+"api/user/"+ idUser +"/imageinstance/"+idImage+"/annotation.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -110,23 +93,20 @@ class AnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-
-
-    static def createAnnotation(Annotation annotationToAdd, User user) {
-       createAnnotation(annotationToAdd.encodeAsJSON(),user.username,user.password)
+    static def create(Annotation annotationToAdd, User user) {
+       create(annotationToAdd.encodeAsJSON(),user.username,user.password)
     }
 
-
-    static def createAnnotation(Annotation annotationToAdd, String username, String password) {
-        return createAnnotation(annotationToAdd.encodeAsJSON(), username, password)
+    static def create(Annotation annotationToAdd, String username, String password) {
+        return create(annotationToAdd.encodeAsJSON(), username, password)
     }
 
-    static def createAnnotation(String jsonAnnotation, User user) {
-        createAnnotation(jsonAnnotation,user.username,user.password)
+    static def create(String jsonAnnotation, User user) {
+        create(jsonAnnotation,user.username,user.password)
     }
 
-    static def createAnnotation(String jsonAnnotation, String username, String password) {
-        log.info("post Annotation:" + jsonAnnotation.replace("\n", ""))
+    static def create(String jsonAnnotation, String username, String password) {
+        log.info("post annotation:" + jsonAnnotation.replace("\n", ""))
         String URL = Infos.CYTOMINEURL + "api/annotation.json"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
@@ -141,7 +121,9 @@ class AnnotationAPI extends DomainAPI {
         return [data: Annotation.get(idAnnotation), code: code]
     }
 
-    static def updateAnnotation(Annotation annotation, String username, String password) {
+    static def update(Annotation annotation, String username, String password) {
+        log.info "update annotation:" + annotation
+
         String oldGeom = "POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"
         String newGeom = "POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))"
 
@@ -177,14 +159,14 @@ class AnnotationAPI extends DomainAPI {
         jsonUpdate.user = newUser.id
         jsonAnnotation = jsonUpdate.encodeAsJSON()
 
-        def data = updateAnnotation(annotation.id, jsonAnnotation, username, password)
+        def data = update(annotation.id, jsonAnnotation, username, password)
         data.mapNew = mapNew
         data.mapOld = mapOld
         return data
     }
 
-    static def updateAnnotation(def id, def jsonAnnotation, String username, String password) {
-        log.info("update annotation")
+    static def update(def id, def jsonAnnotation, String username, String password) {
+        log.info "update annotation:" + id
         String URL = Infos.CYTOMINEURL + "api/annotation/" + id + ".json"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
@@ -197,8 +179,8 @@ class AnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def deleteAnnotation(def id, String username, String password) {
-        log.info("delete annotation")
+    static def delete(def id, String username, String password) {
+        log.info "delete annotation:" + id
         String URL = Infos.CYTOMINEURL + "api/annotation/" + id + ".json"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
@@ -208,4 +190,7 @@ class AnnotationAPI extends DomainAPI {
         client.disconnect();
         return [data: response, code: code]
     }
+
+
+
 }

@@ -41,7 +41,7 @@ class AnnotationTermAPI extends DomainAPI {
         Annotation annotation = BasicInstance.getBasicAnnotationNotExist()
         annotation.image = image
         annotation.project = image.project
-        result = AnnotationAPI.createAnnotation(annotation, username, password)
+        result = AnnotationAPI.create(annotation, username, password)
         assert 200==result.code
         annotation = result.data
         return annotation

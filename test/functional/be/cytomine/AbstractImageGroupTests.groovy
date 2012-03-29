@@ -1,7 +1,5 @@
 package be.cytomine
 
-import be.cytomine.ontology.Annotation
-import be.cytomine.ontology.Term
 import be.cytomine.test.BasicInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos

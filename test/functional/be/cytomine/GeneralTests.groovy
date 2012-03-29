@@ -3,25 +3,14 @@ package be.cytomine
 import org.codehaus.groovy.grails.web.json.JSONObject
 import grails.converters.JSON
 import be.cytomine.test.BasicInstance
-import be.cytomine.ontology.Annotation
+
 import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
-import com.vividsolutions.jts.io.WKTReader
-import be.cytomine.security.User
-import be.cytomine.image.AbstractImage
+
 import org.codehaus.groovy.grails.web.json.JSONArray
-import be.cytomine.image.ImageInstance
-import be.cytomine.command.Command
+
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import be.cytomine.project.Project
-import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
-import static org.springframework.security.acls.domain.BasePermission.DELETE
-import static org.springframework.security.acls.domain.BasePermission.READ
-import static org.springframework.security.acls.domain.BasePermission.WRITE
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.authority.AuthorityUtils
-import org.springframework.security.core.context.SecurityContextHolder as SCH
-import org.codehaus.groovy.grails.commons.ApplicationHolder
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus

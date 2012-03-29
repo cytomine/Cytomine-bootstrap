@@ -1,16 +1,12 @@
 package be.cytomine.security
 
-import be.cytomine.security.User
 import be.cytomine.test.BasicInstance
-import be.cytomine.test.HttpClient
+
 import be.cytomine.test.Infos
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONArray
-import org.codehaus.groovy.grails.web.json.JSONObject
+
 import be.cytomine.project.Project
-import be.cytomine.ontology.Ontology
-import be.cytomine.security.SecRole
-import be.cytomine.security.SecUserSecRole
+
 import be.cytomine.test.http.ProjectAPI
 
 /**

@@ -1,5 +1,6 @@
 package be.cytomine.utils;
-import sun.misc.BASE64Encoder;
+//import sun.misc.BASE64Encoder;
+import org.apache.commons.codec.binary.Base64;
 
 import java.io.*;
 import java.net.*;
@@ -10,7 +11,7 @@ import java.net.*;
  * Time: 8:41
  * To change this template use File | Settings | File Templates.
  */
-public class HttpClient
+public class HttpClientBasic
 {
     protected URL url;
     protected HttpURLConnection server;
@@ -18,7 +19,7 @@ public class HttpClient
     String passwordUser;
 
 
-    public HttpClient(String url,String loginUser,String passwordUser) throws Exception
+    public HttpClientBasic(String url, String loginUser, String passwordUser) throws Exception
     {
         try
         {
@@ -41,8 +42,8 @@ public class HttpClient
         {
             server = (HttpURLConnection)url.openConnection();
             byte[] encodedPassword = ( loginUser + ":" + passwordUser ).getBytes();
-            BASE64Encoder encoder = new BASE64Encoder();
-            server.setRequestProperty( "Authorization", "Basic " + encoder.encode( encodedPassword ) );
+//            BASE64Encoder encoder = new BASE64Encoder();
+            server.setRequestProperty("Authorization", "Basic " + new String(Base64.encodeBase64(encodedPassword)));
             server.setDoInput(true);
             server.setDoOutput(true);
             server.setRequestMethod(method);
@@ -112,7 +113,7 @@ public class HttpClient
 
         try
         {
-            HttpClient c = new HttpClient(argv[0],"toto","lehero");
+            HttpClientBasic c = new HttpClientBasic(argv[0],"toto","lehero");
             c.connect("GET");
           //  c.displayResponse();
             c.disconnect();
