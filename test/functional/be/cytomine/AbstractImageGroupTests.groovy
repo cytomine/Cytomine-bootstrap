@@ -25,12 +25,6 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(200, result.code)
     def json = JSON.parse(result.data)
     assert json instanceof JSONArray
-
-
-      MyGrailsUtil.runWithRoles(["ROLE_1", "ROLE_2"]) {
-          ... code to run with the given roles ...
-      }
-
   }
 
   void testListAbstractImageGroupByAbstractImageWithAbstractImageNotExist() {
