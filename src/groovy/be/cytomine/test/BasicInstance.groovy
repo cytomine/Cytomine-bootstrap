@@ -145,15 +145,96 @@ class BasicInstance {
         sharedannotation
     }
 
+    static UserJob createOrGetBasicUserJob() {
 
+        log.debug "createOrGetBasicUserJob()"
+        UserJob userJob = UserJob.findByUsername("BasicUserJob")
+        if (!userJob) {
+            userJob = new UserJob(
+                    username: "BasicUserJob",
+                    password: "PasswordUserJob",
+                    enabled: true,
+                    user : createOrGetBasicUser(),
+                    job: createOrGetBasicJob()
+            )
+            createOrGetBasicUser().getAuthorities().each { secRole ->
+                SecUserSecRole.create(userJob, secRole)
+            }
+            userJob.generateKeys()
 
+            if(!userJob.validate()) {
+                log.debug "user.errors=" + userJob.errors
+                assert false
+            }
+            if(!userJob.save(flush: true)) {
+                log.debug "user.errors=" + userJob.errors
+                assert false
+            }
+        }
+        assert userJob != null
+        userJob
+    }
 
+    static UserJob getBasicUserJobNotExist() {
 
+        log.debug "getBasicUserJobNotExist()"
+        def random = new Random()
+        def randomInt = random.nextInt()
+        UserJob userJob = UserJob.findByUsername(randomInt + "")
 
+        while (userJob) {
+            randomInt = random.nextInt()
+            userJob = UserJob.findByUsername(randomInt + "")
+        }
+        
+        def user = getBasicUserNotExist()
+        user.save(flush: true)
+        def job = getBasicJobNotExist()
+        job.save(flush: true)
 
-
-
-
+        userJob = new UserJob(
+                username: randomInt+"BasicUserJob",
+                password: "PasswordUserJob",
+                enabled: true,
+                user : user,
+                job: job
+        )
+        user.getAuthorities().each { secRole ->
+            SecUserSecRole.create(userJob, secRole)
+        }
+        userJob.generateKeys()
+        if(!userJob.validate()) {
+            log.debug "user.errors=" + userJob.errors
+            assert false
+        }
+        userJob
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     static Relation createOrGetBasicRelation() {
 
@@ -915,7 +996,7 @@ class BasicInstance {
         annotationTerm
     }
 
-    static AlgoAnnotationTerm createOrGetBasicAlgoAnnotationTerm(UserJob user) {
+    static AlgoAnnotationTerm createOrGetBasicAlgoAnnotationTerm() {
         log.debug "createOrGetBasicAlgoAnnotationTerm()"
 
         def annotation = getBasicAnnotationNotExist()
@@ -924,6 +1005,9 @@ class BasicInstance {
         def term = getBasicTermNotExist()
         term.save(flush: true)
         assert term != null
+        def user = getBasicUserJobNotExist()
+        user.save(flush: true)
+        assert user != null
 
         def algoannotationTerm = AlgoAnnotationTerm.findWhere('annotation': annotation, 'term': term, 'userJob': user)
         assert algoannotationTerm == null
@@ -936,7 +1020,7 @@ class BasicInstance {
         algoannotationTerm
     }
 
-    static AlgoAnnotationTerm getBasicAlgoAnnotationTermNotExist(UserJob user) {
+    static AlgoAnnotationTerm getBasicAlgoAnnotationTermNotExist() {
 
         log.debug "getBasicAnnotationTermNotExist()"
 
@@ -947,6 +1031,10 @@ class BasicInstance {
         def annotation = getBasicAnnotationNotExist()
         annotation.save(flush: true)
         assert annotation != null
+
+        def user = getBasicUserJobNotExist()
+        user.save(flush: true)
+        assert user != null
 
         def algoannotationTerm = new AlgoAnnotationTerm(annotation:annotation,term:term,userJob:user, expectedTerm: term, rate:1d)
 

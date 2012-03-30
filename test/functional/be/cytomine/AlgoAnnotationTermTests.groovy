@@ -1,5 +1,17 @@
 package be.cytomine
 
+import be.cytomine.security.User
+import be.cytomine.test.Infos
+import be.cytomine.test.BasicInstance
+import be.cytomine.test.http.AnnotationTermAPI
+import grails.converters.JSON
+import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.ontology.Annotation
+import org.codehaus.groovy.grails.web.json.JSONArray
+import be.cytomine.ontology.Term
+import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.security.UserJob
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -9,55 +21,26 @@ package be.cytomine
  */
 class AlgoAnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
-  void testAlgo() {
+    void testGetAlgoAnnotationTermWithCredential() {
+       def annotationTermToAdd = BasicInstance.createOrGetBasicAlgoAnnotationTerm()
+       def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.annotation.id,annotationTermToAdd.term.id,annotationTermToAdd.userJob.id,annotationTermToAdd.userJob.username,"PasswordUserJob")
+       assertEquals(200,result.code)
+       def json = JSON.parse(result.data)
+       assert json instanceof JSONObject
+     }
 
-  }
+     void testAddAlgoAnnotationTermCorrect() {
+       def annotationTermToAdd = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+       UserJob currentUserJob = annotationTermToAdd.userJob
+       Infos.addUserRight(currentUserJob.user,annotationTermToAdd.annotation.project)
+       annotationTermToAdd.discard()
+       String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
+       def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,annotationTermToAdd.userJob.username,"PasswordUserJob")
 
-//  void testGetAlgoAnnotationTermWithCredential() {
-//    UserJob userJob = BasicInstance.createUserJob(User.findByUsername(Infos.GOODLOGIN))
-//    def algoannotationTermToAdd = BasicInstance.createOrGetBasicAlgoAnnotationTerm(userJob)
-//    log.info("get annotation:"+userJob.username+"|"+"password")
-//    def result = AnnotationTermAPI.showAlgoAnnotationTerm(algoannotationTermToAdd.annotation.id,algoannotationTermToAdd.term.id,userJob.id,userJob.username,"password")
-//    log.info("check response")
-//    assertEquals(200,result.code)
-//    def json = JSON.parse(result.data)
-//    assert json instanceof JSONObject
-//  }
-//
-//
-//  void testAddAlgoAnnotationTermCorrect() {
-//     UserJob userJob = BasicInstance.createUserJob(User.findByUsername(Infos.GOODLOGIN))
-//     def algoannotationTermToAdd = BasicInstance.getBasicAlgoAnnotationTermNotExist(userJob)
-//
-//    log.info("create AnnotationTerm")
-//    algoannotationTermToAdd.discard()
-//    String jsonAnnotationTerm = algoannotationTermToAdd.encodeAsJSON()
-//    def result = AnnotationTermAPI.createAlgoAnnotationTerm(jsonAnnotationTerm,userJob.username,"password")
-//    log.info("check response")
-//    assertEquals(200,result.code)
-//    AlgoAnnotationTerm annotationTerm = result.data
-//    Long idAnnotation = annotationTerm.annotation.id
-//    Long idTerm = annotationTerm.term.id
-//    log.info("check if object "+ annotationTerm.annotation.id +"/"+ annotationTerm.term.id +"exist in DB")
-//
-//    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,userJob.id,userJob.username,"password")
-//    assertEquals(200,result.code)
-//
-//    log.info("test undo")
-//    result = AnnotationTermAPI.undo()
-//    assertEquals(200,result.code)
-//
-//    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,userJob.id,userJob.username,"password")
-//    assertEquals(404,result.code)
-//
-//    log.info("test redo")
-//    result = AnnotationTermAPI.redo()
-//    assertEquals(200,result.code)
-//
-//    log.info("check if object "+ idAnnotation +"/"+ idTerm +" exist in DB")
-//    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,userJob.id,userJob.username,"password")
-//    assertEquals(200,result.code)
-//
-//  }
-
+       assertEquals(200,result.code)
+   
+       result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.annotation.id,annotationTermToAdd.term.id,annotationTermToAdd.userJob.id,annotationTermToAdd.userJob.username,"PasswordUserJob")
+       assertEquals(200,result.code)
+   
+     }
 }
