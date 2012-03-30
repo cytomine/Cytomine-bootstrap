@@ -24,30 +24,8 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
         if (!group) throw new WrongArgumentException("Group cannot be null")
         def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
         if (abstractimageGroup) throw new AlreadyExistException("AbstractImage - group already exist")
-        //AbstractImage.withTransaction {
         if (!abstractimageGroup) {
             abstractimageGroup = new AbstractImageGroup()
-            abstractimage?.addToAbstractimagegroup(abstractimageGroup)
-            group?.addToAbstractimagegroup(abstractimageGroup)
-            abstractimage.refresh()
-            group.refresh()
-            abstractimageGroup.save(flush: true)
-        } else throw new WrongArgumentException("AbstractImage " + abstractimage.id + " and group " + group.id + " are already mapped")
-        //}
-        return abstractimageGroup
-    }
-
-
-    static AbstractImageGroup link(long id, AbstractImage abstractimage, Group group) {
-
-        if (!abstractimage) throw new WrongArgumentException("AbstractImage cannot be null")
-        if (!group) throw new WrongArgumentException("Group cannot be null")
-        def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-        if (abstractimageGroup) throw new AlreadyExistException("AbstractImage - group already exist")
-
-        if (!abstractimageGroup) {
-            abstractimageGroup = new AbstractImageGroup()
-            abstractimageGroup.id = id
             abstractimage?.addToAbstractimagegroup(abstractimageGroup)
             group?.addToAbstractimagegroup(abstractimageGroup)
             abstractimage.refresh()
@@ -62,11 +40,7 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
         if (!abstractimage) throw new WrongArgumentException("AbstractImage cannot be null")
         if (!group) throw new WrongArgumentException("Group cannot be null")
         def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-
-        if (!abstractimageGroup) {
-            println "abstractimageGroup is null"
-            return
-        }
+        if (!abstractimageGroup) return
 
         if (abstractimageGroup) {
             abstractimage?.removeFromAbstractimagegroup(abstractimageGroup)
@@ -74,7 +48,6 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
             abstractimage.refresh()
             group.refresh()
             abstractimageGroup.delete(flush: true)
-
         }
     }
 

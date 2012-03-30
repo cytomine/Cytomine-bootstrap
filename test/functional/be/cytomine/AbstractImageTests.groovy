@@ -13,7 +13,6 @@ import be.cytomine.image.Mime
 
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.test.http.AbstractImageAPI
-import be.cytomine.test.http.AnnotationAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,7 +25,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
   void testListImagesWithCredential() {
       BasicInstance.createOrGetBasicAbstractImage()
-      def result = AbstractImageAPI.listAbstractImage(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AbstractImageAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
@@ -34,27 +33,27 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
   void testListImagesWithoutCredential() {
       BasicInstance.createOrGetBasicAbstractImage()
-      def result = AbstractImageAPI.listAbstractImage(Infos.BADLOGIN, Infos.BADPASSWORD)
+      def result = AbstractImageAPI.list(Infos.BADLOGIN, Infos.BADPASSWORD)
       assertEquals(401, result.code)
   }
 
   void testListAnnotationsByUserWithCredential() {
       BasicInstance.createOrGetBasicAbstractImage()
       User user = BasicInstance.createOrGetBasicUser()
-      def result = AbstractImageAPI.listAbstractImageByUser(user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AbstractImageAPI.listByUser(user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
   }
 
   void testListAnnotationsByUserNoExistWithCredential() {
-      def result = AbstractImageAPI.listAbstractImageByUser(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AbstractImageAPI.listByUser(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(404, result.code)
   }
 
   void testGetImageWithCredential() {
       AbstractImage image = BasicInstance.createOrGetBasicAbstractImage()
-      def result = AbstractImageAPI.showAbstractImage(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AbstractImageAPI.show(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
@@ -63,10 +62,10 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
   void testAddImageCorrect() {
       def imageToAdd = BasicInstance.getBasicAbstractImageNotExist()
       String json = imageToAdd.encodeAsJSON()
-      def result = AbstractImageAPI.createAbstractImage(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AbstractImageAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)
       int id = result.data.id
-      result = AbstractImageAPI.showAbstractImage(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = AbstractImageAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)
   }
 
@@ -74,7 +73,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
       def imageToAdd = BasicInstance.getBasicAbstractImageNotExist()
       def json = JSON.parse((String)imageToAdd.encodeAsJSON())
       json.scanner = -99
-      def result = AbstractImageAPI.createAbstractImage(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AbstractImageAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(400, result.code)
   }
 
@@ -82,7 +81,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
       def imageToAdd = BasicInstance.getBasicAbstractImageNotExist()
       def json = JSON.parse((String)imageToAdd.encodeAsJSON())
       json.slide = -99
-      def result = AbstractImageAPI.createAbstractImage(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AbstractImageAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(400, result.code)
   }
 
@@ -90,7 +89,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
       def imageToAdd = BasicInstance.getBasicAbstractImageNotExist()
       def json = JSON.parse((String)imageToAdd.encodeAsJSON())
       json.mime = -99
-      def result = AbstractImageAPI.createAbstractImage(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AbstractImageAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(400, result.code)
   }
 
@@ -99,18 +98,18 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
       def imageToAdd = BasicInstance.getBasicAbstractImageNotExist()
       def json = JSON.parse((String)imageToAdd.encodeAsJSON())
       json.mime = mime.id
-      def result = AbstractImageAPI.createAbstractImage(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AbstractImageAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(400, result.code)
   }
 
   void testEditImage() {
       AbstractImage imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
-      def result = AbstractImageAPI.updateAbstractImage(imageToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AbstractImageAPI.update(imageToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
       int id = json.abstractimage.id
-      def showResult = AbstractImageAPI.showAbstractImage(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def showResult = AbstractImageAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       json = JSON.parse(showResult.data)
       BasicInstance.compareAbstractImage(result.mapNew, json)
   }

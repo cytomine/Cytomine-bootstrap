@@ -8,6 +8,7 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.image.AbstractImage
 import be.cytomine.security.Group
+import be.cytomine.test.http.AbstractImageGroupAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,364 +19,94 @@ import be.cytomine.security.Group
  */
 class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
 
-
   void testListAbstractImageGroupByAbstractImageWithCredential() {
-
     AbstractImage abstractimage = BasicInstance.createOrGetBasicAbstractImage()
-
-    log.info("get by abstractimage")
-    String URL = Infos.CYTOMINEURL+"api/image/"+abstractimage.id+"/group.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
+    def result = AbstractImageGroupAPI.listByImage(abstractimage.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    assertEquals(200, result.code)
+    def json = JSON.parse(result.data)
     assert json instanceof JSONArray
+
+
+      MyGrailsUtil.runWithRoles(["ROLE_1", "ROLE_2"]) {
+          ... code to run with the given roles ...
+      }
 
   }
 
   void testListAbstractImageGroupByAbstractImageWithAbstractImageNotExist() {
-
-    AbstractImage abstractimage = BasicInstance.createOrGetBasicAbstractImage()
-
-    log.info("get by abstractimage not exist")
-    String URL = Infos.CYTOMINEURL+"api/image/-99/group.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
-    def json = JSON.parse(response)
-
+      def result = AbstractImageGroupAPI.listByImage(-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      assertEquals(404, result.code)
   }
 
-  void testListAbstractImageGroupByGroupWithCredential() {
+    void testListAbstractImageGroupByGroupWithCredential() {
+      Group group = BasicInstance.createOrGetBasicGroup()
+      def result = AbstractImageGroupAPI.listByGroup(group.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
+      def json = JSON.parse(result.data)
+      assert json instanceof JSONArray
+    }
 
-    Group group = BasicInstance.createOrGetBasicGroup()
-
-    log.info("get by group")
-    String URL = Infos.CYTOMINEURL+"api/group/"+group.id+"/image.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONArray
-  }
-
-  /*void testListAbstractImageGroupByCurrentUser() {
-
-    log.info("get by group")
-    String URL = Infos.CYTOMINEURL+"api/currentuser/image.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONArray
-  }*/
-
-  void testListAbstractImageGroupByGroupWithAbstractImageNotExist() {
-
-    AbstractImage abstractimage = BasicInstance.createOrGetBasicAbstractImage()
-
-    log.info("get by group not exist")
-    String URL = Infos.CYTOMINEURL+"api/group/-99/image.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
-    def json = JSON.parse(response)
-
-  }
+    void testListAbstractImageGroupByGroupWithGroupNotExist() {
+      def result = AbstractImageGroupAPI.listByGroup(-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      assertEquals(404, result.code)
+    }
 
   void testGetAbstractImageGroupWithCredential() {
-
     def abstractimageGroupToAdd = BasicInstance.createOrGetBasicAbstractImageGroup()
-
-    log.info("get abstractimage")
-    String URL = Infos.CYTOMINEURL+"api/image/"+ abstractimageGroupToAdd.abstractimage.id +"/group/"+abstractimageGroupToAdd.group.id +".json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-
+      def result = AbstractImageGroupAPI.show(abstractimageGroupToAdd.abstractimage.id,abstractimageGroupToAdd.group.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
   }
 
   void testAddAbstractImageGroupCorrect() {
-
-    log.info("create AbstractImageGroup")
     def abstractimageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
     abstractimageGroupToAdd.discard()
-    String jsonAbstractImageGroup = abstractimageGroupToAdd.encodeAsJSON()
-
-    log.info("post abstractimageGroup:"+jsonAbstractImageGroup.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+ abstractimageGroupToAdd.abstractimage.id +"/group/"+ abstractimageGroupToAdd.group.id +".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonAbstractImageGroup)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int idAbstractImage= json.abstractimagegroup.abstractimage
-    int idGroup= json.abstractimagegroup.group
-
-    log.info("check if object "+ idAbstractImage +"/"+ idGroup +"exist in DB")
-    client = new HttpClient();
-
-    URL = Infos.CYTOMINEURL+"api/image/"+idAbstractImage+"/group/"+idGroup +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idAbstractImage +"/"+ idGroup +" not exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+ idAbstractImage +"/group/"+idGroup +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(404,code)
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    //must be done because redo change id
-    json = JSON.parse(response)
-    //assert json instanceof JSONObject
-
-    log.info("check if object "+ idAbstractImage +"/"+ idGroup +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+ idAbstractImage +"/group/"+idGroup +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
+    String json = abstractimageGroupToAdd.encodeAsJSON()
+    def result = AbstractImageGroupAPI.create(abstractimageGroupToAdd.abstractimage.id,abstractimageGroupToAdd.group.id,json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+    assertEquals(200, result.code)
+    result = AbstractImageGroupAPI.show(abstractimageGroupToAdd.abstractimage.id,abstractimageGroupToAdd.group.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+    assertEquals(200, result.code)
   }
 
    void testAddAbstractImageGroupAlreadyExist() {
-
-    log.info("create AbstractImageGroup")
     def abstractimageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupAlreadyExist")
     abstractimageGroupToAdd.save(flush:true)
-    //abstractimageGroupToAdd is in database, we will try to add it twice
-    String jsonAbstractImageGroup = abstractimageGroupToAdd.encodeAsJSON()
-
-    log.info("post abstractimageGroup:"+jsonAbstractImageGroup.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+ abstractimageGroupToAdd.abstractimage.id +"/group/"+ abstractimageGroupToAdd.group.id +".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonAbstractImageGroup)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(409,code)
-  }
-  void testAddAbstractImageGroupWithAbstractImageNotExist() {
-
-    log.info("create abstractimagegroup")
-    def abstractimageGroupAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupWithAbstractImageNotExist")
-    String jsonAbstractImageGroup = abstractimageGroupAdd.encodeAsJSON()
-    log.info("jsonAbstractImageGroup="+jsonAbstractImageGroup)
-    def jsonUpdate = JSON.parse(jsonAbstractImageGroup)
-    jsonUpdate.abstractimage = -99
-    jsonAbstractImageGroup = jsonUpdate.encodeAsJSON()
-
-    log.info("post abstractimagegroup:"+jsonAbstractImageGroup.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/-99/group/" + abstractimageGroupAdd.group.id  + ".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonAbstractImageGroup)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-
+    abstractimageGroupToAdd.discard()
+    String json = abstractimageGroupToAdd.encodeAsJSON()
+     def result = AbstractImageGroupAPI.create(abstractimageGroupToAdd.abstractimage.id,abstractimageGroupToAdd.group.id,json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+     assertEquals(409, result.code)
   }
 
-  void testAddAbstractImageGroupWithGroupNotExist() {
+    void testAddAbstractImageGroupWithAbstractImageNotExist() {
+      def abstractimageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+      abstractimageGroupToAdd.discard()
+      def jsonUpdate = JSON.parse(abstractimageGroupToAdd.encodeAsJSON())
+      jsonUpdate.abstractimage = -99
+      def result = AbstractImageGroupAPI.create(-99,abstractimageGroupToAdd.group.id,jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(400, result.code)
+    }
 
-    log.info("create abstractimagegroup")
-    def abstractimageGroupAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupWithGroupNotExist")
-    String jsonAbstractImageGroup = abstractimageGroupAdd.encodeAsJSON()
-    log.info("jsonAbstractImageGroup="+jsonAbstractImageGroup)
-    def jsonUpdate = JSON.parse(jsonAbstractImageGroup)
-    jsonUpdate.group = -99
-    jsonAbstractImageGroup = jsonUpdate.encodeAsJSON()
+    void testAddAbstractImageGroupWithGroupNotExist() {
+      def abstractimageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+      abstractimageGroupToAdd.discard()
+      def jsonUpdate = JSON.parse(abstractimageGroupToAdd.encodeAsJSON())
+      jsonUpdate.group = -99
+      def result = AbstractImageGroupAPI.create(abstractimageGroupToAdd.abstractimage.id,-99,jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(400, result.code)
+    }
 
-    log.info("post abstractimagegroup:"+jsonAbstractImageGroup.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+ abstractimageGroupAdd.abstractimage.id +"/group/"+ abstractimageGroupAdd.group.id +".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonAbstractImageGroup)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
+    void testDeleteAbstractImageGroup() {
+        def abstractimageGroupToDelete = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+        assert abstractimageGroupToDelete.save(flush: true)  != null
+        def result = AbstractImageGroupAPI.delete(abstractimageGroupToDelete.abstractimage.id,abstractimageGroupToDelete.group.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def showResult = AbstractImageGroupAPI.show(abstractimageGroupToDelete.abstractimage.id,abstractimageGroupToDelete.group.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, showResult.code)        
+    }
 
-    log.info("check response")
-    assertEquals(400,code)
-
-  }
-
-  void testDeleteAbstractImageGroup() {
-
-    log.info("create abstractimageGroup")
-    def abstractimageGroupToDelete = BasicInstance.createOrGetBasicAbstractImageGroup()
-    String jsonAbstractImageGroup = abstractimageGroupToDelete.encodeAsJSON()
-
-    int idAbstractImage = abstractimageGroupToDelete.abstractimage.id
-    int idGroup = abstractimageGroupToDelete.group.id
-    log.info("delete abstractimageGroup:"+jsonAbstractImageGroup.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+abstractimageGroupToDelete.abstractimage.id + "/group/"+abstractimageGroupToDelete.group.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-
-    log.info("check if object "+ idAbstractImage +"/" + idGroup + " exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+idAbstractImage + "/group/"+idGroup+".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-
-    assertEquals(404,code)
-
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    //assert json instanceof JSONObject
-    //int newIdAbstractImageGroup  = json.abstractimagegroup.id
-
-    log.info("check if object "+ idAbstractImage +"/" + idGroup +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+idAbstractImage + "/group/"+idGroup+".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idAbstractImage +"/" + idGroup +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+idAbstractImage + "/group/"+idGroup+".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(404,code)
-
-  }
-
-  void testDeleteAbstractImageGroupNotExist() {
-
-     log.info("create project")
-    def abstractimageGroupToDelete = BasicInstance.createOrGetBasicAbstractImageGroup()
-    String jsonAbstractImageGroup = abstractimageGroupToDelete.encodeAsJSON()
-
-    log.info("delete abstractimageGroup:"+jsonAbstractImageGroup.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/-99/group/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
-  }
+    void testDeleteAbstractImageGroupNotExist() {
+        def abstractimageGroupToDelete = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+        assert abstractimageGroupToDelete.save(flush: true)  != null
+        def result = AbstractImageGroupAPI.delete(-99,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
 }

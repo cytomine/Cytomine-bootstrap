@@ -1,13 +1,10 @@
 package be.cytomine.test.http
 
-import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.Annotation
-import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
-import com.vividsolutions.jts.io.WKTReader
+
 import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
 import be.cytomine.image.AbstractImage
@@ -24,21 +21,7 @@ import be.cytomine.image.Mime
 class AbstractImageAPI extends DomainAPI {
 
     private static final log = LogFactory.getLog(this)
-
-
-    static def showAbstractImage(Long id, String username, String password) {
-        log.info("show AbstractImage:" + id)
-        String URL = Infos.CYTOMINEURL + "api/image/" + id + ".json"
-        HttpClient client = new HttpClient();
-        client.connect(URL, username, password);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
-    }
-
-    static def listAbstractImage(String username, String password) {
+    static def list(String username, String password) {
         log.info("list AbstractImage")
         String URL = Infos.CYTOMINEURL + "api/image.json"
         HttpClient client = new HttpClient();
@@ -50,7 +33,21 @@ class AbstractImageAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def listAbstractImageByUser(Long id, String username, String password) {
+    static def show(Long id, String username, String password) {
+        log.info("show AbstractImage:" + id)
+        String URL = Infos.CYTOMINEURL + "api/image/" + id + ".json"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+
+
+    static def listByUser(Long id, String username, String password) {
         log.info("list AbstractImage by user")
         String URL = Infos.CYTOMINEURL + "api/user/$id/image.json"
         HttpClient client = new HttpClient();
@@ -62,20 +59,20 @@ class AbstractImageAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def createAbstractImage(AbstractImage AbstractImageToAdd, User user) {
-       createAbstractImage(AbstractImageToAdd.encodeAsJSON(),user.username,user.password)
+    static def create(AbstractImage AbstractImageToAdd, User user) {
+       create(AbstractImageToAdd.encodeAsJSON(),user.username,user.password)
     }
 
 
-    static def createAbstractImage(AbstractImage AbstractImageToAdd, String username, String password) {
-        return createAbstractImage(AbstractImageToAdd.encodeAsJSON(), username, password)
+    static def create(AbstractImage AbstractImageToAdd, String username, String password) {
+        return create(AbstractImageToAdd.encodeAsJSON(), username, password)
     }
 
-    static def createAbstractImage(String jsonAbstractImage, User user) {
-        createAbstractImage(jsonAbstractImage,user.username,user.password)
+    static def create(String jsonAbstractImage, User user) {
+        create(jsonAbstractImage,user.username,user.password)
     }
 
-    static def createAbstractImage(String jsonAbstractImage, String username, String password) {
+    static def create(String jsonAbstractImage, String username, String password) {
         log.info("post AbstractImage:" + jsonAbstractImage.replace("\n", ""))
         String URL = Infos.CYTOMINEURL + "api/image.json"
         HttpClient client = new HttpClient()
@@ -91,7 +88,7 @@ class AbstractImageAPI extends DomainAPI {
         return [data: AbstractImage.get(idAbstractImage), code: code]
     }
 
-    static def updateAbstractImage(AbstractImage AbstractImage, String username, String password) {
+    static def update(AbstractImage AbstractImage, String username, String password) {
         String oldFilename = "oldName"
         String newFilename = "newName"
 
@@ -154,13 +151,13 @@ class AbstractImageAPI extends DomainAPI {
         jsonUpdate.height = newHeight
         jsonImage = jsonUpdate.encodeAsJSON()
 
-        def data = updateAbstractImage(imageToEdit.id, jsonImage, username, password)
+        def data = update(imageToEdit.id, jsonImage, username, password)
         data.mapNew = mapNew
         data.mapOld = mapOld
         return data
     }
 
-    static def updateAbstractImage(def id, def jsonAbstractImage, String username, String password) {
+    static def update(def id, def jsonAbstractImage, String username, String password) {
         log.info("update AbstractImage")
         String URL = Infos.CYTOMINEURL + "api/image/" + id + ".json"
         HttpClient client = new HttpClient()
@@ -174,7 +171,7 @@ class AbstractImageAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def deleteAbstractImage(def id, String username, String password) {
+    static def delete(def id, String username, String password) {
         log.info("delete AbstractImage")
         String URL = Infos.CYTOMINEURL + "api/image/" + id + ".json"
         HttpClient client = new HttpClient()
