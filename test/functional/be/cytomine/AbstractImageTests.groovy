@@ -13,6 +13,7 @@ import be.cytomine.image.Mime
 
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.test.http.AbstractImageAPI
+import be.cytomine.test.http.AnnotationTermAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -114,214 +115,28 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
       BasicInstance.compareAbstractImage(result.mapNew, json)
   }
 
-  void testEditImageWithBadSlide() {
-    Slide oldSlide = BasicInstance.createOrGetBasicSlide()
-    Slide newSlide = BasicInstance.getBasicSlideNotExist()
-
-    /* Create a old image */
-    log.info("create image")
-    AbstractImage imageToAdd = BasicInstance.getBasicAbstractImageNotExist()
-    imageToAdd.slide = oldSlide
-    imageToAdd.save(flush:true)
-
-    /* Encode a new image to modify */
-    AbstractImage imageToEdit = AbstractImage.get(imageToAdd.id)
-    def jsonImage = imageToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonImage)
-
-    jsonUpdate.slide = -99
-
-    jsonImage = jsonUpdate.encodeAsJSON()
-
-    log.info("put image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+imageToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonImage)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-  }
-
-  void testEditImageWithBadMime()  {
-    Mime oldMime = BasicInstance.createOrGetBasicMime() //TODO: replace by a mime different with image server
-    Mime newMime = BasicInstance.createOrGetBasicMime()  //jp2
-
-    /* Create a old image */
-    log.info("create image")
-    AbstractImage imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
-    imageToAdd.mime = oldMime
-    imageToAdd.save(flush:true)
-
-    /* Encode a new image to modify */
-    AbstractImage imageToEdit = AbstractImage.get(imageToAdd.id)
-    def jsonImage = imageToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonImage)
-    jsonUpdate.mime = -99
-
-    jsonImage = jsonUpdate.encodeAsJSON()
-
-    log.info("put image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+imageToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonImage)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-  }
-
-  void testEditImageWithBadScanner()  {
-    Scanner oldScanner = BasicInstance.createOrGetBasicScanner()
-
-    /* Create a old image */
-    log.info("create image")
-    AbstractImage imageToAdd = BasicInstance.getBasicAbstractImageNotExist()
-    imageToAdd.scanner = oldScanner
-    imageToAdd.save(flush:true)
-
-    /* Encode a new image to modify */
-    AbstractImage imageToEdit = AbstractImage.get(imageToAdd.id)
-    def jsonImage = imageToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonImage)
-
-    jsonUpdate.scanner = -99
-
-    jsonImage = jsonUpdate.encodeAsJSON()
-
-    log.info("put image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+imageToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonImage)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-  }
-
   void testDeleteImage()  {
-
-    log.info("create image")
-    def imageToDelete = BasicInstance.getBasicAbstractImageNotExist()
-    assert imageToDelete.save(flush:true)!=null
-    String jsonImage = imageToDelete.encodeAsJSON()
-    int idImage = imageToDelete.id
-    log.info("delete image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/"+idImage+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-
-    log.info("check if object "+ idImage +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+idImage +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-
-    assertEquals(404,code)
-
-
-    /*log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int newIdImage  = json.abstractimage.id
-
-
-
-    log.info("check if object "+ idImage +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+newIdImage +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL+".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idImage +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/image/"+newIdImage +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(404,code) */
-
-
+      def imageToDelete = BasicInstance.createOrGetBasicAbstractImage()
+      Long id = imageToDelete.id
+      def result = AbstractImageAPI.delete(id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      assertEquals(200,result.code)
+      result = AbstractImageAPI.show(id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      assertEquals(404,result.code)
   }
 
   void testDeleteImageWithData()  {
-    log.info("create image")
     def imageToDelete = BasicInstance.createOrGetBasicImageInstance()
     def annotation = BasicInstance.createOrGetBasicAnnotation()
     annotation.image = imageToDelete
     annotation.save(flush:true)
-    String jsonImage = imageToDelete.encodeAsJSON()
-
-    log.info("delete image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
+      Long id = imageToDelete.baseImage.id
+      def result = AbstractImageAPI.delete(id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      assertEquals(400,result.code)
   }
 
   void testDeleteImageNoExist()  {
-    log.info("create image")
-    def imageToDelete = BasicInstance.createOrGetBasicAbstractImage()
-    String jsonImage = imageToDelete.encodeAsJSON()
-
-    log.info("delete image:"+jsonImage.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/image/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
+      def result = AbstractImageAPI.delete(-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      assertEquals(404,result.code)
   }
 
 }
