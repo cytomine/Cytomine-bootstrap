@@ -1,0 +1,629 @@
+#!/usr/bin/env ruby
+
+# == Synopsis
+#   This is a client to Ais Storage web interface
+#   Default config file : ~/ais/config.yml
+#   This file must contains some informations for the program.
+#
+# == Examples
+#   This command list all the buckets you own.
+#     ais ls
+#
+#   Other examples:
+#     ais -f config.yml ls
+#     ais ls ais://bucketName
+#
+# == Usage
+#   ais [command] [options] [source (optional depends on command)] [dest (optional depends on command)]
+#   Command:
+#     - ls: list buckets or bucket's objects if source set
+#       ais ls [bucketUrl(optional)]
+#     - cp: copy source to dest (one must be a local path)
+#       ais cp [source] [destination]
+#     - rm: remove bucket or object depending on source url
+#       ais rm [bucketUrl/objectUrl]
+#     - metadata: get source metadatas
+#       ais metadata [objectUrl]
+#     - mb: create a new bucket named by the source
+#       ais mb [bucketUrl]
+#     - md: create a dir in a bucket
+#       ais md [objectUrl]
+#     - key: insert access key and secret access key to the current config file.
+#       ais key
+#   ais url format: ais://[bucketName]/[objectName]
+#
+#   For help use: ais -h
+#
+# == Options
+#   -h, --help          Displays help message
+#   -v, --version       Display the version, then exit
+#   -q, --quiet         Output as little as possible, overrides verbose
+#   -V, --verbose       Verbose output
+#   -f, --config-file   Set different config file
+#   -r, --recursive     Enforce local recursive mode (for transferring folder, must be set or you are not able to transfer folders)(ADVANCED: THIS WON'T UPLOAD FILE BY FILE)
+#   -R, --regenerate    With command key, it forces the keys pair to be regenerated on server side
+#   -a, --add           for protocol: add [protocolNamespace], for metadatas add [metadatas hashmap json string]
+#                       example : ais metadata -a "{\"key\":\"value\"}" ais://bucket1/object1
+#                                 ais protocol -a namespace ais://bucket1/object1
+#
+# == Author
+#   Yannick Schutz
+#
+# == Copyright
+#   Copyright (c) 2010 Alma In Silico. Licensed under the MIT License:
+#   http://www.opensource.org/licenses/mit-license.php
+
+
+# TO DO - replace all ruby_cl_skeleton with your app name
+# TO DO - replace all YourName with your actual name
+# TO DO - update Synopsis, Examples, etc
+# TO DO - change license if necessary
+
+
+require 'optparse'
+
+require 'ostruct'
+require 'date'
+require 'rubygems'
+require 'net/http'
+require 'net/https'
+require 'etc'
+require 'json'
+require 'yaml'
+require 'digest/md5'
+
+require 'fileutils'
+require 'time'
+require 'kconv'
+require 'openssl'
+require 'base64'
+
+
+
+class App
+  VERSION = '0.0.9'
+
+  attr_reader :options
+
+  def initialize(arguments, stdin)
+    @arguments = arguments
+    @stdin = stdin
+    # Set defaults
+    @options = OpenStruct.new
+    @options.configFile = ENV["HOME"]+"/.ais/config.yml"
+    @options.verbose = false
+    @options.quiet = false
+    @options.local = false
+    @options.long = false
+    @options.protocol = ""
+    @options.add = ""
+    @storePrefix = 'ais://'
+    @json='application/json'
+    # TO DO - add additional defaults
+  end
+
+
+
+  # Parse options, check arguments, then process the command
+  def run
+
+    if parsed_options? && arguments_valid? && client_configured?
+
+      puts "Start at #{DateTime.now}\n\n" if @options.verbose
+
+      output_options if @options.verbose # [Optional]
+
+      process_arguments
+      process_command
+
+      puts "\nFinished at #{DateTime.now}" if @options.verbose
+
+    else
+      output_usage
+    end
+
+  end
+
+  protected
+
+
+
+    def parsed_options?
+
+      # Specify options
+      opts = OptionParser.new
+      opts.on('--version')    { output_version ; exit 0 }
+      opts.on('-h', '--help')       { output_help; exit 0 }
+      opts.on('-v', '--verbose')    { @options.verbose = true }
+      opts.on( '--raw')    { @options.raw = true }
+      opts.on('-q', '--quiet')      { @options.quiet = true }
+      opts.on('-r','--recursive')       { @options.local = true }
+      opts.on('-l','--long')       { @options.long = true }
+
+      opts.on("-f", "--config-file [FILE]") do |file|
+        @options.configFile = file || ENV["HOME"]+"/config.yml"
+
+      end
+      opts.on("-s", "--store [storeNamespace]") do |store|
+        @options.store = store
+      end
+      opts.on("-a", "--add [add]") do |add|
+        @options.add = add
+      end
+      # TO DO - add additional options
+
+      opts.parse!(@arguments) rescue return false
+
+      process_options
+      true
+    end
+
+    # Performs post-parse processing on options
+    def process_options
+      @options.verbose = false if @options.quiet
+    end
+
+    def output_options
+      puts "Options:\n"
+
+      @options.marshal_dump.each do |name, val|
+        puts "  #{name} = #{val}"
+      end
+    end
+
+    # True if required arguments were provided
+    def arguments_valid?
+      # TO DO - implement your real logic here
+      valid = false
+      case @arguments[0]
+      when 'ls' then
+        #one argument or none but if one, ais url one!
+        bucketName = @arguments[@arguments.length-1]
+        valid = true if (bucketName == 'ls' || bucketName[0,6] == @storePrefix )
+      when 'cp' then
+        #source and dest must be their and one local and not the other! if directory need -L options
+        if (@arguments.length >= 3) then
+          source = @arguments[@arguments.length-2]
+          dest = @arguments[@arguments.length-1]
+          valid =true if(source[0,6] == @storePrefix && dest[0,6] != @storePrefix)
+          valid =true if(source[0,6] != @storePrefix && dest[0,6] == @storePrefix && (( @options.local && File.directory?(source)) || (File.file? source )))
+        end
+      when 'mb' then
+        #bucket url without object so just ais://bucket and not ais://bucket/object
+        bucketName = @arguments[@arguments.length-1]
+        valid = true if (bucketName[0,6] == @storePrefix && !bucketName[6..-1].include?('/'))
+      when 'rm' then
+        #work for bucket or object
+        objectName = @arguments[@arguments.length-1]
+        valid = true if (objectName[0,6] == @storePrefix)
+      when 'metadata','protocol','md' then
+        #same constraint, must be an object url
+        objectName = @arguments[@arguments.length-1]
+        valid = true if (objectName[0,6] == @storePrefix && objectName[6..-1].include?('/'))
+      end
+      valid
+    end
+
+    def client_configured?
+      #read configuration file given by the user or the default one ~/config.yml
+      if !File.exists? @options.configFile then
+        puts "File "+@options.configFile+ " doesn't exists"
+        false
+      end
+      perms = File.stat(@options.configFile).mode
+      perms =  "%o" % perms
+      if (File.file?(@options.configFile) && perms [3 .. 5] == "600" ) then
+        @config = YAML.load_file(@options.configFile)
+        #each key value will be @key variable with the value as the value
+        @config["storage"].each { |key, value| instance_variable_set("@#{key}", value) }
+        @store = Net::HTTP.new(@baseUrl, 443)
+        @store.use_ssl = true
+        @store.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        true
+      else
+        puts 'ERROR : Problem with your config file '+@options.configFile + ' current rights : '+ perms
+        false
+      end
+
+    end
+
+    # Setup the arguments
+    def process_arguments
+      @command = @arguments[0]
+      # TO DO - place in local vars, etc
+    end
+
+    def output_help
+      output_version
+      output_usage
+
+      puts ''
+      puts '   -h, --help          Displays help message'
+      puts '   --raw          Raw responses'
+      puts '   --version       Display the version, then exit'
+      puts '   -q, --quiet         Output as little as possible, overrides verbose'
+      puts '   -v, --verbose       Verbose output'
+      puts '   -f, --config-file   Set different config file'
+      puts '   -l, --local         Enforce local mode (for transferring folder, must be set or you are not able to transfer folders)'
+      puts '   -a, --add           for protocol: add [protocolNamespace], for metadatas add [metadatas hashmap json string]'
+      puts '                       example : ais metadata -a "{\"key\":\"value\"}" ais://bucket1/object1'
+      puts '                                 ais protocol -a namespace ais://bucket1/object1'
+
+
+    end
+
+    def output_usage
+      puts '   ais [command] [options] [source (optional depends on command)] [dest (optional depends on command)]'
+      puts '   Command:'
+      puts '     - ls: list buckets or bucket\'s objects if source set'
+      puts '       ais ls [bucketUrl(optional)]'
+      puts '     - cp: copy source to dest (one must be a local path)'
+      puts '       ais cp [source] [destination]'
+      puts '     - rm: remove bucket or object depending on source url'
+      puts '       ais rm [bucketUrl/objectUrl]'
+      puts '     - metadata: get source metadatas'
+      puts '       ais metadata [objectUrl]'
+      puts '     - mb: create a new bucket named by the source'
+      puts '       ais mb [bucketUrl]'
+      puts '     - md: create a dir in a bucket'
+      puts '       ais md [objectUrl]'
+      puts '   ais url format: ais://[bucketName]/[objectName]'
+      puts ''
+      puts '   For help use: ais -h # gets usage from comments above'
+    end
+
+    def output_version
+      puts "#{File.basename(__FILE__)} version #{VERSION}"
+    end
+
+    #VERIFY FOR Download if the store where the file is is the same as our local store
+    def isLocal (source)
+      objectPath = source
+      req = Net::HTTP::Get.new(@basePath+objectPath[6..-1]+'?metadata')
+      setHeaders req
+      response, data = @store.request(req)
+      jsonResponse = JSON.parse(data)
+      url =""
+      jsonResponse['metadatas']['metadatas'].each{ |o|
+        url = o[1] if (o[0] == '{file}url')
+      }
+      store = url[4 ... url.index("://")]
+      (store == @localNamespace)
+    end
+
+    def processResponse status, response
+      puts status.code if @options.verbose
+      puts response if @options.verbose
+      case status.code
+      when '200' then
+        if @options.raw
+          puts response
+        else
+          yield
+        end
+      when '204' then
+        puts 'No Content'
+      when '500' then
+        puts 'Internal Server Error, please Contact your administrator!'
+        puts response
+      else
+        jsonResponse = JSON.parse response
+        puts jsonResponse['Error']['code']
+      end
+    end
+
+    def metadata
+      objectPath = @arguments[@arguments.length-1]
+      if @options.add == '' then
+
+        req = Net::HTTP::Get.new(@basePath+objectPath[6..-1]+'?metadata')
+        setHeaders req
+        response, data = @store.request(req)
+        processResponse(response, data) {
+          jsonResponse = JSON.parse(data)
+          jsonResponse['metadatas']['metadatas'].each{ |o|
+            puts o[0] +'  :  '+ o[1]
+          }
+        }
+      else
+        message = '{"metadatas":' + @options.add+'}'
+        puts message if @options.verbose
+        req = Net::HTTP::Put.new(@basePath+objectPath[6..-1]+"?metadata")
+        req.body = message
+        setHeaders req
+        response, data = @store.request(req)
+        processResponse(response, data) {}
+      end
+
+    end
+
+    def protocol
+      objectPath = @arguments[@arguments.length-1]
+      if @options.add == '' then
+        req = Net::HTTP::Get.new(@basePath+objectPath[6..-1]+'?protocol')
+        setHeaders req
+        response, data = @store.request(req)
+        processResponse(response, data) {
+          jsonResponse = JSON.parse(data)
+          jsonResponse['listAllObjectProtocolsResult']['protocols'].each{ |o|
+            puts o['name']+'('+o['namespace']+')'
+          }
+        }
+      else
+        protocol = @options.add
+        req = Net::HTTP::Get.new(@protocolBasePath+protocol)
+        setHeaders req
+        response, data = @store.request(req)
+        processResponse(response, data) {
+          jsonResponse = JSON.parse(data)
+          message = '{"metadatas":{'
+          firstMeta = true
+          puts 'Enter value for metadata :'
+          jsonResponse['protocol']['keyConstraints'].each{ |o|
+            puts o['name'] +' (MUST BE OF TYPE '+o['dtatype']+') : '
+            metaValue = STDIN.gets.chomp
+            if (firstMeta) then
+              message = message + '"{'+protocol+'}'+o['name']+'":"'+metaValue+'"'
+              firstMeta = false
+            else
+              message = message + ',"{'+protocol+'}'+o['name']+'":"'+metaValue+'"'
+            end
+
+          }
+          message = message +'}}'
+          puts message if @options.verbose
+          req = Net::HTTP::Put.new(@basePath+objectPath[6..-1]+"?metadata")
+          req.body = message
+          setHeaders req
+          response, data = @store.request(req)
+          processResponse(response, data) {}
+        }
+      end
+
+    end
+
+    def ls
+      bucketName = @arguments[@arguments.length-1]
+      if (bucketName[0,6] == @storePrefix) then
+        bucketName = bucketName[6..-1]
+        if(bucketName.include?('/')) then
+          prefix = bucketName[bucketName.index("/")+1 ..-1]
+          bucketName = bucketName[0..bucketName.index("/")]
+        end
+        req = Net::HTTP::Get.new(@basePath+bucketName)
+
+        if (prefix != nil && prefix.include?('*')) then
+          if (prefix.index('*')==prefix.rindex('*')) then
+            delimiter = prefix[prefix.index('*')+1..-1]
+
+            prefix = prefix[0..prefix.index('*')].chop
+
+            req.add_field 'prefix',prefix if prefix != ''
+            req.add_field 'delimiter',delimiter if delimiter != ''
+            puts 'prefix: '+ prefix if @options.verbose
+            puts 'delimiter: ' +delimiter if @options.verbose
+
+          else
+            puts 'search pattern problem : many * found! '
+            return
+          end
+        elsif (prefix != nil && !prefix.include?('*') )
+          puts 'search pattern problem : no * found! '
+          return
+        end
+        setHeaders req
+        response, data = @store.request(req)
+        processResponse(response, data) {
+          jsonResponse = JSON.parse(data)
+
+          jsonResponse['ListBucketResult']['Contents'].each{ |o|
+            puts o['Key']
+            if @options.long then
+              puts '  lastModified : '+Time.at(o['LastModified']).to_s if o['LastModified'] != nil
+              puts '  eTag : '+o['ETag'] if o['ETag'] != nil
+              puts '  size : '+o['Size'] if o['Size'] != nil
+              puts '  owner : '+o['Owner']['ID'] if (o['Owner'] != nil && o['Owner']['ID'] != nil)
+              puts
+            end
+          }
+        }
+      else
+        req = Net::HTTP::Get.new(@basePath)
+        setHeaders req
+        response, data = @store.request(req)
+
+        processResponse(response, data) {
+          jsonResponse = JSON.parse(data)
+          jsonResponse['ListAllMyBucketsResult']['Buckets'].each{ |bucket|
+            puts 'ais://'+bucket['name']
+          }
+        }
+      end
+    end
+
+    def cp
+      source = @arguments[@arguments.length-2]
+      dest = @arguments[@arguments.length-1]
+      if(source[0,6] == @storePrefix && dest[0,6] != @storePrefix) then
+        puts 'download' if @options.verbose
+        if (isLocal(source)) then
+          req = Net::HTTP::Get.new(@basePath+source[6..-1]+"?local&username="+Etc.getlogin)
+          setHeaders req
+          response, data = @store.request(req)
+          puts @basePath+source[6..-1]+"?local&username="+Etc.getlogin if @options.verbose
+          puts data if @options.verbose
+          processResponse(response, data) {
+            jsonResponse = JSON.parse(data)
+            puts jsonResponse if @options.verbose
+            localPath = jsonResponse['localFile']['localPath']
+            FileUtils.cp_r(localPath, dest)
+          }
+        else
+          response
+          File.open(dest, 'w') {|f|
+            req = Net::HTTP::Get.new(@basePath+source[6..-1])
+            setHeaders req
+            @store.request(req) do |resp|
+              processResponse(resp, '') {
+                resp.read_body do |segment|
+                  f.write(segment)
+                end
+              }
+
+            end
+
+          }
+        end
+      elsif(source[0,6] != @storePrefix && dest[0,6] == @storePrefix)
+        puts 'upload' if @options.verbose
+        req = Net::HTTP::Get.new(@basePath+dest[6..-1]+"?metadata")
+        setHeaders req
+        response, data = @store.request(req)
+        if (response.code != '404' )
+            #NODE ALREADY EXISTS TELL THE CLIENT
+            puts response.code
+            puts 'file exists'
+            return
+
+        end
+        if (@localNamespace != nil) then
+          destFolder = @localTmp+Etc.getlogin+"-"+DateTime.now.strftime("%Y%m%d%H%M%S")+"/"
+          FileUtils.makedirs destFolder
+          FileUtils.cp_r(source, destFolder)
+          copiedFile = destFolder + File.basename(source)
+          FileUtils.chmod_R 0770, destFolder
+          FileUtils.chown_R nil, @localGroup , destFolder if @localGroup
+          FileUtils.chmod_R 0770, destFolder
+
+          incr_digest = Digest::MD5.new()
+          md5 =''
+
+          if File.file? copiedFile then
+            begin
+              file = File.open(copiedFile, 'r')
+              file.each_line do |line|
+                incr_digest << line
+              end
+              md5=incr_digest.hexdigest
+            ensure
+              file.close
+            end
+          else
+            md5 ='thisisadirectory'
+          end
+
+          localFile = {:size => File.size(copiedFile) ,:md5 => md5,  :localPath => copiedFile[@localTmp.length, copiedFile.length], :storeNamespace => @localNamespace}
+          req = Net::HTTP::Put.new(@basePath+dest[6..-1]+"?local")
+          puts localFile.to_json.to_s if @options.verbose
+          req.body = localFile.to_json
+          setHeaders req
+          response, data = @store.request(req)
+          processResponse(response, data) {
+            puts localFile.to_s
+          }
+        else
+          f = File.open(source)
+          req = Net::HTTP::Put.new(@basePath+dest[6..-1])
+          req.body_stream = f
+          setHeaders req
+          response, data = @store.request(req)
+          processResponse(response, data) {}
+        end
+      end
+    end
+
+    def mb
+      bucketName = @arguments[@arguments.length-1]
+      req = Net::HTTP::Put.new(@basePath+bucketName[6..-1])
+      setHeaders req
+      response, data = @store.request(req)
+      processResponse(response, data) {}
+
+    end
+
+    def md
+      objectName = @arguments[@arguments.length-1]
+      req = Net::HTTP::Put.new(@basePath+objectName[6..-1])
+      setHeaders req
+      response, data = @store.request(req)
+      processResponse(response, data) {}
+
+    end
+
+    def rm
+      objectName = @arguments[@arguments.length-1]
+
+      req = Net::HTTP::Delete.new(@basePath+objectName[6..-1])
+      setHeaders req
+      response, data = @store.request(req)
+      processResponse(response, data) {}
+
+    end
+
+    def setHeaders req
+      req['accept'] = @json+', */*'
+      if (req.body == nil && req.body_stream != nil)
+        req.add_field 'content-length', File.size(req.body_stream.path)
+        req['content-type'] ='application/octet-stream'
+        req['x-ais-store-namespace'] = @options.store if (@options.store != nil && @options.store != "")
+      elsif (req.body != nil && req.body_stream == nil)
+        req.add_field 'content-length', req.body.size
+        req['content-type'] = @json
+      else
+        req.add_field 'content-length', 0
+      end
+
+      req['date'] = Time.now.httpdate
+      #req['host'] = @baseUrl+':443'
+      req['host'] = @baseUrl
+      calculateSignature req
+      puts req.to_hash if @options.verbose
+    end
+
+
+
+    def calculateSignature req
+      content_md5 = req['content-MD5'] || ''
+      content_type = req['content-type'] || ''
+      date = req['date'] || ''
+      canonicalHeaders = req.method+"\n"+content_md5+"\n"+content_type+"\n"+date+"\n"
+      #GET HEADERS BEGINNING WITH X-AIS
+      canonicalExtensionHeaders=''
+      canonicalResource=req.path#[(@basePath.size-1)..req.path.size]
+      messageToSign = canonicalHeaders+canonicalExtensionHeaders+canonicalResource
+      digest = OpenSSL::Digest::Digest.new('sha1')
+      signature = Base64.encode64(OpenSSL::HMAC.digest(digest,@secretAccessKey.toutf8,messageToSign.toutf8)).chomp
+      puts "messageToSign: \"" + messageToSign+"\"" if @options.verbose
+      puts "signature: " + signature if @options.verbose
+      #req.add_field 'Authorization' , @securityToken
+      req.add_field 'Authorization' , 'AIS '+@accessKey+':'+signature
+
+
+    end
+
+
+    def process_command
+      send(@command)
+      #rescue
+      # puts 'method does not exists'
+      #process_standard_input # [Optional]
+    end
+
+    def process_standard_input
+      input = @stdin.read
+      # TO DO - process input
+
+      # [Optional]
+      #@stdin.each do |line|
+      #  # TO DO - process each line
+      #end
+    end
+end
+
+
+# TO DO - Add your Modules, Classes, etc
+
+
+# Create and run the application
+app = App.new(ARGV, STDIN)
+app.run
