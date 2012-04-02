@@ -39,7 +39,7 @@ body {
 <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 
-<g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
+<g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT || GrailsUtil.environment == GrailsApplication.ENV_TEST}">
 
     <!-- RequireJS -->
     <script type="text/javascript" src="lib/requirejs/require.js"></script>
@@ -193,7 +193,7 @@ body {
 
 
 
-<g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT}">
+<g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT  || GrailsUtil.environment == GrailsApplication.ENV_TEST}">
     <script type="text/javascript">
         setTimeout(function(){
             if (navigator.appVersion.indexOf("Linux")!=-1) {
