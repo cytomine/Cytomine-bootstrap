@@ -1,7 +1,7 @@
 import grails.plugins.selenium.*
 
 @Mixin(SeleniumAware)
-class HelloWorldTests extends GroovyTestCase{
+class LaunchTests extends GroovyTestCase{
 
     void testCytomineTitle() {
         selenium.open("/");
