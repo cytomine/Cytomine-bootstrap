@@ -1,5 +1,9 @@
 selenium {
     browser = "*googlechrome"
+    screenshot {
+        onFail = true
+        dir = "./target/test-reports/screenshots"
+    }
 /*
 	slow = false									// true to run tests in slow resources mode
 	singleWindow = true								// true for single window mode, false for multi-window mode

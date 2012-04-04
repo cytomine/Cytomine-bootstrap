@@ -11,6 +11,8 @@ class User extends SecUser {
 
     transient springSecurityService
 
+    def projectService
+
     String firstname
     String lastname
     String email
@@ -56,10 +58,13 @@ class User extends SecUser {
     def ontologies() {
         def ontologies = []
         //add ontology created by this user
+        
         if (this.version != null) ontologies.addAll(Ontology.findAllByUser(this))
+        
+        println "User ontolgy =" + ontologies
         //add ontology from project which can be view by this user
         def project = this.projects();
-
+        println "User project =" + project
         project.each { proj ->
             Ontology ontology = proj.ontology
             if (!ontologies.contains(ontology))
@@ -68,18 +73,18 @@ class User extends SecUser {
         ontologies
     }
 
-
+    //TODO: change this by security!!!!
     def projects() {
-        def c = ProjectGroup.createCriteria()
-        def userGroup = userGroups()
-        if (userGroup == null || userGroup.size() == 0) return []
-        def projects = c {
-            inList("group.id", userGroup.collect {it.groupId})
-            projections {
-                groupProperty("project")
-            }
-        }
-        projects
+//        def c = ProjectGroup.createCriteria()
+//        def userGroup = userGroups()
+//        if (userGroup == null || userGroup.size() == 0) return []
+//        def projects = c {
+//            inList("group.id", userGroup.collect {it.groupId})
+//            projections {
+//                groupProperty("project")
+//            }
+//        }
+        projectService.list()
     }
 
     def abstractimages() {

@@ -33,6 +33,7 @@ import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import be.cytomine.ViewPortToBuildXML
+import be.cytomine.test.BasicInstance
 
 class BootStrap {
     def springSecurityService
@@ -160,6 +161,11 @@ class BootStrap {
             createRelation(BootStrapData.relationSamples)
             createRelationTerm(BootStrapData.relationTermSamples)
             createAnnotations(BootStrapData.annotationSamples)
+        }
+        
+        if(env == BootStrap.test) {
+            Project project = BasicInstance.createOrGetBasicProject()
+            Infos.addUserRight(Infos.GOODLOGIN,project)
         }
 
         def destroy = {

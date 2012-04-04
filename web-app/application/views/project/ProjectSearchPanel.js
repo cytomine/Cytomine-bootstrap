@@ -160,8 +160,7 @@ var ProjectSearchPanel = Backbone.View.extend({
             },
             search : function(event)
             {
-
-
+                console.log("search="+$(self.searchProjectTextBoxElem).val());
                 self.searchProject();
             }
         });
