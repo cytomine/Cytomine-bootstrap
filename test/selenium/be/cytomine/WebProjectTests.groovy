@@ -20,7 +20,7 @@ public class WebProjectTests extends AbstractWebProject{
 
     void testConsultProject() {
         //check if the basic project is visible
-        waitForTextPresent(getBasicProject().name);
+        checkProjectOnList(getBasicProject().id)
     }
 
     void testAddProject() {
@@ -29,7 +29,15 @@ public class WebProjectTests extends AbstractWebProject{
         //fill form and save
         fillAddProjectDialogAndSave("testaddnewproject",getBasicProject().discipline?.id,getBasicProject().ontology?.id)
         //check if project is on the listing page
-        waitForTextPresent("testaddnewproject")
+        Project project = null
+        int max = 10
+        while(project==null && max>0) {
+            Thread.sleep(500)
+            project = Project.findByNameIlike("testaddnewproject")
+            max--
+        }
+
+        checkProjectOnList(project.id)
     }
 
     void testEditProject() {
@@ -53,8 +61,9 @@ public class WebProjectTests extends AbstractWebProject{
         //comfirm delete project
         fillDeleteProjectDialogAndSave()
         //check if project is deleted
-        waitForNotTextPresent(project.name);
+        checkProjectNotOnList(project.id)
     }
+
 
     void testFilterProjectName() {
         Project project1 = createBasicProjectNotExist("ABC123")
@@ -72,14 +81,15 @@ public class WebProjectTests extends AbstractWebProject{
         //put "WRONG" on seach project name input => no project visible
         selenium.type("id=projectsearchtextbox", "WRONG");
         selenium.typeKeys("id=projectsearchtextbox"," ")
-        waitForNotTextPresent(project1.name)
-        waitForNotTextPresent(project2.name)
+        checkProjectNotOnList(project1.id)
+        checkProjectNotOnList(project2.id)
 
         //put "ABC" => just project 1 must be in list
         selenium.type("id=projectsearchtextbox", "ABC");
         selenium.typeKeys("id=projectsearchtextbox"," ")
-        waitForTextPresent(project1.name)
-        waitForNotTextPresent(project2.name)
+        checkProjectOnList(project1.id)
+        checkProjectNotOnList(project2.id)
+
 
         //put "789" => just project 2 must be in list
         selenium.type("id=projectsearchtextbox", "789");

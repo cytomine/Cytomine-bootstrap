@@ -48,6 +48,19 @@ public class AbstractWebProject extends AbstractWebCytomine{
         click("id=closeProjectDeleteConfirmDialog")
     }
 
+
+    public void checkProjectOnList(Long id) {
+        selenium.waitForElementPresent("//div[@id='projectlist"+id+"']")
+        selenium.waitForVisible("id=projectlist"+id)
+    }
+
+    public void checkProjectNotOnList(Long id) {
+        Thread.sleep(1000)
+        if(selenium.isElementPresent("id=projectlist"+id)) {
+            selenium.waitForNotVisible("id=projectlist"+id)
+        }
+    }
+
     Project getBasicProject() {
         return BasicInstance.createOrGetBasicProject()
     }
@@ -66,6 +79,8 @@ public class AbstractWebProject extends AbstractWebCytomine{
         Infos.addUserRight(Infos.GOODLOGIN,project)
         return project
     }
+
+
 
 
 }
