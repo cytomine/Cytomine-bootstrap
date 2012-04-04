@@ -40,4 +40,8 @@ public class AbstractWebCytomine extends GroovyTestCase{
         selenium.waitForTextPresent(text);
     }
 
+    void waitForNotTextPresent(String text) {
+        selenium.waitForNotTextPresent("regexpi:"+text)
+    }
+
 }

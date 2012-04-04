@@ -11,6 +11,7 @@ public class WebProjectTests extends AbstractWebProject{
 
     void setUp() throws Exception{
         logIn()
+        openProjectPageAndWait()
     }
 
    void tearDown() throws Exception {
@@ -18,7 +19,6 @@ public class WebProjectTests extends AbstractWebProject{
    }
 
     void testConsultProject() {
-        openProjectPageAndWait()
         //check if the basic project is visible
         waitForTextPresent(getBasicProject().name);
     }
@@ -33,119 +33,82 @@ public class WebProjectTests extends AbstractWebProject{
     }
 
     void testEditProject() {
-        Project project = BasicInstance.getBasicProjectNotExist()
-        project.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,project)
-        
-        selenium.open("/")
-
-        selenium.waitForElementPresent("id=editProjectButton"+project.id);
-        
-//        for (int second = 0;; second++) {
-//      			if (second >= 60) fail("timeout");
-//                if(second==1 || second==5 || second==20 || second==40) selenium.refresh()
-//      			try { if (selenium.isElementPresent("id=editProjectButton"+project.id)) break; } catch (Exception e) {}
-//      			Thread.sleep(1000);
-//        }
-        
-       // println selenium.htmlSource
-        selenium.click("id=editProjectButton"+project.id)
-
-        selenium.type("id=project-edit-name", "BASICPROJECTUPDATED");
-
-        selenium.click("id=users49");
-
-      	selenium.click("id=editProjectButton");
-
-      	selenium.waitForTextPresent("BASICPROJECTUPDATED")
+        Project project = createBasicProjectNotExist()
+        //open page
+        openProjectPageAndWait()
+        //open edit dialog
+        openEditProjectDialgoAndWait(project.id)
+        //fill with new name and new user
+        fillEditProjectDialogAndSave("BASICPROJECTUPDATED")
+        //check if new text is there
+        waitForTextPresent("BASICPROJECTUPDATED")
     }
 
     void testDeleteProject() {
-        Project project = BasicInstance.getBasicProjectNotExist()
-        project.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,project)
-
-        selenium.open("/")
-
-        selenium.waitForTextPresent(project.name.toUpperCase());
-
-        selenium.click("id=deleteProjectButton"+project.id)
-
-        selenium.waitForElementPresent("id=closeProjectDeleteConfirmDialog")
-
-        selenium.click("id=closeProjectDeleteConfirmDialog")
-
-        selenium.waitForNotTextPresent(project.name.toUpperCase());
+        Project project = createBasicProjectNotExist()
+        //open page
+        openProjectPageAndWait()
+        //open delete dialog
+        openDeleteProjectDialogAndWait(project.id)
+        //comfirm delete project
+        fillDeleteProjectDialogAndSave()
+        //check if project is deleted
+        waitForNotTextPresent(project.name);
     }
 
     void testFilterProjectName() {
-        Project project1 = BasicInstance.getBasicProjectNotExist()
-        project1.name = "ABC123"
-        project1.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,project1)
-        Project project2 = BasicInstance.getBasicProjectNotExist()
-        project2.name = "XYZ789"
-        project2.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,project2)
+        Project project1 = createBasicProjectNotExist("ABC123")
+        Project project2 = createBasicProjectNotExist("XYZ789")
+        //open page
+        openProjectPageAndWait()
 
-        selenium.open("/")
+        //check if project are in list
+        waitForTextPresent(project1.name)
+        waitForTextPresent(project2.name)
 
-
-
-        selenium.waitForTextPresent(project1.name.toUpperCase());
-        selenium.waitForTextPresent(project2.name.toUpperCase());
-
+        //wait filter view build
         selenium.waitForElementPresent("id=projectsearchtextbox")
 
+        //put "WRONG" on seach project name input => no project visible
         selenium.type("id=projectsearchtextbox", "WRONG");
         selenium.typeKeys("id=projectsearchtextbox"," ")
-        //selenium.keyPress("id=projectsearchtextbox", "\\71");
+        waitForNotTextPresent(project1.name)
+        waitForNotTextPresent(project2.name)
 
-        selenium.waitForNotTextPresent(project1.name.toUpperCase());
-        selenium.waitForNotTextPresent(project2.name.toUpperCase());
-
+        //put "ABC" => just project 1 must be in list
         selenium.type("id=projectsearchtextbox", "ABC");
         selenium.typeKeys("id=projectsearchtextbox"," ")
-        //selenium.keyPress("id=projectsearchtextbox", "\\67");
+        waitForTextPresent(project1.name)
+        waitForNotTextPresent(project2.name)
 
-        selenium.waitForTextPresent(project1.name.toUpperCase());
-        selenium.waitForNotTextPresent(project2.name.toUpperCase());
-
+        //put "789" => just project 2 must be in list
         selenium.type("id=projectsearchtextbox", "789");
         selenium.typeKeys("id=projectsearchtextbox"," ")
-        //selenium.keyPress("id=projectsearchtextbox", "\\57");
+        waitForNotTextPresent(project1.name)
+        waitForTextPresent(project2.name)
 
-        selenium.waitForNotTextPresent(project1.name.toUpperCase());
-        selenium.waitForTextPresent(project2.name.toUpperCase());
-
+        //put "" => all project must be visible
         selenium.type("id=projectsearchtextbox", "");
         selenium.typeKeys("id=projectsearchtextbox"," ")
-        //selenium.keyPress("id=projectsearchtextbox", "\\13");
-
-        selenium.waitForTextPresent(project1.name.toUpperCase());
-        selenium.waitForTextPresent(project2.name.toUpperCase());
+        waitForTextPresent(project1.name)
+        waitForTextPresent(project2.name)
     }
 
     void testFilterProjectAutoComplete() {
-        Project project = BasicInstance.createOrGetBasicProject()
+        Project project = createBasicProjectNotExist()
         String firstLetter = project.name.substring(0,2)
-
-        selenium.open("/")
-
+        //open page
+        openProjectPageAndWait()
+        //type first caracter from project on autocomplete textbox
         selenium.waitForElementPresent("id=projectsearchtextbox")
         selenium.typeKeys("id=projectsearchtextbox",firstLetter)
-
+        //check is elem is on the list
         selenium.waitForElementPresent("//html/body/ul/li/a[. = \""+project.name.toUpperCase()+"\"]")
     }
 
     void testOpenDashboardProject() {
-        Project project = BasicInstance.createOrGetBasicProject()
-
-        selenium.open("/")
-        selenium.waitForElementPresent("id=radioprojectchange"+project.id);
-        selenium.click("id=radioprojectchange"+project.id);
-        selenium.waitForTextPresent("regexpi:ACTIVITY");
-
+        click("id=radioprojectchange"+getBasicProject().id)
+        waitForTextPresent("activity");
     }
 
 

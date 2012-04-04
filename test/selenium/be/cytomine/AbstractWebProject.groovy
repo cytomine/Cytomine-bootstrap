@@ -9,20 +9,12 @@ import be.cytomine.test.BasicInstance
 public class AbstractWebProject extends AbstractWebCytomine{
 
     void openProjectPageAndWait() {
-            Project project = getBasicProject()
-
-            Infos.addUserRight(Infos.GOODLOGIN,project)
-
-            selenium.open("/")
-
-            selenium.waitForTextPresent(project.name.toUpperCase());
-            selenium.waitForElementPresent("id=project-button");
-        }
-
-        Project getBasicProject() {
-            return BasicInstance.createOrGetBasicProject()
-        }
-
+        Project project = getBasicProject()
+        Infos.addUserRight(Infos.GOODLOGIN,project)
+        selenium.open("/")
+        selenium.waitForTextPresent(project.name.toUpperCase());
+        selenium.waitForElementPresent("id=project-button");
+    }
 
     void openAddProjectDialogAndWait() {
         click("id=projectaddbutton")
@@ -36,6 +28,43 @@ public class AbstractWebProject extends AbstractWebCytomine{
         selenium.select("id=projectdiscipline", "value="+idDiscipline);
         selenium.select("id=projectontology", "value="+idOntology);
         selenium.click("id=saveProjectButton");
+    }
+
+    void openEditProjectDialgoAndWait(Long idProject) {
+        click("id=editProjectButton"+idProject)
+    }
+
+    void fillEditProjectDialogAndSave(String projectNewName) {
+        selenium.type("id=project-edit-name", projectNewName);
+        selenium.click("id=users49");
+      	selenium.click("id=editProjectButton");
+    }
+
+    void openDeleteProjectDialogAndWait(Long idProject) {
+        click("id=deleteProjectButton"+idProject)
+    }
+
+    void fillDeleteProjectDialogAndSave() {
+        click("id=closeProjectDeleteConfirmDialog")
+    }
+
+    Project getBasicProject() {
+        return BasicInstance.createOrGetBasicProject()
+    }
+
+    Project createBasicProjectNotExist() {
+        Project project = BasicInstance.getBasicProjectNotExist()
+        project.save(flush: true)
+        Infos.addUserRight(Infos.GOODLOGIN,project)
+        return project
+    }
+
+    Project createBasicProjectNotExist(String name) {
+        Project project = BasicInstance.getBasicProjectNotExist()
+        project.name = name
+        project.save(flush: true)
+        Infos.addUserRight(Infos.GOODLOGIN,project)
+        return project
     }
 
 
