@@ -17,5 +17,11 @@ class JobUrlMappings {
         "/api/software/$idSoftware/project/$idProject/job"(controller:"restJob"){
             action = [GET: "listBySoftwareAndProject"]
         }
+        "/api/job"(controller:"restJob") {
+            action = [GET:"list", POST:"save"]
+        }
+        "/api/job/$id"(controller:"restJob"){
+            action = [GET:"show", PUT:"update", DELETE:"delete"]
+        }
     }
 }

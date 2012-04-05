@@ -48,5 +48,12 @@ class AnnotationUrlMappings {
         "/api/retrieval/missing/annotation"(controller: "restRetrieval"){
             action = [GET:"missingAnnotation"]
         }
+
+        "/api/import/annotations/$idProject"(controller: "import") {
+            action = [GET:"annotations"]
+        }
+        "/api/annotation/$idannotation/retrieval"(controller:"restRetrieval"){
+            action = [GET:"listSimilarAnnotationAndBestTerm",POST:"index"]
+        }
     }
 }

@@ -32,6 +32,28 @@ class ImageUrlMappings {
         "/api/image/$id/imageservers"(controller: "restImage"){
             action = [GET:"imageservers"]
         }
+        "/api/user/$id/image"(controller:"restImage"){
+            action = [GET:"listByUser"]
+        }
+        "/api/currentuser/image"(controller: "restImage"){
+            action = [GET:"listByUser"]
+        }
+
+        "/api/project/$id/image"(controller: "restImage"){
+            action = [GET:"listByProject"]
+        }
+        "/api/annotation/$id/$zoom/crop"(controller: "restImage"){
+            action = [GET:"crop"]
+        }
+        "/api/annotation/$id/crop"(controller: "restImage"){
+            action = [GET:"crop"]
+        }
+        "/api/annotation/$id/retrieval/$zoom/$maxsimilarpictures"(controller: "restImage") {
+            action = [GET:"retrieval"]
+        }
+        "/api/image/$idabstractimage/group/$idgroup"(controller:"restAbstractImageGroup"){
+            action = [GET:"show",DELETE:"delete",POST:"add"]
+        }
     }
 }
 

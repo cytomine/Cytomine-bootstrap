@@ -17,5 +17,14 @@ class ProjectUrlMappings {
         "/api/software/$id/project"(controller:"restProject"){
             action = [GET: "listBySoftware"]
         }
+        "/api/user/$id/project"(controller:"restProject"){
+            action = [GET:"listByUser"]
+        }
+        "/api/project/$id/last/$max"(controller:"restProject"){
+            action = [GET:"lastAction"]
+        }
+        "/api/ontology/$id/project"(controller:"restProject"){
+            action = [GET:"listByOntology"]
+        }
     }
 }

@@ -20,6 +20,15 @@ class OntologyUrlMappings {
         "/api/ontology/$id/tree"(controller:"restOntology"){
             action = [GET:"tree"]
         }
+        "/api/currentuser/ontology"(controller:"restOntology"){
+            action = [GET:"listByUser"]
+        }
+        "/api/currentuser/ontology/light"(controller:"restOntology"){  //TODO: merge with previous block
+            action = [GET: "listByUserLight"]
+        }
+        "/api/term/$id/ontology"(controller:"restOntology"){
+            action = [GET:"listByTerm"]
+        }
 
     }
 }

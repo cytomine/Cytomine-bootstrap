@@ -27,6 +27,15 @@ class UserUrlMappings {
         "/api/userJob/$id"(controller:"restUser"){
             action = [GET:"showUserJob"]
         }
+        "/api/project/$id/user"(controller: "restUser"){
+            action = [GET:"showByProject",POST:"addUser"]
+        }
+        "/api/project/$id/user/$idUser"(controller: "restUser"){
+            action = [DELETE:"deleteUser",POST:"addUser"]
+        }
+        "/api/project/$id/user/$idUser/admin"(controller: "restUser"){
+            action = [DELETE:"deleteUserAdmin",POST:"addUserAdmin"]
+        }
 
     }
 }

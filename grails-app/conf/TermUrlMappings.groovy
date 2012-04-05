@@ -14,6 +14,21 @@ class TermUrlMappings {
         "/api/term/$id"(controller:"restTerm"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
+        "/api/imageinstance/$id/term"(controller:"restTerm"){
+            action = [GET:"listByImageInstance"]
+        }
+        "/api/project/$idProject/term"(controller:"restTerm"){
+            action = [GET:"listAllByProject"]
+        }
+        "/api/term/$id/project/stat"(controller:"restTerm"){
+            action = [GET:"statProject"]
+        }
+        "/api/ontology/$idontology/term"(controller:"restTerm"){
+            action = [GET:"listByOntology"]
+        }
+        "/api/ontology/$idontology/term"(controller:"restTerm"){
+            action = [GET:"listAllByOntology"]
+        }
     }
 }
 
