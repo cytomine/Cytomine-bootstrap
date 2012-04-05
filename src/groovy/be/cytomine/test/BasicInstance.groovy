@@ -334,7 +334,61 @@ class BasicInstance {
         image
     }
 
+    static Job createOrGetBasicJob() {
+        log.debug  "createOrGetBasicJob()"
+        def job
+        def jobs = Job.findAllByProjectIsNotNull()
+        if(jobs.isEmpty()) {
+            Project project = createOrGetBasicProject()
+            job = new Job(project:project,software:createOrGetBasicSoftware())
+            checkDomain(job)
+            saveDomain(job)
+        } else {
+            job = jobs.first()
+        }
+        assert job!=null
+        job
+    }
 
+    static Job getBasicJobNotExist() {
+        log.debug "getBasicJobNotExist()"
+        Software software = getBasicSoftwareNotExist()
+        Project project = getBasicProjectNotExist()
+        software.save(flush:true)
+        project.save(flush : true)
+        Job job =  new Job(software:software, project : project)
+        checkDomain(job)
+        job
+    }
+
+    static JobParameter createOrGetBasicJobParameter() {
+        log.debug "createOrGetBasicJobparameter()"
+
+        def job = createOrGetBasicJob()
+        def softwareParam = createOrGetBasicSoftwareParameter()
+
+        def jobparameter = JobParameter.findByJobAndSoftwareParameter(job,softwareParam)
+        if (!jobparameter) {
+
+            jobparameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
+            checkDomain(jobparameter)
+            saveDomain(jobparameter)
+        }
+        assert jobparameter != null
+        jobparameter
+    }
+
+    static JobParameter getBasicJobParameterNotExist() {
+        log.debug "getBasicJobparameterNotExist()"
+        def job = getBasicJobNotExist()
+        def softwareParam = getBasicSoftwareParameterNotExist()
+        job.save(flush:true)
+        softwareParam.save(flush:true)
+
+        def jobparameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
+        checkDomain(jobparameter)
+        jobparameter
+    }
     
     
     
@@ -738,38 +792,7 @@ class BasicInstance {
         term
     }
 
-   static Job createOrGetBasicJob() {
-       log.debug  "createOrGetBasicJob()"
-       def job
-       def jobs = Job.findAllByProjectIsNotNull()
-       if(jobs.isEmpty()) {
-           Project project = createOrGetBasicProject()
-           job = new Job(project:project,software:createOrGetBasicSoftware())
-           log.debug  "job.project"+job.project
-           log.debug  "project"+project
-           job.validate()
-           log.debug "job.errors="+job.errors
-           job.save(flush : true)
-           log.debug "job.errors="+job.errors
-       } else {
-           job = jobs.first()
-       }
-       assert job!=null
-       job
-   }
 
-   static Job getBasicJobNotExist() {
-
-       log.debug "getBasicJobNotExist() start"
-       Software software = getBasicSoftwareNotExist()
-       Project project = getBasicProjectNotExist()
-       software.save(flush:true)
-       project.save(flush : true)
-       Job job =  new Job(software:software, project : project)
-       job.validate()
-       log.debug "job.errors="+job.errors
-       job
-   }
 
     static Software createOrGetBasicSoftware() {
         log.debug "createOrGetBasicSoftware()"
@@ -804,36 +827,7 @@ class BasicInstance {
         software
     }
     
-    static JobParameter createOrGetBasicJobParameter() {
-        log.debug "createOrGetBasicJobparameter()"
 
-        def job = createOrGetBasicJob()
-        def softwareParam = createOrGetBasicSoftwareParameter()
-
-        def jobparameter = JobParameter.findByJobAndSoftwareParameter(job,softwareParam)
-        if (!jobparameter) {
-
-            jobparameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
-            jobparameter.validate()
-            log.debug "jobparameter.errors=" + jobparameter.errors
-            jobparameter.save(flush: true)
-            log.debug "jobparameter.errors=" + jobparameter.errors
-        }
-        assert jobparameter != null
-        jobparameter
-    }
-
-    static JobParameter getBasicJobParameterNotExist() {
-
-        log.debug "getBasicJobparameterNotExist() start"
-        def job = getBasicJobNotExist()
-        def softwareParam = getBasicSoftwareParameterNotExist()
-        job.save(flush:true)
-        softwareParam.save(flush:true)
-
-        def jobparameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
-        jobparameter
-    }    
 
     static SoftwareParameter createOrGetBasicSoftwareParameter() {
         log.debug "createOrGetBasicSoftwareParameter()"
