@@ -22,7 +22,7 @@ class ImageInstanceAPI extends DomainAPI {
 
     static ImageInstance buildBasicImage(String username, String password) {
         //Create project with user 1
-        def result = ProjectAPI.createProject(BasicInstance.getBasicProjectNotExist(), username, password)
+        def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(), username, password)
         assert 200==result.code
         Project project = result.data
         //Add image with user 1

@@ -241,7 +241,7 @@ class AnnotationAPI extends DomainAPI {
 
     static def buildBasicAnnotation(String username, String password) {
         //Create project with user 1
-        def result = ProjectAPI.createProject(BasicInstance.getBasicProjectNotExist(), username, password)
+        def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(), username, password)
         assert 200==result.code
         Project project = result.data
 

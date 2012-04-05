@@ -287,7 +287,30 @@ class BasicInstance {
         abstractimageGroup
     }
     
-    
+    static Discipline createOrGetBasicDiscipline() {
+        log.debug "createOrGetBasicDiscipline()"
+        def discipline = Discipline.findByName("BASICDISCIPLINE")
+        if (!discipline) {
+            discipline = new Discipline(name: "BASICDISCIPLINE")
+        }
+        checkDomain(discipline)
+        saveDomain(discipline)
+        discipline
+    }
+
+    static Discipline getBasicDisciplineNotExist() {
+        log.debug "createOrGetBasicDisciplineNotExist()"
+        def random = new Random()
+        def randomInt = random.nextInt()
+        def discipline = Discipline.findByName(randomInt + "")
+        while (discipline) {
+            randomInt = random.nextInt()
+            discipline = Discipline.findByName(randomInt + "")
+        }
+        discipline = new Discipline(name: randomInt + "")
+        checkDomain(discipline)
+        discipline
+    }
     
     
     
@@ -340,40 +363,7 @@ class BasicInstance {
         relation
     }
 
-    static Discipline createOrGetBasicDiscipline() {
 
-        log.debug "createOrGetBasicDiscipline()"
-        def discipline = Discipline.findByName("BASICDISCIPLINE")
-        if (!discipline) {
-            discipline = new Discipline(name: "BASICDISCIPLINE")
-            discipline.validate()
-            log.debug("discipline.errors=" + discipline.errors)
-            discipline.save(flush: true)
-            log.debug("discipline.errors=" + discipline.errors)
-        }
-        assert discipline != null
-        discipline
-    }
-
-    static Discipline getBasicDisciplineNotExist() {
-
-        log.debug "createOrGetBasicDisciplineNotExist()"
-        def random = new Random()
-        def randomInt = random.nextInt()
-        def discipline = Discipline.findByName(randomInt + "")
-
-        while (discipline) {
-            randomInt = random.nextInt()
-            discipline = Discipline.findByName(randomInt + "")
-        }
-
-        discipline = new Discipline(name: randomInt + "")
-        discipline.validate()
-        log.debug("discipline.errors=" + discipline.errors)
-
-        assert discipline != null
-        discipline
-    }
 
     static Mime createOrGetBasicMime() {
 

@@ -7,6 +7,7 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.project.Discipline
+import be.cytomine.test.http.DisciplineAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,489 +19,146 @@ import be.cytomine.project.Discipline
 class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
 
   void testListDisciplineWithCredential() {
-
-    log.info("list discipline")
-    String URL = Infos.CYTOMINEURL+"api/discipline.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONArray
-
+      def result = DisciplineAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
+      def json = JSON.parse(result.data)
+      assert json instanceof JSONArray
   }
 
   void testListDisciplineWithoutCredential() {
-
-    log.info("list discipline")
-    String URL = Infos.CYTOMINEURL+"api/discipline.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.BADLOGIN,Infos.BADPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(401,code)
-
+      def result = DisciplineAPI.list(Infos.BADLOGIN, Infos.BADPASSWORD)
+      assertEquals(401, result.code)
   }
 
   void testShowDisciplineWithCredential() {
-
-    Discipline discipline = BasicInstance.createOrGetBasicDiscipline()
-
-    log.info("list discipline")
-    String URL = Infos.CYTOMINEURL+"api/discipline/"+ discipline.id +".json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-
+      def result = DisciplineAPI.show(BasicInstance.createOrGetBasicDiscipline().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
+      def json = JSON.parse(result.data)
+      assert json instanceof JSONObject
   }
 
   void testAddDisciplineCorrect() {
+      def disciplineToAdd = BasicInstance.getBasicDisciplineNotExist()
+      def result = DisciplineAPI.create(disciplineToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
+      int idDiscipline = result.data.id
 
-   log.info("create discipline")
-    def disciplineToAdd = BasicInstance.getBasicDisciplineNotExist()
-    println("disciplineToAdd.version="+disciplineToAdd.version)
-    String jsonDiscipline = disciplineToAdd.encodeAsJSON()
+      result = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
 
-    log.info("post discipline:"+jsonDiscipline.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/discipline.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonDiscipline)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
+      result = DisciplineAPI.undo()
+      assertEquals(200, result.code)
 
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int idDiscipline = json.discipline.id
+      result = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, result.code)
 
-    log.info("check if object "+ idDiscipline +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/discipline/"+idDiscipline +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
+      result = DisciplineAPI.redo()
+      assertEquals(200, result.code)
 
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idDiscipline +" not exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/discipline/"+idDiscipline +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(404,code)
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    //must be done because redo change id
-    json = JSON.parse(response)
-    assert json instanceof JSONArray
-
-    log.info("check if object "+ idDiscipline +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/discipline/"+idDiscipline +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
+      result = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
   }
 
   void testAddDisciplineAlreadyExist() {
-    log.info("create discipline")
-    def disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
-    //disciplineToAdd is save in DB
-    String jsonDiscipline = disciplineToAdd.encodeAsJSON()
-
-    log.info("post discipline:"+jsonDiscipline.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/discipline.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonDiscipline)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(409,code)
-  }
-
-  void testAddDisciplineWithBadName() {
-    log.info("create discipline")
-    def disciplineToAdd = BasicInstance.getBasicDisciplineNotExist()
-    String jsonDiscipline = disciplineToAdd.encodeAsJSON()
-
-    def jsonUpdate = JSON.parse(jsonDiscipline)
-    jsonUpdate.name = null
-    jsonDiscipline = jsonUpdate.encodeAsJSON()
-
-    log.info("post discipline:"+jsonDiscipline.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/discipline.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonDiscipline)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
+      def disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
+      def result = DisciplineAPI.create(disciplineToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(409, result.code)
   }
 
   void testUpdateDisciplineCorrect() {
+      Discipline disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
+      def result = DisciplineAPI.update(disciplineToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
+      def json = JSON.parse(result.data)
+      assert json instanceof JSONObject
+      int idDiscipline = json.discipline.id
 
-    String oldName = "NAME1"
-    String newName = "NAME2"
+      def showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      json = JSON.parse(showResult.data)
+      BasicInstance.compareDiscipline(result.mapNew, json)
 
-    def mapNew = ["name":newName]
-    def mapOld = ["name":oldName]
+      showResult = DisciplineAPI.undo()
+      assertEquals(200, result.code)
+      showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      BasicInstance.compareDiscipline(result.mapOld, JSON.parse(showResult.data))
 
-    /* Create a Name1 discipline */
-    log.info("create discipline")
-    Discipline disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
-    disciplineToAdd.name = oldName
-    assert (disciplineToAdd.save(flush:true) != null)
-
-    /* Encode a niew discipline Name2*/
-    Discipline disciplineToEdit = Discipline.get(disciplineToAdd.id)
-    def jsonDiscipline = disciplineToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonDiscipline)
-    jsonUpdate.name = newName
-    jsonDiscipline = jsonUpdate.encodeAsJSON()
-
-    log.info("put discipline:"+jsonDiscipline.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/discipline/"+disciplineToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonDiscipline)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int idDiscipline = json.discipline.id
-
-    log.info("check if object "+ idDiscipline +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/discipline/"+idDiscipline +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-    BasicInstance.compareDiscipline(mapNew,json)
-
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL + ".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idDiscipline +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/discipline/"+idDiscipline +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-    BasicInstance.compareDiscipline(mapOld,json)
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL + ".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idDiscipline +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/discipline/"+idDiscipline +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-    BasicInstance.compareDiscipline(mapNew,json)
-
-
-    log.info("check if object "+ idDiscipline +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/discipline/"+idDiscipline +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
+      showResult = DisciplineAPI.redo()
+      assertEquals(200, result.code)
+      showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      BasicInstance.compareDiscipline(result.mapNew, JSON.parse(showResult.data))
   }
 
   void testUpdateDisciplineNotExist() {
-    /* Create a Name1 discipline */
-    log.info("create discipline")
-    Discipline disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
-
-    /* Encode a niew discipline Name2*/
-    Discipline disciplineToEdit = Discipline.get(disciplineToAdd.id)
-    def jsonDiscipline = disciplineToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonDiscipline)
-    jsonUpdate.id = -99
-    jsonDiscipline = jsonUpdate.encodeAsJSON()
-
-    log.info("put discipline:"+jsonDiscipline.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/discipline/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonDiscipline)
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
+      Discipline disciplineWithOldName = BasicInstance.createOrGetBasicDiscipline()
+      Discipline disciplineWithNewName = BasicInstance.getBasicDisciplineNotExist()
+      disciplineWithNewName.save(flush: true)
+      Discipline disciplineToEdit = Discipline.get(disciplineWithNewName.id)
+      def jsonDiscipline = disciplineToEdit.encodeAsJSON()
+      def jsonUpdate = JSON.parse(jsonDiscipline)
+      jsonUpdate.name = disciplineWithOldName.name
+      jsonUpdate.id = -99
+      jsonDiscipline = jsonUpdate.encodeAsJSON()
+      def result = DisciplineAPI.update(-99, jsonDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, result.code)
   }
 
   void testUpdateDisciplineWithNameAlreadyExist() {
-
-    /* Create a Name1 discipline */
-    log.info("create discipline")
-    Discipline disciplineWithOldName = BasicInstance.createOrGetBasicDiscipline()
-    Discipline disciplineWithNewName = BasicInstance.getBasicDisciplineNotExist()
-    disciplineWithNewName.save(flush:true)
-
-
-    /* Encode a niew discipline Name2*/
-    Discipline disciplineToEdit = Discipline.get(disciplineWithNewName.id)
-    log.info("disciplineToEdit="+disciplineToEdit)
-    def jsonDiscipline = disciplineToEdit.encodeAsJSON()
-    log.info("jsonDiscipline="+jsonDiscipline)
-    def jsonUpdate = JSON.parse(jsonDiscipline)
-    jsonUpdate.name = disciplineWithOldName.name
-    jsonDiscipline = jsonUpdate.encodeAsJSON()
-
-    log.info("put discipline:"+jsonDiscipline.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/discipline/"+disciplineToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonDiscipline)
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(409,code)
-
+      Discipline disciplineWithOldName = BasicInstance.createOrGetBasicDiscipline()
+      Discipline disciplineWithNewName = BasicInstance.getBasicDisciplineNotExist()
+      disciplineWithNewName.save(flush: true)
+      Discipline disciplineToEdit = Discipline.get(disciplineWithNewName.id)
+      def jsonDiscipline = disciplineToEdit.encodeAsJSON()
+      def jsonUpdate = JSON.parse(jsonDiscipline)
+      jsonUpdate.name = disciplineWithOldName.name
+      jsonDiscipline = jsonUpdate.encodeAsJSON()
+      def result = DisciplineAPI.update(disciplineToEdit.id, jsonDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(409, result.code)
   }
-
-  void testUpdateDisciplineWithBadName() {
-
-    /* Create a Name1 discipline */
-    log.info("create discipline")
-    Discipline disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
-
-    /* Encode a niew discipline Name2*/
-    Discipline disciplineToEdit = Discipline.get(disciplineToAdd.id)
-    def jsonDiscipline = disciplineToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonDiscipline)
-    jsonUpdate.name = null
-    jsonDiscipline = jsonUpdate.encodeAsJSON()
-
-    log.info("put discipline:"+jsonDiscipline.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/discipline/"+disciplineToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonDiscipline)
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-
-  }
+    
+    void testEditDisciplineWithBadName() {
+        Discipline disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
+        Discipline disciplineToEdit = Discipline.get(disciplineToAdd.id)
+        def jsonDiscipline = disciplineToEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonDiscipline)
+        jsonUpdate.name = null
+        jsonDiscipline = jsonUpdate.encodeAsJSON()
+        def result = DisciplineAPI.update(disciplineToAdd.id, jsonDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(400, result.code)
+    }
 
   void testDeleteDiscipline() {
+      def disciplineToDelete = BasicInstance.getBasicDisciplineNotExist()
+      assert disciplineToDelete.save(flush: true)!= null
+      def id = disciplineToDelete.id
+      def result = DisciplineAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
 
-    log.info("create discipline")
-    def disciplineToDelete = BasicInstance.getBasicDisciplineNotExist()
-    assert disciplineToDelete.save(flush:true)!=null
-    String jsonDiscipline = disciplineToDelete.encodeAsJSON()
-    int idDiscipline = disciplineToDelete.id
-    log.info("delete discipline:"+jsonDiscipline.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/discipline/"+idDiscipline+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
+      def showResult = DisciplineAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, showResult.code)
 
-    log.info("check response")
-    assertEquals(200,code)
+      result = DisciplineAPI.undo()
+      assertEquals(200, result.code)
 
-    log.info("check if object "+ idDiscipline +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/discipline/"+idDiscipline +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
+      result = DisciplineAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
 
-    assertEquals(404,code)
+      result = DisciplineAPI.redo()
+      assertEquals(200, result.code)
 
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idDiscipline +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/discipline/"+idDiscipline  +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idDiscipline +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/discipline/"+idDiscipline +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(404,code)
-
+      result = DisciplineAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, result.code)
   }
 
   void testDeleteDisciplineNotExist() {
-
-     log.info("create discipline")
-    def disciplineToDelete = BasicInstance.createOrGetBasicDiscipline()
-    String jsonDiscipline = disciplineToDelete.encodeAsJSON()
-
-    log.info("delete discipline:"+jsonDiscipline.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/discipline/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
-
+      def result = DisciplineAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, result.code)
   }
 
   void testDeleteDisciplineWithProject() {
-
-    log.info("create discipline")
-    //create project and try to delete his discipline
-    def project = BasicInstance.createOrGetBasicProject()
-    def disciplineToDelete = project.discipline
-    assert disciplineToDelete.save(flush:true)!=null
-    String jsonDiscipline = disciplineToDelete.encodeAsJSON()
-    int idDiscipline = disciplineToDelete.id
-    log.info("delete discipline:"+jsonDiscipline.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/discipline/"+idDiscipline+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-
+      def project = BasicInstance.createOrGetBasicProject()
+      def disciplineToDelete = project.discipline
+      def result = DisciplineAPI.delete(disciplineToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(400, result.code)
   }
 
 }
