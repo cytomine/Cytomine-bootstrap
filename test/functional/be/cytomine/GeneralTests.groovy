@@ -10,6 +10,7 @@ import be.cytomine.test.HttpClient
 import org.codehaus.groovy.grails.web.json.JSONArray
 
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import be.cytomine.test.http.AnnotationAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,8 +28,6 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
     def springSecurityService
 
     void testCommandMaxSizeTooLong() {
-
-        log.info("create image")
         String jsonImage = "{\"text\" : \"*************************************************************************"
         String textAdded = "***************************************************************************************"
         textAdded = textAdded + textAdded + textAdded + textAdded + textAdded + textAdded + textAdded + textAdded + textAdded + textAdded
@@ -54,7 +53,6 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
     }
 
     void testCommandMaxSizeOK() {
-
         log.info("create image")
         String jsonImage = "{\"text\" : \"*************************************************************************"
         String textAdded = "***************************************************************************************"
@@ -75,90 +73,42 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(response)
     }
 
-
-
     void testLastAction() {
-
-
-        log.info("create annotation")
         def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
-        String jsonAnnotation = annotationToAdd.encodeAsJSON()
-        Infos.addUserRight(Infos.GOODLOGIN,annotationToAdd.image.project)
-        /*
-        * Add an annotation, undo and redo it
-        */
-        log.info("post annotation:" + jsonAnnotation.replace("\n", ""))
-        String URL = Infos.CYTOMINEURL + "api/annotation.json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.post(jsonAnnotation)
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
+        def result = AnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        int idAnnotation = result.data.id
 
-        log.info("check response")
-        assertEquals(200, code)
-        def json = JSON.parse(response)
-        assert json instanceof JSONObject
-        int idAnnotation = json.annotation.id
+        result = AnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
 
-        log.info("check if object " + idAnnotation + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/annotation/" + idAnnotation + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
+        result = AnnotationAPI.undo()
+        assertEquals(200, result.code)
 
-        log.info("test undo")
-        client = new HttpClient()
-        URL = Infos.CYTOMINEURL + Infos.UNDOURL
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
+        result = AnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
 
-        log.info("check if object " + idAnnotation + " not exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/annotation/" + idAnnotation + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(404, code)
+        result = AnnotationAPI.redo()
+        assertEquals(200, result.code)
 
-        log.info("test redo")
-        client = new HttpClient()
-        URL = Infos.CYTOMINEURL + Infos.REDOURL
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
+        result = AnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
 
         /*
         * Get the last 3 commands: it must be "REDO ADD ANNOTATION", "UNDO ADD ANNOTATION" and "ADD ANNOTATION"
         */
         Long idProject = annotationToAdd.image.project.id
         Integer max = 3
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/project/" + idProject + "/last/" + max + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        HttpClient client = new HttpClient();
+        String url = Infos.CYTOMINEURL + "api/project/" + idProject + "/last/" + max + ".json"
+        client.connect(url, Infos.GOODLOGIN, Infos.GOODPASSWORD);
         client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
         client.disconnect();
         assertEquals(200, code)
-        json = JSON.parse(response)
+        def json = JSON.parse(response)
         assert json instanceof JSONArray
-
-        log.info("response=" + response);
 
     }
 }

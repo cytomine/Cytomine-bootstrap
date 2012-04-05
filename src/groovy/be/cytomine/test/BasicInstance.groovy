@@ -311,9 +311,30 @@ class BasicInstance {
         checkDomain(discipline)
         discipline
     }
-    
-    
-    
+
+    static ImageInstance createOrGetBasicImageInstance() {
+        log.info "createOrGetBasicImageInstance()"
+        ImageInstance image = getBasicImageInstanceNotExist();
+        checkDomain(image)
+        saveDomain(image)
+        return image
+    }
+
+    static ImageInstance getBasicImageInstanceNotExist() {
+        log.info "getBasicImageInstanceNotExist()"
+        AbstractImage img = BasicInstance.getBasicAbstractImageNotExist()
+        img.save(flush: true)
+        ImageInstance image = new ImageInstance(
+                baseImage: img,
+                project: BasicInstance.createOrGetBasicProject(),
+                slide: BasicInstance.createOrGetBasicSlide(),
+                user: BasicInstance.createOrGetBasicUser())
+        image.baseImage.save(flush: true)
+        checkDomain(image)
+        image
+    }
+
+
     
     
     
@@ -389,39 +410,7 @@ class BasicInstance {
         mime
     }
 
-    static ImageInstance getBasicImageInstanceNotExist() {
 
-        log.debug "getBasicImageNotExist()"
-        AbstractImage img = BasicInstance.getBasicAbstractImageNotExist()
-        img.save(flush: true)
-        ImageInstance image = new ImageInstance(
-                baseImage: img,
-                project: BasicInstance.createOrGetBasicProject(),
-                slide: BasicInstance.createOrGetBasicSlide(),
-                user: BasicInstance.createOrGetBasicUser())
-        image.baseImage.save(flush: true)
-        image.validate()
-        log.debug "ImageInstance.errors=" + image.errors
-        image
-    }
-
-    static ImageInstance createOrGetBasicImageInstance() {
-//    log.debug  "createOrGetBasicImage()"
-//    ImageInstance image =  new ImageInstance(
-//            baseImage:BasicInstance.createOrGetBasicAbstractImage(),
-//            project:BasicInstance.createOrGetBasicProject(),
-//            user:BasicInstance.createOrGetBasicUser())
-//    image.validate()
-//    log.debug "ImageInstance.errors="+image.errors
-//    image.save(flush : true)
-//    log.debug "ImageInstance.errors="+image.errors
-//    assert image!=null
-//    image
-        ImageInstance img = getBasicImageInstanceNotExist();
-        log.info("imageinstance:" + img.save(flush: true))
-        assert img != null
-        return img
-    }
 
     static Scanner createOrGetBasicScanner() {
 

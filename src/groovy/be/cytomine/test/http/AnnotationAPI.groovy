@@ -248,7 +248,7 @@ class AnnotationAPI extends DomainAPI {
         //Add image with user 1
         ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
         image.project = project
-        result = ImageInstanceAPI.createImageInstance(image, username, password)
+        result = ImageInstanceAPI.create(image, username, password)
         assert 200==result.code
         image = result.data
 

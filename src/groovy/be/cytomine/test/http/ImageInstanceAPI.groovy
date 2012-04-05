@@ -28,14 +28,14 @@ class ImageInstanceAPI extends DomainAPI {
         //Add image with user 1
         ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
         image.project = project
-        result = ImageInstanceAPI.createImageInstance(image, username, password)
+        result = ImageInstanceAPI.create(image, username, password)
         assert 200==result.code
         image = result.data
         return image
     }
 
-    static def listImageInstanceByProject(Long id, String username, String password) {
-        log.info("list project")
+    static def listByProject(Long id, String username, String password) {
+        log.info "list image by project $id"
         String URL = Infos.CYTOMINEURL + "api/project/$id/imageinstance.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -46,8 +46,8 @@ class ImageInstanceAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def listImageInstanceByImage(Long id, String username, String password) {
-        log.info("list project")
+    static def listByImage(Long id, String username, String password) {
+        log.info "list image by asbt image $id"
         String URL = Infos.CYTOMINEURL + "api/image/$id/imageinstance.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -58,8 +58,8 @@ class ImageInstanceAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def showImageInstance(Long id, String username, String password) {
-        log.info("show project:" + id)
+    static def show(Long id, String username, String password) {
+        log.info "show image $id"
         String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + ".json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -71,21 +71,21 @@ class ImageInstanceAPI extends DomainAPI {
     }
 
 
-    static def createImageInstance(ImageInstance imageToAdd, User user) {
-       createImageInstance(imageToAdd.encodeAsJSON(),user.username,user.password)
+    static def create(ImageInstance imageToAdd, User user) {
+       create(imageToAdd.encodeAsJSON(),user.username,user.password)
     }
 
 
-    static def createImageInstance(ImageInstance imageToAdd, String username, String password) {
-        return createImageInstance(imageToAdd.encodeAsJSON(), username, password)
+    static def create(ImageInstance imageToAdd, String username, String password) {
+        return create(imageToAdd.encodeAsJSON(), username, password)
     }
 
-    static def createImageInstance(String jsonImageInstance, User user) {
-        createImageInstance(jsonImageInstance,user.username,user.password)
+    static def create(String jsonImageInstance, User user) {
+        create(jsonImageInstance,user.username,user.password)
     }
 
-    static def createImageInstance(String jsonImageInstance, String username, String password) {
-        log.info("post ImageInstance:" + jsonImageInstance.replace("\n", ""))
+    static def create(String jsonImageInstance, String username, String password) {
+        log.info "create ImageInstance"
         String URL = Infos.CYTOMINEURL + "api/imageinstance.json"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
@@ -94,15 +94,13 @@ class ImageInstanceAPI extends DomainAPI {
         String response = client.getResponseData()
         println response
         client.disconnect();
-
-        log.info("check response")
-//        assertEquals(200, code)
         def json = JSON.parse(response)
         Long idImage = json?.imageinstance?.id
         return [data: ImageInstance.get(idImage), code: code]
     }
 
-    static def updateImageInstance(ImageInstance image, String username, String password) {
+    static def update(ImageInstance image, String username, String password) {
+        log.info "update ImageInstance"
         Project oldProject = BasicInstance.createOrGetBasicProject()
         Project newProject = BasicInstance.getBasicProjectNotExist()
         newProject.save(flush: true)
@@ -120,7 +118,6 @@ class ImageInstanceAPI extends DomainAPI {
 
 
         /* Create a old image */
-        log.info("create image")
         ImageInstance imageToAdd = BasicInstance.createOrGetBasicImageInstance()
         imageToAdd.project = oldProject;
         imageToAdd.baseImage = oldImage;
@@ -138,13 +135,14 @@ class ImageInstanceAPI extends DomainAPI {
 
         jsonImage = jsonUpdate.encodeAsJSON()
 
-        def data = updateImageInstance(image.id, jsonImage, username, password)
+        def data = update(image.id, jsonImage, username, password)
         data.mapNew = mapNew
         data.mapOld = mapOld
         return data
     }
 
-    static def updateImageInstance(def id, def jsonImageInstance, String username, String password) {
+    static def update(def id, def jsonImageInstance, String username, String password) {
+        log.info "update ImageInstance $id"
         String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + ".json"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
@@ -157,8 +155,8 @@ class ImageInstanceAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def deleteImageInstance(ImageInstance image, String username, String password) {
-        log.info("delete project")
+    static def delete(ImageInstance image, String username, String password) {
+        log.info "delete ImageInstance"
         String URL = Infos.CYTOMINEURL + "api/project/" + image.project.id + "/image/"+ image.baseImage.id +"/imageinstance.json"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)

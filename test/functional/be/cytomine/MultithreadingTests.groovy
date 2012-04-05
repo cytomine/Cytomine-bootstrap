@@ -114,7 +114,7 @@ class ImageInstanceAddConcurrent extends Thread {
     public void run() {
         log.info("start thread")
         log.info("create image instance")
-        def result = ImageInstanceAPI.createImageInstance(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         log.info("check response")
         code = result.code
         log.info("end thread")
