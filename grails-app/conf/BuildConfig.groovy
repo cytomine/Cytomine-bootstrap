@@ -30,3 +30,7 @@ grails.project.dependency.resolution = {
         // runtime 'mysql:mysql-connector-java:5.1.5'
     }
 }
+
+coverage {
+	exclusions = ["**/be/cytomine/data/**","**/be.cytomine.processing.job/**"]
+}

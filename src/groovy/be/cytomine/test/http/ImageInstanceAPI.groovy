@@ -46,18 +46,6 @@ class ImageInstanceAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def listByImage(Long id, String username, String password) {
-        log.info "list image by asbt image $id"
-        String URL = Infos.CYTOMINEURL + "api/image/$id/imageinstance.json"
-        HttpClient client = new HttpClient();
-        client.connect(URL, username, password);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
-    }
-
     static def show(Long id, String username, String password) {
         log.info "show image $id"
         String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + ".json"

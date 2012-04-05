@@ -27,15 +27,6 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
-    
-
-    void testListImagesInstanceByImageWithCredential() {
-        BasicInstance.createOrGetBasicImageInstance()
-        def result = ImageInstanceAPI.listByProject(BasicInstance.createOrGetBasicAbstractImage().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
-    }    
 
     void testGetImageInstanceWithCredential() {
         def result = ImageInstanceAPI.show(BasicInstance.createOrGetBasicImageInstance().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

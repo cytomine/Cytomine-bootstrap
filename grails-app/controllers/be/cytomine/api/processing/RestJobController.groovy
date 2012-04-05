@@ -89,18 +89,15 @@ class RestJobController extends RestController {
     }
 
     private def executeJob(Job job) {
-        //create Job
-        log.info "Execute Job..."
-        //Create User-job
+        log.info "Create UserJob..."
         UserJob userJob = createUserJob(User.read(springSecurityService.principal.id), job)
         job.software.service.init(job, userJob)
 
-        log.info "### Launch asynchronous..."
+        log.info "Launch async..."
         backgroundService.execute("RunJobAsynchronously", {
             log.info "Launch thread";
             job.software.service.execute(job)
         })
-        log.info "### Return response..."
         job
     }
 
@@ -112,64 +109,6 @@ class RestJobController extends RestController {
     def delete = {
         delete(jobService, JSON.parse("{id : $params.id}"))
     }
-
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
-    def listRetrieval = {
-        log.info "list all job"
-        responseSuccess(retrievalSuggestTermJobService.list())
-    }
-
-    def execute = {
-        Project project = projectService.read(params.long('id'),new Project());
-        if (!project) responseNotFound("Job", "Project", params.id)
-        else {
-            Long idSoftware = Long.parseLong(params.software)
-            //TODO: execute retrieval should be a generic method execute
-            /*if(idSoftware==Software.findByServiceNameIlike("retrievalSuggestedTermJobService").id) {
-                Software software = Software.findByName("Retrieval-Suggest-Term")
-                def resp = createAndExecuteJob(project, software)
-                responseSuccess(resp)
-            }
-            if(idSoftware==Software.findByServiceNameIlike("pyxitSuggestedTermJobService").id) {
-                Software software = Software.findByName("Pyxit KFOLDS")
-                def resp = createAndExecuteJob(project, software)
-                responseSuccess(resp)
-            }*/
-            Software software = Software.read(idSoftware)
-            if (!software) responseNotFound("Job", "Software", params.id)
-            def resp = createAndExecuteJob(project, software)
-            responseSuccess(resp)
-        }
-    }
-
-    private def createAndExecuteJob(Project project, Software software) {
-        //create Job
-        log.info "Create Job..."
-        Job job = new Job(project: project, software: software,running:true)
-        def result = jobService.add(JSON.parse(job.encodeAsJSON()))
-        log.info "result=" + result
-        log.info "result=" + Long.parseLong(result.data.job.id.toString())
-        job = Job.get(Long.parseLong(result.data.job.id.toString()))
-        Job.list().each {
-            println "JOB=" + it.id + " " + it.class
-        }
-        log.info "result=" + job
-
-        //Create User-job
-        UserJob userJob = createUserJob(User.read(springSecurityService.principal.id), job)
-        software.service.init(job, userJob)
-
-        log.info "### Launch asynchronous..."
-        backgroundService.execute("Retrieval-suggest asynchronously", {
-            log.info "Launch thread";
-            software.service.execute(job)
-        })
-        log.info "### Return response..."
-        job
-    }
-
-
-
 
     public UserJob createUserJob(User user, Job job) {
         UserJob userJob = new UserJob()
@@ -183,11 +122,9 @@ class RestJobController extends RestController {
         userJob.passwordExpired = user.passwordExpired
         userJob.user = user
         userJob = userJob.save(flush: true)
-
         user.getAuthorities().each { secRole ->
             SecUserSecRole.create(userJob, secRole)
         }
-
         return userJob
     }
 }

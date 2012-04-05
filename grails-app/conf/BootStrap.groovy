@@ -130,14 +130,12 @@ class BootStrap {
         createImageServers(BootStrapData.imageServerSamples)
         createRetrievalServers(BootStrapData.retrievalServerSamples)
 
+        /* Slides */
         if (env != BootStrap.test) {
             createOntology(BootStrapData.ontologySamples)
             createProjects(BootStrapData.projectSamples)
             createSoftware(BootStrapData.softwareSamples)
             createDiscipline(BootStrapData.disciplineSamples)
-        }
-        /* Slides */
-        if (env != BootStrap.test) {
             createSlidesAndAbstractImages(ImageData.ULBAnapathASP_DATA)
             createSlidesAndAbstractImages(ImageData.ULBAnapathFrottisEBUS_DATA)
             createSlidesAndAbstractImages(ImageData.ULBAnapathFrottisPAPA_DATA)
@@ -168,6 +166,21 @@ class BootStrap {
         if(env == BootStrap.test) {
             Project project = BasicInstance.createOrGetBasicProject()
             Infos.addUserRight(Infos.GOODLOGIN,project)
+//            BootStrapData.class.getDeclaredFields().each {
+//                print it.class
+//            }
+//            ImageData.class.getDeclaredFields().each {
+//                print it.class
+//            }
+//            ImageData2.class.getDeclaredFields().each {
+//                print it.class
+//            }
+//            ImageData3.class.getDeclaredFields().each {
+//                print it.class
+//            }
+//            ImageData4.class.getDeclaredFields().each {
+//                print it.class
+//            }
         }
 
         def destroy = {

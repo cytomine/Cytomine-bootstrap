@@ -776,7 +776,7 @@ class BasicInstance {
         def software = Software.findByName("AnotherBasicSoftware")
         if (!software) {
 
-            software = new Software(name: "AnotherBasicSoftware", serviceName:"retrievalSuggestedTermJobService")
+            software = new Software(name: "AnotherBasicSoftware", serviceName:"helloWorldJobService")
             software.validate()
             log.debug "software.errors=" + software.errors
             software.save(flush: true)
@@ -798,7 +798,7 @@ class BasicInstance {
             software = Software.findByName(randomInt + "")
         }
 
-        software = new Software(name: randomInt + "",serviceName:"retrievalSuggestedTermJobService")
+        software = new Software(name: randomInt + "",serviceName:"helloWorldJobService")
         software.validate()
         log.debug "getBasicSoftwareNotExist() end"
         software
