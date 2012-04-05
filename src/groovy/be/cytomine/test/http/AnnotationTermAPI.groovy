@@ -23,31 +23,8 @@ class AnnotationTermAPI extends DomainAPI {
 
     private static final log = LogFactory.getLog(this)
 
-
-    static def buildBasicAnnotation(String username, String password) {
-        //Create project with user 1
-        def result = ProjectAPI.createProject(BasicInstance.getBasicProjectNotExist(), username, password)
-        assert 200==result.code
-        Project project = result.data
-
-        //Add image with user 1
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
-        image.project = project
-        result = ImageInstanceAPI.createImageInstance(image, username, password)
-        assert 200==result.code
-        image = result.data
-
-        //Add annotation 1 with cytomine admin
-        Annotation annotation = BasicInstance.getBasicAnnotationNotExist()
-        annotation.image = image
-        annotation.project = image.project
-        result = AnnotationAPI.create(annotation, username, password)
-        assert 200==result.code
-        annotation = result.data
-        return annotation
-    }
-
     static def showAnnotationTerm(Long idAnnotation,Long idTerm, Long idUser,String username, String password) {
+        log.info "Show idAnnotation=$idAnnotation and idTerm=$idTerm"
         String URL = Infos.CYTOMINEURL + "api/annotation/" + idAnnotation + "/term/"+ idTerm +"/user/"+idUser+".json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -59,7 +36,7 @@ class AnnotationTermAPI extends DomainAPI {
     }
 
     static def listAnnotationTermByAnnotation(Long idAnnotation,String username, String password) {
-        log.info("list annotation-term")
+        log.info "List by annotation idAnnotation=$idAnnotation"
         String URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation+"/term.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -71,7 +48,7 @@ class AnnotationTermAPI extends DomainAPI {
     }
 
     static def listAnnotationTermByTerm(Long idTerm, String username, String password) {
-        log.info("list annotation-term")
+        log.info "List by annotation idTerm=$idTerm"
         String URL = Infos.CYTOMINEURL+"api/term/"+idTerm+"/annotation.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -95,9 +72,17 @@ class AnnotationTermAPI extends DomainAPI {
     }
 
     static def createAnnotationTerm(String jsonAnnotationTerm, String username, String password) {
-        log.info("post Annotation:" + jsonAnnotationTerm.replace("\n", ""))
+        log.info("create")
+        createAnnotationTerm(jsonAnnotationTerm,username,password,false)
+    }
+    
+    static def createAnnotationTerm(String jsonAnnotationTerm, String username, String password, boolean deleteOldTerm) {
+        log.info("create")
         def json = JSON.parse(jsonAnnotationTerm);
-        String URL = Infos.CYTOMINEURL+"api/annotation/"+ json.annotation +"/term/"+ json.term +".json"
+        String URL = ""
+        if(deleteOldTerm) 
+            URL=Infos.CYTOMINEURL+"api/annotation/"+ json.annotation +"/term/"+ json.term +"/clearBefore.json"
+        else  URL=Infos.CYTOMINEURL+"api/annotation/"+ json.annotation +"/term/"+ json.term +".json"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
         client.post(jsonAnnotationTerm)
@@ -110,10 +95,10 @@ class AnnotationTermAPI extends DomainAPI {
         int idAnnotationTerm
         try {idAnnotationTerm= json?.annotationterm?.id } catch(Exception e) {log.error e}
         return [data: AnnotationTerm.get(idAnnotationTerm), code: code]
-    }
+    }    
 
     static def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser, String username, String password) {
-        log.info("delete annotation")
+        log.info("delete")
         String URL = Infos.CYTOMINEURL + "api/annotation/" + idAnnotation + "/term/"+ idTerm +"/user/"+idUser+".json"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
@@ -148,7 +133,7 @@ class AnnotationTermAPI extends DomainAPI {
     }
 
     static def createAlgoAnnotationTerm(String jsonAnnotationTerm, String username, String password) {
-        log.info("post Annotation:" + jsonAnnotationTerm.replace("\n", ""))
+        log.info("create algoannotationterm")
         def json = JSON.parse(jsonAnnotationTerm);
         String URL = Infos.CYTOMINEURL+"api/annotation/"+ json.annotation +"/term/"+ json.term +".json"
         HttpClient client = new HttpClient()
@@ -164,4 +149,8 @@ class AnnotationTermAPI extends DomainAPI {
         try {idAnnotationTerm= json?.algoannotationterm?.id } catch(Exception e) {log.error e}
         return [data: AlgoAnnotationTerm.get(idAnnotationTerm), code: code]
     }
+    
+    
+    
+
 }

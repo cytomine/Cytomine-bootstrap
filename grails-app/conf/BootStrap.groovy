@@ -129,11 +129,13 @@ class BootStrap {
         createMimes(BootStrapData.mimeSamples)
         createImageServers(BootStrapData.imageServerSamples)
         createRetrievalServers(BootStrapData.retrievalServerSamples)
-        createOntology(BootStrapData.ontologySamples)
-        createProjects(BootStrapData.projectSamples)
-        createSoftware(BootStrapData.softwareSamples)
-        createDiscipline(BootStrapData.disciplineSamples)
 
+        if (env != BootStrap.test) {
+            createOntology(BootStrapData.ontologySamples)
+            createProjects(BootStrapData.projectSamples)
+            createSoftware(BootStrapData.softwareSamples)
+            createDiscipline(BootStrapData.disciplineSamples)
+        }
         /* Slides */
         if (env != BootStrap.test) {
             createSlidesAndAbstractImages(ImageData.ULBAnapathASP_DATA)

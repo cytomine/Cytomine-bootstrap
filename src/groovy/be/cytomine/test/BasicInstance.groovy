@@ -45,9 +45,23 @@ class BasicInstance {
 
     private static Log log = LogFactory.getLog(BasicInstance.class)
 
+    static void checkDomain(def domain) {
+        if(!domain.validate()) {
+            log.warn domain.class+".errors=" + domain.errors
+            assert false
+        }
+    }
+
+    static void saveDomain(def domain) {
+        if(!domain.save(flush: true)) {
+            log.warn domain.class+".errors=" + domain.errors
+            assert false
+        }
+        assert domain != null
+    }
+
     static Annotation createOrGetBasicAnnotation() {
         log.debug "createOrGetBasicAnnotation()"
-
         def image = createOrGetBasicImageInstance()
         def annotation = Annotation.findOrCreateWhere(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
@@ -56,17 +70,8 @@ class BasicInstance {
                 user: User.findByUsername(Infos.GOODLOGIN),
                 project:image.project
         )
-
-        if(!annotation.validate()) {
-            log.debug "annotation.errors=" + annotation.errors
-            assert false
-        }
-
-        if(!annotation.save(flush: true)) {
-            log.debug "annotation.errors=" + annotation.errors
-            assert false
-        }        
-        assert annotation != null
+        checkDomain(annotation)
+        saveDomain(annotation)
         annotation
     }
 
@@ -74,12 +79,10 @@ class BasicInstance {
         log.debug "getBasicAnnotationNotExist()"
         def randomInt = Math.random()
         def annotation = Annotation.findByName(randomInt + "")
-
         while (annotation) {
             randomInt = Math.random()
             annotation = Annotation.findByName(randomInt + "")
         }
-
         def image = createOrGetBasicImageInstance()
         annotation = new Annotation(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
@@ -88,17 +91,7 @@ class BasicInstance {
                 user: User.findByUsername(Infos.GOODLOGIN),
                 project:image.project
         )
-
-        if(!annotation.validate()) {
-            log.debug "annotation.errors=" + annotation.errors
-            assert false
-        }
-
-        if(!annotation.save(flush: true)) {
-            log.debug "annotation.errors=" + annotation.errors
-            assert false
-        }
-        assert annotation != null
+        checkDomain(annotation)
         annotation
     }
 
@@ -110,17 +103,8 @@ class BasicInstance {
                 comment: "This is a test",
                 annotation: createOrGetBasicAnnotation()
         )
-
-        if(!sharedannotation.validate()) {
-            log.debug "sharedannotation.errors=" + sharedannotation.errors
-            assert false
-        }
-
-        if(!sharedannotation.save(flush: true)) {
-            log.debug "sharedannotation.errors=" + sharedannotation.errors
-            assert false
-        }        
-        assert sharedannotation != null
+        checkDomain(sharedannotation)
+        saveDomain(sharedannotation)
         sharedannotation
     }
 
@@ -131,22 +115,11 @@ class BasicInstance {
                 comment: "This is a test",
                 annotation: createOrGetBasicAnnotation()
         )
-
-        if(!sharedannotation.validate()) {
-            log.debug "sharedannotation.errors=" + sharedannotation.errors
-            assert false
-        }
-
-        if(!sharedannotation.save(flush: true)) {
-            log.debug "sharedannotation.errors=" + sharedannotation.errors
-            assert false
-        }
-        assert sharedannotation != null
+        checkDomain(sharedannotation)
         sharedannotation
     }
 
     static UserJob createOrGetBasicUserJob() {
-
         log.debug "createOrGetBasicUserJob()"
         UserJob userJob = UserJob.findByUsername("BasicUserJob")
         if (!userJob) {
@@ -161,27 +134,17 @@ class BasicInstance {
                 SecUserSecRole.create(userJob, secRole)
             }
             userJob.generateKeys()
-
-            if(!userJob.validate()) {
-                log.debug "user.errors=" + userJob.errors
-                assert false
-            }
-            if(!userJob.save(flush: true)) {
-                log.debug "user.errors=" + userJob.errors
-                assert false
-            }
         }
-        assert userJob != null
+        checkDomain(userJob)
+        saveDomain(userJob)
         userJob
     }
 
     static UserJob getBasicUserJobNotExist() {
-
         log.debug "getBasicUserJobNotExist()"
         def random = new Random()
         def randomInt = random.nextInt()
         UserJob userJob = UserJob.findByUsername(randomInt + "")
-
         while (userJob) {
             randomInt = random.nextInt()
             userJob = UserJob.findByUsername(randomInt + "")
@@ -192,31 +155,137 @@ class BasicInstance {
         def job = getBasicJobNotExist()
         job.save(flush: true)
 
-        userJob = new UserJob(
-                username: randomInt+"BasicUserJob",
-                password: "PasswordUserJob",
-                enabled: true,
-                user : user,
-                job: job
-        )
+        userJob = new UserJob(username: randomInt+"BasicUserJob",password: "PasswordUserJob",enabled: true,user : user,job: job)
+
         user.getAuthorities().each { secRole ->
             SecUserSecRole.create(userJob, secRole)
         }
         userJob.generateKeys()
-        if(!userJob.validate()) {
-            log.debug "user.errors=" + userJob.errors
-            assert false
-        }
+        checkDomain(userJob)
         userJob
     }
+
+    static AbstractImage createOrGetBasicAbstractImage() {
+        log.debug "createOrGetBasicAbstractImage()"
+        AbstractImage image = AbstractImage.findByFilename("filename")
+        if (!image) {
+            image = new AbstractImage(filename: "filename", scanner: createOrGetBasicScanner(), slide: null, mime: BasicInstance.createOrGetBasicMime(), path: "pathpathpath")
+        }
+        checkDomain(image)
+        saveDomain(image)
+        image
+    }
+
+    static AbstractImage getBasicAbstractImageNotExist() {
+        log.debug "getBasicImageNotExist()"
+        def random = new Random()
+        def randomInt = random.nextInt()
+        def image = AbstractImage.findByFilename(randomInt + "")
+        while (image) {
+            randomInt = random.nextInt()
+            image = AbstractImage.findByFilename(randomInt + "")
+        }
+        image = new AbstractImage(filename: randomInt, scanner: createOrGetBasicScanner(), slide: null, mime: BasicInstance.createOrGetBasicMime(), path: "pathpathpath")
+        checkDomain(image)
+        image
+    }
     
-    
-    
-    
-    
-    
-    
-    
+    static AnnotationTerm createOrGetBasicAnnotationTerm() {
+        log.debug "createOrGetBasicAnnotationTerm()"
+        def annotation = getBasicAnnotationNotExist()
+        annotation.save(flush: true)
+        assert annotation != null
+        def term = getBasicTermNotExist()
+        term.save(flush: true)
+        assert term != null
+        def user = User.findByUsername(Infos.GOODLOGIN)
+        assert user != null
+
+        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
+        assert annotationTerm == null
+        annotationTerm = AnnotationTerm.link(annotation, term,user)
+        saveDomain(annotationTerm)
+        annotationTerm
+    }
+
+    static AnnotationTerm getBasicAnnotationTermNotExist(String method) {
+        log.debug "getBasicAnnotationTermNotExist()"
+        def term = getBasicTermNotExist()
+        term.save(flush: true)
+        assert term != null
+        def annotation = getBasicAnnotationNotExist()
+        annotation.save(flush: true)
+        assert annotation != null
+
+        def user = User.findByUsername(Infos.GOODLOGIN)
+        assert user != null
+
+        def annotationTerm = new AnnotationTerm(annotation:annotation,term:term,user:user)
+        annotationTerm
+    }
+
+    static AlgoAnnotationTerm createOrGetBasicAlgoAnnotationTerm() {
+        log.debug "createOrGetBasicAlgoAnnotationTerm()"
+        def annotation = getBasicAnnotationNotExist()
+        annotation.save(flush: true)
+        assert annotation != null
+        def term = getBasicTermNotExist()
+        term.save(flush: true)
+        assert term != null
+        def user = getBasicUserJobNotExist()
+        user.save(flush: true)
+        assert user != null
+
+        def algoannotationTerm = AlgoAnnotationTerm.findWhere('annotation': annotation, 'term': term, 'userJob': user)
+        assert algoannotationTerm == null
+        algoannotationTerm = new AlgoAnnotationTerm(annotation:annotation, term:term,expectedTerm:term,userJob:user,rate:0)
+        saveDomain(algoannotationTerm)
+        algoannotationTerm
+    }
+
+    static AlgoAnnotationTerm getBasicAlgoAnnotationTermNotExist() {
+        log.debug "getBasicAnnotationTermNotExist()"
+        def term = getBasicTermNotExist()
+        term.save(flush: true)
+        assert term != null
+        def annotation = getBasicAnnotationNotExist()
+        annotation.save(flush: true)
+        assert annotation != null
+        def user = getBasicUserJobNotExist()
+        user.save(flush: true)
+        assert user != null
+        def algoannotationTerm = new AlgoAnnotationTerm(annotation:annotation,term:term,userJob:user, expectedTerm: term, rate:1d)
+        algoannotationTerm
+    }
+
+    static AbstractImageGroup createOrGetBasicAbstractImageGroup() {
+        log.debug "createOrGetBasicAbstractImageGroup()"
+        def abstractimage = getBasicAbstractImageNotExist()
+        abstractimage.save(flush: true)
+        assert abstractimage != null
+        def group = getBasicGroupNotExist()
+        group.save(flush: true)
+        assert group != null
+        def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
+        assert abstractimageGroup == null
+
+        if (!abstractimageGroup) {
+            abstractimageGroup = AbstractImageGroup.link(abstractimage, group)
+        }
+        abstractimageGroup
+    }
+
+    static AbstractImageGroup getBasicAbstractImageGroupNotExist(String method) {
+        log.debug "getBasicAbstractImageGroupNotExist()"
+        def group = getBasicGroupNotExist()
+        group.save(flush: true)
+        assert group != null
+        def abstractimage = getBasicAbstractImageNotExist()
+        abstractimage.save(flush: true)
+        assert abstractimage != null
+        def abstractimageGroup = new AbstractImageGroup(abstractimage: abstractimage, group: group)
+        abstractimageGroup
+    }
     
     
     
@@ -271,7 +340,6 @@ class BasicInstance {
         relation
     }
 
-
     static Discipline createOrGetBasicDiscipline() {
 
         log.debug "createOrGetBasicDiscipline()"
@@ -307,7 +375,6 @@ class BasicInstance {
         discipline
     }
 
-
     static Mime createOrGetBasicMime() {
 
         log.debug "createOrGetBasicMime1()"
@@ -331,7 +398,6 @@ class BasicInstance {
         assert mime != null
         mime
     }
-
 
     static ImageInstance getBasicImageInstanceNotExist() {
 
@@ -365,39 +431,6 @@ class BasicInstance {
         log.info("imageinstance:" + img.save(flush: true))
         assert img != null
         return img
-    }
-
-    static AbstractImage getBasicAbstractImageNotExist() {
-
-        log.debug "getBasicImageNotExist()"
-        def random = new Random()
-        def randomInt = random.nextInt()
-        def image = AbstractImage.findByFilename(randomInt + "")
-
-        while (image) {
-            randomInt = random.nextInt()
-            image = AbstractImage.findByFilename(randomInt + "")
-        }
-
-        image = new AbstractImage(filename: randomInt, scanner: createOrGetBasicScanner(), slide: null, mime: BasicInstance.createOrGetBasicMime(), path: "pathpathpath")
-        image.validate()
-        log.debug "AbstractImage.errors=" + image.errors
-        image
-    }
-
-    static AbstractImage createOrGetBasicAbstractImage() {
-        log.debug "createOrGetBasicImage()"
-        AbstractImage image = AbstractImage.findByFilename("filename")
-        if (!image) {
-            image = new AbstractImage(filename: "filename", scanner: createOrGetBasicScanner(), slide: null, mime: BasicInstance.createOrGetBasicMime(), path: "pathpathpath")
-            image.validate()
-            log.debug "image.errors=" + image.errors
-            image.save(flush: true)
-            log.debug "image.errors=" + image.errors
-            assert image != null
-
-        }
-        image
     }
 
     static Scanner createOrGetBasicScanner() {
@@ -477,16 +510,6 @@ class BasicInstance {
         assert user != null
         user
     }
-
-    /* User user = new User(
-  username : item.username,
-  firstname : item.firstname,
-  lastname : item.lastname,
-  email : item.email,
-  password : password,
-  dateCreated : new Date(),
-  enabled : true)*/
-
 
     static User createOrGetBasicUser() {
 
@@ -768,8 +791,6 @@ class BasicInstance {
        log.debug "job.errors="+job.errors
        job
    }
-    
-
 
     static Software createOrGetBasicSoftware() {
         log.debug "createOrGetBasicSoftware()"
@@ -835,7 +856,6 @@ class BasicInstance {
         jobparameter
     }    
 
-
     static SoftwareParameter createOrGetBasicSoftwareParameter() {
         log.debug "createOrGetBasicSoftwareParameter()"
         Software software = createOrGetBasicSoftware()
@@ -878,7 +898,6 @@ class BasicInstance {
         parameter
     }
 
-
     static SoftwareProject createOrGetBasicSoftwareProject() {
         log.debug "createOrGetBasicSoftwareProject()"
         Software software = createOrGetBasicSoftware()
@@ -912,9 +931,6 @@ class BasicInstance {
         log.debug "getBasicSoftwareParameterNotExist() end"
         softproj
     }
-
-
-
 
     static RelationTerm createOrGetBasicRelationTerm() {
         log.debug "createOrGetBasicRelationTerm()"
@@ -952,96 +968,6 @@ class BasicInstance {
         relationTerm
     }
 
-    static AnnotationTerm createOrGetBasicAnnotationTerm() {
-        log.debug "createOrGetBasicAnnotationTerm()"
-
-        def annotation = getBasicAnnotationNotExist()
-        annotation.save(flush: true)
-        assert annotation != null
-        def term = getBasicTermNotExist()
-        term.save(flush: true)
-        assert term != null
-        def user = User.findByUsername(Infos.GOODLOGIN)
-        assert user != null
-
-        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
-        assert annotationTerm == null
-
-        log.debug "annotation.id:" + annotation.id + " term.id:" + term.id + " user.id:" + user.id
-        //annotationTerm = new AnnotationTerm(annotation:annotation,term:term,user:user)
-        annotationTerm = AnnotationTerm.link(annotation, term,user)
-        annotationTerm.save(flush:true)
-        assert annotationTerm != null
-        annotationTerm
-    }
-
-    static AnnotationTerm getBasicAnnotationTermNotExist(String method) {
-
-        log.debug "getBasicAnnotationTermNotExist()"
-
-        def term = getBasicTermNotExist()
-        term.save(flush: true)
-        assert term != null
-
-        def annotation = getBasicAnnotationNotExist()
-        annotation.save(flush: true)
-        assert annotation != null
-
-        def user = User.findByUsername(Infos.GOODLOGIN)
-        assert user != null
-
-        def annotationTerm = new AnnotationTerm(annotation:annotation,term:term,user:user)
-
-        log.debug "annotationTerm.errors=" + annotationTerm.errors
-        annotationTerm
-    }
-
-    static AlgoAnnotationTerm createOrGetBasicAlgoAnnotationTerm() {
-        log.debug "createOrGetBasicAlgoAnnotationTerm()"
-
-        def annotation = getBasicAnnotationNotExist()
-        annotation.save(flush: true)
-        assert annotation != null
-        def term = getBasicTermNotExist()
-        term.save(flush: true)
-        assert term != null
-        def user = getBasicUserJobNotExist()
-        user.save(flush: true)
-        assert user != null
-
-        def algoannotationTerm = AlgoAnnotationTerm.findWhere('annotation': annotation, 'term': term, 'userJob': user)
-        assert algoannotationTerm == null
-
-        log.debug "annotation.id:" + annotation.id + " term.id:" + term.id + " user.id:" + user.id
-        //annotationTerm = new AnnotationTerm(annotation:annotation,term:term,user:user)
-        algoannotationTerm = new AlgoAnnotationTerm(annotation:annotation, term:term,expectedTerm:term,userJob:user,rate:0)
-        algoannotationTerm.save(flush:true)
-        assert algoannotationTerm != null
-        algoannotationTerm
-    }
-
-    static AlgoAnnotationTerm getBasicAlgoAnnotationTermNotExist() {
-
-        log.debug "getBasicAnnotationTermNotExist()"
-
-        def term = getBasicTermNotExist()
-        term.save(flush: true)
-        assert term != null
-
-        def annotation = getBasicAnnotationNotExist()
-        annotation.save(flush: true)
-        assert annotation != null
-
-        def user = getBasicUserJobNotExist()
-        user.save(flush: true)
-        assert user != null
-
-        def algoannotationTerm = new AlgoAnnotationTerm(annotation:annotation,term:term,userJob:user, expectedTerm: term, rate:1d)
-
-        log.debug "annotationTerm.errors=" + algoannotationTerm.errors
-        algoannotationTerm
-    }
-
     static createUserJob(User user) {
 
        String username = new Date().toString()
@@ -1061,57 +987,6 @@ class BasicInstance {
         return newUser
     }
 
-
-    static AbstractImageGroup createOrGetBasicAbstractImageGroup() {
-        log.debug "createOrGetBasicAbstractImageGroup()"
-
-        def abstractimage = getBasicAbstractImageNotExist()
-        abstractimage.save(flush: true)
-        assert abstractimage != null
-        def group = getBasicGroupNotExist()
-        group.save(flush: true)
-        assert group != null
-        def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-        assert abstractimageGroup == null
-
-        log.debug "abstractimage.id:" + abstractimage.id + " group.id:" + group.id
-        if (!abstractimageGroup) {
-            log.debug "abstractimageGroup link"
-
-            abstractimageGroup = AbstractImageGroup.link(abstractimage, group)
-            log.debug "AbstractImageGroup.errors=" + abstractimageGroup.errors
-        }
-        assert abstractimageGroup != null
-        abstractimageGroup
-    }
-
-    static AbstractImageGroup getBasicAbstractImageGroupNotExist(String method) {
-
-        log.debug "getBasicAbstractImageGroupNotExist()"
-        def random = new Random()
-        def randomInt = random.nextInt()
-
-        def group = getBasicGroupNotExist()
-
-        log.debug "group:" + group.id
-        log.debug "group.name" + group.name
-        log.debug "group.created:" + group.created
-        log.debug "group.attached:" + group.attached
-        log.debug "group.dirty:" + group.dirty
-
-        group.save(flush: true)
-        assert group != null
-
-        def abstractimage = getBasicAbstractImageNotExist()
-
-        log.debug "abstractimage:" + abstractimage.id
-        abstractimage.save(flush: true)
-        assert abstractimage != null
-        def abstractimageGroup = new AbstractImageGroup(abstractimage: abstractimage, group: group)
-
-        log.debug "abstractimageGroup.errors=" + abstractimageGroup.errors
-        abstractimageGroup
-    }
 
     static void compareAnnotation(map, json) {
 

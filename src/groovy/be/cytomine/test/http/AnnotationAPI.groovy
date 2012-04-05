@@ -239,4 +239,26 @@ class AnnotationAPI extends DomainAPI {
 
 
 
+    static def buildBasicAnnotation(String username, String password) {
+        //Create project with user 1
+        def result = ProjectAPI.createProject(BasicInstance.getBasicProjectNotExist(), username, password)
+        assert 200==result.code
+        Project project = result.data
+
+        //Add image with user 1
+        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        image.project = project
+        result = ImageInstanceAPI.createImageInstance(image, username, password)
+        assert 200==result.code
+        image = result.data
+
+        //Add annotation 1 with cytomine admin
+        Annotation annotation = BasicInstance.getBasicAnnotationNotExist()
+        annotation.image = image
+        annotation.project = image.project
+        result = AnnotationAPI.create(annotation, username, password)
+        assert 200==result.code
+        annotation = result.data
+        return annotation
+    }
 }
