@@ -7,11 +7,10 @@
 class OntologyUrlMappings {
 
     static mappings = {
-        /* Ontology */
         "/api/ontology"(controller:"restOntology"){
             action = [GET: "list",POST:"add"]
         }
-        "/api/ontology/light"(controller:"restOntology"){  //TODO: merge with previous block
+        "/api/ontology/light"(controller:"restOntology"){
             action = [GET: "listLight"]
         }
         "/api/ontology/$id"(controller:"restOntology"){
@@ -23,7 +22,7 @@ class OntologyUrlMappings {
         "/api/currentuser/ontology"(controller:"restOntology"){
             action = [GET:"listByUser"]
         }
-        "/api/currentuser/ontology/light"(controller:"restOntology"){  //TODO: merge with previous block
+        "/api/currentuser/ontology/light"(controller:"restOntology"){
             action = [GET: "listByUserLight"]
         }
         "/api/term/$id/ontology"(controller:"restOntology"){

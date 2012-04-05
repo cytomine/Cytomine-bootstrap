@@ -55,6 +55,42 @@ class ProjectAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def listBySoftware(Long id, String username, String password) {
+        log.info("list project")
+        String URL = Infos.CYTOMINEURL + "api/software/$id/project.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+    static def listByOntology(Long id, String username, String password) {
+        log.info("list project")
+        String URL = Infos.CYTOMINEURL + "api/ontology/$id/project.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+    static def listByDiscipline(Long id, String username, String password) {
+        log.info("list project")
+        String URL = Infos.CYTOMINEURL + "api/discipline/$id/project.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
 
     static def create(Project projectToAdd, User user) {
        create(projectToAdd.encodeAsJSON(),user.username,user.password)
@@ -86,7 +122,7 @@ class ProjectAPI extends DomainAPI {
 
     static def update(Project project, String username, String password) {
         String oldName = "Name1"
-        String newName = BasicInstance.buildRandomString()
+        String newName = Math.random()+""
 
         Ontology oldOtology = BasicInstance.createOrGetBasicOntology()
         Ontology newOtology = BasicInstance.getBasicOntologyNotExist()

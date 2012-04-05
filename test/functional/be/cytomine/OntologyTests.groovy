@@ -8,6 +8,7 @@ import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import be.cytomine.ontology.Ontology
 import org.codehaus.groovy.grails.web.json.JSONArray
+import be.cytomine.test.http.OntologyAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,511 +19,162 @@ import org.codehaus.groovy.grails.web.json.JSONArray
  */
 class OntologyTests extends functionaltestplugin.FunctionalTestCase {
 
-  void testListOntologyWithCredential() {
-
-    log.info("list ontology")
-    String URL = Infos.CYTOMINEURL+"api/ontology.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response="+response)
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONArray
-
-  }
-
-  void testListOntologyWithoutCredential() {
-
-    log.info("list ontology")
-    String URL = Infos.CYTOMINEURL+"api/ontology.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.BADLOGIN,Infos.BADPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(401,code)
-
-  }
-
-  void testShowOntologyWithCredential() {
-
-    Ontology ontology = BasicInstance.createOrGetBasicOntology()
-
-    log.info("list ontology")
-    String URL = Infos.CYTOMINEURL+"api/ontology/"+ ontology.id +".json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-  }
-
-  void testListOntologyByUser() {
-
-    log.info("create project")
-    Ontology ontology =  BasicInstance.createOrGetBasicOntology()
-
-    log.info("list project by user")
-    String URL = Infos.CYTOMINEURL+"api/currentuser/ontology.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response:"+response)
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONArray
-  }
-
-  void testAddOntologyCorrect() {
-
-   log.info("create ontology")
-    def ontologyToAdd = BasicInstance.getBasicOntologyNotExist()
-    println("ontologyToAdd.version="+ontologyToAdd.version)
-    String jsonOntology = ontologyToAdd.encodeAsJSON()
-
-    log.info("post ontology:"+jsonOntology.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/ontology.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonOntology)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int idOntology = json.ontology.id
-
-    log.info("check if object "+ idOntology +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idOntology +" not exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(404,code)
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    //must be done because redo change id
-    json = JSON.parse(response)
-    assert json instanceof JSONArray
-
-    log.info("check if object "+ idOntology +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-  }
-
-  void testAddOntologyAlreadyExist() {
-    log.info("create ontology")
-    def ontologyToAdd = BasicInstance.createOrGetBasicOntology()
-    //ontologyToAdd is save in DB
-    String jsonOntology = ontologyToAdd.encodeAsJSON()
-
-    log.info("post ontology:"+jsonOntology.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/ontology.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonOntology)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(409,code)
-  }
-
-  void testAddOntologyWithBadName() {
-    log.info("create ontology")
-    def ontologyToAdd = BasicInstance.getBasicOntologyNotExist()
-    String jsonOntology = ontologyToAdd.encodeAsJSON()
-
-    def jsonUpdate = JSON.parse(jsonOntology)
-    jsonUpdate.name = null
-    jsonOntology = jsonUpdate.encodeAsJSON()
-
-    log.info("post ontology:"+jsonOntology.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/ontology.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonOntology)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-  }
-
-  void testUpdateOntologyCorrect() {
-
-    String oldName = "Name1"
-    String newName = "Name2"
-
-    def mapNew = ["name":newName]
-    def mapOld = ["name":oldName]
-
-    /* Create a Name1 ontology */
-    log.info("create ontology")
-    Ontology ontologyToAdd = BasicInstance.createOrGetBasicOntology()
-    ontologyToAdd.name = oldName
-    assert (ontologyToAdd.save(flush:true) != null)
-
-    /* Encode a niew ontology Name2*/
-    Ontology ontologyToEdit = Ontology.get(ontologyToAdd.id)
-    def jsonOntology = ontologyToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonOntology)
-    jsonUpdate.name = newName
-    jsonOntology = jsonUpdate.encodeAsJSON()
-
-    log.info("put ontology:"+jsonOntology.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/ontology/"+ontologyToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonOntology)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int idOntology = json.ontology.id
-
-    log.info("check if object "+ idOntology +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-    BasicInstance.compareOntology(mapNew,json)
-
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL + ".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idOntology +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-    BasicInstance.compareOntology(mapOld,json)
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL + ".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idOntology +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-    BasicInstance.compareOntology(mapNew,json)
-
-
-    log.info("check if object "+ idOntology +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-  }
-
-  void testUpdateOntologyNotExist() {
-    /* Create a Name1 ontology */
-    log.info("create ontology")
-    Ontology ontologyToAdd = BasicInstance.createOrGetBasicOntology()
-
-    /* Encode a niew ontology Name2*/
-    Ontology ontologyToEdit = Ontology.get(ontologyToAdd.id)
-    def jsonOntology = ontologyToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonOntology)
-    jsonUpdate.id = -99
-    jsonOntology = jsonUpdate.encodeAsJSON()
-
-    log.info("put ontology:"+jsonOntology.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/ontology/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonOntology)
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
-  }
-
-  void testUpdateOntologyWithNameAlreadyExist() {
-
-    /* Create a Name1 ontology */
-    log.info("create ontology")
-    Ontology ontologyWithOldName = BasicInstance.createOrGetBasicOntology()
-    Ontology ontologyWithNewName = BasicInstance.getBasicOntologyNotExist()
-    ontologyWithNewName.save(flush:true)
-
-
-    /* Encode a niew ontology Name2*/
-    Ontology ontologyToEdit = Ontology.get(ontologyWithNewName.id)
-    log.info("ontologyToEdit="+ontologyToEdit)
-    def jsonOntology = ontologyToEdit.encodeAsJSON()
-    log.info("jsonOntology="+jsonOntology)
-    def jsonUpdate = JSON.parse(jsonOntology)
-    jsonUpdate.name = ontologyWithOldName.name
-    jsonOntology = jsonUpdate.encodeAsJSON()
-
-    log.info("put ontology:"+jsonOntology.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/ontology/"+ontologyToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonOntology)
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(409,code)
-
-  }
-
-  void testUpdateOntologyWithBadName() {
-
-    /* Create a Name1 ontology */
-    log.info("create ontology")
-    Ontology ontologyToAdd = BasicInstance.createOrGetBasicOntology()
-
-    /* Encode a niew ontology Name2*/
-    Ontology ontologyToEdit = Ontology.get(ontologyToAdd.id)
-    def jsonOntology = ontologyToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonOntology)
-    jsonUpdate.name = null
-    jsonOntology = jsonUpdate.encodeAsJSON()
-
-    log.info("put ontology:"+jsonOntology.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/ontology/"+ontologyToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonOntology)
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-
-  }
-
-  void testDeleteOntology() {
-
-    log.info("create ontology")
-    def ontologyToDelete = BasicInstance.getBasicOntologyNotExist()
-    assert ontologyToDelete.save(flush:true)!=null
-    String jsonOntology = ontologyToDelete.encodeAsJSON()
-    int idOntology = ontologyToDelete.id
-    log.info("delete ontology:"+jsonOntology.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-
-    log.info("check if object "+ idOntology +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-
-    assertEquals(404,code)
-
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idOntology +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology  +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idOntology +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(404,code)
-
-  }
-
-  void testDeleteOntologyNotExist() {
-
-     log.info("create ontology")
-    def ontologyToDelete = BasicInstance.createOrGetBasicOntology()
-    String jsonOntology = ontologyToDelete.encodeAsJSON()
-
-    log.info("delete ontology:"+jsonOntology.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/ontology/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
-
-  }
-
-  void testDeleteOntologyWithProject() {
-
-    log.info("create ontology")
-    //create project and try to delete his ontology
-    def project = BasicInstance.createOrGetBasicProject()
-    def ontologyToDelete = project.ontology
-    assert ontologyToDelete.save(flush:true)!=null
-    String jsonOntology = ontologyToDelete.encodeAsJSON()
-    int idOntology = ontologyToDelete.id
-    log.info("delete ontology:"+jsonOntology.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
-
-  }
+    void testListOntologyWithCredential() {
+        def result = OntologyAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
+  
+    void testListOntologyWithoutCredential() {
+        def result = OntologyAPI.list(Infos.BADLOGIN, Infos.BADPASSWORD)
+        assertEquals(401, result.code)
+    }
+
+    void testListOntologyLightWithCredential() {
+        def result = OntologyAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD,true)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
+
+    void testListOntologyUserLightWithCredential() {
+        def result = OntologyAPI.listByUserLight(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
+  
+    void testShowOntologyWithCredential() {
+        def result = OntologyAPI.show(BasicInstance.createOrGetBasicOntology().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+    }
+  
+    void testAddOntologyCorrect() {
+        def ontologyToAdd = BasicInstance.getBasicOntologyNotExist()
+        def result = OntologyAPI.create(ontologyToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        int idOntology = result.data.id
+  
+        result = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+  
+        result = OntologyAPI.undo()
+        assertEquals(200, result.code)
+  
+        result = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+  
+        result = OntologyAPI.redo()
+        assertEquals(200, result.code)
+  
+        result = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+  
+    void testAddOntologyAlreadyExist() {
+        def ontologyToAdd = BasicInstance.createOrGetBasicOntology()
+        def result = OntologyAPI.create(ontologyToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(409, result.code)
+    }
+  
+    void testUpdateOntologyCorrect() {
+        Ontology ontologyToAdd = BasicInstance.createOrGetBasicOntology()
+        def result = OntologyAPI.update(ontologyToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        int idOntology = json.ontology.id
+  
+        def showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        json = JSON.parse(showResult.data)
+        BasicInstance.compareOntology(result.mapNew, json)
+  
+        showResult = OntologyAPI.undo()
+        assertEquals(200, result.code)
+        showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        BasicInstance.compareOntology(result.mapOld, JSON.parse(showResult.data))
+  
+        showResult = OntologyAPI.redo()
+        assertEquals(200, result.code)
+        showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        BasicInstance.compareOntology(result.mapNew, JSON.parse(showResult.data))
+    }
+  
+    void testUpdateOntologyNotExist() {
+        Ontology ontologyWithOldName = BasicInstance.createOrGetBasicOntology()
+        Ontology ontologyWithNewName = BasicInstance.getBasicOntologyNotExist()
+        ontologyWithNewName.save(flush: true)
+        Ontology ontologyToEdit = Ontology.get(ontologyWithNewName.id)
+        def jsonOntology = ontologyToEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonOntology)
+        jsonUpdate.name = ontologyWithOldName.name
+        jsonUpdate.id = -99
+        jsonOntology = jsonUpdate.encodeAsJSON()
+        def result = OntologyAPI.update(-99, jsonOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+  
+    void testUpdateOntologyWithNameAlreadyExist() {
+        Ontology ontologyWithOldName = BasicInstance.createOrGetBasicOntology()
+        Ontology ontologyWithNewName = BasicInstance.getBasicOntologyNotExist()
+        ontologyWithNewName.save(flush: true)
+        Ontology ontologyToEdit = Ontology.get(ontologyWithNewName.id)
+        def jsonOntology = ontologyToEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonOntology)
+        jsonUpdate.name = ontologyWithOldName.name
+        jsonOntology = jsonUpdate.encodeAsJSON()
+        def result = OntologyAPI.update(ontologyToEdit.id, jsonOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(409, result.code)
+    }
+      
+      void testEditOntologyWithBadName() {
+          Ontology ontologyToAdd = BasicInstance.createOrGetBasicOntology()
+          Ontology ontologyToEdit = Ontology.get(ontologyToAdd.id)
+          def jsonOntology = ontologyToEdit.encodeAsJSON()
+          def jsonUpdate = JSON.parse(jsonOntology)
+          jsonUpdate.name = null
+          jsonOntology = jsonUpdate.encodeAsJSON()
+          def result = OntologyAPI.update(ontologyToAdd.id, jsonOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(400, result.code)
+      }
+  
+    void testDeleteOntology() {
+        def ontologyToDelete = BasicInstance.getBasicOntologyNotExist()
+        assert ontologyToDelete.save(flush: true)!= null
+        def id = ontologyToDelete.id
+        def result = OntologyAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+  
+        def showResult = OntologyAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, showResult.code)
+  
+        result = OntologyAPI.undo()
+        assertEquals(200, result.code)
+  
+        result = OntologyAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+  
+        result = OntologyAPI.redo()
+        assertEquals(200, result.code)
+  
+        result = OntologyAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+  
+    void testDeleteOntologyNotExist() {
+        def result = OntologyAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+  
+    void testDeleteOntologyWithProject() {
+        def project = BasicInstance.createOrGetBasicProject()
+        def ontologyToDelete = project.ontology
+        def result = OntologyAPI.delete(ontologyToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(400, result.code)
+    }
 
   void testDeleteOntologyWithTerms() {
 
@@ -532,69 +184,24 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
     relationTerm.save(flush:true)
     def ontologyToDelete = relationTerm.term1.ontology
     assert ontologyToDelete.save(flush:true)!=null
-    String jsonOntology = ontologyToDelete.encodeAsJSON()
     int idOntology = ontologyToDelete.id
-    log.info("delete ontology:"+jsonOntology.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
+      def result = OntologyAPI.delete(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
 
-    log.info("check response")
-    assertEquals(200,code)
+      def showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, showResult.code)
 
-    log.info("check if object "+ idOntology +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
+      result = OntologyAPI.undo()
+      assertEquals(200, result.code)
 
-    assertEquals(404,code)
+      result = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
 
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-    def json = JSON.parse(response)
+      result = OntologyAPI.redo()
+      assertEquals(200, result.code)
 
-    log.info("check if object "+ idOntology +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology  +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idOntology +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/ontology/"+idOntology +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(404,code)
+      result = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, result.code)
 
   }
 }

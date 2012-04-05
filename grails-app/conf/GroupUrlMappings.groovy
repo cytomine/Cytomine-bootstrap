@@ -20,7 +20,6 @@ class GroupUrlMappings {
         "/api/group/grid"(controller:"restGroup"){
             action = [GET:"grid"]
         }
-
         "/api/image/$idabstractimage/group"(controller:"restGroup"){
             action = [GET: "listGroupByAbstractImage"]
         }

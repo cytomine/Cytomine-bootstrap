@@ -32,5 +32,9 @@ grails.project.dependency.resolution = {
 }
 
 coverage {
-	exclusions = ["**/be/cytomine/data/**","**/be/cytomine/processing/job/**"]
+	exclusions = [
+            "**/be/cytomine/data/**",
+            "**/be/cytomine/processing/job/**",
+            "**/be.cytomine.processing.image.filters/**"
+    ]
 }

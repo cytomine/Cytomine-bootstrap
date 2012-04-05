@@ -7,7 +7,6 @@
 class ProjectUrlMappings {
 
     static mappings = {
-        /* Project */
         "/api/project"(controller: "restProject"){
             action = [GET:"list", POST:"add"]
         }
@@ -25,6 +24,9 @@ class ProjectUrlMappings {
         }
         "/api/ontology/$id/project"(controller:"restProject"){
             action = [GET:"listByOntology"]
+        }
+        "/api/discipline/$id/project"(controller:"restProject"){
+            action = [GET:"listByDiscipline"]
         }
     }
 }

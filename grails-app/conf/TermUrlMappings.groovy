@@ -29,6 +29,9 @@ class TermUrlMappings {
         "/api/ontology/$idontology/term"(controller:"restTerm"){
             action = [GET:"listAllByOntology"]
         }
+        "/api/annotation/$idannotation/user/$idUser/term"(controller:"restAnnotationTerm"){
+            action = [GET: "listTermByAnnotation"]
+        }
     }
 }
 

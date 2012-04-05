@@ -1,7 +1,6 @@
 class JobParameterUrlMappings {
 
     static mappings = {
-        /* Job */
         "/api/jobparameter"(controller:"restJobParameter"){
             action = [GET: "list",POST:"add"]
         }

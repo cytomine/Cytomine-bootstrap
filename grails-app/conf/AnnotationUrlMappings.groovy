@@ -7,24 +7,14 @@
 class AnnotationUrlMappings {
 
     static mappings = {
-        /* Annotation */
+        /**
+         * Annotation
+         */
         "/api/annotation"(controller:"restAnnotation"){
             action = [GET: "list",POST:"add"]
         }
         "/api/annotation/$id"(controller:"restAnnotation"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
-        }
-        "/api/annotation/$annotation/comment"(controller:"restAnnotation"){
-            action = [POST: "addComment", GET:"listComments"]
-        }
-        "/api/annotation/$annotation/comment/$id"(controller:"restAnnotation"){
-            action = [GET:"showComment"]
-        }
-//        "/api/user/$id/annotation"(controller:"restAnnotation"){
-//            action = [GET:"listByUser"]
-//        }
-        "/api/user/$idUser/imageinstance/$idImage/annotation"(controller:"restAnnotation"){
-            action = [GET:"listByImageAndUser"]
         }
         "/api/project/$id/annotation"(controller: "restAnnotation"){
             action = [GET:"listByProject"]
@@ -32,6 +22,10 @@ class AnnotationUrlMappings {
         "/api/imageinstance/$id/annotation"(controller:"restAnnotation"){
             action = [GET:"listByImage"]
         }
+        "/api/user/$idUser/imageinstance/$idImage/annotation"(controller:"restAnnotation"){
+            action = [GET:"listByImageAndUser"]
+        }
+
         "/api/term/$idterm/annotation"(controller:"restAnnotation"){
             action = [GET: "listAnnotationByTerm"]
         }
@@ -41,16 +35,29 @@ class AnnotationUrlMappings {
         "/api/term/$idterm/imageinstance/$idimageinstance/annotation"(controller:"restAnnotationTerm"){
             action = [GET: "listAnnotationByProjectAndImageInstance"]
         }
+
+        /**
+        * Download listing
+        */
         "/api/project/$id/annotation/download"(controller: "restAnnotation"){
             action = [GET:"downloadDocumentByProject"]
         }
 
-        "/api/retrieval/missing/annotation"(controller: "restRetrieval"){
-            action = [GET:"missingAnnotation"]
+        /**
+         * Comment annotation
+         */
+        "/api/annotation/$annotation/comment"(controller:"restAnnotation"){
+            action = [POST: "addComment", GET:"listComments"]
+        }
+        "/api/annotation/$annotation/comment/$id"(controller:"restAnnotation"){
+            action = [GET:"showComment"]
         }
 
-        "/api/import/annotations/$idProject"(controller: "import") {
-            action = [GET:"annotations"]
+        /**
+         * Retrieval annotation suggestion
+         */
+        "/api/retrieval/missing/annotation"(controller: "restRetrieval"){
+            action = [GET:"missingAnnotation"]
         }
         "/api/annotation/$idannotation/retrieval"(controller:"restRetrieval"){
             action = [GET:"listSimilarAnnotationAndBestTerm",POST:"index"]

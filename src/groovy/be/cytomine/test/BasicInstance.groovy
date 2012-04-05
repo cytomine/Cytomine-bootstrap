@@ -390,7 +390,33 @@ class BasicInstance {
         jobparameter
     }
     
-    
+    static Ontology createOrGetBasicOntology() {
+        log.debug "createOrGetBasicOntology()"
+        def ontology = Ontology.findByName("BasicOntology")
+        if (!ontology) {
+            ontology = new Ontology(name: "BasicOntology", user: createOrGetBasicUser())
+            checkDomain(ontology)
+            saveDomain(ontology)
+        }
+        assert ontology != null
+        ontology
+    }
+
+
+    static Ontology getBasicOntologyNotExist() {
+        log.debug "getBasicOntologyNsotExist()"
+        def random = new Random()
+        def randomInt = random.nextInt()
+        def ontology = Ontology.findByName(randomInt + "")
+        while (ontology) {
+            randomInt = random.nextInt()
+            ontology = Ontology.findByName(randomInt + "")
+        }
+        ontology = new Ontology(name: randomInt + "", user: createOrGetBasicUser())
+        checkDomain(ontology)
+        ontology
+    }
+
     
     
     
@@ -705,43 +731,6 @@ class BasicInstance {
         project
     }
 
-    static Ontology createOrGetBasicOntology() {
-        log.debug "createOrGetBasicOntology()"
-        def ontology = Ontology.findByName("BasicOntology")
-        if (!ontology) {
-
-            ontology = new Ontology(name: "BasicOntology", user: createOrGetBasicUser())
-            ontology.validate()
-            log.debug "ontology.errors=" + ontology.errors
-            ontology.save(flush: true)
-            log.debug "ontology.errors=" + ontology.errors
-        }
-        assert ontology != null
-        ontology
-    }
-
-    static String buildRandomString() {
-        def random = new Random()
-        def randomInt = random.nextInt()
-        return randomInt +""
-    }
-
-    static Ontology getBasicOntologyNotExist() {
-
-        log.debug "getBasicOntologyNsotExist()"
-        def random = new Random()
-        def randomInt = random.nextInt()
-        def ontology = Ontology.findByName(randomInt + "")
-
-        while (ontology) {
-            randomInt = random.nextInt()
-            ontology = Ontology.findByName(randomInt + "")
-        }
-
-        ontology = new Ontology(name: randomInt + "", user: createOrGetBasicUser())
-        ontology.validate()
-        ontology
-    }
 
     static Term createOrGetBasicTerm() {
         log.debug "createOrGetBasicTerm()"
