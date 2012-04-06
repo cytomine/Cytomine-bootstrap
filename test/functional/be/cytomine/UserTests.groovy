@@ -125,7 +125,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
     }
     
     void testDeleteMe() {
-        def result = UserAPI.delete(User.findByUsername(Infos.GOODLOGIN), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.delete(User.findByUsername(Infos.GOODLOGIN).id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(403, result.code)
     }    
   
