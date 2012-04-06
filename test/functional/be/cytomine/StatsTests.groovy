@@ -7,6 +7,12 @@ import be.cytomine.test.Infos
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.security.UserJob
+import be.cytomine.processing.Job
+import be.cytomine.project.Project
+import be.cytomine.ontology.AlgoAnnotationTerm
+import be.cytomine.ontology.Ontology
+import be.cytomine.ontology.Term
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,7 +23,111 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  */
 class StatsTests extends functionaltestplugin.FunctionalTestCase {
 
-    void testtest() {
+    void testRetrievalAVG() {
+        Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
+
+        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/avg.json?job=${job.id}"
+        HttpClient client = new HttpClient();
+        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        assertEquals(200,code)
+        def json = JSON.parse(response)
+    }
+
+    void testRetrievalConfusionMatrix() {
+        Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
+
+        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/confusionmatrix.json?job=${job.id}"
+        HttpClient client = new HttpClient();
+        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        assertEquals(200,code)
+        def json = JSON.parse(response)
+    }
+
+    void testRetrievalWorstTerm() {
+        Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
+
+        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/worstTerm.json?job=${job.id}"
+        HttpClient client = new HttpClient();
+        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        assertEquals(200,code)
+        def json = JSON.parse(response)
+    }
+
+    void testRetrievalWorstAnnotation() {
+        Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
+
+        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/worstAnnotation.json?job=${job.id}"
+        HttpClient client = new HttpClient();
+        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        assertEquals(200,code)
+        def json = JSON.parse(response)
 
     }
+
+    void testRetrievalWorstTermWithSuggest() {
+        Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
+
+        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/worstTermWithSuggest.json?job=${job.id}"
+        HttpClient client = new HttpClient();
+        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        assertEquals(200,code)
+        def json = JSON.parse(response)
+    }
+
+    void testRetrievalEvolution() {
+        Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
+
+        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/evolution.json?job=${job.id}"
+        HttpClient client = new HttpClient();
+        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        assertEquals(200,code)
+        def json = JSON.parse(response)
+    }
+
+/**
+    *
+            "/api/stats/retrieval/confusionmatrix"(controller:"stats"){
+                action = [GET:"statRetrievalConfusionMatrix"]
+            }
+            "/api/stats/retrieval/worstTerm"(controller:"stats"){
+                action = [GET:"statRetrievalWorstTerm"]
+            }
+            "/api/stats/retrieval/worstTermWithSuggest"(controller:"stats"){
+                action = [GET:"statWorstTermWithSuggestedTerm"]
+            }
+            "/api/stats/retrieval/worstAnnotation"(controller:"stats"){
+                action = [GET:"statRetrievalWorstAnnotation"]
+            }
+            "/api/stats/retrieval/evolution"(controller:"stats"){
+                action = [GET:"statRetrievalEvolution"]
+            }
+            "/api/downloadPDF" (controller : "stats") {
+                action = [GET:"convertHtmlContentToPDF"]
+            }
+  */
+
 }

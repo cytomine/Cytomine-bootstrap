@@ -66,42 +66,6 @@ class StatsController extends RestController {
         responseSuccess(data)
     }
 
-    def convertHtmlContentToPDF = {
-        //Get HTML content from POST data
-        String data = "<table border=\"1\"><tr> <td>Cell A</td><td>Cell B</td></tr></table>";
-        //Convert HTML to XML data
-//        Document document = XMLResource.load(new ByteArrayInputStream(data.getBytes())).getDocument();
-//
-//        OutputStream os = new FileOutputStream(outputFile);
-//
-//        ITextRenderer renderer = new ITextRenderer();
-//        renderer.setDocument(url);
-//        renderer.layout();
-//        renderer.createPDF(os);
-//
-//        os.close();
-
-//       final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-//        documentBuilderFactory.setValidating(false);
-//        DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-//        builder.setEntityResolver(FSEntityResolver.instance());
-//        org.w3c.dom.Document document = builder.parse(new ByteArrayInputStream(data.getBytes()));
-//
-//        String outputFile = "firstdoc.pdf";
-//        OutputStream os = new FileOutputStream(outputFile);
-//
-//        ITextRenderer renderer = new ITextRenderer();
-//        renderer.setDocument(document, null);
-//        renderer.layout();
-//        renderer.createPDF(os);
-
-        //Return PDF data as file
-        byte[] pdf = os.decodeBase64();
-        response.setHeader "Content-disposition", "attachment; filename=test.PDF"
-        response.contentType = "application/octet-stream"
-        response.outputStream << pdf
-    }
-
     def statRetrievalWorstTerm = {
         def data = []
         UserJob userJob = retrieveUserJobFromParams(params)

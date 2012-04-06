@@ -43,8 +43,5 @@ class StatsUrlMappings {
         "/api/stats/retrieval/evolution"(controller:"stats"){
             action = [GET:"statRetrievalEvolution"]
         }
-        "/api/downloadPDF" (controller : "stats") {
-            action = [GET:"convertHtmlContentToPDF"]
-        }
     }
 }

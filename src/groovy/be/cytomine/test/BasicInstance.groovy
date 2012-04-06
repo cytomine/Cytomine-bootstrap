@@ -900,6 +900,44 @@ class BasicInstance {
         softproj
     }
 
+    static Job createJobWithAlgoAnnotationTerm() {
+        Project project = BasicInstance.getBasicProjectNotExist()
+        project.save(flush: true)
+        Ontology ontology = project.ontology
+
+        Term term1 = BasicInstance.getBasicTermNotExist()
+        term1.ontology = ontology
+        term1.save(flush: true)
+
+        Term term2 = BasicInstance.getBasicTermNotExist()
+        term2.ontology = ontology
+        term2.save(flush: true)
+
+
+        UserJob userJob = BasicInstance.createOrGetBasicUserJob()
+        Job job = userJob.job
+        job.project = project
+        job.save(flush: true)
+
+        AlgoAnnotationTerm algoAnnotationGood = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        algoAnnotationGood.term = term1
+        algoAnnotationGood.expectedTerm = term1
+        algoAnnotationGood.userJob = userJob
+        BasicInstance.checkDomain(algoAnnotationGood)
+        BasicInstance.saveDomain(algoAnnotationGood)
+
+        AlgoAnnotationTerm algoAnnotationBad = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        algoAnnotationBad.term = term1
+        algoAnnotationBad.expectedTerm = term2
+        algoAnnotationBad.userJob = userJob
+        BasicInstance.checkDomain(algoAnnotationBad)
+        BasicInstance.saveDomain(algoAnnotationBad)
+        AlgoAnnotationTerm.list().each {
+            println it.userJob.id + " | " + it.term.id + " | " + it.expectedTerm.id
+        }
+        return job
+    }
+
 
 
     static createUserJob(User user) {
