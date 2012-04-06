@@ -7,6 +7,7 @@ import grails.converters.JSON
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.test.BasicInstance
 import org.codehaus.groovy.grails.web.json.JSONArray
+import be.cytomine.test.http.RelationTermAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,191 +18,84 @@ import org.codehaus.groovy.grails.web.json.JSONArray
  */
 class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
 
-  void testListRelationTermWithCredential() {
-
-    RelationTerm relationTerm = BasicInstance.createOrGetBasicRelationTerm()
-
-    log.info("get relationTerm")
-    String URL = Infos.CYTOMINEURL+"api/relation/" + relationTerm.relation.id + "/term.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response:"+response)
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONArray
-  }
-
-  void testListRelationTermWithoutCredential() {
-
-    RelationTerm relationTerm = BasicInstance.createOrGetBasicRelationTerm()
-
-    log.info("get relationTerm")
-    String URL = Infos.CYTOMINEURL+"api/relation/" + relationTerm.relation.id + "/term.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.BADLOGIN,Infos.BADPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(401,code)
-  }
-
+    void testShowRelationTerm() {
+        RelationTerm relationTerm = BasicInstance.createOrGetBasicRelationTerm()
+        def result = RelationTermAPI.show(relationTerm.relation.id,relationTerm.term1.id,relationTerm.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+    }    
+    
   void testListRelationTermByTerm1() {
-
-    RelationTerm relationTerm = BasicInstance.createOrGetBasicRelationTerm()
-
-    log.info("get relationTerm")
-    String URL = Infos.CYTOMINEURL+"api/relation/term/1/"+relationTerm.term1.id+".json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response:"+response)
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONArray
+      def result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
+      def json = JSON.parse(result.data)
+      assert json instanceof JSONArray
   }
 
-  void testListRelationTermByTerm2() {
-
-    RelationTerm relationTerm = BasicInstance.createOrGetBasicRelationTerm()
-
-    log.info("get relationTerm")
-    String URL = Infos.CYTOMINEURL+"api/relation/term/2/"+relationTerm.term2.id+".json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response:"+response)
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONArray
-
-  }
+    void testListRelationTermByTerm2() {
+        def result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
+    
+    void testListRelationTermByRelation() {
+        def result = RelationTermAPI.listByRelation(BasicInstance.createOrGetBasicRelation().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }    
 
   void testAddRelationTermCorrect() {
+      def relationTermToAdd = BasicInstance.getBasicRelationTermNotExist()
 
-    log.info("create RelationTerm")
-    def relationTermToAdd = BasicInstance.getBasicRelationTermNotExist()
-    relationTermToAdd.discard()
-    String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
-    def json = JSON.parse(jsonRelationTerm)
-    json.relation = relationTermToAdd.relation.id
-    json.term1 = relationTermToAdd.term1.id
-    json.term2 = relationTermToAdd.term2.id
-    jsonRelationTerm = json.toString()
+      String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
+      def json = JSON.parse(jsonRelationTerm)
+      json.relation = relationTermToAdd.relation.id
+      json.term1 = relationTermToAdd.term1.id
+      json.term2 = relationTermToAdd.term2.id
+      int idRelation = relationTermToAdd.relation.id
+      int idTerm1 = relationTermToAdd.term1.id
+      int idTerm2 = relationTermToAdd.term2.id
+      jsonRelationTerm = json.toString()
 
-    log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/relation/"+ relationTermToAdd.relation.id +"/term.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonRelationTerm)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
+      def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
+      //int idRelationTerm = result.data.id
 
-    log.info("check response")
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int idRelation= json.relationterm.relation.id
-    int idTerm1= json.relationterm.term1.id
-    int idTerm2= json.relationterm.term2.id
+      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
 
-    log.info("check if object "+ idRelation +"/"+ idTerm1 +"/"+ idTerm2 +" exist in DB")
-    client = new HttpClient();
+      result = RelationTermAPI.undo()
+      assertEquals(200, result.code)
 
-    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation+"/term1/"+idTerm1 +"/term2/" + idTerm2 +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
+      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, result.code)
 
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
+      result = RelationTermAPI.redo()
+      assertEquals(200, result.code)
 
-    log.info("check if object "+ idRelation +"/"+ idTerm1 +"/"+ idTerm2 +" not exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation+"/term1/"+idTerm1 +"/term2/" + idTerm2 +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(404,code)
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-
-    log.info("check if object "+ idRelation +"/"+ idTerm1 +"/"+ idTerm2 +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation+"/term1/"+idTerm1 +"/term2/" + idTerm2 +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
+      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
 
   }
 
   void testAddRelationTermAlreadyExist() {
-    log.info("create RelationTerm")
-    def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
-    String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
-    def json = JSON.parse(jsonRelationTerm)
-    json.relation = relationTermToAdd.relation.id
-    json.term1 = relationTermToAdd.term1.id
-    json.term2 = relationTermToAdd.term2.id
-    jsonRelationTerm = json.toString()
+      def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
 
-    log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/relation/"+ relationTermToAdd.relation.id +"/term.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonRelationTerm)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
+      String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
+      def json = JSON.parse(jsonRelationTerm)
+      json.relation = relationTermToAdd.relation.id
+      json.term1 = relationTermToAdd.term1.id
+      json.term2 = relationTermToAdd.term2.id
+      jsonRelationTerm = json.toString()
 
-    log.info("check response")
-    assertEquals(409,code)
+      def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(409, result.code)
   }
 
   void testAddRelationTermWithRelationNotExist() {
-     log.info("create RelationTerm")
     def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
     String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
     def json = JSON.parse(jsonRelationTerm)
@@ -210,154 +104,65 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     json.term2 = relationTermToAdd.term2.id
     jsonRelationTerm = json.toString()
 
-    log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/relation/-99/term.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonRelationTerm)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
+      def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(400, result.code)
   }
 
   void testAddRelationTermWithTerm1NotExist() {
-      log.info("create RelationTerm")
-    def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
-    String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
-    def json = JSON.parse(jsonRelationTerm)
-    json.relation = relationTermToAdd.relation.id
-    json.term1 = -99
-    json.term2 = relationTermToAdd.term2.id
-    jsonRelationTerm = json.toString()
-
-    log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/relation/"+ relationTermToAdd.relation.id +"/term.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonRelationTerm)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
+      def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
+      String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
+      def json = JSON.parse(jsonRelationTerm)
+      json.relation = relationTermToAdd.relation.id
+      json.term1 = -99
+      json.term2 = relationTermToAdd.term2.id
+      jsonRelationTerm = json.toString()
+  
+        def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(400, result.code)
   }
 
   void testAddRelationTermWithTerm2NotExist() {
-      log.info("create RelationTerm")
-    def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
-    String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
-    def json = JSON.parse(jsonRelationTerm)
-    json.relation = relationTermToAdd.relation.id
-    json.term1 = relationTermToAdd.term1.id
-    json.term2 = -99
-    jsonRelationTerm = json.toString()
-
-    log.info("post relationTerm:"+jsonRelationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/relation/"+ relationTermToAdd.relation.id +"/term.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonRelationTerm)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(400,code)
+      def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
+      String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
+      def json = JSON.parse(jsonRelationTerm)
+      json.relation = relationTermToAdd.relation.id
+      json.term1 = relationTermToAdd.term1.id
+      json.term2 = -99
+      jsonRelationTerm = json.toString()
+  
+        def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(400, result.code)
   }
 
   void testDeleteRelationTerm() {
+      def relationtermToDelete = BasicInstance.getBasicRelationTermNotExist()
+      assert relationtermToDelete.save(flush: true)  != null
+      def id = relationtermToDelete.id
+      int idRelation = relationtermToDelete.relation.id
+      int idTerm1 = relationtermToDelete.term1.id
+      int idTerm2 = relationtermToDelete.term2.id
+      def result = RelationTermAPI.delete(relationtermToDelete.relation.id,relationtermToDelete.term1.id,relationtermToDelete.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
 
-    log.info("create relationTerm")
-    def relationTermToDelete = BasicInstance.getBasicRelationTermNotExist()
-    assert relationTermToDelete.save(flush:true)!=null
-   // relationTermToDelete.discard()
-    String jsonRelationTerm = relationTermToDelete.encodeAsJSON()
+      def showResult = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, showResult.code)
 
-    int idRelation = relationTermToDelete.relation.id
-    int idTerm1 = relationTermToDelete.term1.id
-    int idTerm2 = relationTermToDelete.term2.id
-    log.info("delete relationTerm:"+jsonRelationTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/relation/"+relationTermToDelete.relation.id + "/term1/"+relationTermToDelete.term1.id+"/term2/"+relationTermToDelete.term2.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
+      result = RelationTermAPI.undo()
+      assertEquals(200, result.code)
 
-    log.info("check response")
-    assertEquals(200,code)
+      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
 
-    log.info("check if object "+ idRelation +"/" + idTerm1 + " exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation + "/term1/"+idTerm1+"/term2/"+idTerm2+".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
+      result = RelationTermAPI.redo()
+      assertEquals(200, result.code)
 
-    assertEquals(404,code)
-
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idRelation +"/" + idTerm1 +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation + "/term1/"+idTerm1+"/term2/"+idTerm2+".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idRelation +"/" + idTerm1 +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/relation/"+idRelation + "/term1/"+idTerm1+"/term2/"+idTerm2+".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(404,code)
-
+      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, result.code)
   }
 
   void testDeleteRelationTermNotExist() {
-
-    log.info("create relationTerm")
-
-    String URL = Infos.CYTOMINEURL+"api/relation/-99/term1/-99/term2/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
+      def result = RelationTermAPI.delete(-99,-99,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, result.code)
   }
 
 

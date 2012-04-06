@@ -402,7 +402,6 @@ class BasicInstance {
         ontology
     }
 
-
     static Ontology getBasicOntologyNotExist() {
         log.debug "getBasicOntologyNsotExist()"
         def random = new Random()
@@ -417,52 +416,96 @@ class BasicInstance {
         ontology
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    static Project createOrGetBasicProject() {
+        log.debug "createOrGetBasicProject()"
+        def name = "BasicProject".toUpperCase()
+        def project = Project.findByName(name)
+        if (!project) {
+            project = new Project(name: name, ontology: createOrGetBasicOntology(), discipline: createOrGetBasicDiscipline())
+            checkDomain(project)
+            saveDomain(project)
+        }
+        assert project != null
+        project
+    }
+
+    static Project getBasicProjectNotExist() {
+        log.debug "getBasicProjectNotExist()"
+        def random = new Random()
+        def randomInt = random.nextInt()
+        def project = Project.findByName(randomInt + "")
+        while (project) {
+            randomInt = random.nextInt()
+            project = Project.findByName(randomInt + "")
+        }
+        project = new Project(name: randomInt + "", ontology: createOrGetBasicOntology(), discipline: createOrGetBasicDiscipline())
+        project
+    }
 
     static Relation createOrGetBasicRelation() {
-
         log.debug "createOrGetBasicRelation()"
         def relation = Relation.findByName("BasicRelation")
         if (!relation) {
             relation = new Relation(name: "BasicRelation")
-            relation.validate()
-            log.debug("relation.errors=" + relation.errors)
-            relation.save(flush: true)
-            log.debug("relation.errors=" + relation.errors)
+            checkDomain(relation)
+            saveDomain(relation)
         }
         assert relation != null
         relation
     }
 
     static Relation getBasicRelationNotExist() {
-
         log.debug "createOrGetBasicRelationNotExist()"
         def random = new Random()
         def randomInt = random.nextInt()
         def relation = Relation.findByName(randomInt + "")
-
         while (relation) {
             randomInt = random.nextInt()
             relation = Relation.findByName(randomInt + "")
         }
-
         relation = new Relation(name: randomInt + "")
-        relation.validate()
-        log.debug("relation.errors=" + relation.errors)
-
+        checkDomain(relation)
         assert relation != null
         relation
     }
+    
+    static RelationTerm createOrGetBasicRelationTerm() {
+        log.debug "createOrGetBasicRelationTerm()"
+        def relation = createOrGetBasicRelation()
+        def term1 = createOrGetBasicTerm()
+        def term2 = createOrGetAnotherBasicTerm()
+
+        def relationTerm = RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
+        if (!relationTerm) {
+            relationTerm = RelationTerm.link(relation, term1, term2)
+        }
+        assert relationTerm != null
+        relationTerm
+    }
+
+    static RelationTerm getBasicRelationTermNotExist() {
+        log.debug "getBasicRelationTermNotExist()"
+        def relation = getBasicRelationNotExist()
+        def term1 = getBasicTermNotExist()
+        def term2 = getBasicTermNotExist()
+        relation.save(flush: true)
+        term1.save(flush: true)
+        term2.save(flush: true)
+        def relationTerm = new RelationTerm(relation: relation, term1: term1, term2: term2)
+        checkDomain(relationTerm)
+        assert relationTerm != null
+        relationTerm
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+
+
 
 
 
@@ -696,40 +739,7 @@ class BasicInstance {
         return project
     }
 
-    static Project createOrGetBasicProject() {
-        log.debug "createOrGetBasicProject()"
-        def name = "BasicProject".toUpperCase()
-        def project = Project.findByName(name)
-        if (!project) {
 
-            project = new Project(name: name, ontology: createOrGetBasicOntology(), discipline: createOrGetBasicDiscipline())
-            project.validate()
-            log.debug "project.errors=" + project.errors
-            project.save(flush: true)
-            log.debug "project.errors=" + project.errors
-        }
-        assert project != null
-
-        project
-    }
-
-    static Project getBasicProjectNotExist() {
-
-        log.debug "getBasicProjectNotExist()"
-        def random = new Random()
-        def randomInt = random.nextInt()
-        def project = Project.findByName(randomInt + "")
-
-        while (project) {
-            randomInt = random.nextInt()
-            project = Project.findByName(randomInt + "")
-        }
-
-        project = new Project(name: randomInt + "", ontology: createOrGetBasicOntology(), discipline: createOrGetBasicDiscipline())
-        log.debug "getBasicProjectNotExist() validate=" + project.validate()
-        log.debug "getBasicProjectNotExist() project=" + project
-        project
-    }
 
 
     static Term createOrGetBasicTerm() {
@@ -781,8 +791,6 @@ class BasicInstance {
         term
     }
 
-
-
     static Software createOrGetBasicSoftware() {
         log.debug "createOrGetBasicSoftware()"
         def software = Software.findByName("AnotherBasicSoftware")
@@ -815,8 +823,6 @@ class BasicInstance {
         log.debug "getBasicSoftwareNotExist() end"
         software
     }
-    
-
 
     static SoftwareParameter createOrGetBasicSoftwareParameter() {
         log.debug "createOrGetBasicSoftwareParameter()"
@@ -894,41 +900,7 @@ class BasicInstance {
         softproj
     }
 
-    static RelationTerm createOrGetBasicRelationTerm() {
-        log.debug "createOrGetBasicRelationTerm()"
-        def relation = createOrGetBasicRelation()
-        def term1 = createOrGetBasicTerm()
-        def term2 = createOrGetAnotherBasicTerm()
 
-        def relationTerm = RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
-        log.debug "relationTerm=" + relationTerm
-        if (!relationTerm) {
-            log.debug "relationTerm link"
-            relationTerm = RelationTerm.link(relation, term1, term2)
-            log.debug "relationTerm.errors=" + relationTerm.errors
-        }
-        assert relationTerm != null
-        relationTerm
-    }
-
-    static RelationTerm getBasicRelationTermNotExist() {
-
-        log.debug "getBasicRelationTermNotExist()"
-        def random = new Random()
-        def randomInt = random.nextInt()
-
-        def relation = getBasicRelationNotExist()
-        def term1 = getBasicTermNotExist()
-        def term2 = getBasicTermNotExist()
-        relation.save(flush: true)
-        term1.save(flush: true)
-        term2.save(flush: true)
-
-        def relationTerm = new RelationTerm(relation: relation, term1: term1, term2: term2)
-        log.debug "relationTerm.errors=" + relationTerm.errors
-        assert relationTerm != null
-        relationTerm
-    }
 
     static createUserJob(User user) {
 
@@ -948,7 +920,6 @@ class BasicInstance {
         newUser.save(flush:true)
         return newUser
     }
-
 
     static void compareAnnotation(map, json) {
 

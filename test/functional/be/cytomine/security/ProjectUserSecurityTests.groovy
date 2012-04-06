@@ -6,8 +6,6 @@ import be.cytomine.test.BasicInstance
 
 import be.cytomine.test.http.ProjectAPI
 
-import be.cytomine.SecurityTestsAbstract
-
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -30,15 +28,15 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),be.cytomine.SecurityTestsAbstract.USERNAME1,be.cytomine.SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
 
       //check if admin can add user 2 in project
-      assertEquals(200,ProjectAPI.addUserProject(project.id, user2.id,be.cytomine.SecurityTestsAbstract.USERNAMEADMIN,be.cytomine.SecurityTestsAbstract.PASSWORDADMIN).code)
+      assertEquals(200,ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
 
       //check if admin can delete user 2 in project
-      assertEquals(200,ProjectAPI.deleteUserProject(project.id, user2.id,be.cytomine.SecurityTestsAbstract.USERNAMEADMIN,be.cytomine.SecurityTestsAbstract.PASSWORDADMIN).code)
+      assertEquals(200,ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
 
   }
 
@@ -54,15 +52,15 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),be.cytomine.SecurityTestsAbstract.USERNAME1,be.cytomine.SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
 
       //check if user1 can add user 2 in project
-      assertEquals(200,ProjectAPI.addUserProject(project.id, user2.id,be.cytomine.SecurityTestsAbstract.USERNAME1,be.cytomine.SecurityTestsAbstract.PASSWORD1).code)
+      assertEquals(200,ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1).code)
 
       //check if user1 can delete user 2 in project
-      assertEquals(200,ProjectAPI.deleteUserProject(project.id, user2.id,be.cytomine.SecurityTestsAbstract.USERNAME1,be.cytomine.SecurityTestsAbstract.PASSWORD1).code)
+      assertEquals(200,ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1).code)
 
   }
 
@@ -81,21 +79,21 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),be.cytomine.SecurityTestsAbstract.USERNAME1,be.cytomine.SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
 
       //check if user1 can add user 2 in project
-      assertEquals(200,ProjectAPI.addUserProject(project.id, user2.id,be.cytomine.SecurityTestsAbstract.USERNAMEADMIN,be.cytomine.SecurityTestsAbstract.PASSWORDADMIN).code)
+      assertEquals(200,ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
 
       //check if user2 cannot add user 3 in project
-      assertEquals(403,ProjectAPI.addUserProject(project.id, user3.id,be.cytomine.SecurityTestsAbstract.USERNAME2,be.cytomine.SecurityTestsAbstract.PASSWORD2).code)
+      assertEquals(403,ProjectAPI.addUserProject(project.id, user3.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
 
       //check if user2 cannot delete user 3 in project
-      assertEquals(403,ProjectAPI.deleteUserProject(project.id, user3.id,be.cytomine.SecurityTestsAbstract.USERNAME2,be.cytomine.SecurityTestsAbstract.PASSWORD2).code)
+      assertEquals(403,ProjectAPI.deleteUserProject(project.id, user3.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
 
       //check if user2 can delete himself project
-      assertEquals(403,ProjectAPI.deleteUserProject(project.id, user2.id,be.cytomine.SecurityTestsAbstract.USERNAME2,be.cytomine.SecurityTestsAbstract.PASSWORD2).code)
+      assertEquals(403,ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
 
   }
 
@@ -111,15 +109,15 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
       User user3 = getUser3()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),be.cytomine.SecurityTestsAbstract.USERNAME1,be.cytomine.SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
 
       //check if user2 cannot add user 3 in project
-      assertEquals(403,ProjectAPI.addUserProject(project.id, user2.id,be.cytomine.SecurityTestsAbstract.USERNAME2,be.cytomine.SecurityTestsAbstract.PASSWORD2).code)
+      assertEquals(403,ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
 
       //check if user2 cannot delete user 3 in project
-      assertEquals(403,ProjectAPI.deleteUserProject(project.id, user3.id,be.cytomine.SecurityTestsAbstract.USERNAME2,be.cytomine.SecurityTestsAbstract.PASSWORD2).code)
+      assertEquals(403,ProjectAPI.deleteUserProject(project.id, user3.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
 
   }
 
@@ -133,15 +131,15 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
       User user2 = getUser2()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),be.cytomine.SecurityTestsAbstract.USERNAME1,be.cytomine.SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
 
       //check if user2 cannot add user 3 in project
-      assertEquals(401,ProjectAPI.addUserProject(project.id, user2.id,be.cytomine.SecurityTestsAbstract.USERNAMEBAD,be.cytomine.SecurityTestsAbstract.PASSWORDBAD).code)
+      assertEquals(401,ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEBAD,SecurityTestsAbstract.PASSWORDBAD).code)
 
       //check if user2 cannot delete user 3 in project
-      assertEquals(401,ProjectAPI.deleteUserProject(project.id, user2.id,be.cytomine.SecurityTestsAbstract.USERNAMEBAD,be.cytomine.SecurityTestsAbstract.PASSWORDBAD).code)
+      assertEquals(401,ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEBAD,SecurityTestsAbstract.PASSWORDBAD).code)
 
   }
 }

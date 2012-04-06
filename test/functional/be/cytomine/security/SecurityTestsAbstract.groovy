@@ -1,4 +1,4 @@
-package be.cytomine
+package be.cytomine.security
 
 import be.cytomine.project.Project
 import be.cytomine.security.User
