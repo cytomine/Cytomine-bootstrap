@@ -11,6 +11,7 @@ import be.cytomine.ontology.Ontology
 
 import be.cytomine.ontology.AnnotationTerm
 import org.codehaus.groovy.grails.web.json.JSONArray
+import be.cytomine.test.http.TermAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,550 +24,159 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
 
 
   void testListOntologyTermByOntologyWithCredential() {
-
-    Term term = BasicInstance.createOrGetBasicTerm()
-
-    log.info("get by ontology")
-    String URL = Infos.CYTOMINEURL+"api/ontology/"+term.ontology.id+"/term.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONArray
-
+      Ontology ontology = BasicInstance.createOrGetBasicOntology()
+      def result = TermAPI.listByOntology(ontology.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
+      def json = JSON.parse(result.data)
+      assert json instanceof JSONArray
   }
 
   void testListTermOntologyByOntologyWithOntologyNotExist() {
-
-    log.info("get by ontology not exist")
-    String URL = Infos.CYTOMINEURL+"api/ontology/-99/term.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
-    def json = JSON.parse(response)
-
-  }
-
-  void testListTermOntologyByTermWithCredential() {
-
-    Term term = BasicInstance.createOrGetBasicTerm()
-
-    log.info("get by term")
-    String URL = Infos.CYTOMINEURL+"api/term/"+term.id+"/ontology.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response:"+response)
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-
-  }
-
-  void testListTermOntologyByTermWithTermNotExist() {
-
-    log.info("get by term not exist")
-    String URL = Infos.CYTOMINEURL+"api/term/-99/ontology.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
-    def json = JSON.parse(response)
-
+      def result = TermAPI.listByOntology(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, result.code)
   }
 
   void testListTermByImageWithCredential() {
-
-    AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
-
-    log.info("get by ontology")
-    String URL = Infos.CYTOMINEURL+"api/imageinstance/"+annotationTerm.annotation.image.id+"/term.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONArray
-
+      AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+      def result = TermAPI.listByImage(annotationTerm.annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
+      def json = JSON.parse(result.data)
+      assert json instanceof JSONArray
   }
 
   void testListTermByImageWithImageNotExist() {
-
-    log.info("get by ontology not exist")
-    String URL = Infos.CYTOMINEURL+"api/image/-99/term.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
-    def json = JSON.parse(response)
-
+      def result = TermAPI.listByImage(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, result.code)
   }
 
   void testListTermWithCredential() {
-
-    log.info("get term")
-    String URL = Infos.CYTOMINEURL+"api/term.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response:"+response)
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONArray
-  }
-
-  void testListTermWithoutCredential() {
-
-    log.info("get term")
-    String URL = Infos.CYTOMINEURL+"api/term.json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.BADLOGIN,Infos.BADPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(401,code)
+      def result = TermAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
+      def json = JSON.parse(result.data)
+      assert json instanceof JSONArray
   }
 
   void testShowTermWithCredential() {
-
-    log.info("create term")
-    Term term =  BasicInstance.createOrGetBasicTerm()
-
-    log.info("get term")
-    String URL = Infos.CYTOMINEURL+"api/term/"+ term.id +".json"
-    HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-
-    log.info("check response:"+response)
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
+      def result = TermAPI.show(BasicInstance.createOrGetBasicTerm().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
+      def json = JSON.parse(result.data)
+      assert json instanceof JSONObject
   }
 
   void testAddTermCorrect() {
+      def termToAdd = BasicInstance.getBasicTermNotExist()
+      def result = TermAPI.create(termToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
+      int idTerm = result.data.id
 
-    log.info("create term")
-    def termToAdd = BasicInstance.getBasicTermNotExist()
-    String jsonTerm = termToAdd.encodeAsJSON()
+      result = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
 
-    log.info("post term:"+jsonTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/term.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonTerm)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
+      result = TermAPI.undo()
+      assertEquals(200, result.code)
 
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int idTerm = json.term.id
+      result = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(404, result.code)
 
-    log.info("check if object "+ idTerm +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/term/"+idTerm +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
+      result = TermAPI.redo()
+      assertEquals(200, result.code)
 
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idTerm +" not exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/term/"+idTerm +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(404,code)
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    //must be done because redo change id
-    json = JSON.parse(response)
-    assert json instanceof JSONArray
-    idTerm = json[0].term.id
-
-    log.info("check if object "+ idTerm +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/term/"+idTerm +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
+      result = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
   }
 
-  void testAddTermWithBadName() {
-
-    log.info("create term")
-    def termToAdd = BasicInstance.createOrGetAnotherBasicTerm()
-    String jsonTerm = termToAdd.encodeAsJSON()
-
-    log.info("post term:"+jsonTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/term.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.post(jsonTerm)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(409,code)
-
-  }
-
-  void testEditTermCorrect() {
-
-    String oldName = "Name1"
-    String newName = "Name2"
-
-    String oldComment = "Comment1"
-    String newComment = "Comment2"
-
-    String oldColor = "000000"
-    String newColor = "FFFFFF"
-
-    Ontology oldOntology = BasicInstance.createOrGetBasicOntology()
-    Ontology newOntology = BasicInstance.getBasicOntologyNotExist()
-    newOntology.save(flush:true)
-
-    def mapOld = ["name":oldName,"comment":oldComment,"color":oldColor,"ontology":oldOntology]
-    def mapNew = ["name":newName,"comment":newComment,"color":newColor,"ontology":newOntology]
-
-
-    /* Create a Name1 term */
-    log.info("create term")
-    Term termToAdd = BasicInstance.createOrGetBasicTerm()
-    termToAdd.name = oldName
-    termToAdd.comment = oldComment
-    termToAdd.color = oldColor
-    termToAdd.ontology = oldOntology
-    assert (termToAdd.save(flush:true) != null)
-
-    /* Encode a niew term Name2*/
-    Term termToEdit = Term.get(termToAdd.id)
-    def jsonTerm = termToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonTerm)
-    jsonUpdate.name = newName
-    jsonUpdate.comment = newComment
-    jsonUpdate.color = newColor
-    jsonUpdate.ontology = newOntology.id
-    jsonTerm = jsonUpdate.encodeAsJSON()
-
-    log.info("put term:"+jsonTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/term/"+termToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonTerm)
-    int code  = client.getResponseCode()
-    String response = client.getResponseData()
-    println response
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-    def json = JSON.parse(response)
-    assert json instanceof JSONObject
-    int idTerm = json.term.id
-
-    log.info("check if object "+ idTerm +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/term/"+idTerm +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-    BasicInstance.compareTerm(mapNew,json)
-
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL + ".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idTerm +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/term/"+idTerm +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-    BasicInstance.compareTerm(mapOld,json)
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL + ".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idTerm +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/term/"+idTerm +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-    BasicInstance.compareTerm(mapNew,json)
-
-
-    log.info("check if object "+ idTerm +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/term/"+idTerm +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-    json = JSON.parse(response)
-    assert json instanceof JSONObject
-
-  }
-
-  void testEditTermWithBadName() {
-
-    /* Create a Name1 term */
-    log.info("create term")
-    Term term= BasicInstance.getBasicTermNotExist()
-    term.save(flush:true)
-    Term termToAdd = BasicInstance.createOrGetBasicTerm()
-
-    /* Encode a niew term Name2*/
-    Term termToEdit = Term.get(termToAdd.id)
-    def jsonTerm = termToEdit.encodeAsJSON()
-    def jsonUpdate = JSON.parse(jsonTerm)
-    jsonUpdate.name = term.name
-    jsonTerm = jsonUpdate.encodeAsJSON()
-
-    log.info("put term:"+jsonTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/term/"+termToEdit.id+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.put(jsonTerm)
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(409,code)
-
-  }
-
-  void testDeleteTerm() {
-
-    log.info("create term")
-    def termToDelete = BasicInstance.createOrGetBasicTerm()
-    String jsonTerm = termToDelete.encodeAsJSON()
-    int idTerm = termToDelete.id
-    log.info("delete term:"+jsonTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/term/"+idTerm+".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-
-    log.info("check if object "+ idTerm +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/term/"+idTerm +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-
-    assertEquals(404,code)
-
-    log.info("test undo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.UNDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    String response = client.getResponseData()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idTerm +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/term/"+idTerm  +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    response = client.getResponseData()
-    client.disconnect();
-
-    assertEquals(200,code)
-
-
-    log.info("test redo")
-    client = new HttpClient()
-    URL = Infos.CYTOMINEURL+Infos.REDOURL +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(200,code)
-
-    log.info("check if object "+ idTerm +" exist in DB")
-    client = new HttpClient();
-    URL = Infos.CYTOMINEURL+"api/term/"+idTerm +".json"
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
-    client.get()
-    code  = client.getResponseCode()
-    client.disconnect();
-    assertEquals(404,code)
-
-  }
-
-  void testDeleteTermNotExist() {
-
-    log.info("create term")
-    def termToDelete = BasicInstance.createOrGetBasicTerm()
-    String jsonTerm = termToDelete.encodeAsJSON()
-
-    log.info("delete term:"+jsonTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/term/-99.json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(404,code)
-  }
-
-  void testDeleteTermWithData() {
-
-    log.info("create term")
-    def annotTerm = BasicInstance.createOrGetBasicAnnotationTerm()
-    def termToDelete = annotTerm.term
-    String jsonTerm = termToDelete.encodeAsJSON()
-
-    log.info("delete term:"+jsonTerm.replace("\n",""))
-    String URL = Infos.CYTOMINEURL+"api/term/"+ termToDelete.id +".json"
-    HttpClient client = new HttpClient()
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    client.delete()
-    int code  = client.getResponseCode()
-    client.disconnect();
-
-    log.info("check response")
-    assertEquals(200,code)
-  }
-
-  void testAddTermAnnotationMapping() {
-
-  }
-
-  void testAddTermAnnotationMappingAlreadyExist() {
-
-  }
-
-  void testAddTermNoExistToAnnotationMapping()  {
-
-  }
-
-  void testAddTermToAnnotationNotExistMapping() {
-
-  }
-
+    void testAddTermAlreadyExist() {
+       def termToAdd = BasicInstance.createOrGetBasicTerm()
+       def result = TermAPI.create(termToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(409, result.code)
+   }
+ 
+   void testUpdateTermCorrect() {
+       Term termToAdd = BasicInstance.createOrGetBasicTerm()
+       def result = TermAPI.update(termToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(200, result.code)
+       def json = JSON.parse(result.data)
+       assert json instanceof JSONObject
+       int idTerm = json.term.id
+ 
+       def showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       json = JSON.parse(showResult.data)
+       BasicInstance.compareTerm(result.mapNew, json)
+ 
+       showResult = TermAPI.undo()
+       assertEquals(200, result.code)
+       showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       BasicInstance.compareTerm(result.mapOld, JSON.parse(showResult.data))
+ 
+       showResult = TermAPI.redo()
+       assertEquals(200, result.code)
+       showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       BasicInstance.compareTerm(result.mapNew, JSON.parse(showResult.data))
+   }
+ 
+   void testUpdateTermNotExist() {
+       Term termWithOldName = BasicInstance.createOrGetBasicTerm()
+       Term termWithNewName = BasicInstance.getBasicTermNotExist()
+       termWithNewName.save(flush: true)
+       Term termToEdit = Term.get(termWithNewName.id)
+       def jsonTerm = termToEdit.encodeAsJSON()
+       def jsonUpdate = JSON.parse(jsonTerm)
+       jsonUpdate.name = termWithOldName.name
+       jsonUpdate.id = -99
+       jsonTerm = jsonUpdate.encodeAsJSON()
+       def result = TermAPI.update(-99, jsonTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(404, result.code)
+   }
+ 
+   void testUpdateTermWithNameAlreadyExist() {
+       Term termWithOldName = BasicInstance.createOrGetBasicTerm()
+       Term termWithNewName = BasicInstance.getBasicTermNotExist()
+       termWithNewName.save(flush: true)
+       Term termToEdit = Term.get(termWithNewName.id)
+       def jsonTerm = termToEdit.encodeAsJSON()
+       def jsonUpdate = JSON.parse(jsonTerm)
+       jsonUpdate.name = termWithOldName.name
+       jsonTerm = jsonUpdate.encodeAsJSON()
+       def result = TermAPI.update(termToEdit.id, jsonTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(409, result.code)
+   }
+     
+     void testEditTermWithBadName() {
+         Term termToAdd = BasicInstance.createOrGetBasicTerm()
+         Term termToEdit = Term.get(termToAdd.id)
+         def jsonTerm = termToEdit.encodeAsJSON()
+         def jsonUpdate = JSON.parse(jsonTerm)
+         jsonUpdate.name = null
+         jsonTerm = jsonUpdate.encodeAsJSON()
+         def result = TermAPI.update(termToAdd.id, jsonTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assertEquals(400, result.code)
+     }
+ 
+   void testDeleteTerm() {
+       def termToDelete = BasicInstance.getBasicTermNotExist()
+       assert termToDelete.save(flush: true)!= null
+       def id = termToDelete.id
+       def result = TermAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(200, result.code)
+ 
+       def showResult = TermAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(404, showResult.code)
+ 
+       result = TermAPI.undo()
+       assertEquals(200, result.code)
+ 
+       result = TermAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(200, result.code)
+ 
+       result = TermAPI.redo()
+       assertEquals(200, result.code)
+ 
+       result = TermAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(404, result.code)
+   }
+ 
+   void testDeleteTermNotExist() {
+       def result = TermAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(404, result.code)
+   }
 }

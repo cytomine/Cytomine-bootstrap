@@ -7,6 +7,9 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.processing.Software
+import be.cytomine.test.http.SoftwareAPI
+import be.cytomine.test.http.SoftwareParameterAPI
+import be.cytomine.test.http.SoftwareProjectAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,639 +21,146 @@ import be.cytomine.processing.Software
 class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
 
     void testListSoftwareWithCredential() {
-
-        log.info("list software")
-        String URL = Infos.CYTOMINEURL + "api/software.json"
-        HttpClient client = new HttpClient();
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-
-        log.info("check response=" + response)
-        assertEquals(200, code)
-        def json = JSON.parse(response)
-        assert json instanceof JSONArray
-
-    }
-
-    void testListSoftwareWithoutCredential() {
-
-        log.info("list software")
-        String URL = Infos.CYTOMINEURL + "api/software.json"
-        HttpClient client = new HttpClient();
-        client.connect(URL, Infos.BADLOGIN, Infos.BADPASSWORD);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(401, code)
-
-    }
-
-    void testShowSoftwareWithCredential() {
-
-        Software software = BasicInstance.createOrGetBasicSoftware()
-
-        log.info("list software")
-        String URL = Infos.CYTOMINEURL + "api/software/" + software.id + ".json"
-        HttpClient client = new HttpClient();
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(200, code)
-        def json = JSON.parse(response)
-        assert json instanceof JSONObject
-
-    }
-
-    void testAddSoftwareCorrect() {
-
-        log.info("create software")
-        def softwareToAdd = BasicInstance.getBasicSoftwareNotExist()
-        println("softwareToAdd.version=" + softwareToAdd.version)
-        String jsonSoftware = softwareToAdd.encodeAsJSON()
-
-        log.info("post software:" + jsonSoftware.replace("\n", ""))
-        String URL = Infos.CYTOMINEURL + "api/software.json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.post(jsonSoftware)
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        println response
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(200, code)
-        def json = JSON.parse(response)
-        assert json instanceof JSONObject
-        int idSoftware = json.software.id
-
-        log.info("check if object " + idSoftware + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/software/" + idSoftware + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
-
-        log.info("test undo")
-        client = new HttpClient()
-        URL = Infos.CYTOMINEURL + Infos.UNDOURL + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
-
-        log.info("check if object " + idSoftware + " not exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/software/" + idSoftware + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(404, code)
-
-        log.info("test redo")
-        client = new HttpClient()
-        URL = Infos.CYTOMINEURL + Infos.REDOURL + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
-
-        //must be done because redo change id
-        json = JSON.parse(response)
-        assert json instanceof JSONArray
-
-        log.info("check if object " + idSoftware + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/software/" + idSoftware + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
-
-    }
-
-    void testAddSoftwareAlreadyExist() {
-        log.info("create software")
-        def softwareToAdd = BasicInstance.createOrGetBasicSoftware()
-        //softwareToAdd is save in DB
-        String jsonSoftware = softwareToAdd.encodeAsJSON()
-
-        log.info("post software:" + jsonSoftware.replace("\n", ""))
-        String URL = Infos.CYTOMINEURL + "api/software.json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.post(jsonSoftware)
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        println response
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(409, code)
-    }
-
-    void testAddSoftwareWithBadName() {
-        log.info("create software")
-        def softwareToAdd = BasicInstance.getBasicSoftwareNotExist()
-        String jsonSoftware = softwareToAdd.encodeAsJSON()
-
-        def jsonUpdate = JSON.parse(jsonSoftware)
-        jsonUpdate.name = null
-        jsonSoftware = jsonUpdate.encodeAsJSON()
-
-        log.info("post software:" + jsonSoftware.replace("\n", ""))
-        String URL = Infos.CYTOMINEURL + "api/software.json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.post(jsonSoftware)
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        println response
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(400, code)
-    }
-
-    void testAddSoftwareFullWorkflow() {
-        /**
-         * test add software
-         */
-        log.info("create software")
-        def softwareToAdd = BasicInstance.getBasicSoftwareNotExist()
-        println("softwareToAdd.version=" + softwareToAdd.version)
-        String jsonSoftware = softwareToAdd.encodeAsJSON()
-
-        log.info("post software:" + jsonSoftware.replace("\n", ""))
-        String URL = Infos.CYTOMINEURL + "api/software.json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.post(jsonSoftware)
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        println response
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(200, code)
-        def json = JSON.parse(response)
-        assert json instanceof JSONObject
-        int idSoftware = json.software.id
-
-        /*
-        * test add software parameter N
-        */
-        log.info("create softwareparameter")
-        def softwareparameterToAdd = BasicInstance.getBasicSoftwareParameterNotExist()
-        softwareparameterToAdd.software = Software.read(idSoftware)
-        softwareparameterToAdd.name = "N"
-        softwareparameterToAdd.type = "String"
-        println("softwareparameterToAdd.version=" + softwareparameterToAdd.version)
-        String jsonSoftwareparameter = softwareparameterToAdd.encodeAsJSON()
-
-        log.info("post softwareparameter:" + jsonSoftwareparameter.replace("\n", ""))
-        URL = Infos.CYTOMINEURL + "api/softwareparameter.json"
-        client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.post(jsonSoftwareparameter)
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        println response
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(200, code)
-        json = JSON.parse(response)
-        assert json instanceof JSONObject
-        int idSoftwareparameter = json.softwareparameter.id
-
-        log.info("check if object " + idSoftwareparameter + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/softwareparameter/" + idSoftwareparameter + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
-
-        /*
-        * test add software parameter T
-        */
-        log.info("create softwareparameter")
-        softwareparameterToAdd = BasicInstance.getBasicSoftwareParameterNotExist()
-        softwareparameterToAdd.software = Software.read(idSoftware)
-        softwareparameterToAdd.name = "T"
-        softwareparameterToAdd.type = "String"
-        println("softwareparameterToAdd.version=" + softwareparameterToAdd.version)
-        jsonSoftwareparameter = softwareparameterToAdd.encodeAsJSON()
-
-        log.info("post softwareparameter:" + jsonSoftwareparameter.replace("\n", ""))
-        URL = Infos.CYTOMINEURL + "api/softwareparameter.json"
-        client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.post(jsonSoftwareparameter)
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        println response
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(200, code)
-        json = JSON.parse(response)
-        assert json instanceof JSONObject
-        idSoftwareparameter = json.softwareparameter.id
-
-        log.info("check if object " + idSoftwareparameter + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/softwareparameter/" + idSoftwareparameter + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
-
-        /*
-        * test add software parameter project x
-        */
-        log.info("create softwareproject")
-        def softwareprojectToAdd = BasicInstance.getBasicSoftwareProjectNotExist()
-        println("softwareprojectToAdd.version=" + softwareprojectToAdd.version)
-        String jsonSoftwareproject = softwareprojectToAdd.encodeAsJSON()
-
-        log.info("post softwareproject:" + jsonSoftwareproject.replace("\n", ""))
-        URL = Infos.CYTOMINEURL + "api/softwareproject.json"
-        client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.post(jsonSoftwareproject)
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        println response
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(200, code)
-        json = JSON.parse(response)
-        assert json instanceof JSONObject
-        int idSoftwareproject = json.softwareproject.id
-
-        log.info("check if object " + idSoftwareproject + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/softwareproject/" + idSoftwareproject + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
-
-        /*
-        * test add software parameter project y
-        */
-        log.info("create softwareproject")
-        softwareprojectToAdd = BasicInstance.getBasicSoftwareProjectNotExist()
-        println("softwareprojectToAdd.version=" + softwareprojectToAdd.version)
-        jsonSoftwareproject = softwareprojectToAdd.encodeAsJSON()
-
-        log.info("post softwareproject:" + jsonSoftwareproject.replace("\n", ""))
-        URL = Infos.CYTOMINEURL + "api/softwareproject.json"
-        client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.post(jsonSoftwareproject)
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        println response
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(200, code)
-        json = JSON.parse(response)
-        assert json instanceof JSONObject
-        idSoftwareproject = json.softwareproject.id
-
-        log.info("check if object " + idSoftwareproject + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/softwareproject/" + idSoftwareproject + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
-    }
-
-    void testUpdateSoftwareCorrect() {
-
-        String oldName = "Name1"
-        String newName = "Name2"
-        String oldNameService = "projectService"
-        String newNameService = "annotationService"
-
-        def mapNew = ["name": newName,"serviceName" : newNameService]
-        def mapOld = ["name": oldName,"serviceName" : oldNameService]
-
-        /* Create a Name1 software */
-        log.info("create software")
-        Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
-        softwareToAdd.name = oldName
-        softwareToAdd.serviceName = oldNameService
-        assert (softwareToAdd.save(flush: true) != null)
-
-        /* Encode a niew software Name2*/
-        Software softwareToEdit = Software.get(softwareToAdd.id)
-        def jsonSoftware = softwareToEdit.encodeAsJSON()
-        def jsonUpdate = JSON.parse(jsonSoftware)
-        jsonUpdate.name = newName
-        jsonUpdate.serviceName = newNameService
-        jsonSoftware = jsonUpdate.encodeAsJSON()
-
-        log.info("put software:" + jsonSoftware.replace("\n", ""))
-        String URL = Infos.CYTOMINEURL + "api/software/" + softwareToEdit.id + ".json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.put(jsonSoftware)
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        println response
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(200, code)
-        def json = JSON.parse(response)
-        assert json instanceof JSONObject
-        int idSoftware = json.software.id
-
-        log.info("check if object " + idSoftware + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/software/" + idSoftware + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-
-        assertEquals(200, code)
-        json = JSON.parse(response)
-        assert json instanceof JSONObject
-
-        BasicInstance.compareSoftware(mapNew, json)
-
-        log.info("test undo")
-        client = new HttpClient()
-        URL = Infos.CYTOMINEURL + Infos.UNDOURL + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
-
-        log.info("check if object " + idSoftware + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/software/" + idSoftware + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-
-        assertEquals(200, code)
-        json = JSON.parse(response)
-        assert json instanceof JSONObject
-
-        BasicInstance.compareSoftware(mapOld, json)
-
-        log.info("test redo")
-        client = new HttpClient()
-        URL = Infos.CYTOMINEURL + Infos.REDOURL + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
-
-        log.info("check if object " + idSoftware + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/software/" + idSoftware + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-
-        assertEquals(200, code)
-        json = JSON.parse(response)
-        assert json instanceof JSONObject
-
-        BasicInstance.compareSoftware(mapNew, json)
-
-
-        log.info("check if object " + idSoftware + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/software/" + idSoftware + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-
-        assertEquals(200, code)
-        json = JSON.parse(response)
-        assert json instanceof JSONObject
-
-    }
-
-    void testUpdateSoftwareNotExist() {
-        /* Create a Name1 software */
-        log.info("create software")
-        Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
-
-        /* Encode a niew software Name2*/
-        Software softwareToEdit = Software.get(softwareToAdd.id)
-        def jsonSoftware = softwareToEdit.encodeAsJSON()
-        def jsonUpdate = JSON.parse(jsonSoftware)
-        jsonUpdate.id = -99
-        jsonSoftware = jsonUpdate.encodeAsJSON()
-
-        log.info("put software:" + jsonSoftware.replace("\n", ""))
-        String URL = Infos.CYTOMINEURL + "api/software/-99.json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.put(jsonSoftware)
-        int code = client.getResponseCode()
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(404, code)
-    }
-
-    void testUpdateSoftwareWithNameAlreadyExist() {
-
-        /* Create a Name1 software */
-        log.info("create software")
-        Software softwareWithOldName = BasicInstance.createOrGetBasicSoftware()
-        Software softwareWithNewName = BasicInstance.getBasicSoftwareNotExist()
-        softwareWithNewName.save(flush: true)
-
-        /* Encode a niew software Name2*/
-        Software softwareToEdit = Software.get(softwareWithNewName.id)
-        log.info("softwareToEdit=" + softwareToEdit)
-        def jsonSoftware = softwareToEdit.encodeAsJSON()
-        log.info("jsonSoftware=" + jsonSoftware)
-        def jsonUpdate = JSON.parse(jsonSoftware)
-        jsonUpdate.name = softwareWithOldName.name
-        jsonSoftware = jsonUpdate.encodeAsJSON()
-
-        log.info("put software:" + jsonSoftware.replace("\n", ""))
-        String URL = Infos.CYTOMINEURL + "api/software/" + softwareToEdit.id + ".json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.put(jsonSoftware)
-        int code = client.getResponseCode()
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(409, code)
-
-    }
-
-    void testUpdateSoftwareWithBadName() {
-
-        /* Create a Name1 software */
-        log.info("create software")
-        Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
-
-        /* Encode a niew software Name2*/
-        Software softwareToEdit = Software.get(softwareToAdd.id)
-        def jsonSoftware = softwareToEdit.encodeAsJSON()
-        def jsonUpdate = JSON.parse(jsonSoftware)
-        jsonUpdate.name = null
-        jsonSoftware = jsonUpdate.encodeAsJSON()
-
-        log.info("put software:" + jsonSoftware.replace("\n", ""))
-        String URL = Infos.CYTOMINEURL + "api/software/" + softwareToEdit.id + ".json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.put(jsonSoftware)
-        int code = client.getResponseCode()
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(400, code)
-
-    }
-
-    void testDeleteSoftware() {
-
-        log.info("create software")
-        def softwareToDelete = BasicInstance.getBasicSoftwareNotExist()
-        assert softwareToDelete.save(flush: true) != null
-        String jsonSoftware = softwareToDelete.encodeAsJSON()
-        int idSoftware = softwareToDelete.id
-        log.info("delete software:" + jsonSoftware.replace("\n", ""))
-        String URL = Infos.CYTOMINEURL + "api/software/" + idSoftware + ".json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.delete()
-        int code = client.getResponseCode()
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(200, code)
-
-        log.info("check if object " + idSoftware + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/software/" + idSoftware + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        client.disconnect();
-
-        assertEquals(404, code)
-
-        log.info("test undo")
-        client = new HttpClient()
-        URL = Infos.CYTOMINEURL + Infos.UNDOURL + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.get()
-        code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200, code)
-
-        log.info("check if object " + idSoftware + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/software/" + idSoftware + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        response = client.getResponseData()
-        client.disconnect();
-
-        assertEquals(200, code)
-
-
-        log.info("test redo")
-        client = new HttpClient()
-        URL = Infos.CYTOMINEURL + Infos.REDOURL + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.get()
-        code = client.getResponseCode()
-        client.disconnect();
-        assertEquals(200, code)
-
-        log.info("check if object " + idSoftware + " exist in DB")
-        client = new HttpClient();
-        URL = Infos.CYTOMINEURL + "api/software/" + idSoftware + ".json"
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        code = client.getResponseCode()
-        client.disconnect();
-        assertEquals(404, code)
-
-    }
-
-    void testDeleteSoftwareNotExist() {
-
-        log.info("create software")
-        def softwareToDelete = BasicInstance.createOrGetBasicSoftware()
-        String jsonSoftware = softwareToDelete.encodeAsJSON()
-
-        log.info("delete software:" + jsonSoftware.replace("\n", ""))
-        String URL = Infos.CYTOMINEURL + "api/software/-99.json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.delete()
-        int code = client.getResponseCode()
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(404, code)
-
-    }
+       def result = SoftwareAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(200, result.code)
+       def json = JSON.parse(result.data)
+       assert json instanceof JSONArray
+   }
+ 
+   void testListSoftwareWithoutCredential() {
+       def result = SoftwareAPI.list(Infos.BADLOGIN, Infos.BADPASSWORD)
+       assertEquals(401, result.code)
+   }
+ 
+   void testShowSoftwareWithCredential() {
+       def result = SoftwareAPI.show(BasicInstance.createOrGetBasicSoftware().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(200, result.code)
+       def json = JSON.parse(result.data)
+       assert json instanceof JSONObject
+   }
+ 
+   void testAddSoftwareCorrect() {
+       def softwareToAdd = BasicInstance.getBasicSoftwareNotExist()
+       def result = SoftwareAPI.create(softwareToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(200, result.code)
+       int idSoftware = result.data.id
+ 
+       result = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(200, result.code)
+ 
+       result = SoftwareAPI.undo()
+       assertEquals(200, result.code)
+ 
+       result = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(404, result.code)
+ 
+       result = SoftwareAPI.redo()
+       assertEquals(200, result.code)
+ 
+       result = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(200, result.code)
+   }
+ 
+   void testAddSoftwareAlreadyExist() {
+       def softwareToAdd = BasicInstance.createOrGetBasicSoftware()
+       def result = SoftwareAPI.create(softwareToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(409, result.code)
+   }
+ 
+   void testUpdateSoftwareCorrect() {
+       Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
+       def result = SoftwareAPI.update(softwareToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(200, result.code)
+       def json = JSON.parse(result.data)
+       assert json instanceof JSONObject
+       int idSoftware = json.software.id
+ 
+       def showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       json = JSON.parse(showResult.data)
+       BasicInstance.compareSoftware(result.mapNew, json)
+ 
+       showResult = SoftwareAPI.undo()
+       assertEquals(200, result.code)
+       showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       BasicInstance.compareSoftware(result.mapOld, JSON.parse(showResult.data))
+ 
+       showResult = SoftwareAPI.redo()
+       assertEquals(200, result.code)
+       showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       BasicInstance.compareSoftware(result.mapNew, JSON.parse(showResult.data))
+   }
+ 
+   void testUpdateSoftwareNotExist() {
+       Software softwareWithOldName = BasicInstance.createOrGetBasicSoftware()
+       Software softwareWithNewName = BasicInstance.getBasicSoftwareNotExist()
+       softwareWithNewName.save(flush: true)
+       Software softwareToEdit = Software.get(softwareWithNewName.id)
+       def jsonSoftware = softwareToEdit.encodeAsJSON()
+       def jsonUpdate = JSON.parse(jsonSoftware)
+       jsonUpdate.name = softwareWithOldName.name
+       jsonUpdate.id = -99
+       jsonSoftware = jsonUpdate.encodeAsJSON()
+       def result = SoftwareAPI.update(-99, jsonSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(404, result.code)
+   }
+ 
+   void testUpdateSoftwareWithNameAlreadyExist() {
+       Software softwareWithOldName = BasicInstance.createOrGetBasicSoftware()
+       Software softwareWithNewName = BasicInstance.getBasicSoftwareNotExist()
+       softwareWithNewName.save(flush: true)
+       Software softwareToEdit = Software.get(softwareWithNewName.id)
+       def jsonSoftware = softwareToEdit.encodeAsJSON()
+       def jsonUpdate = JSON.parse(jsonSoftware)
+       jsonUpdate.name = softwareWithOldName.name
+       jsonSoftware = jsonUpdate.encodeAsJSON()
+       def result = SoftwareAPI.update(softwareToEdit.id, jsonSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(409, result.code)
+   }
+     
+     void testEditSoftwareWithBadName() {
+         Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
+         Software softwareToEdit = Software.get(softwareToAdd.id)
+         def jsonSoftware = softwareToEdit.encodeAsJSON()
+         def jsonUpdate = JSON.parse(jsonSoftware)
+         jsonUpdate.name = null
+         jsonSoftware = jsonUpdate.encodeAsJSON()
+         def result = SoftwareAPI.update(softwareToAdd.id, jsonSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assertEquals(400, result.code)
+     }
+ 
+   void testDeleteSoftware() {
+       def softwareToDelete = BasicInstance.getBasicSoftwareNotExist()
+       assert softwareToDelete.save(flush: true)!= null
+       def id = softwareToDelete.id
+       def result = SoftwareAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(200, result.code)
+ 
+       def showResult = SoftwareAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(404, showResult.code)
+ 
+       result = SoftwareAPI.undo()
+       assertEquals(200, result.code)
+ 
+       result = SoftwareAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(200, result.code)
+ 
+       result = SoftwareAPI.redo()
+       assertEquals(200, result.code)
+ 
+       result = SoftwareAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(404, result.code)
+   }
+ 
+   void testDeleteSoftwareNotExist() {
+       def result = SoftwareAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(404, result.code)
+   }
+ 
+   void testDeleteSoftwareWithProject() {
+       def softwareProject = BasicInstance.createOrGetBasicSoftwareProject()
+       def result = SoftwareAPI.delete(softwareProject.software.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(400, result.code)
+   }
 
     void testDeleteSoftwareWithJob() {
 
@@ -674,5 +184,57 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
 //    log.info("check response")
 //    assertEquals(400,code)
 
+    }
+
+
+    void testAddSoftwareFullWorkflow() {
+        /**
+         * test add software
+         */
+        Software softwareToAdd = BasicInstance.getBasicSoftwareNotExist()
+        def result = SoftwareAPI.create(softwareToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        int idSoftware = result.data.id
+
+        /*
+        * test add software parameter N
+        */
+        log.info("create softwareparameter")
+        def softwareparameterToAdd = BasicInstance.getBasicSoftwareParameterNotExist()
+        softwareparameterToAdd.software = Software.read(idSoftware)
+        softwareparameterToAdd.name = "N"
+        softwareparameterToAdd.type = "String"
+        println("softwareparameterToAdd.version=" + softwareparameterToAdd.version)
+        String jsonSoftwareparameter = softwareparameterToAdd.encodeAsJSON()
+        result = SoftwareParameterAPI.create(jsonSoftwareparameter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        /*
+        * test add software parameter T
+        */
+        log.info("create softwareparameter")
+        softwareparameterToAdd = BasicInstance.getBasicSoftwareParameterNotExist()
+        softwareparameterToAdd.software = Software.read(idSoftware)
+        softwareparameterToAdd.name = "T"
+        softwareparameterToAdd.type = "String"
+        println("softwareparameterToAdd.version=" + softwareparameterToAdd.version)
+        jsonSoftwareparameter = softwareparameterToAdd.encodeAsJSON()
+        result = SoftwareParameterAPI.create(jsonSoftwareparameter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        /*
+        * test add software parameter project x
+        */
+        def SoftwareProjectToAdd = BasicInstance.getBasicSoftwareProjectNotExist()
+        result = SoftwareProjectAPI.create(SoftwareProjectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        int idSoftwareProject = result.data.id
+        /*
+        * test add software parameter project y
+        */
+        SoftwareProjectToAdd = BasicInstance.getBasicSoftwareProjectNotExist()
+        result = SoftwareProjectAPI.create(SoftwareProjectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        idSoftwareProject = result.data.id
     }
 }
