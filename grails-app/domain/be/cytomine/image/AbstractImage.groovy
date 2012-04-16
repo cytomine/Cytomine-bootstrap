@@ -245,7 +245,7 @@ class AbstractImage extends CytomineDomain {
         return url
     }
 
-    def getCropURL(int topLeftX, int topLeftY, int width, int height) {
+    def getCropURLWithMaxWithOrHeight(int topLeftX, int topLeftY, int width, int height, int dimension) {
         def imageServers = getImageServers()
         if (imageServers == null || imageServers.size() == 0) {
             return "images/cytomine.jpg"
@@ -258,8 +258,11 @@ class AbstractImage extends CytomineDomain {
         def path = getPath()
         def widthImg =  this.getWidth()
         def heightImg = this.getHeight()
-        String url = resolver.getCropURL(baseUrl, basePath + path, topLeftX, topLeftY, width, height, widthImg,heightImg)
-        return url
+        resolver.getCropURL(baseUrl, basePath + path, topLeftX, topLeftY, width, height, widthImg,heightImg, dimension)
+    }
+
+    def getCropURL(int topLeftX, int topLeftY, int width, int height) {
+        getCropURLWithMaxWithOrHeight(topLeftX, topLeftY, width, height, 5000)
     }
 
     def getCropURL(int topLeftX, int topLeftY, int width, int height, int zoom) {

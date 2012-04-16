@@ -9,6 +9,7 @@ import be.cytomine.project.Slide
 import be.cytomine.security.User
 import grails.converters.JSON
 import be.cytomine.Exception.AlreadyExistException
+import be.cytomine.security.SecUser
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,7 +23,7 @@ class ImageInstance extends CytomineDomain {
     AbstractImage baseImage
     Project project
     Slide slide
-    User user
+    SecUser user
     Long countImageAnnotations = 0L
 
     static belongsTo = [AbstractImage, Project, User]

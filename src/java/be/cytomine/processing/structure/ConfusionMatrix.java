@@ -19,9 +19,9 @@ public class ConfusionMatrix {
     public double[] result;
 
     public ConfusionMatrix(List<String> className) {
-//        System.out.println("Before ordering:"+ className);
-//        Collections.sort(className);
-//        System.out.println("After ordering:"+ className);
+        System.out.println("Before ordering:"+ className);
+        Collections.sort(className);
+        System.out.println("After ordering:"+ className);
         header = new HashMap<String,Integer>();
         headerInverse = new HashMap<Integer,String>();
         for(int i=0;i<className.size();i++) {
@@ -44,7 +44,6 @@ public class ConfusionMatrix {
     }
 
     public void addEntry(String termReal, String termSuggest) {
-        //System.out.println("add entry:"+termReal+"vs"+termSuggest);
         int i =  header.get(termReal);
         int j =  header.get(termSuggest);
         Integer oldValue = matrix[i][j];

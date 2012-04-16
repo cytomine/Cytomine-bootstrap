@@ -1,6 +1,6 @@
 <div class="dragHandle minimized label">LAYERS <i class="icon-move icon-white" style="float:right" /></div>
 <div class="layerSwitcher" id="layerswitchercontent<%= id %>" style="padding: 5px;">
-    <i class="dragHandle icon-move icon-white" style="float:right" />
+    <% if (isDesktop) { %> <i class="dragHandle icon-move icon-white" style="float:right" ></i> <% } %>
     <h4 style="color : #ffffff; display: inline;">Layers</h4> <span><a href="#" class="toggleShowBaseLayers">(Show/Hide)</a></span>
     <div style="display: block">
         <ul class="baseLayers"></ul>

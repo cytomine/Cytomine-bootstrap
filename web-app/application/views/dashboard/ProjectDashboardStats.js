@@ -1,7 +1,25 @@
 var ProjectDashboardStats = Backbone.View.extend({
 
     initialize : function () {
+        var self = this;
         this.noDataAlert = _.template("<br /><br /><div class='alert alert-block'>No data to display</div>",{});
+        var width = self.getHalfWidth();
+        $("#projectInfoPanel").css("width", width);
+        $("#projectLastCommandPanel").css("width", width);
+        $(window).bind("resizeEnd", function(event) {
+            var width = self.getHalfWidth();
+            $("#projectInfoPanel").css("width", width);
+            $("#projectLastCommandPanel").css("width", width);
+        });
+    },
+    getFullWidth : function () {
+        return Math.round($(window).width() - 90);
+    },
+    getHalfWidth : function () {
+        if ($(window).width() < 1300) {
+           return this.getFullWidth();
+        }
+        return Math.round($(window).width()/2 - 75);
     },
     fetchStats : function (terms) {
         var self = this;
@@ -43,13 +61,13 @@ var ProjectDashboardStats = Backbone.View.extend({
             }
         });
 
-   },
-   drawUserAnnotationsChart : function (collection, currentUser, response) {
-      var self = this;
-      // Create and populate the data table.
-      var data = new google.visualization.DataTable();
-      var cpt = -1;
-      var first = collection.at(0);
+    },
+    drawUserAnnotationsChart : function (collection, currentUser, response) {
+        var self = this;
+        // Create and populate the data table.
+        var data = new google.visualization.DataTable();
+        var cpt = -1;
+        var first = collection.at(0);
 
         //init users
         data.addColumn('string', 'Terms');
@@ -80,15 +98,15 @@ var ProjectDashboardStats = Backbone.View.extend({
             i++;
 
         });
-        var width = Math.round($(window).width() - 95);
+        var width = self.getFullWidth();
         // Create and draw the visualization.
         var chart = new google.visualization.ColumnChart(document.getElementById('userAnnotationsChart'));
         chart.draw(data,
-                {title:"Term by users",
-                    backgroundColor : "whiteSmoke",
-                    width:width, height:350,
-                    hAxis: {title: "Terms" }
-                }
+            {title:"Term by users",
+                backgroundColor : "whiteSmoke",
+                width:width, height:350,
+                hAxis: {title: "Terms" }
+            }
         );
         var handleClick = function(){
             var row = chart.getSelection()[0]['row'];
@@ -101,6 +119,17 @@ var ProjectDashboardStats = Backbone.View.extend({
             window.app.controllers.browse.tabs.triggerRoute = true;
         };
         google.visualization.events.addListener(chart,'select', handleClick);
+
+        $(window).bind("resizeEnd", function(event) {            
+            var width = self.getFullWidth();
+            $("#userAnnotationsChart").css("width", width);
+            chart.draw(data,
+                {title:"Term by users",
+                    backgroundColor : "whiteSmoke",
+                    width:width, height:350,
+                    hAxis: {title: "Terms" }
+                });
+        });
     },
     drawUserNbAnnotationsChart : function (collection, response) {
         var self = this;
@@ -122,18 +151,19 @@ var ProjectDashboardStats = Backbone.View.extend({
             data.setValue(j, 1, stat.get("value"));
             j++;
         });
-        var width = Math.round($(window).width()/2 - 95);
+        var width = self.getHalfWidth();
+        $("#userNbAnnotationsChartPanel").css("width", width);
         // Create and draw the visualization.
         var chart = new google.visualization.ColumnChart(document.getElementById("userNbAnnotationsChart"));
         chart.draw(data,
-                {title:"",
-                    legend : "none",
-                    width:width,
-                    height:350,
-                    backgroundColor : "whiteSmoke",
-                    vAxis: {title: "Number of annotations"},
-                    hAxis: {title: "Users" }
-                }
+            {title:"",
+                legend : "none",
+                width:width,
+                height:350,
+                backgroundColor : "whiteSmoke",
+                vAxis: {title: "Number of annotations"},
+                hAxis: {title: "Users" }
+            }
         );
 
         var handleClick = function(){
@@ -152,6 +182,21 @@ var ProjectDashboardStats = Backbone.View.extend({
         };
         google.visualization.events.addListener(chart,'select', handleClick);
         $("#userNbAnnotationsChart").show();
+
+        $(window).bind("resizeEnd", function(event) {
+            var width =  self.getHalfWidth();
+            $("#userNbAnnotationsChart").css("width", width);
+            $("#userNbAnnotationsChartPanel").css("width", width);
+            chart.draw(data,
+                {title:"",
+                    legend : "none",
+                    width:width,
+                    height:350,
+                    backgroundColor : "whiteSmoke",
+                    vAxis: {title: "Number of annotations"},
+                    hAxis: {title: "Users" }
+                });
+        });
     },
     drawPieChart : function (collection, response) {
         if (this.model.get('numberOfAnnotations') == 0) {
@@ -174,7 +219,8 @@ var ProjectDashboardStats = Backbone.View.extend({
             data.setValue(i,1, stat.get('value'));
             i++;
         });
-        var width = Math.round($(window).width()/2 - 95);
+        var width =  self.getHalfWidth();
+        $("#projectPieChartPanel").css("width", width);
         // Create and draw the visualization.
         var chart = new google.visualization.PieChart(document.getElementById('projectPieChart'));
         chart.draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
@@ -193,6 +239,13 @@ var ProjectDashboardStats = Backbone.View.extend({
             });
         };
         google.visualization.events.addListener(chart,'select', handleClick);
+
+        $(window).bind("resizeEnd", function(event) {
+            var width =  self.getHalfWidth();
+            $("#projectPieChart").css("width", width);
+            $("#projectPieChartPanel").css("width", width);
+            chart.draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
+        });
     },
     drawColumnChart : function (collection, response) {
         var self = this;
@@ -214,17 +267,18 @@ var ProjectDashboardStats = Backbone.View.extend({
             data.setValue(j, 1, stat.get("value"));
             j++;
         });
-        var width = Math.round($(window).width()/2 - 95);
+        var width = self.getHalfWidth();
+        $("#projectcolumnChartPanel").css("width", width);
         // Create and draw the visualization.
         var chart = new google.visualization.ColumnChart(document.getElementById("projectColumnChart"));
         chart.draw(data,
-                {title:"",
-                    legend : "none",
-                    backgroundColor : "whiteSmoke",
-                    width:width, height:350,
-                    vAxis: {title: "Number of annotations"},
-                    hAxis: {title: "Terms" }
-                }
+            {title:"",
+                legend : "none",
+                backgroundColor : "whiteSmoke",
+                width:width, height:350,
+                vAxis: {title: "Number of annotations"},
+                hAxis: {title: "Terms" }
+            }
         );
         var handleClick = function(){
             var row = chart.getSelection()[0]['row'];
@@ -242,7 +296,20 @@ var ProjectDashboardStats = Backbone.View.extend({
         };
         google.visualization.events.addListener(chart,'select', handleClick);
         $("#projectColumnChart").show();
-
+        $(window).bind("resizeEnd", function(event) {
+            var width =  self.getHalfWidth();
+            $("#projectColumnChart").css("width", width);
+            $("#projectcolumnChartPanel").css("width", width);
+            chart.draw(data,
+                {title:"",
+                    legend : "none",
+                    backgroundColor : "whiteSmoke",
+                    width:width, height:350,
+                    vAxis: {title: "Number of annotations"},
+                    hAxis: {title: "Terms" }
+                }
+            );
+        });
     },
 
 
@@ -263,17 +330,18 @@ var ProjectDashboardStats = Backbone.View.extend({
             data.setValue(j, 1, stat.get("value"));
             j++;
         });
-        var width = Math.round($(window).width()/2 - 95);
+        var width =  self.getHalfWidth();
         // Create and draw the visualization.
         var chart = new google.visualization.ColumnChart(document.getElementById("termSlideAnnotationsChart"));
+        $("#termSlideAnnotationsChartPanel").css("width", width);
         chart.draw(data,
-                {title:"",
-                    legend : "none",
-                    backgroundColor : "whiteSmoke",
-                    width:width, height:350,
-                    vAxis: {title: "Slides"},
-                    hAxis: {title: "Terms" }
-                }
+            {title:"",
+                legend : "none",
+                backgroundColor : "whiteSmoke",
+                width:width, height:350,
+                vAxis: {title: "Slides"},
+                hAxis: {title: "Terms" }
+            }
         );
         var handleClick = function(){
             var row = chart.getSelection()[0]['row'];
@@ -290,6 +358,20 @@ var ProjectDashboardStats = Backbone.View.extend({
             });
         };
         google.visualization.events.addListener(chart,'select', handleClick);
+        $(window).bind("resizeEnd", function(event) {
+            var width =  self.getHalfWidth();
+            $("#termSlideAnnotationsChart").css("width", width);
+            $("#termSlideAnnotationsChartPanel").css("width", width);
+            chart.draw(data,
+                {title:"",
+                    legend : "none",
+                    backgroundColor : "whiteSmoke",
+                    width:width, height:350,
+                    vAxis: {title: "Slides"},
+                    hAxis: {title: "Terms" }
+                }
+            );
+        });
     },
     drawUserSlideChart : function(collection, response){
         var self = this;
@@ -308,18 +390,19 @@ var ProjectDashboardStats = Backbone.View.extend({
             data.setValue(j, 1, stat.get("value"));
             j++;
         });
-        var width = Math.round($(window).width()/2 - 95);
+        var width =  self.getHalfWidth();
         // Create and draw the visualization.
         var chart = new google.visualization.ColumnChart(document.getElementById("userSlideAnnotationsChart"));
+        $("#userSlideAnnotationsChartPanel").css("width", width);
         chart.draw(data,
-                {title:"",
-                    legend : "none",
-                    backgroundColor : "whiteSmoke",
-                    enableInteractivity : true,
-                    width:width, height:350,
-                    vAxis: {title: "Slides"},
-                    hAxis: {title: "Users"}
-                }
+            {title:"",
+                legend : "none",
+                backgroundColor : "whiteSmoke",
+                enableInteractivity : true,
+                width:width, height:350,
+                vAxis: {title: "Slides"},
+                hAxis: {title: "Users"}
+            }
         );
         var handleClick = function(){
             var row = chart.getSelection()[0]['row'];
@@ -336,6 +419,21 @@ var ProjectDashboardStats = Backbone.View.extend({
             });
         };
         google.visualization.events.addListener(chart,'select', handleClick);
+        $(window).bind("resizeEnd", function(event) {
+            var width =  self.getHalfWidth();
+            $("#userSlideAnnotationsChartPanel").css("width", width);
+            chart.draw(data,
+                {title:"",
+                    legend : "none",
+                    backgroundColor : "whiteSmoke",
+                    enableInteractivity : true,
+                    width:width, height:350,
+                    vAxis: {title: "Slides"},
+                    hAxis: {title: "Users"}
+                }
+            );
+        });
 
-   }
+
+    }
 });

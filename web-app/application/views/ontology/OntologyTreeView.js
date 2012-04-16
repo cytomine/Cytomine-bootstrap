@@ -38,7 +38,7 @@ var OntologyTreeView = Backbone.View.extend({
         return this;
     },
     doLayout: function(tpl) {
-        $(this.el).html(_.template(tpl,{}));
+        $(this.el).html(_.template(tpl,{isDesktop : !window.app.view.isMobile}));
         this.tree = $(this.el).find('.tree');
         var self = this;
 

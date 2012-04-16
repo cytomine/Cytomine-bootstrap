@@ -1,4 +1,57 @@
 /* Annotation Layer */
+
+OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
+    read: function(collection) {
+        var self = this;
+        var features = [];
+        _.each(collection,function(annotation) {
+            var feature = self.createFeatureFromAnnotation(annotation);
+            features.push(feature);
+        });
+        return features;
+    },
+    createFeatureFromAnnotation :function (annotation) {
+
+        var format = new OpenLayers.Format.WKT();
+        var point = format.read(annotation.location);
+        var geom = point.geometry;
+        var feature = new OpenLayers.Feature.Vector(geom);
+        feature.attributes = {
+            idAnnotation: annotation.id,
+            measure : 'NO',
+            listener: 'NO',
+            importance: 10
+        };
+        //default style for annotations with 0 terms associated
+        var defaultColor = "#333333";
+        feature.style = {
+            strokeColor : "#000",
+            fillColor :  defaultColor,
+            fillOpacity : 0.6
+        }
+        var multipleTermColor = "#000";
+        if (_.isArray(annotation.term) && _.size(annotation.term > 1)) { //multiple terms
+            feature.style = {
+                strokeColor :multipleTermColor,
+                fillColor :  multipleTermColor,
+                fillOpacity : 0.6
+            }
+        } else {
+            _.each(annotation.term, function(idTerm) {
+                var term = window.app.status.currentTermsCollection.get(idTerm);
+                if (term == undefined) return;
+                feature.style = {
+                    strokeColor : "#000",
+                    fillColor :  window.app.status.currentTermsCollection.get(idTerm).get('color'),
+                    fillOpacity : 0.6
+                }
+            });
+        }
+
+        return feature;
+    }
+});
+
 var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView, map) {
 
     var styleMap = new OpenLayers.StyleMap({
@@ -13,7 +66,14 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.imageID = imageID;
     this.userID = userID;
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
-        renderers: ["Canvas", "SVG", "VML"]
+        renderers: ["Canvas", "SVG", "VML"],
+        strategies: [new OpenLayers.Strategy.BBOX({resFactor: 1})],
+        protocol: new OpenLayers.Protocol.Script({
+            url: new AnnotationCollection({user : this.userID, image : this.imageID, term: undefined}).url().replace("json", "jsonp"),
+            format: new OpenLayers.Format.Cytomine(),
+            callbackKey : "callback"
+
+        })
     });
     this.features = [];
     this.controls = null;
@@ -22,7 +82,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.resize = false;
     this.drag = false;
     this.irregular = false;
-    this.aspectRatio = false;    
+    this.aspectRatio = false;
     this.browseImageView = browseImageView;
     this.map = browseImageView.map;
     this.popup = null;
@@ -149,7 +209,8 @@ AnnotationLayer.prototype = {
     loadAnnotations: function (browseImageView) {
 
         var self = this;
-        new AnnotationCollection({user : this.userID, image : this.imageID, term: undefined}).fetch({
+        browseImageView.addVectorLayer(this, this.userID);
+        /*new AnnotationCollection({user : this.userID, image : this.imageID, term: undefined}).fetch({
             success : function (collection, response) {
                 collection.each(function(annotation) {
                     var feature = self.createFeatureFromAnnotation(annotation);
@@ -157,8 +218,9 @@ AnnotationLayer.prototype = {
                 });
                 browseImageView.layerLoadedCallback(self);
             }
-        });
-        browseImageView.addVectorLayer(this, this.userID);
+        });*/
+
+        browseImageView.layerLoadedCallback(self);
     },
     addFeature: function (feature) {
         this.features[feature.attributes.idAnnotation] = feature;
@@ -218,7 +280,6 @@ AnnotationLayer.prototype = {
         require([
             "text!application/templates/explorer/PopupAnnotation.tpl.html"
         ], function(tpl) {
-            //
             if (evt.feature.popup != null) {
                 return;
             }
@@ -241,10 +302,9 @@ AnnotationLayer.prototype = {
                     });
                     annotation.set({"terms" : terms.join(", ")});
 
-
                     var content = _.template(tpl, annotation.toJSON());
                     self.popup = new OpenLayers.Popup("",
-                            new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
+                            new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 25, evt.feature.geometry.getBounds().bottom + 25),
                             new OpenLayers.Size(300, 200),
                             content,
                             false);
@@ -263,7 +323,11 @@ AnnotationLayer.prototype = {
                         window.app.controllers.browse.navigate(url, false);
                         return false;
                     });
-                    self.showSimilarAnnotation(annotation);
+                    if (!window.app.status.currentProjectModel.get('privateLayer')){
+                        self.showSimilarAnnotation(annotation);
+                    } else {
+                        $("#loadSimilarAnnotation" + annotation.id).html("Retrieval not available");
+                    }
                 }
             });
         });

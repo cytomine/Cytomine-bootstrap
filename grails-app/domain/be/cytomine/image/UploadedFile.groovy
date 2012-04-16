@@ -7,14 +7,19 @@ import grails.converters.JSON
 
 class UploadedFile extends CytomineDomain {
 
+    public static allowedMime = ["vms", "mrxs", "svs", "opt"]
+    public static mimeToConvert = ["jpg", "png", "tiff", "tif","pgm"]
     public static int UPLOADED = 0
     public static int CONVERTED = 1
     public static int DEPLOYED = 2
+    public static int ERROR_FORMAT = 3
 
     SecUser user
     Project project
     String filename
     String originalFilename
+    String convertedFilename
+    String convertedExt
     String ext
     String path
     String contentType
@@ -22,7 +27,9 @@ class UploadedFile extends CytomineDomain {
     int status = 0
 
     static constraints = {
-          project (nullable : true)
+        project (nullable : true)
+        convertedFilename (nullable: true)
+        convertedExt (nullable: true)
     }
 
      static void registerMarshaller(String cytomineBaseUrl) {
@@ -30,7 +37,7 @@ class UploadedFile extends CytomineDomain {
         JSON.registerObjectMarshaller(UploadedFile) {
             def returnArray = [:]
             returnArray['class'] = it.class
-            returnArray['created'] = it.created
+            returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['id'] = it.id
             returnArray['user'] = it.user.id
             returnArray['project'] = it.project?.id
@@ -39,8 +46,10 @@ class UploadedFile extends CytomineDomain {
             returnArray['ext'] = it.ext
             returnArray['contentType'] = it.contentType
             returnArray['size'] = it.size
-            returnArray['uploaded'] = (it.status == 0)
-            returnArray['deployed'] = (it.status == 2)
+            returnArray['uploaded'] = (it.status == UploadedFile.UPLOADED)
+            returnArray['converted'] = (it.status == UploadedFile.CONVERTED)
+            returnArray['deployed'] = (it.status == UploadedFile.DEPLOYED)
+            returnArray['error'] = (it.status == UploadedFile.ERROR_FORMAT)
             return returnArray
         }
     }

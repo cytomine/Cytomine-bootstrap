@@ -1,6 +1,6 @@
 <div class="dragHandle minimized label">FILTERS <i class="icon-move icon-white" style="float:right" /></div>
 <div id="imageFiltersPanelContent<%= id %>" style="padding: 5px;">
-    <i class="dragHandle icon-move icon-white" style="float:right" />
+    <% if (isDesktop) { %> <i class="dragHandle icon-move icon-white" style="float:right" ></i> <% } %>
     <input type="checkbox" name="filterActive">Enabled <a href="#" name="reset">Reset</a>
     <br/>Brightness
     <div id="brightness<%= id %>" name="brightness"></div>

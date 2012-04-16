@@ -63,10 +63,19 @@ var ImageInstanceModel = Backbone.Model.extend({
 var ImageInstanceCollection = Backbone.Collection.extend({
     model: ImageModel,
     url: function() {
-        return "api/project/" + this.project + "/imageinstance.json";
+        if (this.inf != undefined && this.sup != undefined) {
+            return "api/project/" + this.project + "/imageinstance.json?inf="+this.inf+"&sup="+this.sup;
+        } else if (this.tree) {
+            return "api/project/" + this.project + "/imageinstance.json?tree=true";
+        }  else {
+            return "api/project/" + this.project + "/imageinstance.json";
+        }
     },
     initialize: function (options) {
         this.project = options.project;
+        this.tree = options.tree != undefined && options.tree == true;
+        this.inf = options.inf;
+        this.sup = options.sup;
     }
 });
 

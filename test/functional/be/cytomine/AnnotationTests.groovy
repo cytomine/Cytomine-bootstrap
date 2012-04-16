@@ -60,7 +60,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     
     void testListAnnotationsByProjectAndTermWithUserNullWithCredential() {
         AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
-        def result = AnnotationAPI.listByProjectAndTerm(annotationTerm.annotation.project.id, annotationTerm.term.id, null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationAPI.listByProjectAndTerm(annotationTerm.annotation.project.id, annotationTerm.term.id, -1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(404, result.code)
     }    
 
@@ -83,7 +83,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     
     void testDownloadAnnotationsDocument() {
         AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
-        def result = AnnotationAPI.downloadDocumentByProject(annotationTerm.annotation.project.id,annotationTerm.annotation.user.id,annotationTerm.term.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationAPI.downloadDocumentByProject(annotationTerm.annotation.project.id,annotationTerm.annotation.user.id,annotationTerm.term.id, annotationTerm.annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
     }
 

@@ -2,7 +2,6 @@ package be.cytomine
 
 import be.cytomine.command.Command
 import grails.util.GrailsNameUtils
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.project.Project
 
@@ -13,7 +12,7 @@ abstract class ModelService {
     def responseService
     def commandService
     def cytomineService
-
+    def grailsApplication
     boolean saveOnUndoRedoStack
 
     abstract def add(def json)
@@ -46,7 +45,7 @@ abstract class ModelService {
     void initCommandService() {
         if (!commandService) {
             log.info "initService:" + serviceName
-            commandService = ApplicationHolder.application.getMainContext().getBean("commandService")
+            commandService =grailsApplication.getMainContext().getBean("commandService")
         }
 
     }

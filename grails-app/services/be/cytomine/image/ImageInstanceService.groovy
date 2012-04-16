@@ -57,11 +57,40 @@ class ImageInstanceService extends ModelService {
             eq("project", project)
             order("i.created", "desc")
             fetchMode 'baseImage', FetchMode.JOIN
-            fetchMode 'baseImage.storageAbstractImages', FetchMode.JOIN
-//            fetchMode 'baseImage.mim', FetchMode.JOIN
-            //            fetchMode 'baseImage.mim.mis', FetchMode.JOIN
-            //            fetchMode 'baseImage.mim.mis.imageServer', FetchMode.JOIN
-        }.unique()
+        }
+        return images
+    }
+
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    def list(Project project, List ids) {
+        ImageInstance.findAllByIdInList(ids)
+    }
+
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    def listTree(Project project) {
+        def children = []
+        list(project).each { image->
+            children << [ id : image.id, key : image.id, title : image.baseImage.originalFilename, isFolder : false, children : []]
+        }
+        def tree = [:]
+        tree.isFolder = true
+        tree.hideCheckbox = true
+        tree.name = project.getName()
+        tree.title = project.getName();
+        tree.key = project.getId()
+        tree.id = project.getId()
+        tree.children = children
+        return tree
+    }
+
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    def list(Project project, int inf, int sup) {
+        def images = ImageInstance.createCriteria().list(max:sup-inf, offset:inf) {
+            createAlias("baseImage", "i")
+            eq("project", project)
+            order("i.created", "desc")
+            fetchMode 'baseImage', FetchMode.JOIN
+        }
         return images
     }
 

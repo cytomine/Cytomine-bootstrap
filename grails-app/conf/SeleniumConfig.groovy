@@ -1,5 +1,5 @@
 selenium {
-    browser = "*googlechrome"
+    browser = "*googlechrome /Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
     screenshot {
         onFail = true
         dir = "./target/test-reports/screenshots"

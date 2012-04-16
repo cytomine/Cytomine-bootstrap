@@ -4,7 +4,6 @@ var DashboardController = Backbone.Router.extend({
     view : null,
     routes: {
         "tabs-images-:project"  : "images",
-        "tabs-images-:project/:page"  : "imagespage",
         "tabs-thumbs-:project"  : "imagesthumbs",
         "tabs-imagesarray-:project"  : "imagesarray",
         "tabs-annotations-:project-:terms-:users"  : "annotations",
@@ -47,16 +46,6 @@ var DashboardController = Backbone.Router.extend({
         };
         this.init(project, func);
     },
-    imagespage : function(project,page) {
-        var self = this;
-        var func = function() {
-            self.view.changeImagePage(page);
-            self.view.showImagesThumbs();
-            var tabs = $("#explorer > .browser").find(".nav-tabs");
-            tabs.find('a[href=#tabs-images-'+window.app.status.currentProject+']').click();
-        };
-        this.init(project, func);
-    },
     imagesthumbs :  function(project) {
         var self = this;
         var func = function() {
@@ -90,7 +79,6 @@ var DashboardController = Backbone.Router.extend({
         this.init(project, func);
     },
     algos : function(project,software,job) {
-        console.log("Dashboard algos:"+project+"-"+software+"-"+job);
         var self = this;
         var func = function() {
             window.app.controllers.browse.tabs.triggerRoute = false;

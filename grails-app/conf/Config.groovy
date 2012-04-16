@@ -19,6 +19,7 @@ grails.mime.file.extensions = true // enables the parsing of file extensions fro
 grails.mime.use.accept.header = false
 grails.mime.types = [ html: ['text/html','application/xhtml+xml'],
         json: ['application/json','text/json'],
+        jsonp: 'application/javascript',
         xml: ['text/xml', 'application/xml'],
         png : 'image/png',
         jpg : 'image/jpeg',
@@ -70,7 +71,7 @@ environments {
         grails.serverURL = "http://beta.cytomine.be"
     }
     development {
-        grails.serverURL = "http://localhost:8080"
+        grails.serverURL = "http://localhost:8080"  //BS : http://139.165.108.140:9090
         grails.converters.default.pretty.print = true
         grails.plugins.springsecurity.useBasicAuth = true
     }

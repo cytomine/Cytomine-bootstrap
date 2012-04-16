@@ -123,7 +123,7 @@ class BootStrap {
     private def initData(String env) {
         createStorage(BootStrapData.storages)
         createImageFilters(BootStrapData.imageFiltersSamples)
-        createGroups(BootStrapData.groupsSamples)
+        //createGroups(BootStrapData.groupsSamples)
         createUsers(BootStrapData.usersSamples)
         createScanners(BootStrapData.scannersSamples)
         createMimes(BootStrapData.mimeSamples)
@@ -162,7 +162,7 @@ class BootStrap {
             createRelationTerm(BootStrapData.relationTermSamples)
             createAnnotations(BootStrapData.annotationSamples)
         }
-        
+
         if(env == BootStrap.test) {
             Project project = BasicInstance.createOrGetBasicProject()
             Infos.addUserRight(Infos.GOODLOGIN,project)
@@ -500,7 +500,7 @@ class BootStrap {
                 //user.encodePassword()
                 user.save(flush: true)
 
-              println "Save ${user.username}..."
+                println "Save ${user.username}..."
 
                 /* Create a special group the user */
                 def userGroupName = item.username
@@ -513,6 +513,11 @@ class BootStrap {
 
                 /* Handle groups */
                 item.group.each { elem ->
+                    def newGroup = [
+                            [name: elem.name]
+                    ]
+                    createGroups(newGroup)
+                    println "Fetch group " + elem.name
                     group = Group.findByName(elem.name)
                     userGroupService.link(user, group)
                 }

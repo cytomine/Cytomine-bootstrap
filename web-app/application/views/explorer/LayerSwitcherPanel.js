@@ -17,6 +17,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
         this.browseImageView = options.browseImageView;
         this.followInterval = null;
         this.userFollowed = null;
+		this.vectorLayers = [];
     },
     /**
      * Grab the layout and call ask for render
@@ -43,6 +44,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
     },
     addVectorLayer : function (layer, model, userID) {
         var layerID = window.app.models.users.get(userID).prettyName();
+		this.vectorLayers.push({ id : userID, vectorsLayer : layer.vectorsLayer});
         var layerID = "layerSwitch-" + model.get("id") + "-" + userID + "-"  + new Date().getTime(); //index of the layer in this.layers array
         var color = window.app.models.users.get(userID).get('color');
         var layerOptionTpl;
@@ -92,6 +94,10 @@ var LayerSwitcherPanel = Backbone.View.extend({
             new UserPositionModel({ image : image, user : self.userFollowed }).fetch({
                 success : function (model, response) {
                     self.browseImageView.map.moveTo(new OpenLayers.LonLat(model.get("longitude"), model.get("latitude")), model.get("zoom"));
+					var layerWrapper = _.detect(self.vectorLayers, function (item) {
+						return item.id == self.userFollowed;
+					});
+					if (layerWrapper) layerWrapper.vectorsLayer.refresh();
                 },
                 error : function(model, response ) {
                 }
@@ -113,7 +119,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
      */
     doLayout: function(tpl) {
         var self = this;
-        var content = _.template(tpl, {id : self.model.get("id")});
+        var content = _.template(tpl, {id : self.model.get("id"),isDesktop : !window.app.view.isMobile});
         $("#layerSwitcher"+self.model.get("id")).html(content);
 
         $("#layerSwitcher"+self.model.get("id")).find(".toggleShowBaseLayers").click(function () {

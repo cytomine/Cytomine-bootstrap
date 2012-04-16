@@ -112,6 +112,16 @@ class Ontology extends CytomineDomain implements Serializable {
         return this.user?.id
     }
 
+    def projectService
+    def getProjects() {
+        def projects = []
+        /*projectService.list(this).each { project->
+            projects << [ id : project.id, name : project.name]
+        }*/
+        return projects
+
+    }
+
     static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Ontology.class
         JSON.registerObjectMarshaller(Ontology) {
@@ -127,7 +137,7 @@ class Ontology extends CytomineDomain implements Serializable {
             returnArray['hideCheckbox'] = true
             returnArray['user'] = it.getIdUser()
             returnArray['state'] = "open"
-
+            returnArray['projects'] = it.getProjects()
             if (it.version != null) {
                 returnArray['children'] = it.tree()
                 returnArray['users'] = it.usersId()

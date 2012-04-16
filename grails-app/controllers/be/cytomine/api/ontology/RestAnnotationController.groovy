@@ -8,7 +8,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
+
 import java.text.SimpleDateFormat
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.Exception.WrongArgumentException
@@ -18,8 +18,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.social.SharedAnnotation
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import be.cytomine.security.UserJob
+
 import be.cytomine.processing.Job
 
 class RestAnnotationController extends RestController {
@@ -58,29 +57,24 @@ class RestAnnotationController extends RestController {
 
     def listByProject = {
         Project project = projectService.read(params.long('id'), new Project())
-        List<User> userList = userService.list(project)
 
-        if (params.users) {
-            String[] paramsIdUser = params.users.split("_")
-            List<User> userListTemp = new ArrayList<User>()
-            userList.each { user ->
-                if (Arrays.asList(paramsIdUser).contains(user.id + "")) userListTemp.push(user);
-            }
-            userList = userListTemp;
-        }
+        Collection<SecUser> userList = params.users != null && params.users != "null" ? userService.list(project, params.users.split("_").collect{ Long.parseLong(it)}) : userService.list(project)
+        Collection<ImageInstance> imageInstanceList = params.images != null && params.images != "null" ? imageInstanceService.list(project, params.images.split("_").collect{ Long.parseLong(it)}) : imageInstanceService.list(project)
+
         log.info "List by project " + project.id + " with user:" + userList
 
         log.info "Check user =" + cytomineService.getCurrentUser()
-
-        if (project) responseSuccess(annotationService.list(project, userList, (params.noTerm == "true"), (params.multipleTerm == "true")))
+        if (project) responseSuccess(annotationService.list(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true")))
         else responseNotFound("Project", params.id)
     }
 
     def listByImageAndUser = {
         def image = imageInstanceService.read(params.long('idImage'))
         def user = userService.read(params.idUser)
-
-        if (image && user) responseSuccess(annotationService.list(image, user))
+        if (image && user && params.bbox) {
+            responseSuccess(annotationService.list(image, user, (String) params.bbox))
+        }
+        else if (image && user) responseSuccess(annotationService.list(image, user))
         else if (!user) responseNotFound("User", params.idUser)
         else if (!image) responseNotFound("Image", params.idImage)
     }
@@ -95,24 +89,17 @@ class RestAnnotationController extends RestController {
         Term term = termService.read(params.long('idterm'))
         Project project = projectService.read(params.long('idproject'), new Project())
 
-        List<User> userList = userService.list(project)
+        Collection<SecUser> userList = params.users != null && params.users != "null" ? userService.list(project, params.users.split("_").collect{ Long.parseLong(it)}) : userService.list(project)
+        Collection<ImageInstance> imageInstanceList = params.images != null && params.images != "null" ? imageInstanceService.list(project, params.images.split("_").collect{ Long.parseLong(it)}) : imageInstanceService.list(project)
 
-        if (params.users) {
-            String[] paramsIdUser = params.users.split("_")
-            List<User> userListTemp = new ArrayList<User>()
-            userList.each { user ->
-                if (Arrays.asList(paramsIdUser).contains(user.id + "")) userListTemp.push(user);
-            }
-            userList = userListTemp;
-        }
-       
         log.info "List by idTerm " + term.id + " with user:" + userList
-        log.info "annotationService.list: " + project + " # " + term + " # " + userList
+        log.info "annotationService.list: " + project + " # " + term + " # " + userList + " # " + imageInstanceList
         if (term == null) responseNotFound("Term", params.idterm)
         else if (project == null) responseNotFound("Project", params.idproject)
         else if (userList.isEmpty()) responseNotFound("Users", params.users)
+        else if (imageInstanceList.isEmpty()) responseNotFound("ImageInstance", params.images)
         else if(!params.suggestTerm) {
-            responseSuccess(annotationService.list(project, term, userList))
+            responseSuccess(annotationService.list(project, term, userList, imageInstanceList))
         }
         else {
             Term suggestedTerm = termService.read(params.suggestTerm)
@@ -128,16 +115,27 @@ class RestAnnotationController extends RestController {
         log.info "check authorization on project " + project
         projectService.checkAuthorization(project)
         def users = []
-        params.users.split(",").each { id ->
-            users << Long.parseLong(id)
+        if (params.users != null) {
+            params.users.split(",").each { id ->
+                users << Long.parseLong(id)
+            }
         }
         def terms = []
-        params.terms.split(",").each {  id ->
-            terms << Long.parseLong(id)
+        if (params.terms != null) {
+            params.terms.split(",").each {  id ->
+                terms << Long.parseLong(id)
+            }
+        }
+        def images = []
+        if (params.images != null) {
+            params.images.split(",").each {  id ->
+                images << Long.parseLong(id)
+            }
         }
         def termsName = Term.findAllByIdInList(terms).collect{ it.toString() }
         def usersName = SecUser.findAllByIdInList(users).collect{ it.toString() }
-        log.info "termsName="+termsName + " usersName=" +usersName
+        def imageInstances = ImageInstance.findAllByIdInList(images)
+        log.info "EXPORT WITH termsName="+termsName + " usersName=" +usersName + " images=" + imageInstances
         if (params?.format && params.format != "html") {
             def exporterIdentifier = params.format;
             if (exporterIdentifier == "xls") exporterIdentifier = "excel"
@@ -148,15 +146,16 @@ class RestAnnotationController extends RestController {
             log.info "request header"
             def annotations = Annotation.createCriteria().list {
                 eq("project", project)
+                inList("image", imageInstances)
                 inList("user.id", users)
             }
-            log.info "annotation request"
+            log.info "annotation request >" + annotations
             def annotationTerms = AnnotationTerm.createCriteria().list {
                 inList("annotation", annotations)
                 inList("term.id", terms)
                 order("term.id", "asc")
             }
-            log.info "annotation term request"
+            log.info "annotation term request " + annotationTerms
             def exportResult = []
             annotationTerms.each { annotationTerm ->
                 Annotation annotation = annotationTerm.annotation
@@ -181,7 +180,7 @@ class RestAnnotationController extends RestController {
                 data.cropGOTO = UrlApi.getAnnotationURL(grailsApplication.config.grails.serverURL,annotation.image.getIdProject(), annotation.image.id, annotation.id)
                 exportResult.add(data)
             }
-            log.info "export result"
+            log.info "export result > " +  exportResult
             List fields = ["id", "area", "perimeter", "XCentroid", "YCentroid", "image", "filename", "user", "term", "cropURL", "cropGOTO"]
             Map labels = ["id": "Id", "area": "Area (µm²)", "perimeter": "Perimeter (µm)", "XCentroid" : "X", "YCentroid" : "Y", "image": "Image Id", "filename": "Image Filename", "user": "User", "term": "Term", "cropURL": "View annotation picture", "cropGOTO": "View annotation on image"]
             String title = "Annotations in " + project.getName() + " created by " + usersName.join(" or ") + " and associated with " + termsName.join(" or ") + " @ " + (new Date()).toLocaleString()
@@ -196,11 +195,15 @@ class RestAnnotationController extends RestController {
         User sender = User.read(springSecurityService.principal.id)
         Annotation annotation = Annotation.read(request.JSON.annotation)
         log.info "add comment from " + sender + " and annotation " + annotation
-        BufferedImage bufferedImage = getImageFromURL(annotation.getCropURL())
-        File annnotationCrop = File.createTempFile("temp", ".jpg")
-        annnotationCrop.deleteOnExit()
-        ImageIO.write(bufferedImage, "JPG", annnotationCrop)
-
+        File annnotationCrop = null
+        try {
+            BufferedImage bufferedImage = getImageFromURL(annotation.getCropURL())
+            annnotationCrop = File.createTempFile("temp", ".jpg")
+            annnotationCrop.deleteOnExit()
+            ImageIO.write(bufferedImage, "JPG", annnotationCrop)
+        } catch (FileNotFoundException e) {
+            annnotationCrop = null
+        }
         List<User> receivers = request.JSON.users.collect { userID ->
             User.read(userID)
         }
@@ -215,8 +218,10 @@ class RestAnnotationController extends RestController {
                 comment : request.JSON.comment,
                 annotation: annotation
         )
+        def attachments = []
+        if (annnotationCrop != null) attachments << [cid : "annotation", file : annnotationCrop]
         if (sharedAnnotation.save()) {
-            mailService.send("cytomine.ulg@gmail.com", receiversEmail, sender.getEmail(), request.JSON.subject, request.JSON.message, [[cid : "annotation", file : annnotationCrop]])
+            mailService.send("cytomine.ulg@gmail.com", receiversEmail, sender.getEmail(), request.JSON.subject, request.JSON.message, attachments)
             response([success: true, message: "Annotation shared to " + receivers.toString()], 200)
         } else {
             response([success: false, message: "Error"], 400)

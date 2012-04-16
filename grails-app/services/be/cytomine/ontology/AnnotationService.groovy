@@ -26,6 +26,12 @@ import be.cytomine.security.SecUser
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 import be.cytomine.security.SecUser
 import be.cytomine.processing.Job
+import org.hibernate.Criteria
+import org.hibernatespatial.criterion.SpatialRestrictions
+import grails.orm.HibernateCriteriaBuilder
+import org.hibernate.criterion.Restrictions
+import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.geom.Coordinate
 
 class AnnotationService extends ModelService {
 
@@ -51,9 +57,10 @@ class AnnotationService extends ModelService {
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Project project, List<SecUser> userList, boolean noTerm, boolean multipleTerm) {
+    def list(Project project, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList, boolean noTerm, boolean multipleTerm) {
         log.info("project/userList/noTerm/multipleTerm")
         if (userList.isEmpty()) return []
+        if (imageInstanceList.isEmpty()) return []
         else if (multipleTerm) {
             log.info "multipleTerm"
             def terms = Term.findAllByOntology(project.getOntology())
@@ -62,6 +69,8 @@ class AnnotationService extends ModelService {
                 join("annotation")
                 createAlias("annotation", "a")
                 eq("a.project", project)
+                inList("a.image", imageInstanceList)
+                inList("a.user", userList)
                 projections {
                     groupProperty("annotation")
                     countDistinct("term")
@@ -80,23 +89,27 @@ class AnnotationService extends ModelService {
                 inList("term", terms)
                 join("annotation")
                 createAlias("annotation", "a")
+                inList("a.image", imageInstanceList)
+                inList("a.user", userList)
                 projections {
                     eq("a.project", project)
                     groupProperty("annotation.id")
                 }
             }
-            println "annotationsWithTerms ---> " + annotationsWithTerms.size()
+
             //inList crash is argument is an empty list so we have to use if/else at this time
             def annotations = null
             if (annotationsWithTerms.size() == 0) {
                 annotations = Annotation.createCriteria().list {
                     eq("project", project)
+                    inList("image", imageInstanceList)
                     inList("user", userList)
 
                 }
             } else {
                 annotations = Annotation.createCriteria().list {
                     eq("project", project)
+                    inList("image", imageInstanceList)
                     inList("user", userList)
                     not {
                         inList("id", annotationsWithTerms)
@@ -111,6 +124,7 @@ class AnnotationService extends ModelService {
             def annotations = Annotation.createCriteria().list {
                 eq("project", project)
                 inList("user", userList)
+                inList("image", imageInstanceList)
                 fetchMode 'image', FetchMode.JOIN
                 fetchMode 'image.baseImage', FetchMode.JOIN
             }
@@ -122,9 +136,10 @@ class AnnotationService extends ModelService {
 
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Project project, List<User> userList, Term realTerm, Term suggestedTerm, Job job) {
+    def list(Project project, List<SecUser> userList, Term realTerm, Term suggestedTerm, Job job) {
         // POUR realTerm == null => voir dans la fonction précédente le bloc else if (noTerm) {
         log.info "list with suggestedTerm"
+        if (userList.isEmpty()) return []
         //Get last userjob
         SecUser user = UserJob.findByJob(job)
 
@@ -159,6 +174,22 @@ class AnnotationService extends ModelService {
         return Annotation.findAllByImageAndUser(image, user)
     }
 
+    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
+    def list(ImageInstance image, SecUser user, String bbox) {
+        String[] coordinates = bbox.split(",")
+        double bottomX = Double.parseDouble(coordinates[0])
+        double bottomY = Double.parseDouble(coordinates[1])
+        double topX = Double.parseDouble(coordinates[2])
+        double topY = Double.parseDouble(coordinates[3])
+        Coordinate[] boundingBoxCoordinates = [new Coordinate(bottomX, bottomY), new Coordinate(bottomX, topY), new Coordinate(topX, topY), new Coordinate(topX, bottomY), new Coordinate(bottomX, bottomY)]
+        Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
+        Annotation.createCriteria()
+                .add(Restrictions.eq("user", user))
+                .add(Restrictions.eq("image", image))
+                .add(SpatialRestrictions.within("location",boundingbox))
+                .list()
+    }
+
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostFilter("filterObject.hasPermission('READ')")
     def list(Term term) {
@@ -166,16 +197,31 @@ class AnnotationService extends ModelService {
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Project project, Term term, List<SecUser> userList) {
-        log.debug "list annotation by project = $project and term $term and users $userList"
-        def criteria = Annotation.withCriteria() {
-            eq('project', project)
-            annotationTerm {
-                eq('term', term)
-                inList('user', userList)
+    def list(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
+        log.debug "list annotation by project = $project and term $term and users $userList and images $imageInstanceList"
+        if (userList.isEmpty()) return []
+        if (imageInstanceList.isEmpty()) return []
+        if (imageInstanceList.size() == project.countImages) {
+            def criteria = Annotation.withCriteria() {
+                eq('project', project)
+                annotationTerm {
+                    eq('term', term)
+                    inList('user', userList)
+                }
             }
+            return criteria.unique()
+        } else {
+            def criteria = Annotation.withCriteria() {
+                eq('project', project)
+                inList("image", imageInstanceList)
+                annotationTerm {
+                    eq('term', term)
+                    inList('user', userList)
+                }
+            }
+            return criteria.unique()
         }
-        criteria.unique()
+
     }
 
     Annotation get(def id) {
@@ -222,16 +268,16 @@ class AnnotationService extends ModelService {
                 }
             }
 
-        //Stop transaction
-        transactionService.stop()
+            //Stop transaction
+            transactionService.stop()
 
-        //add annotation on the retrieval
-        try {if (annotation) indexRetrievalAnnotation(annotation) } catch (Exception e) {
-            log.error "Cannot index in retrieval:" + e.toString()
-            e.printStackTrace()
-        }
+            //add annotation on the retrieval
+            try {if (annotation) indexRetrievalAnnotation(annotation) } catch (Exception e) {
+                log.error "Cannot index in retrieval:" + e.toString()
+                e.printStackTrace()
+            }
 
-        return result
+            return result
         }
     }
 

@@ -11,8 +11,9 @@ var ApplicationView = Backbone.View.extend({
     tagName : "div",
     className : "layout",
     components : {},
+    isMobile : ( navigator.userAgent.match(/iPad/i) != null ),
     panelsConfiguration : [
-        {key : "toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { top : 100}, align : "center"}},
+        {key : "toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { bottom : 0}, align : "center"}},
         {key : "overview-panel", linkID : "toggle-overview-panel", name : "Overview", className : "overviewPanel", value : { visible : true , position : { right : 20, top : 325}}},
         {key : "ontology-panel", linkID : "toggle-ontology-panel", name : "Ontology", className : "ontologyPanel", value : { visible : true , position : { left : 20, top : 280}}},
         {key : "layer-panel", linkID : "toggle-layer-panel", name : "Layer switcher", className : "layerSwitcherPanel", value : { visible : false , position : { right : 20, top : 100}}},
@@ -47,8 +48,23 @@ var ApplicationView = Backbone.View.extend({
         });
     },
     toggleVisibility : function (item) {
+        var self = this;
         var preference = localStorage.getObject(item.key);
         preference.visible = !preference.visible;
+        if (preference.visible && this.isMobile) { //hide others panel
+
+            _.each(self.panelsConfiguration, function (panel) {
+                if (panel.key == item.key) return;
+                var visible = false;
+                if (panel.key == "toolbar-panel") {
+                    visible = true;
+                }
+                preferencePanel = localStorage.getObject(panel.key);
+                preferencePanel.visible = visible;
+                localStorage.setObject(panel.key , preferencePanel);
+                self.updateMenuItem(panel);
+            });
+        }
         localStorage.setObject(item.key , preference);
         this.updateMenuItem(item);
 
@@ -77,6 +93,13 @@ var ApplicationView = Backbone.View.extend({
      * @param options
      */
     initialize: function(options) {
+        var resizeTO = null;
+        $(window).resize(function() {
+            if(resizeTO) clearTimeout(resizeTO);
+            resizeTO = setTimeout(function() {
+                $(window).trigger('resizeEnd');
+            }, 500);
+        });
     },
     /**
      * Render the html into the DOM element associated to the view
@@ -89,8 +112,8 @@ var ApplicationView = Backbone.View.extend({
             component.render();
         });
         /*/$(window).resize(function(){
-            self.applyPreferences()
-        });*/
+         self.applyPreferences()
+         });*/
         self.initEvents();
         renderCallback.call();
         return this;
@@ -127,21 +150,50 @@ var ApplicationView = Backbone.View.extend({
         });
     },
     updatePanelPosition : function (item, triggerMoveEvent) {
+
         var preference = localStorage.getObject(item.key);
+
         if (preference == undefined) return;
 
-        var panelWidth = $("."+item.className).width();
+        //TMP CODE, we should create mobilePreferences and DesktopPreferences object
+        //and have a versionning in order to override localstorage data on clients
+        if (this.isMobile) { //force bottom right
+            if (item.key == "toolbar-panel")
+                preference.position.bottom = 0;
+            else
+                preference.position.bottom = 40;
+            if (item.key != "toolbar-panel")
+                preference.position.right = 5;
+            else
+                delete preference.position.right;
+            delete preference.position.left;
+            delete preference.position.top;
+        } else { //force bottom right desktop
+            if (item.key == "toolbar-panel") {
+                delete preference.position.right;
+                delete preference.position.left;
+                delete preference.position.top;
+                preference.position.bottom = 0;
+            }
+        }
+        var panelWidth = 0;
+        var panelHeight = 0;
+       $.each($("."+item.className) , function(index, value) {
+           var width = $(value).width();
+           var height = $(value).height();
+           if (width > 0) panelWidth = width;
+           if (height > 0) panelHeight = height;
+        });
+        var panel = $("."+item.className);
 
-        var panelHeight = $("."+item.className).height();
         var windowWidth = $(window).width();
         var windowHeight = $(window).height();
         // Alignment
+
         if (panelWidth != 0 && preference.align != undefined && preference.align == "center") {
-            var panelWidth = $("."+item.className).width();
             var leftPosition = (windowWidth / 2) - (panelWidth / 2);
             preference.position.left = leftPosition;
         }
-
         // Check if out of bounds
         if (panelWidth != 0 && preference.position.left + panelWidth > windowWidth) {
             preference.position.left = windowWidth - panelWidth

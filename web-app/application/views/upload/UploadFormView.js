@@ -1,14 +1,21 @@
 var UploadFormView = Backbone.View.extend({
 
+    statusLabels : {
+        uploadedLabel : '<span class="label label-inverse">UPLOADED</span>',
+        errorFormatLabel : '<span class="label label-important">ERROR FORMAT</span>',
+        convertedLabel : '<span class="label label-info">CONVERTED</span>',
+        deployedLabel : '<span class="label label-success">DEPLOYED</span>'
+    },
+    fileUploadErrors : {
+        maxFileSize: 'File is too big',
+        minFileSize: 'File is too small',
+        acceptFileTypes: 'Filetype not allowed',
+        maxNumberOfFiles: 'Max number of files exceeded',
+        uploadedBytes: 'Uploaded bytes exceed file size',
+        emptyResult: 'Empty file upload result'
+    },
     initialize: function(options) {
-        this.fileUploadErrors = {
-            maxFileSize: 'File is too big',
-            minFileSize: 'File is too small',
-            acceptFileTypes: 'Filetype not allowed',
-            maxNumberOfFiles: 'Max number of files exceeded',
-            uploadedBytes: 'Uploaded bytes exceed file size',
-            emptyResult: 'Empty file upload result'
-        };
+        this.uploadDataTables = null;
     },
     events:{
 
@@ -142,7 +149,7 @@ var UploadFormView = Backbone.View.extend({
                         that._reflow = that._transition && template[0].offsetWidth;
                         template.addClass('in');
                     }
-                    uploadFormView.renderUploadedFiles();
+
                 },
                 // Callback for failed (abort or error) uploads:
                 fail: function (e, data) {
@@ -547,49 +554,119 @@ var UploadFormView = Backbone.View.extend({
             }
         });
     },
+    getStatusLabel : function(model) {
+        if (model.uploaded) {
+            return this.statusLabels.uploadedLabel;
+        } else if (model.converted) {
+            return this.statusLabels.convertedLabel;
+        } else if (model.deployed) {
+            return this.statusLabels.deployedLabel;
+        } else if (model.error) {
+            return this.statusLabels.errorFormatLabel;
+        }
+        return "?";//this.statusLabels.deployedLabel;
+    },
     appendUploadedFile : function (model, target) {
-        var rowTpl = "<tr><td><%= originalFilename %></td><td><%= created %></td><td><%= size %></td><td><%= contentType %></td><td><% if (uploaded) { %><i class='icon icon-ok' /> <% } else { %><i class='icon icon-remove' /> <% } %></td><td><% if (deployed) { %><i class='icon icon-ok' /> <% } else { %><i class='icon icon-remove' /> <% } %></td></tr>";
+        var rowTpl = "<tr><td><%= originalFilename %></td><td><%= created %></td><td><%= size %></td><td><%= contentType %></td><td><%= status %></td></tr>";
+        model.set({status : this.getStatusLabel(model)});
         target.append(_.template(rowTpl, model.toJSON()));
+    },
+    injectFnReloadAjax : function () {
+        $.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnCallback, bStandingRedraw )
+        {
+            if ( typeof sNewSource != 'undefined' && sNewSource != null )
+            {
+                oSettings.sAjaxSource = sNewSource;
+            }
+            this.oApi._fnProcessingDisplay( oSettings, true );
+            var that = this;
+            var iStart = oSettings._iDisplayStart;
+            var aData = [];
+
+            this.oApi._fnServerParams( oSettings, aData );
+
+            oSettings.fnServerData( oSettings.sAjaxSource, aData, function(json) {
+                /* Clear the old information from the table */
+                that.oApi._fnClearTable( oSettings );
+
+                /* Got the data - add it to the table */
+                var aData =  (oSettings.sAjaxDataProp !== "") ?
+                    that.oApi._fnGetObjectDataFn( oSettings.sAjaxDataProp )( json ) : json;
+
+                for ( var i=0 ; i<aData.length ; i++ )
+                {
+                    that.oApi._fnAddData( oSettings, aData[i] );
+                }
+
+                oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+                that.fnDraw();
+
+                if ( typeof bStandingRedraw != 'undefined' && bStandingRedraw === true )
+                {
+                    oSettings._iDisplayStart = iStart;
+                    that.fnDraw( false );
+                }
+
+                that.oApi._fnProcessingDisplay( oSettings, false );
+
+                /* Callback user function - for event handlers etc */
+                if ( typeof fnCallback == 'function' && fnCallback != null )
+                {
+                    fnCallback( oSettings );
+                }
+            }, oSettings );
+        }
     },
     renderUploadedFiles : function() {
         var self = this;
         var uploadTable = $('#uploaded_files');
         var loadingDiv = $("#loadingUploadedFiles");
+        var uploadedFileCollectionUrl = new UploadedFileCollection({ dataTables :  true}).url();
         uploadTable.hide();
-        uploadTable.find("tbody").empty();
         loadingDiv.show();
-        uploadTable.dataTable();
-        uploadTable.fnClearTable();
-        new UploadedFileCollection({}).fetch({
-            success : function (collection, response) {
-                var target = uploadTable.find("tbody");
-                collection.each (function (uploadedFile) {
-                    self.appendUploadedFile(uploadedFile, target);
-                });
-                uploadTable.dataTable( {
-                    "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-                    "sPaginationType": "bootstrap",
-                    "oLanguage": {
-                        "sLengthMenu": "_MENU_ records per page"
-                    },
-                    "iDisplayLength": 25,
-                    "bDestroy" : true,
-                    "aoColumnDefs": [
-                        { "sWidth": "25%", "aTargets": [ 0 ] },
-                        { "sWidth": "25%", "aTargets": [ 1 ] },
-                        { "sWidth": "25%", "aTargets": [ 2 ] },
-                        { "sWidth": "25%", "aTargets": [ 3 ] }
-                    ]
-                });
-                uploadTable.show();
-                loadingDiv.hide();
+        this.injectFnReloadAjax();
+        self.uploadDataTables =uploadTable.dataTable( {
+            "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+            "sPaginationType": "bootstrap",
+            "oLanguage": {
+                "sLengthMenu": "_MENU_ records per page"
             },
-            response : function (collection, response) {}
+            "iDisplayLength": 25,
+            "bDestroy" : true,
+            "bProcessing": true,
+            /*"aoColumnDefs": [
+             { "sWidth": "20%", "aTargets": [ 0 ] },
+             { "sWidth": "20%", "aTargets": [ 1 ] },
+             { "sWidth": "20%", "aTargets": [ 2 ] },
+             { "sWidth": "20%", "aTargets": [ 3 ] },
+             { "sWidth": "20%", "aTargets": [ 4 ] }
+             ],*/
+            "aoColumns": [
+                { "mDataProp": "filename" },
+                { "mDataProp": "created" },
+                { "mDataProp": "size" },
+                { "mDataProp": "contentType" },
+                { "mDataProp": "uploaded" }
+            ],
+            "aoColumnDefs": [
+                {
+                    "fnRender": function ( o, val ) {
+                        return self.getStatusLabel(o.aData);
+                    },
+                    "aTargets": [ 4 ]
+                }
+
+            ],
+            "sAjaxSource": uploadedFileCollectionUrl
         });
+        uploadTable.show();
+        loadingDiv.hide();
+
 
         $("#refreshUploadedFiles").live("click", function(e){
             e.preventDefault();
-            self.renderUploadedFiles();
+            self.uploadDataTables.fnReloadAjax();
+
         });
     },
     doLayout : function(tpl) {
@@ -640,7 +717,7 @@ var UploadFormView = Backbone.View.extend({
                 var linkWithProject = $("#linkWithProject");
                 var idProject = null;
                 if (linkWithProject.attr("checked") == "checked") {
-                   idProject = linkProjectSelect.val();
+                    idProject = linkProjectSelect.val();
                 }
                 data.formData = {idProject: idProject};
                 return true;

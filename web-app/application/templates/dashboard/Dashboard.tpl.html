@@ -1,6 +1,6 @@
 <div class="tab-pane"  id="tabs-dashboard-<%= id %>" style="overflow : auto;padding : 20px;">
     <div class="row" style="padding-top: 15px;padding-left: 30px;">
-        <div id="projectInfoPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;min-height: 250px;" class="span5 hero-unit">
+        <div id="projectInfoPanel" style="padding : 15px;margin-right:5px;min-height: 250px;" class="span5 hero-unit">
             <h3>Project Info</h3>
             <ul>
                 <li>Name: <a href="#tabs-dashboard-<%= id %>"><%= name %></a></li>
@@ -16,53 +16,53 @@
 
         </div>
 
-        <div id="projectLastCommandPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;min-height: 250px;"  class="span5 hero-unit">
+        <div id="projectLastCommandPanel" style="padding : 15px;margin-right:5px;min-height: 250px;"  class="span5 hero-unit">
             <h3>Activity</h3>
             <div style="height: 200px;">
                 <div id="lastactionitem" style="max-height: 200px;overflow-y: auto;" ><br /><br /><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
             </div>
         </div>
 
-        <div id="projectcolmunChartPanel" style="padding : 15px; margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
+        <div id="projectcolumnChartPanel" style="padding : 15px; margin-right:5px;"  class="span5 hero-unit">
             <h3>Number of annotations by term (column)</h3>
             <div>
                 <div id="projectColumnChart" style="height: 350px"><br /><br /><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
             </div>
         </div>
 
-        <div id="projectPieChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
+        <div id="projectPieChartPanel" style="padding : 15px;margin-right:5px;"  class="span5 hero-unit">
             <h3>Number of annotations by term (pie)</h3>
             <div>
                 <div id="projectPieChart" style="height: 350px"><br /><br /><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
             </div>
         </div>
 
-        <div id="userAnnotationsChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width2 %>;"  class="span5 hero-unit">
+        <div id="userAnnotationsChartPanel" style="padding : 15px;margin-right:5px;min-width: 95%;"  class="span5 hero-unit">
             <h3>Number of annotations by term & user</h3>
             <div>
                 <div id="userAnnotationsChart" style="height: 350px"><br /><br /><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
             </div>
         </div>
 
-        <div id="userNbAnnotationsChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
+        <div id="userNbAnnotationsChartPanel" style="padding : 15px;margin-right:5px;"  class="span5 hero-unit">
             <h3>Number of annotations by user</h3>
             <div>
                 <div id="userNbAnnotationsChart" style="height: 350px"><br /><br /><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
             </div>
         </div>
-        <div id="termSlideAnnotationsChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
+        <div id="termSlideAnnotationsChartPanel" style="padding : 15px;margin-right:5px;"  class="span5 hero-unit">
             <h3>Number of annotated slides by term</h3>
             <div>
                 <div id="termSlideAnnotationsChart" style="height: 350px"><br /><br /><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
             </div>
         </div>
-        <div id="userSlideAnnotationsChartPanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">
+        <div id="userSlideAnnotationsChartPanel" style="padding : 15px;margin-right:5px;"  class="span5 hero-unit">
             <h3>Number of annotated slides by users</h3>
             <div>
                 <div id="userSlideAnnotationsChart" style="height: 350px"><br /><br /><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
             </div>
         </div>
-        <!--<div id="worstAnnotationTablePanel" style="padding : 15px;margin-right:5px;min-width: <%= width %>;"  class="span5 hero-unit">-->
+        <!--<div id="worstAnnotationTablePanel" style="padding : 15px;margin-right:5px;"  class="span5 hero-unit">-->
         <!--<h3>Most Questionable Annotations</h3>-->
         <!--<div>-->
         <!--<div id="worstAnnotationTable"><br /><br /><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>-->
@@ -122,6 +122,12 @@
                 <div class="well sidebar-nav">
                     <div id="annotationsFilters">
                         <p></p><h3>Filters</h3></p>
+                        <div id="treeImageListing" class="tree"></div>
+                        <ul style="display : inline;">
+                            <li style="display : inline;"><button id="checkAllImages" class="btn">Check all</button></li>
+                            <li style="display : inline;"><button id="uncheckAllImages" class="btn">Uncheck all</button></li>
+                        </ul>
+                        <hr />
                         <div style="padding-left: 30px;"><input class="undefinedAnnotationsCheckbox" type="checkbox"> <span class="label label-important">Annotations without terms</span></div>
                         <div style="padding-left: 30px;"><input class="multipleAnnotationsCheckbox" type="checkbox"> <span class="label label-important">Annotations with several terms</span></div>
                         <hr />

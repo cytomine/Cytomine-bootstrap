@@ -3,7 +3,7 @@ package be.cytomine.processing
 import be.cytomine.CytomineDomain
 import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
-import org.codehaus.groovy.grails.commons.ApplicationHolder
+
 
 import be.cytomine.Exception.AlreadyExistException
 
@@ -24,7 +24,7 @@ class Software extends CytomineDomain {
 
      def afterLoad = {
             if (!service) {
-                service = ApplicationHolder.application.getMainContext().getBean(serviceName)
+                service = grailsApplication.getMainContext().getBean(serviceName)
             }
 
      }
@@ -87,7 +87,7 @@ class Software extends CytomineDomain {
         //try to loard service if exist
         def service
         try {
-            service = ApplicationHolder.application.getMainContext().getBean(jsonSoftware.serviceName)
+            service = grailsApplication.getMainContext().getBean(jsonSoftware.serviceName)
         } catch(Exception e) {
            throw new WrongArgumentException("Software service-name cannot be launch:"+e)
         }

@@ -16,6 +16,8 @@ class StorageAbstractImage {
             storageAbstractImage = new StorageAbstractImage()
             storage.addToStorageAbstractImages(storageAbstractImage)
             abstractImage.addToStorageAbstractImages(storageAbstractImage)
+            storage.refresh()
+            abstractImage.refresh()
             storageAbstractImage.save(flush: true)
         }
 
@@ -26,6 +28,8 @@ class StorageAbstractImage {
         if (storageAbstractImage) {
             storage.removeFromStorageAbstractImages(storageAbstractImage)
             abstractImage.removeFromStorageAbstractImages(storageAbstractImage)
+            storage.refresh()
+            abstractImage.refresh()
             storageAbstractImage.delete(flush: true)
         }
     }

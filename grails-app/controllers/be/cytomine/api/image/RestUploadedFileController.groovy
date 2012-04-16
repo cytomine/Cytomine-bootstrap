@@ -5,15 +5,20 @@ import grails.converters.JSON
 import be.cytomine.image.UploadedFile
 import be.cytomine.api.RestController
 import be.cytomine.project.Project
+import cytomine.web.ConvertImagesJob
+import groovyx.gpars.Asynchronizer
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 class RestUploadedFileController extends RestController {
 
-    def cytomineService
+    def backgroundService
     def remoteCopyService
+    def cytomineService
     def storageService
     def imagePropertiesService
-    def springSecurityService
     def projectService
+    def convertImagesService
+    def deployImagesService
 
     static allowedMethods = [image: 'POST']
 
@@ -24,9 +29,14 @@ class RestUploadedFileController extends RestController {
         return returned_value
     }
 
+
+
     def list = {
         def uploadedFiles = UploadedFile.createCriteria().list(sort : "created", order : "desc") {
             eq("user", cytomineService.getCurrentUser())
+        }
+        if (params.dataTables) {
+            uploadedFiles = ["aaData" : uploadedFiles]
         }
         responseSuccess(uploadedFiles)
     }
@@ -38,45 +48,49 @@ class RestUploadedFileController extends RestController {
 
     def add = {
         def destPath = "/tmp/cytominebuffer"
-        User currentUser = User.read(springSecurityService.principal.id)
+        User currentUser = cytomineService.getCurrentUser()
         String errorMessage = ""
         String projectParam = request.getParameter("idProject")
         Project project = null
         if (projectParam != null && projectParam != "undefined" && projectParam != "null") {
-             project = projectService.read(Integer.parseInt(projectParam), new Project())
+            project = projectService.read(Integer.parseInt(projectParam), new Project())
         }
         def f = request.getFile('files[]')
 
-        def uploadedFile = null
+        UploadedFile uploadedFile = null
         if (!f.empty) {
 
-             def ext = getExtensionFromFilename(f.originalFilename)
+            def ext = getExtensionFromFilename(f.originalFilename)
 /*           def tmpFile = File.createTempFile(f.originalFilename, ext)
             tmpFile.deleteOnExit()
             f.transferTo(tmpFile) */
             long timestamp = new Date().getTime()
 
-            def fullDestPath = destPath + "/" + timestamp.toString()
-
+            String fullDestPath = destPath + "/" + currentUser.getId() + "/" + timestamp.toString()
+            String newFilename = f.originalFilename
+            newFilename = newFilename.replace(" ", "_")
+            newFilename = newFilename.replace("(", "_")
+            newFilename = newFilename.replace(")", "_")
+            String pathFile = fullDestPath + "/" + newFilename
             def mkdirCommand = "mkdir -p " + fullDestPath
-                        println "mkdirCommand = " + mkdirCommand
-            mkdirCommand.execute()
-            String pathFile = fullDestPath + "/" + f.originalFilename
+            def proc = mkdirCommand.execute()
+            proc.waitFor()
             File destFile = new File(pathFile)
             f.transferTo(destFile)
-            println "transferTo = " + destFile
+            //UploadedFile.withTransaction {
             uploadedFile = new UploadedFile(
                     originalFilename: f.originalFilename,
-                    filename : f.originalFilename,
-                    path : pathFile,
-                    ext : ext,
+                    filename : currentUser.getId() + "/" + timestamp.toString() + "/" + newFilename,
+                    path : destPath.toString(),
+                    ext : ext.toLowerCase(),
                     size : f.size,
                     contentType : f.contentType,
                     project : project,
                     user : currentUser
             )
-            println "save uploadedFile = " + destFile
-            uploadedFile.save()
+            uploadedFile.save(flush : true)
+            //}
+
         }
         else {
             response.status = 400;
@@ -89,36 +103,15 @@ class RestUploadedFileController extends RestController {
         content.size = f.size
         content.type = f.contentType
         content.uploadFile = uploadedFile
+
+        //Convert and deploy
+        backgroundService.execute("convertAndDeployImage", {
+            boolean success = convertImagesService.convertUploadedFile(uploadedFile, currentUser)
+            if (success) deployImagesService.deployUploadedFile(uploadedFile, currentUser)
+        })
+
         def response = [content]
         render response as JSON
     }
 
-    def deploy = {
-        /*Slide slide = new Slide(name : timestamp.toString()+"_"+f.originalFilename, index : 0)
-        slide.save()
-
-        String finalPath = timestamp.toString() + "_" + f.originalFilename
-
-        AbstractImage aimage = new AbstractImage(
-                filename: timestamp+"_"+f.originalFilename,
-                scanner: Scanner.list().first(),
-                slide: slide,
-                path: finalPath,
-                mime: Mime.findByExtension(ext))
-
-        if (aimage.validate()) {
-            aimage.save(flush: true)
-            Group group = Group.findByName(currentUser.getUsername())
-            AbstractImageGroup.link(aimage, group)
-            Storage.list().each { storage ->
-                try {
-                    remoteCopyService.copy(storage, aimage, tmpFile.getPath()) //TO DO : iterate on all servers (not accessibles from here)
-                    StorageAbstractImage.link(storage, aimage)
-                } catch (java.net.ConnectException e) {
-                    errorMessage = "Operation timed out"
-                }
-            }
-            imagePropertiesService.extractUseful(aimage)
-        } */
-    }
 }

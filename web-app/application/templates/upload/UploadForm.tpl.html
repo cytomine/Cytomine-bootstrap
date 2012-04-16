@@ -4,15 +4,18 @@
             <h2>Upload</h2>
         </div>
         <div class="page-content">
-            <div class="well">
-                <h3>Notes</h3>
-                <ul>
-                    <li>The maximum file size for uploads is <strong>5 GB</strong></li>
-                    <li>Only image files (<strong>JP(E)G, GIF, PNG, TIF, TIFF, JP2, SVS, MRXS, VMS, NDPI, SCN</strong>) are allowed</li>
+            <div class="alert alert-block">
+                <h4 class="alert-heading">Important notes !</h4>
+                  <ul>
+                    <li>The maximum file size (per file) for uploads is <strong>1 GB</strong></li>
+                    <li>Only image files (<strong>JP(E)G, GIF, PNG, TIF, TIFF, JP2, SVS, <span style="text-decoration:line-through;">NDPI</span> (soon), SCN</strong>) are allowed</li>
+                    <!--<li><strong>ZIP</strong> files are also allowed (and can contains multiple images)</li>
+                    <li><strong>MRXS</strong> and <strong>VMS</strong> files and its nested files must be always contained in one zipped file. The hierarchy of files and directories must be preserved.</li>-->
                     <li>You can <strong>drag &amp; drop</strong> files from your desktop on the 'Add files...' button with Google Chrome, Mozilla Firefox and Apple Safari.</li>
                     <li>You are also able to link images with project manually after upload is done.</li>
                 </ul>
             </div>
+
 
             <form class="form-horizontal" id="fileupload" action="api/uploadedfile" method="POST" enctype="multipart/form-data">
                 <fieldset>
@@ -72,11 +75,10 @@
                     <th>Created</th>
                     <th>Size</th>
                     <th>Content Type</th>
-                    <th>Uploaded</th>
-                    <th>Deployed</th>
+                    <th>Status</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="loadingUploadedFilesBody">
                 </tbody>
             </table>
         </div>

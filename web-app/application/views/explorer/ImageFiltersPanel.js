@@ -30,6 +30,7 @@ var ImageFiltersPanel = Backbone.View.extend({
    doLayout: function(tpl) {
       var self = this;
       var el = $('#imageFiltersPanel' + this.model.get('id'));
+       this.model.set({isDesktop : !window.app.view.isMobile});
       new DraggablePanelView({
          el : el,
          className : "imageFiltersPanel",

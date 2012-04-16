@@ -54,6 +54,10 @@ class RestController {
   protected def response(data) {
         withFormat {
             json { render data as JSON }
+            jsonp { 
+				response.contentType = 'application/javascript'
+				render "${params.callback}(${data as JSON})" 
+			}
             xml { render data as XML}
         }
     }

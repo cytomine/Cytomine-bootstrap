@@ -220,9 +220,6 @@ class AlgoAnnotationTermService extends ModelService {
     }
 
      ConfusionMatrix computeConfusionMatrix(List<Term> projectTerms, def userJob) {
-         println "projectTermsId="+projectTerms
-         Collections.sort(projectTerms)
-         println "projectTermsId="+projectTerms
         def projectTermsId = projectTerms.collect {it.id + ""}
         println projectTermsId
         ConfusionMatrix matrix = new ConfusionMatrix(projectTermsId);

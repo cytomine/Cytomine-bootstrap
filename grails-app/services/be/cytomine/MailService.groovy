@@ -32,7 +32,7 @@ class MailService {
         //helper.setCc(cc)
         helper.setSubject(subject)
         helper.setText("",message)
-        attachment.each {
+        attachment?.each {
             helper.addInline(it.cid, new FileSystemResource(it.file))
         }
         

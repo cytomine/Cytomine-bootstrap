@@ -434,11 +434,13 @@ class BasicInstance {
         def random = new Random()
         def randomInt = random.nextInt()
         def project = Project.findByName(randomInt + "")
+        def ontology = getBasicOntologyNotExist()
+        ontology.save(flush: true)
         while (project) {
             randomInt = random.nextInt()
             project = Project.findByName(randomInt + "")
         }
-        project = new Project(name: randomInt + "", ontology: createOrGetBasicOntology(), discipline: createOrGetBasicDiscipline())
+        project = new Project(name: randomInt + "", ontology: ontology, discipline: createOrGetBasicDiscipline())
         project
     }
 
@@ -904,6 +906,7 @@ class BasicInstance {
         Project project = BasicInstance.getBasicProjectNotExist()
         project.save(flush: true)
         Ontology ontology = project.ontology
+        println "ontology.terms()="+project.ontology.terms().collect{it.id}
 
         Term term1 = BasicInstance.getBasicTermNotExist()
         term1.ontology = ontology
@@ -911,14 +914,18 @@ class BasicInstance {
 
         Term term2 = BasicInstance.getBasicTermNotExist()
         term2.ontology = ontology
+        println "term2.ontology.id="+term2.ontology.id
         term2.save(flush: true)
 
 
-        UserJob userJob = BasicInstance.createOrGetBasicUserJob()
+        UserJob userJob = BasicInstance.getBasicUserJobNotExist()
+        userJob.save(flush : true)
         Job job = userJob.job
         job.project = project
+        println "project.ontology.id="+project.ontology.id
+        println "ontology.terms()="+project.ontology.terms().collect{it.id}
         job.save(flush: true)
-
+        println "created userjob.id=" + userJob.id
         AlgoAnnotationTerm algoAnnotationGood = BasicInstance.getBasicAlgoAnnotationTermNotExist()
         algoAnnotationGood.term = term1
         algoAnnotationGood.expectedTerm = term1

@@ -54,6 +54,10 @@ class UserService extends ModelService {
         project.users()
     }
 
+    def list(Project project, List ids) {
+        SecUser.findAllByIdInList(ids)
+    }
+
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)

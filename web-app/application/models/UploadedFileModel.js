@@ -11,7 +11,15 @@ var UploadedFileModel = Backbone.Model.extend({
 
 var UploadedFileCollection = Backbone.Collection.extend({
     model : UploadedFileModel,
+    initialize : function (options) {
+        if (!options) return;
+        this.dataTables = options.dataTables;
+    },
 	url : function() {
-		return 'api/uploadedfile.json';
+        if (this.dataTables) {
+            return 'api/uploadedfile.json?dataTables=true';
+        } else {
+		    return 'api/uploadedfile.json';
+        }
 	}
 });

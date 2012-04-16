@@ -48,6 +48,8 @@ var AnnotationCollection = Backbone.Collection.extend({
         if (this.user != undefined) {
             return "api/user/" + this.user + "/imageinstance/" + this.image + "/annotation.json";
         } else if (this.term != undefined && this.project !=undefined){
+            var users = this.users.join('_');
+            var images = this.images.join('_');
             if (this.term < "0") { //annotations without terms (-1), annotations with multiple terms (-2)
                 var critera = "";
                 if (this.term == -1) {
@@ -57,7 +59,10 @@ var AnnotationCollection = Backbone.Collection.extend({
                 }
                 var url = "api/project/" + this.project + "/annotation.json?" + critera;
                 if (this.users!=undefined) {
-                   url += "&users="+this.users.join('_');
+                   url += "&users="+ users;
+                }
+                if (this.images!=undefined) {
+                    url += "&images="+images;
                 }
                 return url;
             }
@@ -65,9 +70,15 @@ var AnnotationCollection = Backbone.Collection.extend({
                 return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?suggestTerm="+ this.suggestTerm + "&job="+this.job;
             }
 
-            if (this.term >= "0" && this.users==undefined) return "api/term/" + this.term + "/project/" + this.project + "/annotation.json";
-            if (this.term >= "0" && this.users!=undefined) {
-                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users="+this.users.join('_');
+            if (this.term >= "0" && this.users==undefined && this.images == undefined) return "api/term/" + this.term + "/project/" + this.project + "/annotation.json";
+            if (this.term >= "0" && this.users!=undefined && this.images == undefined) {
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users="+users;
+            }
+            if (this.term >= "0" && this.users==undefined && this.images != undefined) {
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?images="+images;
+            }
+            if (this.term >= "0" && this.users!=undefined && this.images != undefined) {
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users="+users+"&images="+images;
             }
 
             return "error";
@@ -86,8 +97,9 @@ var AnnotationCollection = Backbone.Collection.extend({
         }
     },
     initialize: function (options) {
-        this.image = options.image;
+        this.image = options.image;//one image
         this.user = options.user;
+        this.images = options.images;//multiple image
         this.project = options.project;
         this.term = options.term;
         this.users = options.users;

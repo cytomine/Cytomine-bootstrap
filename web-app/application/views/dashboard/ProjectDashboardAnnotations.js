@@ -3,6 +3,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     annotationsViews : [], //array of annotation view
     selectedTerm: [],
     selectedUsers: [],
+    selectedImages : [],
     terms : null,
     ontology : null,
     shouldRefresh : true,
@@ -19,25 +20,27 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                 self.ontology = model;
                 $(self.el).find("input.undefinedAnnotationsCheckbox").change(function(){
                     if ($(this).attr("checked") == "checked") {
-                        self.refreshAnnotations(-1,self.selectedUsers);
+                        self.refreshAnnotations(-1,self.selectedUsers,self.selectedImages);
                         self.selectedTerm.push(-1);
                         $("#tabsterm-panel-"+self.model.id+"--1").show();
                     } else {
                         $("#tabsterm-panel-"+self.model.id+"--1").hide();
                         self.selectedTerm = _.without(self.selectedTerm, -1);
                     }
-                    self.updateContentVisibility();self.updateDownloadLinks();
+                    self.updateContentVisibility();
+                    self.updateDownloadLinks();
                 });
                 $(self.el).find("input.multipleAnnotationsCheckbox").change(function(){
                     if ($(this).attr("checked") == "checked") {
-                        self.refreshAnnotations(-2,self.selectedUsers);
+                        self.refreshAnnotations(-2,self.selectedUsers,self.selectedImages);
                         self.selectedTerm.push(-2);
                         $("#tabsterm-panel-"+self.model.id+"--2").show();
                     } else {
                         $("#tabsterm-panel-"+self.model.id+"--2").hide();
                         self.selectedTerm = _.without(self.selectedTerm, -2);
                     }
-                    self.updateContentVisibility();self.updateDownloadLinks();
+                    self.updateContentVisibility();
+                    self.updateDownloadLinks();
                 });
                 $(self.el).find('#treeAnnotationListing').dynatree({
                     checkbox: true,
@@ -48,7 +51,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     onSelect: function(select, node) {
                         //if(!self.activeEvent) return;
                         if (node.isSelected()) {
-                            self.refreshAnnotations(node.data.key,self.selectedUsers);
+                            self.refreshAnnotations(node.data.key,self.selectedUsers,self.selectedImages);
                             $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).show();
                             self.selectedTerm.push(node.data.key);
                         }
@@ -56,7 +59,8 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                             $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).hide();
                             self.selectedTerm = _.without(self.selectedTerm, node.data.key);
                         }
-                        self.updateContentVisibility();self.updateDownloadLinks();
+                        self.updateContentVisibility();
+                        self.updateDownloadLinks();
                     },
                     onDblClick: function(node, event) {
                         //node.toggleSelect();
@@ -91,6 +95,12 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                 $(self.el).find("#uncheckAllUsers").click(function(){
                     self.hideAllUsers();
                 });
+                $(self.el).find("#checkAllImages").click(function(){
+                    self.showAllImages();
+                });
+                $(self.el).find("#uncheckAllImages").click(function(){
+                    self.hideAllImages();
+                });
                 $(self.el).find("#refreshAnnotations").click(function(){
                     self.refreshSelectedTermsWithUserFilter();
                 });
@@ -112,9 +122,39 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                         });
                         self.initDropZone();
                         callback.call();
-
                     }});
+            }
+        });
+        new ImageInstanceCollection({project : window.app.status.currentProject, tree : true}).fetch({
+            success : function (collection, response) {
+                $(self.el).find('#treeImageListing').dynatree({
+                    checkbox: true,
+                    selectMode: 2,
+                    expand : true,
+                    onExpand : function() {},
+                    children: collection.toJSON(),
+                    onSelect: function(select, node) {
+                        //if(!self.activeEvent) return;
+                        if (node.isSelected()) {
+                             self.selectedImages.push(node.data.key);
+                             $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).show();
+                        }
+                        else {
+                            $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).hide();
+                             self.selectedImages = _.without(self.selectedImages, node.data.key);
+                        }
+                        if (self.shouldRefresh) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedImages);
+                    },
+                    onDblClick: function(node, event) {
+                        //node.toggleSelect();
+                    },
 
+                    // The following options are only required, if we have more than one tree on one page:
+                    initId: "treeData-images-"+self.model.get('ontology'),
+                    cookieId: "dynatree-Cb-images-"+self.model.get('ontology'),
+                    idPrefix: "dynatree-Cb-images-"+self.model.get('ontology')+"-"
+                });
+                self.showAllImages();
             }
         });
     },
@@ -250,6 +290,24 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         $(this.el).find("input.multipleAnnotationsCheckbox").trigger("change");
         this.selectAnnotations(false);
     },
+    showAllImages : function() {
+        var self = this;
+        this.shouldRefresh = false;
+        $(this.el).find('#treeImageListing').dynatree("getRoot").visit(function (node) {
+            if (!node.data.isFolder) node.select(true);
+        });
+        this.shouldRefresh = true;
+        self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedImages);
+    },
+    hideAllImages : function() {
+        var self = this;
+        this.shouldRefresh = false;
+        $(this.el).find('#treeImageListing').dynatree("getRoot").visit(function (node) {
+            if (!node.data.isFolder) node.select(false);
+        });
+        this.shouldRefresh = true;
+        self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedImages);
+    },
     showAllUsers : function() {
         var self = this;
         this.shouldRefresh = false;
@@ -257,12 +315,16 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             if (!node.data.isFolder) node.select(true);
         });
         this.shouldRefresh = true;
-        self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers);
+        self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedImages);
     },
     hideAllUsers : function() {
+        var self = this;
+        this.shouldRefresh = false;
         $(this.el).find('#treeUserListing').dynatree("getRoot").visit(function (node) {
             if (!node.data.isFolder) node.select(false);
         });
+        this.shouldRefresh = true;
+        self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedImages);
     },
     initDropZone : function () {
         var self = this;
@@ -324,6 +386,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     children : []
                 };
                 collection.each(function(user) {
+                    if (!_.include(self.model.get("userLayers"), user.id)) return;
                     treeData.children.push({
                         id : user.id,
                         key : user.id,
@@ -346,7 +409,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                         else {
                             self.selectedUsers = _.without(self.selectedUsers, node.data.key);
                         }
-                        if (self.shouldRefresh) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers);
+                        if (self.shouldRefresh) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedImages);
                     },
                     onDblClick: function(node, event) {
                         //node.toggleSelect();
@@ -383,10 +446,11 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     updateDownloadLinks : function () {
         var users = this.selectedUsers.join(",");
         var terms = this.selectedTerm.join(",");
-        var prefix = "&users=" + users + "&terms=" + terms;
-        $("#downloadAnnotationsCSV").attr("href", "/api/project/"+this.model.id+"/annotation/download?format=csv" + prefix);
-        $("#downloadAnnotationsExcel").attr("href", "/api/project/"+this.model.id+"/annotation/download?format=xls" + prefix);
-        $("#downloadAnnotationsPDF").attr("href", "/api/project/"+this.model.id+"/annotation/download?format=pdf" + prefix);
+        var images = this.selectedImages.join(",");
+        var suffix = "&users=" + users + "&terms=" + terms + "&images=" + images;
+        $("#downloadAnnotationsCSV").attr("href", "/api/project/"+this.model.id+"/annotation/download?format=csv" + suffix);
+        $("#downloadAnnotationsExcel").attr("href", "/api/project/"+this.model.id+"/annotation/download?format=xls" + suffix);
+        $("#downloadAnnotationsPDF").attr("href", "/api/project/"+this.model.id+"/annotation/download?format=pdf" + suffix);
     },
     updateContentVisibility : function () {
         var nbUserSelected = _.size(this.selectedUsers);
@@ -421,26 +485,28 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     refreshSelectedTermsWithUserFilter : function () {
         var self = this;
         var users = self.selectedUsers;
+        var images = self.selectedImages;
         var tree = $(this.el).find('#treeAnnotationListing').dynatree("getRoot");
         if (!_.isFunction(tree.visit)) return; //tree is not yet loaded
         tree.visit(function(node){
             if (!node.isSelected()) return;
-            self.refreshAnnotations(node.data.key,users);
+            self.refreshAnnotations(node.data.key,users,images);
         });
         if ($(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked") == "checked") {
-            self.refreshAnnotations(-1,users);
+            self.refreshAnnotations(-1,users,images);
         }
         if ($(this.el).find("input.multipleAnnotationsCheckbox").attr("checked") == "checked") {
-            self.refreshAnnotations(-2,users);
+            self.refreshAnnotations(-2,users,images);
         }
-        self.updateContentVisibility();self.updateDownloadLinks();
+        self.updateContentVisibility();
+        self.updateDownloadLinks();
     },
     /**
      * Refresh all annotation dor the given term
      * @param term annotation term to be refresh (all = 0)
      */
-    refreshAnnotations : function(term,users) {
-        this.printAnnotationThumb(term,"#tabsterm-"+this.model.id+"-"+term,users);
+    refreshAnnotations : function(term,users,images) {
+        this.printAnnotationThumb(term,"#tabsterm-"+this.model.id+"-"+term,users,images);
     },
     clearAnnotations : function (term) {
         console.log("clearAnnotations");
@@ -452,19 +518,20 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
      * @param term term annotation term to be refresh (all = 0)
      * @param $elem  elem that will keep all annotations
      */
-    printAnnotationThumbAllTerms : function(terms,users) {
+    printAnnotationThumbAllTerms : function(terms,users,images) {
+        console.log("self.selectedImages="+images);
         var self = this;
         self.updateContentVisibility();
         self.updateDownloadLinks();
         if (_.size(users) == 0) return; //nothing to display
         for(var i=0;i<terms.length;i++) {
-            self.printAnnotationThumb(terms[i],"#tabsterm-"+self.model.id+"-"+terms[i],users);
+            self.printAnnotationThumb(terms[i],"#tabsterm-"+self.model.id+"-"+terms[i],users, images);
         }
 
     },
-    printAnnotationThumb : function(idTerm,$elem,users){
+    printAnnotationThumb : function(idTerm,$elem,users, images){
         var self = this;
-        new AnnotationCollection({project:self.model.id,term:idTerm,users:users}).fetch({
+        new AnnotationCollection({project:self.model.id,term:idTerm,users:users, images : images}).fetch({
             success : function (collection, response) {
                 if (self.annotationsViews[idTerm] != null && users==undefined) { //only refresh
                     self.annotationsViews[idTerm].refresh(collection,users);

@@ -30,7 +30,7 @@ class Annotation extends CytomineDomain implements Serializable {
     static belongsTo = [ImageInstance, Project]
     static hasMany = [annotationTerm: AnnotationTerm]
 
-    static transients = ["cropURL", "boundaries", "similarity"]
+    static transients = ["boundaries", "similarity"]
 
     static constraints = {
         name(blank: true)
@@ -141,6 +141,11 @@ class Annotation extends CytomineDomain implements Serializable {
     def getCropURL() {
         def boundaries = getBoundaries()
         return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height)
+    }
+
+    def getCropURLWithMaxWithOrHeight(int dimension) {
+        def boundaries = getBoundaries()
+        return image.baseImage.getCropURLWithMaxWithOrHeight(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, dimension)
     }
 
     def getCropURL(int zoom) {
@@ -256,6 +261,7 @@ class Annotation extends CytomineDomain implements Serializable {
             //retrieval
             try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
             returnArray['cropURL'] = annotation.getCropURL()
+            //returnArray['smallCropURL'] = annotation.getCropURLWithMaxWithOrHeight(256)
 
             //println grailsApplication.config.grails.serverURL
 

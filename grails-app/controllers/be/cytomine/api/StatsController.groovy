@@ -56,6 +56,7 @@ class StatsController extends RestController {
     def statRetrievalConfusionMatrix = {
         def data = []
         UserJob userJob = retrieveUserJobFromParams(params)
+        println "get userjob.id=" + userJob.id
         if(!userJob) {
             responseNotFound("UserJob","Params", params)
             return null
@@ -215,7 +216,7 @@ class StatsController extends RestController {
         }
 
         Map<Long, Object> result = new HashMap<Long, Object>()
-        project.users().each { user ->
+        project.userLayers().each { user ->
             def item = [:]
             item.id = user.id
             item.key = user.firstname + " " + user.lastname
@@ -255,7 +256,7 @@ class StatsController extends RestController {
             }
         }
         Map<Long, Object> result = new HashMap<Long, Object>()
-        project.users().each { user ->
+        project.userLayers().each { user ->
             def item = [:]
             item.id = user.id
             item.key = user.firstname + " " + user.lastname
@@ -273,7 +274,6 @@ class StatsController extends RestController {
     def statTerm = {
         Project project = Project.read(params.id)
         if (project == null) responseNotFound("Project", params.id)
-
 
         def terms = project.ontology.terms()
         def annotations = project.annotations()
@@ -310,8 +310,10 @@ class StatsController extends RestController {
         Project project = Project.read(params.id)
         if (project == null) responseNotFound("Project", params.id)
         def terms = Term.findAllByOntology(project.getOntology())
+        def userLayers = project.userLayers()
         def annotations = AnnotationTerm.createCriteria().list {
             inList("term", terms)
+            inList("user", userLayers)
             join("annotation")
             createAlias("annotation", "a")
             projections {
@@ -354,7 +356,7 @@ class StatsController extends RestController {
             }
         }
         Map<Long, Object> result = new HashMap<Long, Object>()
-        project.users().each { user ->
+        project.userLayers().each { user ->
             def item = [:]
             item.id = user.id
             item.key = user.firstname + " " + user.lastname

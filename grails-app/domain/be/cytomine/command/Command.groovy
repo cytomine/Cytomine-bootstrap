@@ -4,7 +4,6 @@ import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
 
 import grails.converters.JSON
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.grails.web.json.JSONElement
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import be.cytomine.security.SecUser
@@ -84,7 +83,7 @@ class Command extends CytomineDomain {
      */
     void initService() {
         if (!service) {
-            service = ApplicationHolder.application.getMainContext().getBean(serviceName)
+            service = grailsApplication.getMainContext().getBean(serviceName)
         }
     }
 

@@ -292,18 +292,14 @@ var OntologyPanelView = Backbone.View.extend({
         var tpl = _.template("<div id='userontologyinfo-<%= id %>' style='padding:5px;'><ul><li><b>Ontology</b> : <%= ontologyName %></li><li><b>Owner</b> : <%= owner %></li><li><b>Shared to</b> : <%= sharedTo %></li><li class='projectsLinked'></li></ul></div>", { id : self.model.id, ontologyName : self.model.get('name'), owner : userOwner.prettyName(), sharedTo :  sharedTo});
         self.$infoOntology.html(tpl);
 
-        //Load project linked to the ontology async
-        new OntologyProjectModel({ontology : self.model.id}).fetch({
-            success : function (collection, response )  {
+	
                 var projectsLinked = []
-                collection.each(function (project) {
-                    var tpl = _.template("<a href='#tabs-dashboard-<%=   idProject %>'><%=   projectName %></a>", {idProject : project.get('id'), projectName : project.get('name')});
+                _.each(self.model.get("projects"), function (project) {
+                    var tpl = _.template("<a href='#tabs-dashboard-<%=   idProject %>'><%=   projectName %></a>", {idProject : project.id, projectName : project.name});
                     projectsLinked.push(tpl);
                 });
                 var tpl = _.template("<b>Projects</b> : <%=   projects %>", {projects : projectsLinked.join(", ")});
                 self.$infoOntology.find('.projectsLinked').html(tpl);
-            }
-        });
 
     },
     buildOntologyTree : function() {

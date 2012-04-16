@@ -1,7 +1,5 @@
 package be.cytomine.server.resolvers
 
-import grails.converters.JSON
-
 /**
  * Cytomine @ GIGA-ULG
  * User: stevben
@@ -69,7 +67,7 @@ class IIPResolver extends Resolver{
         return toURL(baseUrl)
     }
 
-    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int zoom, int baseImageWidth, int baseImageHeight) {
+    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int zoom, int baseImageWidth, int baseImageHeight, int maxCropWidthOrHeight) {
         /*
         #Y is the down inset value (positive) from 0 on the y axis at the max image resolution.
         #X is the right inset value (positive) from 0 on the x axis at the max image resolution.
@@ -80,13 +78,13 @@ class IIPResolver extends Resolver{
         W : 1/(34092/400) = 0.01173295788
         H : 1/(34207/600) = 0.01754026954*/
         def scaledWidth = width
-        def targetWidth = 5000
-        if (width > targetWidth) {
+        //def maxCropWidth = 5000
+        if (width > maxCropWidthOrHeight) {
             def shouldScale = true
             while (shouldScale) {
                 def newWidth = Math.round(scaledWidth / 2)
-                def currentDelta = (Math.abs(scaledWidth - targetWidth))
-                def newDelta = (Math.abs(newWidth - targetWidth))
+                def currentDelta = (Math.abs(scaledWidth - maxCropWidthOrHeight))
+                def newDelta = (Math.abs(newWidth - maxCropWidthOrHeight))
                 if (newDelta < currentDelta && newWidth > 256) scaledWidth = newWidth
                 else shouldScale = false
             }
@@ -97,14 +95,13 @@ class IIPResolver extends Resolver{
         def h = (height == 0) ? 0 : 1/(baseImageHeight / height)
         args.clear()
         args.add("FIF" + ARGS_EQUAL +  imagePath)
-        if (width > targetWidth) args.add("WID" + ARGS_EQUAL + scaledWidth)
         args.add("RGN" + ARGS_EQUAL +  x + "," + y + "," + w + "," + h)
-
+        if (width > maxCropWidthOrHeight) args.add("WID" + ARGS_EQUAL + scaledWidth)
         args.add("CVT" + ARGS_EQUAL + "jpeg")
         return toURL(baseUrl)
     }
 
-    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int baseImageWidth, int baseImageHeight) {
+    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int baseImageWidth, int baseImageHeight, int maxCropWidthOrHeight) {
         def maxZoom = getZoomLevels(baseUrl, imagePath, baseImageWidth, baseImageHeight).max
         def widthTarget = 256
         def tmpWidth = width
@@ -112,7 +109,7 @@ class IIPResolver extends Resolver{
             maxZoom--
             tmpWidth = tmpWidth / 2
         }
-        getCropURL(baseUrl, imagePath, topLeftX, topLeftY, width, height, maxZoom, baseImageWidth, baseImageHeight)
+        getCropURL(baseUrl, imagePath, topLeftX, topLeftY, width, height, maxZoom, baseImageWidth, baseImageHeight, maxCropWidthOrHeight)
     }
 
     /*def getWidthHeight(baseUrl, imagePath) {

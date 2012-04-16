@@ -138,18 +138,19 @@ var AnnotationsPanel = Backbone.View.extend({
               });
           el.css("padding", "0px");
           el.css("margin", "0px");
-          el.css("width", "20px");
-          el.css("height", "20px");
+          el.css("width", "16px");
+          el.css("height", "16px");
           el.css("bottom", "0px");
           el.find("div.panel_button").click(function(){
+             width = parseInt($(window).width());
              el.find("div.panel_button").toggle();
              el.css("bottom", "0px");
              el.animate({
                     height: "302px"
                  }, "fast").animate({
                     width: width
-                 });
-             setTimeout(function(){el.find("div.panel_content").fadeIn();}, 1000);
+                 }, "fast").find("div.panel_content").fadeIn();
+             //setTimeout(function(){el.find("div.panel_content").fadeIn();}, 1000);
              return false;
           });
 
@@ -162,10 +163,10 @@ var AnnotationsPanel = Backbone.View.extend({
           });
           el.find("div#hide_button").click(function(){
              el.animate({
-                    height: "20px"
+                    height: "16px"
                  }, "fast")
                  .animate({
-                    width : "20px"
+                    width : "16px"
                  }, "fast");
 
              setTimeout(function(){el.find("div.panel_content").hide();el.css("bottom", "0px");}, 1000);

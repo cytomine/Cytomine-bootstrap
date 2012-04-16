@@ -129,9 +129,9 @@ class AnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def downloadDocumentByProject(Long idProject,Long idUser, Long idTerm, String username, String password) {
+    static def downloadDocumentByProject(Long idProject,Long idUser, Long idTerm, Long idImageInstance, String username, String password) {
         log.info "download annotation by user " + idUser + " and project " + idProject + " and term " + idTerm
-        String URL = Infos.CYTOMINEURL+"api/project/"+ idProject +"/annotation/download?users=" +idUser + "&terms=" + idTerm +"&format=pdf"
+        String URL = Infos.CYTOMINEURL+"api/project/"+ idProject +"/annotation/download?users=" +idUser + "&terms=" + idTerm +"&images=" + idImageInstance + "&format=pdf"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
         client.get()
