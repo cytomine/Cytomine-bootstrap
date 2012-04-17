@@ -61,7 +61,7 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testListAnnotationsByProjectAndTermWithUserNullWithCredential() {
         AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
         def result = AnnotationAPI.listByProjectAndTerm(annotationTerm.annotation.project.id, annotationTerm.term.id, -1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assertEquals(200, result.code)
     }    
 
     void testListAnnotationsByProjectAndUsersWithCredential() {

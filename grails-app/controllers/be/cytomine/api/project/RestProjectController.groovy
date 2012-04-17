@@ -19,6 +19,7 @@ class RestProjectController extends RestController {
     def cytomineService
     def transactionService
     def retrievalService
+    def imageInstanceService
 
     def list = {
         responseSuccess(projectService.list())
@@ -99,6 +100,15 @@ class RestProjectController extends RestController {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
+    }
+
+    def showPreview = {
+        int inf = 0
+        if (params.inf != null) inf = Integer.parseInt(params.inf)
+        int sup = inf + 1
+        Project project = projectService.read(params.long('id'), new Project())
+        String previewURL = imageInstanceService.list(project, inf, sup).first().getBaseImage().getThumbURL()
+        responseImage(previewURL)
     }
 }
 

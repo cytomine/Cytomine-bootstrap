@@ -20,6 +20,9 @@ class ImageUrlMappings {
 		"/api/image/$id/preview"(controller: "restImage"){
             action = [GET:"preview"]
         }
+        "/api/image/$id/slidingwindow"(controller: "restImage"){
+            action = [GET:"slidingWindow"]
+        }
         "/api/image/$id/metadata"(controller: "restImage"){
             action = [GET:"metadata"]
         }

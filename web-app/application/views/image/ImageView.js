@@ -42,7 +42,7 @@ var ImageView = Backbone.View.extend({
         self.appendingThumbs = true;
         var inf = Math.abs(page) * this.nb_thumb_by_page;
         var sup = (Math.abs(page) + 1) * this.nb_thumb_by_page;
-
+        if (inf > window.app.status.currentProjectModel.get("numberOfImages")) return;//nothing to display
         if (Math.abs(page) * this.nb_thumb_by_page < self.model.size() ) {
             this.showLoading();
         }

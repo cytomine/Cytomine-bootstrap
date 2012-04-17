@@ -58,8 +58,20 @@ class RestAnnotationController extends RestController {
     def listByProject = {
         Project project = projectService.read(params.long('id'), new Project())
 
-        Collection<SecUser> userList = params.users != null && params.users != "null" ? userService.list(project, params.users.split("_").collect{ Long.parseLong(it)}) : userService.list(project)
-        Collection<ImageInstance> imageInstanceList = params.images != null && params.images != "null" ? imageInstanceService.list(project, params.images.split("_").collect{ Long.parseLong(it)}) : imageInstanceService.list(project)
+        Collection<SecUser> userList = []
+        if (params.users != null && params.users != "null") {
+            if (params.users != "") userList = userService.list(project, params.users.split("_").collect{ Long.parseLong(it)})
+        }
+        else {
+            userList = userService.list(project)
+        }
+        Collection<ImageInstance> imageInstanceList = []
+        if (params.images != null && params.images != "null") {
+            if (params.images != "") imageInstanceList = imageInstanceService.list(project, params.images.split("_").collect{ Long.parseLong(it)})
+        } else {
+            imageInstanceList = imageInstanceService.list(project)
+        }
+
 
         log.info "List by project " + project.id + " with user:" + userList
 
@@ -89,15 +101,26 @@ class RestAnnotationController extends RestController {
         Term term = termService.read(params.long('idterm'))
         Project project = projectService.read(params.long('idproject'), new Project())
 
-        Collection<SecUser> userList = params.users != null && params.users != "null" ? userService.list(project, params.users.split("_").collect{ Long.parseLong(it)}) : userService.list(project)
-        Collection<ImageInstance> imageInstanceList = params.images != null && params.images != "null" ? imageInstanceService.list(project, params.images.split("_").collect{ Long.parseLong(it)}) : imageInstanceService.list(project)
+        Collection<SecUser> userList = []
+        if (params.users != null && params.users != "null") {
+            if (params.users != "") userList = userService.list(project, params.users.split("_").collect{ Long.parseLong(it)})
+        }
+        else {
+            userList = userService.list(project)
+        }
+        Collection<ImageInstance> imageInstanceList = []
+        if (params.images != null && params.images != "null") {
+            if (params.images != "") imageInstanceList = imageInstanceService.list(project, params.images.split("_").collect{ Long.parseLong(it)})
+        } else {
+            imageInstanceList = imageInstanceService.list(project)
+        }
 
         log.info "List by idTerm " + term.id + " with user:" + userList
         log.info "annotationService.list: " + project + " # " + term + " # " + userList + " # " + imageInstanceList
         if (term == null) responseNotFound("Term", params.idterm)
         else if (project == null) responseNotFound("Project", params.idproject)
-        else if (userList.isEmpty()) responseNotFound("Users", params.users)
-        else if (imageInstanceList.isEmpty()) responseNotFound("ImageInstance", params.images)
+        /*else if (userList.isEmpty()) responseNotFound("Users", params.users)
+        else if (imageInstanceList.isEmpty()) responseNotFound("ImageInstance", params.images)*/
         else if(!params.suggestTerm) {
             responseSuccess(annotationService.list(project, term, userList, imageInstanceList))
         }

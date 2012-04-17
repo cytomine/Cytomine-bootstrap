@@ -35,7 +35,7 @@ class DeployImagesService {
         AbstractImage abstractImage = new AbstractImage(
                 filename: uploadedFile.getConvertedFilename(),
                 originalFilename:  uploadedFile.getOriginalFilename(),
-                scanner: Scanner.list().first(),
+                scanner: null,
                 slide: slide,
                 path: uploadedFile.getConvertedFilename(),
                 mime: Mime.findByExtension(uploadedFile.getConvertedExt()))

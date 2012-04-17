@@ -281,10 +281,10 @@ var BrowseImageView = Backbone.View.extend({
                 controls: [
                     new OpenLayers.Control.TouchNavigation({
                         dragPanOptions: {
-                            enableKinetic: true
+                            enableKinetic: window.app.view.isMobile
                         }
                     }),
-                    new OpenLayers.Control.Navigation( {dragPanOptions: {enableKinetic: false}}),
+                    new OpenLayers.Control.Navigation( {dragPanOptions: {enableKinetic: window.app.view.isMobile}}),
                     new OpenLayers.Control.ZoomPanel(),
                     new OpenLayers.Control.MousePosition(),
                     new OpenLayers.Control.KeyboardDefaults()],

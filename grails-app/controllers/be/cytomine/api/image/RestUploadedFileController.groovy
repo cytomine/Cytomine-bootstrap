@@ -77,7 +77,7 @@ class RestUploadedFileController extends RestController {
             proc.waitFor()
             File destFile = new File(pathFile)
             f.transferTo(destFile)
-            //UploadedFile.withTransaction {
+
             uploadedFile = new UploadedFile(
                     originalFilename: f.originalFilename,
                     filename : currentUser.getId() + "/" + timestamp.toString() + "/" + newFilename,
@@ -89,8 +89,6 @@ class RestUploadedFileController extends RestController {
                     user : currentUser
             )
             uploadedFile.save(flush : true)
-            //}
-
         }
         else {
             response.status = 400;

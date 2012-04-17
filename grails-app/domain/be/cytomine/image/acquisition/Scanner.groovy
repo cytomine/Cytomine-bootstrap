@@ -9,6 +9,10 @@ class Scanner extends Instrument {
         id(generator: 'assigned', unique: true)
     }
 
+    static mapping = {
+        table 'scanner'
+    }
+
     String toString() {
         brand + "-" + model + " with maxResolution = " + maxResolution
     }

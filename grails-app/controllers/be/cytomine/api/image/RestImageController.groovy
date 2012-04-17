@@ -127,6 +127,15 @@ class RestImageController extends RestController {
         }
     }
 
+    def slidingWindow = {
+        int width = params.width != null ? Integer.parseInt(params.width) : 1000
+        int height = params.height != null ? Integer.parseInt(params.width) : 1000
+        float overlapX = params.overlapX != null ? Float.parseFloat(params.overlapX) : 0
+        float overlapY = params.overlapY != null ? Float.parseFloat(params.overlapY) : 0
+        AbstractImage image = abstractImageService.read(params.long('id'))
+        if (image) responseSuccess(abstractImageService.slidingWindow(image, [ width : width, height : height, overlapX : overlapX, overlapY : overlapY]))
+    }
+
     def retrieval = {
         Annotation annotation = Annotation.read(params.idannotation)
         int zoom = (params.zoom != null) ? Integer.parseInt(params.zoom) : annotation.getImage().getZoomLevels().middle
@@ -141,6 +150,7 @@ class RestImageController extends RestController {
             responseSuccess(abstractImageService.retrieval(annotation, zoom, maxSimilarPictures))
         }
     }
+
 }
 
 

@@ -261,7 +261,7 @@ class Annotation extends CytomineDomain implements Serializable {
             //retrieval
             try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
             returnArray['cropURL'] = annotation.getCropURL()
-            //returnArray['smallCropURL'] = annotation.getCropURLWithMaxWithOrHeight(256)
+            returnArray['smallCropURL'] = annotation.getCropURLWithMaxWithOrHeight(256)
 
             //println grailsApplication.config.grails.serverURL
 

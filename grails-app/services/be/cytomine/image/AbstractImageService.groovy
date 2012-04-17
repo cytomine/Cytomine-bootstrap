@@ -108,7 +108,7 @@ class AbstractImageService extends ModelService {
         def res = executeCommand(new EditCommand(user: currentUser), json)
         AbstractImage abstractImage = res.object
         StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
-              StorageAbstractImage.unlink(storageAbstractImage.storage, abstractImage)
+            StorageAbstractImage.unlink(storageAbstractImage.storage, abstractImage)
         }
         json.storage.each { storageID ->
             Storage storage = storageService.read(storageID)
@@ -129,7 +129,7 @@ class AbstractImageService extends ModelService {
         Group group = Group.findByName(currentUser.getUsername())
         AbstractImageGroup.unlink(abstractImage, group)
         StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
-              StorageAbstractImage.unlink(storageAbstractImage.storage, storageAbstractImage.abstractImage)
+            StorageAbstractImage.unlink(storageAbstractImage.storage, storageAbstractImage.abstractImage)
         }
         def res =  executeCommand(new DeleteCommand(user: currentUser), json)
 
@@ -186,6 +186,26 @@ class AbstractImageService extends ModelService {
     def retrieval(Annotation annotation, int zoom, int maxSimilarPictures) {
         def retrievalServers = RetrievalServer.findAll()
         return retrievalServers.get(0).search(annotation.getCropURL(zoom), maxSimilarPictures)
+    }
+
+    def slidingWindow(AbstractImage abstractImage, parameters) {
+        def windows = []
+        int windowWidth = parameters.width
+        int windowHeight = parameters.height
+        int stepX = parameters.width * (1 - parameters.overlapX)
+        int stepY = parameters.height * (1 - parameters.overlapY)
+        for (int y = 0; y < abstractImage.getHeight(); y +=  stepY) {
+            for (int x = 0; x < abstractImage.getWidth(); x += stepX) {
+                int x_window = x
+                int y_window =  y
+                int width = windowWidth + Math.min(0, (abstractImage.getWidth() - (x_window + windowWidth)))
+                int height = windowHeight + Math.min(0, (abstractImage.getHeight() - (y_window + windowHeight)))
+                int invertedY =  abstractImage.getHeight() - y_window //for IIP
+                String url = abstractImage.getCropURL(x_window, invertedY, width, height)
+                windows << [ x : x_window, y : y_window, width : width, height : height, image : url]
+            }
+        }
+        windows
     }
 
     /**
@@ -263,5 +283,6 @@ class AbstractImageService extends ModelService {
         if (!image) throw new ObjectNotFoundException("Image " + json.id + " not found")
         return image
     }
+
 
 }
