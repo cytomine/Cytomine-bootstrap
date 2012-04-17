@@ -256,23 +256,24 @@ class AnnotationService extends ModelService {
             //Add Annotation
             log.debug this.toString()
             def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
-            def annotation = result?.data?.annotation?.id
-            log.info "annotation=" + annotation + " json.term=" + json.term
+            def annotationID = result?.data?.annotation?.id
+            log.info "annotation=" + annotationID + " json.term=" + json.term
             //Add annotation-term if term
-            if (annotation) {
+            if (annotationID) {
                 def term = json.term;
                 if (term) {
                     term.each { idTerm ->
-                        annotationTermService.addAnnotationTerm(annotation, idTerm, null,currentUser.id, currentUser, transaction)
+                        annotationTermService.addAnnotationTerm(annotationID, idTerm, null,currentUser.id, currentUser, transaction)
                     }
                 }
             }
+
 
             //Stop transaction
             transactionService.stop()
 
             //add annotation on the retrieval
-            try {if (annotation) indexRetrievalAnnotation(annotation) } catch (Exception e) {
+            try {if (annotationID) indexRetrievalAnnotation(annotationID) } catch (Exception e) {
                 log.error "Cannot index in retrieval:" + e.toString()
                 e.printStackTrace()
             }

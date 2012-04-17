@@ -78,24 +78,9 @@ div .overviewPanel {
 
 }
 
-div .popupPanel {
-    width:100%;
-    color : #ffffff !important;
-    padding: 0px;
-    margin : 0px;
-    z-index : 1;
-    background-color: rgba(0, 0, 0, 0.7);
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
-
-}
-
 div .popupPanel a {
     color: #26b4e3;
 }
-
-
 
 div .zoomInfoPanel {
     position : absolute;
@@ -255,7 +240,21 @@ div .layerSwitcherPanel {
     /*right : 20px;
     top : 100px;*/
     z-index : 1000;
+    background-color: black;
+    color : #fff;
+    padding: 0px;
+    margin : 0px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
 
+}
+
+div .annotationDetailPanel {
+    position : absolute;
+    left : 10px;
+    bottom : 35px;
+    z-index : 1001;
     color : #fff;
     padding: 0px;
     -moz-border-radius: 6px;
@@ -263,9 +262,7 @@ div .layerSwitcherPanel {
     border-radius: 6px;
     background-color: rgba(0, 0, 0, 0.7);
     width : 250px;
-
 }
-
 
 div .imageFiltersPanel {
     position : absolute;

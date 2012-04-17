@@ -69,6 +69,7 @@ var BrowseImageView = Backbone.View.extend({
                 success : function (annotation, response) {
                     var layer = _.find(self.layers, function (layer) { return layer.userID == annotation.get("user")});
                     if (layer) {
+                        layer.showFeature(annotation.get("id"));
                         self.setLayerVisibility(layer, true);
                         self.goToAnnotation(layer,  annotation);
                     }
@@ -81,12 +82,8 @@ var BrowseImageView = Backbone.View.extend({
         this.annotationsPanel.refreshAnnotationTabs(idTerm);
     },
     setLayerVisibility : function(layer, visibility) {
-        console.log("setLayerVisibility");
         // manually check (or uncheck) the checkbox in the menu:
         $("#layerSwitcher"+this.model.get("id")).find("ul.annotationLayers").find(":checkbox").each(function(){
-            console.log("Layer name = " + layer.name);
-            console.log("Layer value = " + $(this).attr("value"));
-
             if (layer.name != $(this).attr("value")) return;
             if (visibility) {
                 if ($(this).attr("checked") != "checked") {
