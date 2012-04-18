@@ -19,6 +19,7 @@ import be.cytomine.test.http.AbstractImageGroupAPI
  */
 class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
 
+
   void testListAbstractImageGroupByAbstractImageWithCredential() {
     AbstractImage abstractimage = BasicInstance.createOrGetBasicAbstractImage()
     def result = AbstractImageGroupAPI.listByImage(abstractimage.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)

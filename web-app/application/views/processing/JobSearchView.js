@@ -43,9 +43,12 @@ var JobSearchView = Backbone.View.extend({
     printJobListingPanel : function() {
         console.log("JobSearchView.printJobListingPanel");
         var self = this;
+
+
+
         new JobCollection({ project : self.project.id, software:  self.software.id}).fetch({
              success : function (collection, response) {
-                 new JobTableView({
+                 var listing = new JobTableView({
                      width : self.software,
                      project : self.project,
                      software : self.software,
@@ -53,6 +56,15 @@ var JobSearchView = Backbone.View.extend({
                      parent : self,
                      jobs: collection
 
+                 }).render();
+                 new JobSearchEngineView({
+                     width : self.software,
+                     project : self.project,
+                     software : self.software,
+                     el : $("#jobFilterList"),
+                     parent : self,
+                     listing : listing,
+                     allJobs : collection
                  }).render();
              }
          });

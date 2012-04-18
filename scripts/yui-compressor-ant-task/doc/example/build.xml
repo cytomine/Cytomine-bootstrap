@@ -115,6 +115,8 @@
 <fileset dir="${src.dir}" includes="application/views/processing/LaunchJobView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobResultView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/SoftwareDetailsView.js"/>
+<fileset dir="${src.dir}" includes="application/views/processing/JobSearchView.js"/>
+<fileset dir="${src.dir}" includes="application/views/processing/JobTableView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/result/RetrievalAlgoResult.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationLayer.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/BrowseImageView.js"/>

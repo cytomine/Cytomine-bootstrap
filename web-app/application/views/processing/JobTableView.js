@@ -6,6 +6,8 @@ var JobTableView = Backbone.View.extend({
     parent : null,
     table : null,
     paramsFromSoftwares : null,
+    paramsFromSoftwaresVisibility : null,
+    FIRSTCOLUMNWITHJOBDATA : 6,
     initialize: function(options) {
         var self = this;
         this.software = options.software;
@@ -15,6 +17,10 @@ var JobTableView = Backbone.View.extend({
         this.paramsFromSoftwares = [];
         _.each(self.software.get('parameters'), function(param) {
             self.paramsFromSoftwares.push(param.name)
+        });
+        this.paramsFromSoftwaresVisibility = [];
+        _.each(self.software.get('parameters'), function(param) {
+            self.paramsFromSoftwaresVisibility.push(false)
         });
     },
     render : function() {
@@ -33,16 +39,60 @@ var JobTableView = Backbone.View.extend({
         var content = _.template(jobListingViewTpl, {});
         $(self.el).empty();
         $(self.el).append(content);
-        self.printDatatables()
+        self.printDatatables();
     },
     refresh : function(jobs) {
+        var self = this;
         console.log("JobTableView.refresh");
-//        this.jobs = jobs;
-//        this.printDatatables();
+        self.jobs = jobs;
+        $(self.el).find('#searchJobTable').find('#searchJobHeader').empty();
+        $(self.el).find('#searchJobTable').find("tbody").empty();
+
+        if(self.jobs != undefined && self.jobs.length>0) {
+             self.addParamsColumn(self.jobs.models[0]);
+        }
+//        self.printDatatables()
+        $(self.el).find('#searchJobTable').find("tbody").empty();
+        var datatable = $(self.el).find('#searchJobTable').dataTable();
+
+        datatable.fnClearTable();
+        $(self.el).find('#searchJobTable').find("tbody").empty();
+        datatable.fnClearTable();
+        console.log("#### tbody="+$(self.el).find('#searchJobTable').find("tbody").children().length);
+        self.buildShowHideAllColumn(datatable,true);
+        datatable.fnClearTable();
+        console.log("#### self.jobs="+self.jobs.length);
+        console.log("#### tbody="+$(self.el).find('#searchJobTable').find("tbody").children().length);
+        if (self.jobs != undefined) {
+            self.jobs.each(function (job) {
+//                console.log("job="+job.id);
+                self.addJobData(job);
+            });
+        }
+        self.initSubGridDatatables();
+        self.table = $(self.el).find('#searchJobTable').dataTable({
+//            "bFilter": false,
+//            "sDom": '<"toolbar">frtip',
+            "sPaginationType": "bootstrap",
+            "oLanguage": {
+                "sLengthMenu": "_MENU_ records per page"
+            },
+            "iDisplayLength": 15 ,
+            "bLengthChange" : false,
+//            "aoColumnDefs": [
+//                { "sWidth": "5%", "aTargets": [ 0 ] },
+//                { "sWidth": "10%", "aTargets": [ 1 ]},
+//                { "sWidth": "10%", "aTargets": [ 2 ] },
+//                { "sWidth": "25%", "aTargets": [ 3 ] },
+//                { "sWidth": "20%", "aTargets": [ 4 ] },
+//                { "sWidth": "30%", "aTargets": [ 5 ] }
+//            ],
+            bDestroy: true
+        });
+        self.buildSHowHideColumnParamPanel(datatable)
     },
     addParamsColumn : function(job) {
         var self = this;
-
 
         $(self.el).find('#searchJobTable').find('#searchJobHeader').append('<th></th>');
         $(self.el).find('#searchJobTable').find('#searchJobHeader').append('<th>Id</th>');
@@ -75,7 +125,7 @@ var JobTableView = Backbone.View.extend({
         var colArray = ['<tr>','<td>' + cellIcon + '</td>','<td  style="text-align:left;">'+cellId + '</td>','<td  style="text-align:center;">' + cellNumber + '</td>','<td  style="text-align:center;">' + cellDate + '</td>','<td  style="text-align:center;">' + cellState + '</td>','<td>' + cellSee + '</td>']
 
         var jobParamArray = job.get('jobParameter');
-        console.log(jobParamArray.length);
+//        console.log(jobParamArray.length);
         if(jobParamArray.length==0) {
             _.each(self.paramsFromSoftwares, function(softParam) {
                 colArray.push('<td></td>')
@@ -93,39 +143,54 @@ var JobTableView = Backbone.View.extend({
         }
         colArray.push('</tr>');
         var rowString = colArray.join("");
-        console.log("job="+job.id);
-        console.log("colArray="+colArray.length);
+//        console.log("job="+job.id);
+//        console.log("colArray="+colArray.length);
         tbody.append(rowString);
     },
-    buildSHowHideColumnParamPanel : function(datatable,show) {
+    buildShowHideAllColumn : function(datatable, show) {
+        var self = this;
+        for(var i=0;i<datatable.fnSettings().aoColumns.length;i++) {
+            datatable.fnSetColumnVis( i, show);
+        }
+    },
+    buildSHowHideColumnParamPanel : function(datatable) {
         var self = this;
         console.log("buildHideColumnParamPanel="+datatable.fnSettings().aoColumns.length);
-        for(var i=6;i<datatable.fnSettings().aoColumns.length;i++) {
-            datatable.fnSetColumnVis( i, show);
+        for(var i=self.FIRSTCOLUMNWITHJOBDATA;i<datatable.fnSettings().aoColumns.length;i++) {
+            var visibility = self.paramsFromSoftwaresVisibility[i-self.FIRSTCOLUMNWITHJOBDATA];
+            datatable.fnSetColumnVis( i, visibility);
         }
 
         $("#showParamColumnSearchJobTable").empty();
-        for(var i=6;i<datatable.fnSettings().aoColumns.length;i++) {
-            $("#showParamColumnSearchJobTable").append('<button id="'+i+'">Show '+datatable.fnSettings().aoColumns[i].sTitle+'</button>');
+        for(var i=self.FIRSTCOLUMNWITHJOBDATA;i<datatable.fnSettings().aoColumns.length;i++) {
+            var showOrHide = !self.paramsFromSoftwaresVisibility[i-self.FIRSTCOLUMNWITHJOBDATA]?"Show" : "Hide";
+            $("#showParamColumnSearchJobTable").append('<button id="'+(i-self.FIRSTCOLUMNWITHJOBDATA)+'">'+ showOrHide +' '+datatable.fnSettings().aoColumns[i].sTitle+'</button>');
 
-            $("#showParamColumnSearchJobTable").find('#'+i).click(function () {
+            $("#showParamColumnSearchJobTable").find('#'+(i-self.FIRSTCOLUMNWITHJOBDATA)).click(function () {
                 var $this = $(this);
-                self.showOrHideColumnVisibility($this.attr("id"), datatable);
+                console.log("Show/Hide:"+$this.attr("id"));
+                self.showOrHideColumnVisibility((parseInt($this.attr("id"))+self.FIRSTCOLUMNWITHJOBDATA), datatable);
 
-            })
+            });
         }
     },
     showOrHideColumnVisibility : function(colIndex, datatable) {
         console.log("Click show/hide column:"+colIndex);
-        var bVis = datatable.fnSettings().aoColumns[colIndex].bVisible;
-        if(bVis) {
+        var self = this;
+        var columnIndex = colIndex - self.FIRSTCOLUMNWITHJOBDATA;
+        var columnParamIndex = parseInt(colIndex);
+        console.log("columnIndex="+columnIndex +" columnParamIndex="+columnParamIndex);
+        var oldVisibility = self.paramsFromSoftwaresVisibility[columnIndex];
+        self.paramsFromSoftwaresVisibility[columnIndex] = !self.paramsFromSoftwaresVisibility[columnIndex];
+        console.log("Change visibility to "+self.paramsFromSoftwaresVisibility[columnIndex]);
+        datatable.fnSetColumnVis( columnParamIndex, self.paramsFromSoftwaresVisibility[columnIndex]);
+
+        if(oldVisibility) {
             //hide
-            datatable.fnSetColumnVis( colIndex, false);
-            $("#showParamColumnSearchJobTable").find('#'+colIndex).text("Show " + datatable.fnSettings().aoColumns[colIndex].sTitle);
+            $("#showParamColumnSearchJobTable").find('#'+columnIndex).text("Show " + datatable.fnSettings().aoColumns[(columnParamIndex)].sTitle);
         } else {
             //show
-            datatable.fnSetColumnVis( colIndex, true);
-            $("#showParamColumnSearchJobTable").find('#'+colIndex).text("Hide " + datatable.fnSettings().aoColumns[colIndex].sTitle);
+            $("#showParamColumnSearchJobTable").find('#'+columnIndex).text("Hide " + datatable.fnSettings().aoColumns[(columnParamIndex)].sTitle);
         }
     },
     printDatatables : function() {
@@ -147,7 +212,7 @@ var JobTableView = Backbone.View.extend({
 
 
         //show hidden column (if not done, datatable is not filled)
-        self.buildSHowHideColumnParamPanel(datatable,true);
+        self.buildShowHideAllColumn(datatable,true);
 
         datatable.fnClearTable();
 
@@ -155,7 +220,7 @@ var JobTableView = Backbone.View.extend({
 
         if (self.jobs != undefined) {
             self.jobs.each(function (job) {
-//                console.log("job="+job.id);
+                console.log("job="+job.id);
                 self.addJobData(job);
             });
         }
@@ -186,7 +251,7 @@ var JobTableView = Backbone.View.extend({
         self.initSubGridDatatables();
         console.log("hide id column");
         //hide id column
-        self.buildSHowHideColumnParamPanel(self.table,false);
+        self.buildSHowHideColumnParamPanel(self.table);
     },
     getStateElement : function(job) {
         if(job.isNotLaunch()) return '<span class="label btn-inverse">Not Launch!</span> ';
