@@ -68,7 +68,6 @@ var AnnotationsPanel = Backbone.View.extend({
                        $("#annotationsPanel"+self.model.id).find( ".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *" )
                            .removeClass( "ui-corner-all ui-corner-top" )
                            .addClass( "ui-corner-bottom" );
-                       self.initAnnotations();
                     }});
 
 
@@ -108,20 +107,6 @@ var AnnotationsPanel = Backbone.View.extend({
           $("#annotationsPanel"+this.model.id).find(".ultabsannotation").append(_.template(termTabTpl, data));
           $("#annotationsPanel"+this.model.id).find(".listtabannotation").append(_.template(termTabContentTpl, data));
        },
-       initAnnotations : function () {
-          var self = this;
-
-
-          //init panel for all annotation (with or without term
-          new AnnotationCollection({image:self.model.id}).fetch({
-                 success : function (collection, response) {
-
-                    self.refreshAnnotations(undefined, $("#tabsterm-"+self.model.id+"-all"));
-                    /*self.annotationsViews[0] = view;*/
-
-                 }
-              });
-       },
        /**
         * Render the html into the DOM element associated to the view
         * @param tpl
@@ -150,17 +135,17 @@ var AnnotationsPanel = Backbone.View.extend({
                  }, "fast").animate({
                     width: width
                  }, "fast").find("div.panel_content").fadeIn();
-             //setTimeout(function(){el.find("div.panel_content").fadeIn();}, 1000);
+
+              //Refresh selected tab
+              var tabSelected = el.find(".tabsAnnotation").tabs('option', 'selected');
+              var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object){
+                  return (object.index == tabSelected);
+              });
+              obj.refresh.call();
              return false;
           });
 
-          el.find("div#refresh_annotations_button").click(function(){
-             var tabSelected = el.find(".tabsAnnotation").tabs('option', 'selected');
-             var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object){
-                return (object.index == tabSelected);
-             });
-             obj.refresh.call();
-          });
+
           el.find("div#hide_button").click(function(){
              el.animate({
                     height: "16px"

@@ -81,6 +81,12 @@ var BrowseImageView = Backbone.View.extend({
     refreshAnnotationTabs : function (idTerm) {
         this.annotationsPanel.refreshAnnotationTabs(idTerm);
     },
+    setAllLayersVisibility : function(visibility) {
+        var self = this;
+        _.each(this.layers, function (layer) {
+            self.setLayerVisibility(layer, visibility);
+        });
+    },
     setLayerVisibility : function(layer, visibility) {
         // manually check (or uncheck) the checkbox in the menu:
         $("#layerSwitcher"+this.model.get("id")).find("ul.annotationLayers").find(":checkbox").each(function(){

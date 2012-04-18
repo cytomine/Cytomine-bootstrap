@@ -49,10 +49,10 @@ var LayerSwitcherPanel = Backbone.View.extend({
         var color = window.app.models.users.get(userID).get('color');
         var layerOptionTpl;
         if (layer.isOwner) {
-            layerOptionTpl = _.template("<li><input id='<%=   id %>' type='checkbox'  value='<%= name %>' checked />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color : #ffffff;'> <%=   name %></span></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
+            layerOptionTpl = _.template("<li><input id='<%= id %>' class='showUser' type='checkbox'  value='<%= name %>' checked />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color : #ffffff;'> <%=   name %></span></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
         } else {
             /*layerOptionTpl = _.template("<li><input id='<%= id %>' type='checkbox' value='<%=   name %>' /> <span style='color : #ffffff;'><%=   name %></span> <a class='followUser' data-user-id='<%= userID %>' href='#'>Follow</a></li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});*/
-            layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : #ffffff;'><%= name %></span></a> </li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});
+            layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : #ffffff;'><%= name %></span></a> </li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});
         }
         $("#layerSwitcher"+model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
 
@@ -146,7 +146,21 @@ var LayerSwitcherPanel = Backbone.View.extend({
 
         });
 
-
+        $("#selectLayersIcon"+self.model.get("id")).off("click");
+        $("#selectLayersIcon"+self.model.get("id")).on("click", function (event) {
+            var project = window.app.status.currentProjectModel;
+            var projectUsers = window.app.models.users.select(function(user){
+                return _.include(project.get("users"), user.id);
+            });
+            var userList = $("#layerSwitcher"+self.model.get("id")).find("ul.annotationLayers");
+            projectUsers = _.pluck(projectUsers, 'id');
+            var almostOneCheckedState = false;
+            _.each(projectUsers, function (userID) {
+                var checked = userList.find("li[data-id="+userID+"]").find('input.showUser').attr("checked") == "checked";
+                if (!almostOneCheckedState && checked) almostOneCheckedState = true;
+            });
+            self.browseImageView.setAllLayersVisibility(!almostOneCheckedState);
+        });
         new DraggablePanelView({
             el : $('#layerSwitcher' + self.model.get('id')),
             className : "layerSwitcherPanel"

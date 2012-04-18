@@ -28,6 +28,7 @@ var ProjectDashboardView = Backbone.View.extend({
             self.rendered = true;
         });
         return this;
+
     },
     doLayout : function(tpl) {
         var self = this;
@@ -40,6 +41,11 @@ var ProjectDashboardView = Backbone.View.extend({
         window.app.controllers.browse.tabs.addDashboard(self);
         /*self.initTabs();*/
         self.showImagesThumbs();
+
+        //Refresh dashboard
+        setInterval(function(){
+            if ($("#tabs-dashboard-"+self.model.id).hasClass('active')) self.refreshDashboard();
+        }, 15000);
     },
     refreshImagesThumbs : function() {
         if (this.projectDashboardImages == null)

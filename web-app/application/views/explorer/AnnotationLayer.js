@@ -120,6 +120,8 @@ AnnotationLayer.prototype = {
                         self.removeSelection();
                     } else {
                         self.showPopup(map, evt);
+                        evt.feature.style.strokeColor = "#FF0000";
+                        self.vectorsLayer.drawFeature(evt.feature);
                     }
                 }
                 else self.showPopupMeasure(map, evt);
@@ -134,6 +136,8 @@ AnnotationLayer.prototype = {
                 self.ontologyTreeView.clear();
                 self.ontologyTreeView.clearAnnotation();
                 self.clearPopup(map, evt);
+                evt.feature.style.strokeColor = "#000000";
+                self.vectorsLayer.drawFeature(evt.feature);
                 //alias.ontologyTreeView.refresh(null);
             },
             'featureadded': function (evt) {
