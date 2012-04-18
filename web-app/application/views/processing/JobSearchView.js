@@ -44,8 +44,6 @@ var JobSearchView = Backbone.View.extend({
         console.log("JobSearchView.printJobListingPanel");
         var self = this;
 
-
-
         new JobCollection({ project : self.project.id, software:  self.software.id}).fetch({
              success : function (collection, response) {
                  var listing = new JobTableView({

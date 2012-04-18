@@ -1,10 +1,22 @@
 <div id="jobSearchEngineView">
-    Coucou!
-
-    <form class="well form-search">
-      <input type="text" class="input-medium search-query" id="searchJobFilterNumber">
+    <table>
+        <tr><td><span>Job id : </span></td><td><input type="text" class="input-medium search-query" id="searchJobFilterId"></td></tr>
+        <tr><td>Job # :</td><td><input type="text" class="input-medium search-query" id="searchJobFilterNumber"></td></tr>
+        <tr><td>Creation Date after : </td><td><input type="text" class="input-medium search-query" id="searchJobFilterDateAfter"></td></tr>
+        <tr><td>Creation Date before : </td><td><input type="text" class="input-medium search-query" id="searchJobFilterDateBefore"></td></tr>
+        <tr><td>Status : </td>
+            <td>
+                <ul>
+                    <li id="searchJobFilterStatusNotLaunch"><input id="searchJobFilterStatusNotLaunchCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                    <li id="searchJobFilterStatusInQueue"><input  id="searchJobFilterStatusInQueueCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                    <li id="searchJobFilterStatusRunning"><input id="searchJobFilterStatusRunningCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                    <li id="searchJobFilterStatusSuccess"><input id="searchJobFilterStatusSuccessCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                    <li id="searchJobFilterStatusFailed"><input id="searchJobFilterStatusFailedCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                    <li id="searchJobFilterStatusIndetereminate"><input id="searchJobFilterStatusIndetereminateCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                    <li id="searchJobFilterStatusWait"><input id="searchJobFilterStatusWaitCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                </ul>
+            </td>
+        </tr>
       <button class="btn" id="searchJobFilterButton">Search</button>
-    </form>
-
-
+    </table>
  </div>

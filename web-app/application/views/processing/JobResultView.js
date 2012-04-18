@@ -3,6 +3,7 @@ var JobResultView = Backbone.View.extend({
     project : null,
     jobs : null,
     parent : null,
+
     initialize: function(options) {
         this.software = options.software;
         this.project = options.project;
