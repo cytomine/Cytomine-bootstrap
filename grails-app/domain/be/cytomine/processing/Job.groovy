@@ -7,6 +7,7 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ResponseService
+import org.hibernate.FetchMode
 
 class Job extends CytomineDomain  {
     //enum type are too heavy with GORM
@@ -29,6 +30,7 @@ class Job extends CytomineDomain  {
 
     static belongsTo = [software: Software]
 
+    SortedSet jobParameter
     static hasMany = [jobParameter: JobParameter]
 
     static constraints = {
@@ -65,7 +67,10 @@ class Job extends CytomineDomain  {
             job.created = it.created ? it.created.time.toString() : null
             job.updated = it.updated ? it.updated.time.toString() : null
 
-            try {job.jobParameter = JobParameter.findAllByJob(it) } catch(Exception e) {}
+            try {
+                job.jobParameter =  it.jobParameter
+
+            } catch(Exception e) {println e}
 
             return job
         }

@@ -45,7 +45,7 @@ class Software extends CytomineDomain {
             software.serviceName = it.serviceName
             software.resultName = it.resultName
             try {
-                software.parameters = SoftwareParameter.findAllBySoftware(it,[sort: "name",order: "asc"])
+                software.parameters = SoftwareParameter.findAllBySoftware(it,[sort: "index",order: "asc"])
                 software.numberOfJob = Job.countBySoftware(it);
 
                 software.numberOfNotLaunch = Job.countBySoftwareAndStatus(it,Job.NOTLAUNCH);

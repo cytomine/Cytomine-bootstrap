@@ -5,7 +5,7 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.Exception.AlreadyExistException
 
-class JobParameter extends CytomineDomain{
+class JobParameter  extends CytomineDomain implements Comparable{
 
     String value
 
@@ -14,6 +14,10 @@ class JobParameter extends CytomineDomain{
     static constraints = {
     }
 
+    static mapping = {
+        id generator: "assigned"
+        softwareParameter fetch: 'join'
+    }
 
     //if(JobParameter.findByJobAndSoftwareParameter(domain.job, domain.softwareParameter)) throw new AlreadyExistException("Job parameter still exist for this job ${domain?.job?.id}/softwareparameter ${domain?.softwareParameter?.name}")
     void checkAlreadyExist() {
@@ -34,6 +38,7 @@ class JobParameter extends CytomineDomain{
             jobParameter.softwareParameter = softwareParam.id
             jobParameter.name = softwareParam.name
             jobParameter.type = softwareParam.type
+            jobParameter.index = softwareParam.index
             return jobParameter
         }
     }
@@ -59,5 +64,11 @@ class JobParameter extends CytomineDomain{
         if(!jobParameter.job) throw new WrongArgumentException("Job ${jsonJobParameter.job.toString()} doesn't exist!")
         if(!jobParameter.softwareParameter) throw new WrongArgumentException("SoftwareParameter ${jsonJobParameter.softwareParameter.toString()} doesn't exist!")
         return jobParameter;
+    }
+
+    int compareTo(Object t) {
+        if(this.softwareParameter.index<t.softwareParameter.index) return -1
+        else if(this.softwareParameter.index>t.softwareParameter.index) return 1
+        else return 0
     }
 }

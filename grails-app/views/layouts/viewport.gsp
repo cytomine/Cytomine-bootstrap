@@ -149,6 +149,8 @@ body {
     <script type="text/javascript" src="application/views/processing/LaunchJobView.js" ></script>
     <script type="text/javascript" src="application/views/processing/JobResultView.js" ></script>
     <script type="text/javascript" src="application/views/processing/SoftwareDetailsView.js"></script>
+    <script type="text/javascript" src="application/views/processing/JobSearchView.js"></script>
+    <script type="text/javascript" src="application/views/processing/JobTableView.js"></script>
     <script type="text/javascript" src="application/views/processing/result/RetrievalAlgoResult.js"></script>
 
 

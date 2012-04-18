@@ -49,11 +49,11 @@ var ProjectDashboardAlgos = Backbone.View.extend({
               self.softwares = collection;
               self.initProjectSoftwareList();
               var softModel = collection.get(self.idSoftware);
-               console.log("1. self.idJob="+self.idJob);
               self.printProjectSoftwareInfo();
 
                 //button click run software
                 self.printSoftwareButton();
+
 
 
                 new JobCollection({ project : self.model.id, software: self.idSoftware, light:true}).fetch({
@@ -181,6 +181,16 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                     el : $("#softwareInfoDialogParent")
                 }).render();
           });
+
+        $("#softwareFilterJobButton").click(function() {
+            console.log("project=" + self.model.id + " software.id=" +  self.software.id);
+              new JobSearchView({
+                  software : self.software,
+                  project : self.model,
+                  parent : self,
+                  el : $("#softwareSearchDialogParent")
+              }).render()
+             });
     },
     printComparatorLaunch : function() {
         var self = this;
