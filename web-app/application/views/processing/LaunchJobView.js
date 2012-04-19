@@ -385,7 +385,7 @@ var InputListDomainView = Backbone.View.extend( {
     addRow : function(tbody) {
         var self = this;
          tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;">'+self.param.name+ '</td><td id="'+self.param.id+'" style="text-align:center;"></td><td style="text-align:center;"><span class="errorMessage label label-important hidden"></span></td></tr>');
-        self.trElem = $('tr#'+self.param.id);
+        self.trElem = tbody.find('tr#'+self.param.id);
         console.log("*****************************");
         console.log(self.collection);
         console.log(self.collection.at(0));

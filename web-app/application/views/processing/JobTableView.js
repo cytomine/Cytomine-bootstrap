@@ -40,17 +40,7 @@ var JobTableView = Backbone.View.extend({
         $(self.el).empty();
         $(self.el).append(content);
 
-        if(window.app.models.projects==undefined || (window.app.models.projects.length>0 && window.app.models.projects.at(0).id==undefined)) {
-            console.log("************* EMPTY LIST");
-            window.app.models.projects = new ProjectCollection();
-            window.app.models.projects.fetch({
-                success : function(collection, response) {
-                    self.printDatatables();
-                }
-            });
-        } else {
-            self.printDatatables();
-        }
+        self.printDatatables();
     },
     refresh : function(jobs) {
         var self = this;

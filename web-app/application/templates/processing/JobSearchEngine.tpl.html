@@ -1,11 +1,10 @@
 <div id="jobSearchEngineView">
     <table>
-        <tr><td><span>Job id : </span></td><td><input type="text" class="input-medium search-query" id="searchJobFilterId"></td></tr>
-        <tr><td>Job # :</td><td><input type="text" class="input-medium search-query" id="searchJobFilterNumber"></td></tr>
-        <tr><td>Creation Date after : </td><td><input type="text" class="input-medium search-query" id="searchJobFilterDateAfter"></td></tr>
-        <tr><td>Creation Date before : </td><td><input type="text" class="input-medium search-query" id="searchJobFilterDateBefore"></td></tr>
-        <tr><td>Status : </td>
-            <td>
+        <tr><td>Job id :<br><input type="text" class="input-medium search-query" id="searchJobFilterId"></td></tr>
+        <tr><td>Job # :<br><input type="text" class="input-medium search-query" id="searchJobFilterNumber"></td></tr>
+        <tr><td>Creation Date after : <br><input type="text" class="input-medium search-query" id="searchJobFilterDateAfter"></td></tr>
+        <tr><td>Creation Date before : <br><input type="text" class="input-medium search-query" id="searchJobFilterDateBefore"></td></tr>
+        <tr><td>Status :
                 <ul>
                     <li id="searchJobFilterStatusNotLaunch"><input id="searchJobFilterStatusNotLaunchCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
                     <li id="searchJobFilterStatusInQueue"><input  id="searchJobFilterStatusInQueueCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
@@ -17,6 +16,12 @@
                 </ul>
             </td>
         </tr>
-      <button class="btn" id="searchJobFilterButton">Search</button>
     </table>
+    <button class="btn" id="searchJobFilterButton">Search Jobs</button>
+    <br><br>
+    Jobs Parameter:
+    <table id="searchJobFilterParameterTable">
+
+    </table>
+
  </div>

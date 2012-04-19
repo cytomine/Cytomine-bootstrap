@@ -44,6 +44,20 @@ var JobSearchView = Backbone.View.extend({
         console.log("JobSearchView.printJobListingPanel");
         var self = this;
 
+            if(window.app.models.projects==undefined || (window.app.models.projects.length>0 && window.app.models.projects.at(0).id==undefined)) {
+                console.log("************* EMPTY LIST");
+                window.app.models.projects = new ProjectCollection();
+                window.app.models.projects.fetch({
+                    success : function(collection, response) {
+                        self.openJobListing();
+                    }
+                });
+            } else {
+                self.openJobListing();
+            }
+    },
+    openJobListing : function() {
+        var self = this;
         new JobCollection({ project : self.project.id, software:  self.software.id}).fetch({
              success : function (collection, response) {
                  var listing = new JobTableView({
@@ -66,7 +80,6 @@ var JobSearchView = Backbone.View.extend({
                  }).render();
              }
          });
-
     },
     refreshSearch : function() {
 
