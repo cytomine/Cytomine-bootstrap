@@ -76,6 +76,12 @@ var JobTableView = Backbone.View.extend({
             });
         }
 
+        $(self.el).find('#searchJobTable').find("tbody").find("button").click(function() {
+            var id = $(this).attr("id");
+            $(self.parent.el).dialog("close");
+            window.location = '#tabs-algos-' + self.project.id + "-" + self.software.id + "-" + id + '';
+        });
+
         self.table = $(self.el).find('#searchJobTable').dataTable({
             "bFilter": true,
             "sDom": '<"toolbar">frtip',
@@ -124,7 +130,7 @@ var JobTableView = Backbone.View.extend({
         var cellNumber = job.get('number');
         var cellDate = window.app.convertLongToDate(job.get('created'));
         var cellState = self.getStateElement(job);
-        var cellSee =  '<a href="#tabs-algos-' + self.project.id + "-" + self.software.id + "-" + job.id + '" id="' + job.id + '">See details<br></a>';
+        var cellSee =  '<button id="'+job.id+'">See details</button>';
 
         //fill array with first column info
         var colArray = ['<tr>','<td>' + cellIcon + '</td>','<td  style="text-align:left;">'+cellId + '</td>','<td  style="text-align:center;">' + cellNumber + '</td>','<td  style="text-align:center;">' + cellDate + '</td>','<td  style="text-align:center;">' + cellState + '</td>','<td>' + cellSee + '</td>']
@@ -149,6 +155,7 @@ var JobTableView = Backbone.View.extend({
         colArray.push('</tr>');
         var rowString = colArray.join("");
         tbody.append(rowString);
+
     },
     getValueElement : function(param) {
         if(param.type=="String" || param.type=="Number") {

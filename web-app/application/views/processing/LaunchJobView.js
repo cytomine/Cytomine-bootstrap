@@ -442,8 +442,9 @@ var InputListDomainView = Backbone.View.extend( {
                 self.trElem.find("ul.ui-multiselect-checkboxes").css('overflow-y','scroll');
                 self.trElem.find("ul.ui-multiselect-checkboxes").css('overflow-x','hidden');
                 //autoOpen:false doesn't work, so click to hide open multiselect
-                self.trElem.find('button.ui-multiselect').click();
-                self.trElem.find('button.ui-multiselect').click();
+//                self.trElem.find('button.ui-multiselect').click();
+//                self.trElem.find('button.ui-multiselect').click();
+        self.trElem.find(".domainList").multiselect("close");
 
                 self.checkEntryValidation();
 

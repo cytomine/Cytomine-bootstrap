@@ -57,6 +57,7 @@ var JobSearchEngineView = Backbone.View.extend({
         $("#searchJobFilterStatusIndetereminate").append('<span class="label btn-inverse">Indetereminate!</span>');
         $("#searchJobFilterStatusWait").append('<span class="label btn-warning">Wait!</span>');
 
+
         $("#searchJobFilterButton").click(function() {
             self.launchSearch();
         });
@@ -101,7 +102,6 @@ var JobSearchEngineView = Backbone.View.extend({
 
         });
         self.listing.refresh(new JobCollection(filterJobs));
-
     },
     searchById : function(jobs, num) {
         console.log("Before searchById:"+jobs.length +" value="+num);
@@ -172,10 +172,9 @@ var JobSearchEngineView = Backbone.View.extend({
         var filterJobs = [];
 
         _.each(jobs, function(job) {
-            console.log(job.get('jobParameter'));
             var jobParam = self.getJobParam(job,paramName);
-            if(jobParam!=undefined) console.log(jobParam);
-             if(jobParam!=undefined && jobParam!=null && jobParam.value==paramValue) {
+            if(jobParam!=undefined) console.log("jobParam.value="+jobParam.value);
+             if(jobParam!=undefined && jobParam!=null && jobParam.value.toLowerCase()==paramValue.toLowerCase()) {
                  filterJobs.push(job);
              }
         });
@@ -185,7 +184,6 @@ var JobSearchEngineView = Backbone.View.extend({
     getJobParam : function(job, name) {
         var goodParam = undefined;
         _.each(job.get('jobParameter'), function(param) {
-            console.log("*** " + param.name + "|" +name);
              if(param.name==name) {
                  goodParam=param;
              }
@@ -205,7 +203,7 @@ var InputTextViewSearch = Backbone.View.extend( {
     },
     addRow : function(tbody) {
         var self = this;
-         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;">'+self.param.name+ '<br>'+self.getHtmlElem()+'</td></tr>');
+         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;"><b>'+self.param.name+ '</b><br>'+self.getHtmlElem()+'</td></tr>');
         self.trElem = $('tr#'+self.param.id);
     },
     getHtmlElem : function() {
@@ -230,7 +228,7 @@ var InputNumberViewSearch = Backbone.View.extend( {
     },
     addRow : function(tbody) {
         var self = this;
-         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;">'+self.param.name+ '<br>' + self.getHtmlElem() +'</td></tr>');
+         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;"><b>'+self.param.name+ '</b><br>' + self.getHtmlElem() +'</td></tr>');
         self.trElem = $('tr#'+self.param.id);
     },
     getHtmlElem : function() {
@@ -255,18 +253,14 @@ var InputBooleanViewSearch = Backbone.View.extend( {
     },
     addRow : function(tbody) {
         var self = this;
-         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;">'+self.param.name+ '<br>' + self.getHtmlElem() +'</td></tr>');
+         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;"><b>'+self.param.name+ '</b><br>' + self.getHtmlElem() +'</td></tr>');
         self.trElem = $('tr#'+self.param.id);
     },
     getHtmlElem : function() {
-        return '<input type="checkbox"' + this.getDefaultValue() + ' />';
-    },
-    getDefaultValue : function() {
-        if(this.param.type=="Boolean" && this.param.defaultParamValue!=undefined && this.param.defaultParamValue.toLowerCase()=="true") return 'checked="checked"';
-        return "";
+        return '<select class="input-medium"><option value="">All</option><option value="true">Yes</option><option value="false">No</option></select>';
     },
     getValue : function() {
-        return this.trElem.find("input").is(":checked");
+        return this.trElem.find("select").val();
     },
    getStringValue : function() {
         return this.getValue()+'';
@@ -283,7 +277,7 @@ var InputListViewSearch = Backbone.View.extend( {
     },
     addRow : function(tbody) {
         var self = this;
-         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;">'+self.param.name+ '<br>' + self.getHtmlElem() +'</td></tr>');
+         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;"><b>'+self.param.name+ '</b><br>' + self.getHtmlElem() +'</td></tr>');
         self.trElem = $('tr#'+self.param.id);
         self.trElem.find('.icon-plus-sign').click(function() {
             console.log("Add entry");
@@ -345,7 +339,7 @@ var InputListDomainViewSearch = Backbone.View.extend( {
     },
     addRow : function(tbody) {
         var self = this;
-         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;">'+self.param.name+ '<br>' + self.getHtmlElem() +'</td></tr>');
+         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;"><b>'+self.param.name+ '</b><br>' + self.getHtmlElem() +'</td></tr>');
         self.trElem = tbody.find('tr#'+self.param.id);
         console.log("*****************************");
         console.log(self.collection);
@@ -405,8 +399,9 @@ var InputListDomainViewSearch = Backbone.View.extend( {
                 self.trElem.find("ul.ui-multiselect-checkboxes").css('overflow-y','scroll');
                 self.trElem.find("ul.ui-multiselect-checkboxes").css('overflow-x','hidden');
                 //autoOpen:false doesn't work, so click to hide open multiselect
-                self.trElem.find('button.ui-multiselect').click();
-                self.trElem.find('button.ui-multiselect').click();
+//                self.trElem.find('button.ui-multiselect').click();
+//                self.trElem.find('button.ui-multiselect').click();
+                self.trElem.find(".domainList").multiselect("close");
 
     },
     getDefaultValue : function() {

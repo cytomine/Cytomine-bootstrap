@@ -189,7 +189,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                   project : self.model,
                   parent : self,
                   el : $("#softwareSearchDialogParent")
-              }).render()
+              }).render();
              });
     },
     printComparatorLaunch : function() {

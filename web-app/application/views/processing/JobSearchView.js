@@ -27,7 +27,21 @@ var JobSearchView = Backbone.View.extend({
 
         var width = ($(window).width() - 200);
         var height = ($(window).height() - 200);
-        $(self.el).dialog({ width: width, height: height, modal:true });
+        $(self.el).dialog({
+            width: width,
+            height: height,
+            modal:true,
+            buttons: [
+                {
+                    text: "Close",
+                    click: function() {
+                        $(this).dialog("close");
+                    }
+                }
+            ],close: function(event, ui) {
+                $(self.el).empty();
+            }
+        });
 
         self.printJobListingPanel();
     },
@@ -78,6 +92,7 @@ var JobSearchView = Backbone.View.extend({
                      listing : listing,
                      allJobs : collection
                  }).render();
+
              }
          });
     },
