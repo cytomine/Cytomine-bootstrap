@@ -1,24 +1,24 @@
 var JobSearchView = Backbone.View.extend({
-    width : null,
-    software: null,
-    project : null,
-    parent : null,
-    initialize: function(options) {
+    width:null,
+    software:null,
+    project:null,
+    parent:null,
+    initialize:function (options) {
         this.software = options.software;
         this.project = options.project;
         this.parent = options.parent;
     },
-    render : function() {
+    render:function () {
         var self = this;
         require([
             "text!application/templates/processing/JobSearch.tpl.html"
         ],
-               function(jobSearchViewTpl) {
-                   self.loadResult(jobSearchViewTpl);
-               });
+                function (jobSearchViewTpl) {
+                    self.loadResult(jobSearchViewTpl);
+                });
         return this;
     },
-    loadResult : function (jobSearchViewTpl) {
+    loadResult:function (jobSearchViewTpl) {
         console.log("JobSearchView.loadResult");
         var self = this;
         var content = _.template(jobSearchViewTpl, {});
@@ -28,75 +28,74 @@ var JobSearchView = Backbone.View.extend({
         var width = ($(window).width() - 200);
         var height = ($(window).height() - 200);
         $(self.el).dialog({
-            width: width,
-            height: height,
+            width:width,
+            height:height,
             modal:true,
-            buttons: [
+            buttons:[
                 {
-                    text: "Close",
-                    click: function() {
+                    text:"Close",
+                    click:function () {
                         $(this).dialog("close");
                     }
                 }
-            ],close: function(event, ui) {
+            ], close:function (event, ui) {
                 $(self.el).empty();
             }
         });
 
         self.printJobListingPanel();
     },
-    printBasicSearchPanel : function() {
+    printBasicSearchPanel:function () {
 
     },
-    printAdvancedSearchPanel : function() {
+    printAdvancedSearchPanel:function () {
 
     },
-    printFilterPanel : function() {
+    printFilterPanel:function () {
 
     },
-    printJobListingPanel : function() {
+    printJobListingPanel:function () {
         console.log("JobSearchView.printJobListingPanel");
         var self = this;
 
-            if(window.app.models.projects==undefined || (window.app.models.projects.length>0 && window.app.models.projects.at(0).id==undefined)) {
-                console.log("************* EMPTY LIST");
-                window.app.models.projects = new ProjectCollection();
-                window.app.models.projects.fetch({
-                    success : function(collection, response) {
-                        self.openJobListing();
-                    }
-                });
-            } else {
-                self.openJobListing();
-            }
+        if (window.app.models.projects == undefined || (window.app.models.projects.length > 0 && window.app.models.projects.at(0).id == undefined)) {
+            window.app.models.projects = new ProjectCollection();
+            window.app.models.projects.fetch({
+                success:function (collection, response) {
+                    self.openJobListing();
+                }
+            });
+        } else {
+            self.openJobListing();
+        }
     },
-    openJobListing : function() {
+    openJobListing:function () {
         var self = this;
-        new JobCollection({ project : self.project.id, software:  self.software.id}).fetch({
-             success : function (collection, response) {
-                 var listing = new JobTableView({
-                     width : self.software,
-                     project : self.project,
-                     software : self.software,
-                     el : $("#jobTablesList"),
-                     parent : self,
-                     jobs: collection
+        new JobCollection({ project:self.project.id, software:self.software.id}).fetch({
+            success:function (collection, response) {
+                var listing = new JobTableView({
+                    width:self.software,
+                    project:self.project,
+                    software:self.software,
+                    el:$("#jobTablesList"),
+                    parent:self,
+                    jobs:collection
 
-                 }).render();
-                 new JobSearchEngineView({
-                     width : self.software,
-                     project : self.project,
-                     software : self.software,
-                     el : $("#jobFilterList"),
-                     parent : self,
-                     listing : listing,
-                     allJobs : collection
-                 }).render();
+                }).render();
+                new JobSearchEngineView({
+                    width:self.software,
+                    project:self.project,
+                    software:self.software,
+                    el:$("#jobFilterList"),
+                    parent:self,
+                    listing:listing,
+                    allJobs:collection
+                }).render();
 
-             }
-         });
+            }
+        });
     },
-    refreshSearch : function() {
+    refreshSearch:function () {
 
     }
 
