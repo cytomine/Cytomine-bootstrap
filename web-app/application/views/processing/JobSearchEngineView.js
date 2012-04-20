@@ -39,6 +39,20 @@ var JobSearchEngineView = Backbone.View.extend({
     printBasicSearchPanel:function () {
         var self = this;
 
+        var launchQuickSearch = function()
+            {
+                console.log(self);
+                console.log("launchQuickSearch:"+$("#searchJobFilterAll").val());
+                //console.log(self.listing.datatable);
+                self.listing.table.fnFilter(
+                    $("#searchJobFilterAll").val(),
+                    null,
+                    false,
+                    true
+                );
+            };
+        $("#searchJobFilterAll").keyup(launchQuickSearch);
+        $("#searchJobFilterAll").click(launchQuickSearch);
         $("#searchJobFilterDateAfter").datepicker({
             numberOfMonths:3,
             showButtonPanel:true
@@ -86,7 +100,12 @@ var JobSearchEngineView = Backbone.View.extend({
     launchSearch:function () {
         var self = this;
         console.log("search job");
+
+        //clean quicksearch input
+        $("#searchJobFilterAll").val("");
+
         var filterJobs = self.allJobs.models;
+
         filterJobs = self.searchById(filterJobs, $("#searchJobFilterId").val());
         filterJobs = self.searchByNumber(filterJobs, $("#searchJobFilterNumber").val());
         filterJobs = self.searchByCreationDateAfter(filterJobs, $("#searchJobFilterDateAfter").datepicker("getDate"));

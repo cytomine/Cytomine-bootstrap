@@ -82,6 +82,7 @@ var JobSearchView = Backbone.View.extend({
                     jobs:collection
 
                 }).render();
+                console.log("listing1:"+listing);
                 new JobSearchEngineView({
                     width:self.software,
                     project:self.project,

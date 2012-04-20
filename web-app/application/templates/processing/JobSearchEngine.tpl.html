@@ -1,32 +1,49 @@
 <div id="jobSearchEngineView">
-    <br><br>
-    <button class="btn" id="searchJobFilterButton">Search Jobs</button>
-    <button class="btn" id="resetJobFilterButton">Reset</button>
-    <br><br>
-    <h4>Jobs Infos:</h4>
-    <table>
-        <tr><td><b>Job ID</b><br><input type="text" class="input-medium search-query" id="searchJobFilterId"></td></tr>
-        <tr><td><b>Job Number</b><br><input type="text" class="input-medium search-query" id="searchJobFilterNumber"></td></tr>
-        <tr><td><b>Creation Date after</b><br><input type="text" class="input-medium search-query" id="searchJobFilterDateAfter"></td></tr>
-        <tr><td><b>Creation Date before</b><br><input type="text" class="input-medium search-query" id="searchJobFilterDateBefore"></td></tr>
-        <tr><td><b>Status</b>
-                <ul>
-                    <li id="searchJobFilterStatusNotLaunch"><input id="searchJobFilterStatusNotLaunchCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
-                    <li id="searchJobFilterStatusInQueue"><input  id="searchJobFilterStatusInQueueCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
-                    <li id="searchJobFilterStatusRunning"><input id="searchJobFilterStatusRunningCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
-                    <li id="searchJobFilterStatusSuccess"><input id="searchJobFilterStatusSuccessCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
-                    <li id="searchJobFilterStatusFailed"><input id="searchJobFilterStatusFailedCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
-                    <li id="searchJobFilterStatusIndetereminate"><input id="searchJobFilterStatusIndetereminateCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
-                    <li id="searchJobFilterStatusWait"><input id="searchJobFilterStatusWaitCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
-                </ul>
-            </td>
-        </tr>
-    </table>
+    <br>
 
-    <br><br>
-    <h4>Jobs Parameter:</h4>
-    <table id="searchJobFilterParameterTable">
+    <div class="tabbable" style="margin-bottom: 9px;">
 
-    </table>
+        <ul class="nav nav-tabs">
+              <li class="active"><a href="#basicSearch" data-toggle="tab">Basic</a></li>
+              <li class=""><a href="#advancedSearch" data-toggle="tab">Advanced</a></li>
+        </ul>
 
+        <div class="tab-content">
+              <div class="tab-pane active" id="basicSearch">
+                  <h4>Jobs Quicksearch:</h4>
+                  <input type="text" class="input-medium search-query" id="searchJobFilterAll">
+              </div>
+              <div class="tab-pane" id="advancedSearch">
+                  <button class="btn" id="searchJobFilterButton">Search Jobs</button>
+                      <button class="btn" id="resetJobFilterButton">Reset</button>
+                      <br><br>
+                      <h4>Jobs Infos:</h4>
+                      <table>
+                          <tr><td><b>Job ID</b><br><input type="text" class="input-medium search-query" id="searchJobFilterId"></td></tr>
+                          <tr><td><b>Job Number</b><br><input type="text" class="input-medium search-query" id="searchJobFilterNumber"></td></tr>
+                          <tr><td><b>Creation Date after</b><br><input type="text" class="input-medium search-query" id="searchJobFilterDateAfter"></td></tr>
+                          <tr><td><b>Creation Date before</b><br><input type="text" class="input-medium search-query" id="searchJobFilterDateBefore"></td></tr>
+                          <tr><td><b>Status</b>
+                                  <ul>
+                                      <li id="searchJobFilterStatusNotLaunch"><input id="searchJobFilterStatusNotLaunchCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                                      <li id="searchJobFilterStatusInQueue"><input  id="searchJobFilterStatusInQueueCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                                      <li id="searchJobFilterStatusRunning"><input id="searchJobFilterStatusRunningCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                                      <li id="searchJobFilterStatusSuccess"><input id="searchJobFilterStatusSuccessCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                                      <li id="searchJobFilterStatusFailed"><input id="searchJobFilterStatusFailedCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                                      <li id="searchJobFilterStatusIndetereminate"><input id="searchJobFilterStatusIndetereminateCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                                      <li id="searchJobFilterStatusWait"><input id="searchJobFilterStatusWaitCheck" type="checkbox" name="checkbox" value="checkbox" checked="checked"></li>
+                                  </ul>
+                              </td>
+                          </tr>
+                      </table>
+
+                      <br><br>
+                      <h4>Jobs Parameter:</h4>
+                      <table id="searchJobFilterParameterTable">
+
+                      </table>
+              </div>
+        </div>
+
+    </div>
  </div>
