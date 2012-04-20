@@ -61,6 +61,10 @@ var JobSearchEngineView = Backbone.View.extend({
         $("#searchJobFilterButton").click(function () {
             self.launchSearch();
         });
+
+        $("#resetJobFilterButton").click(function () {
+            self.launchReset();
+        });
     },
     printAdvancedSearchPanel:function () {
         var self = this;
@@ -189,6 +193,27 @@ var JobSearchEngineView = Backbone.View.extend({
             }
         });
         return goodParam;
+    },
+    launchReset:function () {
+        var self = this;
+        console.log("search job");
+        var filterJobs = self.allJobs.models;
+        $("#searchJobFilterId").val("");
+        $("#searchJobFilterNumber").val("");
+        $("#searchJobFilterDateAfter").datepicker("setDate",null);
+        $("#searchJobFilterDateBefore").datepicker("setDate",null);
+        $("#searchJobFilterStatusNotLaunchCheck").attr('checked', true);
+        $("#searchJobFilterStatusInQueueCheck").attr('checked', true);
+        $("#searchJobFilterStatusRunningCheck").attr('checked', true);
+        $("#searchJobFilterStatusSuccessCheck").attr('checked', true);
+        $("#searchJobFilterStatusFailedCheck").attr('checked', true);
+        $("#searchJobFilterStatusIndetereminateCheck").attr('checked', true);
+        $("#searchJobFilterStatusWaitCheck").attr('checked', true);
+
+        _.each(self.paramViews, function (paramView) {
+            paramView.reset();
+        });
+        self.listing.refresh(self.allJobs);
     }
 });
 
@@ -215,6 +240,9 @@ var InputTextViewSearch = Backbone.View.extend({
     },
     getStringValue:function () {
         return this.getValue();
+    },
+    reset : function() {
+        this.trElem.find("input").val("");
     }
 });
 
@@ -240,6 +268,9 @@ var InputNumberViewSearch = Backbone.View.extend({
     },
     getStringValue:function () {
         return this.getValue();
+    },
+    reset : function() {
+        this.trElem.find("input").val("");
     }
 });
 
@@ -264,6 +295,9 @@ var InputBooleanViewSearch = Backbone.View.extend({
     },
     getStringValue:function () {
         return this.getValue() + '';
+    },
+    reset : function() {
+        this.trElem.find('option[value=""]').attr('selected', 'selected');
     }
 });
 
@@ -300,7 +334,7 @@ var InputListViewSearch = Backbone.View.extend({
     getHtmlElem:function () {
         var self = this;
         var defaultValues = self.getDefaultValue();
-        var valueStr = '<div class="controls"><input type="text" value="" style="text-align:center;"><i class="icon-plus-sign"></i><select>';
+        var valueStr = '<div class="controls"><input type="text" value="" style="text-align:center;"><i class="icon-plus-sign"></i><select><option value="">All</option>';
         _.each(defaultValues, function (value) {
             valueStr = valueStr + '<option value="' + value + '">' + value + '</option>';
         });
@@ -320,6 +354,9 @@ var InputListViewSearch = Backbone.View.extend({
     },
     getStringValue:function () {
         return this.getValue();
+    },
+    reset : function() {
+        this.trElem.find('option[value=""]').attr('selected', 'selected');
     }
 });
 
@@ -432,5 +469,8 @@ var InputListDomainViewSearch = Backbone.View.extend({
         var values = self.trElem.find(".domainList").val();
         if (values == undefined) return "";
         else return values.join(",");
+    },
+    reset : function() {
+        this.trElem.find(".domainList").multiselect("uncheckAll");
     }
 });
