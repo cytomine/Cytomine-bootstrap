@@ -219,6 +219,40 @@ class AlgoAnnotationTermService extends ModelService {
         return (double) (nbTermCorrect / nbTermTotal)
     }
 
+    double computeAVGAveragePerClass(def userJob) {
+
+        def terms = userJob.job.project.ontology.terms()
+
+        double total = 0
+        int nbTermNotEmpty = 0
+
+        terms.each { term ->
+
+            def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
+                eq("userJob", userJob)
+                eq("term",term)
+                isNotNull("expectedTerm")
+                eqProperty("term", "expectedTerm")
+            }
+            def nbTermTotal = AlgoAnnotationTerm.createCriteria().count {
+                eq("userJob", userJob)
+                eq("term",term)
+                isNotNull("expectedTerm")
+            }
+
+            if(nbTermTotal!=0) {
+                total = total + (double)(nbTermCorrect/nbTermTotal)
+                nbTermNotEmpty++
+            }
+
+
+        }
+        double avg = 0
+        if(nbTermNotEmpty!=0)
+            avg = (double)(total/nbTermNotEmpty)
+        return avg
+   }
+
      ConfusionMatrix computeConfusionMatrix(List<Term> projectTerms, def userJob) {
         def projectTermsId = projectTerms.collect {it.id + ""}
         println projectTermsId

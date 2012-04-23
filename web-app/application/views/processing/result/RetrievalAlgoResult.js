@@ -123,6 +123,12 @@ var RetrievalAlgoResult = Backbone.View.extend({
                        }
                    });
 
+
+                   //Gobal sucess rate (good annotation / total annotations)
+                   $(self.el).find("#worstTermList").append('<br><b>Average:</b> '+(model.get('avg')*100).toFixed(2) + "%<br>");
+                   //Global sucess rate per class (For each class, compute sucess + make avg)
+                   $(self.el).find("#worstTermList").append('<b>Average (per class):</b> '+(model.get('avgMiddlePerClass')*100).toFixed(2)  + "%<br>");
+
                    $(self.el).find("#worstTermList").append('<br><button id="matrix-suggest" class="btn">See full information</button>');
                    $(self.el).find("#matrix-suggest").button();
                    $(self.el).find('#matrix-suggest').click(function() {

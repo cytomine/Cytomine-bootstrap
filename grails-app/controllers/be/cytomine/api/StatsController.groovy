@@ -80,7 +80,6 @@ class StatsController extends RestController {
     }
 
     def statWorstTermWithSuggestedTerm = {
-        def data = []
         log.info "statWorstTermWithSuggestedTerm"
         UserJob userJob = retrieveUserJobFromParams(params)
         if(!userJob) {
@@ -88,7 +87,10 @@ class StatsController extends RestController {
             return null
         }
         def worstTerms = listWorstTermWithSuggestedTerm(userJob)
-        data = ['worstTerms': worstTerms]
+        def avg =  algoAnnotationTermService.computeAVG(userJob)
+        def avgAveragedPerClass =  algoAnnotationTermService.computeAVGAveragePerClass(userJob)
+        log.info "avg = " + avg + " avgAveragedPerClass=" + avgAveragedPerClass
+        def data = ['worstTerms': worstTerms, 'avg':avg, 'avgMiddlePerClass' : avgAveragedPerClass]
         responseSuccess(data)
     }
 
