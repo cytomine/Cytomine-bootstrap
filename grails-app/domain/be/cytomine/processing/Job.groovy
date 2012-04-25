@@ -105,6 +105,9 @@ class Job extends CytomineDomain  {
                 job.software = Software.read(softwareId)
                 if (!job.software) throw new WrongArgumentException("Software was not found with id:" + softwareId)
             } else job.software = null
+
+            job.created = (!jsonJob.created.toString().equals("null")) ? new Date(Long.parseLong(jsonJob.created.toString())) : null
+            job.updated = (!jsonJob.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonJob.updated.toString())) : null
         }catch(Exception e) {
             throw new WrongArgumentException(e.toString())
         }

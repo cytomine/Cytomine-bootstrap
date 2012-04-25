@@ -96,6 +96,7 @@ class RestUserController extends RestController {
 
         Job job = new Job()
         job.software = Software.read(json.software)
+        try {job.project = Project.read(json.project) }catch(Exception e) {log.warn e.toString()}
         job = job.save(flush : true)
 
         String username = json.username
@@ -109,6 +110,11 @@ class RestUserController extends RestController {
         userJob.accountLocked = user.accountLocked
         userJob.passwordExpired = user.passwordExpired
         userJob.user = user
+        try {
+            Date date = new Date()
+            date.setTime(Long.parseLong(json.created.toString()))
+            userJob.created = date
+        } catch(Exception e) {log.warn e.toString()} 
         userJob = userJob.save(flush:true)
 
         user.getAuthorities().each { secRole ->

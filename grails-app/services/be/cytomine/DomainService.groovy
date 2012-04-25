@@ -21,6 +21,12 @@ class DomainService {
             log.debug "code="+cyto.code
             throw new WrongArgumentException(newObject.retrieveErrors().toString())
         }
+        println "newObject2.dirty="+newObject.isDirty()
+        def modifiedFieldNames = newObject.getDirtyPropertyNames()
+        for (fieldName in modifiedFieldNames) {
+           println "field change = " + fieldName
+           println "value change = " + newObject.getPersistentValue(fieldName) + " vs new value = " + newObject."$fieldName"
+        }
         if (!newObject.save(flush: true)) throw new InvalidRequestException(newObject.retrieveErrors().toString())
     }
 

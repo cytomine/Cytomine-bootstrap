@@ -113,7 +113,7 @@ class AlgoAnnotationTermService extends ModelService {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.userJob], printMessage, "Add", domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.term?.name, domain.annotation.id, domain.userJob], printMessage, "Add", domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -211,7 +211,6 @@ class AlgoAnnotationTermService extends ModelService {
         }
         def nbTermTotal = AlgoAnnotationTerm.createCriteria().count {
             eq("userJob", userJob)
-            isNotNull("term")
             isNotNull("expectedTerm")
         }
          if(nbTermTotal==0) throw new Exception("UserJob has no algo-annotation-term!")
@@ -230,14 +229,12 @@ class AlgoAnnotationTermService extends ModelService {
 
             def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
                 eq("userJob", userJob)
-                eq("term",term)
-                isNotNull("expectedTerm")
+                eq("expectedTerm",term)
                 eqProperty("term", "expectedTerm")
             }
             def nbTermTotal = AlgoAnnotationTerm.createCriteria().count {
                 eq("userJob", userJob)
-                eq("term",term)
-                isNotNull("expectedTerm")
+                eq("expectedTerm",term)
             }
 
             if(nbTermTotal!=0) {
@@ -278,13 +275,31 @@ class AlgoAnnotationTermService extends ModelService {
 
     def listAVGEvolution(UserJob userJob) {
         def data = []
+        int count = 0;
+        List<Annotation> annotations = Annotation.findAllByProject(userJob?.job?.project,[sort:'created', order:"desc"])
+        println "annotations="+annotations.size()
+
         //Get all project userJob
         List userJobs = jobService.getAllLastUserJob(userJob?.job?.project,userJob?.job?.software)
+
         if(userJobs.isEmpty()) return null
         println userJobs
         userJobs.each {
             def userJobIt = it
             def item = [:]
+
+            Date stopDate = userJobIt.job.created
+
+            //we browse userjob (oreder desc creation).
+            //For each userjob, we browse annotation (oreder desc creation) and we count the number of annotation
+            //that are most recent than userjob, we subsitute this count from annotation.list()
+            //=> not needed to browse n times annotations list, juste 1 time.
+            while(count<annotations.size()) {
+                if(annotations.get(count).created<stopDate) break;
+                count++;
+            }
+            item.size = annotations.size()-count;
+
             try {
                 item.date = userJobIt.job.created.getTime()
                 item.avg = computeAVG(userJobIt)*100

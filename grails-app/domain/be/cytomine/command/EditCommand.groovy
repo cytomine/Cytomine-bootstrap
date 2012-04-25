@@ -62,6 +62,7 @@ class EditCommand extends Command {
         initService()
         //Create new domain
         def updatedDomain = service.retrieve(json)
+        println "updatedDomain.version="+updatedDomain.version
         def oldDomain = updatedDomain.encodeAsJSON()
         updatedDomain.getFromData(updatedDomain, json)
         //Init command info

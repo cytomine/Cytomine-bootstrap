@@ -18,7 +18,7 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
 
     static constraints = {
         annotation nullable: false
-        term nullable: false
+        term nullable: true
         expectedTerm nullable: true
         rate(min: 0d, max: 1d)
         userJob nullable: false
@@ -67,7 +67,7 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
         println "expectedTermId="+expectedTermId
         if (!expectedTermId.equals("null")) {
             algoAnnotationTerm.expectedTerm = Term.read(expectedTermId)
-            if (algoAnnotationTerm.term == null) throw new WrongArgumentException("Expected Term was not found with id:" + termId)
+            if (algoAnnotationTerm.expectedTerm == null) throw new WrongArgumentException("Expected Term was not found with id:" + termId)
         }
         else algoAnnotationTerm.expectedTerm = null
 

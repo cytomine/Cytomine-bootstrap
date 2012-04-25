@@ -165,8 +165,8 @@ class User extends SecUser {
         user.password = jsonUser.password
         user.enabled = true
         user.generateKeys()
-//    user.created = (!jsonUser.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.created)) : null
-        //    user.updated = (!jsonUser.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.updated)) : null
+         user.created = (!jsonUser.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.created.toString())) : null
+         user.updated = (!jsonUser.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.updated.toString())) : null
         return user;
     }
 

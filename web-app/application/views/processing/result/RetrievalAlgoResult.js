@@ -347,7 +347,9 @@ var RetrievalAlgoResult = Backbone.View.extend({
         }
         var data = new google.visualization.DataTable();
         data.addColumn('date', 'Date');
+        data.addColumn('number', 'Number of annotations');
         data.addColumn('number', 'Success rate (%)');
+
 
         var indiceJob = 0;
         var dateSelect = new Date();
@@ -359,17 +361,29 @@ var RetrievalAlgoResult = Backbone.View.extend({
             if (dateSelect.getTime() == date.getTime()) {
                 indiceJob = i;
             }
-            data.addRow([date, evolution[i].avg]);
+            data.addRow([date,evolution[i].size, evolution[i].avg ]);
         }
 
         var width = Math.round($(window).width() / 2 - 150);
         // Create and draw the visualization.
-        var evolChart = new google.visualization.AreaChart($(this.el).find('#avgEvolutionLineChart')[0]);
-        evolChart.draw(data, {title: '',
+        var evolChart = new google.visualization.LineChart($(this.el).find('#avgEvolutionLineChart')[0]);
+        evolChart.draw(data, {
+                    colors : ['#dc3912','#3366cc'],
+                    title: '',
             width: this.width, height: 350,
+                    vAxes: {
+                        0: {
+                            label: 'Y1'
+                        },
+                        1: {
+                            label: 'Y2'
+                        }
+                    },
             vAxis: {title: "Success rate",minValue:0,maxValue:100},
             hAxis: {title: "Time"},
             backgroundColor : "whiteSmoke",
+            seriesType: "line",
+            series: {0:{targetAxisIndex: 0},1: {type: "area",targetAxisIndex: 1}},
             lineWidth: 1}
                 );
         evolChart.setSelection([
