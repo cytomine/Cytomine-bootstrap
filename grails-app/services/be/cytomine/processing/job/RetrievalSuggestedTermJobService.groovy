@@ -5,6 +5,9 @@ import be.cytomine.security.UserJob
 import grails.converters.JSON
 import be.cytomine.processing.Software
 import be.cytomine.processing.SoftwareParameter
+import be.cytomine.ontology.AlgoAnnotationTerm
+import be.cytomine.processing.structure.ConfusionMatrix
+import be.cytomine.ontology.Term
 
 class RetrievalSuggestedTermJobService extends AbstractJobService {
 
@@ -13,6 +16,8 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
     def commandService
     def domainService
     def jobParameterService
+    def jobService
+    def algoAnnotationTermService
 
     def init(Job job, UserJob userJob) {
 
@@ -67,4 +72,23 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
         launchAndWaitSoftware(args)
         printStopJobInfo(job,args)
     }
+
+    def listAVGEvolution(UserJob userJob) {
+        //Get all project userJob
+        List userJobs = jobService.getAllLastUserJob(userJob?.job?.project,userJob?.job?.software)
+        return algoAnnotationTermService.listAVGEvolution(userJobs, userJob?.job?.project)
+    }
+
+    double computeAVG(def userJob) {
+       return algoAnnotationTermService.computeAVG(userJob)
+   }
+
+   double computeAVGAveragePerClass(def userJob) {
+        return  algoAnnotationTermService.computeAVGAveragePerClass(userJob)
+  }
+
+    ConfusionMatrix computeConfusionMatrix(List<Term> projectTerms, def userJob) {
+       return algoAnnotationTermService.computeConfusionMatrix(projectTerms,userJob)
+   }
+
 }

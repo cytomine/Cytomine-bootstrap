@@ -68,6 +68,7 @@ var LaunchJobView = Backbone.View.extend({
     getParamView : function(param) {
         if(param.type=="String") return new InputTextView({param:param});
         if(param.type=="Number") return new InputNumberView({param:param});
+        if(param.type=="Date") return new InputDateView({param:param});
         if(param.type=="Boolean") return new InputBooleanView({param:param});
         if(param.type=="List") return new InputListView({param:param});
         if(param.type=="ListProject") return new InputListDomainView({param:param, multiple:true, collection: window.app.models.projects, printAttribut:"name"});
@@ -241,6 +242,68 @@ var InputNumberView = Backbone.View.extend( {
     },
     getValue : function() {
         return this.trElem.find("input").val();
+    },
+   getStringValue : function() {
+        return this.getValue();
+    },
+    changeStyle : function(elem, success, message) {
+        InputView.changeStyle(elem,success,message);
+    }
+});
+
+
+var InputDateView = Backbone.View.extend( {
+    param : null,
+    parent : null,
+    trElem : null,
+    initialize: function(options) {
+        this.param = options.param;
+        this.parent = options.parent;
+    },
+    addRow : function(tbody) {
+        var self = this;
+         tbody.append('<tr id="'+self.param.id+'"><td style="text-align:left;">'+self.param.name+ '</td><td style="text-align:center;">'+self.getHtmlElem()+'</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
+        self.trElem = $('tr#'+self.param.id);
+
+        var defaultValue = self.getDefaultValue();
+        console.log("addRow defaultValue =" +defaultValue);
+        var dateDefault = null;
+        if(defaultValue!=null) dateDefault = new Date(Number(defaultValue));
+        console.log("dateDefault =" +dateDefault);
+
+        self.trElem.find("input").datepicker({
+            dateFormat: "yy-mm-dd",
+            onSelect: function(dateText, inst) { self.checkEntryValidation(); }
+        });
+        if(dateDefault!=null)
+            self.trElem.find("input").datepicker("setDate",dateDefault);
+
+        self.trElem.find('input').keyup(function() {
+             self.checkEntryValidation();
+        });
+    },
+    getHtmlElem : function() {
+        var self = this;
+        var classRequier = "";
+        if(self.param.required)  classRequier = 'border-style: solid; border-width: 2px;';
+        else classRequier = 'border-style: dotted;border-width: 2px;';
+        return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="" style="text-align:center;'+classRequier+'"></div></div>';
+    },
+    getDefaultValue : function() {return InputView.getDefaultValueWithVariable(this.param.defaultParamValue)},
+    checkEntryValidation : function() {
+        var self = this;
+        var date = self.trElem.find("input").datepicker("getDate");
+        console.log("checkEntryValidation");
+        console.log(date);
+        console.log((self.param.required && date==null));
+        if(self.param.required && date==null) self.changeStyle(self.trElem,false,"Field require");
+        else self.changeStyle(self.trElem,true,"");
+    },
+    getValue : function() {
+        var self = this;
+        var date = self.trElem.find("input").datepicker("getDate");
+        if(date==null) return null;
+        else return date.getTime();
     },
    getStringValue : function() {
         return this.getValue();
@@ -557,6 +620,8 @@ var InputView = {
         var self = this;
          if(value=="$currentProject") return window.app.status.currentProject;
          else if(value=="$cytomineHost") return window.location.protocol + "//" + window.location.host;
+         else if(value=="$currentDate") return new Date().getTime();
+         else if(value=="$currentProjectCreationDate") return  window.app.status.currentProjectModel.get('created');
          else return value;
     }
 };

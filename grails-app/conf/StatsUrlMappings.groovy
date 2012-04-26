@@ -25,22 +25,29 @@ class StatsUrlMappings {
         "/api/project/$id/stats/retrievalsuggestion"(controller:"stats"){
             action = [GET:"statRetrievalsuggestion"]
         }
-        "/api/stats/retrieval/avg"(controller:"stats"){
+
+
+        "/api/stats/retrieval/avg"(controller:"retrievalSuggestStats"){
             action = [GET:"statRetrievalAVG"]
         }
-        "/api/stats/retrieval/confusionmatrix"(controller:"stats"){
+        "/api/stats/retrieval/confusionmatrix"(controller:"retrievalSuggestStats"){
             action = [GET:"statRetrievalConfusionMatrix"]
         }
-        "/api/stats/retrieval/worstTerm"(controller:"stats"){
+        "/api/stats/retrieval/worstTerm"(controller:"retrievalSuggestStats"){
             action = [GET:"statRetrievalWorstTerm"]
         }
-        "/api/stats/retrieval/worstTermWithSuggest"(controller:"stats"){
+        "/api/stats/retrieval/worstTermWithSuggest"(controller:"retrievalSuggestStats"){
             action = [GET:"statWorstTermWithSuggestedTerm"]
         }
-        "/api/stats/retrieval/worstAnnotation"(controller:"stats"){
+        "/api/stats/retrieval/worstAnnotation"(controller:"retrievalSuggestStats"){
             action = [GET:"statRetrievalWorstAnnotation"]
         }
-        "/api/stats/retrieval/evolution"(controller:"stats"){
+        "/api/stats/retrieval/evolution"(controller:"retrievalSuggestStats"){
+            action = [GET:"statRetrievalEvolution"]
+        }
+
+
+        "/api/stats/retrieval-evolution/evolution"(controller:"retrievalEvolutionStats"){
             action = [GET:"statRetrievalEvolution"]
         }
     }

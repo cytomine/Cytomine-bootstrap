@@ -116,6 +116,24 @@ var StatsRetrievalSuggestionEvolutionModel = Backbone.Model.extend({
     }
 });
 
+var StatsRetrievalEvolutionModel = Backbone.Model.extend({
+	url : function() {
+        if (this.project != undefined && this.software != undefined) {
+            return "api/stats/retrieval-evolution/evolution.json?project="+this.project+"&software="+this.software;
+        } else if (this.job != undefined) {
+            return "api/stats/retrieval-evolution/evolution.json?job="+this.job;
+        }
+	},
+    initialize: function (options) {
+        this.project = options.project;
+        this.software = options.software;
+        this.job=options.job;
+    }
+});
+
+
+
+
 // define our collection
 var StatsTermCollection = Backbone.Collection.extend({
     model: StatsModel,

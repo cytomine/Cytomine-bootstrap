@@ -15,6 +15,7 @@ var JobResultView = Backbone.View.extend({
         switch (self.software.get('resultName'))
         {
             case 'ValidateAnnotation': self.valideAnnotation(); break;
+            case 'ValidateEvolution': self.valideEvolution(); break;
             default: self.defaultResult(); break;
         }
         return this;
@@ -22,6 +23,16 @@ var JobResultView = Backbone.View.extend({
     valideAnnotation : function() {
         var self = this;
         var result = new RetrievalAlgoResult({
+            model : self.model,
+            project : self.project,
+            el : self.el,
+            jobs : self.jobs,
+            software : self.software
+        }).render();
+    },
+    valideEvolution : function() {
+        var self = this;
+        var result = new EvolutionAlgoResult({
             model : self.model,
             project : self.project,
             el : self.el,

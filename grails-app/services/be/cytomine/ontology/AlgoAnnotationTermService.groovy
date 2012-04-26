@@ -178,28 +178,6 @@ class AlgoAnnotationTermService extends ModelService {
         return domain
     }
 
-//     SecUser getLastUserJob(Project project) {
-//        def users = getAllLastUserJobWithDate(project)
-//        return users.isEmpty() ? null : users.first().first()
-//    }
-
-//     List getAllLastUserJobWithDate(Project project) {
-//        def users = AlgoAnnotationTerm.createCriteria().list {
-//            createAlias("userJob", "u")
-//            eq("project", project)
-//            join("u")
-//            order "u.created", "desc"
-//            projections {
-//                groupProperty('userJob')
-//                groupProperty('u.created')
-//            }
-//        }
-//        return users
-//    }
-
-
-
-
      double computeAVG(def userJob) {
         println "userJob="+userJob
         println "userJob.id="+userJob.id
@@ -273,14 +251,12 @@ class AlgoAnnotationTermService extends ModelService {
         return sum
     }
 
-    def listAVGEvolution(UserJob userJob) {
+    def listAVGEvolution(List<UserJob> userJobs, Project project) {
         def data = []
         int count = 0;
-        List<Annotation> annotations = Annotation.findAllByProject(userJob?.job?.project,[sort:'created', order:"desc"])
+        List<Annotation> annotations = Annotation.findAllByProject(project,[sort:'created', order:"desc"])
         println "annotations="+annotations.size()
 
-        //Get all project userJob
-        List userJobs = jobService.getAllLastUserJob(userJob?.job?.project,userJob?.job?.software)
 
         if(userJobs.isEmpty()) return null
         println userJobs
@@ -288,7 +264,7 @@ class AlgoAnnotationTermService extends ModelService {
             def userJobIt = it
             def item = [:]
 
-            Date stopDate = userJobIt.job.created
+            Date stopDate = userJobIt.created
 
             //we browse userjob (oreder desc creation).
             //For each userjob, we browse annotation (oreder desc creation) and we count the number of annotation
@@ -301,7 +277,7 @@ class AlgoAnnotationTermService extends ModelService {
             item.size = annotations.size()-count;
 
             try {
-                item.date = userJobIt.job.created.getTime()
+                item.date = userJobIt.created.getTime()
                 item.avg = computeAVG(userJobIt)*100
                 data << item
             } catch(Exception e) {

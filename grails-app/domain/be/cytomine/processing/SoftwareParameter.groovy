@@ -18,7 +18,7 @@ class SoftwareParameter extends CytomineDomain {
 
     static constraints = {
         name (nullable: false, blank : false)
-        type (inList: ["String", "Boolean", "Number","List","ListProject","Project"])
+        type (inList: ["String", "Boolean", "Number","Date","List","ListProject","Project"])
         defaultValue (nullable: true, blank : true)
     }
 
