@@ -8,6 +8,7 @@ import be.cytomine.project.Project
 class RetrievalEvolutionJobService extends AbstractJobService{
 
     static transactional = false
+    def springSecurityService
     def cytomineService
     def commandService
     def domainService
@@ -15,8 +16,8 @@ class RetrievalEvolutionJobService extends AbstractJobService{
     def algoAnnotationTermService
 
     def init(Job job, UserJob userJob) {
-        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()))
+        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.user.publicKey).encodeAsJSON()))
+        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.user.privateKey).encodeAsJSON()))
         //Execute Job
         log.info "Execute Job..."
     }
@@ -27,16 +28,20 @@ class RetrievalEvolutionJobService extends AbstractJobService{
 
         //get job params
         String[] jobParams = getParametersValues(job)
-        String[] args = new String[jobParams.length+4]
+        String[] args = new String[jobParams.length+7]
         //build software params
         args[0] = "java"
         args[1] = "-Xmx2G"
-        args[2] = "-jar"
+        args[2] = "-cp"
         args[3] = applicPath
         args[4] = "retrieval.algo.suggestAnnotation.SuggestAnnotationEvolution"
 
+        args[5] = job.software.id
+        args[6] = UserJob.findByJob(job).user.id
+
+
         for(int i=0;i<jobParams.length;i++) {
-            args[i+5] = jobParams[i]
+            args[i+7] = jobParams[i]
         }
 
 

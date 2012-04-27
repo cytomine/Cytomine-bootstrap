@@ -36,16 +36,8 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
         */
         //Create Job-parameter
 //        jobParameterService.add(JSON.parse(createJobParameter("execType",job,"cytomine").encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()))
-//        jobParameterService.add(JSON.parse(createJobParameter("N",job, "500").encodeAsJSON()))
-//        jobParameterService.add(JSON.parse(createJobParameter("T",job, "5").encodeAsJSON()))
-//        jobParameterService.add(JSON.parse(createJobParameter("workingDir",job, "algo/retrievalSuggest/suggest/").encodeAsJSON()))
-//        jobParameterService.add(JSON.parse(createJobParameter("cytomineHost",job, "http://localhost:8080").encodeAsJSON()))
-//        jobParameterService.add(JSON.parse(createJobParameter("forceDownloadCrop",job, "false").encodeAsJSON()))
-//        jobParameterService.add(JSON.parse(createJobParameter("storeName",job, "KYOTOSINGLEFILE").encodeAsJSON()))
-//        jobParameterService.add(JSON.parse(createJobParameter("indexProject",job, "57").encodeAsJSON()))
-//        jobParameterService.add(JSON.parse(createJobParameter("searchProject",job, "57").encodeAsJSON()))
+        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.user.publicKey).encodeAsJSON()))
+        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.user.privateKey).encodeAsJSON()))
         //Execute Job
         log.info "Execute Job..."
     }
@@ -56,15 +48,19 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
 
         //get job params
         String[] jobParams = getParametersValues(job)
-        String[] args = new String[jobParams.length+4]
+        String[] args = new String[jobParams.length+7]
         //build software params
         args[0] = "java"
         args[1] = "-Xmx2G"
-        args[2] = "-jar"
+        args[2] = "-cp"
         args[3] = applicPath
+        args[4] = "retrieval.algo.suggestAnnotation.SuggestAnnotationSimple"
+
+        args[5] = job.software.id
+        args[6] = UserJob.findByJob(job).user.id
 
         for(int i=0;i<jobParams.length;i++) {
-            args[i+4] = jobParams[i]
+            args[i+7] = jobParams[i]
         }
 
 
