@@ -17,7 +17,7 @@ var ApplicationController = Backbone.Router.extend({
         var self = this;
         self.dataTablesBootstrap();
         self.view = new ApplicationView({
-            el: $('#app')
+            el: $('#content')
         });
         var loadingView = new LoadingDialogView();
         //loadingView.render();
@@ -84,8 +84,10 @@ var ApplicationController = Backbone.Router.extend({
 
         require(["text!application/templates/ServerDownDialog.tpl.html"], function (serverDownTpl) {
             var serverDown = function(status) {
-                $("#app").fadeOut('slow');
-                var dialog = new ConfirmDialogView({
+                window.app.view.clearIntervals();
+                $("#content").fadeOut('slow').empty();
+                $(".navbar").remove();
+                new ConfirmDialogView({
                     el:'#dialogs',
                     template : serverDownTpl,
                     dialogAttr : {

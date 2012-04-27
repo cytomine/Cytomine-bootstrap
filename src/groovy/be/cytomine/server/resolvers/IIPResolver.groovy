@@ -67,6 +67,7 @@ class IIPResolver extends Resolver{
         return toURL(baseUrl)
     }
 
+    //TO DO : a function width desired with/height AND a function with desired ZOOM.
     public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int zoom, int baseImageWidth, int baseImageHeight, int maxCropWidthOrHeight) {
         /*
         #Y is the down inset value (positive) from 0 on the y axis at the max image resolution.
@@ -77,18 +78,6 @@ class IIPResolver extends Resolver{
         Y : 1/(34092/15100) = 0.4414301166
         W : 1/(34092/400) = 0.01173295788
         H : 1/(34207/600) = 0.01754026954*/
-        def scaledWidth = width
-        //def maxCropWidth = 5000
-        if (width > maxCropWidthOrHeight) {
-            def shouldScale = true
-            while (shouldScale) {
-                def newWidth = Math.round(scaledWidth / 2)
-                def currentDelta = (Math.abs(scaledWidth - maxCropWidthOrHeight))
-                def newDelta = (Math.abs(newWidth - maxCropWidthOrHeight))
-                if (newDelta < currentDelta && newWidth > 256) scaledWidth = newWidth
-                else shouldScale = false
-            }
-        }
         def x = (topLeftX == 0) ? 0 : 1/(baseImageWidth / topLeftX)
         def y = ((baseImageHeight - topLeftY) == 0) ? 0 : 1/(baseImageHeight / (baseImageHeight - topLeftY))
         def w = (width == 0) ? 0 : 1/(baseImageWidth / width)
@@ -96,38 +85,29 @@ class IIPResolver extends Resolver{
         args.clear()
         args.add("FIF" + ARGS_EQUAL +  imagePath)
         args.add("RGN" + ARGS_EQUAL +  x + "," + y + "," + w + "," + h)
-        if (width > maxCropWidthOrHeight) args.add("WID" + ARGS_EQUAL + scaledWidth)
+        if (height > maxCropWidthOrHeight) {
+            args.add("HEI" + ARGS_EQUAL + Math.round(baseImageHeight / (height / maxCropWidthOrHeight)))
+        } else if (width > maxCropWidthOrHeight) {
+            args.add("WID" + ARGS_EQUAL + Math.round(baseImageWidth / (width / maxCropWidthOrHeight)))
+        }
         args.add("CVT" + ARGS_EQUAL + "jpeg")
         return toURL(baseUrl)
     }
 
     public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int baseImageWidth, int baseImageHeight, int maxCropWidthOrHeight) {
-        def maxZoom = getZoomLevels(baseUrl, imagePath, baseImageWidth, baseImageHeight).max
+        /*def maxZoom = getZoomLevels(baseUrl, imagePath, baseImageWidth, baseImageHeight).max
         def widthTarget = 256
         def tmpWidth = width
         while (tmpWidth > widthTarget) {
             maxZoom--
             tmpWidth = tmpWidth / 2
-        }
-        getCropURL(baseUrl, imagePath, topLeftX, topLeftY, width, height, maxZoom, baseImageWidth, baseImageHeight, maxCropWidthOrHeight)
+        }*/
+        getCropURL(baseUrl, imagePath, topLeftX, topLeftY, width, height, -1, baseImageWidth, baseImageHeight, maxCropWidthOrHeight)
     }
 
-    /*def getWidthHeight(baseUrl, imagePath) {
-        def url = new URL(getMetaDataURL(baseUrl, imagePath))
-        def dimensions = null
-        url.eachLine { line ->
-            def args = line.split(":")
-            if (args[0].equals("Max-size")) {
-                def sizes = args[1].split(" ")
-                dimensions = [width : Integer.parseInt(sizes[0]), height : Integer.parseInt(sizes[1])]
-            }
-        }
-        return dimensions
-    }*/
-
-    def getZoomLevels (baseUrl, imagePath, width, height) {
-        def tmpWidth = width
-        def tmpHeight = height
+    def getZoomLevels (String baseUrl, String imagePath, int width, int height) {
+        double tmpWidth = width
+        double tmpHeight = height
         def nbZoom = 0
         while (tmpWidth >= 256 || tmpHeight >= 256) {
             nbZoom++

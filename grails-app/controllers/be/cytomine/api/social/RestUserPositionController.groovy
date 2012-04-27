@@ -61,22 +61,32 @@ class RestUserPositionController extends RestController {
 
     def listOnlineUsersByImage = {
         ImageInstance image = imageInstanceService.read(params.id)
-        DateTime tenSecondsAgo = new DateTime()
-        tenSecondsAgo = tenSecondsAgo.minusSeconds(30)
+        DateTime thirtySecondsAgo = new DateTime()
+        thirtySecondsAgo = thirtySecondsAgo.minusSeconds(30)
         def userPositions = UserPosition.createCriteria().list(sort : "created", order : "desc") {
             eq("image", image)
-            gt("created", tenSecondsAgo.toDate())
+            or {
+                gt("created", thirtySecondsAgo.toDate())
+                gt("updated", thirtySecondsAgo.toDate())
+            }
         }.collect { it.user.id }.unique()
         def result = [ "users" : userPositions.join(",")]
         responseSuccess(result)
     }
 
     def listLastUserPositionsByProject = {
-        DateTime tenSecondsAgo = new DateTime()
-        tenSecondsAgo = tenSecondsAgo.minusSeconds(30)
-        def userPositions = UserPosition.createCriteria().list(sort : "created", order : "desc") {
-            gt("created", tenSecondsAgo.toDate())
-            groupProperty("image")
+        DateTime thirtySecondsAgo = new DateTime()
+        thirtySecondsAgo = thirtySecondsAgo.minusSeconds(30)
+        def userPositions = UserPosition.createCriteria().list() {
+            or {
+                gt("created", thirtySecondsAgo.toDate())
+                gt("updated", thirtySecondsAgo.toDate())
+            }
+
+            projections {
+                groupProperty("image.id")
+                groupProperty("user.id")
+            }
         }
         responseSuccess(userPositions)
     }

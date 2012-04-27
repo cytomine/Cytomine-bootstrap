@@ -187,7 +187,7 @@ class AnnotationService extends ModelService {
                 .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq("image", image))
                 .add(SpatialRestrictions.within("location",boundingbox))
-                .list()
+                .list().unique()
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -198,7 +198,6 @@ class AnnotationService extends ModelService {
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
-        log.debug "list annotation by project = $project and term $term and users $userList and images $imageInstanceList"
         if (userList.isEmpty()) return []
         if (imageInstanceList.isEmpty()) return []
         if (imageInstanceList.size() == project.countImages) {

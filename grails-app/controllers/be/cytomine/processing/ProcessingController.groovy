@@ -32,11 +32,10 @@ class ProcessingController extends RestController {
         AbstractImage image = ImageInstance.read(idImage).getBaseImage()
         int shiftY = image.getHeight() - Math.round(Double.parseDouble(params.y)) + middleROI
         int shiftX = Math.round(Double.parseDouble(params.x)) - middleROI
-        def url = image.getCropURL((int) shiftX, (int) shiftY, roiSize, roiSize)
+        def url = image.getCropURLWithMaxWithOrHeight((int) shiftX, (int) shiftY, roiSize, roiSize, (int) image.getWidth() / scale)
         println url
         //Image Processing
         ImagePlus ori = getThresholdedImage(url, method)
-
         /* Work in progress for handle scaling */
         double widthRatio = roiSize / ori.getWidth()
         double heightRatio = roiSize / ori.getHeight()
@@ -71,6 +70,9 @@ class ProcessingController extends RestController {
         PlugInFilter filler = new ij.plugin.filter.Binary()
         filler.setup("fill", ori)
         filler.run(ori.getProcessor())
+
+        println "startPixelX $startPixelX"
+        println "startPixelY $startPixelY"
         Coordinate[] coordinates = imageProcessingService.doWand(ori, startPixelX, startPixelY, 30, null)
         coordinates.each { coordinate ->
             coordinate.x = shiftX + coordinate.x
@@ -117,7 +119,6 @@ class ProcessingController extends RestController {
         ImagePlus ip = new ImagePlus(url, bufferedImage)
         ImageConverter ic = new ImageConverter(ip)
         ic.convertToGray8()
-        //ip.getProcessor().autoThreshold()
         def at = new Auto_Threshold()
         Object[] result = at.exec(ip, method, false, false, true, false, false, false)
         ImagePlus ip_thresholded = (ImagePlus) result[1]

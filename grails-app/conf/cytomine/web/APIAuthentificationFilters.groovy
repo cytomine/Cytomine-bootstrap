@@ -64,7 +64,11 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
             String method = authorization.substring(0, authorization.indexOf(" "))
             String accessKey = authorization.substring(authorization.indexOf(" ") + 1, authorization.indexOf(":"))
             String authorizationSign = authorization.substring(authorization.indexOf(":") + 1)
+			println "#####"
+			println "messagetosign="+messageToSign
+			println "#####"
             println "accessKey="+accessKey
+		
             SecUser user = SecUser.findByPublicKey(accessKey)
             if (!user) {
                 return false
@@ -76,6 +80,7 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
             mac.init(signingKey)
             // compute the hmac on input data bytes
             byte[] rawHmac = mac.doFinal(new String(messageToSign.getBytes(), "UTF-8").getBytes())
+
             // base64-encode the hmac
             byte[] signatureBytes = Base64.encode(rawHmac)
             signature = new String(signatureBytes)

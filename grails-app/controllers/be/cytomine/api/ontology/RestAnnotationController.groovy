@@ -48,13 +48,6 @@ class RestAnnotationController extends RestController {
         else responseNotFound("Image", params.id)
     }
 
-//    def listByUser = {
-    //        User user = userService.read(params.long('id'))
-    //        //TODO: Security with postfilter = (very) bad performance!
-    //        if (user) responseSuccess(annotationService.list(user))
-    //        else responseNotFound("User", params.id)
-    //    }
-
     def listByProject = {
         Project project = projectService.read(params.long('id'), new Project())
 
@@ -72,10 +65,6 @@ class RestAnnotationController extends RestController {
             imageInstanceList = imageInstanceService.list(project)
         }
 
-
-        log.info "List by project " + project.id + " with user:" + userList
-
-        log.info "Check user =" + cytomineService.getCurrentUser()
         if (project) responseSuccess(annotationService.list(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true")))
         else responseNotFound("Project", params.id)
     }
@@ -115,8 +104,6 @@ class RestAnnotationController extends RestController {
             imageInstanceList = imageInstanceService.list(project)
         }
 
-        log.info "List by idTerm " + term.id + " with user:" + userList
-        log.info "annotationService.list: " + project + " # " + term + " # " + userList + " # " + imageInstanceList
         if (term == null) responseNotFound("Term", params.idterm)
         else if (project == null) responseNotFound("Project", params.idproject)
         /*else if (userList.isEmpty()) responseNotFound("Users", params.users)
@@ -132,10 +119,10 @@ class RestAnnotationController extends RestController {
 
     def downloadDocumentByProject = {  //and filter by users and terms !
         // Export service provided by Export plugin
-        log.info params
+
         Project project = projectService.read(params.long('id'),new Project())
         if (!project) responseNotFound("Project", params.long('id'))
-        log.info "check authorization on project " + project
+
         projectService.checkAuthorization(project)
         def users = []
         if (params.users != null) {
@@ -158,7 +145,7 @@ class RestAnnotationController extends RestController {
         def termsName = Term.findAllByIdInList(terms).collect{ it.toString() }
         def usersName = SecUser.findAllByIdInList(users).collect{ it.toString() }
         def imageInstances = ImageInstance.findAllByIdInList(images)
-        log.info "EXPORT WITH termsName="+termsName + " usersName=" +usersName + " images=" + imageInstances
+
         if (params?.format && params.format != "html") {
             def exporterIdentifier = params.format;
             if (exporterIdentifier == "xls") exporterIdentifier = "excel"
@@ -166,19 +153,19 @@ class RestAnnotationController extends RestController {
             SimpleDateFormat  simpleFormat = new SimpleDateFormat("yyyyMMdd_hhmmss");
             String datePrefix = simpleFormat.format(new Date())
             response.setHeader("Content-disposition", "attachment; filename=${datePrefix}_annotations_project${project.id}.${params.format}")
-            log.info "request header"
+
             def annotations = Annotation.createCriteria().list {
                 eq("project", project)
                 inList("image", imageInstances)
                 inList("user.id", users)
             }
-            log.info "annotation request >" + annotations
+
             def annotationTerms = AnnotationTerm.createCriteria().list {
                 inList("annotation", annotations)
                 inList("term.id", terms)
                 order("term.id", "asc")
             }
-            log.info "annotation term request " + annotationTerms
+
             def exportResult = []
             annotationTerms.each { annotationTerm ->
                 Annotation annotation = annotationTerm.annotation
@@ -203,11 +190,11 @@ class RestAnnotationController extends RestController {
                 data.cropGOTO = UrlApi.getAnnotationURL(grailsApplication.config.grails.serverURL,annotation.image.getIdProject(), annotation.image.id, annotation.id)
                 exportResult.add(data)
             }
-            log.info "export result > " +  exportResult
+
             List fields = ["id", "area", "perimeter", "XCentroid", "YCentroid", "image", "filename", "user", "term", "cropURL", "cropGOTO"]
             Map labels = ["id": "Id", "area": "Area (µm²)", "perimeter": "Perimeter (µm)", "XCentroid" : "X", "YCentroid" : "Y", "image": "Image Id", "filename": "Image Filename", "user": "User", "term": "Term", "cropURL": "View annotation picture", "cropGOTO": "View annotation on image"]
             String title = "Annotations in " + project.getName() + " created by " + usersName.join(" or ") + " and associated with " + termsName.join(" or ") + " @ " + (new Date()).toLocaleString()
-            log.info "export service"
+
             exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04,0.06,0.06,0.04, 0.04, 0.04,0.08,0.06,0.06,0.25,0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
         }
     }
@@ -220,7 +207,7 @@ class RestAnnotationController extends RestController {
         log.info "add comment from " + sender + " and annotation " + annotation
         File annnotationCrop = null
         try {
-            BufferedImage bufferedImage = getImageFromURL(annotation.getCropURL())
+            BufferedImage bufferedImage = getImageFromURL(annotation.toCropURL())
             annnotationCrop = File.createTempFile("temp", ".jpg")
             annnotationCrop.deleteOnExit()
             ImageIO.write(bufferedImage, "JPG", annnotationCrop)
@@ -287,9 +274,9 @@ class RestAnnotationController extends RestController {
     }
 
     def show = {
-        log.info "Show controller " + params.long('id')
+
         Annotation annotation = annotationService.read(params.long('id'))
-        log.info "Annotation = " + annotation
+
         if (annotation) {
             annotationService.checkAuthorization(annotation.project)
             responseSuccess(annotation)
@@ -330,8 +317,7 @@ class RestAnnotationController extends RestController {
         def json = request.JSON
         try {
             def domain = annotationService.retrieve(json)
-            log.info "CurrentUser = "+cytomineService.getCurrentUser().id
-            log.info "Annotation.user.id = "+domain.user.id
+
             def result = annotationService.update(domain,json)
             responseResult(result)
         } catch (CytomineException e) {

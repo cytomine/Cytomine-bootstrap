@@ -164,6 +164,7 @@ class ImageInstance extends CytomineDomain {
             returnArray['height'] = it.baseImage.height
             returnArray['resolution'] = it.baseImage.resolution
             returnArray['magnification'] = it.baseImage.magnification
+            returnArray['depth'] = it.baseImage.getZoomLevels()?.max
             /*returnArray['scale'] = it.baseImage.scale
 
             returnArray['roi'] = it.baseImage.roi.toString()*/

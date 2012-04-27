@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest
 import org.springframework.web.multipart.MultipartFile
 import javax.imageio.ImageIO
 import ij.ImagePlus
+import java.awt.Graphics2D
 
 /**
  * Created by IntelliJ IDEA.
@@ -119,17 +120,30 @@ class RestImageInstanceController extends RestController {
     }
 
     def window = {
-        println "WINDOW REQUEST " + params.toString()
         ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
         int x = Integer.parseInt(params.x)
         int y = abstractImage.getHeight() - Integer.parseInt(params.y)
         int w = Integer.parseInt(params.w)
         int h = Integer.parseInt(params.h)
+        int maxZoom = abstractImage.getZoomLevels().max
+		int zoom = (params.zoom != null && params.zoom != "") ? Math.max(Math.min(Integer.parseInt(params.zoom), maxZoom), 0) : 0
+        int resizeWidth = w / Math.pow(2, zoom)
+        int resizeHeight = h / Math.pow(2, zoom)
+        println "ZOOM =" + zoom
         try {
             String url = abstractImage.getCropURL(x, y, w, h)
-            log.info("Window : " + url)
-            responseImage(url)
+            BufferedImage bufferedImage = getImageFromURL(url)
+            //Resize image here, scaling with IIP return "strange" results. Mail was send to the creator of the project
+            if (resizeWidth != w || resizeHeight != h ) {
+                BufferedImage resizedImage = new BufferedImage(resizeWidth, resizeHeight, BufferedImage.TYPE_INT_RGB);
+                Graphics2D g = resizedImage.createGraphics();
+                g.drawImage(bufferedImage, 0, 0, resizeWidth, resizeHeight, null);
+                g.dispose();
+                bufferedImage = resizedImage
+            }
+
+            responseBufferedImage(bufferedImage)
         } catch (Exception e) {
             log.error("GetThumb:" + e);
         }

@@ -24,7 +24,7 @@ class UserPosition extends CytomineDomain {
         JSON.registerObjectMarshaller(UserPosition) {
             def returnArray = [:]
             returnArray.id = it.id
-            returnArray.date = it.created
+            returnArray.date = it.updated != null ? it.updated : it.created
             returnArray.user = it.user.id
             returnArray.image = it.image.id
             returnArray.zoom = it.zoom

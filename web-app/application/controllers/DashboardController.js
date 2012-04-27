@@ -22,11 +22,11 @@ var DashboardController = Backbone.Router.extend({
             this.destroyView();
             window.app.controllers.browse.closeAll();
             window.app.status.currentProject = undefined;
-
+            window.app.view.clearIntervals();
         }
 
         if (window.app.status.currentProject == undefined) {
-
+            window.app.view.clearIntervals();
             window.app.status.currentProject = project;
             window.app.controllers.browse.initTabs();
             if (this.view == null) this.createView(callback);

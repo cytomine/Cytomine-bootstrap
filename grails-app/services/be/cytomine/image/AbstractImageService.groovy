@@ -11,7 +11,7 @@ import be.cytomine.image.server.RetrievalServer
 import be.cytomine.ontology.Annotation
 import be.cytomine.project.Project
 import be.cytomine.security.Group
-import be.cytomine.security.User
+
 import grails.orm.PagedResultList
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.command.Transaction
@@ -178,14 +178,14 @@ class AbstractImageService extends ModelService {
 
     def crop(Annotation annotation, def zoom) {
         if (zoom)
-            return annotation.getCropURL(zoom)
+            return annotation.toCropURL(zoom)
         else
-            return annotation.getCropURL()
+            return annotation.toCropURL()
     }
 
     def retrieval(Annotation annotation, int zoom, int maxSimilarPictures) {
         def retrievalServers = RetrievalServer.findAll()
-        return retrievalServers.get(0).search(annotation.getCropURL(zoom), maxSimilarPictures)
+        return retrievalServers.get(0).search(annotation.toCropURL(zoom), maxSimilarPictures)
     }
 
     def slidingWindow(AbstractImage abstractImage, parameters) {

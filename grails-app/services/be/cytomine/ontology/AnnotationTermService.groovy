@@ -128,12 +128,12 @@ class AnnotationTermService extends ModelService {
      */
     def deleteAnnotationTermFromAllUser(Annotation annotation, User currentUser, Transaction transaction) {
         //Delete all annotation term
-        def annotationTerm = AnnotationTerm.findAllByAnnotation(annotation)
-        log.info "Delete old annotationTerm= " + annotationTerm.size()
+        def annotationTerms = AnnotationTerm.findAllByAnnotation(annotation)
+        log.info "Delete old annotationTerm= " + annotationTerms.size()
 
-        annotationTerm.each { annotterm ->
-            log.info "unlink annotterm:" + annotterm.id
-            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.user.id, currentUser, false,transaction)
+        annotationTerms.each { annotationTerm ->
+            log.info "unlink annotterm:" + annotationTerm.id
+            deleteAnnotationTerm(annotationTerm.annotation.id, annotationTerm.term.id, annotationTerm.user.id, currentUser, false,transaction)
         }
     }
 

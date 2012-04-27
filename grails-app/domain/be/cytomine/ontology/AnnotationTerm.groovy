@@ -64,8 +64,8 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         if (annotationTerm) {
             annotation?.removeFromAnnotationTerm(annotationTerm)
             term?.removeFromAnnotationTerm(annotationTerm)
-            //annotation.refresh()
-            //term.refresh()
+            annotation.refresh()
+            term.refresh()
             println "delete annotationTerm=" + annotationTerm
             annotationTerm.delete(flush: true)
 

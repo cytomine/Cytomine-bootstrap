@@ -227,7 +227,6 @@ body {
 </head>
 <body>
 
-<div id='app'></div>
 <div id='dialogs'></div>
 <div id="alerts"></div>
 </body>

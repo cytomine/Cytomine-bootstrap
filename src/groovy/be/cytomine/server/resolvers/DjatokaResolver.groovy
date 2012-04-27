@@ -97,7 +97,7 @@ class DjatokaResolver extends Resolver {
         return toURL(baseUrl)
     }
 
-    def getZoomLevels (baseUrl, imagePath, width, height) {
+    def  getZoomLevels(String baseUrl, String imagePath, int width, int height) {
         def metadata = JSON.parse(new URL(getMetaDataURL(baseUrl, imagePath)).text)
         int max = Integer.parseInt(metadata.levels)
         int min = 0

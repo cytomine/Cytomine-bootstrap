@@ -519,7 +519,6 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
      * @param $elem  elem that will keep all annotations
      */
     printAnnotationThumbAllTerms : function(terms,users,images) {
-        console.log("self.selectedImages="+images);
         var self = this;
         self.updateContentVisibility();
         self.updateDownloadLinks();

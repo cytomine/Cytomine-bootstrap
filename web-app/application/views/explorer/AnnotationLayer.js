@@ -31,7 +31,8 @@ OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
             fillOpacity : 0.6
         }
         var multipleTermColor = "#000";
-        if (_.isArray(annotation.term) && _.size(annotation.term > 1)) { //multiple terms
+        if (annotation.term.length > 1) { //multiple terms
+
             feature.style = {
                 strokeColor :multipleTermColor,
                 fillColor :  multipleTermColor,
@@ -54,19 +55,11 @@ OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
 });
 
 var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView, map) {
-
-    var styleMap = new OpenLayers.StyleMap({
-        "default" : OpenLayers.Util.applyDefaults({fillColor: color, fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
-                OpenLayers.Feature.Vector.style["default"]),
-        "select" : OpenLayers.Util.applyDefaults({fillColor: "#25465D", fillOpacity: 0.5, strokeColor: "black", strokeWidth: 2},
-                OpenLayers.Feature.Vector.style["default"])
-    });
     this.ontologyTreeView = ontologyTreeView;
     this.name = name;
     this.map = map;
     this.imageID = imageID;
     this.userID = userID;
-
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
         renderers: ["Canvas", "SVG", "VML"],
         strategies: [new OpenLayers.Strategy.BBOX({resFactor: 1})],
@@ -89,8 +82,8 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.map = browseImageView.map;
     this.popup = null;
     this.hoverControl = null;
-    this.triggerUpdateOnUnselect = true,
-            this.isOwner = null;
+    this.triggerUpdateOnUnselect = true;
+    this.isOwner = null;
     this.deleteOnSelect = false; //true if select tool checked
     this.measureOnSelect = false;
     this.magicOnClick = false;
@@ -132,7 +125,6 @@ AnnotationLayer.prototype = {
                 if (self.measureOnSelect) self.vectorsLayer.removeFeatures(evt.feature);
 
                 if (self.dialog != null) self.dialog.destroy();
-
                 self.ontologyTreeView.clear();
                 self.ontologyTreeView.clearAnnotation();
                 self.clearPopup(map, evt);
@@ -172,6 +164,9 @@ AnnotationLayer.prototype = {
                 if (self.triggerUpdateOnUnselect) self.updateAnnotation(evt.feature);
             },
             'onDelete': function (feature) {
+            },
+            "moveend": function() {
+                self.clearPopup();
             }
         });
     },
@@ -217,14 +212,14 @@ AnnotationLayer.prototype = {
         var self = this;
         browseImageView.addVectorLayer(this, this.userID);
         /*new AnnotationCollection({user : this.userID, image : this.imageID, term: undefined}).fetch({
-            success : function (collection, response) {
-                collection.each(function(annotation) {
-                    var feature = self.createFeatureFromAnnotation(annotation);
-                    self.addFeature(feature);
-                });
-                browseImageView.layerLoadedCallback(self);
-            }
-        });*/
+         success : function (collection, response) {
+         collection.each(function(annotation) {
+         var feature = self.createFeatureFromAnnotation(annotation);
+         self.addFeature(feature);
+         });
+         browseImageView.layerLoadedCallback(self);
+         }
+         });*/
 
         browseImageView.layerLoadedCallback(self);
     },
@@ -440,10 +435,10 @@ AnnotationLayer.prototype = {
             }
             var content = _.template(tpl, {length:length});
             self.popup = new OpenLayers.Popup("chicken",
-                    new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
-                    new OpenLayers.Size(200, 60),
-                    content,
-                    false);
+                new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
+                new OpenLayers.Size(200, 60),
+                content,
+                false);
             self.popup.setBackgroundColor("transparent");
             self.popup.setBorder(0);
             self.popup.padding = 0;
@@ -461,7 +456,7 @@ AnnotationLayer.prototype = {
     disableHightlight : function () {
         //this.hoverControl.deactivate();
     },
-     /*Add annotation in database*/
+    /*Add annotation in database*/
     addAnnotation: function (feature) {
         var alias = this;
         var self = this;

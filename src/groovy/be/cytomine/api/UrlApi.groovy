@@ -15,7 +15,6 @@ class UrlApi {
         return url + "/api/image/"+idImage+"/metadata.json"
     }
 
-
     static def getAnnotationCropWithAnnotationId(String url,Long idAnnotation) {
         return url+'/api/annotation/' + idAnnotation +'/crop.jpg'
     }

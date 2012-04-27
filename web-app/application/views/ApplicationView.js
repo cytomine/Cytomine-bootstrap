@@ -11,6 +11,7 @@ var ApplicationView = Backbone.View.extend({
     tagName : "div",
     className : "layout",
     components : {},
+    intervals : [], //references to followInterval, positionInterval...
     isMobile : ( navigator.userAgent.match(/iPad/i) != null ),
     panelsConfiguration : [
         {key : "toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { bottom : 0}, align : "center"}},
@@ -21,6 +22,11 @@ var ApplicationView = Backbone.View.extend({
     ],
     events: {
 
+    },
+    clearIntervals : function (){
+        _.each(this.intervals, function (interval) {
+            clearInterval(interval);
+        });
     },
     /**
      *  UNDO the last command

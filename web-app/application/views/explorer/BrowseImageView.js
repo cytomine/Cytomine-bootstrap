@@ -72,6 +72,13 @@ var BrowseImageView = Backbone.View.extend({
                         layer.showFeature(annotation.get("id"));
                         self.setLayerVisibility(layer, true);
                         self.goToAnnotation(layer,  annotation);
+                        setTimeout(function(){
+                            var feature = layer.getFeature(annotation.id)
+                            console.log("feature="+feature);
+                            if (feature) layer.selectFeature(feature);
+                        }, 1000);//select feature once layer is readed. Should be triggered by event...
+
+
                     }
                 }
             });
@@ -455,6 +462,7 @@ var BrowseImageView = Backbone.View.extend({
         this.broadcastPositionInterval = setInterval(function(){
             self.broadcastPosition();
         }, 5000);
+        window.app.view.intervals.push(this.broadcastPositionInterval);
     },
     stopBroadcastingInterval : function() {
         clearInterval(this.broadcastPositionInterval);
@@ -469,6 +477,7 @@ var BrowseImageView = Backbone.View.extend({
                 }
             });
         }, 5000);
+        window.app.view.intervals.push(this.watchOnlineUsersInterval);
     },
     stopWatchOnlineUsersInterval : function() {
         clearInterval(this.watchOnlineUsersInterval);

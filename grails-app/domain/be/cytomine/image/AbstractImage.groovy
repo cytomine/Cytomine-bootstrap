@@ -168,8 +168,10 @@ class AbstractImage extends CytomineDomain {
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null
             returnArray['width'] = it.width
             returnArray['height'] = it.height
+            returnArray['depth'] = it.getZoomLevels()?.max
             returnArray['resolution'] = it.resolution
             returnArray['magnification'] = it.magnification
+
             /*returnArray['scale'] = it.scale
             returnArray['roi'] = it.roi.toString()*/
             //returnArray['annotations'] = it.annotations
@@ -278,8 +280,8 @@ class AbstractImage extends CytomineDomain {
 
     def getZoomLevels() {
         def imageServers = getImageServers()
-        assert (imageServers.size() > 0)
+        if (imageServers == null || imageServers.size() > 0) return null
         Resolver resolver = Resolver.getResolver(imageServers[0].className)
-        return resolver.getZoomLevels(imageServers[0].getBaseUrl(), imageServers[0].getStorage().getBasePath() + getPath())
+        return resolver.getZoomLevels(imageServers[0].getBaseUrl(), imageServers[0].getStorage().getBasePath() + getPath(), width, height)
     }
 }

@@ -138,17 +138,17 @@ class Annotation extends CytomineDomain implements Serializable {
         return [topLeftX: topLeftX, topLeftY: topLeftY, width: width, height: height]
     }
 
-    def getCropURL() {
+    def toCropURL() {
         def boundaries = getBoundaries()
         return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height)
     }
 
-    def getCropURLWithMaxWithOrHeight(int dimension) {
+    def toCropURLWithMaxWithOrHeight(int dimension) {
         def boundaries = getBoundaries()
         return image.baseImage.getCropURLWithMaxWithOrHeight(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, dimension)
     }
 
-    def getCropURL(int zoom) {
+    def toCropURL(int zoom) {
         def boundaries = getBoundaries()
         return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height)
     }
@@ -260,8 +260,8 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['userByTerm'] = annotation.usersIdByTerm()
             //retrieval
             try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
-            returnArray['cropURL'] = annotation.getCropURL()
-            returnArray['smallCropURL'] = annotation.getCropURLWithMaxWithOrHeight(256)
+            returnArray['cropURL'] = annotation.toCropURL()
+            returnArray['smallCropURL'] = annotation.toCropURLWithMaxWithOrHeight(512)
 
             //println grailsApplication.config.grails.serverURL
 
