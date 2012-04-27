@@ -16,8 +16,8 @@ class RetrievalEvolutionJobService extends AbstractJobService{
     def algoAnnotationTermService
 
     def init(Job job, UserJob userJob) {
-        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.user.publicKey).encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.user.privateKey).encodeAsJSON()))
+        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()))
+        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()))
         //Execute Job
         log.info "Execute Job..."
     }

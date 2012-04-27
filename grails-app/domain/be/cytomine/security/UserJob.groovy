@@ -76,10 +76,8 @@ class UserJob extends SecUser {
             def returnArray = [:]
             returnArray['id'] = it.id
             returnArray['username'] = it.username
-			if (it.springSecurityService.principal.id == it.user.id) {
-            	returnArray['publicKey'] = it.publicKey
-            	returnArray['privateKey'] = it.privateKey
-			}
+            returnArray['publicKey'] = it.publicKey
+            returnArray['privateKey'] = it.privateKey
             returnArray['job'] = it.job?.id
             returnArray['user'] = it.user?.id
             returnArray['created'] = it.created ? it.created.time.toString() : null

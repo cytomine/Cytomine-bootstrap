@@ -89,26 +89,31 @@ class RestUserController extends RestController {
         delete(userService, JSON.parse("{id : $params.id}"))
     }
 
-    @Secured(['ROLE_ADMIN'])
     def addChild = {
         def json = request.JSON
-        User user = User.read(springSecurityService.principal.id)
+        User user = null
+        if(json.parent.toString().equals("null")) {
+            user = User.read(springSecurityService.principal.id)
+        } else {
+            user = User.read(json.parent.toString())
+        }
 
         UserJob userJob = new UserJob()
         
         if(json.job.toString().equals("null")) {
-            log.debug "Job is not define: create new job"
+            log.debug "Job is not define: create new job:"+json
             Job job = new Job()
             job.software = Software.read(json.software)
             try {job.project = Project.read(json.project) }catch(Exception e) {log.warn e.toString()}
             job = job.save(flush : true) 
             userJob.job = job
         } else {
-            log.debug "Job is define: add job " + json.job.toString() + " to userjob"
+
+            log.debug "Job is define: add job " + json.job + " to userjob"
             Job job = Job.get(Long.parseLong(json.job.toString()))
             userJob.job = job
         }
-
+        log.debug "Create userJob"
         userJob.username = "JOB[" + user.username + "], " + new Date().toString()
         userJob.password = user.password
         userJob.generateKeys()
