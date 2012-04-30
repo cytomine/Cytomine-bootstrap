@@ -196,6 +196,23 @@ class AlgoAnnotationTermService extends ModelService {
         return (double) (nbTermCorrect / nbTermTotal)
     }
 
+    double computeAVG(def userJob, Term term) {
+       println "userJob="+userJob
+       println "userJob.id="+userJob.id
+       def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
+           eq("userJob", userJob)
+           eq("expectedTerm",term)
+           eqProperty("term", "expectedTerm")
+       }
+       def nbTermTotal = AlgoAnnotationTerm.createCriteria().count {
+           eq("userJob", userJob)
+           eq("expectedTerm",term)
+       }
+        if(nbTermTotal==0) throw new Exception("UserJob has no algo-annotation-term!")
+        println "nbTermNotCorrect="+nbTermCorrect +" nbTermTotal="+nbTermTotal
+       return (double) (nbTermCorrect / nbTermTotal)
+   }
+
     double computeAVGAveragePerClass(def userJob) {
 
         def terms = userJob.job.project.ontology.terms()
@@ -252,9 +269,26 @@ class AlgoAnnotationTermService extends ModelService {
     }
 
     def listAVGEvolution(List<UserJob> userJobs, Project project) {
+        listAVGEvolution(userJobs,project,null)
+    }
+    def listAVGEvolution(List<UserJob> userJobs, Project project, Term term) {
         def data = []
         int count = 0;
-        List<Annotation> annotations = Annotation.findAllByProject(project,[sort:'created', order:"desc"])
+
+        List<Annotation> annotations = null
+        if(term==null)
+            annotations = Annotation.findAllByProject(project,[sort:'created', order:"desc"])
+        else {
+            annotations = Annotation.withCriteria() {
+                eq('project', project)
+                annotationTerm {
+                    eq('term', term)
+                }
+                order("created", "desc")
+            }.unique()
+        }
+
+
         println "annotations="+annotations.size()
 
 
@@ -278,7 +312,10 @@ class AlgoAnnotationTermService extends ModelService {
 
             try {
                 item.date = userJobIt.created.getTime()
-                item.avg = computeAVG(userJobIt)*100
+                if(term)
+                    item.avg = computeAVG(userJobIt,term)*100
+                else
+                    item.avg = computeAVG(userJobIt)*100
                 data << item
             } catch(Exception e) {
                 log.info e
@@ -286,5 +323,7 @@ class AlgoAnnotationTermService extends ModelService {
         }
         return data
     }
+
+
 
 }

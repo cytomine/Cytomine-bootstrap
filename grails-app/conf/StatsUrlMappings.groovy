@@ -50,5 +50,8 @@ class StatsUrlMappings {
         "/api/stats/retrieval-evolution/evolution"(controller:"retrievalEvolutionStats"){
             action = [GET:"statRetrievalEvolution"]
         }
+        "/api/stats/retrieval-evolution/evolutionByTerm"(controller:"retrievalEvolutionStats"){
+            action = [GET:"statRetrievalEvolutionByTerm"]
+        }
     }
 }

@@ -11,6 +11,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
 import be.cytomine.utils.Utils
 import java.util.TreeMap.Entry
+import be.cytomine.ontology.Annotation
 
 class RetrievalEvolutionStatsController extends RestController {
 
@@ -51,5 +52,23 @@ class RetrievalEvolutionStatsController extends RestController {
         def evolution = retrievalEvolutionJobService.listAVGEvolution(userJob.job)
         if (evolution) data = ['evolution': evolution]
         responseSuccess(data)
+    }
+
+    def statRetrievalEvolutionByTerm = {
+        UserJob userJob = retrieveUserJobFromParams(params)
+        if(!userJob) {
+            responseNotFound("UserJob","Params", params)
+            return null
+        }
+        def data = []
+        if (params.term!=null) {
+            Term term = Term.read(params.term)
+            def evolution = retrievalEvolutionJobService.listAVGEvolution(userJob.job,term)
+            if (evolution) data = ['evolution': evolution]
+            responseSuccess(data)            
+        } else {
+            responseNotFound("Term", params.term)
+        }
+
     }
 }

@@ -118,16 +118,21 @@ var StatsRetrievalSuggestionEvolutionModel = Backbone.Model.extend({
 
 var StatsRetrievalEvolutionModel = Backbone.Model.extend({
 	url : function() {
-        if (this.project != undefined && this.software != undefined) {
+        if (this.project != undefined && this.software != undefined && this.term==undefined) {
             return "api/stats/retrieval-evolution/evolution.json?project="+this.project+"&software="+this.software;
-        } else if (this.job != undefined) {
+        }else  if (this.project != undefined && this.software != undefined && this.term!=undefined) {
+            return "api/stats/retrieval-evolution/evolutionByTerm.json?project="+this.project+"&software="+this.software+"&term="+this.term;
+        } else if (this.job != undefined && this.term==undefined)  {
             return "api/stats/retrieval-evolution/evolution.json?job="+this.job;
-        }
+        } else if (this.job != undefined) {
+                    return "api/stats/retrieval-evolution/evolutionByTerm.json?job="+this.job+"&term="+this.term;
+                }
 	},
     initialize: function (options) {
         this.project = options.project;
         this.software = options.software;
         this.job=options.job;
+        this.term=options.term;
     }
 });
 

@@ -4,6 +4,7 @@ import be.cytomine.processing.Job
 import be.cytomine.security.UserJob
 import grails.converters.JSON
 import be.cytomine.project.Project
+import be.cytomine.ontology.Term
 
 class RetrievalEvolutionJobService extends AbstractJobService{
 
@@ -50,9 +51,13 @@ class RetrievalEvolutionJobService extends AbstractJobService{
         printStopJobInfo(job,args)
     }
     
-    
     def listAVGEvolution(Job job) {
         List<UserJob> userJobs = UserJob.findAllByJob(job, [sort : "created", order: "desc"])
         return algoAnnotationTermService.listAVGEvolution(userJobs, job.project)
+    }
+
+    def listAVGEvolution(Job job, Term term) {
+        List<UserJob> userJobs = UserJob.findAllByJob(job, [sort : "created", order: "desc"])
+        return algoAnnotationTermService.listAVGEvolution(userJobs, job.project,term)
     }
 }
