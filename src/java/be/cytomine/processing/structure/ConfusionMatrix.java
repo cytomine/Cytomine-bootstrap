@@ -19,9 +19,6 @@ public class ConfusionMatrix {
     public double[] result;
 
     public ConfusionMatrix(List<String> className) {
-        System.out.println("Before ordering:"+ className);
-        Collections.sort(className);
-        System.out.println("After ordering:"+ className);
         header = new HashMap<String,Integer>();
         headerInverse = new HashMap<Integer,String>();
         for(int i=0;i<className.size();i++) {
