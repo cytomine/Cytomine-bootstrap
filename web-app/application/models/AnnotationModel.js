@@ -48,8 +48,14 @@ var AnnotationCollection = Backbone.Collection.extend({
         if (this.user != undefined) {
             return "api/user/" + this.user + "/imageinstance/" + this.image + "/annotation.json";
         } else if (this.term != undefined && this.project !=undefined){
-            var users = this.users.join('_');
-            var images = this.images.join('_');
+            var users = undefined;
+            if (this.users!=undefined) {
+                users = this.users.join('_');
+            }
+            var images = undefined;
+            if (this.images!=undefined) {
+                images = this.images.join('_');
+            }
             if (this.term < "0") { //annotations without terms (-1), annotations with multiple terms (-2)
                 var critera = "";
                 if (this.term == -1) {
@@ -58,10 +64,10 @@ var AnnotationCollection = Backbone.Collection.extend({
                     critera = "multipleTerm=true";
                 }
                 var url = "api/project/" + this.project + "/annotation.json?" + critera;
-                if (this.users!=undefined) {
+                if (users) {
                    url += "&users="+ users;
                 }
-                if (this.images!=undefined) {
+                if (images) {
                     url += "&images="+images;
                 }
                 return url;
