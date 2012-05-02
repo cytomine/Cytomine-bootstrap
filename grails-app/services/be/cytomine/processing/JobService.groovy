@@ -30,7 +30,14 @@ class JobService extends ModelService {
 
     def list(Software software, boolean light, def max) {
         def jobs = Job.findAllBySoftware(software, [max: max, sort: "created", order: "desc"])
-        if(!light) return jobs
+        if(!light) {
+            jobs.each {
+                if(it.rate==-1) {
+                    it.rate = it.software?.service?.computeRate(it)
+                    it.save(flush: true)
+                }
+            }
+        }
         else getJOBResponseList(jobs)
     }
 
@@ -42,7 +49,14 @@ class JobService extends ModelService {
 
     def list(Software software, Project project, boolean light, def max) {
         def jobs = Job.findAllBySoftwareAndProject(software, project, [max: max, sort: "created", order: "desc"])
-        if(!light) return jobs
+        if(!light) {
+            jobs.each {
+                if(it.rate==-1) {
+                    it.rate = it.software?.service?.computeRate(it)
+                    it.save(flush: true)
+                }
+            }
+        }
         else getJOBResponseList(jobs)
     }
 

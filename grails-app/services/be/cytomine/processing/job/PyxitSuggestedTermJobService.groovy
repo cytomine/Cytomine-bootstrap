@@ -45,4 +45,9 @@ class PyxitSuggestedTermJobService extends AbstractJobService {
         launchAndWaitSoftware(args)
         printStopJobInfo(job,args)
     }
+
+    @Override
+    double computeRate(Job job) {
+        return -2;
+    }
 }

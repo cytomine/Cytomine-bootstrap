@@ -60,4 +60,17 @@ class RetrievalEvolutionJobService extends AbstractJobService{
         List<UserJob> userJobs = UserJob.findAllByJob(job, [sort : "created", order: "desc"])
         return algoAnnotationTermService.listAVGEvolution(userJobs, job.project,term)
     }
+
+    @Override
+    double computeRate(Job job) {
+        if(job.rate==-1) {
+            def result = listAVGEvolution(job)
+            println "result="+result
+            if(!result.isEmpty()) {
+                job.rate = result.first().avg
+//                job.save(flush: true)
+            }
+        }
+        return job.rate
+    }
 }

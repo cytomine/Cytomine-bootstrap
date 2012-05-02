@@ -49,8 +49,12 @@ class RetrievalSuggestStatsController extends RestController {
             responseNotFound("UserJob","Params", params)
             return null
         }
-        double avg = retrievalSuggestedTermJobService.computeAVG(userJob)
-        def data = ['avg': avg]
+        if(userJob.rate==-1) {
+            //avg is not yet compute for this userjob
+            userJob.rate = retrievalSuggestedTermJobService.computeRate(userJob.job)
+            userJob.save(flush:true)
+        }    
+        def data = ['avg': userJob.rate]
         responseSuccess(data)
     }
 
@@ -88,7 +92,7 @@ class RetrievalSuggestStatsController extends RestController {
             return null
         }
         def worstTerms = listWorstTermWithSuggestedTerm(userJob)
-        def avg =  retrievalSuggestedTermJobService.computeAVG(userJob)
+        def avg =  retrievalSuggestedTermJobService.computeRate(userJob.job)
         def avgAveragedPerClass =  retrievalSuggestedTermJobService.computeAVGAveragePerClass(userJob)
         log.info "avg = " + avg + " avgAveragedPerClass=" + avgAveragedPerClass
         def data = ['worstTerms': worstTerms, 'avg':avg, 'avgMiddlePerClass' : avgAveragedPerClass]

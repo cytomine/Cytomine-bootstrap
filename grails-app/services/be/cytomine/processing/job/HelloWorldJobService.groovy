@@ -25,4 +25,8 @@ class HelloWorldJobService extends AbstractJobService {
     }
 
 
+    @Override
+    double computeRate(Job job) {
+        return -2;
+    }
 }

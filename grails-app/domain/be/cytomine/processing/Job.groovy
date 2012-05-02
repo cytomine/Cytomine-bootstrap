@@ -8,6 +8,7 @@ import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ResponseService
 import org.hibernate.FetchMode
+import be.cytomine.security.UserJob
 
 class Job extends CytomineDomain  {
     //enum type are too heavy with GORM
@@ -26,6 +27,8 @@ class Job extends CytomineDomain  {
 
     Project project
 
+    double rate = -1
+
     static transients = ["url"]
 
     static belongsTo = [software: Software]
@@ -37,6 +40,7 @@ class Job extends CytomineDomain  {
         progress(min: 0, max: 100)
         project(nullable:true)
         status(range: 0..6)
+        rate(nullable:true)
     }
 
     static mapping = {
@@ -50,6 +54,7 @@ class Job extends CytomineDomain  {
         if(!previousJob.isEmpty()) number = previousJob.get(0).number+1
         else number = 1;
     }
+    
 
     static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Job.class
@@ -67,6 +72,13 @@ class Job extends CytomineDomain  {
             job.created = it.created ? it.created.time.toString() : null
             job.updated = it.updated ? it.updated.time.toString() : null
 
+            try {
+                println "it.software="+it.software
+                println "it.software?.service="+it.software?.service
+                println "it.software?.service?.computeRate(it)="+it.software?.service?.computeRate(it)
+                job.rate = it.rate
+            } catch(Exception e) {e.printStackTrace()}
+            
             try {
                 job.jobParameter =  it.jobParameter
 
@@ -105,6 +117,8 @@ class Job extends CytomineDomain  {
                 job.software = Software.read(softwareId)
                 if (!job.software) throw new WrongArgumentException("Software was not found with id:" + softwareId)
             } else job.software = null
+
+            job.rate = (!jsonJob.rate.toString().equals("null")) ? Double.parseDouble(jsonJob.rate) : -1
 
             job.created = (!jsonJob.created.toString().equals("null")) ? new Date(Long.parseLong(jsonJob.created.toString())) : null
             job.updated = (!jsonJob.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonJob.updated.toString())) : null

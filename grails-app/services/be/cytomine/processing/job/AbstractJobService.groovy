@@ -4,6 +4,7 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.SoftwareParameter
 import be.cytomine.processing.JobParameter
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.security.UserJob
 
 abstract class AbstractJobService {
 
@@ -124,5 +125,7 @@ abstract class AbstractJobService {
         println "###################################################################################"
         println "###################################################################################"
     }
+
+    public abstract double computeRate(Job job);
 
 }

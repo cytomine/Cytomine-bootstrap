@@ -12,6 +12,7 @@ class UserJob extends SecUser {
 
     User user
     Job job
+    double rate = -1
 
 
     static constraints = {
@@ -80,6 +81,7 @@ class UserJob extends SecUser {
             returnArray['privateKey'] = it.privateKey
             returnArray['job'] = it.job?.id
             returnArray['user'] = it.user?.id
+            returnArray['rate'] = it.rate
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null
             return returnArray

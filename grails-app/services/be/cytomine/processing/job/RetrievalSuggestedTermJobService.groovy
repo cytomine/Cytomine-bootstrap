@@ -87,4 +87,10 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
        return algoAnnotationTermService.computeConfusionMatrix(projectTerms,userJob)
    }
 
+    double computeRate(Job job) {
+        if(job.rate==-1) {
+            job.rate = computeAVG(UserJob.findByJob(job))
+        }
+        return job.rate
+    }       
 }
