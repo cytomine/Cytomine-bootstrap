@@ -433,7 +433,14 @@ var ProjectDashboardAlgos = Backbone.View.extend({
             });
             valueStr = valueStr + "</select>";
             return valueStr;
-        } else return param.value
+        } else if(param.type=="Date") {
+            return window.app.convertLongToDate(param.value);
+        } else if(param.type=="Boolean") {
+             if(param.value=="true") return '<input type="checkbox" name="" checked="checked" />';
+             else  return '<input type="checkbox" name="" />';
+        } else if(param.name.toLowerCase()=="privatekey") return "***********";
+        else if(param.name.toLowerCase()=="publickey") return "***********";
+        else return param.value
     },
     printJobResult: function(job) {
         if(job==undefined) {
