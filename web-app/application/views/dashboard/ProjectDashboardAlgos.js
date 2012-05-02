@@ -110,6 +110,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     changeSoftware : function() {
         var self = this;
+        self.idJob = undefined;
+
         self.softwares.each(function (software) {
             $("#consultSoftware-" + software.id).removeClass("active");
         });
@@ -364,7 +366,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         });
 
         subelem.append(self.getStatusElement(job,width));
-
+        if(job.get('rate')!=-1)
+            subelem.append('<li>'+(job.get('rate')*100).toFixed(2)+'%</li>');
        subelem.append('<li>'+window.app.convertLongToDate(job.get('created'))+'</li>');
 
        subelem.find('div#progBar').each(function(index) {

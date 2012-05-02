@@ -12,7 +12,7 @@ class UserJob extends SecUser {
 
     User user
     Job job
-    double rate = -1
+    double rate = -1d
 
 
     static constraints = {

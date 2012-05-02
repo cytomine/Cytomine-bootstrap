@@ -27,7 +27,7 @@ class Job extends CytomineDomain  {
 
     Project project
 
-    double rate = -1
+    double rate = -1d
 
     static transients = ["url"]
 
@@ -73,9 +73,6 @@ class Job extends CytomineDomain  {
             job.updated = it.updated ? it.updated.time.toString() : null
 
             try {
-                println "it.software="+it.software
-                println "it.software?.service="+it.software?.service
-                println "it.software?.service?.computeRate(it)="+it.software?.service?.computeRate(it)
                 job.rate = it.rate
             } catch(Exception e) {e.printStackTrace()}
             
@@ -118,7 +115,7 @@ class Job extends CytomineDomain  {
                 if (!job.software) throw new WrongArgumentException("Software was not found with id:" + softwareId)
             } else job.software = null
 
-            job.rate = (!jsonJob.rate.toString().equals("null")) ? Double.parseDouble(jsonJob.rate) : -1
+            job.rate = (!jsonJob.rate.toString().equals("null")) ? Double.parseDouble(jsonJob.rate.toString()) : -1
 
             job.created = (!jsonJob.created.toString().equals("null")) ? new Date(Long.parseLong(jsonJob.created.toString())) : null
             job.updated = (!jsonJob.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonJob.updated.toString())) : null
