@@ -1,16 +1,16 @@
 var JobComparatorView = Backbone.View.extend({
-    width : null,
-    software: null, //current software
-    softwares : null, //softwares from project
-    project : null,
-    software1: null, //selected software
-    software2: null,
-    job1 : null, //selected job
-    job2 : null,
-    jobs1 : null, //job list
-    jobs2 : null,
-    parent : null,
-    initialize: function(options) {
+    width:null,
+    software:null, //current software
+    softwares:null, //softwares from project
+    project:null,
+    software1:null, //selected software
+    software2:null,
+    job1:null, //selected job
+    job2:null,
+    jobs1:null, //job list
+    jobs2:null,
+    parent:null,
+    initialize:function (options) {
         this.width = options.width;
         this.software = options.software;
         this.software1 = options.software;
@@ -24,30 +24,30 @@ var JobComparatorView = Backbone.View.extend({
         this.parent = options.parent;
 
     },
-    render : function() {
+    render:function () {
         var self = this;
         require([
             "text!application/templates/processing/JobComparator.tpl.html"
         ],
-               function(JobComparatorTpl) {
-                   self.loadResult(JobComparatorTpl);
-               });
+                function (JobComparatorTpl) {
+                    self.loadResult(JobComparatorTpl);
+                });
         return this;
     },
-    loadResult : function (JobComparatorTpl) {
+    loadResult:function (JobComparatorTpl) {
         var self = this;
         var content = _.template(JobComparatorTpl, {});
-        if(self.jobs1.length<1 || self.jobs2.length<1) return;
+        if (self.jobs1.length < 1 || self.jobs2.length < 1) return;
         $(self.el).empty();
         $(self.el).append(content);
 
 
         var width = ($(window).width() - 200);
         var height = ($(window).height() - 200);
-        $(self.el).dialog({ width: width, height: height, modal:true });
+        $(self.el).dialog({ width:width, height:height, modal:true });
         self.printSoftwareSelection($("#comparatorSoftwareSelection"));
-        self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job1'),self.software1.id);
-        self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job2'),self.software2.id);
+        self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job1'), self.software1.id);
+        self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job2'), self.software2.id);
         self.printJobSelection($("#comparatorJobSelection"));
 
         self.changeSelection();
@@ -56,19 +56,19 @@ var JobComparatorView = Backbone.View.extend({
         self.refreshSelectStyle($("#comparatorJobSelection").find('.job2'));
         self.refreshCompareJob();
     },
-    changeSelection : function() {
+    changeSelection:function () {
         var self = this;
 
-        if(self.jobs1.get(self.job1)!=undefined) {
-           self.changeSelectionValue($("#comparatorJobSelection").find('.job1'),self.job1.id);
+        if (self.jobs1.get(self.job1) != undefined) {
+            self.changeSelectionValue($("#comparatorJobSelection").find('.job1'), self.job1.id);
         } else {
-          self.changeSelectionValue($("#comparatorJobSelection").find('.job1'),self.jobs1.at(0).id);
+            self.changeSelectionValue($("#comparatorJobSelection").find('.job1'), self.jobs1.at(0).id);
         }
 
-        if(self.jobs2.get(self.job2)!=undefined) {
-           self.changeSelectionValue($("#comparatorJobSelection").find('.job2'),self.job2.id);
+        if (self.jobs2.get(self.job2) != undefined) {
+            self.changeSelectionValue($("#comparatorJobSelection").find('.job2'), self.job2.id);
         } else {
-          self.changeSelectionValue($("#comparatorJobSelection").find('.job2'),self.jobs2.at(0).id);
+            self.changeSelectionValue($("#comparatorJobSelection").find('.job2'), self.jobs2.at(0).id);
         }
 
 //
@@ -83,16 +83,16 @@ var JobComparatorView = Backbone.View.extend({
 //            self.changeSelectionValue($("#comparatorJobSelection").find('.job2'),self.jobs2.at(1).id);
 //        }
     },
-    changeSelectionValue : function(elem, value) {
+    changeSelectionValue:function (elem, value) {
         elem.find('select').val(value);
     },
-    retrieveSelectedJob : function(num) {
+    retrieveSelectedJob:function (num) {
         return $("#comparatorJobSelection").find('.job' + num).find('select').val();
     },
-    retrieveSelectedSoftware : function(num) {
+    retrieveSelectedSoftware:function (num) {
         return $("#comparatorSoftwareSelection").find('.job' + num).find('select').val();
     },
-    cleanCompareJob : function() {
+    cleanCompareJob:function () {
         $("#comparatorJobInfo").find(".job1").empty();
         $("#comparatorJobInfo").find(".job2").empty();
         $("#comparatorJobParam").find(".job1").empty();
@@ -101,30 +101,30 @@ var JobComparatorView = Backbone.View.extend({
         $("#comparatorJobResult").find(".job2").empty();
 
     },
-    reloadSelection : function() {
+    reloadSelection:function () {
         var self = this;
         $("#comparatorJobSelection").find('.job1').empty();
         $("#comparatorJobSelection").find('.job2').empty();
         $("#comparatorSoftwareSelection").find('.job1').empty();
         $("#comparatorSoftwareSelection").find('.job2').empty();
         self.printSoftwareSelection($("#comparatorSoftwareSelection"));
-        self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job1'),self.software1.id);
-        self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job2'),self.software2.id);
+        self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job1'), self.software1.id);
+        self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job2'), self.software2.id);
         self.printJobSelection($("#comparatorJobSelection"));
         self.changeSelection();
         self.refreshCompareJob();
     },
-    refreshCompareJob : function() {
+    refreshCompareJob:function () {
         var self = this;
         self.cleanCompareJob();
         var idJob1 = self.retrieveSelectedJob('1');
         var idJob2 = self.retrieveSelectedJob('2');
-        console.log("idJob1="+idJob1 +" idJob2="+idJob2);
+        console.log("idJob1=" + idJob1 + " idJob2=" + idJob2);
         if (idJob1 == undefined || idJob2 == undefined) return;
-        new JobModel({ id : idJob1}).fetch({
-            success : function (job1, response) {
-                new JobModel({ id : idJob2}).fetch({
-                    success : function (job2, response) {
+        new JobModel({ id:idJob1}).fetch({
+            success:function (job1, response) {
+                new JobModel({ id:idJob2}).fetch({
+                    success:function (job2, response) {
                         self.job1 = job1;
                         self.job2 = job2;
                         self.printJobInfo($("#comparatorJobInfo"));
@@ -136,57 +136,57 @@ var JobComparatorView = Backbone.View.extend({
         });
 
     },
-    printJobSelection : function(elemParent) {
+    printJobSelection:function (elemParent) {
         var self = this;
-        self.addSelectionView(elemParent.find('.job1'),self.jobs1);
-        self.addSelectionView(elemParent.find('.job2'),self.jobs2);
+        self.addSelectionView(elemParent.find('.job1'), self.jobs1);
+        self.addSelectionView(elemParent.find('.job2'), self.jobs2);
     },
-    printSoftwareSelection : function(elemParent) {
+    printSoftwareSelection:function (elemParent) {
         var self = this;
         self.addSelectionSoftwareView(elemParent.find('.job1'));
         self.addSelectionSoftwareView(elemParent.find('.job2'));
     },
-    printJobInfo : function(elemParent) {
+    printJobInfo:function (elemParent) {
         var self = this;
         console.log("PRINT JOB INFO");
         self.addJobView(elemParent.find('.job1'), self.job1);
         self.addJobView(elemParent.find('.job2'), self.job2);
     },
-    printParamJob : function(elemParent) {
+    printParamJob:function (elemParent) {
         var self = this;
         self.addParamView(elemParent.find('.job1'), self.job1);
         self.addParamView(elemParent.find('.job2'), self.job2);
     },
-    printResultJob : function(elemParent) {
+    printResultJob:function (elemParent) {
         var self = this;
         self.addResultView(elemParent.find('.job1'), self.job1);
         self.addResultView(elemParent.find('.job2'), self.job2);
     },
-    addSelectionView : function(elemParent, collection) {
+    addSelectionView:function (elemParent, collection) {
         var self = this;
         elemParent.append('<select></select>');
-        collection.each(function(job) {
+        collection.each(function (job) {
             var className = self.getClassName(job);
             elemParent.find("select").append('<option class="' + className + '" value="' + job.id + '">Job ' + job.get('number') + ' (' + window.app.convertLongToDate(job.get('created')) + ')' + '</option>');
         });
-        elemParent.find("select").change(function() {
+        elemParent.find("select").change(function () {
             self.refreshSelectStyle(elemParent);
             self.refreshCompareJob();
         });
     },
-    addSelectionSoftwareView : function(elemParent) {
+    addSelectionSoftwareView:function (elemParent) {
         var self = this;
         elemParent.append('<select></select>');
-        self.softwares.each(function(software) {
-            if(software.get('resultName')==software.get('resultName'))
+        self.softwares.each(function (software) {
+            if (software.get('resultName') == software.get('resultName'))
                 elemParent.find("select").append('<option value="' + software.id + '">Software ' + software.get('name') + '</option>');
         });
-        elemParent.find("select").change(function() {
+        elemParent.find("select").change(function () {
             self.refreshJobList();
 
         });
     },
-    refreshJobList : function() {
+    refreshJobList:function () {
         var self = this;
         self.cleanCompareJob();
         //retrieve software 1 & 2
@@ -194,45 +194,45 @@ var JobComparatorView = Backbone.View.extend({
         self.software1 = self.softwares.get(idSoftware1);
         var idSoftware2 = self.retrieveSelectedSoftware('2');
         self.software2 = self.softwares.get(idSoftware2);
-        console.log("Selected software: 1#" + self.software1.id + "- 2#"+ self.software2.id);
+        console.log("Selected software: 1#" + self.software1.id + "- 2#" + self.software2.id);
         //retrieve job from software selection 1
-        new JobCollection({ project : self.project.id, software: self.software1.id, light:true}).fetch({
-                success : function (collection, response) {
-                    self.jobs1 = collection;
+        new JobCollection({ project:self.project.id, software:self.software1.id, light:true}).fetch({
+            success:function (collection, response) {
+                self.jobs1 = collection;
 
-                        //retrieve job from software selection 2
-                        new JobCollection({ project : self.project.id, software: self.software2.id, light:true}).fetch({
-                                success : function (collection, response) {
-                                    self.jobs2 = collection;
-                                     self.reloadSelection();
-                                }
-                        });
-                }
+                //retrieve job from software selection 2
+                new JobCollection({ project:self.project.id, software:self.software2.id, light:true}).fetch({
+                    success:function (collection, response) {
+                        self.jobs2 = collection;
+                        self.reloadSelection();
+                    }
+                });
+            }
         });
     },
-    refreshSelectStyle : function(elemParent) {
+    refreshSelectStyle:function (elemParent) {
         var value = elemParent.find("select").val();
         elemParent.find('select').attr("class", "");
         var className = elemParent.find('option[value="' + value + '"]').attr("class");
         elemParent.find("select").addClass(className);
     },
-    getClassName : function(job) {
-        if(job.isNotLaunch()) return "btn-inverse";
-        else if(job.isInQueue()) return "btn-info";
-        else if(job.isRunning()) return "btn-primary";
-        else if(job.isSuccess()) return "btn-success";
-        else if(job.isFailed()) return "btn-danger";
-        else if(job.isIndeterminate()) return "btn-inverse";
-        else if(job.isWait()) return "btn-primary";
+    getClassName:function (job) {
+        if (job.isNotLaunch()) return "btn-inverse";
+        else if (job.isInQueue()) return "btn-info";
+        else if (job.isRunning()) return "btn-primary";
+        else if (job.isSuccess()) return "btn-success";
+        else if (job.isFailed()) return "btn-danger";
+        else if (job.isIndeterminate()) return "btn-inverse";
+        else if (job.isWait()) return "btn-primary";
         else return "no supported";
     },
-    addJobView : function(elemParent, job) {
+    addJobView:function (elemParent, job) {
         var self = this;
         console.log("addJobView");
         elemParent.append('<div style="margin: 0px auto;min-width:100px;max-width:200px" id="' + job.id + '"></div>');
         self.parent.buildJobInfoElem(job, elemParent.find("#" + job.id));
     },
-    addParamView : function(elemParent, job) {
+    addParamView:function (elemParent, job) {
         var self = this;
 
         elemParent.append('<table width="100%" style="width:100%;max-width:100%" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="runParamsTable" ></table>');
@@ -249,40 +249,40 @@ var JobComparatorView = Backbone.View.extend({
         });
         elemParent.find('#runParamsTable').dataTable({
             //"sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-            "sPaginationType": "bootstrap",
-            "oLanguage": {
-                "sLengthMenu": "_MENU_ records per page"
+            "sPaginationType":"bootstrap",
+            "oLanguage":{
+                "sLengthMenu":"_MENU_ records per page"
             },
-            "iDisplayLength": 10 ,
-            "bLengthChange" : false,
-            bDestroy: true,
-            "aoColumnDefs": [
-                { "sWidth": "40%", "aTargets": [ 0 ] },
-                { "sWidth": "40%", "aTargets": [ 1 ] },
-                { "sWidth": "20%", "aTargets": [ 2 ] }
+            "iDisplayLength":10,
+            "bLengthChange":false,
+            bDestroy:true,
+            "aoColumnDefs":[
+                { "sWidth":"40%", "aTargets":[ 0 ] },
+                { "sWidth":"40%", "aTargets":[ 1 ] },
+                { "sWidth":"20%", "aTargets":[ 2 ] }
             ]
         });
     },
-    getJobParamValue : function(param) {
-        if(param.type=="List") {
+    getJobParamValue:function (param) {
+        if (param.type == "List") {
             var valueStr = "<select>";
             var values = param.value.split(',');
-            _.each(values,function(value) {
-                valueStr = valueStr + "<option>"+value+"</option>";
+            _.each(values, function (value) {
+                valueStr = valueStr + "<option>" + value + "</option>";
             });
             valueStr = valueStr + "</select>";
             return valueStr;
         } else return param.value
     },
-    addResultView: function(elemParent, job) {
+    addResultView:function (elemParent, job) {
         var self = this;
 
         if (window.app.status.currentTermsCollection == undefined || window.app.status.currentAnnotationsCollection == undefined) {
             new AnnotationCollection({project:self.project.id}).fetch({
-                success : function (collection, response) {
+                success:function (collection, response) {
                     window.app.status.currentAnnotationsCollection = collection;
                     new TermCollection({idProject:self.project.id}).fetch({
-                        success : function (terms, response) {
+                        success:function (terms, response) {
                             window.app.status.currentTermsCollection = terms;
                             self.initJobResult(job, elemParent);
 
@@ -294,14 +294,14 @@ var JobComparatorView = Backbone.View.extend({
             self.initJobResult(job, elemParent);
         }
     },
-    initJobResult : function(job, elemParent) {
+    initJobResult:function (job, elemParent) {
         var self = this;
         var result = new RetrievalAlgoResult({
-            model : job,
-            terms : window.app.status.currentTermsCollection,
-            annotations: window.app.status.currentAnnotationsCollection,
-            project : self.project,
-            el : elemParent
+            model:job,
+            terms:window.app.status.currentTermsCollection,
+            annotations:window.app.status.currentAnnotationsCollection,
+            project:self.project,
+            el:elemParent
         }).render();
     }
 });

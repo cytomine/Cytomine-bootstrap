@@ -89,7 +89,12 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
 
     double computeRate(Job job) {
         if(job.rate==-1) {
+            try {
             job.rate = computeAVG(UserJob.findByJob(job))
+            }catch(Exception e) {
+                log.warn "computeRate is null:"+e.toString()
+                job.rate = 0
+            }
         }
         return job.rate
     }       
