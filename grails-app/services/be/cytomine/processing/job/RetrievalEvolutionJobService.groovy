@@ -47,7 +47,7 @@ class RetrievalEvolutionJobService extends AbstractJobService{
 
 
         printStartJobInfo(job,args)
-        launchAndWaitSoftware(args)
+        launchAndWaitSoftware(args,job)
         printStopJobInfo(job,args)
     }
     
@@ -63,7 +63,7 @@ class RetrievalEvolutionJobService extends AbstractJobService{
 
     @Override
     double computeRate(Job job) {
-        if(job.rate==-1) {
+        if(job.rate==-1 && job.status==Job.SUCCESS) {
             def result = listAVGEvolution(job)
             println "result="+result
             if(!result.isEmpty()) {

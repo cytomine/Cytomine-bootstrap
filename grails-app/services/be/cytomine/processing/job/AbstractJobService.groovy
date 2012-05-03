@@ -48,7 +48,7 @@ abstract class AbstractJobService {
     }
 
 
-    void launchAndWaitSoftware(String[] args) {
+    void launchAndWaitSoftware(String[] args, Job job) {
          Runtime runtime = Runtime.getRuntime();
          final Process process = runtime.exec(args);
 
@@ -90,6 +90,9 @@ abstract class AbstractJobService {
                  }
              }.start();
             process.waitFor();
+//        job.refresh()
+//        job.rate = job.software.service.computeRate(job)
+//        job.save(flush: true)
     }
 
 

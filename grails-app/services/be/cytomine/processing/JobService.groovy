@@ -32,7 +32,7 @@ class JobService extends ModelService {
         def jobs = Job.findAllBySoftware(software, [max: max, sort: "created", order: "desc"])
         if(!light) {
             jobs.each {
-                if(it.rate==-1) {
+                if(it.rate==-1 && it.status==Job.SUCCESS) {
                     it.rate = it.software?.service?.computeRate(it)
                     it.save(flush: true)
                 }
@@ -51,7 +51,7 @@ class JobService extends ModelService {
         def jobs = Job.findAllBySoftwareAndProject(software, project, [max: max, sort: "created", order: "desc"])
         if(!light) {
             jobs.each {
-                if(it.rate==-1) {
+                if(it.rate==-1 && it.status==Job.SUCCESS) {
                     it.rate = it.software?.service?.computeRate(it)
                     it.save(flush: true)
                 }

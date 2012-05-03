@@ -83,7 +83,9 @@ var EvolutionAlgoResult = Backbone.View.extend({
             if (dateSelect.getTime() == date.getTime()) {
                 indiceJob = i;
             }
-            data.addRow([date, evolution[i].size, evolution[i].avg ]);
+            var avg = 0;
+            if(evolution[i].avg!=-1) avg = (evolution[i].avg*100);
+            data.addRow([date, evolution[i].size, avg ]);
         }
 
         var width = Math.round($(window).width() / 2 - 150);
@@ -167,7 +169,9 @@ var EvolutionAlgoResult = Backbone.View.extend({
             if (dateSelect.getTime() == date.getTime()) {
                 indiceJob = i;
             }
-            data.addRow([date, evolution[i].size, evolution[i].avg ]);
+            var avg = 0;
+            if(evolution[i].avg!=-1) avg = (evolution[i].avg*100);
+            data.addRow([date, evolution[i].size, avg ]);
         }
 
         var width = Math.round($(window).width() / 2 - 150);

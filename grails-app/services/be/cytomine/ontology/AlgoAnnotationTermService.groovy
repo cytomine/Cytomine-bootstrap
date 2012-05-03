@@ -313,10 +313,10 @@ class AlgoAnnotationTermService extends ModelService {
             try {
                 item.date = userJobIt.created.getTime()
                 if(term)
-                    item.avg = computeAVG(userJobIt,term)*100
+                    item.avg = computeAVG(userJobIt,term)
                 else {
-                    if(userJobIt.rate==-1) {
-                        userJobIt.rate = computeAVG(userJobIt)*100
+                    if(userJobIt.rate==-1 && userJobIt.job.status==Job.SUCCESS) {
+                        userJobIt.rate = computeAVG(userJobIt)
                         userJobIt.save(flush: true)
                     }
                     item.avg = userJobIt.rate

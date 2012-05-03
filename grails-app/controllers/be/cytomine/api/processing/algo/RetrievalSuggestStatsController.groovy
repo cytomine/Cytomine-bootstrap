@@ -49,7 +49,7 @@ class RetrievalSuggestStatsController extends RestController {
             responseNotFound("UserJob","Params", params)
             return null
         }
-        if(userJob.rate==-1) {
+        if(userJob.rate==-1 && userJob.job.status==Job.SUCCESS) {
             //avg is not yet compute for this userjob
             userJob.rate = retrievalSuggestedTermJobService.computeRate(userJob.job)
             userJob.save(flush:true)

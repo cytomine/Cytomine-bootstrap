@@ -42,7 +42,7 @@ class PyxitSuggestedTermJobService extends AbstractJobService {
             args[i+2] = jobParams[i]
         }
         printStartJobInfo(job,args)
-        launchAndWaitSoftware(args)
+        launchAndWaitSoftware(args,job)
         printStopJobInfo(job,args)
     }
 

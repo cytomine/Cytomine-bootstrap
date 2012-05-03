@@ -65,7 +65,7 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
 
 
         printStartJobInfo(job,args)
-        launchAndWaitSoftware(args)
+        launchAndWaitSoftware(args,job)
         printStopJobInfo(job,args)
     }
 
@@ -88,7 +88,7 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
    }
 
     double computeRate(Job job) {
-        if(job.rate==-1) {
+        if(job.rate==-1 && job.status==Job.SUCCESS) {
             try {
             job.rate = computeAVG(UserJob.findByJob(job))
             }catch(Exception e) {
