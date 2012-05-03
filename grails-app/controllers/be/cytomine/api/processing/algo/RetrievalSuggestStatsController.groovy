@@ -188,6 +188,7 @@ class RetrievalSuggestStatsController extends RestController {
     def listWorstAnnotationTerm(def userJob, def max) {
         def results = []
 
+
         def algoAnnotationsTerm = AlgoAnnotationTerm.createCriteria().list {
             eq("userJob", userJob)
             neProperty("term", "expectedTerm")
@@ -195,10 +196,21 @@ class RetrievalSuggestStatsController extends RestController {
         }
 
         for (int i = 0; i < algoAnnotationsTerm.size() && max > results.size(); i++) {
+            def result = [:]
             def suggest = algoAnnotationsTerm.get(i)
             //def annotation = suggest.annotation
             //def realTerm = termService.list(annotation, annotation.user)
-            results.add(suggest);
+            result['id'] = suggest.id
+            Annotation annotation = suggest.annotation
+            result['annotation'] = annotation.id
+            result['project'] = annotation.image.id
+            result['cropURL'] = annotation.toCropURL()
+            result['term'] = suggest.term.id
+            result['expectedTerm'] = suggest.expectedTerm.id
+            result['rate'] = suggest.rate
+            result['user'] = suggest.userJob.id
+            result['project'] = suggest.project.id
+            results << result;
         }
 
         return results

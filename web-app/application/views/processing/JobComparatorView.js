@@ -277,18 +277,13 @@ var JobComparatorView = Backbone.View.extend({
     addResultView:function (elemParent, job) {
         var self = this;
 
-        if (window.app.status.currentTermsCollection == undefined || window.app.status.currentAnnotationsCollection == undefined) {
-            new AnnotationCollection({project:self.project.id}).fetch({
-                success:function (collection, response) {
-                    window.app.status.currentAnnotationsCollection = collection;
+        if (window.app.status.currentTermsCollection == undefined) {
                     new TermCollection({idProject:self.project.id}).fetch({
                         success:function (terms, response) {
                             window.app.status.currentTermsCollection = terms;
                             self.initJobResult(job, elemParent);
 
                         }
-                    });
-                }
             });
         } else {
             self.initJobResult(job, elemParent);
@@ -299,7 +294,6 @@ var JobComparatorView = Backbone.View.extend({
         var result = new RetrievalAlgoResult({
             model:job,
             terms:window.app.status.currentTermsCollection,
-            annotations:window.app.status.currentAnnotationsCollection,
             project:self.project,
             el:elemParent
         }).render();

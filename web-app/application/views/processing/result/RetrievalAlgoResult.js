@@ -5,12 +5,10 @@ var RetrievalAlgoResult = Backbone.View.extend({
     //el
     width:null,
     project:null,
-    annotations:null,
     terms:null,
     jobs:null,
     software:null,
     initialize:function (options) {
-        this.annotations = window.app.status.currentAnnotationsCollection;
         this.terms = window.app.status.currentTermsCollection;
         this.project = options.project;
         this.jobs = options.jobs;
@@ -61,7 +59,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
         console.log("StatsRetrievalSuggestionWorstAnnotationModel");
         new StatsRetrievalSuggestionWorstAnnotationModel({job:self.model.id}).fetch({
             success:function (model, response) {
-                self.drawWorstAnnotationsTable(model, response, self.terms, self.annotations);
+                self.drawWorstAnnotationsTable(model, response, self.terms);
 
             }
         });
@@ -302,7 +300,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
                 draw(data, {width:this.width, height:350, title:"", backgroundColor:"whiteSmoke", colors:colors});
     },
 
-    drawWorstAnnotationsTable:function (model, response, terms, annotations) {
+    drawWorstAnnotationsTable:function (model, response, terms) {
         var annotationsTerms = model.get('worstAnnotations');
         if (annotationsTerms == undefined) {
             $(self.el).find("#worstAnnotationPanel").hide();
@@ -321,17 +319,17 @@ var RetrievalAlgoResult = Backbone.View.extend({
                     for (var i = 0; i < annotationsTerms.length; i++) {
                         var annotationTerm = annotationsTerms[i];
                         var rate = Math.round(annotationTerm.rate * 100) - 1 + "%";
-                        var annotation = annotations.get(annotationTerm.annotation);
+
                         var suggestedTerm = terms.get(annotationTerm.term).get('name');
                         var termsAnnotation = terms.get(annotationTerm.expectedTerm).get('name');
 //                            _.each(annotation.get('term'), function(idTerm){ realTerms.push(terms.get(idTerm).get('name')); });
                         //var termsAnnotation =  realTerms.join();
-                        var text = "<b>" + suggestedTerm + "</b> for annotation " + annotation.id + " instead of <b>" + termsAnnotation + "</b>";
+                        var text = "<b>" + suggestedTerm + "</b> for annotation " + annotationTerm.annotation + " instead of <b>" + termsAnnotation + "</b>";
 
                         var cropStyle = "block";
-                        var cropURL = annotation.get("cropURL");
+                        var cropURL = annotationTerm.cropURL;
 
-                        var action = _.template(suggestedAnnotationTermTpl, {idProject:self.project.id, idAnnotation:annotation.id, idImage:annotation.get('image'), icon:"add.png", text:text, rate:rate, cropURL:cropURL, cropStyle:cropStyle});
+                        var action = _.template(suggestedAnnotationTermTpl, {idProject:self.project.id, idAnnotation:annotationTerm.annotation, idImage:annotationTerm.image, icon:"add.png", text:text, rate:rate, cropURL:cropURL, cropStyle:cropStyle});
                         $(self.el).find("#worstannotationitem").append(action);
                     }
                 }

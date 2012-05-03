@@ -450,18 +450,14 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         }
         var self = this;
 
-        if(window.app.status.currentTermsCollection==undefined || window.app.status.currentAnnotationsCollection==undefined) {
-             new AnnotationCollection({project:self.model.id}).fetch({
-                success : function (collection, response) {
-                    window.app.status.currentAnnotationsCollection = collection;
-                    new TermCollection({idProject:self.model.id}).fetch({
-                        success : function (terms, response) {
-                            window.app.status.currentTermsCollection = terms;
-                            self.initJobResult(job);
+        if(window.app.status.currentTermsCollection==undefined) {
 
-                        }
-                    });
-                }
+                new TermCollection({idProject:self.model.id}).fetch({
+                    success : function (terms, response) {
+                        window.app.status.currentTermsCollection = terms;
+                        self.initJobResult(job);
+
+                    }
             });
         } else {
             self.initJobResult(job);
