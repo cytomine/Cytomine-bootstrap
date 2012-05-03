@@ -388,13 +388,17 @@ AnnotationLayer.prototype = {
             $("#annotationRetrievalMain").append("<div id=\"annotationRetrieval\"></div>");
 
 
+            var bestTerms = [bestTerm1,bestTerm2];
+            var bestTermsValue = [bestTerm1Value, bestTerm2Value];
             var panel = new AnnotationRetrievalView({
                 model : new AnnotationRetrievalCollection(similarAnnotation),
                 projectsPanel : self,
                 container : self,
                 el : "#annotationRetrieval",
                 baseAnnotation : annotation,
-                terms : terms
+                terms : terms,
+                bestTerms : bestTerms,
+                bestTermsValue : bestTermsValue
             }).render();
             return false;
 

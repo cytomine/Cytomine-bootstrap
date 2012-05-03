@@ -8,6 +8,8 @@ var AnnotationRetrievalView = Backbone.View.extend({
         this.annotations = null; //array of annotations that are printed
         this.baseAnnotation = options.baseAnnotation;
         this.terms = options.terms;
+        this.bestTerms = options.bestTerms;
+        this.bestTermsValue = options.bestTermsValue;
         window.app.status.currentTermsCollection = options.terms;
         if (this.page == undefined) this.page = 0;
     },
@@ -22,25 +24,22 @@ var AnnotationRetrievalView = Backbone.View.extend({
         $(self.el).append("<div id=\"retrievalThumb\"><div>");
         $(self.el).append("<div id=\"retrievalPieChart\"><div id=\"retrievalPieChartTerm\" style=\"float: left; width: 50%;\"></div><div id=\"retrievalPieChartProject\" style=\"float: left; width: 50%;\"></div></div>");
 
+        $("#annotationRetrieval").tabs();
+        $(self.el).dialog({
+            title : self.createTitle(),
+            width: 900,
+            height: 500,
+            autoOpen : true,
+            modal:true,
+            buttons : {
+                "Close" : function() {
+                    $(self.el).dialog("close");
 
-
-
-                $("#annotationRetrieval").tabs();
-                $(self.el).dialog({
-                    title : self.createTitle(),
-                    width: 900,
-                    height: 500,
-                    autoOpen : true,
-                    modal:true,
-                    buttons : {
-                        "Close" : function() {
-                            $(self.el).dialog("close");
-
-                        }
-                    }
-                });
-                self.createThumbView(self.page);
-                self.createStatsView();
+                }
+            }
+        });
+        self.createThumbView(self.page);
+        self.createStatsView();
         return this;
 
     },
@@ -48,15 +47,11 @@ var AnnotationRetrievalView = Backbone.View.extend({
         var self = this;
         var id = self.baseAnnotation.get('id');
         var termsNameArray = new Array();
-        var termArray = self.baseAnnotation.get('term');
-        _.each(termArray, function(termid){
-            //console.log(termid);
-            //console.log(self.terms);
-            if(self.terms.get(termid)!=undefined) {
-                termsNameArray.push(self.terms.get(termid).get('name'));
-            }
+
+        _.each(self.bestTerms, function(term, i){
+            termsNameArray.push(term.get('name') + "("+ (self.bestTermsValue[i]).toFixed(2) + "%)");
         });
-        return "Annotation " + id + " with term " +  termsNameArray.join(',');
+        return "Annotation " + id + ": similar annotations " + termsNameArray.join(', ') ;
 
     },
     createThumbView : function(page) {
