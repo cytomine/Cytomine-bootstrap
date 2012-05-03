@@ -49,7 +49,8 @@ var AnnotationRetrievalView = Backbone.View.extend({
         var termsNameArray = new Array();
 
         _.each(self.bestTerms, function(term, i){
-            termsNameArray.push(term.get('name') + "("+ (self.bestTermsValue[i]).toFixed(2) + "%)");
+            if(term!=undefined && term!=null)
+                termsNameArray.push(term.get('name') + " ("+ (self.bestTermsValue[i]).toFixed(2) + "%)");
         });
         return "Annotation " + id + ": similar annotations " + termsNameArray.join(', ') ;
 
