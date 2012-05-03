@@ -12,6 +12,7 @@ var JobSearchEngineView = Backbone.View.extend({
         this.project = options.project;
         this.parent = options.parent;
         this.listing = options.listing;
+        this.idJob = options.idJob;
         this.allJobs = options.allJobs;
         this.paramViews = [];
     },
@@ -31,6 +32,17 @@ var JobSearchEngineView = Backbone.View.extend({
         var content = _.template(JobSearchEngineTpl, {});
         $(self.el).empty();
         $(self.el).append(content);
+
+        console.log("$('#myTab')="+$('#myTab').length);
+        console.log("$('#myTab').find('a')="+$('#myTab').find('a').length);
+
+        $('#myTab').find('a').click(function (e) {
+            console.log("click");
+          e.preventDefault();
+          $(this).tab('show');
+            history.replaceState(null, '', '#tabs-algos-'+self.project.id +"-" + self.software.id + "-" + self.idJob);
+            return false;
+        });
 
         self.printBasicSearchPanel();
         self.printAdvancedSearchPanel();

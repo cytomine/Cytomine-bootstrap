@@ -7,6 +7,7 @@ var JobSearchView = Backbone.View.extend({
         this.software = options.software;
         this.project = options.project;
         this.parent = options.parent;
+        this.idJob = options.idJob;
     },
     render:function () {
         var self = this;
@@ -24,6 +25,7 @@ var JobSearchView = Backbone.View.extend({
         var content = _.template(jobSearchViewTpl, {});
         $(self.el).empty();
         $(self.el).append(content);
+
 
         var width = ($(window).width() - 200);
         var height = ($(window).height() - 200);
@@ -87,6 +89,7 @@ var JobSearchView = Backbone.View.extend({
                     width:self.software,
                     project:self.project,
                     software:self.software,
+                    idJob : self.idJob,
                     el:$("#jobFilterList"),
                     parent:self,
                     listing:listing,

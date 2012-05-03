@@ -57,6 +57,7 @@ body {
 
     <!-- Twitter bootstrap -->
     <script type="text/javascript" src="lib/bootstrap-2.0/js/bootstrap.js"></script>
+    <script type="text/javascript" src="lib/bootstrap-2.0/js/bootstrap-tab.js"></script>
 
     <!-- Core Libs -->
     <script type="text/javascript" src="lib/underscore.js"></script>

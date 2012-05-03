@@ -44,6 +44,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                if(self.idSoftware==undefined) {
                    var lastSoftware = collection.last();
                    self.idSoftware = lastSoftware.id;
+                   window.location = "#tabs-algos-" + self.model.id + "-" + self.idSoftware + "-";
                }
               self.software = collection.get(self.idSoftware);
               self.softwares = collection;
@@ -189,6 +190,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
               new JobSearchView({
                   software : self.software,
                   project : self.model,
+                  idJob : self.idJob,
                   parent : self,
                   el : $("#softwareSearchDialogParent")
               }).render();
