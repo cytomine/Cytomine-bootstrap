@@ -8,7 +8,7 @@ var JobTableView = Backbone.View.extend({
     datatable:null,
     paramsFromSoftwares:null,
     paramsFromSoftwaresVisibility:null,
-    FIRSTCOLUMNWITHJOBDATA:6,
+    FIRSTCOLUMNWITHJOBDATA:7,
     initialize:function (options) {
         var self = this;
         this.software = options.software;
@@ -109,6 +109,7 @@ var JobTableView = Backbone.View.extend({
         $(self.el).find('#searchJobTable').find('#searchJobHeader').append('<th>#</th>');
         $(self.el).find('#searchJobTable').find('#searchJobHeader').append('<th>Date</th>');
         $(self.el).find('#searchJobTable').find('#searchJobHeader').append('<th>State</th>');
+        $(self.el).find('#searchJobTable').find('#searchJobHeader').append('<th>Rate</th>');
         $(self.el).find('#searchJobTable').find('#searchJobHeader').append('<th>See</th>');
 
         _.each(self.software.get('parameters'), function (param) {
@@ -124,9 +125,11 @@ var JobTableView = Backbone.View.extend({
         var cellDate = window.app.convertLongToDate(job.get('created'));
         var cellState = self.getStateElement(job);
         var cellSee = '<button id="' + job.id + '">See details</button>';
+        var cellRate = "";
+        if(job.get('rate') != -1) cellRate = (job.get('rate')*100).toFixed(2)+"%";
 
         //fill array with first column info
-        var colArray = ['<tr>', '<td>' + cellIcon + '</td>', '<td  style="text-align:left;">' + cellId + '</td>', '<td  style="text-align:center;">' + cellNumber + '</td>', '<td  style="text-align:center;">' + cellDate + '</td>', '<td  style="text-align:center;">' + cellState + '</td>', '<td>' + cellSee + '</td>']
+        var colArray = ['<tr>', '<td>' + cellIcon + '</td>', '<td  style="text-align:left;">' + cellId + '</td>', '<td  style="text-align:center;">' + cellNumber + '</td>', '<td  style="text-align:center;">' + cellDate + '</td>', '<td  style="text-align:center;">' + cellState + '</td>', '<td  style="text-align:center;">' + cellRate + '</td>', '<td>' + cellSee + '</td>']
 
         //get all params form job to print in table column
         var jobParamArray = job.get('jobParameter');
