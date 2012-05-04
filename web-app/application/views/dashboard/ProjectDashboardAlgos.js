@@ -178,11 +178,17 @@ var ProjectDashboardAlgos = Backbone.View.extend({
 
         $("#softwareInfoButton").click(function() {
               console.log("project=" + self.model.id + " software.id=" +  self.software.id);
-                new SoftwareDetailsView({
-                    software : self.software,
-                    project : self.model,
-                    el : $("#softwareInfoDialogParent")
-                }).render();
+
+                new StatsProjectSoftwareModel({project : self.model.id, software: self.software.id}).fetch({
+                     success : function (model, response) {
+                         new SoftwareDetailsView({
+                             software : self.software,
+                             stats : model,
+                             project : self.model,
+                             el : $("#softwareInfoDialogParent")
+                         }).render();
+                     }
+                 });
           });
 
         $("#softwareFilterJobButton").click(function() {
@@ -254,19 +260,18 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         }
 
     },
-    printAcitivtyDiagram : function(software) {
+    printAcitivtyDiagram : function(stat) {
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Success');
         data.addColumn('number', 'Succes rate');
-         console.log("printAcitivtyDiagram="+software.id);
          data.addRows([
-             ['Not Launch',software.get('numberOfNotLaunch')],
-             ['In Queue',software.get('numberOfInQueue')],
-             ['Running',software.get('numberOfRunning')],
-             ['Success',software.get('numberOfSuccess')],
-             ['Failed',software.get('numberOfFailed')],
-             ['Indeterminate',software.get('numberOfIndeterminate')],
-             ['Wait',software.get('numberOfWait')]
+             ['Not Launch',stat.get('numberOfNotLaunch')],
+             ['In Queue',stat.get('numberOfInQueue')],
+             ['Running',stat.get('numberOfRunning')],
+             ['Success',stat.get('numberOfSuccess')],
+             ['Failed',stat.get('numberOfFailed')],
+             ['Indeterminate',stat.get('numberOfIndeterminate')],
+             ['Wait',stat.get('numberOfWait')]
         ]);
         var width = $("#softwareInfoDiagram").width()-100;
         var options = {
@@ -285,11 +290,15 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         chart.draw(data, options);
     },
     printProjectSoftwareDetails : function(software) {
+        var self = this;
         $("#panelSoftwareResume").find('.softwareMainInfo').empty();
         $("#panelSoftwareResume").find('.softwareMainInfo').append('<li><h2>'+software.get('name')+'</h2></li>');
-        $("#panelSoftwareResume").find('.softwareMainInfo').append('<li>'+ software.get('numberOfJob') +' job has been run</li>');
-        this.printAcitivtyDiagram(software);
-
+        new StatsProjectSoftwareModel({project : self.model.id, software: self.software.id}).fetch({
+            success : function (model, response) {
+                $("#panelSoftwareResume").find('.softwareMainInfo').append('<li>'+ model.get('numberOfJob') +' job has been run</li>');
+                self.printAcitivtyDiagram(model);
+            }
+        });
     },
     fillJobSelectView : function() {
         var self = this;

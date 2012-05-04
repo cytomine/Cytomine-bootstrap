@@ -11,5 +11,9 @@ class SoftwareProjectUrlMappings {
         "/api/project/$id/softwareproject"(controller:"restSoftwareProject"){
             action = [GET: "listByProject"]
         }
+        "/api/project/$idProject/software/$idSoftware/stats"(controller:"restSoftware"){
+            action = [GET: "softwareInfoForProject"]
+        }
+
     }
 }

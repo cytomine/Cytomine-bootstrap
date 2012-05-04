@@ -4,6 +4,7 @@ var SoftwareDetailsView = Backbone.View.extend({
     initialize:function (options) {
         this.software = options.software;
         this.project = options.project;
+        this.stats = options.stats;
     },
     render:function () {
         var self = this;
@@ -61,14 +62,14 @@ var SoftwareDetailsView = Backbone.View.extend({
         detailsElem.append('<ul></ul>');
 
         var ulDetailsElem = detailsElem.find("ul");
-        ulDetailsElem.append('<li>Total Job : ' + self.software.get('numberOfJob') + '</li>');
-        ulDetailsElem.append('<li>Not Launch : <span class="badge badge-inverse">' + self.software.get('numberOfNotLaunch') + '</span></li>');
-        ulDetailsElem.append('<li>In Queue : <span class="badge badge-inverse">' + self.software.get('numberOfInQueue') + '</span></li>');
-        ulDetailsElem.append('<li>Running : <span class="badge badge-info">' + self.software.get('numberOfRunning') + '</span></li>');
-        ulDetailsElem.append('<li>Success : <span class="badge badge-success">' + self.software.get('numberOfSuccess') + '</span></li>');
-        ulDetailsElem.append('<li>Indeterminate : <span class="badge">' + self.software.get('numberOfIndeterminate') + '</span></li>');
-        ulDetailsElem.append('<li>Wait : <span class="badge badge-warning">' + self.software.get('numberOfWait') + '</span></li>');
-        ulDetailsElem.append('<li>Failed : <span class="badge badge-error">' + self.software.get('numberOfFailed') + '</span></li>');
+        ulDetailsElem.append('<li>Total Job : ' + self.stats.get('numberOfJob') + '</li>');
+        ulDetailsElem.append('<li>Not Launch : <span class="badge badge-inverse">' + self.stats.get('numberOfNotLaunch') + '</span></li>');
+        ulDetailsElem.append('<li>In Queue : <span class="badge badge-inverse">' + self.stats.get('numberOfInQueue') + '</span></li>');
+        ulDetailsElem.append('<li>Running : <span class="badge badge-info">' + self.stats.get('numberOfRunning') + '</span></li>');
+        ulDetailsElem.append('<li>Success : <span class="badge badge-success">' + self.stats.get('numberOfSuccess') + '</span></li>');
+        ulDetailsElem.append('<li>Indeterminate : <span class="badge">' + self.stats.get('numberOfIndeterminate') + '</span></li>');
+        ulDetailsElem.append('<li>Wait : <span class="badge badge-warning">' + self.stats.get('numberOfWait') + '</span></li>');
+        ulDetailsElem.append('<li>Failed : <span class="badge badge-error">' + self.stats.get('numberOfFailed') + '</span></li>');
 
 
         self.printAcitivtyDiagram();

@@ -179,7 +179,7 @@ var InputTextView = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td style="text-align:center;">' + self.getHtmlElem() + '</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
-        self.trElem = $('tr#' + self.param.id);
+        self.trElem =  tbody.find('tr#' + self.param.id);
         self.trElem.find('input').keyup(function () {
             self.checkEntryValidation();
         });
@@ -222,7 +222,7 @@ var InputNumberView = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td style="text-align:center;">' + self.getHtmlElem() + '</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
-        self.trElem = $('tr#' + self.param.id);
+        self.trElem =  tbody.find('tr#' + self.param.id);
         self.trElem.find('input').keyup(function () {
             self.checkEntryValidation();
         });
@@ -267,7 +267,7 @@ var InputDateView = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td style="text-align:center;">' + self.getHtmlElem() + '</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
-        self.trElem = $('tr#' + self.param.id);
+        self.trElem =  tbody.find('tr#' + self.param.id);
 
         var defaultValue = self.getDefaultValue();
         console.log("addRow defaultValue =" + defaultValue);
@@ -332,7 +332,7 @@ var InputBooleanView = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td style="text-align:center;">' + self.getHtmlElem() + '</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
-        self.trElem = $('tr#' + self.param.id);
+        self.trElem =  tbody.find('tr#' + self.param.id);
         self.trElem.find('input').keyup(function () {
             self.checkEntryValidation();
         });
@@ -371,7 +371,7 @@ var InputListView = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td style="text-align:center;">' + self.getHtmlElem() + '</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
-        self.trElem = $('tr#' + self.param.id);
+        self.trElem =  tbody.find('tr#' + self.param.id);
         self.trElem.find('.icon-plus-sign').click(function () {
             console.log("Add entry");
             var value = $(this).parent().find("input").val();

@@ -288,12 +288,8 @@ class AlgoAnnotationTermService extends ModelService {
             }.unique()
         }
 
-
-        println "annotations="+annotations.size()
-
-
         if(userJobs.isEmpty()) return null
-        println userJobs
+
         userJobs.each {
             def userJobIt = it
             def item = [:]

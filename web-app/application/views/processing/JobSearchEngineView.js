@@ -278,7 +278,7 @@ var InputTextViewSearch = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
-        self.trElem = $('tr#' + self.param.id);
+        self.trElem = tbody.find('tr#' + self.param.id);
     },
     getHtmlElem:function () {
         var self = this;
@@ -306,7 +306,7 @@ var InputNumberViewSearch = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
-        self.trElem = $('tr#' + self.param.id);
+        self.trElem =  tbody.find('tr#' + self.param.id);
     },
     getHtmlElem:function () {
         var self = this;
@@ -334,7 +334,7 @@ var InputBooleanViewSearch = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
-        self.trElem = $('tr#' + self.param.id);
+        self.trElem =  tbody.find('tr#' + self.param.id);
     },
     getHtmlElem:function () {
         return '<select class="input-medium"><option value="">All</option><option value="true">Yes</option><option value="false">No</option></select>';
@@ -361,7 +361,7 @@ var InputListViewSearch = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
-        self.trElem = $('tr#' + self.param.id);
+        self.trElem =  tbody.find('tr#' + self.param.id);
         self.trElem.find('.icon-plus-sign').click(function () {
             console.log("Add entry");
             var value = $(this).parent().find("input").val();
@@ -421,7 +421,7 @@ var InputDateViewSearch = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
-        self.trElem = $('tr#' + self.param.id);
+        self.trElem =  tbody.find('tr#' + self.param.id);
 
         var dates = self.trElem.find("#from" + self.param.id + ", #to" + self.param.id).datepicker({
             defaultDate:"+1w",

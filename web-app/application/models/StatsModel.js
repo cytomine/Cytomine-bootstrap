@@ -22,6 +22,18 @@ var StatsModel = Backbone.Model.extend({
     }
 });
 
+var StatsProjectSoftwareModel = Backbone.Model.extend({
+	url : function() {
+        if (this.project != undefined && this.software != undefined) {
+            return "api/project/"+this.project+"/software/"+this.software+"/stats.json";
+        }
+	},
+    initialize: function (options) {
+        this.project = options.project;
+        this.software = options.software;
+    }
+});
+
 
 var StatsRetrievalSuggestionAVGModel = Backbone.Model.extend({
 	url : function() {
