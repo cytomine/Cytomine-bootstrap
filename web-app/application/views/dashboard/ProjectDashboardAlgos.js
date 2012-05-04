@@ -295,7 +295,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         $("#panelSoftwareResume").find('.softwareMainInfo').append('<li><h2>'+software.get('name')+'</h2></li>');
         new StatsProjectSoftwareModel({project : self.model.id, software: self.software.id}).fetch({
             success : function (model, response) {
-                $("#panelSoftwareResume").find('.softwareMainInfo').append('<li>'+ model.get('numberOfJob') +' job has been run</li>');
+                $("#panelSoftwareResume").find('.softwareMainInfo').find("#numberOfJob").replaceWith("");
+                $("#panelSoftwareResume").find('.softwareMainInfo').append('<li id="numberOfJob">'+ model.get('numberOfJob') +' job has been run</li>');
                 self.printAcitivtyDiagram(model);
             }
         });
