@@ -61,6 +61,13 @@ var ProjectDashboardStats = Backbone.View.extend({
             }
         });
 
+        new StatsAnnotationEvolutionCollection({project:self.model.get('id'), daysRange:7}).fetch({
+            success : function(collection, response) {
+                self.drawAnnotationEvolutionChart(collection, response);
+            }
+        });
+
+
     },
     drawUserAnnotationsChart : function (collection, currentUser, response) {
         var self = this;
@@ -433,7 +440,38 @@ var ProjectDashboardStats = Backbone.View.extend({
                 }
             );
         });
+    },
+    drawAnnotationEvolutionChart : function(collection, response){
 
+        var self = this;
+            // Create and populate the data table.
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', 'Date');
+            data.addColumn('number', 'Success rate (%)');
 
+            var dateSelect = new Date();
+            dateSelect.setTime(this.model.get('created'));
+            var j = 0;
+            collection.each(function(stat) {
+
+                var date = new Date();
+                date.setTime(stat.get("date"));
+                data.addRow([date, stat.get("size")]);
+                j++;
+            });
+
+             var width = Math.round($(window).width()/2 - 150);
+            // Create and draw the visualization.
+//        console.log("CONTAINER:"+$(this.el).html());
+//        console.log("CONTAINER:"+$(this.el).find('#annotationsEvolutionChart').length);
+            var evolChart = new google.visualization.AreaChart(document.getElementById('annotationsEvolutionChart'));
+            evolChart.draw(data, {title: '',
+                  width: self.getHalfWidth(), height: 350,
+                  vAxis: {title: "Success rate",minValue:0,maxValue:100},
+                  hAxis: {title: "Time"},
+                  backgroundColor : "whiteSmoke",
+                  lineWidth: 1}
+           );
     }
+
 });

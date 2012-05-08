@@ -222,3 +222,19 @@ var StatsUserSlideCollection = Backbone.Collection.extend({
         this.project = options.project;
     }
 });
+
+var StatsAnnotationEvolutionCollection = Backbone.Collection.extend({
+    model: StatsModel,
+
+    url: function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/stats/annotationevolution.json?daysRange="+this.daysRange;
+        }
+    },
+    initialize: function (options) {
+        this.project = options.project;
+        this.daysRange = options.daysRange;
+    }
+});
+
+

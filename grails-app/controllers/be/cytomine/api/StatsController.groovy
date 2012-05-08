@@ -196,4 +196,39 @@ class StatsController extends RestController {
 
         responseSuccess(result.values())
     }
+    
+    
+    def statAnnotationEvolution = {
+
+        Project project = Project.read(params.id)
+        if (project == null) responseNotFound("Project", params.id)
+        int daysRange = params.daysRange!=null ? params.getInt('daysRange') : 1
+        log.info "statAnnotationEvolution:"+  project.name
+        def data = []
+        int count = 0;
+
+        List<Annotation> annotations = Annotation.findAllByProject(project,[sort:'created', order:"desc"])
+
+        Date creation = project.created
+        //stop today
+        Date current = new Date()
+        
+        while(current.getTime()>=creation.getTime()) {
+            def item = [:]
+            while(count<annotations.size()) {
+                if(annotations.get(count).created<current) break;
+                count++;
+            }
+
+            item.date = current.getTime()
+            item.size = annotations.size()-count;
+            data << item
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(current);
+            cal.add(Calendar.DATE, -daysRange);
+            current = cal.getTime();
+        }
+        responseSuccess(data)
+    }
 }
