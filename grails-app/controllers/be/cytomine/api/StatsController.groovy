@@ -207,7 +207,9 @@ class StatsController extends RestController {
         def data = []
         int count = 0;
 
-        List<Annotation> annotations = Annotation.findAllByProject(project,[sort:'created', order:"desc"])
+        //List<Annotation> annotations = Annotation.findAllByProject(project,[sort:'created', order:"desc"])
+        def annotations = Annotation.executeQuery("select a.created from Annotation a where a.project = ? order by a.created desc", [project])
+        log.info "annotations="+annotations
 
         Date creation = project.created
         //stop today
@@ -216,7 +218,7 @@ class StatsController extends RestController {
         while(current.getTime()>=creation.getTime()) {
             def item = [:]
             while(count<annotations.size()) {
-                if(annotations.get(count).created<current) break;
+                if(annotations.get(count).getTime()<current.getTime()) break;
                 count++;
             }
 
