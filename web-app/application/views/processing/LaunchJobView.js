@@ -188,7 +188,7 @@ var InputTextView = Backbone.View.extend({
         var self = this;
         var classRequier = "";
         if (self.param.required)  classRequier = 'border-style: solid; border-width: 2px;';
-        else classRequier = 'border-style: dotted;border-width: 2px;';
+        else classRequier = 'border-style: solid;border-width: 2px;';
         return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue() + '" style="text-align:center;' + classRequier + '"></div></div>';
     },
     getDefaultValue:function () {
@@ -231,7 +231,7 @@ var InputNumberView = Backbone.View.extend({
         var self = this;
         var classRequier = "";
         if (self.param.required)  classRequier = 'border-style: solid; border-width: 2px;';
-        else classRequier = 'border-style: dotted;border-width: 2px;';
+        else classRequier = 'border-style: solid;border-width: 2px;';
         return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue() + '" style="text-align:center;' + classRequier + '"></div></div>';
     },
     getDefaultValue:function () {
@@ -338,7 +338,7 @@ var InputBooleanView = Backbone.View.extend({
         });
     },
     getHtmlElem:function () {
-        return '<input type="checkbox" class="span3" ' + this.getDefaultValue() + ' />';
+        return '<div><input type="checkbox" class="span3" ' + this.getDefaultValue() + ' /></div>';
     },
     getDefaultValue:function () {
         if (this.param.type == "Boolean" && this.param.defaultParamValue != undefined && this.param.defaultParamValue.toLowerCase() == "true") return 'checked="checked"';
@@ -461,6 +461,9 @@ var InputListDomainView = Backbone.View.extend({
         console.log(self.collection);
         console.log(self.collection.at(0));
         if (self.collection == undefined || (self.collection.length > 0 && self.collection.at(0).id == undefined)) {
+            self.trElem.find("td#" + self.param.id).append('<div class="alert alert-info" style="margin-left : 10px;margin-right: 10px;"><i class="icon-refresh" /> Loading...</div>');
+            if (self.param.required) self.changeStyle(self.trElem, false, "Field require");
+
             self.collection.fetch({
                 success:function (collection, response) {
                     console.log("*****************************");
@@ -473,6 +476,7 @@ var InputListDomainView = Backbone.View.extend({
     },
     addHtmlElem:function () {
         var self = this;
+        self.trElem.find("td#" + self.param.id).empty();
         self.trElem.find("td#" + self.param.id).append(self.getHtmlElem());
 
 
@@ -516,6 +520,9 @@ var InputListDomainView = Backbone.View.extend({
 //                self.trElem.find('button.ui-multiselect').click();
 //                self.trElem.find('button.ui-multiselect').click();
         self.trElem.find(".domainList").multiselect("close");
+
+        self.trElem.find("button").css("border-style","solid");
+        self.trElem.find("button").css("border-width", "2px");
 
         self.checkEntryValidation();
 
@@ -600,6 +607,26 @@ var InputListDomainView = Backbone.View.extend({
             labelElem.text("");
             labelElem.text(message);
         }
+
+        var className = "";
+        //color input
+        if (success) className = "success";
+        else  className = "error";
+        console.log(elem.html());
+        var valueElem = this.trElem.find("button");
+        if(success) {
+            //just put background color doesn't work!
+            this.trElem.find("button").css("border-bottom-color","#356635");
+            this.trElem.find("button").css("border-left-color","#356635");
+            this.trElem.find("button").css("border-right-color","#356635");
+            this.trElem.find("button").css("border-top-color","#356635");
+        } else {
+            this.trElem.find("button").css("border-bottom-color","#953B39");
+            this.trElem.find("button").css("border-left-color","#953B39");
+            this.trElem.find("button").css("border-right-color","#953B39");
+            this.trElem.find("button").css("border-top-color","#953B39");
+        }
+
     }
 });
 
