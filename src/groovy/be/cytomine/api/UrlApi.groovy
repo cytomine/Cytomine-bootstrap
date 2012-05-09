@@ -19,6 +19,10 @@ class UrlApi {
         return url+'/api/annotation/' + idAnnotation +'/crop.jpg'
     }
 
+    static def getAnnotationCropWithAnnotationIdWithMaxWithOrHeight(String url, Long idAnnotation, int maxWidthOrHeight) {
+        return url+'/api/annotation/' + idAnnotation +'/crop.jpg?max_size='+maxWidthOrHeight
+    }
+
     static def getAnnotationURL(String url,Long idProject, Long idImage, Long idAnnotation) {
         return  url + '/#tabs-image-' + idProject + "-" + idImage + "-" +  idAnnotation
     }

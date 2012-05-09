@@ -65,6 +65,7 @@
         <concat destfile="${result.file}" force="no">
 <fileset dir="${src.dir}" includes="lib/requirejs/require.js"/>
 <fileset dir="${src.dir}" includes="lib/bootstrap-2.0/js/bootstrap.js"/>
+<fileset dir="${src.dir}" includes="lib/bootstrap-2.0/js/bootstrap-tab.js"/>
 <fileset dir="${src.dir}" includes="lib/underscore.js"/>
 <fileset dir="${src.dir}" includes="lib/backbone.js"/>
 <fileset dir="${src.dir}" includes="lib/json2.js"/>

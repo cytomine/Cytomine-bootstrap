@@ -146,10 +146,10 @@ log4j = {
        }
    }
    //debug "org.hibernate.SQL"
-   debug 'be.cytomine'
+   /*debug 'be.cytomine'
    debug 'grails.app'
    debug 'grails.app.services'
-   debug 'grails.app.controllers'
+   debug 'grails.app.controllers*/
 
    //UNCOMMENT THESE 2 LINES TO SEE SQL REQUEST AND THEIR PARAMETERS VALUES
    //debug 'org.hibernate.SQL'

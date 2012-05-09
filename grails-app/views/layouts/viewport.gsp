@@ -204,8 +204,6 @@ body {
     <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
     <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
 
-
-
 </g:if>
 
 

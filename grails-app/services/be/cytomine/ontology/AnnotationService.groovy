@@ -32,6 +32,7 @@ import grails.orm.HibernateCriteriaBuilder
 import org.hibernate.criterion.Restrictions
 import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.geom.Coordinate
+import org.hibernate.criterion.Projections
 
 class AnnotationService extends ModelService {
 
@@ -187,7 +188,7 @@ class AnnotationService extends ModelService {
                 .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq("image", image))
                 .add(SpatialRestrictions.within("location",boundingbox))
-                .list().unique()
+                .list()
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -396,8 +397,8 @@ class AnnotationService extends ModelService {
 
         Geometry annotationFull = new WKTReader().read(form);
         Geometry lastAnnotationFull = annotationFull
-        println "points=" + annotationFull.getNumPoints() + " " + annotationFull.getArea();
-        println "annotationFull:" + annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
+        log.info "points=" + annotationFull.getNumPoints() + " " + annotationFull.getArea();
+        log.info "annotationFull:" + annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
 
         /* Number of point (ex: 500 points) */
         double numberOfPoint = annotationFull.getNumPoints()
@@ -416,7 +417,7 @@ class AnnotationService extends ModelService {
         while (numberOfPoint > rateLimitMax && maxLoop > 0) {
             rate = i
             lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull, rate)
-            log.debug "annotationFull=" + rate + " " + lastAnnotationFull.getNumPoints()
+            //log.debug "annotationFull=" + rate + " " + lastAnnotationFull.getNumPoints()
             if (lastAnnotationFull.getNumPoints() < rateLimitMin) break;
             annotationFull = lastAnnotationFull
             i = i + (incrThreshold * increaseIncrThreshold); maxLoop--;

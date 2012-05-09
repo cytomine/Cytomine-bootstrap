@@ -1,5 +1,9 @@
+var AnnotationStatus = {
+	NO_TERM : 'NO_TERM',
+	MULTIPLE_TERM : 'MULTIPLE_TERM',
+	TOO_SMALL : 'TOO_SMALL'
+}
 /* Annotation Layer */
-
 OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
     read: function(collection) {
         var self = this;
@@ -17,59 +21,139 @@ OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
         var point = format.read(annotation.location);
         var geom = point.geometry;
         var feature = new OpenLayers.Feature.Vector(geom);
+		var term = AnnotationStatus.NO_TERM; //no term associated
+		if (annotation.term.length > 1) { //multiple term
+			term = AnnotationStatus.MULTIPLE_TERM;
+		} else if (annotation.term.length == 1) {
+			term = annotation.term[0]; //put ID
+		}
         feature.attributes = {
             idAnnotation: annotation.id,
             measure : 'NO',
             listener: 'NO',
-            importance: 10
-        };
-        //default style for annotations with 0 terms associated
-        var defaultColor = "#333333";
-        feature.style = {
-            strokeColor : "#000",
-            fillColor :  defaultColor,
-            fillOpacity : 0.6
-        }
-        var multipleTermColor = "#000";
-        if (annotation.term.length > 1) { //multiple terms
-
-            feature.style = {
-                strokeColor :multipleTermColor,
-                fillColor :  multipleTermColor,
-                fillOpacity : 0.6
-            }
-        } else {
-            _.each(annotation.term, function(idTerm) {
-                var term = window.app.status.currentTermsCollection.get(idTerm);
-                if (term == undefined) return;
-                feature.style = {
-                    strokeColor : "#000",
-                    fillColor :  window.app.status.currentTermsCollection.get(idTerm).get('color'),
-                    fillOpacity : 0.6
-                }
-            });
-        }
-
+            importance: 10,
+			term : term
+        };       
         return feature;
     }
 });
 
+OpenLayers.Renderer.Smart = OpenLayers.Class(OpenLayers.Renderer.SVG, {
+ 
+    getComponentsString: function(components, separator)
+    {
+        // I got bored trying to figure out a smart formula to calculate the zoomFactor
+        // it works as follows: if the zoom is found among the array, that zoomFactor is picked, otherwise we go down until we find one
+        var zoomFactors = new Array();
+        // 0 is a mandatory key
+        zoomFactors[0] = 1000;
+        zoomFactors[1] = 500;
+        zoomFactors[2] = 400;
+        zoomFactors[3] = 300;
+        zoomFactors[4] = 200;
+        zoomFactors[5] = 100;
+        zoomFactors[6] = 50;
+        zoomFactors[7] = 10;
+        zoomFactors[9] = 1;
+ 
+        var zoomIndex = this.map.zoom;
+        var zoomFactor = zoomFactors[zoomIndex];
+ 
+        // see comment above the zoomFactors array
+        while (zoomFactor == undefined)
+        {
+            zoomIndex--;
+            zoomFactor = zoomFactors[zoomIndex];
+        }
+ 
+        var renderCmp = [];
+        var complete = true;
+        var len = components.length;
+        var strings = [];
+        var str, component;
+ 
+        // here is where we plug in the zoomFactor in the original code
+        // so instead of rendering each and every point, we will skip n number of
+        // points, based on the 'zoomFactors' array
+ 
+        for(var i=0; i<len; i+=zoomFactor) {
+            component = components[i];
+            renderCmp.push(component);
+            str = this.getShortString(component);
+            if (str) {
+                strings.push(str);
+            } else {
+                if (i > 0) {
+                    if (this.getShortString(components[i - 1])) {
+                        strings.push(this.clipLine(components[i],
+                            components[i-1]));
+                    }
+                }
+                if (i < len - 1) {
+                    if (this.getShortString(components[i + 1])) {
+                        strings.push(this.clipLine(components[i],
+                            components[i+1]));
+                    }
+                }
+                complete = false;
+            }
+        }
+ 
+        return {
+            path: strings.join(separator || ","),
+            complete: complete
+        };
+    },
+ 
+    CLASS_NAME: "OpenLayers.Renderer.Smart"
+});
 var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView, map) {
     this.ontologyTreeView = ontologyTreeView;
+	this.pointRadius = window.app.view.isMobile ? 12 : 8;
     this.name = name;
     this.map = map;
     this.imageID = imageID;
     this.userID = userID;
+	var rules = [new OpenLayers.Rule({ 
+		symbolizer: {strokeColor:"#FF0000",strokeWidth: 2}, 
+		// symbolizer: {}, // instead if you want to keep default colors 
+		elseFilter: true 
+	})]; 
+
+	var defaultStyle =  new OpenLayers.Style({
+		'fillColor'   : '#EEEEEE',
+		'fillOpacity' : .8,
+		'strokeColor' : '#000000',
+		'strokeWidth' : 3,
+		'pointRadius' : this.pointRadius
+	});
+	defaultStyle.addRules(rules);
+	var selectStyle = new OpenLayers.Style({
+		'fillColor'   : '#EEEEEE',
+		'fillOpacity' : .8,
+		'strokeColor' : '#FF0000',
+		'strokeWidth' : 3,
+		'pointRadius' : this.pointRadius
+	});
+	selectStyle.addRules(rules);
+	var styleMap = new OpenLayers.StyleMap({
+		'default' : defaultStyle,
+		'select' : selectStyle
+	});
+	styleMap.styles["default"].addRules(rules); 
+	styleMap.addUniqueValueRules('default', 'term', this.getSymbolizer());
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
         renderers: ["Canvas", "SVG", "VML"],
-        strategies: [new OpenLayers.Strategy.BBOX({resFactor: 1})],
+        strategies: [
+			new OpenLayers.Strategy.BBOX({resFactor: 1})
+		],
         protocol: new OpenLayers.Protocol.Script({
             url: new AnnotationCollection({user : this.userID, image : this.imageID, term: undefined}).url().replace("json", "jsonp"),
             format: new OpenLayers.Format.Cytomine({ annotationLayer : this}),
             callbackKey : "callback"
-
-        })
-    });
+        }),
+		'styleMap' : styleMap
+	});
     this.controls = null;
     this.dialog = null;
     this.rotate = false;
@@ -91,7 +175,40 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 }
 
 AnnotationLayer.prototype = {
-
+	getSymbolizer : function() {
+		var symbolizers_lookup = {};
+		symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
+			'fillColor'   : "#EEEEEE",
+			'fillOpacity' : .6,
+			'strokeColor' : '#000000',
+			'strokeWidth' : 3,
+			'pointRadius' : this.pointRadius
+		};
+		symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
+			'fillColor'   : "#CCCCCC",
+			'fillOpacity' : .6,
+			'strokeColor' : '#000000',
+			'strokeWidth' : 3,
+			'pointRadius' : this.pointRadius
+		};
+		symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
+			'fillColor'   : "#FF0000",
+			'fillOpacity' : 1,
+			'strokeColor' : '#FF0000',
+			'strokeWidth' : 5,
+			'pointRadius' : this.pointRadius
+		};
+		window.app.status.currentTermsCollection.each(function (term) {			
+			symbolizers_lookup[term.id] = {
+				'fillColor'   : term.get('color'),
+				'fillOpacity' : .6,
+				'strokeColor' : '#000000',
+				'strokeWidth' : 3,
+				'pointRadius' : this.pointRadius
+			}
+		});
+		return symbolizers_lookup
+	},
     registerEvents: function (map) {
 
         var self = this;
@@ -113,7 +230,6 @@ AnnotationLayer.prototype = {
                         self.removeSelection();
                     } else {
                         self.showPopup(map, evt);
-                        evt.feature.style.strokeColor = "#FF0000";
                         self.vectorsLayer.drawFeature(evt.feature);
                     }
                 }
@@ -128,7 +244,6 @@ AnnotationLayer.prototype = {
                 self.ontologyTreeView.clear();
                 self.ontologyTreeView.clearAnnotation();
                 self.clearPopup(map, evt);
-                evt.feature.style.strokeColor = "#000000";
                 self.vectorsLayer.drawFeature(evt.feature);
                 //alias.ontologyTreeView.refresh(null);
             },

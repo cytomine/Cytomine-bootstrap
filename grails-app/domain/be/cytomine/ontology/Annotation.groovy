@@ -234,13 +234,13 @@ class Annotation extends CytomineDomain implements Serializable {
 
             Date start = new Date()
             ImageInstance imageinstance = annotation.image
-            AbstractImage image = imageinstance?.baseImage
+            //AbstractImage image = imageinstance?.baseImage
             returnArray['class'] = annotation.class
             returnArray['id'] = annotation.id
             returnArray['name'] = annotation.name != "" ? annotation.name : "Annotation " + annotation.id
             returnArray['location'] = annotation.location.toString()
             returnArray['image'] = annotation.getIdImage()
-            returnArray['imageFilename'] = image?.filename
+            //returnArray['imageFilename'] = image?.filename
 
             returnArray['zoomLevel'] = annotation.zoomLevel
             returnArray['geometryCompression'] = annotation.geometryCompression
@@ -260,8 +260,8 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['userByTerm'] = annotation.usersIdByTerm()
             //retrieval
             try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
-            returnArray['cropURL'] = annotation.toCropURL()
-            returnArray['smallCropURL'] = annotation.toCropURLWithMaxWithOrHeight(512)
+            returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
+            returnArray['smallCropURL'] = UrlApi.getAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl,annotation.id, 512)
 
             //println grailsApplication.config.grails.serverURL
 

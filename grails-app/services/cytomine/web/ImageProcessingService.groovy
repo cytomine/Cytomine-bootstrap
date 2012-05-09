@@ -139,6 +139,15 @@ class ImageProcessingService {
         toVisit.push(new Coordinate(x, y))
         img.getProcessor().putPixel(x, y, 255)
         assert (img.getProcessor().getPixel((int) x, (int) y) == WHITE)
+
+		int[] xShifts = [-1, 0, 1,
+                -1, 1,
+                -1, 0, 1]
+
+        int[] yShifts = [-1, -1, -1,
+                0, 0,
+                1, 1, 1]
+
         while (!toVisit.empty()) {
             Coordinate point = toVisit.pop()
             //visited.push(new Coordinate(point.x, point.y)) //compute the real coordinate, not relative to the crop
@@ -146,13 +155,7 @@ class ImageProcessingService {
             int posX
             int posY
 
-            int[] xShifts = [-1, 0, 1,
-                    -1, 1,
-                    -1, 0, 1]
-
-            int[] yShifts = [-1, -1, -1,
-                    0, 0,
-                    1, 1, 1]
+            
 
             assert (xShifts.size() == yShifts.size())
             boolean oneNeighborIsWhite = false

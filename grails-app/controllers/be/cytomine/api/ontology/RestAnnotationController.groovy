@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 
 import be.cytomine.processing.Job
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 class RestAnnotationController extends RestController {
 
@@ -286,6 +287,22 @@ class RestAnnotationController extends RestController {
 
     def add = {
         def json = request.JSON
+        if (json instanceof org.codehaus.groovy.grails.web.json.JSONArray) {
+            def result = [:]
+            result.status = 200
+            result.data = []
+            json.each {
+                def resp = add_one(it, false)
+                if (resp)
+                    result.data << resp
+            }
+            responseResult(result)
+        } else {
+           responseResult(add_one(json))
+        }
+    }
+    private def add_one(json, shouldResponse = true) {
+        print "json="+json
         try {
             if(!json.project || json.isNull('project')) {
                 log.debug "No project was set"
@@ -305,11 +322,13 @@ class RestAnnotationController extends RestController {
 
             annotationService.checkAuthorization(Long.parseLong(json.project.toString()), new Annotation())
             def result = annotationService.add(json)
-            responseResult(result)
+            if (shouldResponse) responseResult(result)
+            else return result
         } catch (CytomineException e) {
             log.error("add error:" + e.msg)
             log.error(e)
-            response([success: false, errors: e.msg], e.code)
+            if (shouldResponse) response([success: false, errors: e.msg], e.code)
+            return null
         }
     }
 

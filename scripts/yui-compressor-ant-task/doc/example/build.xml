@@ -117,7 +117,9 @@
 <fileset dir="${src.dir}" includes="application/views/processing/SoftwareDetailsView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobSearchView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobTableView.js"/>
+<fileset dir="${src.dir}" includes="application/views/processing/JobSearchEngineView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/result/RetrievalAlgoResult.js"/>
+<fileset dir="${src.dir}" includes="application/views/processing/result/EvolutionAlgoResult.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationLayer.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/BrowseImageView.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/DraggablePanelView.js"/>
@@ -154,8 +156,8 @@
 <fileset dir="${src.dir}" includes="application/views/annotation/ShareAnnotationView.js"/>
 <fileset dir="${src.dir}" includes="application/views/utils/CrudGridView.js"/>
 <fileset dir="${src.dir}" includes="application/views/Component.js"/>
-<fileset dir="${src.dir}" includes="application/views/ApplicationView.js"/>
 <fileset dir="${src.dir}" includes="application/views/ConfirmDialogView.js"/>
+<fileset dir="${src.dir}" includes="application/views/ApplicationView.js"/>
 </concat>
     </target>
 

@@ -279,8 +279,9 @@ class AbstractImage extends CytomineDomain {
     }
 
     def getZoomLevels() {
+
         def imageServers = getImageServers()
-        if (imageServers == null || imageServers.size() > 0) return null
+        if (imageServers == null || imageServers.size() == 0 || width == null || height == null) return null
         Resolver resolver = Resolver.getResolver(imageServers[0].className)
         return resolver.getZoomLevels(imageServers[0].getBaseUrl(), imageServers[0].getStorage().getBasePath() + getPath(), width, height)
     }
