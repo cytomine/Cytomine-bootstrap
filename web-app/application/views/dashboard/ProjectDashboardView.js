@@ -113,7 +113,10 @@ var ProjectDashboardView = Backbone.View.extend({
                         success : function (terms, response) {
                             window.app.status.currentTermsCollection = terms;
                             //self.fetchWorstAnnotations(collection,terms);
-                            new ProjectDashboardStats({model : self.model}).fetchStats(terms);
+                            if(self.projectStats==null)
+                                self.projectStats = new ProjectDashboardStats({model : self.model});
+
+                            self.projectStats.fetchStats(terms);
 
                         }
                     });

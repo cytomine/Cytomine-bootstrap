@@ -1,5 +1,5 @@
 var ProjectDashboardStats = Backbone.View.extend({
-
+    annotationNumberSelectedTerm : -1,
     initialize : function () {
         var self = this;
         this.noDataAlert = _.template("<br /><br /><div class='alert alert-block'>No data to display</div>",{});
@@ -10,6 +10,19 @@ var ProjectDashboardStats = Backbone.View.extend({
             var width = self.getHalfWidth();
             $("#projectInfoPanel").css("width", width);
             $("#projectLastCommandPanel").css("width", width);
+        });
+
+
+        var select = $("#annotationNumberEvolutionLineChartByTermSelect");
+        select.empty();
+        select.append('<option value="' + -1 + '">All terms</option>');
+        window.app.status.currentTermsCollection.each(function (term) {
+            select.append('<option value="' + term.id + '">' + term.get('name') + '</option>');
+        });
+        select.val(self.annotationNumberSelectedTerm);
+        select.unbind();
+        select.change(function () {
+            self.drawAnnotationNumberEvolutionByTermAction();
         });
     },
     getFullWidth : function () {
@@ -23,7 +36,7 @@ var ProjectDashboardStats = Backbone.View.extend({
     },
     fetchStats : function (terms) {
         var self = this;
-
+        console.log("fetchStats") ;
         //Annotations by terms
         var statsCollection = new StatsTermCollection({project:self.model.get('id')});
         var statsCallback = function(collection, response) {
@@ -61,11 +74,9 @@ var ProjectDashboardStats = Backbone.View.extend({
             }
         });
 
-        new StatsAnnotationEvolutionCollection({project:self.model.get('id'), daysRange:7}).fetch({
-            success : function(collection, response) {
-                self.drawAnnotationEvolutionChart(collection, response);
-            }
-        });
+
+
+        self.drawAnnotationNumberEvolutionByTermAction();
 
 
     },
@@ -441,13 +452,31 @@ var ProjectDashboardStats = Backbone.View.extend({
             );
         });
     },
-    drawAnnotationEvolutionChart : function(collection, response){
-
+    drawAnnotationNumberEvolutionByTermAction:function () {
+        console.log("drawAnnotationNumberEvolutionByTermAction");
         var self = this;
+        var termSelected = $("#annotationNumberEvolutionLineChartByTermSelect").val();
+        self.annotationNumberSelectedTerm = termSelected;
+        new StatsAnnotationEvolutionCollection({project:self.model.get('id'), daysRange:7, term: termSelected}).fetch({
+            success : function(collection, response) {
+                self.drawAnnotationNumberEvolutionChart(collection, response);
+            }
+        });
+    },
+    drawAnnotationNumberEvolutionChart : function(collection, response){
+
+        console.log("drawAnnotationNumberEvolutionChart");
+        var self = this;
+
+            if (collection == undefined) {
+                $(self.el).find("#annotationNumberEvolutionLineChartByTerm").text("No data for this term!");
+                return;
+            }
+            $(self.el).find("#annotationNumberEvolutionLineChartByTerm").empty();
             // Create and populate the data table.
             var data = new google.visualization.DataTable();
             data.addColumn('date', 'Date');
-            data.addColumn('number', 'Success rate (%)');
+            data.addColumn('number', 'Number of annotations');
 
             var dateSelect = new Date();
             dateSelect.setTime(this.model.get('created'));
@@ -464,13 +493,15 @@ var ProjectDashboardStats = Backbone.View.extend({
             // Create and draw the visualization.
 //        console.log("CONTAINER:"+$(this.el).html());
 //        console.log("CONTAINER:"+$(this.el).find('#annotationsEvolutionChart').length);
+        $("#annotationsEvolutionChartPanel").css("width", self.getHalfWidth());
             var evolChart = new google.visualization.AreaChart(document.getElementById('annotationsEvolutionChart'));
             evolChart.draw(data, {title: '',
                   width: self.getHalfWidth(), height: 350,
-                  vAxis: {title: "Success rate",minValue:0,maxValue:100},
+                  vAxis: {title: "Number of annotations",minValue:0,maxValue:100},
                   hAxis: {title: "Time"},
                   backgroundColor : "whiteSmoke",
-                  lineWidth: 1}
+                  lineWidth: 1,
+                  legend: {position: 'none'}}
            );
     }
 

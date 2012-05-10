@@ -203,12 +203,22 @@ class StatsController extends RestController {
         Project project = Project.read(params.id)
         if (project == null) responseNotFound("Project", params.id)
         int daysRange = params.daysRange!=null ? params.getInt('daysRange') : 1
+        Term term = Term.read(params.getLong('term'))
         log.info "3statAnnotationEvolution:"+  project.name
         def data = []
         int count = 0;
 
+        def annotations = null;
         //List<Annotation> annotations = Annotation.findAllByProject(project,[sort:'created', order:"desc"])
-        def annotations = Annotation.executeQuery("select a.created from Annotation a where a.project = ? order by a.created desc", [project])
+        if(!term) {
+            annotations = Annotation.executeQuery("select a.created from Annotation a where a.project = ? order by a.created desc", [project])
+        }
+        else {
+            log.info "Search on term " + term.name
+            annotations = Annotation.executeQuery("select b.created from Annotation b where b.project = ? and b.id in (select x.annotation.id from AnnotationTerm x where x.term = ?) order by b.created desc", [project,term])
+        }
+
+
 
         Date creation = project.created
         //stop today

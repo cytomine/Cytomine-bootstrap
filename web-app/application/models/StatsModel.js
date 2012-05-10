@@ -228,12 +228,13 @@ var StatsAnnotationEvolutionCollection = Backbone.Collection.extend({
 
     url: function() {
         if (this.project != undefined) {
-            return "api/project/" + this.project + "/stats/annotationevolution.json?daysRange="+this.daysRange;
+            return "api/project/" + this.project + "/stats/annotationevolution.json?daysRange="+this.daysRange + "&term="+this.term;
         }
     },
     initialize: function (options) {
         this.project = options.project;
         this.daysRange = options.daysRange;
+        this.term = options.term;
     }
 });
 
