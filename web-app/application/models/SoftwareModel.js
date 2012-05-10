@@ -26,6 +26,26 @@ var SoftwareCollection = Backbone.Collection.extend({
     }
 });
 
+// define our collection
+var SoftwareParameterModelCollection = Backbone.Collection.extend({
+    model: SoftwareModel,
+    url : function() {
+        if (this.uri != null && this.uri!=undefined)
+            return this.uri;
+    },
+    initialize: function (options) {
+        if (!options) return;
+        this.uri = options.uri;
+        this.sortAttribut = options.sortAttribut;
+    },
+    comparator : function(model) {
+        if(this.sortAttribut!=null && this.sortAttribut!=undefined)
+            return model.get(this.sortAttribut);
+        else
+            return model.get("id");
+    }
+});
+
 var SoftwareProjectModel = Backbone.Model.extend({
     url : function() {
         var base = 'api/softwareproject';

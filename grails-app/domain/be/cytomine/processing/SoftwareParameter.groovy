@@ -13,13 +13,19 @@ class SoftwareParameter extends CytomineDomain {
     String defaultValue
     Boolean required = false
     Integer index=-1
+    String uri
+    String uriPrintAttribut
+    String uriSortAttribut
 
     static belongsTo = [Software]
 
     static constraints = {
         name (nullable: false, blank : false)
-        type (inList: ["String", "Boolean", "Number","Date","List","ListProject","Project"])
+        type (inList: ["String", "Boolean", "Number","Date","List","ListDomain","Domain"])
         defaultValue (nullable: true, blank : true)
+        uri (nullable: true, blank : true)
+        uriPrintAttribut (nullable: true, blank : true)
+        uriSortAttribut (nullable: true, blank : true)
     }
 
     public beforeInsert() {
@@ -64,6 +70,10 @@ class SoftwareParameter extends CytomineDomain {
             softwareParameter.required = it.required
             softwareParameter.software = it.getIdSoftware()
             softwareParameter.index = it.index
+            softwareParameter.uri = it.uri
+            softwareParameter.uriPrintAttribut = it.uriPrintAttribut
+            softwareParameter.uriSortAttribut = it.uriSortAttribut
+
             return softwareParameter
         }
     }
@@ -100,6 +110,10 @@ class SoftwareParameter extends CytomineDomain {
 
         if (!jsonSoftwareParameter.index.toString().equals("null"))
             softwareParameter.index = Integer.parseInt(jsonSoftwareParameter.index.toString())
+
+        softwareParameter.uri = jsonSoftwareParameter.uri
+        softwareParameter.uriPrintAttribut = jsonSoftwareParameter.uriPrintAttribut
+        softwareParameter.uriSortAttribut = jsonSoftwareParameter.uriSortAttribut
 
         return softwareParameter;
     }

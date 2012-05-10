@@ -5,6 +5,7 @@ import be.cytomine.project.Project
 import be.cytomine.ontology.AnnotationFilter
 import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.ontology.Ontology
 
 class RestAnnotationFilterController extends RestController {
 
@@ -18,6 +19,21 @@ class RestAnnotationFilterController extends RestController {
         projectService.checkAuthorization(idProject, new AnnotationFilter())
         Project project = projectService.read(idProject, new Project())
         responseSuccess(annotationFilterService.listByProject(project))
+    }
+
+    def listByOntology = {
+        Ontology ontology = Ontology.read(params.idOntology)
+        if (ontology) {
+            def result = []
+            List<Project> userProject = projectService.list(ontology)
+
+            userProject.each {
+                result.addAll(annotationFilterService.listByProject(it))
+            }
+
+            responseSuccess(result)
+        }
+        else responseNotFound("ImageFilter", "Ontology", params.idOntology)
     }
 
     def show = {

@@ -13,5 +13,9 @@ class AnnotationFilterUrlMappings {
         "/api/annotationfilter/$id"(controller:"restAnnotationFilter"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
+
+        "/api/ontology/$idOntology/annotationfilter"(controller: "restAnnotationFilter"){
+            action = [GET:"listByOntology"]
+        }
     }
 }

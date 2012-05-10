@@ -72,8 +72,8 @@ var LaunchJobView = Backbone.View.extend({
         if (param.type == "Date") return new InputDateView({param:param});
         if (param.type == "Boolean") return new InputBooleanView({param:param});
         if (param.type == "List") return new InputListView({param:param});
-        if (param.type == "ListProject") return new InputListDomainView({param:param, multiple:true, collection:window.app.models.projects, printAttribut:"name"});
-        if (param.type == "Project") return new InputListDomainView({param:param, multiple:false, collection:window.app.models.projects, printAttribut:"name"});
+        if (param.type == "ListDomain") return new InputListDomainView({param:param, multiple:true});
+        if (param.type == "Domain") return new InputListDomainView({param:param, multiple:false});
 
 
         else return new InputTextView({param:param});
@@ -192,7 +192,7 @@ var InputTextView = Backbone.View.extend({
         return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue() + '" style="text-align:center;' + classRequier + '"></div></div>';
     },
     getDefaultValue:function () {
-        return InputView.getDefaultValueWithVariable(this.param.defaultParamValue)
+        return InputView.replaceVariable(this.param.defaultParamValue)
     },
     checkEntryValidation:function () {
         var self = this;
@@ -235,7 +235,7 @@ var InputNumberView = Backbone.View.extend({
         return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue() + '" style="text-align:center;' + classRequier + '"></div></div>';
     },
     getDefaultValue:function () {
-        return InputView.getDefaultValueWithVariable(this.param.defaultParamValue)
+        return InputView.replaceVariable(this.param.defaultParamValue)
     },
     checkEntryValidation:function () {
         var self = this;
@@ -296,7 +296,7 @@ var InputDateView = Backbone.View.extend({
         return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="" style="text-align:center;' + classRequier + '"></div></div>';
     },
     getDefaultValue:function () {
-        return InputView.getDefaultValueWithVariable(this.param.defaultParamValue)
+        return InputView.replaceVariable(this.param.defaultParamValue)
     },
     checkEntryValidation:function () {
         var self = this;
@@ -411,15 +411,12 @@ var InputListView = Backbone.View.extend({
         var values = [];
         console.log(split);
         _.each(split, function (s) {
-            console.log(s);
-            values.push(InputView.getDefaultValueWithVariable(s));
+            values.push(InputView.replaceVariable(s));
         });
-        console.log(values);
         return values;
     },
     checkEntryValidation:function () {
         var self = this;
-        console.log("checkEntryValidation");
         if (self.trElem.find("select").children().length == 0) self.changeStyle(self.trElem, false, "Field require");
         else self.changeStyle(self.trElem, true, "");
     },
@@ -450,14 +447,14 @@ var InputListDomainView = Backbone.View.extend({
         this.param = options.param;
         this.parent = options.parent;
         this.multiple = options.multiple;
-        this.collection = options.collection;
-        this.printAttribut = options.printAttribut;
+        this.printAttribut = this.param.uriPrintAttribut;
     },
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td id="' + self.param.id + '" style="text-align:center;"></td><td style="text-align:center;"><span class="errorMessage label label-important hidden"></span></td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
         console.log("*****************************");
+        self.collection = new SoftwareParameterModelCollection({uri: InputView.replaceVariable(self.param.uri), sortAttribut : self.param.uriSortAttribut});
         console.log(self.collection);
         console.log(self.collection.at(0));
         if (self.collection == undefined || (self.collection.length > 0 && self.collection.at(0).id == undefined)) {
@@ -539,7 +536,7 @@ var InputListDomainView = Backbone.View.extend({
         console.log(split);
         _.each(split, function (s) {
             console.log(s);
-            values.push(InputView.getDefaultValueWithVariable(s));
+            values.push(InputView.replaceVariable(s));
         });
         console.log(values);
         return values;
@@ -612,7 +609,6 @@ var InputListDomainView = Backbone.View.extend({
         //color input
         if (success) className = "success";
         else  className = "error";
-        console.log(elem.html());
         var valueElem = this.trElem.find("button");
         if(success) {
             //just put background color doesn't work!
@@ -651,12 +647,15 @@ var InputView = {
             labelElem.text(message);
         }
     },
-    getDefaultValueWithVariable:function (value) {
+    replaceVariable:function (value) {
         var self = this;
-        if (value == "$currentProject") return window.app.status.currentProject;
-        else if (value == "$cytomineHost") return window.location.protocol + "//" + window.location.host;
-        else if (value == "$currentDate") return new Date().getTime();
-        else if (value == "$currentProjectCreationDate") return  window.app.status.currentProjectModel.get('created');
-        else return value;
+        var result =value;
+        result=result.replace("$currentProjectCreationDate$",window.app.status.currentProjectModel.get('created'));
+        result=result.replace("$currentProject$",window.app.status.currentProject);
+        result=result.replace("$cytomineHost$",window.location.protocol + "//" + window.location.host);
+        result=result.replace("$currentDate$",new Date().getTime());
+        result=result.replace("$currentOntology$",window.app.status.currentProjectModel.get('ontology'));
+
+        return result;
     }
 };

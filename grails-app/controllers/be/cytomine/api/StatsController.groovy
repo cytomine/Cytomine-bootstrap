@@ -203,7 +203,7 @@ class StatsController extends RestController {
         Project project = Project.read(params.id)
         if (project == null) responseNotFound("Project", params.id)
         int daysRange = params.daysRange!=null ? params.getInt('daysRange') : 1
-        log.info "statAnnotationEvolution:"+  project.name
+        log.info "3statAnnotationEvolution:"+  project.name
         def data = []
         int count = 0;
 
