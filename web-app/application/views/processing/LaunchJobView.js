@@ -192,7 +192,7 @@ var InputTextView = Backbone.View.extend({
         return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue() + '" style="text-align:center;' + classRequier + '"></div></div>';
     },
     getDefaultValue:function () {
-        return InputView.replaceVariable(this.param.defaultParamValue)
+        return window.app.replaceVariable(this.param.defaultParamValue)
     },
     checkEntryValidation:function () {
         var self = this;
@@ -235,7 +235,7 @@ var InputNumberView = Backbone.View.extend({
         return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue() + '" style="text-align:center;' + classRequier + '"></div></div>';
     },
     getDefaultValue:function () {
-        return InputView.replaceVariable(this.param.defaultParamValue)
+        return window.app.replaceVariable(this.param.defaultParamValue)
     },
     checkEntryValidation:function () {
         var self = this;
@@ -296,7 +296,7 @@ var InputDateView = Backbone.View.extend({
         return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="" style="text-align:center;' + classRequier + '"></div></div>';
     },
     getDefaultValue:function () {
-        return InputView.replaceVariable(this.param.defaultParamValue)
+        return window.app.replaceVariable(this.param.defaultParamValue)
     },
     checkEntryValidation:function () {
         var self = this;
@@ -411,7 +411,7 @@ var InputListView = Backbone.View.extend({
         var values = [];
         console.log(split);
         _.each(split, function (s) {
-            values.push(InputView.replaceVariable(s));
+            values.push(window.app.replaceVariable(s));
         });
         return values;
     },
@@ -454,7 +454,7 @@ var InputListDomainView = Backbone.View.extend({
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td id="' + self.param.id + '" style="text-align:center;"></td><td style="text-align:center;"><span class="errorMessage label label-important hidden"></span></td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
         console.log("*****************************");
-        self.collection = new SoftwareParameterModelCollection({uri: InputView.replaceVariable(self.param.uri), sortAttribut : self.param.uriSortAttribut});
+        self.collection = new SoftwareParameterModelCollection({uri: window.app.replaceVariable(self.param.uri), sortAttribut : self.param.uriSortAttribut});
         console.log(self.collection);
         console.log(self.collection.at(0));
         if (self.collection == undefined || (self.collection.length > 0 && self.collection.at(0).id == undefined)) {
@@ -536,7 +536,7 @@ var InputListDomainView = Backbone.View.extend({
         console.log(split);
         _.each(split, function (s) {
             console.log(s);
-            values.push(InputView.replaceVariable(s));
+            values.push(window.app.replaceVariable(s));
         });
         console.log(values);
         return values;
@@ -646,16 +646,5 @@ var InputView = {
             labelElem.text("");
             labelElem.text(message);
         }
-    },
-    replaceVariable:function (value) {
-        var self = this;
-        var result =value;
-        result=result.replace("$currentProjectCreationDate$",window.app.status.currentProjectModel.get('created'));
-        result=result.replace("$currentProject$",window.app.status.currentProject);
-        result=result.replace("$cytomineHost$",window.location.protocol + "//" + window.location.host);
-        result=result.replace("$currentDate$",new Date().getTime());
-        result=result.replace("$currentOntology$",window.app.status.currentProjectModel.get('ontology'));
-
-        return result;
     }
 };

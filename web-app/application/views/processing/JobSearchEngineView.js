@@ -96,6 +96,7 @@ var JobSearchEngineView = Backbone.View.extend({
         _.each(self.software.get('parameters'), function (param) {
             var paramView = self.getParamView(param);
             self.paramViews.push(paramView);
+            console.log("### addRow " + param.type);
             paramView.addRow($("#searchJobFilterParameterTable"));
         });
     },
@@ -105,8 +106,8 @@ var JobSearchEngineView = Backbone.View.extend({
         if (param.type == "Boolean") return new InputBooleanViewSearch({param:param});
         if (param.type == "List") return new InputListViewSearch({param:param});
         if (param.type == "Date") return new InputDateViewSearch({param:param});
-        if (param.type == "ListProject") return new InputListDomainViewSearch({param:param, multiple:true, collection:window.app.models.projects, printAttribut:"name"});
-        if (param.type == "Project") return new InputListDomainViewSearch({param:param, multiple:false, collection:window.app.models.projects, printAttribut:"name"});
+        if (param.type == "ListDomain") return new InputListDomainViewSearch({param:param, multiple:true});
+        if (param.type == "Domain") return new InputListDomainViewSearch({param:param, multiple:false});
         else return new InputTextViewSearch({param:param});
     },
     launchSearch:function () {
@@ -470,13 +471,14 @@ var InputListDomainViewSearch = Backbone.View.extend({
         this.param = options.param;
         this.parent = options.parent;
         this.multiple = options.multiple;
-        this.collection = options.collection;
-        this.printAttribut = options.printAttribut;
+        this.printAttribut = this.param.uriPrintAttribut;
     },
     addRow:function (tbody) {
         var self = this;
-        tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
+        tbody.append('<tr id="' + self.param.id + '"><td id="'+self.param.id+'" style="text-align:left;"><b>' + self.param.name + '</b><br></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
+        console.log("### " + window.app.replaceVariable(self.param.uri) +" ###"+self.param.uriSortAttribut);
+        self.collection = new SoftwareParameterModelCollection({uri: window.app.replaceVariable(self.param.uri), sortAttribut : self.param.uriSortAttribut});
         if (self.collection == undefined || (self.collection.length > 0 && self.collection.at(0).id == undefined)) {
             self.collection.fetch({
                 success:function (collection, response) {

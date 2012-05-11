@@ -169,6 +169,17 @@ var ApplicationController = Backbone.Router.extend({
           var dateStr = year + "-" + month +"-" + day + " " + hour + "h" + min;
         return dateStr;
     },
+    replaceVariable:function (value) {
+        var self = this;
+        var result =value;
+        result=result.replace("$currentProjectCreationDate$",window.app.status.currentProjectModel.get('created'));
+        result=result.replace("$currentProject$",window.app.status.currentProject);
+        result=result.replace("$cytomineHost$",window.location.protocol + "//" + window.location.host);
+        result=result.replace("$currentDate$",new Date().getTime());
+        result=result.replace("$currentOntology$",window.app.status.currentProjectModel.get('ontology'));
+
+        return result;
+    },
     dataTablesBootstrap : function () {
         /* Default class modification */
         /* Default class modification */
