@@ -135,6 +135,8 @@ body {
     <script type="text/javascript" src="application/views/auth/LoadingDialogView.js" ></script>
     <script type="text/javascript" src="application/views/auth/LogoutDialogView.js" ></script>
 
+    <script type="text/javascript" src="application/views/utils/MultiSelectView.js" ></script>
+
     <script type="text/javascript" src="application/views/dashboard/AnnotationThumbView.js" ></script>
     <script type="text/javascript" src="application/views/dashboard/AnnotationView.js" ></script>
     <script type="text/javascript" src="application/views/dashboard/ProjectDashboardView.js" ></script>

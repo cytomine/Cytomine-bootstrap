@@ -4,6 +4,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     selectedTerm: [],
     selectedUsers: [],
     selectedImages : [],
+    allImages : 0,
     terms : null,
     ontology : null,
     shouldRefresh : true,
@@ -157,6 +158,10 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                 self.showAllImages();
             }
         });
+
+
+
+
     },
     initAnnotationsFilter : function() {
         var self = this;
@@ -292,9 +297,13 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     },
     showAllImages : function() {
         var self = this;
+        self.allImages = 0;
         this.shouldRefresh = false;
         $(this.el).find('#treeImageListing').dynatree("getRoot").visit(function (node) {
-            if (!node.data.isFolder) node.select(true);
+            if (!node.data.isFolder) {
+                self.allImages++;
+                node.select(true);
+            }
         });
         this.shouldRefresh = true;
         self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedImages);
@@ -530,7 +539,19 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     },
     printAnnotationThumb : function(idTerm,$elem,users, images){
         var self = this;
-        new AnnotationCollection({project:self.model.id,term:idTerm,users:users, images : images}).fetch({
+
+        console.log(self.allImages);
+        console.log("self.selectedImages="+self.selectedImages.length);
+
+
+
+        var imagesFilter = undefined;
+        //if all image are uncheck, just pass undefined
+        if(self.allImages!=self.selectedImages.length) {
+            imagesFilter = images;
+        }
+
+        new AnnotationCollection({project:self.model.id,term:idTerm,users:users, images : imagesFilter}).fetch({
             success : function (collection, response) {
                 if (self.annotationsViews[idTerm] != null && users==undefined) { //only refresh
                     self.annotationsViews[idTerm].refresh(collection,users);
