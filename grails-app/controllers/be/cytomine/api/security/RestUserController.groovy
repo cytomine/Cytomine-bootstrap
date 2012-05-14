@@ -14,6 +14,8 @@ import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
 import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.processing.SoftwareProject
+import java.text.SimpleDateFormat
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
@@ -207,20 +209,72 @@ class RestUserController extends RestController {
     def listUserJobByProject = {
         Project project = projectService.read(params.long('id'),new Project())
         if (project) {
-            def userJobs = []
-            List<Job> allJobs = Job.findAllByProject(project,[sort:'created',order:'desc'])
-            
-            allJobs.each { job ->
-                def item = [:]
-                def userJob = UserJob.findByJob(job);
-                item.id = userJob.id
-                item.idJob = job.id
-                item.idSoftware = job.software.id
-                item.SoftwareName = job.software.name
-                item.created = job.created.getTime()
-                userJobs << item
+            if(params.getBoolean("tree")) {
+
+                SimpleDateFormat formater = new SimpleDateFormat("dd MM yyyy HH:mm:ss")
+
+                def root = [:]
+                root.isFolder = true
+                root.hideCheckbox = true
+                root.name = project.name
+                root.title = project.name
+                root.key = project.id
+                root.id = project.id
+
+                def allSofts = []
+                List<SoftwareProject> softwareProject = SoftwareProject.findAllByProject(project)
+                
+                softwareProject.each {
+                    Software software = it.software
+                    def soft = [:]
+                    soft.isFolder = true
+                    soft.name = software.name
+                    soft.title = software.name
+                    soft.key = software.id
+                    soft.id = software.id
+                    soft.hideCheckbox = true
+
+                    def softJob = []
+                    List<Job> jobs = Job.findAllByProjectAndSoftware(project,software,[sort:'created',order:'desc'])
+                    jobs.each {
+                        def userJob = UserJob.findByJob(it);
+                        def job = [:]
+                        job.id = userJob.id
+                        job.key = userJob.id
+                        job.title = formater.format(it.created);
+                        job.date = it.created.getTime()
+                        job.isFolder = false
+                        //job.children = []
+                        softJob << job
+                    }
+                    soft.children = softJob
+
+                    allSofts << soft
+
+                }
+                root.children = allSofts
+                responseSuccess(root)
+
+            } else {
+                def userJobs = []
+                List<Job> allJobs = Job.findAllByProject(project,[sort:'created',order:'desc'])
+
+                allJobs.each { job ->
+                    def item = [:]
+                    def userJob = UserJob.findByJob(job);
+                    item.id = userJob.id
+                    item.idJob = job.id
+                    item.idSoftware = job.software.id
+                    item.SoftwareName = job.software.name
+                    item.created = job.created.getTime()
+                    userJobs << item
+                }
+                responseSuccess(userJobs)
             }
-            responseSuccess(userJobs)
+
+
+
+
         }else responseNotFound("User", "Project", params.id)
     }
 

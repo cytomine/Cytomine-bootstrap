@@ -474,31 +474,31 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         var self = this;
         new UserJobCollection({project:self.model.id}).fetch({
             success : function (collection, response) {
-                var treeData = {
-                    id : self.model.id,
-                    name : "Jobs",
-                    title : "Jobs",
-                    key : self.model.id,
-                    "hideCheckbox": true,
-                    isFolder : true,
-                    children : []
-                };
-                collection.each(function(userjob) {
-                    console.log(userjob);
-                    treeData.children.push({
-                        id : userjob.id,
-                        key : userjob.id,
-                        name : userjob.id,
-                        title : window.app.convertLongToDate(userjob.get('created')),
-                        children : []
-                    });
-                });
+//                var treeData = {
+//                    id : self.model.id,
+//                    name : "Jobs",
+//                    title : "Jobs",
+//                    key : self.model.id,
+//                    "hideCheckbox": true,
+//                    isFolder : true,
+//                    children : []
+//                };
+//                collection.each(function(userjob) {
+//                    console.log(userjob);
+//                    treeData.children.push({
+//                        id : userjob.id,
+//                        key : userjob.id,
+//                        name : userjob.id,
+//                        title : window.app.convertLongToDate(userjob.get('created')),
+//                        children : []
+//                    });
+//                });
                 $(self.el).find('#treeJobListing').dynatree({
                     checkbox: true,
                     selectMode: 2,
                     expand : true,
                     onExpand : function() {},
-                    children: treeData,
+                    children: collection.toJSON(),
                     onSelect: function(select, node) {
                         //if(!self.activeEvent) return;
 

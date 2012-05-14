@@ -64,7 +64,7 @@ var UserJobCollection = Backbone.Collection.extend({
     model: UserModel,
     url: function() {
         if (this.project != undefined) {
-            return "api/project/" + this.project + "/userjob.json";
+            return "api/project/" + this.project + "/userjob.json?tree=true";
         } else {
             return "api/userjob.json";
         }
