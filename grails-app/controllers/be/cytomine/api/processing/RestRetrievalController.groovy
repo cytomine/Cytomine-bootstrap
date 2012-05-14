@@ -3,10 +3,12 @@ package be.cytomine.api.processing
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Annotation
 import be.cytomine.project.Project
+import be.cytomine.security.SecUser
 
 class RestRetrievalController extends RestController {
 
     def retrievalService
+    def cytomineService
 
     def search = {
         log.info "List with id annotation:" + params.idannotation
@@ -29,6 +31,7 @@ class RestRetrievalController extends RestController {
 
     def index = {
         log.info "index with id annotation:" + params.idannotation
+        SecUser user = cytomineService.currentUser
         retrievalService.indexAnnotationAsynchronous(Annotation.read(params.idannotation))
         responseSuccess([])
     }

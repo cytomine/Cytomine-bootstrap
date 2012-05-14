@@ -273,9 +273,11 @@ class AnnotationService extends ModelService {
             transactionService.stop()
 
             //add annotation on the retrieval
-            try {if (annotationID) indexRetrievalAnnotation(annotationID) } catch (Exception e) {
-                log.error "Cannot index in retrieval:" + e.toString()
-                e.printStackTrace()
+            if(!currentUser.algo())  {
+                try {if (annotationID) indexRetrievalAnnotation(annotationID) } catch (Exception e) {
+                    log.error "Cannot index in retrieval:" + e.toString()
+                    e.printStackTrace()
+                }
             }
 
             return result
