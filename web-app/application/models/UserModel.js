@@ -57,3 +57,21 @@ var UserSecRole =  Backbone.Model.extend({
         this.role = options.role;
     }
 });
+
+
+// define our collection
+var UserJobCollection = Backbone.Collection.extend({
+    model: UserModel,
+    url: function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/userjob.json";
+        } else {
+            return "api/userjob.json";
+        }
+    },
+    initialize: function (options) {
+        this.project = options.project;
+    },comparator : function(user) {
+        return -user.get("created");
+    }
+});

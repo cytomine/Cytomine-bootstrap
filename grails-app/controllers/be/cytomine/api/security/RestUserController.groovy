@@ -13,6 +13,7 @@ import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
+import be.cytomine.ontology.AnnotationTerm
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
@@ -202,6 +203,27 @@ class RestUserController extends RestController {
         def jsonData = [rows: users, page: currentPage, records: totalRows, total: numberOfPages]
         render jsonData as JSON
     }
+
+    def listUserJobByProject = {
+        Project project = projectService.read(params.long('id'),new Project())
+        if (project) {
+            def userJobs = []
+            List<Job> allJobs = Job.findAllByProject(project,[sort:'created',order:'desc'])
+            
+            allJobs.each { job ->
+                def item = [:]
+                def userJob = UserJob.findByJob(job);
+                item.id = userJob.id
+                item.idJob = job.id
+                item.idSoftware = job.software.id
+                item.SoftwareName = job.software.name
+                item.created = job.created.getTime()
+                userJobs << item
+            }
+            responseSuccess(userJobs)
+        }else responseNotFound("User", "Project", params.id)
+    }
+
 
 
 }

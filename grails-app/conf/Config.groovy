@@ -118,8 +118,8 @@ log4j = {
            'net.sf.ehcache.hibernate',
            'org.hibernate.engine.StatefulPersistenceContext.ProxyWarnLog'
 
-   debug 'org.codehaus.groovy.grails.plugins.springsecurity.AnnotationFilterInvocationDefinition'
-   info   'be.cytomine' ,'org.hibernate'
+   debug 'org.codehaus.groovy.grails.plugins.springsecurity.AnnotationFilterInvocationDefinition','be.cytomine'
+   info   'org.hibernate'
 
 
 

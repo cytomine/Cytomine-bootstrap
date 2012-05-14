@@ -36,6 +36,8 @@ class UserUrlMappings {
         "/api/project/$id/user/$idUser/admin"(controller: "restUser"){
             action = [DELETE:"deleteUserAdmin",POST:"addUserAdmin"]
         }
-
+        "/api/project/$id/userjob"(controller: "restUser"){
+            action = [GET:"listUserJobByProject"]
+        }
     }
 }

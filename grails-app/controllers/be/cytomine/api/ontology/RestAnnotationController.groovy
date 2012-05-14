@@ -88,6 +88,7 @@ class RestAnnotationController extends RestController {
     }
 
     def listAnnotationByProjectAndTerm = {
+        log.info "listAnnotationByProjectAndTerm"
         Term term = termService.read(params.long('idterm'))
         Project project = projectService.read(params.long('idproject'), new Project())
 
@@ -98,6 +99,7 @@ class RestAnnotationController extends RestController {
         else {
             userList = userService.list(project)
         }
+        log.info "userList="+userList
         Collection<ImageInstance> imageInstanceList = []
         if (params.images != null && params.images != "null") {
             if (params.images != "") imageInstanceList = imageInstanceService.list(project, params.images.split("_").collect{ Long.parseLong(it)})
@@ -110,6 +112,7 @@ class RestAnnotationController extends RestController {
         /*else if (userList.isEmpty()) responseNotFound("Users", params.users)
         else if (imageInstanceList.isEmpty()) responseNotFound("ImageInstance", params.images)*/
         else if(!params.suggestTerm) {
+
             responseSuccess(annotationService.list(project, term, userList, imageInstanceList))
         }
         else {
