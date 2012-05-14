@@ -5,6 +5,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     selectedUsers: [],
     selectedImages : [],
     allImages : 0,
+    allUsers : 0,
     terms : null,
     ontology : null,
     shouldRefresh : true,
@@ -319,9 +320,13 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     },
     showAllUsers : function() {
         var self = this;
+        self.allUsers = 0;
         this.shouldRefresh = false;
         $(this.el).find('#treeUserListing').dynatree("getRoot").visit(function (node) {
-            if (!node.data.isFolder) node.select(true);
+            if (!node.data.isFolder) {
+                self.allUsers++;
+                node.select(true);
+            }
         });
         this.shouldRefresh = true;
         self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedImages);
@@ -540,8 +545,8 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     printAnnotationThumb : function(idTerm,$elem,users, images){
         var self = this;
 
-        console.log(self.allImages);
-        console.log("self.selectedImages="+self.selectedImages.length);
+        console.log(self.allUsers);
+        console.log("users.length="+users.length);
 
 
 
@@ -551,7 +556,13 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             imagesFilter = images;
         }
 
-        new AnnotationCollection({project:self.model.id,term:idTerm,users:users, images : imagesFilter}).fetch({
+        var usersFilter = undefined;
+        //if all image are uncheck, just pass undefined
+        if(self.allUsers!=users.length) {
+            usersFilter = users;
+        }
+
+        new AnnotationCollection({project:self.model.id,term:idTerm,users:usersFilter, images : imagesFilter}).fetch({
             success : function (collection, response) {
                 if (self.annotationsViews[idTerm] != null && users==undefined) { //only refresh
                     self.annotationsViews[idTerm].refresh(collection,users);
