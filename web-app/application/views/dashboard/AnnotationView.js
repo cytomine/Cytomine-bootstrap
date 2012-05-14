@@ -64,7 +64,6 @@ var AnnotationView = Backbone.View.extend({
     appendThumbs : function(page) {
 
         var self = this;
-        console.log($(self.el).length);
         var cpt = 0;
         var inf = Math.abs(page) * self.nb_thumb_by_page;
         var sup = (Math.abs(page) + 1) * self.nb_thumb_by_page;
@@ -77,17 +76,13 @@ var AnnotationView = Backbone.View.extend({
          } */
 
         self.model.each(function(annotation) {
-            console.log("Model:"+annotation.id);
             if ((cpt >= inf) && (cpt < sup)) {
-                console.log("add");
                 var thumb = new AnnotationThumbView({
                     model : annotation,
                     className : "thumb-wrap",
                     term : self.term
                     //id : "annotationthumb"+annotation.get('id')
                 }).render();
-                console.log("elem:"+self.el.html());
-                console.log("append:"+thumb.el);
                 $(self.el).append(thumb.el);
             }
             cpt++;

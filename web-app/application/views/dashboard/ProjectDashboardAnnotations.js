@@ -655,13 +655,13 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         }
 
         usersFilter = _.union(users,jobs);
-        console.log("usersFilter="+usersFilter.length);
+
+        //print loading info
+        $($elem).parent().find("h4").append('<div class="alert alert-info"><i class="icon-refresh" /> Loading...</div>');
 
         new AnnotationCollection({project:self.model.id,term:idTerm,users:usersFilter, images : imagesFilter}).fetch({
             success : function (collection, response) {
-                console.log("collection.length="+collection.length);
                 if (self.annotationsViews[idTerm] != null && users==undefined) { //only refresh
-                    console.log("only refresh");
                     self.annotationsViews[idTerm].refresh(collection,usersFilter);
                     return;
                 }
@@ -674,6 +674,8 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     el:$($elem)
                 }).render();
                 //$("#listtabannotation > div").tsort();
+                //unprint loading info
+                $($elem).parent().find("h4").find(".alert").replaceWith("");
             }
         });
     }
