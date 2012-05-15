@@ -26,12 +26,12 @@ class RequestFilters {
                         strParam = strParam +"<" + it.key +':'+ value +'>; '
                     }
                 }*/
-                String strPost = ""
-                try {
-                    strPost = request.JSON
-                    strPost = strPost.substring(0,Math.min(200, strPost.length()))
-                } catch(Exception e) {}
-                String requestInfo = "| PARAM="+strParam + "| POST=" + strPost + " | "
+//                String strPost = ""
+//                try {
+//                    strPost = request.JSON
+//                    strPost = strPost.substring(0,Math.min(200, strPost.length()))
+//                } catch(Exception e) {}
+                String requestInfo = "| PARAM="+strParam //+ "| POST=" + strPost + " | "
                 String userInfo = ""
                 try { userInfo = springSecurityService.principal.id} catch(Exception e) { userInfo = springSecurityService.principal}
                 log.info controllerName+"."+actionName + ": user:" + userInfo + " request=" + requestInfo

@@ -31,6 +31,7 @@ import be.cytomine.processing.SoftwareParameter
 import be.cytomine.processing.SoftwareProject
 import be.cytomine.processing.JobParameter
 import be.cytomine.social.SharedAnnotation
+import be.cytomine.processing.JobData
 
 /**
  * Created by IntelliJ IDEA.
@@ -360,6 +361,25 @@ class BasicInstance {
         checkDomain(job)
         job
     }
+
+
+    static JobData getBasicJobDataNotExist() {
+        log.debug "getBasicJobDataNotExist()"
+        Job job = getBasicJobNotExist()
+        job.save(flush:true)
+        JobData jobData =  new JobData(job:job, key : "TESTKEY", filename: "filename.jpg")
+        checkDomain(jobData)
+        jobData
+    }
+
+
+    static JobData createOrGetBasicJobData() {
+        log.debug  "createOrGetBasicJobData()"
+        def jobData = getBasicJobDataNotExist()
+        jobData.save(flush: true)
+        jobData
+    }
+
 
     static JobParameter createOrGetBasicJobParameter() {
         log.debug "createOrGetBasicJobparameter()"
@@ -1028,6 +1048,13 @@ class BasicInstance {
         assert map.comment.equals(json.comment)
         assert map.color.equals(json.color)
         assert toLong(map.ontology.id).equals(toLong(json.ontology))
+
+    }
+
+    static void compareJobData(map, json) {
+
+        assert map.key.equals(json.key)
+        assert toLong(map.job.id).equals(toLong(json.job))
 
     }
 

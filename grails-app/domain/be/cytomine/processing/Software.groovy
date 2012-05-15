@@ -81,9 +81,12 @@ class Software extends CytomineDomain {
         if (!jsonSoftware.name.toString().equals("null"))
             software.name = jsonSoftware.name
         else throw new WrongArgumentException("Software name cannot be null")
+
         if (!jsonSoftware.serviceName.toString().equals("null"))
             software.serviceName = jsonSoftware.serviceName
         else throw new WrongArgumentException("Software service-name cannot be null")
+
+        software.resultName = jsonSoftware.resultName
         //try to loard service if exist
         def service
         try {
