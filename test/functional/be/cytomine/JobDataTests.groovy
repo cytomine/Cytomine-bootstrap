@@ -13,6 +13,7 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.processing.JobData
 import be.cytomine.test.http.JobDataAPI
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 /**
  * Created by IntelliJ IDEA.
@@ -102,4 +103,61 @@ class JobDataTests extends functionaltestplugin.FunctionalTestCase {
         def result = JobDataAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(404, result.code)
     }
+
+    //testUpload + download from database
+    void testDataInDatabase() {
+        ConfigurationHolder.config.cytomine.jobdata.filesystem = false
+        //create jobdata
+        JobData jobData = BasicInstance.getBasicJobDataNotExist()
+        jobData.filename = "test.data"
+        jobData.save(flush: true)
+
+        byte[] testData = "HelloWorld!".bytes
+
+        //upload file
+         def result = JobDataAPI.upload(jobData.id,testData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        //download file
+        result = JobDataAPI.download(jobData.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        //check if byte[] are equals
+        assertEquals testData, result.data
+    }
+
+    //testUpload + download from filesystem
+    void testDataInFileSystem() {
+        ConfigurationHolder.config.cytomine.jobdata.filesystem = true
+        //create jobdata
+        JobData jobData = BasicInstance.getBasicJobDataNotExist()
+        jobData.filename = "test.data"
+        jobData.save(flush: true)
+
+        byte[] testData = "HelloWorld!".bytes
+
+        //upload file
+         def result = JobDataAPI.upload(jobData.id,testData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        //download file
+        result = JobDataAPI.download(jobData.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        //check if byte[] are equals
+        assertEquals testData, result.data
+        ConfigurationHolder.config.cytomine.jobdata.filesystem = false
+    }
+
+    protected void tearDown() {
+        super.tearDown();
+        ConfigurationHolder.config.cytomine.jobdata.filesystem = false
+    }
+
+    protected void setUp() {
+        super.tearDown();
+        ConfigurationHolder.config.cytomine.jobdata.filesystem = true
+    }
+
+
 }

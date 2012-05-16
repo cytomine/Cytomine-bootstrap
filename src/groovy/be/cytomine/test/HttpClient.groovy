@@ -20,6 +20,8 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.apache.http.client.methods.HttpPut
 import org.apache.http.client.methods.HttpDelete
+import org.apache.http.entity.InputStreamEntity
+import java.awt.image.BufferedImage
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -65,6 +67,26 @@ class HttpClient {
     response = client.execute(targetHost, httpGet, localcontext);
   }
 
+
+    byte[] getData() throws MalformedURLException, IOException, Exception {
+        HttpGet httpGet = new HttpGet(URL.toString());
+        response = client.execute(targetHost, httpGet, localcontext);
+        log.info("url=" + URL.toString() + " is " + response.getStatusLine().statusCode);
+
+        boolean isOK = (response.getStatusLine().statusCode == HttpURLConnection.HTTP_OK);
+        boolean isFound = (response.getStatusLine().statusCode == HttpURLConnection.HTTP_MOVED_TEMP);
+        boolean isErrorServer = (response.getStatusLine().statusCode == HttpURLConnection.HTTP_INTERNAL_ERROR);
+
+        if (!isOK && !isFound & !isErrorServer) throw new IOException(URL.toString() + " cannot be read: " + response.getStatusLine().statusCode);
+        HttpEntity entity = response.getEntity();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        if (entity != null) {
+
+            entity.writeTo(baos)
+        }
+        return baos.toByteArray()
+    }
+
   void delete()
   {
     log.debug("Delete " + URL.toString())
@@ -109,6 +131,23 @@ class HttpClient {
 
     response = client.execute(targetHost, httpPut, localcontext);
   }
+
+    void put(byte[] data) {
+        log.debug("Put " + URL.getPath())
+        HttpPut httpPut = new HttpPut(URL.getPath());;
+        log.debug("Put send :" + data.length)
+
+        InputStreamEntity reqEntity = new InputStreamEntity(new ByteArrayInputStream(data), -1);
+        reqEntity.setContentType("binary/octet-stream");
+        reqEntity.setChunked(false);
+        httpPut.setEntity(reqEntity);
+        response = client.execute(targetHost, httpPut, localcontext);
+    }
+
+
+
+
+
 
   String getResponseData()   {
     HttpEntity entityResponse = response.getEntity();

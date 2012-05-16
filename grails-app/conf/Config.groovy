@@ -62,6 +62,9 @@ grails.logging.jul.usebridge = true
 // packages to include in Spring bean scanning
 grails.spring.bean.packages = []
 
+cytomine.jobdata.filesystem = false
+cytomine.jobdata.filesystemPath = "algo/data/"
+
 //mail.error.port = 587
 //mail.error.starttls = true
 

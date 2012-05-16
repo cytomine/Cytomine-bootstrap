@@ -134,4 +134,34 @@ class JobDataAPI extends DomainAPI {
         client.disconnect();
         return [data: response, code: code]
     }
+
+    static def upload(def id, byte[] data, String username, String password) {
+        log.info("upload Jobdata")
+        /* Encode a niew Jobdata Name2*/
+        String URL = Infos.CYTOMINEURL + "api/jobdata/" + id + "/upload.json"
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        client.put(data)
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        println response
+        client.disconnect();
+        log.info("check response")
+        return [data: response, code: code]
+    }
+
+    static def download(def id,String username, String password) {
+        log.info("upload Jobdata")
+        /* Encode a niew Jobdata Name2*/
+        String URL = Infos.CYTOMINEURL + "api/jobdata/" + id + "/download.json"
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        byte[] data = client.getData()
+        int code = client.getResponseCode()
+//        String response = client.getResponseData()
+//        println response
+        client.disconnect();
+        log.info("check response")
+        return [data: data, code: code]
+    }
 }

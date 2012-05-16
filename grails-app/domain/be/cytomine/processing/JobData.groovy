@@ -9,12 +9,15 @@ class JobData extends CytomineDomain {
     String key
     byte[] data
     String filename
+    String dir
 
     static belongsTo = [job: Job]
 
     static constraints = {
         key(nullable: false, blank: false, unique: false)
         data(nullable: true)
+        filename(nullable: false, blank: false)
+        dir(nullable: true,blank: true)
     }
 
     static JobData createFromDataWithId(json) {
