@@ -1,8 +1,8 @@
 package be.cytomine.security
 
+import be.cytomine.CytomineDomain
 import grails.converters.JSON
 import org.apache.commons.lang.builder.HashCodeBuilder
-import be.cytomine.CytomineDomain
 
 class SecUserSecRole extends CytomineDomain implements Serializable {
 

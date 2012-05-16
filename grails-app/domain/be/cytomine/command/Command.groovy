@@ -2,11 +2,10 @@ package be.cytomine.command
 
 import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
-
-import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONElement
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import be.cytomine.security.SecUser
+import grails.converters.JSON
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.codehaus.groovy.grails.web.json.JSONElement
 
 /**
  * @author ULG-GIGA Cytomine Team

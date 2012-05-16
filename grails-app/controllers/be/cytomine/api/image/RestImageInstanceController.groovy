@@ -1,5 +1,7 @@
 package be.cytomine.api.image
 
+import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
@@ -7,22 +9,20 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
-
+import be.cytomine.test.Infos
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.geom.LinearRing
 import grails.converters.JSON
-import java.awt.Color
-import java.awt.image.BufferedImage
-import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.test.Infos
-import org.springframework.web.multipart.MultipartHttpServletRequest
-import org.springframework.web.multipart.MultipartFile
-import javax.imageio.ImageIO
 import ij.ImagePlus
+import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.multipart.MultipartHttpServletRequest
+
+import java.awt.Color
 import java.awt.Graphics2D
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
 
 /**
  * Created by IntelliJ IDEA.

@@ -1,18 +1,16 @@
 package be.cytomine.api.processing
 
+import grails.plugins.springsecurity.Secured
+
+import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
 import be.cytomine.processing.Job
-import grails.plugins.springsecurity.Secured
-import grails.converters.JSON
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
-
+import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
-import be.cytomine.security.SecUserSecRole
-import groovyx.gpars.Asynchronizer
-import java.util.concurrent.Future
-import be.cytomine.Exception.CytomineException
+import grails.converters.JSON
 
 class RestJobController extends RestController {
 

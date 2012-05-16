@@ -3,16 +3,9 @@ package be.cytomine.api.processing
 import grails.plugins.springsecurity.Secured
 
 import be.cytomine.api.RestController
-import org.apache.commons.io.IOUtils
-import be.cytomine.processing.JobData
 import be.cytomine.processing.Job
-import be.cytomine.processing.Software
-import be.cytomine.ontology.Ontology
-import be.cytomine.security.User
-import be.cytomine.project.Discipline
-import be.cytomine.project.Project
+import be.cytomine.processing.JobData
 import grails.converters.JSON
-import be.cytomine.Exception.CytomineException
 
 class RestJobDataController extends RestController {
 

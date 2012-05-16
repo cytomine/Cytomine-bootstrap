@@ -1,19 +1,16 @@
 package be.cytomine.processing
 
-import be.cytomine.ModelService
+import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
-import be.cytomine.security.User
+import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
+import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
-import be.cytomine.command.DeleteCommand
-import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.Exception.ConstraintException
-import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.security.SecUser
 import be.cytomine.project.Project
-import be.cytomine.Exception.AlreadyExistException
-import org.hibernate.FlushMode
+import be.cytomine.security.SecUser
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 class SoftwareService extends ModelService {
 

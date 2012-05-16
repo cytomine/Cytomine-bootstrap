@@ -1,10 +1,7 @@
 package be.cytomine.api.processing
 
 import be.cytomine.api.RestController
-import be.cytomine.processing.ImageFilter
 import be.cytomine.project.Project
-import be.cytomine.test.Infos
-import be.cytomine.processing.ImageFilterProject
 import grails.converters.JSON
 
 class RestImageFilterProjectController extends RestController {

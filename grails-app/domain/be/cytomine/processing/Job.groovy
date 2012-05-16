@@ -1,14 +1,10 @@
 package be.cytomine.processing
 
 import be.cytomine.CytomineDomain
-import be.cytomine.project.Project
-
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ResponseService
-import org.hibernate.FetchMode
-import be.cytomine.security.UserJob
+import be.cytomine.project.Project
+import grails.converters.JSON
 
 class Job extends CytomineDomain  {
     //enum type are too heavy with GORM

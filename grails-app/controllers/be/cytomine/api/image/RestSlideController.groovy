@@ -1,13 +1,12 @@
 package be.cytomine.api.image
 
+import grails.plugins.springsecurity.Secured
+
+import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
 import be.cytomine.project.Slide
-import be.cytomine.security.User
-import grails.converters.JSON
-import grails.plugins.springsecurity.Secured
-import be.cytomine.Exception.CytomineException
-import be.cytomine.test.Infos
 import be.cytomine.security.SecUser
+import grails.converters.JSON
 
 /**
  * Cytomine @ GIGA-ULG

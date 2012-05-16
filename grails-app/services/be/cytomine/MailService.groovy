@@ -1,9 +1,10 @@
 package be.cytomine
 
+import org.springframework.core.io.FileSystemResource
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.mail.javamail.MimeMessageHelper
+
 import javax.mail.internet.MimeMessage
-import org.springframework.core.io.FileSystemResource
 
 class MailService {
 

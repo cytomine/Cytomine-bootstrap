@@ -1,8 +1,8 @@
 package be.cytomine.social
 
+import be.cytomine.CytomineDomain
 import be.cytomine.ontology.Annotation
 import be.cytomine.security.User
-import be.cytomine.CytomineDomain
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 

@@ -1,38 +1,33 @@
 package be.cytomine.ontology
 
+import org.springframework.security.access.prepost.PostFilter
+import org.springframework.security.access.prepost.PreAuthorize
+
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
+import be.cytomine.command.Transaction
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.server.RetrievalServer
+import be.cytomine.processing.Job
 import be.cytomine.project.Project
-import be.cytomine.security.User
+import be.cytomine.security.SecUser
+import be.cytomine.security.UserJob
+import be.cytomine.social.SharedAnnotation
+import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.io.WKTWriter
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
-import org.springframework.security.access.prepost.PostFilter
-import org.springframework.security.access.prepost.PreAuthorize
-
 import org.hibernate.FetchMode
-import be.cytomine.command.Transaction
-import be.cytomine.social.SharedAnnotation
-import be.cytomine.security.UserJob
-import be.cytomine.security.SecUser
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
-import be.cytomine.security.SecUser
-import be.cytomine.processing.Job
-import org.hibernate.Criteria
-import org.hibernatespatial.criterion.SpatialRestrictions
-import grails.orm.HibernateCriteriaBuilder
 import org.hibernate.criterion.Restrictions
-import com.vividsolutions.jts.geom.GeometryFactory
-import com.vividsolutions.jts.geom.Coordinate
-import org.hibernate.criterion.Projections
+import org.hibernatespatial.criterion.SpatialRestrictions
 
 class AnnotationService extends ModelService {
 

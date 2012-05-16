@@ -1,10 +1,8 @@
 package be.cytomine.processing
 
 import be.cytomine.CytomineDomain
-import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.ontology.Ontology
-import be.cytomine.project.Discipline
+import grails.converters.JSON
 
 class JobData extends CytomineDomain {
 

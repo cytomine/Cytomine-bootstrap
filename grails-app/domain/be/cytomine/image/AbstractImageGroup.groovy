@@ -1,10 +1,10 @@
 package be.cytomine.image
 
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.security.Group
 import grails.converters.JSON
-import be.cytomine.Exception.AlreadyExistException
 
 class AbstractImageGroup extends CytomineDomain implements Serializable {
 

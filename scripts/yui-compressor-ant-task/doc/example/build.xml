@@ -101,6 +101,7 @@
 <fileset dir="${src.dir}" includes="application/views/auth/LoginDialogView.js"/>
 <fileset dir="${src.dir}" includes="application/views/auth/LoadingDialogView.js"/>
 <fileset dir="${src.dir}" includes="application/views/auth/LogoutDialogView.js"/>
+<fileset dir="${src.dir}" includes="application/views/utils/MultiSelectView.js"/>
 <fileset dir="${src.dir}" includes="application/views/dashboard/AnnotationThumbView.js"/>
 <fileset dir="${src.dir}" includes="application/views/dashboard/AnnotationView.js"/>
 <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardView.js"/>
@@ -156,8 +157,8 @@
 <fileset dir="${src.dir}" includes="application/views/annotation/ShareAnnotationView.js"/>
 <fileset dir="${src.dir}" includes="application/views/utils/CrudGridView.js"/>
 <fileset dir="${src.dir}" includes="application/views/Component.js"/>
-<fileset dir="${src.dir}" includes="application/views/ConfirmDialogView.js"/>
 <fileset dir="${src.dir}" includes="application/views/ApplicationView.js"/>
+<fileset dir="${src.dir}" includes="application/views/ConfirmDialogView.js"/>
 </concat>
     </target>
 

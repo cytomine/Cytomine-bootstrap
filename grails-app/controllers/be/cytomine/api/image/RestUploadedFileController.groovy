@@ -1,13 +1,11 @@
 package be.cytomine.api.image
 
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import be.cytomine.api.RestController
+import be.cytomine.image.UploadedFile
+import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
-import be.cytomine.image.UploadedFile
-import be.cytomine.api.RestController
-import be.cytomine.project.Project
-import cytomine.web.ConvertImagesJob
-import groovyx.gpars.Asynchronizer
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 class RestUploadedFileController extends RestController {
 

@@ -2,8 +2,6 @@ package be.cytomine.api.processing
 
 import be.cytomine.api.RestController
 import be.cytomine.processing.ImageFilter
-import be.cytomine.ontology.Ontology
-import be.cytomine.project.Project
 
 class RestImageFilterController extends RestController {
 

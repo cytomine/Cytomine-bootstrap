@@ -1,9 +1,9 @@
 package be.cytomine.ontology
 
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
-import be.cytomine.Exception.AlreadyExistException
 
 class RelationTerm extends CytomineDomain implements Serializable {
 

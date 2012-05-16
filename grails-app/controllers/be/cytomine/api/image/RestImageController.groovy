@@ -5,9 +5,9 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.ontology.Annotation
 import be.cytomine.project.Project
 import be.cytomine.security.Group
+import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
-import be.cytomine.security.SecUser
 
 class RestImageController extends RestController {
 

@@ -11,7 +11,6 @@ import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.project.Slide
 import be.cytomine.server.resolvers.Resolver
 import grails.converters.JSON
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class AbstractImage extends CytomineDomain {
 

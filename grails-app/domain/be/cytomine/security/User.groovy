@@ -4,7 +4,6 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.AbstractImageGroup
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.SoftwareProject
-import be.cytomine.project.ProjectGroup
 import grails.converters.JSON
 
 class User extends SecUser {

@@ -1,10 +1,9 @@
 package be.cytomine.processing.job
 
-import be.cytomine.processing.Job
-import be.cytomine.processing.SoftwareParameter
-import be.cytomine.processing.JobParameter
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.security.UserJob
+import be.cytomine.processing.Job
+import be.cytomine.processing.JobParameter
+import be.cytomine.processing.SoftwareParameter
 
 abstract class AbstractJobService {
 

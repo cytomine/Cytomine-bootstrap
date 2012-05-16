@@ -1,16 +1,17 @@
 package be.cytomine.image
 
+import org.springframework.security.access.prepost.PreAuthorize
+
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
+import be.cytomine.command.AddCommand
+import be.cytomine.command.DeleteCommand
+import be.cytomine.command.EditCommand
 import be.cytomine.project.Slide
+import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.orm.PagedResultList
-import be.cytomine.command.AddCommand
-import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.Exception.ObjectNotFoundException
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.command.EditCommand
-import be.cytomine.security.SecUser
-import be.cytomine.command.DeleteCommand
 
 class SlideService extends ModelService {
 

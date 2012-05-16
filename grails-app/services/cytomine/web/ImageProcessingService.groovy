@@ -1,15 +1,16 @@
 package cytomine.web
 
-import ij.ImagePlus
+import be.cytomine.processing.image.filters.Auto_Threshold
 import com.vividsolutions.jts.geom.Coordinate
-import ij.plugin.filter.PlugInFilter
+import ij.ImagePlus
 import ij.gui.PolygonRoi
 import ij.gui.Roi
 import ij.gui.Wand
-import ij.process.ImageProcessor
-import java.awt.image.BufferedImage
+import ij.plugin.filter.PlugInFilter
 import ij.process.ImageConverter
-import be.cytomine.processing.image.filters.Auto_Threshold
+import ij.process.ImageProcessor
+
+import java.awt.image.BufferedImage
 
 class ImageProcessingService {
 

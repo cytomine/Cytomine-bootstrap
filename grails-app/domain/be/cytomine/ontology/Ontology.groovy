@@ -1,11 +1,11 @@
 package be.cytomine.ontology
 
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
-import be.cytomine.Exception.AlreadyExistException
 
 class Ontology extends CytomineDomain implements Serializable {
 

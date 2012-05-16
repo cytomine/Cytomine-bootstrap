@@ -1,10 +1,7 @@
 package cytomine.web
 
-import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Annotation
-import be.cytomine.project.Project
 import be.cytomine.social.SharedAnnotation
-import java.sql.Statement
 
 /**
  * Cytomine @ GIGA-ULG

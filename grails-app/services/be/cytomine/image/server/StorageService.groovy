@@ -1,10 +1,7 @@
 package be.cytomine.image.server
 
 import be.cytomine.image.AbstractImage
-import be.cytomine.image.server.Storage
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.Exception.ObjectNotFoundException
 
 class StorageService {
 

@@ -1,13 +1,10 @@
 package be.cytomine.processing.job
 
+import be.cytomine.ontology.Term
 import be.cytomine.processing.Job
+import be.cytomine.processing.structure.ConfusionMatrix
 import be.cytomine.security.UserJob
 import grails.converters.JSON
-import be.cytomine.processing.Software
-import be.cytomine.processing.SoftwareParameter
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.processing.structure.ConfusionMatrix
-import be.cytomine.ontology.Term
 
 class RetrievalSuggestedTermJobService extends AbstractJobService {
 

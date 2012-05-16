@@ -1,17 +1,12 @@
 package be.cytomine.api.processing.algo
 
 import be.cytomine.api.RestController
-import be.cytomine.ontology.AlgoAnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.processing.Job
 import be.cytomine.processing.Software
-import be.cytomine.processing.structure.ConfusionMatrix
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
-import be.cytomine.utils.Utils
-import java.util.TreeMap.Entry
-import be.cytomine.ontology.Annotation
 
 class RetrievalEvolutionStatsController extends RestController {
 

@@ -1,8 +1,8 @@
 package be.cytomine.command
 
 import be.cytomine.CytomineDomain
-import be.cytomine.security.User
 import be.cytomine.security.SecUser
+import be.cytomine.security.User
 
 /**
  * @author ULG-GIGA Cytomine Team

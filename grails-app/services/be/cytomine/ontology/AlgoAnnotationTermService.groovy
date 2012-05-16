@@ -4,23 +4,17 @@ import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
+import be.cytomine.command.Transaction
 import be.cytomine.processing.Job
+import be.cytomine.processing.structure.ConfusionMatrix
 import be.cytomine.project.Project
+import be.cytomine.security.SecUser
 import be.cytomine.security.User
+import be.cytomine.security.UserJob
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.command.Transaction
-import be.cytomine.security.UserJob
-import be.cytomine.security.SecUser
-import be.cytomine.processing.structure.ConfusionMatrix
-import be.cytomine.security.SecUser
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.utils.ValueComparator
-import be.cytomine.utils.Utils
+
 import java.util.TreeMap.Entry
-import be.cytomine.security.UserJob
-import be.cytomine.processing.Software
 
 class AlgoAnnotationTermService extends ModelService {
 

@@ -1,17 +1,15 @@
 package be.cytomine.api.ontology
 
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.InvalidRequestException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.Term
+import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
-import be.cytomine.project.Project
-import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.test.Infos
-import be.cytomine.security.SecUser
-import be.cytomine.Exception.InvalidRequestException
 
 class RestAnnotationTermController extends RestController {
 

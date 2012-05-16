@@ -1,7 +1,6 @@
 package be.cytomine.command
 
 import be.cytomine.api.RestController
-import be.cytomine.security.User
 import be.cytomine.security.SecUser
 
 class CommandController extends RestController {

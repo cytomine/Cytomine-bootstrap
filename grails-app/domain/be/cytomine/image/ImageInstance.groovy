@@ -1,15 +1,15 @@
 package be.cytomine.image
 
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.UrlApi
 import be.cytomine.ontology.Annotation
 import be.cytomine.project.Project
 import be.cytomine.project.Slide
+import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
-import be.cytomine.Exception.AlreadyExistException
-import be.cytomine.security.SecUser
 
 /**
  * Created by IntelliJ IDEA.

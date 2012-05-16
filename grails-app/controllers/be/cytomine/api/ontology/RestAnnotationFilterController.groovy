@@ -1,11 +1,11 @@
 package be.cytomine.api.ontology
 
-import be.cytomine.api.RestController
-import be.cytomine.project.Project
-import be.cytomine.ontology.AnnotationFilter
-import grails.converters.JSON
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.api.RestController
+import be.cytomine.ontology.AnnotationFilter
 import be.cytomine.ontology.Ontology
+import be.cytomine.project.Project
+import grails.converters.JSON
 
 class RestAnnotationFilterController extends RestController {
 

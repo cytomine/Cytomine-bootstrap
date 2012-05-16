@@ -2,9 +2,6 @@ package be.cytomine.security
 
 import be.cytomine.processing.Job
 import grails.converters.JSON
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
 
 class UserJob extends SecUser {
 

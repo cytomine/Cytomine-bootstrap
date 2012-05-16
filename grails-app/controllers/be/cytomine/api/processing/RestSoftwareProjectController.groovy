@@ -1,11 +1,9 @@
 package be.cytomine.api.processing
 
 import be.cytomine.api.RestController
-import be.cytomine.processing.Software
-import be.cytomine.processing.SoftwareParameter
-import grails.converters.JSON
-import be.cytomine.project.Project
 import be.cytomine.processing.SoftwareProject
+import be.cytomine.project.Project
+import grails.converters.JSON
 
 class RestSoftwareProjectController extends RestController{
 

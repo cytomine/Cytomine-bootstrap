@@ -1,5 +1,12 @@
 package be.cytomine.processing
 
+import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.acls.model.NotFoundException
+
+import groovyx.net.http.*
+import static groovyx.net.http.Method.*
+
+import be.cytomine.api.UrlApi
 import be.cytomine.image.server.RetrievalServer
 import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.Term
@@ -8,15 +15,8 @@ import be.cytomine.test.HttpClient
 import be.cytomine.utils.ValueComparator
 import grails.converters.JSON
 import groovyx.gpars.Asynchronizer
+
 import java.util.concurrent.Future
-
-import org.springframework.security.access.AccessDeniedException
-import org.springframework.security.acls.model.NotFoundException
-
-import groovyx.net.http.*
-import static groovyx.net.http.Method.*
-
-import be.cytomine.api.UrlApi
 
 class RetrievalService {
 

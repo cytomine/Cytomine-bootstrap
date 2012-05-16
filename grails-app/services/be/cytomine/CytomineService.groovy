@@ -1,6 +1,5 @@
 package be.cytomine
 
-import be.cytomine.security.User
 import be.cytomine.security.SecUser
 
 class CytomineService {

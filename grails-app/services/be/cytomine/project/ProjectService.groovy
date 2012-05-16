@@ -1,23 +1,22 @@
 package be.cytomine.project
 
-import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
-import be.cytomine.ontology.Ontology
-import be.cytomine.security.Group
-import be.cytomine.security.User
-import be.cytomine.security.UserGroup
-import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.command.*
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.access.prepost.PostFilter
-import org.springframework.transaction.annotation.Transactional
 
 import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.model.Permission
-import be.cytomine.test.Infos
-import grails.converters.JSON
-import be.cytomine.security.SecUser
+
+import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.ModelService
+import be.cytomine.ontology.Ontology
 import be.cytomine.processing.Software
+import be.cytomine.security.Group
+import be.cytomine.security.SecUser
+import be.cytomine.security.User
+import be.cytomine.test.Infos
+import org.codehaus.groovy.grails.web.json.JSONObject
+import org.springframework.transaction.annotation.Transactional
+import be.cytomine.command.*
 
 class ProjectService extends ModelService {
 

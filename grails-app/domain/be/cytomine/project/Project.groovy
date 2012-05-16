@@ -1,18 +1,16 @@
 package be.cytomine.project
 
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
-
 import be.cytomine.command.Command
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.ImageFilterProject
 import be.cytomine.processing.SoftwareProject
-
-import grails.converters.JSON
-import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.security.SecUser
+import grails.converters.JSON
 
 class Project extends CytomineDomain {
 

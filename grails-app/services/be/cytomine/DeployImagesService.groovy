@@ -1,19 +1,13 @@
 package be.cytomine
 
-import be.cytomine.image.UploadedFile
-import be.cytomine.security.SecUser
-import be.cytomine.project.Slide
-import be.cytomine.image.AbstractImage
-import be.cytomine.image.Mime
-import be.cytomine.image.server.Storage
-import be.cytomine.image.acquisition.Scanner
-import be.cytomine.image.server.StorageAbstractImage
-import be.cytomine.image.AbstractImageGroup
-import be.cytomine.security.Group
-import be.cytomine.image.ImageInstance
-import grails.converters.JSON
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-
+import be.cytomine.image.server.Storage
+import be.cytomine.image.server.StorageAbstractImage
+import be.cytomine.project.Slide
+import be.cytomine.security.Group
+import be.cytomine.security.SecUser
+import grails.converters.JSON
+import be.cytomine.image.*
 
 class DeployImagesService {
 

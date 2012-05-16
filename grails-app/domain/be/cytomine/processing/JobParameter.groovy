@@ -1,9 +1,9 @@
 package be.cytomine.processing
 
-import grails.converters.JSON
 import be.cytomine.CytomineDomain
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.Exception.AlreadyExistException
+import be.cytomine.Exception.WrongArgumentException
+import grails.converters.JSON
 
 class JobParameter  extends CytomineDomain implements Comparable{
 

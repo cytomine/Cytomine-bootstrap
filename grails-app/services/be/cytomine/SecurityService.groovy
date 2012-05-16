@@ -1,13 +1,12 @@
 package be.cytomine
 
-import be.cytomine.security.User
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import org.springframework.security.acls.model.Acl
-import org.springframework.transaction.annotation.Transactional
+
 import org.springframework.security.acls.model.NotFoundException
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
+
 import be.cytomine.security.SecUser
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
+import be.cytomine.security.User
 
 class SecurityService {
 

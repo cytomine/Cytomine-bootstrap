@@ -1,16 +1,13 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.security.SecUser
-import be.cytomine.command.AddCommand
-import be.cytomine.command.EditCommand
-import be.cytomine.command.DeleteCommand
-import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
-import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.Exception.AlreadyExistException
+import be.cytomine.command.AddCommand
+import be.cytomine.command.DeleteCommand
+import be.cytomine.command.EditCommand
+import be.cytomine.security.SecUser
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 class SoftwareParameterService extends ModelService{
 

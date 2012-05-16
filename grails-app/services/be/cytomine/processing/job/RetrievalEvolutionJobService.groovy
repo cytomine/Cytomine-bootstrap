@@ -1,10 +1,9 @@
 package be.cytomine.processing.job
 
+import be.cytomine.ontology.Term
 import be.cytomine.processing.Job
 import be.cytomine.security.UserJob
 import grails.converters.JSON
-import be.cytomine.project.Project
-import be.cytomine.ontology.Term
 
 class RetrievalEvolutionJobService extends AbstractJobService{
 

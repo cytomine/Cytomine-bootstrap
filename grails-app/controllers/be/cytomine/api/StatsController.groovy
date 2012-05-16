@@ -1,19 +1,9 @@
 package be.cytomine.api
 
 import be.cytomine.ontology.Annotation
+import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
-
-import be.cytomine.processing.structure.ConfusionMatrix
-import be.cytomine.security.SecUser
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.utils.ValueComparator
-import be.cytomine.utils.Utils
-import java.util.TreeMap.Entry
-import be.cytomine.security.UserJob
-import be.cytomine.processing.Job
-import be.cytomine.processing.Software
 
 class StatsController extends RestController {
 

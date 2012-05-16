@@ -3,9 +3,10 @@ package be.cytomine.api
 import be.cytomine.Exception.CytomineException
 import grails.converters.JSON
 import grails.converters.XML
+import org.apache.commons.io.IOUtils
+
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
-import org.apache.commons.io.IOUtils
 
 class RestController {
 

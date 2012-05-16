@@ -3,9 +3,8 @@ package be.cytomine.api.ontology
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term
-import be.cytomine.security.User
-import grails.converters.JSON
 import be.cytomine.security.SecUser
+import grails.converters.JSON
 
 class RestOntologyController extends RestController {
 

@@ -6,9 +6,8 @@ import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.security.Group
-import be.cytomine.security.User
-import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.security.SecUser
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 class AbstractImageGroupService extends ModelService {
 

@@ -1,10 +1,10 @@
 package be.cytomine.processing
 
-import be.cytomine.project.Project
-import grails.converters.JSON
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.project.Project
+import grails.converters.JSON
 
 class ImageFilterProject extends CytomineDomain implements Serializable{
 

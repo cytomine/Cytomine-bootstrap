@@ -1,10 +1,10 @@
 package be.cytomine.processing.job
 
 import be.cytomine.processing.Job
-import be.cytomine.security.UserJob
-import be.cytomine.processing.SoftwareParameter
-import grails.converters.JSON
 import be.cytomine.processing.JobParameter
+import be.cytomine.processing.SoftwareParameter
+import be.cytomine.security.UserJob
+import grails.converters.JSON
 
 class PyxitSuggestedTermJobService extends AbstractJobService {
 

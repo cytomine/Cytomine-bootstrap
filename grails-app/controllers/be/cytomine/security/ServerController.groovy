@@ -2,7 +2,6 @@ package be.cytomine.security
 
 import grails.converters.JSON
 import grails.converters.XML
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class ServerController {
 

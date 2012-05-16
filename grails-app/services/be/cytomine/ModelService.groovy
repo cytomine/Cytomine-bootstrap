@@ -1,9 +1,9 @@
 package be.cytomine
 
+import org.springframework.security.access.prepost.PreAuthorize
+
 import be.cytomine.command.Command
 import grails.util.GrailsNameUtils
-import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.project.Project
 
 abstract class ModelService {
 

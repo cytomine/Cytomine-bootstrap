@@ -1,9 +1,9 @@
 package be.cytomine.api.social
 
-import be.cytomine.social.UserPosition
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.security.SecUser
+import be.cytomine.social.UserPosition
 import org.joda.time.DateTime
 
 class RestUserPositionController extends RestController {

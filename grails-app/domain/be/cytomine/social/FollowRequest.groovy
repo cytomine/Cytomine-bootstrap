@@ -1,8 +1,8 @@
 package be.cytomine.social
 
 import be.cytomine.CytomineDomain
-import be.cytomine.security.SecUser
 import be.cytomine.image.ImageInstance
+import be.cytomine.security.SecUser
 
 /**
  * Cytomine @ GIGA-ULG

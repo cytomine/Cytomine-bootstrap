@@ -2,10 +2,9 @@ package be.cytomine.ontology
 
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.WrongArgumentException
-
 import be.cytomine.project.Project
-import grails.converters.JSON
 import be.cytomine.security.UserJob
+import grails.converters.JSON
 
 class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
 

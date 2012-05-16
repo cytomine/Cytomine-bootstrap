@@ -6,6 +6,7 @@ import com.vividsolutions.jts.geom.Geometry
 import ij.ImagePlus
 import ij.process.ImageProcessor
 import ij.process.PolygonFiller
+
 import java.awt.Color
 import java.awt.Rectangle
 import java.awt.image.BufferedImage

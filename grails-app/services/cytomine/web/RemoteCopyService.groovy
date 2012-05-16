@@ -1,8 +1,8 @@
 package cytomine.web
 
 import be.cytomine.image.AbstractImage
-import be.cytomine.image.server.Storage
 import be.cytomine.image.UploadedFile
+import be.cytomine.image.server.Storage
 
 class RemoteCopyService {
 

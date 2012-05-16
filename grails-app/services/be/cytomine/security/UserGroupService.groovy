@@ -1,12 +1,12 @@
 package be.cytomine.security
 
+import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.Exception.InvalidRequestException
 
 class UserGroupService extends ModelService {
 
