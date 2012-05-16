@@ -8,11 +8,13 @@ import be.cytomine.processing.JobData
 import grails.converters.JSON
 import grails.util.GrailsUtil
 import be.cytomine.Exception.ServerException
+import be.cytomine.processing.JobDataBinaryValue
 
 class RestJobDataController extends RestController {
 
     def jobDataService
     def grailsApplication
+    def domainService
 
     def list = {
          responseSuccess(jobDataService.list())
@@ -47,6 +49,11 @@ class RestJobDataController extends RestController {
     def upload = {
         log.info "Upload file = " + params.getLong('id')
         JobData jobData = JobData.read(params.getLong('id'))
+        JobDataBinaryValue value = new JobDataBinaryValue(jobData:jobData)
+        domainService.saveDomain(value)
+        jobData.value = value
+        domainService.saveDomain(jobData)
+
         if(!jobData) responseNotFound("JobData", params.id)
         else {
             if(!grailsApplication.config.cytomine.jobdata.filesystem)
@@ -73,13 +80,13 @@ class RestJobDataController extends RestController {
     }
 
     private JobData saveInDatabase(JobData jobData, byte[] data) {
-        jobData.data = data
-        jobData.save(flush: true)
+        jobData.value.data = data
+        jobData.value.save(flush: true)
         return jobData
     }
 
     private byte[] readFromDatabase(JobData jobData) {
-        return jobData.data
+        return jobData.value.data
     }
 
     private void saveInFileSystem(JobData jobData, byte[] data) {
@@ -89,11 +96,13 @@ class RestJobDataController extends RestController {
         try {
             log.info "save data in file = " + f.absolutePath
 
-            if(!dir.mkdirs())  throw new IOException("Cannot create dirs " + dir.absolutePath)
+            dir.mkdirs()
 
+            log.info "write data in file = " + f.absolutePath
             new FileOutputStream(f).withWriter { w ->
                w << new BufferedInputStream( new ByteArrayInputStream(data) )
             }
+            log.info "end file"
         } catch(Exception e) {
             e.printStackTrace()
             throw new ServerException("Cannot create file: " + e)

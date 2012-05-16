@@ -19,6 +19,10 @@ class JobData extends CytomineDomain {
         value(nullable: true)
     }
 
+    static mapping = {
+        value lazy: false
+    }
+
     static JobData createFromDataWithId(json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
