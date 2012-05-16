@@ -7,17 +7,16 @@ import grails.converters.JSON
 class JobData extends CytomineDomain {
 
     String key
-    byte[] data
     String filename
     String dir
-
+    JobDataBinaryValue value
     static belongsTo = [job: Job]
 
     static constraints = {
         key(nullable: false, blank: false, unique: false)
-        data(nullable: true)
         filename(nullable: false, blank: false)
         dir(nullable: true,blank: true)
+        value(nullable: true)
     }
 
     static JobData createFromDataWithId(json) {
