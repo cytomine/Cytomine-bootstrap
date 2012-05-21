@@ -44,9 +44,19 @@ var AnnotationCropModel = Backbone.Model.extend({
 // define our collection
 var AnnotationCollection = Backbone.Collection.extend({
     model: AnnotationModel,
+    fullSize : -1,
     url: function() {
+
+        var offset = "";
+        if(this.offset!=undefined) {
+            offset=offset+"&offset="+this.offset;
+        }
+        if(this.maxResult!=undefined) {
+            offset=offset+"&max="+this.maxResult;
+        }
+
         if (this.user != undefined) {
-            return "api/user/" + this.user + "/imageinstance/" + this.image + "/annotation.json";
+            return "api/user/" + this.user + "/imageinstance/" + this.image + "/annotation.json"+offset;
         } else if (this.term != undefined && this.project !=undefined){
             var users = undefined;
             if (this.users!=undefined) {
@@ -63,7 +73,7 @@ var AnnotationCollection = Backbone.Collection.extend({
                 } else if (this.term == -2) {
                     critera = "multipleTerm=true";
                 }
-                var url = "api/project/" + this.project + "/annotation.json?" + critera;
+                var url = "api/project/" + this.project + "/annotation.json?" + critera+offset;
                 if (users) {
                    url += "&users="+ users;
                 }
@@ -73,18 +83,18 @@ var AnnotationCollection = Backbone.Collection.extend({
                 return url;
             }
             if (this.suggestTerm!=undefined) { //ask annotation with suggest term diff than correct term
-                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?suggestTerm="+ this.suggestTerm + "&job="+this.job;
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?suggestTerm="+ this.suggestTerm + "&job="+this.job+offset;
             }
 
-            if (this.term >= "0" && this.users==undefined && this.images == undefined) return "api/term/" + this.term + "/project/" + this.project + "/annotation.json";
+            if (this.term >= "0" && this.users==undefined && this.images == undefined) return "api/term/" + this.term + "/project/" + this.project + "/annotation.json"+offset;
             if (this.term >= "0" && this.users!=undefined && this.images == undefined) {
-                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users="+users;
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users="+users+offset;
             }
             if (this.term >= "0" && this.users==undefined && this.images != undefined) {
-                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?images="+images;
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?images="+images+offset;
             }
             if (this.term >= "0" && this.users!=undefined && this.images != undefined) {
-                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users="+users+"&images="+images;
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users="+users+"&images="+images+offset;
             }
 
             return "error";
@@ -111,7 +121,25 @@ var AnnotationCollection = Backbone.Collection.extend({
         this.users = options.users;
         this.suggestTerm = options.suggestTerm;
         this.job = options.job;
-    }/*,
+    },
+    build : function () {
+        var self = this;
+        var model = self.at(0);
+        console.log("**********************");
+        console.log(model);
+        console.log(model.get("size"));
+        var coll = model.get("collection");
+        console.log(self.size() + " items in collection");
+        this.remove(self.models);
+        this.fullSize = model.get("size");
+        _.each(coll, function(item) {
+            self.add(item);
+        });
+        console.log(self.size() + " items in collection");
+    }
+
+
+    /*,
     comparator : function (annotation) {
         return -annotation.get("id"); //id or created (chronology?)
     }*/

@@ -70,11 +70,16 @@ class AnnotationService extends ModelService {
                 projections {
                     groupProperty("annotation")
                     countDistinct("term")
+                    countDistinct('created', 'createdSort')
+
                 }
+                order('createdSort','desc')
             }
             def annotations = []
-            annotationsWithTerms.each {  result ->
-                if (result[1] > 1) annotations.add(result[0]) //filter in groovy, to do : I tried greaterThan criteria on alias nbTerms whithout success
+            annotationsWithTerms.eachWithIndex {  result, index ->
+                if (result[1] > 1) annotations.add(result[0])
+                //filter in groovy, to do : I tried greaterThan criteria on alias nbTerms whithout success
+                //+todo: add  (index>=offset && index<max) in request to improve perf
             }
             annotations
         }
@@ -100,7 +105,9 @@ class AnnotationService extends ModelService {
                     eq("project", project)
                     inList("image", imageInstanceList)
                     inList("user", userList)
-
+                    order 'created', 'desc'
+//                    firstResult(offset)
+//                    maxResults(max)
                 }
             } else {
                 annotations = Annotation.createCriteria().list {
@@ -110,6 +117,9 @@ class AnnotationService extends ModelService {
                     not {
                         inList("id", annotationsWithTerms)
                     }
+                    order 'created', 'desc'
+//                    firstResult(offset)
+//                    maxResults(max)
                 }
             }
 
@@ -123,6 +133,9 @@ class AnnotationService extends ModelService {
                 inList("image", imageInstanceList)
                 fetchMode 'image', FetchMode.JOIN
                 fetchMode 'image.baseImage', FetchMode.JOIN
+                order 'created', 'desc'
+//                firstResult(offset)
+//                maxResults(max)
             }
             long end = new Date().time
             println "time = " + (end - start) + "ms"
@@ -203,6 +216,9 @@ class AnnotationService extends ModelService {
                     eq('term', term)
                     inList('user', userList)
                 }
+                order 'created', 'desc'
+//                firstResult(offset)
+//                maxResults(max)
             }
             return criteria.unique()
         } else {
@@ -213,6 +229,9 @@ class AnnotationService extends ModelService {
                     eq('term', term)
                     inList('user', userList)
                 }
+                order 'created', 'desc'
+//                firstResult(offset)
+//                maxResults(max)
             }
             return criteria.unique()
         }

@@ -54,7 +54,8 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         assertEquals(200, AnnotationAPI.show(annotation2.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
         result = AnnotationAPI.listByProject(project.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
         assertEquals(200, result.code)
-        assertTrue(AnnotationAPI.containsInJSONList(annotation2.id, JSON.parse(result.data)))
+        log.info "JSON.parse(result.data)="+JSON.parse(result.data)
+        assertTrue(AnnotationAPI.containsInJSONList(annotation2.id, JSON.parse(result.data).collection))
 
         //update annotation 2 with cytomine admin
         assertEquals(200, AnnotationAPI.update(annotation2, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
@@ -85,7 +86,7 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         assertEquals(200, AnnotationAPI.show(annotation.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
         result = AnnotationAPI.listByProject(project.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assertEquals(200, result.code)
-        assertTrue(AnnotationAPI.containsInJSONList(annotation.id, JSON.parse(result.data)))
+        assertTrue(AnnotationAPI.containsInJSONList(annotation.id, JSON.parse(result.data).collection))
 
         //update annotation 1 with user 1
         annotation.refresh()
@@ -123,7 +124,7 @@ class AnnotationSecurityTests extends SecurityTestsAbstract {
         assertEquals(200, AnnotationAPI.show(annotation.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
         result = AnnotationAPI.listByProject(project.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2)
         assertEquals(200, result.code)
-        assertTrue(AnnotationAPI.containsInJSONList(annotation.id, JSON.parse(result.data)))
+        assertTrue(AnnotationAPI.containsInJSONList(annotation.id, JSON.parse(result.data).collection))
 
         //update annotation 1 with user 2
         assertEquals(403, AnnotationAPI.update(annotation, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)

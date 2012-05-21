@@ -2,6 +2,7 @@ var AnnotationView = Backbone.View.extend({
     tagName : "div",
     nb_thumb_by_page : 24,
     pagination_window : 3,
+    nbAnnotation : -1,
     initialize: function(options) {
         this.page = options.page;
         this.term = options.term;
@@ -10,20 +11,26 @@ var AnnotationView = Backbone.View.extend({
     },
     render: function() {
         var self = this;
-        self.initPagination();
-        self.appendThumbs(self.page);
 
-        /*$(window).scroll(function(){
-         if  (($(window).scrollTop() + 100) >= $(document).height() - $(window).height()){
-         self.appendThumbs(++self.page);
-         }
-         });*/
+        self.model.offset=(self.page)*self.nb_thumb_by_page;
+        self.model.maxResult=self.nb_thumb_by_page;
 
+        self.model.fetch({
+            success : function (collection, response) {
+
+                $(self.el).empty();
+                collection.build();
+                self.model = collection;
+                self.nbAnnotation = collection.fullSize;
+                self.initPagination();
+                self.appendThumbs(self.page);
+
+        }});
         return this;
     },
     initPagination : function () {
         var self = this;
-        var nb_pages = Math.ceil(_.size(this.model) / this.nb_thumb_by_page);
+        var nb_pages = Math.ceil(self.nbAnnotation / this.nb_thumb_by_page);
         if (nb_pages < 2) return; //paginator not useful
         require(["text!application/templates/dashboard/Pagination.tpl.html"], function(paginationTpl) {
             var pagination = _.template(paginationTpl, { term : self.term});
@@ -76,7 +83,7 @@ var AnnotationView = Backbone.View.extend({
          } */
 
         self.model.each(function(annotation) {
-            if ((cpt >= inf) && (cpt < sup)) {
+            //if ((cpt >= inf) && (cpt < sup)) {
                 var thumb = new AnnotationThumbView({
                     model : annotation,
                     className : "thumb-wrap",
@@ -84,8 +91,8 @@ var AnnotationView = Backbone.View.extend({
                     //id : "annotationthumb"+annotation.get('id')
                 }).render();
                 $(self.el).append(thumb.el);
-            }
-            cpt++;
+            //}
+            //cpt++;
             self.annotations.push(annotation.id);
         });
     },
@@ -117,32 +124,49 @@ var AnnotationView = Backbone.View.extend({
      * -Remove annotations which are not in newAnnotations but well in the thumb set
      * @param newAnnotations newAnnotations collection
      */
-    refresh : function(newAnnotations) {
-        var self = this;
-
-        var arrayDeletedAnnotations = self.annotations;
-        newAnnotations.each(function(annotation) {
-            //if annotation is not in table, add it
-            if(_.indexOf(self.annotations, annotation.id)==-1){
-                self.add(annotation);
-                self.annotations.push(annotation.id);
-            }
-            /*
-             * We remove each "new" annotation from  arrayDeletedAnnotations
-             * At the end of the loop, element from arrayDeletedAnnotations must be deleted because they aren't
-             * in the set of new annotations
-             */
-            //
-            arrayDeletedAnnotations = _.without(arrayDeletedAnnotations,annotation.id);
-
-        });
-
-        arrayDeletedAnnotations.forEach(function(removeAnnotation) {
-            self.remove(removeAnnotation);
-            self.annotations = _.without(self.annotations,removeAnnotation);
-        });
-
-    }
+//    refresh : function(newAnnotations) {
+//        var self = this;
+//
+//
+//        newAnnotations.fetch({
+//            success : function (collection, response) {
+//                collection.build();
+//
+//                var arrayDeletedAnnotations = self.annotations;
+//                collection.each(function(annotation) {
+//                    //if annotation is not in table, add it
+//                    if(_.indexOf(self.annotations, annotation.id)==-1){
+//                        self.add(annotation);
+//                        self.annotations.push(annotation.id);
+//                    }
+//                    /*
+//                     * We remove each "new" annotation from  arrayDeletedAnnotations
+//                     * At the end of the loop, element from arrayDeletedAnnotations must be deleted because they aren't
+//                     * in the set of new annotations
+//                     */
+//                    //
+//                    arrayDeletedAnnotations = _.without(arrayDeletedAnnotations,annotation.id);
+//
+//                });
+//
+//                arrayDeletedAnnotations.forEach(function(removeAnnotation) {
+//                    self.remove(removeAnnotation);
+//                    self.annotations = _.without(self.annotations,removeAnnotation);
+//                });
+//
+//
+//
+//
+//            }
+//
+//
+//
+//
+//        });
+//
+//
+//
+//    }
 
 
 });

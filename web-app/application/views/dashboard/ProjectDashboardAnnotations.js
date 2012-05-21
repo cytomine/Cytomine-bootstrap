@@ -55,6 +55,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     children: model.toJSON(),
                     onSelect: function(select, node) {
                         //if(!self.activeEvent) return;
+                        console.log("EVENT ON ONTOLOGY SELECTION");
                         if (node.isSelected()) {
                             self.refreshAnnotations(node.data.key,self.selectedUsers,self.selectedJobs,self.selectedImages);
                             $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).show();
@@ -96,16 +97,16 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     self.showAllTerms();
                 });
                 $(self.el).find("#checkAllUsers").click(function(){
-                    self.showAllUsers();
+                    self.showAllUsers(true);
                 });
                 $(self.el).find("#uncheckAllUsers").click(function(){
-                    self.hideAllUsers();
+                    self.hideAllUsers(true);
                 });
                 $(self.el).find("#checkAllImages").click(function(){
-                    self.showAllImages();
+                    self.showAllImages(true);
                 });
                 $(self.el).find("#uncheckAllImages").click(function(){
-                    self.hideAllImages();
+                    self.hideAllImages(true);
                 });
                 $(self.el).find("#refreshAnnotations").click(function(){
                     self.refreshSelectedTermsWithUserFilter();
@@ -297,76 +298,76 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         $(this.el).find("input.multipleAnnotationsCheckbox").trigger("change");
         this.selectAnnotations(false);
     },
-    showAllImages : function() {
+    showAllImages : function(triggerRefresh) {
         var self = this;
         self.allImages = 0;
-        this.shouldRefresh = false;
+        if(triggerRefresh==true) this.shouldRefresh = false;
         $(this.el).find('#treeImageListing').dynatree("getRoot").visit(function (node) {
             if (!node.data.isFolder) {
                 self.allImages++;
                 node.select(true);
             }
         });
-        this.shouldRefresh = true;
-        self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedJobs,self.selectedImages);
+        if(triggerRefresh==true) this.shouldRefresh = true;
+        if(triggerRefresh==true) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedJobs,self.selectedImages);
     },
-    hideAllImages : function() {
+    hideAllImages : function(triggerRefresh) {
         var self = this;
-        this.shouldRefresh = false;
+        if(triggerRefresh==true) this.shouldRefresh = false;
         $(this.el).find('#treeImageListing').dynatree("getRoot").visit(function (node) {
             if (!node.data.isFolder) node.select(false);
         });
-        this.shouldRefresh = true;
-        self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers,self.selectedJobs, self.selectedImages);
+        if(triggerRefresh==true) this.shouldRefresh = true;
+        if(triggerRefresh==true) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers,self.selectedJobs, self.selectedImages);
     },
-    showAllUsers : function() {
+    showAllUsers : function(triggerRefresh) {
         var self = this;
         self.allUsers = 0;
-        this.shouldRefresh = false;
+        if(triggerRefresh==true) this.shouldRefresh = false;
         $(this.el).find('#treeUserListing').dynatree("getRoot").visit(function (node) {
             if (!node.data.isFolder) {
                 self.allUsers++;
                 node.select(true);
             }
         });
-        this.shouldRefresh = true;
-        self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedJobs,self.selectedImages);
+        if(triggerRefresh==true) this.shouldRefresh = true;
+        if(triggerRefresh==true) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedJobs,self.selectedImages);
     },
-    hideAllUsers : function() {
+    hideAllUsers : function(triggerRefresh) {
         var self = this;
-        this.shouldRefresh = false;
+        if(triggerRefresh==true) this.shouldRefresh = false;
         if(this.userTreeLoaded) {
             $(this.el).find('#treeUserListing').dynatree("getRoot").visit(function (node) {
                 if (!node.data.isFolder) node.select(false);
             });
         }
 
-        this.shouldRefresh = true;
-        self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers,self.selectedJobs, self.selectedImages);
+        if(triggerRefresh==true) this.shouldRefresh = true;
+        if(triggerRefresh==true) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers,self.selectedJobs, self.selectedImages);
     },
-    showAllJobs : function() {
+    showAllJobs : function(triggerRefresh) {
         var self = this;
         self.allJobs = 0;
-        this.shouldRefresh = false;
+        if(triggerRefresh==true) this.shouldRefresh = false;
         $(this.el).find('#treeUserListing').dynatree("getRoot").visit(function (node) {
             if (!node.data.isFolder) {
                 self.allJobs++;
                 node.select(true);
             }
         });
-        this.shouldRefresh = true;
-        self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedJobs, self.selectedImages);
+        if(triggerRefresh==true) this.shouldRefresh = true;
+        if(triggerRefresh==true) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedJobs, self.selectedImages);
     },
-    hideAllJobs : function() {
+    hideAllJobs : function(triggerRefresh) {
         var self = this;
-        this.shouldRefresh = false;
+        if(triggerRefresh==true) this.shouldRefresh = false;
         if (this.jobTreeLoaded) {
             $(this.el).find('#treeJobListing').dynatree("getRoot").visit(function (node) {
                 if (!node.data.isFolder) node.select(false);
             });
         }
-        this.shouldRefresh = true;
-        self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers,self.selectedJobs, self.selectedImages);
+        if(triggerRefresh==true) this.shouldRefresh = true;
+        if(triggerRefresh==true) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers,self.selectedJobs, self.selectedImages);
     },
     initDropZone : function () {
         var self = this;
@@ -444,9 +445,10 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     onExpand : function() {},
                     children: treeData,
                     onSelect: function(select, node) {
+                        console.log("EVENT ON USERS SELECTION:"+self.shouldRefresh);
                         //if(!self.activeEvent) return;
                         if (node.isSelected()) {
-                            self.hideAllJobs();
+                            self.hideAllJobs(false);
                             self.selectedUsers.push(node.data.key);
                         }
                         else {
@@ -501,10 +503,10 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     children: collection.toJSON(),
                     onSelect: function(select, node) {
                         //if(!self.activeEvent) return;
-
+                        console.log("EVENT ON JOBS SELECTION");
                         if (node.isSelected()) {
                             //disable all node from user
-                            self.hideAllUsers();
+                            self.hideAllUsers(false);
                             self.selectedJobs.push(node.data.key);
                         }
                         else {
@@ -627,8 +629,8 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         self.updateContentVisibility();
         self.updateDownloadLinks();
         if (_.size(users) == 0 && _.size(jobs) == 0) return; //nothing to display
+        console.log("terms="+terms);
         for(var i=0;i<terms.length;i++) {
-            console.log("printAnnotationThumbAllTerms :" + "#tabsterm-"+self.model.id+"-"+terms[i]);
             self.printAnnotationThumb(terms[i],"#tabsterm-"+self.model.id+"-"+terms[i],users, jobs,images);
         }
 
@@ -636,10 +638,6 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     printAnnotationThumb : function(idTerm,$elem,users, jobs,images){
         var self = this;
          //TODO: problem avec $elem!
-        console.log($elem);
-        //console.log(self.allUsers);
-        console.log("users.length="+users.length);
-        console.log("jobs.length="+jobs.length);
 
 
         var imagesFilter = undefined;
@@ -659,14 +657,9 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         //print loading info
         $($elem).parent().find("h4").append('<div class="alert alert-info"><i class="icon-refresh" /> Loading...</div>');
 
-        new AnnotationCollection({project:self.model.id,term:idTerm,users:usersFilter, images : imagesFilter}).fetch({
-            success : function (collection, response) {
-                if (self.annotationsViews[idTerm] != null && users==undefined) { //only refresh
-                    self.annotationsViews[idTerm].refresh(collection,usersFilter);
-                    return;
-                }
+        var collection = new AnnotationCollection({project:self.model.id,term:idTerm,users:usersFilter, images : imagesFilter});
+
                 $($elem).empty();
-                console.log("1"+$elem);
                 self.annotationsViews[idTerm] = new AnnotationView({
                     page : undefined,
                     model : collection,
@@ -677,6 +670,4 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                 //unprint loading info
                 $($elem).parent().find("h4").find(".alert").replaceWith("");
             }
-        });
-    }
 });

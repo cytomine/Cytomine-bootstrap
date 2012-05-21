@@ -48,7 +48,8 @@ class RestAnnotationController extends RestController {
 
     def listByProject = {
         Project project = projectService.read(params.long('id'), new Project())
-
+        Integer offset = params.offset!=null? params.getInt('offset') : 0
+        Integer max = params.max!=null? params.getInt('max') : Integer.MAX_VALUE
         Collection<SecUser> userList = []
         if (params.users != null && params.users != "null") {
             if (params.users != "") userList = userService.list(project, params.users.split("_").collect{ Long.parseLong(it)})
@@ -63,7 +64,10 @@ class RestAnnotationController extends RestController {
             imageInstanceList = imageInstanceService.list(project)
         }
 
-        if (project) responseSuccess(annotationService.list(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true")))
+        if (project) {
+            def list = annotationService.list(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"))
+            responseSuccess([size:list.size(),collection:substract(list,offset,max)])
+        }
         else responseNotFound("Project", params.id)
     }
 
@@ -89,6 +93,11 @@ class RestAnnotationController extends RestController {
         Term term = termService.read(params.long('idterm'))
         Project project = projectService.read(params.long('idproject'), new Project())
 
+        Integer offset = params.offset!=null? params.getInt('offset') : 0
+        Integer max = params.max!=null? params.getInt('max') : Integer.MAX_VALUE
+
+        println "offset=$offset max=$max"
+
         Collection<SecUser> userList = []
         if (params.users != null && params.users != "null") {
             if (params.users != "") userList = userService.list(project, params.users.split("_").collect{ Long.parseLong(it)})
@@ -109,12 +118,13 @@ class RestAnnotationController extends RestController {
         /*else if (userList.isEmpty()) responseNotFound("Users", params.users)
         else if (imageInstanceList.isEmpty()) responseNotFound("ImageInstance", params.images)*/
         else if(!params.suggestTerm) {
-
-            responseSuccess(annotationService.list(project, term, userList, imageInstanceList))
+            def list = annotationService.list(project, term, userList, imageInstanceList)
+            responseSuccess([size:list.size(),collection:substract(list,offset,max)])
         }
         else {
             Term suggestedTerm = termService.read(params.suggestTerm)
-            responseSuccess(annotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job'))))
+            def list = annotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')))
+            responseSuccess([size:list.size(),collection:substract(list,offset,max)])
         }
     }
 
@@ -349,5 +359,14 @@ class RestAnnotationController extends RestController {
     def delete = {
         def json = JSON.parse("{id : $params.id}")
         delete(annotationService, json)
+    }
+
+
+    private def substract(List collection, Integer offset, Integer max) {
+        if (offset>=collection.size()) return []
+
+        def maxForCollection = Math.min(collection.size()-offset,max)
+        println "collection=${collection.size()} offset=$offset max=$max compute=${collection.size()-offset} maxForCollection=$maxForCollection"
+        return collection.subList(offset,offset+maxForCollection)
     }
 }

@@ -120,7 +120,7 @@ class RestJobDataController extends RestController {
             // Get the byte array
             byte[] bytes = new byte[(int) f.length()];
             // Iterate the byte array
-            while (offset < bytes.length&& (bytesRead = inputStream.read(bytes, offset, bytes.length - offset)) >= 0) {
+            while (offset < bytes.length && (bytesRead = inputStream.read(bytes, offset, bytes.length - offset)) >= 0) {
                 offset += bytesRead;
             }
             // Close after use
@@ -132,14 +132,4 @@ class RestJobDataController extends RestController {
         }
 
     }
-
-
-
-
-
-
-
-
-
-
 }
