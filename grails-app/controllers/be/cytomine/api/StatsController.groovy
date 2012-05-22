@@ -87,15 +87,25 @@ class StatsController extends RestController {
         responseSuccess(result.values())
     }
 
+    private Date getTimeAndReset(Date start, String message) {
+        Date end = new Date()
+        log.info "TIME $message : ${end.getTime()-start.getTime()}"
+        return end
+    }
+
     def statTerm = {
         Project project = Project.read(params.id)
         if (project == null) responseNotFound("Project", params.id)
 
         def terms = project.ontology.terms()
-        def annotations = project.annotations()
+
+        def results = Annotation.executeQuery('select t.term.id, count(t) from AnnotationTerm as t, Annotation as b where b.id=t.annotation.id and b.project = ? group by t.term.id', [project])
+
+        //println results
         def stats = [:]
         def color = [:]
         def ids = [:]
+        def idsRevert = [:]
         def list = []
 
         //init list
@@ -104,17 +114,16 @@ class StatsController extends RestController {
                 stats[term.name] = 0
                 color[term.name] = term.color
                 ids[term.name] = term.id
+                idsRevert[term.id] = term.name
             }
         }
 
-        //compute stat
-        annotations.each { annotation ->
-            def termOfAnnotation = annotation.terms()
-            termOfAnnotation.each { term ->
-                if (term.ontology.id == project.ontology.id && !term.hasChildren())
-                    stats[term.name] = stats[term.name] + 1
-            }
+        results.each { result ->
+            println result
+            def name = idsRevert[result[0]]
+            if(name) stats[name]=result[1]
         }
+
         stats.each {
             list << ["id": ids.get(it.key), "key": it.key, "value": it.value, "color": color.get(it.key)]
         }
