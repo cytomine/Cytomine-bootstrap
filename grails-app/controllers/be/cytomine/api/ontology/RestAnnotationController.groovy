@@ -66,7 +66,8 @@ class RestAnnotationController extends RestController {
 
         if (project) {
             def list = annotationService.list(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"))
-            responseSuccess([size:list.size(),collection:substract(list,offset,max)])
+            if(params.offset!=null) responseSuccess([size:list.size(),collection:substract(list,offset,max)])
+            else responseSuccess(list)
         }
         else responseNotFound("Project", params.id)
     }
@@ -119,12 +120,14 @@ class RestAnnotationController extends RestController {
         else if (imageInstanceList.isEmpty()) responseNotFound("ImageInstance", params.images)*/
         else if(!params.suggestTerm) {
             def list = annotationService.list(project, term, userList, imageInstanceList)
-            responseSuccess([size:list.size(),collection:substract(list,offset,max)])
+            if(params.offset!=null) responseSuccess([size:list.size(),collection:substract(list,offset,max)])
+            else responseSuccess(list)
         }
         else {
             Term suggestedTerm = termService.read(params.suggestTerm)
             def list = annotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')))
-            responseSuccess([size:list.size(),collection:substract(list,offset,max)])
+            if(params.offset!=null) responseSuccess([size:list.size(),collection:substract(list,offset,max)])
+            else responseSuccess(list)
         }
     }
 
