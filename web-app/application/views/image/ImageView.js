@@ -48,6 +48,7 @@ var ImageView = Backbone.View.extend({
         }
         self.tabsContent = [];
 
+        console.log("ImageView:appendThumbs");
         self.model = new ImageInstanceCollection({project: window.app.status.currentProject, inf : inf, sup : sup});
         self.model.fetch({
             success : function (collection, response){

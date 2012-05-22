@@ -13,11 +13,7 @@ var ImageTabsView = Backbone.View.extend({
     },
     render: function() {
         var self = this;
-        self.model.fetch({
-            success : function (collection, response) {
-                self.renderImageTable();
-            }
-        });
+        self.renderImageTable();
     },
     refresh : function() {
     },
