@@ -77,6 +77,7 @@ class RestController {
     }
 
   protected  def responseSuccess(data) {
+      log.info "responseSuccess"
         response(data)
     }
 
@@ -86,6 +87,7 @@ class RestController {
     }
 
   protected  def responseNotFound(className, id) {
+        log.info "responseNotFound"
         log.error className + " Id " + id + " don't exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {

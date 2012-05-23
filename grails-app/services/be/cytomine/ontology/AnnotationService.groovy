@@ -266,6 +266,7 @@ class AnnotationService extends ModelService {
 
         //Synchronzed this part of code, prevent two annotation to be add at the same time
         synchronized (this.getClass()) {
+            log.info "IN"
             //Add annotation user
             json.user = currentUser.id
             //Add Annotation
@@ -296,7 +297,7 @@ class AnnotationService extends ModelService {
                     log.error "Exception index in retrieval:" + e.toString()
                }
             }
-
+            log.info "OUT"
             return result
         }
     }
@@ -381,7 +382,7 @@ class AnnotationService extends ModelService {
         log.info "annotation.id=" + id + " stevben-server=" + retrieval
         if (id && retrieval) {
             log.info "index annotation " + id + " on  " + retrieval.url
-            retrievalService.indexAnnotationAsynchronous(Annotation.read(id))
+            retrievalService.indexAnnotationAsynchronous(Annotation.read(id),RetrievalServer.findByDescription("retrieval"))
 
         }
     }

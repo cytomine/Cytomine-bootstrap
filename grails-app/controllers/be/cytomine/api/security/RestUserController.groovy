@@ -51,7 +51,9 @@ class RestUserController extends RestController {
      */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
+        log.info "Show method1"
         User user = userService.read(params.long('id'))
+        log.info "User check:"+user
         if (user) responseSuccess(user)
         else responseNotFound("User", params.id)
     }

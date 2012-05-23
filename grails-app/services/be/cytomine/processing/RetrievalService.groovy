@@ -129,7 +129,7 @@ class RetrievalService {
     }
 
 public static String getPostResponse(String URL, String resource, def jsonStr) {
-
+    println "REQ IN"
         def http = new HTTPBuilder(URL)
         http.auth.basic 'xxx', 'xxx'
 
@@ -146,6 +146,7 @@ public static String getPostResponse(String URL, String resource, def jsonStr) {
                 return ""
             }
         }
+        println "REQ OUT"
 }
 
 public static String getDeleteResponse(String URL, String resource) {
@@ -175,11 +176,11 @@ public static String getDeleteResponse(String URL, String resource) {
 
 }
 
-public static def indexAnnotationSynchronous(String json) {
+public static def indexAnnotationSynchronous(String json, String url) {
     println "index synchronous json"
-    RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+    println "url = " + url
     String res = "/retrieval-web/api/resource/index.json"
-    getPostResponse(server.url, res, json)
+    getPostResponse(url, res, json)
 }
 
 public static def indexAnnotationSynchronous(Long id) {
@@ -209,13 +210,17 @@ public static def updateAnnotationSynchronous(Long id) {
     indexAnnotationSynchronous(id)
 }
 
-public static def indexAnnotationAsynchronous(Annotation annotation) {
+public static def indexAnnotationAsynchronous(Annotation annotation,RetrievalServer server) {
     //indexAnnotationSynchronous(annotation)
     println "index asynchronous"
+    String url = server.url
     def json = annotation.encodeAsJSON()
     //println "json="+json
     Asynchronizer.withAsynchronizer() {
-        Closure indexAnnotation = {try {indexAnnotationSynchronous(json)} catch (Exception e) {throw new ServerException("Retrieval Exception: "+e)}}
+        Closure indexAnnotation = {
+            try {
+            indexAnnotationSynchronous(json,url)
+        } catch (Exception e) {throw new ServerException("Retrieval Exception: "+e)}}
         Closure annotationIndexing = indexAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
         Future result = annotationIndexing()
     }
