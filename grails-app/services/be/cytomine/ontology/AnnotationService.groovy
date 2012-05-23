@@ -28,6 +28,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
+import be.cytomine.Exception.CytomineException
 
 class AnnotationService extends ModelService {
 
@@ -288,10 +289,12 @@ class AnnotationService extends ModelService {
 
             //add annotation on the retrieval
             if(!currentUser.algo())  {
-                try {if (annotationID) indexRetrievalAnnotation(annotationID) } catch (Exception e) {
-                    log.error "Cannot index in retrieval:" + e.toString()
-                    e.printStackTrace()
-                }
+                try {if (annotationID) indexRetrievalAnnotation(annotationID)
+                } catch (CytomineException ex) {
+                    log.error "CytomineException index in retrieval:" + ex.toString()
+                } catch (Exception e) {
+                    log.error "Exception index in retrieval:" + e.toString()
+               }
             }
 
             return result

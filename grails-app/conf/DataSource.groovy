@@ -32,4 +32,11 @@ environments {
       url = "jdbc:postgresql://localhost:5432/cytomineprod"
     }
   }
+  perf {
+    dataSource {
+        //loggingSql = true
+        dbCreate = "update"
+        url="jdbc:postgresql://localhost:5432/cytomineperf"
+      }
+    }
 }

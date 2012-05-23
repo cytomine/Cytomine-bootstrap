@@ -50,7 +50,7 @@ body {
     <!-- OpenLayers -->
     <script type="text/javascript" src="lib/OpenLayers-2.11/OpenLayers.js"></script>
 
-<g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT || GrailsUtil.environment == GrailsApplication.ENV_TEST}">
+<g:if test="${GrailsUtil.environment != GrailsApplication.ENV_PRODUCTION}">
 
     <!-- RequireJS -->
     <script type="text/javascript" src="lib/requirejs/require.js"></script>
@@ -210,7 +210,7 @@ body {
 
 
 
-<g:if test="${GrailsUtil.environment == GrailsApplication.ENV_DEVELOPMENT  || GrailsUtil.environment == GrailsApplication.ENV_TEST}">
+<g:if test="${GrailsUtil.environment != GrailsApplication.ENV_PRODUCTION}">
     <script type="text/javascript">
         setTimeout(function(){
             if (navigator.appVersion.indexOf("Linux")!=-1) {

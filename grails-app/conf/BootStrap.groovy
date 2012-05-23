@@ -58,6 +58,7 @@ class BootStrap {
     static def development = "development"
     static def production = "production"
     static def test = "test"
+    static def perf = "perf"
 
 
     def init = { servletContext ->
@@ -70,6 +71,7 @@ class BootStrap {
         if (GrailsUtil.environment == BootStrap.development) { //scripts are not present in productions mode
             compileJS();
         }
+
 
         marshallersService.initMarshallers()
         sequenceService.initSequences()
@@ -131,7 +133,7 @@ class BootStrap {
         createRetrievalServers(BootStrapData.retrievalServerSamples)
 
         /* Slides */
-        if (env != BootStrap.test) {
+        if (env != BootStrap.test && env != BootStrap.perf) {
             createOntology(BootStrapData.ontologySamples)
             createProjects(BootStrapData.projectSamples)
             createSoftware(BootStrapData.softwareSamples)
@@ -156,7 +158,7 @@ class BootStrap {
             createSlidesAndAbstractImages(ImageData5.CELLSOLUTIONSBESTCYTECERVIX_DATA)
         }
 
-        if (env != BootStrap.test) {
+        if (env != BootStrap.test && env != BootStrap.perf) {
             createTerms(BootStrapData.termSamples)
             createRelation(BootStrapData.relationSamples)
             createRelationTerm(BootStrapData.relationTermSamples)

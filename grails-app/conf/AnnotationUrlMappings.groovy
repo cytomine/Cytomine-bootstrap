@@ -16,6 +16,9 @@ class AnnotationUrlMappings {
         "/api/annotation/$id"(controller:"restAnnotation"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
+        "/api/annotation/$id/copy"(controller:"restAnnotation"){
+            action = [POST:"copy"]
+        }
         "/api/project/$id/annotation"(controller: "restAnnotation"){
             action = [GET:"listByProject"]
         }

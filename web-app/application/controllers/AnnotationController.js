@@ -3,7 +3,8 @@ var AnnotationController = Backbone.Router.extend({
     routes: {
         "annotation"            :   "annotation",
         "annotation/:idAnnotation"           :   "annotation",
-        "share-annotation/:idAnnotation" : "share"
+        "share-annotation/:idAnnotation" : "share",
+        "copy-annotation/:idAnnotation" : "copy"
     },
 
     annotation : function(idAnnotation) {
@@ -35,5 +36,19 @@ var AnnotationController = Backbone.Router.extend({
                 }).render();
             }
         });
+    },
+
+    copy : function(idAnnotation) {
+        new AnnotationCopyModel({id : idAnnotation}).save({id : idAnnotation},{
+                    success: function (model, response) {
+                        window.app.view.message("Annotation", response.message, "success");
+                    },
+                    error: function (model, response) {
+                        var json = $.parseJSON(response.responseText);
+                        window.app.view.message("Annotation", json.errors, "error");
+                    }
+                }
+        );
+        window.history.back();
     }
 });

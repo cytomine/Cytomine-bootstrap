@@ -237,6 +237,20 @@ class AnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def copy(def id, String username, String password) {
+        log.info "copy annotation:" + id
+        String URL = Infos.CYTOMINEURL + "api/annotation/" + id + "/copy.json"
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        client.post("")
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        def json = JSON.parse(response)
+        Long idAnnotation = json?.annotation?.id
+        return [data: Annotation.get(idAnnotation), code: code]
+    }
+
 
 
     static def buildBasicAnnotation(String username, String password) {

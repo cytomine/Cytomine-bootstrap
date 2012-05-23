@@ -157,7 +157,6 @@ class RestUserController extends RestController {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
         boolean admin = false
-        log.debug "addUser project="+project+" user="+user+" admin="+admin
         userService.addUserFromProject(user,project,admin)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
@@ -181,7 +180,6 @@ class RestUserController extends RestController {
         Project project = Project.get(params.id)
         User user = User.get(params.idUser)
         boolean admin = true
-        log.debug "addUser project="+project+" user="+user+" admin="+admin
         userService.addUserFromProject(user,project,admin)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]

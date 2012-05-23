@@ -32,6 +32,19 @@ var AnnotationModel = Backbone.Model.extend({
     }
 });
 
+var AnnotationCopyModel = Backbone.Model.extend({
+    isNew: function() {
+        return true;
+      },
+    url : function() {
+
+        return 'api/annotation/'+this.id+"/copy.json";
+    },
+    initialize: function (options) {
+        this.id = options.id;
+    }
+});
+
 
 var AnnotationCropModel = Backbone.Model.extend({
 

@@ -87,12 +87,6 @@ class StatsController extends RestController {
         responseSuccess(result.values())
     }
 
-    private Date getTimeAndReset(Date start, String message) {
-        Date end = new Date()
-        log.info "TIME $message : ${end.getTime()-start.getTime()}"
-        return end
-    }
-
     def statTerm = {
         Project project = Project.read(params.id)
         if (project == null) responseNotFound("Project", params.id)
@@ -101,7 +95,6 @@ class StatsController extends RestController {
 
         def results = Annotation.executeQuery('select t.term.id, count(t) from AnnotationTerm as t, Annotation as b where b.id=t.annotation.id and b.project = ? group by t.term.id', [project])
 
-        //println results
         def stats = [:]
         def color = [:]
         def ids = [:]
@@ -119,7 +112,6 @@ class StatsController extends RestController {
         }
 
         results.each { result ->
-            println result
             def name = idsRevert[result[0]]
             if(name) stats[name]=result[1]
         }

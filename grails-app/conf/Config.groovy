@@ -83,7 +83,11 @@ environments {
         grails.plugins.springsecurity.useBasicAuth = true
         grails.plugins.springsecurity.basic.realmName = "Cytomine log"
     }
-
+    perf {
+        grails.serverURL = "http://localhost:8080"
+        grails.plugins.springsecurity.useBasicAuth = true
+        grails.plugins.springsecurity.basic.realmName = "Cytomine log"
+    }
 }
 
 // log4j configuration
@@ -142,6 +146,12 @@ log4j = {
            }
        }
        test {
+           root {
+               info 'stdout','appLog',"logfile"
+               additivity = true
+           }
+       }
+       perf {
            root {
                info 'stdout','appLog',"logfile"
                additivity = true

@@ -59,11 +59,8 @@ class User extends SecUser {
         //add ontology created by this user
         
         if (this.version != null) ontologies.addAll(Ontology.findAllByUser(this))
-        
-        println "User ontolgy =" + ontologies
         //add ontology from project which can be view by this user
         def project = this.projects();
-        println "User project =" + project
         project.each { proj ->
             Ontology ontology = proj.ontology
             if (!ontologies.contains(ontology))

@@ -22,6 +22,7 @@ class Annotation extends CytomineDomain implements Serializable {
     Double similarity
     Double geometryCompression
     Project project
+    Annotation parent
 
     long countComments = 0L
 
@@ -38,6 +39,7 @@ class Annotation extends CytomineDomain implements Serializable {
         channels(nullable: true)
         user(nullable: false)
         project(nullable:true)
+        parent(nullable: true)
     }
 
     static mapping = {
@@ -206,6 +208,12 @@ class Annotation extends CytomineDomain implements Serializable {
             annotation.updated = (!jsonAnnotation.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.updated)) : null
             if (!annotation.location) throw new WrongArgumentException("Geo is null: 0 points")
 
+
+            if (!jsonAnnotation.parent.toString().equals("null")) {
+                annotation.parent = Annotation.get(jsonAnnotation.parent)
+                if(!annotation.parent) throw new WrongArgumentException("Annotation parent ${jsonAnnotation.parent} not found!")
+            }
+
         } catch (com.vividsolutions.jts.io.ParseException ex) {
             throw new WrongArgumentException(ex.toString())
         }
@@ -245,6 +253,7 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['channels'] = annotation.channels
             returnArray['project'] = annotation.project.id
             returnArray['container'] = annotation.project.id
+            returnArray['parent'] = annotation.parent!=null? annotation.parent.id : null
 
             if (annotation.userId) returnArray['user'] = annotation.userId
             else returnArray['user'] = annotation.user?.id

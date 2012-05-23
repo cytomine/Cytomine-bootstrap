@@ -8,6 +8,8 @@ import be.cytomine.test.Infos
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.test.http.AnnotationAPI
 import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.test.http.AnnotationTermAPI
+import be.cytomine.security.User
 
 /**
  * Created by IntelliJ IDEA.
@@ -255,6 +257,30 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def annotationToDelete = annotTerm.annotation
         def result = AnnotationAPI.delete(annotationToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
+    }
+
+    void testCopyAnnotationFromAlgo() {
+        //create annotation with user = userjob
+        def annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+        def annotation = annotationTerm.annotation
+        annotation.user = BasicInstance.createOrGetBasicUserJob()
+        assert annotation.save(flush: true)  != null
+
+        //call service to allow copy annotation
+        def result = AnnotationAPI.copy(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        //check annotation
+        int idAnnotation = result.data.id
+        result = AnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        //check term is added!
+        result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,annotationTerm.term.id,User.findByUsername(Infos.GOODLOGIN).id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assertEquals(200,result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+
     }
 
 }

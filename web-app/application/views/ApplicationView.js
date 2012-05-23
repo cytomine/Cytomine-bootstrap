@@ -393,7 +393,7 @@ ApplicationView.prototype.message =  function(title, message, type) {
     $("#alert"+timestamp).alert();
     setTimeout(function(){
         $("#alert"+timestamp).remove();
-    }, 1500);
+    }, 3000);
 
 }
 

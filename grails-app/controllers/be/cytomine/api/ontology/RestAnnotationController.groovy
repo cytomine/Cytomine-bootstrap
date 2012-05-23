@@ -299,50 +299,52 @@ class RestAnnotationController extends RestController {
     }
 
     def add = {
-        def json = request.JSON
-        if (json instanceof org.codehaus.groovy.grails.web.json.JSONArray) {
-            def result = [:]
-            result.status = 200
-            result.data = []
-            json.each {
-                def resp = add_one(it, false)
-                if (resp)
-                    result.data << resp
-            }
-            responseResult(result)
-        } else {
-           responseResult(add_one(json))
-        }
+            def json = request.JSON
+            if (json instanceof org.codehaus.groovy.grails.web.json.JSONArray) {
+                def result = [:]
+                result.status = 200
+                result.data = []
+                json.each {
+                    try {
+                    def resp = addOne(it, false)
+                        result.data << resp
+                    } catch (CytomineException e) {
+                        log.error(e)
+                        response([success: false, errors: e.msg], e.code)
+                    }
+                }
+                responseResult(result)
+            } else {
+                    try {
+                       responseResult(addOne(json))
+                    } catch (CytomineException e) {
+                        log.error(e)
+                        response([success: false, errors: e.msg], e.code)
+                    }
+                }
     }
-    private def add_one(json, shouldResponse = true) {
-        print "json="+json
-        try {
-            if(!json.project || json.isNull('project')) {
-                log.debug "No project was set"
-                ImageInstance image = ImageInstance.read(json.image)
-                log.debug "Get image = "+image
-                log.debug "Get poroject = "+image.project
-                if(image) json.project = image.project.id
-                log.debug "Get poroject 2 = "+json.project
-            }
-            log.debug "json.project="+json.project + " (" + json.isNull('project') + ")"
-            log.debug "json.location="+json.location + " (" + json.isNull('location') + ")"
-            if(json.isNull('project')) throw new WrongArgumentException("Annotation must have a valide project:"+json.project)
-            if(json.isNull('location')) {
-                log.debug "json location is null!"
-                throw new WrongArgumentException("Annotation must have a valide geometry:"+json.location)
-            }
 
-            annotationService.checkAuthorization(Long.parseLong(json.project.toString()), new Annotation())
-            def result = annotationService.add(json)
-            if (shouldResponse) responseResult(result)
-            else return result
-        } catch (CytomineException e) {
-            log.error("add error:" + e.msg)
-            log.error(e)
-            if (shouldResponse) response([success: false, errors: e.msg], e.code)
-            return null
+    private def addOne(json, shouldResponse = true) {
+        //print "json="+json
+        if(!json.project || json.isNull('project')) {
+            log.debug "No project was set"
+            ImageInstance image = ImageInstance.read(json.image)
+            log.debug "Get image = "+image
+            log.debug "Get poroject = "+image.project
+            if(image) json.project = image.project.id
+            log.debug "Get poroject 2 = "+json.project
         }
+        log.debug "json.project="+json.project + " (" + json.isNull('project') + ")"
+        log.debug "json.location="+json.location + " (" + json.isNull('location') + ")"
+        if(json.isNull('project')) throw new WrongArgumentException("Annotation must have a valide project:"+json.project)
+        if(json.isNull('location')) {
+            log.debug "json location is null!"
+            throw new WrongArgumentException("Annotation must have a valide geometry:"+json.location)
+        }
+
+        annotationService.checkAuthorization(Long.parseLong(json.project.toString()), new Annotation())
+        def result = annotationService.add(json)
+        return result
     }
 
     def update= {
@@ -362,6 +364,28 @@ class RestAnnotationController extends RestController {
     def delete = {
         def json = JSON.parse("{id : $params.id}")
         delete(annotationService, json)
+    }
+
+    def copy = {
+        Long idAnnotation = params.getLong('id')
+        Annotation annotation = Annotation.read(idAnnotation)
+
+        if(!annotation) responseNotFound("Annotation", params.id)
+        else {
+            try {
+                annotationService.checkAuthorization(annotation.project)
+                if(cytomineService.currentUser.id==annotation.user.id) throw new WrongArgumentException("You cannot copy your own annotation!")
+                def json = JSON.parse(annotation.encodeAsJSON())
+                json.id = null
+                json.user = cytomineService.currentUser.id
+                json.parent = idAnnotation
+                def result = annotationService.add(json)
+                responseResult(result)
+            } catch (CytomineException e) {
+                log.error(e)
+                response([success: false, errors: e.msg], e.code)
+            }
+        }
     }
 
 

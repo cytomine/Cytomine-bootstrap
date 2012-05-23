@@ -17,6 +17,7 @@ import grails.converters.JSON
 import groovyx.gpars.Asynchronizer
 
 import java.util.concurrent.Future
+import be.cytomine.Exception.ServerException
 
 class RetrievalService {
 
@@ -212,9 +213,9 @@ public static def indexAnnotationAsynchronous(Annotation annotation) {
     //indexAnnotationSynchronous(annotation)
     println "index asynchronous"
     def json = annotation.encodeAsJSON()
-    println "json="+json
+    //println "json="+json
     Asynchronizer.withAsynchronizer() {
-        Closure indexAnnotation = {try {indexAnnotationSynchronous(json)} catch (Exception e) {e.printStackTrace()}}
+        Closure indexAnnotation = {try {indexAnnotationSynchronous(json)} catch (Exception e) {throw new ServerException("Retrieval Exception: "+e)}}
         Closure annotationIndexing = indexAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
         Future result = annotationIndexing()
     }
