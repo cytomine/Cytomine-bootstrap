@@ -24,7 +24,6 @@ class Software extends CytomineDomain {
             if (!service) {
                 service = grailsApplication.getMainContext().getBean(serviceName)
             }
-
      }
 
     void checkAlreadyExist() {

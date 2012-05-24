@@ -23,7 +23,6 @@ class Annotation extends CytomineDomain implements Serializable {
     Double geometryCompression
     Project project
     Annotation parent
-
     long countComments = 0L
 
     static belongsTo = [ImageInstance, Project]
@@ -71,8 +70,12 @@ class Annotation extends CytomineDomain implements Serializable {
         }
     }
 
+    def getFilename() {
+          return this.image?.baseImage?.getFilename()
+      }
+
     def termsId() {
-        return annotationTerm.collect{it.getIdTerm()}.unique()
+        return annotationTerm.collect{it.term?.id}.unique()
     }
 
     def usersIdByTerm() {
@@ -80,42 +83,30 @@ class Annotation extends CytomineDomain implements Serializable {
         annotationTerm.each { annotationTerm ->
             def map = [:]
             map.id = annotationTerm.id
-            map.term = annotationTerm.getIdTerm()
-            map.user = [annotationTerm.getIdUser()]
-            def item = results.find { it.term == annotationTerm.getIdTerm() }
+            map.term = annotationTerm.term?.id
+            map.user = [annotationTerm.user?.id]
+            def item = results.find { it.term == annotationTerm.term?.id }
             if (!item) results << map
             else item.user.add(annotationTerm.user.id)
         }
         results
     }
 
-    def project() {
-        return project
-    }
-
     Project projectDomain() {
         return image?.project
     }
 
-    String imageFileName() {
-        return this.image?.baseImage?.getFilename()
-    }
-
-    private def getFilename() {
-        return this.image?.baseImage?.getFilename()
-    }
-
-    private def getArea() {
+    def getArea() {
         //TODO: must be compute with zoom level
         return location.area
     }
 
-    private def getPerimeter() {
+    def getPerimeter() {
         //TODO: must be compute with zoom level
         return location.getLength()
     }
 
-    private def getCentroid() {
+    def getCentroid() {
         if (location.area < 1) return null
         def centroid = location.getCentroid()
         def response = [:]
@@ -124,7 +115,7 @@ class Annotation extends CytomineDomain implements Serializable {
         return response
     }
 
-    private def getBoundaries() {
+   def getBoundaries() {
         /*def metadata = JSON.parse(new URL(image.getMetadataURL()).text)
      int zoom = Integer.parseInt(metadata.levels)*/
         Coordinate[] coordinates = location.getEnvelope().getCoordinates()
@@ -190,25 +181,28 @@ class Annotation extends CytomineDomain implements Serializable {
     static Annotation getFromData(annotation, jsonAnnotation) {
         try {
             annotation.name = jsonAnnotation.name
-            annotation.location = new WKTReader().read(jsonAnnotation.location)
-            if (annotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geometry is empty:" + annotation.location.getNumPoints() + " points")
-            if (annotation.location.getNumPoints() < 3) throw new WrongArgumentException("Geometry is not a polygon :" + annotation.location.getNumPoints() + " points")
-            //annotation.location = DouglasPeuckerSimplifier.simplify(annotation.location,50)
-            annotation.image = ImageInstance.get(jsonAnnotation.image);
-            println "Annotation image = " + annotation.image + "($jsonAnnotation.image)"
-            if (!annotation.image) throw new WrongArgumentException("Image $jsonAnnotation.image not found!")
-
-            annotation.project = Project.get(jsonAnnotation.project);
-            if (!annotation.project) throw new WrongArgumentException("Project $jsonAnnotation.project not found!")
             annotation.zoomLevel = (!jsonAnnotation.zoomLevel.toString().equals("null")) ? ((String) jsonAnnotation.zoomLevel).toDouble() : -1
             annotation.geometryCompression = (!jsonAnnotation.geometryCompression.toString().equals("null")) ? ((String) jsonAnnotation.geometryCompression).toDouble() : 0
             annotation.channels = jsonAnnotation.channels
-            annotation.user = SecUser.get(jsonAnnotation.user);
+
             annotation.created = (!jsonAnnotation.created.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.created)) : null
             annotation.updated = (!jsonAnnotation.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.updated)) : null
+
+            //location
+            annotation.location = new WKTReader().read(jsonAnnotation.location)
+            if (annotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geometry is empty:" + annotation.location.getNumPoints() + " points")
+            if (annotation.location.getNumPoints() < 3) throw new WrongArgumentException("Geometry is not a polygon :" + annotation.location.getNumPoints() + " points")
             if (!annotation.location) throw new WrongArgumentException("Geo is null: 0 points")
-
-
+            //image
+            annotation.image = ImageInstance.get(jsonAnnotation.image);
+            if (!annotation.image) throw new WrongArgumentException("Image $jsonAnnotation.image not found!")
+            //project
+            annotation.project = Project.get(jsonAnnotation.project);
+            if (!annotation.project) throw new WrongArgumentException("Project $jsonAnnotation.project not found!")
+            //user
+            annotation.user = SecUser.get(jsonAnnotation.user);
+            if (!annotation.project) throw new WrongArgumentException("SecUser $jsonAnnotation.user not found!")
+            //parent
             if (!jsonAnnotation.parent.toString().equals("null")) {
                 annotation.parent = Annotation.get(jsonAnnotation.parent)
                 if(!annotation.parent) throw new WrongArgumentException("Annotation parent ${jsonAnnotation.parent} not found!")
@@ -220,43 +214,28 @@ class Annotation extends CytomineDomain implements Serializable {
         return annotation;
     }
 
-    def getIdImage() {
-//        if (this.imageId) return this.imageId
-//        else return this.image?.id
-        return this.image?.id
-    }
-
     def getCallBack() {
         return [annotationID: this.id, imageID: this.image.id]
 
     }
-    
-
 
     static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Annotation.class
         JSON.registerObjectMarshaller(Annotation) { annotation ->
             def returnArray = [:]
-
-            Date start = new Date()
             ImageInstance imageinstance = annotation.image
-            //AbstractImage image = imageinstance?.baseImage
             returnArray['class'] = annotation.class
             returnArray['id'] = annotation.id
             returnArray['name'] = annotation.name != "" ? annotation.name : "Annotation " + annotation.id
             returnArray['location'] = annotation.location.toString()
-            returnArray['image'] = annotation.getIdImage()
-            //returnArray['imageFilename'] = image?.filename
-
+            returnArray['image'] = annotation.image?.id
             returnArray['zoomLevel'] = annotation.zoomLevel
             returnArray['geometryCompression'] = annotation.geometryCompression
             returnArray['channels'] = annotation.channels
             returnArray['project'] = annotation.project.id
             returnArray['container'] = annotation.project.id
-            returnArray['parent'] = annotation.parent!=null? annotation.parent.id : null
-
-            if (annotation.userId) returnArray['user'] = annotation.userId
-            else returnArray['user'] = annotation.user?.id
+            returnArray['parent'] = annotation.parent?.id
+            returnArray['user'] = annotation.user?.id
             returnArray['nbComments'] = annotation.countComments
             returnArray['area'] = annotation.computeArea()
             returnArray['perimeter'] = annotation.computePerimeter()
@@ -265,15 +244,11 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['updated'] = annotation.updated ? annotation.updated.time.toString() : null
             returnArray['term'] = annotation.termsId()
             returnArray['userByTerm'] = annotation.usersIdByTerm()
-            //retrieval
             try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
             returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
             returnArray['smallCropURL'] = UrlApi.getAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl,annotation.id, 512)
-
-            //println grailsApplication.config.grails.serverURL
-
             returnArray['url'] = UrlApi.getAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
-            returnArray['imageURL'] = UrlApi.getAnnotationURL(cytomineBaseUrl,imageinstance.getIdProject(), imageinstance.id, annotation.id)
+            returnArray['imageURL'] = UrlApi.getAnnotationURL(cytomineBaseUrl,imageinstance.project?.id, imageinstance.id, annotation.id)
             return returnArray
         }
     }

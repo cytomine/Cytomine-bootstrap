@@ -106,12 +106,6 @@ class Ontology extends CytomineDomain implements Serializable {
         return t
     }
 
-    def getIdUser() {
-//        if (this.userId) return this.userId
-//        else return this.user?.id
-        return this.user?.id
-    }
-
     def projectService
     def getProjects() {
         def projects = []
@@ -135,7 +129,7 @@ class Ontology extends CytomineDomain implements Serializable {
             returnArray['isFolder'] = true
             returnArray['key'] = it.id
             returnArray['hideCheckbox'] = true
-            returnArray['user'] = it.getIdUser()
+            returnArray['user'] = it.user?.id
             returnArray['state'] = "open"
             returnArray['projects'] = it.getProjects()
             if (it.version != null) {

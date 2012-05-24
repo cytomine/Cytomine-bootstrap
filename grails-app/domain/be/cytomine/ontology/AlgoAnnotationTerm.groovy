@@ -87,48 +87,17 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
         return algoAnnotationTerm;
     }
 
-
-    def getIdAnnotation() {
-//        if (this.annotationId) return this.annotationId
-//        else return this.annotation?.id
-        return this.annotation?.id
-    }
-
-    def getIdTerm() {
-//        if (this.termId) return this.termId
-//        else return this.term?.id
-        return this.term?.id
-    }
-
-    def getIdExpectedTerm() {
-//        if (this.expectedTermId) return this.expectedTermId
-//        else return this.expectedTerm?.id
-        return this.expectedTerm?.id
-    }
-
-    def getIdUserJob() {
-//        if (this.userJobId) return this.userJobId
-//        else return this.userJob?.id
-        return this.userJob?.id
-    }
-
-    def getIdProject() {
-//        if (this.projectId) return this.projectId
-//        else return this.project?.id
-        return this.project?.id
-    }
-
     static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + AlgoAnnotationTerm.class
         JSON.registerObjectMarshaller(AlgoAnnotationTerm) {
             def returnArray = [:]
             returnArray['id'] = it.id
-            returnArray['annotation'] = it.getIdAnnotation()
-            returnArray['term'] = it.getIdTerm()
-            returnArray['expectedTerm'] = it.getIdExpectedTerm()
+            returnArray['annotation'] = it.annotation?.id
+            returnArray['term'] = it.term?.id
+            returnArray['expectedTerm'] = it.expectedTerm?.id
             returnArray['rate'] = it.rate
-            returnArray['user'] = it.getIdUserJob()
-            returnArray['project'] = it.getIdProject()
+            returnArray['user'] = it.userJob?.id
+            returnArray['project'] = it.project?.id
             return returnArray
         }
     }

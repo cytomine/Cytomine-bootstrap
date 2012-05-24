@@ -19,8 +19,7 @@ class RestRetrievalController extends RestController {
         log.info "List with id annotation:" + params.idannotation
         try {
             Annotation annotation = Annotation.read(params.idannotation)
-            Project project = annotation.project()
-            def data = retrievalService.listSimilarAnnotationAndBestTerm(project, annotation)
+            def data = retrievalService.listSimilarAnnotationAndBestTerm(annotation.project, annotation)
             response.status = 200
             responseSuccess(data)
         } catch (java.net.ConnectException ex) {

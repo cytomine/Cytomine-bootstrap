@@ -162,12 +162,12 @@ class RetrievalSuggestStatsController extends RestController {
         }
 
         algoAnnotationsTerm.each {
-            TreeMap<Long, Integer> subMap = termMap.get(it.getIdExpectedTerm());
-            Integer oldValue = subMap.get(it.getIdTerm())
+            TreeMap<Long, Integer> subMap = termMap.get(it.expectedTerm?.id);
+            Integer oldValue = subMap.get(it.term?.id)
             if (!oldValue) oldValue = 0
-            subMap.put(it.getIdTerm(), oldValue + 1)
+            subMap.put(it.term?.id, oldValue + 1)
 
-            termMap.put(it.getIdExpectedTerm(), subMap)
+            termMap.put(it.expectedTerm?.id, subMap)
         }
         def data = [:]
         termMap.each {

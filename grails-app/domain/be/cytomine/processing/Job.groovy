@@ -120,38 +120,4 @@ class Job extends CytomineDomain  {
         }
         return job;
     }
-
-//    static Job createFromData(data) {
-    //
-    //        Job job = null
-    //
-    //        /*if (new MyDetectionLearnJob().getClass().getName().contains(data.className.toString())) {
-    //            println "MyDetectionLearnJob"
-    //            // Should be in  MyDetectionLearnJob.createFromData but doesn't work ? Instance is null when passed in argument... (*)
-    //            job = new MyDetectionLearnJob()
-    //            if (data.doRGB) job.doRGB = Boolean.parseBoolean(data.doRGB)
-    //            if (data.doEDGE) job.doEDGE = Boolean.parseBoolean(data.doEDGE)
-    //            if (data.doHSV) job.doHSV = Boolean.parseBoolean(data.doHSV)
-    //            if (data.doGRAY) job.doGRAY = Boolean.parseBoolean(data.doGRAY)
-    //            if (data.doLBP) job.doLBP = Boolean.parseBoolean(data.doLBP)
-    //            if (data.ratio) job.ratio = Integer.parseInt(data.ratio)
-    //            if (data.split) job.split = Integer.parseInt(data.split)
-    //            if (data.bound) job.bound = Integer.parseInt(data.bound)
-    //            if (data.tree) job.tree = Integer.parseInt(job.tree)
-    //            if (data.subwindowWidth) job.subwindowWidth = Integer.parseInt(job.subwindowWidth)
-    //            if (data.subwindowHeight) job.subwindowHeight = Integer.parseInt(job.subwindowHeight)
-    //            job.user = User.read(data.user)
-    //            job.software = Software.read(data.software)
-    //            job.project = Project.read(data.project)
-    //        }
-    //
-    //        if (new MyDetectionPredictJob().getClass().getName().contains(data.className.toString())) {
-    //            println "MyDetectionPredictJob"
-    //            // Same than (*)
-    //            job = new MyDetectionPredictJob()
-    //            job.myDetectionLearnJob = MyDetectionLearnJob.read(data.myDetectionPredictJob)
-    //        }*/
-    //        return job
-    //    }
-
 }

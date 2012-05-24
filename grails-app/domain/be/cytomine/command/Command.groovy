@@ -104,7 +104,6 @@ class Command extends CytomineDomain {
      * @return Class name (without package) of o
      */
     protected String getClassName(Object o) {
-        log.info("getClassName=" + o.getClass());
         String name = o.getClass()   //be.cytomine.image.Image
         String[] array = name.split("\\.")  //[be,cytomine,image,Image]
         log.info array.length

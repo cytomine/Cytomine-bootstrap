@@ -201,7 +201,7 @@ class RestAnnotationController extends RestController {
                 data.user = annotation.user.toString()
                 data.term = term.name
                 data.cropURL =UrlApi.getAnnotationCropWithAnnotationId(grailsApplication.config.grails.serverURL,annotation.id)
-                data.cropGOTO = UrlApi.getAnnotationURL(grailsApplication.config.grails.serverURL,annotation.image.getIdProject(), annotation.image.id, annotation.id)
+                data.cropGOTO = UrlApi.getAnnotationURL(grailsApplication.config.grails.serverURL,annotation?.image?.project?.id, annotation.image.id, annotation.id)
                 exportResult.add(data)
             }
 

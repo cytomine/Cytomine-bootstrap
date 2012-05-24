@@ -113,7 +113,7 @@ log4j = {
 //               threshold:org.apache.log4j.Level.ERROR)
    }
 
-   info  'org.codehaus.groovy.grails.web.servlet',  //  controllers
+   error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
            'org.codehaus.groovy.grails.web.pages', //  GSP
            'org.codehaus.groovy.grails.web.sitemesh', //  layouts
            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
@@ -126,7 +126,7 @@ log4j = {
            'org.hibernate.engine.StatefulPersistenceContext.ProxyWarnLog'
 
     debug 'org.codehaus.groovy.grails.plugins.springsecurity.AnnotationFilterInvocationDefinition','be.cytomine'
-   info   'org.hibernate'
+   error   'org.hibernate'
 
 
 
@@ -165,7 +165,7 @@ log4j = {
    debug 'grails.app.controllers*/
 
    //UNCOMMENT THESE 2 LINES TO SEE SQL REQUEST AND THEIR PARAMETERS VALUES
-//   debug 'org.hibernate.SQL'
+ //  debug 'org.hibernate.SQL'
 //   trace 'org.hibernate.type'
 }
 

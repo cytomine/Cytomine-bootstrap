@@ -58,10 +58,4 @@ class UserGroup {
     def getCallBack() {
         return null
     }
-/*    public boolean equals(Object o) {
-        println "equals " + o?.id + " vs " + this?.id
-        if (!o) return false
-        if (!o instanceof UserGroup) return false
-        try {return ((UserGroup) o).getId() == this.getId()} catch (Exception e) { return false}
-    }*/
 }

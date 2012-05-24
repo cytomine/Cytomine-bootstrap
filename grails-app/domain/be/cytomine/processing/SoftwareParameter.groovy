@@ -37,8 +37,6 @@ class SoftwareParameter extends CytomineDomain {
               else
                 this.index = 0
         }
-
-
     }
 
    void checkAlreadyExist() {
@@ -53,12 +51,6 @@ class SoftwareParameter extends CytomineDomain {
         return (this as JSON).toString()
     }
 
-    def getIdSoftware() {
-//        if (this.softwareId) return this.softwareId
-//        else return this.software?.id
-        return this.software?.id
-    }
-
      static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + SoftwareParameter.class
         JSON.registerObjectMarshaller(SoftwareParameter) {
@@ -68,7 +60,7 @@ class SoftwareParameter extends CytomineDomain {
             softwareParameter.type = it.type
             softwareParameter.defaultParamValue = it.defaultValue  //defaultValue & default are reserved
             softwareParameter.required = it.required
-            softwareParameter.software = it.getIdSoftware()
+            softwareParameter.software = it.software?.id
             softwareParameter.index = it.index
             softwareParameter.uri = it.uri
             softwareParameter.uriPrintAttribut = it.uriPrintAttribut

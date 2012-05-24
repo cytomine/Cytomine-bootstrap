@@ -10,17 +10,13 @@ class Term extends CytomineDomain implements Serializable, Comparable {
 
     String name
     String comment
-
     Ontology ontology
     String color
-
     Double rate
 
     static belongsTo = [ontology: Ontology]
     static transients = ["rate"]
-    //static belongsTo = Annotation
     static hasMany = [annotationTerm: AnnotationTerm, relationTerm1: RelationTerm, relationTerm2: RelationTerm]
-
     //must be done because RelationTerm has two Term attribute
     static mappedBy = [relationTerm1: 'term1', relationTerm2: 'term2']
 
@@ -45,16 +41,6 @@ class Term extends CytomineDomain implements Serializable, Comparable {
                 annotations << it.annotation
         }
         annotations
-    }
-
-    def relationAsTerm1() {
-        def relations = []
-        relationTerm1.each {
-            def map = [:]
-            map.put(it.relation, it.term2)
-            relations.add(map)
-        }
-        return relations
     }
 
     def hasChildren() {
@@ -82,16 +68,6 @@ class Term extends CytomineDomain implements Serializable, Comparable {
             isChild |= (it.getRelation().getName() == RelationTerm.names.PARENT)
         }
         return isChild
-    }
-
-    def relationAsTerm2() {
-        def relations = []
-        relationTerm2.each {
-            def map = [:]
-            map.put(it.relation, it.term1)
-            relations.add(map)
-        }
-        return relations
     }
 
     static Term createFromDataWithId(jsonTerm) throws CytomineException {
@@ -122,12 +98,6 @@ class Term extends CytomineDomain implements Serializable, Comparable {
         return term;
     }
 
-    def getIdOntology() {
-//        if (this.ontologyId) return this.ontologyId
-//        else return this.ontology?.id
-        return this.ontology?.id
-    }
-
     def getCallBack() {
         return [ontologyID: this?.ontology?.id]
     }
@@ -139,11 +109,10 @@ class Term extends CytomineDomain implements Serializable, Comparable {
             returnArray['id'] = it.id
             returnArray['name'] = it.name
             returnArray['comment'] = it.comment
-            returnArray['ontology'] = it.getIdOntology()
+            returnArray['ontology'] = it.ontology?.id
             try {returnArray['rate'] = it.rate} catch (Exception e) {println e}
             RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT), Term.read(it.id))
-
-            returnArray['parent'] = rt?.getIdTerm1()
+            returnArray['parent'] = rt?.term1?.id
             if (it.color) returnArray['color'] = it.color
             return returnArray
         }
@@ -154,7 +123,6 @@ class Term extends CytomineDomain implements Serializable, Comparable {
         if (!o instanceof Term) return false
         try {return ((Term) o).getId() == this.getId()} catch (Exception e) { return false}
         //if no try/catch, when getting term from ontology => GroovyCastException: Cannot cast object 'null' with class 'org.codehaus.groovy.grails.web.json.JSONObject$Null' to class 'be.cytomine.ontology.Term'
-
     }
     
     String toString() {

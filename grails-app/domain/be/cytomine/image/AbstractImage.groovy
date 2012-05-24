@@ -121,34 +121,8 @@ class AbstractImage extends CytomineDomain {
             throw new WrongArgumentException("Mime with id:" + mimeId + " has not image server")
         }
 
-        /*String roi = jsonImage.roi.toString()
-        if(!roi.equals("null"))
-        {
-            try { image.roi = new WKTReader().read(roi)}
-            catch(com.vividsolutions.jts.io.ParseException e)
-            {
-                throw new WrongArgumentException("Bad Geometry:"+ e.getMessage())
-            }
-
-        }
-        else image.roi = null*/
-
         return image;
     }
-
-    def getIdScanner() {
-//        if (this.scannerId) return this.scannerId
-//        else return this.scanner?.id
-        return this.scanner?.id
-
-    }
-
-    def getIdSlide() {
-//        if (this.slideId) return this.slideId
-//        else return this.slide?.id
-        return this.slide?.id
-    }
-
 
     static void registerMarshaller(String cytomineBaseUrl) {
 
@@ -159,8 +133,8 @@ class AbstractImage extends CytomineDomain {
             returnArray['id'] = it.id
             returnArray['filename'] = it.filename
             returnArray['originalFilename'] = it.originalFilename
-            returnArray['scanner'] = it.getIdScanner()
-            returnArray['slide'] = it.getIdSlide()
+            returnArray['scanner'] = it.scanner?.id
+            returnArray['slide'] = it.slide?.id
             returnArray['path'] = it.path
             returnArray['mime'] = it.mime.extension
             returnArray['created'] = it.created ? it.created.time.toString() : null
@@ -170,18 +144,8 @@ class AbstractImage extends CytomineDomain {
             returnArray['depth'] = it.getZoomLevels()?.max
             returnArray['resolution'] = it.resolution
             returnArray['magnification'] = it.magnification
-
-            /*returnArray['scale'] = it.scale
-            returnArray['roi'] = it.roi.toString()*/
-            //returnArray['annotations'] = it.annotations
-            /*returnArray['thumb'] = it.getThumbURL()*/
             returnArray['thumb'] = it.getThumbURL()
             returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(cytomineBaseUrl,it.id)
-            //returnArray['imageServerInfos'] = UrlApi.getImageServerInfosWithImageId(it.id)
-            //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
-            //returnArray['imageServerBaseURL'] = it.getMime().imageServers().collect { it.getZoomifyUrl() }
-            //returnArray['imageServerBaseURL'] = UrlApi.getImageServerInfosWithImageId(it.id)
-
             return returnArray
         }
     }

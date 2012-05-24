@@ -20,18 +20,6 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         "[" + this.id + " <" + annotation + "," + term + "," + user + ">]"
     }
 
-    def getIdTerm() {
-//        if (this.termId) return this.termId
-//        else return this.term?.id
-        return this.term?.id
-    }
-
-    def getIdUser() {
-//        if (this.userId) return this.userId
-//        else return this.user?.id
-        return this.user?.id
-    }
-
     static AnnotationTerm link(Annotation annotation, Term term,SecUser user) {
         if (!annotation) throw new WrongArgumentException("Annotation cannot be null")
         if (!term) throw new WrongArgumentException("Term cannot be null")
@@ -43,7 +31,6 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
             annotationTerm = new AnnotationTerm(user: user)
             annotation?.addToAnnotationTerm(annotationTerm)
             term?.addToAnnotationTerm(annotationTerm)
-            println "save annotationTerm"
             annotation.refresh()
             term.refresh()
             annotationTerm.save(flush: true)
@@ -65,9 +52,7 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
             term?.removeFromAnnotationTerm(annotationTerm)
             annotation.refresh()
             term.refresh()
-            println "delete annotationTerm=" + annotationTerm
             annotationTerm.delete(flush: true)
-
         }
     }
 
@@ -83,7 +68,6 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     static AnnotationTerm getFromData(annotationTerm, jsonAnnotationTerm) {
-        println "jsonAnnotationTerm from getAnnotationTermFromData = " + jsonAnnotationTerm
         annotationTerm.annotation = Annotation.get(jsonAnnotationTerm.annotation.toString())
         annotationTerm.term = Term.get(jsonAnnotationTerm.term.toString())
         annotationTerm.user = SecUser.get(jsonAnnotationTerm.user.toString())

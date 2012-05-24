@@ -16,11 +16,6 @@ class RelationTerm extends CytomineDomain implements Serializable {
         id(generator: 'assigned', unique: true)
     }
 
-    def getIdTerm1() {
-        if (this.term1Id) return this.term1Id
-        else return this.term1?.id
-    }
-
     String toString() {
         "[" + this.id + " <" + relation + '(' + relation?.name + ')' + ":[" + term1 + '(' + term1?.name + ')' + "," + term2 + '(' + term2?.name + ')' + "]>]"
     }

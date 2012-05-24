@@ -69,17 +69,7 @@ class User extends SecUser {
         ontologies
     }
 
-    //TODO: change this by security!!!!
     def projects() {
-//        def c = ProjectGroup.createCriteria()
-//        def userGroup = userGroups()
-//        if (userGroup == null || userGroup.size() == 0) return []
-//        def projects = c {
-//            inList("group.id", userGroup.collect {it.groupId})
-//            projections {
-//                groupProperty("project")
-//            }
-//        }
         projectService.list()
     }
 
@@ -198,7 +188,6 @@ class User extends SecUser {
     }
 
     def beforeInsert() {
-      println "User.beforeInsert()"
         super.beforeInsert()
     }
 

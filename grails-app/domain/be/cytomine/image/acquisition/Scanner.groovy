@@ -18,7 +18,6 @@ class Scanner extends Instrument {
     }
 
   def beforeInsert() {
-    println "Scanner.beforeInsert()"
       super.beforeInsert()
   }
 

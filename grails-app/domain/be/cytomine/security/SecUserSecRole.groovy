@@ -69,7 +69,6 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
         if (!(other instanceof SecUserSecRole)) {
             return false
         }
-
         other.secUser?.id == secUser?.id && other.secRole?.id == secRole?.id
     }
 

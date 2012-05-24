@@ -26,12 +26,8 @@ class AddCommand extends Command {
     def execute() {
         initService()
         //Create new domain
-        log.debug "initService"
         def newDomain = service.createFromJSON(json)
-        log.debug "newDomain="+newDomain
         def response = service.create(newDomain, printMessage)
-        log.debug "response="+response
-        log.debug "newDomain="+newDomain?.id
         //Init command info
         newDomain = response.object
         fillCommandInfo(newDomain, response.data.message)

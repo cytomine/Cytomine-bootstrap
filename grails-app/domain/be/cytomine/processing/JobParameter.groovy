@@ -19,8 +19,7 @@ class JobParameter  extends CytomineDomain implements Comparable{
         softwareParameter fetch: 'join'
     }
 
-    //if(JobParameter.findByJobAndSoftwareParameter(domain.job, domain.softwareParameter)) throw new AlreadyExistException("Job parameter still exist for this job ${domain?.job?.id}/softwareparameter ${domain?.softwareParameter?.name}")
-    void checkAlreadyExist() {
+     void checkAlreadyExist() {
         JobParameter.withNewSession {
             JobParameter jobParamAlreadyExist=JobParameter.findByJobAndSoftwareParameter(job,softwareParameter)
             if(jobParamAlreadyExist!=null && (jobParamAlreadyExist.id!=id))  throw new AlreadyExistException("Parameter " + softwareParameter?.name + " already exist fro job " + job?.id)
