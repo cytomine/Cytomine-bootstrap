@@ -31,6 +31,9 @@ class RestAnnotationController extends RestController {
     def projectService
     def cytomineService
     def mailService
+    def sessionFactory
+    def propertyInstanceMap = org.codehaus.groovy.grails.plugins.DomainClassGrailsPlugin.PROPERTY_INSTANCE_MAP
+
 
     def list = {
         def annotations = []
@@ -64,6 +67,7 @@ class RestAnnotationController extends RestController {
         } else {
             imageInstanceList = imageInstanceService.list(project)
         }
+                                        def sessionFactory
 
         if (project) {
             def list = annotationService.list(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"))
@@ -107,6 +111,7 @@ class RestAnnotationController extends RestController {
         else {
             userList = userService.list(project)
         }
+
         log.info "userList="+userList
         Collection<ImageInstance> imageInstanceList = []
         if (params.images != null && params.images != "null") {
@@ -299,12 +304,21 @@ class RestAnnotationController extends RestController {
         else responseNotFound("Annotation", params.id)
     }
 
+    def cleanUpGorm() {
+        def session = sessionFactory.currentSession
+        session.flush()
+        session.clear()
+        propertyInstanceMap.get().clear()
+
+    }
+
     def add = {
             def json = request.JSON
             if (json instanceof org.codehaus.groovy.grails.web.json.JSONArray) {
                 def result = [:]
                 result.status = 200
                 result.data = []
+                int i = 0
                 json.each {
                     try {
                     def resp = addOne(it, false)
@@ -313,6 +327,8 @@ class RestAnnotationController extends RestController {
                         log.error(e)
                         response([success: false, errors: e.msg], e.code)
                     }
+                    if(i%100==0) cleanUpGorm()
+                    i++
                 }
                 responseResult(result)
             } else {
