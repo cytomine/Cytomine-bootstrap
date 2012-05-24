@@ -129,6 +129,30 @@ class AnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def listByProjectAndUsersWithoutTerm(Long id,Long idUser, String username, String password) {
+        log.info "list annotation by user " + idUser + " and project " + id
+        String URL = Infos.CYTOMINEURL+"api/project/"+ id +"/annotation.json?noTerm=true&users=" +idUser
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+    static def listByProjectAndUsersSeveralTerm(Long id,Long idUser, String username, String password) {
+        log.info "list annotation by user " + idUser + " and project " + id
+        String URL = Infos.CYTOMINEURL+"api/project/"+ id +"/annotation.json?multipleTerm=true&users=" +idUser
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
     static def downloadDocumentByProject(Long idProject,Long idUser, Long idTerm, Long idImageInstance, String username, String password) {
         log.info "download annotation by user " + idUser + " and project " + idProject + " and term " + idTerm
         String URL = Infos.CYTOMINEURL+"api/project/"+ idProject +"/annotation/download?users=" +idUser + "&terms=" + idTerm +"&images=" + idImageInstance + "&format=pdf"

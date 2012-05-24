@@ -10,6 +10,12 @@ import be.cytomine.test.http.AnnotationAPI
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.test.http.AnnotationTermAPI
 import be.cytomine.security.User
+import be.cytomine.test.http.DomainAPI
+import be.cytomine.project.Project
+import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.Ontology
+import be.cytomine.security.UserJob
+import be.cytomine.ontology.AlgoAnnotationTerm
 
 /**
  * Created by IntelliJ IDEA.
@@ -281,6 +287,191 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
 
+    }
+
+    void testListingAnntotationWithoutTerm() {
+        //create annotation without term
+        User user = BasicInstance.getNewUser()
+        Project project = BasicInstance.getBasicProjectNotExist()
+        Ontology ontology = BasicInstance.createOrGetBasicOntology()
+        project.ontology = ontology
+        project.save(flush: true)
+        Infos.addUserRight(user.username,project)
+        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        image.project = project
+        image.save(flush: true)
+
+
+        Annotation annotationWithoutTerm = BasicInstance.getBasicAnnotationNotExist()
+        annotationWithoutTerm.project = project
+        annotationWithoutTerm.image = image
+        annotationWithoutTerm.user = user
+        assert annotationWithoutTerm.save(flush: true)
+
+        AnnotationTerm at = BasicInstance.getBasicAnnotationTermNotExist("")
+        at.term.ontology = ontology
+        at.term.save(flush: true)
+        at.user = user
+        at.save(flush: true)
+        Annotation annotationWithTerm = at.annotation
+        annotationWithTerm.user = user
+        annotationWithTerm.project = project
+        annotationWithTerm.image = image
+        assert annotationWithTerm.save(flush: true)
+
+        AnnotationTerm at2 = BasicInstance.getBasicAnnotationTermNotExist("")
+        at2.term.ontology = ontology
+        at2.term.save(flush: true)
+        at2.user = BasicInstance.getOldUser()
+        at2.save(flush: true)
+        Annotation annotationWithTermFromOtherUser = at.annotation
+        annotationWithTermFromOtherUser.user = user
+        annotationWithTermFromOtherUser.project = project
+        annotationWithTermFromOtherUser.image = image
+        assert annotationWithTermFromOtherUser.save(flush: true)
+
+        //list annotation without term with this user
+        def result = AnnotationAPI.listByProjectAndUsersWithoutTerm(project.id, user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        assert DomainAPI.containsInJSONList(annotationWithoutTerm.id,json)
+        assert !DomainAPI.containsInJSONList(annotationWithTerm.id,json)
+    }
+
+    void testListingAnntotationWithoutTermAlgo() {
+        //create annotation without term
+        UserJob user = BasicInstance.createOrGetBasicUserJob()
+        Project project = BasicInstance.getBasicProjectNotExist()
+        Ontology ontology = BasicInstance.createOrGetBasicOntology()
+        project.ontology = ontology
+        project.save(flush: true)
+        try {Infos.addUserRight(user.user,project) }catch(Exception e){println e}
+        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        image.project = project
+        image.save(flush: true)
+
+        Annotation annotationWithoutTerm = BasicInstance.getBasicAnnotationNotExist()
+        annotationWithoutTerm.project = project
+        annotationWithoutTerm.image = image
+        annotationWithoutTerm.user = user
+        assert annotationWithoutTerm.save(flush: true)
+
+        AlgoAnnotationTerm at = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        at.term.ontology = ontology
+        at.term.save(flush: true)
+        at.userJob = user
+        at.save(flush: true)
+        Annotation annotationWithTerm = at.annotation
+        annotationWithTerm.user = user
+        annotationWithTerm.project = project
+        annotationWithTerm.image = image
+        assert annotationWithTerm.save(flush: true)
+
+        //list annotation without term with this user
+        def result = AnnotationAPI.listByProjectAndUsersWithoutTerm(project.id, user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        assert DomainAPI.containsInJSONList(annotationWithoutTerm.id,json)
+        assert !DomainAPI.containsInJSONList(annotationWithTerm.id,json)
+    }
+
+
+    void testListingAnntotationWithSeveralTerm() {
+        //create annotation without term
+        User user = BasicInstance.getNewUser()
+        Project project = BasicInstance.getBasicProjectNotExist()
+        Ontology ontology = BasicInstance.createOrGetBasicOntology()
+        project.ontology = ontology
+        project.save(flush: true)
+        Infos.addUserRight(user.username,project)
+        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        image.project = project
+        image.save(flush: true)
+
+        //annotation with no multiple term
+        Annotation annotationWithNoTerm = BasicInstance.getBasicAnnotationNotExist()
+        annotationWithNoTerm.project = project
+        annotationWithNoTerm.image = image
+        annotationWithNoTerm.user = user
+        assert annotationWithNoTerm.save(flush: true)
+
+        //annotation with multiple term
+        AnnotationTerm at = BasicInstance.getBasicAnnotationTermNotExist("")
+        at.term.ontology = ontology
+        at.term.save(flush: true)
+        at.user = user
+        at.save(flush: true)
+        Annotation annotationWithMultipleTerm = at.annotation
+        annotationWithMultipleTerm.user = user
+        annotationWithMultipleTerm.project = project
+        annotationWithMultipleTerm.image = image
+        assert annotationWithMultipleTerm.save(flush: true)
+        AnnotationTerm at2 = BasicInstance.getBasicAnnotationTermNotExist("")
+        at2.term.ontology = ontology
+        at2.term.save(flush: true)
+        at2.user = user
+        at2.annotation=annotationWithMultipleTerm
+        at2.save(flush: true)
+
+        //list annotation without term with this user
+        def result = AnnotationAPI.listByProjectAndUsersSeveralTerm(project.id, user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        assert !DomainAPI.containsInJSONList(annotationWithNoTerm.id,json)
+        assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)
+    }
+
+    void testListingAnntotationWithSeveralTermAlgo() {
+        //create annotation without term
+        UserJob user = BasicInstance.createOrGetBasicUserJob()
+        Project project = BasicInstance.getBasicProjectNotExist()
+        Ontology ontology = BasicInstance.createOrGetBasicOntology()
+        project.ontology = ontology
+        project.save(flush: true)
+        try {Infos.addUserRight(user.user,project) }catch(Exception e){println e}
+        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        image.project = project
+        image.save(flush: true)
+
+        //annotation with no multiple term
+        Annotation annotationWithNoTerm = BasicInstance.getBasicAnnotationNotExist()
+        annotationWithNoTerm.project = project
+        annotationWithNoTerm.image = image
+        annotationWithNoTerm.user = user
+        assert annotationWithNoTerm.save(flush: true)
+
+        //annotation with multiple term
+        AlgoAnnotationTerm at = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        at.term.ontology = ontology
+        at.term.save(flush: true)
+        at.userJob = user
+        at.save(flush: true)
+        Annotation annotationWithMultipleTerm = at.annotation
+        annotationWithMultipleTerm.user = user
+        annotationWithMultipleTerm.project = project
+        annotationWithMultipleTerm.image = image
+        assert annotationWithMultipleTerm.save(flush: true)
+        AlgoAnnotationTerm at2 = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        at2.term.ontology = ontology
+        at2.term.save(flush: true)
+        at2.userJob = user
+        at2.annotation=annotationWithMultipleTerm
+        at2.save(flush: true)
+
+        //list annotation without term with this user
+        def result = AnnotationAPI.listByProjectAndUsersSeveralTerm(project.id, user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        assert !DomainAPI.containsInJSONList(annotationWithNoTerm.id,json)
+        assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)
     }
 
 }

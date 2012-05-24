@@ -36,7 +36,6 @@ class Job extends CytomineDomain  {
         progress(min: 0, max: 100)
         project(nullable:true)
         status(range: 0..6)
-        rate(nullable:true)
     }
 
     static mapping = {

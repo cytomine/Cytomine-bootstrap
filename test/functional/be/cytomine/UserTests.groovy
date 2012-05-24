@@ -138,10 +138,10 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(400, result.code)
     }
 
-    /*void testAddUserChildCorrect() {
+    void testAddUserChildCorrect() {
        log.info("create user")
        def parent = User.findByUsername(Infos.GOODLOGIN);
-       def json = "{parent:"+ parent.id +", username:"+ Math.random()+"}";
+       def json = "{parent:"+ parent.id +", username:"+ Math.random()+", software: ${BasicInstance.createOrGetBasicSoftware().id}}";
 
        log.info("post user child")
        String URL = Infos.CYTOMINEURL+"api/userJob.json"
@@ -159,5 +159,5 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
        assert json instanceof JSONObject
        int idUser = json.userJob.id
 
-     }*/
+     }
 }

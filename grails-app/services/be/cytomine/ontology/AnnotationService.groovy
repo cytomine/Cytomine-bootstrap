@@ -29,7 +29,6 @@ import org.hibernate.FetchMode
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
 import be.cytomine.Exception.CytomineException
-import be.cytomine.security.User
 
 class AnnotationService extends ModelService {
 
@@ -56,7 +55,16 @@ class AnnotationService extends ModelService {
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList, boolean noTerm, boolean multipleTerm) {
-        log.info("project/userList/noTerm/multipleTerm")
+         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob ) {
+             listForUserJob(project,userList,imageInstanceList,noTerm,multipleTerm)
+         } else {
+             listForUser(project,userList,imageInstanceList,noTerm,multipleTerm)
+         }
+    }
+
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    def listForUser(Project project, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList, boolean noTerm, boolean multipleTerm) {
+        log.info("project/userList/noTerm/multipleTerm project=$project.id userList=$userList imageInstanceList=$imageInstanceList noTerm=$noTerm multipleTerm=$multipleTerm")
         if (userList.isEmpty()) return []
         if (imageInstanceList.isEmpty()) return []
         else if (multipleTerm) {
@@ -99,6 +107,9 @@ class AnnotationService extends ModelService {
                     groupProperty("annotation.id")
                 }
             }
+            log.info "Found="+annotationsWithTerms.size()
+            annotationsWithTerms.each {println it}
+
 
             //inList crash is argument is an empty list so we have to use if/else at this time
             def annotations = null
@@ -144,6 +155,91 @@ class AnnotationService extends ModelService {
             return annotations
         }
     }
+
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+     def listForUserJob(Project project, Collection<UserJob> userList, Collection<ImageInstance> imageInstanceList, boolean noTerm, boolean multipleTerm) {
+         log.info("project/userList/noTerm/multipleTerm for UserJob")
+         if (userList.isEmpty()) return []
+         if (imageInstanceList.isEmpty()) return []
+         else if (multipleTerm) {
+             log.info "multipleTerm"
+             def terms = Term.findAllByOntology(project.getOntology())
+             def annotationsWithTerms = AlgoAnnotationTerm.withCriteria() {
+                 inList("term", terms)
+                 join("annotation")
+                 createAlias("annotation", "a")
+                 eq("a.project", project)
+                 inList("a.image", imageInstanceList)
+                 inList("a.user", userList)
+                 projections {
+                     groupProperty("annotation")
+                     countDistinct("term")
+                     countDistinct('created', 'createdSort')
+
+                 }
+                 order('createdSort','desc')
+             }
+             def annotations = []
+             annotationsWithTerms.eachWithIndex {  result, index ->
+                 if (result[1] > 1) annotations.add(result[0])
+                 //filter in groovy, to do : I tried greaterThan criteria on alias nbTerms whithout success
+                 //+todo: add  (index>=offset && index<max) in request to improve perf
+             }
+             annotations
+         }
+         else if (noTerm) {
+             log.info "noTerm"
+             def terms = Term.findAllByOntology(project.getOntology())
+             def annotationsWithTerms = AlgoAnnotationTerm.createCriteria().list {
+                 inList("term", terms)
+                 join("annotation")
+                 createAlias("annotation", "a")
+                 inList("a.image", imageInstanceList)
+                 inList("a.user", userList)
+                 projections {
+                     eq("a.project", project)
+                     groupProperty("annotation.id")
+                 }
+             }
+
+             //inList crash is argument is an empty list so we have to use if/else at this time
+             def annotations = null
+             if (annotationsWithTerms.size() == 0) {
+                 annotations = Annotation.createCriteria().list {
+                     eq("project", project)
+                     inList("image", imageInstanceList)
+                     inList("user", userList)
+                     order 'created', 'desc'
+                 }
+             } else {
+                 annotations = Annotation.createCriteria().list {
+                     eq("project", project)
+                     inList("image", imageInstanceList)
+                     inList("user", userList)
+                     not {
+                         inList("id", annotationsWithTerms)
+                     }
+                     order 'created', 'desc'
+                 }
+             }
+
+             return annotations
+         } else {
+             log.info "findAllByProjectAndUserInList=" + project + " users=" + userList
+             long start = new Date().time
+             def annotations = Annotation.createCriteria().list {
+                 eq("project", project)
+                 inList("user", userList)
+                 inList("image", imageInstanceList)
+                 fetchMode 'image', FetchMode.JOIN
+                 fetchMode 'image.baseImage', FetchMode.JOIN
+                 order 'created', 'desc'
+             }
+             long end = new Date().time
+             println "time = " + (end - start) + "ms"
+             return annotations
+         }
+     }
 
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
@@ -210,13 +306,13 @@ class AnnotationService extends ModelService {
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
          if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob ) {
-            list_for_user_job(project, term, userList, imageInstanceList)
+            listForUserJob(project, term, userList, imageInstanceList)
          } else {
-             list_for_user(project, term, userList, imageInstanceList)
+             listForUser(project, term, userList, imageInstanceList)
          }
     }
 
-    private def list_for_user(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
+    private def listForUser(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
         if (userList.isEmpty()) return []
         if (imageInstanceList.isEmpty()) return []
         if (imageInstanceList.size() == project.countImages) {
@@ -247,7 +343,7 @@ class AnnotationService extends ModelService {
         }
     }
 
-    private def list_for_user_job(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
+    private def listForUserJob(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
         if (userList.isEmpty()) return []
         if (imageInstanceList.isEmpty()) return []
         if (imageInstanceList.size() == project.countImages) {
@@ -337,7 +433,6 @@ class AnnotationService extends ModelService {
                     log.error "Exception index in retrieval:" + e.toString()
                }
             }
-            log.info "OUT"
             return result
         }
     }
