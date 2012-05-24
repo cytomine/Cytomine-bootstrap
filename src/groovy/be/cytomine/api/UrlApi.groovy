@@ -15,6 +15,14 @@ class UrlApi {
         return url + "/api/image/"+idImage+"/metadata.json"
     }
 
+    static def getThumbURLWithImageId(String url,Long idImage) {
+        return url + "/api/image/"+idImage+"/thumb.png"
+    }
+
+    static def getPreviewURLWithImageId(String url, Long idImage) {
+        return url + "/api/image/"+idImage+"/preview.png"
+    }
+
     static def getAnnotationCropWithAnnotationId(String url,Long idAnnotation) {
         return url+'/api/annotation/' + idAnnotation +'/crop.jpg'
     }

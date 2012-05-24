@@ -18,7 +18,7 @@ class Job extends CytomineDomain  {
 
     int progress = 0
     int status = 0 //enum type are too heavy with GORM
-    int number
+    int number//nth job of the software within a project
 
 
     Project project

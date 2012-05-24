@@ -24,6 +24,7 @@ class RestAnnotationController extends RestController {
     def exportService
     def grailsApplication
     def annotationService
+	def domainService
     def termService
     def imageInstanceService
     def userService
@@ -323,6 +324,7 @@ class RestAnnotationController extends RestController {
                     }
                 }
     }
+
 
     private def addOne(json, shouldResponse = true) {
         //print "json="+json

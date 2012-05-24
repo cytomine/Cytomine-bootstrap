@@ -102,13 +102,20 @@ class RestUserController extends RestController {
         }
 
         UserJob userJob = new UserJob()
-        
         if(json.job.toString().equals("null")) {
             log.debug "Job is not define: create new job:"+json
             Job job = new Job()
             job.software = Software.read(json.software)
-            try {job.project = Project.read(json.project) }catch(Exception e) {log.warn e.toString()}
-            job = job.save(flush : true) 
+            try {
+                job.project = Project.read(json.project)
+            }catch(Exception e) {
+                log.warn e.toString()
+            }
+            if (job.validate()) {
+                job = job.save(flush : true)
+            } else {
+                job.errors?.each { log.warn it}
+            }
             userJob.job = job
         } else {
 

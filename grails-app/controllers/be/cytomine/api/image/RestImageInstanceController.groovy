@@ -23,6 +23,7 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
+import com.vividsolutions.jts.io.WKTReader
 
 /**
  * Created by IntelliJ IDEA.
@@ -147,6 +148,13 @@ class RestImageInstanceController extends RestController {
         } catch (Exception e) {
             log.error("GetThumb:" + e);
         }
+    }
+
+    def cropGeometry = {
+        def geometry = new WKTReader().read(params.geometry)
+        def annotation = new Annotation(location: geometry)
+        annotation.image = ImageInstance.read(params.id)
+        responseImage(abstractImageService.crop(annotation, null))
     }
 
     def mask = {

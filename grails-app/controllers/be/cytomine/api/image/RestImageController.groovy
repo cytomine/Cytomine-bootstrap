@@ -8,6 +8,7 @@ import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.image.ImageInstance
 
 class RestImageController extends RestController {
 

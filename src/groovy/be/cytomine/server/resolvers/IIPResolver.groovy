@@ -109,7 +109,7 @@ class IIPResolver extends Resolver{
         double tmpWidth = width
         double tmpHeight = height
         def nbZoom = 0
-        while (tmpWidth >= 256 || tmpHeight >= 256) {
+        while (tmpWidth > 256 || tmpHeight > 256) {
             nbZoom++
             tmpWidth = tmpWidth / 2
             tmpHeight = tmpHeight / 2

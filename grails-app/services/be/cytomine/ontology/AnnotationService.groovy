@@ -29,6 +29,7 @@ import org.hibernate.FetchMode
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
 import be.cytomine.Exception.CytomineException
+import be.cytomine.security.User
 
 class AnnotationService extends ModelService {
 
@@ -208,6 +209,14 @@ class AnnotationService extends ModelService {
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
+         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob ) {
+            list_for_user_job(project, term, userList, imageInstanceList)
+         } else {
+             list_for_user(project, term, userList, imageInstanceList)
+         }
+    }
+
+    private def list_for_user(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
         if (userList.isEmpty()) return []
         if (imageInstanceList.isEmpty()) return []
         if (imageInstanceList.size() == project.countImages) {
@@ -236,7 +245,39 @@ class AnnotationService extends ModelService {
             }
             return criteria.unique()
         }
+    }
 
+    private def list_for_user_job(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
+        if (userList.isEmpty()) return []
+        if (imageInstanceList.isEmpty()) return []
+        if (imageInstanceList.size() == project.countImages) {
+            def criteria = AlgoAnnotationTerm.withCriteria() {
+                createAlias("annotation", "a")
+                eq('project', project)
+                eq('term', term)
+                inList('userJob', userList)
+                projections {
+                    groupProperty("annotation")
+                }
+                //order 'a.created', 'desc'
+
+            }
+            return criteria.unique()
+        } else {
+            def criteria = AlgoAnnotationTerm.withCriteria() {
+                createAlias("annotation", "a")
+                eq('project', project)
+                eq('term', term)
+                inList('userJob', userList)
+                inList("a.image", imageInstanceList)
+                projections {
+                    groupProperty("annotation")
+                }
+               // order 'a.created', 'desc'
+
+            }
+            return criteria.unique()
+        }
     }
 
     Annotation get(def id) {
@@ -266,7 +307,6 @@ class AnnotationService extends ModelService {
 
         //Synchronzed this part of code, prevent two annotation to be add at the same time
         synchronized (this.getClass()) {
-            log.info "IN"
             //Add annotation user
             json.user = currentUser.id
             //Add Annotation
