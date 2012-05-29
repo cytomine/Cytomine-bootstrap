@@ -7,9 +7,12 @@ import org.apache.commons.io.IOUtils
 
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 class RestController {
 
+    def sessionFactory
+    def propertyInstanceMap = org.codehaus.groovy.grails.plugins.DomainClassGrailsPlugin.PROPERTY_INSTANCE_MAP
     def springSecurityService
     int idUser
 
@@ -17,18 +20,62 @@ class RestController {
 
     def transactionService
 
+
     def add(def service, def json) {
         try {
-            log.debug("add")
-            def result = service.add(json)
-            log.debug("result")
-            responseResult(result)
+            if (json instanceof JSONArray) {
+                responseResult(addMultiple(service,json))
+            } else {
+                responseResult(addOne(service,json))
+            }
         } catch (CytomineException e) {
             log.error("add error:" + e.msg)
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
     }
+
+    def addOne(def service, def json) {
+          return service.add(json)
+    }
+
+    def addMultiple(def service, def json) {
+        def result = [:]
+        result.data = []
+        int i = 0
+        json.each {
+            def resp = addOne(service, it)  //TODO: when exception here, what should we do? For the time being, stop everything and response error
+            result.data << resp
+            if(i%100==0) cleanUpGorm()
+            i++
+        }
+        cleanUpGorm()
+        result.status = 200
+        return result
+    }
+
+    def cleanUpGorm() {
+        def session = sessionFactory.currentSession
+        session.flush()
+        session.clear()
+        propertyInstanceMap.get().clear()
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def update(def service, def json) {
         try {

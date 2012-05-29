@@ -117,6 +117,16 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
     }
 
+    void testAddAnnotationMultipleCorrect() {
+        def annotationToAdd1 = BasicInstance.createOrGetBasicAnnotation()
+        def annotationToAdd2 = BasicInstance.createOrGetBasicAnnotation()
+        def annotations = []
+        annotations << JSON.parse(annotationToAdd1.encodeAsJSON())
+        annotations << JSON.parse(annotationToAdd2.encodeAsJSON())
+        def result = AnnotationAPI.create(annotations.encodeAsJSON() , Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
     void testAddAnnotationCorrectWithoutProject() {
         def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())

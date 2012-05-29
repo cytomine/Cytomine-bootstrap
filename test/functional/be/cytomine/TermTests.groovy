@@ -12,6 +12,7 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.AnnotationTerm
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.test.http.TermAPI
+import be.cytomine.test.http.AnnotationAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -84,6 +85,16 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
       result = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)
   }
+    
+    void testAddTermMultipleCorrect() {
+        def termToAdd1 = BasicInstance.getBasicTermNotExist()
+        def termToAdd2 = BasicInstance.getBasicTermNotExist()
+        def terms = []
+        terms << JSON.parse(termToAdd1.encodeAsJSON())
+        terms << JSON.parse(termToAdd2.encodeAsJSON())
+        def result = TermAPI.create(terms.encodeAsJSON() , Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }    
 
     void testAddTermAlreadyExist() {
        def termToAdd = BasicInstance.createOrGetBasicTerm()

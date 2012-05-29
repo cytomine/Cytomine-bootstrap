@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory
 import be.cytomine.ontology.Annotation
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.image.ImageInstance
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * User: lrollus
@@ -175,6 +176,7 @@ class AnnotationAPI extends DomainAPI {
         create(jsonAnnotation,user.username,user.password)
     }
 
+
     static def create(String jsonAnnotation, String username, String password) {
         log.info("post annotation:" + jsonAnnotation.replace("\n", ""))
         String URL = Infos.CYTOMINEURL + "api/annotation.json"
@@ -187,6 +189,7 @@ class AnnotationAPI extends DomainAPI {
         client.disconnect();
         log.info("check response")
         def json = JSON.parse(response)
+        if(JSON.parse(jsonAnnotation) instanceof JSONArray) return [code: code]
         Long idAnnotation = json?.annotation?.id
         return [data: Annotation.get(idAnnotation), code: code]
     }

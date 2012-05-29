@@ -9,6 +9,7 @@ import be.cytomine.test.Infos
 import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
 import be.cytomine.ontology.Term
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * User: lrollus
@@ -95,6 +96,7 @@ class TermAPI extends DomainAPI {
         println response
         client.disconnect();
         def json = JSON.parse(response)
+        if(JSON.parse(jsonTerm) instanceof JSONArray) return [code: code]
         Long idTerm = json?.term?.id
         return [data: Term.get(idTerm), code: code]
     }

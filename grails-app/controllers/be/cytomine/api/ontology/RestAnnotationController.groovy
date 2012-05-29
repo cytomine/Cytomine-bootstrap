@@ -31,8 +31,6 @@ class RestAnnotationController extends RestController {
     def projectService
     def cytomineService
     def mailService
-    def sessionFactory
-    def propertyInstanceMap = org.codehaus.groovy.grails.plugins.DomainClassGrailsPlugin.PROPERTY_INSTANCE_MAP
 
 
     def list = {
@@ -313,53 +311,17 @@ class RestAnnotationController extends RestController {
     }
 
     def add = {
-            def json = request.JSON
-            if (json instanceof org.codehaus.groovy.grails.web.json.JSONArray) {
-                def result = [:]
-                result.status = 200
-                result.data = []
-                int i = 0
-                json.each {
-                    try {
-                    def resp = addOne(it, false)
-                        result.data << resp
-                    } catch (CytomineException e) {
-                        log.error(e)
-                        response([success: false, errors: e.msg], e.code)
-                    }
-                    if(i%100==0) cleanUpGorm()
-                    i++
-                }
-                responseResult(result)
-            } else {
-                    try {
-                       responseResult(addOne(json))
-                    } catch (CytomineException e) {
-                        log.error(e)
-                        response([success: false, errors: e.msg], e.code)
-                    }
-                }
+        add(annotationService, request.JSON)
     }
 
-
-    private def addOne(json, shouldResponse = true) {
-        //print "json="+json
+    @Override
+    def addOne(def service, def json) {
         if(!json.project || json.isNull('project')) {
-            log.debug "No project was set"
             ImageInstance image = ImageInstance.read(json.image)
-            log.debug "Get image = "+image
-            log.debug "Get poroject = "+image.project
             if(image) json.project = image.project.id
-            log.debug "Get poroject 2 = "+json.project
         }
-        log.debug "json.project="+json.project + " (" + json.isNull('project') + ")"
-        log.debug "json.location="+json.location + " (" + json.isNull('location') + ")"
         if(json.isNull('project')) throw new WrongArgumentException("Annotation must have a valide project:"+json.project)
-        if(json.isNull('location')) {
-            log.debug "json location is null!"
-            throw new WrongArgumentException("Annotation must have a valide geometry:"+json.location)
-        }
-
+        if(json.isNull('location')) throw new WrongArgumentException("Annotation must have a valide geometry:"+json.location)
         annotationService.checkAuthorization(Long.parseLong(json.project.toString()), new Annotation())
         def result = annotationService.add(json)
         return result
@@ -369,7 +331,6 @@ class RestAnnotationController extends RestController {
         def json = request.JSON
         try {
             def domain = annotationService.retrieve(json)
-
             def result = annotationService.update(domain,json)
             responseResult(result)
         } catch (CytomineException e) {
