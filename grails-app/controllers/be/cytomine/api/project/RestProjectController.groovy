@@ -53,9 +53,10 @@ class RestProjectController extends RestController {
     }
 
     def listRetrieval = {
-        log.info "listRetrieval with rproject id:" + params.id
+        log.info "listRetrieval with project id:" + params.id
         Project project = projectService.read(params.long('id'), new Project())
         if (project) {
+            log.info "project.retrievalProjects=" + project.retrievalProjects
             responseSuccess(project.retrievalProjects)
         }
         else responseNotFound("Project", params.id)

@@ -129,6 +129,7 @@ class ProjectService extends ModelService {
                 Project projectRetrieval = Project.read(idProject)
                 if(projectRetrieval) project.retrievalProjects.add(projectRetrieval)
             }
+            project.save(flush: true)
         }
         return response
     }
