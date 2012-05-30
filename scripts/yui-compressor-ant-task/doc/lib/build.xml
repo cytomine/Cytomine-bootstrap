@@ -76,6 +76,7 @@
 <fileset dir="${src.dir}" includes="lib/dynatree/jquery.dynatree.js"/>
 <fileset dir="${src.dir}" includes="lib/ui.panel/ui.panel.min.js"/>
 <fileset dir="${src.dir}" includes="lib/farbtastic/farbtastic.js"/>
+<fileset dir="${src.dir}" includes="lib/multiselect-next/js/ui.multiselect.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect/src/jquery.multiselect.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect/src/jquery.multiselect.filter.js"/>
 <fileset dir="${src.dir}" includes="lib/jqgrid/js/i18n/grid.locale-en.js"/>

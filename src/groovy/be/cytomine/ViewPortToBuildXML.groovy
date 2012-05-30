@@ -105,9 +105,12 @@ class ViewPortToBuildXML {
 
         (0..<scriptElems.length).each{
             def scriptElem = scriptElems.item(it)
-            def scriptElemSrc = scriptElem.attributes.getNamedItem('src').nodeValue.toString()
 
-            if(scriptElemSrc.startsWith("lib")) libFiles.add(scriptElemSrc);
+            if(scriptElem.attributes.getNamedItem('src')!=null)  {
+                def scriptElemSrc = scriptElem.attributes.getNamedItem('src').nodeValue.toString()
+                if(scriptElemSrc.startsWith("lib")) libFiles.add(scriptElemSrc);
+            }
+
         }
 
         libFiles.each {
@@ -128,9 +131,11 @@ class ViewPortToBuildXML {
 
         (0..<scriptElems.length).each{
             def scriptElem = scriptElems.item(it)
-            def scriptElemSrc = scriptElem.attributes.getNamedItem('src').nodeValue.toString()
 
-            if(scriptElemSrc.startsWith("app")) appFiles.add(scriptElemSrc);
+            if( scriptElem.attributes.getNamedItem('src')!=null) {
+                def scriptElemSrc = scriptElem.attributes.getNamedItem('src').nodeValue.toString()
+                if(scriptElemSrc.startsWith("app")) appFiles.add(scriptElemSrc);
+            }
         }
         appFiles.each {
             println "app -> " + it

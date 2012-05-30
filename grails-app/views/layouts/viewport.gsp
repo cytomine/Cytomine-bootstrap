@@ -77,6 +77,15 @@ body {
 
     <script type="text/javascript" src="lib/farbtastic/farbtastic.js"></script>
 
+
+
+    <script type="text/javascript" src="lib/multiselect-next/js/ui.multiselect.js"></script>
+    <script type="text/javascript" src="lib/multiselect-next/js/plugins/tmpl/jquery.tmpl.1.1.1.js"></script>
+    <script type="text/javascript" src="lib/multiselect-next/js/plugins/blockUI/jquery.blockUI.js"></script>
+    <link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
+    <script>
+        $.fn.multiselectNext = $.fn.multiselect;
+    </script>
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.js"></script>
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.filter.js"></script>
 

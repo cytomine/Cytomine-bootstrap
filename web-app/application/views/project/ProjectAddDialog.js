@@ -1,6 +1,7 @@
 var AddProjectDialog = Backbone.View.extend({
     projectsPanel : null,
     addProjectDialog : null,
+    userMultiSelect : null,
     initialize: function(options) {
         this.container = options.container;
         this.projectsPanel = options.projectsPanel;
@@ -53,8 +54,6 @@ var AddProjectDialog = Backbone.View.extend({
             }
         });
 
-
-
         self.createUserList(usersChoicesTpl);
 
 
@@ -73,29 +72,61 @@ var AddProjectDialog = Backbone.View.extend({
         return this;
 
     },
+//    /* REDONDANT WITH ProjectEditDialog.createUserList !!! */
+//    createUserList : function (usersChoicesTpl) {
+//        /* Create Users List */
+//        var listIdentifierName =  "projectuser";
+//        $("#"+listIdentifierName).empty();
+//        var numberOfColumns = 4;
+//        var numberOfUsersByColumn = Math.floor(_.size(window.app.models.users) / numberOfColumns);
+//        for (var k = 0; k < numberOfColumns; k++) {
+//            $("#"+listIdentifierName).append(_.template("<div class='span2'><ul id='<%= identifier %><%= column %>'></ul></div>", { identifier : listIdentifierName, column : k}));
+//        }
+//        var  i = 0;
+//        window.app.models.users.each(function(user) {
+//            var column = Math.floor(i / numberOfUsersByColumn);
+//            var choice = _.template(usersChoicesTpl, {id:user.id,username:user.prettyName()});
+//            $("#"+listIdentifierName+column).append(choice);
+//            i++;
+//        });
+//        $("#"+listIdentifierName).find('#users'+window.app.status.user.id).attr('checked','checked');
+//        $("#"+listIdentifierName).find('#users'+window.app.status.user.id).click(function() {
+//            $("#"+listIdentifierName).find('#users'+window.app.status.user.id).attr('checked','checked');
+//        });
+//        $("#"+listIdentifierName).find('[for="users'+window.app.status.user.id+'"]').css("font-weight","bold");
+//    },
     /* REDONDANT WITH ProjectEditDialog.createUserList !!! */
     createUserList : function (usersChoicesTpl) {
         /* Create Users List */
-        var listIdentifierName =  "projectuser";
-        $("#"+listIdentifierName).empty();
-        var numberOfColumns = 4;
-        var numberOfUsersByColumn = Math.floor(_.size(window.app.models.users) / numberOfColumns);
-        for (var k = 0; k < numberOfColumns; k++) {
-            $("#"+listIdentifierName).append(_.template("<div class='span2'><ul id='<%= identifier %><%= column %>'></ul></div>", { identifier : listIdentifierName, column : k}));
-        }
-        var  i = 0;
+        $("#projectuser").empty();
         window.app.models.users.each(function(user) {
-            var column = Math.floor(i / numberOfUsersByColumn);
-            var choice = _.template(usersChoicesTpl, {id:user.id,username:user.prettyName()});
-            $("#"+listIdentifierName+column).append(choice);
-            i++;
+
+            if(user.id==window.app.status.user.id) {
+                $("#projectuser").append('<option value="'+user.id+'" selected="selected">'+user.prettyName()+'</option>');
+            } else $("#projectuser").append('<option value="'+user.id+'">'+user.prettyName()+'</option>');
         });
-        $("#"+listIdentifierName).find('#users'+window.app.status.user.id).attr('checked','checked');
-        $("#"+listIdentifierName).find('#users'+window.app.status.user.id).click(function() {
-            $("#"+listIdentifierName).find('#users'+window.app.status.user.id).attr('checked','checked');
-        });
-        $("#"+listIdentifierName).find('[for="users'+window.app.status.user.id+'"]').css("font-weight","bold");
+
+
+        $("#projectuser").multiselectNext({
+            deselected: function(event, ui) {
+                //lock current user (cannot be deselected
+                if($(ui.option).val()==window.app.status.user.id)  {
+                    $("#projectuser").multiselectNext('select', $(ui.option).text());
+                    window.app.view.message("User", "You must be in user list of your project!", "error");
+                }
+            },
+            selected: function(event, ui) {
+                //alert($(ui.option).val() + " has been selected");
+            }});
+
+        $("ul.available").css("height","150px");
+        $("ul.selected").css("height","150px");
+        $("input.search").css("width","75px");
+
+        console.log("window.app.status.user.model.prettyName()="+window.app.status.user.model.prettyName());
+        $("#projectuser").multiselectNext('select',window.app.status.user.model.prettyName());
     },
+
     refresh : function() {
     },
     open: function() {
@@ -124,11 +155,11 @@ var AddProjectDialog = Backbone.View.extend({
         var discipline = $("#projectdiscipline").attr('value');
         if(discipline==-1) discipline=null;
         var ontology = $("#projectontology").attr('value');
-        var users = new Array();
+        var users = $("#projectuser").multiselectNext('selectedValues');
 
-        $('input[type=checkbox][name=usercheckbox]:checked').each(function(i,item){
-            users.push($(item).attr("value"))
-        });
+//        $('input[type=checkbox][name=usercheckbox]:checked').each(function(i,item){
+//            users.push($(item).attr("value"))
+//        });
         //create project
         new ProjectModel({name : name, ontology : ontology, discipline:discipline }).save({name : name, ontology : ontology,discipline:discipline},{
                     success: function (model, response) {
@@ -154,13 +185,9 @@ var AddProjectDialog = Backbone.View.extend({
 
                     },
                     error: function (model, response) {
-
                         var json = $.parseJSON(response.responseText);
-
                         window.app.view.message("Project", json.errors[0], "error");
                         //$("#projecterrorlabel").show();
-
-
                     }
                 }
         );
