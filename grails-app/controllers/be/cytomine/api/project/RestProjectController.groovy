@@ -52,6 +52,16 @@ class RestProjectController extends RestController {
         else responseNotFound("Project", "Discipline", params.id)
     }
 
+    def listRetrieval = {
+        log.info "listRetrieval with rproject id:" + params.id
+        Project project = projectService.read(params.long('id'), new Project())
+        if (project) {
+            responseSuccess(project.retrievalProjects)
+        }
+        else responseNotFound("Project", params.id)
+    }
+
+
     def show = {
         Project project = projectService.read(params.long('id'), new Project())
         if (project) {
@@ -82,11 +92,6 @@ class RestProjectController extends RestController {
     def update = {
         update(projectService, request.JSON)
     }
-
-//    def delete = {
-//        delete(projectService, JSON.parse("{id : $params.id}"))
-//    }
-
 
     def delete = {
         try {

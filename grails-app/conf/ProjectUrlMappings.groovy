@@ -31,5 +31,9 @@ class ProjectUrlMappings {
         "/api/discipline/$id/project"(controller:"restProject"){
             action = [GET:"listByDiscipline"]
         }
+
+        "/api/retrieval/$id/project"(controller:"restProject"){
+            action = [GET:"listRetrieval"]
+        }
     }
 }

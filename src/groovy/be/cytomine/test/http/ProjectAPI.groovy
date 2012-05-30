@@ -91,6 +91,17 @@ class ProjectAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def listRetrieval(Long id, String username, String password) {
+        log.info("list project")
+        String URL = Infos.CYTOMINEURL + "api/retrieval/$id/project.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
 
     static def create(Project projectToAdd, User user) {
        create(projectToAdd.encodeAsJSON(),user.username,user.password)

@@ -23,8 +23,11 @@ class Project extends CytomineDomain {
     long countAnnotations
     long countImages
 
+    boolean retrievalDisable = false
+    boolean retrievalAllOntology = true
+
     static belongsTo = [ontology: Ontology]
-    static hasMany = [projectGroup: ProjectGroup, commands: Command, softwareProjects: SoftwareProject, imageFilterProjects: ImageFilterProject]
+    static hasMany = [projectGroup: ProjectGroup, commands: Command, softwareProjects: SoftwareProject, imageFilterProjects: ImageFilterProject, retrievalProjects : Project]
 
 
     static constraints = {
@@ -128,6 +131,7 @@ class Project extends CytomineDomain {
     }
 
     static Project getFromData(project, jsonProject) {
+        //log.info "jsonProject="+jsonProject
         String name = jsonProject.name.toString()
         if (!name.equals("null"))
             project.name = jsonProject.name.toUpperCase()
@@ -145,6 +149,9 @@ class Project extends CytomineDomain {
         try {project.countImages = Long.parseLong(jsonProject.numberOfImages.toString()) } catch (Exception e) {
             project.countImages = 0
         }
+
+        if(!jsonProject.retrievalDisable.toString().equals("null")) project.retrievalDisable = Boolean.parseBoolean(jsonProject.retrievalDisable.toString())
+        if(!jsonProject.retrievalAllOntology.toString().equals("null")) project.retrievalAllOntology = Boolean.parseBoolean(jsonProject.retrievalAllOntology.toString())
 
         return project;
     }
@@ -180,6 +187,10 @@ class Project extends CytomineDomain {
             try {returnArray['numberOfSlides'] = project.countSlides()} catch (Exception e) {returnArray['numberOfSlides'] = -1}
             try {returnArray['numberOfImages'] = project.countImageInstance()} catch (Exception e) {returnArray['numberOfImages'] = -1}
             try {returnArray['numberOfAnnotations'] = project.countAnnotations()} catch (Exception e) {e.printStackTrace(); returnArray['numberOfAnnotations'] = -1}
+
+            returnArray['retrievalDisable'] = project.retrievalDisable
+            returnArray['retrievalAllOntology'] = project.retrievalAllOntology
+
             returnArray['created'] = project.created ? project.created.time.toString() : null
             returnArray['updated'] = project.updated ? project.updated.time.toString() : null
             return returnArray

@@ -17,6 +17,8 @@ import be.cytomine.test.Infos
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.transaction.annotation.Transactional
 import be.cytomine.command.*
+import org.apache.commons.collections.CollectionUtils
+import be.cytomine.Exception.WrongArgumentException
 
 class ProjectService extends ModelService {
 
@@ -106,7 +108,47 @@ class ProjectService extends ModelService {
     @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new AddCommand(user: currentUser), json)
+        checkRetrievalConsistency(json)
+        def response = executeCommand(new AddCommand(user: currentUser), json)
+
+        //add or delete RetrievalProject
+        log.info "json="+json
+        log.info "response="+response
+
+        Project project = response.object
+        log.info "project="+project
+
+        if(!json.retrievalProjects.toString().equals("null")) {
+            project.refresh()
+            log.info "json.retrievalProjects="+json.retrievalProjects
+            log.info "json.retrievalProjects="+json.retrievalProjects.getClass()
+            log.info "json.retrievalProjects="+json.retrievalProjects.size()
+            log.info "json.retrievalProjects="+json.retrievalProjects.get(0)
+            json.retrievalProjects.each { idProject ->
+                println "idProject="+idProject
+                Project projectRetrieval = Project.read(idProject)
+                if(projectRetrieval) project.retrievalProjects.add(projectRetrieval)
+            }
+        }
+        return response
+    }
+
+    private void checkRetrievalConsistency(def json) {
+        log.info "checkRetrievalConsistency="+json
+        log.info "checkRetrievalConsistency="+json.retrievalProjects
+        log.info "checkRetrievalConsistency="+json.retrievalProjects.getClass()
+        boolean retrievalDisable =  false
+        if(!json.retrievalDisable.toString().equals("null")) retrievalDisable = Boolean.parseBoolean(json.retrievalDisable.toString())
+        boolean retrievalAllOntology =  true
+        if(!json.retrievalAllOntology.toString().equals("null")) retrievalAllOntology= Boolean.parseBoolean(json.retrievalAllOntology.toString())
+        boolean retrievalProjectEmpty = true
+        if(!json.retrievalProjects.toString().equals("null")) retrievalProjectEmpty = json.retrievalProjects.isEmpty()
+
+        log.info "retrievalDisable=$retrievalDisable retrievalAllOntology=$retrievalAllOntology retrievalProjectEmpty=$retrievalProjectEmpty"
+
+        if(retrievalDisable && retrievalAllOntology) throw new WrongArgumentException("Retrieval cannot be disable of all Projects are selected")
+        if(retrievalDisable && !retrievalProjectEmpty) throw new WrongArgumentException("Retrieval cannot be disable of some Projects are selected")
+        if(retrievalAllOntology && !retrievalProjectEmpty) throw new WrongArgumentException("Retrieval cannot be set for all procects if some projects are selected")
     }
 
     @PreAuthorize("#domain.hasPermission('WRITE') or hasRole('ROLE_ADMIN')")
@@ -123,6 +165,12 @@ class ProjectService extends ModelService {
             group.name = newName
             group.save(flush: true)
         }
+
+
+        //update RetrievalProject
+
+
+
         return response
     }
 
@@ -166,6 +214,24 @@ class ProjectService extends ModelService {
     def destroy(Project domain, boolean printMessage) {
         //Build response message
         println "destroy project"
+
+        //remove Retrieval-project where this project is set
+       def criteria = Project.createCriteria()
+        List<Project> projectsThatUseThisProjectForRetrieval = criteria.list {
+          retrievalProjects {
+              eq('id', domain.id)
+          }
+        }
+
+        projectsThatUseThisProjectForRetrieval.each {
+            it.refresh()
+            it.removeFromRetrievalProjects(domain)
+            it.save(flush: true)
+        }
+
+        //remove retrieval-project of this project
+        //domain.retrievalProjects.clear()
+
         //Delete all command / command history from project
         CommandHistory.findAllByProject(domain).each { it.delete() }
         Command.findAllByProject(domain).each {
