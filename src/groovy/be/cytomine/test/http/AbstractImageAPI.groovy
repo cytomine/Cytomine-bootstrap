@@ -8,7 +8,6 @@ import be.cytomine.test.Infos
 import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
 import be.cytomine.image.AbstractImage
-import be.cytomine.image.acquisition.Scanner
 import be.cytomine.project.Slide
 import be.cytomine.image.Mime
 import be.cytomine.image.acquisition.Instrument

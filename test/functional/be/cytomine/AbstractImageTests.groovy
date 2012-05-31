@@ -2,7 +2,6 @@ package be.cytomine
 
 import be.cytomine.test.BasicInstance
 import be.cytomine.image.AbstractImage
-import be.cytomine.image.acquisition.Scanner
 import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
 import org.codehaus.groovy.grails.web.json.JSONObject

@@ -4,7 +4,6 @@ import be.cytomine.image.Mime
 import be.cytomine.ontology.Annotation
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.image.AbstractImage
-import be.cytomine.image.acquisition.Scanner
 import be.cytomine.ontology.Term
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory

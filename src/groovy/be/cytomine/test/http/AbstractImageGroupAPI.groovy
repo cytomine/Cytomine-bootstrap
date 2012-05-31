@@ -2,7 +2,6 @@ package be.cytomine.test.http
 
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.Mime
-import be.cytomine.image.acquisition.Scanner
 import be.cytomine.project.Slide
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstance
