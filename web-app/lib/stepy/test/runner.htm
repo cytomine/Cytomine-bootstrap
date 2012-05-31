@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>jQuery Test Runner</title>
+
+		<link rel="stylesheet" type="text/css" href="lib/jasmine.css">
+		<link rel="stylesheet" type="text/css" href="../css/jquery.stepy.css">
+
+		<script type="text/javascript" charset="utf-8" src="../js/jquery.min.js"></script>
+		<script type="text/javascript" charset="utf-8" src="../js/jquery.validate.min.js"></script>
+		<script type="text/javascript" charset="utf-8" src="../js/jquery.stepy.js"></script>
+
+		<script type="text/javascript" charset="utf-8" src="lib/jasmine.js"></script>
+		<script type="text/javascript" charset="utf-8" src="lib/jasmine-html.js"></script>
+		<script type="text/javascript" charset="utf-8" src="lib/jasmine-jquery.js"></script>
+	</head>
+	<body>
+		<script type="text/javascript">
+			describe('Using checkbox', function() {
+
+				beforeEach(function() {
+					$('body').append(
+							'<form id="stepy">' +
+							'<fieldset title="Step 1">' +
+								'<legend>description 1</legend>' +
+								'<label>User:</label>' +
+								'<input type="hidden" name="hidden" />' +
+								'<input type="text" value="wbotelhos" name="user" disabled="disabled" />' +
+								'<label>E-mail:</label> <input type="text" name="email" />' +
+								'<input type="checkbox" name="checked" /> Checked?' +
+								'<label>Newsletter?</label>' +
+								'<input type="radio" name="newsletter" /> Yep' +
+								'<input type="radio" name="newsletter" /> Nop' +
+								'<label>Password:</label> <input type="password" name="password" />' +
+							'</fieldset>' +
+							'<fieldset title="Step 2">' +
+								'<legend>description 2</legend>' +
+								'<label>Bio:</label> <textarea name="bio"></textarea>' +
+							'</fieldset>' +
+							'<fieldset title="Step 3">' +
+								'<legend>description 3</legend>' +
+								'<label>Birthday:</label>' +
+								'<select name="day">' +
+									'<option></option>' +
+									'<option>23</option>' +
+								'</select>' +
+								'<label>Site:</label><input type="text" name="site" size="40" />' +
+							'</fieldset>' +
+							'<input type="submit" class="finish" value="Finish!" />' +
+						'</form>'
+					);
+				});
+
+				afterEach(function() {
+					var $body = $('body');
+				});
+	
+				it('should valid checkable field even when it is hidden', function() {
+					// given
+					var $form	= $('#stepy').stepy({ block: true, validate: true }),
+						$steps	= $form.children(), 
+						$first	= $steps.eq(0),
+						$second	= $steps.eq(1),
+						$third	= $steps.eq(2);
+
+					$form.validate({
+						errorPlacement: function(error, element) {
+							$('#stepy div.stepy-error').append(error);
+						}, rules: {
+							'checked':	'required'
+						}, messages: {
+							'checked':	{ required: 'Checked field is requerid!' }
+						}
+					});
+
+					var $checked = $('input[name="checked"]');
+
+					// when
+					$checked.click();
+					$first.find('.button-next').click();
+
+					$checked.click();
+					$second.find('.button-next').click();
+
+					// then
+					expect($form.children('.stepy-error')).toContain('label.error');
+					expect($first).not.toBeHidden();
+					expect($second).toBeHidden();
+					expect($third).toBeHidden();
+				});
+				
+			});
+
+			jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+			jasmine.getEnv().execute();
+		</script>
+	</body>
+</html>

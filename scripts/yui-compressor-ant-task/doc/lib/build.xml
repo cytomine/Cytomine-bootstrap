@@ -77,8 +77,11 @@
 <fileset dir="${src.dir}" includes="lib/ui.panel/ui.panel.min.js"/>
 <fileset dir="${src.dir}" includes="lib/farbtastic/farbtastic.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect-next/js/ui.multiselect.js"/>
+<fileset dir="${src.dir}" includes="lib/multiselect-next/js/plugins/tmpl/jquery.tmpl.1.1.1.js"/>
+<fileset dir="${src.dir}" includes="lib/multiselect-next/js/plugins/blockUI/jquery.blockUI.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect/src/jquery.multiselect.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect/src/jquery.multiselect.filter.js"/>
+<fileset dir="${src.dir}" includes="lib/stepy/js/jquery.stepy.min.js"/>
 <fileset dir="${src.dir}" includes="lib/jqgrid/js/i18n/grid.locale-en.js"/>
 <fileset dir="${src.dir}" includes="lib/jqgrid/js/jquery.jqGrid.src.js"/>
 <fileset dir="${src.dir}" includes="lib/DataTables-1.9.0/media/js/jquery.dataTables.js"/>
