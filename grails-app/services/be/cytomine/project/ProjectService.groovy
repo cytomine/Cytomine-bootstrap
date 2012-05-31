@@ -123,7 +123,6 @@ class ProjectService extends ModelService {
             log.info "json.retrievalProjects="+json.retrievalProjects
             log.info "json.retrievalProjects="+json.retrievalProjects.getClass()
             log.info "json.retrievalProjects="+json.retrievalProjects.size()
-            log.info "json.retrievalProjects="+json.retrievalProjects.get(0)
             json.retrievalProjects.each { idProject ->
                 println "idProject="+idProject
                 Project projectRetrieval = Project.read(idProject)

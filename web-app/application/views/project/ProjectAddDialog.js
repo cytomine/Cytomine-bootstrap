@@ -2,6 +2,7 @@ var AddProjectDialog = Backbone.View.extend({
     projectsPanel : null,
     addProjectDialog : null,
     userMultiSelect : null,
+    projectMultiSelectAlreadyLoad : false,
     initialize: function(options) {
         this.container = options.container;
         this.projectsPanel = options.projectsPanel;
@@ -22,13 +23,43 @@ var AddProjectDialog = Backbone.View.extend({
         return this;
     },
     doLayout : function(projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl, usersChoicesTpl) {
-
         var self = this;
         var dialog = _.template(projectAddDialogTpl, {});
         $("#editproject").replaceWith("");
         $("#addproject").replaceWith("");
         $(self.el).append(dialog);
 
+        self.initStepy();
+        self.createProjectInfo(ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl);
+        self.createUserList();
+        self.createRetrievalProject();
+
+        //Build dialog
+        self.addProjectDialog = $("#addproject").modal({
+            keyboard : true,
+            backdrop : false
+        });
+        $("#saveProjectButton").click(function(){$("#login-form-add-project").submit();return false;});
+        $("#closeAddProjectDialog").click(function(){$("#addproject").modal('hide');$("#addproject").remove();return false;});
+        self.open();
+        return this;
+    },
+    initStepy : function() {
+        $('#login-form-add-project').stepy({next: function(index) {
+            //show save button on last step
+             if(index==$("#login-form-add-project").find("fieldset").length) $("#saveProjectButton").show();
+          }, back: function(index) {
+            //hide save button if not on last step
+            if(index!=$("#login-form-add-project").find("fieldset").length) $("#saveProjectButton").hide();
+          }});
+        $("fieldset").find("a.button-next").css("float","right");
+        $("fieldset").find("a.button-back").css("float","left");
+        $("fieldset").find("a").removeClass("button-next");
+        $("fieldset").find("a").removeClass("button-back");
+        $("fieldset").find("a").addClass("btn btn-primary");
+    },
+    createProjectInfo : function(ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl) {
+        var self = this;
         $("#login-form-add-project").submit(function () {self.createProject(); return false;});
         $("#login-form-add-project").find("input").keydown(function(e){
             if (e.keyCode == 13) { //ENTER_KEY
@@ -53,50 +84,8 @@ var AddProjectDialog = Backbone.View.extend({
                 });
             }
         });
-
-        self.createUserList(usersChoicesTpl);
-
-
-        //Build dialog
-
-        self.addProjectDialog = $("#addproject").modal({
-            keyboard : true,
-            backdrop : false
-        });
-
-        $("#saveProjectButton").click(function(){$("#login-form-add-project").submit();return false;});
-        $("#closeAddProjectDialog").click(function(){$("#addproject").modal('hide');$("#addproject").remove();return false;});
-
-        self.open();
-
-        return this;
-
     },
-//    /* REDONDANT WITH ProjectEditDialog.createUserList !!! */
-//    createUserList : function (usersChoicesTpl) {
-//        /* Create Users List */
-//        var listIdentifierName =  "projectuser";
-//        $("#"+listIdentifierName).empty();
-//        var numberOfColumns = 4;
-//        var numberOfUsersByColumn = Math.floor(_.size(window.app.models.users) / numberOfColumns);
-//        for (var k = 0; k < numberOfColumns; k++) {
-//            $("#"+listIdentifierName).append(_.template("<div class='span2'><ul id='<%= identifier %><%= column %>'></ul></div>", { identifier : listIdentifierName, column : k}));
-//        }
-//        var  i = 0;
-//        window.app.models.users.each(function(user) {
-//            var column = Math.floor(i / numberOfUsersByColumn);
-//            var choice = _.template(usersChoicesTpl, {id:user.id,username:user.prettyName()});
-//            $("#"+listIdentifierName+column).append(choice);
-//            i++;
-//        });
-//        $("#"+listIdentifierName).find('#users'+window.app.status.user.id).attr('checked','checked');
-//        $("#"+listIdentifierName).find('#users'+window.app.status.user.id).click(function() {
-//            $("#"+listIdentifierName).find('#users'+window.app.status.user.id).attr('checked','checked');
-//        });
-//        $("#"+listIdentifierName).find('[for="users'+window.app.status.user.id+'"]').css("font-weight","bold");
-//    },
-    /* REDONDANT WITH ProjectEditDialog.createUserList !!! */
-    createUserList : function (usersChoicesTpl) {
+    createUserList : function () {
         /* Create Users List */
         $("#projectuser").empty();
         window.app.models.users.each(function(user) {
@@ -119,14 +108,72 @@ var AddProjectDialog = Backbone.View.extend({
                 //alert($(ui.option).val() + " has been selected");
             }});
 
-        $("ul.available").css("height","150px");
-        $("ul.selected").css("height","150px");
-        $("input.search").css("width","75px");
+        $("div.ui-multiselect").find("ul.available").css("height","150px");
+        $("div.ui-multiselect").find("ul.selected").css("height","150px");
+        $("div.ui-multiselect").find("input.search").css("width","75px");
+
+        $("div.ui-multiselect").find("div.actions").css("background-color","#DDDDDD");
 
         console.log("window.app.status.user.model.prettyName()="+window.app.status.user.model.prettyName());
         $("#projectuser").multiselectNext('select',window.app.status.user.model.prettyName());
     },
+    createRetrievalProject : function() {
+        var self = this;
+        $("input#retrievalProjectSome,input#retrievalProjectAll,input#retrievalProjectNone").change(function() {
+                if($("input#retrievalProjectSome").is(':checked')) {
+                    if(!self.projectMultiSelectAlreadyLoad) {
+                        self.createRetrievalProjectSelect();
+                        self.projectMultiSelectAlreadyLoad = true
+                    } else {
+                        console.log("Show");
+                        $("div#retrievalGroup").find(".ui-multiselect").show();
+                    }
+                } else {
+                    console.log("Hide");
+                    $("div#retrievalGroup").find(".ui-multiselect").hide();
+                }
+         });
 
+        $("input#project-name").change(function() {
+                console.log("change");
+                if(self.projectMultiSelectAlreadyLoad) {
+                    self.createRetrievalProjectSelect();
+                }
+         });
+
+        $("#projectontology").change(function() {
+                console.log("change");
+                if(self.projectMultiSelectAlreadyLoad) {
+                    self.createRetrievalProjectSelect();
+                }
+         });
+    },
+    createRetrievalProjectSelect : function () {
+        /* Create Users List */
+        $("#retrievalproject").empty();
+
+        var projectName = $("input#project-name").val();
+        var idOntology = $("select#projectontology").val();
+
+
+        window.app.models.projects.each(function(project) {
+            if(project.get('ontology')==idOntology)
+                $("#retrievalproject").append('<option value="'+project.id+'">'+project.get('name')+'</option>');
+        });
+        $("#retrievalproject").append('<option value="-1" selected="selected">'+projectName+'</option>');
+
+        $("#retrievalproject").multiselectNext( 'destroy' );
+        $("#retrievalproject").multiselectNext({
+            selected: function(event, ui) {
+                //alert($(ui.option).val() + " has been selected");
+            }});
+
+        $("div.ui-multiselect").find("ul.available").css("height","150px");
+        $("div.ui-multiselect").find("ul.selected").css("height","150px");
+        $("div.ui-multiselect").find("input.search").css("width","75px");
+
+        $("div.ui-multiselect").find("div.actions").css("background-color","#DDDDDD");
+    },
     refresh : function() {
     },
     open: function() {
@@ -157,11 +204,16 @@ var AddProjectDialog = Backbone.View.extend({
         var ontology = $("#projectontology").attr('value');
         var users = $("#projectuser").multiselectNext('selectedValues');
 
-//        $('input[type=checkbox][name=usercheckbox]:checked').each(function(i,item){
-//            users.push($(item).attr("value"))
-//        });
+
+        var retrievalDisable = $("input#retrievalProjectNone").is(':checked');
+        var retrievalProjectAll = $("input#retrievalProjectAll").is(':checked');
+        var retrievalProjectSome = $("input#retrievalProjectSome").is(':checked');
+        var projectRetrieval = [];
+        if(retrievalProjectSome)
+            projectRetrieval = $("#retrievalproject").multiselectNext('selectedValues');
+
         //create project
-        new ProjectModel({name : name, ontology : ontology, discipline:discipline }).save({name : name, ontology : ontology,discipline:discipline},{
+        new ProjectModel({name : name, ontology : ontology, discipline:discipline,retrievalDisable:retrievalDisable,retrievalAllOntology:retrievalProjectAll,retrievalProjects:projectRetrieval}).save({name : name, ontology : ontology,discipline:discipline},{
                     success: function (model, response) {
 
                         window.app.view.message("Project", response.message, "success");

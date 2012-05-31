@@ -89,6 +89,9 @@ body {
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.js"></script>
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.filter.js"></script>
 
+    <script type="text/javascript" src="lib/stepy/js/jquery.stepy.min.js"></script>
+    <link rel='stylesheet' href='lib/stepy/css/jquery.stepy.css' type='text/css'/>
+
     <!--<link href="lib/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>-->
 
