@@ -35,8 +35,16 @@ class RetrievalService {
     def listSimilarAnnotationAndBestTerm(Project project, Annotation annotation) throws Exception {
 
         def data = [:]
+
+        //find project used for retrieval
+        List<Long> projectSearch = []
+        if(project.retrievalDisable) return data
+        else if(project.retrievalAllOntology)
+            projectSearch=projectService.list(annotation.project.ontology).collect {it.id}
+        else projectSearch=project.retrievalProjects.collect {it.id}
+
         //Get similar annotation
-        def similarAnnotations = loadAnnotationSimilarities(annotation)
+        def similarAnnotations = loadAnnotationSimilarities(annotation,projectSearch)
         data.annotation = similarAnnotations
 
         //Get all term from project
@@ -80,10 +88,10 @@ class RetrievalService {
         map
     }
 
-    private def loadAnnotationSimilarities(Annotation searchAnnotation) {
-        log.info "get similarities for annotation " + searchAnnotation.id
+    private def loadAnnotationSimilarities(Annotation searchAnnotation,List<Long> projectSearch) {
+        log.info "get similarities for annotation " + searchAnnotation.id + " on " + projectSearch
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
-        def response = getPostSearchResponse(server.url,'/retrieval-web/api/resource/search.json', searchAnnotation)
+        def response = getPostSearchResponse(server.url,'/retrieval-web/api/resource/search.json', searchAnnotation,projectSearch)
         def json = JSON.parse(response)
         def data = []
 
@@ -104,13 +112,11 @@ class RetrievalService {
         return data
     }
 
-    public String getPostSearchResponse(String URL, String resource, Annotation annotation) {
-
-        List<Long> projectWithSameOntology = projectService.list(annotation.project.ontology).collect {it.id}
+    public String getPostSearchResponse(String URL, String resource, Annotation annotation,List<Long> projectsSearch) {
 
         def http = new HTTPBuilder(URL)
         http.auth.basic 'xxx', 'xxx'
-        def params = ["id": annotation.id, "url": UrlApi.getAnnotationCropWithAnnotationId(grailsApplication.config.grails.serverURL,annotation.id), "containers": projectWithSameOntology]
+        def params = ["id": annotation.id, "url": UrlApi.getAnnotationCropWithAnnotationId(grailsApplication.config.grails.serverURL,annotation.id), "containers": projectsSearch]
         def paramsJSON = params as JSON
 
         http.request(POST) {

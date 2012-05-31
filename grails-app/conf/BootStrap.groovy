@@ -2,7 +2,6 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.AbstractImageGroup
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
-import be.cytomine.image.acquisition.Scanner
 import be.cytomine.processing.ImageFilter
 import be.cytomine.processing.Job
 import be.cytomine.processing.Software
@@ -34,6 +33,7 @@ import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import be.cytomine.ViewPortToBuildXML
 import be.cytomine.test.BasicInstance
+import be.cytomine.image.acquisition.Instrument
 
 class BootStrap {
     def springSecurityService
@@ -98,6 +98,20 @@ class BootStrap {
         if (GrailsUtil.environment == BootStrap.test) { //scripts are not present in productions mode and dev mode
             initData(GrailsUtil.environment)
         }
+
+        Instrument scanner = new Instrument(brand:"gigascan2",model:"MODEL2")
+        println "validate scanner = " + scanner.validate()
+        println "errors scanner = " + scanner.errors
+        println "save scanner = " + scanner.save(flush: true)
+        //update abstract image
+
+
+
+
+
+
+
+
         countersService.updateCounters()
         //updateImageProperties()
         generateAbstractImageOriginalFilename()
@@ -123,6 +137,7 @@ class BootStrap {
     }
 
     private def initData(String env) {
+
         createStorage(BootStrapData.storages)
         createImageFilters(BootStrapData.imageFiltersSamples)
         //createGroups(BootStrapData.groupsSamples)
@@ -386,7 +401,7 @@ class BootStrap {
 
             def mime = Mime.findByExtension(extension)
 
-            def scanner = Scanner.findByBrand("gigascan")
+            def scanner = Instrument.findByBrand("gigascan")
 
             Long lo = new Long("1309250380");
             Long hi = new Date().getTime()
@@ -540,22 +555,6 @@ class BootStrap {
         }
     }
 
-    def createScanners(scannersSamples) {
-        scannersSamples.each { item ->
-            if (Scanner.findByBrandAndModel(item.brand, item.model)) return
-            Scanner scanner = new Scanner(brand: item.brand, model: item.model)
-            if (scanner.validate()) {
-                println "Creating scanner ${scanner.brand} - ${scanner.model}..."
-                scanner.save(flush: true)
-            } else {
-                println("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
-                scanner.errors.each {
-                    err -> println err
-                }
-            }
-        }
-    }
-
     def createMimes(mimeSamples) {
         mimeSamples.each { item ->
             if (Mime.findByExtension(item.extension)) return
@@ -589,6 +588,23 @@ class BootStrap {
             }
         }
     }
+
+
+    def createScanners(scannersSamples) {
+         scannersSamples.each { item ->
+             if (Instrument.findByBrandAndModel(item.brand, item.model)) return
+             Instrument scanner = new Instrument(brand: item.brand, model: item.model)
+             if (scanner.validate()) {
+                 println "Creating scanner ${scanner.brand} - ${scanner.model}..."
+                 scanner.save(flush: true)
+             } else {
+                 println("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
+                 scanner.errors.each {
+                     err -> println err
+                 }
+             }
+         }
+     }
 
     def createImageServers(imageServerSamples) {
         imageServerSamples.each { item ->
@@ -703,7 +719,6 @@ class BootStrap {
             def extension = item.extension ?: "jp2"
             def mime = Mime.findByExtension(extension)
 
-            def scanner = Scanner.findByBrand("gigascan")
             def user = User.findByUsername("lrollus")
 
 
@@ -717,7 +732,7 @@ class BootStrap {
                     filename: item.filename,
                     path: item.path,
                     mime: mime,
-                    scanner: scanner,
+                    scanner: null,
                     slide: slides[item.slide],
                     created: created
             )

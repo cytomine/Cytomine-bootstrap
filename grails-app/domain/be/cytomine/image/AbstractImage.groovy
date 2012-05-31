@@ -4,13 +4,13 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.UrlApi
-import be.cytomine.image.acquisition.Scanner
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.project.Slide
 import be.cytomine.server.resolvers.Resolver
 import grails.converters.JSON
+import be.cytomine.image.acquisition.Instrument
 
 class AbstractImage extends CytomineDomain {
 
@@ -18,7 +18,7 @@ class AbstractImage extends CytomineDomain {
 
     String originalFilename
     String filename
-    Scanner scanner
+    Instrument scanner
     Slide slide
     String path
     Mime mime
@@ -100,7 +100,7 @@ class AbstractImage extends CytomineDomain {
 
         String scannerId = jsonImage.scanner.toString()
         if (!scannerId.equals("null")) {
-            image.scanner = Scanner.get(scannerId)
+            image.scanner = Instrument.get(scannerId)
             if (image.scanner == null) throw new WrongArgumentException("Scanner was not found with id:" + scannerId)
         }
         else image.scanner = null

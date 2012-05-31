@@ -9,7 +9,6 @@ import be.cytomine.image.AbstractImageGroup
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.security.SecUser
-import be.cytomine.image.acquisition.Scanner
 import be.cytomine.image.ImageInstance
 import grails.util.GrailsUtil
 

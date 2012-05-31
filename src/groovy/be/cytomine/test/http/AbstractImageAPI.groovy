@@ -11,6 +11,7 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.acquisition.Scanner
 import be.cytomine.project.Slide
 import be.cytomine.image.Mime
+import be.cytomine.image.acquisition.Instrument
 
 /**
  * User: lrollus
@@ -95,8 +96,8 @@ class AbstractImageAPI extends DomainAPI {
         String oldGeom = "POINT (1111 1111)"
         String newGeom = "POINT (9999 9999)"
 
-        Scanner oldScanner = BasicInstance.createOrGetBasicScanner()
-        Scanner newScanner = BasicInstance.getNewScannerNotExist()
+        Instrument oldScanner = BasicInstance.createOrGetBasicScanner()
+        Instrument newScanner = BasicInstance.getNewScannerNotExist()
         newScanner.save(flush:true)
 
         Slide oldSlide = BasicInstance.createOrGetBasicSlide()

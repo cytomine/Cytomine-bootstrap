@@ -112,17 +112,12 @@ class ProjectService extends ModelService {
         def response = executeCommand(new AddCommand(user: currentUser), json)
 
         //add or delete RetrievalProject
-        log.info "json="+json
-        log.info "response="+response
-
         Project project = response.object
         log.info "project="+project
 
         if(!json.retrievalProjects.toString().equals("null")) {
             project.refresh()
             log.info "json.retrievalProjects="+json.retrievalProjects
-            log.info "json.retrievalProjects="+json.retrievalProjects.getClass()
-            log.info "json.retrievalProjects="+json.retrievalProjects.size()
             json.retrievalProjects.each { idProject ->
                 println "idProject="+idProject
                 Project projectRetrieval = Project.read(idProject)
@@ -134,9 +129,6 @@ class ProjectService extends ModelService {
     }
 
     private void checkRetrievalConsistency(def json) {
-        log.info "checkRetrievalConsistency="+json
-        log.info "checkRetrievalConsistency="+json.retrievalProjects
-        log.info "checkRetrievalConsistency="+json.retrievalProjects.getClass()
         boolean retrievalDisable =  false
         if(!json.retrievalDisable.toString().equals("null")) retrievalDisable = Boolean.parseBoolean(json.retrievalDisable.toString())
         boolean retrievalAllOntology =  true

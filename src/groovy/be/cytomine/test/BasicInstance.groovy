@@ -32,6 +32,7 @@ import be.cytomine.processing.SoftwareProject
 import be.cytomine.processing.JobParameter
 import be.cytomine.social.SharedAnnotation
 import be.cytomine.processing.JobData
+import be.cytomine.image.acquisition.Instrument
 
 /**
  * Created by IntelliJ IDEA.
@@ -557,10 +558,10 @@ class BasicInstance {
 
 
 
-    static Scanner createOrGetBasicScanner() {
+    static Instrument createOrGetBasicScanner() {
 
         log.debug "createOrGetBasicScanner()"
-        Scanner scanner = new Scanner(maxResolution: "x40", brand: "brand", model: "model")
+        Instrument scanner = new Instrument(brand: "brand", model: "model")
         log.info(scanner)
         scanner.validate()
         log.info("validate")
@@ -572,10 +573,10 @@ class BasicInstance {
 
     }
 
-    static Scanner getNewScannerNotExist() {
+    static Instrument getNewScannerNotExist() {
 
         log.debug "getNewScannerNotExist()"
-        def scanner = new Scanner(maxResolution: "x60", brand: "newBrand", model: "newModel")
+        def scanner = new Instrument(brand: "newBrand", model: "newModel")
         scanner.validate()
         log.debug "scanner.errors=" + scanner.errors
         scanner.save(flush: true)

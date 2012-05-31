@@ -416,10 +416,10 @@ AnnotationLayer.prototype = {
                         window.app.controllers.browse.navigate(url, false);
                         return false;
                     });
-                    if (!window.app.status.currentProjectModel.get('privateLayer')){
-                        self.showSimilarAnnotation(annotation);
-                    } else {
+                    if (window.app.status.currentProjectModel.get('privateLayer') || window.app.status.currentProjectModel.get('retrievalDisable')){
                         $("#loadSimilarAnnotation" + annotation.id).html("Retrieval not available");
+                    } else {
+                        self.showSimilarAnnotation(annotation);
                     }
                 }
             });
@@ -427,53 +427,59 @@ AnnotationLayer.prototype = {
     },
     showSimilarAnnotation : function(model) {
         var self = this;
-        new TermCollection({idOntology:window.app.status.currentProjectModel.get('ontology')}).fetch({
-            success : function (terms, response) {
-                new AnnotationRetrievalModel({annotation : model.id}).fetch({
-                    success : function (collection, response) {
+        if(window.app.status.currentTermsCollection==undefined || (window.app.status.currentTermsCollection.length > 0 && window.app.status.currentTermsCollection.at(0).id == undefined)) {
+            new TermCollection({idOntology:window.app.status.currentProjectModel.get('ontology')}).fetch({
+                success : function (terms, response) {
+                    window.app.status.currentTermsCollection=terms;
+                    self.showSimilarAnnotationResult(model);
+            }});
+        } else {
+            self.showSimilarAnnotationResult(model);
+        }
+    },
+    showSimilarAnnotationResult : function(model) {
+        new AnnotationRetrievalModel({annotation : model.id}).fetch({
+            success : function (collection, response) {
 
-                        var termsList = collection.get('term');
+                var termsList = collection.get('term');
 
-                        //var termsCollection = new TermCollection(termsList);
+                //var termsCollection = new TermCollection(termsList);
 
-                        var bestTerm1Object;
-                        var bestTerm2Object;
+                var bestTerm1Object;
+                var bestTerm2Object;
 
-                        var sum = 0;
-                        var i = 0;
+                var sum = 0;
+                var i = 0;
 
-                        _.each(termsList,function(term) {
-                            sum = sum + term.rate;
-                            if(i==0) bestTerm1Object = term;
-                            if(i==1) bestTerm2Object = term;
-                            i++;
-                        });
+                _.each(termsList,function(term) {
+                    sum = sum + term.rate;
+                    if(i==0) bestTerm1Object = term;
+                    if(i==1) bestTerm2Object = term;
+                    i++;
+                });
 
-                        var bestTerm1;
-                        var bestTerm2;
-                        var bestTerm1Value = 0;
-                        var bestTerm2Value = 0;
-                        if(bestTerm1Object!=undefined) {
-                            bestTerm1 = bestTerm1Object.id
-                            bestTerm1Value = bestTerm1Object.rate;
-                            if(bestTerm1Value==0) bestTerm1 = undefined;
-                        }
-                        if(bestTerm2Object!=undefined) {
-                            bestTerm2 = bestTerm2Object.id
-                            bestTerm2Value = bestTerm2Object.rate;
-                            if(bestTerm2Value==0) bestTerm2 = undefined;
-                        }
+                var bestTerm1;
+                var bestTerm2;
+                var bestTerm1Value = 0;
+                var bestTerm2Value = 0;
+                if(bestTerm1Object!=undefined) {
+                    bestTerm1 = bestTerm1Object.id;
+                    bestTerm1Value = bestTerm1Object.rate;
+                    if(bestTerm1Value==0) bestTerm1 = undefined;
+                }
+                if(bestTerm2Object!=undefined) {
+                    bestTerm2 = bestTerm2Object.id;
+                    bestTerm2Value = bestTerm2Object.rate;
+                    if(bestTerm2Value==0) bestTerm2 = undefined;
+                }
 
-                        bestTerm1Value = (bestTerm1Value / sum) * 100;
-                        bestTerm2Value = (bestTerm2Value / sum) * 100;
+                bestTerm1Value = (bestTerm1Value / sum) * 100;
+                bestTerm2Value = (bestTerm2Value / sum) * 100;
 
-                        //Print suggested Term
-                        self.printSuggestedTerm(model, terms.get(bestTerm1), terms.get(bestTerm2), bestTerm1Value, bestTerm2Value, terms, collection.get('annotation'));
-                    },error: function (bad, response) {
-                        $("#loadSimilarAnnotation" + model.id).replaceWith("Error: cannot reach retrieval");
-
-
-                    }});
+                //Print suggested Term
+                self.printSuggestedTerm(model, terms.get(bestTerm1), terms.get(bestTerm2), bestTerm1Value, bestTerm2Value, terms, collection.get('annotation'));
+            },error: function (bad, response) {
+                $("#loadSimilarAnnotation" + model.id).replaceWith("Error: cannot reach retrieval");
             }});
     },
     printSuggestedTerm : function(annotation, bestTerm1, bestTerm2, bestTerm1Value, bestTerm2Value, terms, similarAnnotation) {

@@ -117,7 +117,7 @@ var AnnotationView = Backbone.View.extend({
      */
     remove : function (idAnnotation) {
         $("#thumb"+idAnnotation).remove();
-    },
+    }
     /**
      * Refresh thumb with newAnnotations collection:
      * -Add annotations thumb from newAnnotations which are not already in the thumb set
