@@ -145,6 +145,7 @@ class ProjectService extends ModelService {
 
     @PreAuthorize("#domain.hasPermission('WRITE') or hasRole('ROLE_ADMIN')")
     def update(def domain, def json) {
+        checkRetrievalConsistency(json)
         String oldName = Project.get(json.id)?.name
         SecUser currentUser = cytomineService.getCurrentUser()
         def response = executeCommand(new EditCommand(user: currentUser), json)
@@ -158,11 +159,33 @@ class ProjectService extends ModelService {
             group.save(flush: true)
         }
 
-
+        Project project = Project.get(json.id)
         //update RetrievalProject
+        if(!json.retrievalProjects.toString().equals("null")) {
+            List<Long> newProjectRetrievalList = json.retrievalProjects.collect{it.longValue() }
+            List<Long> oldProjectRetrievalList = project.retrievalProjects.collect {it.id}
+            log.info "newProjectRetrievalList = "  + newProjectRetrievalList
+            log.info "oldProjectRetrievalList = "  + oldProjectRetrievalList
 
+            List<Long> shouldBeAdded = CollectionUtils.subtract(newProjectRetrievalList,oldProjectRetrievalList)
+            List<Long> shouldBeRemoved = CollectionUtils.subtract(oldProjectRetrievalList,newProjectRetrievalList)
+            log.info "shouldBeAdded = " + shouldBeAdded
+            log.info "shouldBeRemoved = " + shouldBeRemoved
+            log.info "project="+project.retrievalProjects.collect{it.id}
+            shouldBeAdded.each {
+                log.info "add="+Project.read(it).id
+                project.retrievalProjects.add(Project.read(it))
 
-
+            }
+            shouldBeRemoved.each {
+                log.info "rem="+Project.read(it).id
+                project.retrievalProjects.remove(Project.read(it))
+            }
+            log.info "project="+project.retrievalProjects.collect{it.id}
+            project.save(flush: true)
+            project.refresh()
+            log.info "project="+project.retrievalProjects.collect{it.id}
+         }
         return response
     }
 

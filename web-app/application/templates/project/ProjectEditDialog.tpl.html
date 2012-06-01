@@ -4,27 +4,42 @@
         <h3>Edit a project</h3>
     </div>
     <div class="modal-body">
-        <form id="login-form-edit-project">
-            <div id="projectediterrorlabel" class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                    <strong>Error:</strong><div id="errormessage"></div></p>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="project-edit-name">Name</label>
-                <div class="controls">
-                    <input class="input-xlarge focused" id="project-edit-name" type="text" placeholder="Your project name">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">Groups</label>
-                <div class="controls row" id="projectedituser">
-                </div>
-            </div>
 
+        <form id="login-form-edit-project">
+            <fieldset title="Step 1" style="margin: auto; height: 300px;">
+                <legend>Project information</legend>
+                    <div class="control-group">
+                        <label class="control-label" for="project-edit-name">Name</label>
+                        <div class="controls">
+                            <input class="input-xlarge focused" id="project-edit-name" type="text" placeholder="Your project name">
+                        </div>
+                    </div><br>
+          	</fieldset>
+
+            <fieldset title="Step 2" style="margin: auto;height: 300px;">
+                <legend>Project users</legend>
+                <div>
+                    <select multiple="multiple" id="projectedituser" style="width:500px;">
+                    </select>
+                </div><br>
+            </fieldset>
+
+            <fieldset title="Step 3" style="margin: auto;height: 300px;">
+                <legend>Retrieval info</legend>
+                <div id="retrievalGroup">
+                    <input type="radio" id="retrievalProjectAll" name="retrievalProjectGroup" value="all" checked> Enable retrieval search on all project (same ontology)<br> <br>
+                    <input type="radio" id="retrievalProjectSome" name="retrievalProjectGroup" value="some"> Enable retrieval search on some project (same ontology) <br>
+                        <select multiple="multiple" id="retrievalproject" style="width:500px;display:none;"></select><br>
+                    <input type="radio" id="retrievalProjectNone" name="retrievalProjectGroup" value="none"> Disable retrieval search <br>
+                </div><br>
+            </fieldset>
+
+            <input type="submit" class="finish" style="display:none;"/>
         </form>
+
     </div>
     <div class="modal-footer">
-        <a href="#" id="editProjectButton" class="btn btn-primary">Update</a>
+        <a href="#" id="editProjectButton" class="btn btn-primary" style="display:none;">Update</a>
         <a href="#" id="closeEditProjectDialog" class="btn">Cancel</a>
     </div>
 </div>

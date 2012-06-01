@@ -169,4 +169,146 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
 
     }
 
+    void testUpdateProjectRetrievalAddProjectInsteadOfAllOntology() {
+        //project with AO=T
+        Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
+        projectToAdd.retrievalAllOntology = true;
+        projectToAdd.retrievalDisable = false;
+        projectToAdd.save(flush: true)
+
+        //add project json
+        def jsonProject = JSON.parse(projectToAdd.encodeAsJSON())
+        jsonProject.retrievalDisable = false
+        jsonProject.retrievalAllOntology = false
+        def projectRetrieval = BasicInstance.getBasicProjectNotExist()
+        projectRetrieval.save(flush: true)
+        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval)
+        jsonProject.retrievalProjects = new JSONArray("["+projectRetrieval.id+"]")
+
+        def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        int idProject = json.project.id
+
+        Project checkProject = Project.read(idProject)
+        checkProject.refresh()
+        assert !checkProject.retrievalAllOntology
+        assert !checkProject.retrievalDisable
+        assert checkProject.retrievalProjects.contains(projectRetrieval)
+    }
+
+    void testUpdateProjectRetrievalAddProject() {
+        //project with AO=T
+        Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
+        projectToAdd.retrievalAllOntology = false;
+        projectToAdd.retrievalDisable = false;
+        projectToAdd.retrievalProjects.clear()
+        projectToAdd.save(flush: true)
+        def projectRetrieval1 = BasicInstance.getBasicProjectNotExist()
+        projectRetrieval1.save(flush: true)
+        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval1)
+        projectToAdd.retrievalProjects.add(projectRetrieval1)
+        projectToAdd.save(flush: true)
+
+        //add project json
+        def jsonProject = JSON.parse(projectToAdd.encodeAsJSON())
+        jsonProject.retrievalDisable = false
+        jsonProject.retrievalAllOntology = false
+        def projectRetrieval2 = BasicInstance.getBasicProjectNotExist()
+        projectRetrieval2.save(flush: true)
+        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval2)
+        jsonProject.retrievalProjects = new JSONArray("["+projectRetrieval1.id+"," + projectRetrieval2.id +"]")
+
+        def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        int idProject = json.project.id
+
+        Project checkProject = Project.read(idProject)
+        checkProject.refresh()
+        log.info checkProject.retrievalProjects
+        assert !checkProject.retrievalAllOntology
+        assert !checkProject.retrievalDisable
+        assert checkProject.retrievalProjects.contains(projectRetrieval1)
+        assert checkProject.retrievalProjects.contains(projectRetrieval2)
+    }
+
+    void testUpdateProjectRetrievalRemoveProject() {
+        //project with AO=T
+        Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
+        projectToAdd.retrievalAllOntology = false;
+        projectToAdd.retrievalDisable = false;
+        projectToAdd.retrievalProjects.clear()
+        projectToAdd.save(flush: true)
+        def projectRetrieval1 = BasicInstance.getBasicProjectNotExist()
+        projectRetrieval1.save(flush: true)
+        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval1)
+        def projectRetrieval2 = BasicInstance.getBasicProjectNotExist()
+        projectRetrieval2.save(flush: true)
+        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval2)
+
+        projectToAdd.retrievalProjects.add(projectRetrieval1)
+        projectToAdd.retrievalProjects.add(projectRetrieval2)
+        projectToAdd.save(flush: true)
+
+        //add project json
+        def jsonProject = JSON.parse(projectToAdd.encodeAsJSON())
+        jsonProject.retrievalDisable = false
+        jsonProject.retrievalAllOntology = false
+        jsonProject.retrievalProjects = new JSONArray("["+projectRetrieval1.id+"]")
+
+        def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        int idProject = json.project.id
+
+        Project checkProject = Project.read(idProject)
+        checkProject.refresh()
+        log.info checkProject.retrievalProjects
+        assert !checkProject.retrievalAllOntology
+        assert !checkProject.retrievalDisable
+        assert checkProject.retrievalProjects.contains(projectRetrieval1)
+        assert !checkProject.retrievalProjects.contains(projectRetrieval2)
+    }
+
+    void testUpdateProjectRetrievalRemoveProjectAndDisableRetrieval() {
+        //project with AO=T
+        Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
+        projectToAdd.retrievalAllOntology = false;
+        projectToAdd.retrievalDisable = false;
+        projectToAdd.retrievalProjects.clear()
+        projectToAdd.save(flush: true)
+        def projectRetrieval1 = BasicInstance.getBasicProjectNotExist()
+        projectRetrieval1.save(flush: true)
+        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval1)
+        def projectRetrieval2 = BasicInstance.getBasicProjectNotExist()
+        projectRetrieval2.save(flush: true)
+        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval2)
+
+        projectToAdd.retrievalProjects.add(projectRetrieval1)
+        projectToAdd.retrievalProjects.add(projectRetrieval2)
+        projectToAdd.save(flush: true)
+
+        //add project json
+        def jsonProject = JSON.parse(projectToAdd.encodeAsJSON())
+        jsonProject.retrievalDisable = true
+        jsonProject.retrievalAllOntology = false
+        jsonProject.retrievalProjects = new JSONArray("[]")
+
+        def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        int idProject = json.project.id
+
+        Project checkProject = Project.read(idProject)
+        checkProject.refresh()
+        assert !checkProject.retrievalAllOntology
+        assert checkProject.retrievalDisable
+        assert !checkProject.retrievalProjects.contains(projectRetrieval1)
+        assert !checkProject.retrievalProjects.contains(projectRetrieval2)
+    }
 }

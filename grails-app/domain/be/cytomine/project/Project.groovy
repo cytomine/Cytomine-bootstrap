@@ -131,7 +131,7 @@ class Project extends CytomineDomain {
     }
 
     static Project getFromData(project, jsonProject) {
-        //log.info "jsonProject="+jsonProject
+        log.info "jsonProject="+jsonProject
         String name = jsonProject.name.toString()
         if (!name.equals("null"))
             project.name = jsonProject.name.toUpperCase()
@@ -150,6 +150,7 @@ class Project extends CytomineDomain {
             project.countImages = 0
         }
 
+        log.info "jsonProject.retrievalDisable.toString()="+Boolean.parseBoolean(jsonProject.retrievalAllOntology.toString())
         if(!jsonProject.retrievalDisable.toString().equals("null")) project.retrievalDisable = Boolean.parseBoolean(jsonProject.retrievalDisable.toString())
         if(!jsonProject.retrievalAllOntology.toString().equals("null")) project.retrievalAllOntology = Boolean.parseBoolean(jsonProject.retrievalAllOntology.toString())
 
@@ -187,6 +188,7 @@ class Project extends CytomineDomain {
             try {returnArray['numberOfSlides'] = project.countSlides()} catch (Exception e) {returnArray['numberOfSlides'] = -1}
             try {returnArray['numberOfImages'] = project.countImageInstance()} catch (Exception e) {returnArray['numberOfImages'] = -1}
             try {returnArray['numberOfAnnotations'] = project.countAnnotations()} catch (Exception e) {e.printStackTrace(); returnArray['numberOfAnnotations'] = -1}
+            try {returnArray['retrievalProjects'] = project.retrievalProjects.collect { it.id } } catch (Exception e) {println "users:"+e}
 
             returnArray['retrievalDisable'] = project.retrievalDisable
             returnArray['retrievalAllOntology'] = project.retrievalAllOntology
@@ -195,5 +197,11 @@ class Project extends CytomineDomain {
             returnArray['updated'] = project.updated ? project.updated.time.toString() : null
             return returnArray
         }
+    }
+
+    public boolean equals(Object o) {
+        if (!o) return false
+        try {return ((Project) o).getId() == this.getId()} catch (Exception e) { return false}
+        //if no try/catch, when getting term from ontology => GroovyCastException: Cannot cast object 'null' with class 'org.codehaus.groovy.grails.web.json.JSONObject$Null' to class 'be.cytomine.ontology.Term'
     }
 }
