@@ -427,6 +427,7 @@ AnnotationLayer.prototype = {
     },
     showSimilarAnnotation : function(model) {
         var self = this;
+        console.log('showSimilarAnnotation');
         if(window.app.status.currentTermsCollection==undefined || (window.app.status.currentTermsCollection.length > 0 && window.app.status.currentTermsCollection.at(0).id == undefined)) {
             new TermCollection({idOntology:window.app.status.currentProjectModel.get('ontology')}).fetch({
                 success : function (terms, response) {
@@ -438,6 +439,8 @@ AnnotationLayer.prototype = {
         }
     },
     showSimilarAnnotationResult : function(model) {
+        var self = this;
+        console.log('showSimilarAnnotationResult');
         new AnnotationRetrievalModel({annotation : model.id}).fetch({
             success : function (collection, response) {
 
@@ -477,7 +480,7 @@ AnnotationLayer.prototype = {
                 bestTerm2Value = (bestTerm2Value / sum) * 100;
 
                 //Print suggested Term
-                self.printSuggestedTerm(model, terms.get(bestTerm1), terms.get(bestTerm2), bestTerm1Value, bestTerm2Value, terms, collection.get('annotation'));
+                self.printSuggestedTerm(model, window.app.status.currentTermsCollection.get(bestTerm1), window.app.status.currentTermsCollection.get(bestTerm2), bestTerm1Value, bestTerm2Value, window.app.status.currentTermsCollection, collection.get('annotation'));
             },error: function (bad, response) {
                 $("#loadSimilarAnnotation" + model.id).replaceWith("Error: cannot reach retrieval");
             }});

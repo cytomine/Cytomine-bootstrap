@@ -120,7 +120,9 @@ class ProjectService extends ModelService {
             log.info "json.retrievalProjects="+json.retrievalProjects
             json.retrievalProjects.each { idProject ->
                 println "idProject="+idProject
-                Project projectRetrieval = Project.read(idProject)
+                Long proj = Long.parseLong(idProject.toString())
+                println "proj="+proj
+                Project projectRetrieval = proj==-1 ? project : Project.read(proj)
                 if(projectRetrieval) project.retrievalProjects.add(projectRetrieval)
             }
             project.save(flush: true)
@@ -162,7 +164,9 @@ class ProjectService extends ModelService {
         Project project = Project.get(json.id)
         //update RetrievalProject
         if(!json.retrievalProjects.toString().equals("null")) {
-            List<Long> newProjectRetrievalList = json.retrievalProjects.collect{it.longValue() }
+            List<Long> newProjectRetrievalList = json.retrievalProjects.collect{
+                Long.parseLong(it.toString())
+            }
             List<Long> oldProjectRetrievalList = project.retrievalProjects.collect {it.id}
             log.info "newProjectRetrievalList = "  + newProjectRetrievalList
             log.info "oldProjectRetrievalList = "  + oldProjectRetrievalList

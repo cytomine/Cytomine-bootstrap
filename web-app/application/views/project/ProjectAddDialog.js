@@ -213,7 +213,7 @@ var AddProjectDialog = Backbone.View.extend({
             projectRetrieval = $("#retrievalproject").multiselectNext('selectedValues');
 
         //create project
-        new ProjectModel({name : name, ontology : ontology, discipline:discipline,retrievalDisable:retrievalDisable,retrievalAllOntology:retrievalProjectAll,retrievalProjects:projectRetrieval}).save({name : name, ontology : ontology,discipline:discipline},{
+        new ProjectModel({name : name, ontology : ontology, discipline:discipline,retrievalDisable:retrievalDisable,retrievalAllOntology:retrievalProjectAll,retrievalProjects:projectRetrieval}).save({name : name, ontology : ontology,discipline:discipline,retrievalDisable:retrievalDisable,retrievalAllOntology:retrievalProjectAll,retrievalProjects:projectRetrieval},{
                     success: function (model, response) {
 
                         window.app.view.message("Project", response.message, "success");

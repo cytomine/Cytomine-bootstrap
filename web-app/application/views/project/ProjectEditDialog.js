@@ -32,6 +32,7 @@ var EditProjectDialog = Backbone.View.extend({
         self.initStepy();
         self.createProjectInfo();
         self.createUserList();
+        $("#project-edit-name").val(self.model.get('name'));
         self.createRetrievalProject();
         self.createUserList(usersChoicesTpl);
 
@@ -48,10 +49,10 @@ var EditProjectDialog = Backbone.View.extend({
     initStepy : function() {
         $('#login-form-edit-project').stepy({next: function(index) {
             //show save button on last step
-             if(index==$("#login-form-edit-project").find("fieldset").length) $("#saveProjectButton").show();
+             if(index==$("#login-form-edit-project").find("fieldset").length) $("#editProjectButton").show();
           }, back: function(index) {
             //hide save button if not on last step
-            if(index!=$("#login-form-edit-project").find("fieldset").length) $("#saveProjectButton").hide();
+            if(index!=$("#login-form-edit-project").find("fieldset").length) $("#editProjectButton").hide();
           }});
         $('#login-form-edit-project').find("fieldset").find("a.button-next").css("float","right");
         $('#login-form-edit-project').find("fieldset").find("a.button-back").css("float","left");
@@ -126,6 +127,19 @@ var EditProjectDialog = Backbone.View.extend({
                     self.createRetrievalProjectSelect();
                 }
          });
+
+        if(self.model.get('retrievalDisable')) {
+            $('#login-form-edit-project').find("input#retrievalProjectNone").attr("checked", "checked");
+            $('#login-form-edit-project').find("input#retrievalProjectNone").change();
+        } else if(self.model.get('retrievalAllOntology')) {
+            $('#login-form-edit-project').find("input#retrievalProjectAll").attr("checked", "checked");
+            $('#login-form-edit-project').find("input#retrievalProjectAll").change();
+        } else {
+            $('#login-form-edit-project').find("input#retrievalProjectSome").attr("checked", "checked");
+            $('#login-form-edit-project').find("input#retrievalProjectSome").change();
+            //retrievalProjectAll
+
+        }
     },
     createRetrievalProjectSelect : function () {
         var self = this;
@@ -134,13 +148,13 @@ var EditProjectDialog = Backbone.View.extend({
 
         window.app.models.projects.each(function(project) {
             if(project.get('ontology')==self.model.get('ontology') && project.id!=self.model.id) {
-                if(_.indexOf(project.get('retrievalProjects'),project.id)==-1)
-                    $("#retrievalproject").append('<option value="'+project.id+'">'+project.get('name')+'</option>');
+                if(_.indexOf(self.model.get('retrievalProjects'),project.id)==-1)
+                    $('#login-form-edit-project').find("#retrievalproject").append('<option value="'+project.id+'">'+project.get('name')+'</option>');
                 else
-                    $("#retrievalproject").append('<option value="'+project.id+'" selected="selected">'+project.get('name')+'</option>');
+                    $('#login-form-edit-project').find("#retrievalproject").append('<option value="'+project.id+'" selected="selected">'+project.get('name')+'</option>');
             }
         });
-        $('#login-form-edit-project').find("#retrievalproject").append('<option value="'+self.model.id+'" selected="selected">'+$("#project-edit-name").val()+'</option>');
+        $('#login-form-edit-project').find("#retrievalproject").append('<option value="'+self.model.id+'" selected="selected">'+$('#login-form-edit-project').find("#project-edit-name").val()+'</option>');
 
         $('#login-form-edit-project').find("#retrievalproject").multiselectNext( 'destroy' );
         $('#login-form-edit-project').find("#retrievalproject").multiselectNext({
@@ -158,7 +172,7 @@ var EditProjectDialog = Backbone.View.extend({
 
         var self = this;
         //fill project Name
-        $("#project-edit-name").val(self.model.get('name'));
+
     },
     refresh : function() {
     },
@@ -172,7 +186,7 @@ var EditProjectDialog = Backbone.View.extend({
 
         $("#projectediterrormessage").empty();
         $("#projectediterrorlabel").hide();
-        $("#project-edit-name").val("");
+//        $("#project-edit-name").val("");
 
         $(self.editProjectCheckedUsersCheckboxElem).attr("checked", false);
     },
@@ -202,18 +216,21 @@ var EditProjectDialog = Backbone.View.extend({
         $("#projectediterrormessage").empty();
         $("#projectediterrorlabel").hide();
 
-        var name = $("#project-edit-name").val().toUpperCase();;
-        var users = new Array();
+        var name = $("#project-edit-name").val().toUpperCase();
+        var users = $('#login-form-edit-project').find("#projectedituser").multiselectNext('selectedValues');
 
-        $('input[type=checkbox][name=usercheckbox]:checked').each(function(i, item) {
-            users.push($(item).attr("value"))
-        });
+        var retrievalDisable = $('#login-form-edit-project').find("input#retrievalProjectNone").is(':checked');
+        var retrievalProjectAll = $('#login-form-edit-project').find("input#retrievalProjectAll").is(':checked');
+        var retrievalProjectSome = $('#login-form-edit-project').find("input#retrievalProjectSome").is(':checked');
+        var projectRetrieval = [];
+        if(retrievalProjectSome)
+            projectRetrieval = $('#login-form-edit-project').find("#retrievalproject").multiselectNext('selectedValues');
 
         //edit project
         var project = self.model;
-        project.set({name:name});
+        project.set({name:name,retrievalDisable:retrievalDisable,retrievalAllOntology:retrievalProjectAll,retrievalProjects:projectRetrieval});
 
-        project.save({name : name}, {
+        project.save({name : name,retrievalDisable:retrievalDisable,retrievalAllOntology:retrievalProjectAll,retrievalProjects:projectRetrieval}, {
                     success: function (model, response) {
 
 
