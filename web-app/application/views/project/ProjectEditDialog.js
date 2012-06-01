@@ -48,6 +48,13 @@ var EditProjectDialog = Backbone.View.extend({
     },
     initStepy : function() {
         $('#login-form-edit-project').stepy({next: function(index) {
+             //check validate name
+             if(index==2) {
+                 if($("#project-edit-name").val().toUpperCase().trim()=="") {
+                     window.app.view.message("User", "You must provide a valide project name!", "error");
+                     return false;
+                 }
+             }
             //show save button on last step
              if(index==$("#login-form-edit-project").find("fieldset").length) $("#editProjectButton").show();
           }, back: function(index) {

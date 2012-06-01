@@ -311,4 +311,22 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         assert !checkProject.retrievalProjects.contains(projectRetrieval1)
         assert !checkProject.retrievalProjects.contains(projectRetrieval2)
     }
+
+    void testDeleteProjectRetrievalWithRetrievalProject() {
+        def projectToAdd = BasicInstance.getBasicProjectNotExist()
+        assert projectToAdd.save(flush: true)
+        Infos.addUserRight(Infos.GOODLOGIN,projectToAdd)
+
+        def projectRetrieval = BasicInstance.getBasicProjectNotExist()
+        assert projectRetrieval.save(flush: true)
+        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval)
+
+        projectToAdd.refresh()
+        projectToAdd.addToRetrievalProjects(projectRetrieval)
+        assert projectToAdd.save(flush: true)
+
+        //delete 1 retrieval project
+        def result = ProjectAPI.delete(projectToAdd.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
 }

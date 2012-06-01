@@ -29,6 +29,9 @@ class StatsUrlMappings {
             action = [GET:"statAnnotationEvolution"]
         }
 
+        "/api/project/$id/stats/test"(controller:"stats"){
+            action = [GET:"test"]
+        }
 
 
 
@@ -58,5 +61,9 @@ class StatsUrlMappings {
         "/api/stats/retrieval-evolution/evolutionByTerm"(controller:"retrievalEvolutionStats"){
             action = [GET:"statRetrievalEvolutionByTerm"]
         }
+
+
+
+
     }
 }

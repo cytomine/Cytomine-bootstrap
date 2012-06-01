@@ -4,6 +4,7 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
+import grails.orm.PagedResultList
 
 class StatsController extends RestController {
 
@@ -13,6 +14,21 @@ class StatsController extends RestController {
     def jobService
     def retrievalSuggestedTermJobService
     def retrievalEvolutionJobService
+
+    def test = {
+
+        PagedResultList annotations = Annotation.createCriteria().list(offset: 0, max: 5) {
+               eq("project", Project.read(57))
+               order 'created', 'desc'
+           }
+
+        def data = [:]
+        data.records = annotations.totalCount
+        data.total = Math.ceil(annotations.totalCount / 5) + "" //[100/10 => 10 page] [5/15
+        data.rows = annotations.list
+        responseSuccess(data)
+
+    }
 
 
     def statUserAnnotations = {

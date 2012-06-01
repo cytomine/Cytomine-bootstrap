@@ -46,7 +46,14 @@ var AddProjectDialog = Backbone.View.extend({
     },
     initStepy : function() {
         $('#login-form-add-project').stepy({next: function(index) {
-            //show save button on last step
+             //check validate name
+             if(index==2) {
+                 if($("#project-name").val().toUpperCase().trim()=="") {
+                     window.app.view.message("User", "You must provide a valide project name!", "error");
+                     return false;
+                 }
+             }
+             //show save button on last step
              if(index==$("#login-form-add-project").find("fieldset").length) $("#saveProjectButton").show();
           }, back: function(index) {
             //hide save button if not on last step
