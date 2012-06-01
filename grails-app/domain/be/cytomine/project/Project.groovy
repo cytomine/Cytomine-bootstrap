@@ -131,7 +131,6 @@ class Project extends CytomineDomain {
     }
 
     static Project getFromData(project, jsonProject) {
-        log.info "jsonProject="+jsonProject
         String name = jsonProject.name.toString()
         if (!name.equals("null"))
             project.name = jsonProject.name.toUpperCase()
@@ -149,8 +148,6 @@ class Project extends CytomineDomain {
         try {project.countImages = Long.parseLong(jsonProject.numberOfImages.toString()) } catch (Exception e) {
             project.countImages = 0
         }
-
-        log.info "jsonProject.retrievalDisable.toString()="+Boolean.parseBoolean(jsonProject.retrievalAllOntology.toString())
         if(!jsonProject.retrievalDisable.toString().equals("null")) project.retrievalDisable = Boolean.parseBoolean(jsonProject.retrievalDisable.toString())
         if(!jsonProject.retrievalAllOntology.toString().equals("null")) project.retrievalAllOntology = Boolean.parseBoolean(jsonProject.retrievalAllOntology.toString())
 
