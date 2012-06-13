@@ -283,8 +283,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
-                self.$errorLabel.show();
-                self.$errorMessage.append(json.errors);
+                window.app.view.message("Term", json.errors, "error");
             }
         } ); //TODO: catch error
     },
@@ -293,7 +292,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         var self = this;
         self.$errorMessage.empty();
         self.$errorLabel.hide();
-
+        console.log("createOntologyTerm");
         var id = self.model.id;
         var name =  self.getNewName();
         var isParentOntology = true;
@@ -305,7 +304,8 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         self.model.set({name:name,color:color});
         self.model = new TermModel({name:name,color:color,ontology:self.ontology.id}).save({name:name,color:color,ontology:self.ontology.id},{
             success: function (model, response) {
-                //TODO: check it relation/term is changed
+                console.log("createOntologyTerm.success");
+                //TODO: check success relation/term is changed
                 if(isParentOntology) {
                     //no link "parent" with a term
                     window.app.view.message("Term", response.message, "success");
@@ -316,9 +316,11 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
                 }
             },
             error: function (model, response) {
+                console.log("createOntologyTerm.error");
                 var json = $.parseJSON(response.responseText);
-                self.$errorLabel.show();
-                self.$errorMessage.append(json.errors);
+//                self.$errorLabel.show();
+//                self.$errorMessage.append(json.errors);
+                  window.app.view.message("Term", json.errors, "error");
             }
         } ); //TODO: catch error
 
