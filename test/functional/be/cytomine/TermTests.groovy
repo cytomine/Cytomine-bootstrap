@@ -142,6 +142,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
    void testUpdateTermWithNameAlreadyExist() {
        Term termWithOldName = BasicInstance.createOrGetBasicTerm()
        Term termWithNewName = BasicInstance.getBasicTermNotExist()
+       termWithNewName.ontology = termWithOldName.ontology
        termWithNewName.save(flush: true)
        Term termToEdit = Term.get(termWithNewName.id)
        def jsonTerm = termToEdit.encodeAsJSON()
