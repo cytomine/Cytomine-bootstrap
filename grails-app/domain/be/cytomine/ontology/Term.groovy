@@ -29,7 +29,7 @@ class Term extends CytomineDomain implements Serializable, Comparable {
 
     void checkAlreadyExist() {
         Term.withNewSession {
-            Term termAlreadyExist=Term.findByName(name)
+            Term termAlreadyExist=Term.findByNameAndOntology(name, ontology)
             if(termAlreadyExist!=null && (termAlreadyExist.id!=id))  throw new AlreadyExistException("Term " + termAlreadyExist?.name + " already exist!")
         }
     }
