@@ -99,18 +99,14 @@ class BootStrap {
             initData(GrailsUtil.environment)
         }
 
-        Instrument scanner = new Instrument(brand:"gigascan2",model:"MODEL2")
-        println "validate scanner = " + scanner.validate()
-        println "errors scanner = " + scanner.errors
-        println "save scanner = " + scanner.save(flush: true)
+        if(!Instrument.findByBrand('gigascan2')) {
+            Instrument scanner = new Instrument(brand:"gigascan2",model:"MODEL2")
+            println "validate scanner = " + scanner.validate()
+            println "errors scanner = " + scanner.errors
+            println "save scanner = " + scanner.save(flush: true)
+        }
+
         //update abstract image
-
-
-
-
-
-
-
 
         countersService.updateCounters()
         //updateImageProperties()
