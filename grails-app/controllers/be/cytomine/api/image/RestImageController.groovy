@@ -28,7 +28,7 @@ class RestImageController extends RestController {
         SecUser user = null
         if (params.id != null) user = User.read(params.id)
         else user = cytomineService.getCurrentUser()
-
+        println "params="+params
         if (user != null) responseSuccess(abstractImageService.list(user, params.page, params.rows, params.sidx, params.sord, params.filename, params.createdstart, params.createdstop))
         else responseNotFound("User", params.id)
     }

@@ -60,9 +60,9 @@ class AbstractImageService extends ModelService {
             int max = Integer.parseInt(limit)
             int offset = pg * max
 
-            String filenameSearch = filename!=null ?: ""
-            Date dateAddedStart = dateStart ? new Date(Long.parseLong(dateStart)) : new Date(0)
-            Date dateAddedStop = dateStop ? new Date(Long.parseLong(dateStop)) : new Date(8099, 11, 31) //another way to keep the max date?
+            String filenameSearch = filename!=null ? filename : ""
+            Date dateAddedStart = dateStart!=null && dateStart!="" ? new Date(Long.parseLong(dateStart)) : new Date(0)
+            Date dateAddedStop = dateStop!=null && dateStop!="" ? new Date(Long.parseLong(dateStop)) : new Date(8099, 11, 31) //another way to keep the max date?
 
             log.info "filenameSearch=" + filenameSearch + " dateAddedStart=" + dateAddedStart + " dateAddedStop=" + dateAddedStop
 
@@ -75,17 +75,15 @@ class AbstractImageService extends ModelService {
                 }
             }
             log.info "imageGroup=" + imageGroup.size()
+            log.info "imageGroup=" + imageGroup
 
-            log.info "scanner=" + Instrument.read(1787434)
-
-            log.info "offset=$offset max=$max sortedRow=$sortedRow sord=$sord filename=%$filename% created $dateStart < $dateStop"
+            log.info "offset=$offset max=$max sortedRow=$sortedRow sord=$sord filename=%$filenameSearch% created $dateAddedStart < $dateAddedStop"
             PagedResultList results = AbstractImage.createCriteria().list(offset: offset, max: max, sort: sortedRow, order: sord) {
                 inList("id", imageGroup)
                 ilike("filename", "%" + filenameSearch + "%")
                 between('created', dateAddedStart, dateAddedStop)
 
             }
-
             data.page = page + ""
             data.records = results.totalCount
             data.total = Math.ceil(results.totalCount / max) + "" //[100/10 => 10 page] [5/15
