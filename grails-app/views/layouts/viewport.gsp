@@ -84,9 +84,7 @@ body {
     <script type="text/javascript" src="lib/multiselect-next/js/ui.multiselect.js"></script>
     <script type="text/javascript" src="lib/multiselect-next/js/plugins/tmpl/jquery.tmpl.1.1.1.js"></script>
 
-    <script>
-        $.fn.multiselectNext = $.fn.multiselect;
-    </script>
+
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.js"></script>
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.filter.js"></script>
 
@@ -246,8 +244,11 @@ body {
 <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">
     <script type="text/javascript" src="lib.js" ></script>
     <script type="text/javascript" src="application.js" ></script>
-</g:if>
 
+</g:if>
+<script>
+    $.fn.multiselectNext = $.fn.multiselect;
+</script>
 <script type="text/javascript">
     $(function() {
         require(

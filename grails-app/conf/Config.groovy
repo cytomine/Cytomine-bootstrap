@@ -79,7 +79,7 @@ environments {
         grails.plugins.springsecurity.useBasicAuth = true
     }
     test {
-        grails.serverURL = "http://localhost:8090/cytomine"
+        grails.serverURL = "http://localhost:8090"
         grails.plugins.springsecurity.useBasicAuth = true
         grails.plugins.springsecurity.basic.realmName = "Cytomine log"
     }
