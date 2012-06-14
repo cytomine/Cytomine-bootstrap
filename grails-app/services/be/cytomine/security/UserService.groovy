@@ -28,7 +28,7 @@ class UserService extends ModelService {
 
 
     def get(def id) {
-        User.get(id)
+        SecUser.get(id)
     }
 
     SecUser getByPublicKey(String key) {
@@ -36,7 +36,7 @@ class UserService extends ModelService {
     }
 
     def read(def id) {
-        User.read(id)
+        SecUser.read(id)
     }
 
     def readCurrentUser() {
@@ -44,7 +44,7 @@ class UserService extends ModelService {
     }
 
     def list() {
-        User.list(sort: "username", order: "asc")
+        SecUser.list(sort: "username", order: "asc")
     }
 
     def list(Project project) {

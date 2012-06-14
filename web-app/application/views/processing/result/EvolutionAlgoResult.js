@@ -105,7 +105,7 @@ var EvolutionAlgoResult = Backbone.View.extend({
                     },
                     vAxis:{title:"Success rate", minValue:0, maxValue:100},
                     hAxis:{title:"Time"},
-                    backgroundColor:"whiteSmoke",
+                    backgroundColor:"white",
                     seriesType:"line",
                     series:{0:{targetAxisIndex:0}, 1:{type:"area", targetAxisIndex:1}},
                     lineWidth:1}
@@ -191,7 +191,7 @@ var EvolutionAlgoResult = Backbone.View.extend({
                     },
                     vAxis:{title:"Success rate", minValue:0, maxValue:100},
                     hAxis:{title:"Time"},
-                    backgroundColor:"whiteSmoke",
+                    backgroundColor:"white",
                     seriesType:"line",
                     series:{0:{targetAxisIndex:0}, 1:{type:"area", targetAxisIndex:1}},
                     lineWidth:1}

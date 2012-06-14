@@ -222,7 +222,7 @@ AnnotationLayer.prototype = {
             },
             featureselected: function (evt) {
 
-
+                               alert(evt);
                 if (!self.measureOnSelect) {
                     self.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
 
@@ -230,7 +230,7 @@ AnnotationLayer.prototype = {
                         self.removeSelection();
                     } else {
                         self.showPopup(map, evt);
-                        self.vectorsLayer.drawFeature(evt.feature);
+                        //self.vectorsLayer.drawFeature(evt.feature);
                     }
                 }
                 else self.showPopupMeasure(map, evt);

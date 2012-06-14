@@ -3,7 +3,7 @@ package be.cytomine.security
 import be.cytomine.project.Project
 import grails.converters.JSON
 import org.apache.commons.lang.builder.HashCodeBuilder
-
+import be.cytomine.Exception.AlreadyExistException
 class UserGroup {
 
     def domaineService
@@ -22,6 +22,13 @@ class UserGroup {
         if (user) builder.append(user.id)
         if (group) builder.append(group.id)
         builder.toHashCode()
+    }
+
+	void checkAlreadyExist() {
+        UserGroup.withNewSession {
+            UserGroup userGroupAlreadyExist = UserGroup.findByUserAndGroup(user, group)
+            if(userGroupAlreadyExist)  throw new AlreadyExistException("UserGroup "+userGroupAlreadyExist?.user + ","+ userGroupAlreadyExist?.group + " already exist!")
+        }
     }
 
     static UserGroup getFromData(UserGroup userGroup, jsonUserGroup) {

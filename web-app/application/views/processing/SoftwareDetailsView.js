@@ -90,17 +90,13 @@ var SoftwareDetailsView = Backbone.View.extend({
             //var require = '<td style="text-align:center;">'+param.required+'</td>';
             var checked = "";
             if (param.required) checked = 'checked="yes"';
-            var require = '<td style="text-align:center;"><input type="checkbox" ' + checked + ' name="sports" value="basketball" /></td>';
-
-
+            var require = '<td style="text-align:center;"><input type="checkbox" ' + checked + ' disabled /></td>';
             var index = '<td style="text-align:center;">' + param.index + '</td>';
-
-
             tbody.append('<tr>' + name + type + defaultVal + require + index + '</tr>');
         });
 
         var width = Math.min($("#softwareParams").width() - 100, 1000);
-        console.log("width=" + width);
+
         $('#softwareParamsTable').dataTable({
             //"sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
             "sPaginationType":"bootstrap",
@@ -125,7 +121,7 @@ var SoftwareDetailsView = Backbone.View.extend({
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Success');
         data.addColumn('number', 'Succes rate');
-        console.log("printAcitivtyDiagram=" + software.id);
+
         data.addRows([
             ['Not Launch', software.get('numberOfNotLaunch')],
             ['In Queue', software.get('numberOfInQueue')],
@@ -142,7 +138,7 @@ var SoftwareDetailsView = Backbone.View.extend({
             width:width, height:150,
             vAxis:{title:"Success rate"},
             hAxis:{title:"#"},
-            backgroundColor:"whiteSmoke",
+            backgroundColor:"white",
             strictFirstColumnType:false,
             is3D:true,
             lineWidth:1,

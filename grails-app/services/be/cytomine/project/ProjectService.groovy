@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 import be.cytomine.command.*
 import org.apache.commons.collections.CollectionUtils
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.image.UploadedFile
 
 class ProjectService extends ModelService {
 
@@ -282,6 +283,9 @@ class ProjectService extends ModelService {
             ProjectGroup.unlink(domain, group)
             //delete group
             group.delete(flush:true)
+        }
+        UploadedFile.findAllByProject(domain).each { uploadedFile ->
+            uploadedFile.delete()
         }
         log.info "createResponseMessage"
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())

@@ -14,6 +14,9 @@ import be.cytomine.security.SecUser
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
+import be.cytomine.social.UserPosition
+
+import be.cytomine.social.FollowRequest
 
 class ImageInstanceService extends ModelService {
 
@@ -142,7 +145,13 @@ class ImageInstanceService extends ModelService {
         Project project = Project.read(json.project)
         AbstractImage image = AbstractImage.read(json.image)
         ImageInstance imageInstance = ImageInstance.findByBaseImageAndProject(image, project)
-
+        /* Delete social stuff */
+        UserPosition.findAllByImage(imageInstance).each { userPosition ->
+            userPosition.delete()
+        }
+        FollowRequest.findAllByImage(imageInstance).each { followRequest ->
+            followRequest.delete()
+        }
         //Delete each annotation from image (if possible)
         if (imageInstance) {
             log.info "Delete annotation from image"

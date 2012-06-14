@@ -297,7 +297,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
 
         // Create and draw the visualization.
         new google.visualization.PieChart($(this.el).find('#worstTermprojectPieChart')[0]).
-                draw(data, {width:this.width, height:350, title:"", backgroundColor:"whiteSmoke", colors:colors});
+                draw(data, {width:this.width, height:350, title:"", backgroundColor:"white", colors:colors});
     },
 
     drawWorstAnnotationsTable:function (model, response, terms) {
@@ -381,7 +381,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
                     },
                     vAxis:{title:"Success rate", minValue:0, maxValue:100},
                     hAxis:{title:"Time"},
-                    backgroundColor:"whiteSmoke",
+                    backgroundColor:"white",
                     seriesType:"line",
                     series:{0:{targetAxisIndex:0}, 1:{type:"area", targetAxisIndex:1}},
                     lineWidth:1}

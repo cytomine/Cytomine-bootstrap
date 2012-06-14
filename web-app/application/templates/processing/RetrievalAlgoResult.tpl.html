@@ -1,34 +1,24 @@
-<div id="resultPanelInfo" style="padding-top: 15px;padding-left: 2px;overflow : auto;">
-     <div class="row" style="padding-top: 15px;padding-left: 2px;">
-        <div id="worstAnnotationPanel" style="padding : 2px;margin-right:5px;min-width: <%= width %>;min-height: <%= height %>;"  class="span5 hero-unit">
-            <h3>Most Questionable Annotation Term</h3>
-            <div>
-                <div>
-                    <ul>
-                        <div id="worstannotationitem" style="max-height: 350px;overflow-y: auto;text-align:left" ><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
-                    </ul>
-                </div>
-            </div>
-        </div>
+<div id="resultPanelInfo" style="padding: 20px;">
+        <div id="worstAnnotationPanel" style="padding-bottom: 25px;">
+            <h4>Most Questionable Annotation Term</h4>
+				<div id="worstannotationitem">
+					<div class="alert alert-info"><i class="icon-refresh" /> Loading...</div>
+				</div>
+        </div> <!-- worstAnnotationPanel -->
 
-        <div id="worstTermListPanel" style="padding : 2px;margin-right:5px;min-width: <%= width %>;min-height: <%= height %>;"  class="span5 hero-unit">
-            <h3>Success for retrieval algo with term suggestion</h3>
-            <div>
-                <div id="worstTermList" style="text-align:left"><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
-                <div id="userRetrievalSuggestMatrixDataTable"></div>
-            </div>
-        </div>
-        <div id="avgEvolutionLineChartPanel" style="padding : 2px;margin-right:5px;min-width: <%= width %>;min-height: <%= height %>;"  class="span5 hero-unit">
-            <h3>AVG of success rate for retrieval algo</h3>
-            <div>
-                <div id="avgEvolutionLineChart"><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
-            </div>
-        </div>
-        <div id="worstTermPieChartPanel" style="padding : 2px;margin-right:5px;min-width: <%= width %>;min-height: <%= height %>;"  class="span5 hero-unit">
-            <h3>Most Questionable Terms (pie)</h3>
-            <div>
-                <div id="worstTermprojectPieChart"><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
-            </div>
-        </div>
-     </div>
+        <div id="worstTermListPanel" style="padding-bottom: 25px;">
+            <h4>Success for retrieval algo with term suggestion</h4>
+			<div id="worstTermList"><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
+			<div id="userRetrievalSuggestMatrixDataTable"></div>            
+        </div> <!-- worstTermListPanel -->
+
+        <div id="avgEvolutionLineChartPanel" style="padding-bottom: 25px;">
+            <h4>AVG of success rate for retrieval algo</h4>
+			<div id="avgEvolutionLineChart"><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
+        </div> <!-- avgEvolutionLineChartPanel -->
+
+        <div id="worstTermPieChartPanel" style="padding-bottom: 25px;">
+            <h4>Most Questionable Terms (pie)</h4>
+			<div id="worstTermprojectPieChart"><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
+        </div> <!-- worstTermPieChartPanel -->
 </div>

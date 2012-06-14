@@ -61,7 +61,7 @@ class AnnotationTermService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def addAnnotationTerm(def idAnnotation, def idTerm, def idExpectedTerm, def idUser, User currentUser,Transaction transaction) {
+    def addAnnotationTerm(def idAnnotation, def idTerm, def idExpectedTerm, def idUser, SecUser currentUser,Transaction transaction) {
         def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, expectedTerm: $idExpectedTerm, user: $idUser}")
         return executeCommand(new AddCommand(user: currentUser,transaction:transaction), json)
     }

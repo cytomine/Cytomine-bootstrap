@@ -4,6 +4,7 @@ import be.cytomine.image.UploadedFile
 import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
+
 class ConvertImagesService {
 
     static transactional = true
@@ -35,9 +36,9 @@ class ConvertImagesService {
             String contextPath = uploadedFile.getPath().endsWith("/") ?  uploadedFile.getPath() :  uploadedFile.getPath() + "/"
             String originalFilenameFullPath = contextPath + uploadedFile.getFilename()
             String convertedFilenameFullPath = contextPath + convertFileName
-            def convertCommand = """/usr/local/bin/vips im_vips2tiff "$originalFilenameFullPath" "$convertedFilenameFullPath":jpeg:95,tile:256x256,pyramid"""
-            println convertCommand
-            convertCommand = """"$originalFilenameFullPath" -define tiff:tile-geometry=256x256 -compress jpeg 'ptif:$convertedFilenameFullPath'"""
+            /*def convertCommand = """/usr/local/bin/vips im_vips2tiff "$originalFilenameFullPath" "$convertedFilenameFullPath":jpeg:95,tile:256x256,pyramid"""
+            println convertCommand*/
+            def convertCommand = """"$originalFilenameFullPath" -define tiff:tile-geometry=256x256 -compress jpeg 'ptif:$convertedFilenameFullPath'"""
             println convertCommand
             try {
                 def ant = new AntBuilder()   // create an antbuilder

@@ -15,6 +15,7 @@ var BrowseImageView = Backbone.View.extend({
         this.broadcastPositionInterval = null;
         this.watchOnlineUsersInterval = null;
         this.annotationsPanel = null;
+        this.ontologyPanel = null;
         this.map = null;
         this.currentAnnotation = null;
         _.bindAll(this, "initVectorLayers");
@@ -70,14 +71,24 @@ var BrowseImageView = Backbone.View.extend({
                     var layer = _.find(self.layers, function (layer) { return layer.userID == annotation.get("user")});
                     if (layer) {
                         layer.showFeature(annotation.get("id"));
-                        self.setLayerVisibility(layer, true);
                         self.goToAnnotation(layer,  annotation);
+                        self.setLayerVisibility(layer, true);
                         setTimeout(function(){
                             var feature = layer.getFeature(annotation.id)
-                            console.log("feature="+feature);
                             if (feature) layer.selectFeature(feature);
                         }, 1000);//select feature once layer is readed. Should be triggered by event...
-
+                    } else {
+                        new UserModel({id : annotation.get('user')}).fetch({
+                            success : function (userAlgo, response) {
+                                var layer = new AnnotationLayer(userAlgo.get('username'), self.model.get('id'), annotation.get('user'), "", self.ontologyPanel.ontologyTreeView, self, self.map );
+                                layer.isOwner = false;
+                                layer.loadAnnotations(self);
+                                layer.registerEvents(self.map);
+                                layer.showFeature(annotation.get("id"));
+                                self.goToAnnotation(layer,  annotation);
+                                self.setLayerVisibility(layer, true);
+                            }
+                        });
 
                     }
                 }
@@ -625,7 +636,7 @@ var BrowseImageView = Backbone.View.extend({
      */
     initOntology: function () {
         var self = this;
-        new OntologyPanel({
+        self.ontologyPanel = new OntologyPanel({
             el : this.el,
             model : this.model,
             callback : self.initVectorLayers,

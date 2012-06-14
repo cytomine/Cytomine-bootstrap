@@ -28,11 +28,10 @@ class DeployImagesJob {
 
     void execute(context) {
         if (GrailsUtil.environment != "production") return
-        /*
         println "START (DeployImagesJob)"
         UploadedFile.findAllByStatus(UploadedFile.CONVERTED).each { uploadedFile ->
             deployImagesService.deployUploadedFile(uploadedFile)
         }
-        println "DONE (DeployImagesJob)"*/
+        println "DONE (DeployImagesJob)"
     }
 }

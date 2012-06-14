@@ -24,71 +24,62 @@ var ProjectDashboardAlgos = Backbone.View.extend({
            this.rendered = true;
           return this;
     },
-   doLayout: function(tpl) {
-      console.log("this.idJob="+this.idJob);
-      console.log("this.idSoftware="+this.idSoftware);
-      var self = this;
-      $(this.el).empty();
-      $(this.el).append(_.template(tpl, {}));
+	doLayout: function(tpl) {
+		var self = this;
+		$(this.el).empty();
+     	$(this.el).append(_.template(tpl, {}));
 
-       //get all software from project and print menu
-       new SoftwareCollection({ project : self.model.id}).fetch({
-           success : function (collection, response) {
+     	//get all software from project and print menu
+     	new SoftwareCollection({ project : self.model.id}).fetch({
+     		success : function (collection, response) {
+				if(collection.length==0) {
+					$(self.el).empty();
+					$(self.el).append('<div class="alert alert-info" style="width : 50%; margin:auto; margin-top : 30px;">No software available for this project</div>');
+					return;
+				}
 
-               if(collection.length==0) {
-                   $(self.el).empty();
-                   $(self.el).append('<br/><divstyle="text-align:left;"><h2>No software available for this project!</h2></div>');
-                   return;
-               }
+				if(self.idSoftware==undefined) {
+					var lastSoftware = collection.last();
+					self.idSoftware = lastSoftware.id;
+					window.location = "#tabs-algos-" + self.model.id + "-" + self.idSoftware + "-";
+				}
 
-               if(self.idSoftware==undefined) {
-                   var lastSoftware = collection.last();
-                   self.idSoftware = lastSoftware.id;
-                   window.location = "#tabs-algos-" + self.model.id + "-" + self.idSoftware + "-";
-               }
-              self.software = collection.get(self.idSoftware);
-              self.softwares = collection;
-              self.initProjectSoftwareList();
-              var softModel = collection.get(self.idSoftware);
-              self.printProjectSoftwareInfo();
-
-                //button click run software
-                self.printSoftwareButton();
-
-
-
-                new JobCollection({ project : self.model.id, software: self.idSoftware, light:true}).fetch({
-                    success : function (collection, response) {
-                        self.jobsLight = collection;
+				self.software = collection.get(self.idSoftware);
+				self.softwares = collection;
+				self.initProjectSoftwareList();
+				self.printProjectSoftwareInfo();
+              	self.printSoftwareButton();
+				new JobCollection({ project : self.model.id, software: self.idSoftware, light:true}).fetch({
+					success : function (collection, response) {
+						self.jobsLight = collection;
                         self.printComparatorLaunch();
                         self.fillJobSelectView();
                     }
                 });
-
-
        }});
 
 
       return this;
-   },
-    refresh : function() {
-        console.log("refresh()" + this.idJob);
+	},
+	refresh : function() {
+       
         if (!this.rendered) this.render();
         if(this.softwares==null) return;
-        //this.printProjectJobInfo(this.idJob);
+       
         this.software = this.softwares.get(this.idSoftware);
         this.printProjectSoftwareInfo();
     },
+
     refresh : function(idSoftware,idJob) {
-        console.log("refresh(idSoftware,idJob)" + this.idJob);
+
         if(this.softwares==null || this.softwares.length<1) return;
         this.idJob = idJob;
         if(idSoftware==undefined) {
             idSoftware = this.idSoftware;
         }
         this.software = this.softwares.get(idSoftware);
-        if(idSoftware!=this.idSoftware)
-        {   this.idSoftware = idSoftware;
+        if(idSoftware!=this.idSoftware) {
+			this.idSoftware = idSoftware;
             this.changeSoftware();
         } else {
             this.idSoftware = idSoftware;
@@ -102,7 +93,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         self.softwares.each(function (software) {
             $("#projectSoftwareListUl").append('<li id="consultSoftware-' + software.id + '"><a href="#tabs-algos-'+self.model.id + '-' +software.id + '-">' + software.get('name') + '</a></li>');
             $("#projectSoftwareListUl").children().removeClass("active");
-
             if(software.id==self.idSoftware) {
                  $("#consultSoftware-" + software.id).addClass("active");
             }
@@ -112,7 +102,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     changeSoftware : function() {
         var self = this;
         self.idJob = undefined;
-
         self.softwares.each(function (software) {
             $("#consultSoftware-" + software.id).removeClass("active");
         });
@@ -122,7 +111,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         //clean result
         $("#panelJobResultsDiv").empty();
         //load result
-        console.log("changeSoftware") ;
         self.fillJobSelectView();
     },
     printProjectSoftwareInfo : function() {
@@ -137,11 +125,10 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         //Print selected job from this software
         self.printProjectJobInfo( self.idJob);
 
-
     },
     changeJobSelection : function(idJob)  {
         var self = this;
-        console.log("refresh:idJob="+idJob);
+
         window.location = '#tabs-algos-'+self.model.id + '-' + self.idSoftware + '-' + idJob;
         if(self.jobSelectView!=undefined) self.jobSelectView.refresh();
     },
@@ -149,7 +136,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var self = this;
         //jobLaunchDialogParent
           $("#softwareLaunchJobButton").click(function() {
-              console.log("project=" + self.model.id + " software.id=" +  self.software.id);
+
                new LaunchJobView({
                     software : self.software,
                     project : self.model,
@@ -161,7 +148,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
        $("#softwareCompareJobButton").click(function() {
             self.jobsLight.fetch({
                 success : function (collection, response) {
-                      console.log("project=" + self.model.id + " software.id=" +  self.software.id);
                         new JobComparatorView({
                             software : self.software,
                             project : self.model,
@@ -177,7 +163,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
             });
 
         $("#softwareInfoButton").click(function() {
-              console.log("project=" + self.model.id + " software.id=" +  self.software.id);
 
                 new StatsProjectSoftwareModel({project : self.model.id, software: self.software.id}).fetch({
                      success : function (model, response) {
@@ -192,7 +177,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
           });
 
         $("#softwareFilterJobButton").click(function() {
-            console.log("project=" + self.model.id + " software.id=" +  self.software.id);
+
               new JobSearchView({
                   software : self.software,
                   project : self.model,
@@ -208,7 +193,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
        $("#launchComparator").click(function() {
             self.jobsLight.fetch({
                 success : function (collection, response) {
-                      console.log("project=" + self.model.id + " software.id=" +  self.software.id);
+
                         new JobComparatorView({
                             software : self.software,
                             project : self.model,
@@ -279,7 +264,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
           width: width, height: 150,
           vAxis: {title: "Success rate"},
           hAxis: {title: "#"},
-          backgroundColor : "whiteSmoke",
+          backgroundColor : "white",
             strictFirstColumnType: false,
             is3D: true,
           lineWidth: 1,
@@ -292,7 +277,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     printProjectSoftwareDetails : function(software) {
         var self = this;
         $("#panelSoftwareResume").find('.softwareMainInfo').empty();
-        $("#panelSoftwareResume").find('.softwareMainInfo').append('<li><h2>'+software.get('name')+'</h2></li>');
+        $("#panelSoftwareResume").find('.softwareMainInfo').append('<h3>'+software.get('name')+'</h3>');
         new StatsProjectSoftwareModel({project : self.model.id, software: self.software.id}).fetch({
             success : function (model, response) {
                 $("#panelSoftwareResume").find('.softwareMainInfo').find("#numberOfJob").replaceWith("");
@@ -303,9 +288,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     fillJobSelectView : function() {
         var self = this;
-        console.log("fillJobSelectView:"+self.software.get('name'));
+        
         $('#jobSelection').empty();
-
 
         new JobCollection({ project : self.model.id, software: self.software.id, light:true}).fetch({
             success : function (collection, response) {
@@ -336,7 +320,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     fillSelectedJobDetails : function(job) {
         var self = this;
-        console.log("fillSelectedJobDetails="+job);
+
         if(job==undefined) {
             $('.selectRunDetails').empty();
             $('#selectRunParamsTable').find('tbody').empty();

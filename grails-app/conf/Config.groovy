@@ -92,79 +92,79 @@ environments {
 
 // log4j configuration
 log4j = {
-   // Example of changing the log pattern for the default console
-   // appender:
-   //
-   //appenders {
-   //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-   //}
+    // Example of changing the log pattern for the default console
+    // appender:
+    //
+    //appenders {
+    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+    //}
 //   System.setProperty('mail.smtp.port', mail.error.port.toString())
 //   System.setProperty('mail.smtp.starttls.enable',  mail.error.starttls.toString())
 
-   println "Log4j consoleLevel"
+    println "Log4j consoleLevel"
 
-   appenders {
-       rollingFile name:"logfile", maxFileSize:'300kB',
-               layout:pattern(conversionPattern: "%d{[ dd.MM.yy HH:mm:ss.SSS]} [%t] %-5p %c %x - %m%n"),
-               file:"/tmp/cytomine.log"
+    appenders {
+        rollingFile name:"logfile", maxFileSize:'300kB',
+                layout:pattern(conversionPattern: "%d{[ dd.MM.yy HH:mm:ss.SSS]} [%t] %-5p %c %x - %m%n"),
+                file:"/tmp/cytomine.log"
 //       appender new org.apache.log4j.net.SMTPAppender(name:'mail', to:'cytomine.ulg@gmail.com', from:'cytomine.ulg@gmail.com', subject:'[Application Error]',
 //               SMTPHost:'smtp.gmail.com', SMTPUsername:'cytomine.ulg@gmail.com', SMTPPassword: 'C3=8wj9R',
 //               layout: pattern(conversionPattern: '%d{[ dd.MM.yy HH:mm:ss.SSS]} [%t] %n%-5p %n%c %n%C %n %x %n %m%n %n'),
 //               threshold:org.apache.log4j.Level.ERROR)
-   }
+    }
 
-   warn  'org.codehaus.groovy.grails.web.servlet',  //  controllers
-           'org.codehaus.groovy.grails.web.pages', //  GSP
-           'org.codehaus.groovy.grails.web.sitemesh', //  layouts
-           'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-           'org.codehaus.groovy.grails.web.mapping', // URL mapping
-           'org.codehaus.groovy.grails.commons', // core / classloading
-           'org.codehaus.groovy.grails.plugins', // plugins
-           'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
-           'org.springframework',
-           'net.sf.ehcache.hibernate',
-           'org.hibernate.engine.StatefulPersistenceContext.ProxyWarnLog'
+    warn  'org.codehaus.groovy.grails.web.servlet',  //  controllers
+            'org.codehaus.groovy.grails.web.pages', //  GSP
+            'org.codehaus.groovy.grails.web.sitemesh', //  layouts
+            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+            'org.codehaus.groovy.grails.web.mapping', // URL mapping
+            'org.codehaus.groovy.grails.commons', // core / classloading
+            'org.codehaus.groovy.grails.plugins', // plugins
+            'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
+            'org.springframework',
+            'net.sf.ehcache.hibernate',
+            'org.hibernate.engine.StatefulPersistenceContext.ProxyWarnLog'
 
     warn 'org.codehaus.groovy.grails.plugins.springsecurity.AnnotationFilterInvocationDefinition','be.cytomine'
-   warn   'org.hibernate'
+    warn   'org.hibernate'
 
 
 
 
-   environments {
-       production {
-           root {
-               info 'stdout','appLog',"logfile"
+    environments {
+        production {
+            root {
+                info 'stdout','appLog',"logfile"
 //               error  'mail'
-               additivity = true
-           }
-       }
-       development {
-           root {
-               info 'stdout','appLog',"logfile"
-               additivity = true
-           }
-       }
-       test {
-           root {
-               info 'stdout','appLog',"logfile"
-               additivity = true
-           }
-       }
-       perf {
-           root {
-               info 'stdout','appLog',"logfile"
-               additivity = true
-           }
-       }
-   }
-   //debug "org.hibernate.SQL"
-   /*debug 'be.cytomine'
+                additivity = true
+            }
+        }
+        development {
+            root {
+                info 'stdout','appLog',"logfile"
+                additivity = true
+            }
+        }
+        test {
+            root {
+                info 'stdout','appLog',"logfile"
+                additivity = true
+            }
+        }
+        perf {
+            root {
+                info 'stdout','appLog',"logfile"
+                additivity = true
+            }
+        }
+    }
+    //debug "org.hibernate.SQL"
+    /*debug 'be.cytomine'
    debug 'grails.app'
    debug 'grails.app.services'
    debug 'grails.app.controllers*/
 
-   //UNCOMMENT THESE 2 LINES TO SEE SQL REQUEST AND THEIR PARAMETERS VALUES
+    //UNCOMMENT THESE 2 LINES TO SEE SQL REQUEST AND THEIR PARAMETERS VALUES
 //   debug 'org.hibernate.SQL'
 //   trace 'org.hibernate.type'
 }

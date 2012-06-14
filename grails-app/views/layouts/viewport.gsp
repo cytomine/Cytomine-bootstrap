@@ -22,23 +22,18 @@
 <link rel="apple-touch-icon" sizes="72x72" href="images/logoGIGA.gif" />
 <link rel="apple-touch-icon" sizes="114x114" href="images/logoGIGA.gif" />
 
-
-<link rel="stylesheet" href="lib/add-to-homescreen/style/add2home.css" />
-<script type="text/javascript" src="lib/add-to-homescreen/src/add2home.js" charset="utf-8"></script>
-
-
 <link rel='stylesheet' href='css/bootstrap/jquery-ui-1.8.16.custom.css' type='text/css'/>
 <link rel='stylesheet' href='lib/ui.panel/ui.panel.css' type='text/css'/>
 <link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
 <!--<link rel="stylesheet" href="lib/bootstrap-1.3/bootstrap.min.css">-->
-<link rel="stylesheet" href="lib/bootstrap-2.0/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="lib/bootstrap-2.0.4/css/bootstrap.min.css"/>
 <style type="text/css">
 body {
     padding-top: 40px;
 }
 </style>
-<link rel="stylesheet" href="lib/bootstrap-2.0/css/bootstrap-responsive.min.css"/>
+<link rel="stylesheet" href="lib/bootstrap-2.0.4/css/bootstrap-responsive.min.css"/>
 
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
@@ -46,6 +41,12 @@ body {
 <!-- JQuery & JQuery UI -->
 <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+
+<!--
+<link rel="stylesheet" href="lib/add-to-homescreen/style/add2home.css" />
+<script type="text/javascript" src="lib/add-to-homescreen/src/add2home.js" charset="utf-8"></script>
+-->
+
 
     <!-- OpenLayers -->
     <script type="text/javascript" src="lib/OpenLayers-2.11/OpenLayers.js"></script>
@@ -56,8 +57,8 @@ body {
     <script type="text/javascript" src="lib/requirejs/require.js"></script>
 
     <!-- Twitter bootstrap -->
-    <script type="text/javascript" src="lib/bootstrap-2.0/js/bootstrap.js"></script>
-    <script type="text/javascript" src="lib/bootstrap-2.0/js/bootstrap-tab.js"></script>
+    <script type="text/javascript" src="lib/bootstrap-2.0.4/js/bootstrap.js"></script>
+    <script type="text/javascript" src="lib/bootstrap-2.0.4/js/bootstrap-tab.js"></script>
 
     <!-- Core Libs -->
     <script type="text/javascript" src="lib/underscore.js"></script>
@@ -90,7 +91,7 @@ body {
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.filter.js"></script>
 
     <script type="text/javascript" src="lib/stepy/js/jquery.stepy.min.js"></script>
-    <link rel='stylesheet' href='lib/stepy/css/jquery.stepy.css' type='text/css'/>
+    <link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
 
     <!--<link href="lib/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>-->

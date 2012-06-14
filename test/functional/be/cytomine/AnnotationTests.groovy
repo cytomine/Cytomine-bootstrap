@@ -16,6 +16,7 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Ontology
 import be.cytomine.security.UserJob
 import be.cytomine.ontology.AlgoAnnotationTerm
+import be.cytomine.ontology.Term
 
 /**
  * Created by IntelliJ IDEA.
@@ -275,11 +276,11 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
     }
 
-    void testCopyAnnotationFromAlgo() {
+    void testCopyAnnotationFromUser() {
         //create annotation with user = userjob
         def annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
         def annotation = annotationTerm.annotation
-        annotation.user = BasicInstance.createOrGetBasicUserJob()
+        annotation.user = BasicInstance.createOrGetBasicUser()
         assert annotation.save(flush: true)  != null
 
         //call service to allow copy annotation
@@ -292,6 +293,8 @@ class AnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
 
         //check term is added!
+        println "idAnnotation : $idAnnotation, annotationTerm.term.id : $annotationTerm.term.id"
+        println "annotations : " + AnnotationTerm.findAllByAnnotationAndTerm(Annotation.read(idAnnotation), Term.read(annotationTerm.term.id))
         result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,annotationTerm.term.id,User.findByUsername(Infos.GOODLOGIN).id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assertEquals(200,result.code)
         def json = JSON.parse(result.data)

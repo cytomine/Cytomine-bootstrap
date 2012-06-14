@@ -20,11 +20,11 @@ class ConvertImagesJob {
 
     void execute(context) {
         if (GrailsUtil.environment != "production") return
-        /*println "START (ConvertImagesJob)"
+        println "START (ConvertImagesJob)"
         UploadedFile.findAllByStatus(UploadedFile.UPLOADED).each { uploadedFile ->
            convertImagesService.convertUploadedFile(uploadedFile, cytomineService.getCurrentUser())
         }
-        println "DONE (ConvertImagesJob)"*/
+        println "DONE (ConvertImagesJob)"
     }
 
 }

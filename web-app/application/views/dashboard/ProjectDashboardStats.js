@@ -121,7 +121,7 @@ var ProjectDashboardStats = Backbone.View.extend({
         var chart = new google.visualization.ColumnChart(document.getElementById('userAnnotationsChart'));
         chart.draw(data,
             {title:"Term by users",
-                backgroundColor : "whiteSmoke",
+                backgroundColor : "white",
                 width:width, height:350,
                 hAxis: {title: "Terms" }
             }
@@ -143,7 +143,7 @@ var ProjectDashboardStats = Backbone.View.extend({
             $("#userAnnotationsChart").css("width", width);
             chart.draw(data,
                 {title:"Term by users",
-                    backgroundColor : "whiteSmoke",
+                    backgroundColor : "white",
                     width:width, height:350,
                     hAxis: {title: "Terms" }
                 });
@@ -178,7 +178,7 @@ var ProjectDashboardStats = Backbone.View.extend({
                 legend : "none",
                 width:width,
                 height:350,
-                backgroundColor : "whiteSmoke",
+                backgroundColor : "white",
                 vAxis: {title: "Number of annotations"},
                 hAxis: {title: "Users" }
             }
@@ -210,7 +210,7 @@ var ProjectDashboardStats = Backbone.View.extend({
                     legend : "none",
                     width:width,
                     height:350,
-                    backgroundColor : "whiteSmoke",
+                    backgroundColor : "white",
                     vAxis: {title: "Number of annotations"},
                     hAxis: {title: "Users" }
                 });
@@ -241,7 +241,7 @@ var ProjectDashboardStats = Backbone.View.extend({
         $("#projectPieChartPanel").css("width", width);
         // Create and draw the visualization.
         var chart = new google.visualization.PieChart(document.getElementById('projectPieChart'));
-        chart.draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
+        chart.draw(data, {width: width, height: 350,title:"", backgroundColor : "white",colors : colors});
         var handleClick = function(){
             var row = chart.getSelection()[0]['row'];
             var column = chart.getSelection()[0]['column'];
@@ -262,7 +262,7 @@ var ProjectDashboardStats = Backbone.View.extend({
             var width =  self.getHalfWidth();
             $("#projectPieChart").css("width", width);
             $("#projectPieChartPanel").css("width", width);
-            chart.draw(data, {width: width, height: 350,title:"", backgroundColor : "whiteSmoke",colors : colors});
+            chart.draw(data, {width: width, height: 350,title:"", backgroundColor : "white",colors : colors});
         });
     },
     drawColumnChart : function (collection, response) {
@@ -292,7 +292,7 @@ var ProjectDashboardStats = Backbone.View.extend({
         chart.draw(data,
             {title:"",
                 legend : "none",
-                backgroundColor : "whiteSmoke",
+                backgroundColor : "white",
                 width:width, height:350,
                 vAxis: {title: "Number of annotations"},
                 hAxis: {title: "Terms" }
@@ -321,7 +321,7 @@ var ProjectDashboardStats = Backbone.View.extend({
             chart.draw(data,
                 {title:"",
                     legend : "none",
-                    backgroundColor : "whiteSmoke",
+                    backgroundColor : "white",
                     width:width, height:350,
                     vAxis: {title: "Number of annotations"},
                     hAxis: {title: "Terms" }
@@ -355,7 +355,7 @@ var ProjectDashboardStats = Backbone.View.extend({
         chart.draw(data,
             {title:"",
                 legend : "none",
-                backgroundColor : "whiteSmoke",
+                backgroundColor : "white",
                 width:width, height:350,
                 vAxis: {title: "Slides"},
                 hAxis: {title: "Terms" }
@@ -383,7 +383,7 @@ var ProjectDashboardStats = Backbone.View.extend({
             chart.draw(data,
                 {title:"",
                     legend : "none",
-                    backgroundColor : "whiteSmoke",
+                    backgroundColor : "white",
                     width:width, height:350,
                     vAxis: {title: "Slides"},
                     hAxis: {title: "Terms" }
@@ -415,7 +415,7 @@ var ProjectDashboardStats = Backbone.View.extend({
         chart.draw(data,
             {title:"",
                 legend : "none",
-                backgroundColor : "whiteSmoke",
+                backgroundColor : "white",
                 enableInteractivity : true,
                 width:width, height:350,
                 vAxis: {title: "Slides"},
@@ -443,7 +443,7 @@ var ProjectDashboardStats = Backbone.View.extend({
             chart.draw(data,
                 {title:"",
                     legend : "none",
-                    backgroundColor : "whiteSmoke",
+                    backgroundColor : "white",
                     enableInteractivity : true,
                     width:width, height:350,
                     vAxis: {title: "Slides"},
@@ -499,7 +499,7 @@ var ProjectDashboardStats = Backbone.View.extend({
                   width: self.getHalfWidth(), height: 350,
                   vAxis: {title: "Number of annotations",minValue:0,maxValue:100},
                   hAxis: {title: "Time"},
-                  backgroundColor : "whiteSmoke",
+                  backgroundColor : "white",
                   lineWidth: 1,
                   legend: {position: 'none'}}
            );
