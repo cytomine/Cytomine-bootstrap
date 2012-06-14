@@ -64,8 +64,7 @@
         <echo message="Building ${result.file}"/>
         <concat destfile="${result.file}" force="no">
 <fileset dir="${src.dir}" includes="lib/requirejs/require.js"/>
-<fileset dir="${src.dir}" includes="lib/bootstrap-2.0/js/bootstrap.js"/>
-<fileset dir="${src.dir}" includes="lib/bootstrap-2.0/js/bootstrap-tab.js"/>
+<fileset dir="${src.dir}" includes="lib/bootstrap-2.0.4/js/bootstrap.js"/>
 <fileset dir="${src.dir}" includes="lib/underscore.js"/>
 <fileset dir="${src.dir}" includes="lib/backbone.js"/>
 <fileset dir="${src.dir}" includes="lib/json2.js"/>
@@ -78,7 +77,6 @@
 <fileset dir="${src.dir}" includes="lib/farbtastic/farbtastic.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect-next/js/ui.multiselect.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect-next/js/plugins/tmpl/jquery.tmpl.1.1.1.js"/>
-<fileset dir="${src.dir}" includes="lib/multiselect-next/js/plugins/blockUI/jquery.blockUI.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect/src/jquery.multiselect.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect/src/jquery.multiselect.filter.js"/>
 <fileset dir="${src.dir}" includes="lib/stepy/js/jquery.stepy.min.js"/>

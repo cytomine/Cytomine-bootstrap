@@ -221,8 +221,6 @@ AnnotationLayer.prototype = {
 
             },
             featureselected: function (evt) {
-
-                               alert(evt);
                 if (!self.measureOnSelect) {
                     self.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
 

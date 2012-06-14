@@ -74,17 +74,17 @@ environments {
         grails.serverURL = "http://beta.cytomine.be"
     }
     development {
-        grails.serverURL = "http://localhost:8080"  //BS : http://139.165.108.140:9090
+        grails.serverURL = "http://localhost:8080/cytomine"  //BS : http://139.165.108.140:9090
         grails.converters.default.pretty.print = true
         grails.plugins.springsecurity.useBasicAuth = true
     }
     test {
-        grails.serverURL = "http://localhost:8090"
+        grails.serverURL = "http://localhost:8090/cytomine"
         grails.plugins.springsecurity.useBasicAuth = true
         grails.plugins.springsecurity.basic.realmName = "Cytomine log"
     }
     perf {
-        grails.serverURL = "http://localhost:8080"
+        grails.serverURL = "http://localhost:8080/cytomine"
         grails.plugins.springsecurity.useBasicAuth = true
         grails.plugins.springsecurity.basic.realmName = "Cytomine log"
     }

@@ -26,6 +26,8 @@
 <link rel='stylesheet' href='lib/ui.panel/ui.panel.css' type='text/css'/>
 <link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
+<link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
+<link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
 <!--<link rel="stylesheet" href="lib/bootstrap-1.3/bootstrap.min.css">-->
 <link rel="stylesheet" href="lib/bootstrap-2.0.4/css/bootstrap.min.css"/>
 <style type="text/css">
@@ -58,7 +60,6 @@ body {
 
     <!-- Twitter bootstrap -->
     <script type="text/javascript" src="lib/bootstrap-2.0.4/js/bootstrap.js"></script>
-    <script type="text/javascript" src="lib/bootstrap-2.0.4/js/bootstrap-tab.js"></script>
 
     <!-- Core Libs -->
     <script type="text/javascript" src="lib/underscore.js"></script>
@@ -82,8 +83,7 @@ body {
 
     <script type="text/javascript" src="lib/multiselect-next/js/ui.multiselect.js"></script>
     <script type="text/javascript" src="lib/multiselect-next/js/plugins/tmpl/jquery.tmpl.1.1.1.js"></script>
-    <script type="text/javascript" src="lib/multiselect-next/js/plugins/blockUI/jquery.blockUI.js"></script>
-    <link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
+
     <script>
         $.fn.multiselectNext = $.fn.multiselect;
     </script>
@@ -91,7 +91,6 @@ body {
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.filter.js"></script>
 
     <script type="text/javascript" src="lib/stepy/js/jquery.stepy.min.js"></script>
-    <link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
 
     <!--<link href="lib/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>-->

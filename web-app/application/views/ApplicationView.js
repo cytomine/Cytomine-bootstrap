@@ -390,7 +390,6 @@ ApplicationView.prototype.message =  function(title, message, type) {
     var tpl = '<div style="min-width: 200px" id="alert<%=   timestamp %>" class="alert <%=   type %> fade in" data-alert="alert"><a class="close" data-dismiss="alert">×</a><p><strong><%=   alert %></strong> <%=   message %></p></div>';
     var timestamp = new Date().getTime();
     $("#alerts").append(_.template(tpl, { alert : title, message : message, timestamp : timestamp, type : type}));
-    $("#alert"+timestamp).alert();
     setTimeout(function(){
         $("#alert"+timestamp).remove();
     }, 3000);
