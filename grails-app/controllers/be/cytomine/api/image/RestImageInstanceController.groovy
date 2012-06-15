@@ -52,7 +52,7 @@ class RestImageInstanceController extends RestController {
     }
 
     def showByProjectAndImage = {
-        Project project = projectService.read(params.long('idproject'))
+        Project project = projectService.read(params.long('idproject'), new Project())
         AbstractImage image = abstractImageService.read(params.long('idimage'))
         ImageInstance imageInstance = imageInstanceService.get(project, image)
         if (imageInstance) {
@@ -128,7 +128,7 @@ class RestImageInstanceController extends RestController {
         int w = Integer.parseInt(params.w)
         int h = Integer.parseInt(params.h)
         int maxZoom = abstractImage.getZoomLevels().max
-		int zoom = (params.zoom != null && params.zoom != "") ? Math.max(Math.min(Integer.parseInt(params.zoom), maxZoom), 0) : 0
+        int zoom = (params.zoom != null && params.zoom != "") ? Math.max(Math.min(Integer.parseInt(params.zoom), maxZoom), 0) : 0
         int resizeWidth = w / Math.pow(2, zoom)
         int resizeHeight = h / Math.pow(2, zoom)
         println "ZOOM =" + zoom
@@ -151,7 +151,8 @@ class RestImageInstanceController extends RestController {
     }
 
     def cropGeometry = {
-        def geometry = new WKTReader().read(params.geometry)
+        String geometrySTR = params.geometry
+        def geometry = new WKTReader().read(geometrySTR)
         def annotation = new Annotation(location: geometry)
         annotation.image = ImageInstance.read(params.id)
         responseImage(abstractImageService.crop(annotation, null))
@@ -212,6 +213,49 @@ class RestImageInstanceController extends RestController {
         }
     }
 
+    private BufferedImage getMaskImage(Annotation annotation, Term term, Integer zoom, Boolean withAlpha) {
+        BufferedImage crop = getImageFromURL(abstractImageService.crop(annotation, zoom))
+        BufferedImage mask = new BufferedImage(crop.getWidth(),crop.getHeight(),BufferedImage.TYPE_INT_ARGB);
+        AbstractImage abstractImage = annotation.getImage().getBaseImage()
+        Collection<Geometry> geometries = new LinkedList<Geometry>()
+        geometries.add(annotation.getLocation())
+        def boundaries = annotation.getBoundaries()
+        double x_ratio = crop.getWidth() / boundaries.width
+        double y_ratio = crop.getHeight() / boundaries.height
+        mask = segmentationService.colorizeWindow(abstractImage, mask, geometries, Color.decode(term.color), boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
+        if (withAlpha)
+            return applyMaskToAlpha(crop, mask)
+        else
+            return mask
+    }
+
+    def alphamask = {
+        Annotation annotation = Annotation.read(params.annotation)
+        if (!annotation) {
+            responseNotFound("Annotation", params.annotation)
+        }
+        Term term = Term.read(params.term)
+        if (!term) {
+            responseNotFound("Term", params.term)
+        }
+        if (!annotation.termsId().contains(term.id)) {
+            response([ error : "Term not associated with annotation", annotation : annotation.id, term : term.id])
+        }
+        Integer zoom = null
+        if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
+        if (annotation == null)
+            responseNotFound("Crop", "Annotation", params.annotation)
+        else if ((params.zoom != null) && (zoom < annotation.getImage().getBaseImage().getZoomLevels().min || zoom > annotation.getImage().getBaseImage().getZoomLevels().max))
+            responseNotFound("Crop", "Zoom", zoom)
+        else {
+            try {
+                responseBufferedImage(getMaskImage(annotation, term, zoom, true))
+            } catch (Exception e) {
+                log.error("GetThumb:" + e);
+            }
+        }
+    }
+
     def cropmask = {
         Annotation annotation = Annotation.read(params.annotation)
         if (!annotation) {
@@ -224,7 +268,7 @@ class RestImageInstanceController extends RestController {
         if (!annotation.termsId().contains(term.id)) {
             response([ error : "Term not associated with annotation", annotation : annotation.id, term : term.id])
         }
-        def zoom
+        Integer zoom = null
         if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
         if (annotation == null)
             responseNotFound("Crop", "Annotation", params.annotation)
@@ -232,21 +276,32 @@ class RestImageInstanceController extends RestController {
             responseNotFound("Crop", "Zoom", zoom)
         else {
             try {
-                BufferedImage crop = getImageFromURL(abstractImageService.crop(annotation, zoom))
-                BufferedImage window = new BufferedImage(crop.getWidth(),crop.getHeight(),BufferedImage.TYPE_INT_ARGB);
-                AbstractImage abstractImage = annotation.getImage().getBaseImage()
-                Collection<Geometry> geometries = new LinkedList<Geometry>()
-                geometries.add(annotation.getLocation())
-                def boundaries = annotation.getBoundaries()
-                double x_ratio = crop.getWidth() / boundaries.width
-                double y_ratio = crop.getHeight() / boundaries.height
-                window = segmentationService.colorizeWindow(abstractImage, window, geometries, Color.decode(term.color), boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
-                responseBufferedImage(window)
+                responseBufferedImage(getMaskImage(annotation, term, zoom, false))
             } catch (Exception e) {
                 log.error("GetThumb:" + e);
             }
         }
+
     }
+
+    private BufferedImage applyMaskToAlpha(BufferedImage image, BufferedImage mask)
+    {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        int[] imagePixels = image.getRGB(0, 0, width, height, null, 0, width);
+        int[] maskPixels = mask.getRGB(0, 0, width, height, null, 0, width);
+        int black = Color.BLACK.getRGB()
+        for (int i = 0; i < imagePixels.length; i++)
+        {
+            Color c = new Color(imagePixels[i]);
+            int alphaValue = (maskPixels[i] == black) ? 0 : 255
+            imagePixels[i] = new Color(c.getRed(), c.getGreen(), c.getBlue(),alphaValue).getRGB()
+        }
+        BufferedImage combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        combined.setRGB(0, 0, width, height, imagePixels, 0, width)
+        return combined
+    }
+
 
 
 

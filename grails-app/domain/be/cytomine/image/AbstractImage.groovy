@@ -164,7 +164,7 @@ class AbstractImage extends CytomineDomain {
     def getPreviewURL() {
         def imageServers = getImageServers()
         if (imageServers == null || imageServers.size() == 0) {
-            return "images/cytomine.jpg"
+            return null
         }
         def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
@@ -175,7 +175,7 @@ class AbstractImage extends CytomineDomain {
     def getThumbURL() {
         def imageServers = getImageServers()
         if (imageServers == null || imageServers.size() == 0 || getWidth() == null || getHeight() == null) {
-            return "images/cytomine.jpg"
+            return null
         }
         def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
         Integer desiredWidth = this.getWidth()
@@ -210,10 +210,10 @@ class AbstractImage extends CytomineDomain {
         return url
     }
 
-    def getCropURLWithMaxWithOrHeight(int topLeftX, int topLeftY, int width, int height, int dimension) {
+    def getCropURLWithMaxWithOrHeight(int topLeftX, int topLeftY, int width, int height, int desiredWidth, int desiredHeight) {
         def imageServers = getImageServers()
         if (imageServers == null || imageServers.size() == 0) {
-            return "images/cytomine.jpg"
+            return null
         }
         def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
@@ -223,22 +223,17 @@ class AbstractImage extends CytomineDomain {
         def path = getPath()
         def widthImg =  this.getWidth()
         def heightImg = this.getHeight()
-        resolver.getCropURL(baseUrl, basePath + path, topLeftX, topLeftY, width, height, widthImg,heightImg, dimension)
+        resolver.getCropURL(baseUrl, basePath + path, topLeftX, topLeftY, width, height, widthImg,heightImg, desiredWidth, desiredHeight)
     }
 
     def getCropURL(int topLeftX, int topLeftY, int width, int height) {
-        getCropURLWithMaxWithOrHeight(topLeftX, topLeftY, width, height, 5000)
+        getCropURLWithMaxWithOrHeight(topLeftX, topLeftY, width, height, 5000, (int) (5000 / (width / height)))
     }
 
     def getCropURL(int topLeftX, int topLeftY, int width, int height, int zoom) {
-        def imageServers = getImageServers()
-        if (imageServers == null || imageServers.size() == 0) {
-            return "images/cytomine.jpg"
-        }
-        def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
-        Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getCropURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(), topLeftX, topLeftY, width, height, zoom, this.getWidth(), this.getHeight())
-        return url
+        int desiredWidth = Math.round(width / Math.pow(2, zoom))
+        int desiredHeight= Math.round(height / Math.pow(2, zoom))
+        getCropURLWithMaxWithOrHeight(topLeftX, topLeftY, width, height, desiredWidth, desiredHeight)
     }
 
     def getZoomLevels() {

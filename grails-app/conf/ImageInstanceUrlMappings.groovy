@@ -23,6 +23,9 @@ class ImageInstanceUrlMappings {
         "/api/annotation/$annotation/mask-$term"(controller: "restImageInstance"){
             action = [GET:"cropmask"]
         }
+        "/api/annotation/$annotation/alphamask-$term"(controller: "restImageInstance"){
+            action = [GET:"alphamask"]
+        }
         "/api/project/$id/imageinstance"(controller: "restImageInstance"){
             action = [GET:"listByProject"]
         }

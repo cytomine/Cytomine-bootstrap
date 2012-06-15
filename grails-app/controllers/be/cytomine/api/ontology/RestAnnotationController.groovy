@@ -225,10 +225,13 @@ class RestAnnotationController extends RestController {
         log.info "add comment from " + sender + " and annotation " + annotation
         File annnotationCrop = null
         try {
-            BufferedImage bufferedImage = getImageFromURL(annotation.toCropURL())
-            annnotationCrop = File.createTempFile("temp", ".jpg")
-            annnotationCrop.deleteOnExit()
-            ImageIO.write(bufferedImage, "JPG", annnotationCrop)
+            String cropURL = annotation.toCropURL()
+            if (cropURL != null) {
+                BufferedImage bufferedImage = getImageFromURL()
+                annnotationCrop = File.createTempFile("temp", ".jpg")
+                annnotationCrop.deleteOnExit()
+                ImageIO.write(bufferedImage, "JPG", annnotationCrop)
+            }
         } catch (FileNotFoundException e) {
             annnotationCrop = null
         }

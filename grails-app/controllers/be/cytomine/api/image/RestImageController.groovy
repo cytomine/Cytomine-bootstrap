@@ -96,7 +96,9 @@ class RestImageController extends RestController {
     def thumb = {
         AbstractImage image = AbstractImage.read(params.long('id'))
         try {
-            responseImage(image.getThumbURL())
+            String thumbURL = image.getThumbURL()
+            if (thumbURL == null) thumbURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
+            responseImage(thumbURL)
         } catch (Exception e) {
             log.error("GetThumb:" + e);
         }
@@ -105,7 +107,9 @@ class RestImageController extends RestController {
     def preview = {
         AbstractImage image = AbstractImage.read(params.long('id'))
         try {
-            responseImage(image.getPreviewURL())
+            String previewURL = image.getPreviewURL()
+            if (previewURL == null) previewURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
+            responseImage(previewURL)
         } catch (Exception e) {
             log.error("GetThumb:" + e);
         }
@@ -113,7 +117,7 @@ class RestImageController extends RestController {
 
     def crop = {
         Annotation annotation = Annotation.read(params.id)
-        def zoom
+        Integer zoom = 0
         if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
         if (annotation == null)
             responseNotFound("Crop", "Annotation", params.id)
@@ -121,7 +125,9 @@ class RestImageController extends RestController {
             responseNotFound("Crop", "Zoom", zoom)
         else {
             try {
-                responseImage(abstractImageService.crop(annotation, zoom))
+                String cropURL = abstractImageService.crop(annotation, zoom)
+                if (cropURL == null) cropURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
+                responseImage(cropURL)
             } catch (Exception e) {
                 log.error("GetThumb:" + e);
             }

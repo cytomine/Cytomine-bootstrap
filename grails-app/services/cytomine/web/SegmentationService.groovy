@@ -17,8 +17,6 @@ class SegmentationService {
 
 
     BufferedImage colorizeWindow(AbstractImage image, BufferedImage window, Collection<Geometry> geometryCollection, Color color, int x, int y, double x_ratio, double y_ratio) {
-        //http://localhost:8080/api/imageinstance/1564/mask-0-0-28672-38400.jpg
-
         ImagePlus imagePlus = new ImagePlus("", window)
         ImageProcessor ip = imagePlus.getProcessor()
         ip.setColor(color)
@@ -27,15 +25,13 @@ class SegmentationService {
             Collection<Coordinate> coordinates = geometry.getCoordinates()
             int[] _x = new int[coordinates.size()]
             int[] _y = new int[coordinates.size()]
-            int i = 0
-            coordinates.each { coordinate ->
+            coordinates.eachWithIndex { coordinate, i ->
                 int xLocal = Math.min((coordinate.x - x) * x_ratio, window.getWidth());
                 xLocal = Math.max(0, xLocal)
                 int yLocal = Math.min((image.getHeight() - coordinate.y - y) * x_ratio, window.getHeight());
                 yLocal = Math.max(0, yLocal)
                 _x[i] = xLocal
                 _y[i] = yLocal
-                i++
             }
             PolygonFiller polygonFiller = new PolygonFiller()
             polygonFiller.setPolygon(_x, _y, coordinates.size())
