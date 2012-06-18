@@ -7,7 +7,9 @@ var JobTableView = Backbone.View.extend({
     table:null,
     datatable:null,
     paramsFromSoftwares:null,
+    paramsFromSoftwaresFull:null,
     paramsFromSoftwaresVisibility:null,
+    paramsFromSoftwaresDomainFill:null,
     FIRSTCOLUMNWITHJOBDATA:7,
     initialize:function (options) {
         var self = this;
@@ -16,12 +18,16 @@ var JobTableView = Backbone.View.extend({
         this.parent = options.parent;
         this.jobs = options.jobs;
         this.paramsFromSoftwares = [];
+        this.paramsFromSoftwaresFull = [];
         _.each(self.software.get('parameters'), function (param) {
-            self.paramsFromSoftwares.push(param.name)
+            self.paramsFromSoftwares.push(param.name);
+            self.paramsFromSoftwaresFull.push(param)
         });
         this.paramsFromSoftwaresVisibility = [];
+        this.paramsFromSoftwaresDomainFill = [];
         _.each(self.software.get('parameters'), function (param) {
-            self.paramsFromSoftwaresVisibility.push(false)
+            self.paramsFromSoftwaresVisibility.push(false);
+            self.paramsFromSoftwaresDomainFill.push(false);
         });
     },
     render:function () {
@@ -100,6 +106,8 @@ var JobTableView = Backbone.View.extend({
 
         //hide id column
         self.buildSHowHideColumnParamPanel(self.table);
+
+
     },
     addColumns:function (job) {
         var self = this;
@@ -155,6 +163,7 @@ var JobTableView = Backbone.View.extend({
 
     },
     getValueElement:function (param) {
+        var self = this;
         if (param.type == "String" || param.type == "Number") {
             return '<td>' + param.value + '</td>';
         } else if (param.type == "Boolean") {
@@ -168,18 +177,12 @@ var JobTableView = Backbone.View.extend({
                 return '<td>' + window.app.convertLongToDate(param.value) + '</td>';
             }
             else return "<td></td>";
-        } else if (param.type == 'ListProject' || param.type == 'Project') {
-            var list = param.value.split(",");
-            var projectNames = [];
-            _.each(list, function (id) {
-                var project = window.app.models.projects.get(id);
-                if (project != undefined)
-                    projectNames.push(window.app.models.projects.get(id).get('name'));
-            });
-            return '<td>' + projectNames.join(', ') + '</td>';
-        } else '<td>' + param.value + '</td>';
+        } else if (param.type == 'ListDomain' || param.type == 'Domain') {
+            return '<td><label style="display:inline;" data="'+param.value+'" class="'+param.softwareParameter+'" id="paramsTable'+param.id+'"><i class="icon-refresh" />Loading...</label></td>';
+        } else return '<td>' + param.value + '</td>';
 
     },
+
     getStateElement:function (job) {
         if (job.isNotLaunch()) return '<span class="label btn-inverse">Not Launch!</span> ';
         else if (job.isInQueue()) return '<span class="label btn-info">In queue!</span> ';
@@ -373,12 +376,36 @@ var JobTableView = Backbone.View.extend({
         console.log("Change visibility to " + self.paramsFromSoftwaresVisibility[columnIndex]);
         datatable.fnSetColumnVis(columnParamIndex, self.paramsFromSoftwaresVisibility[columnIndex]);
 
-//        if(oldVisibility) {
-//            //hide
-//            $("#showParamColumnSearchJobTable").find('#'+columnIndex).text("Show " + datatable.fnSettings().aoColumns[(columnParamIndex)].sTitle);
-//        } else {
-//            //show
-//            $("#showParamColumnSearchJobTable").find('#'+columnIndex).text("Hide " + datatable.fnSettings().aoColumns[(columnParamIndex)].sTitle);
-//        }
+        var param = self.paramsFromSoftwaresFull[columnIndex];
+        self.fillDomainElement(param,columnIndex);
+    },
+    fillDomainElement: function(param,index) {
+
+
+            if(param.type=="Domain" || param.type=="ListDomain") {
+                if(!this.paramsFromSoftwaresDomainFill[index]) this.retrieveAndReplaceCell(param,index);
+            }
+
+    },
+    retrieveAndReplaceCell : function(param,index) {
+        var self = this;
+        new SoftwareParameterModelCollection({uri: window.app.replaceVariable(param.uri), sortAttribut : param.uriSortAttribut}).fetch({
+               success:function (collection, response) {
+                   _.each($(self.el).find("label."+param.id),function(cell) {
+                       var domainList = $(cell).attr("data");
+                       var domainName = [];
+                       _.each(domainList.split(","), function (id) {
+                           var domain = collection.get(id);
+                           if (domain != undefined)
+                               domainName.push(domain.get(param.uriPrintAttribut));
+                       });
+                       $(cell).empty();
+                       $(cell).text(domainName.join(","));
+
+                   });
+
+                   self.paramsFromSoftwaresDomainFill[index] = true;
+               }
+         });
     }
 });
