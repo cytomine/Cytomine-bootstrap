@@ -84,6 +84,9 @@ body {
     <script type="text/javascript" src="lib/multiselect-next/js/ui.multiselect.js"></script>
     <script type="text/javascript" src="lib/multiselect-next/js/plugins/tmpl/jquery.tmpl.1.1.1.js"></script>
 
+    <script type="text/javascript" src="lib/multiselectResolveConflict.js"></script>
+
+
 
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.js"></script>
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.filter.js"></script>
@@ -246,9 +249,6 @@ body {
     <script type="text/javascript" src="application.js" ></script>
 
 </g:if>
-<script>
-    $.fn.multiselectNext = $.fn.multiselect;
-</script>
 <script type="text/javascript">
     $(function() {
         require(
