@@ -1,0 +1,28 @@
+@CHARSET "UTF-8";
+
+.button-back { float: left; }
+.button-next, .finish { float: right; }
+.button-back, .button-next, .finish {
+}
+.button-back:hover, .button-next:hover, .finish:hover { 
+}
+
+.step {
+	clear: left;  width: auto;
+}
+.step label {  display: block; margin: 10px 0 3px 7px; }
+.step legend {  font-size : 18px; font-weight : bold;padding: 0 2px 3px 2px; }
+.step input, .step textarea, .step select { border: 1px solid #AAA; margin-left: 7px; }
+
+.error-image { background: url('../img/error.png') no-repeat right top; }
+
+.stepy-titles { list-style: none; margin: 0; padding: 0; width: 100%; }
+.stepy-titles li { color: #DDD; cursor: pointer;  float: left; padding: 10px; }
+.stepy-titles li span { display: block; }
+.stepy-titles .current-step { color: #369; cursor: auto; }
+
+/*** Optionaly (jQuery Validate) ***/
+
+.error { background-color: #FAF4F4; }
+
+label.error { background: url('../img/alert.png') no-repeat; color: #DE5130; display: block; float: left; height: 13px; margin: 3px 3px 0 10px; padding-left: 21px; padding-top: 2px; }
