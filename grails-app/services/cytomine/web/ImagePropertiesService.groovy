@@ -72,6 +72,9 @@ class ImagePropertiesService {
             case "svs":
                 extractUsefulTif(image)
                 break;
+            case "jp2":
+                extractUsefulTif(image)
+                break;
         }
     }
 
@@ -80,7 +83,12 @@ class ImagePropertiesService {
         if (imageServers == null || imageServers.size() == 0) return
         def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
         def imageServer = imageServers.get(index)
+        println "imageServer="+imageServer
+        println "imageServerclassName="+imageServer.className
         Resolver resolver = Resolver.getResolver(imageServer.className)
+        println "resolver="+resolver
+        println "storage="+imageServer.getStorage()
+        println "image="+image
         def metadaURL = resolver.getMetaDataURL(imageServer.getBaseUrl(), imageServer.getStorage().getBasePath() + image.getPath())
 
         DefaultHttpClient httpClient = new DefaultHttpClient()

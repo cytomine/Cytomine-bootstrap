@@ -8,6 +8,7 @@ import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import grails.converters.JSON
 import be.cytomine.image.*
+import be.cytomine.image.server.MimeImageServer
 
 class DeployImagesService {
 
@@ -25,19 +26,19 @@ class DeployImagesService {
 
         long timestamp = new Date().getTime()
         Slide slide = new Slide(name : timestamp.toString() + "-" + uploadedFile.getOriginalFilename(), index : 0)
-
+        Mime mime = Mime.findByExtension(uploadedFile.getConvertedExt())
         AbstractImage abstractImage = new AbstractImage(
                 filename: uploadedFile.getConvertedFilename(),
                 originalFilename:  uploadedFile.getOriginalFilename(),
                 scanner: null,
                 slide: slide,
                 path: uploadedFile.getConvertedFilename(),
-                mime: Mime.findByExtension(uploadedFile.getConvertedExt()))
+                mime: mime)
 
         if (slide.validate() && abstractImage.validate()) {
 
-
-            Storage.list().each { storage ->
+            Collection<Storage> storages = MimeImageServer.findAllByMime(mime).collect {it.imageServer.storage}.unique()
+            storages.each { storage ->
                 try {
                     remoteCopyService.copy(storage, abstractImage, uploadedFile, true) //TO DO : iterate on all servers (not accessibles from here)
 
@@ -57,7 +58,7 @@ class DeployImagesService {
             abstractImage.save(flush: true)
             Group group = Group.findByName(currentUser.getUsername())
             AbstractImageGroup.link(abstractImage, group)
-            Storage.list().each { storage ->
+            storages.each { storage ->
                 StorageAbstractImage.link(storage, abstractImage)
             }
             if (uploadedFile.getProject() != null) {

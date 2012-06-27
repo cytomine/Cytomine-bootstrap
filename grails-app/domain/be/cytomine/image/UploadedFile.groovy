@@ -7,7 +7,7 @@ import grails.converters.JSON
 
 class UploadedFile extends CytomineDomain {
 
-    public static allowedMime = ["vms", "mrxs", "svs", "opt"]
+    public static allowedMime = ["vms", "mrxs", "svs", "opt", "jp2"]
     public static mimeToConvert = ["jpg", "png", "tiff", "tif","pgm"]
     public static int UPLOADED = 0
     public static int CONVERTED = 1

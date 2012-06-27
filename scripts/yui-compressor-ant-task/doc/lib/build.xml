@@ -77,6 +77,7 @@
 <fileset dir="${src.dir}" includes="lib/farbtastic/farbtastic.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect-next/js/ui.multiselect.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect-next/js/plugins/tmpl/jquery.tmpl.1.1.1.js"/>
+<fileset dir="${src.dir}" includes="lib/multiselectResolveConflict.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect/src/jquery.multiselect.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect/src/jquery.multiselect.filter.js"/>
 <fileset dir="${src.dir}" includes="lib/stepy/js/jquery.stepy.min.js"/>

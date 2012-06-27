@@ -21,7 +21,7 @@ var JobTableView = Backbone.View.extend({
         this.paramsFromSoftwaresFull = [];
         _.each(self.software.get('parameters'), function (param) {
             self.paramsFromSoftwares.push(param.name);
-            self.paramsFromSoftwaresFull.push(param)
+            self.paramsFromSoftwaresFull.push(param);
         });
         this.paramsFromSoftwaresVisibility = [];
         this.paramsFromSoftwaresDomainFill = [];

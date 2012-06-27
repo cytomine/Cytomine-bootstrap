@@ -11,6 +11,7 @@ import be.cytomine.project.Slide
 import be.cytomine.server.resolvers.Resolver
 import grails.converters.JSON
 import be.cytomine.image.acquisition.Instrument
+import be.cytomine.image.server.MimeImageServer
 
 class AbstractImage extends CytomineDomain {
 
@@ -152,9 +153,11 @@ class AbstractImage extends CytomineDomain {
 
     def getImageServers() {
         if (this.storageAbstractImages != null && this.storageAbstractImages.size() > 0) {
+
             def imageServers = ImageServer.createCriteria().list {
                 eq("available", true)
                 inList("storage", this.storageAbstractImages.collect { it.storage })
+                inList("id", MimeImageServer.findAllByMime(this.getMime()).collect {it.imageServer.id}.unique())
             }
             return imageServers
         }

@@ -21,6 +21,7 @@ import grails.util.GrailsUtil
 class DeployImagesJob {
 
     def deployImagesService
+    def cytomineService
 
     static triggers = {
          simple name: 'deployImagesJob', startDelay: 60000, repeatInterval: 1000*60*5 //5 minutes
@@ -30,7 +31,7 @@ class DeployImagesJob {
         if (GrailsUtil.environment != "production") return
         println "START (DeployImagesJob)"
         UploadedFile.findAllByStatus(UploadedFile.CONVERTED).each { uploadedFile ->
-            deployImagesService.deployUploadedFile(uploadedFile)
+            deployImagesService.deployUploadedFile(uploadedFile, cytomineService.getCurrentUser())
         }
         println "DONE (DeployImagesJob)"
     }
