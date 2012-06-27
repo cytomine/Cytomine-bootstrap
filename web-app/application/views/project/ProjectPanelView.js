@@ -149,6 +149,7 @@ var ProjectPanelView = Backbone.View.extend({
 
         var self = this;
         $('#editproject').remove();
+        console.log('editProject');
         self.editProjectDialog = new EditProjectDialog({projectPanel:self,el:self.el,model:self.model}).render();
     },
     deleteProject : function() {

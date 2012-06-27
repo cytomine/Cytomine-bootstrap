@@ -19,7 +19,6 @@ var EditProjectDialog = Backbone.View.extend({
         return this;
     },
     doLayout : function(projectEditDialogTpl, usersChoicesTpl) {
-
         var self = this;
         $("#editproject").replaceWith("");
         $("#addproject").replaceWith("");
@@ -34,7 +33,7 @@ var EditProjectDialog = Backbone.View.extend({
         self.createUserList();
         $("#project-edit-name").val(self.model.get('name'));
         self.createRetrievalProject();
-        self.createUserList(usersChoicesTpl);
+//        self.createUserList(usersChoicesTpl);
 
         //Build dialog
         self.editProjectDialog = $("#editproject").modal({
@@ -95,13 +94,9 @@ var EditProjectDialog = Backbone.View.extend({
                     $("#projectedituser").multiselectNext('select', $(ui.option).text());
                     window.app.view.message("User", "You must be in user list of your project!", "error");
                 } else {
-                    //There is a bug: multiselect don't remove attribute selected on html option items...so I do it by hand
-                    $("option[value="+$(ui.option).val()+"]").removeAttr("selected");
                 }
             },
             selected: function(event, ui) {
-                //There is a bug: multiselect don't add attribute selected on html option items...so I do it by hand
-                $("option[value="+$(ui.option).val()+"]").attr("selected","selected");
         }});
 
         $("div.ui-multiselect").find("ul.available").css("height","150px");

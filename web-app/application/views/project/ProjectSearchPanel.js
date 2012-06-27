@@ -285,6 +285,7 @@ var ProjectSearchPanel = Backbone.View.extend({
 
         var self = this;
         $('#addproject').remove();
+        console.log('showAddProjectPanel');
         self.addProjectDialog = new AddProjectDialog({projectsPanel:self.projectsPanel,el:self.el, ontologies : self.ontologies}).render();
     },
     /**
