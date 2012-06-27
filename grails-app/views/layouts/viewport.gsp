@@ -86,8 +86,6 @@ body {
 
     <script type="text/javascript" src="lib/multiselectResolveConflict.js"></script>
 
-
-
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.js"></script>
     <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.filter.js"></script>
 

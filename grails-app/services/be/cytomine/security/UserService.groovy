@@ -44,7 +44,7 @@ class UserService extends ModelService {
     }
 
     def list() {
-        SecUser.list(sort: "username", order: "asc")
+        User.list(sort: "username", order: "asc")
     }
 
     def list(Project project) {

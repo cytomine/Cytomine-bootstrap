@@ -236,10 +236,11 @@ var AddProjectDialog = Backbone.View.extend({
                                 success: function (model, response) {
                                     self.addUserProjectCallback(total,++counter);
                                 },error: function (model, response) {
-
+                                    self.addUserProjectCallback(total,++counter);
                                     var json = $.parseJSON(response.responseText);
                                     window.app.view.message("User", json.errors, "error");
                                 }});
+
                         });
 
                     },

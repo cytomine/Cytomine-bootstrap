@@ -94,10 +94,14 @@ var EditProjectDialog = Backbone.View.extend({
                 if($(ui.option).val()==window.app.status.user.id)  {
                     $("#projectedituser").multiselectNext('select', $(ui.option).text());
                     window.app.view.message("User", "You must be in user list of your project!", "error");
+                } else {
+                    //There is a bug: multiselect don't remove attribute selected on html option items...so I do it by hand
+                    $("option[value="+$(ui.option).val()+"]").removeAttr("selected");
                 }
             },
             selected: function(event, ui) {
-                //alert($(ui.option).val() + " has been selected");
+                //There is a bug: multiselect don't add attribute selected on html option items...so I do it by hand
+                $("option[value="+$(ui.option).val()+"]").attr("selected","selected");
         }});
 
         $("div.ui-multiselect").find("ul.available").css("height","150px");
@@ -195,7 +199,7 @@ var EditProjectDialog = Backbone.View.extend({
         $("#projectediterrorlabel").hide();
 //        $("#project-edit-name").val("");
 
-        $(self.editProjectCheckedUsersCheckboxElem).attr("checked", false);
+        //$(self.editProjectCheckedUsersCheckboxElem).attr("checked", false);
     },
     /**
      * Function which returns the result of the subtraction method applied to
@@ -214,8 +218,6 @@ var EditProjectDialog = Backbone.View.extend({
                 diff.push(a[i]);
         return diff;
     },
-
-
     editProject : function() {
 
         var self = this;
@@ -225,7 +227,8 @@ var EditProjectDialog = Backbone.View.extend({
 
         var name = $("#project-edit-name").val().toUpperCase();
         var users = $('#login-form-edit-project').find("#projectedituser").multiselectNext('selectedValues');
-
+        console.log("users="+users);
+        console.log("multiselect="+$('#login-form-edit-project').length);
         var retrievalDisable = $('#login-form-edit-project').find("input#retrievalProjectNone").is(':checked');
         var retrievalProjectAll = $('#login-form-edit-project').find("input#retrievalProjectAll").is(':checked');
         var retrievalProjectSome = $('#login-form-edit-project').find("input#retrievalProjectSome").is(':checked');
@@ -247,7 +250,6 @@ var EditProjectDialog = Backbone.View.extend({
 
                         //create user-project "link"
 
-
                         var projectOldUsers = new Array(); //[a,b,c]
                         var projectNewUsers = null;  //[a,b,x]
                         var projectAddUser = null;
@@ -265,6 +267,10 @@ var EditProjectDialog = Backbone.View.extend({
                         //var diff = self.diffArray(projectOldUsers,projectNewUsers);
                         projectAddUser = self.diffArray(projectNewUsers,projectOldUsers); //[x] must be added
                         projectDeleteUser =  self.diffArray(projectOldUsers,projectNewUsers); //[c] must be deleted
+                        console.log("projectOldUsers="+projectOldUsers);
+                        console.log("projectNewUsers="+projectNewUsers);
+                        console.log("projectAddUser="+projectAddUser);
+                        console.log("projectDeleteUser="+projectDeleteUser);
 
 
                         /*_.each(projectOldUsers,function(user){
