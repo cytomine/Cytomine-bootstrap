@@ -20,6 +20,7 @@ import be.cytomine.command.*
 import org.apache.commons.collections.CollectionUtils
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.image.UploadedFile
+import be.cytomine.processing.ImageFilterProject
 
 class ProjectService extends ModelService {
 
@@ -247,6 +248,10 @@ class ProjectService extends ModelService {
             it.refresh()
             it.removeFromRetrievalProjects(domain)
             it.save(flush: true)
+        }
+
+        ImageFilterProject.findAllByProject(domain).each {
+            it.delete()
         }
 
         //remove retrieval-project of this project
