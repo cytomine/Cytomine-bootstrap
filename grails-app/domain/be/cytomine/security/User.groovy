@@ -28,9 +28,9 @@ class User extends SecUser {
         color(blank: false, nullable: true)
     }
 
-  static mapping = {
-      id(generator: 'assigned', unique: true)
-  }
+    static mapping = {
+        id(generator: 'assigned', unique: true)
+    }
 
 
     static hasMany = [softwareProjects: SoftwareProject]
@@ -57,7 +57,7 @@ class User extends SecUser {
     def ontologies() {
         def ontologies = []
         //add ontology created by this user
-        
+
         if (this.version != null) ontologies.addAll(Ontology.findAllByUser(this))
         //add ontology from project which can be view by this user
         def project = this.projects();
@@ -148,11 +148,15 @@ class User extends SecUser {
         user.lastname = jsonUser.lastname
         user.email = jsonUser.email
         user.color = jsonUser.color
-        user.password = jsonUser.password
+        if (jsonUser.password) {
+            user.password = jsonUser.password
+        }
         user.enabled = true
-        user.generateKeys()
-         user.created = (!jsonUser.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.created.toString())) : null
-         user.updated = (!jsonUser.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.updated.toString())) : null
+        if (user.getPublicKey() == null || user.getPrivateKey() == null || jsonUser.publicKey == "" || jsonUser.privateKey == "") {
+            user.generateKeys()
+        }
+        user.created = (!jsonUser.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.created.toString())) : null
+        user.updated = (!jsonUser.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.updated.toString())) : null
         return user;
     }
 
@@ -175,7 +179,6 @@ class User extends SecUser {
             returnArray['firstname'] = it.firstname
             returnArray['lastname'] = it.lastname
             returnArray['email'] = it.email
-            returnArray['password'] = "******"
             if (it.id == it.springSecurityService.principal?.id) {
                 returnArray['publicKey'] = it.publicKey
                 returnArray['privateKey'] = it.privateKey

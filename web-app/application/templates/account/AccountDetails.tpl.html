@@ -1,10 +1,108 @@
-<div class="hero-unit" style="margin: 10px;">
-    <h3><%= firstname %> <%= lastname %></h3>
-    <hr>
-    <h4>Your public key</h4>
-    <span class="label label-inverse"><%= publicKey %></span>
-    <br />
-    <h4>Your private key</h4>
-    <span class="label label-inverse"><%= privateKey %></span>
+<div class="container-fluid" style="margin-bottom: 30px;">
+    <div style="margin-top: 20px;">
+        <div class="widget-header">
+            <i class="icon-user"></i>
+            <h3>Profile</h3>
+        </div>
+        <div class="widget-content" style="padding: 10px;">
+            <form id="edit_profile_form" class="form-horizontal well">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label" for="input_username">Username</label>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="input_username" value="<%= username %>" disabled>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="input_firstname">Firstname</label>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="input_firstname" value="<%= firstname %>">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="input_lastname">Lastname</label>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="input_lastname" value="<%= lastname %>">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="input_email">Email</label>
+                        <div class="controls" >
+                            <div class="input-prepend input-append">
+                                <!--span class="add-on"><i class="icon-envelope"></i></span>--><input type="text"  class="input-xlarge" id="input_email" value="<%= email %>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button id="edit_profile_submit" type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    <div style="margin-top: 20px;">
+        <div class="widget-header">
+            <i class="icon-lock"></i>
+            <h3>Password</h3>
+        </div>
+        <div class="widget-content" style="padding: 10px;">
+            <form id="edit_password_form" class="form-horizontal well">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label" for="input_password">Actual password</label>
+                        <div class="controls">
+                            <div class="input-prepend input-append">
+                                <span class="add-on"><i class="icon-lock"></i></span><input type="password" class="input-xlarge" id="input_password">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="input_new_password">New password</label>
+                        <div class="controls">
+                            <div class="input-prepend input-append">
+                                <span class="add-on"><i class="icon-lock"></i></span><input type="password" class="input-xlarge" id="input_new_password" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="input_new_password_confirm">New password (confirm)</label>
+                        <div class="controls">
+                            <div class="input-prepend input-append">
+                                <span class="add-on"><i class="icon-lock"></i></span><input type="password" class="input-xlarge" id="input_new_password_confirm" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button id="submit_edit_password" type="submit" class="btn btn-primary" disabled>Save changes</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    <div style="margin-top: 20px;">
+        <div class="widget-header">
+            <i class="icon-lock"></i>
+            <h3>API KEYS</h3>
+        </div>
+        <div class="widget-content" style="padding: 10px;">
+            <form id="regenerate_keys_form" class="form-horizontal well">
+                <div class="control-group">
+                    <label class="control-label" for="input_public_key">Public Key</label>
+                    <div class="controls">
+                        <input type="text" class="input-xlarge" id="input_public_key" value="<%= publicKey %>" disabled>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="input_private_key">Private Key</label>
+                    <div class="controls">
+                        <input type="text" class="input-xlarge" id="input_private_key" value="<%= privateKey %>" disabled>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Regenerate</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 </div>

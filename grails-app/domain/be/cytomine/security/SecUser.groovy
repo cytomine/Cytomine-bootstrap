@@ -48,8 +48,8 @@ class SecUser extends CytomineDomain {
 
     def generateKeys() {
         println "GENERATE KEYS"
-        String privateKey = UUID.randomUUID().toString();
-        String publicKey = UUID.randomUUID().toString();
+        String privateKey = UUID.randomUUID().toString()
+        String publicKey = UUID.randomUUID().toString()
         this.setPrivateKey(privateKey)
         this.setPublicKey(publicKey)
     }
@@ -62,8 +62,12 @@ class SecUser extends CytomineDomain {
 
     def beforeUpdate() {
         super.beforeUpdate()
-        if (isDirty('password')) {
-            encodePassword()
+        def persisted = SecUser.findById(this.id).getPassword()
+        def encodedNew = springSecurityService.encodePassword(password)
+        if(persisted != encodedNew) {
+            println "Encode password="+password
+            password = encodedNew
+            println "Encoded password="+password
         }
     }
 
@@ -76,6 +80,7 @@ class SecUser extends CytomineDomain {
     }
 
     protected void encodePassword() {
+        if (password == "") password = "random_password"
         password = springSecurityService.encodePassword(password)
     }
 }

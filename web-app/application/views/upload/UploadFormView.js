@@ -1,4 +1,4 @@
-var UploadFormView = Backbone.View.extend({
+ var UploadFormView = Backbone.View.extend({
 
     statusLabels : {
         uploadedLabel : '<span class="label label-inverse">UPLOADED</span>',

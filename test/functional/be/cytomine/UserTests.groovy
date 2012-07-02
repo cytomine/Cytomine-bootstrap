@@ -37,7 +37,8 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
   
     void testAddUserCorrect() {
         def userToAdd = BasicInstance.getBasicUserNotExist()
-        def result = UserAPI.create(userToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def jsonUser = new JSONObject(userToAdd.encodeAsJSON()).put("password", "password").toString();
+        def result = UserAPI.create(jsonUser.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         int idUser = result.data.id
   

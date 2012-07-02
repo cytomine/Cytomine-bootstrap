@@ -10,9 +10,10 @@ import org.codehaus.groovy.grails.commons.GrailsApplication
 
 abstract class CytomineDomain {
 
+    def springSecurityService
     def cytomineService
     def sequenceService
-    def jsonService
+
     static def grailsApplication
     Long id
     Date created
