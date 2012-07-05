@@ -22,7 +22,6 @@ class AnnotationTermUrlMappings {
         "/api/annotation/$idannotation/notuser/$idNotUser/term"(controller:"restAnnotationTerm"){
             action = [GET: "listAnnotationTermByUserNot"]
         }
-
     }
 }
 

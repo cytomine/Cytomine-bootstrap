@@ -99,26 +99,70 @@ class BootStrap {
             initData(GrailsUtil.environment)
         }
 
-        if(!Instrument.findByBrand('gigascan2')) {
-            Instrument scanner = new Instrument(brand:"gigascan2",model:"MODEL2")
-            println "validate scanner = " + scanner.validate()
-            println "errors scanner = " + scanner.errors
-            println "save scanner = " + scanner.save(flush: true)
-        }
-
-        //update abstract image
+        println "create scanner"
+        createScanner()
+        println "create user"
+        createBasicUser()
+        println "create discipline"
+        createDiscipline()
 
         countersService.updateCounters()
         //updateImageProperties()
-        generateAbstractImageOriginalFilename()
+        //generateAbstractImageOriginalFilename()
         /*
         createProjectGrant()
         createProjectOwner()
         createAnnotationGrant()
         */
         //end of init
+    }
 
+    public void createBasicUser() {
+        if (User.list().isEmpty()) {
+            User user = new User()
+            user.username = "admin"
+            user.firstname = "Admin"
+            user.lastname = "Admin"
+            user.password = "test"
+            user.email = "admin@cytominetest.be"
+            user.enabled = true
+            user.accountExpired = false
+            user.accountLocked = false
+            user.passwordExpired = false
+            user.generateKeys()
+            println "validate user = " + user.validate()
+            println "errors user = " + user.errors
+            println "save user = " + user.save(flush: true)
 
+            def userRole = SecRole.findByAuthority("ROLE_USER") ?: new SecRole(authority: "ROLE_USER").save(flush: true)
+            def adminRole = SecRole.findByAuthority("ROLE_ADMIN") ?: new SecRole(authority: "ROLE_ADMIN").save(flush: true)
+
+            SecUserSecRole.create(user, userRole)
+            SecUserSecRole.create(user, adminRole)
+        }
+
+    }
+
+    public void createScanner() {
+        if (!Instrument.findByBrand('gigascan2')) {
+            Instrument scanner = new Instrument(brand: "gigascan2", model: "MODEL2")
+            println "validate scanner = " + scanner.validate()
+            println "errors scanner = " + scanner.errors
+            println "save scanner = " + scanner.save(flush: true)
+        }
+    }
+
+    public void createDiscipline() {
+        if (Discipline.list().isEmpty()) {
+            Discipline cyto = new Discipline(name: "CYTOLOGY")
+            println "validate cyto = " + cyto.validate()
+            println "errors cyto = " + cyto.errors
+            println "save cyto = " + cyto.save(flush: true)
+            Discipline histo = new Discipline(name: "HISTOLOGY")
+            println "validate histo = " + histo.validate()
+            println "errors histo = " + histo.errors
+            println "save histo = " + histo.save(flush: true)
+        }
     }
 
     private def compileJS() {

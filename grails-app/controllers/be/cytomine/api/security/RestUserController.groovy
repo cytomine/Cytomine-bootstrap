@@ -83,7 +83,7 @@ class RestUserController extends RestController {
     def add = {
         add(userService, request.JSON)
     }
-    @Secured(['ROLE_ADMIN'])
+    @Secured(['ROLE_USER','ROLE_ADMIN'])
     def update = {
         update(userService, request.JSON)
     }
