@@ -3,7 +3,7 @@ dataSource {
   driverClassName = "org.postgresql.Driver"
 //    driverClassName = "com.p6spy.engine.spy.P6SpyDriver" // use this driver to enable p6spy logging
   username = "postgres"
-  password = "\$.cytomine"
+
   dialect = org.hibernatespatial.postgis.PostgisDialect
 }
 hibernate {
@@ -17,6 +17,7 @@ environments {
     dataSource {
       dbCreate = "update"
       url="jdbc:postgresql://localhost:5432/cytomine"
+      password = "postgres"
     }
   }
   test {
@@ -24,12 +25,14 @@ environments {
       //loggingSql = true
       dbCreate = "create"
       url="jdbc:postgresql://localhost:5432/cytominetest"
+      password = "postgres"
     }
   }
   production {
     dataSource {
       dbCreate = "update"
       url = "jdbc:postgresql://localhost:5432/cytomineprod"
+      password = "\$.cytomine"
     }
   }
   perf {
@@ -37,6 +40,7 @@ environments {
         //loggingSql = true
         dbCreate = "update"
         url="jdbc:postgresql://localhost:5432/cytomineperf"
+        password = "postgres"
       }
     }
 }
