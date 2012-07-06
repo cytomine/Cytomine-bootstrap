@@ -141,6 +141,15 @@ class BootStrap {
             SecUserSecRole.create(user, adminRole)
         }
 
+
+        if(Group.list().isEmpty()) {
+            Group group = new Group()
+            group.name = "admin"
+            println "validate admin = " + group.validate()
+            println "errors admin = " + group.errors
+            println "save admin = " + group.save(flush: true)
+        }
+
     }
 
     public void createScanner() {
