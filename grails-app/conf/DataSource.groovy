@@ -3,7 +3,7 @@ dataSource {
   driverClassName = "org.postgresql.Driver"
 //    driverClassName = "com.p6spy.engine.spy.P6SpyDriver" // use this driver to enable p6spy logging
   username = "postgres"
-  password = "postgres"
+  password = "\$.cytomine"
   dialect = org.hibernatespatial.postgis.PostgisDialect
 }
 hibernate {
@@ -16,7 +16,7 @@ environments {
   development {
     dataSource {
       dbCreate = "update"
-      url="jdbc:postgresql://localhost:5432/dbtest"
+      url="jdbc:postgresql://localhost:5432/cytomine"
     }
   }
   test {
