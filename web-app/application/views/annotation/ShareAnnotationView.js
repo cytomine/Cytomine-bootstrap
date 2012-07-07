@@ -116,10 +116,12 @@ var ShareAnnotationView = Backbone.View.extend({
                 shareAnnotationURL : shareAnnotationURL,
                 by : window.app.status.serverURL
             });
+            alert(self.model.id);
             var subject = _.template("Cytomine : <%= from %> shared an annotation with you",{ from : userCollection.get(window.app.status.user.id).prettyName()});
-            new AnnotationCommentModel().save({
+            new AnnotationCommentModel({
+                annotation : self.model.id
+            }).save({
                 users : users,
-                annotation : self.model.id,
                 message : message,
                 comment : comment,
                 subject : subject,

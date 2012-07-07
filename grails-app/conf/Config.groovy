@@ -105,6 +105,7 @@ log4j = {
     println "Log4j consoleLevel"
 
     appenders {
+	    'null' name:'stacktrace'
         rollingFile name:"logfile", maxFileSize:'300kB',
                 layout:pattern(conversionPattern: "%d{[ dd.MM.yy HH:mm:ss.SSS]} [%t] %-5p %c %x - %m%n"),
                 file:"/tmp/cytomine.log"

@@ -32,7 +32,7 @@ environments {
     dataSource {
       dbCreate = "update"
       url = "jdbc:postgresql://localhost:5432/cytomineprod"
-      password = "\$.cytomine"
+      password = "cytomine_postgres"
     }
   }
   perf {

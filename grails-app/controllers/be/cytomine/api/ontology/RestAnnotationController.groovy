@@ -24,7 +24,7 @@ class RestAnnotationController extends RestController {
     def exportService
     def grailsApplication
     def annotationService
-	def domainService
+    def domainService
     def termService
     def imageInstanceService
     def userService
@@ -65,7 +65,7 @@ class RestAnnotationController extends RestController {
         } else {
             imageInstanceList = imageInstanceService.list(project)
         }
-                                        def sessionFactory
+        def sessionFactory
 
         if (project) {
             def list = annotationService.list(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"))
@@ -227,10 +227,12 @@ class RestAnnotationController extends RestController {
         try {
             String cropURL = annotation.toCropURL()
             if (cropURL != null) {
-                BufferedImage bufferedImage = getImageFromURL()
-                annnotationCrop = File.createTempFile("temp", ".jpg")
-                annnotationCrop.deleteOnExit()
-                ImageIO.write(bufferedImage, "JPG", annnotationCrop)
+                BufferedImage bufferedImage = getImageFromURL(annotation.toCropURL())
+                if (bufferedImage != null) {
+                    annnotationCrop = File.createTempFile("temp", ".jpg")
+                    annnotationCrop.deleteOnExit()
+                    ImageIO.write(bufferedImage, "JPG", annnotationCrop)
+                }
             }
         } catch (FileNotFoundException e) {
             annnotationCrop = null

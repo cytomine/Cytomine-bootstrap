@@ -86,6 +86,7 @@
           <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/selenium-rc-1.0.2/lib" />
           <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/quartz-0.4.2/lib" />
           <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/export-1.1/lib" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/export-1.1/lib" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.springframework.security/org.springframework.security.acls/jars/org.springframework.security.acls-3.0.4.RELEASE.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/xml-resolver/xml-resolver/jars/xml-resolver-1.2.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/net.sf.ezmorph/ezmorph/jars/ezmorph-1.0.6.jar!/" />
@@ -112,7 +113,6 @@
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.apache.ant/ant/jars/ant-1.7.0.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/asm/asm-tree/jars/asm-tree-3.0.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/net.sourceforge.cobertura/cobertura/jars/cobertura-1.9.4.1.jar!/" />
-          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/export-1.1/lib" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

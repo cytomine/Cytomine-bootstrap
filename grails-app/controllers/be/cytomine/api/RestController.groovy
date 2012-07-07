@@ -200,8 +200,9 @@ class RestController {
         try {
             out << new URL(url).openStream()
         } catch(Exception e) {
+            print e.printStackTrace()
             //out = IOUtils.toByteArray(new FileInputStream(url));
-            IOUtils.copy(new FileInputStream(url),out);
+            //IOUtils.copy(new FileInputStream(url),out);
 
          //            InputStream input = new BufferedInputStream(new FileInputStream(url));
 //            input.read(out)
