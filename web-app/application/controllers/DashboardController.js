@@ -49,7 +49,7 @@ var DashboardController = Backbone.Router.extend({
     imagesthumbs :  function(project) {
         var self = this;
         var func = function() {
-            self.view.refreshImagesTable();
+            self.view.refreshImagesThumbs();
             self.view.showImagesThumbs();
             var tabs = $("#explorer > .browser").find(".nav-tabs");
             tabs.find('a[href=#tabs-images-'+window.app.status.currentProject+']').click();

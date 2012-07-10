@@ -429,36 +429,25 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
       if(hasAnnotation) {
          //ask for confirmation
          require(["text!application/templates/project/ProjectAddImageDeleteImageInstanceWithAnnotation.tpl.html"], function(tpl) {
-            // $('#dialogsTerm').empty();
-
-            //delete-image-with-annotation-confirm
-            var dialog =  new ConfirmDialogView({
-               el:'#dialogDeleteImageWithAnnotation',
+            var dialog = new ConfirmDialogView({
+               el:'#dialogs',
                template : _.template(tpl, {projectname : self.model.get('name')}),
                dialogAttr : {
                   dialogID : '#dialogDeleteImageWithAnnotation',
-                  width : 400,
-                  height : 300,
-                  buttons: {
-                     "Delete all images and annotations": function() {
-                        self.deleteImageProject(idSelectedArray);
-                        $('#dialogDeleteImageWithAnnotation').dialog( "close" ) ;
-                     },
-                     "Cancel": function() {
-
-                        //doesn't work! :-(
-                        $('#dialogDeleteImageWithAnnotation').dialog( "close" ) ;
-                     }
-                  },
-                  close :function (event) {
-                  }
                }
             }).render();
+            $("#confirmDeleteImageWithAnnotation").off("click");
+             $("#confirmDeleteImageWithAnnotation").on("click", function(){
+                 self.deleteImageProject(idSelectedArray);
+                 dialog.close();
+             });
+             $("#cancelDeleteImageWithAnnotation").off("click");
+             $("#cancelDeleteImageWithAnnotation").on("click", function(){
+                 dialog.close();
+             });
+
          });
-
-
-      }
-      else {
+      } else {
          self.deleteImageProject(idSelectedArray);
       }
    }

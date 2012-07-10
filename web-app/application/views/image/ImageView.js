@@ -7,10 +7,20 @@ var ImageView = Backbone.View.extend({
         this.nb_thumb_by_page = 30;
         this.appendingThumbs = false;
         if (this.page == undefined) this.page = 0;
+        _.bindAll(this, 'render');
     },
     render: function() {
         var self = this;
-        $(self.el).empty();
+
+        if (window.app.status.currentProjectModel.get("numberOfImages") != 0) {
+            $(self.el).empty();
+        } else {
+            require(["text!application/templates/dashboard/NoImageAvailable.tpl.html"], function (tpl) {
+                $(self.el).html(_.template(tpl, { idProject : window.app.status.currentProjectModel.id}))
+            });
+        }
+
+
         self.appendThumbs(self.page);
 
         $(window).scroll(function(){
@@ -32,6 +42,8 @@ var ImageView = Backbone.View.extend({
 
             }
         });
+
+
         return this;
     },
     showLoading : function() {
@@ -42,13 +54,13 @@ var ImageView = Backbone.View.extend({
         self.appendingThumbs = true;
         var inf = Math.abs(page) * this.nb_thumb_by_page;
         var sup = (Math.abs(page) + 1) * this.nb_thumb_by_page;
-        if (inf > window.app.status.currentProjectModel.get("numberOfImages")) return;//nothing to display
+        if (inf > window.app.status.currentProjectModel.get("numberOfImages")) {
+            return
+        }
         if (Math.abs(page) * this.nb_thumb_by_page < self.model.size() ) {
             this.showLoading();
         }
         self.tabsContent = [];
-
-        console.log("ImageView:appendThumbs");
         self.model = new ImageInstanceCollection({project: window.app.status.currentProject, inf : inf, sup : sup});
         self.model.fetch({
             success : function (collection, response){

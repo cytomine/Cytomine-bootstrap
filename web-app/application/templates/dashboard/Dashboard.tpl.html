@@ -1,23 +1,7 @@
 <div class="tab-pane"  id="tabs-dashboard-<%= id %>" style="overflow : auto;padding : 20px;">
     <div class="row" style="padding-top: 15px;padding-left: 30px;">
         <div id="projectInfoPanel" style="padding : 15px;margin-right:5px;min-height: 250px;" class="span5">
-            <div class="widget-header">
-                <i class="icon-list-alt"></i>
-                <h3>Project Info</h3>
-            </div>
-            <div class="widget-content" style="padding: 10px;">
-                <ul>
-                    <li>Name: <a href="#tabs-dashboard-<%= id %>"><%= name %></a></li>
-                    <li>Ontology: <a href="#ontology/<%= ontology %>"><%= ontologyName %></a></li>
-                    <li>Users : <div id="projectInfoUserList" style="display: inline;"></div></li>
-                </ul>
-                <br />
-                <ul>
-                    <li>Number of samples : <a href="#tabs-images-<%= id %>"><%= numberOfSlides %></a></li>
-                    <li>Number of images : <a href="#tabs-images-<%= id %>"><%= numberOfImages %></a></li>
-                    <li>Number of annotations : <a href="#tabs-annotations-<%= id %>"><%= numberOfAnnotations %></a></li>
-                </ul>
-            </div>
+
         </div>
 
         <div id="projectLastCommandPanel" style="padding : 15px;margin-right:5px;min-height: 250px;"  class="span5">
@@ -137,12 +121,12 @@
     </div>
     <div id="tabs-projectImageThumb<%= id %>">
         <div id="projectImageThumb<%= id %>" style="display:inline-block;width:100%;">
-            <br /><br /><div class="alert alert-info" style="margin-left : 10px;margin-right: 10px;"><i class="icon-refresh" /> Loading...</div><br /><br />
+            <div class="alert alert-info" style="margin : 10px;"><i class="icon-refresh" /> Loading...</div>
         </div>
     </div>
     <div id="tabs-projectImageListing<%= id %>"  style="display:inline-block;width:100%;">
         <div id="projectImageListing<%= id %>" style="width:100%;">
-            <br /><br /><div class="alert alert-info" style="margin-left : 10px;margin-right: 10px;"><i class="icon-refresh" /> Loading...</div><br /><br />
+            <div class="alert alert-info" style="margin : 10px"><i class="icon-refresh" /> Loading...</div>
         </div>
         <div class="container">
             <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="projectImageTable<%= id %>" style="display: none;">

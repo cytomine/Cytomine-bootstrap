@@ -47,31 +47,48 @@ var ProjectController = Backbone.Router.extend({
             }});
     },
 
-    project : function() {
+    project : function(callback) {
 
         var self = this;
         $("#warehouse-button").attr("href", "#project");
         $("#addimagediv").hide();
         $("#projectdiv").show();
-        if (!this.view) {
-            this.initView(function(){self.view.container.show(self.view, "#project", "project");window.app.view.showComponent(window.app.view.components.project);});
-            return;
+        var projectCallback = function () {
+            self.view.container.show(self.view, "#project", "project");
+            window.app.view.showComponent(window.app.view.components.project);
+            if (_.isFunction(callback)) {
+                callback.call();
+            }
         }
-        self.view.container.show(self.view, "#warehouse > .sidebar", "project");
-        window.app.view.showComponent(window.app.view.components.project);
+
+        if (!this.view) {
+            this.initView(projectCallback);
+        } else {
+            projectCallback.call();
+        }
+
+
     },
 
     manage : function(idProject) {
         var self = this;
 
-        if (self.view==undefined)
-            self.project();
+        var showManageImages = function() {
+            $("#projectdiv").hide();
+            $("#addimagediv").show();
+            new ProjectModel({id:idProject}).fetch({
+                success : function (model, response) {
+                    self.manageView = new ProjectManageSlideDialog({model:model,projectPanel:null,el:$("#project")}).render();
+                }});
+        }
 
-        $("#projectdiv").hide();
-        $("#addimagediv").show();
-        new ProjectModel({id:idProject}).fetch({
-            success : function (model, response) {
-                self.manageView = new ProjectManageSlideDialog({model:model,projectPanel:null,el:$("#project")}).render();
-            }});
+        if (self.view==undefined) {
+            self.project(showManageImages);
+        } else {
+            self.view.container.show(self.view, "#project", "project");
+            window.app.view.showComponent(window.app.view.components.project);
+            showManageImages();
+        }
+
     }
 });

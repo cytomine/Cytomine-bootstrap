@@ -11,16 +11,13 @@ var ImageTabsView = Backbone.View.extend({
         this.tab = 2;
         this.timeoutHnd = null
     },
-    render: function() {
-        var self = this;
-        self.renderImageTable();
-    },
     refresh : function() {
     },
-    renderImageTable : function () {
+    render : function () {
         var self = this;
         self.model.fetch({
             success : function (collection, response) {
+
                 //print data from project image table
                 var tbody = $('#projectImageTable'+self.idProject).find("tbody");
                 var exploreButtonTpl = "<a href='#tabs-image-<%= project %>-<%= image %>-' class='btn btn-primary' style='color : #FFF'';><i class='icon-eye-open icon-white'></i> Explore</a>";
@@ -50,5 +47,6 @@ var ImageTabsView = Backbone.View.extend({
                 $('#projectImageTable'+self.idProject).show();
             }
         });
+        return this;
     }
 });

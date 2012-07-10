@@ -39,23 +39,21 @@ var ProjectDashboardView = Backbone.View.extend({
         var html = _.template(tpl, self.model.toJSON());
         $(self.el).append(html);
         window.app.controllers.browse.tabs.addDashboard(self);
-        /*self.initTabs();*/
         self.showImagesThumbs();
 
         //Refresh dashboard
         setInterval(function(){
             if ($("#tabs-dashboard-"+self.model.id).hasClass('active')) self.refreshDashboard();
-        }, 15000);
+        }, 5000);
     },
     refreshImagesThumbs : function() {
-        if (this.projectDashboardImages == null)
+        if (this.projectDashboardImages == null) {
             this.projectDashboardImages = new ProjectDashboardImages({ model : this.model});
-
+        }
         this.projectDashboardImages.refreshImagesThumbs();
 
     },
     refreshAlgos : function(idSoftware,idJob) {
-        console.log("refreshAlgos this.projectDashboardAlgos=="+this.projectDashboardAlgos);
         if (this.projectDashboardAlgos == null || this.projectDashboardAlgos==undefined) {
             this.projectDashboardAlgos = new ProjectDashboardAlgos({
                 model : this.model,
@@ -78,9 +76,9 @@ var ProjectDashboardView = Backbone.View.extend({
     },
 
     refreshImagesTable : function() {
-        if (this.projectDashboardImages == null)
+        if (this.projectDashboardImages == null) {
             this.projectDashboardImages = new ProjectDashboardImages({ model : this.model});
-
+        }
         this.projectDashboardImages.refreshImagesTable();
     },
     refreshAnnotations : function(terms, users) {
@@ -104,37 +102,50 @@ var ProjectDashboardView = Backbone.View.extend({
         if (!self.rendered) return;
 
         var refreshDashboard = function(model, response) {
-            self.fetchProjectInfo();
             self.model = model;
-            //TODO: must be improve!
 
-                    self.fetchCommands();
-                    new TermCollection({idProject:self.model.id}).fetch({
-                        success : function (terms, response) {
-                            window.app.status.currentTermsCollection = terms;
-                            //self.fetchWorstAnnotations(collection,terms);
-                            if(self.projectStats==null)
-                                self.projectStats = new ProjectDashboardStats({model : self.model});
+            self.fetchProjectInfo();
+            self.fetchCommands();
+            new TermCollection({idProject:self.model.id}).fetch({
+                success : function (terms, response) {
+                    window.app.status.currentTermsCollection = terms;
+                    //self.fetchWorstAnnotations(collection,terms);
+                    if(self.projectStats==null)
+                        self.projectStats = new ProjectDashboardStats({model : self.model});
 
-                            self.projectStats.fetchStats(terms);
+                    self.projectStats.fetchStats(terms);
 
-                        }
-                    });
+                }
+            });
 
             //new ProjectDashboardStats({model : self.model}).fetchStats();
         }
         var fetchInformations = function () {
             self.model.fetch({
                 success : function(model, response) {
+                    window.app.status.currentProjectModel = model;
                     refreshDashboard(model, response); //to do : optimiser pour ne pas tout recharger
                 }
             });
         }
+
         fetchInformations();
 
     },
 
     fetchProjectInfo : function () {
+        var self = this;
+        require(["text!application/templates/dashboard/ProjectInfoContent.tpl.html"], function(tpl) {
+            $("#projectInfoPanel").html(_.template(tpl, self.model.toJSON()));
+            //Get users list
+            $("#projectInfoUserList").empty();
+            var users = []
+            _.each(self.model.get('users'), function (idUser) {
+                users.push(window.app.models.users.get(idUser).prettyName());
+            });
+            $("#projectInfoUserList").html(users.join(", "));
+        });
+        return;
         var self = this;
         var json = self.model.toJSON();
 
@@ -160,13 +171,7 @@ var ProjectDashboardView = Backbone.View.extend({
         resetElem("#projectInfoUpdated",json.updated);
 
 
-        //Get users list
-        $("#projectInfoUserList").empty();
-        var users = []
-        _.each(self.model.get('users'), function (idUser) {
-            users.push(window.app.models.users.get(idUser).prettyName());
-        });
-        $("#projectInfoUserList").html(users.join(", "));
+
     },
     fetchCommands : function () {
         var self = this;
@@ -174,94 +179,94 @@ var ProjectDashboardView = Backbone.View.extend({
             "text!application/templates/dashboard/CommandAnnotation.tpl.html",
             "text!application/templates/dashboard/CommandAnnotationTerm.tpl.html",
             "text!application/templates/dashboard/CommandImageInstance.tpl.html"],
-                function(commandAnnotationTpl, commandAnnotationTermTpl,commandImageInstanceTpl) {
-                    var commandCollection = new CommandCollection({project:self.model.get('id'),max:self.maxCommandsView});
-                    var commandCallback = function(collection, response) {
-                        $("#lastactionitem").empty();
-                        if (collection.size() == 0) {
-                            var noDataAlert = _.template("<br /><br /><div class='alert alert-block'>No data to display</div>",{});
-                            $("#lastactionitem").append(noDataAlert);
-                        }
-                        $("#lastactionitem").append("<ul></ul>");
-                        var ulContainer = $("#lastactionitem").find("ul");
-                        collection.each(function(commandHistory) {
-                            var command = commandHistory.get("command");
-                            var dateCreated = new Date();
-                            dateCreated.setTime(command.created);
-                            var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
-                            var jsonCommand = $.parseJSON(command.data);
-                            var action = "undefined";
-                            if(command.serviceName=="annotationService" && command.CLASSNAME=="be.cytomine.command.AddCommand") {
-                                var cropStyle = "block";
-                                var cropURL = jsonCommand.cropURL;
+            function(commandAnnotationTpl, commandAnnotationTermTpl,commandImageInstanceTpl) {
+                var commandCollection = new CommandCollection({project:self.model.get('id'),max:self.maxCommandsView});
+                var commandCallback = function(collection, response) {
+                    $("#lastactionitem").empty();
+                    if (collection.size() == 0) {
+                        var noDataAlert = _.template("<br /><br /><div class='alert alert-block'>No data to display</div>",{});
+                        $("#lastactionitem").append(noDataAlert);
+                    }
+                    $("#lastactionitem").append("<ul></ul>");
+                    var ulContainer = $("#lastactionitem").find("ul");
+                    collection.each(function(commandHistory) {
+                        var command = commandHistory.get("command");
+                        var dateCreated = new Date();
+                        dateCreated.setTime(command.created);
+                        var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
+                        var jsonCommand = $.parseJSON(command.data);
+                        var action = "undefined";
+                        if(command.serviceName=="annotationService" && command.CLASSNAME=="be.cytomine.command.AddCommand") {
+                            var cropStyle = "block";
+                            var cropURL = jsonCommand.cropURL;
 //                                if (annotations.get(jsonCommand.id) == undefined) {
 //                                    cropStyle = "none";
 //                                    cropURL = "";
 //                                }
-                                action = _.template(commandAnnotationTpl,
-                                        {   idProject : self.model.id,
-                                            idAnnotation : jsonCommand.id,
-                                            idImage : jsonCommand.image,
-                                            imageFilename : jsonCommand.imageFilename,
-                                            icon:"add.png",
-                                            text:commandHistory.get("prefixAction")+ " " + command.action,
-                                            datestr:dateStr,
-                                            cropURL:cropURL,
-                                            cropStyle:cropStyle
-                                        });
-                            }
-                            else if(command.serviceName=="annotationService" && command.CLASSNAME=="be.cytomine.command.EditCommand") {
-                                var cropStyle = "";
-                                var cropURL = jsonCommand.newAnnotation.cropURL;
+                            action = _.template(commandAnnotationTpl,
+                                {   idProject : self.model.id,
+                                    idAnnotation : jsonCommand.id,
+                                    idImage : jsonCommand.image,
+                                    imageFilename : jsonCommand.imageFilename,
+                                    icon:"add.png",
+                                    text:commandHistory.get("prefixAction")+ " " + command.action,
+                                    datestr:dateStr,
+                                    cropURL:cropURL,
+                                    cropStyle:cropStyle
+                                });
+                        }
+                        else if(command.serviceName=="annotationService" && command.CLASSNAME=="be.cytomine.command.EditCommand") {
+                            var cropStyle = "";
+                            var cropURL = jsonCommand.newAnnotation.cropURL;
 //                                if (annotations.get(jsonCommand.newAnnotation.id) == undefined) {
 //                                    cropStyle = "display : none;";
 //                                    cropURL = "";
 //                                }
-                                action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.newAnnotation.id, idImage : jsonCommand.newAnnotation.image,imageFilename : jsonCommand.newAnnotation.imageFilename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
-                            }
-                            else if(command.serviceName=="annotationService" && command.CLASSNAME=="be.cytomine.command.DeleteCommand") {
-                                var cropStyle = "";
-                                var cropURL = jsonCommand.cropURL;
+                            action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.newAnnotation.id, idImage : jsonCommand.newAnnotation.image,imageFilename : jsonCommand.newAnnotation.imageFilename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
+                        }
+                        else if(command.serviceName=="annotationService" && command.CLASSNAME=="be.cytomine.command.DeleteCommand") {
+                            var cropStyle = "";
+                            var cropURL = jsonCommand.cropURL;
 //                                if (annotations.get(jsonCommand.id) == undefined) {
 //                                    cropStyle = "display : none;";
 //                                    cropURL = "";
 //                                }
-                                action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.id, idImage : jsonCommand.image,imageFilename : jsonCommand.imageFilename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
+                            action = _.template(commandAnnotationTpl, {idProject : self.model.id, idAnnotation : jsonCommand.id, idImage : jsonCommand.image,imageFilename : jsonCommand.imageFilename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
 
-                            }
-                            else if(command.serviceName=="annotationTermService" && command.CLASSNAME=="be.cytomine.command.AddCommand") {
-                                action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-plus",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,image:""});
-
-                            }
-                            else if(command.serviceName=="annotationTermService" && command.CLASSNAME=="be.cytomine.command.EditCommand") {
-                                action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-pencil",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,image:""});
-
-                            }
-                            else if(command.serviceName=="annotationTermService" && command.CLASSNAME=="be.cytomine.command.DeleteCommand") {
-                                action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-trash",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,image:""});
-
-                            }
-                            else if(command.serviceName=="imageInstanceService" && command.CLASSNAME=="be.cytomine.command.AddCommand") {
-                                var cropStyle = "block";
-                                var cropURL = jsonCommand.thumb;
-                                action = _.template(commandImageInstanceTpl, {idProject : self.model.id, idImage : jsonCommand.id, imageFilename : jsonCommand.filename, icon:"add.png",text:commandHistory.get("prefixAction")+ " " + command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
-
-                            }
-                            else if(command.serviceName=="imageInstanceService" && command.CLASSNAME=="be.cytomine.command.DeleteCommand") {
-                                var cropStyle = "block";
-                                var cropURL = jsonCommand.thumb;
-                                action = _.template(commandImageInstanceTpl, {idProject : self.model.id, idImage : jsonCommand.id, imageFilename : jsonCommand.filename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
-
-                            }
-                            ulContainer.append(action);
-                        });
-                    }
-                    commandCollection.fetch({
-                        success : function(collection, response) {
-                            commandCallback(collection, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
                         }
+                        else if(command.serviceName=="annotationTermService" && command.CLASSNAME=="be.cytomine.command.AddCommand") {
+                            action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-plus",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,image:""});
+
+                        }
+                        else if(command.serviceName=="annotationTermService" && command.CLASSNAME=="be.cytomine.command.EditCommand") {
+                            action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-pencil",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,image:""});
+
+                        }
+                        else if(command.serviceName=="annotationTermService" && command.CLASSNAME=="be.cytomine.command.DeleteCommand") {
+                            action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-trash",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,image:""});
+
+                        }
+                        else if(command.serviceName=="imageInstanceService" && command.CLASSNAME=="be.cytomine.command.AddCommand") {
+                            var cropStyle = "block";
+                            var cropURL = jsonCommand.thumb;
+                            action = _.template(commandImageInstanceTpl, {idProject : self.model.id, idImage : jsonCommand.id, imageFilename : jsonCommand.filename, icon:"add.png",text:commandHistory.get("prefixAction")+ " " + command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
+
+                        }
+                        else if(command.serviceName=="imageInstanceService" && command.CLASSNAME=="be.cytomine.command.DeleteCommand") {
+                            var cropStyle = "block";
+                            var cropURL = jsonCommand.thumb;
+                            action = _.template(commandImageInstanceTpl, {idProject : self.model.id, idImage : jsonCommand.id, imageFilename : jsonCommand.filename,icon:"delete.gif",text:commandHistory.get("prefixAction")+ " " +command.action,datestr:dateStr,cropURL:cropURL, cropStyle:cropStyle});
+
+                        }
+                        ulContainer.append(action);
                     });
+                }
+                commandCollection.fetch({
+                    success : function(collection, response) {
+                        commandCallback(collection, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+                    }
                 });
+            });
     },
     showImagesThumbs : function() {
         $("#tabs-projectImageThumb"+this.model.id).show();

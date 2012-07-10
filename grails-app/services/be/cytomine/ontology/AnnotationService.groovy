@@ -480,13 +480,11 @@ class AnnotationService extends ModelService {
     }
 
 
-    def deleteAnnotation(def idAnnotation, SecUser currentUser, Transaction transaction) {
+    def deleteAnnotation(Long idAnnotation, SecUser currentUser, Transaction transaction) {
         return deleteAnnotation(idAnnotation, currentUser, true, transaction)
     }
 
-    def deleteAnnotation(def idAnnotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
-        log.info "Delete annotation: " + idAnnotation
-        Annotation annotation = Annotation.read(idAnnotation)
+    def deleteAnnotation(Annotation annotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
 
         println "*** deleteAnnotation1.vesion=" + annotation.version
 
@@ -505,9 +503,15 @@ class AnnotationService extends ModelService {
             println "*** deleteAnnotation4.vesion=" + annotation.version
         }
         //Delete annotation
-        def json = JSON.parse("{id: $idAnnotation}")
+        def json = JSON.parse("{id: $annotation.id}")
         def result = executeCommand(new DeleteCommand(user: currentUser, transaction: transaction), json)
         return result
+    }
+
+    def deleteAnnotation(Long idAnnotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
+        log.info "Delete annotation: " + idAnnotation
+        Annotation annotation = Annotation.read(idAnnotation)
+        return deleteAnnotation(annotation, currentUser, printMessage, transaction)
     }
 
 

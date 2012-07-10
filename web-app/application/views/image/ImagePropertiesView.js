@@ -35,12 +35,11 @@ var ImagePropertiesView = Backbone.View.extend({
                 success : function (collection, response) {
                     var target = $("#image-properties-content");
                     $("#image-properties-content").empty();
+                    collection.sort();
                     collection.each(function(model) {
                         var html = _.template(tpl, {key : model.get("key"), value : model.get("value")});
                         target.append(html);
                     });
-                    $("#image-properties").dialog('open');
-                    //$("ul#image-properties-content>li").tsort();
                 }
             });
         });
