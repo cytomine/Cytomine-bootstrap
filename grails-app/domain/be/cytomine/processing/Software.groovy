@@ -23,6 +23,7 @@ class Software extends CytomineDomain {
     }
 
     static mapping = {
+        id generator: "assigned"
         description type: 'text'
     }
 

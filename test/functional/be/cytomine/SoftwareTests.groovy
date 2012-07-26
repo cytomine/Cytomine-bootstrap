@@ -48,7 +48,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
        result = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assertEquals(200, result.code)
  
-       /*result = SoftwareAPI.undo()
+       result = SoftwareAPI.undo()
        assertEquals(200, result.code)
  
        result = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -58,7 +58,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
        assertEquals(200, result.code)
  
        result = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, result.code) */
+       assertEquals(200, result.code)
    }
  
    void testAddSoftwareAlreadyExist() {
@@ -69,25 +69,29 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
  
    void testUpdateSoftwareCorrect() {
        Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
-       def result = SoftwareAPI.update(softwareToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, result.code)
-       def json = JSON.parse(result.data)
+       def resultBase = SoftwareAPI.update(softwareToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assertEquals(200, resultBase.code)
+       def json = JSON.parse(resultBase.data)
        assert json instanceof JSONObject
        int idSoftware = json.software.id
  
        def showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        json = JSON.parse(showResult.data)
-       BasicInstance.compareSoftware(result.mapNew, json)
+       BasicInstance.compareSoftware(resultBase.mapNew, json)
 
-       /*result = SoftwareAPI.undo()
+       def result = SoftwareAPI.undo()
        assertEquals(200, result.code)
        showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       BasicInstance.compareSoftware(result.mapOld, JSON.parse(showResult.data))
+       System.out.println("toto="+showResult);
+       System.out.println("toto="+showResult.data);
+       System.out.println("toto="+JSON.parse(showResult.data));
+       System.out.println("toto="+JSON.parse(showResult.data).name);
+       BasicInstance.compareSoftware(resultBase.mapOld, JSON.parse(showResult.data))
 
        result = SoftwareAPI.redo()
        assertEquals(200, result.code)
        showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       BasicInstance.compareSoftware(result.mapNew, JSON.parse(showResult.data))*/
+       BasicInstance.compareSoftware(resultBase.mapNew, JSON.parse(showResult.data))
    }
  
    void testUpdateSoftwareNotExist() {
@@ -139,7 +143,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
        def showResult = SoftwareAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assertEquals(404, showResult.code)
  
-       /*result = SoftwareAPI.undo()
+       result = SoftwareAPI.undo()
        assertEquals(200, result.code)
  
        result = SoftwareAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -149,7 +153,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
        assertEquals(200, result.code)
  
        result = SoftwareAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(404, result.code)*/
+       assertEquals(404, result.code)
    }
  
    void testDeleteSoftwareNotExist() {
