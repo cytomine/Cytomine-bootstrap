@@ -17,13 +17,13 @@ class ServerController {
         data.version = grailsApplication.metadata['app.version']
         data.serverURL = grailsApplication.config.grails.serverURL
 
-        if (data.authenticated)
+        if (data.authenticated)  {
             data.user = springSecurityService.principal.id
-
-        //set last ping
-        SecUser user = SecUser.get(springSecurityService.principal.id)
-        user.setLastPing(new Date())
-        user.save()
+            //set last ping
+            SecUser user = SecUser.get(springSecurityService.principal.id)
+            user.setLastPing(new Date())
+            user.save()
+        }
 
         withFormat {
             json { render data as JSON }
