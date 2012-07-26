@@ -78,6 +78,7 @@
 <fileset dir="${src.dir}" includes="application/controllers/AdminController.js"/>
 <fileset dir="${src.dir}" includes="application/controllers/ActivityController.js"/>
 <fileset dir="${src.dir}" includes="application/controllers/AccountController.js"/>
+<fileset dir="${src.dir}" includes="application/controllers/PhonoController.js"/>
 <fileset dir="${src.dir}" includes="application/models/UploadedFileModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/AnnotationsFilterModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/ImageModel.js"/>
@@ -97,6 +98,7 @@
 <fileset dir="${src.dir}" includes="application/models/JobModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/SoftwareModel.js"/>
 <fileset dir="${src.dir}" includes="application/views/activity/ActivityView.js"/>
+<fileset dir="${src.dir}" includes="application/views/phono/PhonoMenu.js"/>
 <fileset dir="${src.dir}" includes="application/views/account/AccountDetails.js"/>
 <fileset dir="${src.dir}" includes="application/views/auth/LoginDialogView.js"/>
 <fileset dir="${src.dir}" includes="application/views/auth/LoadingDialogView.js"/>
@@ -120,7 +122,8 @@
 <fileset dir="${src.dir}" includes="application/views/processing/JobTableView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobSearchEngineView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/result/RetrievalAlgoResult.js"/>
-<fileset dir="${src.dir}" includes="application/views/processing/result/EvolutionAlgoResult.js"/>
+<fileset dir="${src.dir}" includes="application/views/processing/result/RetrievalAlgoResult.js"/>
+<fileset dir="${src.dir}" includes="application/views/processing/result/DefaultResult.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationLayer.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/BrowseImageView.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/DraggablePanelView.js"/>

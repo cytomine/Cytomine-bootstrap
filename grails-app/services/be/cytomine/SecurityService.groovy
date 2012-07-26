@@ -7,6 +7,11 @@ import org.springframework.security.acls.model.NotFoundException
 
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
+import be.cytomine.project.Project
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclClass
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 
 class SecurityService {
 
@@ -41,6 +46,18 @@ class SecurityService {
             "where aclObjectId.objectId = "+domain.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
 
         return users
+    }
+
+    List<Project> getProjectList(SecUser user) {
+        AclClass aclClassProject = AclClass.findByClassName('be.cytomine.project.Project')
+        Collection<AclEntry> aclEntries = AclEntry.findAllBySid(AclSid.findBySid(user.getUsername()))
+        List<AclObjectIdentity> aclObjectIdentities = AclObjectIdentity.createCriteria().list {
+            eq('aclClass', aclClassProject)
+            inList('id', aclEntries.collect{it.aclObjectIdentity.id})
+        }
+        return Project.createCriteria().list() {
+            inList("id", aclObjectIdentities.collect{it.objectId})
+        }
     }
 
 }

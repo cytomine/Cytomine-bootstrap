@@ -2,20 +2,23 @@ package be.cytomine.security
 
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
+import org.joda.time.DateTime
 
 class SecUser extends CytomineDomain {
 
     String username
     String password
+    String newPassword = null
     String publicKey
     String privateKey
     boolean enabled
     boolean accountExpired
     boolean accountLocked
     boolean passwordExpired
+    Date lastPing = null
     Boolean transactionInProgress = false //indicates whether the current user is doing several actions seen as only one action
 
-    static transients = ["currentTransaction", "nextTransaction"]
+    static transients = ["newPassword", "currentTransaction", "nextTransaction"]
 
     //Map userGroup
     //static hasMany = [userGroup: UserGroup]
@@ -29,6 +32,8 @@ class SecUser extends CytomineDomain {
     static constraints = {
         username blank: false, unique: true
         password blank: false
+        lastPing nullable : true
+        newPassword(nullable : true, black : false)
         id unique: true
     }
 
@@ -62,17 +67,20 @@ class SecUser extends CytomineDomain {
 
     def beforeUpdate() {
         super.beforeUpdate()
-        def persisted = SecUser.findById(this.id).getPassword()
-        def encodedNew = springSecurityService.encodePassword(password)
-        if(persisted != encodedNew) {
-            println "Encode password="+password
-            password = encodedNew
-            println "Encoded password="+password
+        if (newPassword) {
+            password = newPassword
+            encodePassword()
         }
     }
 
     boolean algo() {
         return false
+    }
+
+    boolean isOnline() {
+        if (!this.getLastPing()) return false
+        Long diffTime =  new Date().toTimestamp().getTime() - this.getLastPing().toTimestamp().getTime()
+        return diffTime < 10000 //10 seconds
     }
 
     String toString() {

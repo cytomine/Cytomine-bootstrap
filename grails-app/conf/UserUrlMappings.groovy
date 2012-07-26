@@ -20,7 +20,9 @@ class UserUrlMappings {
         "/api/user/current"(controller:"restUser"){
             action = [GET:"showCurrent"]
         }
-
+        "/api/user/$id/friends"(controller:"restUser"){
+            action = [GET:"listFriends"]
+        }
         "/api/userJob"(controller:"restUser"){
             action = [POST:"addChild"]
         }

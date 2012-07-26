@@ -12,12 +12,18 @@ class Software extends CytomineDomain {
     def service
     def projectService
     String resultName
+    String description
 
     static hasMany = [softwareProjects: SoftwareProject, softwareParameters : SoftwareParameter]
 
     static constraints = {
         name(nullable: false, unique: true)
         resultName(nullable:true)
+        description(nullable:true, blank : false)
+    }
+
+    static mapping = {
+        description type: 'text'
     }
 
      def afterLoad = {
@@ -39,8 +45,10 @@ class Software extends CytomineDomain {
             def software = [:]
             software.id = it.id
             software.name = it.name
+            software.created = it.created
             software.serviceName = it.serviceName
             software.resultName = it.resultName
+            software.description = it.description
             try {
                 software.parameters = SoftwareParameter.findAllBySoftware(it,[sort: "index",order: "asc"])
                 software.numberOfJob = Job.countBySoftware(it);
@@ -78,7 +86,8 @@ class Software extends CytomineDomain {
         if (!jsonSoftware.name.toString().equals("null"))
             software.name = jsonSoftware.name
         else throw new WrongArgumentException("Software name cannot be null")
-
+        if (!jsonSoftware.description.toString().equals("null"))
+            software.description = jsonSoftware.description
         if (!jsonSoftware.serviceName.toString().equals("null"))
             software.serviceName = jsonSoftware.serviceName
         else throw new WrongArgumentException("Software service-name cannot be null")

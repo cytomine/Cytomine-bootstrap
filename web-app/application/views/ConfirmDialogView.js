@@ -8,10 +8,18 @@ var ConfirmDialogView = Backbone.View.extend({
         this.templateURL = options.templateURL;
         this.autoOpen = options.autoOpen;
         this.templateData = options.templateData;
-        this.dialogAttr = options.dialogAttr;
-        if (options.dialogAttr.autoOpen == undefined) this.dialogAttr.autoOpen = true;
-        if (!options.dialogAttr.width) this.dialogAttr.width = 'auto';
-        if (!options.dialogAttr.height) this.dialogAttr.height = 'auto';
+        this.dialogAttr = {
+            autoOpen : true,
+            width : 'auto',
+            height : 'auto'
+        };
+        if (options.dialogAttr != undefined) {
+            if (options.dialogAttr.autoOpen) this.dialogAttr.autoOpen = options.dialogAttr.autoOpen;
+            if (options.dialogAttr.width) this.dialogAttr.width = options.dialogAttr.width;
+            if (options.dialogAttr.height) this.dialogAttr.height = options.dialogAttr.height;
+            if (options.dialogAttr.dialogID) this.dialogAttr.dialogID = options.dialogAttr.dialogID;
+        }
+
     },
     doLayout : function(tpl)  {
         var self = this;
@@ -22,6 +30,7 @@ var ConfirmDialogView = Backbone.View.extend({
             show : true,
             backdrop : (this.dialogAttr.backdrop != undefined) ? this.dialogAttr.backdrop : true
         });
+
         $(this.dialogAttr.dialogID).on('hidden', function () {
             $(self.dialogAttr.dialogID).remove();
         });

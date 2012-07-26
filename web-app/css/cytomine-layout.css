@@ -329,6 +329,13 @@ div.olControlOverviewMapElement img {
     z-index: 2200;
 }
 
+#phono-messages {
+    position: absolute;
+    /*left is set dynamically */
+    top : 50px;
+    z-index: 2200;
+}
+
 /*Fix align in multiselect, text-align right introduced by twitter bootstrap*/
 label.ui-corner-all {
     text-align : left;

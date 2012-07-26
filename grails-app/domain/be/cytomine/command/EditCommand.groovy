@@ -65,7 +65,7 @@ class EditCommand extends Command {
         def oldDomain = updatedDomain.encodeAsJSON()
         updatedDomain.getFromData(updatedDomain, json)
         //Init command info
-        super.initCurrentCommantProject(updatedDomain?.projectDomain())
+        setProject(updatedDomain?.projectDomain())
 
         def response = service.edit(updatedDomain, printMessage)
         fillCommandInfo(updatedDomain, oldDomain, response.data.message)

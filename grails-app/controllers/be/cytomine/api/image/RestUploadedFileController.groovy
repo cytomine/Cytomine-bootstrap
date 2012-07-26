@@ -4,7 +4,7 @@ import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import be.cytomine.api.RestController
 import be.cytomine.image.UploadedFile
 import be.cytomine.project.Project
-import be.cytomine.security.User
+import be.cytomine.security.SecUser
 import grails.converters.JSON
 
 class RestUploadedFileController extends RestController {
@@ -46,7 +46,7 @@ class RestUploadedFileController extends RestController {
 
     def add = {
         def destPath = "/tmp/cytominebuffer"
-        User currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
         String errorMessage = ""
         String projectParam = request.getParameter("idProject")
         Project project = null

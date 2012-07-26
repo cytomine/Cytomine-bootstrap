@@ -24,6 +24,8 @@ import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import com.vividsolutions.jts.io.WKTReader
+import org.hibernate.criterion.Restrictions
+import org.hibernatespatial.criterion.SpatialRestrictions
 
 /**
  * Created by IntelliJ IDEA.
@@ -159,7 +161,6 @@ class RestImageInstanceController extends RestController {
     }
 
     def mask = {
-        println "WINDOW REQUEST " + params.toString()
         ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
         int x = Integer.parseInt(params.x)
@@ -179,15 +180,6 @@ class RestImageInstanceController extends RestController {
             //Fetch annotations with the requested term on the request image
             Term term = Term.read(termID)
 
-            Collection<Annotation> annotations = (Collection<Annotation>) AnnotationTerm.createCriteria().list {
-                inList("term", [term])
-                join("annotation")
-                createAlias("annotation", "a")
-                projections {
-                    inList("a.image", [image])
-                    groupProperty("annotation")
-                }
-            }
             //Create a geometry corresponding to the ROI of the request (x,y,w,h)
             //1. Compute points
             Coordinate[] roiPoints = new Coordinate[5]
@@ -199,14 +191,26 @@ class RestImageInstanceController extends RestController {
             //Build geometry
             LinearRing linearRing = new GeometryFactory().createLinearRing(roiPoints)
             Geometry roiGeometry = new GeometryFactory().createPolygon(linearRing)
-            //Filter annotation which intersects the ROI
-            Collection<Geometry> intersectGeometries = new LinkedList<Geometry>()
-            annotations.each { annotation ->
-                if (roiGeometry.intersects(annotation.getLocation())) {
-                    intersectGeometries.add(annotation.getLocation())
+
+            Collection<Annotation> annotations = []
+            Collection<Annotation> annotations_in_roi = Annotation.createCriteria()
+                    .add(Restrictions.eq("image", image))
+                    .add(SpatialRestrictions.within("location",roiGeometry))
+                    .list()
+
+            if (!annotations_in_roi.isEmpty()) {
+                annotations = (Collection<Annotation>) AnnotationTerm.createCriteria().list {
+                    inList("term", [term])
+                    join("annotation")
+                    createAlias("annotation", "a")
+                    projections {
+                        inList("a.id", annotations_in_roi.collect{it.id})
+                        groupProperty("annotation")
+                    }
                 }
             }
-            mask = segmentationService.colorizeWindow(abstractImage, mask, intersectGeometries, Color.decode(term.color), x, y, x_ratio, y_ratio)
+
+            mask = segmentationService.colorizeWindow(abstractImage, mask, annotations.collect{it.getLocation()}, Color.decode(term.color), x, y, x_ratio, y_ratio)
             responseBufferedImage(mask)
         } catch (Exception e) {
             log.error("GetThumb:" + e)
@@ -218,6 +222,7 @@ class RestImageInstanceController extends RestController {
         BufferedImage mask = new BufferedImage(crop.getWidth(),crop.getHeight(),BufferedImage.TYPE_INT_ARGB);
         AbstractImage abstractImage = annotation.getImage().getBaseImage()
         Collection<Geometry> geometries = new LinkedList<Geometry>()
+
         geometries.add(annotation.getLocation())
         def boundaries = annotation.getBoundaries()
         double x_ratio = crop.getWidth() / boundaries.width
@@ -286,18 +291,19 @@ class RestImageInstanceController extends RestController {
 
     private BufferedImage applyMaskToAlpha(BufferedImage image, BufferedImage mask)
     {
-        int width = image.getWidth();
-        int height = image.getHeight();
-        int[] imagePixels = image.getRGB(0, 0, width, height, null, 0, width);
-        int[] maskPixels = mask.getRGB(0, 0, width, height, null, 0, width);
-        int black = Color.BLACK.getRGB()
+        int width = image.getWidth()
+        int height = image.getHeight()
+        int[] imagePixels = image.getRGB(0, 0, width, height, null, 0, width)
+        int[] maskPixels = mask.getRGB(0, 0, width, height, null, 0, width)
+        int black_rgb = Color.BLACK.getRGB()
         for (int i = 0; i < imagePixels.length; i++)
         {
-            Color c = new Color(imagePixels[i]);
-            int alphaValue = (maskPixels[i] == black) ? 0 : 255
-            imagePixels[i] = new Color(c.getRed(), c.getGreen(), c.getBlue(),alphaValue).getRGB()
+            int color = imagePixels[i] & 0x00FFFFFF; // mask away any alpha present
+            int alphaValue = (maskPixels[i] == black_rgb) ? 0x00 : 0xFF
+            int maskColor = alphaValue << 24 // shift value into alpha bits
+            imagePixels[i] = color | maskColor
         }
-        BufferedImage combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
         combined.setRGB(0, 0, width, height, imagePixels, 0, width)
         return combined
     }

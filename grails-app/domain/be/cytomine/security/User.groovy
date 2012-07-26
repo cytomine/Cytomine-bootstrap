@@ -17,6 +17,7 @@ class User extends SecUser {
     String email
     String color
     String skypeAccount
+    String sipAccount
 
     int transaction
 
@@ -24,6 +25,7 @@ class User extends SecUser {
         firstname blank: false
         lastname blank: false
         skypeAccount(nullable: true, blank:false)
+        sipAccount(nullable: true, blank:false)
         email(blank: false, email: true)
         color(blank: false, nullable: true)
     }
@@ -148,8 +150,12 @@ class User extends SecUser {
         user.lastname = jsonUser.lastname
         user.email = jsonUser.email
         user.color = jsonUser.color
-        if (jsonUser.password) {
-            user.password = jsonUser.password
+        user.skypeAccount = jsonUser.skypeAccount != null ? jsonUser.skypeAccount : null
+        user.sipAccount = jsonUser.sipAccount != null ? jsonUser.sipAccount : null
+        if (jsonUser.password && user.password != null) {
+            user.newPassword = jsonUser.password //user updated
+        } else if (jsonUser.password) {
+            user.password = jsonUser.password //user created
         }
         user.enabled = true
         if (user.getPublicKey() == null || user.getPrivateKey() == null || jsonUser.publicKey == "" || jsonUser.privateKey == "") {
@@ -179,10 +185,12 @@ class User extends SecUser {
             returnArray['firstname'] = it.firstname
             returnArray['lastname'] = it.lastname
             returnArray['email'] = it.email
+            returnArray['sipAccount'] = it.sipAccount
             if (it.id == it.springSecurityService.principal?.id) {
                 returnArray['publicKey'] = it.publicKey
                 returnArray['privateKey'] = it.privateKey
             }
+            returnArray['online'] = it.isOnline()
             returnArray['color'] = it.color
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null

@@ -9,6 +9,7 @@ import grails.converters.JSON
 import grails.util.GrailsUtil
 import be.cytomine.Exception.ServerException
 import be.cytomine.processing.JobDataBinaryValue
+import org.springframework.web.multipart.MultipartHttpServletRequest
 
 class RestJobDataController extends RestController {
 
@@ -17,34 +18,34 @@ class RestJobDataController extends RestController {
     def domainService
 
     def list = {
-         responseSuccess(jobDataService.list())
-     }
+        responseSuccess(jobDataService.list())
+    }
 
-     def listByJob = {
-         Job job = Job.read(params.long('id'))
-         if(job) responseSuccess(jobDataService.list(job))
-         else responseNotFound("Job", params.id)
-     }
+    def listByJob = {
+        Job job = Job.read(params.long('id'))
+        if(job) responseSuccess(jobDataService.list(job))
+        else responseNotFound("Job", params.id)
+    }
 
-     def show = {
-         JobData jobData = jobDataService.read(params.long('id'), new JobData())
-         if (jobData) {
-             responseSuccess(jobData)
-         }
-         else responseNotFound("JobData", params.id)
-     }
+    def show = {
+        JobData jobData = jobDataService.read(params.long('id'), new JobData())
+        if (jobData) {
+            responseSuccess(jobData)
+        }
+        else responseNotFound("JobData", params.id)
+    }
 
-     def add = {
-         add(jobDataService, request.JSON)
-     }
+    def add = {
+        add(jobDataService, request.JSON)
+    }
 
-     def update = {
-         update(jobDataService, request.JSON)
-     }
+    def update = {
+        update(jobDataService, request.JSON)
+    }
 
-     def delete = {
-         delete(jobDataService, JSON.parse("{id : $params.id}"))
-     }
+    def delete = {
+        delete(jobDataService, JSON.parse("{id : $params.id}"))
+    }
 
     def upload = {
         log.info "Upload file = " + params.getLong('id')
@@ -53,17 +54,27 @@ class RestJobDataController extends RestController {
         domainService.saveDomain(value)
         jobData.value = value
         domainService.saveDomain(jobData)
+        println "UPLOADING...."
+
+        byte[] bytes = null
+
+        if(request instanceof MultipartHttpServletRequest) {
+            def file = request.getFile('files[]')
+            bytes = file.getBytes()
+        } else {
+            bytes = request.inputStream.bytes
+        }
 
         if(!jobData) responseNotFound("JobData", params.id)
         else {
             if(!grailsApplication.config.cytomine.jobdata.filesystem)
-                jobData = saveInDatabase(jobData,request.inputStream.bytes)
+                jobData = saveInDatabase(jobData,bytes)
             else
-                jobData = saveInFileSystem(jobData,request.inputStream.bytes)
+                jobData = saveInFileSystem(jobData,bytes)
             responseSuccess(jobData)
         }
     }
-    
+
     def download = {
         log.info "Download file jobdata = " + params.getLong('id')
         JobData jobData = JobData.read(params.getLong('id'))
@@ -100,7 +111,7 @@ class RestJobDataController extends RestController {
 
             log.info "write data in file = " + f.absolutePath
             new FileOutputStream(f).withWriter { w ->
-               w << new BufferedInputStream( new ByteArrayInputStream(data) )
+                w << new BufferedInputStream( new ByteArrayInputStream(data) )
             }
             log.info "end file"
         } catch(Exception e) {

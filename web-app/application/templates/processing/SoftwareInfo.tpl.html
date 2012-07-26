@@ -8,39 +8,32 @@
             </ul>
         </div>
 
-        <div class="span9">
+        <div class="span10">
             <div id="panelSoftwareResume" style="padding-bottom: 30px;">
-                <div class="widget-header softwareMainInfo">
+                <div class="widget-header">
+                    <h3>Software description</h3>
                 </div>
                 <div id="softwareInfoDLaunch" class="widget-content" style="padding: 20px;">
-                    <div class="btn-group">
-                        <button id="softwareLaunchJobButton"><i class="icon-play"></i> Launch new job</button>
-                        <button id="softwareFilterJobButton"><i class="icon-search"></i> Search job</button>
-                        <button id="softwareCompareJobButton"><i class=" icon-th-large"></i> Compare job</button>
-                        <button id="softwareInfoButton"><i class="icon-file"></i> Software info</button>
-                    </div>
+                    <div id="softwareDescription" class="well"></div>
+                    <div id="softwareDetails"></div>
                     <div id="softwareInfoDiagram">
                     </div>
                 </div>
             </div> <!-- panelSoftwareResume -->
 
-            <div id="panelSoftwareLastJob" style="padding-bottom: 30px;">
-                <div class="widget-header">
-                    <h3>Last Job</h3>
-                </div>
-                <div class="widget-content" style="padding: 20px;">
-                    <div id="panelSoftwareLastRunList">
-                    </div>
-                </div>
-            </div> <!-- panelSoftwareLastJob -->
-
             <div id="panelAlgoSoftware" style="padding-bottom: 30px;">
                 <div id="panelJobSelection">
                     <div class="widget-header">
-                    <h3>Selected Job </h3>
+                        <h3>Jobs </h3>
                     </div>
-                    <div class="widget-content">
-                    <div id="jobSelection"></div>
+                    <div class="widget-content" style="padding: 20px;">
+                        <div class="btn-group" style="width : auto; margin: auto;">
+                            <button class="btn" id="softwareLaunchJobButton"><i class="icon-play"></i>  New job</button>
+                            <!--<button class="btn" id="softwareFilterJobButton"><i class="icon-search"></i> Search job</button>-->
+                            <button class="btn" id="softwareCompareJobButton"><i class=" icon-th-large"></i> Compare job</button>
+                        </div>
+
+                        <div id="jobSelection" style="margin-top: 30px;"></div>
                     </div>
                 </div>
             </div> <!-- panelAlgoSoftware -->
@@ -49,9 +42,9 @@
                 <div class="widget-header">
                     <h3>Selected Job details</h3>
                 </div>
-                <div class="widget-content">
+                <div class="widget-content" style="padding: 20px;">
                     <div class="selectRunDetails"></div>
-                    <button id="launchComparator"><i class="icon-th-large"></i> Compare this job</button>
+                    <button class="btn" id="launchComparator"><i class="icon-th-large"></i> Compare this job</button>
                     <div class="selectRunParams">
                         <table id="selectRunParamsTable"width="100%" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed">
                             <thead>
@@ -72,7 +65,7 @@
                 <div class="widget-header">
                     <h3>Selected Job results</h3>
                 </div>
-                <div class="widget-content">
+                <div class="widget-content" style="padding: 20px;">
                     <div id="panelJobResultsDiv"></div>
                 </div>
             </div> <!-- panelJobResults -->

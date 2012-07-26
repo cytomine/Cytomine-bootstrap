@@ -19,11 +19,11 @@ class Job extends CytomineDomain  {
     int progress = 0
     int status = 0 //enum type are too heavy with GORM
     int number//nth job of the software within a project
-
+    String statusComment
 
     Project project
 
-    double rate = -1d
+    double rate
 
     static transients = ["url"]
 
@@ -35,6 +35,7 @@ class Job extends CytomineDomain  {
     static constraints = {
         progress(min: 0, max: 100)
         project(nullable:true)
+        statusComment(nullable:true)
         status(range: 0..6)
     }
 
@@ -60,15 +61,14 @@ class Job extends CytomineDomain  {
             job.progress = it.progress
             job.status = it.status
             job.number = it.number
-
+            job.statusComment = it.statusComment
             job.project = it.project?.id
             job.software = it.software?.id
-
             job.created = it.created ? it.created.time.toString() : null
             job.updated = it.updated ? it.updated.time.toString() : null
-
+            job.rate = (it.rate == -1) ? "N.A." : it.rate
             try {
-                job.rate = it.rate
+
             } catch(Exception e) {e.printStackTrace()}
             
             try {
@@ -87,22 +87,28 @@ class Job extends CytomineDomain  {
     }
 
     static Job createFromData(jsonJob) {
-        def job = new Job()
-        getFromData(job, jsonJob)
+        getFromData(new Job(), jsonJob)
     }
 
-    static def getFromData(job, jsonJob) {
+    static def getFromData(Job job, jsonJob) {
         try {
             if (!jsonJob.status.toString().equals("null"))
                 job.status = Integer.parseInt(jsonJob.status.toString())
             if (!jsonJob.progress.toString().equals("null"))
                 job.progress = Integer.parseInt(jsonJob.progress.toString())
 
+            if (!jsonJob.statusComment.toString().equals("null"))
+                job.statusComment = jsonJob.statusComment.toString()
+            else
+                job.statusComment = ""
+
             String projectId = jsonJob.project.toString()
             if (!projectId.equals("null")) {
                 job.project = Project.read(projectId)
                 if (!job.project) throw new WrongArgumentException("Project was not found with id:" + projectId)
-            } else job.project = null
+            } else {
+                job.project = null
+            }
 
             String softwareId = jsonJob.software.toString()
             if (!softwareId.equals("null")) {

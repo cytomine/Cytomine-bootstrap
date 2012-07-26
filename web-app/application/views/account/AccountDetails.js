@@ -35,7 +35,8 @@ var AccountDetails = Backbone.View.extend({
     editPassword : function () {
         var user = new UserModel(this.model.toJSON());
         user.save({
-            "password" : $("#input_new_password").val()
+            "password" : $("#input_new_password").val(),
+            "password2" : $("#input_new_password").val()
         }, {
             success : function (model, response) {
                 window.app.view.message("Success", response.message, "success");

@@ -23,7 +23,9 @@ class RestUserController extends RestController {
     def springSecurityService
     def transactionService
 
+    def cytomineService
     def userService
+    def securityService
     def projectService
 
     /**
@@ -33,7 +35,7 @@ class RestUserController extends RestController {
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
         if(params.publicKey!=null) {
-             responseSuccess(userService.getByPublicKey(params.publicKey))
+            responseSuccess(userService.getByPublicKey(params.publicKey))
         } else responseSuccess(userService.list())
     }
 
@@ -136,7 +138,7 @@ class RestUserController extends RestController {
             Date date = new Date()
             date.setTime(Long.parseLong(json.created.toString()))
             userJob.created = date
-        } catch(Exception e) {log.warn e.toString()} 
+        } catch(Exception e) {log.warn e.toString()}
         userJob = userJob.save(flush:true)
 
         user.getAuthorities().each { secRole ->
@@ -211,6 +213,21 @@ class RestUserController extends RestController {
         render jsonData as JSON
     }
 
+    def listFriends = {
+        //slow method ;-)
+        SecUser user = userService.get(params.long('id'))
+        def include_online = !params.boolean('offline')
+        List<Project> projects = securityService.getProjectList(user)
+        Collection<SecUser> users = new ArrayList<SecUser>()
+        projects.each { project ->
+            project.users().each { it_user ->
+                if (it_user.isOnline() == include_online && it_user !=  cytomineService.getCurrentUser()) users.add(it_user)
+            }
+            //users.addAll(project.users())
+        }
+        responseSuccess(users.unique())
+    }
+
     def listUserJobByProject = {
         Project project = projectService.read(params.long('id'),new Project())
         if (project) {
@@ -228,7 +245,7 @@ class RestUserController extends RestController {
 
                 def allSofts = []
                 List<SoftwareProject> softwareProject = SoftwareProject.findAllByProject(project)
-                
+
                 softwareProject.each {
                     Software software = it.software
                     def soft = [:]

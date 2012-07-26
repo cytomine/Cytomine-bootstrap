@@ -53,7 +53,7 @@ class SoftwareService extends ModelService {
         Transaction transaction = transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
         //Read software
-        Software software = Software.read(json.id)
+        //Software software = Software.read(json.id)
 
         //TODO: Delete each Job
 

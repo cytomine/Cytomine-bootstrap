@@ -185,7 +185,7 @@ class AbstractImage extends CytomineDomain {
         while (desiredWidth > 512) {
             desiredWidth /= 2
         }
-
+		println "desiredWidth="+desiredWidth
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
         String url = resolver.getThumbUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(), desiredWidth)
         return url

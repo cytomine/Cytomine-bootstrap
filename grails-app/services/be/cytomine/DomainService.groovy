@@ -13,7 +13,6 @@ class DomainService {
         if (!newObject.validate()) {
             println newObject.errors
             println newObject.retrieveErrors().toString()
-            CytomineException cyto = new WrongArgumentException(newObject.retrieveErrors().toString())
             throw new WrongArgumentException(newObject.retrieveErrors().toString())
         }
         def modifiedFieldNames = newObject.getDirtyPropertyNames()

@@ -1,5 +1,7 @@
 package cytomine.web
 
+import grails.converters.JSON
+
 class MarshallersService {
 
     def grailsApplication
@@ -8,6 +10,9 @@ class MarshallersService {
     def initMarshallers() {
         print "initMarshallers"
         String baseUrl = grailsApplication.config.grails.serverURL
+        JSON.registerObjectMarshaller(Date) {
+            return it?.format("dd-MM-yyyy")
+        }
         grailsApplication.getDomainClasses().each { domain ->
             domain.metaClass.methods.each { method ->
                 if (method.name.equals("registerMarshaller")) {

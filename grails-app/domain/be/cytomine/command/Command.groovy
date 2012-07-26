@@ -86,14 +86,6 @@ class Command extends CytomineDomain {
         }
     }
 
-    /**
-     * Add a project concerned by this command
-     * @param project Project concerned by this command
-     */
-    void initCurrentCommantProject(Project project) {
-        this.project = project;
-    }
-
     public String toString() {
         return this.id + "[" + this.created + "]";
     }

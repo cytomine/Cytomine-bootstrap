@@ -100,7 +100,7 @@ class RestImageController extends RestController {
             if (thumbURL == null) thumbURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
             responseImage(thumbURL)
         } catch (Exception e) {
-            log.error("GetThumb:" + e);
+            log.error("GetThumb:" + e)
         }
     }
 
@@ -111,7 +111,7 @@ class RestImageController extends RestController {
             if (previewURL == null) previewURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
             responseImage(previewURL)
         } catch (Exception e) {
-            log.error("GetThumb:" + e);
+            log.error("GetThumb:" + e)
         }
     }
 
@@ -129,7 +129,7 @@ class RestImageController extends RestController {
                 if (cropURL == null) cropURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
                 responseImage(cropURL)
             } catch (Exception e) {
-                log.error("GetThumb:" + e);
+                log.error("GetCrop:" + e)
             }
         }
     }

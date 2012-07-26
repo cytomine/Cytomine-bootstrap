@@ -28,7 +28,9 @@
 <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
 <link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
 <link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
-<!--<link rel="stylesheet" href="lib/bootstrap-1.3/bootstrap.min.css">-->
+
+
+<!--<link rel="stylesheet" href="http://bootswatch.com/cerulean/bootstrap.min.css"/>-->
 <link rel="stylesheet" href="lib/bootstrap-2.0.4/css/bootstrap.min.css"/>
 <style type="text/css">
 body {
@@ -65,6 +67,9 @@ body {
     <script type="text/javascript" src="lib/underscore.js"></script>
     <script type="text/javascript" src="lib/backbone.js"></script>
     <script type="text/javascript" src="lib/json2.js"></script>
+
+    <!-- Phono -->
+    <script type="text/javascript" src="http://s.phono.com/releases/0.3/jquery.phono.js"></script>
 
     <!-- fileupload -->
     <script type="text/javascript" src="lib/fileupload/vendor/jquery.ui.widget.js"></script>
@@ -118,6 +123,7 @@ body {
     <script type="text/javascript" src="application/controllers/AdminController.js" ></script>
     <script type="text/javascript" src="application/controllers/ActivityController.js" ></script>
     <script type="text/javascript" src="application/controllers/AccountController.js" ></script>
+    <script type="text/javascript" src="application/controllers/PhonoController.js" ></script>
     <!-- Models -->
     <script type="text/javascript" src="application/models/UploadedFileModel.js" ></script>
     <script type="text/javascript" src="application/models/AnnotationsFilterModel.js" ></script>
@@ -137,9 +143,10 @@ body {
     <script type="text/javascript" src="application/models/SuggestedAnnotationTermModel.js" ></script>
     <script type="text/javascript" src="application/models/JobModel.js" ></script>
     <script type="text/javascript" src="application/models/SoftwareModel.js" ></script>
+
     <!-- View -->
     <script type="text/javascript" src="application/views/activity/ActivityView.js" ></script>
-
+    <script type="text/javascript" src="application/views/phono/PhonoMenu.js" ></script>
     <script type="text/javascript" src="application/views/account/AccountDetails.js" ></script>
 
     <script type="text/javascript" src="application/views/auth/LoginDialogView.js" ></script>
@@ -168,7 +175,8 @@ body {
     <script type="text/javascript" src="application/views/processing/JobSearchEngineView.js"></script>
 
     <script type="text/javascript" src="application/views/processing/result/RetrievalAlgoResult.js"></script>
-    <script type="text/javascript" src="application/views/processing/result/EvolutionAlgoResult.js"></script>
+    <script type="text/javascript" src="application/views/processing/result/RetrievalAlgoResult.js"></script>
+    <script type="text/javascript" src="application/views/processing/result/DefaultResult.js"></script>
 
     <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
     <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>
@@ -241,6 +249,7 @@ body {
 
 <div id='dialogs'></div>
 <div id="alerts"></div>
+<div id="phono-messages"></div>
 </body>
 <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">
     <script type="text/javascript" src="lib.js" ></script>

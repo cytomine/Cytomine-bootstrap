@@ -295,6 +295,7 @@ class AnnotationService extends ModelService {
                 .add(Restrictions.eq("image", image))
                 .add(SpatialRestrictions.within("location",boundingbox))
                 .list()
+
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")

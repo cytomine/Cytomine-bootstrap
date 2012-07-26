@@ -31,7 +31,7 @@ class AddCommand extends Command {
         //Init command info
         newDomain = response.object
         fillCommandInfo(newDomain, response.data.message)
-        super.initCurrentCommantProject(newDomain?.projectDomain())
+        super.setProject(newDomain?.projectDomain())
         return response
     }
 

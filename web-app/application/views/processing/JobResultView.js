@@ -19,6 +19,9 @@ var JobResultView = Backbone.View.extend({
             case 'ValidateEvolution':
                 self.valideEvolution();
                 break;
+            case 'Default':
+                self.defaultResult();
+                break;
             default:
                 self.defaultResult();
                 break;
@@ -27,7 +30,7 @@ var JobResultView = Backbone.View.extend({
     },
     valideAnnotation:function () {
         var self = this;
-        var result = new RetrievalAlgoResult({
+        new RetrievalAlgoResult({
             model:self.model,
             project:self.project,
             el:self.el,
@@ -37,7 +40,7 @@ var JobResultView = Backbone.View.extend({
     },
     valideEvolution:function () {
         var self = this;
-        var result = new EvolutionAlgoResult({
+        new EvolutionAlgoResult({
             model:self.model,
             project:self.project,
             el:self.el,
@@ -46,6 +49,13 @@ var JobResultView = Backbone.View.extend({
         }).render();
     },
     defaultResult:function () {
-        alert("Result not supported!");
+        var self = this;
+        new DefaultResult({
+            model:self.model,
+            project:self.project,
+            el:self.el,
+            jobs:self.jobs,
+            software:self.software
+        }).render();
     }
 });

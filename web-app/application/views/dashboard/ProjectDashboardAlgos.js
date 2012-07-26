@@ -120,7 +120,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         self.printProjectSoftwareDetails( self.software);
 
         //Print last job + n last job details
-        self.printLastNRun();
+        //self.printLastNRun();
 
         //Print selected job from this software
         self.printProjectJobInfo( self.idJob);
@@ -162,16 +162,17 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                 });
             });
 
-        $("#softwareInfoButton").click(function() {
+        $("#softwareInfoButton").live("click",function() {
 
                 new StatsProjectSoftwareModel({project : self.model.id, software: self.software.id}).fetch({
                      success : function (model, response) {
                          new SoftwareDetailsView({
-                             software : self.software,
+                             model : self.software,
                              stats : model,
                              project : self.model,
-                             el : $("#softwareInfoDialogParent")
+                             el : $("#dialogs")
                          }).render();
+
                      }
                  });
           });
@@ -275,16 +276,17 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         chart.draw(data, options);
     },
     printProjectSoftwareDetails : function(software) {
-        var self = this;
-        $("#panelSoftwareResume").find('.softwareMainInfo').empty();
-        $("#panelSoftwareResume").find('.softwareMainInfo').append('<h3>'+software.get('name')+'</h3>');
-        new StatsProjectSoftwareModel({project : self.model.id, software: self.software.id}).fetch({
+        $('#softwareDescription').empty();
+        $('#softwareDescription').append(_.template(
+            '<h3><%= name %></h3><dl class="dl-horizontal"><dt>Name</dt><dd><%= name %></dd><dt>Description</dt><dd><%= description %></dd><dt>Created</dt><dd><%= created %></dd><dt></dt><dd><a id="softwareInfoButton">More info</a> <i class="icon-info-sign"></i></dd></dl>',
+            software.toJSON()));
+        /*new StatsProjectSoftwareModel({project : self.model.id, software: self.software.id}).fetch({
             success : function (model, response) {
                 $("#panelSoftwareResume").find('.softwareMainInfo').find("#numberOfJob").replaceWith("");
                 $("#panelSoftwareResume").find('.softwareMainInfo').append('<li id="numberOfJob">'+ model.get('numberOfJob') +' job has been run</li>');
                 self.printAcitivtyDiagram(model);
             }
-        });
+        });*/
     },
     fillJobSelectView : function() {
         var self = this;
@@ -297,7 +299,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                  self.jobSelectView = new JobSelectionView({
                     software : self.software,
                     project : self.model,
-                    el : $("#panelAlgoSoftware").find('#jobSelection'),
+                    el : $('#jobSelection'),
                     parent : self,
                     jobs: collection,
                     comparator : false

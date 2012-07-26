@@ -29,7 +29,7 @@ class DeleteCommand extends Command {
         def oldDomain = service.retrieve(json)
         def backup = oldDomain.encodeAsJSON()
         //Init command info
-        super.initCurrentCommantProject(oldDomain?.projectDomain())
+        super.setProject(oldDomain?.projectDomain())
         def response = service.destroy(oldDomain, printMessage)
 
         fillCommandInfoJSON(backup, response.data.message)

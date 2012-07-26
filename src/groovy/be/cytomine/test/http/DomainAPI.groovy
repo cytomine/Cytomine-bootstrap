@@ -33,18 +33,20 @@ class DomainAPI {
         client.get()
         int code = client.getResponseCode()
         String response = client.getResponseData()
+        println "undo = " + response
         client.disconnect();
         return [data: response, code: code]
     }
 
     static def redo() {
-        log.info("test undo")
+        log.info("test redo")
         HttpClient client = new HttpClient()
         String  URL = Infos.CYTOMINEURL + Infos.REDOURL
         client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         client.get()
         int code = client.getResponseCode()
         String response = client.getResponseData()
+        println "redo = " + response
         client.disconnect();
         return [data: response, code: code]
     }

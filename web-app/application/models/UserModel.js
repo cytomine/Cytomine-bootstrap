@@ -26,6 +26,18 @@ var UserModel = Backbone.Model.extend({
 });
 
 
+var UserFriendCollection = Backbone.Collection.extend({
+    model: UserModel,
+    url: function() {
+           return "api/user/" + this.id + "/friends.json";
+    },
+    initialize: function (options) {
+        this.id = options.id;
+    },comparator : function(user) {
+        return user.get("username").toLowerCase();
+    }
+});
+
 // define our collection
 var UserCollection = Backbone.Collection.extend({
     model: UserModel,
