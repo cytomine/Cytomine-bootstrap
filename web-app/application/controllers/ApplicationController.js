@@ -68,7 +68,7 @@ var ApplicationController = Backbone.Router.extend({
         window.app.controllers.annotation   = new AnnotationController();
         window.app.controllers.activity     = new ActivityController();
         window.app.controllers.account      = new AccountController();
-        window.app.controllers.phono        = new PhonoController();
+        //window.app.controllers.phono        = new PhonoController();
         //window.app.controllers.admin        = new AdminController();
         //Start the history
         window.app.view.initPreferences();

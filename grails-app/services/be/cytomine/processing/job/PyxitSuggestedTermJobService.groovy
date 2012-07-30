@@ -47,7 +47,7 @@ class PyxitSuggestedTermJobService extends AbstractJobService {
     }
 
     @Override
-    double computeRate(Job job) {
-        return -2;
+    Double computeRate(Job job) {
+        return null;
     }
 }

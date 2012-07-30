@@ -54,7 +54,6 @@ var JobSearchEngineView = Backbone.View.extend({
         var launchQuickSearch = function () {
             console.log(self);
             console.log("launchQuickSearch:" + $("#searchJobFilterAll").val());
-            //console.log(self.listing.datatable);
             self.listing.table.fnFilter(
                     $("#searchJobFilterAll").val(),
                     null,

@@ -1,5 +1,6 @@
 var SoftwareDetailsView = Backbone.View.extend({
     project:null,
+    detailsRendered : false,
     initialize:function (options) {
         this.project = options.project;
         this.stats = options.stats;
@@ -16,19 +17,22 @@ var SoftwareDetailsView = Backbone.View.extend({
     },
     doLayout:function (softwareDetailsTpl) {
         var self = this;
-        var dialog = new ConfirmDialogView({
-            el : "#dialogs",
-            template :_.template(softwareDetailsTpl,  $.extend({}, self.model.toJSON(), self.stats.toJSON())),
-            dialogAttr : {
-                dialogID : "#softwareDetailsPanel"
-            }
-        }).render();
-        self.printJobsChart();
-        self.printSoftwareParams();
-        $("#closeSoftwareDetailsPanel").click(function(e) {
-            dialog.close();
-            e.preventDefault();
+        self.model.set({_created : window.app.convertLongToDate(self.model.get("created"))});
+        $(self.el).html(_.template(softwareDetailsTpl,  $.extend({}, self.model.toJSON(), self.stats.toJSON())));
+        $("#softwareHideDetailsButton").on("click", function (e) {
+            $("#softwareDetailsPanel").hide();
+            $("#softwareDescription").show();
         });
+        $("#softwareShowDetailsButton").on("click", function (e) {
+            $("#softwareDetailsPanel").show();
+            $("#softwareDescription").hide();
+            if (!self.detailsRendered) {
+                self.printJobsChart();
+                self.printSoftwareParams();
+                self.detailsRendered = true;
+            }
+        });
+
     },
     printSoftwareParams:function () {
         var self = this;

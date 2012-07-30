@@ -18,6 +18,7 @@ var JobSelectionView = Backbone.View.extend({
         this.jobs = options.jobs;
         this.comparator = options.comparator;
         this.loadDateArray();
+        //this.initDataTableSelectFiltering();
     },
     render:function () {
         var self = this;
@@ -32,7 +33,7 @@ var JobSelectionView = Backbone.View.extend({
     loadResult:function (jobSelectionViewTpl) {
         var self = this;
         var content = _.template(jobSelectionViewTpl, {});
-        console.log("loadResult");
+
         $(self.el).empty();
         $(self.el).append(content);
         self.printDatatables(self.jobs.models);
@@ -65,7 +66,7 @@ var JobSelectionView = Backbone.View.extend({
                 self.printDataPicker(date);
                 $(self.el).find("#datepicker").datepicker('setDate', date);
                 self.refreshDatePicker();
-                //self.printDataPicker(date);
+
             }
         });
     },
@@ -107,10 +108,8 @@ var JobSelectionView = Backbone.View.extend({
             var date = $(self.el).find("#datepicker").datepicker("getDate");
             if (date != null) {
                 self.currentDate = date;
-                console.log("self.currentDate=" + self.currentDate);
-                var indx = self.findJobIndiceBetweenDateTime(date.getTime(), date.getTime() + 86400000); //86400000ms in a day
+                var indx = self.findJobIndiceBetweenDateTime(date.getTime(), date.getTime() + 86400000); //60*60*24*1000 = 86400000ms in a day
                 var jobs = self.findJobByIndice(indx);
-                console.log(jobs);
                 self.printDatatables(jobs, date);
             }
         }
@@ -134,6 +133,7 @@ var JobSelectionView = Backbone.View.extend({
     },
     printDatatables:function (jobs, date) {
         var self = this;
+
 
         //rebuilt table
         var selectRunParamElem = $(self.el).find('#selectJobTable').find('tbody').empty();
@@ -195,15 +195,35 @@ var JobSelectionView = Backbone.View.extend({
 
         //hide id column
         self.table.fnSetColumnVis(1, false);
+
+        //add select input elemen for each column
+        /*var fnCreateSelect = function fnCreateSelect( aData )
+        {
+            var r='<select><option value=""></option>', i, iLen=aData.length;
+            for ( i=0 ; i<iLen ; i++ )
+            {
+                r += '<option value="'+aData[i]+'">'+aData[i]+'</option>';
+            }
+            return r+'</select>';
+        }
+        $("#selectJobTable").append('<tfoot><th rowspan="1" colspan="1"><th rowspan="1" colspan="1"><th rowspan="1" colspan="1"><th rowspan="1" colspan="1"><th rowspan="1" colspan="1"></tfoot>');
+        _.each([], function ( i ) {
+            alert(i);
+            var th_elem = $("#selectJobTable").find("tfoot th:eq("+i+")");
+            th_elem.html(fnCreateSelect( self.table.fnGetColumnData(i)));
+            $('select', this).change( function () {
+                self.table.fnFilter( $(this).val(), i );
+            } );
+        } ); */
     },
     getStateElement:function (job) {
-        if (job.isNotLaunch()) return '<span class="label btn-inverse">Not Launch!</span> ';
-        else if (job.isInQueue()) return '<span class="label btn-info">In queue!</span> ';
-        else if (job.isRunning()) return '<span class="label btn-primary">Running!</span> ';
-        else if (job.isSuccess()) return '<span class="label btn-success">Success!</span> ';
-        else if (job.isFailed()) return '<span class="label btn-danger">Failed!</span> ';
-        else if (job.isIndeterminate()) return '<span class="label btn-inverse">Indetereminate!</span> ';
-        else if (job.isWait()) return '<span class="label btn-warning">Wait!</span> ';
+        if (job.isNotLaunch()) return '<span class="label btn-inverse">not naunch</span> ';
+        else if (job.isInQueue()) return '<span class="label btn-info">in queue</span> ';
+        else if (job.isRunning()) return '<span class="label btn-primary">running</span> ';
+        else if (job.isSuccess()) return '<span class="label btn-success">success</span> ';
+        else if (job.isFailed()) return '<span class="label btn-danger">failed</span> ';
+        else if (job.isIndeterminate()) return '<span class="label btn-inverse">indetereminate</span> ';
+        else if (job.isWait()) return '<span class="label btn-warning">wait</span> ';
         else return "no supported";
     },
     initSubGridDatatables:function () {
@@ -247,6 +267,61 @@ var JobSelectionView = Backbone.View.extend({
         sOut += '</table>';
 
         return sOut;
+    },
+
+    initDataTableSelectFiltering : function() {
+        /*
+         * Function: fnGetColumnData
+         * Purpose:  Return an array of table values from a particular column.
+         * Returns:  array string: 1d data array
+         * Inputs:   object:oSettings - dataTable settings object. This is always the last argument past to the function
+         *           int:iColumn - the id of the column to extract the data from
+         *           bool:bUnique - optional - if set to false duplicated values are not filtered out
+         *           bool:bFiltered - optional - if set to false all the table data is used (not only the filtered)
+         *           bool:bIgnoreEmpty - optional - if set to false empty values are not filtered from the result array
+         * Author:   Benedikt Forchhammer <b.forchhammer /AT\ mind2.de>
+         */
+        $.fn.dataTableExt.oApi.fnGetColumnData = function ( oSettings, iColumn, bUnique, bFiltered, bIgnoreEmpty ) {
+            // check that we have a column id
+            if ( typeof iColumn == "undefined" ) return new Array();
+
+            // by default we only wany unique data
+            if ( typeof bUnique == "undefined" ) bUnique = true;
+
+            // by default we do want to only look at filtered data
+            if ( typeof bFiltered == "undefined" ) bFiltered = true;
+
+            // by default we do not wany to include empty values
+            if ( typeof bIgnoreEmpty == "undefined" ) bIgnoreEmpty = true;
+
+            // list of rows which we're going to loop through
+            var aiRows;
+
+            // use only filtered rows
+            if (bFiltered == true) aiRows = oSettings.aiDisplay;
+            // use all rows
+            else aiRows = oSettings.aiDisplayMaster; // all row numbers
+
+            // set up data array
+            var asResultData = new Array();
+
+            for (var i=0,c=aiRows.length; i<c; i++) {
+                iRow = aiRows[i];
+                var aData = this.fnGetData(iRow);
+                var sValue = aData[iColumn];
+
+                // ignore empty values?
+                if (bIgnoreEmpty == true && sValue.length == 0) continue;
+
+                // ignore unique values?
+                else if (bUnique == true && jQuery.inArray(sValue, asResultData) > -1) continue;
+
+                // else push the value onto the result data array
+                else asResultData.push(sValue);
+            }
+
+            return asResultData;
+        }
     }
 
 });

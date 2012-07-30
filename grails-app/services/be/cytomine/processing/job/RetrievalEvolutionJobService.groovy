@@ -61,7 +61,7 @@ class RetrievalEvolutionJobService extends AbstractJobService{
     }
 
     @Override
-    double computeRate(Job job) {
+    Double computeRate(Job job) {
         if(job.rate==-1 && job.status==Job.SUCCESS) {
             def result = listAVGEvolution(job)
             println "result="+result

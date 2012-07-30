@@ -58,7 +58,6 @@ class Infos {
     }
 
     static void addUserRight(User user, Project project) {
-        println "Add user right " + user.username + " to project " + project.name
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         def aclService = ApplicationHolder.application.getMainContext().getBean("aclService")
         def objectIdentityRetrievalStrategy = ApplicationHolder.application.getMainContext().getBean("objectIdentityRetrievalStrategy")
@@ -77,10 +76,6 @@ class Infos {
             aclService.createAcl objectIdentityRetrievalStrategy.getObjectIdentity(project)
         }
 
-
-
-
-        println "Add permission " + user.username + " to project " + project.name
         aclUtilService.addPermission project, user.username, ADMINISTRATION
 
         def sessionFactory = ApplicationHolder.application.getMainContext().getBean("sessionFactory")

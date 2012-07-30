@@ -11,7 +11,6 @@ class UserJob extends SecUser {
     Job job
     double rate = -1d
 
-
     static constraints = {
         job(nullable: true)
     }
@@ -21,7 +20,7 @@ class UserJob extends SecUser {
     }
 
     String realUsername() {
-        return user.username
+        return "$user.firstname $user.lastname ($user.username)"
     }
 
     def beforeInsert() {
@@ -74,6 +73,9 @@ class UserJob extends SecUser {
             def returnArray = [:]
             returnArray['id'] = it.id
             returnArray['username'] = it.username
+            try {
+                returnArray['realUsername']= it.realUsername()
+            } catch (Exception e) {println e}
             returnArray['publicKey'] = it.publicKey
             returnArray['privateKey'] = it.privateKey
             returnArray['job'] = it.job?.id

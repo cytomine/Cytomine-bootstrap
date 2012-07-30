@@ -11,7 +11,7 @@ class MarshallersService {
         print "initMarshallers"
         String baseUrl = grailsApplication.config.grails.serverURL
         JSON.registerObjectMarshaller(Date) {
-            return it?.format("dd-MM-yyyy")
+            return it?.time?.toString()
         }
         grailsApplication.getDomainClasses().each { domain ->
             domain.metaClass.methods.each { method ->

@@ -128,6 +128,6 @@ abstract class AbstractJobService {
         println "###################################################################################"
     }
 
-    public abstract double computeRate(Job job);
+    public abstract Double computeRate(Job job);
 
 }

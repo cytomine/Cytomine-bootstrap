@@ -1,9 +1,19 @@
-<div id="softwareDetailsPanel" title="" class="xbigModal modal">
-    <div class="modal-header">
-        <h3>Software details</h3>
+<div id="softwareDescription">
+    <div class="well">
+        <h3><%= name %></h3>
+        <dl class="dl-horizontal">
+            <dt>Name</dt>
+            <dd><%= name %></dd>
+            <dt>Description</dt>
+            <dd><%= description %></dd>
+            <dt>Created</dt>
+            <dd><%= _created %></dd>
+            <dt></dt>
+            <dd><a id="softwareShowDetailsButton">More details</a> <i class="icon-info-sign"></i></dd>
+        </dl>
     </div>
-    <div class="modal-body">
-
+</div>
+<div id="softwareDetailsPanel" title="" style="display:none;">
         <div class="well">
             <h3><%= name %></h3>
             <dl class="dl-horizontal">
@@ -15,11 +25,14 @@
                 <dd><%= created %></dd>
                 <dt>Service associated</dt>
                 <dd><%= serviceName %></dd>
-                <dt>Result generator associated</dt>
+                <dt>Result generator</dt>
                 <dd><%= resultName %></dd>
+                <dt>Number of job</dt>
+                <dd><%= numberOfJob %></dd>
+                <dt></dt>
+                <dd><a id="softwareHideDetailsButton">Less details</a> <i class="icon-info-sign"></i></dd>
             </dl>
         </div>
-
         <div id="softwareParams" class="well">
             <h3>Parameters</h3>
             <div id="softwareParamsTableDiv" style="padding: 25px;">
@@ -38,7 +51,6 @@
                 </table>
             </div>
         </div>
-
         <div id="softwareState" class="well">
             <h3>Jobs status</h3>
             <div id="softwareInfoList">
@@ -55,10 +67,4 @@
             </div>
             <div id="softwareInfoChart"></div>
         </div>
-
-
-    </div>
-    <div class="modal-footer">
-        <a href="#" id="closeSoftwareDetailsPanel" class="btn btn-primary">Close</a>
-    </div>
 </div>

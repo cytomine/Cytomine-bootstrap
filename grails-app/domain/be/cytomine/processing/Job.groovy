@@ -5,6 +5,7 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ResponseService
 import be.cytomine.project.Project
 import grails.converters.JSON
+import be.cytomine.security.UserJob
 
 class Job extends CytomineDomain  {
     //enum type are too heavy with GORM
@@ -23,7 +24,7 @@ class Job extends CytomineDomain  {
 
     Project project
 
-    double rate
+    Double rate = null
 
     static transients = ["url"]
 
@@ -37,6 +38,7 @@ class Job extends CytomineDomain  {
         project(nullable:true)
         statusComment(nullable:true)
         status(range: 0..6)
+        rate(nullable: true)
     }
 
     static mapping = {
@@ -50,7 +52,7 @@ class Job extends CytomineDomain  {
         if(!previousJob.isEmpty()) number = previousJob.get(0).number+1
         else number = 1;
     }
-    
+
 
     static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Job.class
@@ -62,18 +64,17 @@ class Job extends CytomineDomain  {
             job.status = it.status
             job.number = it.number
             job.statusComment = it.statusComment
+            try {
+            job.username = UserJob.findByJob(it)?.realUsername()
+            } catch (Exception e) {println e}
+
             job.project = it.project?.id
             job.software = it.software?.id
             job.created = it.created ? it.created.time.toString() : null
             job.updated = it.updated ? it.updated.time.toString() : null
-            job.rate = (it.rate == -1) ? "N.A." : it.rate
-            try {
-
-            } catch(Exception e) {e.printStackTrace()}
-            
+            job.rate = it.rate
             try {
                 job.jobParameter =  it.jobParameter
-
             } catch(Exception e) {println e}
 
             return job

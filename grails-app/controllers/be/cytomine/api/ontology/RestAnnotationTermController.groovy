@@ -99,7 +99,7 @@ class RestAnnotationTermController extends RestController {
                 responseResult(result)
             } else {
                 if(!json.annotation || !Annotation.read(json.annotation)) throw new WrongArgumentException("AlgoAnnotationTerm must have a valide annotation:"+json.annotation)
-                annotationTermService.checkAuthorization(Annotation.read(json.annotation).project)
+                //annotationTermService.checkAuthorization(Annotation.read(json.annotation).project)
                 def result = algoAnnotationTermService.add(json)
                 responseResult(result)
             }
