@@ -10,6 +10,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.project.Project
 
 class RestAnnotationTermController extends RestController {
 
@@ -99,7 +100,7 @@ class RestAnnotationTermController extends RestController {
                 responseResult(result)
             } else {
                 if(!json.annotation || !Annotation.read(json.annotation)) throw new WrongArgumentException("AlgoAnnotationTerm must have a valide annotation:"+json.annotation)
-                //annotationTermService.checkAuthorization(Annotation.read(json.annotation).project)
+                annotationTermService.checkAuthorization(Annotation.read(json.annotation).project.id,new Project())
                 def result = algoAnnotationTermService.add(json)
                 responseResult(result)
             }

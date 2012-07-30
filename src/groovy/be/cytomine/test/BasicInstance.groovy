@@ -255,6 +255,7 @@ class BasicInstance {
         def user = getBasicUserJobNotExist()
         user.save(flush: true)
         assert user != null
+        Infos.addUserRight(user.user,annotation.project)
         def algoannotationTerm = new AlgoAnnotationTerm(annotation:annotation,term:term,userJob:user, expectedTerm: term, rate:1d)
         algoannotationTerm
     }

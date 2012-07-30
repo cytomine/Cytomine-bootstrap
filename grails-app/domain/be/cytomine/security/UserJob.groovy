@@ -20,7 +20,7 @@ class UserJob extends SecUser {
     }
 
     String realUsername() {
-        return "$user.firstname $user.lastname ($user.username)"
+        return user.username
     }
 
     def beforeInsert() {

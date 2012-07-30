@@ -7,6 +7,7 @@ import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
 import static org.springframework.security.acls.domain.BasePermission.*
 import org.codehaus.groovy.grails.commons.GrailsApplication
+import be.cytomine.security.UserJob
 
 abstract class CytomineDomain {
 
@@ -71,7 +72,6 @@ abstract class CytomineDomain {
 
     boolean hasPermission(String permission) {
         try {
-            //println "hasPermission($permission)"
             return hasPermission(this,permission)
         } catch (Exception e) {e.printStackTrace()}
         return false
@@ -79,7 +79,6 @@ abstract class CytomineDomain {
 
     boolean hasPermission(Long id,String className, String permission) {
         try {
-            //println "hasPermission($id,$className,$permission)"
             def obj = grailsApplication.classLoader.loadClass(className).get(id)
             return hasPermission(obj,permission)
         } catch (Exception e) {
@@ -90,18 +89,17 @@ abstract class CytomineDomain {
 
     boolean hasPermission(def domain,String permissionStr) {
         try {
-            //println "hasPermission($domain,$permissionStr)"
             SecUser currentUser = cytomineService.getCurrentUser()
-            String username = currentUser.realUsername()
+            String usernameParentUser = currentUser.realUsername()
             int permission = -1
             if(permissionStr.equals("READ")) permission = READ.mask
             else if(permissionStr.equals("WRITE")) permission = WRITE.mask
             else if(permissionStr.equals("DELETE")) permission = DELETE.mask
             else if(permissionStr.equals("CREATE")) permission = CREATE.mask
             else if(permissionStr.equals("ADMIN")) permission = ADMINISTRATION.mask
-
             AclObjectIdentity aclObject = AclObjectIdentity.findByObjectId(domain.id)
-            AclSid aclSid = AclSid.findBySid(username)
+            AclSid aclSid = AclSid.findBySid(usernameParentUser)
+
             if(!aclObject) return false
             if(!aclSid) return false
 
