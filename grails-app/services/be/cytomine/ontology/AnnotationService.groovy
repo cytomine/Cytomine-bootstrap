@@ -426,14 +426,17 @@ class AnnotationService extends ModelService {
             transactionService.stop()
 
             //add annotation on the retrieval
-            if(!currentUser.algo())  {
-                try {if (annotationID) indexRetrievalAnnotation(annotationID)
-                } catch (CytomineException ex) {
-                    log.error "CytomineException index in retrieval:" + ex.toString()
-                } catch (Exception e) {
-                    log.error "Exception index in retrieval:" + e.toString()
-               }
+            if(Annotation.read(annotationID).location.getNumPoints() >= 3)  {
+                if(!currentUser.algo())  {
+                    try {if (annotationID) indexRetrievalAnnotation(annotationID)
+                    } catch (CytomineException ex) {
+                        log.error "CytomineException index in retrieval:" + ex.toString()
+                    } catch (Exception e) {
+                        log.error "Exception index in retrieval:" + e.toString()
+                   }
+                }
             }
+
             return result
         }
     }

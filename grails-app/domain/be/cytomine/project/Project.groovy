@@ -181,7 +181,7 @@ class Project extends CytomineDomain {
             try {returnArray['creator'] = project.creator().id} catch (Exception e) {println "creator:"+e}
             try {returnArray['admins'] = project.admins().collect { it.id }} catch (Exception e) {println "admins:"+e}
             try {returnArray['users'] = project.users().collect { it.id } } catch (Exception e) {println "users:"+e}
-            try {returnArray['userLayers'] = project.userLayers().collect { it.id } } catch (Exception e) {println "userLayers:"+e}
+            try {returnArray['userLayers'] = project.userLayers().collect {it.id} } catch (Exception e) {println "userLayers:"+e}
             try {returnArray['numberOfSlides'] = project.countSlides()} catch (Exception e) {returnArray['numberOfSlides'] = -1}
             try {returnArray['numberOfImages'] = project.countImageInstance()} catch (Exception e) {returnArray['numberOfImages'] = -1}
             try {returnArray['numberOfAnnotations'] = project.countAnnotations()} catch (Exception e) {e.printStackTrace(); returnArray['numberOfAnnotations'] = -1}

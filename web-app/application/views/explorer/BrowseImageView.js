@@ -535,6 +535,11 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().toggleControl("select");
             self.getUserLayer().disableHightlight();
         });
+        toolbar.find('a[id=point' + this.model.get('id') + ']').click(function () {
+            self.getUserLayer().controls.select.unselectAll();
+            self.getUserLayer().toggleControl("point");
+            self.getUserLayer().disableHightlight();
+        });
         toolbar.find('a[id=regular4' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().setSides(4);
@@ -557,6 +562,7 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().toggleControl("freehand");
             self.getUserLayer().disableHightlight();
         });
+
         if (this.iPad) {
             toolbar.find('a[id=freehand' + this.model.get('id') + ']').hide();
         }

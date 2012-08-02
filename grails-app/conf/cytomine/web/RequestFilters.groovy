@@ -14,7 +14,8 @@ class RequestFilters {
     def springSecurityService
 
     def filters = {
-        all(uri:'/api/**') {
+        //all(uri:'/api/**') {
+        all(uri:'/**') {
             before = {
                 if(actionName.equals("crop")) return
                 request.currentTime = System.currentTimeMillis()

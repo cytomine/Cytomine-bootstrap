@@ -247,10 +247,10 @@ AnnotationLayer.prototype = {
             },
             'featureadded': function (evt) {
                 //Abort if the geometry contains less than 3 vertices
-                if (evt.feature.geometry.getVertices().length < 3) {
-                    self.vectorsLayer.removeFeatures(evt.feature);
-                    return;
-                }
+//                if (evt.feature.geometry.getVertices().length < 3) {
+//                    self.vectorsLayer.removeFeatures(evt.feature);
+//                    return;
+//                }
 
                 /* Check if feature must throw a listener when it is added
                  * true: annotation already in database (no new insert!)

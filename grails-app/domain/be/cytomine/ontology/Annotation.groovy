@@ -191,7 +191,7 @@ class Annotation extends CytomineDomain implements Serializable {
             //location
             annotation.location = new WKTReader().read(jsonAnnotation.location)
             if (annotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geometry is empty:" + annotation.location.getNumPoints() + " points")
-            if (annotation.location.getNumPoints() < 3) throw new WrongArgumentException("Geometry is not a polygon :" + annotation.location.getNumPoints() + " points")
+            //if (annotation.location.getNumPoints() < 3) throw new WrongArgumentException("Geometry is not a polygon :" + annotation.location.getNumPoints() + " points")
             if (!annotation.location) throw new WrongArgumentException("Geo is null: 0 points")
             //image
             annotation.image = ImageInstance.get(jsonAnnotation.image);
