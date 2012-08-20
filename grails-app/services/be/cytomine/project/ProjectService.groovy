@@ -155,13 +155,6 @@ class ProjectService extends ModelService {
         def response = executeCommand(new EditCommand(user: currentUser), json)
         String newName = Project.get(json.id)?.name
         //Validate and save domain
-        log.debug "oldName = " + oldName
-        Group group = Group.findByName(oldName)
-        log.info "rename group " + group?.name + "(" + group + ") by " + newName
-        if (group) {
-            group.name = newName
-            group.save(flush: true)
-        }
 
         Project project = Project.get(json.id)
         //update RetrievalProject
@@ -266,29 +259,6 @@ class ProjectService extends ModelService {
             it.delete()
         }
         log.info "command deleted"
-        //Delete group map with project
-        Group projectGroup = Group.findByName(domain.name);
-        log.info "projectGroup " + projectGroup
-        if (projectGroup) {
-            projectGroup.name = "TO REMOVE " + domain.id
-            log.info "group " + projectGroup + " will be renamed"
-            projectGroup.save(flush: true)
-        }
-        def groups = domain.groups()
-//        def l = []
-        //        l += groups
-        log.info "groups="+groups
-        groups.each { group ->
-            //for each group, delete user link
-            def users = group.users()
-            log.info "users="+users
-            users.each { user ->
-                userGroupService.unlink(user, group)
-            }
-            ProjectGroup.unlink(domain, group)
-            //delete group
-            group.delete(flush:true)
-        }
         UploadedFile.findAllByProject(domain).each { uploadedFile ->
             uploadedFile.delete()
         }

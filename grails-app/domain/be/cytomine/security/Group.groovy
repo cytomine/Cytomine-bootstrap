@@ -3,7 +3,6 @@ package be.cytomine.security
 import be.cytomine.CytomineDomain
 import be.cytomine.image.AbstractImageGroup
 import be.cytomine.project.Project
-import be.cytomine.project.ProjectGroup
 import grails.converters.JSON
 
 class Group extends CytomineDomain {
@@ -11,7 +10,7 @@ class Group extends CytomineDomain {
     String name
     //Map userGroup
     static belongsTo = Project
-    static hasMany = [projectGroup: ProjectGroup, abstractimagegroup: AbstractImageGroup]
+    static hasMany = [abstractimagegroup: AbstractImageGroup]
 
 
     static mapping = {

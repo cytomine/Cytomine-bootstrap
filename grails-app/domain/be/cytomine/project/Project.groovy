@@ -27,7 +27,7 @@ class Project extends CytomineDomain {
     boolean retrievalAllOntology = true
 
     static belongsTo = [ontology: Ontology]
-    static hasMany = [projectGroup: ProjectGroup, commands: Command, softwareProjects: SoftwareProject, imageFilterProjects: ImageFilterProject, retrievalProjects : Project]
+    static hasMany = [commands: Command, softwareProjects: SoftwareProject, imageFilterProjects: ImageFilterProject, retrievalProjects : Project]
 
 
     static constraints = {
