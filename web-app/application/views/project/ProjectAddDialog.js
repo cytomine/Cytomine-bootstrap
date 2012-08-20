@@ -47,11 +47,18 @@ var AddProjectDialog = Backbone.View.extend({
     initStepy : function() {
         $('#login-form-add-project').stepy({next: function(index) {
              //check validate name
+            var error = false;
              if(index==2) {
                  if($("#project-name").val().toUpperCase().trim()=="") {
                      window.app.view.message("User", "You must provide a valide project name!", "error");
-                     return false;
+                     error = true;
                  }
+                 console.log($("#projectontology").val());
+                 if($("#projectontology").val()==undefined) {
+                     window.app.view.message("Ontology", "You must provide a ontology name!", "error");
+                     error = true;
+                 }
+                 return !error;
              }
              //show save button on last step
              if(index==$("#login-form-add-project").find("fieldset").length) $("#saveProjectButton").show();
@@ -89,8 +96,35 @@ var AddProjectDialog = Backbone.View.extend({
                     var choice = _.template(ontologiesChoicesRadioTpl, {id:ontology.id,name:ontology.get("name")});
                     $("#projectontology").append(choice);
                 });
+                $("#projectontology").find("option:selected").removeAttr("selected");
             }
         });
+
+        $("#createOntologyWithProjectName").click(function(evt) {
+
+            //create ontology
+            var projectName = $("#project-name").val().toUpperCase().trim();
+            var ontology = new OntologyModel({name : projectName}).save({name : projectName},{
+                    success: function (model, response) {
+                        window.app.view.message("Ontology", response.message, "success");
+                        var id = response.ontology.id;
+                        window.app.models.ontologies.add(model);
+
+                        var choice = _.template(ontologiesChoicesRadioTpl, {id:id,name:model.get("name")});
+                        $("#projectontology").prepend(choice);
+                        $("#projectontology").val(id);
+
+
+                    },
+                    error: function (model, response) {
+                        var json = $.parseJSON(response.responseText);
+                        window.app.view.message("Ontology", json.errors, "error");
+                    }
+                }
+            );
+
+
+        })
     },
     createUserList : function () {
         /* Create Users List */
