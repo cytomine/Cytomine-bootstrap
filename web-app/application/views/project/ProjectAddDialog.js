@@ -280,7 +280,8 @@ var AddProjectDialog = Backbone.View.extend({
                     },
                     error: function (model, response) {
                         var json = $.parseJSON(response.responseText);
-                        window.app.view.message("Project", json.errors[0], "error");
+                        window.app.view.message("Project", json.errors, "error");
+                        $('#login-form-add-project').stepy('step', 1);
                         //$("#projecterrorlabel").show();
                     }
                 }
