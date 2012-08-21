@@ -63,9 +63,6 @@ var ProjectView = Backbone.View.extend({
                 self.model = collection;
                 self.render();
             }});
-
-
-
     },
     generateAddProjectPanel : function () {
         var self = this;

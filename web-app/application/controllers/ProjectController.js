@@ -56,10 +56,12 @@ var ProjectController = Backbone.Router.extend({
         var projectCallback = function () {
             self.view.container.show(self.view, "#project", "project");
             window.app.view.showComponent(window.app.view.components.project);
+            self.view.refresh();
             if (_.isFunction(callback)) {
                 callback.call();
             }
         }
+
 
         if (!this.view) {
             this.initView(projectCallback);
