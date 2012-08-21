@@ -42,6 +42,8 @@ class RequestFilters {
             after = {}
             afterView = {
                 if(actionName.equals("crop")) return
+                if(actionName.equals("ping")) return
+                if(actionName.equals("listOnlineUsersByImage")) return
                 log.info controllerName+"."+actionName + " Request took ${System.currentTimeMillis()-request.currentTime}ms"
             }
         }
