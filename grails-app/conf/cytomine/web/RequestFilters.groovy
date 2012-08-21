@@ -18,6 +18,8 @@ class RequestFilters {
         all(uri:'/**') {
             before = {
                 if(actionName.equals("crop")) return
+                if(actionName.equals("ping")) return
+                if(actionName.equals("listOnlineUsersByImage")) return
                 request.currentTime = System.currentTimeMillis()
                 String strParam =""
                 /*params.each{

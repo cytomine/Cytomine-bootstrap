@@ -62,7 +62,6 @@ var ProjectController = Backbone.Router.extend({
             }
         }
 
-
         if (!this.view) {
             this.initView(projectCallback);
         } else {

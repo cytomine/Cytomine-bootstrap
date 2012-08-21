@@ -107,8 +107,6 @@ class AnnotationService extends ModelService {
                     groupProperty("annotation.id")
                 }
             }
-            log.info "Found="+annotationsWithTerms.size()
-            annotationsWithTerms.each {println it}
 
 
             //inList crash is argument is an empty list so we have to use if/else at this time

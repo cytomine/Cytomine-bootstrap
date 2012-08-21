@@ -111,7 +111,6 @@ class RestController {
     }
 
   protected  def responseResult(result) {
-        log.info "result.status="+result.status
         response.status = result.status
         withFormat {
             json { render result.data as JSON }
@@ -124,7 +123,6 @@ class RestController {
     }
 
   protected  def responseSuccess(data) {
-      log.info "responseSuccess"
         response(data)
     }
 
