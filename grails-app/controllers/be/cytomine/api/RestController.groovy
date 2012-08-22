@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import org.codehaus.groovy.grails.web.json.JSONArray
+import be.cytomine.test.HttpClient
 
 class RestController {
 
@@ -164,34 +165,71 @@ class RestController {
         }
     }
 
-  protected def responseImage(String url) {
-        def out = new ByteArrayOutputStream()
-        withFormat {
-            png {
-                if (request.method == 'HEAD') {
-                    render(text: "", contentType: "image/png")
-                }
-                else {
-                    //IIP Send JPEG, so we have to convert to PNG
-                    BufferedImage bufferedImage = getImageFromURL(url)
-                    ImageIO.write(bufferedImage, "PNG", out)
-                    response.contentType = "image/png"
-                    response.getOutputStream() << out.toByteArray()
-                }
-            }
-            jpg {
-                if (request.method == 'HEAD') {
-                    render(text: "", contentType: "image/jpeg")
-                }
-                else {
-                    out << new URL(url).openStream()
-                    response.contentLength = out.size();
-                    response.contentType = "image/jpeg"
-                    response.getOutputStream() << out.toByteArray()
-                }
-            }
-        }
-    }
+//  protected def responseImage(String url) {
+//        def out = new ByteArrayOutputStream()
+//        withFormat {
+//            png {
+//                if (request.method == 'HEAD') {
+//                    render(text: "", contentType: "image/png")
+//                }
+//                else {
+//                    //IIP Send JPEG, so we have to convert to PNG
+//                    BufferedImage bufferedImage = getImageFromURL(url)
+//                    ImageIO.write(bufferedImage, "PNG", out)
+//                    response.contentType = "image/png"
+//                    response.getOutputStream() << out.toByteArray()
+//                }
+//            }
+//            jpg {
+//                if (request.method == 'HEAD') {
+//                    render(text: "", contentType: "image/jpeg")
+//                }
+//                else {
+//                    out << new URL(url).openStream()
+//                    response.contentLength = out.size();
+//                    response.contentType = "image/jpeg"
+//                    response.getOutputStream() << out.toByteArray()
+//                }
+//            }
+//        }
+//    }
+
+    protected def responseImage(String url) {
+          println "responseImage="+url
+          withFormat {
+              png {
+                  if (request.method == 'HEAD') {
+                      render(text: "", contentType: "image/png")
+                  }
+                  else {
+                      HttpClient client = new HttpClient()
+                      client.connect(url,"","")
+                      byte[] imageData = client.getData()
+                      //IIP Send JPEG, so we have to convert to PNG
+                      InputStream input = new ByteArrayInputStream(imageData);
+                      BufferedImage bufferedImage = ImageIO.read(input);
+                      def out = new ByteArrayOutputStream()
+                      ImageIO.write(bufferedImage, "PNG", out)
+                      response.contentType = "image/png"
+                      response.getOutputStream() << out.toByteArray()
+                  }
+              }
+              jpg {
+                  if (request.method == 'HEAD') {
+                      render(text: "", contentType: "image/jpeg")
+                  }
+                  else {
+                      HttpClient client = new HttpClient()
+                      client.connect(url,"","")
+                      byte[] imageData = client.getData()
+                      response.contentLength = imageData.size();
+                      response.contentType = "image/jpeg"
+                      response.getOutputStream() << imageData
+                  }
+              }
+          }
+      }
+
 
   protected BufferedImage getImageFromURL(String url) {
         def out = new ByteArrayOutputStream()

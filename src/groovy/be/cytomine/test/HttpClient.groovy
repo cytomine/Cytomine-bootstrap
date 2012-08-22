@@ -67,7 +67,6 @@ class HttpClient {
     response = client.execute(targetHost, httpGet, localcontext);
   }
 
-
     byte[] getData() throws MalformedURLException, IOException, Exception {
         HttpGet httpGet = new HttpGet(URL.toString());
         response = client.execute(targetHost, httpGet, localcontext);
@@ -81,7 +80,6 @@ class HttpClient {
         HttpEntity entity = response.getEntity();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         if (entity != null) {
-
             entity.writeTo(baos)
         }
         return baos.toByteArray()
