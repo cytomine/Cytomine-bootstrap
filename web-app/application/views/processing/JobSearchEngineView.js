@@ -483,6 +483,10 @@ var InputListDomainViewSearch = Backbone.View.extend({
                 success:function (collection, response) {
                     console.log(collection);
                     self.collection = collection;
+                    self.collection.comparator = function (item) {
+                      return item.get(self.param.uriSortAttribut);
+                    };
+                    self.collection.sort();
                     self.addHtmlElem();
                 }
             });

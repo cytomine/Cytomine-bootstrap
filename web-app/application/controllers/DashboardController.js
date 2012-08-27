@@ -137,5 +137,62 @@ var DashboardController = Backbone.Router.extend({
         $("#explorer > .browser").show();
         $("#explorer > .noProject").hide();
         window.app.view.showComponent(window.app.view.components.explorer);
+    },
+    //print job param value in cell
+    printJobParameterValue : function(param,cell,maxSize) {
+        var self = this;
+        if(param.type=="Date") {
+            cell.html(window.app.convertLongToDate(param.value));
+        } else if(param.type=="Boolean") {
+            if(param.value=="true") {
+                cell.html('<input type="checkbox" name="" checked="checked" />');
+            }
+            else {
+                cell.html('<input type="checkbox" name="" />');
+            }
+        }
+        else if(param.type=="ListDomain" || param.type=="Domain")  {
+            var ids = param.value.split(",");
+            console.log("Domain or ListDomain:"+ids);
+            var collection =  window.app.getFromCache(window.app.replaceVariable(param.uri));
+            if (collection == undefined || (collection.length > 0 && collection.at(0).id == undefined)) {
+                console.log("Collection is NOT CACHE - Reload collection");
+                collection = new SoftwareParameterModelCollection({uri: window.app.replaceVariable(param.uri), sortAttribut : param.uriSortAttribut});
+                collection.fetch({
+                        success:function (col, response) {
+                            window.app.addToCache(window.app.replaceVariable(param.uri),col);
+                            cell.html(self.createJobParameterDomainValue(ids, col,param,maxSize));
+                            cell.find("a").popover();
+                        }
+                });
+            } else {
+                console.log("Collection is CACHE");
+                cell.html(self.createJobParameterDomainValue(ids, collection,param,maxSize));
+                cell.find("a").popover();
+            }
+        }
+        else {
+            var computeValue = param.value;
+            if(param.name.toLowerCase()=="privatekey" || param.name.toLowerCase()=="publickey") computeValue = "************************************";
+            cell.html(computeValue);
+        }
+    },
+    createJobParameterDomainValue : function(ids, collection, param,maxSize){
+        var names = new Array();
+        _.each(ids, function(id){
+            console.log(id);
+
+            var name = collection.get(id);
+            if(name==undefined) names.push("Unknown");
+            else names.push(name.get(param.uriPrintAttribut));
+
+        });
+        names = _.sortBy(names, function(name){ return name;});
+        var computeValue = names.join(', ');
+        var shortValue=computeValue;
+        if(computeValue.length>maxSize) {
+            shortValue = computeValue.substring(0,maxSize)+"...";
+        }
+        return '<a class="cellPopover" data-placement="top" rel="popover" data-content="'+computeValue+'" data-original-title="">'+shortValue+'</a>';
     }
 });

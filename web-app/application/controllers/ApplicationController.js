@@ -32,6 +32,9 @@ var ApplicationController = Backbone.Router.extend({
         self.models.projects = new ProjectCollection({user:undefined});
         self.models.annotations = new AnnotationCollection({});
 
+        //"hashtable" with custom collection (usefull in software page)
+        self.models.currentCollection = new Object();
+
         //fetch models
         var modelsToPreload = [self.models.users];
         if (_.size(modelsToPreload) == 0) {
@@ -184,6 +187,15 @@ var ApplicationController = Backbone.Router.extend({
     isCollectionUndefinedOrEmpty: function(collection) {
         console.log(collection);
         return (collection == undefined ||  (collection==1 && collection.at(0).id==undefined))
+    },
+    getFromCache : function(key) {
+        return  this.models.currentCollection[key];
+    },
+    addToCache : function(key,value) {
+        this.models.currentCollection[key]=value;
+    },
+    clearCache : function() {
+        this.models.currentCollection = new Object();
     },
     dataTablesBootstrap : function () {
         /* Default class modification */

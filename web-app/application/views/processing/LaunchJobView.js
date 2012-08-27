@@ -453,22 +453,34 @@ var InputListDomainView = Backbone.View.extend({
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td id="' + self.param.id + '" style="text-align:center;"></td><td style="text-align:center;"><span class="errorMessage label label-important hidden"></span></td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
+
         self.collection = new SoftwareParameterModelCollection({uri: window.app.replaceVariable(self.param.uri), sortAttribut : self.param.uriSortAttribut});
 
-        if (self.collection == undefined || (self.collection.length > 0 && self.collection.at(0).id == undefined)) {
-            self.trElem.find("td#" + self.param.id).append('<div class="alert alert-info" style="margin-left : 10px;margin-right: 10px;"><i class="icon-refresh" /> Loading...</div>');
-            if (self.param.required) self.changeStyle(self.trElem, false, "Field require");
-            self.collection.fetch({
-                success:function (collection, response) {
-                    self.collection = collection;
+        //Check if collection data are still loaded in "currentCollection" (cache objet)
+        if(window.app.getFromCache(window.app.replaceVariable(self.param.uri))==undefined) {
+            if (self.collection == undefined || (self.collection.length > 0 && self.collection.at(0).id == undefined)) {
+                self.trElem.find("td#" + self.param.id).append('<div class="alert alert-info" style="margin-left : 10px;margin-right: 10px;"><i class="icon-refresh" /> Loading...</div>');
+                if (self.param.required) self.changeStyle(self.trElem, false, "Field require");
+                self.collection.fetch({
+                    success:function (collection, response) {
+                        self.collection = collection;
+                        window.app.addToCache(window.app.replaceVariable(self.param.uri),collection);
+                        self.collection.comparator = function (item) {
+                          return item.get(self.param.uriSortAttribut);
+                        };
+                        self.collection.sort();
+                        self.addHtmlElem();
+                    }
+                });
+            } else self.addHtmlElem();
+        } else {
+            self.collection = window.app.getFromCache(window.app.replaceVariable(self.param.uri));
                     self.collection.comparator = function (item) {
                       return item.get(self.param.uriSortAttribut);
                     };
                     self.collection.sort();
                     self.addHtmlElem();
-                }
-            });
-        } else self.addHtmlElem();
+        }
     },
     addHtmlElem:function () {
         var self = this;
@@ -512,9 +524,7 @@ var InputListDomainView = Backbone.View.extend({
         //print scroll only vertical
         self.trElem.find("ul.ui-multiselect-checkboxes").css('overflow-y', 'scroll');
         self.trElem.find("ul.ui-multiselect-checkboxes").css('overflow-x', 'hidden');
-        //autoOpen:false doesn't work, so click to hide open multiselect
-//                self.trElem.find('button.ui-multiselect').click();
-//                self.trElem.find('button.ui-multiselect').click();
+
         self.trElem.find(".domainList").multiselect("close");
 
         self.trElem.find("button").css("border-style","solid");
@@ -525,6 +535,12 @@ var InputListDomainView = Backbone.View.extend({
 
         self.trElem.find(".domainList").bind("multiselectclick", function (event, ui) {
             self.checkEntryValidationWithAllValue(ui.value, ui.checked);
+        });
+        self.trElem.find(".domainList").bind("multiselectcheckall", function (event, ui) {
+            self.checkEntryValidation();
+        });
+        self.trElem.find(".domainList").bind("multiselectuncheckall", function (event, ui) {
+            self.checkEntryValidation();
         });
 
     },

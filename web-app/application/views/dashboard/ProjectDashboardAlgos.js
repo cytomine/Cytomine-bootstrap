@@ -341,6 +341,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         return _.template(tpl, {text : text, className : className, progress: job.get('progress')});
 
     },
+
     buildJobParamElem: function(job, ulElem) {
         var self = this;
         if(job==undefined) return;
@@ -351,11 +352,9 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var tbody = $('#selectRunParamsTable').find("tbody");
 
         _.each(job.get('jobParameter'), function (param) {
-            var value = self.getJobParamValue(param);
-            if(value.length>50) {
-                value = value.substring(0,50)+"...";
-            }
-            tbody.append('<tr><td>'+param.name+'</td><td>'+value+'</td><td>'+param.type+'</td></tr>');
+
+            tbody.append('<tr><td>'+param.name+'</td><td id="'+param.id+'"><div class="alert alert-info" style="margin-left : 10px;margin-right: 10px;"><i class="icon-refresh" /> Loading...</div></td><td>'+param.type+'</td></tr>');
+            window.app.controllers.dashboard.printJobParameterValue(param, $('#selectRunParamsTable').find("tbody").find("td#"+param.id),100);
         });
         $('#selectRunParamsTable').dataTable( {
             //"sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
@@ -374,22 +373,22 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         });
     },
     getJobParamValue : function(param) {
-        if(param.type=="List") {
-            var valueStr = "<select>";
-            var values = param.value.split(',');
-            _.each(values,function(value) {
-                valueStr = valueStr + "<option>"+value+"</option>";
-            });
-            valueStr = valueStr + "</select>";
-            return valueStr;
-        } else if(param.type=="Date") {
-            return window.app.convertLongToDate(param.value);
-        } else if(param.type=="Boolean") {
-            if(param.value=="true") return '<input type="checkbox" name="" checked="checked" />';
-            else  return '<input type="checkbox" name="" />';
-        } else if(param.name.toLowerCase()=="privatekey") return "***********";
-        else if(param.name.toLowerCase()=="publickey") return "***********";
-        else return param.value
+//        if(param.type=="List") {
+//            var valueStr = "<select>";
+//            var values = param.value.split(',');
+//            _.each(values,function(value) {
+//                valueStr = valueStr + "<option>"+value+"</option>";
+//            });
+//            valueStr = valueStr + "</select>";
+//            return valueStr;
+//        } else if(param.type=="Date") {
+//            return window.app.convertLongToDate(param.value);
+//        } else if(param.type=="Boolean") {
+//            if(param.value=="true") return '<input type="checkbox" name="" checked="checked" />';
+//            else  return '<input type="checkbox" name="" />';
+//        } else if(param.name.toLowerCase()=="privatekey") return "***********";
+//        else if(param.name.toLowerCase()=="publickey") return "***********";
+//        else return param.value
     },
     printJobResult: function(job) {
         if(job==undefined) {
