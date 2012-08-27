@@ -217,7 +217,7 @@ var JobSelectionView = Backbone.View.extend({
         } ); */
     },
     getStateElement:function (job) {
-        if (job.isNotLaunch()) return '<span class="label btn-inverse">not naunch</span> ';
+        if (job.isNotLaunch()) return '<span class="label btn-inverse">not launch</span> ';
         else if (job.isInQueue()) return '<span class="label btn-info">in queue</span> ';
         else if (job.isRunning()) return '<span class="label btn-primary">running</span> ';
         else if (job.isSuccess()) return '<span class="label btn-success">success</span> ';
@@ -227,6 +227,7 @@ var JobSelectionView = Backbone.View.extend({
         else return "no supported";
     },
     initSubGridDatatables:function () {
+        console.log("initSubGridDatatables");
         var self = this;
 
         $(self.el).find('#selectJobTable tbody td i').live('click', function () {
@@ -249,7 +250,13 @@ var JobSelectionView = Backbone.View.extend({
                     success:function (model, response) {
                         var tableParam = $(self.el).find('#selectJobTable').find('table[id=' + aData[1] + ']');
                         _.each(model.get('jobParameter'), function (param) {
-                            tableParam.append('<tr><td>' + param.name + '</td><td>' + param.value + '</td><td>' + param.type + '</td></tr>');
+                            console.log("param.value="+param.value);
+                            var value =  param.value
+                            if(value.length>50) {
+                                value = value.substring(0,50)+"..."
+                            }
+
+                            tableParam.append('<tr><td>' + param.name + '</td><td>' + value + '</td><td>' + param.type + '</td></tr>');
                         });
                     }
                 });

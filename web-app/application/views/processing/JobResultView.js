@@ -19,6 +19,9 @@ var JobResultView = Backbone.View.extend({
             case 'ValidateEvolution':
                 self.valideEvolution();
                 break;
+            case 'DownloadFiles':
+                self.downloadFiles();
+                break;
             case 'Default':
                 self.defaultResult();
                 break;
@@ -51,6 +54,16 @@ var JobResultView = Backbone.View.extend({
     defaultResult:function () {
         var self = this;
         new DefaultResult({
+            model:self.model,
+            project:self.project,
+            el:self.el,
+            jobs:self.jobs,
+            software:self.software
+        }).render();
+    },
+    downloadFiles : function() {
+        var self = this;
+        new DownloadFiles({
             model:self.model,
             project:self.project,
             el:self.el,

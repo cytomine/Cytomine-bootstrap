@@ -43,7 +43,7 @@ body {
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
 
 <!-- JQuery & JQuery UI -->
-<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 
 <!--
@@ -142,6 +142,7 @@ body {
     <script type="text/javascript" src="application/models/SecRoleModel.js" ></script>
     <script type="text/javascript" src="application/models/SuggestedAnnotationTermModel.js" ></script>
     <script type="text/javascript" src="application/models/JobModel.js" ></script>
+    <script type="text/javascript" src="application/models/JobDataModel.js" ></script>
     <script type="text/javascript" src="application/models/SoftwareModel.js" ></script>
 
     <!-- View -->
@@ -177,6 +178,7 @@ body {
     <script type="text/javascript" src="application/views/processing/result/RetrievalAlgoResult.js"></script>
     <script type="text/javascript" src="application/views/processing/result/RetrievalAlgoResult.js"></script>
     <script type="text/javascript" src="application/views/processing/result/DefaultResult.js"></script>
+    <script type="text/javascript" src="application/views/processing/result/DownloadFiles.js"></script>
 
     <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
     <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>

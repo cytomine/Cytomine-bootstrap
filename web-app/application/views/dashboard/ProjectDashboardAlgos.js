@@ -351,7 +351,11 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var tbody = $('#selectRunParamsTable').find("tbody");
 
         _.each(job.get('jobParameter'), function (param) {
-            tbody.append('<tr><td>'+param.name+'</td><td>'+self.getJobParamValue(param)+'</td><td>'+param.type+'</td></tr>');
+            var value = self.getJobParamValue(param);
+            if(value.length>50) {
+                value = value.substring(0,50)+"...";
+            }
+            tbody.append('<tr><td>'+param.name+'</td><td>'+value+'</td><td>'+param.type+'</td></tr>');
         });
         $('#selectRunParamsTable').dataTable( {
             //"sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",

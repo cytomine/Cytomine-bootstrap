@@ -453,19 +453,18 @@ var InputListDomainView = Backbone.View.extend({
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td id="' + self.param.id + '" style="text-align:center;"></td><td style="text-align:center;"><span class="errorMessage label label-important hidden"></span></td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
-        console.log("*****************************");
         self.collection = new SoftwareParameterModelCollection({uri: window.app.replaceVariable(self.param.uri), sortAttribut : self.param.uriSortAttribut});
-        console.log(self.collection);
-        console.log(self.collection.at(0));
+
         if (self.collection == undefined || (self.collection.length > 0 && self.collection.at(0).id == undefined)) {
             self.trElem.find("td#" + self.param.id).append('<div class="alert alert-info" style="margin-left : 10px;margin-right: 10px;"><i class="icon-refresh" /> Loading...</div>');
             if (self.param.required) self.changeStyle(self.trElem, false, "Field require");
-
             self.collection.fetch({
                 success:function (collection, response) {
-                    console.log("*****************************");
-                    console.log(collection);
                     self.collection = collection;
+                    self.collection.comparator = function (item) {
+                      return item.get(self.param.uriSortAttribut);
+                    };
+                    self.collection.sort();
                     self.addHtmlElem();
                 }
             });

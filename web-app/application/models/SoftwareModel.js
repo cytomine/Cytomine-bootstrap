@@ -29,6 +29,7 @@ var SoftwareCollection = Backbone.Collection.extend({
 // define our collection
 var SoftwareParameterModelCollection = Backbone.Collection.extend({
     model: SoftwareModel,
+    sortAttribut : null,
     url : function() {
         if (this.uri != null && this.uri!=undefined)
             return this.uri;
@@ -37,6 +38,7 @@ var SoftwareParameterModelCollection = Backbone.Collection.extend({
         if (!options) return;
         this.uri = options.uri;
         this.sortAttribut = options.sortAttribut;
+        console.log(this);
     },
     comparator : function(model) {
         if(this.sortAttribut!=null && this.sortAttribut!=undefined)

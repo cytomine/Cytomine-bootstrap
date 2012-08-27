@@ -221,7 +221,7 @@ var JobTableView = Backbone.View.extend({
                     success:function (model, response) {
                         var tableParam = $(self.el).find('#searchJobTable').find('table[id=' + aData[1] + ']');
                         _.each(model.get('jobParameter'), function (param) {
-                            tableParam.append('<tr><td>' + param.name + '</td><td>' + param.value + '</td><td>' + param.type + '</td></tr>');
+                            tableParam.append('<tr><td>' + param.name + '</td><td>' + param.value+ '</td><td>' + param.type + '</td></tr>');
                         });
                     }
                 });
