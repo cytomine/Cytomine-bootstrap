@@ -28,7 +28,8 @@ class DeployImagesJob {
     }
 
     void execute(context) {
-        if (GrailsUtil.environment != "production") return
+        return
+        //if (GrailsUtil.environment != "production") return
         println "START (DeployImagesJob)"
         UploadedFile.findAllByStatus(UploadedFile.CONVERTED).each { uploadedFile ->
             deployImagesService.deployUploadedFile(uploadedFile, cytomineService.getCurrentUser())

@@ -7,6 +7,16 @@ var ImageModel = Backbone.Model.extend({
     }
 });
 
+
+var ImageMetadataModel = Backbone.Model.extend({
+    initialize: function (options) {
+        this.image = options.image;
+    },
+    url : function() {
+        return 'api/image/'+this.image+"/metadata.json?extract=true";
+    }
+});
+
 var ImagePropertyCollection = Backbone.Collection.extend({
     initialize: function (options) {
         this.image = options.image;

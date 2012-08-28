@@ -3,6 +3,31 @@ var AnnotationStatus = {
 	MULTIPLE_TERM : 'MULTIPLE_TERM',
 	TOO_SMALL : 'TOO_SMALL'
 }
+var AnnotationLayerUtils = AnnotationLayerUtils || {};
+AnnotationLayerUtils.createFeatureFromAnnotation  = function (annotation) {
+    var location = annotation.location || annotation.get('location');
+    var terms = annotation.term || annotation.get('term');
+    var format = new OpenLayers.Format.WKT();
+    var point = format.read(location);
+    var geom = point.geometry;
+    var feature = new OpenLayers.Feature.Vector(geom);
+    var term = AnnotationStatus.NO_TERM; //no term associated
+    if (terms.length > 1) { //multiple term
+        term = AnnotationStatus.MULTIPLE_TERM;
+    } else if (terms.length == 1) {
+        term = terms[0]; //put ID
+    }
+    feature.attributes = {
+        idAnnotation: annotation.id,
+        measure : 'NO',
+        listener: 'NO',
+        importance: 10,
+        term : term
+    };
+    console.log("FEATURE="+feature);
+    return feature;
+};
+
 /* Annotation Layer */
 OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
     read: function(collection) {
@@ -10,103 +35,14 @@ OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
         var features = [];
         _.each(collection,function(annotation) {
             if (_.indexOf(self.annotationLayer.featuresHidden, annotation.id) != -1) return;
-            var feature = self.createFeatureFromAnnotation(annotation);
+            var feature = AnnotationLayerUtils.createFeatureFromAnnotation(annotation);
             features.push(feature);
         });
         return features;
-    },
-    createFeatureFromAnnotation :function (annotation) {
-
-        var format = new OpenLayers.Format.WKT();
-        var point = format.read(annotation.location);
-        var geom = point.geometry;
-        var feature = new OpenLayers.Feature.Vector(geom);
-		var term = AnnotationStatus.NO_TERM; //no term associated
-		if (annotation.term.length > 1) { //multiple term
-			term = AnnotationStatus.MULTIPLE_TERM;
-		} else if (annotation.term.length == 1) {
-			term = annotation.term[0]; //put ID
-		}
-        feature.attributes = {
-            idAnnotation: annotation.id,
-            measure : 'NO',
-            listener: 'NO',
-            importance: 10,
-			term : term
-        };       
-        return feature;
     }
+
 });
 
-OpenLayers.Renderer.Smart = OpenLayers.Class(OpenLayers.Renderer.SVG, {
- 
-    getComponentsString: function(components, separator)
-    {
-        // I got bored trying to figure out a smart formula to calculate the zoomFactor
-        // it works as follows: if the zoom is found among the array, that zoomFactor is picked, otherwise we go down until we find one
-        var zoomFactors = new Array();
-        // 0 is a mandatory key
-        zoomFactors[0] = 1000;
-        zoomFactors[1] = 500;
-        zoomFactors[2] = 400;
-        zoomFactors[3] = 300;
-        zoomFactors[4] = 200;
-        zoomFactors[5] = 100;
-        zoomFactors[6] = 50;
-        zoomFactors[7] = 10;
-        zoomFactors[9] = 1;
- 
-        var zoomIndex = this.map.zoom;
-        var zoomFactor = zoomFactors[zoomIndex];
- 
-        // see comment above the zoomFactors array
-        while (zoomFactor == undefined)
-        {
-            zoomIndex--;
-            zoomFactor = zoomFactors[zoomIndex];
-        }
- 
-        var renderCmp = [];
-        var complete = true;
-        var len = components.length;
-        var strings = [];
-        var str, component;
- 
-        // here is where we plug in the zoomFactor in the original code
-        // so instead of rendering each and every point, we will skip n number of
-        // points, based on the 'zoomFactors' array
- 
-        for(var i=0; i<len; i+=zoomFactor) {
-            component = components[i];
-            renderCmp.push(component);
-            str = this.getShortString(component);
-            if (str) {
-                strings.push(str);
-            } else {
-                if (i > 0) {
-                    if (this.getShortString(components[i - 1])) {
-                        strings.push(this.clipLine(components[i],
-                            components[i-1]));
-                    }
-                }
-                if (i < len - 1) {
-                    if (this.getShortString(components[i + 1])) {
-                        strings.push(this.clipLine(components[i],
-                            components[i+1]));
-                    }
-                }
-                complete = false;
-            }
-        }
- 
-        return {
-            path: strings.join(separator || ","),
-            complete: complete
-        };
-    },
- 
-    CLASS_NAME: "OpenLayers.Renderer.Smart"
-});
 var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView, map) {
     this.ontologyTreeView = ontologyTreeView;
 	this.pointRadius = window.app.view.isMobile ? 12 : 8;
@@ -114,7 +50,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.map = map;
     this.imageID = imageID;
     this.userID = userID;
-	var rules = [new OpenLayers.Rule({ 
+	var rules = [new OpenLayers.Rule({
 		symbolizer: {strokeColor:"#FF0000",strokeWidth: 2}, 
 		// symbolizer: {}, // instead if you want to keep default colors 
 		elseFilter: true 
@@ -140,7 +76,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 		'default' : defaultStyle,
 		'select' : selectStyle
 	});
-	styleMap.styles["default"].addRules(rules); 
+	styleMap.styles["default"].addRules(rules);
 	styleMap.addUniqueValueRules('default', 'term', this.getSymbolizer());
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
         renderers: ["Canvas", "SVG", "VML"],
@@ -327,7 +263,7 @@ AnnotationLayer.prototype = {
         /*new AnnotationCollection({user : this.userID, image : this.imageID, term: undefined}).fetch({
          success : function (collection, response) {
          collection.each(function(annotation) {
-         var feature = self.createFeatureFromAnnotation(annotation);
+         var feature = self.AnnotationLayerUtils.createFeatureFromAnnotation(annotation);
          self.addFeature(feature);
          });
          browseImageView.layerLoadedCallback(self);
@@ -598,12 +534,12 @@ AnnotationLayer.prototype = {
 
         annotation.save({}, {
             success: function (annotation, response) {
-                var annotation = new AnnotationModel({id : response.annotation.id}).fetch({
+                new AnnotationModel({id : response.annotation.id}).fetch({
                     success : function (annotation, response) {
                         //annotation.set(response.annotation.id);
                         var message = response.message;
                         self.vectorsLayer.removeFeatures([feature]);
-                        var newFeature = self.createFeatureFromAnnotation(annotation);
+                        var newFeature = AnnotationLayerUtils.createFeatureFromAnnotation(annotation);
                         self.addFeature(newFeature);
                         self.controls.select.unselectAll();
                         self.controls.select.select(newFeature);
@@ -622,46 +558,6 @@ AnnotationLayer.prototype = {
         });
 
 
-    },
-    createFeatureFromAnnotation :function (annotation) {
-
-        var format = new OpenLayers.Format.WKT();
-        var point = format.read(annotation.get("location"));
-        var geom = point.geometry;
-        var feature = new OpenLayers.Feature.Vector(geom);
-        feature.attributes = {
-            idAnnotation: annotation.get("id"),
-            measure : 'NO',
-            listener: 'NO',
-            importance: 10
-        };
-        //default style for annotations with 0 terms associated
-        var defaultColor = "#333333";
-        feature.style = {
-            strokeColor : "#000",
-            fillColor :  defaultColor,
-            fillOpacity : 0.6
-        }
-        var multipleTermColor = "#000";
-        if (_.size(annotation.get("term")) > 1) { //multiple terms
-            feature.style = {
-                strokeColor :multipleTermColor,
-                fillColor :  multipleTermColor,
-                fillOpacity : 0.6
-            }
-        } else {
-            _.each(annotation.get("term"), function(idTerm) {
-                var term = window.app.status.currentTermsCollection.get(idTerm);
-                if (term == undefined) return;
-                feature.style = {
-                    strokeColor : "#000",
-                    fillColor :  window.app.status.currentTermsCollection.get(idTerm).get('color'),
-                    fillOpacity : 0.6
-                }
-            });
-        }
-
-        return feature;
     },
     removeAnnotation : function(feature) {
         var idAnnotation = feature.attributes.idAnnotation;
@@ -829,7 +725,7 @@ AnnotationLayer.prototype = {
             id: idAnnotation
         }).fetch({
             success: function (model) {
-                var feature = self.createFeatureFromAnnotation(model);
+                var feature = AnnotationLayerUtils.createFeatureFromAnnotation(model);
                 self.addFeature(feature);
                 self.selectFeature(feature);
                 self.controls.select.activate();

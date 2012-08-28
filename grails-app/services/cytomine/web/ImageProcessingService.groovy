@@ -36,19 +36,19 @@ class ImageProcessingService {
     }
 
     public Collection<Coordinate[]> getConnectedComponents(ImagePlus ori, ImagePlus img, int minNumberOfPixels) {
-        PlugInFilter filler = new ij.plugin.filter.Binary()
+        /*PlugInFilter filler = new ij.plugin.filter.Binary()
         filler.setup("fill", img)
         filler.run(img.getProcessor())
         filler = new ij.plugin.filter.Binary()
         filler.setup("fill", ori)
-        filler.run(ori.getProcessor())
+        filler.run(ori.getProcessor())*/
         int k = 0
         Collection<Coordinate[]> components = new ArrayList<Coordinate[]>()
         Collection<Coordinate[]> polygons = new ArrayList<Coordinate[]>()
         for (int x = 0; x < img.getWidth(); x++) {
             for (int y = 0; y < img.getHeight(); y++) {
                 int pixelValue = img.getProcessor().getPixel((int) x, (int) y)
-                if (pixelValue == BLACK) {
+                if (pixelValue == WHITE) {
                     Coordinate[] coordinates = computeCoordinates(ori, img, x, y)
                     if (coordinates.size() > minNumberOfPixels) {
                         Coordinate[] c = new Coordinate[1]
@@ -130,16 +130,16 @@ class ImageProcessingService {
 
     public Coordinate[] computeCoordinates(ImagePlus ori, ImagePlus img, int x, int y) {
         int[] firstPixel = img.getPixel(x, y)
-        if (firstPixel[0] == WHITE) { //pixel is white, nothing to do
-            println "PIXEL IS WHITE !!!!"
+        if (firstPixel[0] == BLACK) { //pixel is white, nothing to do
+            println "PIXEL IS BLACK !!!!"
             return null
         }
         Stack<Coordinate> toVisit = new Stack<Coordinate>()
         Stack<Coordinate> interestingPoints = new Stack<Coordinate>()
         //List<Coordinate> visited = new ArrayList<Coordinate>()
         toVisit.push(new Coordinate(x, y))
-        img.getProcessor().putPixel(x, y, 255)
-        assert (img.getProcessor().getPixel((int) x, (int) y) == WHITE)
+        img.getProcessor().putPixel(x, y, BLACK)
+        assert (img.getProcessor().getPixel((int) x, (int) y) == BLACK)
 
 		int[] xShifts = [-1, 0, 1,
                 -1, 1,
@@ -163,11 +163,11 @@ class ImageProcessingService {
             for (int i = 0; i < xShifts.size(); i++) {
                 posX = (int) point.x + xShifts[i]
                 posY = (int) point.y + yShifts[i]
-                if (isInROI(ori, posX, posY) && ori.getProcessor().getPixel(posX, posY) == WHITE) {
+                if (isInROI(ori, posX, posY) && ori.getProcessor().getPixel(posX, posY) == BLACK) {
                     oneNeighborIsWhite = true
                 }
-                if (isInROI(img, posX, posY) && img.getProcessor().getPixel(posX, posY) != WHITE) {
-                    img.getProcessor().putPixel(posX, posY, WHITE)
+                if (isInROI(img, posX, posY) && img.getProcessor().getPixel(posX, posY) != BLACK) {
+                    img.getProcessor().putPixel(posX, posY, BLACK)
                     toVisit.push(new Coordinate(posX, posY))
                 }
             }

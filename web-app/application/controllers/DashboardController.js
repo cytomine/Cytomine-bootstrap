@@ -84,7 +84,7 @@ var DashboardController = Backbone.Router.extend({
             window.app.controllers.browse.tabs.triggerRoute = false;
             var tabs = $("#explorer > .browser").find(".nav-tabs");
             tabs.find('a[href^=#tabs-algos-'+window.app.status.currentProject+']').click();
-            self.view.refreshAlgos(software,job==''?undefined:job);
+            self.view.refreshAlgos(software, job || undefined);
             window.app.controllers.browse.tabs.triggerRoute = true;
         };
         this.init(project, func);

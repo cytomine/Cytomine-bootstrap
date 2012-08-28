@@ -318,10 +318,10 @@ class RestImageInstanceController extends RestController {
         ImagePlus copy = new ImagePlus("copy", ImageIO.read ( new ByteArrayInputStream ( uploadedFile.getBytes() )))
 
         //Extract params
-        double scale = Integer.parseInt(params.w) / original.getWidth()
+        double scale = Integer.parseInt(params.oriwidth) / original.getWidth()
 
         // Get polygons
-        Collection<Coordinate[]> components = imageProcessingService.getConnectedComponents(original, copy, 500)
+        Collection<Coordinate[]> components = imageProcessingService.getConnectedComponents(original, copy, 50)
         String[] polygons = new String[components.size()]
         int i = 0
         components.each { coordinates ->

@@ -23,6 +23,7 @@ var ImageThumbView = Backbone.View.extend({
                 new ImagePropertiesView({model : self.model}).render();
                 return false;
             });
+
         });
         return this;
     }

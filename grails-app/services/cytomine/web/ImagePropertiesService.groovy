@@ -90,7 +90,7 @@ class ImagePropertiesService {
         println "storage="+imageServer.getStorage()
         println "image="+image
         def metadaURL = resolver.getMetaDataURL(imageServer.getBaseUrl(), imageServer.getStorage().getBasePath() + image.getPath())
-
+        println "metadataURL="+metadaURL
         DefaultHttpClient httpClient = new DefaultHttpClient()
         URI _url = new URI(metadaURL)
         HttpGet httpGet = new HttpGet(_url)
@@ -118,7 +118,7 @@ class ImagePropertiesService {
         } catch (IOException e) {
             println "IO Exception:" + e.toString()
         }
-        image.setMagnification(10)
+        image.setMagnification(40)
         image.setResolution(0.65)
 
     }

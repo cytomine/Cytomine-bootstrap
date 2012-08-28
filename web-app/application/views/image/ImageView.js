@@ -76,7 +76,6 @@ var ImageView = Backbone.View.extend({
                     self.tabsContent.push(image.id);
                 }
                 self.appendingThumbs = false;
-
             }
         });
 

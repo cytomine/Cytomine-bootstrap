@@ -60,6 +60,10 @@ class RestJobDataController extends RestController {
 
         if(request instanceof MultipartHttpServletRequest) {
             def file = request.getFile('files[]')
+            if (!file) {
+                //error in upload
+
+            }
             bytes = file.getBytes()
         } else {
             bytes = request.inputStream.bytes

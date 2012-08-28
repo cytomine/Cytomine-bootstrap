@@ -666,8 +666,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     term : idTerm,
                     el:$($elem)
                 }).render();
-                //$("#listtabannotation > div").tsort();
-                //unprint loading info
                 $($elem).parent().find("h4").find(".alert").replaceWith("");
+
             }
 });

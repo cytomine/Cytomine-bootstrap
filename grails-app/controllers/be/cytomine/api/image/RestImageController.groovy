@@ -66,13 +66,16 @@ class RestImageController extends RestController {
     }
 
     def metadata = {
-        def url = abstractImageService.metadata(params.long('id'))
-
-        withFormat {
-            json {
-                render(contentType: "application/json", text: "${url.text}")
-            }
+        def idImage = params.long('id')
+        def extract = params.boolean('extract')
+        if (extract) {
+            AbstractImage image = abstractImageService.read(idImage)
+            imagePropertiesService.extractUseful(image)
+            image.save(flush : true)
         }
+        def responseData = [:]
+        responseData.metadata = abstractImageService.metadata(idImage)
+        response(responseData)
     }
 
     def imageProperties = {

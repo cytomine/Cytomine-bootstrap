@@ -8,6 +8,7 @@ import ij.plugin.ContrastEnhancer
 import ij.process.ImageConverter
 
 import java.awt.image.BufferedImage
+import ij.process.ImageProcessor
 
 /**
  * Cytomine @ GIGA-ULG
@@ -47,16 +48,17 @@ class VisionController extends RestController {
                 bufferedImage = dt.getResult(0).getBufferedImage()
             }
 
-            if (params.method == "g_rgb") {
+            else if (params.method == "g_rgb") {
                 ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
                 dt.setSelectedStain(14)
                 dt.setup(params.url, ip)
                 dt.run(ip.getProcessor())
+
                 bufferedImage = dt.getResult(1).getBufferedImage()
             }
 
-            if (params.method == "b_rgb") {
+            else if (params.method == "b_rgb") {
                 ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
                 dt.setSelectedStain(14)
@@ -65,7 +67,7 @@ class VisionController extends RestController {
                 bufferedImage = dt.getResult(2).getBufferedImage()
             }
 
-            if (params.method == "c_cmy") {
+            else if (params.method == "c_cmy") {
                 ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
                 dt.setSelectedStain(15)
@@ -73,7 +75,7 @@ class VisionController extends RestController {
                 dt.run(ip.getProcessor())
                 bufferedImage = dt.getResult(0).getBufferedImage()
             }
-            if (params.method == "m_cmy") {
+            else if (params.method == "m_cmy") {
                 ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
                 dt.setSelectedStain(15)
@@ -82,7 +84,7 @@ class VisionController extends RestController {
                 bufferedImage = dt.getResult(1).getBufferedImage()
             }
 
-            if (params.method == "y_cmy") {
+            else if (params.method == "y_cmy") {
                 ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
                 dt.setSelectedStain(15)
@@ -91,7 +93,7 @@ class VisionController extends RestController {
                 bufferedImage = dt.getResult(2).getBufferedImage()
             }
 
-            if (params.method == "he-eosin") {
+            else if (params.method == "he-eosin") {
                 ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
                 dt.setSelectedStain(1)
@@ -100,7 +102,7 @@ class VisionController extends RestController {
                 bufferedImage = dt.getResult(1).getBufferedImage()
             }
 
-            if (params.method == "he-haematoxylin") {
+            else if (params.method == "he-haematoxylin") {
                 ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
                 dt.setSelectedStain(1)
@@ -109,7 +111,7 @@ class VisionController extends RestController {
                 bufferedImage = dt.getResult(0).getBufferedImage()
             }
 
-            if (params.method == "hdab-haematoxylin") {
+            else if (params.method == "hdab-haematoxylin") {
                 ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 Colour_Deconvolution dt = new Colour_Deconvolution()
                 dt.setSelectedStain(3)
@@ -127,7 +129,7 @@ class VisionController extends RestController {
                 bufferedImage = dt.getResult(1).getBufferedImage()
             }
 
-            if (params.method == "binary") {
+            else if (params.method == "binary") {
                 ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 ImageConverter ic = new ImageConverter(ip)
                 ic.convertToGray8()
@@ -135,14 +137,14 @@ class VisionController extends RestController {
                 bufferedImage = ip.getBufferedImage()
             }
 
-            if (params.method == "gray") {
+            else if (params.method == "gray") {
                 ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 ImageConverter ic = new ImageConverter(ip)
                 ic.convertToGray8()
                 bufferedImage = ip.getBufferedImage()
             }
 
-            if (params.method == "otsu") {
+            else if (params.method == "otsu") {
                 ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 ImageConverter ic = new ImageConverter(ip)
                 ic.convertToGray8()
@@ -152,46 +154,46 @@ class VisionController extends RestController {
                 bufferedImage = dt.getResult().getBufferedImage()
             }
             /* Apply filters */
-            if (params.method == "huang") {
+            else if (params.method == "huang") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Huang")
             }
-            if (params.method == "intermodes") {
+            else if (params.method == "intermodes") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Intermodes")
             }
-            if (params.method == "isodata") {
+            else if (params.method == "isodata") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "IsoData")
             }
-            if (params.method == "li") {
+            else if (params.method == "li") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Li")
             }
-            if (params.method == "maxentropy") {
+            else if (params.method == "maxentropy") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "MaxEntropy")
             }
-            if (params.method == "mean") {
+            else if (params.method == "mean") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Mean")
             }
-            if (params.method == "minerror") {
+            else if (params.method == "minerror") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "MinError(I)")
             }
-            if (params.method == "minimum") {
+            else if (params.method == "minimum") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Minimum")
             }
-            if (params.method == "moments") {
+            else if (params.method == "moments") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Moments")
             }
-            if (params.method == "percentile") {
+            else if (params.method == "percentile") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "percentile")
             }
-            if (params.method == "renyientropy") {
+            else if (params.method == "renyientropy") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "RenyiEntropy")
             }
-            if (params.method == "shanbhag") {
+            else if (params.method == "shanbhag") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Shanbhag")
             }
-            if (params.method == "triangle") {
+            else if (params.method == "triangle") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Triangle")
             }
-            if (params.method == "yen") {
+            else if (params.method == "yen") {
                 bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Yen")
             }
 

@@ -12,7 +12,7 @@ class ExtractImageMetadataJob {
 
     def execute() {
         return
-        println "ExtractImageMetadataJob"
+        /*println "ExtractImageMetadataJob"
         Collection<AbstractImage> abstractImages = AbstractImage.findAllByWidthIsNull()
         abstractImages.each { image ->
             println "Extracting... " + image
@@ -22,6 +22,6 @@ class ExtractImageMetadataJob {
           abstractImages.each { image ->
             println "Extracting... " + image
             imagePropertiesService.extractUseful(image)
-        }
+        }*/
     }
 }

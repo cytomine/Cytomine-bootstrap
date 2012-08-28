@@ -31,7 +31,7 @@
 
 
 <!--<link rel="stylesheet" href="http://bootswatch.com/cerulean/bootstrap.min.css"/>-->
-<link rel="stylesheet" href="lib/bootstrap-2.0.4/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="lib/bootstrap-2.0.4/css/bootstrap.css"/>
 <style type="text/css">
 body {
     padding-top: 40px;
@@ -43,7 +43,7 @@ body {
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
 
 <!-- JQuery & JQuery UI -->
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 
 <!--
@@ -51,9 +51,10 @@ body {
 <script type="text/javascript" src="lib/add-to-homescreen/src/add2home.js" charset="utf-8"></script>
 -->
 
-
-    <!-- OpenLayers -->
-    <script type="text/javascript" src="lib/OpenLayers-2.11/OpenLayers.js"></script>
+<!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+    <script type="text/javascript" src="lib/OpenLayers-2.12/OpenLayers.custom.js"></script>
 
 <g:if test="${GrailsUtil.environment != GrailsApplication.ENV_PRODUCTION}">
 
@@ -227,6 +228,10 @@ body {
     <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
     <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
 
+    <script type="text/javascript" src="application/utils/processing/image/Utils.js" ></script>
+    <script type="text/javascript" src="application/utils/processing/image/Invert.js" ></script>
+    <script type="text/javascript" src="application/utils/processing/image/MagicWand.js" ></script>
+    <script type="text/javascript" src="application/utils/processing/image/Outline.js" ></script>
 </g:if>
 
 

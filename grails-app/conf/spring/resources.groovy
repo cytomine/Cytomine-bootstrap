@@ -5,9 +5,9 @@ beans = {
     }
     'multipartResolver'(be.cytomine.CytomineMultipartHttpServletRequest) {
         // Max in memory 100kbytes
-        maxInMemorySize=10240
+        maxInMemorySize=10240*3
 
         //1Gb Max upload size
-        maxUploadSize=1024000000
+        maxUploadSize=1024000000*3
     }
 }

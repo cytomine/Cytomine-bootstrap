@@ -149,9 +149,10 @@ class ImageInstance extends CytomineDomain {
             // returnArray['thumb'] = it.baseImage.getThumbURL()
             //returnArray['preview'] = it.baseImage ? it.baseImage.getPreviewURL() : null
 			try {returnArray['preview'] = it.baseImage ? it.baseImage.getPreviewURL() : null} catch (Exception e) {returnArray['preview'] = 'NO preview:' + e.toString()}
-            returnArray['thumb'] = UrlApi.getPreviewURLWithImageId(cytomineBaseUrl, it.baseImage.id)
-			//try {returnArray['thumb'] = it.baseImage ? it.baseImage.getThumbURL() : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
-            returnArray['thumb'] = UrlApi.getThumbURLWithImageId(cytomineBaseUrl, it.baseImage.id)
+
+            //returnArray['thumb'] = UrlApi.getPreviewURLWithImageId(cytomineBaseUrl, it.baseImage.id)
+            try {returnArray['thumb'] = it.baseImage ? it.baseImage.getThumbURL() : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
+
             //returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(cytomineBaseUrl,it.baseImage.id)
 
             try {returnArray['numberOfAnnotations'] = it.countImageAnnotations} catch (Exception e) {e.printStackTrace(); returnArray['numberOfAnnotations'] = -1}

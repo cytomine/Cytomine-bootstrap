@@ -69,6 +69,10 @@ class RestUploadedFileController extends RestController {
             newFilename = newFilename.replace(" ", "_")
             newFilename = newFilename.replace("(", "_")
             newFilename = newFilename.replace(")", "_")
+            newFilename = newFilename.replace("+", "_")
+            newFilename = newFilename.replace("*", "_")
+            newFilename = newFilename.replace("/", "_")
+            newFilename = newFilename.replace("@", "_")
             String pathFile = fullDestPath + "/" + newFilename
             def mkdirCommand = "mkdir -p " + fullDestPath
             def proc = mkdirCommand.execute()

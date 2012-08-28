@@ -45,9 +45,8 @@ class AbstractImage extends CytomineDomain {
                 filename = filename.substring(filename.lastIndexOf("/")+1, filename.size())
             originalFilename = filename
         }
-
-
     }
+
     static belongsTo = Slide
 
     static hasMany = [abstractimagegroup: AbstractImageGroup, storageAbstractImages: StorageAbstractImage, imageProperties: ImageProperty]
@@ -185,7 +184,6 @@ class AbstractImage extends CytomineDomain {
         while (desiredWidth > 512) {
             desiredWidth /= 2
         }
-		println "desiredWidth="+desiredWidth
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
         String url = resolver.getThumbUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(), desiredWidth)
         return url
