@@ -14,6 +14,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     render : function() {
         var self = this;
+        console.log("##########################"+$("#selectRunParamsTable").length);
         require([
             "text!application/templates/processing/SoftwareInfo.tpl.html"
         ],
@@ -27,6 +28,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var self = this;
         $(this.el).empty();
         $(this.el).append(_.template(tpl, {}));
+        console.log("##########################"+$("#selectRunParamsTable").length);
 
         //get all software from project and print menu
         new SoftwareCollection({ project : self.model.id}).fetch({
@@ -68,9 +70,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         this.software = this.softwares.get(this.idSoftware);
         this.printProjectSoftwareInfo();
     },
-
     refresh : function(idSoftware,idJob) {
-
+        console.log("Print job "+idJob +" from software "+idSoftware);
         if(!this.softwares || this.softwares.length<1) return;
         this.idJob = idJob;
         if(idSoftware==undefined) {
@@ -79,6 +80,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         this.software = this.softwares.get(idSoftware);
         if(idSoftware!=this.idSoftware) {
             this.idSoftware = idSoftware;
+            console.log("Change software");
             this.changeSoftware();
         } else {
             this.idSoftware = idSoftware;
@@ -114,12 +116,14 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     printProjectSoftwareInfo : function() {
         var self = this;
 
+        console.log("printProjectSoftwareInfo1");
         //Print software details
         self.printProjectSoftwareDetails();
 
         //Print last job + n last job details
         //self.printLastNRun();
 
+        console.log("printProjectSoftwareInfo2");
         //Print selected job from this software
         self.printProjectJobInfo();
 
@@ -226,8 +230,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         } else {
             $("#panelJobDetails").hide();
             $("#panelJobResults").hide();
-            $("#panelJobDetails").empty();
-            $("#panelJobResults").empty();
+//            $("#panelJobDetails").empty();
+//            $("#panelJobResults").empty();
         }
 
     },
@@ -241,6 +245,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                     project : self.model,
                     el : $("#softwareDetails")
                 }).render();
+                console.log("printProjectSoftwareDetails OK");
             }
         });
     },
@@ -347,6 +352,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         if(job==undefined) return;
 
         var datatable = $('#selectRunParamsTable').dataTable();
+        console.log("buildJobParamElem="+datatable);
+        console.log("buildJobParamElem="+$('#selectRunParamsTable').length);
         datatable.fnClearTable();
         //print data from project image table
         var tbody = $('#selectRunParamsTable').find("tbody");

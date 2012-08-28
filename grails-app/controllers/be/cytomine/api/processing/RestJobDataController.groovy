@@ -97,6 +97,7 @@ class RestJobDataController extends RestController {
     private JobData saveInDatabase(JobData jobData, byte[] data) {
         jobData.value.data = data
         jobData.value.save(flush: true)
+        jobData.size = data.length;
         return jobData
     }
 
@@ -107,7 +108,8 @@ class RestJobDataController extends RestController {
     private void saveInFileSystem(JobData jobData, byte[] data) {
         File dir = new File(grailsApplication.config.cytomine.jobdata.filesystemPath + GrailsUtil.environment + "/"+jobData.job.id +"/" + jobData.key )
         File f = new File(dir.getAbsolutePath()+ "/"+jobData.filename)
-
+        jobData.size = data.length;
+        jobData.save(flush:true)
         try {
             log.info "save data in file = " + f.absolutePath
 

@@ -24,22 +24,38 @@ var DownloadFiles = Backbone.View.extend({
         var content = _.template(tpl, {});
         $(this.el).append(content);
 
-        new JobDataCollection({ job:self.model.id}).fetch({
-               success:function (collection, response) {
 
-                   collection.each(function(data) {
-                       $("#jobDataResult").append('<a href="/api/jobdata/'+data.id+'/download" class="btn btn-large btn-primary">'+data.get("filename")+'</a>');
-                       $("#jobDataResult").find("#"+data.id).click(function(evt){
-                           self.downloadFile(data.id);
+        var refresh = function() {
+            new JobDataCollection({ job:self.model.id}).fetch({
+                   success:function (collection, response) {
+                       $("#jobDataResult").find('tbody').empty();
+                       collection.each(function(data) {
+                           console.log("data="+data + " " + collection.length);
+                           $("#jobDataResult").find('tbody').append('<tr id="'+data.id+'"></tr>');
+                           var row = $("#jobDataResult").find('tbody').find("tr#"+data.id);
+                           row.append('<td>'+data.get("filename")+'</td>');
+                           row.append('<td>'+data.get("key")+'</td>');
+                           row.append('<td>'+self.convertSize(data.get("size"))+'</td>');
+                           row.append('<td><a href="/api/jobdata/'+data.id+'/download" class="btn btn-large btn-primary">'+data.get("filename")+'</a></td>');
                        });
-                   });
 
-               }
-           });
+                   }
+               });
+        };
+        refresh();
+        var interval = setInterval(refresh, 5000);
+        $(window).bind('hashchange', function() {
+            clearInterval(interval);
+        });
+
+
+
+
     },
-    downloadFile : function(idJobData) {
-
-
-
+    convertSize :function(bytes) {
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes == 0) return 'n/a';
+        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
     }
 });

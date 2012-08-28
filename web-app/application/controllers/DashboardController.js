@@ -180,8 +180,6 @@ var DashboardController = Backbone.Router.extend({
     createJobParameterDomainValue : function(ids, collection, param,maxSize){
         var names = new Array();
         _.each(ids, function(id){
-            console.log(id);
-
             var name = collection.get(id);
             if(name==undefined) names.push("Unknown");
             else names.push(name.get(param.uriPrintAttribut));

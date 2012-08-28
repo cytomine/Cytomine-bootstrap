@@ -10,6 +10,7 @@ class JobData extends CytomineDomain {
     String filename
     String dir
     JobDataBinaryValue value
+    Long size
     static belongsTo = [job: Job]
 
     static constraints = {
@@ -17,6 +18,7 @@ class JobData extends CytomineDomain {
         filename(nullable: false, blank: false)
         dir(nullable: true,blank: true)
         value(nullable: true)
+        size(nullable: true)
     }
 
     static mapping = {
@@ -57,6 +59,7 @@ class JobData extends CytomineDomain {
             returnArray['key'] = jobData.key
             returnArray['job'] = jobData.job.id
             returnArray['filename'] = jobData.filename
+            returnArray['size'] = jobData.size
             returnArray['created'] = jobData.created ? jobData.created.time.toString() : null
             returnArray['updated'] = jobData.updated ? jobData.updated.time.toString() : null
             return returnArray

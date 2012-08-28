@@ -96,6 +96,7 @@
 <fileset dir="${src.dir}" includes="application/models/SecRoleModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/SuggestedAnnotationTermModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/JobModel.js"/>
+<fileset dir="${src.dir}" includes="application/models/JobDataModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/SoftwareModel.js"/>
 <fileset dir="${src.dir}" includes="application/views/activity/ActivityView.js"/>
 <fileset dir="${src.dir}" includes="application/views/phono/PhonoMenu.js"/>
@@ -124,6 +125,7 @@
 <fileset dir="${src.dir}" includes="application/views/processing/result/RetrievalAlgoResult.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/result/RetrievalAlgoResult.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/result/DefaultResult.js"/>
+<fileset dir="${src.dir}" includes="application/views/processing/result/DownloadFiles.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationLayer.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/BrowseImageView.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/DraggablePanelView.js"/>
