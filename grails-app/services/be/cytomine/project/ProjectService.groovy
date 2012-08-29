@@ -43,9 +43,10 @@ class ProjectService extends ModelService {
     }
 
     @PreAuthorize("#project.hasPermission('ADMIN') or hasRole('ROLE_ADMIN')")
-    void addPermission(Project project, String username, Permission permission) {
-        log.info "Add Permission " +  permission.toString() + " for " + username + " to " + project?.name
+    synchronized void addPermission(Project project, String username, Permission permission) {
+        log.info "##### Add Permission " +  permission.toString() + " for " + username + " to " + project?.name
         aclUtilService.addPermission(project, username, permission)
+        log.info "#####  Permission added"
     }
 
     @Transactional
