@@ -433,17 +433,19 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
                el:'#dialogs',
                template : _.template(tpl, {projectname : self.model.get('name')}),
                dialogAttr : {
-                  dialogID : '#dialogDeleteImageWithAnnotation',
+                  dialogID : '#dialogDeleteImageWithAnnotation'
                }
             }).render();
             $("#confirmDeleteImageWithAnnotation").off("click");
              $("#confirmDeleteImageWithAnnotation").on("click", function(){
                  self.deleteImageProject(idSelectedArray);
                  dialog.close();
+                 dialog.destroy();
              });
-             $("#cancelDeleteImageWithAnnotation").off("click");
-             $("#cancelDeleteImageWithAnnotation").on("click", function(){
+             $("#closeDeleteImageWithAnnotation").off("click");
+             $("#closeDeleteImageWithAnnotation").on("click", function(){
                  dialog.close();
+                 dialog.destroy();
              });
 
          });
