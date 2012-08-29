@@ -78,6 +78,7 @@ class RestAnnotationController extends RestController {
     def listByImageAndUser = {
         def image = imageInstanceService.read(params.long('idImage'))
         def user = userService.read(params.idUser)
+        println "xxxlistByImageAndUser="+image.project
         if (image && user && params.bbox) {
             responseSuccess(annotationService.list(image, user, (String) params.bbox))
         }

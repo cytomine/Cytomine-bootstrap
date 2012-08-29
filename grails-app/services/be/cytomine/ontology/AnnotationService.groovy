@@ -560,13 +560,15 @@ class AnnotationService extends ModelService {
         Geometry lastAnnotationFull = annotationFull
         log.info "points=" + annotationFull.getNumPoints() + " " + annotationFull.getArea();
         log.info "annotationFull:" + annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
-
+        double ratioMax = 1.6d
+        double ratioMin = 2d
+        println 'ratioMax='+ratioMax
         /* Number of point (ex: 500 points) */
         double numberOfPoint = annotationFull.getNumPoints()
         /* Maximum number of point that we would have (500/5 (max 150)=max 100 points)*/
-        double rateLimitMax = Math.min(numberOfPoint / 7.5d, 150)
+        double rateLimitMax = Math.min(numberOfPoint / ratioMax, 150)
         /* Minimum number of point that we would have (500/10 (min 10 max 100)=min 50 points)*/
-        double rateLimitMin = Math.min(Math.max(numberOfPoint / 10d, 10), 100)
+        double rateLimitMin = Math.min(Math.max(numberOfPoint / ratioMin, 10), 100)
         /* Increase value for the increment (allow to converge faster) */
         float incrThreshold = 0.25f
         double increaseIncrThreshold = numberOfPoint / 100d
