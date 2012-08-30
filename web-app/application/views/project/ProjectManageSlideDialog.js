@@ -50,7 +50,7 @@ var ProjectManageSlideDialog = Backbone.View.extend({
       var dialog = _.template(tpl, {id:self.model.get('id'),name:self.model.get('name')});
       $(self.el).append(dialog);
 
-      $("button[class=goBackToProject]").click(function() {
+      $("button[class=goBack]").click(function() {
          window.location = "#project";
       });
 
@@ -73,9 +73,15 @@ var ProjectManageSlideDialog = Backbone.View.extend({
       }).render();
 
 
-      $("a[class=goBackToProject]").button({
+      $("a[class=goBack]").button({
          icons : {primary: "ui-icon-circle-triangle-w"}
       });
+
+       $('a.goBack').click(function(){
+           console.log("go back!");
+           parent.history.back();
+           return false;
+       });
 
       $("input[class=showImageTable]").click(function() {
        self.imageListing.refresh();
