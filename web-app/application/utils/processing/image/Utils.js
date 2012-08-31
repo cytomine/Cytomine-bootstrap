@@ -4,9 +4,9 @@ Processing.Utils = {
     startColorR : null,
     startColorG : null,
     startColorB : null,
-    fillColorR : 128,
-    fillColorG : 128,
-    fillColorB : 128,
+    fillColorR : 255,
+    fillColorG : 0,
+    fillColorB : 0,
     canvasWidth : 256,
     canvasHeight : 256,
 

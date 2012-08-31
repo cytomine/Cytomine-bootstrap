@@ -145,13 +145,14 @@ class VisionController extends RestController {
             }
 
             else if (params.method == "otsu") {
-                ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
+                /*ImagePlus ip = new ImagePlus(imageURL, bufferedImage)
                 ImageConverter ic = new ImageConverter(ip)
                 ic.convertToGray8()
                 Multi_OtsuThreshold dt = new Multi_OtsuThreshold()
                 dt.setup(imageURL, ip)
                 dt.run(ip.getProcessor())
-                bufferedImage = dt.getResult().getBufferedImage()
+                bufferedImage = dt.getResult().getBufferedImage()*/
+                bufferedImage = imageProcessingService.dynBinary(imageURL, bufferedImage, "Otsu")
             }
             /* Apply filters */
             else if (params.method == "huang") {

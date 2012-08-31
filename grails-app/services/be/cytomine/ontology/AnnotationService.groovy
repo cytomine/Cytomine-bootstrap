@@ -29,6 +29,8 @@ import org.hibernate.FetchMode
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
 import be.cytomine.Exception.CytomineException
+import com.vividsolutions.jts.geom.Polygon
+import com.vividsolutions.jts.geom.LineString
 
 class AnnotationService extends ModelService {
 
@@ -557,6 +559,7 @@ class AnnotationService extends ModelService {
     private def simplifyPolygon(String form) {
 
         Geometry annotationFull = new WKTReader().read(form);
+
         Geometry lastAnnotationFull = annotationFull
         log.info "points=" + annotationFull.getNumPoints() + " " + annotationFull.getArea();
         log.info "annotationFull:" + annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
@@ -577,10 +580,14 @@ class AnnotationService extends ModelService {
         int maxLoop = 500
         double rate = 0
 
+        Boolean isPolygonAndNotValid =  (annotationFull instanceof com.vividsolutions.jts.geom.Polygon && !((Polygon)annotationFull).isValid())
         while (numberOfPoint > rateLimitMax && maxLoop > 0) {
             rate = i
-            lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull, rate)
-            //log.debug "annotationFull=" + rate + " " + lastAnnotationFull.getNumPoints()
+            if (isPolygonAndNotValid) {
+                lastAnnotationFull = TopologyPreservingSimplifier.simplify(annotationFull, rate)
+            } else {
+                lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull, rate)
+            }
             if (lastAnnotationFull.getNumPoints() < rateLimitMin) break;
             annotationFull = lastAnnotationFull
             i = i + (incrThreshold * increaseIncrThreshold); maxLoop--;

@@ -4,15 +4,44 @@ Processing.Outline = $.extend({}, Processing.Utils,
         canvas : null,
         points : null,
         xmin : null,
-        process : function(canvas, canvasWidth, canvasHeight, bbox) {
+        process : function (params) {
             var self = this;
-            this.canvasWidth = canvasWidth;
-            this.canvasHeight = canvasHeight;
-            this.canvas = canvas;
+            this.canvasWidth = params.canvasWidth;
+            this.canvasHeight = params.canvasHeight;
+            this.canvas = params.canvas;
 
-            var firstPoint = this.findOutlineFirstPoint(canvas, bbox);
+
+            var firstPoint = this.findOutlineFirstPoint(params.canvas, params.bbox);
             var startX = firstPoint.x;
             var startY = firstPoint.y;
+            var first = true;
+            var xmin = this.canvasWidth;
+            var x = startX;
+            var y = startY;
+            while (true) {                  // loop until we have not traced an inner hole
+                var insideSelected = this.traceEdge(startX, startY);
+                if (insideSelected) {       // not an inner hole
+                    if (first) return {startX : startX, startY : startY, points : this.points};      // started at seed, so we got it (sucessful)
+                    if (xmin<=startX) {      // possibly the correct particle
+                        /*Polygon poly = new Polygon(xpoints, ypoints, npoints);
+                        if (poly.contains(startX, startY))
+                            return {startX : startX, startY : startY, points : this.points};        // if we have done a clockwise loop, inside pixels are enclosed*/
+                        console.log("check polygon needed");
+                        return {startX : startX, startY : startY, points : this.points};
+                    }
+                }
+                first = false;
+                // we have traced an inner hole or the wrong particle
+                if (!this.inside(x,y)) do {
+                    x++;                    // traverse the hole
+                    if (x>this.canvasWidth) console.log("Wand Malfunction"); //should never happen
+                } while (!this.inside(x,y));
+                do {x++;} while (this.inside(x,y)); //retry here; maybe no inner hole any more
+            }
+
+        },
+        traceEdge : function(startX, startY) {
+            var self = this;
             // Let us name the crossings between 4 pixels vertices, then the
             // vertex (x,y) marked with '+', is between pixels (x-1, y-1) and (x,y):
             //
@@ -59,7 +88,7 @@ Processing.Outline = $.extend({}, Processing.Utils,
             //
             var fourConnected = false;
             var allPoints = true;
-            this.xmin = canvasWidth;
+            this.xmin = this.canvasWidth;
             this.points = []
             var startDirection;
             if (this.inside(startX,startY))      // inside at left, outside right
@@ -98,10 +127,11 @@ Processing.Outline = $.extend({}, Processing.Utils,
                     case 3: y++; break;
                 }
                 direction = newDirection;
-            } while ((x!=startX || y!=startY || (direction&3)!=startDirection) && (iter < 5000));
+            } while ((x!=startX || y!=startY || (direction&3)!=startDirection) && (iter < 10000));
             if (allPoints || this.points[0].x!=x)            // if the start point = end point is a corner: add to list
                 this.addPoint(x, y);
-            return this.points;        // if we have done a clockwise loop, inside pixels are enclosed
+            return (direction <= 0);        // if we have done a clockwise loop, inside pixels are enclosed
+
         },
         inside : function(x,y) {
             if (x<0 || x>=this.canvasWidth || y<0 || y>=this.canvasHeight)
@@ -126,7 +156,7 @@ Processing.Outline = $.extend({}, Processing.Utils,
             if (this.xmin > x) this.xmin = x;
         },
         findOutlineFirstPoint : function(canvas, bbox) {
-            var startX = 0;
+            var startX = bbox.xmin;
             var startY = Math.round(bbox.ymin + (bbox.ymax - bbox.ymin) / 2);
             while (!this.matchReplacementColor(canvas, this.getPixelPos(startX, startY)) && startX < this.canvasWidth) {
                 startX++;

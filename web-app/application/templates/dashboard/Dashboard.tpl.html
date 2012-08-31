@@ -152,7 +152,7 @@
 </div>
 
 <div class="tab-pane" id="tabs-annotations-<%= id %>" style="overflow : auto;">
-    <div class="container-fluid" style="padding-top: 10px;">
+    <div class="container-fluid" style="padding-top: 10px">
         <div class="row-fluid">
             <div class="span4"  style="max-width: 350px;">
                 <div class="well sidebar-nav">
@@ -217,8 +217,30 @@
     </div>
 </div>
 <div class="tab-pane" id="tabs-config-<%= id %>" style="overflow : auto;padding: 20px;">
-    <div class="row" style="padding : 20px;">
-        <div class="span5">
+    <div class="container-fluid">
+        <div style="margin-top: 20px;">
+            <div class="widget-header">
+                <h3>Magic Wand Configuration</h3>
+            </div>
+            <div class="widget-content" style="padding: 10px;">
+                <form id="mwToleranceForm" class="form-horizontal well">
+                    <fieldset>
+                        <div class="control-group">
+                            <label class="control-label" for="input_tolerance">Tolerance</label>
+                            <div class="controls">
+                                <div class="input-prepend input-append">
+                                    <span class="add-on"><i class=" icon-screenshot"></i></span><input type="text" class="input-xlarge" id="input_tolerance">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button id="submit_mwToleranceForm" type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
             <div class="widget-header">
                 <h3>Image filters</h3>
             </div>
@@ -227,7 +249,7 @@
                     <li><button id="addImageFilterButton" class="btn btn-small btn-primary"><i class="icon-plus icon-white" /> Add&nbsp;&nbsp;&nbsp;</button> <select id="addImageFilter"></select></li></ul>
             </div>
         </div>
-        <div class="span5">
+        <div style="margin-top: 20px;">
             <div class="widget-header">
                 <h3>Softwares</h3>
             </div>
@@ -239,5 +261,7 @@
         </div>
     </div>
 </div>
+
+
 <div class="tab-pane" id="tabs-algos-<%= id %>" style="overflow : auto;padding: 20px;"></div>
 

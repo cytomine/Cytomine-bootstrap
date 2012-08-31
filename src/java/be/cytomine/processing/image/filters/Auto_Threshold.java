@@ -332,7 +332,7 @@ public class Auto_Threshold implements PlugIn {
 		}
 
 		threshold+=minbin; // add the offset of the histogram
-
+        System.out.println("GENERATED THESHOLD="+threshold);
 		// show treshold in log window if required
 		if (doIlog) IJ.log(myMethod+": "+threshold);
 		if (threshold>-1) { 

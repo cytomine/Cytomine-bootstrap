@@ -232,6 +232,8 @@ body {
     <script type="text/javascript" src="application/utils/processing/image/Invert.js" ></script>
     <script type="text/javascript" src="application/utils/processing/image/MagicWand.js" ></script>
     <script type="text/javascript" src="application/utils/processing/image/Outline.js" ></script>
+    <script type="text/javascript" src="application/utils/processing/image/Threshold.js" ></script>
+    <script type="text/javascript" src="application/utils/processing/image/ColorChannel.js" ></script>
 </g:if>
 
 

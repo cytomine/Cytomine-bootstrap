@@ -24,7 +24,6 @@ AnnotationLayerUtils.createFeatureFromAnnotation  = function (annotation) {
         importance: 10,
         term : term
     };
-    console.log("FEATURE="+feature);
     return feature;
 };
 

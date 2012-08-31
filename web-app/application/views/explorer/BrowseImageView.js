@@ -76,14 +76,16 @@ var BrowseImageView = Backbone.View.extend({
         });
 
         layer.events.register("tileloaded", layer, function(evt) {
+            return; //disabled but works
             var ctx = evt.tile.getCanvasContext();
-            //var filter = Processing.invert;
-
-            var filter = null;
-            if (ctx && filter) {
+            if (ctx) {
                 var imgd = ctx.getImageData(0, 0, evt.tile.size.w, evt.tile.size.h);
                 //process PIX
-                //Processing.magicWand.process(imgd, 256,256,0,0);
+                //Processing.Threshold.process({canvas :imgd, threshold : 165});
+
+                /*Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.GREEN});
+                 Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.BLUE});*/
+
                 ctx.putImageData(imgd, 0, 0);
                 evt.tile.imgDiv.removeAttribute("crossorigin");
                 evt.tile.imgDiv.src = ctx.canvas.toDataURL();
@@ -174,7 +176,7 @@ var BrowseImageView = Backbone.View.extend({
         var featureHeight = bounds.top - bounds.bottom;
         var windowWidth = $(window).width();
         var windowHeight = $(window).height();
-        var zoom = self.map.getNumZoomLevels()-1;
+        var zoom = self.map.getNumZoomLevels() - this.nbDigitialZoom;
         var tmpWidth = featureWidth;
         var tmpHeight = featureHeight;
         while ((tmpWidth > windowWidth) || (tmpHeight > windowHeight)) {
@@ -183,9 +185,8 @@ var BrowseImageView = Backbone.View.extend({
             zoom--;
         }
         zoom = Math.max(0, zoom-1);
+        //zoom = Math.max(0, zoom-1);
         self.map.moveTo(new OpenLayers.LonLat(geom.getCentroid().x, geom.getCentroid().y), Math.max(0, zoom));
-
-
     },
     getFeature : function (idAnnotation) {
         return this.userLayer.getFeature(idAnnotation);
@@ -365,6 +366,7 @@ var BrowseImageView = Backbone.View.extend({
                         var map = event.object;
                         var maxMagnification = self.model.get("magnification") * Math.pow(2, self.nbDigitialZoom);
                         var deltaZoom = map.getNumZoomLevels() - map.getZoom() - 1;
+
                         var magnification = maxMagnification;
                         if (deltaZoom != 0)
                             magnification = maxMagnification / (Math.pow(2,deltaZoom));
@@ -551,85 +553,108 @@ var BrowseImageView = Backbone.View.extend({
         clearInterval(this.watchOnlineUsersInterval);
     },
     initAutoAnnoteTools : function () {
-
         var self = this;
         var processInProgress = false;
         var handleMapClick = function handleMapClick(evt) {
+            if (!self.getUserLayer().magicOnClick) return;
+
             if (processInProgress) {
-                alert("Magic Wand in progress");
+                window.app.view.message("Warning", "Magic Wand in progress...", "warning");
                 return;
             }
             processInProgress = true;
-            if (!self.getUserLayer().magicOnClick) return;
-
-            var lonlat = self.map.getLonLatFromViewPortPx(evt.xy);
-            console.log("lonlat="+lonlat);
-
             var tiles = self.map.baseLayer.grid;
-            console.log("tiles="+tiles);
+            var newCanvas = document.createElement('canvas');
+            var newContext = newCanvas.getContext("2d");
+            var newCanvasWidth =tiles[0].length * tiles[0][0].size.w;
+            var newCanvasHeight = tiles.length * tiles[0][0].size.h;
+            newCanvas.width= newCanvasWidth;
+            newCanvas.height= newCanvasHeight;
+            newCanvas.display = 'none';
+            document.body.appendChild(newCanvas);
+            var mapContainerDiv = $("#map"+self.model.id).children().children()[0];
+            var viewPositionLeft =  parseInt($(mapContainerDiv).css("left"), 10);
+            var viewPositionTop =  parseInt($(mapContainerDiv).css("top"), 10);
             for (var row = 0; row < tiles.length; row++) {
                 for (var col = 0; col < tiles[row].length; col++) {
-                    var bounds = tiles[row][col].bounds;
-                    var y = lonlat.lat;
-                    var x = lonlat.lon;
-                    if (x >= bounds.left && x < bounds.right && y >= bounds.bottom && y < bounds.top) {
-                        console.log("Tiles identified="+bounds);
-                        var tile =  tiles[row][col];
-                        var ratioBoundsTileWidth = (bounds.right - bounds.left) / tile.size.w;
-                        var ratioBoundsTileHeight = (bounds.top - bounds.bottom) / tile.size.h;
-                        var localX = Math.round((x - bounds.left) / ratioBoundsTileWidth);
-                        var localY = Math.round(tile.size.h - ((y - bounds.bottom) / ratioBoundsTileHeight));
-                        var ctx = tile.getCanvasContext();
-                        var imgd = ctx.getImageData(0, 0, tile.size.w, tile.size.h);
-                        //process PIX
-                        var wandResult = Processing.MagicWand.process(imgd, tile.size.w,tile.size.h,localX,localY);
-                        var outline = Processing.Outline.process(imgd, tile.size.w,tile.size.h, wandResult.bbox);
-                        for (var i = 0; i < outline.length; i++) {
-                            var p = outline[i];
-                            var pixelPos = Processing.Utils.getPixelPos(p.x, p.y);
-                            if (p.x < 0 || p.x >= tile.size.w || p.y < 0 || p.y >= tile.size.h)
-                                console.log("Draw point " + p.x + " , " + p.y);
-                            Processing.Utils.colorPixel(imgd, pixelPos, 255, 0, 0);
-                        }
-                        var polyPoints = []
-                        for (var i = 0; i < outline.length; i++) {
-                            var globalX = bounds.left + (outline[i].x * ratioBoundsTileWidth);
-                            var globalY = bounds.top - (outline[i].y * ratioBoundsTileHeight);
-                            var point = new OpenLayers.Geometry.Point(
-                                globalX,
-                                globalY);
-                            polyPoints.push(point);
-                        }
-                        polyPoints.push(polyPoints[0]);
-                        var linear_ring = new OpenLayers.Geometry.LinearRing(polyPoints);
-                        var polygonFeature = new OpenLayers.Feature.Vector(
-                            new OpenLayers.Geometry.Polygon([linear_ring]), null, {});
-                        self.getUserLayer().addAnnotation(polygonFeature);
-                        ctx.putImageData(imgd, 0, 0);
-                        tile.imgDiv.removeAttribute("crossorigin");
-                        tile.imgDiv.src = ctx.canvas.toDataURL();
-                        console.log("done");
-                    }
-
+                    var tile = tiles[row][col];
+                    var tileCtx = tile.getCanvasContext();
+                    if (tileCtx) newContext.drawImage(
+                        tileCtx.canvas,
+                        viewPositionLeft + tile.position.x,
+                        viewPositionTop + tile.position.y);
                 }
             }
-            /*console.log("row="+row);
-             console.log("col="+col);
-             console.log("v="+tiles[row][col].bounds);
-             }
-             }
-             /*var y = parseInt(self.model.get("height")) - lonlat.lat;
-             var x = lonlat.lon;
-             var url = "processing/detect/"+self.model.get("id")+"/"+x+"/"+y;
-             $.getJSON(url,
-             function (response) {
-             var format = new OpenLayers.Format.WKT();
-             var point = format.read(response.geometry);
-             var geom = point.geometry;
-             self.getUserLayer().addAnnotation(new OpenLayers.Feature.Vector(geom));
-             }
-             );*/
+            var startX = evt.xy.x;
+            var startY =  evt.xy.y;
+
+            var imgd = newContext.getImageData(0, 0, newCanvasWidth, newCanvasHeight);
+            //TMP HACK in order to decide if we use the GREEN Channel or not
+            var toleranceKey = "mw_tolerance" + window.app.status.currentProject;
+            var tolerance = localStorage.getObject(toleranceKey) || new MagicWandConfig().toleranceDefaultValue;
+            console.log("tolerance="+tolerance);
+            if (window.app.status.currentProjectModel.get('disciplineName') == 'HISTOLOGY') {
+                Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.GREEN});
+            } else {
+                Processing.Threshold.process({canvas :imgd, threshold : 165});
+            }
+
+            //process PIX
+            console.log("MagicWand...");
+            var wandResult = Processing.MagicWand.process({
+                canvas : imgd,
+                canvasWidth : newCanvasWidth,
+                canvasHeight : newCanvasHeight,
+                startX : startX,
+                startY : startY,
+                tolerance : tolerance
+            });
+            if (!wandResult.success) {
+                processInProgress = false;
+                document.body.removeChild(newCanvas);
+                window.app.view.message("Warning", "Can't find interesting region", "error");
+                return;
+            }
+            console.log("done");
+            console.log("Outline");
+            var outline = Processing.Outline.process({
+                canvas : imgd,
+                canvasWidth : newCanvasWidth,
+                canvasHeight : newCanvasHeight,
+                bbox : wandResult.bbox
+            });
+            console.log("done");
             processInProgress = false;
+            var debug = false;
+            if (debug) {
+                newContext.putImageData(imgd, 0, 0);
+                newContext.fillStyle="#FF0000";
+                newContext.fillRect(wandResult.bbox.xmin - 5, wandResult.bbox.ymin - 5, 10, 10);
+                newContext.fillRect(wandResult.bbox.xmin - 5, wandResult.bbox.ymax - 5, 10, 10);
+                newContext.fillRect(wandResult.bbox.xmax - 5, wandResult.bbox.ymin - 5, 10, 10);
+                newContext.fillRect(wandResult.bbox.xmax - 5, wandResult.bbox.ymax - 5, 10, 10);
+                newContext.fillStyle="#00FF00";
+                newContext.fillRect(outline.startX - 5, outline.startY - 5, 10, 10);
+                for (var i = 0; i < outline.points.length; i++) {
+                    newContext.fillStyle="#00FFFF";
+                    newContext.fillRect(outline.points[i].x - 1, outline.points[i].y -1, 3, 3);
+                }
+            }
+            if (!debug) document.body.removeChild(newCanvas);
+            var polyPoints = []
+            for (var i = 0; i < outline.points.length; i++) {
+                var _p = self.map.getLonLatFromViewPortPx({ x : outline.points[i].x, y : outline.points[i].y});
+                var point = new OpenLayers.Geometry.Point(
+                    _p.lon,
+                    _p.lat);
+                polyPoints.push(point);
+            }
+            polyPoints.push(polyPoints[0]);
+            var linear_ring = new OpenLayers.Geometry.LinearRing(polyPoints);
+            var polygonFeature = new OpenLayers.Feature.Vector(
+                new OpenLayers.Geometry.Polygon([linear_ring]), null, {});
+            self.getUserLayer().addAnnotation(polygonFeature);
+
 
         }
         if (self.getUserLayer() != undefined)  {

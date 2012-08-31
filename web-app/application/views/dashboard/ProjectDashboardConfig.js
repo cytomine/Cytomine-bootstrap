@@ -4,20 +4,62 @@ var ProjectDashboardConfig = Backbone.View.extend({
         this.rendered = false;
     },
     render : function() {
-        this.imageFiltersProjectPanel = new ImageFiltersProjectPanel({
+        new ImageFiltersProjectPanel({
             el : this.el,
             model : this.model
         }).render();
-        this.softwareProjectPanels = new SoftwareProjectPanel({
+        new SoftwareProjectPanel({
             el : this.el,
             model : this.model
         }).render();
+        new MagicWandConfig({}).render();
         this.rendered = true;
     },
     refresh : function() {
         if (!this.rendered) this.render();
     }
 
+});
+
+var MagicWandConfig = Backbone.View.extend({
+    toleranceDefaultValue : 70,
+    toleranceKey : null,
+    initialize : function () {
+        this.toleranceKey = "mw_tolerance" + window.app.status.currentProject;
+        if (localStorage.getObject(this.toleranceKey) == null) {
+            localStorage.setObject(this.toleranceKey, this.toleranceDefaultValue);
+        }
+        return this;
+    },
+
+    render : function() {
+        this.fillForm();
+        this.initEvents();
+    },
+
+    initEvents : function() {
+        var self = this;
+        var form = $("#mwToleranceForm");
+        var max_euclidian_distance = Math.ceil(Math.sqrt(255*255+255*255+255*255)) //between pixels
+        form.on("submit", function(e){
+            e.preventDefault();
+            var toleranceValue = parseInt($("#input_tolerance").val());
+            if (_.isNumber(toleranceValue) && toleranceValue > 0 && toleranceValue < max_euclidian_distance) {
+                localStorage.setObject(self.toleranceKey, Math.round(toleranceValue));
+                var successMessage = _.template("Tolerance value for project <%= name %> is now <%= tolerance %>", {
+                    name : window.app.status.currentProjectModel.get('name'),
+                    tolerance : toleranceValue
+                });
+                window.app.view.message("Success", successMessage, "success");
+            } else {
+                window.app.view.message("Error", "Tolerance must be an integer between 0 and " + max_euclidian_distance,"error");
+            }
+        });
+    },
+
+    fillForm : function() {
+        $("#input_tolerance").val(localStorage.getObject(this.toleranceKey));
+    }
 });
 
 var SoftwareProjectPanel = Backbone.View.extend({
@@ -108,7 +150,6 @@ var ImageFiltersProjectPanel = Backbone.View.extend({
             success : function (imageFilters, response) {
                 imageFilters.each(function (imageFilter) {
                     self.renderImageFilter(imageFilter, el);
-                    window.app.view.message("", response.message, "success");
                 });
             }
         });

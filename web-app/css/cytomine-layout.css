@@ -406,7 +406,7 @@ td.confusionMatrixBadValue{
   background-color: #6C8690;
 } */
 
-.olLayerGrid .olTileImage {
+/*.olLayerGrid .olTileImage {
     -webkit-transition: opacity 0.2s linear;
     -moz-transition: opacity 0.2s linear;
     -o-transition: opacity 0.2s linear;
@@ -417,7 +417,7 @@ td.confusionMatrixBadValue{
     img.olTileImage {
         -webkit-transform: none;
     }
-}
+}*/
 
 /* Datatables */
 

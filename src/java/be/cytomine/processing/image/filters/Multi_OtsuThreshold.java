@@ -69,7 +69,7 @@ public class Multi_OtsuThreshold implements PlugInFilter
             msg += i + "=" + threshold[i] + ", ";
         msg += " maxSig = " + maxSig;
         if (gui)  IJ.log(msg);
-
+        System.out.println("otsu thresholds : " + msg);
         ///////////////////////////////////////////////////////////////
         // show regions works for any MLEVEL
         ///////////////////////////////////////////////////////////////

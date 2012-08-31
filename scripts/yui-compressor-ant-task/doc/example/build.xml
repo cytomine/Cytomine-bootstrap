@@ -168,6 +168,8 @@
 <fileset dir="${src.dir}" includes="application/utils/processing/image/Invert.js"/>
 <fileset dir="${src.dir}" includes="application/utils/processing/image/MagicWand.js"/>
 <fileset dir="${src.dir}" includes="application/utils/processing/image/Outline.js"/>
+<fileset dir="${src.dir}" includes="application/utils/processing/image/Threshold.js"/>
+<fileset dir="${src.dir}" includes="application/utils/processing/image/ColorChannel.js"/>
 </concat>
     </target>
 

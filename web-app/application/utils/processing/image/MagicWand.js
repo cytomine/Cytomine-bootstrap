@@ -5,29 +5,33 @@ Processing.MagicWand = $.extend({}, Processing.Utils,
         canvas : null,
         startX : null,
         startY : null,
-        process : function(canvas, canvasWidth, canvasHeight, startX, startY, _tolerance){
-            this.tolerance = _tolerance || this.tolerance;
-            this.canvasWidth = canvasWidth;
-            this.canvasHeight = canvasHeight;
-            this.canvas = canvas;
-            this.startX = startX;
-            this.startY = startY;
-            var firstPixelPos = this.getPixelPos(startX, startY);
-            this.startColorR = canvas.data[firstPixelPos];
-            this.startColorG = canvas.data[firstPixelPos+1];
-            this.startColorB = canvas.data[firstPixelPos+2];
-            if (this.matchReplacementColor(canvas, this.getPixelPos(startX, startY))) return; //already processed.
-            this.initBBOX(startX,startY);
+        maxIter : 10000,
+        process : function(params){ //canvas, canvasWidth, canvasHeight, startX, startY, tolerance
+            this.tolerance = params.tolerance || this.tolerance;
+            this.canvasWidth = params.canvasWidth;
+            this.canvasHeight = params.canvasHeight;
+            this.canvas = params.canvas;
+            this.startX = params.startX;
+            this.startY = params.startY;
+            this.bbox = null;
+            var firstPixelPos = this.getPixelPos(params.startX, params.startY);
+            this.startColorR = this.canvas.data[firstPixelPos];
+            this.startColorG = this.canvas.data[firstPixelPos+1];
+            this.startColorB = this.canvas.data[firstPixelPos+2];
+            if (this.matchReplacementColor(this.canvas, this.getPixelPos(this.startX, this.startY))) return; //already processed.
+            this.initBBOX(this.startX,this.startY);
 
-            this.wand(this.canvas, startX, startY);
+            var success = this.wand(this.canvas, this.startX, this.startY);
 
-            return {canvas : canvas, bbox : this.bbox }
+            return {success : success, canvas : this.canvas, bbox : this.bbox }
 
         },
         wand : function(canvas, startX, startY) {
             var pixelStack = [[startX, startY]];
             var drawingBoundTop = 0;
-            while(pixelStack.length) {
+            var iter = 0;
+            while(pixelStack.length && iter < this.maxIter) {
+                iter++;
                 var newPos, x, y, pixelPos, reachLeft, reachRight;
                 newPos = pixelStack.pop();
                 x = newPos[0];
@@ -82,6 +86,7 @@ Processing.MagicWand = $.extend({}, Processing.Utils,
                     pixelPos += this.canvasWidth * 4;
                 }
             }
+            return iter < this.maxIter;
         },
 
         initBBOX : function(x,y) {
