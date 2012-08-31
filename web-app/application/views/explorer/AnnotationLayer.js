@@ -78,7 +78,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 	styleMap.styles["default"].addRules(rules);
 	styleMap.addUniqueValueRules('default', 'term', this.getSymbolizer());
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
-        renderers: ["Canvas", "SVG", "VML"],
+        //renderers: ["Canvas", "SVG", "VML"],
         strategies: [
 			new OpenLayers.Strategy.BBOX({resFactor: 1})
 		],

@@ -642,7 +642,7 @@ var BrowseImageView = Backbone.View.extend({
             }
             if (!debug) document.body.removeChild(newCanvas);
             var polyPoints = []
-            for (var i = 0; i < outline.points.length; i++) {
+            for (var i = 0; i + 5 < outline.points.length; i = i + 5) {
                 var _p = self.map.getLonLatFromViewPortPx({ x : outline.points[i].x, y : outline.points[i].y});
                 var point = new OpenLayers.Geometry.Point(
                     _p.lon,

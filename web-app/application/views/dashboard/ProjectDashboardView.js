@@ -44,7 +44,7 @@ var ProjectDashboardView = Backbone.View.extend({
         //Refresh dashboard
         setInterval(function(){
             if ($("#tabs-dashboard-"+self.model.id).hasClass('active')) self.refreshDashboard();
-        }, 5000);
+        }, 60000);
     },
     refreshImagesThumbs : function() {
         if (this.projectDashboardImages == null) {

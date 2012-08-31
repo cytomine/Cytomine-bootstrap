@@ -4,6 +4,7 @@ Processing.Outline = $.extend({}, Processing.Utils,
         canvas : null,
         points : null,
         xmin : null,
+        maxIter : 5000,
         process : function (params) {
             var self = this;
             this.canvasWidth = params.canvasWidth;
@@ -18,7 +19,8 @@ Processing.Outline = $.extend({}, Processing.Utils,
             var xmin = this.canvasWidth;
             var x = startX;
             var y = startY;
-            while (true) {                  // loop until we have not traced an inner hole
+            var iter= 0;
+            while (iter < this.maxIter) {                  // loop until we have not traced an inner hole
                 var insideSelected = this.traceEdge(startX, startY);
                 if (insideSelected) {       // not an inner hole
                     if (first) return {startX : startX, startY : startY, points : this.points};      // started at seed, so we got it (sucessful)
@@ -37,6 +39,7 @@ Processing.Outline = $.extend({}, Processing.Utils,
                     if (x>this.canvasWidth) console.log("Wand Malfunction"); //should never happen
                 } while (!this.inside(x,y));
                 do {x++;} while (this.inside(x,y)); //retry here; maybe no inner hole any more
+                iter++;
             }
 
         },
