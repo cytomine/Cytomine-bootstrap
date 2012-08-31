@@ -1,6 +1,7 @@
 var Processing = Processing || {};
 Processing.MagicWand = $.extend({}, Processing.Utils,
     {
+        defaultTolerance : 70,
         bbox :null,
         canvas : null,
         startX : null,

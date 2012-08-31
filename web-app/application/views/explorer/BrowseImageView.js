@@ -591,12 +591,15 @@ var BrowseImageView = Backbone.View.extend({
             var imgd = newContext.getImageData(0, 0, newCanvasWidth, newCanvasHeight);
             //TMP HACK in order to decide if we use the GREEN Channel or not
             var toleranceKey = "mw_tolerance" + window.app.status.currentProject;
-            var tolerance = localStorage.getObject(toleranceKey) || new MagicWandConfig().toleranceDefaultValue;
+            var thresholdKey = "th_threshold" + window.app.status.currentProject;
+            var tolerance = localStorage.getObject(toleranceKey) || Processing.MagicWand.defaultTolerance;
+            var threshold = localStorage.getObject(thresholdKey) || Processing.Threshold.defaultTheshold;
+            console.log("threshold="+threshold);
             console.log("tolerance="+tolerance);
             if (window.app.status.currentProjectModel.get('disciplineName') == 'HISTOLOGY') {
                 Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.GREEN});
             } else {
-                Processing.Threshold.process({canvas :imgd, threshold : 165});
+                Processing.Threshold.process({canvas :imgd, threshold : threshold});
             }
 
             //process PIX
