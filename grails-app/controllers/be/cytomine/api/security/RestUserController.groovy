@@ -261,13 +261,15 @@ class RestUserController extends RestController {
                     jobs.each {
                         def userJob = UserJob.findByJob(it);
                         def job = [:]
-                        job.id = userJob.id
-                        job.key = userJob.id
-                        job.title = formater.format(it.created);
-                        job.date = it.created.getTime()
-                        job.isFolder = false
-                        //job.children = []
-                        softJob << job
+                        if(userJob) {
+                            job.id = userJob.id
+                            job.key = userJob.id
+                            job.title = formater.format(it.created);
+                            job.date = it.created.getTime()
+                            job.isFolder = false
+                            //job.children = []
+                            softJob << job
+                         }
                     }
                     soft.children = softJob
 
@@ -283,12 +285,15 @@ class RestUserController extends RestController {
 
                 allJobs.each { job ->
                     def item = [:]
+                    println "XXX == " + job.id
                     def userJob = UserJob.findByJob(job);
-                    item.id = userJob.id
-                    item.idJob = job.id
-                    item.idSoftware = job.software.id
-                    item.SoftwareName = job.software.name
-                    item.created = job.created.getTime()
+                    if(userJob) {
+                        item.id = userJob.id
+                        item.idJob = job.id
+                        item.idSoftware = job.software.id
+                        item.SoftwareName = job.software.name
+                        item.created = job.created.getTime()
+                    }
                     userJobs << item
                 }
                 responseSuccess(userJobs)
