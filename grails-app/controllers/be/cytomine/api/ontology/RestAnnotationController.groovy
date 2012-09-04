@@ -397,14 +397,20 @@ class RestAnnotationController extends RestController {
 
      private def unionAnnotations(ImageInstance image, SecUser user, Integer minIntersectLength) {
          long start = System.currentTimeMillis()
-         unionPostgisSQL(image, user,minIntersectLength)
+         int i = 0
+         boolean restart = unionPostgisSQL(image, user,minIntersectLength)
+         while(restart && i<100) {
+             restart = unionPostgisSQL(image, user,minIntersectLength)
+             i++
+         }
+
          long end = System.currentTimeMillis()
          println "#TIME#=" + (end - start)
      }
 
-     private def unionPostgisSQL(ImageInstance image, SecUser user, Integer minIntersectLength) {
+     private boolean unionPostgisSQL(ImageInstance image, SecUser user, Integer minIntersectLength) {
          println "unionPostgisSQL"
-
+         boolean mustBeRestart = false
          //all annotation must be valid to compute intersection
          List<Annotation> annotations = Annotation.findAllByImageAndUser(image, user)
          println "valide annotation..."
@@ -432,7 +438,7 @@ class RestAnnotationController extends RestController {
                  " AND annotation2.created > annotation1.created\n" +
                  " AND annotation1.user_id = ${user.id}\n" +
                  " AND annotation2.user_id = ${user.id}\n" +
-                 " AND ST_length2d(ST_Intersection(annotation1.location, annotation2.location))>$minIntersectLength"
+                 " AND ST_length2d(ST_Intersection(annotation1.location, annotation2.location))>=$minIntersectLength"
          ) {
 
              long idBased = it[1]
@@ -448,17 +454,18 @@ class RestAnnotationController extends RestController {
              Annotation compared = Annotation.get(idCompared)
 
              if (based && compared && based.id != compared.id) {
+                 mustBeRestart = true
                  based.location = based.location.union(compared.location)
                  removedByUnion.put(compared.id, based.id)
                  //save new annotation with union location
+
                  domainService.saveDomain(based)
                  //remove old annotation with data
                  AlgoAnnotationTerm.executeUpdate("delete AlgoAnnotationTerm aat where aat.annotation = :annotation", [annotation: compared])
                  domainService.deleteDomain(compared)
 
              }
-
-
          }
+         return mustBeRestart
      }
 }
