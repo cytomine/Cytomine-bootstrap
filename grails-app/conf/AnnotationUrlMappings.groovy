@@ -13,6 +13,9 @@ class AnnotationUrlMappings {
         "/api/annotation"(controller:"restAnnotation"){
             action = [GET: "list",POST:"add"]
         }
+        "/api/annotation/union"(controller:"restAnnotation"){
+            action = [PUT:"union", GET:"union"]
+        }
         "/api/annotation/$id"(controller:"restAnnotation"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }

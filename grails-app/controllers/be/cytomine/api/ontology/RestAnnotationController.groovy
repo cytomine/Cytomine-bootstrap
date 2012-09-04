@@ -18,6 +18,8 @@ import grails.converters.JSON
 import java.awt.image.BufferedImage
 import java.text.SimpleDateFormat
 import javax.imageio.ImageIO
+import groovy.sql.Sql
+import be.cytomine.ontology.AlgoAnnotationTerm
 
 class RestAnnotationController extends RestController {
 
@@ -31,6 +33,8 @@ class RestAnnotationController extends RestController {
     def projectService
     def cytomineService
     def mailService
+    def dataSource
+
 
 
     def list = {
@@ -381,4 +385,80 @@ class RestAnnotationController extends RestController {
         println "collection=${collection.size()} offset=$offset max=$max compute=${collection.size()-offset} maxForCollection=$maxForCollection"
         return collection.subList(offset,offset+maxForCollection)
     }
+
+
+    def union() {
+         ImageInstance image = ImageInstance.read(params.getLong('idImage'))
+         SecUser user = SecUser.read(params.getLong('idUser'))
+         Integer minIntersectLength = params.getInt('minIntersectionLength')
+         unionAnnotations(image, user,minIntersectLength)
+         responseSuccess([])
+     }
+
+     private def unionAnnotations(ImageInstance image, SecUser user, Integer minIntersectLength) {
+         long start = System.currentTimeMillis()
+         unionPostgisSQL(image, user,minIntersectLength)
+         long end = System.currentTimeMillis()
+         println "#TIME#=" + (end - start)
+     }
+
+     private def unionPostgisSQL(ImageInstance image, SecUser user, Integer minIntersectLength) {
+         println "unionPostgisSQL"
+
+         //all annotation must be valid to compute intersection
+         List<Annotation> annotations = Annotation.findAllByImageAndUser(image, user)
+         println "valide annotation..."
+         annotations.each {
+             if (!it.location.isValid()) {
+                 it.location = it.location.buffer(0)
+                 it.save(flush: true)
+             }
+         }
+
+         //key = deleted annotation, value = annotation that take in the deleted annotation
+         //If y is deleted and merge with x, we add an entry <y,x>. Further if y had intersection with z, we replace "y" (deleted) by "x" (has now intersection with z).
+         HashMap<Long, Long> removedByUnion = new HashMap<Long, Long>(annotations.size())
+
+         def sql = new Sql(dataSource)
+         println "********************\n********************\n********************\n********************\n"
+         println sql
+         println "image=$image"
+         println "user=$user"
+         println "minIntersectLength=$minIntersectLength"
+         sql.eachRow("SELECT length(ST_Intersection(annotation1.location, annotation2.location)) as length,annotation1.id as id1, annotation2.id as id2\n" +
+                 " FROM annotation annotation1, annotation annotation2\n" +
+                 " WHERE annotation1.image_id = $image.id\n" +
+                 " AND annotation2.image_id = $image.id\n" +
+                 " AND annotation2.created > annotation1.created\n" +
+                 " AND annotation1.user_id = ${user.id}\n" +
+                 " AND annotation2.user_id = ${user.id}\n" +
+                 " AND ST_length2d(ST_Intersection(annotation1.location, annotation2.location))>$minIntersectLength"
+         ) {
+
+             long idBased = it[1]
+             //check if annotation has be deleted (because merge), if true get the union annotation
+             if (removedByUnion.containsKey(it[1]))
+                 idBased = removedByUnion.get(it[1])
+             long idCompared = it[2]
+             //check if annotation has be deleted (because merge), if true get the union annotation
+             if (removedByUnion.containsKey(it[2]))
+                 idCompared = removedByUnion.get(it[2])
+
+             Annotation based = Annotation.get(idBased)
+             Annotation compared = Annotation.get(idCompared)
+
+             if (based && compared && based.id != compared.id) {
+                 based.location = based.location.union(compared.location)
+                 removedByUnion.put(compared.id, based.id)
+                 //save new annotation with union location
+                 domainService.saveDomain(based)
+                 //remove old annotation with data
+                 AlgoAnnotationTerm.executeUpdate("delete AlgoAnnotationTerm aat where aat.annotation = :annotation", [annotation: compared])
+                 domainService.deleteDomain(compared)
+
+             }
+
+
+         }
+     }
 }
