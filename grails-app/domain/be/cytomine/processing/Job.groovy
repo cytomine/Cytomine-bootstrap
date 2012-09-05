@@ -64,8 +64,11 @@ class Job extends CytomineDomain  {
             job.status = it.status
             job.number = it.number
             job.statusComment = it.statusComment
+
+            UserJob user = UserJob.findByJob(it)
             try {
-            job.username = UserJob.findByJob(it)?.realUsername()
+                job.username = user?.realUsername()
+                job.userJob = user.id
             } catch (Exception e) {println e}
 
             job.project = it.project?.id
