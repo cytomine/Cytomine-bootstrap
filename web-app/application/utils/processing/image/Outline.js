@@ -4,7 +4,7 @@ Processing.Outline = $.extend({}, Processing.Utils,
         canvas : null,
         points : null,
         xmin : null,
-        maxIter : 5000,
+        maxIter : 10000,
         process : function (params) {
             var self = this;
             this.canvasWidth = params.canvasWidth;

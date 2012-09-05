@@ -50,10 +50,10 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.imageID = imageID;
     this.userID = userID;
 	var rules = [new OpenLayers.Rule({
-		symbolizer: {strokeColor:"#FF0000",strokeWidth: 2}, 
-		// symbolizer: {}, // instead if you want to keep default colors 
-		elseFilter: true 
-	})]; 
+		symbolizer: {strokeColor:"#00FF00",strokeWidth: 2},
+		// symbolizer: {}, // instead if you want to keep default colors
+		elseFilter: true
+	})];
 
 	var defaultStyle =  new OpenLayers.Style({
 		'fillColor'   : '#EEEEEE',
@@ -66,7 +66,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 	var selectStyle = new OpenLayers.Style({
 		'fillColor'   : '#EEEEEE',
 		'fillOpacity' : .8,
-		'strokeColor' : '#FF0000',
+		'strokeColor' : '#00FF00',
 		'strokeWidth' : 3,
 		'pointRadius' : this.pointRadius
 	});
@@ -75,8 +75,11 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 		'default' : defaultStyle,
 		'select' : selectStyle
 	});
+
 	styleMap.styles["default"].addRules(rules);
 	styleMap.addUniqueValueRules('default', 'term', this.getSymbolizer());
+    styleMap.styles["select"].addRules(rules);
+    styleMap.addUniqueValueRules('select', 'term', this.getSymbolizer(true));
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
         //renderers: ["Canvas", "SVG", "VML"],
         strategies: [
@@ -110,26 +113,32 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 }
 
 AnnotationLayer.prototype = {
-	getSymbolizer : function() {
+    defaultStrokeColor : "#000000",
+    selectedStrokeColor : "#00FF00",
+	getSymbolizer : function(selected) {
+        console.log("this.pointRadius="+this.pointRadius);
+        var strokeColor = this.defaultStrokeColor;
+        if (selected) strokeColor = this.selectedStrokeColor;
 		var symbolizers_lookup = {};
+        var self = this;
 		symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
 			'fillColor'   : "#EEEEEE",
 			'fillOpacity' : .6,
-			'strokeColor' : '#000000',
+			'strokeColor' : strokeColor,
 			'strokeWidth' : 3,
 			'pointRadius' : this.pointRadius
 		};
 		symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
 			'fillColor'   : "#CCCCCC",
 			'fillOpacity' : .6,
-			'strokeColor' : '#000000',
+			'strokeColor' : strokeColor,
 			'strokeWidth' : 3,
 			'pointRadius' : this.pointRadius
 		};
 		symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
 			'fillColor'   : "#FF0000",
 			'fillOpacity' : 1,
-			'strokeColor' : '#FF0000',
+			'strokeColor' : strokeColor,
 			'strokeWidth' : 5,
 			'pointRadius' : this.pointRadius
 		};
@@ -137,9 +146,9 @@ AnnotationLayer.prototype = {
 			symbolizers_lookup[term.id] = {
 				'fillColor'   : term.get('color'),
 				'fillOpacity' : .6,
-				'strokeColor' : '#000000',
+				'strokeColor' : strokeColor,
 				'strokeWidth' : 3,
-				'pointRadius' : this.pointRadius
+				'pointRadius' : self.pointRadius
 			}
 		});
 		return symbolizers_lookup

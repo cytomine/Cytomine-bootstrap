@@ -22,7 +22,7 @@ var ImageTabsView = Backbone.View.extend({
                 var tbody = $('#projectImageTable'+self.idProject).find("tbody");
                 var exploreButtonTpl = "<a href='#tabs-image-<%= project %>-<%= image %>-' class='btn btn-primary' style='color : #FFF'';><i class='icon-eye-open icon-white'></i> Explore</a>";
                 var thumbImgTpl = "<img class='lazy' src='<%= thumb %>' alt='<%= filename %>' style='max-height: 75px;'/>";
-                var rowTpl = "<tr><td><%= thumImg %></td><td><%= filename %></td><td><%= mime %></td><td><%= width %></td><td><%= height %></td><td><%= magnification %></td><td><%= resolution %></td><td><%= numberOfAnnotations %></td><td><%= created %></td><td><%= action %></td></tr>";
+                var rowTpl = "<tr><td><%= thumImg %></td><td><%= filename %></td><td><%= mime %></td><td><%= width %></td><td><%= height %></td><td><%= magnification %></td><td><%= resolution %></td><td><%= numberOfAnnotations %></td><td><%= numberOfJobAnnotations %></td><td><%= created %></td><td><%= action %></td></tr>";
                 collection.each(function (image) {
                     var exploreButton = _.template(exploreButtonTpl,{ project : self.idProject, image : image.get("id")});
                     var thumImg = _.template(thumbImgTpl,{ thumb : image.get("thumb"), filename : image.get("filename")});

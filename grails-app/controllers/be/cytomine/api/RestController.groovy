@@ -63,21 +63,6 @@ class RestController {
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def update(def service, def json) {
         try {
             def domain = service.retrieve(json)
@@ -203,6 +188,7 @@ class RestController {
                   }
                   else {
                       HttpClient client = new HttpClient()
+                      client.timeout = 2000;
                       client.connect(url,"","")
                       byte[] imageData = client.getData()
                       //IIP Send JPEG, so we have to convert to PNG
@@ -220,6 +206,7 @@ class RestController {
                   }
                   else {
                       HttpClient client = new HttpClient()
+                      client.timeout = 2000;
                       client.connect(url,"","")
                       byte[] imageData = client.getData()
                       response.contentLength = imageData.size();

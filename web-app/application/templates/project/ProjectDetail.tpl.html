@@ -16,7 +16,8 @@
             <ul>
                 <li>Number of samples : <a class="imagesPopover" href="#tabs-images-<%= id %>" rel="popover" data-content="<%= images %>" data-original-title="Images"><%= numberOfSlides %></a></li>
                 <li>Number of images : <a  class="imagesPopover" href="#tabs-images-<%= id %>" rel="popover" data-content="<%= images %>" data-original-title="Images"><%= numberOfImages %></a></li>
-                <li>Number of annotations : <% if (numberOfAnnotations == 0) { %> <span class="badge badge-error"><%= numberOfAnnotations %></span> <% } else if (numberOfAnnotations < 250) { %><span class="badge badge-warning"><%= numberOfAnnotations %></span> <% } else { %><span class="badge badge-success"><%= numberOfAnnotations %></span> <% } %></li>
+                <li>Number of user annotations : <% if (numberOfAnnotations == 0) { %> <span class="badge badge-error"><%= numberOfAnnotations %></span> <% } else if (numberOfAnnotations < 250) { %><span class="badge badge-warning"><%= numberOfAnnotations %></span> <% } else { %><span class="badge badge-success"><%= numberOfAnnotations %></span> <% } %></li>
+                <li>Number of job annotations : <% if (numberOfJobAnnotations == 0) { %> <span class="badge badge-error"><%= numberOfJobAnnotations %></span> <% } else if (numberOfJobAnnotations < 250) { %><span class="badge badge-warning"><%= numberOfJobAnnotations %></span> <% } else { %><span class="badge badge-success"><%= numberOfJobAnnotations %></span> <% } %></li>
             </ul>
         </div>
     </div>

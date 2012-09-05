@@ -21,6 +21,7 @@ class Project extends CytomineDomain {
     Discipline discipline
     boolean privateLayer = false
     long countAnnotations
+	long countJobAnnotations
     long countImages
 
     boolean retrievalDisable = false
@@ -80,6 +81,10 @@ class Project extends CytomineDomain {
 
     def countAnnotations() {
         countAnnotations  //may return null
+    }
+
+	def countJobAnnotations() {
+        countJobAnnotations  //may return null
     }
 
     def slides() {
@@ -185,6 +190,7 @@ class Project extends CytomineDomain {
             try {returnArray['numberOfSlides'] = project.countSlides()} catch (Exception e) {returnArray['numberOfSlides'] = -1}
             try {returnArray['numberOfImages'] = project.countImageInstance()} catch (Exception e) {returnArray['numberOfImages'] = -1}
             try {returnArray['numberOfAnnotations'] = project.countAnnotations()} catch (Exception e) {e.printStackTrace(); returnArray['numberOfAnnotations'] = -1}
+			try {returnArray['numberOfJobAnnotations'] = project.countJobAnnotations()} catch (Exception e) {e.printStackTrace(); returnArray['numberOfJobAnnotations'] = -1}
             try {returnArray['retrievalProjects'] = project.retrievalProjects.collect { it.id } } catch (Exception e) {println "users:"+e}
 
             returnArray['retrievalDisable'] = project.retrievalDisable

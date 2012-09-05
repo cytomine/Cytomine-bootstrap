@@ -17,7 +17,8 @@ var BrowseImageView = Backbone.View.extend({
         this.annotationsPanel = null;
         this.ontologyPanel = null;
         this.map = null;
-        this.nbDigitialZoom = Math.round(Math.log(80 / this.model.get('magnification')) / Math.log(2));//max zoom desired is 80X
+        //this.nbDigitialZoom = Math.round(Math.log(80 / this.model.get('magnification')) / Math.log(2));//max zoom desired is 80X
+        this.nbDigitialZoom = 0; //TMP DISABLED DUE TO OPENLAYERS BUG. http://dev.cytomine.be/jira/browse/CYTO-613
         this.digitalResolutions = [];
         for (var i = 0; i < this.nbDigitialZoom; i++) {
             this.digitalResolutions.push(1 / Math.pow(2, i+1));

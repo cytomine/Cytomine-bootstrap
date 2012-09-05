@@ -36,6 +36,7 @@ class HttpClient {
   BasicHttpContext localcontext
   URL URL
   HttpResponse response
+  int timeout = 2500;//2.5 seconds
 
   private Log log = LogFactory.getLog(HttpClient.class)
 
@@ -69,6 +70,7 @@ class HttpClient {
 
     byte[] getData() throws MalformedURLException, IOException, Exception {
         HttpGet httpGet = new HttpGet(URL.toString());
+        httpGet.getParams().setParameter("http.socket.timeout", new Integer(timeout));
         response = client.execute(targetHost, httpGet, localcontext);
         log.info("url=" + URL.toString() + " is " + response.getStatusLine().statusCode);
 

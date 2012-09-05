@@ -2,6 +2,8 @@ package cytomine.web
 
 import be.cytomine.ontology.Annotation
 import be.cytomine.social.SharedAnnotation
+import be.cytomine.image.ImageInstance
+import be.cytomine.project.Project
 
 /**
  * Cytomine @ GIGA-ULG
@@ -11,21 +13,45 @@ import be.cytomine.social.SharedAnnotation
  */
 class CountersService {
 
-        def sessionFactory
+    def sessionFactory
 
     def updateCounters() {
-        /*Project.list().each { project ->
+        Project.list().each { project ->
             println "update counter for project " + project.name
             def images = project.imagesinstance()
-            if (images.size() > 0) project.setCountAnnotations(Annotation.countByImageInList(images))
-            else project.setCountAnnotations(0L)
+            def users = project.users()
+            println "users = " + users
+            if (images.size() > 0) {
+                long totalCountAnnotations = Annotation.countByImageInList(images)
+                println "totalCountAnnotations = " + totalCountAnnotations
+                long totalCountAnnotationsByUser = Annotation.countByImageInListAndUserInList(images, users)
+                println "totalCountAnnotationsByUser = " + totalCountAnnotationsByUser
+                project.countAnnotations = totalCountAnnotationsByUser
+                project.countJobAnnotations = totalCountAnnotations - totalCountAnnotationsByUser
+            }
+            else {
+                project.setCountAnnotations(0L)
+                project.setCountJobAnnotations(0L)
+            }
             project.setCountImages(ImageInstance.countByProject(project))
-            project.save()
+            if (!project.validate()) {
+                project.errors.each {
+                    println it
+                }
+            } else {
+                println "Project OK : " + project
+                project.save(flush : true)
+            }
+            project.imagesinstance().each { image ->
+                long totalCountAnnotations = Annotation.countByImage(image)
+                long totalCountAnnotationsByUser = Annotation.countByImageAndUserInList(image, users)
+                image.setCountImageAnnotations(totalCountAnnotationsByUser)
+                image.setCountImageJobAnnotations(totalCountAnnotations - totalCountAnnotationsByUser)
+                image.save(flush : true)
+            }
+
         }
-        ImageInstance.list().each { image ->
-            image.setCountImageAnnotations(Annotation.countByImage(image))
-            image.save()
-        }*/
+
 
         sessionFactory.getCurrentSession().clear();
         def connection = sessionFactory.currentSession.connection()

@@ -1,5 +1,5 @@
 <div class="span3 well" style="text-align: center;min-height : 270px;padding: 0px;">
-    <div class="thumbnail" >
+    <div class="thumbnail" style="line-height: 1.25;">
         <div style="min-height: 256px;">
             <a id="lazyLoadImage<%= id %>" href='#tabs-image-<%= project %>-<%=  id  %>-'><img class="lazy" src='<%=  thumb  %>' alt='<%=  originalFilename  %>'  style="max-height:260px; max-width:100%;"  /></a>
         </div>
@@ -9,7 +9,8 @@
                 <b>Resolution</b> : <%= resolution %><br />
                 <b>Width</b> : <%= width %><br />
                 <b>Height</b> : <%= height %><br />
-                <b>Annotations</b> <% if (numberOfAnnotations == 0) { %> <span class="badge badge-error"><%= numberOfAnnotations %></span> <% } else if (numberOfAnnotations < 100) { %><span class="badge badge-warning"><%= numberOfAnnotations %></span> <% } else { %><span class="badge badge-success"><%= numberOfAnnotations %></span> <% } %></p>
+                <b>User annotations</b> <% if (numberOfAnnotations == 0) { %> <span class="badge badge-error"><%= numberOfAnnotations %></span> <% } else if (numberOfAnnotations < 100) { %><span class="badge badge-warning"><%= numberOfAnnotations %></span> <% } else { %><span class="badge badge-success"><%= numberOfAnnotations %></span> <% } %><br />
+                <b>Job annotations</b> : <%= numberOfJobAnnotations %></p>
             <p><a  class="btn btn-small" id="getImageProperties-<%= id %>" href="#"><i class="icon-info-sign"></i> More info</a> <a href='#tabs-image-<%= project %>-<%=  id  %>-' class="btn btn-inverse btn-small"><i class="icon-eye-open icon-white"></i> Explore</a></p>
         </div>
     </div>
