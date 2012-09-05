@@ -45,7 +45,6 @@ var ProjectSearchPanel = Backbone.View.extend({
         return this;
     },
     doLayout : function(tpl) {
-
         var self = this;
         var search = _.template(tpl, {});
         $(this.el).empty();
@@ -285,7 +284,6 @@ var ProjectSearchPanel = Backbone.View.extend({
 
         var self = this;
         $('#addproject').remove();
-        console.log('showAddProjectPanel');
         self.addProjectDialog = new AddProjectDialog({projectsPanel:self.projectsPanel,el:self.el, ontologies : self.ontologies}).render();
     },
     /**

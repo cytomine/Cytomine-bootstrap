@@ -27,8 +27,6 @@ var ProjectView = Backbone.View.extend({
         return this;
     },
     doLayout: function(tpl) {
-
-
         var self = this;
         $(this.el).find("#projectdiv").html(_.template(tpl, {}));
 

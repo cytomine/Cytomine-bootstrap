@@ -6,7 +6,7 @@ var ProjectController = Backbone.Router.extend({
         "project-manage-:idProject" : "manage"
     },
 
-    initView : function(callback) {
+    initView : function() {
         var self = this;
 
         var ontologies = null;
@@ -25,7 +25,8 @@ var ProjectController = Backbone.Router.extend({
 
             self.view.container.views.project = self.view;
 
-            if (_.isFunction(callback)) callback.call();
+            self.view.container.show(self.view, "#project", "project");
+            window.app.view.showComponent(window.app.view.components.project);
         }
 
         new OntologyCollection({ light : true }).fetch({
@@ -53,7 +54,9 @@ var ProjectController = Backbone.Router.extend({
         $("#warehouse-button").attr("href", "#project");
         $("#addimagediv").hide();
         $("#projectdiv").show();
+
         var projectCallback = function () {
+
             self.view.container.show(self.view, "#project", "project");
             window.app.view.showComponent(window.app.view.components.project);
             self.view.refresh();
@@ -63,7 +66,7 @@ var ProjectController = Backbone.Router.extend({
         }
 
         if (!this.view) {
-            this.initView(projectCallback);
+            this.initView();
         } else {
             projectCallback.call();
         }
