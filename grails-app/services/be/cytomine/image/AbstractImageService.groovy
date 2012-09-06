@@ -193,11 +193,23 @@ class AbstractImageService extends ModelService {
         }
     }
 
-    def crop(Annotation annotation, def zoom) {
-        if (zoom)
-            return annotation.toCropURL(zoom)
-        else
+    def cropWithMaxSize(Annotation annotation, int maxSize) {
+        return annotation.toCropURLWithMaxSize(maxSize)
+    }
+
+    def crop(Annotation annotation, Integer zoom) {
+        def boundaries = annotation.getBoundaries()
+        if (zoom != null) {
+            println "zoom=$zoom"
+
+            int desiredWidth = boundaries.width / Math.pow(2, zoom)
+            int desiredHeight = boundaries.height / Math.pow(2, zoom)
+            println "desiredWidth=$desiredWidth"
+            println "desiredHeight=$desiredHeight"
+            return cropWithMaxSize(annotation, Math.max(desiredHeight, desiredWidth))
+        } else {
             return annotation.toCropURL()
+        }
     }
 
     def retrieval(Annotation annotation, int zoom, int maxSimilarPictures) {

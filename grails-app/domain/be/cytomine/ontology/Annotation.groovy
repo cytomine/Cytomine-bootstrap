@@ -139,6 +139,11 @@ class Annotation extends CytomineDomain implements Serializable {
         return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height)
     }
 
+    def toCropURLWithMaxSize(int maxSize) {
+        def boundaries = getBoundaries()
+        return image.baseImage.getCropURLWithMaxWithOrHeight(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, maxSize,maxSize)
+    }
+
     def toCropURL(int zoom) {
         def boundaries = getBoundaries()
         return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, zoom)
@@ -246,7 +251,7 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['userByTerm'] = annotation.usersIdByTerm()
             try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
             returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
-            returnArray['smallCropURL'] = UrlApi.getAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl,annotation.id, 512)
+            returnArray['smallCropURL'] = UrlApi.getAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl,annotation.id, 256)
             returnArray['url'] = UrlApi.getAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
             returnArray['imageURL'] = UrlApi.getAnnotationURL(cytomineBaseUrl,imageinstance.project?.id, imageinstance.id, annotation.id)
             return returnArray

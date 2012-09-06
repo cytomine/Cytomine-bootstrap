@@ -181,6 +181,7 @@ class RestController {
 
     protected def responseImage(String url) {
           println "responseImage="+url
+
           withFormat {
               png {
                   if (request.method == 'HEAD') {
@@ -188,7 +189,7 @@ class RestController {
                   }
                   else {
                       HttpClient client = new HttpClient()
-                      client.timeout = 2000;
+                      client.timeout = 60000;
                       client.connect(url,"","")
                       byte[] imageData = client.getData()
                       //IIP Send JPEG, so we have to convert to PNG
@@ -203,18 +204,12 @@ class RestController {
               jpg {
                   if (request.method == 'HEAD') {
                       render(text: "", contentType: "image/jpeg")
+
                   }
-                  else {
-                      HttpClient client = new HttpClient()
-                      client.timeout = 2000;
-                      client.connect(url,"","")
-                      byte[] imageData = client.getData()
-                      response.contentLength = imageData.size();
-                      response.contentType = "image/jpeg"
-                      response.getOutputStream() << imageData
-                  }
+                  redirect(url: url)
               }
           }
+
       }
 
 
@@ -230,8 +225,8 @@ class RestController {
          //            InputStream input = new BufferedInputStream(new FileInputStream(url));
 //            input.read(out)
         }
-        InputStream inputStream = new ByteArrayInputStream(out.toByteArray());
-        return ImageIO.read(inputStream);
+        InputStream inputStream = new ByteArrayInputStream(out.toByteArray())
+        return ImageIO.read(inputStream)
     }
 
   protected def responseBufferedImage(BufferedImage bufferedImage) {

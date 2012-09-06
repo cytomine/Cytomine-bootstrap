@@ -16,7 +16,7 @@ class CountersService {
     def sessionFactory
 
     def updateCounters() {
-        Project.list().each { project ->
+        /*Project.list().each { project ->
             println "update counter for project " + project.name
             def images = project.imagesinstance()
             def users = project.users()
@@ -50,7 +50,7 @@ class CountersService {
                 image.save(flush : true)
             }
 
-        }
+        } */
 
 
         sessionFactory.getCurrentSession().clear();

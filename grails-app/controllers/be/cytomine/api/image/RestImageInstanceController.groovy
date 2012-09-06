@@ -133,7 +133,6 @@ class RestImageInstanceController extends RestController {
         int zoom = (params.zoom != null && params.zoom != "") ? Math.max(Math.min(Integer.parseInt(params.zoom), maxZoom), 0) : 0
         int resizeWidth = w / Math.pow(2, zoom)
         int resizeHeight = h / Math.pow(2, zoom)
-        println "ZOOM =" + zoom
         try {
             String url = abstractImage.getCropURL(x, y, w, h)
             BufferedImage bufferedImage = getImageFromURL(url)
@@ -275,6 +274,7 @@ class RestImageInstanceController extends RestController {
         }
         Integer zoom = null
         if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
+        println "zoom====$zoom"
         if (annotation == null)
             responseNotFound("Crop", "Annotation", params.annotation)
         else if ((params.zoom != null) && (zoom < annotation.getImage().getBaseImage().getZoomLevels().min || zoom > annotation.getImage().getBaseImage().getZoomLevels().max))

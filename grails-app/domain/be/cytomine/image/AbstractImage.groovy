@@ -170,8 +170,8 @@ class AbstractImage extends CytomineDomain {
         }
         def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getPreviewUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath())
-        return url
+        //String url = resolver.getPreviewUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath())
+        return getCropURLWithMaxWithOrHeight(0, this.height, this.width, this.height, 5096, 5096)
     }
 
     def getThumbURL() {
@@ -185,8 +185,9 @@ class AbstractImage extends CytomineDomain {
             desiredWidth /= 2
         }
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getThumbUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(), desiredWidth)
-        return url
+        return getCropURLWithMaxWithOrHeight(0, this.height, this.width, this.height, 256, 256)
+        /*String url = resolver.getThumbUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(), desiredWidth)
+        return url*/
     }
 
     def getMetadataURL() {

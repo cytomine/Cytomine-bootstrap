@@ -121,6 +121,8 @@ class RestImageController extends RestController {
     def crop = {
         Annotation annotation = Annotation.read(params.id)
         Integer zoom = 0
+        Integer maxSize = -1
+        if (params.max_size != null) maxSize =  Integer.parseInt(params.max_size)
         if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
         if (annotation == null)
             responseNotFound("Crop", "Annotation", params.id)
@@ -128,7 +130,13 @@ class RestImageController extends RestController {
             responseNotFound("Crop", "Zoom", zoom)
         else {
             try {
-                String cropURL = abstractImageService.crop(annotation, zoom)
+                String cropURL = null
+                if (maxSize != -1) {
+                    cropURL = abstractImageService.cropWithMaxSize(annotation, maxSize)
+                } else {
+                    cropURL = abstractImageService.crop(annotation, zoom)
+                }
+
                 if (cropURL == null) cropURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
                 responseImage(cropURL)
             } catch (Exception e) {
