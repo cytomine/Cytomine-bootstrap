@@ -26,7 +26,7 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
 
     void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
         tryAPIAuthentification(request, response)
-        chain.doFilter(request, response);
+        chain.doFilter(request, response)
     }
 
     void destroy() {}

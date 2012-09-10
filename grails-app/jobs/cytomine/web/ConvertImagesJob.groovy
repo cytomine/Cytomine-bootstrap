@@ -19,6 +19,7 @@ class ConvertImagesJob {
     }
 
     void execute(context) {
+        return
         if (GrailsUtil.environment != "production") return
         println "START (ConvertImagesJob)"
         UploadedFile.findAllByStatus(UploadedFile.UPLOADED).each { uploadedFile ->

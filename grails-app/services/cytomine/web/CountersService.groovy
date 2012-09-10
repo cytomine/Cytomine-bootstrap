@@ -50,7 +50,8 @@ class CountersService {
                 image.save(flush : true)
             }
 
-        } */
+        }*/
+
 
 
         sessionFactory.getCurrentSession().clear();

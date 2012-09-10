@@ -13,6 +13,7 @@ var AnnotationThumbView = Backbone.View.extend({
         var self = this;
         require(["text!application/templates/dashboard/AnnotationThumb.tpl.html"], function(tpl) {
             var annotationJSON = self.model.toJSON();
+            annotationJSON.rate = Math.round(annotationJSON.rate*100)/100;
             annotationJSON.sameUser = (window.app.status.user.id==annotationJSON.user);
             if(annotationJSON.rate!=undefined)
                 annotationJSON.data = (annotationJSON.rate*100)+"%";
@@ -21,9 +22,11 @@ var AnnotationThumbView = Backbone.View.extend({
 
             annotationJSON.colorStyle ="";
             if(annotationJSON.rate!=undefined) {
-                if(annotationJSON.rate > 0 && annotationJSON.rate<=0.33) annotationJSON.colorStyle = "important";
+                /*if(annotationJSON.rate > 0 && annotationJSON.rate<=0.33) annotationJSON.colorStyle = "important";
                 if(annotationJSON.rate > 0.33 && annotationJSON.rate<=0.66) annotationJSON.colorStyle = "warning";
-                if(annotationJSON.rate > 0.66 && annotationJSON.rate<=1) annotationJSON.colorStyle = "success";
+                if(annotationJSON.rate > 0.66 && annotationJSON.rate<=1) annotationJSON.colorStyle = "success";*/
+                if (annotationJSON.id_term == annotationJSON.id_expectedTerm) annotationJSON.colorStyle = "success";
+                else if (annotationJSON.id_term != annotationJSON.id_expectedTerm) annotationJSON.colorStyle = "important";
             }
 
 

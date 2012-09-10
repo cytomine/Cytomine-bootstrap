@@ -143,7 +143,7 @@ class RestAnnotationController extends RestController {
     }
 
 
-       //return a list of annotation (if list = [[annotation1,rate1],..], add rate value in annotation]
+       //return a list of annotation (if list = [[annotation1,rate1, term1, expectedTerm1],..], add rate value in annotation]
        private def mergeResults(def list) {
            //list = [ [a,b],...,[x,y]]  => [a.rate = b, x.rate = y...]
            if(list.isEmpty() || list[0] instanceof Annotation) return list
@@ -151,6 +151,8 @@ class RestAnnotationController extends RestController {
            list.each {
                Annotation annotation = it[0]
                annotation.rate = it[1]
+               annotation.id_term = it[2].id
+               annotation.id_expectedTerm = it[3].id
                result << annotation
            }
            return result
@@ -484,7 +486,8 @@ class RestAnnotationController extends RestController {
                     " AND annotation2.id = at2.annotation_id\n" +
                     " AND at1.term_id = ${term.id}\n" +
                     " AND at2.term_id = ${term.id}\n" +
-                    " AND ST_length2d(ST_Intersection(annotation1.location, annotation2.location))>=$minIntersectLength\n"
+                    " AND ST_Perimeter(ST_Intersection(annotation1.location, annotation2.location))>=$minIntersectLength\n"
+
 
 
         } else {
