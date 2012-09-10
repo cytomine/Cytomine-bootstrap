@@ -355,8 +355,9 @@ class AnnotationService extends ModelService {
                 inList('userJob', userList)
                 projections {
                     groupProperty("annotation")
+                    groupProperty("rate")
                 }
-                //order 'a.created', 'desc'
+                order 'rate', 'desc'
 
             }
             return criteria.unique()
@@ -369,8 +370,9 @@ class AnnotationService extends ModelService {
                 inList("a.image", imageInstanceList)
                 projections {
                     groupProperty("annotation")
+                    groupProperty("rate")
                 }
-               // order 'a.created', 'desc'
+                order 'rate', 'desc'
 
             }
             return criteria.unique()

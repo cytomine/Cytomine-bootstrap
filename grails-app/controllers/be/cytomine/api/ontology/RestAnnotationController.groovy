@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat
 import javax.imageio.ImageIO
 import groovy.sql.Sql
 import be.cytomine.ontology.AlgoAnnotationTerm
+import be.cytomine.security.UserJob
 
 class RestAnnotationController extends RestController {
 
@@ -105,6 +106,7 @@ class RestAnnotationController extends RestController {
         Integer offset = params.offset!=null? params.getInt('offset') : 0
         Integer max = params.max!=null? params.getInt('max') : Integer.MAX_VALUE
 
+
         println "offset=$offset max=$max"
 
         Collection<SecUser> userList = []
@@ -129,16 +131,31 @@ class RestAnnotationController extends RestController {
         else if (imageInstanceList.isEmpty()) responseNotFound("ImageInstance", params.images)*/
         else if(!params.suggestTerm) {
             def list = annotationService.list(project, term, userList, imageInstanceList)
-            if(params.offset!=null) responseSuccess([size:list.size(),collection:substract(list,offset,max)])
+            if(params.offset!=null) responseSuccess([size:list.size(),collection:substract(mergeResults(list),offset,max)])
             else responseSuccess(list)
         }
         else {
             Term suggestedTerm = termService.read(params.suggestTerm)
             def list = annotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')))
-            if(params.offset!=null) responseSuccess([size:list.size(),collection:substract(list,offset,max)])
+            if(params.offset!=null) responseSuccess([size:list.size(),collection:substract(mergeResults(list),offset,max)])
             else responseSuccess(list)
         }
     }
+
+
+       //return a list of annotation (if list = [[annotation1,rate1],..], add rate value in annotation]
+       private def mergeResults(def list) {
+           //list = [ [a,b],...,[x,y]]  => [a.rate = b, x.rate = y...]
+           if(list.isEmpty() || list[0] instanceof Annotation) return list
+           def result = []
+           list.each {
+               Annotation annotation = it[0]
+               annotation.rate = it[1]
+               result << annotation
+           }
+           return result
+       }
+
 
     def downloadDocumentByProject = {  //and filter by users and terms !
         // Export service provided by Export plugin

@@ -20,6 +20,7 @@ class Annotation extends CytomineDomain implements Serializable {
     String channels
     SecUser user
     Double similarity
+    Double rate
     Double geometryCompression
     Project project
     Annotation parent
@@ -28,7 +29,7 @@ class Annotation extends CytomineDomain implements Serializable {
     static belongsTo = [ImageInstance, Project]
     static hasMany = [annotationTerm: AnnotationTerm]
 
-    static transients = ["boundaries", "similarity"]
+    static transients = ["boundaries", "similarity","rate"]
 
     static constraints = {
         name(blank: true)
@@ -250,6 +251,7 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['term'] = annotation.termsId()
             returnArray['userByTerm'] = annotation.usersIdByTerm()
             try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
+            try {if (annotation?.rate) returnArray['rate'] = annotation.rate} catch (Exception e) {}
             returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
             returnArray['smallCropURL'] = UrlApi.getAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl,annotation.id, 256)
             returnArray['url'] = UrlApi.getAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
