@@ -388,131 +388,134 @@ class RestAnnotationController extends RestController {
 
 
     def union() {
-         ImageInstance image = ImageInstance.read(params.getLong('idImage'))
-         SecUser user = SecUser.read(params.getLong('idUser'))
-         Term term = Term.read(params.getLong('idTerm'))
-         Integer minIntersectLength = params.getInt('minIntersectionLength')
-         Integer bufferLength = params.getInt('bufferLength')
-         if(!image) responseNotFound("ImageInstance",params.getLong('idImage'))
-         else if(!term) responseNotFound("Term",params.getLong('idTerm'))
-         else if(!user) responseNotFound("User",params.getLong('idUser'))
-         else {
-             unionAnnotations(image, user,term,minIntersectLength,bufferLength)
-            responseSuccess([])
-         }
-     }
+        ImageInstance image = ImageInstance.read(params.getLong('idImage'))
+        SecUser user = SecUser.read(params.getLong('idUser'))
+        Term term = Term.read(params.getLong('idTerm'))
+        Integer minIntersectLength = params.getInt('minIntersectionLength')
+        Integer bufferLength = params.getInt('bufferLength')
+        if(!image) responseNotFound("ImageInstance",params.getLong('idImage'))
+        else if(!term) responseNotFound("Term",params.getLong('idTerm'))
+        else if(!user) responseNotFound("User",params.getLong('idUser'))
+        else {
+            unionAnnotations(image, user,term,minIntersectLength,bufferLength)
+            def data = [:]
+            data.annotationunion = [:]
+            data.annotationunion.status = "ok"
+            responseSuccess(data)
+        }
+    }
 
-     private def unionAnnotations(ImageInstance image, SecUser user, Term term, Integer minIntersectLength,Integer bufferLength) {
-         long start = System.currentTimeMillis()
-         int i = 0
+    private def unionAnnotations(ImageInstance image, SecUser user, Term term, Integer minIntersectLength,Integer bufferLength) {
+        long start = System.currentTimeMillis()
+        int i = 0
 
-         if(bufferLength) {
-             List<Annotation> annotations = Annotation.findAllByImageAndUser(image, user)
-             println "Buffer($bufferLength) annotations..."
-             annotations.each {
-                 if(AlgoAnnotationTerm.findWhere(annotation: it,userJob:user,term: term)) {
-                     it.location = it.location.buffer(bufferLength)
-                     it.save(flush: true)
-                 }
-             }
-         }
+        if(bufferLength) {
+            List<Annotation> annotations = Annotation.findAllByImageAndUser(image, user)
+            println "Buffer($bufferLength) annotations..."
+            annotations.each {
+                if(AlgoAnnotationTerm.findWhere(annotation: it,userJob:user,term: term)) {
+                    it.location = it.location.buffer(bufferLength)
+                    it.save(flush: true)
+                }
+            }
+        }
 
-         boolean restart = unionPostgisSQL(image, user,term,minIntersectLength,bufferLength)
-         while(restart && i<100) {
-             restart = unionPostgisSQL(image, user,term,minIntersectLength,bufferLength)
-             i++
-         }
+        boolean restart = unionPostgisSQL(image, user,term,minIntersectLength,bufferLength)
+        while(restart && i<100) {
+            restart = unionPostgisSQL(image, user,term,minIntersectLength,bufferLength)
+            i++
+        }
 
-         long end = System.currentTimeMillis()
-         println "#TIME#=" + (end - start)
-     }
+        long end = System.currentTimeMillis()
+        println "#TIME#=" + (end - start)
+    }
 
-     private boolean unionPostgisSQL(ImageInstance image, SecUser user, Term term,Integer minIntersectLength,Integer bufferLength) {
-         println "unionPostgisSQL"
+    private boolean unionPostgisSQL(ImageInstance image, SecUser user, Term term,Integer minIntersectLength,Integer bufferLength) {
+        println "unionPostgisSQL"
 
-         println "********************\n********************\n********************\n********************\n"
-         println "image=$image"
-         println "user=$user"
-         println "term=$term"
-         println "minIntersectLength=$minIntersectLength"
-         println "bufferLength=$bufferLength"
+        println "********************\n********************\n********************\n********************\n"
+        println "image=$image"
+        println "user=$user"
+        println "term=$term"
+        println "minIntersectLength=$minIntersectLength"
+        println "bufferLength=$bufferLength"
 
-         boolean mustBeRestart = false
-         //key = deleted annotation, value = annotation that take in the deleted annotation
-         //If y is deleted and merge with x, we add an entry <y,x>. Further if y had intersection with z, we replace "y" (deleted) by "x" (has now intersection with z).
-         HashMap<Long, Long> removedByUnion = new HashMap<Long, Long>(1024)
+        boolean mustBeRestart = false
+        //key = deleted annotation, value = annotation that take in the deleted annotation
+        //If y is deleted and merge with x, we add an entry <y,x>. Further if y had intersection with z, we replace "y" (deleted) by "x" (has now intersection with z).
+        HashMap<Long, Long> removedByUnion = new HashMap<Long, Long>(1024)
 
-         List<Annotation> annotations = Annotation.findAllByImageAndUser(image, user)
-         println "valide annotation..."
-         annotations.each {
-             if (!it.location.isValid()) {
-                 it.location = it.location.buffer(0)
-                 it.save(flush: true)
-             }
-         }
+        List<Annotation> annotations = Annotation.findAllByImageAndUser(image, user)
+        println "valide annotation..."
+        annotations.each {
+            if (!it.location.isValid()) {
+                it.location = it.location.buffer(0)
+                it.save(flush: true)
+            }
+        }
 
-         String request
-         if(bufferLength==null) {
+        String request
+        if(bufferLength==null) {
             request = "SELECT annotation1.id as id1, annotation2.id as id2\n" +
-                                          " FROM annotation annotation1, annotation annotation2, algo_annotation_term at1, algo_annotation_term at2\n" +
-                                          " WHERE annotation1.image_id = $image.id\n" +
-                                          " AND annotation2.image_id = $image.id\n" +
-                                          " AND annotation2.created > annotation1.created\n" +
-                                          " AND annotation1.user_id = ${user.id}\n" +
-                                          " AND annotation2.user_id = ${user.id}\n" +
-                                          " AND annotation1.id = at1.annotation_id\n" +
-                                          " AND annotation2.id = at2.annotation_id\n" +
-                                          " AND at1.term_id = ${term.id}\n" +
-                                          " AND at2.term_id = ${term.id}\n" +
-                                          " AND ST_length2d(ST_Intersection(annotation1.location, annotation2.location))>=$minIntersectLength\n"
+                    " FROM annotation annotation1, annotation annotation2, algo_annotation_term at1, algo_annotation_term at2\n" +
+                    " WHERE annotation1.image_id = $image.id\n" +
+                    " AND annotation2.image_id = $image.id\n" +
+                    " AND annotation2.created > annotation1.created\n" +
+                    " AND annotation1.user_id = ${user.id}\n" +
+                    " AND annotation2.user_id = ${user.id}\n" +
+                    " AND annotation1.id = at1.annotation_id\n" +
+                    " AND annotation2.id = at2.annotation_id\n" +
+                    " AND at1.term_id = ${term.id}\n" +
+                    " AND at2.term_id = ${term.id}\n" +
+                    " AND ST_length2d(ST_Intersection(annotation1.location, annotation2.location))>=$minIntersectLength\n"
 
 
-         } else {
+        } else {
             request = "SELECT annotation1.id as id1, annotation2.id as id2\n" +
-                             " FROM annotation annotation1, annotation annotation2, algo_annotation_term at1, algo_annotation_term at2\n" +
-                             " WHERE annotation1.image_id = $image.id\n" +
-                             " AND annotation2.image_id = $image.id\n" +
-                             " AND annotation2.created > annotation1.created\n" +
-                             " AND annotation1.user_id = ${user.id}\n" +
-                             " AND annotation2.user_id = ${user.id}\n" +
-                             " AND annotation1.id = at1.annotation_id\n" +
-                             " AND annotation2.id = at2.annotation_id\n" +
-                             " AND at1.term_id = ${term.id}\n" +
-                             " AND at2.term_id = ${term.id}\n" +
-                             " AND ST_Perimeter(ST_Intersection(ST_Buffer(annotation1.location,$bufferLength), ST_Buffer(annotation2.location,$bufferLength)))>=$minIntersectLength\n"
-         }
+                    " FROM annotation annotation1, annotation annotation2, algo_annotation_term at1, algo_annotation_term at2\n" +
+                    " WHERE annotation1.image_id = $image.id\n" +
+                    " AND annotation2.image_id = $image.id\n" +
+                    " AND annotation2.created > annotation1.created\n" +
+                    " AND annotation1.user_id = ${user.id}\n" +
+                    " AND annotation2.user_id = ${user.id}\n" +
+                    " AND annotation1.id = at1.annotation_id\n" +
+                    " AND annotation2.id = at2.annotation_id\n" +
+                    " AND at1.term_id = ${term.id}\n" +
+                    " AND at2.term_id = ${term.id}\n" +
+                    " AND ST_Perimeter(ST_Intersection(ST_Buffer(annotation1.location,$bufferLength), ST_Buffer(annotation2.location,$bufferLength)))>=$minIntersectLength\n"
+        }
 
-         def sql = new Sql(dataSource)
+        def sql = new Sql(dataSource)
 
 
-         sql.eachRow(request) {
+        sql.eachRow(request) {
 
-             long idBased = it[0]
-             //check if annotation has be deleted (because merge), if true get the union annotation
-             if (removedByUnion.containsKey(it[0]))
-                 idBased = removedByUnion.get(it[0])
+            long idBased = it[0]
+            //check if annotation has be deleted (because merge), if true get the union annotation
+            if (removedByUnion.containsKey(it[0]))
+                idBased = removedByUnion.get(it[0])
 
-             long idCompared = it[1]
-             //check if annotation has be deleted (because merge), if true get the union annotation
-             if (removedByUnion.containsKey(it[1]))
-                 idCompared = removedByUnion.get(it[1])
+            long idCompared = it[1]
+            //check if annotation has be deleted (because merge), if true get the union annotation
+            if (removedByUnion.containsKey(it[1]))
+                idCompared = removedByUnion.get(it[1])
 
-             Annotation based = Annotation.get(idBased)
-             Annotation compared = Annotation.get(idCompared)
+            Annotation based = Annotation.get(idBased)
+            Annotation compared = Annotation.get(idCompared)
 
-             if (based && compared && based.id != compared.id) {
-                 mustBeRestart = true
-                 based.location = based.location.union(compared.location)
-                 removedByUnion.put(compared.id, based.id)
-                 //save new annotation with union location
+            if (based && compared && based.id != compared.id) {
+                mustBeRestart = true
+                based.location = based.location.union(compared.location)
+                removedByUnion.put(compared.id, based.id)
+                //save new annotation with union location
 
-                 domainService.saveDomain(based)
-                 //remove old annotation with data
-                 AlgoAnnotationTerm.executeUpdate("delete AlgoAnnotationTerm aat where aat.annotation = :annotation", [annotation: compared])
-                 domainService.deleteDomain(compared)
+                domainService.saveDomain(based)
+                //remove old annotation with data
+                AlgoAnnotationTerm.executeUpdate("delete AlgoAnnotationTerm aat where aat.annotation = :annotation", [annotation: compared])
+                domainService.deleteDomain(compared)
 
-             }
-         }
-         return mustBeRestart
-     }
+            }
+        }
+        return mustBeRestart
+    }
 }

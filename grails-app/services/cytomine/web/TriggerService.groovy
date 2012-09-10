@@ -133,11 +133,13 @@ class TriggerService {
 		IF current_class = user_class THEN
             UPDATE project
             SET count_annotations = count_annotations - 1
+            FROM image_instance
             WHERE project.id = image_instance.project_id
             AND image_instance.id = OLD.image_id;
 		ELSEIF current_class = job_class THEN
             UPDATE project
             SET count_job_annotations = count_job_annotations - 1
+            FROM image_instance
             WHERE project.id = image_instance.project_id
             AND image_instance.id = OLD.image_id;
 		END IF;
@@ -163,11 +165,11 @@ class TriggerService {
             user_class sec_user.class%TYPE := 'be.cytomine.security.User';
             job_class sec_user.class%TYPE := 'be.cytomine.security.UserJob';
         BEGIN
-        SELECT class INTO current_class from sec_user where id = OLD.user_id;
+        SELECT class INTO current_class from sec_user where id = NEW.user_id;
         IF current_class = user_class THEN
             UPDATE image_instance
             SET count_image_annotations = count_image_annotations + 1
-            WHERE image_instance.id = NEW.image_id; RETURN NEW;
+            WHERE image_instance.id = NEW.image_id;
         ELSEIF current_class = job_class THEN
             UPDATE image_instance
             SET count_image_job_annotations = count_image_job_annotations + 1
