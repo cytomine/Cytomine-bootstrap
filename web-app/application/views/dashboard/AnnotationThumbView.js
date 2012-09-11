@@ -25,8 +25,8 @@ var AnnotationThumbView = Backbone.View.extend({
                 /*if(annotationJSON.rate > 0 && annotationJSON.rate<=0.33) annotationJSON.colorStyle = "important";
                 if(annotationJSON.rate > 0.33 && annotationJSON.rate<=0.66) annotationJSON.colorStyle = "warning";
                 if(annotationJSON.rate > 0.66 && annotationJSON.rate<=1) annotationJSON.colorStyle = "success";*/
-                if (annotationJSON.id_term == annotationJSON.id_expectedTerm) annotationJSON.colorStyle = "success";
-                else if (annotationJSON.id_term != annotationJSON.id_expectedTerm) annotationJSON.colorStyle = "important";
+                if (annotationJSON.idTerm == annotationJSON.idExpectedTerm) annotationJSON.colorStyle = "success";
+                else if (annotationJSON.idTerm != annotationJSON.idExpectedTerm) annotationJSON.colorStyle = "important";
             }
 
 

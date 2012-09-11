@@ -151,8 +151,8 @@ class RestAnnotationController extends RestController {
            list.each {
                Annotation annotation = it[0]
                annotation.rate = it[1]
-               annotation.id_term = it[2].id
-               annotation.id_expectedTerm = it[3].id
+               annotation.idTerm = it[2].id
+               annotation.idExpectedTerm = it[3].id
                result << annotation
            }
            return result

@@ -374,6 +374,8 @@ class AnnotationService extends ModelService {
                 projections {
                     groupProperty("annotation")
                     groupProperty("rate")
+                    groupProperty("term")
+                    groupProperty("expectedTerm")
                 }
                 order 'rate', 'desc'
 

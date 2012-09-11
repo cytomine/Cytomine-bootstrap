@@ -27,14 +27,14 @@ class Annotation extends CytomineDomain implements Serializable {
     /* Transients values for JSON/XML rendering */
     Double similarity
     Double rate
-    Integer id_term
-    Integer id_expectedTerm
+    Long idTerm
+    Long idExpectedTerm
 
 
     static belongsTo = [ImageInstance, Project]
     static hasMany = [annotationTerm: AnnotationTerm]
 
-    static transients = ["boundaries", "similarity","rate", "id_term", "id_expectedTerm"]
+    static transients = ["boundaries", "similarity","rate", "idTerm", "idExpectedTerm"]
 
     static constraints = {
         name(blank: true)
@@ -257,8 +257,8 @@ class Annotation extends CytomineDomain implements Serializable {
             returnArray['userByTerm'] = annotation.usersIdByTerm()
             try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
             try {if (annotation?.rate) returnArray['rate'] = annotation.rate} catch (Exception e) {}
-            try {if (annotation?.rate) returnArray['id_term'] = annotation.id_term} catch (Exception e) {}
-            try {if (annotation?.rate) returnArray['id_expectedTerm'] = annotation.id_expectedTerm} catch (Exception e) {}
+            try {if (annotation?.rate) returnArray['idTerm'] = annotation.idTerm} catch (Exception e) {}
+            try {if (annotation?.rate) returnArray['idExpectedTerm'] = annotation.idExpectedTerm} catch (Exception e) {}
             returnArray['cropURL'] = UrlApi.getAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
             returnArray['smallCropURL'] = UrlApi.getAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl,annotation.id, 256)
             returnArray['url'] = UrlApi.getAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
