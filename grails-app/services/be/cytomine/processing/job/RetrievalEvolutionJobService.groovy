@@ -28,20 +28,21 @@ class RetrievalEvolutionJobService extends AbstractJobService{
 
         //get job params
         String[] jobParams = getParametersValues(job)
-        String[] args = new String[jobParams.length+7]
+        String[] args = new String[jobParams.length+8]
         //build software params
         args[0] = "java"
-        args[1] = "-Xmx2G"
-        args[2] = "-cp"
-        args[3] = applicPath
-        args[4] = "retrieval.algo.suggestAnnotation.SuggestAnnotationEvolution"
+        args[1] = "-Djava.library.path=/usr/local/lib"
+        args[2] = "-Xmx2G"
+        args[3] = "-cp"
+        args[4] = applicPath
+        args[5] = "retrieval.algo.suggestAnnotation.SuggestAnnotationEvolution"
 
-        args[5] = job.software.id
-        args[6] = UserJob.findByJob(job).user.id
+        args[6] = job.software.id
+        args[7] = UserJob.findByJob(job).user.id
 
-
+        println "command="+ Arrays.toString(args)
         for(int i=0;i<jobParams.length;i++) {
-            args[i+7] = jobParams[i]
+            args[i+8] = jobParams[i]
         }
 
 
