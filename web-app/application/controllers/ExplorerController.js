@@ -4,7 +4,9 @@ var ExplorerController = Backbone.Router.extend({
     tabs : null,
 
     routes: {
+        "tabs-annotation-:idAnnotation"   :   "browseAnnotation",
         "tabs-image-:idProject-:idImage-:idAnnotation"   :   "browse",
+
         "close"   :   "close"
     },
 
@@ -17,7 +19,19 @@ var ExplorerController = Backbone.Router.extend({
             container : window.app.view.components.explorer
         }).render();
     },
+
+    browseAnnotation : function (idAnnotation) {
+        var self = this;
+       console.log("browseAnnotation");
+        //allow to access an annotation without knowing its projet/image (usefull to access annotation when we just have annotationTerm data).
+        new AnnotationModel({id : idAnnotation}).fetch({
+            success : function (model, response) {
+                self.browse(model.get("project"),model.get("image"),idAnnotation);
+            }
+        });
+    },
     browse : function (idProject, idImage, idAnnotation) {
+        console.log("browse");
         /*
          if (window.app.secondaryWindow) {
          window.app.secondaryWindow.location = window.location;

@@ -319,13 +319,13 @@ var RetrievalAlgoResult = Backbone.View.extend({
                     for (var i = 0; i < annotationsTerms.length; i++) {
                         var annotationTerm = annotationsTerms[i];
                         var rate = Math.round(annotationTerm.rate * 100) - 1 + "%";
-
+                        console.log("annotationTerm.image="+annotationTerm.image);
                         var suggestedTerm = terms.get(annotationTerm.term).get('name');
                         var termsAnnotation = terms.get(annotationTerm.expectedTerm).get('name');
 //                            _.each(annotation.get('term'), function(idTerm){ realTerms.push(terms.get(idTerm).get('name')); });
                         //var termsAnnotation =  realTerms.join();
-                        var text = "<b>" + suggestedTerm + "</b> for annotation " + annotationTerm.annotation + " instead of <b>" + termsAnnotation + "</b>";
-
+                        //var text = "<b>" + suggestedTerm + "</b> for annotation " + annotationTerm.annotation + " instead of <b>" + termsAnnotation + "</b>";
+                        var text = "Annotation "+ annotationTerm.annotation + " is predicted " + suggestedTerm + " instead of " + termsAnnotation;
                         var cropStyle = "block";
                         var cropURL = annotationTerm.cropURL;
 
