@@ -1,6 +1,6 @@
 var AnnotationView = Backbone.View.extend({
     tagName : "div",
-    nb_thumb_by_page : 24,
+    nb_thumb_by_page : 50,
     pagination_window : 3,
     nbAnnotation : -1,
     initialize: function(options) {

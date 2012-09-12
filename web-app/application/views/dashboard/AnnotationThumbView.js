@@ -11,40 +11,67 @@ var AnnotationThumbView = Backbone.View.extend({
 
     render: function() {
         var self = this;
-        require(["text!application/templates/dashboard/AnnotationThumb.tpl.html"], function(tpl) {
-            var annotationJSON = self.model.toJSON();
-            annotationJSON.rate = Math.round(annotationJSON.rate*100)/100;
-            annotationJSON.sameUser = (window.app.status.user.id==annotationJSON.user);
-            if(annotationJSON.rate!=undefined)
-                annotationJSON.data = (annotationJSON.rate*100)+"%";
+        require(["text!application/templates/dashboard/AnnotationThumb.tpl.html", "text!application/templates/dashboard/AnnotationPopOverThumb.tpl.html"], function(tpl, popoverTpl) {
+            var annotation = self.model.clone();
+
+            var date_or_rate = undefined;
+            if(annotation.get("rate")!=undefined && !isNaN(annotation.get("rate")))
+                date_or_rate = Math.round(annotation.get("rate")*10000)/100 + "%";
             else
-                annotationJSON.data = window.app.convertLongToDate(annotationJSON.created);
+                date_or_rate = window.app.convertLongToDate(annotation.get("created"));
 
-            annotationJSON.colorStyle ="";
-            if(annotationJSON.rate!=undefined) {
-                /*if(annotationJSON.rate > 0 && annotationJSON.rate<=0.33) annotationJSON.colorStyle = "important";
-                if(annotationJSON.rate > 0.33 && annotationJSON.rate<=0.66) annotationJSON.colorStyle = "warning";
-                if(annotationJSON.rate > 0.66 && annotationJSON.rate<=1) annotationJSON.colorStyle = "success";*/
-                if (annotationJSON.idTerm == annotationJSON.idExpectedTerm) annotationJSON.colorStyle = "success";
-                else if (annotationJSON.idTerm != annotationJSON.idExpectedTerm) annotationJSON.colorStyle = "important";
-            }
+            var colorStyle = undefined;
+            if (annotation.get("idTerm") == annotation.get("idExpectedTerm")) colorStyle = "#cccccc";
+            else if (annotation.get("idTerm") != annotation.get("idExpectedTerm")) {colorStyle = "#F89406"};
 
+            annotation.set({
+                sameUser : (window.app.status.user.id==annotation.get("user")),
+                date_or_rate : date_or_rate,
+                colorStyle : colorStyle
+            });
 
-            $(self.el).html(_.template(tpl, annotationJSON));
-            $(self.el).attr("data-annotation", self.model.get("id"));
+            $(self.el).html(_.template(tpl, annotation.toJSON()));
+            $(self.el).attr("data-annotation", annotation.get("id"));
             if (self.term != undefined) $(self.el).attr("data-term", self.term);
 
+
             //POPOVER
-            /*
-            var thumb = $(self.el).find(".thumb");
-            var popoverTitle = _.template("<%= name %>", {name : self.term.get('name')});
-            var popoverContent = _.template("<%= name %>", {name : self.term.get('name')});
-            thumb.attr("data-original-title", popoverTitle);
-            thumb.attr("data-content", popoverContent);
-            thumb.popover({
+            //See if algo suggest something and agrees
+            var userByTerm = []
+            _.each(annotation.get("userByTerm"), function (it) {
+                var termName = window.app.status.currentTermsCollection.get(it.term).get('name');
+                var userName = [];
+                _.each(it.user, function (user_id) {
+                    userName.push(window.app.models.users.get(user_id).prettyName());
+                })
+                userByTerm.push({
+                    userName : userName.join(" and "),
+                    termName : termName
+                });
+            });
+
+            var termName = undefined;
+            var expectedTermName = undefined;
+            if (annotation.get("idTerm") != annotation.get("idExpectedTerm")) {
+                termName =  window.app.status.currentTermsCollection.get(annotation.get("idTerm")).get('name');
+                expectedTermName = window.app.status.currentTermsCollection.get(annotation.get("idExpectedTerm")).get('name')
+            }
+            var popoverContent = _.template(popoverTpl, {
+                created : window.app.convertLongToDate(annotation.get("created")),
+                userName : window.app.models.users.get(annotation.get("user")).prettyName(),
+                userByTerm : userByTerm,
+                termName : termName,
+                expectedTermName : expectedTermName
+            });
+
+            $(self.el).popover({
                 html : true,
-                placement : "below"
-            });*/
+                title : 'Annotation details',
+                content : popoverContent,
+                placement : 'right',
+                trigger : 'hover'
+            });
+
             self.initDraggable();
         });
         return this;

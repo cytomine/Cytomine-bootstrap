@@ -1,20 +1,31 @@
-<div class="tab-pane">
-    <a href='#tabs-image-<%= project %>-<%=  image  %>-<%= id %>'>
-        <div class="thumbnail">
-            <div style="min-height: 150px;" id="lazyLoadAnnotation<%= id %>">
-                <img id='AnnotationThumbCrop-<%= id %>' src='<%=  smallCropURL  %>' alt='alt |<%=  name  %>|' style="max-height:150px; max-width:150px; "  />
-                <div></div>
-            </div>
-            <span class="badge badge-<%= colorStyle %>"><%=  data  %></span>
-            <div class="caption">
-                <a  class="btn btn-info btn-small"  href="#share-annotation/<%= id %>"><i class="icon-comment icon-white" /> Comment (<%= nbComments %>)</a> <a  class="btn btn-info btn-small" href='#tabs-image-<%= project %>-<%=  image  %>-<%= id %>'><i class="icon-eye-open icon-white" /> View</a> <a  class="btn btn-warning btn-small" style="display: none;" href="#delete-annotation/<%= id %>"><i class="icon-trash icon-white" /> </a>
+<div style="border: 1px solid; border-color: <%= colorStyle %>;width : 100px; height: 100px;position: relative;text-align: center;">
 
-                <% if (!sameUser) { %>
-                    <a  class="btn btn-info btn-small"  href="#copy-annotation/<%= id %>"><i class="icon-magnet icon-white" /> Copy </a>
-                <% } else { %>
-                    <a  class="btn btn-info btn-small disabled"  href="#copy-annotation/<%= id %>"><i class="icon-magnet icon-white" /> Copy </a>
-                <% } %>
-            </div>
-        </div>
+    <a href='#tabs-image-<%= project %>-<%=  image  %>-<%= id %>'>
+        <img id='AnnotationThumbCrop-<%= id %>' src='<%=  smallCropURL  %>' alt='alt |<%=  name  %>|' style="max-height:100px; max-width:100px;"  />
     </a>
+
+    <% if (date_or_rate) { %>
+    <div style="position: absolute;width : 100px; bottom : 1px; left : 0px;">
+        <span class="badge badge-inverse"><%= date_or_rate %></span>
+    </div>
+    <% } %>
+    <div style="position: absolute;right : 0px;top : 0px;margin: auto;">
+        <div class="btn-group dropup">
+            <a class="btn btn-mini dropdown-toggle "  id="drop4" role="button" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+            <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="drop4">
+                <% if (!sameUser) { %>
+                <li><a href="#copy-annotation/<%= id %>"> Copy </a></li>
+                <li class="divider"></li>
+                <% } %>
+                <li><a tabindex="-1" href="#share-annotation/<%= id %>"> Comment (<%= nbComments %>)</a></li>
+                <li><a tabindex="-1" style="display: none;" href="#delete-annotation/<%= id %>"> </a></li>
+                <li><a tabindex="-1" href='#tabs-image-<%= project %>-<%=  image  %>-<%= id %>'> View</a></li>
+
+            </ul>
+        </div>
+    </div>
+
+
+
+
 </div>

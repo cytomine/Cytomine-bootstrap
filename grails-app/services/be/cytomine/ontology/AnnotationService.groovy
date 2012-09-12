@@ -306,11 +306,11 @@ class AnnotationService extends ModelService {
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
-         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob ) {
+        if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob ) {
             listForUserJob(project, term, userList, imageInstanceList)
-         } else {
-             listForUser(project, term, userList, imageInstanceList)
-         }
+        } else {
+            listForUser(project, term, userList, imageInstanceList)
+        }
     }
 
     private def listForUser(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
@@ -356,14 +356,12 @@ class AnnotationService extends ModelService {
                 projections {
                     groupProperty("annotation")
                     groupProperty("rate")
-                    groupProperty("term")
-                    groupProperty("expectedTerm")
-
+                    groupProperty("term.id")
+                    groupProperty("expectedTerm.id")
                 }
                 order 'rate', 'desc'
-
             }
-            return criteria.unique()
+            return criteria
         } else {
             def criteria = AlgoAnnotationTerm.withCriteria() {
                 createAlias("annotation", "a")
@@ -374,15 +372,16 @@ class AnnotationService extends ModelService {
                 projections {
                     groupProperty("annotation")
                     groupProperty("rate")
-                    groupProperty("term")
-                    groupProperty("expectedTerm")
+                    groupProperty("term.id")
+                    groupProperty("expectedTerm.id")
                 }
                 order 'rate', 'desc'
-
             }
-            return criteria.unique()
+            return criteria
         }
     }
+
+
 
     Annotation get(def id) {
         Annotation.get(id)

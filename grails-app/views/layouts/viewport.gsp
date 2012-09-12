@@ -31,13 +31,14 @@
 
 
 <!--<link rel="stylesheet" href="http://bootswatch.com/cerulean/bootstrap.min.css"/>-->
-<link rel="stylesheet" href="lib/bootstrap-2.0.4/css/bootstrap.css"/>
+<link rel="stylesheet" href="lib/bootstrap-2.1.1/css/bootstrap.css"/>
 <style type="text/css">
 body {
-    padding-top: 40px;
+    padding-top: 44px;
+
 }
 </style>
-<link rel="stylesheet" href="lib/bootstrap-2.0.4/css/bootstrap-responsive.min.css"/>
+<link rel="stylesheet" href="lib/bootstrap-2.1.1/css/bootstrap-responsive.min.css"/>
 
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
@@ -62,7 +63,7 @@ body {
     <script type="text/javascript" src="lib/requirejs/require.js"></script>
 
     <!-- Twitter bootstrap -->
-    <script type="text/javascript" src="lib/bootstrap-2.0.4/js/bootstrap.js"></script>
+    <script type="text/javascript" src="lib/bootstrap-2.1.1/js/bootstrap.js"></script>
 
     <!-- Core Libs -->
     <script type="text/javascript" src="lib/underscore.js"></script>

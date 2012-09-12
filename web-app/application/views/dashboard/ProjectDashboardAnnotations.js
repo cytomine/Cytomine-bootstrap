@@ -503,7 +503,6 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     children: collection.toJSON(),
                     onSelect: function(select, node) {
                         //if(!self.activeEvent) return;
-                        console.log("EVENT ON JOBS SELECTION");
                         if (node.isSelected()) {
                             //disable all node from user
                             self.hideAllUsers(false);
@@ -512,7 +511,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                         else {
                             self.selectedJobs = _.without(self.selectedJobs, node.data.key);
                         }
-                        console.log("printAnnotationThumbAllTerms:"+self.shouldRefresh);
+
                         if (self.shouldRefresh) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers,self.selectedJobs, self.selectedImages);
                     },
                     onDblClick: function(node, event) {
@@ -525,9 +524,10 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     idPrefix: "dynatree-Cbjobs-"+self.model.id+"-"
                 });
                 self.jobTreeLoaded = true;
-                $(self.el).find('#treeJobListing').dynatree("getRoot").visit(function(node){
-                    node.expand(true);
-                });
+                //expand root node
+                var rootNode = $("#treeJobListing").dynatree("getTree").getNodeByKey(self.model.id);
+                rootNode.expand(true);
+
             }});
     },
     /**
@@ -625,11 +625,9 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
      */
     printAnnotationThumbAllTerms : function(terms,users,jobs,images) {
         var self = this;
-        console.log("printAnnotationThumbAllTerms x");
         self.updateContentVisibility();
         self.updateDownloadLinks();
         if (_.size(users) == 0 && _.size(jobs) == 0) return; //nothing to display
-        console.log("terms="+terms);
         for(var i=0;i<terms.length;i++) {
             self.printAnnotationThumb(terms[i],"#tabsterm-"+self.model.id+"-"+terms[i],users, jobs,images);
         }

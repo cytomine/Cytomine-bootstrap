@@ -123,7 +123,7 @@
 <fileset dir="${src.dir}" includes="application/views/processing/JobTableView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobSearchEngineView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/result/RetrievalAlgoResult.js"/>
-<fileset dir="${src.dir}" includes="application/views/processing/result/RetrievalAlgoResult.js"/>
+<fileset dir="${src.dir}" includes="application/views/processing/result/EvolutionAlgoResult.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/result/DefaultResult.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/result/DownloadFiles.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationLayer.js"/>

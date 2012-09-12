@@ -1,7 +1,6 @@
 <div id='projectlist<%= id %>' class="well span2" style="padding: 5px;margin: 0 15px 15px 0px;min-width: 280px;font-size: 12px;">
-    <h3 style="padding-left : 10px;display:inline"><a href="#tabs-dashboard-<%= id %>" style="color:#000;"><%= title %></a></h3>
-    <hr />
-    <div class="row" style="min-height : 205px;">
+    <h4 style="display:inline"><a href="#tabs-dashboard-<%= id %>" style="color:#000;"><%= title %></a></h4>
+    <div class="row" style="min-height : 250px;padding-top : 10px;">
         <div style="padding-left : 10px;">
             <ul >
                 <li>Name : <a href="#tabs-dashboard-<%= id %>"><%= name %></a></li>
@@ -21,10 +20,10 @@
             </ul>
         </div>
     </div>
-    <button class="editProject btn " id="editProjectButton<%= id %>" style="display : inline-block;">Edit</button>
-    <button class="deleteProject btn " id="deleteProjectButton<%= id %>" style="display : inline-block;">Delete</button>
-    <button class="addSlide btn" id='projectaddimages<%= id %>' type="button">Images</button>
-    <a href="#tabs-dashboard-<%= id %>"><button class="btn btn-inverse" id='radioprojectchange<%= id %>'>Open</button></a>
+    <button class="editProject btn btn-small" id="editProjectButton<%= id %>" style="display : inline-block;">Edit</button>
+    <button class="deleteProject btn btn-small" id="deleteProjectButton<%= id %>" style="display : inline-block;">Delete</button>
+    <button class="addSlide btn btn-small" id='projectaddimages<%= id %>' type="button">Images</button>
+    <a href="#tabs-dashboard-<%= id %>"><button class="btn btn-inverse btn-small" id='radioprojectchange<%= id %>'>Open</button></a>
 
 
     <!--<a class="addSlide" id='projectaddimages<%= id %>' href="#project-manage-<%= id %>">Manage samples</a>-->

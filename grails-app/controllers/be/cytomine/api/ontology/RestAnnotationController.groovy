@@ -131,16 +131,18 @@ class RestAnnotationController extends RestController {
         else if (imageInstanceList.isEmpty()) responseNotFound("ImageInstance", params.images)*/
         else if(!params.suggestTerm) {
             def list = annotationService.list(project, term, userList, imageInstanceList)
-            if(params.offset!=null) responseSuccess([size:list.size(),collection:substract(mergeResults(list),offset,max)])
+            if(params.offset!=null) responseSuccess([size:list.size(),collection:mergeResults(substract(list,offset,max))])
             else responseSuccess(list)
         }
         else {
             Term suggestedTerm = termService.read(params.suggestTerm)
             def list = annotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')))
-            if(params.offset!=null) responseSuccess([size:list.size(),collection:substract(mergeResults(list),offset,max)])
+            if(params.offset!=null) responseSuccess([size:list.size(),collection:mergeResults(substract(list,offset,max))])
             else responseSuccess(list)
         }
     }
+
+
 
 
        //return a list of annotation (if list = [[annotation1,rate1, term1, expectedTerm1],..], add rate value in annotation]
@@ -151,8 +153,8 @@ class RestAnnotationController extends RestController {
            list.each {
                Annotation annotation = it[0]
                annotation.rate = it[1]
-               annotation.idTerm = it[2].id
-               annotation.idExpectedTerm = it[3].id
+               annotation.idTerm = it[2]
+               annotation.idExpectedTerm = it[3]
                result << annotation
            }
            return result

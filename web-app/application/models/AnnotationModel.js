@@ -138,17 +138,12 @@ var AnnotationCollection = Backbone.Collection.extend({
     build : function () {
         var self = this;
         var model = self.at(0);
-        console.log("**********************");
-        console.log(model);
-        console.log(model.get("size"));
         var coll = model.get("collection");
-        console.log(self.size() + " items in collection");
         this.remove(self.models);
         this.fullSize = model.get("size");
         _.each(coll, function(item) {
             self.add(item);
         });
-        console.log(self.size() + " items in collection");
     }
 
 

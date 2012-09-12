@@ -1,5 +1,5 @@
 html, body {
-    background-image: url('../images/first_aid_kit.png');
+    background-image: url('../images/tiny_grid.png');
 }
 
 
@@ -42,8 +42,8 @@ span.version {
 
 
 .thumb-wrap{
-    text-align: center;
-    vertical-align: middle;
+    text-align: left;
+    vertical-align: top;
     display: inline-block;
     padding: 5px;
 
@@ -489,7 +489,7 @@ table.dataTable th:active {
 }
 
 .tab-pane {
-    background-image: url('../images/first_aid_kit.png');
+    background-image: url('../images/tiny_grid.png');
 }
 
 
