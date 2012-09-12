@@ -23,6 +23,10 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         new OntologyModel({id:self.model.get('ontology')}).fetch({
             success : function(model, response) {
                 self.ontology = model;
+
+                new UserJobCollection({project:self.model.id}).fetch({
+                    success : function (collection, response) {
+
                 $(self.el).find("input.undefinedAnnotationsCheckbox").change(function(){
                     if ($(this).attr("checked") == "checked") {
                         self.refreshAnnotations(-1,self.selectedUsers,self.selectedJobs,self.selectedImages);
@@ -88,7 +92,8 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                 //$("#ontology-annotations-panel-"+self.model.id).panel();
 
                 self.initSelectUser();
-                self.initSelectJobs();
+
+                self.initSelectJobs(collection);
                 self.initAnnotationsFilter();
                 $(self.el).find("#uncheckAllTerms").click(function(){
                     self.hideAllTerms();
@@ -164,6 +169,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                 self.showAllImages();
             }
         });
+      }});
 
     },
     initAnnotationsFilter : function() {
@@ -283,6 +289,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         } else if (users != "" && users != undefined) {
             this.selectUsers(users);
         }
+
     },
     showAllTerms : function() {
         $(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked", "checked");
@@ -472,10 +479,9 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                 $(self.el).find('#treeUserListing').dynatree("getTree").selectKey(window.app.status.user.id);
             }});
     },
-    initSelectJobs : function () {
+    initSelectJobs : function (collection) {
         var self = this;
-        new UserJobCollection({project:self.model.id}).fetch({
-            success : function (collection, response) {
+
 //                var treeData = {
 //                    id : self.model.id,
 //                    name : "Jobs",
@@ -527,8 +533,6 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                 //expand root node
                 var rootNode = $("#treeJobListing").dynatree("getTree").getNodeByKey(self.model.id);
                 rootNode.expand(true);
-
-            }});
     },
     /**
      * Add the the tab with term info
@@ -581,10 +585,28 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     selectUsers : function(users) {
         users = users.split(",");
         var tree = $(this.el).find('#treeUserListing').dynatree("getTree");
-        _.each(users, function(user ) {
+        console.log(tree);
+        var user = false;
+        _.each(users, function(user) {
             var node = tree.getNodeByKey(user);
-            node.select(true);
+            if(node!=undefined) {
+                user = true;
+                node.select(true);
+            }
         });
+        if(!user) {
+            var treeJob = $(this.el).find('#treeJobListing').dynatree("getTree");
+            console.log(treeJob);
+            _.each(users, function(user) {
+                var node = treeJob.getNodeByKey(user);
+                if(node!=undefined) {
+                    node.select(true);
+                    node.getParent().expand(true);
+                }
+
+            });
+        }
+
     },
     refreshSelectedTermsWithUserFilter : function () {
         var self = this;

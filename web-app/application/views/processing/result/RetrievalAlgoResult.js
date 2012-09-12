@@ -127,7 +127,8 @@ var RetrievalAlgoResult = Backbone.View.extend({
                     //Global sucess rate per class (For each class, compute sucess + make avg)
                     $(self.el).find("#worstTermList").append('<b>Average (per class):</b> ' + (model.get('avgMiddlePerClass') * 100).toFixed(2) + "%<br>");
 
-                    $(self.el).find("#worstTermList").append('<br><button id="matrix-suggest" class="btn">See full information</button>');
+                    $(self.el).find("#worstTermList").append('<br><button id="matrix-suggest" class="btn">View confusion matrix</button>');
+                    $(self.el).find("#worstTermList").append('<a href="#tabs-annotations-'+self.project.id+'-all-'+self.model.get("userJob")+'" class="btn">View predicted galleries</a>');
                     $(self.el).find("#matrix-suggest").button();
                     $(self.el).find('#matrix-suggest').click(function () {
                         self.initMatrixDialog(terms);
