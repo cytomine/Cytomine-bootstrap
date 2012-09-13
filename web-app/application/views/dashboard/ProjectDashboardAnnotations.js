@@ -161,7 +161,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     cookieId: "dynatree-Cb-images-"+self.model.get('ontology'),
                     idPrefix: "dynatree-Cb-images-"+self.model.get('ontology')+"-"
                 });
-                self.showAllImages();
+
                 self.loadingCallBack(callback);
             }
         });
@@ -285,6 +285,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         }
         this.hideAllTerms();
         this.hideAllUsers();
+        this.hideAllImages();
         if (terms == "all") {
             this.showAllTerms();
         } else if (terms !="" && terms!= undefined) {

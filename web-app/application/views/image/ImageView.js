@@ -61,17 +61,26 @@ var ImageView = Backbone.View.extend({
             this.showLoading();
         }
         self.tabsContent = [];
+
+
         self.model = new ImageInstanceCollection({project: window.app.status.currentProject, inf : inf, sup : sup});
         self.model.fetch({
             success : function (collection, response){
+                var idDivPage = window.app.status.currentProject + "-image-page-" + self.page;
+                if ($("#"+idDivPage).length == 0) { //create page div
+                    $(self.el).append(_.template("<div id='<%= idDivPage %>'></div>",{
+                        idDivPage :idDivPage
+                    }));
+                } else { //empty page div
+                    $("#"+idDivPage).empty();
+                }
                 var cpt = 0;
-
                 while (cpt < (sup - inf) && cpt < collection.size()) {
                     var image  = collection.at(cpt);
                     var thumb = new ImageThumbView({
                         model : image
                     }).render();
-                    $(self.el).append(thumb.el);
+                    $("#"+idDivPage).append(thumb.el);
                     cpt++;
                     self.tabsContent.push(image.id);
                 }
@@ -102,34 +111,8 @@ var ImageView = Backbone.View.extend({
     remove : function (idImage) {
         $("#thumb"+idImage).remove();
     },
-    /**
-     * Refresh thumb with newImages collection:
-     * -Add images thumb from newImages which are not already in the thumb set
-     * -Remove images which are not in newImages but well in the thumb set
-     * @param newImages newImages collection
-     */
-    refresh : function(newImages) {
-        return; //DESACTIVED, does not take into account the actual page & nb_thums_by_page
-        var self = this;
-        var arrayDeletedImages = self.tabsContent;
-        newImages.each(function(image) {
-            //if image is not in table, add it
-            if(_.indexOf(self.tabsContent, image.id)==-1){
-                self.add(image);
-                self.tabsContent.push(image.id);
-            }
-            /*
-             * We remove each "new" image from  arrayDeletedImage
-             * At the end of the loop, element from arrayDeletedImages must be deleted because they aren't
-             * in the set of new images
-             */
-            arrayDeletedImages = _.without(arrayDeletedImages,image.id);
-        });
-
-        arrayDeletedImages.forEach(function(removeImage) {
-                self.remove(removeImage);
-                self.tabsContent = _.without(self.tabsContent,removeImage);
-            }
-        );
+    refresh : function() {
+        for (var p = 0; p <= this.page; p++)
+            this.appendThumbs(p);
     }
 });
