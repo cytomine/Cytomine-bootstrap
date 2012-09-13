@@ -26,6 +26,7 @@ var DashboardController = Backbone.Router.extend({
         }
 
         if (window.app.status.currentProject == undefined) {
+
             window.app.view.clearIntervals();
             window.app.status.currentProject = project;
             window.app.controllers.browse.initTabs();
