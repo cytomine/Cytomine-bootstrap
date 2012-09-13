@@ -270,28 +270,24 @@ class AlgoAnnotationTermService extends ModelService {
 
         def data = []
         int count = 0;
-        println "********* LOAD ANNOTATION start"
         def annotations = null;
         //List<Annotation> annotations = Annotation.findAllByProject(project,[sort:'created', order:"desc"])
         if(!term) {
-            annotations = Annotation.executeQuery("select a.created from Annotation a where a.project = ? order by a.created desc", [project])
+            annotations = Annotation.executeQuery("select a.created from Annotation a where a.project = ? and a.user.class = ? order by a.created desc", [project,"be.cytomine.security.User"])
         }
         else {
             log.info "Search on term " + term.name
-            annotations = Annotation.executeQuery("select b.created from Annotation b where b.project = ? and b.id in (select x.annotation.id from AnnotationTerm x where x.term = ?) order by b.created desc", [project,term])
+            annotations = Annotation.executeQuery("select b.created from Annotation b where b.project = ? and b.id in (select x.annotation.id from AnnotationTerm x where x.term = ?) and b.user.class = ? order by b.created desc", [project,term,"be.cytomine.security.User"])
         }
-        println "********* LOAD ANNOTATION end"
         userJobs.each {
             def userJobIt = it
             def item = [:]
-            println "********* New userJob:"+userJobIt.rate
             Date stopDate = userJobIt.created
 
             //we browse userjob (oreder desc creation).
             //For each userjob, we browse annotation (oreder desc creation) and we count the number of annotation
             //that are most recent than userjob, we subsitute this count from annotation.list()
             //=> not needed to browse n times annotations list, juste 1 time.
-            println "********* Browse annotation"
             while(count<annotations.size()) {
                 if(annotations.get(count)<stopDate) break;
                 count++;
@@ -304,9 +300,7 @@ class AlgoAnnotationTermService extends ModelService {
                     item.avg = computeAVG(userJobIt,term)
                 else {
                     if(userJobIt.rate==-1 && userJobIt.job.status==Job.SUCCESS) {
-                        println "********* COMPUTE STATS"
                         userJobIt.rate = computeAVG(userJobIt)
-                        println "********* COMPUTE STATS end"
                         userJobIt.save(flush: true)
                     }
                     item.avg = userJobIt.rate

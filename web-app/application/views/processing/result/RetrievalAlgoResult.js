@@ -346,7 +346,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
         }
         var data = new google.visualization.DataTable();
         data.addColumn('date', 'Date');
-        data.addColumn('number', 'Number of annotations');
+        data.addColumn('number', 'Number of user annotations');
         data.addColumn('number', 'Success rate (%)');
 
 
@@ -380,7 +380,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
                             label:'Y2'
                         }
                     },
-                    vAxis:{title:"Success rate", minValue:0, maxValue:100},
+                    vAxis:{title:"", minValue:0, maxValue:100},
                     hAxis:{title:"Time"},
                     backgroundColor:"white",
                     seriesType:"line",

@@ -5,6 +5,7 @@ import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
 import grails.orm.PagedResultList
+import be.cytomine.security.SecUser
 
 class StatsController extends RestController {
 
@@ -14,6 +15,7 @@ class StatsController extends RestController {
     def jobService
     def retrievalSuggestedTermJobService
     def retrievalEvolutionJobService
+    def securityService
 
     def test = {
 
@@ -216,13 +218,12 @@ class StatsController extends RestController {
         int count = 0;
 
         def annotations = null;
-        //List<Annotation> annotations = Annotation.findAllByProject(project,[sort:'created', order:"desc"])
         if(!term) {
-            annotations = Annotation.executeQuery("select a.created from Annotation a where a.project = ? order by a.created desc", [project])
+            annotations = Annotation.executeQuery("select a.created from Annotation a where a.project = ? and a.user.class = ? order by a.created desc", [project,"be.cytomine.security.User"])
         }
         else {
             log.info "Search on term " + term.name
-            annotations = Annotation.executeQuery("select b.created from Annotation b where b.project = ? and b.id in (select x.annotation.id from AnnotationTerm x where x.term = ?) order by b.created desc", [project,term])
+            annotations = Annotation.executeQuery("select b.created from Annotation b where b.project = ? and b.id in (select x.annotation.id from AnnotationTerm x where x.term = ?) and b.user.class = ? order by b.created desc", [project,term,"be.cytomine.security.User"])
         }
 
 
