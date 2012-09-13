@@ -83,6 +83,9 @@ var UserJobCollection = Backbone.Collection.extend({
             return "api/userjob.json";
         }
     },
+    prettyName : function () {
+        return this.get('softwareName');
+    },
     initialize: function (options) {
         this.project = options.project;
         this.tree = options.tree || false;

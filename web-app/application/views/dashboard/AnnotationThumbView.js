@@ -8,15 +8,6 @@ var AnnotationThumbView = Backbone.View.extend({
         this.term = options.term;
         _.bindAll(this, 'render');
     },
-    getUserNameById : function(userId) {
-        if (window.app.models.users.get(userId)) {
-           return window.app.models.users.get(userId).prettyName();
-        } else if (window.app.models.projectUserJob.get(userId)) {
-            return window.app.models.projectUserJob.get(userId).get("softwareName");
-        } else {
-            return "undefined"; //should not appear
-        }
-    },
     render: function() {
         var self = this;
         require(["text!application/templates/dashboard/AnnotationThumb.tpl.html", "text!application/templates/dashboard/AnnotationPopOverThumb.tpl.html"], function(tpl, popoverTpl) {
@@ -35,6 +26,7 @@ var AnnotationThumbView = Backbone.View.extend({
             //if user job, construct link to the job
             var jobLink = null;
             var userJob = window.app.models.projectUserJob.get(annotation.get("user"));
+
             if (userJob) {
                 jobLink = _.template("#tabs-algos-<%= idProject %>-<%= idSoftware%>-<%= idJob %>", {
                     idProject : window.app.status.currentProject,
@@ -64,7 +56,7 @@ var AnnotationThumbView = Backbone.View.extend({
                 var termName = window.app.status.currentTermsCollection.get(it.term).get('name');
                 var userName = [];
                 _.each(it.user, function (userID) {
-                    userName.push(self.getUserNameById(userID));
+                    userName.push(window.app.view.getUserNameById(userID));
                 })
                 userByTerm.push({
                     userName : userName.join(" and "),
@@ -80,7 +72,7 @@ var AnnotationThumbView = Backbone.View.extend({
             }
             var popoverContent = _.template(popoverTpl, {
                 created : window.app.convertLongToDate(annotation.get("created")),
-                userName : self.getUserNameById(annotation.get("user")),
+                userName : window.app.view.getUserNameById(annotation.get("user")),
                 userByTerm : userByTerm,
                 termName : termName,
                 expectedTermName : expectedTermName

@@ -8,7 +8,7 @@ var ShareAnnotationView = Backbone.View.extend({
 
     doLayout: function(shareAnnotationViewTpl, shareAnnotationMailTpl) {
         var self = this;
-        this.model.set({ "username" :  window.app.models.users.get(this.model.get("user")).prettyName()});
+        this.model.set({ "username" :  window.app.view.getUserNameById(this.model.get("user"))});
         this.model.set({ "terms" :  "undefined"});
         this.dialog = new ConfirmDialogView({
             el:'#dialogs',

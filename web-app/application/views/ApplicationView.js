@@ -214,13 +214,13 @@ var ApplicationView = Backbone.View.extend({
         // Position
         var position = preference.position;
         if (position.top == undefined) position.top = '';
-        $("."+item.className).css("top", position.top);
+        else $("."+item.className).css("top", position.top);
         if (position.left == undefined) position.left = '';
-        $("."+item.className).css("left", position.left);
+        else $("."+item.className).css("left", position.left);
         if (position.right == undefined) position.right = '';
-        $("."+item.className).css("right", position.right);
+        else $("."+item.className).css("right", position.right);
         if (position.bottom == undefined) position.bottom = '';
-        $("."+item.className).css("bottom", position.bottom);
+        else $("."+item.className).css("bottom", position.bottom);
 
         if (triggerMoveEvent) $("."+item.className).trigger("movedProgramatically");
     },
@@ -374,6 +374,15 @@ var ApplicationView = Backbone.View.extend({
         });
         $("#app").show();
         component.activate();
+    },
+    getUserNameById : function(userId) {
+        if (window.app.models.users.get(userId)) {
+            return window.app.models.users.get(userId).prettyName();
+        } else if (window.app.models.projectUserJob.get(userId)) {
+            return window.app.models.projectUserJob.get(userId).get("softwareName");
+        } else {
+            return "undefined"; //should not appear
+        }
     }
 });
 

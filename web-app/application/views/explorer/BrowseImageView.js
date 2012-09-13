@@ -480,7 +480,7 @@ var BrowseImageView = Backbone.View.extend({
             }
             self.map.zoomTo(idealZoom);
 
-            window.app.view.applyPreferences();
+            setTimeout(function(){window.app.view.applyPreferences()}, 1000);
 
             //broadcast position every 5 seconds even if user id idle
             self.initBroadcastingInterval();
