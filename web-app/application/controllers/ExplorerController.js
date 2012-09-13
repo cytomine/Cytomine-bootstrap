@@ -48,12 +48,12 @@ var ExplorerController = Backbone.Router.extend({
                 browseImageViewInitOptions.goToAnnotation = {value : idAnnotation};
             }
             self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions);
-            $('#tabs-image-'+idImage).tab('show');
-            window.app.view.showComponent(self.tabs.container);
+            //$('#tabs-image-'+idImage).tab('show');
+           // window.app.view.showComponent(self.tabs.container);
             self.showView();
         };
 
-        if (window.app.status.currentProject == undefined) {//direct access -> create dashboard
+        if (window.app.status.currentProject == undefined ||  window.app.status.currentProject!=idProject) {//direct access -> create dashboard
             window.app.controllers.dashboard.dashboard(idProject, createBrowseImageViewTab);
             return;
         }

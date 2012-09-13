@@ -41,20 +41,24 @@ var ExplorerTabs = Backbone.View.extend({
             tab.view.show(options);
             return;
         }
+
         var tabs = $("#explorer-tab-content");
+        var view = new BrowseImageView({
+                initCallback : function(){view.show(options)},
+                el: tabs
+        });
+        self.tabs.push({idImage : idImage,view : view});
+
         new ImageInstanceModel({id : idImage}).fetch({
             success : function(model, response) {
-                var view = new BrowseImageView({
-                    model : model,
-                    initCallback : function(){view.show(options)},
-                    el: tabs
-                }).render();
+                view.model = model;
+                view.render();
                 $(".closeTab").on("click",function(e) {
                     var idImage = $(this).attr("data-image");
                     self.removeTab(idImage);
                 });
                 self.showTab(idImage);
-                self.tabs.push({idImage : idImage,view : view});
+
             }
         });
     },

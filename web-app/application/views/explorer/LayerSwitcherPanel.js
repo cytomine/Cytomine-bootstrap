@@ -43,6 +43,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
         });
     },
     addVectorLayer : function (layer, model, userID) {
+
 		this.vectorLayers.push({ id : userID, vectorsLayer : layer.vectorsLayer});
         var layerID = "layerSwitch-" + model.get("id") + "-" + userID + "-"  + new Date().getTime(); //index of the layer in this.layers array
         var color = "#FFF";//window.app.models.users.get(userID).get('color');
@@ -53,6 +54,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
             /*layerOptionTpl = _.template("<li><input id='<%= id %>' type='checkbox' value='<%=   name %>' /> <span style='color : #ffffff;'><%=   name %></span> <a class='followUser' data-user-id='<%= userID %>' href='#'>Follow</a></li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});*/
             layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : #ffffff;'><%= name %></span></a> </li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});
         }
+        console.log("*** addVectorLayer "+model.get("id"));
         $("#layerSwitcher"+model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
 
         $("#"+layerID).click(function(){

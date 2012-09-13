@@ -116,7 +116,6 @@ AnnotationLayer.prototype = {
     defaultStrokeColor : "#000000",
     selectedStrokeColor : "#00FF00",
 	getSymbolizer : function(selected) {
-        console.log("this.pointRadius="+this.pointRadius);
         var strokeColor = this.defaultStrokeColor;
         if (selected) strokeColor = this.selectedStrokeColor;
 		var symbolizers_lookup = {};

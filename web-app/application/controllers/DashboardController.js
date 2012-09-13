@@ -16,9 +16,9 @@ var DashboardController = Backbone.Router.extend({
     },
 
     init : function (project, callback) {
-
+        console.log("window.app.status.currentProject="+window.app.status.currentProject + " new project="+project);
         if (window.app.status.currentProject != undefined && window.app.status.currentProject != project) {
-
+            console.log("1");
             this.destroyView();
             window.app.controllers.browse.closeAll();
             window.app.status.currentProject = undefined;
@@ -26,13 +26,14 @@ var DashboardController = Backbone.Router.extend({
         }
 
         if (window.app.status.currentProject == undefined) {
-
+            console.log("2");
             window.app.view.clearIntervals();
             window.app.status.currentProject = project;
             window.app.controllers.browse.initTabs();
             if (this.view == null) this.createView(callback);
             this.showView();
         } else {
+            console.log("3");
             callback.call();
             this.showView();
         }
