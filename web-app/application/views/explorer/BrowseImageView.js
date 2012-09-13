@@ -42,7 +42,7 @@ var BrowseImageView = Backbone.View.extend({
         }
         var tabTpl = "<li><a style='float: left;' id='tabs-image-<%= idImage %>' rel='tooltip' title='<%= originalFilename %>' href='#tabs-image-<%= idProject %>-<%= idImage %>-' data-toggle='tab'><i class='icon-search' /> <%= shortOriginalFilename %> </a></li>";
         $(".nav-tabs").append(_.template(tabTpl,{ idProject : window.app.status.currentProject, idImage : this.model.get('id'), originalFilename : this.model.get('originalFilename'), shortOriginalFilename : shortOriginalFilename}));
-        var dropdownTpl ='<li class="dropdown"><a href="#" id="tabs-image-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class=""><i class="icon-remove" /> Close</a></li></ul></li>';
+        var dropdownTpl ='<li class="dropdown"><a href="#" id="tabs-image-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab"><i class="icon-remove" /> Close</a></li></ul></li>';
         $(".nav-tabs").append(_.template(dropdownTpl, { idProject : window.app.status.currentProject, idImage : this.model.get('id'), filename : this.model.get('filename')}));
         this.initToolbar();
         this.initMap();

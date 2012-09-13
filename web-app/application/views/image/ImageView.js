@@ -6,12 +6,13 @@ var ImageView = Backbone.View.extend({
         this.page = options.page;
         this.nb_thumb_by_page = 30;
         this.appendingThumbs = false;
+        this.tabsContent = undefined;
         if (this.page == undefined) this.page = 0;
         _.bindAll(this, 'render');
     },
     render: function() {
         var self = this;
-
+        this.tabsContent = [];
         if (window.app.status.currentProjectModel.get("numberOfImages") != 0) {
             $(self.el).empty();
         } else {
@@ -60,7 +61,7 @@ var ImageView = Backbone.View.extend({
         if (Math.abs(page) * this.nb_thumb_by_page < self.model.size() ) {
             this.showLoading();
         }
-        self.tabsContent = [];
+
 
 
         self.model = new ImageInstanceCollection({project: window.app.status.currentProject, inf : inf, sup : sup});
@@ -71,18 +72,27 @@ var ImageView = Backbone.View.extend({
                     $(self.el).append(_.template("<div id='<%= idDivPage %>'></div>",{
                         idDivPage :idDivPage
                     }));
-                } else { //empty page div
-                    $("#"+idDivPage).empty();
                 }
                 var cpt = 0;
                 while (cpt < (sup - inf) && cpt < collection.size()) {
                     var image  = collection.at(cpt);
-                    var thumb = new ImageThumbView({
-                        model : image
-                    }).render();
-                    $("#"+idDivPage).append(thumb.el);
+                    var item = _.find(self.tabsContent, function (item) {
+                        return item.id_image == image.id
+                    });
+                    if (item) {
+                        var thumb = item.thumb;
+                        thumb.model = image;
+                        thumb.refresh();
+                    } else {
+                        var thumb = new ImageThumbView({
+                            model : image
+                        });
+                        thumb.render();
+                        $("#"+idDivPage).append(thumb.el);
+                        self.tabsContent.push( { id_image : image.id, thumb : thumb});
+                    }
                     cpt++;
-                    self.tabsContent.push(image.id);
+
                 }
                 self.appendingThumbs = false;
             }
