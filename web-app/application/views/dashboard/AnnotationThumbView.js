@@ -25,8 +25,7 @@ var AnnotationThumbView = Backbone.View.extend({
             var ratePourcent = "";
             if(annotation.get("rate")!=undefined && !isNaN(annotation.get("rate"))) {
                 ratePourcent = Math.round(annotation.get("rate")*10000)/100 + "%";
-            }
-            console.log("ratePourcent="+ratePourcent);
+            };
 
             var colorStyle = undefined;
             if (annotation.get("idTerm") == annotation.get("idExpectedTerm")) colorStyle = "#cccccc";

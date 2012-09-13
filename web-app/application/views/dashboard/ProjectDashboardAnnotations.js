@@ -55,11 +55,11 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             children: window.app.status.currentOntologyModel.toJSON(),
             onSelect: function(select, node) {
                 //if(!self.activeEvent) return;
-                console.log("EVENT ON ONTOLOGY SELECTION");
                 if (node.isSelected()) {
+                    self.selectedTerm.push(node.data.key);
                     self.refreshAnnotations(node.data.key,self.selectedUsers,self.selectedJobs,self.selectedImages);
                     $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).show();
-                    self.selectedTerm.push(node.data.key);
+
                 }
                 else {
                     $("#tabsterm-panel-"+self.model.id+"-"+node.data.key).hide();
@@ -129,7 +129,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     $("#tabsterm-panel-"+self.model.id+"-"+term.get("id")).hide();
                 });
                 self.initDropZone();
-                callback.call();
+                self.loadingCallBack(callback);
             }});
 
         new ImageInstanceCollection({project : window.app.status.currentProject, tree : true}).fetch({
@@ -162,10 +162,21 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     idPrefix: "dynatree-Cb-images-"+self.model.get('ontology')+"-"
                 });
                 self.showAllImages();
+                self.loadingCallBack(callback);
             }
         });
 
 
+    },
+    loadingCallBack : function(callback) {
+        if(this.callbackNbre==undefined) {
+            this.callbackNbre = 0;
+        }
+        this.callbackNbre++;
+
+        if(this.callbackNbre==2) {
+            callback.call();
+        }
     },
     initAnnotationsFilter : function() {
         var self = this;
@@ -302,73 +313,73 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     showAllImages : function(triggerRefresh) {
         var self = this;
         self.allImages = 0;
-        if(triggerRefresh==true) this.shouldRefresh = false;
+        if(triggerRefresh) this.shouldRefresh = false;
         $(this.el).find('#treeImageListing').dynatree("getRoot").visit(function (node) {
             if (!node.data.isFolder) {
                 self.allImages++;
                 node.select(true);
             }
         });
-        if(triggerRefresh==true) this.shouldRefresh = true;
-        if(triggerRefresh==true) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedJobs,self.selectedImages);
+        if(triggerRefresh) this.shouldRefresh = true;
+        if(triggerRefresh) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedJobs,self.selectedImages);
     },
     hideAllImages : function(triggerRefresh) {
         var self = this;
-        if(triggerRefresh==true) this.shouldRefresh = false;
+        if(triggerRefresh) this.shouldRefresh = false;
         $(this.el).find('#treeImageListing').dynatree("getRoot").visit(function (node) {
             if (!node.data.isFolder) node.select(false);
         });
-        if(triggerRefresh==true) this.shouldRefresh = true;
-        if(triggerRefresh==true) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers,self.selectedJobs, self.selectedImages);
+        if(triggerRefresh) this.shouldRefresh = true;
+        if(triggerRefresh) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers,self.selectedJobs, self.selectedImages);
     },
     showAllUsers : function(triggerRefresh) {
         var self = this;
         self.allUsers = 0;
-        if(triggerRefresh==true) this.shouldRefresh = false;
+        if(triggerRefresh) this.shouldRefresh = false;
         $(this.el).find('#treeUserListing').dynatree("getRoot").visit(function (node) {
             if (!node.data.isFolder) {
                 self.allUsers++;
                 node.select(true);
             }
         });
-        if(triggerRefresh==true) this.shouldRefresh = true;
-        if(triggerRefresh==true) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedJobs,self.selectedImages);
+        if(triggerRefresh) this.shouldRefresh = true;
+        if(triggerRefresh) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedJobs,self.selectedImages);
     },
     hideAllUsers : function(triggerRefresh) {
         var self = this;
-        if(triggerRefresh==true) this.shouldRefresh = false;
+        if(triggerRefresh) this.shouldRefresh = false;
         if(this.userTreeLoaded) {
             $(this.el).find('#treeUserListing').dynatree("getRoot").visit(function (node) {
                 if (!node.data.isFolder) node.select(false);
             });
         }
 
-        if(triggerRefresh==true) this.shouldRefresh = true;
-        if(triggerRefresh==true) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers,self.selectedJobs, self.selectedImages);
+        if(triggerRefresh) this.shouldRefresh = true;
+        if(triggerRefresh) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers,self.selectedJobs, self.selectedImages);
     },
     showAllJobs : function(triggerRefresh) {
         var self = this;
         self.allJobs = 0;
-        if(triggerRefresh==true) this.shouldRefresh = false;
+        if(triggerRefresh) this.shouldRefresh = false;
         $(this.el).find('#treeUserListing').dynatree("getRoot").visit(function (node) {
             if (!node.data.isFolder) {
                 self.allJobs++;
                 node.select(true);
             }
         });
-        if(triggerRefresh==true) this.shouldRefresh = true;
-        if(triggerRefresh==true) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedJobs, self.selectedImages);
+        if(triggerRefresh) this.shouldRefresh = true;
+        if(triggerRefresh) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers, self.selectedJobs, self.selectedImages);
     },
     hideAllJobs : function(triggerRefresh) {
         var self = this;
-        if(triggerRefresh==true) this.shouldRefresh = false;
+        if(triggerRefresh) this.shouldRefresh = false;
         if (this.jobTreeLoaded) {
             $(this.el).find('#treeJobListing').dynatree("getRoot").visit(function (node) {
                 if (!node.data.isFolder) node.select(false);
             });
         }
-        if(triggerRefresh==true) this.shouldRefresh = true;
-        if(triggerRefresh==true) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers,self.selectedJobs, self.selectedImages);
+        if(triggerRefresh) this.shouldRefresh = true;
+        if(triggerRefresh) self.printAnnotationThumbAllTerms(self.selectedTerm,self.selectedUsers,self.selectedJobs, self.selectedImages);
     },
     initDropZone : function () {
         var self = this;
@@ -576,7 +587,6 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     selectUsers : function(users) {
         users = users.split(",");
         var tree = $(this.el).find('#treeUserListing').dynatree("getTree");
-        console.log(tree);
         var user = false;
         _.each(users, function(user) {
             var node = tree.getNodeByKey(user);
@@ -587,12 +597,11 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         });
         if(!user) {
             var treeJob = $(this.el).find('#treeJobListing').dynatree("getTree");
-            console.log(treeJob);
             _.each(users, function(user) {
                 var node = treeJob.getNodeByKey(user);
                 if(node!=undefined) {
                     node.select(true);
-                    node.getParent().expand(true);
+                    //node.getParent().expand(true);
                 }
 
             });
