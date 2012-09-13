@@ -61,9 +61,9 @@ var OntologyView = Backbone.View.extend({
         require([
             "text!application/templates/ontology/OntologyList.tpl.html"
         ],
-                function(tpl) {
-                    self.doLayout(tpl);
-                });
+            function(tpl) {
+                self.doLayout(tpl);
+            });
 
         return this;
     },
@@ -72,7 +72,17 @@ var OntologyView = Backbone.View.extend({
         $(this.el).html(_.template(tpl, {}));
         self.$tabsOntologies = $(self.el).find("#ontology");
         self.initOntologyTabs();
+
+        this.scrollToOntology(this.idOntology);
         return this;
+    },
+    scrollToOntology :function(idOntology) {
+        var targetOffset = $(".ontology"+idOntology);
+        if (targetOffset.length > 0) {
+            var topOffset = targetOffset.offset().top;
+            topOffset = topOffset - 110;
+            $('html,body').animate({scrollTop: topOffset}, 1000);
+        }
     },
     showAddOntologyPanel : function() {
         var self = this;
@@ -97,35 +107,35 @@ var OntologyView = Backbone.View.extend({
     initOntologyTabs : function(){
         var self = this;
         require(["text!application/templates/ontology/OntologyTab.tpl.html", "text!application/templates/ontology/OntologyTabContent.tpl.html"],
-                function(ontologyTabTpl, ontologyTabContentTpl) {
-                    self.ontologiesPanel = new Array();
-                    //add "All annotation from all term" tab
-                    self.model.each(function(ontology) {
-                        var elem = self.addOntologyToTab(ontologyTabTpl, ontologyTabContentTpl, { id : ontology.get("id"), name : ontology.get("name")});
-                        //create project search panel
-                        var view = new OntologyPanelView({
-                            model : ontology,
-                            el:elem,
-                            container : self,
-                            ontologiesPanel : self
-                        });
-                        view.render();
-                        self.ontologiesPanel.push(view);
+            function(ontologyTabTpl, ontologyTabContentTpl) {
+                self.ontologiesPanel = new Array();
+                //add "All annotation from all term" tab
+                self.model.each(function(ontology) {
+                    var elem = self.addOntologyToTab(ontologyTabTpl, ontologyTabContentTpl, { id : ontology.get("id"), name : ontology.get("name")});
+                    //create project search panel
+                    var view = new OntologyPanelView({
+                        model : ontology,
+                        el:elem,
+                        container : self,
+                        ontologiesPanel : self
                     });
-
-                    //Hack loading...
-                    setTimeout(function(){
-                        $("#ontologyLoading").remove();
-                    },1500);
-
-
-                    if(!self.alreadyBuild) {
-                        $("#ontology h3 a").click(function() {
-                            window.location = $(this).attr('href'); //follow link
-                            return false;
-                        });
-                    }
+                    view.render();
+                    self.ontologiesPanel.push(view);
                 });
+
+                //Hack loading...
+                setTimeout(function(){
+                    $("#ontologyLoading").remove();
+                },1500);
+
+
+                if(!self.alreadyBuild) {
+                    $("#ontology h3 a").click(function() {
+                        window.location = $(this).attr('href'); //follow link
+                        return false;
+                    });
+                }
+            });
     },
     /**
      * Add the the tab with ontology info

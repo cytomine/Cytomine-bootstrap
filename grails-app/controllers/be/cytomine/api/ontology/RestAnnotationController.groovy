@@ -169,19 +169,19 @@ class RestAnnotationController extends RestController {
 
         projectService.checkAuthorization(project)
         def users = []
-        if (params.users != null) {
+        if (params.users != null && params.users != "") {
             params.users.split(",").each { id ->
                 users << Long.parseLong(id)
             }
         }
         def terms = []
-        if (params.terms != null) {
+        if (params.terms != null && params.terms != "") {
             params.terms.split(",").each {  id ->
                 terms << Long.parseLong(id)
             }
         }
         def images = []
-        if (params.images != null) {
+        if (params.images != null && params.images != "") {
             params.images.split(",").each {  id ->
                 images << Long.parseLong(id)
             }

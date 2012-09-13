@@ -161,7 +161,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                     cookieId: "dynatree-Cb-images-"+self.model.get('ontology'),
                     idPrefix: "dynatree-Cb-images-"+self.model.get('ontology')+"-"
                 });
-
+                self.showAllImages();
                 self.loadingCallBack(callback);
             }
         });
@@ -566,9 +566,10 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         var nbUserSelected = _.size(this.selectedUsers);
         var nbTermSelected = _.size(this.selectedTerm);
         var nbJobSelected = _.size(this.selectedJobs);
+        var nbSelectedImages = _.size(this.selectedImages);
         nbTermSelected += ($(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked") == "checked") ? 1 : 0;
         nbTermSelected += ($(this.el).find("input.multipleAnnotationsCheckbox").attr("checked") == "checked") ? 1 : 0;
-        if (nbTermSelected > 0 && (nbUserSelected > 0 || nbJobSelected > 0)){
+        if (nbTermSelected > 0 && nbSelectedImages > 0 && (nbUserSelected > 0 || nbJobSelected > 0)){
             $("#listtabannotation").show();
             $("#downloadAnnotation").show();
         } else {
