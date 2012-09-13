@@ -601,7 +601,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
                 var node = treeJob.getNodeByKey(user);
                 if(node!=undefined) {
                     node.select(true);
-                    //node.getParent().expand(true);
+                    node.getParent().expand(true);
                 }
 
             });
