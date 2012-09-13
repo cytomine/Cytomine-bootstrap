@@ -64,10 +64,6 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
             String method = authorization.substring(0, authorization.indexOf(" "))
             String accessKey = authorization.substring(authorization.indexOf(" ") + 1, authorization.indexOf(":"))
             String authorizationSign = authorization.substring(authorization.indexOf(":") + 1)
-			println "#####"
-			println "messagetosign="+messageToSign
-			println "#####"
-            println "accessKey="+accessKey
 		
             SecUser user = SecUser.findByPublicKey(accessKey)
             if (!user) {
@@ -85,11 +81,11 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
             byte[] signatureBytes = Base64.encode(rawHmac)
             signature = new String(signatureBytes)
             if (authorizationSign == signature) {
-                print "authorizationSign == signature : " + authorizationSign + " == " + signature
+                //print "authorizationSign == signature : " + authorizationSign + " == " + signature
                 SpringSecurityUtils.reauthenticate user.getUsername(), null
                 return true
             } else {
-                print "authorizationSign != signature : " + authorizationSign + " != " + signature
+                //print "authorizationSign != signature : " + authorizationSign + " != " + signature
                 return false
             }
 

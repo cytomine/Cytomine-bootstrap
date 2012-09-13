@@ -29,7 +29,7 @@ var UserModel = Backbone.Model.extend({
 var UserFriendCollection = Backbone.Collection.extend({
     model: UserModel,
     url: function() {
-           return "api/user/" + this.id + "/friends.json";
+        return "api/user/" + this.id + "/friends.json";
     },
     initialize: function (options) {
         this.id = options.id;
@@ -75,7 +75,9 @@ var UserSecRole =  Backbone.Model.extend({
 var UserJobCollection = Backbone.Collection.extend({
     model: UserModel,
     url: function() {
-        if (this.project != undefined) {
+        if (this.project && !this.tree) {
+            return "api/project/" + this.project + "/userjob.json";
+        } else if (this.project && this.tree) {
             return "api/project/" + this.project + "/userjob.json?tree=true";
         } else {
             return "api/userjob.json";
@@ -83,6 +85,7 @@ var UserJobCollection = Backbone.Collection.extend({
     },
     initialize: function (options) {
         this.project = options.project;
+        this.tree = options.tree || false;
     },comparator : function(user) {
         return -user.get("created");
     }

@@ -192,7 +192,7 @@
             </div><!--/span-->
             <div class="span8">
                 <div class="row-fluid">
-                    <div class="row hero-unit" style="padding-top : 15px;">
+                    <div class="well" style="padding-top : 15px;">
                         <span class="label label-success">New</span>&nbsp;<h4 style="display: inline-block;">Predefined Filters</h4><br/>
                         <select id="annotationFilterSelect">
                         </select>
@@ -202,7 +202,7 @@
                         <li id="liConfirmAnnotationFilter" style="display : none;"><input id="inputAnnotationFilterName" type="text" data-placement="below" rel='tooltip' title='Please specify a identifier' />&nbsp;<button id="confirmAnnotationFilter" class="btn success"> Confirm</button>&nbsp;<button id="cancelAnnotationFilter" class="btn"> Cancel</button></li>
                     </div>
                     <div id="listtabannotation" style="display: none;"></div>
-                    <div id="downloadAnnotation" class="row hero-unit" style="padding-top : 15px; padding-bottom: 15px;display: none;">
+                    <div id="downloadAnnotation" class="well" style="margin-top : 20px; padding-bottom: 15px;display: none;">
                         <h4>Download</h4>
                         <ul>
                             <li style="display : inline;"><a href="/api/project/<%= id %>/annotation/download?format=csv"  id="downloadAnnotationsCSV" class="btn">Download CSV</a></li>
@@ -212,7 +212,7 @@
                     </div>
                     <div id="annotationRetrievalMain"><div id="annotationRetrieval"></div></div>
                     <div id="annotationQuestionableMain"><div id="annotationQuestionable"></div></div>
-                </div><!--/row-->
+                </div>
             </div><!--/span-->
         </div><!--/row-->
     </div>

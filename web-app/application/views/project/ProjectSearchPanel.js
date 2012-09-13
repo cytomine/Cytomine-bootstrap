@@ -5,7 +5,7 @@ var ProjectSearchPanel = Backbone.View.extend({
     container : null,
     projectsPanel : null,
     allProjectsButtonElem: "#projectallbutton",
-    addProjectButtonElem : "#projectaddbutton",
+    //addProjectButtonElem : "#projectaddbutton",
     searchProjectOntolgiesListElem : "#ontologyChoiceList",
     searchProjectDisciplinesListElem : "#disciplineChoiceList",
     sliderNumberOfImagesElem : "#numberofimageSlider",
@@ -28,7 +28,7 @@ var ProjectSearchPanel = Backbone.View.extend({
         this.projectsPanel = options.projectsPanel;
     },
     events: {
-        "click .addProject": "showAddProjectPanel",
+        //"click .addProject": "showAddProjectPanel",
         "change .searchProjectCriteria": "searchProject",
         "click .showAllProject": "showAllProject",
         "click .refreshAllProject": "refreshAllProject"
@@ -56,42 +56,15 @@ var ProjectSearchPanel = Backbone.View.extend({
                 function(ontologiesChoices,disciplinesChoices) {
                     self.loadPanelAndButton(ontologiesChoices,disciplinesChoices);
                 });
-
-
         self.loadSlider();
-
         self.loadAutocomplete();
-
-        /*$("#projectallbutton").click(self.showAllProject);
-         $("#projectaddbutton").click(self.showAddProjectPanel);*/
-
-
     },
     /**
      * Load panel and all buttons/checkbox
      */
     loadPanelAndButton : function(ontologiesChoices,disciplinesChoices) {
         var self = this;
-        //create search panel
-        /*$(self.el).find("#searchProjectPanel").panel({
-         collapseSpeed:100,
-         collapsed:true
-         });*/
 
-
-
-        //configure "all projects" button
-        /*$(self.el).find(self.allProjectsButtonElem).button({
-         icons : {secondary: "ui-icon-refresh" }
-
-         });*/
-
-        //configure "add projects" button
-        /*$(self.el).find(self.addProjectButtonElem).button({
-         icons : {secondary: "ui-icon-plus" }
-         });*/
-
-        //render ontologies choice
         self.ontologies.each(function(ontology) {
             var choice = _.template(ontologiesChoices, {id:ontology.id,name:ontology.get("name")});
             $(self.searchProjectOntolgiesListElem).append(choice);
@@ -277,15 +250,7 @@ var ProjectSearchPanel = Backbone.View.extend({
                 numberOfSlides,
                 numberOfAnnotations);
     },
-    /**
-     * Show dialog to add a project
-     */
-    showAddProjectPanel : function() {
 
-        var self = this;
-        $('#addproject').remove();
-        self.addProjectDialog = new AddProjectDialog({projectsPanel:self.projectsPanel,el:self.el, ontologies : self.ontologies}).render();
-    },
     /**
      * Show only project that match with params
      * @param searchText Project Name

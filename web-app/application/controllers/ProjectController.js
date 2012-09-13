@@ -12,9 +12,9 @@ var ProjectController = Backbone.Router.extend({
         var ontologies = null;
         var disciplines = null;
         var projects = null;
-
+        var users = null;
         var loadHandler = function() {
-            if (ontologies == null || disciplines == null || projects == null) return;
+            if (ontologies == null || disciplines == null || projects == null || users == null) return;
             self.view = new ProjectView({
                 model : projects,
                 ontologies : ontologies,
@@ -46,6 +46,13 @@ var ProjectController = Backbone.Router.extend({
                 projects = collection;
                 loadHandler();
             }});
+
+        window.app.models.users.fetch({
+            success : function (collection, response) {
+                users = collection;
+                loadHandler();
+            }
+        })
     },
 
     project : function(callback) {

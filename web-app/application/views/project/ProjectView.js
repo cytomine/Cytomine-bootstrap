@@ -18,21 +18,25 @@ var ProjectView = Backbone.View.extend({
     render : function () {
         var self = this;
         require([
-            "text!application/templates/project/ProjectList.tpl.html"
+            "text!application/templates/project/ProjectList.tpl.html",
+            "text!application/templates/project/NewProjectBox.tpl.html"
         ],
-                function(tpl) {
-                    self.doLayout(tpl);
+                function(tpl, newProjectBoxTpl) {
+                    self.doLayout(tpl, newProjectBoxTpl);
                 });
 
         return this;
     },
-    doLayout: function(tpl) {
+    doLayout: function(tpl, newProjectBoxTpl) {
         var self = this;
         $(this.el).find("#projectdiv").html(_.template(tpl, {}));
 
         //clear de list
         $(self.projectListElem).empty();
-
+        $(self.projectListElem).append(_.template(newProjectBoxTpl, {}));
+        $("#projectaddbutton").on("click", function(){
+            self.showAddProjectPanel();
+        });
         //print addProjectPanel
         //self.generateAddProjectPanel();
 
@@ -43,6 +47,19 @@ var ProjectView = Backbone.View.extend({
         self.loadProjectsListing();
 
         return this;
+    },
+    /**
+     * Show dialog to add a project
+     */
+    showAddProjectPanel : function() {
+
+        var self = this;
+        $('#addproject').remove();
+        self.addProjectDialog = new AddProjectDialog({
+            projectsPanel:self,
+            el:self.el,
+            ontologies : self.ontologies
+        }).render();
     },
     /**
      * Refresh all project panel

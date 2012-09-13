@@ -269,7 +269,7 @@ class RestUserController extends RestController {
                             job.isFolder = false
                             //job.children = []
                             softJob << job
-                         }
+                        }
                     }
                     soft.children = softJob
 
@@ -285,24 +285,21 @@ class RestUserController extends RestController {
 
                 allJobs.each { job ->
                     def item = [:]
-                    println "XXX == " + job.id
                     def userJob = UserJob.findByJob(job);
                     if(userJob) {
                         item.id = userJob.id
                         item.idJob = job.id
                         item.idSoftware = job.software.id
-                        item.SoftwareName = job.software.name
+                        item.softwareName = job.software.name
                         item.created = job.created.getTime()
                     }
                     userJobs << item
                 }
                 responseSuccess(userJobs)
             }
-
-
-
-
-        }else responseNotFound("User", "Project", params.id)
+        }else {
+            responseNotFound("User", "Project", params.id)
+        }
     }
 
 

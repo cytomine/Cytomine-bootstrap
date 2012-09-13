@@ -117,16 +117,54 @@ var DashboardController = Backbone.Router.extend({
 
     createView : function (callback) {
         var self = this;
+
+        var nbCollectionToFetch = 5;
+        var nbCollectionToFetched = 0;
+        var collectionFetched = function(expected) {
+            nbCollectionToFetched++;
+            if (nbCollectionToFetched < expected) return;
+            self.view = new ProjectDashboardView({
+                model : window.app.status.currentProjectModel,
+                el: $("#explorer-tab-content")
+            }).render();
+            callback.call();
+        }
+        new UserJobCollection({project : window.app.status.currentProject}).fetch({
+            success : function(collection, response) {
+                window.app.models.projectUserJob = collection;
+                collectionFetched(nbCollectionToFetch);
+            }
+        });
+        new UserJobCollection({project : window.app.status.currentProject, tree : true}).fetch({
+            success : function(collection, response) {
+                window.app.models.projectUserJobTree = collection;
+                collectionFetched(nbCollectionToFetch);
+            }
+        });
+        new UserCollection({project : window.app.status.currentProject}).fetch({
+            success : function(collection, response) {
+                window.app.models.projectUser = collection;
+                collectionFetched(nbCollectionToFetch);
+            }
+        });
         new ProjectModel({id : window.app.status.currentProject}).fetch({
             success : function(model, response) {
                 window.app.status.currentProjectModel = model;
-                self.view = new ProjectDashboardView({
-                    model : model,
-                    el: $("#explorer-tab-content")
-                }).render();
-                callback.call();
+                collectionFetched(nbCollectionToFetch);
+                new OntologyModel({id:window.app.status.currentProjectModel.get("ontology")}).fetch({
+                    success : function(model, response) {
+                        window.app.status.currentOntologyModel = model;
+                        collectionFetched(nbCollectionToFetch);
+                    }
+                });
             }
         });
+
+
+
+
+
+
 
     },
 
@@ -160,11 +198,11 @@ var DashboardController = Backbone.Router.extend({
                 console.log("Collection is NOT CACHE - Reload collection");
                 collection = new SoftwareParameterModelCollection({uri: window.app.replaceVariable(param.uri), sortAttribut : param.uriSortAttribut});
                 collection.fetch({
-                        success:function (col, response) {
-                            window.app.addToCache(window.app.replaceVariable(param.uri),col);
-                            cell.html(self.createJobParameterDomainValue(ids, col,param,maxSize));
-                            cell.find("a").popover();
-                        }
+                    success:function (col, response) {
+                        window.app.addToCache(window.app.replaceVariable(param.uri),col);
+                        cell.html(self.createJobParameterDomainValue(ids, col,param,maxSize));
+                        cell.find("a").popover();
+                    }
                 });
             } else {
                 console.log("Collection is CACHE");

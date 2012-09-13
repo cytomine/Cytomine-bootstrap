@@ -4,9 +4,9 @@
         <img id='AnnotationThumbCrop-<%= id %>' src='<%=  smallCropURL  %>' alt='alt |<%=  name  %>|' style="max-height:100px; max-width:100px;"  />
     </a>
 
-    <% if (date_or_rate) { %>
+    <% if (ratePourcent) { %>
     <div style="position: absolute;width : 100px; bottom : 1px; left : 0px;">
-        <span class="badge badge-inverse"><%= date_or_rate %></span>
+        <span class="badge badge-inverse"><%= ratePourcent %></span>
     </div>
     <% } %>
     <div style="position: absolute;right : 0px;top : 0px;margin: auto;">
@@ -16,6 +16,9 @@
                 <% if (!sameUser) { %>
                 <li><a href="#copy-annotation/<%= id %>"> Copy </a></li>
                 <li class="divider"></li>
+                <% } %>
+                <% if (jobLink) { %>
+                <li><a tabindex="-1" href='<%= jobLink %>'> Go to job</a></li>
                 <% } %>
                 <li><a tabindex="-1" href="#share-annotation/<%= id %>"> Comment (<%= nbComments %>)</a></li>
                 <li><a tabindex="-1" style="display: none;" href="#delete-annotation/<%= id %>"> </a></li>

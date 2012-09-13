@@ -1,46 +1,43 @@
-<div style="display: inline-block;padding-right : 10px;">
-    <h3>Project</h3>
-    <button id='projectaddbutton' class="btn btn-info addProject">Add</button>
-    <button class="btn refreshAllProject">Refresh</button>
-</div>
-<hr />
 <div style="display: block;padding-right : 10px">
     <h3>Filters</h3>
 
-<div style="display: inline-block;padding-right : 10px;">
-    By name
-    <input id="projectsearchtextbox" style="max-width: 150px;" />
+    <div style="display: inline-block;padding-right : 10px;">
+        By name
+        <input id="projectsearchtextbox" style="max-width: 150px;" />
+    </div>
+    <div style="display: inline-block;padding-right : 10px;">
+        | Slides
+        <input type="text" id="amountNumberOfSlides" style="max-width: 80px;display: inline-block;; text-align: center" />
+        <div id="numberofslideSlider" style="margin-left: 10px;display: inline-block;min-width: 75px;" />
+    </div>
+    <div style="display: inline-block;padding-right : 10px;">
+        | Images
+        <input type="text" id="amountNumberOfImages" style="max-width: 80px;display: inline-block;; text-align: center" />
+        <div id="numberofimageSlider" style="margin-left: 10px;display: inline-block;min-width: 75px;" />
+    </div>
+    <div style="display: inline-block;padding-right : 10px;">
+        | Annotations
+        <input type="text" id="amountNumberOfAnnotations"  style="max-width: 80px;display: inline-block;; text-align: center" />
+        <div id="numberofannotationSlider" style="margin-left: 10px;display: inline-block;min-width: 75px;" />
+    </div>
+    <div style="display: inline-block;padding-right : 10px;">
+        | By discipline
+        <select id="disciplineChoiceList" class="searchProjectCriteria" style="max-width: 155px;">
+            <option value="-1">All</option>
+        </select>
+    </div>
+    <div style="display: inline-block;padding-right : 10px;">
+        | By ontology
+        <select id="ontologyChoiceList" class="searchProjectCriteria" style="max-width: 155px;">
+            <option value="-1">All</option>
+        </select>
+    </div>
+    <div style="display: inline-block;padding-right : 10px;">
+        <button type="button" class="btn showAllProject">Reset</button>
+    </div>
+    <div style="display: inline-block;padding-right : 10px;">
+        <button class="btn btn refreshAllProject">Refresh</button>
+    </div>
 </div>
-<div style="display: inline-block;padding-right : 10px;">
-    | Slides
-    <input type="text" id="amountNumberOfSlides" style="max-width: 80px;display: inline-block; text-align: center;" />
-    <div id="numberofslideSlider" style="margin-left: 10px;display: inline-block;min-width: 75px;" />
-</div>
-<div style="display: inline-block;padding-right : 10px;">
-    | Images
-    <input type="text" id="amountNumberOfImages" style="max-width: 80px;display: inline-block; text-align: center;" />
-    <div id="numberofimageSlider" style="margin-left: 10px;display: inline-block;min-width: 75px;" />
-</div>
-<div style="display: inline-block;padding-right : 10px;">
-    | Annotations
-    <input type="text" id="amountNumberOfAnnotations"  style="max-width: 80px;display: inline-block; text-align: center;" />
-    <div id="numberofannotationSlider" style="margin-left: 10px;display: inline-block;min-width: 75px;" />
-</div>
-<div style="display: inline-block;padding-right : 10px;">
-    | By discipline
-    <select id="disciplineChoiceList" class="searchProjectCriteria" style="max-width: 155px;">
-        <option value="-1">All</option>
-    </select>
-</div>
-<div style="display: inline-block;padding-right : 10px;">
-    | By ontology
-    <select id="ontologyChoiceList" class="searchProjectCriteria" style="max-width: 155px;">
-        <option value="-1">All</option>
-    </select>
-</div>
-<div style="display: inline-block;padding-right : 10px;">
-    <button type="button" class="btn showAllProject">Reset</button>
-</div>
-      </div>
 
 

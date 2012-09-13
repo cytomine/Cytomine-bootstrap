@@ -180,8 +180,6 @@ class RestController {
 //    }
 
     protected def responseImage(String url) {
-          println "responseImage="+url
-
           withFormat {
               png {
                   if (request.method == 'HEAD') {

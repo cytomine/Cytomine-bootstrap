@@ -8,27 +8,50 @@ var AnnotationThumbView = Backbone.View.extend({
         this.term = options.term;
         _.bindAll(this, 'render');
     },
-
+    getUserNameById : function(userId) {
+        if (window.app.models.users.get(userId)) {
+           return window.app.models.users.get(userId).prettyName();
+        } else if (window.app.models.projectUserJob.get(userId)) {
+            return window.app.models.projectUserJob.get(userId).get("softwareName");
+        } else {
+            return "undefined"; //should not appear
+        }
+    },
     render: function() {
         var self = this;
         require(["text!application/templates/dashboard/AnnotationThumb.tpl.html", "text!application/templates/dashboard/AnnotationPopOverThumb.tpl.html"], function(tpl, popoverTpl) {
             var annotation = self.model.clone();
 
-            var date_or_rate = undefined;
-            if(annotation.get("rate")!=undefined && !isNaN(annotation.get("rate")))
-                date_or_rate = Math.round(annotation.get("rate")*10000)/100 + "%";
-            else
-                date_or_rate = window.app.convertLongToDate(annotation.get("created"));
+            var ratePourcent = "";
+            if(annotation.get("rate")!=undefined && !isNaN(annotation.get("rate"))) {
+                ratePourcent = Math.round(annotation.get("rate")*10000)/100 + "%";
+            }
+            console.log("ratePourcent="+ratePourcent);
 
             var colorStyle = undefined;
             if (annotation.get("idTerm") == annotation.get("idExpectedTerm")) colorStyle = "#cccccc";
             else if (annotation.get("idTerm") != annotation.get("idExpectedTerm")) {colorStyle = "#F89406"};
 
+
+            //if user job, construct link to the job
+            var jobLink = null;
+            var userJob = window.app.models.projectUserJob.get(annotation.get("user"));
+            if (userJob) {
+                jobLink = _.template("#tabs-algos-<%= idProject %>-<%= idSoftware%>-<%= idJob %>", {
+                    idProject : window.app.status.currentProject,
+                    idSoftware : userJob.get("idSoftware"),
+                    idJob : userJob.get("idJob")
+                });
+            }
+
             annotation.set({
                 sameUser : (window.app.status.user.id==annotation.get("user")),
-                date_or_rate : date_or_rate,
-                colorStyle : colorStyle
+                ratePourcent : ratePourcent,
+                colorStyle : colorStyle,
+                jobLink : jobLink
             });
+
+
 
             $(self.el).html(_.template(tpl, annotation.toJSON()));
             $(self.el).attr("data-annotation", annotation.get("id"));
@@ -41,8 +64,8 @@ var AnnotationThumbView = Backbone.View.extend({
             _.each(annotation.get("userByTerm"), function (it) {
                 var termName = window.app.status.currentTermsCollection.get(it.term).get('name');
                 var userName = [];
-                _.each(it.user, function (user_id) {
-                    userName.push(window.app.models.users.get(user_id).prettyName());
+                _.each(it.user, function (userID) {
+                    userName.push(self.getUserNameById(userID));
                 })
                 userByTerm.push({
                     userName : userName.join(" and "),
@@ -58,7 +81,7 @@ var AnnotationThumbView = Backbone.View.extend({
             }
             var popoverContent = _.template(popoverTpl, {
                 created : window.app.convertLongToDate(annotation.get("created")),
-                userName : window.app.models.users.get(annotation.get("user")).prettyName(),
+                userName : self.getUserNameById(annotation.get("user")),
                 userByTerm : userByTerm,
                 termName : termName,
                 expectedTermName : expectedTermName

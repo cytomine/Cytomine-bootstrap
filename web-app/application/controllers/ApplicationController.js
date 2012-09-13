@@ -9,7 +9,6 @@ var ApplicationController = Backbone.Router.extend({
     routes: {
         ""          :   "initialRoute",
         "explorer"  :   "explorer",
-        //"upload"    :   "upload",
         "admin"     :   "admin"
     },
 
@@ -19,8 +18,7 @@ var ApplicationController = Backbone.Router.extend({
         self.view = new ApplicationView({
             el: $('#content')
         });
-        var loadingView = new LoadingDialogView();
-        //loadingView.render();
+
         //init collections
         self.models.images = new ImageCollection({project:undefined});
         self.models.imagesinstance = new ImageInstanceCollection({project:undefined});
@@ -32,34 +30,32 @@ var ApplicationController = Backbone.Router.extend({
         self.models.projects = new ProjectCollection({user:undefined});
         self.models.annotations = new AnnotationCollection({});
 
-        //"hashtable" with custom collection (usefull in software page)
+        //"hashtable" with custom collection (useful in software page)
         self.models.currentCollection = new Object();
 
         //fetch models
         var modelsToPreload = [self.models.users];
         if (_.size(modelsToPreload) == 0) {
-            self.modelFetched(0, 0, loadingView);
+            self.modelFetched(0, 0);
         } else {
-            loadingView.initProgressBar();
             var nbModelFetched = 0;
             _.each(modelsToPreload, function(model){
                 model.fetch({
                     success :  function(model, response) {
-                        self.modelFetched(++nbModelFetched, _.size(modelsToPreload), loadingView);
+                        self.modelFetched(++nbModelFetched, _.size(modelsToPreload));
                     }
                 });
             });
         }
     },
 
-    modelFetched : function (cpt, expected, loadingView) {
-        var step = 100 / expected;
-        var value = cpt * step;
-        //loadingView.progress(value);
+    modelFetched : function (cpt, expected) {
         if (cpt == expected) {
             this.view.render(this.start);
         }
     },
+
+
     start : function () {
         window.app.controllers.image        = new ImageController();
         window.app.controllers.project      = new ProjectController();
@@ -129,8 +125,8 @@ var ApplicationController = Backbone.Router.extend({
 
 
             self.status = new Status(pingURL, serverDown,
-                    function () { //TO DO: HANDLE WHEN USER IS DISCONNECTED BY SERVER
-                    }, 10000);
+                function () { //TO DO: HANDLE WHEN USER IS DISCONNECTED BY SERVER
+                }, 10000);
 
         });
 
@@ -156,32 +152,29 @@ var ApplicationController = Backbone.Router.extend({
     },
 
     initialRoute: function() {
-        this.controllers.project.project();
+        this.navigate("#project", true);
     },
     convertLongToDate : function (longDate) {
-          var createdDate = new Date();
-          createdDate.setTime(longDate);
+        var createdDate = new Date();
+        createdDate.setTime(longDate);
 
-          //date format
-          var year = createdDate.getFullYear();
-          var month = (createdDate.getMonth()+1)  < 10 ? "0"+(createdDate.getMonth()+1) : (createdDate.getMonth()+1);
-          var day =  (createdDate.getDate())  < 10 ? "0"+(createdDate.getDate()) : (createdDate.getDate());
+        //date format
+        var year = createdDate.getFullYear();
+        var month = (createdDate.getMonth()+1)  < 10 ? "0"+(createdDate.getMonth()+1) : (createdDate.getMonth()+1);
+        var day =  (createdDate.getDate())  < 10 ? "0"+(createdDate.getDate()) : (createdDate.getDate());
 
-          var hour =  (createdDate.getHours())  < 10 ? "0"+(createdDate.getHours()) : (createdDate.getHours());
-          var min =  (createdDate.getMinutes())  < 10 ? "0"+(createdDate.getMinutes()) : (createdDate.getMinutes());
+        var hour =  (createdDate.getHours())  < 10 ? "0"+(createdDate.getHours()) : (createdDate.getHours());
+        var min =  (createdDate.getMinutes())  < 10 ? "0"+(createdDate.getMinutes()) : (createdDate.getMinutes());
 
-          var dateStr = year + "-" + month +"-" + day + " " + hour + "h" + min;
-        return dateStr;
+        return year + "-" + month +"-" + day + " " + hour + "h" + min;
     },
     replaceVariable:function (value) {
-        var self = this;
         var result =value;
         result=result.replace("$currentProjectCreationDate$",window.app.status.currentProjectModel.get('created'));
         result=result.replace("$currentProject$",window.app.status.currentProject);
         result=result.replace("$cytomineHost$",window.location.protocol + "//" + window.location.host);
         result=result.replace("$currentDate$",new Date().getTime());
         result=result.replace("$currentOntology$",window.app.status.currentProjectModel.get('ontology'));
-
         return result;
     },
     isCollectionUndefinedOrEmpty: function(collection) {
@@ -198,7 +191,6 @@ var ApplicationController = Backbone.Router.extend({
         this.models.currentCollection = new Object();
     },
     dataTablesBootstrap : function () {
-        /* Default class modification */
         /* Default class modification */
         $.extend( $.fn.dataTableExt.oStdClasses, {
             "sWrapper": "dataTables_wrapper form-inline"
@@ -231,10 +223,10 @@ var ApplicationController = Backbone.Router.extend({
                     };
 
                     $(nPaging).addClass('pagination').append(
-                            '<ul>'+
-                                    '<li class="prev disabled"><a href="#">&larr; '+oLang.sPrevious+'</a></li>'+
-                                    '<li class="next disabled"><a href="#">'+oLang.sNext+' &rarr; </a></li>'+
-                                    '</ul>'
+                        '<ul>'+
+                            '<li class="prev disabled"><a href="#">&larr; '+oLang.sPrevious+'</a></li>'+
+                            '<li class="next disabled"><a href="#">'+oLang.sNext+' &rarr; </a></li>'+
+                            '</ul>'
                     );
                     var els = $('a', nPaging);
                     $(els[0]).bind( 'click.DT', { action: "previous" }, fnClickHandler );
@@ -270,12 +262,12 @@ var ApplicationController = Backbone.Router.extend({
                         for ( j=iStart ; j<=iEnd ; j++ ) {
                             sClass = (j==oPaging.iPage+1) ? 'class="active"' : '';
                             $('<li '+sClass+'><a href="#">'+j+'</a></li>')
-                                    .insertBefore( $('li:last', an[i])[0] )
-                                    .bind('click', function (e) {
-                                        e.preventDefault();
-                                        oSettings._iDisplayStart = (parseInt($('a', this).text(),10)-1) * oPaging.iLength;
-                                        fnDraw( oSettings );
-                                    } );
+                                .insertBefore( $('li:last', an[i])[0] )
+                                .bind('click', function (e) {
+                                    e.preventDefault();
+                                    oSettings._iDisplayStart = (parseInt($('a', this).text(),10)-1) * oPaging.iLength;
+                                    fnDraw( oSettings );
+                                } );
                         }
 
                         // Add / remove disabled classes from the static elements
