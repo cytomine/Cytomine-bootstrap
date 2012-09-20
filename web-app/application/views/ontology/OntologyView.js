@@ -6,6 +6,7 @@ var OntologyView = Backbone.View.extend({
     ontologiesPanel : null,
     idOntology : null,
     addOntologyDialog : null,
+    allTerms : [],
     events: {
         "click .addOntology": "showAddOntologyPanel",
         "click .refreshOntology" : "refresh"
@@ -15,40 +16,43 @@ var OntologyView = Backbone.View.extend({
         this.idOntology = options.idOntology;
         this.idTerm =  options.idTerm;
     },
+    //browse all ontologies to retrieve each term and add it in window.app.models.terms
+    retrieveTerm : function(ontologies) {
+        var self = this;
+        allTerms = [];
+        ontologies.each(function(ontology) {
+            var terms = self.retrieveChildren(ontology.attributes);
+            allTerms = _.union(allTerms,terms);
+
+        });
+        window.app.models.terms = new TermCollection(allTerms);
+    },
+    retrieveChildren : function(parent) {
+        var self = this;
+        if(parent['children'].length==0) return [];
+        var children = [];
+        _.each(parent['children'],function(elem) {
+            children.push(elem);
+            children = _.union(children,self.retrieveChildren(elem));
+        });
+        return children;
+    },
     refresh : function() {
         var self = this;
-        var i = 0;
-        var deferRender = function(){
-            i++;
-            if (i == 2) self.render();
-        }
-        window.app.models.terms.fetch({
-            success : function (collection, response) {
-                deferRender();
-            }
-        });
         window.app.models.ontologies.fetch({
             success : function (collection, response) {
-                deferRender();
+                self.retrieveTerm(window.app.models.ontologies);
+                self.render();
             }});
     },
     refresh : function(idOntology, idTerm) {
         var self = this;
         this.idOntology = idOntology;
         this.idTerm = idTerm;
-        var i = 0;
-        var deferRender = function(){
-            i++;
-            if (i == 2) self.render();
-        }
-        window.app.models.terms.fetch({
-            success : function (collection, response) {
-                deferRender();
-            }
-        });
         window.app.models.ontologies.fetch({
             success : function (collection, response) {
-                deferRender();
+                self.retrieveTerm(window.app.models.ontologies);
+                self.render();
             }});
     },
     select : function(idOntology) {
