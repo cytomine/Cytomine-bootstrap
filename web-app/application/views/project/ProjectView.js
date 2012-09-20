@@ -4,16 +4,14 @@ var ProjectView = Backbone.View.extend({
     projectListElem : "#projectlist",
     projectList : null,
     addSlideDialog : null,
-    ontologies : null,
-    disciplines : null,
     initialize: function(options) {
         this.container = options.container;
         this.model = options.model;
-        this.ontologies = options.ontologies;
-        this.disciplines = options.disciplines;
         this.el = options.el;
         this.searchProjectPanel = null;
         this.addProjectDialog = null;
+        this.ontologies = this.getOntologiesChoice();
+        this.disciplines = this.getDisciplinesChoice();
     },
     render : function () {
         var self = this;
@@ -58,7 +56,8 @@ var ProjectView = Backbone.View.extend({
         self.addProjectDialog = new AddProjectDialog({
             projectsPanel:self,
             el:self.el,
-            ontologies : self.ontologies
+            ontologies : self.ontologies,
+            disciplines : self.disciplines
         }).render();
     },
     /**
@@ -66,7 +65,6 @@ var ProjectView = Backbone.View.extend({
      */
     refresh : function() {
         var self = this;
-        //TODO: project must be filter by user?
         var idUser =  undefined;
 
         //_.each(self.projectList, function(panel){ panel.refresh(); });
@@ -107,6 +105,31 @@ var ProjectView = Backbone.View.extend({
             projectsPanel : self
         }).render();
     },
+
+    getOntologiesChoice : function() {
+        var ontologies = new Backbone.Collection;
+        ontologies.comparator = function(item) {
+          return item.get("name");
+        };
+        _.each(this.model.models, function(project) {
+            if(ontologies.get(project.get("ontology"))==undefined)
+                ontologies.add({id: project.get("ontology"),name: project.get("ontologyName")});
+        });
+        return ontologies;
+
+    },
+    getDisciplinesChoice : function() {
+        var disciplines = new Backbone.Collection;
+        disciplines.comparator = function(item) {
+          return item.get("name");
+        };
+        _.each(this.model.models, function(project) {
+            if(disciplines.get(project.get("discipline"))==undefined && project.get("discipline")!=null)
+                disciplines.add({id: project.get("discipline"),name: project.get("disciplineName")});
+        });
+        return disciplines;
+    },
+
     /**
      * Print all project panel
      */

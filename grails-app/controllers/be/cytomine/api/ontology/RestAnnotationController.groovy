@@ -42,7 +42,7 @@ class RestAnnotationController extends RestController {
         def annotations = []
         def projects = projectService.list()
         projects.each {
-            annotations.addAll(annotationService.list(it))
+            annotations.addAll(annotationService.listUserAnnotation(it))
         }
         responseSuccess(annotations)
     }

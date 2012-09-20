@@ -11,6 +11,7 @@ import be.cytomine.processing.ImageFilterProject
 import be.cytomine.processing.SoftwareProject
 import be.cytomine.security.SecUser
 import grails.converters.JSON
+import be.cytomine.utils.JSONMin
 
 class Project extends CytomineDomain {
 
@@ -173,8 +174,11 @@ class Project extends CytomineDomain {
 
     static void registerMarshaller(String cytomineBaseUrl) {
         println "Register custom JSON renderer for " + Project.class
+
         JSON.registerObjectMarshaller(Project) { project ->
+
             def returnArray = [:]
+
             returnArray['class'] = project.class
             returnArray['id'] = project.id
             returnArray['name'] = project.name

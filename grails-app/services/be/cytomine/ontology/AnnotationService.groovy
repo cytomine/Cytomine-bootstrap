@@ -42,6 +42,7 @@ class AnnotationService extends ModelService {
     def algoAnnotationTermService
     def responseService
     def domainService
+    def securityService
 
     boolean saveOnUndoRedoStack = true
 
@@ -53,6 +54,13 @@ class AnnotationService extends ModelService {
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
         Annotation.findAllByProject(project)
+    }
+
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    def listUserAnnotation(Project project) {
+        List<SecUser> users = securityService.getUserList(project)
+        List<Annotation> annotations = Annotation.findAllByProjectAndUserInList(project,users)
+        return annotations
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")

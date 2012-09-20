@@ -51,6 +51,7 @@ class BootStrap {
     def aclUtilService
     def objectIdentityRetrievalStrategy
     def sessionFactory
+    def JSONMinService
 
 
 
@@ -63,6 +64,8 @@ class BootStrap {
     def init = { servletContext ->
         //Register API Authentifier
         println "Current directory="+new File( 'test.html' ).absolutePath
+
+
 
         SpringSecurityUtils.clientRegisterFilter( 'apiAuthentificationFilter', SecurityFilterPosition.DIGEST_AUTH_FILTER.order + 1)
         println "###################" + grailsApplication.config.grails.serverURL + "##################"
@@ -106,7 +109,7 @@ class BootStrap {
         println "create discipline"
         createDiscipline()
 
-        countersService.updateCounters()
+        //countersService.updateCounters()
         //updateImageProperties()
         //generateAbstractImageOriginalFilename()
         /*

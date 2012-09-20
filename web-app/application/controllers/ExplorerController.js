@@ -31,7 +31,7 @@ var ExplorerController = Backbone.Router.extend({
         });
     },
     browse : function (idProject, idImage, idAnnotation) {
-        console.log("browse");
+        console.log("browse2");
         /*
          if (window.app.secondaryWindow) {
          window.app.secondaryWindow.location = window.location;
@@ -40,9 +40,11 @@ var ExplorerController = Backbone.Router.extend({
         var self = this;
         //create tabs if not exist
         if (this.tabs == null) {
+            console.log("this.tabs==null");
             this.initTabs();
         }
         var createBrowseImageViewTab = function() {
+            console.log("createBrowseImageViewTab");
             var browseImageViewInitOptions = {};
             if (idAnnotation != "") {
                 browseImageViewInitOptions.goToAnnotation = {value : idAnnotation};
@@ -50,10 +52,12 @@ var ExplorerController = Backbone.Router.extend({
             self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions);
             //$('#tabs-image-'+idImage).tab('show');
            // window.app.view.showComponent(self.tabs.container);
+            console.log("showView");
             self.showView();
         };
 
         if (window.app.status.currentProject == undefined ||  window.app.status.currentProject!=idProject) {//direct access -> create dashboard
+            console.log("project check");
             window.app.controllers.dashboard.dashboard(idProject, createBrowseImageViewTab);
             return;
         }

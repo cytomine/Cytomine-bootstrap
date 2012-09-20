@@ -14,6 +14,7 @@ var ApplicationController = Backbone.Router.extend({
 
     startup : function () {
         var self = this;
+
         self.dataTablesBootstrap();
         self.view = new ApplicationView({
             el: $('#content')

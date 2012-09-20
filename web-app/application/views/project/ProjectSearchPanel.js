@@ -1,8 +1,8 @@
 var ProjectSearchPanel = Backbone.View.extend({
-    ontologies : null,
-    disciplines : null,
     idUser : null,
     container : null,
+    ontologies : null,
+    disciplines : null,
     projectsPanel : null,
     allProjectsButtonElem: "#projectallbutton",
     //addProjectButtonElem : "#projectaddbutton",
@@ -21,11 +21,11 @@ var ProjectSearchPanel = Backbone.View.extend({
     addProjectCheckedDisciplinesRadioElem : 'input[type=radio][name=disciplineradio]:checked',
     addProjectCheckedUsersCheckboxElem : 'input[type=checkbox][name=usercheckbox]:checked',
     initialize: function(options) {
-        this.ontologies = options.ontologies;
-        this.disciplines = options.disciplines;
         this.idUser = options.idUser;
         this.container = options.container;
         this.projectsPanel = options.projectsPanel;
+        this.ontologies = options.ontologies;
+        this.disciplines = options.disciplines;
     },
     events: {
         //"click .addProject": "showAddProjectPanel",
@@ -44,6 +44,7 @@ var ProjectSearchPanel = Backbone.View.extend({
 
         return this;
     },
+
     doLayout : function(tpl) {
         var self = this;
         var search = _.template(tpl, {});

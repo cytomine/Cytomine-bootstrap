@@ -9,16 +9,12 @@ var ProjectController = Backbone.Router.extend({
     initView : function() {
         var self = this;
 
-        var ontologies = null;
-        var disciplines = null;
         var projects = null;
         var users = null;
         var loadHandler = function() {
-            if (ontologies == null || disciplines == null || projects == null || users == null) return;
+            if (projects == null || users == null) return;
             self.view = new ProjectView({
                 model : projects,
-                ontologies : ontologies,
-                disciplines : disciplines,
                 el:$("#project"),
                 container : window.app.view.components.project
             }).render();
@@ -29,17 +25,17 @@ var ProjectController = Backbone.Router.extend({
             window.app.view.showComponent(window.app.view.components.project);
         }
 
-        new OntologyCollection({ light : true }).fetch({
-            success : function (collection, response) {
-                ontologies = collection;
-                loadHandler();
-            }});
+//        new OntologyCollection({ light : true }).fetch({
+//            success : function (collection, response) {
+//                ontologies = collection;
+//                loadHandler();
+//            }});
 
-        window.app.models.disciplines.fetch({
-            success : function (collection, response) {
-                disciplines = collection;
-                loadHandler();
-            }});
+//        window.app.models.disciplines.fetch({
+//            success : function (collection, response) {
+//                disciplines = collection;
+//                loadHandler();
+//            }});
 
         window.app.models.projects.fetch({
             success : function (collection, response) {

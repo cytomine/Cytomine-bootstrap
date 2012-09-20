@@ -115,6 +115,8 @@ class ImageInstance extends CytomineDomain {
         JSON.registerObjectMarshaller(ImageInstance) {
             def returnArray = [:]
 
+
+
             returnArray['class'] = it.class
 
             returnArray['id'] = it.id
