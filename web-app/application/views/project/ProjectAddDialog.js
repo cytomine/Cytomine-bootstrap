@@ -86,16 +86,32 @@ var AddProjectDialog = Backbone.View.extend({
         $("#projectdiscipline").empty();
         var choice = _.template(disciplinesChoicesRadioTpl, {id:-1,name:"*** Undefined ***"});
         $("#projectdiscipline").append(choice);
-        self.disciplines.each(function(discipline){
-            var choice = _.template(disciplinesChoicesRadioTpl, {id:discipline.id,name:discipline.get("name")});
-            $("#projectdiscipline").append(choice);
+        window.app.models.disciplines.fetch({
+            success : function (collection, response) {
+                $("#choiceListDiscipline").empty();
+                $("#choiceListDiscipline").append('<select class="input-xlarge focused" id="projectdiscipline" />');
+
+
+                collection.each(function(discipline){
+                    var choice = _.template(ontologiesChoicesRadioTpl, {id:discipline.id,name:discipline.get("name")});
+                    $("#projectdiscipline").append(choice);
+                });
+                $("#projectdiscipline").find("option:selected").removeAttr("selected");
+            }
         });
         $("#projectontology").empty();
-        self.ontologies.each(function(ontology){
+        window.app.models.ontologiesLigth.fetch({
+            success : function (collection, response) {
+                $("#choiceListOntology").empty();
+                $("#choiceListOntology").append('<select class="input-xlarge focused" id="projectontology" />');
+
+                collection.each(function(ontology){
                     var choice = _.template(ontologiesChoicesRadioTpl, {id:ontology.id,name:ontology.get("name")});
                     $("#projectontology").append(choice);
                 });
                 $("#projectontology").find("option:selected").removeAttr("selected");
+            }
+        });
 
         $("#createOntologyWithProjectName").click(function(evt) {
 

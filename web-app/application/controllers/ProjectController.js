@@ -25,18 +25,6 @@ var ProjectController = Backbone.Router.extend({
             window.app.view.showComponent(window.app.view.components.project);
         }
 
-//        new OntologyCollection({ light : true }).fetch({
-//            success : function (collection, response) {
-//                ontologies = collection;
-//                loadHandler();
-//            }});
-
-//        window.app.models.disciplines.fetch({
-//            success : function (collection, response) {
-//                disciplines = collection;
-//                loadHandler();
-//            }});
-
         window.app.models.projects.fetch({
             success : function (collection, response) {
                 projects = collection;
