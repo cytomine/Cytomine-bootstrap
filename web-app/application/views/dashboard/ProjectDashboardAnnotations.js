@@ -440,7 +440,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             children : []
         };
         window.app.models.projectUser.each(function(user) {
-            if (!_.include(self.model.get("userLayers"), user.id)) return;
+            if (window.app.models.userLayer.get(user.id)==undefined) return;
             treeData.children.push({
                 id : user.id,
                 key : user.id,

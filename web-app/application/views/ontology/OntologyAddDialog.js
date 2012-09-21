@@ -23,7 +23,7 @@ var AddOntologyDialog = Backbone.View.extend({
         $("#editontology").replaceWith("");
         $("#addontology").replaceWith("");
         $(self.el).append(dialog);
-        var user = window.app.models.users.get(window.app.status.user);
+        var user = window.app.models.projectUser.get(window.app.status.user);
         $("#ontologyuser").append(user.get('username') + " ("+ user.get('firstname') + " " + user.get('lastname') +")");
         $("#login-form-add-ontology").submit(function () {self.createOntology(); return false;});
         $("#login-form-add-ontology").find("input").keydown(function(e){

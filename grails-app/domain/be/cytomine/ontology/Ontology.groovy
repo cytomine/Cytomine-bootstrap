@@ -132,14 +132,8 @@ class Ontology extends CytomineDomain implements Serializable {
             returnArray['user'] = it.user?.id
             returnArray['state'] = "open"
             returnArray['projects'] = it.getProjects()
-            if (it.version != null) {
-                returnArray['children'] = it.tree()
-                returnArray['users'] = it.usersId()
-            }
-            else {
-                returnArray['children'] = []
-                returnArray['users'] = []
-            }
+            if (it.version != null) returnArray['children'] = it.tree()
+            else returnArray['children'] = []
             return returnArray
         }
     }

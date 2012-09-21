@@ -14,6 +14,7 @@ import be.cytomine.security.UserJob
 import grails.converters.JSON
 
 import java.text.SimpleDateFormat
+import be.cytomine.ontology.Ontology
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
@@ -27,6 +28,7 @@ class RestUserController extends RestController {
     def userService
     def securityService
     def projectService
+    def ontologyService
 
     /**
      * Render and returns all Users into the specified format given in the request
@@ -53,9 +55,7 @@ class RestUserController extends RestController {
      */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
-        log.info "Show method1"
         SecUser user = userService.read(params.long('id'))
-        log.info "User check:"+user
         if (user) responseSuccess(user)
         else responseNotFound("User", params.id)
     }
@@ -80,6 +80,54 @@ class RestUserController extends RestController {
         }
         else responseNotFound("User", "Project", params.id)
     }
+
+    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
+    def showAdminByProject = {
+        Project project = projectService.read(params.long('id'),new Project())
+        if (project) {
+            responseSuccess(project.admins())
+        }
+        else responseNotFound("User", "Project", params.id)
+    }
+
+    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
+    def showCreatorByProject = {
+        Project project = projectService.read(params.long('id'),new Project())
+        if (project) {
+            responseSuccess([project.creator()])
+        }
+        else responseNotFound("User", "Project", params.id)
+    }
+
+    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
+    def showCreatorByOntology = {
+        Ontology ontology = ontologyService.read(params.long('id'))
+        if (ontology) {
+            responseSuccess([ontology.user])
+        }
+        else responseNotFound("User", "Project", params.id)
+    }
+
+    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
+    def showUserByOntology = {
+        Ontology ontology = ontologyService.read(params.long('id'))
+        if (ontology) {
+            responseSuccess(ontology.users())
+        }
+        else responseNotFound("User", "Project", params.id)
+    }
+
+    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
+    def showLayerByProject = {
+        Project project = projectService.read(params.long('id'),new Project())
+        if (project) {
+            responseSuccess(project.userLayers())
+        }
+        else responseNotFound("User", "Project", params.id)
+    }
+
+
+
 
     @Secured(['ROLE_ADMIN'])
     def add = {

@@ -327,7 +327,7 @@ AnnotationLayer.prototype = {
         ], function(tpl) {
             new AnnotationModel({id : evt.feature.attributes.idAnnotation}).fetch({
                 success : function (annotation, response) {
-                    annotation.set({"username" : window.app.models.users.get(annotation.get("user")).prettyName()});
+                    annotation.set({"username" : window.app.models.projectUser.get(annotation.get("user")).prettyName()});
 
                     var terms = new Array();
                     //browse all term and compute the number of user who add this term

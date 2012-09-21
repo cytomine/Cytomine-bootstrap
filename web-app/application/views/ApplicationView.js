@@ -376,8 +376,8 @@ var ApplicationView = Backbone.View.extend({
         component.activate();
     },
     getUserNameById : function(userId) {
-        if (window.app.models.users.get(userId)) {
-            return window.app.models.users.get(userId).prettyName();
+        if (window.app.models.projectUser.get(userId)) {
+            return window.app.models.projectUser.get(userId).prettyName();
         } else if (window.app.models.projectUserJob.get(userId)) {
             return window.app.models.projectUserJob.get(userId).get("softwareName");
         } else {

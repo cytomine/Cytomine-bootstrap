@@ -62,6 +62,7 @@ class BootStrap {
 
 
     def init = { servletContext ->
+
         //Register API Authentifier
         println "Current directory="+new File( 'test.html' ).absolutePath
 

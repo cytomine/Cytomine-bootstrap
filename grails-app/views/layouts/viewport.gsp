@@ -200,6 +200,7 @@ body {
     <script type="text/javascript" src="application/views/image/ImageTabsView.js" ></script>
     <script type="text/javascript" src="application/views/image/ImagePropertiesView.js" ></script>
 
+    <script type="text/javascript" src="application/views/ontology/OntologyUsersDialog.js" ></script>
     <script type="text/javascript" src="application/views/ontology/OntologyPanelView.js" ></script>
     <script type="text/javascript" src="application/views/ontology/OntologyView.js" ></script>
     <script type="text/javascript" src="application/views/ontology/OntologyAddOrEditTermView.js" ></script>
@@ -207,6 +208,7 @@ body {
     <script type="text/javascript" src="application/views/ontology/OntologyEditDialog.js" ></script>
     <script type="text/javascript" src="application/views/ontology/OntologyAddDialog.js" ></script>
 
+    <script type="text/javascript" src="application/views/project/ProjectUsersDialog.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectView.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectPanelView.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectManageSlideDialog.js" ></script>

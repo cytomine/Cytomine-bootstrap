@@ -46,7 +46,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
 
 		this.vectorLayers.push({ id : userID, vectorsLayer : layer.vectorsLayer});
         var layerID = "layerSwitch-" + model.get("id") + "-" + userID + "-"  + new Date().getTime(); //index of the layer in this.layers array
-        var color = "#FFF";//window.app.models.users.get(userID).get('color');
+        var color = "#FFF";
         var layerOptionTpl;
         if (layer.isOwner) {
             layerOptionTpl = _.template("<li><input id='<%= id %>' class='showUser' type='checkbox'  value='<%= name %>' checked />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color : #ffffff;'> <%=   name %></span></li>", {id : layerID, name : layer.vectorsLayer.name, color : color});
@@ -66,11 +66,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
     updateOnlineUsers : function (onlineUsers) {
         var self = this;
         var userList = $("#layerSwitcher"+this.model.get("id")).find("ul.annotationLayers");
-        var project = window.app.status.currentProjectModel;
-        var projectUsers = window.app.models.users.select(function(user){
-            return _.include(project.get("users"), user.id);
-        });
-        projectUsers = _.pluck(projectUsers, 'id');
+        var projectUsers = _.pluck(window.app.models.projectUser, 'id');
         //check if the the user we are following is always connected, if not disconneted
         if (!_.include(onlineUsers, self.userFollowed)) {
             userList.find("li[data-id="+self.userFollowed+"]").find('input.followUser').removeAttr('checked');
@@ -89,7 +85,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
     },
     startFollowing : function () {
         var self = this;
-        window.app.view.message("","Start following " + window.app.models.users.get(self.userFollowed).prettyName(), "success");
+        window.app.view.message("","Start following " + window.app.models.projectUser.get(self.userFollowed).prettyName(), "success");
         var image = this.model.get("id");
         this.followInterval = setInterval(function() {
             new UserPositionModel({ image : image, user : self.userFollowed }).fetch({
@@ -108,7 +104,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
     stopFollowing: function() {
         var self = this;
         if (self.followInterval != undefined) {
-            window.app.view.message("","Stop following " + window.app.models.users.get(self.userFollowed).prettyName(), "success");
+            window.app.view.message("","Stop following " + window.app.models.projectUser.get(self.userFollowed).prettyName(), "success");
             clearInterval(self.followInterval);
             self.followInterval = null;
             self.userFollowed = null;
@@ -150,11 +146,8 @@ var LayerSwitcherPanel = Backbone.View.extend({
         $("#selectLayersIcon"+self.model.get("id")).off("click");
         $("#selectLayersIcon"+self.model.get("id")).on("click", function (event) {
             var project = window.app.status.currentProjectModel;
-            var projectUsers = window.app.models.users.select(function(user){
-                return _.include(project.get("users"), user.id);
-            });
             var userList = $("#layerSwitcher"+self.model.get("id")).find("ul.annotationLayers");
-            projectUsers = _.pluck(projectUsers, 'id');
+            var projectUsers = _.pluck(window.app.models.projectUser, 'id');
             var almostOneCheckedState = false;
             _.each(projectUsers, function (userID) {
                 var checked = userList.find("li[data-id="+userID+"]").find('input.showUser').attr("checked") == "checked";

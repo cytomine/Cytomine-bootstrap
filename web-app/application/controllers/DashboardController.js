@@ -117,7 +117,7 @@ var DashboardController = Backbone.Router.extend({
     createView : function (callback) {
         var self = this;
 
-        var nbCollectionToFetch = 5;
+        var nbCollectionToFetch = 6;
         var nbCollectionToFetched = 0;
         var collectionFetched = function(expected) {
             nbCollectionToFetched++;
@@ -146,6 +146,13 @@ var DashboardController = Backbone.Router.extend({
                 collectionFetched(nbCollectionToFetch);
             }
         });
+        new UserLayerCollection({project : window.app.status.currentProject}).fetch({
+            success : function(collection, response) {
+                window.app.models.userLayer = collection;
+                collectionFetched(nbCollectionToFetch);
+            }
+        });
+
         new ProjectModel({id : window.app.status.currentProject}).fetch({
             success : function(model, response) {
                 window.app.status.currentProjectModel = model;

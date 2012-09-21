@@ -3,6 +3,7 @@ var ProjectController = Backbone.Router.extend({
     manageView : null,
     routes: {
         "project"     :   "project",
+        "project-users-:idProject" : "users",
         "project-manage-:idProject" : "manage"
     },
 
@@ -10,9 +11,8 @@ var ProjectController = Backbone.Router.extend({
         var self = this;
 
         var projects = null;
-        var users = null;
         var loadHandler = function() {
-            if (projects == null || users == null) return;
+            if (projects == null) return;
             self.view = new ProjectView({
                 model : projects,
                 el:$("#project"),
@@ -30,17 +30,10 @@ var ProjectController = Backbone.Router.extend({
                 projects = collection;
                 loadHandler();
             }});
-
-        window.app.models.users.fetch({
-            success : function (collection, response) {
-                users = collection;
-                loadHandler();
-            }
-        })
     },
 
     project : function(callback) {
-
+        console.log("controller.project");
         var self = this;
         $("#warehouse-button").attr("href", "#project");
         $("#addimagediv").hide();
@@ -85,5 +78,37 @@ var ProjectController = Backbone.Router.extend({
             showManageImages();
         }
 
+    },
+
+    users : function(idProject,callback) {
+
+
+
+        var self = this;
+        $("#warehouse-button").attr("href", "#project");
+        $("#addimagediv").hide();
+        $("#projectdiv").show();
+
+        var projectCallback = function () {
+
+            self.view.container.show(self.view, "#project", "project");
+            window.app.view.showComponent(window.app.view.components.project);
+            self.view.refresh();
+            if (_.isFunction(callback)) {
+                callback.call();
+            }
+        }
+
+        if (!this.view) {
+            this.initView();
+        } else {
+            projectCallback.call();
+        }
+
+        console.log("controller.user="+idProject);
+        new ProjectModel({id:idProject}).fetch({
+            success : function (model, response) {
+                new projectUsersDialog({model:model,el:$("#project")}).render();
+            }});
     }
 });

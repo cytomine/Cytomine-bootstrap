@@ -203,7 +203,7 @@ var BrowseImageView = Backbone.View.extend({
         var self = this;
         this.layersLoaded++;
         var project = window.app.status.currentProjectModel;
-        if (this.layersLoaded == project.get("userLayers").length) {
+        if (this.layersLoaded == window.app.models.userLayer.length) {
             //Init MultiSelected in LayerSwitcher
             /*$("#layerSwitcher"+this.model.get("id")).find("select").multiselect({
              click: function(event, ui){
@@ -765,8 +765,8 @@ var BrowseImageView = Backbone.View.extend({
     initVectorLayers: function (ontologyTreeView) {
         var self = this;
         var project = window.app.status.currentProjectModel;
-        var projectUsers = window.app.models.users.select(function(user){
-            return _.include(project.get("userLayers"), user.id);
+        var projectUsers =window.app.models.projectUser.select(function(user){
+            return window.app.models.userLayer.get(user.id)!=undefined;
         });
         _.each(projectUsers, function (user) {
             var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map );

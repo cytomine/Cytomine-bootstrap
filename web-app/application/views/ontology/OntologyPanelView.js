@@ -276,21 +276,18 @@ var OntologyPanelView = Backbone.View.extend({
     buildInfoOntologyPanel : function() {
         var self = this;
         self.$infoOntology.empty();
-        var idUserOwner = self.model.get('user');
-        var userOwner = window.app.models.users.get(idUserOwner);
-        var sharedTo = "Nobody";
-        var users = self.model.get('users');
-        if (_.size(users) > 0) {
-            var userNames = []
-            _.each(users,
-                    function(idUser){
-                        if (idUser == idUserOwner) return;
-                        userNames.push(window.app.models.users.get(idUser).prettyName());
-                    });
-            sharedTo = userNames.join(', ');
-        }
-        var tpl = _.template("<div id='userontologyinfo-<%= id %>' style='padding:5px;'><ul><li><b>Ontology</b> : <%= ontologyName %></li><li><b>Owner</b> : <%= owner %></li><li><b>Shared to</b> : <%= sharedTo %></li><li class='projectsLinked'></li></ul></div>", { id : self.model.id, ontologyName : self.model.get('name'), owner : userOwner.prettyName(), sharedTo :  sharedTo});
+        var buttonId = "seeUserOntology-"+ self.model.id;
+        var tpl = _.template("" +
+                "<div id='userontologyinfo-<%= id %>' style='padding:5px;'>" +
+                "<ul><li><b>Ontology</b> : <%= ontologyName %></li>" +
+                "<li><b>Users</b> : <button id='"+buttonId+"' class='btn'>See users list</button></li><li class='projectsLinked'></li></ul></div>", { id : self.model.id, ontologyName : self.model.get('name')});
         self.$infoOntology.html(tpl);
+
+        $("#"+buttonId).click(function(){
+            console.log("open ontology user "+ self.model.id)
+                   new ontologyUsersDialog({model:self.model,el:$("#ontology")}).render();
+        });
+
 
 	
                 var projectsLinked = []

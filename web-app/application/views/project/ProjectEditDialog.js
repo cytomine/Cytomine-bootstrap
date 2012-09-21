@@ -80,33 +80,52 @@ var EditProjectDialog = Backbone.View.extend({
         var self = this;
         /* Create Users List */
         $("#projectedituser").empty();
-        window.app.models.users.each(function(user) {
-            if(_.indexOf(self.model.get('users'),user.id)!=-1) {
-                $("#projectedituser").append('<option value="'+user.id+'" selected="selected">'+user.prettyName()+'</option>');
-            } else $("#projectedituser").append('<option value="'+user.id+'">'+user.prettyName()+'</option>');
-        });
 
+        var allUser = null;
+        var projectUser = null;
+        var loadUser = function() {
+            if(allUser==null || projectUser==null) return
 
-        $("#projectedituser").multiselectNext({
-            deselected: function(event, ui) {
-                //lock current user (cannot be deselected
-                if($(ui.option).val()==window.app.status.user.id)  {
-                    $("#projectedituser").multiselectNext('select', $(ui.option).text());
-                    window.app.view.message("User", "You must be in user list of your project!", "error");
-                } else {
-                }
-            },
-            selected: function(event, ui) {
+            allUser.each(function(user) {
+                  if(projectUser.get(user.id)!=undefined) {
+                      $("#projectedituser").append('<option value="'+user.id+'" selected="selected">'+user.prettyName()+'</option>');
+                  } else $("#projectedituser").append('<option value="'+user.id+'">'+user.prettyName()+'</option>');
+              });
+
+              $("#projectedituser").multiselectNext({
+                  deselected: function(event, ui) {
+                      //lock current user (cannot be deselected
+                      if($(ui.option).val()==window.app.status.user.id)  {
+                          $("#projectedituser").multiselectNext('select', $(ui.option).text());
+                          window.app.view.message("User", "You must be in user list of your project!", "error");
+                      } else {
+                      }
+                  },
+                  selected: function(event, ui) {
+              }});
+
+              $("div.ui-multiselect").find("ul.available").css("height","150px");
+              $("div.ui-multiselect").find("ul.selected").css("height","150px");
+              $("div.ui-multiselect").find("input.search").css("width","75px");
+
+              $("div.ui-multiselect").find("div.actions").css("background-color","#DDDDDD");
+
+              console.log("window.app.status.user.model.prettyName()="+window.app.status.user.model.prettyName());
+              $("#projectedituser").multiselectNext('select',window.app.status.user.model.prettyName());
+        }
+
+        new UserCollection({}).fetch({
+             success : function (allUserCollection, response) {
+                 allUser = allUserCollection;
+                 loadUser();
         }});
 
-        $("div.ui-multiselect").find("ul.available").css("height","150px");
-        $("div.ui-multiselect").find("ul.selected").css("height","150px");
-        $("div.ui-multiselect").find("input.search").css("width","75px");
-
-        $("div.ui-multiselect").find("div.actions").css("background-color","#DDDDDD");
-
-        console.log("window.app.status.user.model.prettyName()="+window.app.status.user.model.prettyName());
-        $("#projectedituser").multiselectNext('select',window.app.status.user.model.prettyName());
+        new UserCollection({project:self.model.id}).fetch({
+            success : function (projectUserCollection, response) {
+                 projectUser = projectUserCollection;
+                 window.app.models.projectUser = projectUserCollection;
+                 loadUser();
+       }});
     },
     createRetrievalProject : function() {
         var self = this;
@@ -250,7 +269,11 @@ var EditProjectDialog = Backbone.View.extend({
                         var projectAddUser = null;
                         var projectDeleteUser = null;
 
-                        var jsonuser = self.model.get('users');
+                        var jsonuser = [];
+
+                        window.app.models.projectUser.each(function(user) {
+                            jsonuser.push(user.id);
+                        });
 
                         _.each(jsonuser,
                                 function(user){

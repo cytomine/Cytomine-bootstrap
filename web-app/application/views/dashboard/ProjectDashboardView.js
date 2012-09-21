@@ -140,8 +140,8 @@ var ProjectDashboardView = Backbone.View.extend({
             //Get users list
             $("#projectInfoUserList").empty();
             var users = []
-            _.each(self.model.get('users'), function (idUser) {
-                users.push(window.app.models.users.get(idUser).prettyName());
+            window.app.models.projectUser.each(function (user) {
+                users.push(user.prettyName());
             });
             $("#projectInfoUserList").html(users.join(", "));
         });

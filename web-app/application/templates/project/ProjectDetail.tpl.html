@@ -6,9 +6,7 @@
                 <li>Name : <a href="#tabs-dashboard-<%= id %>"><%= name %></a></li>
                 <li>Discipline : <%= disciplineName %></li>
                 <li>Ontology : <a href="#ontology/<%= ontology %>"><%= ontologyName %></a></li>
-                <li>Creator : <%= creator %></li>
-                <li>Admins : <a  class="adminsPopover" href="#" rel="popover" data-content="<%= admins %>" data-original-title="Admins"> <%= shortAdmins %></a></li>
-                <li>Users : <a  class="usersPopover" href="#" rel="popover" data-content="<%= users %>" data-original-title="Users"> <%= shortUsers %></a></li>
+                <li><i class="icon-user"></i> <a href="#project-users-<%= id %>">See users list</a><li>
             </ul>
         </div>
         <div style="padding-left : 10px;">

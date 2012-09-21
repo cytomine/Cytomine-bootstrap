@@ -8,6 +8,7 @@ import be.cytomine.project.Discipline
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.security.SecUser
 
 class RestProjectController extends RestController {
 
@@ -22,8 +23,17 @@ class RestProjectController extends RestController {
     def imageInstanceService
 
     def list = {
-        responseSuccess(projectService.list())
+        SecUser user = cytomineService.currentUser
+        //Use post filter (better code) or this request (good perf)?
+        List<Project> projects = Project.executeQuery(
+                "select distinct project "+
+                "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project "+
+                "where aclObjectId.objectId = project.id " +
+                "and aclEntry.aclObjectIdentity = aclObjectId.id "+
+                "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
+        responseSuccess(projects)
     }
+
 
     def listBySoftware = {
         Software software = Software.read(params.long('id'))

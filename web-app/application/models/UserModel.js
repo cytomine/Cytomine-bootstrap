@@ -26,6 +26,7 @@ var UserModel = Backbone.Model.extend({
 });
 
 
+
 var UserFriendCollection = Backbone.Collection.extend({
     model: UserModel,
     url: function() {
@@ -42,16 +43,40 @@ var UserFriendCollection = Backbone.Collection.extend({
 var UserCollection = Backbone.Collection.extend({
     model: UserModel,
     url: function() {
-        if (this.project != undefined) {
+        if (this.project != undefined && this.admin == true) {
+            return "api/project/" + this.project + "/admin.json";
+        } else if (this.project != undefined && this.creator == true) {
+            return "api/project/" + this.project + "/creator.json";
+        } else if (this.project != undefined) {
             return "api/project/" + this.project + "/user.json";
-        } else {
+        } else if (this.ontology != undefined && this.creator == true) {
+            return "api/ontology/" + this.ontology + "/creator.json";
+        }else if (this.ontology != undefined) {
+            console.log("ontologyYYY="+this.ontology);
+            return "api/ontology/" + this.ontology + "/user.json";
+        }else {
             return "api/user.json";
         }
     },
     initialize: function (options) {
         this.project = options.project;
+        this.ontology = options.ontology;
+        this.admin = options.admin;
+        this.creator = options.creator;
     },comparator : function(user) {
         return user.get("username").toLowerCase();
+    }
+});
+
+
+var UserLayerCollection = Backbone.Collection.extend({
+    url: function() {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/userlayer.json";
+        }
+    },
+    initialize: function (options) {
+        this.project = options.project;
     }
 });
 

@@ -24,7 +24,6 @@ var ApplicationController = Backbone.Router.extend({
         self.models.images = new ImageCollection({project:undefined});
         self.models.imagesinstance = new ImageInstanceCollection({project:undefined});
         self.models.slides = new SlideCollection({project:undefined});
-        self.models.users = new UserCollection({project:undefined});
         self.models.terms = new TermCollection({project:undefined});
         self.models.ontologies = new OntologyCollection();
         self.models.ontologiesLigth = new OntologyCollection({light:true});
@@ -36,7 +35,7 @@ var ApplicationController = Backbone.Router.extend({
         self.models.currentCollection = new Object();
 
         //fetch models
-        var modelsToPreload = [self.models.users];
+        var modelsToPreload = [];
         if (_.size(modelsToPreload) == 0) {
             self.modelFetched(0, 0);
         } else {

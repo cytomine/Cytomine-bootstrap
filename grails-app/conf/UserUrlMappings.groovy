@@ -32,6 +32,12 @@ class UserUrlMappings {
         "/api/project/$id/user"(controller: "restUser"){
             action = [GET:"showByProject",POST:"addUser"]
         }
+        "/api/project/$id/admin"(controller: "restUser"){
+            action = [GET:"showAdminByProject"]
+        }
+        "/api/project/$id/creator"(controller: "restUser"){
+            action = [GET:"showCreatorByProject"]
+        }
         "/api/project/$id/user/$idUser"(controller: "restUser"){
             action = [DELETE:"deleteUser",POST:"addUser"]
         }
@@ -40,6 +46,15 @@ class UserUrlMappings {
         }
         "/api/project/$id/userjob"(controller: "restUser"){
             action = [GET:"listUserJobByProject"]
+        }
+        "/api/ontology/$id/user"(controller: "restUser"){
+            action = [GET:"showUserByOntology"]
+        }
+        "/api/ontology/$id/creator"(controller: "restUser"){
+            action = [GET:"showCreatorByOntology"]
+        }
+        "/api/project/$id/userlayer"(controller: "restUser"){
+            action = [GET:"showLayerByProject"]
         }
     }
 }
