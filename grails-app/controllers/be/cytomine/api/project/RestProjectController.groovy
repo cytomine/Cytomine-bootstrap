@@ -25,13 +25,17 @@ class RestProjectController extends RestController {
     def list = {
         SecUser user = cytomineService.currentUser
         //Use post filter (better code) or this request (good perf)?
-        List<Project> projects = Project.executeQuery(
-                "select distinct project "+
-                "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project "+
-                "where aclObjectId.objectId = project.id " +
-                "and aclEntry.aclObjectIdentity = aclObjectId.id "+
-                "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
-        responseSuccess(projects)
+        if(user.isAdmin()) {
+            responseSuccess(Project.list())
+        } else {
+            List<Project> projects = Project.executeQuery(
+                    "select distinct project "+
+                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project "+
+                    "where aclObjectId.objectId = project.id " +
+                    "and aclEntry.aclObjectIdentity = aclObjectId.id "+
+                    "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
+            responseSuccess(projects)
+        }
     }
 
 

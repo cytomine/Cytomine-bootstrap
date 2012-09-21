@@ -46,6 +46,12 @@ class SecUser extends CytomineDomain {
         SecUserSecRole.findAllBySecUser(this).collect { it.secRole } as Set
     }
 
+    boolean isAdmin() {
+        if(SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_ADMIN").id))
+            return true
+        else return false
+    }
+
     String realUsername() {
         return username
     }
