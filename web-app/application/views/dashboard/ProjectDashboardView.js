@@ -106,18 +106,12 @@ var ProjectDashboardView = Backbone.View.extend({
 
             self.fetchProjectInfo();
             self.fetchCommands();
-            new TermCollection({idProject:self.model.id}).fetch({
-                success : function (terms, response) {
-                    window.app.status.currentTermsCollection = terms;
-                    //self.fetchWorstAnnotations(collection,terms);
-                    if(self.projectStats==null)
-                        self.projectStats = new ProjectDashboardStats({model : self.model});
 
-                    self.projectStats.fetchStats(terms);
+            //self.fetchWorstAnnotations(collection,terms);
+            if(self.projectStats==null)
+                self.projectStats = new ProjectDashboardStats({model : self.model});
 
-                }
-            });
-
+            self.projectStats.fetchStats(window.app.status.currentTermsCollection);
             //new ProjectDashboardStats({model : self.model}).fetchStats();
         }
         var fetchInformations = function () {

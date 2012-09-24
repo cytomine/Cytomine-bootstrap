@@ -12,8 +12,13 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     shouldRefresh : true,
     render : function(callback) {
         var self = this;
-        require(["text!application/templates/dashboard/TermTab.tpl.html", "text!application/templates/dashboard/TermTabContent.tpl.html"], function(termTabTpl, termTabContentTpl) {
-            self.doLayout(termTabTpl, termTabContentTpl, callback);
+        new UserJobCollection({project : window.app.status.currentProject, tree : true}).fetch({
+            success : function(collection, response) {
+                window.app.models.projectUserJobTree = collection;
+                require(["text!application/templates/dashboard/TermTab.tpl.html", "text!application/templates/dashboard/TermTabContent.tpl.html"], function(termTabTpl, termTabContentTpl) {
+                    self.doLayout(termTabTpl, termTabContentTpl, callback);
+                });
+            }
         });
     },
     doLayout : function (termTabTpl, termTabContentTpl, callback) {

@@ -117,7 +117,7 @@ var DashboardController = Backbone.Router.extend({
     createView : function (callback) {
         var self = this;
 
-        var nbCollectionToFetch = 6;
+        var nbCollectionToFetch = 5;
         var nbCollectionToFetched = 0;
         var collectionFetched = function(expected) {
             nbCollectionToFetched++;
@@ -131,12 +131,6 @@ var DashboardController = Backbone.Router.extend({
         new UserJobCollection({project : window.app.status.currentProject}).fetch({
             success : function(collection, response) {
                 window.app.models.projectUserJob = collection;
-                collectionFetched(nbCollectionToFetch);
-            }
-        });
-        new UserJobCollection({project : window.app.status.currentProject, tree : true}).fetch({
-            success : function(collection, response) {
-                window.app.models.projectUserJobTree = collection;
                 collectionFetched(nbCollectionToFetch);
             }
         });
@@ -160,6 +154,7 @@ var DashboardController = Backbone.Router.extend({
                 new OntologyModel({id:window.app.status.currentProjectModel.get("ontology")}).fetch({
                     success : function(model, response) {
                         window.app.status.currentOntologyModel = model;
+                        window.app.status.currentTermsCollection = window.app.retrieveTerm(model);
                         collectionFetched(nbCollectionToFetch);
                     }
                 });

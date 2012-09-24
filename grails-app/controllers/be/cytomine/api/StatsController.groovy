@@ -6,6 +6,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.project.Project
 import grails.orm.PagedResultList
 import be.cytomine.security.SecUser
+import be.cytomine.ontology.RelationTerm
 
 class StatsController extends RestController {
 
@@ -16,6 +17,7 @@ class StatsController extends RestController {
     def retrievalSuggestedTermJobService
     def retrievalEvolutionJobService
     def securityService
+    def relationService
 
     def test = {
 
@@ -89,6 +91,7 @@ class StatsController extends RestController {
                 groupProperty("user.id")
             }
         }
+
         Map<Long, Object> result = new HashMap<Long, Object>()
         project.userLayers().each { user ->
             def item = [:]
@@ -109,8 +112,9 @@ class StatsController extends RestController {
         Project project = Project.read(params.id)
         if (project == null) responseNotFound("Project", params.id)
 
-        def terms = project.ontology.terms()
+        def terms = project.ontology.leafTerms()
 
+        println "terms="+terms
         def results = Annotation.executeQuery('select t.term.id, count(t) from AnnotationTerm as t, Annotation as b where b.id=t.annotation.id and b.project = ? group by t.term.id', [project])
 
         def stats = [:]
@@ -121,12 +125,10 @@ class StatsController extends RestController {
 
         //init list
         terms.each { term ->
-            if (!term.hasChildren()) {
                 stats[term.name] = 0
                 color[term.name] = term.color
                 ids[term.name] = term.id
                 idsRevert[term.id] = term.name
-            }
         }
 
         results.each { result ->

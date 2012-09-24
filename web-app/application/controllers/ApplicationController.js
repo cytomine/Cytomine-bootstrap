@@ -178,6 +178,20 @@ var ApplicationController = Backbone.Router.extend({
         result=result.replace("$currentOntology$",window.app.status.currentProjectModel.get('ontology'));
         return result;
     },
+    retrieveTerm : function(ontology) {
+        var self = this;
+         return new TermCollection(self.retrieveChildren(ontology.attributes));
+    },
+    retrieveChildren : function(parent) {
+        var self = this;
+        if(parent['children'].length==0) return [];
+        var children = [];
+        _.each(parent['children'],function(elem) {
+            children.push(elem);
+            children = _.union(children,self.retrieveChildren(elem));
+        });
+        return children;
+    },
     isCollectionUndefinedOrEmpty: function(collection) {
         console.log(collection);
         return (collection == undefined ||  (collection==1 && collection.at(0).id==undefined))

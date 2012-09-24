@@ -12,6 +12,8 @@ class Ontology extends CytomineDomain implements Serializable {
     String name
     User user
 
+    def relationService
+
     static constraints = {
         name(blank: false, unique: true)
     }
@@ -44,12 +46,9 @@ class Ontology extends CytomineDomain implements Serializable {
     }
 
     def leafTerms() {
-        def leafTerms = []
-        def terms = Term.findAllByOntology(this)
-        terms.each { term ->
-            if (!term.hasChildren()) leafTerms << term
-        }
-        return leafTerms
+        //get all term from ontology which are not in term with child
+        def terms = Term.executeQuery('SELECT term FROM Term as term WHERE ontology = :ontology AND term.id NOT IN (SELECT DISTINCT rel.term1.id FROM RelationTerm as rel, Term as t WHERE rel.relation = :relation AND t.ontology = :ontology AND t.id=rel.term1.id)',['ontology':this,'relation':Relation.findByName(RelationTerm.names.PARENT)])
+        return terms
     }
 
     def termsParent() {
