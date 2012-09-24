@@ -19,10 +19,11 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         this.container = options.container;
         this.ontologyPanel = options.ontologyPanel;
         this.ontology = options.ontology;
-        _.bindAll(this, 'render');
+        //_.bindAll(this, 'render');
     },
     render : function() {
         var self = this;
+        console.log("OntologyAddOrEditTermView.render");
         require([
             "text!application/templates/ontology/OntologyAddOrEditTermView.tpl.html"
         ],
@@ -242,10 +243,12 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
     },
     open: function() {
         var self = this;
+        console.log("open");
         self.clearOntologyTermPanel();
     },
     clearOntologyTermPanel : function() {
         var self = this;
+
         self.$errorMessage.empty();
         self.$errorLabel.hide();
     },
@@ -258,12 +261,12 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         var idOldParent = self.model.get("parent");
         var idParent = self.getNewParent();
         var isOldParentOntology = true;
-        if(idOldParent!=null && window.app.models.ontologies.get(idOldParent)==undefined) {
+        if(idOldParent!=null && self.ontology.id==idOldParent) {
             isOldParentOntology = false;
         }
         var isParentOntology = true;
 
-        if(window.app.models.ontologies.get(idParent)==undefined) {
+        if(self.ontology.id!=idParent) {
             isParentOntology = false;
         }
         var color = self.getNewColor();
@@ -297,7 +300,9 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         var name =  self.getNewName();
         var isParentOntology = true;
         var idParent = self.getNewParent();
-        if(window.app.models.ontologies.get(idParent)==undefined) {
+        console.log("idParent="+idParent);
+        console.log("self.ontology.id="+self.ontology.id);
+        if(self.ontology.id!=idParent) {
             isParentOntology = false;
         }
         var color = self.getNewColor();

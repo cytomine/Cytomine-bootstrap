@@ -23,7 +23,7 @@ var AddOntologyDialog = Backbone.View.extend({
         $("#editontology").replaceWith("");
         $("#addontology").replaceWith("");
         $(self.el).append(dialog);
-        var user = window.app.models.projectUser.get(window.app.status.user);
+        var user = window.app.status.user.model;
         $("#ontologyuser").append(user.get('username') + " ("+ user.get('firstname') + " " + user.get('lastname') +")");
         $("#login-form-add-ontology").submit(function () {self.createOntology(); return false;});
         $("#login-form-add-ontology").find("input").keydown(function(e){
@@ -75,7 +75,6 @@ var AddOntologyDialog = Backbone.View.extend({
                     window.app.view.message("Ontology", response.message, "success");
                     var id = response.ontology.id;
                     self.ontologiesPanel.refresh(id);
-                    window.app.models.ontologies.add(ontology);
                     $("#addontology").modal("hide");
                 },
                 error: function (model, response) {

@@ -6,10 +6,9 @@ var OntologyPanelView = Backbone.View.extend({
     $addTerm : null,
     $editTerm : null,
     $deleteTerm : null,
-    ontologiesPanel : null,
+
     initialize: function(options) {
         this.container = options.container;
-        this.ontologiesPanel = options.ontologiesPanel;
     },
     render: function() {
         var self = this;
@@ -31,42 +30,26 @@ var OntologyPanelView = Backbone.View.extend({
     },
     initEvents : function() {
         var self = this;
-        $("#buttonAddTerm"+this.model.id).live("click", function(){
+        console.log("initEvents:"+self.model.id);
+        $("#buttonAddTerm"+this.model.id).click(function(){
             self.addTerm();
         });
-        $("#buttonEditTerm"+this.model.id).live("click", function(){
+        $("#buttonEditTerm"+this.model.id).click(function(){
             self.editTerm();
         });
-        $("#buttonDeleteTerm"+this.model.id).live("click", function(){
+        $("#buttonDeleteTerm"+this.model.id).click(function(){
             self.deleteTerm();
         });
-        $("#buttonEditOntology"+this.model.id).live("click", function(){
+        $("#buttonEditOntology"+this.model.id).click(function(){
             self.editOntology();
         });
-        $("#buttonDeleteOntology"+this.model.id).live("click", function(){
+        $("#buttonDeleteOntology"+this.model.id).click(function(){
             self.deleteOntology();
         });
     },
     refresh : function() {
         var self = this;
-
-        var i = 0;
-        var onLoad = function() {
-            i++;
-            if (i < 2) return;
-            self.clear();
-            self.render();
-        }
-
-        window.app.models.terms.fetch({
-            success : function (model, response) {
-                onLoad();
-            }});
-
-        self.model.fetch({
-            success : function (model, response) {
-                onLoad();
-            }});
+        self.container.refresh(self.model.id);
     },
 
     clear : function() {
@@ -103,6 +86,7 @@ var OntologyPanelView = Backbone.View.extend({
 
     editTerm : function() {
         var self = this;
+        console.log("OntologyPanelView.editTerm");
         self.$editTerm.remove();
 
         var node = self.$tree.dynatree("getActiveNode");
@@ -181,7 +165,7 @@ var OntologyPanelView = Backbone.View.extend({
             $('#deleteOntologyButton').click(function(){
                 self.model.destroy({
                     success : function (model, response) {
-                        self.ontologiesPanel.refresh();
+                        self.container.refresh();
                         $('#delete-ontology-confirm').modal( "hide" ) ;
                         $('#delete-ontology-confirm').remove();
                     },error: function (model, response) {

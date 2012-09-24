@@ -22,10 +22,11 @@ var OntologyController = Backbone.Router.extend({
           this.ontology(idOntology,idTerm,false);
        },
        ontology : function(idOntology,idTerm,refresh) {
+          console.log("ontology-"+idOntology+"-"+idTerm+"-"+refresh);
           var self = this;
-          if (!self.view) {
+          if (!self.view || refresh) {
+              console.log("empty view");
              self.view = new OntologyView({
-                    model : window.app.models.ontologies,
                     el:$("#ontology"),
                     container : window.app.view.components.ontology,
                     idOntology : idOntology, //selected ontology
@@ -35,24 +36,11 @@ var OntologyController = Backbone.Router.extend({
              self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
              $("#warehouse-button").attr("href", "#ontology");
              window.app.view.showComponent(window.app.view.components.ontology);
-             self.view.refresh(idOntology, idTerm);
-
           }
           else {
              self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");
              window.app.view.showComponent(window.app.view.components.ontology);
-
-             if(refresh) {
-                window.app.models.ontologies.fetch({
-                       success : function (collection, response) {
-                          self.view.select(idOntology)
-                       }});
-             }else {
-                self.view.select(idOntology,idTerm);
-             }
-
-
-
+             self.view.select(idOntology,idTerm);
           }
        }
     });
