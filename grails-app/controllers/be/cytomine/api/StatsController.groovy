@@ -114,7 +114,6 @@ class StatsController extends RestController {
 
         def terms = project.ontology.leafTerms()
 
-        println "terms="+terms
         def results = Annotation.executeQuery('select t.term.id, count(t) from AnnotationTerm as t, Annotation as b where b.id=t.annotation.id and b.project = ? group by t.term.id', [project])
 
         def stats = [:]
