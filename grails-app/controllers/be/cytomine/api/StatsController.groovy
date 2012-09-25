@@ -39,6 +39,10 @@ class StatsController extends RestController {
         Project project = Project.read(params.id)
         if (project == null) responseNotFound("Project", params.id)
         def terms = Term.findAllByOntology(project.getOntology())
+        if(terms.isEmpty()) {
+            responseSuccess([])
+            return
+        }
         def nbAnnotationsByUserAndTerms = AnnotationTerm.createCriteria().list {
             inList("term", terms)
             join("annotation")
@@ -147,6 +151,10 @@ class StatsController extends RestController {
         if (project == null) responseNotFound("Project", params.id)
         def terms = Term.findAllByOntology(project.getOntology())
         def userLayers = project.userLayers()
+        if(terms.isEmpty() || userLayers.isEmpty()) {
+            responseSuccess([])
+            return
+        }
         def annotations = AnnotationTerm.createCriteria().list {
             inList("term", terms)
             inList("user", userLayers)
@@ -180,6 +188,10 @@ class StatsController extends RestController {
         Project project = Project.read(params.id)
         if (project == null) responseNotFound("Project", params.id)
         def terms = Term.findAllByOntology(project.getOntology())
+        if(terms.isEmpty()) {
+            responseSuccess([])
+            return
+        }
         def annotations = AnnotationTerm.createCriteria().list {
             inList("term", terms)
             join("annotation")
