@@ -169,7 +169,7 @@ class RestAnnotationController extends RestController {
         projectService.checkAuthorization(project)
         def users = []
         if (params.users != null && params.users != "") {
-            params.users.split(",").eacdataSourceh { id ->
+            params.users.split(",").each { id ->
                 users << Long.parseLong(id)
             }
         }
