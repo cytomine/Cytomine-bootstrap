@@ -45,7 +45,6 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     static AlgoAnnotationTerm getFromData(AlgoAnnotationTerm algoAnnotationTerm, jsonAlgoAnnotationTerm) {
-        println "=========jsonAlgoAnnotationTerm======="  + jsonAlgoAnnotationTerm
 
         String annotationId = jsonAlgoAnnotationTerm.annotation.toString()
         if (!annotationId.equals("null")) {
@@ -55,7 +54,6 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
         else algoAnnotationTerm.annotation = null
 
         String termId = jsonAlgoAnnotationTerm.term.toString()
-        println "termID="+termId
         if (!termId.equals("null")) {
             algoAnnotationTerm.term = Term.read(termId)
             if (algoAnnotationTerm.term == null) throw new WrongArgumentException("Term was not found with id:" + termId)
@@ -63,7 +61,6 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
         else algoAnnotationTerm.term = null
 
         String expectedTermId = jsonAlgoAnnotationTerm.expectedTerm.toString()
-        println "expectedTermId="+expectedTermId
         if (!expectedTermId.equals("null")) {
             algoAnnotationTerm.expectedTerm = Term.read(expectedTermId)
             if (algoAnnotationTerm.expectedTerm == null) throw new WrongArgumentException("Expected Term was not found with id:" + termId)
@@ -72,7 +69,6 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
 
 
         String userJobId = jsonAlgoAnnotationTerm.user.toString()
-        println "userJobId="+userJobId
         if (!userJobId.equals("null")) {
             algoAnnotationTerm.userJob = UserJob.read(userJobId)
             if (algoAnnotationTerm.userJob == null) throw new WrongArgumentException("UserJob was not found with id:" + userJobId)
@@ -81,9 +77,6 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
 
         if (!jsonAlgoAnnotationTerm.rate) jsonAlgoAnnotationTerm.rate = 0
         algoAnnotationTerm.rate = Double.parseDouble(jsonAlgoAnnotationTerm.rate + "")
-
-        println ">>>>> user " + algoAnnotationTerm.userJob + "<<<<"
-        println ">>>>> term " + algoAnnotationTerm.term + "<<<<"
         return algoAnnotationTerm;
     }
 

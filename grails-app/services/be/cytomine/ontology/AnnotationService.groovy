@@ -74,7 +74,7 @@ class AnnotationService extends ModelService {
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listForUser(Project project, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList, boolean noTerm, boolean multipleTerm) {
-        log.info("project/userList/noTerm/multipleTerm project=$project.id userList=$userList imageInstanceList=$imageInstanceList noTerm=$noTerm multipleTerm=$multipleTerm")
+        log.info("project/userList/noTerm/multipleTerm project=$project.id userList=$userList imageInstanceList=${imageInstanceList.size()} noTerm=$noTerm multipleTerm=$multipleTerm")
         if (userList.isEmpty()) return []
         if (imageInstanceList.isEmpty()) return []
         else if (multipleTerm) {
@@ -575,11 +575,8 @@ class AnnotationService extends ModelService {
         Geometry annotationFull = new WKTReader().read(form);
 
         Geometry lastAnnotationFull = annotationFull
-        log.info "points=" + annotationFull.getNumPoints() + " " + annotationFull.getArea();
-        log.info "annotationFull:" + annotationFull.getNumPoints() + " |" + new WKTWriter().write(annotationFull);
         double ratioMax = 1.6d
         double ratioMin = 2d
-        println 'ratioMax='+ratioMax
         /* Number of point (ex: 500 points) */
         double numberOfPoint = annotationFull.getNumPoints()
         /* Maximum number of point that we would have (500/5 (max 150)=max 100 points)*/
@@ -606,8 +603,6 @@ class AnnotationService extends ModelService {
             annotationFull = lastAnnotationFull
             i = i + (incrThreshold * increaseIncrThreshold); maxLoop--;
         }
-
-        log.debug "annotationFull good=" + i + " " + annotationFull.getNumPoints() + " |" + new WKTWriter().write(lastAnnotationFull);
         return [geometry: lastAnnotationFull, rate: rate]
     }
 

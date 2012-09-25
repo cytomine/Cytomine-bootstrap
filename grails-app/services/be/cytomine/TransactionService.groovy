@@ -11,7 +11,6 @@ class TransactionService {
             log.info "begin transaction:" + springSecurityService.principal.id
             Transaction transaction = new Transaction()
             transaction.save(flush:true)
-            log.info "Transaction ${transaction.id} saved"
             return transaction
         }
     }

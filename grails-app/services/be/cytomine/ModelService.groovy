@@ -55,7 +55,7 @@ abstract class ModelService {
         c.saveOnUndoRedoStack = this.isSaveOnUndoRedoStack() //need to use getter method, to get child value
         c.service = this
         c.serviceName = getServiceName()
-        log.info "commandService=" + commandService + " c=" + c + " json=" + json
+        log.debug "commandService=" + commandService + " c=" + c + " json=" + json
         return commandService.processCommand(c, json)
     }
 

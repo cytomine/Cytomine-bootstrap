@@ -37,7 +37,7 @@ class CommandService {
     }
 
     def processCommand(Command c, JSONElement json, int successCode) throws CytomineException {
-        log.info "processCommand:" + json
+        log.debug "processCommand:" + json
         c.setJson(json)
         String postData = json.toString()
         def maxRequestSize = grailsApplication.config.cytomine.maxRequestSize

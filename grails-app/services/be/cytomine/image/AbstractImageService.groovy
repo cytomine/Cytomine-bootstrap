@@ -75,7 +75,6 @@ class AbstractImageService extends ModelService {
                 }
             }
             log.info "imageGroup=" + imageGroup.size()
-            log.info "imageGroup=" + imageGroup
 
             log.info "offset=$offset max=$max sortedRow=$sortedRow sord=$sord filename=%$filenameSearch% created $dateAddedStart < $dateAddedStop"
             PagedResultList results = AbstractImage.createCriteria().list(offset: offset, max: max, sort: sortedRow, order: sord) {
