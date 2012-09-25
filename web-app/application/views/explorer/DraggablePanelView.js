@@ -8,7 +8,10 @@ var DraggablePanelView = Backbone.View.extend({
     },
     render: function() {
         var self = this;
+        console.log("DraggablePanelView.render");
         $(this.el).html(this.template);
+        //put above the main menu
+        $(this.el).css("z-index", "1000000");
         if (this.iPad) return this;
         var width = null;
         var height = null;
@@ -160,6 +163,7 @@ var DraggablePanelView = Backbone.View.extend({
             }
 
         });
+
         return this;
     }
 });

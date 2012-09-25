@@ -5,21 +5,25 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.security.SecUser
 import be.cytomine.social.UserPosition
 import org.joda.time.DateTime
+import groovy.sql.Sql
 
 class RestUserPositionController extends RestController {
 
     def cytomineService
     def imageInstanceService
     def userService
+    def dataSource
+    def sequenceService
 
     def add = {
         synchronized (this.getClass()) {
+            SecUser user = cytomineService.getCurrentUser()
             //check if user has moved its position. If not, only update the date
             DateTime tenSecondsAgo = new DateTime()
             tenSecondsAgo = tenSecondsAgo.minusSeconds(10)
             def userPositions = UserPosition.createCriteria().list(sort : "created", order : "desc", max : 1) {
-                eq("image", imageInstanceService.read(request.JSON.image))
-                eq("user", userService.read(cytomineService.getCurrentUser().id))
+                eq("image.id", Long.parseLong(request.JSON.image+""))
+                eq("user.id", user.id)
                 eq("longitude", (double) request.JSON.lon)
                 eq("latitude", (double) request.JSON.lat)
                 or {
@@ -37,12 +41,18 @@ class RestUserPositionController extends RestController {
             } else {
                 //create the new position
                 userPosition = new UserPosition(
-                        user : userService.read(cytomineService.getCurrentUser().id),
+                        user : user,
                         longitude : request.JSON.lon,
                         latitude : request.JSON.lat,
                         zoom : request.JSON.zoom,
                         image : imageInstanceService.read(request.JSON.image)
-                ).save(flush : true)
+                )
+                userPosition.save(flush: true)
+//                def sql = new Sql(dataSource)
+//                long nexId = sequenceService.generateID(user)
+//                String req = "insert into user_position (id , version, user_id, longitude , latitude, zoom,image_id) values( ${nexId},0,${user.id},${request.JSON.lon}, ${request.JSON.lat},${request.JSON.zoom},${request.JSON.image})"
+//                sql.execute(req)
+
             }
             responseSuccess(userPosition)
         }

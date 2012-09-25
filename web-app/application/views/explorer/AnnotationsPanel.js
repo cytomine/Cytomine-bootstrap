@@ -33,43 +33,38 @@ var AnnotationsPanel = Backbone.View.extend({
           var self = this;
           require(["text!application/templates/explorer/TermTab.tpl.html", "text!application/templates/explorer/TermTabContent.tpl.html"], function(termTabTpl, termTabContentTpl) {
 
-             new TermCollection({idOntology:idOntology}).fetch({
-                    success : function (collection, response) {
-                       window.app.status.currentTermsCollection = collection;
-                       //add "All annotation from all term" tab
-                       self.addTermToTab(termTabTpl, termTabContentTpl, { id : "all", image : self.model.id, name : "All"});
-                       self.refreshAnnotationsTabsFunc.push({
-                              index : 0,
-                              idTerm : "all",
-                              refresh : function() {self.refreshAnnotations(undefined,$("#tabsterm-"+self.model.id+"-all"))}
-                           });
-                       var i = 1;
-                       collection.each(function(term) {
-                          //add x term tab
-                          self.addTermToTab(termTabTpl, termTabContentTpl, { id : term.get("id"), image : self.model.id,name : term.get("name")});
-                          self.refreshAnnotationsTabsFunc.push({
-                                 index : i,
-                                 idTerm : term.get("id"),
-                                 refresh : function() {self.refreshAnnotations(term.get("id"),$("#tabsterm-"+self.model.id+"-"+term.get("id")))}
-                              });
-                          i++;
-                       });
-                       $("#annotationsPanel"+self.model.id).find(".tabsAnnotation").tabs({
-                              add : function (event, ui) {
+               //add "All annotation from all term" tab
+               self.addTermToTab(termTabTpl, termTabContentTpl, { id : "all", image : self.model.id, name : "All"});
+               self.refreshAnnotationsTabsFunc.push({
+                      index : 0,
+                      idTerm : "all",
+                      refresh : function() {self.refreshAnnotations(undefined,$("#tabsterm-"+self.model.id+"-all"))}
+                   });
+               var i = 1;
+                window.app.status.currentTermsCollection.each(function(term) {
+                  //add x term tab
+                  self.addTermToTab(termTabTpl, termTabContentTpl, { id : term.get("id"), image : self.model.id,name : term.get("name")});
+                  self.refreshAnnotationsTabsFunc.push({
+                         index : i,
+                         idTerm : term.get("id"),
+                         refresh : function() {self.refreshAnnotations(term.get("id"),$("#tabsterm-"+self.model.id+"-"+term.get("id")))}
+                      });
+                  i++;
+               });
+               $("#annotationsPanel"+self.model.id).find(".tabsAnnotation").tabs({
+                      add : function (event, ui) {
 
-                              },
-                              select: function(event, ui) {
-                                 var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object){
-                                    return (object.index == ui.index);
-                                 });
-                                 obj.refresh.call();
-                              }
-                           });
-                       $("#annotationsPanel"+self.model.id).find( ".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *" )
-                           .removeClass( "ui-corner-all ui-corner-top" )
-                           .addClass( "ui-corner-bottom" );
-                    }});
-
+                      },
+                      select: function(event, ui) {
+                         var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object){
+                            return (object.index == ui.index);
+                         });
+                         obj.refresh.call();
+                      }
+                   });
+               $("#annotationsPanel"+self.model.id).find( ".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *" )
+                   .removeClass( "ui-corner-all ui-corner-top" )
+                   .addClass( "ui-corner-bottom" );
 
           });
        },
