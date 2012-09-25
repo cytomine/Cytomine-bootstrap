@@ -714,8 +714,8 @@
    * =================================== */
 
   $(function () {
-    $('html')
-      .on('click.dropdown.data-api touchstart.dropdown.data-api', clearMenus)
+      $('html')
+          .on('click.dropdown.data-api', clearMenus)
     $('body')
       .on('click.dropdown touchstart.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
       .on('click.dropdown.data-api touchstart.dropdown.data-api'  , toggle, Dropdown.prototype.toggle)

@@ -70,7 +70,7 @@ class ImagePropertiesService {
                 extractUsefulTif(image)
                 break;
             case "svs":
-                extractUsefulTif(image)
+                extractUsefulSVS(image)
                 break;
             case "jp2":
                 extractUsefulTif(image)
@@ -130,11 +130,11 @@ class ImagePropertiesService {
         if (magnificationProperty) image.setMagnification(Integer.parseInt(magnificationProperty.getValue()))
         else println "magnificationProperty is null"
         //Width
-        def widthProperty = ImageProperty.findByImageAndKey(image, "openslide.layer[0].width")
+        def widthProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].width")
         if (widthProperty) image.setWidth(Integer.parseInt(widthProperty.getValue()))
         else println "widthProperty is null"
         //Height
-        def heightProperty = ImageProperty.findByImageAndKey(image, "openslide.layer[0].height")
+        def heightProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].height")
         if (heightProperty) image.setHeight(Integer.parseInt(heightProperty.getValue()))
         else println "heightProperty is null"
         //Resolution
@@ -151,18 +151,41 @@ class ImagePropertiesService {
             def value = Float.parseFloat(magnificationProperty.getValue().replace(",", "."))
             image.setMagnification(value.toInteger())
         }
-        //Width openslide.layer[0].width
-        def widthProperty = ImageProperty.findByImageAndKey(image, "openslide.layer[0].width")
+        //Width openslide.level[0].width
+        def widthProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].width")
         if (widthProperty) image.setWidth(Integer.parseInt(widthProperty.getValue()))
-        //Height openslide.layer[0].height
-        def heightProperty = ImageProperty.findByImageAndKey(image, "openslide.layer[0].height")
+        //Height openslide.level[0].height
+        def heightProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].height")
         if (heightProperty) image.setHeight(Integer.parseInt(heightProperty.getValue()))
-        //Resolution : hamamatsu.PhysicalWidth / openslide.layer[0].width / 1000
+        //Resolution : hamamatsu.PhysicalWidth / openslide.level[0].width / 1000
         def physicalWidthProperty = ImageProperty.findByImageAndKey(image, "hamamatsu.PhysicalWidth")
         if (physicalWidthProperty && widthProperty) {
             def resolutionProperty = Float.parseFloat(physicalWidthProperty.getValue()) / Float.parseFloat(widthProperty.getValue()) / 1000
             image.setResolution(resolutionProperty)
         }
+    }
+
+    private def extractUsefulSVS(AbstractImage image) {
+        println "extract properties from svs : " + image.getFilename()
+        def magnificationProperty = ImageProperty.findByImageAndKey(image, "aperio.AppMag")
+        println "magnificationProperty="+magnificationProperty
+        if (magnificationProperty) {
+            def value = Float.parseFloat(magnificationProperty.getValue().replace(",", "."))
+            image.setMagnification(value.toInteger())
+        }
+        //Width openslide.level[0].width
+        def widthProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].width")
+        if (widthProperty) image.setWidth(Integer.parseInt(widthProperty.getValue()))
+        println "widthProperty="+widthProperty
+        //Height openslide.level[0].height
+        def heightProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].height")
+        if (heightProperty) image.setHeight(Integer.parseInt(heightProperty.getValue()))
+        println "heightProperty="+heightProperty
+        //openslide.mpp-x
+        def resolutionProperty = ImageProperty.findByImageAndKey(image, "aperio.MPP")
+        if (resolutionProperty) image.setResolution(Float.parseFloat(resolutionProperty.getValue()))
+        println "resolutionProperty="+resolutionProperty
+
     }
 
 }

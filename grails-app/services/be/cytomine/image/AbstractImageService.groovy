@@ -110,6 +110,7 @@ class AbstractImageService extends ModelService {
             StorageAbstractImage.link(storage, abstractImage)
         }
         imagePropertiesService.extractUseful(abstractImage)
+        abstractImage.save(flush : true)
         //Stop transaction
         transactionService.stop()
 

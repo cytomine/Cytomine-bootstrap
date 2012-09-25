@@ -69,7 +69,7 @@ class DeployImagesService {
             }
 
             imagePropertiesService.extractUseful(abstractImage)
-
+            abstractImage.save(flush : true)
 
         } else {
             slide.errors?.each {
