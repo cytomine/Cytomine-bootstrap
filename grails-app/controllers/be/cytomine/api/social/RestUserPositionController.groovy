@@ -40,12 +40,15 @@ class RestUserPositionController extends RestController {
                 userPosition = userPositions[0]
             } else {
                 //create the new position
+                ImageInstance image = imageInstanceService.read(request.JSON.image)
                 userPosition = new UserPosition(
                         user : user,
                         longitude : request.JSON.lon,
                         latitude : request.JSON.lat,
                         zoom : request.JSON.zoom,
-                        image : imageInstanceService.read(request.JSON.image)
+                        image : image,
+                        updated: new Date(),
+                        project : image.project
                 )
                 userPosition.save(flush: true)
 //                def sql = new Sql(dataSource)

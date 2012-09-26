@@ -56,5 +56,12 @@ class UserUrlMappings {
         "/api/project/$id/userlayer"(controller: "restUser"){
             action = [GET:"showLayerByProject"]
         }
+
+
+
+
+        "/api/project/$id/online/user"(controller: "restUser"){
+            action = [GET:"listOnlineFriendsWithPosition"]
+        }
     }
 }

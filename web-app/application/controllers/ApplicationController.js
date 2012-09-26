@@ -98,14 +98,15 @@ var ApplicationController = Backbone.Router.extend({
             }
 
             var successcallback =  function (data) {
-                self.status.version = data.version;
-                self.status.serverURL = data.serverURL;
-                if (data.authenticated) {
-                    new UserModel({id : data.user}).fetch({
+                console.log("Launch app!");
+                self.status.version = data.get('version');
+                self.status.serverURL = data.get('serverURL');
+                if (data.get('authenticated')) {
+                    new UserModel({id : data.get('user')}).fetch({
                         success : function (model, response) {
                             self.status.user = {
-                                id : data.user,
-                                authenticated : data.authenticated,
+                                id : data.get('user'),
+                                authenticated : data.get('authenticated'),
                                 model : model
                             }
                             self.startup();
@@ -118,11 +119,26 @@ var ApplicationController = Backbone.Router.extend({
             }
 
             var pingURL = 'server/ping';
-            $.ajax({
-                url: pingURL,
-                type: 'GET',
-                success : successcallback
-            });
+//            $.ajax({
+//                url: pingURL,
+//                type: 'GET',
+//                contentType:'application/json',
+//                data: "{test:hello}",
+//                success : successcallback
+//            });
+
+            var project = window.app.status.currentProject
+            if(project==undefined) project = "null";
+            new PingModel({project : project}).save({},{
+                      success: function (model, response) {
+                           console.log("Ping success first!");
+                          successcallback(model)
+                      },
+                      error: function (model, response) {
+                          console.log("Ping error!");
+                      }
+                  }
+              );
 
 
             self.status = new Status(pingURL, serverDown,

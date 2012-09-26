@@ -3,13 +3,14 @@ var ProjectDashboardStats = Backbone.View.extend({
     initialize : function () {
         var self = this;
         this.noDataAlert = _.template("<br /><br /><div class='alert alert-block'>No data to display</div>",{});
-        var width = self.getHalfWidth();
+        var width = self.getTierWidth();
         $("#projectInfoPanel").css("width", width);
         $("#projectLastCommandPanel").css("width", width);
         $(window).bind("resizeEnd", function(event) {
-            var width = self.getHalfWidth();
+            var width = self.getTierWidth();
             $("#projectInfoPanel").css("width", width);
             $("#projectLastCommandPanel").css("width", width);
+            $("#projectUserOnline").css("width", width);
         });
 
 
@@ -33,6 +34,12 @@ var ProjectDashboardStats = Backbone.View.extend({
            return this.getFullWidth();
         }
         return Math.round($(window).width()/2 - 75);
+    },
+    getTierWidth : function () {
+        if ($(window).width() < 1300) {
+           return this.getFullWidth();
+        }
+        return Math.round($(window).width()/3 - 75);
     },
     fetchStats : function (terms) {
         var self = this;

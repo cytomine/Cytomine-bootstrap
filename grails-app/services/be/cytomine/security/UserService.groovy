@@ -16,6 +16,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 import be.cytomine.social.LastConnection
 import org.apache.commons.collections.ListUtils
+import be.cytomine.utils.Utils
 
 class UserService extends ModelService {
 
@@ -86,14 +87,22 @@ class UserService extends ModelService {
 
     List<SecUser> getAllOnlineUsers() {
         //get date with -X secondes
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.SECOND, -10);
-
-        def xSecondAgo = cal.getTime();
-
+        def xSecondAgo = Utils.getDatePlusSecond(-20000)
         def results = LastConnection.withCriteria {
             ge('date', xSecondAgo)
+            projections {
+                groupProperty("user")
+            }
+        }
+        return results
+    }
+
+    List<SecUser> getAllOnlineUsers(Project project) {
+        if(!project) return getAllOnlineUsers()
+        def xSecondAgo = Utils.getDatePlusSecond(-20000)
+        def results = LastConnection.withCriteria {
+            ge('date', xSecondAgo)
+            eq('project',project)
             projections {
                 groupProperty("user")
             }
@@ -105,6 +114,10 @@ class UserService extends ModelService {
        return ListUtils.intersection(getAllFriendsUsers(user),getAllOnlineUsers())
     }
 
+    List<SecUser> getAllFriendsUsersOnline(SecUser user, Project project) {
+        //no need to make insterect because getAllOnlineUsers(project) contains only friends users
+       return getAllOnlineUsers(project)
+    }
 
     /*def clearUser = {
    log.info "ClearUser"

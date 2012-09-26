@@ -54,12 +54,18 @@ var Status = function(url, errorcallback, successcallback, interval) {
 Status.prototype.start = function() {
     var self = this;
     var ajaxFn = function() {
-        $.ajax({
-            url: self.url,
-            type: 'GET',
-            success : self.successcallback,
-            error: self.error
-        });
+
+        var project = window.app.status.currentProject;
+        if(project==undefined) project = "null";
+        new PingModel({project : project}).save({},{
+                  success: function (model, response) {
+                      self.successcallback();
+                  },
+                  error: function (model, response) {
+                      self.error();
+                  }
+              }
+          );
     };
     if (!this.watcher) {
         var that = this;

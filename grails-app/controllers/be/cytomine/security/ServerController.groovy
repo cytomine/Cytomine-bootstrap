@@ -3,6 +3,7 @@ package be.cytomine.security
 import grails.converters.JSON
 import grails.converters.XML
 import be.cytomine.social.LastConnection
+import be.cytomine.project.Project
 
 class ServerController {
 
@@ -11,30 +12,39 @@ class ServerController {
 
     def ping = {
 
+        def jsonContent = request.JSON
+        synchronized (this.getClass()) {
+            def data = [:]
+                    data.alive = true
+                    data.authenticated = springSecurityService.isLoggedIn()
+                    data.version = grailsApplication.metadata['app.version']
+                    data.serverURL = grailsApplication.config.grails.serverURL
 
-        def data = [:]
-        data.alive = true
-        data.authenticated = springSecurityService.isLoggedIn()
-        data.version = grailsApplication.metadata['app.version']
-        data.serverURL = grailsApplication.config.grails.serverURL
 
-        if (data.authenticated)  {
-            data.user = springSecurityService.principal.id
-            //set last ping
-            SecUser user = SecUser.get(springSecurityService.principal.id)
-            LastConnection lastConnection =  LastConnection.findByUser(user)
+                    println "TEST="+jsonContent.project
 
-            if(!lastConnection) {
-                lastConnection = new LastConnection(user:user,date: new Date())
-            } else {
-                lastConnection.setDate(new Date())
+                    Project project
+                    if(!jsonContent.project.toString().equals("null"))
+                        project = Project.read(Long.parseLong(jsonContent.project))
+
+                    if (data.authenticated)  {
+                        data.user = springSecurityService.principal.id
+                        //set last ping
+                        SecUser user = SecUser.get(springSecurityService.principal.id)
+
+                        LastConnection lastConnection =  LastConnection.findByUserAndProject(user,project)
+                        println ("ping.lastconnection="+lastConnection?.id + " "+ lastConnection?.project)
+                        if(!lastConnection) {
+                            lastConnection = new LastConnection(user:user,date: new Date(),project:project)
+                        } else {
+                            lastConnection.setDate(new Date())
+                        }
+                        lastConnection.save(flush:true)
+                    }
+            withFormat {
+                json { render data as JSON }
+                xml { render data as XML}
             }
-            lastConnection.save()
-        }
-
-        withFormat {
-            json { render data as JSON }
-            xml { render data as XML}
         }
     }
 }

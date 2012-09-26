@@ -5,20 +5,19 @@ package be.cytomine.utils;
  * Date: 6/02/12
  * GIGA-ULg
  */
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Utils {
+
+    public static Date getDatePlusSecond(int secondes) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.SECOND, secondes);
+        Date xSecondAgo = cal.getTime();
+        return xSecondAgo;
+    }
+
+
 public static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> entriesSortedByValues(
             Map<K, V> map) {
         SortedSet<Map.Entry<K, V>> sortedEntries = new TreeSet<Map.Entry<K, V>>(

@@ -33,6 +33,7 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import be.cytomine.ViewPortToBuildXML
 import be.cytomine.test.BasicInstance
 import be.cytomine.image.acquisition.Instrument
+import be.cytomine.social.UserPosition
 
 class BootStrap {
     def springSecurityService
@@ -109,6 +110,14 @@ class BootStrap {
         createBasicUser()
         println "create discipline"
         createDiscipline()
+
+        println "fill project for position (may take some time...)"
+        UserPosition.findAllByProjectIsNull().each {
+            it.project = it.image.project
+            if(!it.updated) it.updated = it.created
+            it.save()
+        }
+
 
         //countersService.updateCounters()
         //updateImageProperties()

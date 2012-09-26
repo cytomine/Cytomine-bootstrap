@@ -18,6 +18,8 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.social.LastConnection
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 import org.apache.commons.collections.ListUtils
+import be.cytomine.social.UserPosition
+import be.cytomine.utils.Utils
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
@@ -266,16 +268,62 @@ class RestUserController extends RestController {
 
     def listFriends = {
         SecUser user = userService.get(params.long('id'))
+        Long idProject = params.long('project')
+        Project project = null
+        if(idProject) project = projectService.read(params.long('project'),new Project())
         boolean includeOffline = params.boolean('offline')
 
         List<SecUser> users
         if(!includeOffline){
-            users = userService.getAllFriendsUsersOnline(user)
+            if(project)
+                users = userService.getAllFriendsUsersOnline(user,project)
+            else users = userService.getAllFriendsUsersOnline(user)
         } else {
-            users = userService.getAllFriendsUsers(user)
+            if(project)
+                users = securityService.getUserList(project)
+            else
+                users = userService.getAllFriendsUsers(user)
         }
         responseSuccess(users)
     }
+
+    def listOnlineFriendsWithPosition = {
+        println "listOnlineFriendsWithPosition ${params}"
+        Project project = projectService.read(params.long('id'),new Project())
+
+        def users = userService.getAllFriendsUsersOnline(cytomineService.currentUser,project)
+        def userWithPosition = []
+        users.each{
+            def json = JSON.parse(it.encodeAsJSON())
+            json.position = getLastPosition(it,project)
+            userWithPosition <<  json
+        }
+        responseSuccess(userWithPosition)
+    }
+
+    private List getLastPosition(SecUser user, Project project) {
+        println "getLastPosition ${user} ${project}"
+        println UserPosition.list().get(0).updated
+        Date someSecondesBefore = Utils.getDatePlusSecond(-20)
+
+        List<SecUser> userPositions = SecUser.executeQuery(
+            "SELECT image.id, project.id, max(updated) from UserPosition as userPosition "+
+            "where userPosition.project.id = ${project.id} and userPosition.user.id = ${user.id} and updated > ? group by image.id,project.id",[someSecondesBefore])
+
+        println userPositions
+
+        def positions = []
+
+        userPositions.each { position ->
+            println position
+              def mapPositon = [date:position[2],image:position[0]]
+            positions <<  mapPositon
+
+        }
+
+        positions
+    }
+
 
     def listUserJobByProject = {
         Project project = projectService.read(params.long('id'),new Project())

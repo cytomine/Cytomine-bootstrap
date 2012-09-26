@@ -137,7 +137,7 @@ var ProjectDashboardView = Backbone.View.extend({
             window.app.models.projectUser.each(function (user) {
                 users.push(user.prettyName());
             });
-            $("#projectInfoUserList").html(users.join(", "));
+            //$("#projectInfoUserList").html(users.join(", "));
         });
         return;
         var self = this;
