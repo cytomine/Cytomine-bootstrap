@@ -15,6 +15,9 @@ import grails.converters.JSON
 
 import java.text.SimpleDateFormat
 import be.cytomine.ontology.Ontology
+import be.cytomine.social.LastConnection
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
+import org.apache.commons.collections.ListUtils
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
@@ -262,18 +265,16 @@ class RestUserController extends RestController {
     }
 
     def listFriends = {
-        //slow method ;-)
         SecUser user = userService.get(params.long('id'))
-        def include_online = !params.boolean('offline')
-        List<Project> projects = securityService.getProjectList(user)
-        Collection<SecUser> users = new ArrayList<SecUser>()
-        projects.each { project ->
-            project.users().each { it_user ->
-                if (it_user.isOnline() == include_online && it_user !=  cytomineService.getCurrentUser()) users.add(it_user)
-            }
-            //users.addAll(project.users())
+        boolean includeOffline = params.boolean('offline')
+
+        List<SecUser> users
+        if(!includeOffline){
+            users = userService.getAllFriendsUsersOnline(user)
+        } else {
+            users = userService.getAllFriendsUsers(user)
         }
-        responseSuccess(users.unique())
+        responseSuccess(users)
     }
 
     def listUserJobByProject = {

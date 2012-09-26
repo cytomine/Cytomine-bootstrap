@@ -13,6 +13,9 @@ import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.project.Project
 import org.codehaus.groovy.grails.web.json.JSONObject
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
+import be.cytomine.social.LastConnection
+import org.apache.commons.collections.ListUtils
 
 class UserService extends ModelService {
 
@@ -71,6 +74,37 @@ class UserService extends ModelService {
         if (json.id == springSecurityService.principal.id) throw new ForbiddenException("The user can't delete herself")
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
+
+    List<SecUser> getAllFriendsUsers(SecUser user) {
+        AclSid sid = AclSid.findBySid(user.username)
+        List<SecUser> users = SecUser.executeQuery(
+            "select distinct secUser from AclSid as aclSid, AclEntry as aclEntry, SecUser as secUser "+
+            "where aclEntry.aclObjectIdentity in (select  aclEntry.aclObjectIdentity from aclEntry where sid = ${sid.id}) and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and aclSid.id!=${sid.id}")
+
+        return users
+    }
+
+    List<SecUser> getAllOnlineUsers() {
+        //get date with -X secondes
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.SECOND, -10);
+
+        def xSecondAgo = cal.getTime();
+
+        def results = LastConnection.withCriteria {
+            ge('date', xSecondAgo)
+            projections {
+                groupProperty("user")
+            }
+        }
+        return results
+    }
+
+    List<SecUser> getAllFriendsUsersOnline(SecUser user) {
+       return ListUtils.intersection(getAllFriendsUsers(user),getAllOnlineUsers())
+    }
+
 
     /*def clearUser = {
    log.info "ClearUser"

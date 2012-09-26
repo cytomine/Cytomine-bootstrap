@@ -15,7 +15,6 @@ class SecUser extends CytomineDomain {
     boolean accountExpired
     boolean accountLocked
     boolean passwordExpired
-    Date lastPing = null
     Boolean transactionInProgress = false //indicates whether the current user is doing several actions seen as only one action
 
     static transients = ["newPassword", "currentTransaction", "nextTransaction"]
@@ -32,7 +31,6 @@ class SecUser extends CytomineDomain {
     static constraints = {
         username blank: false, unique: true
         password blank: false
-        lastPing nullable : true
         newPassword(nullable : true, black : false)
         id unique: true
     }
@@ -81,12 +79,6 @@ class SecUser extends CytomineDomain {
 
     boolean algo() {
         return false
-    }
-
-    boolean isOnline() {
-        if (!this.getLastPing()) return false
-        Long diffTime =  new Date().toTimestamp().getTime() - this.getLastPing().toTimestamp().getTime()
-        return diffTime < 10000 //10 seconds
     }
 
     String toString() {

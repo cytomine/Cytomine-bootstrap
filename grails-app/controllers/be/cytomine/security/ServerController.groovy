@@ -2,6 +2,7 @@ package be.cytomine.security
 
 import grails.converters.JSON
 import grails.converters.XML
+import be.cytomine.social.LastConnection
 
 class ServerController {
 
@@ -21,8 +22,14 @@ class ServerController {
             data.user = springSecurityService.principal.id
             //set last ping
             SecUser user = SecUser.get(springSecurityService.principal.id)
-            user.setLastPing(new Date())
-            user.save()
+            LastConnection lastConnection =  LastConnection.findByUser(user)
+
+            if(!lastConnection) {
+                lastConnection = new LastConnection(user:user,date: new Date())
+            } else {
+                lastConnection.setDate(new Date())
+            }
+            lastConnection.save()
         }
 
         withFormat {

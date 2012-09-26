@@ -190,7 +190,6 @@ class User extends SecUser {
                 returnArray['publicKey'] = it.publicKey
                 returnArray['privateKey'] = it.privateKey
             }
-            returnArray['online'] = it.isOnline()
             returnArray['color'] = it.color
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null
