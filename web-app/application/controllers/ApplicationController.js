@@ -185,6 +185,13 @@ var ApplicationController = Backbone.Router.extend({
 
         return year + "-" + month +"-" + day + " " + hour + "h" + min;
     },
+    minString : function(string, maxFirstCar, maxLastCar) {
+        if(string.length<=(maxFirstCar+maxLastCar+5)) return  string;
+        var start = string.substr(0,maxFirstCar);
+        var end = string.substr((string.length-maxLastCar),maxLastCar);
+
+        return start + "[...]"+ end;
+    },
     replaceVariable:function (value) {
         var result =value;
         result=result.replace("$currentProjectCreationDate$",window.app.status.currentProjectModel.get('created'));

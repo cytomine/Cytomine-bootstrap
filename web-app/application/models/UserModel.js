@@ -39,6 +39,16 @@ var UserFriendCollection = Backbone.Collection.extend({
     }
 });
 
+var UserOnlineCollection = Backbone.Collection.extend({
+    model: UserModel,
+    url: function() {
+        return "api/project/" + this.project + "/online/user.json";
+    },
+    initialize: function (options) {
+        this.project = options.project;
+    }
+});
+
 // define our collection
 var UserCollection = Backbone.Collection.extend({
     model: UserModel,

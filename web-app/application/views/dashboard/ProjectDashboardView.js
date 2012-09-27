@@ -106,6 +106,7 @@ var ProjectDashboardView = Backbone.View.extend({
 
             self.fetchProjectInfo();
             self.fetchCommands();
+            self.fetchUsersOnline();
 
             //self.fetchWorstAnnotations(collection,terms);
             if(self.projectStats==null)
@@ -126,7 +127,6 @@ var ProjectDashboardView = Backbone.View.extend({
         fetchInformations();
 
     },
-
     fetchProjectInfo : function () {
         var self = this;
         require(["text!application/templates/dashboard/ProjectInfoContent.tpl.html"], function(tpl) {
@@ -163,7 +163,40 @@ var ProjectDashboardView = Backbone.View.extend({
         resetElem("#projectInfoNumberOfAnnotations",json.numberOfAnnotations);
         resetElem("#projectInfoCreated",json.created);
         resetElem("#projectInfoUpdated",json.updated);
+    },
+    fetchUsersOnline : function() {
+        var self = this;
 
+
+
+        var refreshData = function() {
+            require(["text!application/templates/dashboard/OnlineUser.tpl.html"],
+                    function(userOnlineTpl) {
+                        new UserOnlineCollection({project:self.model.id}).fetch({
+                            success : function(collection, response) {
+                                $("#userOnlineItem").empty();
+                                collection.each(function(user) {
+                                    var divId = 'onlineUser-'+user.id;
+                                    $("#userOnlineItem").append('<div id="'+divId+'"><li class="icon-user"/> '+window.app.models.projectUser.get(user.id).prettyName()+'</div>');
+
+                                    var positions = user.get('position');
+                                    $("#"+divId).append("<ul></ul>")
+                                    _.each(positions,function(position) {
+
+                                       $("#"+divId).find("ul").append(_.template(userOnlineTpl,{project:self.model.id,filename:window.app.minString(position.filename,15,10), image: position.image}));
+
+                                    });
+                                })
+                            }
+                        });
+                    }
+             )
+        };
+        refreshData();
+        var interval = setInterval(refreshData, 5000);
+        $(window).bind('hashchange', function() {
+            clearInterval(interval);
+        });
 
 
     },

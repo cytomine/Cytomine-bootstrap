@@ -53,6 +53,7 @@ var ExplorerController = Backbone.Router.extend({
             //$('#tabs-image-'+idImage).tab('show');
            // window.app.view.showComponent(self.tabs.container);
             console.log("showView");
+
             self.showView();
         };
 

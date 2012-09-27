@@ -287,19 +287,47 @@ class RestUserController extends RestController {
         responseSuccess(users)
     }
 
+//    def listOnlineFriendsWithPosition = {
+//        println "listOnlineFriendsWithPosition ${params}"
+//        Project project = projectService.read(params.long('id'),new Project())
+//
+//        def users = userService.getAllFriendsUsersOnline(cytomineService.currentUser,project)
+//        def userWithPosition = []
+//        users.each{
+//            def json = JSON.parse(it.encodeAsJSON())
+//            json.position = getLastPosition(it,project)
+//            userWithPosition <<  json
+//        }
+//        responseSuccess(userWithPosition)
+//    }
+
     def listOnlineFriendsWithPosition = {
         println "listOnlineFriendsWithPosition ${params}"
+        Date someSecondesBefore = Utils.getDatePlusSecond(-20)
         Project project = projectService.read(params.long('id'),new Project())
 
-        def users = userService.getAllFriendsUsersOnline(cytomineService.currentUser,project)
-        def userWithPosition = []
-        users.each{
-            def json = JSON.parse(it.encodeAsJSON())
-            json.position = getLastPosition(it,project)
-            userWithPosition <<  json
+        List<SecUser> userPositions = SecUser.executeQuery(
+            "SELECT userPosition.user.id,imageInstance.id, abstractImage.originalFilename, max(userPosition.updated) from UserPosition as userPosition, ImageInstance as imageInstance, AbstractImage as abstractImage "+
+            "where userPosition.project.id = ${project.id} and userPosition.updated > ? and imageInstance.id = userPosition.image.id and imageInstance.baseImage.id = abstractImage.id group by userPosition.user.id,imageInstance.id,abstractImage.originalFilename order by userPosition.user.id",[someSecondesBefore])
+
+        println "XXXX userPositions="+userPositions
+
+        def usersWithPosition = []
+        def userInfo
+        long previousUser = -1
+        userPositions.each{
+            long currenUser = it[0]
+            if(previousUser!=currenUser) {
+                userInfo = [id:currenUser, position:[]]
+                usersWithPosition << userInfo
+            }
+            userInfo['position'] << [image:it[1],filename:it[2],date:it[3]]
+            previousUser = currenUser
         }
-        responseSuccess(userWithPosition)
+        responseSuccess(usersWithPosition)
     }
+
+
 
     private List getLastPosition(SecUser user, Project project) {
         println "getLastPosition ${user} ${project}"
@@ -307,8 +335,9 @@ class RestUserController extends RestController {
         Date someSecondesBefore = Utils.getDatePlusSecond(-20)
 
         List<SecUser> userPositions = SecUser.executeQuery(
-            "SELECT image.id, project.id, max(updated) from UserPosition as userPosition "+
-            "where userPosition.project.id = ${project.id} and userPosition.user.id = ${user.id} and updated > ? group by image.id,project.id",[someSecondesBefore])
+            "SELECT imageInstance.id, abstractImage.originalFilename, max(userPosition.updated) from UserPosition as userPosition, ImageInstance as imageInstance, AbstractImage as abstractImage "+
+            "where userPosition.project.id = ${project.id} and userPosition.user.id = ${user.id} and userPosition.updated > ? and imageInstance.id = userPosition.image.id and imageInstance.baseImage.id = abstractImage.id group by imageInstance.id,abstractImage.originalFilename",[someSecondesBefore])
+
 
         println userPositions
 
@@ -316,7 +345,7 @@ class RestUserController extends RestController {
 
         userPositions.each { position ->
             println position
-              def mapPositon = [date:position[2],image:position[0]]
+              def mapPositon = [date:position[2],image:position[0],filename:position[1]]
             positions <<  mapPositon
 
         }
