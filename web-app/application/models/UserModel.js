@@ -57,7 +57,9 @@ var UserCollection = Backbone.Collection.extend({
             return "api/project/" + this.project + "/admin.json";
         } else if (this.project != undefined && this.creator == true) {
             return "api/project/" + this.project + "/creator.json";
-        } else if (this.project != undefined) {
+        } else if (this.project != undefined && this.online == true) {
+                    return "api/project/" + this.project + "/user.json?online=true";
+       }else if (this.project != undefined) {
             return "api/project/" + this.project + "/user.json";
         } else if (this.ontology != undefined && this.creator == true) {
             return "api/ontology/" + this.ontology + "/creator.json";
@@ -73,6 +75,7 @@ var UserCollection = Backbone.Collection.extend({
         this.ontology = options.ontology;
         this.admin = options.admin;
         this.creator = options.creator;
+        this.online = options.online;
     },comparator : function(user) {
         return user.get("username").toLowerCase();
     }

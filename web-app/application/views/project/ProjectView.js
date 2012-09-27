@@ -44,6 +44,8 @@ var ProjectView = Backbone.View.extend({
         //print all project panel
         self.loadProjectsListing();
 
+        self.printProjectInfo();
+
         return this;
     },
     /**
@@ -76,6 +78,116 @@ var ProjectView = Backbone.View.extend({
                 self.model = collection;
                 self.render();
             }});
+    },
+    printProjectInfo : function() {
+       console.log("printProjectInfo");
+       var self = this;
+        var allProjectsPanel = $(self.el).find(".projectInfoPanel");
+
+        require([
+            "text!application/templates/project/ProjectBigPanel.tpl.html"
+        ],
+                function(tpl) {
+                    allProjectsPanel.hover(function() {
+
+                                $(".projectBigInfo").replaceWith("");
+
+                               var id = $(this).attr('data-id');
+                               var project = self.model.get(id);
+                               var indexNextRow = self.getIndiceNextRow($(this),allProjectsPanel);
+
+                                console.log('id='+id);
+                                console.log('project='+project);
+                                console.log('indexNextRow='+indexNextRow);
+
+
+                                var newRowItem = $(allProjectsPanel).eq(indexNextRow);
+                                console.log("newRowItem="+newRowItem.attr('data-id'));
+
+
+                                //var htmlCode = '<div class="well span2 projectBigInfo" style="padding: 5px;margin: 0 15px 15px 0px;min-width: '+self.getFullWidth()+'px;font-size: 12px;">'+project.get("name")+'</div>';
+                                var htmlCode = _.template(tpl,{projectName:project.get('name'),width:self.getFullWidth(),id:project.id});
+                                if(newRowItem.attr('data-id')!=undefined) {
+                                    newRowItem.parent().before(htmlCode);
+                                } else {
+                                    //last row
+                                    allProjectsPanel.last().after(htmlCode);
+                                }
+
+
+                                new ImageInstanceCollection({project:project.id,inf:0,sup:3}).fetch({
+                                    success : function (collection, response) {
+                                        collection.each(function(image) {
+
+                                           var str = '<div style="min-height: 128px;max-width: 30%;" class="span6">' +
+                                                   '<a href="#tabs-image-'+project.id+'-'+image.id+'-">' +
+                                                   '     <img class="lazy" src="'+image.get("thumb")+'" alt="'+image.get("filename")+'" style="max-height:200px; max-width:100%;">' +
+                                                   '</a></div>';
+                                            $("#imageInfoBigPanel-"+project.id).find(".row").append(str);
+                                        })
+                                    }});
+
+                                new UserCollection({project:project.id, creator:true}).fetch({
+                                        success : function (creator, response) {
+                                            $("#userInfoBigPanel-"+project.id).find("#projectCreator").empty();
+                                            var list = [];
+                                            creator.each(function(user) {
+                                                list.push(user.prettyName());
+                                            });
+                                            $("#userInfoBigPanel-"+project.id).find("#projectCreator").append(list.join(", "));
+                                }});
+
+                               new UserCollection({project:project.id, admin:true}).fetch({
+                                       success : function (admin, response) {
+                                           $("#userInfoBigPanel-"+project.id).find("#projectAdmins").empty();
+                                           var list = [];
+                                           admin.each(function(user) {
+                                               list.push(user.prettyName());
+                                           });
+                                           $("#userInfoBigPanel-"+project.id).find("#projectAdmins").append(list.join(", "));
+
+                               }});
+                                new UserCollection({project:project.id}).fetch({
+                                       success : function (users, response) {
+                                           $("#userInfoBigPanel-"+project.id).find("#projectUsers").empty();
+                                           var list = [];
+                                           users.each(function(user) {
+                                               list.push(user.prettyName());
+                                           });
+                                               $("#userInfoBigPanel-"+project.id).find("#projectUsers").append(list.join(", "));
+
+                               }});
+                                new UserCollection({project:project.id,online:true}).fetch({
+                                       success : function (users, response) {
+                                           $("#userInfoBigPanel-"+project.id).find("#projectUsersOnline").empty();
+                                           var list = [];
+                                           users.each(function(user) {
+                                               list.push('<span style="color:green;font-style: bold;">'+user.prettyName()+'</span>');
+                                           });
+                                               $("#userInfoBigPanel-"+project.id).find("#projectUsersOnline").append(list.join(", "));
+
+                               }});
+
+                           }, function() {
+                        //$(".projectBigInfo").replaceWith("");
+                    });
+                });
+
+    },
+    getFullWidth : function () {
+        return Math.round($(window).width() - 90);
+    },
+    getIndiceNextRow : function(projectPanel,allProjectsPanel) {
+        var currentY = projectPanel.position().top;
+
+        var i = 0;
+        _.each(allProjectsPanel,function(panel) {
+            console.log($(panel).position());
+            if($(panel).position().top<=currentY) {
+                i++;
+            }
+        });
+        return i;
     },
     generateAddProjectPanel : function () {
         var self = this;

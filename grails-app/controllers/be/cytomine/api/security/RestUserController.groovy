@@ -79,9 +79,13 @@ class RestUserController extends RestController {
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showByProject = {
+        boolean online = params.boolean('online')
         Project project = projectService.read(params.long('id'),new Project())
-        if (project) {
+        if (project && !online) {
             responseSuccess(project.users())
+        } else if(project && online) {
+            def users = userService.getAllFriendsUsersOnline(cytomineService.currentUser,project)
+            responseSuccess(users)
         }
         else responseNotFound("User", "Project", params.id)
     }
@@ -287,30 +291,18 @@ class RestUserController extends RestController {
         responseSuccess(users)
     }
 
-//    def listOnlineFriendsWithPosition = {
-//        println "listOnlineFriendsWithPosition ${params}"
-//        Project project = projectService.read(params.long('id'),new Project())
-//
-//        def users = userService.getAllFriendsUsersOnline(cytomineService.currentUser,project)
-//        def userWithPosition = []
-//        users.each{
-//            def json = JSON.parse(it.encodeAsJSON())
-//            json.position = getLastPosition(it,project)
-//            userWithPosition <<  json
-//        }
-//        responseSuccess(userWithPosition)
-//    }
+
 
     def listOnlineFriendsWithPosition = {
         println "listOnlineFriendsWithPosition ${params}"
         Date someSecondesBefore = Utils.getDatePlusSecond(-20)
         Project project = projectService.read(params.long('id'),new Project())
 
+        def users = userService.getAllFriendsUsersOnline(cytomineService.currentUser,project)
+        def usersId = users.collect{it.id}
         List<SecUser> userPositions = SecUser.executeQuery(
             "SELECT userPosition.user.id,imageInstance.id, abstractImage.originalFilename, max(userPosition.updated) from UserPosition as userPosition, ImageInstance as imageInstance, AbstractImage as abstractImage "+
             "where userPosition.project.id = ${project.id} and userPosition.updated > ? and imageInstance.id = userPosition.image.id and imageInstance.baseImage.id = abstractImage.id group by userPosition.user.id,imageInstance.id,abstractImage.originalFilename order by userPosition.user.id",[someSecondesBefore])
-
-        println "XXXX userPositions="+userPositions
 
         def usersWithPosition = []
         def userInfo
@@ -320,9 +312,14 @@ class RestUserController extends RestController {
             if(previousUser!=currenUser) {
                 userInfo = [id:currenUser, position:[]]
                 usersWithPosition << userInfo
+                usersId.remove(currenUser)
             }
             userInfo['position'] << [image:it[1],filename:it[2],date:it[3]]
             previousUser = currenUser
+        }
+        //user online with no image open
+        usersId.each {
+            usersWithPosition << [id:it, position:[]]
         }
         responseSuccess(usersWithPosition)
     }
