@@ -39,6 +39,7 @@ var ExplorerTabs = Backbone.View.extend({
         var tab = this.getBrowseImageView(idImage);
         if (tab != null) {
             tab.view.show(options);
+            self.showTab(idImage);
             return;
         }
 
