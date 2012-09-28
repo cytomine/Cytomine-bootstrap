@@ -191,7 +191,7 @@ log4j = {
 
     warn 'org.codehaus.groovy.grails.plugins.springsecurity.AnnotationFilterInvocationDefinition','be.cytomine'
     warn   'org.hibernate'
-    error 'org.springframework.security.web.context', 'org.hibernate.engine'
+    error 'org.springframework.security.web.context', 'org.hibernate.engine','net.sf.hibernate.impl.SessionImpl'
 
 
 

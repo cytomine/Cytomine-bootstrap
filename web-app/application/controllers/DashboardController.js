@@ -170,6 +170,8 @@ var DashboardController = Backbone.Router.extend({
     },
 
     destroyView : function() {
+        $(".projectUserDialog").modal('hide');
+        $(".projectUserDialog").remove();
         this.view = null;
     },
 

@@ -20,9 +20,6 @@ class ServerController {
                     data.version = grailsApplication.metadata['app.version']
                     data.serverURL = grailsApplication.config.grails.serverURL
 
-
-                    println "TEST="+jsonContent.project
-
                     Project project
                     if(!jsonContent.project.toString().equals("null"))
                         project = Project.read(Long.parseLong(jsonContent.project))
@@ -33,7 +30,6 @@ class ServerController {
                         SecUser user = SecUser.get(springSecurityService.principal.id)
 
                         LastConnection lastConnection =  LastConnection.findByUserAndProject(user,project)
-                        println ("ping.lastconnection="+lastConnection?.id + " "+ lastConnection?.project)
                         if(!lastConnection) {
                             lastConnection = new LastConnection(user:user,date: new Date(),project:project)
                         } else {

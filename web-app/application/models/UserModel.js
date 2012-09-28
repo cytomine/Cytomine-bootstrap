@@ -21,7 +21,7 @@ var UserModel = Backbone.Model.extend({
     },
 
     prettyName : function () {
-        return this.get('firstname') + " " + this.get('lastname');
+        return this.get('lastname') + " " + this.get('firstname');
     }
 });
 
@@ -35,7 +35,10 @@ var UserFriendCollection = Backbone.Collection.extend({
     initialize: function (options) {
         this.id = options.id;
     },comparator : function(user) {
-        return user.get("username").toLowerCase();
+        if(user.get("lastname")!=undefined) {
+            return user.get("lastname") + " " + user.get("firstname")
+        }
+        else return user.get("username").toLowerCase();
     }
 });
 
@@ -77,7 +80,10 @@ var UserCollection = Backbone.Collection.extend({
         this.creator = options.creator;
         this.online = options.online;
     },comparator : function(user) {
-        return user.get("username").toLowerCase();
+        if(user.get("lastname")!=undefined) {
+            return user.get("lastname") + " " + user.get("firstname")
+        }
+        else return user.get("username").toLowerCase();
     }
 });
 

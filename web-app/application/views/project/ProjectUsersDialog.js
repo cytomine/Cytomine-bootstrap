@@ -33,7 +33,6 @@ var projectUsersDialog = Backbone.View.extend({
         $("#closeUserProjectDialog").click(function()
         {$("#projectUsers"+self.model.id).modal('hide');
             $("#projectUsers"+self.model.id).remove();
-            window.location.hash = "#project";
             return false;});
         self.open();
         return this;
@@ -42,30 +41,36 @@ var projectUsersDialog = Backbone.View.extend({
         var self = this;
         new UserCollection({project:self.model.id, creator:true}).fetch({
                 success : function (creator, response) {
-                    $("#projectCreator").empty();
+                    $("#projectCreatorDialog").empty();
+                    var list = [];
                     creator.each(function(user) {
-                        $("#projectCreator").append(user.prettyName());
+                        list.push(user.prettyName());
                  });
+                 $("#projectCreatorDialog").append(list.join(", "));
         }});
     },
     printAdmins : function() {
         var self = this;
         new UserCollection({project:self.model.id, admin:true}).fetch({
                 success : function (admin, response) {
-                    $("#projectAdmins").empty();
+                    $("#projectAdminsDialog").empty();
+                    var list = [];
                     admin.each(function(user) {
-                        $("#projectAdmins").append(user.prettyName() + " | ");
+                        list.push(user.prettyName());
                  });
+                    $("#projectAdminsDialog").append(list.join(", "));
         }});
     },
     printUsers : function() {
         var self = this;
         new UserCollection({project:self.model.id}).fetch({
                 success : function (users, response) {
-                    $("#projectUsers").empty();
+                    $("#projectUsersDialog").empty();
+                    var list = [];
                     users.each(function(user) {
-                        $("#projectUsers").append(user.prettyName() + " | ");
+                        list.push(user.prettyName());
                  });
+                    $("#projectUsersDialog").append(list.join(", "));
         }});
     },
     open: function() {

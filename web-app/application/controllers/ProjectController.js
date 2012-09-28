@@ -3,7 +3,6 @@ var ProjectController = Backbone.Router.extend({
     manageView : null,
     routes: {
         "project"     :   "project",
-        "project-users-:idProject" : "users",
         "project-manage-:idProject" : "manage"
     },
 
@@ -78,37 +77,5 @@ var ProjectController = Backbone.Router.extend({
             showManageImages();
         }
 
-    },
-
-    users : function(idProject,callback) {
-
-
-
-        var self = this;
-        $("#warehouse-button").attr("href", "#project");
-        $("#addimagediv").hide();
-        $("#projectdiv").show();
-
-        var projectCallback = function () {
-
-            self.view.container.show(self.view, "#project", "project");
-            window.app.view.showComponent(window.app.view.components.project);
-            self.view.refresh();
-            if (_.isFunction(callback)) {
-                callback.call();
-            }
-        }
-
-        if (!this.view) {
-            this.initView();
-        } else {
-            projectCallback.call();
-        }
-
-        console.log("controller.user="+idProject);
-        new ProjectModel({id:idProject}).fetch({
-            success : function (model, response) {
-                new projectUsersDialog({model:model,el:$("#project")}).render();
-            }});
     }
 });

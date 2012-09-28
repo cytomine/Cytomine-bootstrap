@@ -139,7 +139,14 @@ var ProjectDashboardView = Backbone.View.extend({
             });
             //$("#projectInfoUserList").html(users.join(", "));
         });
-        return;
+
+        console.log("event listener:"+$("#seeUsersProjectList-"+self.model.id).length);
+        $("#seeUsersProjectList-"+self.model.id).click(function(){
+            console.log("open project users "+ self.model.id);
+            new projectUsersDialog({model:self.model,el:$("#explorer")}).render();
+        });
+
+        return; //????
         var self = this;
         var json = self.model.toJSON();
 
@@ -163,6 +170,8 @@ var ProjectDashboardView = Backbone.View.extend({
         resetElem("#projectInfoNumberOfAnnotations",json.numberOfAnnotations);
         resetElem("#projectInfoCreated",json.created);
         resetElem("#projectInfoUpdated",json.updated);
+
+
     },
     fetchUsersOnline : function() {
         var self = this;

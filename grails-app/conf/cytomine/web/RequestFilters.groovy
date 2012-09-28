@@ -20,7 +20,7 @@ class RequestFilters {
                 if(actionName.equals("crop")) return
                 if(actionName.equals("ping")) return
                 if(actionName.equals("listOnlineUsersByImage")) return
-                //if(controllerName.equals("restUserPosition") && actionName.equals("add")) return
+                if(controllerName.equals("restUserPosition") && actionName.equals("add")) return
                 request.currentTime = System.currentTimeMillis()
                 String strParam =""
                 /*params.each{
@@ -45,7 +45,7 @@ class RequestFilters {
                 if(actionName.equals("crop")) return
                 if(actionName.equals("ping")) return
                 if(actionName.equals("listOnlineUsersByImage")) return
-                //if(controllerName.equals("restUserPosition") && actionName.equals("add")) return
+                if(controllerName.equals("restUserPosition") && actionName.equals("add")) return
                 log.info controllerName+"."+actionName + " Request took ${System.currentTimeMillis()-request.currentTime}ms"
             }
         }
