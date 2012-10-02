@@ -99,7 +99,7 @@ class UserService extends ModelService {
 
     List<SecUser> getAllOnlineUsers(Project project) {
         if(!project) return getAllOnlineUsers()
-        def xSecondAgo = Utils.getDatePlusSecond(-20000)
+        def xSecondAgo = Utils.getDatePlusSecond(-20)
         def results = LastConnection.withCriteria {
             ge('date', xSecondAgo)
             eq('project',project)
