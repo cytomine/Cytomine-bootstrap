@@ -294,7 +294,6 @@ class RestUserController extends RestController {
 
 
     def listOnlineFriendsWithPosition = {
-        println "listOnlineFriendsWithPosition ${params}"
         Date someSecondesBefore = Utils.getDatePlusSecond(-20)
         Project project = projectService.read(params.long('id'),new Project())
 

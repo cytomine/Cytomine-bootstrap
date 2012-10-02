@@ -19,31 +19,19 @@ class RequestFilters {
             before = {
                 if(actionName.equals("crop")) return
                 if(actionName.equals("ping")) return
-                if(actionName.equals("listOnlineUsersByImage")) return
+                if(actionName.equals("listOnlineFriendsWithPosition")) return
+                if(actionName.equals("listOnlineFriendsWithPosition")) return
                 if(controllerName.equals("restUserPosition") && actionName.equals("add")) return
                 request.currentTime = System.currentTimeMillis()
-                String strParam =""
-                /*params.each{
-                    if(!it.key.equals('action') && !it.key.equals('controller')) {
-                        String value = new String(it.value)
-                        value = value.substring(0,Math.min(200, value.length()))
-                        strParam = strParam +"<" + it.key +':'+ value +'>; '
-                    }
-                }*/
-//                String strPost = ""
-//                try {
-//                    strPost = request.JSON
-//                    strPost = strPost.substring(0,Math.min(200, strPost.length()))
-//                } catch(Exception e) {}
-                String requestInfo = "| PARAM="+strParam //+ "| POST=" + strPost + " | "
                 String userInfo = ""
                 try { userInfo = springSecurityService.principal.id} catch(Exception e) { userInfo = springSecurityService.principal}
-                log.info controllerName+"."+actionName + ": user:" + userInfo + " request=" + requestInfo
+                log.info controllerName+"."+actionName + ": user:" + userInfo
             }
             after = {}
             afterView = {
                 if(actionName.equals("crop")) return
                 if(actionName.equals("ping")) return
+                if(actionName.equals("listOnlineFriendsWithPosition")) return
                 if(actionName.equals("listOnlineUsersByImage")) return
                 if(controllerName.equals("restUserPosition") && actionName.equals("add")) return
                 log.info controllerName+"."+actionName + " Request took ${System.currentTimeMillis()-request.currentTime}ms"

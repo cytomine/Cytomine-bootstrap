@@ -10,6 +10,41 @@
           <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/code-coverage-1.2/web-app" relative="/" />
           <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/rest-0.7/web-app" relative="/" />
         </webroots>
+        <sourceRoots>
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/background-thread-1.6/src/java" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/background-thread-1.6/grails-app/services" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/code-coverage-1.2/grails-app/i18n" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/elasticsearch-0.18.7.1-SNAPSHOT/src/java" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/elasticsearch-0.18.7.1-SNAPSHOT/src/groovy" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/elasticsearch-0.18.7.1-SNAPSHOT/grails-app/services" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/export-1.1/src/groovy" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/export-1.1/grails-app/i18n" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/export-1.1/grails-app/services" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/export-1.1/grails-app/taglib" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/functional-test-2.0.M2/src/groovy" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/functional-test-2.0.M2/grails-app/i18n" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/functional-test-2.0.M2/grails-app/controllers" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/hibernate-2.0.3/grails-app/i18n" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/quartz-0.4.2/src/java" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/quartz-0.4.2/src/groovy" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/quartz-0.4.2/grails-app/i18n" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/quartz-0.4.2/grails-app/services" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/rest-0.7/src/groovy" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/selenium-rc-1.0.2/src/java" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/selenium-rc-1.0.2/src/groovy" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-acl-1.1/src/java" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-acl-1.1/src/groovy" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-acl-1.1/grails-app/domain" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-acl-1.1/grails-app/services" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-acl-1.1/grails-app/taglib" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-appinfo-1.0/grails-app/controllers" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-core-1.2.7.3/src/java" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-core-1.2.7.3/src/groovy" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-core-1.2.7.3/grails-app/i18n" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-core-1.2.7.3/grails-app/services" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-core-1.2.7.3/grails-app/taglib" />
+          <root url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/webxml-1.4.1/src/groovy" />
+        </sourceRoots>
       </configuration>
     </facet>
     <facet type="hibernate" name="Hibernate">
@@ -20,66 +55,6 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/background-thread-1.6">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/background-thread-1.6/src/java" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/background-thread-1.6/grails-app/services" isTestSource="false" />
-    </content>
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/code-coverage-1.2">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/code-coverage-1.2/grails-app/i18n" isTestSource="false" />
-    </content>
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/elasticsearch-0.18.7.1-SNAPSHOT">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/elasticsearch-0.18.7.1-SNAPSHOT/src/java" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/elasticsearch-0.18.7.1-SNAPSHOT/src/groovy" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/elasticsearch-0.18.7.1-SNAPSHOT/grails-app/services" isTestSource="false" />
-    </content>
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/export-1.1">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/export-1.1/src/groovy" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/export-1.1/grails-app/i18n" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/export-1.1/grails-app/services" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/export-1.1/grails-app/taglib" isTestSource="false" />
-    </content>
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/functional-test-2.0.M2">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/functional-test-2.0.M2/src/groovy" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/functional-test-2.0.M2/grails-app/i18n" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/functional-test-2.0.M2/grails-app/controllers" isTestSource="false" />
-    </content>
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/hibernate-2.0.3">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/hibernate-2.0.3/grails-app/i18n" isTestSource="false" />
-    </content>
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/quartz-0.4.2">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/quartz-0.4.2/src/java" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/quartz-0.4.2/src/groovy" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/quartz-0.4.2/grails-app/i18n" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/quartz-0.4.2/grails-app/services" isTestSource="false" />
-    </content>
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/rest-0.7">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/rest-0.7/src/groovy" isTestSource="false" />
-    </content>
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/selenium-rc-1.0.2">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/selenium-rc-1.0.2/src/java" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/selenium-rc-1.0.2/src/groovy" isTestSource="false" />
-    </content>
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-acl-1.1">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-acl-1.1/src/java" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-acl-1.1/src/groovy" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-acl-1.1/grails-app/domain" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-acl-1.1/grails-app/services" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-acl-1.1/grails-app/taglib" isTestSource="false" />
-    </content>
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-appinfo-1.0">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-appinfo-1.0/grails-app/controllers" isTestSource="false" />
-    </content>
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-core-1.2.7.3">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-core-1.2.7.3/src/java" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-core-1.2.7.3/src/groovy" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-core-1.2.7.3/grails-app/i18n" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-core-1.2.7.3/grails-app/services" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/spring-security-core-1.2.7.3/grails-app/taglib" isTestSource="false" />
-    </content>
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/tomcat-2.0.3" />
-    <content url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/webxml-1.4.1">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.0.3/projects/cytomine/plugins/webxml-1.4.1/src/groovy" isTestSource="false" />
-    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="grails-2.1.0" level="application" />

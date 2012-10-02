@@ -122,14 +122,19 @@ var ProjectView = Backbone.View.extend({
 
                         new ImageInstanceCollection({project:project.id,inf:0,sup:3}).fetch({
                             success : function (collection, response) {
-                                collection.each(function(image) {
+                                if(collection.length!=0) {
+                                    collection.each(function(image) {
 
-                                    var str = '<div style="min-height: 128px;max-width: 30%;" class="span6">' +
-                                            '<a href="#tabs-image-'+project.id+'-'+image.id+'-">' +
-                                            '     <img class="lazy" src="'+image.get("thumb")+'" alt="'+image.get("filename")+'" style="max-height:200px; max-width:100%;">' +
-                                            '</a></div>';
-                                    $("#imageInfoBigPanel-"+project.id).find(".row").append(str);
-                                })
+                                        var str = '<div style="min-height: 128px;max-width: 30%;" class="span6">' +
+                                                '<a href="#tabs-image-'+project.id+'-'+image.id+'-">' +
+                                                '     <img class="lazy" src="'+image.get("thumb")+'" alt="'+image.get("filename")+'" style="max-height:150px; max-width:100%;">' +
+                                                '</a></div>';
+                                        $("#imageInfoBigPanel-"+project.id).find(".row").append(str);
+                                    })
+                                } else {
+                                    $("#imageInfoBigPanel-"+project.id).find(".row").append("<div class='alert alert-block'>No data to display</div>");
+                                }
+
                             }});
 
                         new UserCollection({project:project.id, creator:true}).fetch({

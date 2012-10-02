@@ -185,16 +185,19 @@ var ProjectDashboardView = Backbone.View.extend({
                             success : function(collection, response) {
                                 $("#userOnlineItem").empty();
                                 collection.each(function(user) {
-                                    var divId = 'onlineUser-'+user.id;
-                                    $("#userOnlineItem").append('<div id="'+divId+'"><li class="icon-user"/> '+window.app.models.projectUser.get(user.id).prettyName()+'</div>');
+                                    //if undefined => user is cytomine admin but not in project!
+                                    if(window.app.models.projectUser.get(user.id)!=undefined) {
+                                        var divId = 'onlineUser-'+user.id;
+                                        $("#userOnlineItem").append('<div id="'+divId+'"><li class="icon-user"/> '+window.app.models.projectUser.get(user.id).prettyName()+'</div>');
 
-                                    var positions = user.get('position');
-                                    $("#"+divId).append("<ul></ul>")
-                                    _.each(positions,function(position) {
+                                        var positions = user.get('position');
+                                        $("#"+divId).append("<ul></ul>")
+                                        _.each(positions,function(position) {
 
-                                       $("#"+divId).find("ul").append(_.template(userOnlineTpl,{project:self.model.id,filename:window.app.minString(position.filename,15,10), image: position.image}));
+                                           $("#"+divId).find("ul").append(_.template(userOnlineTpl,{project:self.model.id,filename:window.app.minString(position.filename,15,10), image: position.image}));
 
-                                    });
+                                        });
+                                    }
                                 })
                             }
                         });
