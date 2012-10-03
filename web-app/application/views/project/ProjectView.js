@@ -89,9 +89,6 @@ var ProjectView = Backbone.View.extend({
         ],
                 function(tpl) {
                     allProjectsPanel.hover(function() {
-
-//
-
                         $(".projectBigInfo").replaceWith("");
                         $(self.el).find(".projectInfoPanel").css("border-color","#ffffff");
 
@@ -100,10 +97,6 @@ var ProjectView = Backbone.View.extend({
                         var indexNextRow = self.getIndiceNextRow($(this),allProjectsPanel);
 
                         $(this).css("border-color","#000000");
-
-                        console.log('id='+id);
-                        console.log('project='+project);
-                        console.log('indexNextRow='+indexNextRow);
 
                         //var htmlCode = '<div class="well span2 projectBigInfo" style="padding: 5px;margin: 0 15px 15px 0px;min-width: '+self.getFullWidth()+'px;font-size: 12px;">'+project.get("name")+'</div>';
                         var htmlCode = _.template(tpl,{projectName:project.get('name'),width:self.getFullWidth(),id:project.id});
@@ -117,7 +110,7 @@ var ProjectView = Backbone.View.extend({
                             allProjectsPanel.last().after(htmlCode);
                         }
 
-                        //$(".projectBigInfo").fadeIn('slow');
+                        $(".projectBigInfoPanel").fadeIn('slow');
 
 
                         new ImageInstanceCollection({project:project.id,inf:0,sup:3}).fetch({
@@ -179,7 +172,7 @@ var ProjectView = Backbone.View.extend({
                             }});
 
                     }, function() {
-                        //$(".projectBigInfo").replaceWith("");
+                        //$(".projectBigInfoPanel").fadeOut('slow');
                     });
                 });
 
