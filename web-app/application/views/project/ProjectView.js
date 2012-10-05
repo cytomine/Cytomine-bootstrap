@@ -79,9 +79,11 @@ var ProjectView = Backbone.View.extend({
                 self.render();
             }});
     },
+    dateHoverOut : null,
     printProjectInfo : function() {
         console.log("printProjectInfo");
         var self = this;
+
         var allProjectsPanel = $(self.el).find(".projectInfoPanel");
 
         require([
@@ -89,6 +91,9 @@ var ProjectView = Backbone.View.extend({
         ],
                 function(tpl) {
                     allProjectsPanel.hover(function() {
+                        console.log("Hover on:"+self.dateHoverOut);
+                        self.dateHoverOut = null;
+                        console.log("Hover on:"+self.dateHoverOut);
                         $(".projectBigInfo").replaceWith("");
                         $(self.el).find(".projectInfoPanel").css("border-color","#ffffff");
 
@@ -102,7 +107,7 @@ var ProjectView = Backbone.View.extend({
                         var htmlCode = _.template(tpl,{projectName:project.get('name'),width:self.getFullWidth(),id:project.id});
                        // $(".projectBigInfo").replaceWith("");
                         var newRowItem = $(allProjectsPanel).eq(indexNextRow);
-                        console.log("newRowItem="+newRowItem.attr('data-id'));
+                        //console.log("newRowItem="+newRowItem.attr('data-id'));
                         if(newRowItem.attr('data-id')!=undefined) {
                             newRowItem.parent().before(htmlCode);
                         } else {
@@ -171,11 +176,31 @@ var ProjectView = Backbone.View.extend({
 
                             }});
 
+
+
+                        $(".projectBigInfoPanel").hover(
+                                function() {
+                                    //if going on big panel, don't remove it
+                                    self.dateHoverOut = null;
+                                },
+                                function() {
+                                    //if going out of the big panel, remove it after x sec
+                                    self.dateHoverOut = new Date().getTime();
+                                    setTimeout(function() { self.removePanelIfNeccessary(self.dateHoverOut);}, 1500);
+                                })
+
                     }, function() {
-                        //$(".projectBigInfoPanel").fadeOut('slow');
+                        self.dateHoverOut = new Date().getTime();
+                        setTimeout(function() { self.removePanelIfNeccessary(self.dateHoverOut);}, 1500);
                     });
                 });
 
+    },
+    removePanelIfNeccessary : function(dateHoverOut) {
+        if(dateHoverOut==null) return;
+        var now = new Date().getTime();
+        if((now-dateHoverOut)>=1000)
+            $(".projectBigInfoPanel").fadeOut('slow');
     },
     getFullWidth : function () {
         return Math.round($(window).width() - 90);
@@ -185,7 +210,7 @@ var ProjectView = Backbone.View.extend({
 
         var i = 0;
         _.each(allProjectsPanel,function(panel) {
-            console.log($(panel).position());
+            //console.log($(panel).position());
             if($(panel).position().top<=currentY) {
                 i++;
             }
