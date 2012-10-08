@@ -65,14 +65,14 @@ class BootStrap {
     def init = { servletContext ->
 
         //Register API Authentifier
-        println "Current directory="+new File( 'test.html' ).absolutePath
+        log.info "Current directory="+new File( 'test.html' ).absolutePath
 
 
 
         SpringSecurityUtils.clientRegisterFilter( 'apiAuthentificationFilter', SecurityFilterPosition.DIGEST_AUTH_FILTER.order + 1)
-        println "###################" + grailsApplication.config.grails.serverURL + "##################"
+        log.info "###################" + grailsApplication.config.grails.serverURL + "##################"
 
-        println "GrailsUtil.environment= " + GrailsUtil.environment + " BootStrap.development=" + BootStrap.development
+        log.info "GrailsUtil.environment= " + GrailsUtil.environment + " BootStrap.development=" + BootStrap.development
         if (GrailsUtil.environment == BootStrap.development) { //scripts are not present in productions mode
             compileJS();
         }
@@ -97,21 +97,21 @@ class BootStrap {
         /* Print JVM infos like XMX/XMS */
         List inputArgs = ManagementFactory.getRuntimeMXBean().getInputArguments();
         for (int i = 0; i < inputArgs.size(); i++) {
-            println inputArgs.get(i)
+            log.info inputArgs.get(i)
         }
 
         if (GrailsUtil.environment == BootStrap.test) { //scripts are not present in productions mode and dev mode
             initData(GrailsUtil.environment)
         }
 
-        println "create scanner"
+        log.info "create scanner"
         createScanner()
-        println "create user"
+        log.info "create user"
         createBasicUser()
-        println "create discipline"
+        log.info "create discipline"
         createDiscipline()
 
-        println "fill project for position (may take some time...)"
+        log.info "fill project for position (may take some time...)"
         UserPosition.findAllByProjectIsNull().each {
             it.project = it.image.project
             if(!it.updated) it.updated = it.created
@@ -143,9 +143,7 @@ class BootStrap {
             user.accountLocked = false
             user.passwordExpired = false
             user.generateKeys()
-            println "validate user = " + user.validate()
-            println "errors user = " + user.errors
-            println "save user = " + user.save(flush: true)
+            log.info "save user = " + user.save(flush: true)
 
             def userRole = SecRole.findByAuthority("ROLE_USER") ?: new SecRole(authority: "ROLE_USER").save(flush: true)
             def adminRole = SecRole.findByAuthority("ROLE_ADMIN") ?: new SecRole(authority: "ROLE_ADMIN").save(flush: true)
@@ -158,9 +156,7 @@ class BootStrap {
         if(Group.list().isEmpty()) {
             Group group = new Group()
             group.name = "admin"
-            println "validate admin = " + group.validate()
-            println "errors admin = " + group.errors
-            println "save admin = " + group.save(flush: true)
+            log.info "save admin = " + group.save(flush: true)
         }
 
     }
@@ -168,34 +164,29 @@ class BootStrap {
     public void createScanner() {
         if (!Instrument.findByBrand('gigascan2')) {
             Instrument scanner = new Instrument(brand: "gigascan2", model: "MODEL2")
-            println "validate scanner = " + scanner.validate()
-            println "errors scanner = " + scanner.errors
-            println "save scanner = " + scanner.save(flush: true)
+            log.info "save scanner = " + scanner.save(flush: true)
         }
     }
 
     public void createDiscipline() {
         if (Discipline.list().isEmpty()) {
             Discipline cyto = new Discipline(name: "CYTOLOGY")
-            println "validate cyto = " + cyto.validate()
-            println "errors cyto = " + cyto.errors
-            println "save cyto = " + cyto.save(flush: true)
+            log.info "validate cyto = " + cyto.validate()
+            log.info "save cyto = " + cyto.save(flush: true)
             Discipline histo = new Discipline(name: "HISTOLOGY")
-            println "validate histo = " + histo.validate()
-            println "errors histo = " + histo.errors
-            println "save histo = " + histo.save(flush: true)
+            log.info "save histo = " + histo.save(flush: true)
         }
     }
 
     private def compileJS() {
 
-        println "========= C O M P I L E == J S ========= "
+        log.info "========= C O M P I L E == J S ========= "
         ViewPortToBuildXML.process()
         def proc = "./scripts/yui-compressor-ant-task/doc/example/deploy.sh".execute()
-        proc.in.eachLine { line -> println line }
+        proc.in.eachLine { line -> log.info line }
         proc = "./scripts/yui-compressor-ant-task/doc/lib/deploy.sh".execute()
-        proc.in.eachLine { line -> println line }
-        println "======================================== "
+        proc.in.eachLine { line -> log.info line }
+        log.info "======================================== "
     }
 
     private def initData(String env) {
@@ -275,7 +266,7 @@ class BootStrap {
             if (filename.lastIndexOf("/") != -1 && filename.lastIndexOf("/") != filename.size())
                 filename = filename.substring(filename.lastIndexOf("/")+1, filename.size())
 
-            println image.getFilename() + " => " + filename
+            log.info image.getFilename() + " => " + filename
             image.originalFilename = filename
             image.save(flush : true)
         }
@@ -283,7 +274,7 @@ class BootStrap {
 
     private def createProjectGrant() {
         //Remove admin ritht for non-giga user
-        println "createProjectGrant..."
+        log.info "createProjectGrant..."
         List<User> usersList = User.list()
         usersList.each { user ->
             if (!user.username.equals("lrollus") && !user.username.equals("stevben") && !user.username.equals("rmaree")) {
@@ -295,7 +286,7 @@ class BootStrap {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         List<Project> projects = Project.list()
         projects.each { project ->
-            println "createProjectGrant for project $project.name..."
+            log.info "createProjectGrant for project $project.name..."
             def objectACL = AclObjectIdentity.findByObjectId(project.id)
 
             if (!objectACL) {
@@ -314,7 +305,7 @@ class BootStrap {
 
                     }
                     users.each { user ->
-                        println "add user $user.username..."
+                        log.info "add user $user.username..."
                         aclUtilService.addPermission(project, user.username, ADMINISTRATION)
                     }
                 } catch (Exception e) { e.printStackTrace()}
@@ -351,10 +342,10 @@ class BootStrap {
     private void changeOwner(String projectName, String username) {
         Project project = Project.findByName(projectName)
         if(project) {
-            println "Project " + project.name + " id=" + project.id  +" will be owned by " + username
+            log.info "Project " + project.name + " id=" + project.id  +" will be owned by " + username
             aclUtilService.changeOwner project, username
         } else {
-            println "Project not found " + projectName
+            log.info "Project not found " + projectName
         }
 //        AclObjectIdentity acl = AclObjectIdentity.findByObjectId(project.id)
         //        acl.owner = AclSid.findBySid(username)
@@ -369,7 +360,7 @@ class BootStrap {
             it.project = it.image.project
             it.save(flush:true)
         }
-        //Annotation.findAllByProjectIsNull().each {it -> println it}
+        //Annotation.findAllByProjectIsNull().each {it -> log.info it}
 
     }
 
@@ -392,16 +383,16 @@ class BootStrap {
             if (imageFilter.validate()) {
                 imageFilter.save();
             } else {
-                println("\n\n\n Errors in creating imageFilter for ${it.name}!\n\n\n")
+                log.info("\n\n\n Errors in creating imageFilter for ${it.name}!\n\n\n")
                 imageFilter.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
             }
         }
     }
 
     def createStorage(storages) {
-        println "createStorages"
+        log.info "createStorages"
         storages.each {
             if (Storage.findByName(it.name)) {
                 def storage = Storage.findByName(it.name)
@@ -418,9 +409,9 @@ class BootStrap {
                 if (storage.validate()) {
                     storage.save();
                 } else {
-                    println("\n\n\n Errors in creating storage for ${it.name}!\n\n\n")
+                    log.info("\n\n\n Errors in creating storage for ${it.name}!\n\n\n")
                     storage.errors.each {
-                        err -> println err
+                        err -> log.info err
                     }
                 }
             }
@@ -495,7 +486,7 @@ class BootStrap {
 
                 if (project != null) {
                     project.groups().each { group ->
-                        println "GROUP " + group.name + " IMAGE " + image.filename
+                        log.info "GROUP " + group.name + " IMAGE " + image.filename
                         AbstractImageGroup.link(image, group)
                     }
 
@@ -513,7 +504,7 @@ class BootStrap {
                     if (imageinstance.validate()) {
                         imageinstance.save(flush: true)
                     } else {
-                        imageinstance.errors.each { println it }
+                        imageinstance.errors.each { log.info it }
                     }
 
                 } else { //link with stevben by default
@@ -528,9 +519,9 @@ class BootStrap {
                 //StorageAbstractImage.link(storage, image)
 
             } else {
-                println("\n\n\n Errors in image boostrap for ${item.filename}!\n\n\n")
+                log.info("\n\n\n Errors in image boostrap for ${item.filename}!\n\n\n")
                 image.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
 
             }
@@ -543,14 +534,14 @@ class BootStrap {
             if (Group.findByName(item.name)) return
             def group = new Group(name: item.name)
             if (group.validate()) {
-                println "Creating group ${group.name}..."
+                log.info "Creating group ${group.name}..."
                 group.save(flush: true)
-                println "Creating group ${group.name}... OK"
+                log.info "Creating group ${group.name}... OK"
             }
             else {
-                println("\n\n\n Errors in group boostrap for ${item.name}!\n\n\n")
+                log.info("\n\n\n Errors in group boostrap for ${item.name}!\n\n\n")
                 group.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
             }
         }
@@ -572,14 +563,14 @@ class BootStrap {
                     password: item.password,
                     enabled: true)
             user.generateKeys()
-            println "Before validating ${user.username}..."
+            log.info "Before validating ${user.username}..."
             if (user.validate()) {
-                println "Creating user ${user.username}..."
+                log.info "Creating user ${user.username}..."
                 // user.addToTransactions(new Transaction())
                 //user.encodePassword()
                 user.save(flush: true)
 
-                println "Save ${user.username}..."
+                log.info "Save ${user.username}..."
 
                 /* Create a special group the user */
                 def userGroupName = item.username
@@ -596,22 +587,22 @@ class BootStrap {
                             [name: elem.name]
                     ]
                     createGroups(newGroup)
-                    println "Fetch group " + elem.name
+                    log.info "Fetch group " + elem.name
                     group = Group.findByName(elem.name)
                     userGroupService.link(user, group)
                 }
 
                 /* Add Roles */
                 item.roles.each { authority ->
-                    println "Add SecRole " + authority + " for user " + user.username
+                    log.info "Add SecRole " + authority + " for user " + user.username
                     SecRole secRole = SecRole.findByAuthority(authority)
                     if (secRole) SecUserSecRole.create(user, secRole)
                 }
 
             } else {
-                println("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
+                log.info("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
                 user.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
             }
         }
@@ -623,12 +614,12 @@ class BootStrap {
             Mime mime = new Mime(extension: item.extension,
                     mimeType: item.mimeType)
             if (mime.validate()) {
-                println "Creating mime ${mime.extension} : ${mime.mimeType}..."
+                log.info "Creating mime ${mime.extension} : ${mime.mimeType}..."
                 mime.save(flush: true)
             } else {
-                println("\n\n\n Errors in account boostrap for ${mime.extension} : ${mime.mimeType}!\n\n\n")
+                log.info("\n\n\n Errors in account boostrap for ${mime.extension} : ${mime.mimeType}!\n\n\n")
                 mime.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
             }
         }
@@ -639,13 +630,13 @@ class BootStrap {
             if (RetrievalServer.findByDescription(item.description)) return
             RetrievalServer retrievalServer = new RetrievalServer(url: item.url, description: item.description)
             if (retrievalServer.validate()) {
-                println "Creating retrieval server ${item.description}... "
+                log.info "Creating retrieval server ${item.description}... "
                 retrievalServer.save(flush: true)
 
             } else {
-                println("\n\n\n Errors in retrieval server boostrap for ${item.description} !\n\n\n")
+                log.info("\n\n\n Errors in retrieval server boostrap for ${item.description} !\n\n\n")
                 item.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
             }
         }
@@ -657,12 +648,12 @@ class BootStrap {
              if (Instrument.findByBrandAndModel(item.brand, item.model)) return
              Instrument scanner = new Instrument(brand: item.brand, model: item.model)
              if (scanner.validate()) {
-                 println "Creating scanner ${scanner.brand} - ${scanner.model}..."
+                 log.info "Creating scanner ${scanner.brand} - ${scanner.model}..."
                  scanner.save(flush: true)
              } else {
-                 println("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
+                 log.info("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
                  scanner.errors.each {
-                     err -> println err
+                     err -> log.info err
                  }
              }
          }
@@ -694,7 +685,7 @@ class BootStrap {
                         available: true)
 
                 if (imageServer.validate()) {
-                    println "Creating image server ${imageServer.name}... : ${imageServer.url}"
+                    log.info "Creating image server ${imageServer.name}... : ${imageServer.url}"
                     imageServer.save(flush: true)
 
                     /* Link with MIME Types */
@@ -703,9 +694,9 @@ class BootStrap {
                         MimeImageServer.link(imageServer, mime)
                     }
                 } else {
-                    println("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
+                    log.info("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
                     imageServer.errors.each {
-                        err -> println err
+                        err -> log.info err
                     }
                 }
             }
@@ -728,7 +719,7 @@ class BootStrap {
         //                    deleted : item.deleted
         //            )
         //            if (project.validate()){
-        //                println "Creating project  ${project.name}..."
+        //                log.info "Creating project  ${project.name}..."
         //
         //                project.save(flush : true)
         //
@@ -741,9 +732,9 @@ class BootStrap {
         //
         //
         //            } else {
-        //                println("\n\n\n Errors in project boostrap for ${item.name}!\n\n\n")
+        //                log.info("\n\n\n Errors in project boostrap for ${item.name}!\n\n\n")
         //                project.errors.each {
-        //                    err -> println err
+        //                    err -> log.info err
         //                }
         //            }
         //        }
@@ -755,7 +746,7 @@ class BootStrap {
             def slide = new Slide(name: item.name, order: item.order)
 
             if (slide.validate()) {
-                println "Creating slide  ${item.name}..."
+                log.info "Creating slide  ${item.name}..."
 
                 slide.save(flush: true)
 
@@ -767,9 +758,9 @@ class BootStrap {
 
 
             } else {
-                println("\n\n\n Errors in slide boostrap for ${item.name}!\n\n\n")
+                log.info("\n\n\n Errors in slide boostrap for ${item.name}!\n\n\n")
                 slide.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
             }
         }
@@ -800,21 +791,21 @@ class BootStrap {
             )
 
             if (image.validate()) {
-                println "Creating image : ${image.filename}..."
+                log.info "Creating image : ${image.filename}..."
 
                 image.save(flush: true)
 /*
             *//* Link to projects *//*
             item.annotations.each { elem ->
               Annotation annotation = Annotation.findByName(elem.name)
-              println 'ScanAnnotation:' + image.filename + " " + annotation.name
+              log.info 'ScanAnnotation:' + image.filename + " " + annotation.name
               ScanAnnotation.link(image, annotation)
-              println 'ScanAnnotation: OK'
+              log.info 'ScanAnnotation: OK'
             }*/
             } else {
-                println("\n\n\n Errors in account boostrap for ${item.filename}!\n\n\n")
+                log.info("\n\n\n Errors in account boostrap for ${item.filename}!\n\n\n")
                 image.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
             }
         }
@@ -848,27 +839,27 @@ class BootStrap {
 
 
             def user = User.findByUsername(item.user)
-            println "user " + item.user + "=" + user.username
+            log.info "user " + item.user + "=" + user.username
 
             annotation = new Annotation(name: item.name, location: geom, image: imageParent, user: user)
 
             /* Save annotation */
             if (annotation.validate()) {
-                println "Creating annotation : ${annotation.name}..."
+                log.info "Creating annotation : ${annotation.name}..."
 
                 annotation.save(flush: true)
 
                 item.term.each {  term ->
-                    println "add Term " + term
+                    log.info "add Term " + term
                     //annotation.addToTerm(Term.findByName(term))
                     AnnotationTerm.link(annotation, Term.findByName(term))
                 }
 
 
             } else {
-                println("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
+                log.info("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
                 annotation.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
 
             }
@@ -880,15 +871,15 @@ class BootStrap {
             if (Ontology.findByName(item.name)) return
             User user = User.findByUsername(item.user)
             def ontology = new Ontology(name: item.name, user: user)
-            println "create ontology=" + ontology.name
+            log.info "create ontology=" + ontology.name
 
             if (ontology.validate()) {
-                println "Creating ontology : ${ontology.name}..."
+                log.info "Creating ontology : ${ontology.name}..."
                 ontology.save(flush: true)
             } else {
-                println("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
+                log.info("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
                 ontology.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
 
             }
@@ -896,26 +887,26 @@ class BootStrap {
     }
 
     def createTerms(termSamples) {
-        println "createTerms"
+        log.info "createTerms"
         termSamples.each { item ->
             if (Term.findByNameAndOntology(item.name, Ontology.findByName(item.ontology.name))) return
             def term = new Term(name: item.name, comment: item.comment, ontology: Ontology.findByName(item.ontology.name), color: item.color)
-            println "create term=" + term.name
+            log.info "create term=" + term.name
 
             if (term.validate()) {
-                println "Creating term : ${term.name}..."
+                log.info "Creating term : ${term.name}..."
                 term.save(flush: true)
 
                 /*  item.ontology.each {  ontology ->
-                  println "add Ontology " + ontology.name
+                  log.info "add Ontology " + ontology.name
                   //annotation.addToTerm(Term.findByName(term))
                   TermOntology.link(term, Ontology.findByName(ontology.name),ontology.color)
                 }*/
 
             } else {
-                println("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
+                log.info("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
                 term.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
 
             }
@@ -924,20 +915,20 @@ class BootStrap {
 
 
     def createRelation(relationsSamples) {
-        println "createRelation"
+        log.info "createRelation"
         relationsSamples.each { item ->
             if (Relation.findByName(item.name)) return
             def relation = new Relation(name: item.name)
-            println "create relation=" + relation.name
+            log.info "create relation=" + relation.name
 
             if (relation.validate()) {
-                println "Creating relation : ${relation.name}..."
+                log.info "Creating relation : ${relation.name}..."
                 relation.save(flush: true)
 
             } else {
-                println("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
+                log.info("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
                 relation.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
 
             }
@@ -952,7 +943,7 @@ class BootStrap {
             def term2 = Term.findByNameAndOntology(item.term2, ontology)
 
             if (!RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)) {
-                println "Creating term/relation  ${relation.name}:${item.term1}/${item.term2}..."
+                log.info "Creating term/relation  ${relation.name}:${item.term1}/${item.term2}..."
                 RelationTerm.link(relation, term1, term2)
             }
 
@@ -960,14 +951,14 @@ class BootStrap {
     }
 
     def createSoftware(softwareSamples) {
-        println "createRelation"
+        log.info "createRelation"
         softwareSamples.each { item ->
             if (Software.findByName(item.name)) return
             Software software = new Software(name: item.name, serviceName: "wrongService")
-            println "create software=" + software.name
+            log.info "create software=" + software.name
 
             if (software.validate()) {
-                println "Creating software : ${software.name}..."
+                log.info "Creating software : ${software.name}..."
                 software.save(flush: true)
 
                 if (Job.findAllBySoftware(software).isEmpty()) {
@@ -976,9 +967,9 @@ class BootStrap {
                 }
 
             } else {
-                println("\n\n\n Errors in account boostrap for ${software.name}!\n\n\n")
+                log.info("\n\n\n Errors in account boostrap for ${software.name}!\n\n\n")
                 software.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
 
             }
@@ -992,20 +983,20 @@ class BootStrap {
     ]
 
     def createDiscipline(disciplineSamples) {
-        println "createDiscipline"
+        log.info "createDiscipline"
         disciplineSamples.each { item ->
             if (Discipline.findByName(item.name)) return
             Discipline discipline = new Discipline(name: item.name)
-            println "create discipline=" + discipline.name
+            log.info "create discipline=" + discipline.name
 
             if (discipline.validate()) {
-                println "Creating discipline : ${discipline.name}..."
+                log.info "Creating discipline : ${discipline.name}..."
                 discipline.save(flush: true)
 
             } else {
-                println("\n\n\n Errors in account boostrap for ${discipline.name}!\n\n\n")
+                log.info("\n\n\n Errors in account boostrap for ${discipline.name}!\n\n\n")
                 discipline.errors.each {
-                    err -> println err
+                    err -> log.info err
                 }
 
             }
