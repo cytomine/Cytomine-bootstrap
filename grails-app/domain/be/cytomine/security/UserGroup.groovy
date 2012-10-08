@@ -4,6 +4,7 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.project.Project
 import grails.converters.JSON
 import org.apache.commons.lang.builder.HashCodeBuilder
+import org.apache.log4j.Logger
 
 class UserGroup {
 
@@ -49,7 +50,7 @@ class UserGroup {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + UserGroup.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + UserGroup.class)
         JSON.registerObjectMarshaller(UserGroup) {
             def returnArray = [:]
             returnArray['id'] = it.hashCode()

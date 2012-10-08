@@ -4,6 +4,7 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class SoftwareParameter extends CytomineDomain {
 
@@ -52,7 +53,7 @@ class SoftwareParameter extends CytomineDomain {
     }
 
      static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + SoftwareParameter.class
+         Logger.getLogger(this).info("Register custom JSON renderer for " + SoftwareParameter.class)
         JSON.registerObjectMarshaller(SoftwareParameter) {
             def softwareParameter = [:]
             softwareParameter.id = it.id

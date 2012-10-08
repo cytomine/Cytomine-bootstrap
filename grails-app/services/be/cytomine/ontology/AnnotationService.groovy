@@ -157,7 +157,7 @@ class AnnotationService extends ModelService {
 //                maxResults(max)
             }
             long end = new Date().time
-            println "time = " + (end - start) + "ms"
+            log.info "time = " + (end - start) + "ms"
             return annotations
         }
     }
@@ -242,7 +242,7 @@ class AnnotationService extends ModelService {
                  order 'created', 'desc'
              }
              long end = new Date().time
-             println "time = " + (end - start) + "ms"
+             log.info "time = " + (end - start) + "ms"
              return annotations
          }
      }
@@ -502,21 +502,21 @@ class AnnotationService extends ModelService {
 
     def deleteAnnotation(Annotation annotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
 
-        println "*** deleteAnnotation1.vesion=" + annotation.version
+        log.info "*** deleteAnnotation1.vesion=" + annotation.version
 
         if (annotation) {
             //Delete Annotation-Term before deleting Annotation
             annotationTermService.deleteAnnotationTermFromAllUser(annotation, currentUser, transaction)
-            println "*** deleteAnnotation2.vesion=" + annotation.version
+            log.info "*** deleteAnnotation2.vesion=" + annotation.version
             //Delete Suggested-Term before deleting Annotation
             algoAnnotationTermService.deleteAlgoAnnotationTermFromAllUser(annotation, currentUser, transaction)
-            println "*** deleteAnnotation3.vesion=" + annotation.version
+            log.info "*** deleteAnnotation3.vesion=" + annotation.version
             //Delete Shared annotation:
             def sharedAnnotation = SharedAnnotation.findAllByAnnotation(annotation)
             sharedAnnotation.each {
                 it.delete()
             }
-            println "*** deleteAnnotation4.vesion=" + annotation.version
+            log.info "*** deleteAnnotation4.vesion=" + annotation.version
         }
         //Delete annotation
         def json = JSON.parse("{id: $annotation.id}")

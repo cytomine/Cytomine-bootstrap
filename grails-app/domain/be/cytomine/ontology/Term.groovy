@@ -5,6 +5,7 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class Term extends CytomineDomain implements Serializable, Comparable {
 
@@ -103,14 +104,14 @@ class Term extends CytomineDomain implements Serializable, Comparable {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + Term.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + Term.class)
         JSON.registerObjectMarshaller(Term) {
             def returnArray = [:]
             returnArray['id'] = it.id
             returnArray['name'] = it.name
             returnArray['comment'] = it.comment
             returnArray['ontology'] = it.ontology?.id
-            try {returnArray['rate'] = it.rate} catch (Exception e) {println e}
+            try {returnArray['rate'] = it.rate} catch (Exception e) {log.info e}
             RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT), Term.read(it.id))
             returnArray['parent'] = rt?.term1?.id
             if (it.color) returnArray['color'] = it.color

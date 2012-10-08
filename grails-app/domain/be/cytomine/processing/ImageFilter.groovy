@@ -1,6 +1,7 @@
 package be.cytomine.processing
 
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class ImageFilter {
 
@@ -15,7 +16,7 @@ class ImageFilter {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + ImageFilter.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + ImageFilter.class)
         JSON.registerObjectMarshaller(ImageFilter) {
             def returnArray = [:]
             returnArray['id'] = it.id

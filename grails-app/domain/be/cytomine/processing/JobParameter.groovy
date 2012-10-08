@@ -4,6 +4,7 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class JobParameter  extends CytomineDomain implements Comparable{
 
@@ -27,7 +28,7 @@ class JobParameter  extends CytomineDomain implements Comparable{
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + JobParameter.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + JobParameter.class)
         JSON.registerObjectMarshaller(JobParameter) {
             def jobParameter = [:]
             jobParameter.id = it.id

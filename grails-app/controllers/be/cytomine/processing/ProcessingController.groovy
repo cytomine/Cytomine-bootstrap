@@ -32,7 +32,7 @@ class ProcessingController extends RestController {
         int shiftY = image.getHeight() - Math.round(Double.parseDouble(params.y)) + middleROI
         int shiftX = Math.round(Double.parseDouble(params.x)) - middleROI
         def url = image.getCropURLWithMaxWithOrHeight((int) shiftX, (int) shiftY, roiSize, roiSize, (int) image.getWidth() / scale)
-        println url
+        log.info url
         //Image Processing
         ImagePlus ori = getThresholdedImage(url, method)
         /* Work in progress for handle scaling */
@@ -40,23 +40,23 @@ class ProcessingController extends RestController {
         double heightRatio = roiSize / ori.getHeight()
         int startPixelX = middleROI / widthRatio
         int startPixelY = middleROI / heightRatio
-        /*println "ImageRatio "
-        println "widthRatio = " + widthRatio
-        println "heightRatio = " + heightRatio
-        println "startPixelX = " + startPixelX
-        println "startPixelY = " + startPixelY
+        /*log.info "ImageRatio "
+        log.info "widthRatio = " + widthRatio
+        log.info "heightRatio = " + heightRatio
+        log.info "startPixelX = " + startPixelX
+        log.info "startPixelY = " + startPixelY
         if (shiftX < 0) {
-            println " shiftX < 0 : " + shiftX
-            println " + " + (Math.abs(shiftX) / widthRatio)
+            log.info " shiftX < 0 : " + shiftX
+            log.info " + " + (Math.abs(shiftX) / widthRatio)
             startPixelX = startPixelX + (Math.abs(shiftX) / widthRatio)
         }
         if (shiftY < 0) {
-            println " shiftY < 0 : " + shiftX
-            println " + " + (Math.abs(shiftY) / heightRatio)
+            log.info " shiftY < 0 : " + shiftX
+            log.info " + " + (Math.abs(shiftY) / heightRatio)
             startPixelY = startPixelY - (Math.abs(shiftY) / heightRatio)
         }
-        println "startPixelX = " + startPixelX
-        println "startPixelY = " + startPixelY
+        log.info "startPixelX = " + startPixelX
+        log.info "startPixelY = " + startPixelY
         */
 
         int erodeDilateNumber = 3
@@ -70,8 +70,8 @@ class ProcessingController extends RestController {
         filler.setup("fill", ori)
         filler.run(ori.getProcessor())
 
-        println "startPixelX $startPixelX"
-        println "startPixelY $startPixelY"
+        log.info "startPixelX $startPixelX"
+        log.info "startPixelY $startPixelY"
         Coordinate[] coordinates = imageProcessingService.doWand(ori, startPixelX, startPixelY, 30, null)
         coordinates.each { coordinate ->
             coordinate.x = shiftX + coordinate.x
@@ -91,7 +91,7 @@ class ProcessingController extends RestController {
         def y = image.getHeight() - Math.round(Double.parseDouble(params.y)) + middleROI
         def x = Math.round(Double.parseDouble(params.x)) - middleROI
         def url = image.getCropURL((int) x, (int) y, (int) ProcessingController.ROI_SIZE, (int) ProcessingController.ROI_SIZE)
-        println url
+        log.info url
         ImagePlus ip = getThresholdedImage(url, method)
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(ip.getBufferedImage(), "jpg", baos);

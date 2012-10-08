@@ -199,12 +199,12 @@ class AbstractImageService extends ModelService {
     def crop(Annotation annotation, Integer zoom) {
         def boundaries = annotation.getBoundaries()
         if (zoom != null) {
-            println "zoom=$zoom"
+            log.info "zoom=$zoom"
 
             int desiredWidth = boundaries.width / Math.pow(2, zoom)
             int desiredHeight = boundaries.height / Math.pow(2, zoom)
-            println "desiredWidth=$desiredWidth"
-            println "desiredHeight=$desiredHeight"
+            log.info "desiredWidth=$desiredWidth"
+            log.info "desiredHeight=$desiredHeight"
             return cropWithMaxSize(annotation, Math.max(desiredHeight, desiredWidth))
         } else {
             return annotation.toCropURL()

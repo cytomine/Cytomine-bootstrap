@@ -4,6 +4,7 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class RelationTerm extends CytomineDomain implements Serializable {
 
@@ -25,7 +26,7 @@ class RelationTerm extends CytomineDomain implements Serializable {
         if (!term1) throw new WrongArgumentException("Term 1 cannot be null");
         if (!term2) throw new WrongArgumentException("Term 2 cannot be null");
 
-        println "Link Term " + term1.id + " with Term " + term2.id + " with relation " + relation.id
+        Logger.getLogger(this).info("Link Term " + term1.id + " with Term " + term2.id + " with relation " + relation.id)
         def relationTerm = RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
         if (!relationTerm) {
             relationTerm = new RelationTerm()
@@ -36,9 +37,7 @@ class RelationTerm extends CytomineDomain implements Serializable {
             term1.refresh()
             term2.refresh()
             relation.refresh()
-            println "relationTerm.id=" + relationTerm.id
             relationTerm.save(flush: true)
-            println "relationTerm.id=" + relationTerm.id
         } else throw new AlreadyExistException("Term1 " + term1.id + " and " + term2.id + " are already mapped with relation " + relation.id)
         return relationTerm
     }
@@ -48,7 +47,7 @@ class RelationTerm extends CytomineDomain implements Serializable {
     }
 
     static void unlink(Relation relation, Term term1, Term term2) {
-        println "Unlink Term " + term1.id + " with Term " + term2.id + " with relation " + relation.id
+        Logger.getLogger(this).info("Unlink Term " + term1.id + " with Term " + term2.id + " with relation " + relation.id)
         def relationTerm = RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
         if (relationTerm) {
             term1?.removeFromRelationTerm1(relationTerm)
@@ -71,15 +70,13 @@ class RelationTerm extends CytomineDomain implements Serializable {
     }
 
     static RelationTerm getFromData(relationTerm, jsonRelationTerm) {
-        println "jsonRelationTerm=" + jsonRelationTerm.toString()
+        Logger.getLogger(this).info("jsonRelationTerm=" + jsonRelationTerm.toString())
         try {
-            println "jsonRelationTerm.xxx.id"
             relationTerm.relation = Relation.get(jsonRelationTerm.relation.id)
             relationTerm.term1 = Term.get(jsonRelationTerm.term1.id)
             relationTerm.term2 = Term.get(jsonRelationTerm.term2.id)
         }
         catch (Exception e) {
-            println "jsonRelationTerm.idXXX"
             relationTerm.relation = Relation.get(jsonRelationTerm.relation)
             relationTerm.term1 = Term.get(jsonRelationTerm.term1)
             relationTerm.term2 = Term.get(jsonRelationTerm.term2)
@@ -91,7 +88,7 @@ class RelationTerm extends CytomineDomain implements Serializable {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + RelationTerm.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + RelationTerm.class)
         JSON.registerObjectMarshaller(RelationTerm) {
             def returnArray = [:]
             returnArray['class'] = it.class

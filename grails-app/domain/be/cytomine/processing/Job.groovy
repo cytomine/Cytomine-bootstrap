@@ -6,6 +6,7 @@ import be.cytomine.ResponseService
 import be.cytomine.project.Project
 import be.cytomine.security.UserJob
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class Job extends CytomineDomain  {
     //enum type are too heavy with GORM
@@ -55,7 +56,7 @@ class Job extends CytomineDomain  {
 
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + Job.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + Job.class)
         JSON.registerObjectMarshaller(Job) {
             def job = [:]
             job.id = it.id
@@ -69,7 +70,7 @@ class Job extends CytomineDomain  {
                 UserJob user = UserJob.findByJob(it)
                 job.username = user?.realUsername()
                 job.userJob = user.id
-            } catch (Exception e) {println e}
+            } catch (Exception e) {log.info e}
 
             job.project = it.project?.id
             job.software = it.software?.id
@@ -78,7 +79,7 @@ class Job extends CytomineDomain  {
             job.rate = it.rate
             try {
                 job.jobParameter =  it.jobParameter
-            } catch(Exception e) {println e}
+            } catch(Exception e) {log.info e}
 
             return job
         }

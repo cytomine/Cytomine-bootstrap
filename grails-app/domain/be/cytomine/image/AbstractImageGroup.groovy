@@ -5,6 +5,7 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.security.Group
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class AbstractImageGroup extends CytomineDomain implements Serializable {
 
@@ -63,7 +64,7 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
     }
 
     static AbstractImageGroup getFromData(abstractimageGroup, jsonAbstractImageGroup) {
-        println "jsonAbstractImageGroup from getAbstractImageGroupFromData = " + jsonAbstractImageGroup
+        Logger.getLogger(this).info("jsonAbstractImageGroup from getAbstractImageGroupFromData = " + jsonAbstractImageGroup)
         abstractimageGroup.abstractimage = AbstractImage.get(jsonAbstractImageGroup.abstractimage.toString())
         abstractimageGroup.group = Group.get(jsonAbstractImageGroup.group.toString())
         return abstractimageGroup;
@@ -78,7 +79,7 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + AbstractImageGroup.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + AbstractImageGroup.class)
         JSON.registerObjectMarshaller(AbstractImageGroup) {
             def returnArray = [:]
             returnArray['class'] = it.class

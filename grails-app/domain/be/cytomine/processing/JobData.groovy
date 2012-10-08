@@ -3,6 +3,7 @@ package be.cytomine.processing
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class JobData extends CytomineDomain {
 
@@ -51,7 +52,7 @@ class JobData extends CytomineDomain {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + JobData.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + JobData.class)
         JSON.registerObjectMarshaller(JobData) { jobData ->
             def returnArray = [:]
             returnArray['class'] = jobData.class

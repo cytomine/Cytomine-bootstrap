@@ -6,6 +6,7 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class AnnotationTerm extends CytomineDomain implements Serializable {
 
@@ -86,7 +87,7 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + AnnotationTerm.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + AnnotationTerm.class)
         JSON.registerObjectMarshaller(AnnotationTerm) {
             def returnArray = [:]
             //returnArray['class'] = it.class

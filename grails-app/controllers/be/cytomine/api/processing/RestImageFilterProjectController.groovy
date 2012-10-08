@@ -29,7 +29,7 @@ class RestImageFilterProjectController extends RestController {
     }
 
     def delete = {
-        println "DELETE imageFilterProjectService " + params.id
+        log.info "DELETE imageFilterProjectService " + params.id
         delete(imageFilterProjectService, JSON.parse("{id : $params.id}"))
     }
 

@@ -41,7 +41,7 @@ abstract class AbstractJobService {
              if(jobParam) value = jobParam.value
              else if(softParam.required) throw new WrongArgumentException("Argument "+softParam.name+" is required!")
              args[i] = value
-             println softParam.name + "=" + value
+             log.info softParam.name + "=" + value
          }
         return args
     }
@@ -60,7 +60,7 @@ abstract class AbstractJobService {
                          String line = "";
                          try {
                              while((line = reader.readLine()) != null) {
-                                 println "############# JOB:" + line
+                                 log.info "############# JOB:" + line
                              }
                          } finally {
                              reader.close();
@@ -78,7 +78,7 @@ abstract class AbstractJobService {
                          String line = "";
                          try {
                              while((line = reader.readLine()) != null) {
-                                 println line
+                                 log.info line
                              }
                          } finally {
                              reader.close();
@@ -98,34 +98,34 @@ abstract class AbstractJobService {
 
 
     void printStartJobInfo(Job job, String[] args) {
-         println "*******************************"
-         println "****** Execute " + job?.software?.name
-         println "*******************************"
+         log.info "*******************************"
+         log.info "****** Execute " + job?.software?.name
+         log.info "*******************************"
 
 
-         println "*******************************"
-         println "****** Params:"
+         log.info "*******************************"
+         log.info "****** Params:"
          for(int i=0;i<args.length;i++) {
-             println "args["+(i-1)+"]="+args[i]
+             log.info "args["+(i-1)+"]="+args[i]
          }
-         println "*******************************"
+         log.info "*******************************"
 
     }
 
     void printStopJobInfo(Job job, String[] args) {
-         println "###################################################################################"
-         println "###################################################################################"
-         println "################## ALGO IS FINISH: " + job?.software?.name
-         println "###################################################################################"
-         println "###################################################################################"
+         log.info "###################################################################################"
+         log.info "###################################################################################"
+         log.info "################## ALGO IS FINISH: " + job?.software?.name
+         log.info "###################################################################################"
+         log.info "###################################################################################"
 
-         println "****** Params:"
+         log.info "****** Params:"
          for(int i=0;i<args.length;i++) {
-             println "args["+(i-1)+"]="+args[i]
+             log.info "args["+(i-1)+"]="+args[i]
          }
-        println "###################################################################################"
-        println "###################################################################################"
-        println "###################################################################################"
+        log.info "###################################################################################"
+        log.info "###################################################################################"
+        log.info "###################################################################################"
     }
 
     public abstract Double computeRate(Job job);

@@ -24,7 +24,7 @@ class GrantService {
             statement.execute(getGrantInfo())
 
         } catch (org.postgresql.util.PSQLException e) {
-            println e
+            log.info e
         }
 
     }

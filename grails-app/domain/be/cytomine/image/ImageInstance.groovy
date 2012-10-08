@@ -9,6 +9,7 @@ import be.cytomine.project.Slide
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 /**
  * Created by IntelliJ IDEA.
@@ -110,7 +111,7 @@ class ImageInstance extends CytomineDomain {
 
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + ImageInstance.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + ImageInstance.class)
         JSON.registerObjectMarshaller(ImageInstance) {
             def returnArray = [:]
 

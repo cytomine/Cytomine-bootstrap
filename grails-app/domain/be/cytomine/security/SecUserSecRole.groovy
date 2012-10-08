@@ -3,6 +3,7 @@ package be.cytomine.security
 import be.cytomine.CytomineDomain
 import grails.converters.JSON
 import org.apache.commons.lang.builder.HashCodeBuilder
+import org.apache.log4j.Logger
 
 class SecUserSecRole extends CytomineDomain implements Serializable {
 
@@ -54,7 +55,7 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + SecUserSecRole.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + SecUserSecRole.class)
         JSON.registerObjectMarshaller(SecUserSecRole) {
             def returnArray = [:]
             returnArray['id'] = it.hashCode()

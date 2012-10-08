@@ -73,10 +73,10 @@ class DeployImagesService {
 
         } else {
             slide.errors?.each {
-                println "Slide error : " + it
+                log.info "Slide error : " + it
             }
             abstractImage.errors?.each {
-                println "Slide error : " + it
+                log.info "Slide error : " + it
             }
         }
     }

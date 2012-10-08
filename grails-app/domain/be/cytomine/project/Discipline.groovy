@@ -4,6 +4,7 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class Discipline extends CytomineDomain {
 
@@ -17,7 +18,7 @@ class Discipline extends CytomineDomain {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + Discipline.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + Discipline.class)
         JSON.registerObjectMarshaller(Discipline) {
             def returnArray = [:]
             returnArray['class'] = it.class

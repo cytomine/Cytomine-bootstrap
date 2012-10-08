@@ -6,6 +6,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 //TO DO : move this Domain to another package (utilities ? preferences ?)
 class AnnotationFilter extends CytomineDomain implements Serializable {
@@ -53,7 +54,7 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
 
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + AnnotationFilter.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + AnnotationFilter.class)
         JSON.registerObjectMarshaller(AnnotationFilter) {
             def returnArray = [:]
             returnArray['class'] = it.class

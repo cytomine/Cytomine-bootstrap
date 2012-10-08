@@ -3,6 +3,7 @@ package be.cytomine.project
 import be.cytomine.CytomineDomain
 import be.cytomine.image.AbstractImage
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class Slide extends CytomineDomain {
 
@@ -36,20 +37,15 @@ class Slide extends CytomineDomain {
     }
 
     static Slide getFromData(Slide slide, jsonSlide) {
-        println "getFromData:" + jsonSlide
-
         slide.created = (!jsonSlide.created.toString().equals("null")) ? new Date(Long.parseLong(jsonSlide.created)) : null
         slide.updated = (!jsonSlide.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonSlide.updated)) : null
-
         slide.name = jsonSlide.name
         slide.index = jsonSlide.index
-
-
         return slide;
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + Slide.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + Slide.class)
         JSON.registerObjectMarshaller(Slide) {
             def returnArray = [:]
             returnArray['class'] = it.class

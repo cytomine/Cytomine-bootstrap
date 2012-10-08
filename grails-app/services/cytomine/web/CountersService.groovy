@@ -15,15 +15,15 @@ class CountersService {
 
     def updateCounters() {
         /*Project.list().each { project ->
-            println "update counter for project " + project.name
+            log.info "update counter for project " + project.name
             def images = project.imagesinstance()
             def users = project.users()
-            println "users = " + users
+            log.info "users = " + users
             if (images.size() > 0) {
                 long totalCountAnnotations = Annotation.countByImageInList(images)
-                println "totalCountAnnotations = " + totalCountAnnotations
+                log.info "totalCountAnnotations = " + totalCountAnnotations
                 long totalCountAnnotationsByUser = Annotation.countByImageInListAndUserInList(images, users)
-                println "totalCountAnnotationsByUser = " + totalCountAnnotationsByUser
+                log.info "totalCountAnnotationsByUser = " + totalCountAnnotationsByUser
                 project.countAnnotations = totalCountAnnotationsByUser
                 project.countJobAnnotations = totalCountAnnotations - totalCountAnnotationsByUser
             }
@@ -34,10 +34,10 @@ class CountersService {
             project.setCountImages(ImageInstance.countByProject(project))
             if (!project.validate()) {
                 project.errors.each {
-                    println it
+                    log.info it
                 }
             } else {
-                println "Project OK : " + project
+                log.info "Project OK : " + project
                 project.save(flush : true)
             }
             project.imagesinstance().each { image ->
@@ -59,7 +59,7 @@ class CountersService {
             def statement = connection.createStatement()
             statement.execute("update annotation set count_comments = 0;")
         } catch (org.postgresql.util.PSQLException e) {
-            println e
+            log.info e
         }
 
 

@@ -13,14 +13,14 @@ class StorageService {
     def copy(Storage storage, AbstractImage image) {
         def remotePath = getRemotePath(storage, image)
         def command = ais + " -s " + storage.getName() + " cp " + image.getPath() + " " + remotePath// Create the String
-        println command
+        log.info command
         def proc = command.execute()                 // Call *execute* on the string
         proc.waitFor()                               // Wait for the command to finish
 
         // Obtain status and output
-        println "return code: ${ proc.exitValue()}"
-        println "stderr: ${proc.err.text}"
-        println "stdout: ${proc.in.text}" // *out* from the external program is *in* for groovy
+        log.info "return code: ${ proc.exitValue()}"
+        log.info "stderr: ${proc.err.text}"
+        log.info "stdout: ${proc.in.text}" // *out* from the external program is *in* for groovy
     }
 
 
@@ -31,7 +31,7 @@ class StorageService {
     def metadata(Storage storage, AbstractImage image) {
         def remotePath = getRemotePath(storage, image)
         def command = ais + " --raw -s " + storage.getName() + " metadata " + image.getPath() + " " + remotePath// Create the String
-        println command
+        log.info command
         def proc = command.execute()                 // Call *execute* on the string
         proc.waitFor()                               // Wait for the command to finish
 

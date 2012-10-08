@@ -322,8 +322,8 @@ class RestUserController extends RestController {
 
 
     private List getLastPosition(SecUser user, Project project) {
-        println "getLastPosition ${user} ${project}"
-        println UserPosition.list().get(0).updated
+        log.info "getLastPosition ${user} ${project}"
+        log.info UserPosition.list().get(0).updated
         Date someSecondesBefore = Utils.getDatePlusSecond(-20)
 
         List<SecUser> userPositions = SecUser.executeQuery(
@@ -331,12 +331,12 @@ class RestUserController extends RestController {
             "where userPosition.project.id = ${project.id} and userPosition.user.id = ${user.id} and userPosition.updated > ? and imageInstance.id = userPosition.image.id and imageInstance.baseImage.id = abstractImage.id group by imageInstance.id,abstractImage.originalFilename",[someSecondesBefore])
 
 
-        println userPositions
+        log.info userPositions
 
         def positions = []
 
         userPositions.each { position ->
-            println position
+            log.info position
               def mapPositon = [date:position[2],image:position[0],filename:position[1]]
             positions <<  mapPositon
 

@@ -11,6 +11,7 @@ import be.cytomine.processing.ImageFilterProject
 import be.cytomine.processing.SoftwareProject
 import be.cytomine.security.SecUser
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class Project extends CytomineDomain {
 
@@ -172,12 +173,9 @@ class Project extends CytomineDomain {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + Project.class
-
+        Logger.getLogger(this).info("Register custom JSON renderer for " + Project.class)
         JSON.registerObjectMarshaller(Project) { project ->
-
             def returnArray = [:]
-
             returnArray['class'] = project.class
             returnArray['id'] = project.id
             returnArray['name'] = project.name
@@ -190,7 +188,7 @@ class Project extends CytomineDomain {
             try {returnArray['numberOfImages'] = project.countImageInstance()} catch (Exception e) {returnArray['numberOfImages'] = -1}
             try {returnArray['numberOfAnnotations'] = project.countAnnotations()} catch (Exception e) {e.printStackTrace(); returnArray['numberOfAnnotations'] = -1}
 			try {returnArray['numberOfJobAnnotations'] = project.countJobAnnotations()} catch (Exception e) {e.printStackTrace(); returnArray['numberOfJobAnnotations'] = -1}
-            try {returnArray['retrievalProjects'] = project.retrievalProjects.collect { it.id } } catch (Exception e) {println "users:"+e}
+            try {returnArray['retrievalProjects'] = project.retrievalProjects.collect { it.id } } catch (Exception e) {log.info "users:"+e}
 
             returnArray['retrievalDisable'] = project.retrievalDisable
             returnArray['retrievalAllOntology'] = project.retrievalAllOntology

@@ -4,6 +4,7 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class Software extends CytomineDomain {
 
@@ -41,7 +42,7 @@ class Software extends CytomineDomain {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + Software.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + Software.class)
         JSON.registerObjectMarshaller(Software) {
             def software = [:]
             software.id = it.id
@@ -62,7 +63,7 @@ class Software extends CytomineDomain {
                 software.numberOfIndeterminate = Job.countBySoftwareAndStatus(it,Job.INDETERMINATE);
                 software.numberOfWait = Job.countBySoftwareAndStatus(it,Job.WAIT);
 
-            } catch(Exception e) { println e; e.printStackTrace()}
+            } catch(Exception e) { log.info e; e.printStackTrace()}
 
             return software
         }

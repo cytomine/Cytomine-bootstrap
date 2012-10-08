@@ -2,6 +2,7 @@ package be.cytomine.image.server
 
 import be.cytomine.image.AbstractImage
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class ImageProperty {
 
@@ -17,7 +18,7 @@ class ImageProperty {
 
     static void registerMarshaller(String cytomineBaseUrl) {
 
-        println "Register custom JSON renderer for " + AbstractImage.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + AbstractImage.class)
         JSON.registerObjectMarshaller(ImageProperty) {
             def returnArray = [:]
             returnArray["id"] = it.id

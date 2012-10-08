@@ -5,6 +5,7 @@ import be.cytomine.image.AbstractImageGroup
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.SoftwareProject
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class User extends SecUser {
 
@@ -177,7 +178,7 @@ class User extends SecUser {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + User.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + User.class)
         JSON.registerObjectMarshaller(User) {
             def returnArray = [:]
             returnArray['id'] = it.id

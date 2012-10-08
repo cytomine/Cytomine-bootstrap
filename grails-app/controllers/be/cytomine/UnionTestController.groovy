@@ -34,15 +34,15 @@ class UnionTestController extends RestController {
         unionPostgisSQL(image, user)
         //unionNaiveBetter(image)
         long end = System.currentTimeMillis()
-        println "#TIME#=" + (end - start)
+        log.info "#TIME#=" + (end - start)
     }
 
     private def unionPostgisSQL(ImageInstance image, SecUser user) {
-        println "unionPostgisSQL"
+        log.info "unionPostgisSQL"
 
         //all annotation must be valid to compute intersection
         List<Annotation> annotations = Annotation.findAllByImageAndUser(image, user)
-        println "valide annotation..."
+        log.info "valide annotation..."
         annotations.each {
             if (!it.location.isValid()) {
                 it.location = it.location.buffer(0)
@@ -55,7 +55,7 @@ class UnionTestController extends RestController {
         HashMap<Long, Long> removedByUnion = new HashMap<Long, Long>(annotations.size())
 
         def sql = new Sql(dataSource)
-        println "********************\n********************\n********************\n********************\n"
+        log.info "********************\n********************\n********************\n********************\n"
         sql.eachRow("SELECT length(ST_Intersection(annotation1.location, annotation2.location)) as length,annotation1.id as id1, annotation2.id as id2\n" +
                 " FROM annotation annotation1, annotation annotation2\n" +
                 " WHERE annotation1.image_id = $image.id\n" +
@@ -94,12 +94,12 @@ class UnionTestController extends RestController {
     }
 
     private def unionNaive(ImageInstance image, SecUser user) {
-        println "unionNaive"
+        log.info "unionNaive"
 
         List<Annotation> annotations = Annotation.findAllByImageAndUser(image, user)
         HashMap<Long, Long> removedByUnion = new HashMap<Long, Long>(annotations.size())
 
-        println "valide annotation..."
+        log.info "valide annotation..."
         annotations.each {
             if (!it.location.isValid()) {
                 it.location = it.location.buffer(0)
@@ -109,7 +109,7 @@ class UnionTestController extends RestController {
 
         int i = 0
         def sql = new Sql(dataSource)
-        println "********************\n********************\n********************\n********************\n"
+        log.info "********************\n********************\n********************\n********************\n"
         def rows = sql.rows("SELECT annotation1.id as id1, annotation2.id as id2\n" +
                 " FROM annotation annotation1, annotation annotation2\n" +
                 " WHERE annotation1.image_id = $image.id\n" +
@@ -121,7 +121,7 @@ class UnionTestController extends RestController {
 
         rows.each {
             if (i % 1000 == 0) {
-                println "Union annotation: ${i}/${rows.size()}"
+                log.info "Union annotation: ${i}/${rows.size()}"
                 cleanUpGorm()
             }
 
@@ -169,7 +169,7 @@ class UnionTestController extends RestController {
 //    private def removeAnnotations(ImageInstance image) {
 //        def annotations = Annotation.findAllByImage(image)
 //        annotations.each {
-//            println "##### DELETE ANNOTATION " + it.id
+//            log.info "##### DELETE ANNOTATION " + it.id
 //            //annotationService.deleteAnnotation(it.id,cytomineService.getCurrentUser(),transaction)
 //            it.delete()
 //        }
@@ -194,7 +194,7 @@ class UnionTestController extends RestController {
 //        annotation.user = User.read(16)
 //        annotation.location = new WKTReader().read(location)
 //        if(!annotation.validate())
-//            println "errors:"+annotation.errors
+//            log.info "errors:"+annotation.errors
 //        annotation.save(flush: true)
 //    }
 

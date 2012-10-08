@@ -119,9 +119,9 @@ class ProjectService extends ModelService {
             project.refresh()
             log.info "json.retrievalProjects="+json.retrievalProjects
             json.retrievalProjects.each { idProject ->
-                println "idProject="+idProject
+                log.info "idProject="+idProject
                 Long proj = Long.parseLong(idProject.toString())
-                println "proj="+proj
+                log.info "proj="+proj
                 Project projectRetrieval = proj==-1 ? project : Project.read(proj)
                 if(projectRetrieval) project.retrievalProjects.add(projectRetrieval)
             }
@@ -225,7 +225,7 @@ class ProjectService extends ModelService {
 
     def destroy(Project domain, boolean printMessage) {
         //Build response message
-        println "destroy project"
+        log.info "destroy project"
 
         //remove Retrieval-project where this project is set
        def criteria = Project.createCriteria()

@@ -3,6 +3,7 @@ package be.cytomine.ontology
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class Relation extends CytomineDomain implements Serializable {
 
@@ -40,7 +41,7 @@ class Relation extends CytomineDomain implements Serializable {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + Relation.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + Relation.class)
         JSON.registerObjectMarshaller(Relation) {
             def returnArray = [:]
             returnArray['class'] = it.class

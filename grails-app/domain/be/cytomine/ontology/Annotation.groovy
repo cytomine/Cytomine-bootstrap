@@ -10,6 +10,7 @@ import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class Annotation extends CytomineDomain implements Serializable {
 
@@ -231,7 +232,7 @@ class Annotation extends CytomineDomain implements Serializable {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + Annotation.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + Annotation.class)
         JSON.registerObjectMarshaller(Annotation) { annotation ->
             def returnArray = [:]
             ImageInstance imageinstance = annotation.image

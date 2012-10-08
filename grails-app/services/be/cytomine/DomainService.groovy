@@ -10,23 +10,23 @@ class DomainService {
     def saveDomain(def newObject) {
         newObject.checkAlreadyExist()
         if (!newObject.validate()) {
-            println newObject.errors
-            println newObject.retrieveErrors().toString()
+            log.info newObject.errors
+            log.info newObject.retrieveErrors().toString()
             throw new WrongArgumentException(newObject.retrieveErrors().toString())
         }
         def modifiedFieldNames = newObject.getDirtyPropertyNames()
         for (fieldName in modifiedFieldNames) {
-           println "field change = " + fieldName
+           log.info "field change = " + fieldName
         }
         if (!newObject.save(flush: true)) throw new InvalidRequestException(newObject.retrieveErrors().toString())
     }
 
     def deleteDomain(def oldObject) {
         try {
-//            println "*** deleteDomain.vesion=" + oldObject.version
-//            println "*** object=" + oldObject
-//            println "*** recup=" + oldObject.read(oldObject.id)
-//            println "*** refresh=" + oldObject.refresh()
+//            log.info "*** deleteDomain.vesion=" + oldObject.version
+//            log.info "*** object=" + oldObject
+//            log.info "*** recup=" + oldObject.read(oldObject.id)
+//            log.info "*** refresh=" + oldObject.refresh()
             oldObject.refresh()
             oldObject.delete(flush: true, failOnError: true)
         } catch (Exception e) {

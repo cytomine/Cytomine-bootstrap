@@ -3,6 +3,7 @@ package be.cytomine.command
 import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 /**
  * @author ULG-GIGA Cytomine Team
@@ -33,7 +34,7 @@ class CommandHistory extends CytomineDomain {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + CommandHistory.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + CommandHistory.class)
         JSON.registerObjectMarshaller(CommandHistory) {
             def returnArray = [:]
             returnArray['id'] = it.id

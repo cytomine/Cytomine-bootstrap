@@ -13,7 +13,7 @@ class ConvertImagesService {
         SpringSecurityUtils.reauthenticate currentUser.getUsername(), null
         //Check if file mime is allowed
         if (!UploadedFile.allowedMime.plus(UploadedFile.mimeToConvert).contains(uploadedFile.getExt())) {
-            println uploadedFile.getFilename() + " : FORMAT NOT ALLOWED"
+            log.info uploadedFile.getFilename() + " : FORMAT NOT ALLOWED"
             uploadedFile.setStatus(UploadedFile.ERROR_FORMAT)
             uploadedFile.save(flush : true)
             return true
@@ -21,7 +21,7 @@ class ConvertImagesService {
 
         //Check if file must be converted or not...
         if (!UploadedFile.mimeToConvert.contains(uploadedFile.getExt())) {
-            println uploadedFile.getFilename() + " : CONVERTED"
+            log.info uploadedFile.getFilename() + " : CONVERTED"
             uploadedFile.setStatus(UploadedFile.CONVERTED)
             uploadedFile.setConvertedExt(uploadedFile.getExt())
             uploadedFile.setConvertedFilename(uploadedFile.getFilename())
@@ -37,9 +37,9 @@ class ConvertImagesService {
             String originalFilenameFullPath = contextPath + uploadedFile.getFilename()
             String convertedFilenameFullPath = contextPath + convertFileName
             /*def convertCommand = """/usr/local/bin/vips im_vips2tiff "$originalFilenameFullPath" "$convertedFilenameFullPath":jpeg:95,tile:256x256,pyramid"""
-            println convertCommand*/
+            log.info convertCommand*/
             def convertCommand = """"$originalFilenameFullPath" -define tiff:tile-geometry=256x256 -compress jpeg 'ptif:$convertedFilenameFullPath'"""
-            println convertCommand
+            log.info convertCommand
             try {
                 def ant = new AntBuilder()   // create an antbuilder
                 ant.exec(outputproperty:"cmdOut",
@@ -49,9 +49,9 @@ class ConvertImagesService {
                         executable: '/usr/local/bin/convert') {
                     arg(line:convertCommand)
                 }
-                println "return code:  ${ant.project.properties.cmdExit}"
-                println "stderr:         ${ant.project.properties.cmdErr}"
-                println "stdout:        ${ ant.project.properties.cmdOut}"
+                log.info "return code:  ${ant.project.properties.cmdExit}"
+                log.info "stderr:         ${ant.project.properties.cmdErr}"
+                log.info "stdout:        ${ ant.project.properties.cmdOut}"
                 /*def proc = convertCommand.execute()
                 proc.waitFor()*/
                 //if (ant.project.properties.cmdExit == 0) { //success

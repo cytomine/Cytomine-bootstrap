@@ -82,7 +82,7 @@ class JobDataService extends ModelService {
 
     def destroy(JobData domain, boolean printMessage) {
         //Build response message
-        println "destroy JobData"
+        log.info "destroy JobData"
         log.info "createResponseMessage"
         def response = responseService.createResponseMessage(domain, [domain.id, domain.key, domain.job?.id], printMessage, "Delete", domain.getCallBack())
         //Delete object

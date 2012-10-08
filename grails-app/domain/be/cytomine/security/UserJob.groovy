@@ -2,6 +2,7 @@ package be.cytomine.security
 
 import be.cytomine.processing.Job
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class UserJob extends SecUser {
 
@@ -68,14 +69,14 @@ class UserJob extends SecUser {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + UserJob.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + UserJob.class)
         JSON.registerObjectMarshaller(UserJob) {
             def returnArray = [:]
             returnArray['id'] = it.id
             returnArray['username'] = it.username
             try {
                 returnArray['realUsername']= it.realUsername()
-            } catch (Exception e) {println e}
+            } catch (Exception e) {log.info e}
             returnArray['publicKey'] = it.publicKey
             returnArray['privateKey'] = it.privateKey
             returnArray['job'] = it.job?.id

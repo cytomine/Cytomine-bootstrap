@@ -14,14 +14,14 @@ class SequenceService {
         /*grailsApplication.getDomainClasses().each { domain->
           def seqName = domain.name + SEQ_SUFFIX
           try {
-            println "Creating sequence for domain class " + domain.name + " : " + seqName
+            log.info "Creating sequence for domain class " + domain.name + " : " + seqName
             def statement  = connection.createStatement()
             def dropSequenceQuery = "DROP SEQUENCE IF EXISTS "+seqName +";"
             def createSequenceQuery = "CREATE SEQUENCE "+seqName+" START 1;"
             statement.execute(dropSequenceQuery + createSequenceQuery)
           }
           catch (org.postgresql.util.PSQLException e) {
-            println e
+            log.info e
           }
         }*/
         try {
@@ -30,7 +30,7 @@ class SequenceService {
             def createSequenceQuery = "CREATE SEQUENCE " + SEQ_NAME + " START 1;"
             statement.execute(dropSequenceQuery + createSequenceQuery)
         } catch (org.postgresql.util.PSQLException e) {
-            println e
+            log.info e
         }
 
     }
@@ -43,7 +43,7 @@ class SequenceService {
         def res = statement.executeQuery("select nextval('" + SEQ_NAME + "');")
         res.next()
         Long nextVal = res.getLong("nextval")
-        //println "Get nextval for " +  domain.getClass().getName()    + " : " + nextVal
+        //log.info "Get nextval for " +  domain.getClass().getName()    + " : " + nextVal
         return nextVal
     }
 }

@@ -102,10 +102,10 @@ class ImageInstanceService extends ModelService {
         def order = params.sSortDir_0
         def first = params.iDisplayStart
         def max  = params.iDisplayLength
-        println "col = " + col
-        println "order = " + order
-        println "first = " + first
-        println "max = " + max
+        log.info "col = " + col
+        log.info "order = " + order
+        log.info "first = " + first
+        log.info "max = " + max
 
         def images = ImageInstance.createCriteria().list(offset: first, max: max, sort: col, order: order) {
             eq("project", project)

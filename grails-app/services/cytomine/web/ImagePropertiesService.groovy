@@ -29,7 +29,7 @@ class ImagePropertiesService {
         def imageServer = imageServers.get(index)
         Resolver resolver = Resolver.getResolver(imageServer.className)
         def propertiesURL = resolver.getPropertiesURL(imageServer.getBaseUrl(), imageServer.getStorage().getBasePath() + image.getPath())
-        println image.getFilename() + " : " + propertiesURL
+        log.info image.getFilename() + " : " + propertiesURL
         DefaultHttpClient httpClient = new DefaultHttpClient()
         URI _url = new URI(propertiesURL)
         HttpGet httpGet = new HttpGet(_url)
@@ -48,9 +48,9 @@ class ImagePropertiesService {
             }
             image.save()
         } catch (java.net.SocketTimeoutException e) {
-            println "Timeout reached to image : " + image.getFilename()
+            log.info "Timeout reached to image : " + image.getFilename()
         } catch (IOException e) {
-            println "IO Exception:" + e.toString()
+            log.info "IO Exception:" + e.toString()
         }
 
     }
@@ -83,14 +83,14 @@ class ImagePropertiesService {
         if (imageServers == null || imageServers.size() == 0) return
         def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
         def imageServer = imageServers.get(index)
-        println "imageServer="+imageServer
-        println "imageServerclassName="+imageServer.className
+        log.info "imageServer="+imageServer
+        log.info "imageServerclassName="+imageServer.className
         Resolver resolver = Resolver.getResolver(imageServer.className)
-        println "resolver="+resolver
-        println "storage="+imageServer.getStorage()
-        println "image="+image
+        log.info "resolver="+resolver
+        log.info "storage="+imageServer.getStorage()
+        log.info "image="+image
         def metadaURL = resolver.getMetaDataURL(imageServer.getBaseUrl(), imageServer.getStorage().getBasePath() + image.getPath())
-        println "metadataURL="+metadaURL
+        log.info "metadataURL="+metadaURL
         DefaultHttpClient httpClient = new DefaultHttpClient()
         URI _url = new URI(metadaURL)
         HttpGet httpGet = new HttpGet(_url)
@@ -114,9 +114,9 @@ class ImagePropertiesService {
                 }
             }
         } catch (java.net.SocketTimeoutException e) {
-            println "Timeout reached to image : " + image.getFilename()
+            log.info "Timeout reached to image : " + image.getFilename()
         } catch (IOException e) {
-            println "IO Exception:" + e.toString()
+            log.info "IO Exception:" + e.toString()
         }
         image.setMagnification(40)
         image.setResolution(0.65)
@@ -124,27 +124,27 @@ class ImagePropertiesService {
     }
 
     private def extractUsefulMrxs(AbstractImage image) {
-        println "extract properties from mrxs : " + image.getFilename()
+        log.info "extract properties from mrxs : " + image.getFilename()
         //Magnificiation
         def magnificationProperty = ImageProperty.findByImageAndKey(image, "mirax.GENERAL.OBJECTIVE_MAGNIFICATION")
         if (magnificationProperty) image.setMagnification(Integer.parseInt(magnificationProperty.getValue()))
-        else println "magnificationProperty is null"
+        else log.info "magnificationProperty is null"
         //Width
         def widthProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].width")
         if (widthProperty) image.setWidth(Integer.parseInt(widthProperty.getValue()))
-        else println "widthProperty is null"
+        else log.info "widthProperty is null"
         //Height
         def heightProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].height")
         if (heightProperty) image.setHeight(Integer.parseInt(heightProperty.getValue()))
-        else println "heightProperty is null"
+        else log.info "heightProperty is null"
         //Resolution
         def resolutionProperty = ImageProperty.findByImageAndKey(image, "mirax.LAYER_0_LEVEL_0_SECTION.MICROMETER_PER_PIXEL_X")
         if (resolutionProperty) image.setResolution(Float.parseFloat(resolutionProperty.getValue()))
-        else println "resolutionProperty is null"
+        else log.info "resolutionProperty is null"
     }
 
     private def extractUsefulVms(AbstractImage image) {
-        println "extract properties from vms : " + image.getFilename()
+        log.info "extract properties from vms : " + image.getFilename()
         //Magnification : hamamatsu.SourceLens
         def magnificationProperty = ImageProperty.findByImageAndKey(image, "hamamatsu.SourceLens")
         if (magnificationProperty) {
@@ -166,9 +166,9 @@ class ImagePropertiesService {
     }
 
     private def extractUsefulSVS(AbstractImage image) {
-        println "extract properties from svs : " + image.getFilename()
+        log.info "extract properties from svs : " + image.getFilename()
         def magnificationProperty = ImageProperty.findByImageAndKey(image, "aperio.AppMag")
-        println "magnificationProperty="+magnificationProperty
+        log.info "magnificationProperty="+magnificationProperty
         if (magnificationProperty) {
             def value = Float.parseFloat(magnificationProperty.getValue().replace(",", "."))
             image.setMagnification(value.toInteger())
@@ -176,15 +176,15 @@ class ImagePropertiesService {
         //Width openslide.level[0].width
         def widthProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].width")
         if (widthProperty) image.setWidth(Integer.parseInt(widthProperty.getValue()))
-        println "widthProperty="+widthProperty
+        log.info "widthProperty="+widthProperty
         //Height openslide.level[0].height
         def heightProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].height")
         if (heightProperty) image.setHeight(Integer.parseInt(heightProperty.getValue()))
-        println "heightProperty="+heightProperty
+        log.info "heightProperty="+heightProperty
         //openslide.mpp-x
         def resolutionProperty = ImageProperty.findByImageAndKey(image, "aperio.MPP")
         if (resolutionProperty) image.setResolution(Float.parseFloat(resolutionProperty.getValue()))
-        println "resolutionProperty="+resolutionProperty
+        log.info "resolutionProperty="+resolutionProperty
 
     }
 

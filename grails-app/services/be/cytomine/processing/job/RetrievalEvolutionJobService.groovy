@@ -40,7 +40,7 @@ class RetrievalEvolutionJobService extends AbstractJobService{
         args[6] = job.software.id
         args[7] = UserJob.findByJob(job).user.id
 
-        println "command="+ Arrays.toString(args)
+        log.info "command="+ Arrays.toString(args)
         for(int i=0;i<jobParams.length;i++) {
             args[i+8] = jobParams[i]
         }
@@ -65,7 +65,7 @@ class RetrievalEvolutionJobService extends AbstractJobService{
     Double computeRate(Job job) {
         if(job.rate==-1 && job.status==Job.SUCCESS) {
             def result = listAVGEvolution(job)
-            println "result="+result
+            log.info "result="+result
             if(!result.isEmpty()) {
                 job.rate = result.first().avg
 //                job.save(flush: true)

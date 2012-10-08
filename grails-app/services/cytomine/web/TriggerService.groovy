@@ -30,7 +30,7 @@ class TriggerService {
             statement.execute(getAnnotationCommentTriggerIncr())
 
         } catch (org.postgresql.util.PSQLException e) {
-            println e
+            log.info e
         }
 
     }
@@ -46,9 +46,9 @@ class TriggerService {
         String createTrigger = "CREATE TRIGGER countIncrementAnnotationComment AFTER INSERT ON shared_annotation FOR EACH ROW EXECUTE PROCEDURE incrementAnnotationComment();"
 
 
-        println createFunction
-        println dropTrigger
-        println createTrigger
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -63,9 +63,9 @@ class TriggerService {
         String createTrigger = "CREATE TRIGGER countImageProject AFTER INSERT ON image_instance FOR EACH ROW EXECUTE PROCEDURE incrementProjectImage();"
 
 
-        println createFunction
-        println dropTrigger
-        println createTrigger
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -79,9 +79,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER countDecrImageProject AFTER DELETE ON image_instance FOR EACH ROW EXECUTE PROCEDURE decrementProjectImage();"
 
-        println createFunction
-        println dropTrigger
-        println createTrigger
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -115,9 +115,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER countAnnotationProject AFTER INSERT ON annotation FOR EACH ROW EXECUTE PROCEDURE incrementProjectAnnotation(); "
 
-        println createFunction
-        println dropTrigger
-        println createTrigger
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -151,9 +151,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER countDecrAnnotationProject AFTER DELETE ON annotation FOR EACH ROW EXECUTE PROCEDURE decrementProjectAnnotation(); "
 
-        println createFunction
-        println dropTrigger
-        println createTrigger
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -183,9 +183,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER countAnnotationImage AFTER INSERT ON annotation FOR EACH ROW EXECUTE PROCEDURE incrementImageAnnotation(); "
 
-        println createFunction
-        println dropTrigger
-        println createTrigger
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -216,9 +216,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER countDecrAnnotationImage AFTER DELETE ON annotation FOR EACH ROW EXECUTE PROCEDURE decrementImageAnnotation(); "
 
-        println createFunction
-        println dropTrigger
-        println createTrigger
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 }

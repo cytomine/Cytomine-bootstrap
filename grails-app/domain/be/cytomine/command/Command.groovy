@@ -6,6 +6,7 @@ import be.cytomine.security.SecUser
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.codehaus.groovy.grails.web.json.JSONElement
+import org.apache.log4j.Logger
 
 /**
  * @author ULG-GIGA Cytomine Team
@@ -123,7 +124,7 @@ class Command extends CytomineDomain {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + Command.class
+        Logger.getLogger(this).info "Register custom JSON renderer for " + Command.class
         JSON.registerObjectMarshaller(Command) {
             def returnArray = [:]
 

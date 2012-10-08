@@ -52,7 +52,7 @@ class RestJobDataController extends RestController {
         domainService.saveDomain(value)
         jobData.value = value
         domainService.saveDomain(jobData)
-        println "UPLOADING...."
+        log.info "UPLOADING...."
 
         byte[] bytes = null
 

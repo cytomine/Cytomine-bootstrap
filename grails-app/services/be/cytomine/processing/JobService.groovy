@@ -168,7 +168,7 @@ class JobService extends ModelService {
     }
 
     def edit(Job domain, boolean printMessage) {
-        println "edit="+domain
+        log.info "edit="+domain
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, Job], printMessage, "Edit", domain.getCallBack())
         //Save update
@@ -191,9 +191,9 @@ class JobService extends ModelService {
      * @return domain retrieve thanks to json
      */
     def retrieve(JSONObject json) {
-        println "retrieve="+json
+        log.info "retrieve="+json
         Job job = Job.get(json.id)
-        println "job="+job
+        log.info "job="+job
         if (!job) throw new ObjectNotFoundException("Job " + json.id + " not found")
         return job
     }

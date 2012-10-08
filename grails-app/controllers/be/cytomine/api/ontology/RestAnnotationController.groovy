@@ -105,7 +105,7 @@ class RestAnnotationController extends RestController {
         Integer max = params.max!=null? params.getInt('max') : Integer.MAX_VALUE
 
 
-        println "offset=$offset max=$max"
+        log.info "offset=$offset max=$max"
 
         Collection<SecUser> userList = []
         if (params.users != null && params.users != "null") {
@@ -401,7 +401,7 @@ class RestAnnotationController extends RestController {
         if (offset>=collection.size()) return []
 
         def maxForCollection = Math.min(collection.size()-offset,max)
-        println "collection=${collection.size()} offset=$offset max=$max compute=${collection.size()-offset} maxForCollection=$maxForCollection"
+        log.info "collection=${collection.size()} offset=$offset max=$max compute=${collection.size()-offset} maxForCollection=$maxForCollection"
         return collection.subList(offset,offset+maxForCollection)
     }
 
@@ -430,7 +430,7 @@ class RestAnnotationController extends RestController {
 
         if(bufferLength) {
             List<Annotation> annotations = Annotation.findAllByImageAndUser(image, user)
-            println "Buffer($bufferLength) annotations..."
+            log.info "Buffer($bufferLength) annotations..."
             annotations.each {
                 if(AlgoAnnotationTerm.findWhere(annotation: it,userJob:user,term: term)) {
                     it.location = it.location.buffer(bufferLength)
@@ -446,18 +446,18 @@ class RestAnnotationController extends RestController {
         }
 
         long end = System.currentTimeMillis()
-        println "#TIME#=" + (end - start)
+        log.info "#TIME#=" + (end - start)
     }
 
     private boolean unionPostgisSQL(ImageInstance image, SecUser user, Term term,Integer minIntersectLength,Integer bufferLength) {
-        println "unionPostgisSQL"
+        log.info "unionPostgisSQL"
 
-        println "********************\n********************\n********************\n********************\n"
-        println "image=$image"
-        println "user=$user"
-        println "term=$term"
-        println "minIntersectLength=$minIntersectLength"
-        println "bufferLength=$bufferLength"
+        log.info "********************\n********************\n********************\n********************\n"
+        log.info "image=$image"
+        log.info "user=$user"
+        log.info "term=$term"
+        log.info "minIntersectLength=$minIntersectLength"
+        log.info "bufferLength=$bufferLength"
 
         boolean mustBeRestart = false
         //key = deleted annotation, value = annotation that take in the deleted annotation
@@ -465,7 +465,7 @@ class RestAnnotationController extends RestController {
         HashMap<Long, Long> removedByUnion = new HashMap<Long, Long>(1024)
 
         List<Annotation> annotations = Annotation.findAllByImageAndUser(image, user)
-        println "valide annotation..."
+        log.info "valide annotation..."
         annotations.each {
             if (!it.location.isValid()) {
                 it.location = it.location.buffer(0)

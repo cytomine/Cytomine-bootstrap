@@ -4,6 +4,7 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.project.Project
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class SoftwareProject extends CytomineDomain implements Serializable{
 
@@ -40,7 +41,9 @@ class SoftwareProject extends CytomineDomain implements Serializable{
             software?.removeFromSoftwareProjects(softwareProjects)
             project?.removeFromSoftwareProjects(softwareProjects)
             softwareProjects.delete(flush: true)
-        } else {println "no link between " + software + " " + project}
+        } else {
+            Logger.getLogger(this).info("no link between " + software + " " + project)
+        }
     }
     
    static SoftwareProject createFromDataWithId(json) {
@@ -55,14 +58,12 @@ class SoftwareProject extends CytomineDomain implements Serializable{
     }
 
     static SoftwareProject getFromData(SoftwareProject softwareProject, jsonSoftwareParameter) {
-        println "jsonSoftwareParameter=" + jsonSoftwareParameter.toString()
+        Logger.getLogger(this).info("jsonSoftwareParameter=" + jsonSoftwareParameter.toString())
         try {
-            println "jsonSoftwareParameter.xxx.id"
             softwareProject.software = Software.get(jsonSoftwareParameter.software.id)
             softwareProject.project = Project.get(jsonSoftwareParameter.project.id)
         }
         catch (Exception e) {
-            println "jsonSoftwareParameter.idXXX"
             softwareProject.software = Software.get(jsonSoftwareParameter.software)
             softwareProject.project = Project.get(jsonSoftwareParameter.project)
         }
@@ -72,7 +73,7 @@ class SoftwareProject extends CytomineDomain implements Serializable{
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + SoftwareProject.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + SoftwareProject.class)
         JSON.registerObjectMarshaller(SoftwareProject) {
             def returnArray = [:]
             returnArray['class'] = it.class

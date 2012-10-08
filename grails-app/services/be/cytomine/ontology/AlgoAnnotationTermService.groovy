@@ -173,8 +173,8 @@ class AlgoAnnotationTermService extends ModelService {
     }
 
      double computeAVG(def userJob) {
-        println "userJob="+userJob
-        println "userJob.id="+userJob.id
+        log.info "userJob="+userJob
+        log.info "userJob.id="+userJob.id
         def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
             eq("userJob", userJob)
             isNotNull("term")
@@ -186,13 +186,13 @@ class AlgoAnnotationTermService extends ModelService {
             isNotNull("expectedTerm")
         }
          if(nbTermTotal==0) throw new Exception("UserJob has no algo-annotation-term!")
-         println "nbTermNotCorrect="+nbTermCorrect +" nbTermTotal="+nbTermTotal
+         log.info "nbTermNotCorrect="+nbTermCorrect +" nbTermTotal="+nbTermTotal
         return (double) (nbTermCorrect / nbTermTotal)
     }
 
     double computeAVG(def userJob, Term term) {
-       println "userJob="+userJob
-       println "userJob.id="+userJob.id
+       log.info "userJob="+userJob
+       log.info "userJob.id="+userJob.id
        def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
            eq("userJob", userJob)
            eq("expectedTerm",term)
@@ -203,7 +203,7 @@ class AlgoAnnotationTermService extends ModelService {
            eq("expectedTerm",term)
        }
         if(nbTermTotal==0) throw new Exception("UserJob has no algo-annotation-term!")
-        println "nbTermNotCorrect="+nbTermCorrect +" nbTermTotal="+nbTermTotal
+        log.info "nbTermNotCorrect="+nbTermCorrect +" nbTermTotal="+nbTermTotal
        return (double) (nbTermCorrect / nbTermTotal)
    }
 

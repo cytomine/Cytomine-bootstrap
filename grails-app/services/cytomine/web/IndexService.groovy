@@ -89,7 +89,7 @@ class IndexService {
 
 
         } catch (org.postgresql.util.PSQLException e) {
-            println e
+            log.info e
         }
 
     }
@@ -97,10 +97,10 @@ class IndexService {
     def createIndex(def statement, String table, String col) {
         String name = table + "_" + col + "_index"
         String reqdrop = "DROP INDEX IF EXISTS " + name + ";"
-        println reqdrop
+        log.info reqdrop
         statement.execute(reqdrop);
         String reqcreate = "CREATE INDEX " + name + " ON " + table + " (" + col + ");"
-        println reqcreate
+        log.info reqcreate
         statement.execute(reqcreate);
     }
 

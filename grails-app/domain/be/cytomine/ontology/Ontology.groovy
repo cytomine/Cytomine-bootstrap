@@ -6,6 +6,7 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class Ontology extends CytomineDomain implements Serializable {
 
@@ -118,7 +119,7 @@ class Ontology extends CytomineDomain implements Serializable {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + Ontology.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + Ontology.class)
         JSON.registerObjectMarshaller(Ontology) {
             def returnArray = [:]
             returnArray['class'] = it.class
@@ -155,8 +156,8 @@ class Ontology extends CytomineDomain implements Serializable {
             ontology.name = jsonOntology.name
         else throw new WrongArgumentException("Ontology name cannot be null")
         ontology.user = User.get(jsonOntology.user);
-        println "jsonOntology.name=" + jsonOntology.name
-        println "ontology.name=" + ontology.name
+        Logger.getLogger(this).info("jsonOntology.name=" + jsonOntology.name)
+        Logger.getLogger(this).info("ontology.name=" + ontology.name)
         return ontology;
     }
 

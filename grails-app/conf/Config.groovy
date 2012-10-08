@@ -199,26 +199,26 @@ log4j = {
     environments {
         production {
             root {
-                info 'stdout','appLog',"logfile"
+                info 'appLog',"logfile"
 //               error  'mail'
                 additivity = true
             }
         }
         development {
             root {
-                info 'stdout','appLog',"logfile"
+                info 'appLog',"logfile", stdout
                 additivity = true
             }
         }
         test {
             root {
-                info 'stdout','appLog',"logfile"
+                info 'appLog',"logfile", stdout
                 additivity = true
             }
         }
         perf {
             root {
-                info 'stdout','appLog',"logfile"
+                info 'appLog',"logfile", stdout
                 additivity = true
             }
         }

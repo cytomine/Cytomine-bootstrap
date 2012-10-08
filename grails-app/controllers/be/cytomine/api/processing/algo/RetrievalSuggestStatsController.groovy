@@ -61,7 +61,7 @@ class RetrievalSuggestStatsController extends RestController {
     def statRetrievalConfusionMatrix = {
         def data = []
         UserJob userJob = retrieveUserJobFromParams(params)
-        println "get userjob.id=" + userJob.id
+        log.info "get userjob.id=" + userJob.id
         if(!userJob) {
             responseNotFound("UserJob","Params", params)
             return null

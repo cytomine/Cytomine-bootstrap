@@ -68,7 +68,7 @@ class TermService extends ModelService {
 
         //init list
         projects.each { project ->
-            println "project=" + project.name
+            log.info "project=" + project.name
             count[project.name] = 0
             percentage[project.name] = 0
         }

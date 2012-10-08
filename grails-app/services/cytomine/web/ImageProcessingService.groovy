@@ -78,7 +78,6 @@ class ImageProcessingService {
 
     public static Coordinate[] doWand(ImagePlus img, int x, int y, double tolerance, String mode) {
         Collection<Coordinate> coordinates = new ArrayList<Coordinate>()
-        long start = new Date().getTime()
         ImageProcessor ip = img.getProcessor()
         if ((img.getType()==ImagePlus.GRAY32) && Double.isNaN(ip.getPixelValue(x,y)))
             return 0
@@ -92,7 +91,6 @@ class ImageProcessingService {
         Wand w = new Wand(ip)
         double t1 = ip.getMinThreshold()
         if (t1==ImageProcessor.NO_THRESHOLD || (ip.getLutUpdateMode()==ImageProcessor.NO_LUT_UPDATE&& tolerance>0.0)) {
-            println " w.autoOutline(x, y, tolerance, imode)"
             w.autoOutline(x, y, tolerance, imode)
         } else {
             w.autoOutline(x, y, t1, ip.getMaxThreshold(), imode)
@@ -115,10 +113,6 @@ class ImageProcessingService {
                     w.xpoints[0] + roi.getBounds().getX(),
                     w.ypoints[0] + roi.getBounds().getY()))
 
-
-            long stop = new Date().getTime()
-            long time = stop - start
-            System.out.println("time="+time)
             img.killRoi()
             img.setRoi(roi)
         }
@@ -130,7 +124,7 @@ class ImageProcessingService {
     public Coordinate[] computeCoordinates(ImagePlus ori, ImagePlus img, int x, int y) {
         int[] firstPixel = img.getPixel(x, y)
         if (firstPixel[0] == BLACK) { //pixel is white, nothing to do
-            println "PIXEL IS BLACK !!!!"
+            log.info "PIXEL IS BLACK !!!!"
             return null
         }
         Stack<Coordinate> toVisit = new Stack<Coordinate>()

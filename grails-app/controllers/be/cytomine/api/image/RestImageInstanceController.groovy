@@ -274,7 +274,7 @@ class RestImageInstanceController extends RestController {
         }
         Integer zoom = null
         if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
-        println "zoom====$zoom"
+        log.info "zoom====$zoom"
         if (annotation == null)
             responseNotFound("Crop", "Annotation", params.annotation)
         else if ((params.zoom != null) && (zoom < annotation.getImage().getBaseImage().getZoomLevels().min || zoom > annotation.getImage().getBaseImage().getZoomLevels().max))

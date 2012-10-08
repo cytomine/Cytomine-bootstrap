@@ -12,6 +12,7 @@ import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.project.Slide
 import be.cytomine.server.resolvers.Resolver
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class AbstractImage extends CytomineDomain {
 
@@ -126,7 +127,7 @@ class AbstractImage extends CytomineDomain {
 
     static void registerMarshaller(String cytomineBaseUrl) {
 
-        println "Register custom JSON renderer for " + AbstractImage.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + AbstractImage.class)
         JSON.registerObjectMarshaller(AbstractImage) {
             def returnArray = [:]
             returnArray['class'] = it.class

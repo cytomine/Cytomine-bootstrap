@@ -4,6 +4,7 @@ import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class UploadedFile extends CytomineDomain {
 
@@ -33,7 +34,7 @@ class UploadedFile extends CytomineDomain {
     }
 
      static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + UploadedFile.class
+         Logger.getLogger(this).info("Register custom JSON renderer for " + UploadedFile.class)
         JSON.registerObjectMarshaller(UploadedFile) {
             def returnArray = [:]
             returnArray['class'] = it.class

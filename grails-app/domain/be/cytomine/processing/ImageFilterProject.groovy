@@ -5,6 +5,7 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.project.Project
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class ImageFilterProject extends CytomineDomain implements Serializable{
 
@@ -43,7 +44,9 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
             imageFilter.refresh()
             project.refresh()
             imageFilterProject.delete(flush: true)
-        } else {println "no link between " + imageFilter + " " + project}
+        } else {
+            Logger.getLogger(this).info("no link between " + imageFilter + " " + project)
+        }
     }
 
     static ImageFilterProject createFromDataWithId(json) {
@@ -58,7 +61,7 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
     }
 
     static ImageFilterProject getFromData(ImageFilterProject imageFilterProject, jsonSoftwareParameter) {
-        println "jsonSoftwareParameter=" + jsonSoftwareParameter.toString()
+        Logger.getLogger(this).info("jsonSoftwareParameter=" + jsonSoftwareParameter.toString())
         try {
             imageFilterProject.imageFilter = ImageFilter.get(jsonSoftwareParameter.imageFilter.id)
             imageFilterProject.project = Project.get(jsonSoftwareParameter.project.id)
@@ -73,7 +76,7 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + ImageFilterProject.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + ImageFilterProject.class)
         JSON.registerObjectMarshaller(ImageFilterProject) {
             def returnArray = [:]
             returnArray['class'] = it.class

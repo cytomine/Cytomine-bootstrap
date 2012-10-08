@@ -5,6 +5,7 @@ import be.cytomine.ontology.Annotation
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.apache.log4j.Logger
 
 class SharedAnnotation extends CytomineDomain {
 
@@ -24,7 +25,7 @@ class SharedAnnotation extends CytomineDomain {
 
     static void registerMarshaller(String cytomineBaseUrl) {
 
-        println "Register custom JSON renderer for " + SharedAnnotation.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + SharedAnnotation.class)
         JSON.registerObjectMarshaller(SharedAnnotation) {
             def returnArray = [:]
             returnArray['class'] = it.class

@@ -51,10 +51,10 @@ class UserGroupService extends ModelService {
 
     def create(UserGroup domain, boolean printMessage) {
         //Save new object
-        println "new usegroup " + domain
+        log.info "new usegroup " + domain
         domain.validate()
         domain.errors.each {
-            println it
+            log.info it
         }
         domain.setId(null)
         domainService.saveDomain(domain)
@@ -106,16 +106,16 @@ class UserGroupService extends ModelService {
     }
 
     UserGroup link(User user, Group group) {
-       println "link between " + user?.username + " " + group?.name
+       log.info "link between " + user?.username + " " + group?.name
        def userGroup = UserGroup.findByUserAndGroup(user, group)
        if (!userGroup) {
            userGroup = new UserGroup(user:user, group:group)
             if (!userGroup.validate()) {
-                println userGroup.retrieveErrors().toString()
+                log.info userGroup.retrieveErrors().toString()
                 throw new WrongArgumentException(userGroup.retrieveErrors().toString())
             }
             if (!userGroup.save(flush: true)) {
-                println userGroup.retrieveErrors().toString()
+                log.info userGroup.retrieveErrors().toString()
                 throw new InvalidRequestException(userGroup.retrieveErrors().toString())
            }
        }
@@ -123,12 +123,12 @@ class UserGroupService extends ModelService {
    }
 
    void unlink(User user, Group group) {
-       println "###################################"
+       log.info "###################################"
        def userGroup = UserGroup.findByUserAndGroup(user, group)
        if (userGroup) {
            userGroup.delete(flush:true)
 
-       } else {println "no link between " + user?.username + " " + group?.name}
+       } else {log.info "no link between " + user?.username + " " + group?.name}
    }
 
 

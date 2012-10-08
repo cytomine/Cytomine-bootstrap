@@ -4,6 +4,7 @@ import be.cytomine.CytomineDomain
 import be.cytomine.image.AbstractImageGroup
 import be.cytomine.project.Project
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 class Group extends CytomineDomain {
 
@@ -63,7 +64,7 @@ class Group extends CytomineDomain {
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
-        println "Register custom JSON renderer for " + Group.class
+        Logger.getLogger(this).info("Register custom JSON renderer for " + Group.class)
         JSON.registerObjectMarshaller(Group) {
             def returnArray = [:]
             returnArray['id'] = it.id

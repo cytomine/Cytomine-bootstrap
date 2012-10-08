@@ -55,7 +55,7 @@ class SecUser extends CytomineDomain {
 
 
     def generateKeys() {
-        println "GENERATE KEYS"
+        log.info "GENERATE KEYS"
         String privateKey = UUID.randomUUID().toString()
         String publicKey = UUID.randomUUID().toString()
         this.setPrivateKey(privateKey)

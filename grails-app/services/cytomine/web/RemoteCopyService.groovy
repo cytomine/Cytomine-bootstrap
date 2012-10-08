@@ -11,11 +11,11 @@ class RemoteCopyService {
     def copy(Storage storage, AbstractImage image, UploadedFile uploadedFile, boolean deleteAfterCopy) {
         def ant = new AntBuilder()
         def remoteFile = storage.getBasePath() + uploadedFile.getConvertedFilename()
-        println "REMOTE FILE = " + remoteFile
+        log.info "REMOTE FILE = " + remoteFile
         def remotePath = new File(remoteFile).getParent()
-        println "REMOTE PATH = " + remotePath
+        log.info "REMOTE PATH = " + remotePath
         def localFile = uploadedFile.getPath() + "/" + uploadedFile.getConvertedFilename()
-        println "LOCAL FILE = " + localFile
+        log.info "LOCAL FILE = " + localFile
         def username = storage.getUsername()
         def ip = storage.getIp()
         def port = storage.getPort()
