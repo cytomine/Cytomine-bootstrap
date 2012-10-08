@@ -2,8 +2,6 @@ package cytomine.web
 
 import be.cytomine.ontology.Annotation
 import be.cytomine.social.SharedAnnotation
-import be.cytomine.image.ImageInstance
-import be.cytomine.project.Project
 
 /**
  * Cytomine @ GIGA-ULG

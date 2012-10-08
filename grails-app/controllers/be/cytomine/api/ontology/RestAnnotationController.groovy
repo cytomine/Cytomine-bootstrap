@@ -5,6 +5,7 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.AlgoAnnotationTerm
 import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
@@ -14,13 +15,11 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.social.SharedAnnotation
 import grails.converters.JSON
+import groovy.sql.Sql
 
 import java.awt.image.BufferedImage
 import java.text.SimpleDateFormat
 import javax.imageio.ImageIO
-import groovy.sql.Sql
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.security.UserJob
 
 class RestAnnotationController extends RestController {
 

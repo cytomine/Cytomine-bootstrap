@@ -1,7 +1,5 @@
 package be.cytomine.image
 
-import org.springframework.security.access.prepost.PreAuthorize
-
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
@@ -12,6 +10,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.orm.PagedResultList
 import org.codehaus.groovy.grails.web.json.JSONObject
+import org.springframework.security.access.prepost.PreAuthorize
 
 class SlideService extends ModelService {
 

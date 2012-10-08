@@ -15,10 +15,10 @@ var ApplicationView = Backbone.View.extend({
     isMobile : ( navigator.userAgent.match(/iPad/i) != null ),
     panelsConfiguration : [
         {key : "toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { bottom : 0}, align : "center"}},
-        {key : "overview-panel", linkID : "toggle-overview-panel", name : "Overview", className : "overviewPanel", value : { visible : true , position : { right : 20, top : 325}}},
+        {key : "overview-panel", linkID : "toggle-overview-panel", name : "Overview", className : "overviewPanel", value : { visible : true , position : { right : 250, top : 325}}},
         {key : "ontology-panel", linkID : "toggle-ontology-panel", name : "Ontology", className : "ontologyPanel", value : { visible : true , position : { left : 20, top : 280}}},
-        {key : "layer-panel", linkID : "toggle-layer-panel", name : "Layer switcher", className : "layerSwitcherPanel", value : { visible : false , position : { right : 20, top : 100}}},
-        {key : "filters-panel", linkID : "toggle-filters-panel", name : "Filters", className : "imageFiltersPanel", value : { visible : false , position : { right : 20, bottom : 15}}}
+        {key : "layer-panel", linkID : "toggle-layer-panel", name : "Layer switcher", className : "layerSwitcherPanel", value : { visible : false , position : { right : 250, top : 100}}},
+        {key : "filters-panel", linkID : "toggle-filters-panel", name : "Filters", className : "imageFiltersPanel", value : { visible : false , position : { right : 250, bottom : 15}}}
     ],
     events: {
 
@@ -214,13 +214,13 @@ var ApplicationView = Backbone.View.extend({
         // Position
         var position = preference.position;
         if (position.top == undefined) position.top = '';
-        else $("."+item.className).css("top", position.top);
+        $("."+item.className).css("top", position.top);
         if (position.left == undefined) position.left = '';
-        else $("."+item.className).css("left", position.left);
+        $("."+item.className).css("left", position.left);
         if (position.right == undefined) position.right = '';
-        else $("."+item.className).css("right", position.right);
+        $("."+item.className).css("right", position.right);
         if (position.bottom == undefined) position.bottom = '';
-        else $("."+item.className).css("bottom", position.bottom);
+        $("."+item.className).css("bottom", position.bottom);
 
         if (triggerMoveEvent) $("."+item.className).trigger("movedProgramatically");
     },

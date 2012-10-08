@@ -1,7 +1,5 @@
 package be.cytomine.api.image
 
-import grails.plugins.springsecurity.Secured
-
 import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
 import be.cytomine.project.Slide

@@ -98,6 +98,7 @@
 <fileset dir="${src.dir}" includes="application/models/JobModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/JobDataModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/SoftwareModel.js"/>
+<fileset dir="${src.dir}" includes="application/models/PingModel.js"/>
 <fileset dir="${src.dir}" includes="application/views/activity/ActivityView.js"/>
 <fileset dir="${src.dir}" includes="application/views/phono/PhonoMenu.js"/>
 <fileset dir="${src.dir}" includes="application/views/account/AccountDetails.js"/>
@@ -141,12 +142,14 @@
 <fileset dir="${src.dir}" includes="application/views/image/ImageView.js"/>
 <fileset dir="${src.dir}" includes="application/views/image/ImageTabsView.js"/>
 <fileset dir="${src.dir}" includes="application/views/image/ImagePropertiesView.js"/>
+<fileset dir="${src.dir}" includes="application/views/ontology/OntologyUsersDialog.js"/>
 <fileset dir="${src.dir}" includes="application/views/ontology/OntologyPanelView.js"/>
 <fileset dir="${src.dir}" includes="application/views/ontology/OntologyView.js"/>
 <fileset dir="${src.dir}" includes="application/views/ontology/OntologyAddOrEditTermView.js"/>
 <fileset dir="${src.dir}" includes="application/views/ontology/OntologyTreeView.js"/>
 <fileset dir="${src.dir}" includes="application/views/ontology/OntologyEditDialog.js"/>
 <fileset dir="${src.dir}" includes="application/views/ontology/OntologyAddDialog.js"/>
+<fileset dir="${src.dir}" includes="application/views/project/ProjectUsersDialog.js"/>
 <fileset dir="${src.dir}" includes="application/views/project/ProjectView.js"/>
 <fileset dir="${src.dir}" includes="application/views/project/ProjectPanelView.js"/>
 <fileset dir="${src.dir}" includes="application/views/project/ProjectManageSlideDialog.js"/>

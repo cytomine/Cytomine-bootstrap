@@ -1,9 +1,9 @@
 package be.cytomine.security
 
+import be.cytomine.project.Project
+import be.cytomine.social.LastConnection
 import grails.converters.JSON
 import grails.converters.XML
-import be.cytomine.social.LastConnection
-import be.cytomine.project.Project
 
 class ServerController {
 

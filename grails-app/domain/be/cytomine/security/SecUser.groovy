@@ -2,7 +2,6 @@ package be.cytomine.security
 
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
-import org.joda.time.DateTime
 
 class SecUser extends CytomineDomain {
 

@@ -1,22 +1,17 @@
 package cytomine.web
 
+import be.cytomine.security.SecUser
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import org.springframework.security.core.codec.Base64
+
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+import javax.servlet.FilterChain
+import javax.servlet.FilterConfig
+import javax.servlet.ServletRequest
+import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-
-import javax.crypto.spec.SecretKeySpec
-import javax.crypto.Mac
-import org.springframework.security.core.codec.Base64
-import be.cytomine.security.SecUser
-import javax.servlet.FilterConfig
-import javax.servlet.FilterChain
-import javax.servlet.ServletResponse
-import javax.servlet.ServletRequest
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import javax.servlet.http.HttpServletRequestWrapper
-import org.springframework.web.multipart.MultipartHttpServletRequest
-import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest
-
-
 
 class APIAuthentificationFilters implements javax.servlet.Filter {
 

@@ -1,6 +1,5 @@
 package be.cytomine.api.image
 
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import be.cytomine.api.RestController
 import be.cytomine.image.UploadedFile
 import be.cytomine.project.Project

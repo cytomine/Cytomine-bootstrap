@@ -1,10 +1,9 @@
 package be.cytomine.command.image
 
+import be.cytomine.command.AddCommand
+import be.cytomine.command.UndoRedoCommand
 import be.cytomine.image.AbstractImage
 import grails.converters.JSON
-
-import be.cytomine.command.UndoRedoCommand
-import be.cytomine.command.AddCommand
 import org.codehaus.groovy.grails.validation.exceptions.ConstraintException
 
 /**

@@ -6,7 +6,6 @@ import ij.ImagePlus
 import ij.gui.PolygonRoi
 import ij.gui.Roi
 import ij.gui.Wand
-import ij.plugin.filter.PlugInFilter
 import ij.process.ImageConverter
 import ij.process.ImageProcessor
 

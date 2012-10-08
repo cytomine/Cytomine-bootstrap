@@ -5,8 +5,6 @@ import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
 import grails.orm.PagedResultList
-import be.cytomine.security.SecUser
-import be.cytomine.ontology.RelationTerm
 
 class StatsController extends RestController {
 

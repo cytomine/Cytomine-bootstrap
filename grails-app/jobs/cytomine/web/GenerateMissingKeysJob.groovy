@@ -15,7 +15,6 @@ class GenerateMissingKeysJob {
     }
 
     def execute() {
-        println "GenerateMissingKeysJob"
         Collection<SecUser> secUsers = SecUser.findAllByPrivateKeyIsNullOrPublicKeyIsNull()
         secUsers.each { user ->
             user.generateKeys()

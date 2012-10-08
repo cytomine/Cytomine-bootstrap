@@ -1,8 +1,6 @@
 package be.cytomine.ontology
 
-import org.springframework.security.access.prepost.PostFilter
-import org.springframework.security.access.prepost.PreAuthorize
-
+import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
@@ -19,6 +17,7 @@ import be.cytomine.social.SharedAnnotation
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.geom.Polygon
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.io.WKTWriter
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
@@ -28,9 +27,8 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
-import be.cytomine.Exception.CytomineException
-import com.vividsolutions.jts.geom.Polygon
-import com.vividsolutions.jts.geom.LineString
+import org.springframework.security.access.prepost.PostFilter
+import org.springframework.security.access.prepost.PreAuthorize
 
 class AnnotationService extends ModelService {
 

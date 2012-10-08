@@ -1,7 +1,5 @@
 package be.cytomine.ontology
 
-import org.springframework.security.access.prepost.PreAuthorize
-
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
@@ -11,6 +9,7 @@ import be.cytomine.command.EditCommand
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.web.json.JSONObject
+import org.springframework.security.access.prepost.PreAuthorize
 
 class AnnotationFilterService extends ModelService {
 

@@ -1,26 +1,23 @@
 package be.cytomine.project
 
-import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.access.prepost.PostFilter
-
-import org.springframework.security.acls.domain.BasePermission
-import org.springframework.security.acls.model.Permission
-
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ModelService
+import be.cytomine.image.UploadedFile
 import be.cytomine.ontology.Ontology
+import be.cytomine.processing.ImageFilterProject
 import be.cytomine.processing.Software
-import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.test.Infos
+import org.apache.commons.collections.CollectionUtils
 import org.codehaus.groovy.grails.web.json.JSONObject
+import org.springframework.security.access.prepost.PostFilter
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.acls.domain.BasePermission
+import org.springframework.security.acls.model.Permission
 import org.springframework.transaction.annotation.Transactional
 import be.cytomine.command.*
-import org.apache.commons.collections.CollectionUtils
-import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.image.UploadedFile
-import be.cytomine.processing.ImageFilterProject
 
 class ProjectService extends ModelService {
 

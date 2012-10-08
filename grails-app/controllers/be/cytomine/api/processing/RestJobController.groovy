@@ -1,7 +1,5 @@
 package be.cytomine.api.processing
 
-import grails.plugins.springsecurity.Secured
-
 import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
 import be.cytomine.processing.Job
@@ -11,6 +9,7 @@ import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import grails.converters.JSON
+import grails.plugins.springsecurity.Secured
 
 class RestJobController extends RestController {
 

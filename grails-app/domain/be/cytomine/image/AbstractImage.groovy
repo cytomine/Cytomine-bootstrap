@@ -4,14 +4,14 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.UrlApi
+import be.cytomine.image.acquisition.Instrument
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
+import be.cytomine.image.server.MimeImageServer
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.project.Slide
 import be.cytomine.server.resolvers.Resolver
 import grails.converters.JSON
-import be.cytomine.image.acquisition.Instrument
-import be.cytomine.image.server.MimeImageServer
 
 class AbstractImage extends CytomineDomain {
 

@@ -1,6 +1,5 @@
 package be.cytomine
 
-import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
 

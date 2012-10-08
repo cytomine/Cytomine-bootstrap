@@ -1,7 +1,5 @@
 package be.cytomine.image
 
-import org.springframework.security.access.prepost.PreAuthorize
-
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
@@ -11,12 +9,12 @@ import be.cytomine.command.Transaction
 import be.cytomine.ontology.Annotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.social.FollowRequest
+import be.cytomine.social.UserPosition
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
-import be.cytomine.social.UserPosition
-
-import be.cytomine.social.FollowRequest
+import org.springframework.security.access.prepost.PreAuthorize
 
 class ImageInstanceService extends ModelService {
 

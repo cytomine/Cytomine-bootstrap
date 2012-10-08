@@ -17,7 +17,6 @@ import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import grails.orm.PagedResultList
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.image.acquisition.Instrument
 
 class AbstractImageService extends ModelService {
 

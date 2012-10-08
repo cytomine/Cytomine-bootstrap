@@ -11,7 +11,6 @@ import be.cytomine.processing.ImageFilterProject
 import be.cytomine.processing.SoftwareProject
 import be.cytomine.security.SecUser
 import grails.converters.JSON
-import be.cytomine.utils.JSONMin
 
 class Project extends CytomineDomain {
 

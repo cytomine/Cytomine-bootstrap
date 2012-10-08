@@ -1,11 +1,5 @@
 package be.cytomine.processing
 
-import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.access.prepost.PostFilter
-
-import org.springframework.security.acls.domain.BasePermission
-import org.springframework.security.acls.model.Permission
-
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
 import be.cytomine.command.AddCommand

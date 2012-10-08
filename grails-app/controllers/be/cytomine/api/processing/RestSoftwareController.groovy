@@ -1,12 +1,11 @@
 package be.cytomine.api.processing
 
-import grails.plugins.springsecurity.Secured
-
 import be.cytomine.api.RestController
 import be.cytomine.processing.Job
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import grails.converters.JSON
+import grails.plugins.springsecurity.Secured
 
 class RestSoftwareController extends RestController {
 

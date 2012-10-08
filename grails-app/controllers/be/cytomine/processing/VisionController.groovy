@@ -2,13 +2,11 @@ package be.cytomine.processing
 
 import be.cytomine.api.RestController
 import be.cytomine.processing.image.filters.Colour_Deconvolution
-import be.cytomine.processing.image.filters.Multi_OtsuThreshold
 import ij.ImagePlus
 import ij.plugin.ContrastEnhancer
 import ij.process.ImageConverter
 
 import java.awt.image.BufferedImage
-import ij.process.ImageProcessor
 
 /**
  * Cytomine @ GIGA-ULG

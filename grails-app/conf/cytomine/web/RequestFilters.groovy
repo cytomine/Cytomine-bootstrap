@@ -1,5 +1,4 @@
 package cytomine.web
-import be.cytomine.security.SecUser
 
 /**
  * Created by IntelliJ IDEA.

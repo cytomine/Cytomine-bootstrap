@@ -1,5 +1,5 @@
-import org.springframework.security.acls.model.NotFoundException
 import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.acls.model.NotFoundException
 
 class UrlMappings {
 
@@ -9,7 +9,8 @@ class UrlMappings {
                 // apply constraints here
             }
         }
-
+        "/admin/manage/$action?"(controller: "adminManage")
+        "/adminManage/$action?"(controller: "errors", action: "error500")
 
         /* Home */
         "/"(view:"/index")

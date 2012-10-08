@@ -1,14 +1,14 @@
 package be.cytomine
 
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import be.cytomine.image.server.MimeImageServer
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.project.Slide
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import grails.converters.JSON
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import be.cytomine.image.*
-import be.cytomine.image.server.MimeImageServer
 
 class DeployImagesService {
 

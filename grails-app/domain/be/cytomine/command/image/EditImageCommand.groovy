@@ -1,10 +1,9 @@
 package be.cytomine.command.image
 
-import grails.converters.JSON
-
+import be.cytomine.command.EditCommand
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.image.AbstractImage
-import be.cytomine.command.EditCommand
+import grails.converters.JSON
 
 /**
  * Created by IntelliJ IDEA.

@@ -5,7 +5,6 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.security.SecUser
 import be.cytomine.social.UserPosition
 import org.joda.time.DateTime
-import groovy.sql.Sql
 
 class RestUserPositionController extends RestController {
 

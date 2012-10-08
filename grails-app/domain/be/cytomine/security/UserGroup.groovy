@@ -1,9 +1,10 @@
 package be.cytomine.security
 
+import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.project.Project
 import grails.converters.JSON
 import org.apache.commons.lang.builder.HashCodeBuilder
-import be.cytomine.Exception.AlreadyExistException
+
 class UserGroup {
 
     def domaineService

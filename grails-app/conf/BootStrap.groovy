@@ -1,39 +1,41 @@
+import org.springframework.security.core.context.SecurityContextHolder as SCH
+
+import be.cytomine.ViewPortToBuildXML
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.AbstractImageGroup
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
+import be.cytomine.image.acquisition.Instrument
 import be.cytomine.processing.ImageFilter
 import be.cytomine.processing.Job
 import be.cytomine.processing.Software
 import be.cytomine.project.Discipline
 import be.cytomine.project.Project
 import be.cytomine.project.Slide
+import be.cytomine.security.Group
+import be.cytomine.security.SecRole
+import be.cytomine.security.SecUserSecRole
+import be.cytomine.security.User
+import be.cytomine.social.UserPosition
+import be.cytomine.test.BasicInstance
+import be.cytomine.test.Infos
 import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.geom.Polygon
 import com.vividsolutions.jts.io.WKTReader
 import grails.util.GrailsUtil
+import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.AuthorityUtils
+
 import java.lang.management.ManagementFactory
+
 import be.cytomine.data.*
 import be.cytomine.image.server.*
 import be.cytomine.ontology.*
-import be.cytomine.security.*
+
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
-import static org.springframework.security.acls.domain.BasePermission.DELETE
-import static org.springframework.security.acls.domain.BasePermission.READ
-import static org.springframework.security.acls.domain.BasePermission.WRITE
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import be.cytomine.test.Infos
-import org.springframework.security.core.authority.AuthorityUtils
-import org.springframework.security.core.context.SecurityContextHolder as SCH
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
-import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import be.cytomine.ViewPortToBuildXML
-import be.cytomine.test.BasicInstance
-import be.cytomine.image.acquisition.Instrument
-import be.cytomine.social.UserPosition
 
 class BootStrap {
     def springSecurityService

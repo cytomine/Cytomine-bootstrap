@@ -2,7 +2,6 @@ package be.cytomine.api.processing
 
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Annotation
-import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 
 class RestRetrievalController extends RestController {

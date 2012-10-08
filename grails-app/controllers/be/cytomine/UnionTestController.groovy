@@ -1,14 +1,14 @@
 package be.cytomine
 
+import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.AlgoAnnotationTerm
 import be.cytomine.ontology.Annotation
 import be.cytomine.security.SecUser
 import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.LineString
 import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.geom.LineString
 import groovy.sql.Sql
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.api.RestController
 
 class UnionTestController extends RestController {
 

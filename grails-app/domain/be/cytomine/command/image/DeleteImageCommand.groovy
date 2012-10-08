@@ -7,11 +7,12 @@ package be.cytomine.command.image
  * Time: 14:57
  * To change this template use File | Settings | File Templates.
  */
-import grails.converters.JSON
 
+import be.cytomine.command.DeleteCommand
 import be.cytomine.command.UndoRedoCommand
 import be.cytomine.image.AbstractImage
-import be.cytomine.command.DeleteCommand
+import grails.converters.JSON
+
 import java.util.prefs.BackingStoreException
 
 class DeleteImageCommand extends DeleteCommand implements UndoRedoCommand{

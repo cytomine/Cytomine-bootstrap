@@ -1,8 +1,8 @@
 package be.cytomine.social
 
-import be.cytomine.security.SecUser
 import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
+import be.cytomine.security.SecUser
 
 class LastConnection extends CytomineDomain{
 
