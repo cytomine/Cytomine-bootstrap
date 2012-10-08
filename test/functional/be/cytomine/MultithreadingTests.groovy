@@ -3,11 +3,11 @@ package be.cytomine
 import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AnnotationAPI
-
+import be.cytomine.test.http.AnnotationTermAPI
+import be.cytomine.test.http.ImageInstanceAPI
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import be.cytomine.test.http.ImageInstanceAPI
-import be.cytomine.test.http.AnnotationTermAPI
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus

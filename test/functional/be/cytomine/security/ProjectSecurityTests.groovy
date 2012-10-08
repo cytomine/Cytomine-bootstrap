@@ -1,13 +1,10 @@
 package be.cytomine.security
 
-import be.cytomine.test.BasicInstance
-
-import be.cytomine.test.Infos
-import grails.converters.JSON
-
 import be.cytomine.project.Project
-
+import be.cytomine.test.BasicInstance
+import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
+import grails.converters.JSON
 
 /**
  * Created by IntelliJ IDEA.

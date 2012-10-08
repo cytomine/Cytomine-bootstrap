@@ -1,10 +1,8 @@
 package be.cytomine
 
-import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
-
+import be.cytomine.test.Infos
 import grails.converters.JSON
-
 import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**

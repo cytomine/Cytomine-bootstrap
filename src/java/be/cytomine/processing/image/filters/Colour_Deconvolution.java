@@ -1,11 +1,17 @@
 package be.cytomine.processing.image.filters;
 
-import ij.*;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.gui.GenericDialog;
+import ij.gui.ImageCanvas;
+import ij.gui.ImageWindow;
+import ij.gui.NewImage;
 import ij.plugin.filter.PlugInFilter;
-import ij.process.*;
-import ij.gui.*;
+import ij.process.ImageProcessor;
+
 import java.awt.*;
-import java.awt.image.*;
+import java.awt.image.IndexColorModel;
 
 
 public class Colour_Deconvolution implements PlugInFilter {

@@ -7,11 +7,14 @@ package be.cytomine.processing.image.filters;
  * Time: 15:07
  */
 
-import ij.*;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.gui.GenericDialog;
 import ij.plugin.filter.PlugInFilter;
-import ij.process.*;
-import ij.gui.*;
 import ij.plugin.filter.RankFilters;
+import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
 
 
 /**

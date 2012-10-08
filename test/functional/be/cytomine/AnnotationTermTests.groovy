@@ -1,16 +1,14 @@
 package be.cytomine
 
-import org.codehaus.groovy.grails.web.json.JSONObject
-import grails.converters.JSON
-import be.cytomine.test.BasicInstance
-import be.cytomine.ontology.Annotation
-import be.cytomine.test.Infos
-
-import be.cytomine.ontology.Term
-import org.codehaus.groovy.grails.web.json.JSONArray
-import be.cytomine.security.User
-import be.cytomine.test.http.AnnotationTermAPI
 import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.ontology.Term
+import be.cytomine.security.User
+import be.cytomine.test.BasicInstance
+import be.cytomine.test.Infos
+import be.cytomine.test.http.AnnotationTermAPI
+import grails.converters.JSON
+import org.codehaus.groovy.grails.web.json.JSONArray
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 /**
  * Created by IntelliJ IDEA.

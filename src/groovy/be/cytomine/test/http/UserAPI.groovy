@@ -1,6 +1,5 @@
 package be.cytomine.test.http
 
-import be.cytomine.project.Discipline
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstance
 import be.cytomine.test.HttpClient

@@ -1,13 +1,12 @@
 package be.cytomine
 
 import be.cytomine.project.Project
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
+import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
+
 import static org.springframework.security.acls.domain.BasePermission.*
-import org.codehaus.groovy.grails.commons.GrailsApplication
-import be.cytomine.security.UserJob
 
 abstract class CytomineDomain {
 

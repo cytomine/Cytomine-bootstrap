@@ -1,9 +1,7 @@
 package be.cytomine
 
-import grails.plugins.selenium.*
 import be.cytomine.test.Infos
-import be.cytomine.project.Project
-import be.cytomine.test.BasicInstance
+import grails.plugins.selenium.SeleniumAware
 
 @Mixin(SeleniumAware)
 public class AbstractWebCytomine extends GroovyTestCase{

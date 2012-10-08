@@ -8,11 +8,14 @@ package be.cytomine.processing.image.filters;
 // Coding   : Yasunari Tosa (ytosa@att.net)
 // Date     : Feb. 19th, 2005
 //
-import ij.*;
-import ij.process.*;
-import ij.gui.*;
-import java.awt.*;
-import ij.plugin.filter.*;
+
+import ij.IJ;
+import ij.ImagePlus;
+import ij.gui.GenericDialog;
+import ij.gui.NewImage;
+import ij.gui.PlotWindow;
+import ij.plugin.filter.PlugInFilter;
+import ij.process.ImageProcessor;
 
 public class Multi_OtsuThreshold implements PlugInFilter
 {

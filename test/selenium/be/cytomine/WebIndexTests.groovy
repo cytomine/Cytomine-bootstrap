@@ -1,7 +1,7 @@
 package be.cytomine
 
-import grails.plugins.selenium.*
 import be.cytomine.test.Infos
+import grails.plugins.selenium.SeleniumAware
 
 @Mixin(SeleniumAware)
 class WebIndexTests extends GroovyTestCase{

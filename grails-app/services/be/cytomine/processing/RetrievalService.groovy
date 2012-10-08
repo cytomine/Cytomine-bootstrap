@@ -19,6 +19,7 @@ import java.util.concurrent.Future
 
 import static groovyx.net.http.Method.DELETE
 import static groovyx.net.http.Method.POST
+import org.apache.log4j.Logger
 
 class RetrievalService {
 
@@ -125,11 +126,11 @@ class RetrievalService {
             send ContentType.JSON, paramsJSON.toString()
 
             response.success = { resp, json ->
-                println "response succes: ${resp.statusLine}"
+                log.info "response succes: ${resp.statusLine}"
                 return json.toString()
             }
             response.failure = { resp ->
-                println "response error: ${resp.statusLine}"
+                log.info "response error: ${resp.statusLine}"
                 return ""
             }
         }
@@ -144,11 +145,11 @@ class RetrievalService {
             send ContentType.JSON, jsonStr
 
             response.success = { resp, json ->
-                println "response succes: ${resp.statusLine}"
+                Logger.getLogger(this).info("response succes: ${resp.statusLine}")
                 return json.toString()
             }
             response.failure = { resp ->
-                println "response error: ${resp.statusLine}"
+                Logger.getLogger(this).info("response error: ${resp.statusLine}")
                 return ""
             }
         }
@@ -163,68 +164,68 @@ class RetrievalService {
                 uri.path = resource
 
                 response.success = { resp, json ->
-                    println "response succes: ${resp.statusLine}"
+                    Logger.getLogger(this).info("response succes: ${resp.statusLine}")
                     return json
                 }
                 response.failure = { resp ->
-                    println "response error: ${resp.statusLine}"
+                    Logger.getLogger(this).info("response error: ${resp.statusLine}")
                     return ""
                 }
             }
     }
 
     public static def indexAnnotationSynchronous(String json, String url) {
-        println "index synchronous json"
-        println "url = " + url
+        Logger.getLogger(this).info("index synchronous json")
+        Logger.getLogger(this).info("url = " + url)
         String res = "/retrieval-web/api/resource.json"
         getPostResponse(url, res, json)
     }
 
     public static def indexAnnotationSynchronous(Long id) {
-        println "index synchronous id"
+        Logger.getLogger(this).info("index synchronous id")
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String res = "/retrieval-web/api/resource.json"
         getPostResponse(server.url, res, Annotation.read(id))
     }
 
     public static def deleteAnnotationSynchronous(Long id) {
-        println "delete synchronous"
+        Logger.getLogger(this).info("delete synchronous")
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String res = "/retrieval-web/api/resource/"+id+".json"
         getDeleteResponse(server.url,res)
     }
 
     public static def deleteContainerSynchronous(Long id) {
-        println "delete container synchronous"
+        Logger.getLogger(this).info("delete container synchronous")
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String res = "/retrieval-web/api/container/" + id + ".json"
         getDeleteResponse(server.url,res)
     }
 
     public static def updateAnnotationSynchronous(Long id) {
-        println "update synchronous"
+        Logger.getLogger(this).info("update synchronous")
         deleteAnnotationSynchronous(id)
         indexAnnotationSynchronous(id)
     }
 
     public static def indexAnnotationAsynchronous(Annotation annotation,RetrievalServer server) {
         //indexAnnotationSynchronous(annotation)
-        println "index asynchronous"
+        Logger.getLogger(this).info("index asynchronous")
         String url = server.url
         def json = annotation.encodeAsJSON()
-        //println "json="+json
+
         Asynchronizer.withAsynchronizer() {
             Closure indexAnnotation = {
                 try {
                 indexAnnotationSynchronous(json,url)
             } catch (Exception e) {throw new ServerException("Retrieval Exception: "+e)}}
             Closure annotationIndexing = indexAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
-            Future result = annotationIndexing()
+            annotationIndexing()
         }
     }
 
     public static def deleteAnnotationAsynchronous(Long id) {
-        println "delete asynchronous"
+        Logger.getLogger(this).info("delete asynchronous")
         Asynchronizer.withAsynchronizer() {
             Closure deleteAnnotation = {
                 try {
@@ -232,12 +233,12 @@ class RetrievalService {
                 } catch (Exception e) {e.printStackTrace()}
             }
             Closure annotationDeleting = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
-            Future result = annotationDeleting()
+            annotationDeleting()
         }
     }
 
     public static def deleteContainerAsynchronous(Long id) {
-        println "delete asynchronous"
+        Logger.getLogger(this).info("delete asynchronous")
         Asynchronizer.withAsynchronizer() {
             Closure deleteContainer = {
                 try {
@@ -245,13 +246,13 @@ class RetrievalService {
                 } catch (Exception e) {e.printStackTrace()}
             }
             Closure containerDeleting = deleteContainer.async()  //create a new closure, which starts the original closure on a thread pool
-            Future result = containerDeleting()
+            containerDeleting()
         }
     }
 
 
     public static def updateAnnotationAsynchronous(Long id) {
-        println "update asynchronous"
+        Logger.getLogger(this).info("update asynchronous")
         Asynchronizer.doParallel() {
             Closure deleteAnnotation = {
                 try {
@@ -260,7 +261,7 @@ class RetrievalService {
                 } catch (Exception e) {e.printStackTrace()}
             }
             Closure annotationUpdating = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
-            Future result = annotationUpdating()
+            annotationUpdating()
         }
     }
 

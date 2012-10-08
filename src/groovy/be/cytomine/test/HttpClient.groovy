@@ -1,27 +1,27 @@
 package be.cytomine.test
-import org.apache.http.entity.ContentProducer
-import org.apache.http.HttpEntity
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.entity.EntityTemplate
-import org.apache.http.impl.client.DefaultHttpClient
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.auth.AuthScope
-import org.apache.http.auth.UsernamePasswordCredentials
-import org.apache.http.HttpResponse
-import org.apache.commons.io.IOUtils
-import org.apache.http.client.AuthCache
-import org.apache.http.impl.client.BasicAuthCache
-import org.apache.http.impl.auth.BasicScheme
-import org.apache.http.protocol.BasicHttpContext
-import org.apache.http.client.protocol.ClientContext
-import org.apache.http.HttpHost
 
+import org.apache.commons.io.IOUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.apache.http.client.methods.HttpPut
+import org.apache.http.HttpEntity
+import org.apache.http.HttpHost
+import org.apache.http.HttpResponse
+import org.apache.http.auth.AuthScope
+import org.apache.http.auth.UsernamePasswordCredentials
+import org.apache.http.client.AuthCache
 import org.apache.http.client.methods.HttpDelete
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.client.methods.HttpPut
+import org.apache.http.client.protocol.ClientContext
+import org.apache.http.entity.ContentProducer
+import org.apache.http.entity.EntityTemplate
 import org.apache.http.entity.InputStreamEntity
-import java.awt.image.BufferedImage
+import org.apache.http.impl.auth.BasicScheme
+import org.apache.http.impl.client.BasicAuthCache
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.protocol.BasicHttpContext
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus

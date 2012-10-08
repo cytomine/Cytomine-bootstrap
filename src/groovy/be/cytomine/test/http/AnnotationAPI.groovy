@@ -1,15 +1,15 @@
 package be.cytomine.test.http
 
+import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.Annotation
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
+import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
-import be.cytomine.ontology.Annotation
-import com.vividsolutions.jts.io.WKTReader
-import be.cytomine.image.ImageInstance
 import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**

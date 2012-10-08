@@ -1,11 +1,12 @@
 package be.cytomine
 
-import org.springframework.web.multipart.commons.CommonsMultipartResolver
-import javax.servlet.http.HttpServletRequest
-import org.springframework.web.multipart.MaxUploadSizeExceededException
-import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest
-import org.springframework.web.multipart.MultipartHttpServletRequest
 import org.springframework.util.LinkedMultiValueMap
+import org.springframework.web.multipart.MaxUploadSizeExceededException
+import org.springframework.web.multipart.MultipartHttpServletRequest
+import org.springframework.web.multipart.commons.CommonsMultipartResolver
+import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest
+
+import javax.servlet.http.HttpServletRequest
 
 /**
  * Cytomine @ GIGA-ULG

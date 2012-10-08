@@ -1,18 +1,10 @@
 package be.cytomine
 
-import be.cytomine.processing.Software
+import be.cytomine.processing.Job
 import be.cytomine.test.BasicInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONArray
-import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.security.UserJob
-import be.cytomine.processing.Job
-import be.cytomine.project.Project
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.ontology.Ontology
-import be.cytomine.ontology.Term
 
 /**
  * Created by IntelliJ IDEA.

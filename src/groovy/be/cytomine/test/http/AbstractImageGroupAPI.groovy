@@ -1,15 +1,11 @@
 package be.cytomine.test.http
 
-import be.cytomine.image.AbstractImage
-import be.cytomine.image.Mime
-import be.cytomine.project.Slide
+import be.cytomine.image.AbstractImageGroup
 import be.cytomine.security.User
-import be.cytomine.test.BasicInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
-import be.cytomine.image.AbstractImageGroup
 
 /**
  * User: lrollus

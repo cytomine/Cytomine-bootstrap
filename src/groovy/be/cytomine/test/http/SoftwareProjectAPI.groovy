@@ -1,13 +1,11 @@
 package be.cytomine.test.http
 
-import be.cytomine.processing.JobParameter
+import be.cytomine.processing.SoftwareProject
 import be.cytomine.security.User
-import be.cytomine.test.BasicInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
-import be.cytomine.processing.SoftwareProject
 
 /**
  * User: lrollus

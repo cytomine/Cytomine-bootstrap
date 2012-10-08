@@ -1,14 +1,12 @@
 package be.cytomine
 
-import be.cytomine.test.BasicInstance
-import be.cytomine.test.HttpClient
-import be.cytomine.test.Infos
-import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONArray
-import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.image.AbstractImage
 import be.cytomine.security.Group
+import be.cytomine.test.BasicInstance
+import be.cytomine.test.Infos
 import be.cytomine.test.http.AbstractImageGroupAPI
+import grails.converters.JSON
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * Created by IntelliJ IDEA.

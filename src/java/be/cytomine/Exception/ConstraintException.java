@@ -1,7 +1,5 @@
 package be.cytomine.Exception;
 
-import org.omg.CORBA.PUBLIC_MEMBER;
-
 /**
  * User: lrollus
  * Date: 17/11/11

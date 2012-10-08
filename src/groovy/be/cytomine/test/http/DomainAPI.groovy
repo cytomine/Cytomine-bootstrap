@@ -1,8 +1,9 @@
 package be.cytomine.test.http
 
-import be.cytomine.test.Infos
 import be.cytomine.test.HttpClient
+import be.cytomine.test.Infos
 import org.apache.commons.logging.LogFactory
+
 /**
  * User: lrollus
  * Date: 6/12/11

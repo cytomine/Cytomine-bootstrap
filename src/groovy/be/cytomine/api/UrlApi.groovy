@@ -1,7 +1,5 @@
 package be.cytomine.api
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus

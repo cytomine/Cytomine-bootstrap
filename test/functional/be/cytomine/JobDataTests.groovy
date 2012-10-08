@@ -1,19 +1,13 @@
 package be.cytomine
 
-import be.cytomine.ontology.Ontology
-import be.cytomine.processing.Software
-import be.cytomine.project.Discipline
-import be.cytomine.project.Project
-import be.cytomine.security.User
+import be.cytomine.processing.JobData
 import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
-import be.cytomine.test.http.ProjectAPI
+import be.cytomine.test.http.JobDataAPI
 import grails.converters.JSON
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.processing.JobData
-import be.cytomine.test.http.JobDataAPI
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 /**
  * Created by IntelliJ IDEA.

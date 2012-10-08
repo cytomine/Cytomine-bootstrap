@@ -1,37 +1,21 @@
 package be.cytomine.test
 
-import be.cytomine.image.Mime
-import be.cytomine.ontology.Annotation
-import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.image.AbstractImage
-import be.cytomine.ontology.Term
+import be.cytomine.image.AbstractImageGroup
+import be.cytomine.image.ImageInstance
+import be.cytomine.image.Mime
+import be.cytomine.image.acquisition.Instrument
+import be.cytomine.project.Discipline
+import be.cytomine.project.Project
+import be.cytomine.project.Slide
+import be.cytomine.social.SharedAnnotation
+import com.vividsolutions.jts.io.WKTReader
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import be.cytomine.security.User
-import be.cytomine.project.Slide
-import be.cytomine.project.Project
-import be.cytomine.ontology.Relation
-import be.cytomine.ontology.RelationTerm
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.ontology.Ontology
-import be.cytomine.image.ImageInstance
-import be.cytomine.security.Group
-import be.cytomine.image.AbstractImageGroup
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.processing.Software
-import be.cytomine.processing.Job
-import be.cytomine.project.Discipline
 import org.codehaus.groovy.grails.commons.ApplicationHolder
-import be.cytomine.security.SecUserSecRole
-import be.cytomine.security.SecRole
-import be.cytomine.security.SecUser
-import be.cytomine.security.UserJob
-import be.cytomine.processing.SoftwareParameter
-import be.cytomine.processing.SoftwareProject
-import be.cytomine.processing.JobParameter
-import be.cytomine.social.SharedAnnotation
-import be.cytomine.processing.JobData
-import be.cytomine.image.acquisition.Instrument
+import be.cytomine.ontology.*
+import be.cytomine.processing.*
+import be.cytomine.security.*
 
 /**
  * Created by IntelliJ IDEA.
