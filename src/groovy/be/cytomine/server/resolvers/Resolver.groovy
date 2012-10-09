@@ -21,7 +21,7 @@ abstract class Resolver {
         Map<String, Object> resolvers = new HashMap<String,Object>()
         resolvers.put("DjatokaResolver", new DjatokaResolver())
         resolvers.put("IIPResolver", new IIPResolver())
-        return resolvers.get(className)
+        return (Resolver) resolvers.get(className)
 
     }
 

@@ -14,14 +14,12 @@ class RestController {
     def sessionFactory
     def propertyInstanceMap = org.codehaus.groovy.grails.plugins.DomainClassGrailsPlugin.PROPERTY_INSTANCE_MAP
     def springSecurityService
-    int idUser
 
-    static int NOT_FOUND_CODE = 404
+    static final int NOT_FOUND_CODE = 404
 
     def transactionService
 
-
-    def add(def service, def json) {
+    public Object add(def service, def json) {
         try {
             if (json instanceof JSONArray) {
                 responseResult(addMultiple(service,json))
@@ -35,11 +33,11 @@ class RestController {
         }
     }
 
-    def addOne(def service, def json) {
+    public Object addOne(def service, def json) {
           return service.add(json)
     }
 
-    def addMultiple(def service, def json) {
+    public Object addMultiple(def service, def json) {
         def result = [:]
         result.data = []
         int i = 0
@@ -51,18 +49,17 @@ class RestController {
         }
         cleanUpGorm()
         result.status = 200
-        return result
+        result
     }
 
-    def cleanUpGorm() {
+    public void  cleanUpGorm() {
         def session = sessionFactory.currentSession
         session.flush()
         session.clear()
         propertyInstanceMap.get().clear()
-
     }
 
-    def update(def service, def json) {
+    public Object  update(def service, def json) {
         try {
             def domain = service.retrieve(json)
             def result = service.update(domain,json)
@@ -73,7 +70,7 @@ class RestController {
         }
     }
 
-    def delete(def service, def json) {
+    public Object delete(def service, def json) {
         try {
             def domain = service.retrieve(json)
             def result = service.delete(domain,json)

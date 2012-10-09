@@ -33,7 +33,7 @@ class ProjectService extends ModelService {
     def springSecurityService
 
 
-    boolean saveOnUndoRedoStack = false
+    final boolean saveOnUndoRedoStack = false
 
     void addPermission(Project project, String username, int permission) {
         addPermission(project, username, aclPermissionFactory.buildFromMask(permission))
@@ -148,10 +148,8 @@ class ProjectService extends ModelService {
     @PreAuthorize("#domain.hasPermission('WRITE') or hasRole('ROLE_ADMIN')")
     def update(def domain, def json) {
         checkRetrievalConsistency(json)
-        String oldName = Project.get(json.id)?.name
         SecUser currentUser = cytomineService.getCurrentUser()
         def response = executeCommand(new EditCommand(user: currentUser), json)
-        String newName = Project.get(json.id)?.name
         //Validate and save domain
 
         Project project = Project.get(json.id)

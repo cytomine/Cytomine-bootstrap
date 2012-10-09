@@ -10,14 +10,13 @@ class CommandService {
 
     def springSecurityService
     def grailsApplication
-    int idUser
 
-    static int SUCCESS_ADD_CODE = 200
-    static int SUCCESS_EDIT_CODE = 200
-    static int SUCCESS_DELETE_CODE = 200
+    static final int SUCCESS_ADD_CODE = 200
+    static final int SUCCESS_EDIT_CODE = 200
+    static final int SUCCESS_DELETE_CODE = 200
 
-    static int NOT_FOUND_CODE = 404
-    static int TOO_LONG_REQUEST = 413
+    static final int NOT_FOUND_CODE = 404
+    static final int TOO_LONG_REQUEST = 413
 
     //to do : filter by user
     def list()  {

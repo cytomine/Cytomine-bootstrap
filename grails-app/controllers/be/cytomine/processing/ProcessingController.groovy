@@ -125,16 +125,4 @@ class ProcessingController extends RestController {
     }
 
 
-    private def getROI(idImage, x, y) {
-        def shift = ProcessingController.ROI_SIZE / 2
-        def points = []
-        points.add([x: (x - shift), y: (y - shift)]) //topLeft
-        points.add([x: (x + shift), y: (y - shift)]) //topRight
-        points.add([x: (x + shift), y: (y + shift)]) //bottomRight
-        points.add([x: (x - shift), y: (y + shift)]) //bottomLeft
-        points
-    }
-
-
-
 }

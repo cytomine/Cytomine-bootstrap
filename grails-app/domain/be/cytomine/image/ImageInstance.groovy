@@ -158,8 +158,8 @@ class ImageInstance extends CytomineDomain {
 
             //returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(cytomineBaseUrl,it.baseImage.id)
 
-            try {returnArray['numberOfAnnotations'] = it.countImageAnnotations} catch (Exception e) {e.printStackTrace(); returnArray['numberOfAnnotations'] = -1}
-            try {returnArray['numberOfJobAnnotations'] = it.countImageJobAnnotations} catch (Exception e) {e.printStackTrace(); returnArray['numberOfJobAnnotations'] = -1}
+            try {returnArray['numberOfAnnotations'] = it.countImageAnnotations} catch (Exception e) {returnArray['numberOfAnnotations'] = -1}
+            try {returnArray['numberOfJobAnnotations'] = it.countImageJobAnnotations} catch (Exception e) {returnArray['numberOfJobAnnotations'] = -1}
             //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
 
             //returnArray['imageServerBaseURL'] = it.baseImage.getMime().imageServers().collect { it.getZoomifyUrl() }

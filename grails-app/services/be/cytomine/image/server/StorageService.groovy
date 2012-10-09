@@ -35,10 +35,10 @@ class StorageService {
         def proc = command.execute()                 // Call *execute* on the string
         proc.waitFor()                               // Wait for the command to finish
 
-        def exitValue = proc.exitValue()
-        def stdderr = proc.err.text
         def stdout = proc.in.text
-
+        log.info "return code: ${ proc.exitValue()}"
+        log.info "stderr: ${proc.err.text}"
+        log.info "stdout: ${stdout}" // *out* from the external program is *in* for groovy
         return JSON.parse(stdout)
     }
 

@@ -186,8 +186,8 @@ class Project extends CytomineDomain {
             returnArray['disciplineName'] = project.discipline ? project.discipline.name : null
             try {returnArray['numberOfSlides'] = project.countSlides()} catch (Exception e) {returnArray['numberOfSlides'] = -1}
             try {returnArray['numberOfImages'] = project.countImageInstance()} catch (Exception e) {returnArray['numberOfImages'] = -1}
-            try {returnArray['numberOfAnnotations'] = project.countAnnotations()} catch (Exception e) {e.printStackTrace(); returnArray['numberOfAnnotations'] = -1}
-			try {returnArray['numberOfJobAnnotations'] = project.countJobAnnotations()} catch (Exception e) {e.printStackTrace(); returnArray['numberOfJobAnnotations'] = -1}
+            try {returnArray['numberOfAnnotations'] = project.countAnnotations()} catch (Exception e) { returnArray['numberOfAnnotations'] = -1}
+			try {returnArray['numberOfJobAnnotations'] = project.countJobAnnotations()} catch (Exception e) { returnArray['numberOfJobAnnotations'] = -1}
             try {returnArray['retrievalProjects'] = project.retrievalProjects.collect { it.id } } catch (Exception e) {log.info "users:"+e}
 
             returnArray['retrievalDisable'] = project.retrievalDisable

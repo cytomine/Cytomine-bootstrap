@@ -69,8 +69,6 @@ class RestAnnotationController extends RestController {
         } else {
             imageInstanceList = imageInstanceService.list(project)
         }
-        def sessionFactory
-
         if (project) {
             def list = annotationService.list(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"))
             if(params.offset!=null) responseSuccess([size:list.size(),collection:substract(list,offset,max)])
@@ -291,7 +289,6 @@ class RestAnnotationController extends RestController {
 
     def showComment = {
         Annotation annotation = annotationService.read(params.long('annotation'))
-        User user = User.read(springSecurityService.principal.id)
         if (!annotation)  responseNotFound("Annotation", params.annotation)
         annotationService.checkAuthorization(annotation.project)
         def sharedAnnotation = SharedAnnotation.findById(params.long('id'))
@@ -331,7 +328,7 @@ class RestAnnotationController extends RestController {
         else responseNotFound("Annotation", params.id)
     }
 
-    def cleanUpGorm() {
+    public void cleanUpGorm() {
         def session = sessionFactory.currentSession
         session.flush()
         session.clear()
@@ -344,7 +341,7 @@ class RestAnnotationController extends RestController {
     }
 
     @Override
-    def addOne(def service, def json) {
+    public Object addOne(def service, def json) {
         if(!json.project || json.isNull('project')) {
             ImageInstance image = ImageInstance.read(json.image)
             if(image) json.project = image.project.id
@@ -406,7 +403,7 @@ class RestAnnotationController extends RestController {
     }
 
 
-    def union() {
+    def union = {
         ImageInstance image = ImageInstance.read(params.getLong('idImage'))
         SecUser user = SecUser.read(params.getLong('idUser'))
         Term term = Term.read(params.getLong('idTerm'))

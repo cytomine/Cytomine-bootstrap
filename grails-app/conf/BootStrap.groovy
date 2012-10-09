@@ -255,8 +255,6 @@ class BootStrap {
 //            }
         }
 
-        def destroy = {
-        }
         //end of init
     }
 
@@ -423,7 +421,6 @@ class BootStrap {
     def createSlidesAndAbstractImages(abstractImages) {
 
         //Storage storage = Storage.findByName("cytomine")
-        Group giga = Group.findByName('GIGA')
         User user = User.findByUsername("rmaree")
         abstractImages.each { item ->
             if (!item.name) {
@@ -551,8 +548,8 @@ class BootStrap {
 
 
     def createUsers(usersSamples) {
-        def userRole = SecRole.findByAuthority("ROLE_USER") ?: new SecRole(authority: "ROLE_USER").save(flush: true)
-        def adminRole = SecRole.findByAuthority("ROLE_ADMIN") ?: new SecRole(authority: "ROLE_ADMIN").save(flush: true)
+        SecRole.findByAuthority("ROLE_USER") ?: new SecRole(authority: "ROLE_USER").save(flush: true)
+        SecRole.findByAuthority("ROLE_ADMIN") ?: new SecRole(authority: "ROLE_ADMIN").save(flush: true)
         usersSamples.each { item ->
             User user = User.findByUsername(item.username)
             if (user)  return
@@ -773,10 +770,6 @@ class BootStrap {
             if (AbstractImage.findByPath(item.path)) return
             def extension = item.extension ?: "jp2"
             def mime = Mime.findByExtension(extension)
-
-            def user = User.findByUsername("lrollus")
-
-
             Random random = new Random()
             Long randomInt = random.nextLong()
             Date created = new Date(randomInt);

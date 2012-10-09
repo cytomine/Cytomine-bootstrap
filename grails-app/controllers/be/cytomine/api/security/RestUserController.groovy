@@ -37,14 +37,14 @@ class RestUserController extends RestController {
      */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
-        if(params.publicKey!=null) {
+        if (params.publicKey != null) {
             responseSuccess(userService.getByPublicKey(params.publicKey))
         } else responseSuccess(userService.list())
     }
 
     def showUserJob = {
         UserJob userJob = UserJob.read(params.long('id'))
-        if(userJob) responseSuccess(userJob)
+        if (userJob) responseSuccess(userJob)
         else responseNotFound("UserJob", params.id)
 
     }
@@ -76,11 +76,11 @@ class RestUserController extends RestController {
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showByProject = {
         boolean online = params.boolean('online')
-        Project project = projectService.read(params.long('id'),new Project())
+        Project project = projectService.read(params.long('id'), new Project())
         if (project && !online) {
             responseSuccess(project.users())
-        } else if(project && online) {
-            def users = userService.getAllFriendsUsersOnline(cytomineService.currentUser,project)
+        } else if (project && online) {
+            def users = userService.getAllFriendsUsersOnline(cytomineService.currentUser, project)
             responseSuccess(users)
         }
         else responseNotFound("User", "Project", params.id)
@@ -88,7 +88,7 @@ class RestUserController extends RestController {
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showAdminByProject = {
-        Project project = projectService.read(params.long('id'),new Project())
+        Project project = projectService.read(params.long('id'), new Project())
         if (project) {
             responseSuccess(project.admins())
         }
@@ -97,7 +97,7 @@ class RestUserController extends RestController {
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showCreatorByProject = {
-        Project project = projectService.read(params.long('id'),new Project())
+        Project project = projectService.read(params.long('id'), new Project())
         if (project) {
             responseSuccess([project.creator()])
         }
@@ -124,7 +124,7 @@ class RestUserController extends RestController {
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showLayerByProject = {
-        Project project = projectService.read(params.long('id'),new Project())
+        Project project = projectService.read(params.long('id'), new Project())
         if (project) {
             responseSuccess(project.userLayers())
         }
@@ -138,7 +138,7 @@ class RestUserController extends RestController {
     def add = {
         add(userService, request.JSON)
     }
-    @Secured(['ROLE_USER','ROLE_ADMIN'])
+    @Secured(['ROLE_USER', 'ROLE_ADMIN'])
     def update = {
         update(userService, request.JSON)
     }
@@ -150,24 +150,24 @@ class RestUserController extends RestController {
     def addChild = {
         def json = request.JSON
         User user = null
-        if(json.parent.toString().equals("null")) {
+        if (json.parent.toString().equals("null")) {
             user = User.read(springSecurityService.principal.id)
         } else {
             user = User.read(json.parent.toString())
         }
 
         UserJob userJob = new UserJob()
-        if(json.job.toString().equals("null")) {
-            log.debug "Job is not define: create new job:"+json
+        if (json.job.toString().equals("null")) {
+            log.debug "Job is not define: create new job:" + json
             Job job = new Job()
             job.software = Software.read(json.software)
             try {
                 job.project = Project.read(json.project)
-            }catch(Exception e) {
+            } catch (Exception e) {
                 log.warn e.toString()
             }
             if (job.validate()) {
-                job = job.save(flush : true)
+                job = job.save(flush: true)
             } else {
                 job.errors?.each { log.warn it}
             }
@@ -191,8 +191,8 @@ class RestUserController extends RestController {
             Date date = new Date()
             date.setTime(Long.parseLong(json.created.toString()))
             userJob.created = date
-        } catch(Exception e) {log.warn e.toString()}
-        userJob = userJob.save(flush:true)
+        } catch (Exception e) {log.warn e.toString()}
+        userJob = userJob.save(flush: true)
 
         user.getAuthorities().each { secRole ->
             SecUserSecRole.create(userJob, secRole)
@@ -203,7 +203,7 @@ class RestUserController extends RestController {
 //        }
 
         //def ret = [data: [user: newUser], status: 200]
-        response([userJob: userJob],200)
+        response([userJob: userJob], 200)
 
     }
 
@@ -211,7 +211,7 @@ class RestUserController extends RestController {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
         boolean admin = false
-        userService.deleteUserFromProject(user,project,admin)
+        userService.deleteUserFromProject(user, project, admin)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
@@ -221,7 +221,7 @@ class RestUserController extends RestController {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
         boolean admin = false
-        userService.addUserFromProject(user,project,admin)
+        userService.addUserFromProject(user, project, admin)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
@@ -233,7 +233,7 @@ class RestUserController extends RestController {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
         boolean admin = true
-        userService.deleteUserFromProject(user,project,admin)
+        userService.deleteUserFromProject(user, project, admin)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
@@ -244,7 +244,7 @@ class RestUserController extends RestController {
         Project project = Project.get(params.id)
         User user = User.get(params.idUser)
         boolean admin = true
-        userService.addUserFromProject(user,project,admin)
+        userService.addUserFromProject(user, project, admin)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
@@ -270,16 +270,16 @@ class RestUserController extends RestController {
         SecUser user = userService.get(params.long('id'))
         Long idProject = params.long('project')
         Project project = null
-        if(idProject) project = projectService.read(params.long('project'),new Project())
+        if (idProject) project = projectService.read(params.long('project'), new Project())
         boolean includeOffline = params.boolean('offline')
 
         List<SecUser> users
-        if(!includeOffline){
-            if(project)
-                users = userService.getAllFriendsUsersOnline(user,project)
+        if (!includeOffline) {
+            if (project)
+                users = userService.getAllFriendsUsersOnline(user, project)
             else users = userService.getAllFriendsUsersOnline(user)
         } else {
-            if(project)
+            if (project)
                 users = securityService.getUserList(project)
             else
                 users = userService.getAllFriendsUsers(user)
@@ -291,65 +291,38 @@ class RestUserController extends RestController {
 
     def listOnlineFriendsWithPosition = {
         Date someSecondesBefore = Utils.getDatePlusSecond(-20)
-        Project project = projectService.read(params.long('id'),new Project())
+        Project project = projectService.read(params.long('id'), new Project())
 
-        def users = userService.getAllFriendsUsersOnline(cytomineService.currentUser,project)
-        def usersId = users.collect{it.id}
+        def users = userService.getAllFriendsUsersOnline(cytomineService.currentUser, project)
+        def usersId = users.collect {it.id}
         List<SecUser> userPositions = SecUser.executeQuery(
-            "SELECT userPosition.user.id,imageInstance.id, abstractImage.originalFilename, max(userPosition.updated) from UserPosition as userPosition, ImageInstance as imageInstance, AbstractImage as abstractImage "+
-            "where userPosition.project.id = ${project.id} and userPosition.updated > ? and imageInstance.id = userPosition.image.id and imageInstance.baseImage.id = abstractImage.id group by userPosition.user.id,imageInstance.id,abstractImage.originalFilename order by userPosition.user.id",[someSecondesBefore])
+                "SELECT userPosition.user.id,imageInstance.id, abstractImage.originalFilename, max(userPosition.updated) from UserPosition as userPosition, ImageInstance as imageInstance, AbstractImage as abstractImage " +
+                        "where userPosition.project.id = ${project.id} and userPosition.updated > ? and imageInstance.id = userPosition.image.id and imageInstance.baseImage.id = abstractImage.id group by userPosition.user.id,imageInstance.id,abstractImage.originalFilename order by userPosition.user.id", [someSecondesBefore])
 
         def usersWithPosition = []
         def userInfo
         long previousUser = -1
-        userPositions.each{
+        userPositions.each {
             long currenUser = it[0]
-            if(previousUser!=currenUser) {
-                userInfo = [id:currenUser, position:[]]
+            if (previousUser != currenUser) {
+                userInfo = [id: currenUser, position: []]
                 usersWithPosition << userInfo
                 usersId.remove(currenUser)
             }
-            userInfo['position'] << [image:it[1],filename:it[2],date:it[3]]
+            userInfo['position'] << [image: it[1], filename: it[2], date: it[3]]
             previousUser = currenUser
         }
         //user online with no image open
         usersId.each {
-            usersWithPosition << [id:it, position:[]]
+            usersWithPosition << [id: it, position: []]
         }
         responseSuccess(usersWithPosition)
     }
 
-
-
-    private List getLastPosition(SecUser user, Project project) {
-        log.info "getLastPosition ${user} ${project}"
-        log.info UserPosition.list().get(0).updated
-        Date someSecondesBefore = Utils.getDatePlusSecond(-20)
-
-        List<SecUser> userPositions = SecUser.executeQuery(
-            "SELECT imageInstance.id, abstractImage.originalFilename, max(userPosition.updated) from UserPosition as userPosition, ImageInstance as imageInstance, AbstractImage as abstractImage "+
-            "where userPosition.project.id = ${project.id} and userPosition.user.id = ${user.id} and userPosition.updated > ? and imageInstance.id = userPosition.image.id and imageInstance.baseImage.id = abstractImage.id group by imageInstance.id,abstractImage.originalFilename",[someSecondesBefore])
-
-
-        log.info userPositions
-
-        def positions = []
-
-        userPositions.each { position ->
-            log.info position
-              def mapPositon = [date:position[2],image:position[0],filename:position[1]]
-            positions <<  mapPositon
-
-        }
-
-        positions
-    }
-
-
     def listUserJobByProject = {
-        Project project = projectService.read(params.long('id'),new Project())
+        Project project = projectService.read(params.long('id'), new Project())
         if (project) {
-            if(params.getBoolean("tree")) {
+            if (params.getBoolean("tree")) {
 
                 SimpleDateFormat formater = new SimpleDateFormat("dd MM yyyy HH:mm:ss")
 
@@ -375,11 +348,11 @@ class RestUserController extends RestController {
                     soft.hideCheckbox = true
 
                     def softJob = []
-                    List<Job> jobs = Job.findAllByProjectAndSoftware(project,software,[sort:'created',order:'desc'])
+                    List<Job> jobs = Job.findAllByProjectAndSoftware(project, software, [sort: 'created', order: 'desc'])
                     jobs.each {
                         def userJob = UserJob.findByJob(it);
                         def job = [:]
-                        if(userJob) {
+                        if (userJob) {
                             job.id = userJob.id
                             job.key = userJob.id
                             job.title = formater.format(it.created);
@@ -399,12 +372,12 @@ class RestUserController extends RestController {
 
             } else {
                 def userJobs = []
-                List<Job> allJobs = Job.findAllByProject(project,[sort:'created',order:'desc'])
+                List<Job> allJobs = Job.findAllByProject(project, [sort: 'created', order: 'desc'])
 
                 allJobs.each { job ->
                     def item = [:]
                     def userJob = UserJob.findByJob(job);
-                    if(userJob) {
+                    if (userJob) {
                         item.id = userJob.id
                         item.idJob = job.id
                         item.idSoftware = job.software.id
@@ -415,11 +388,10 @@ class RestUserController extends RestController {
                 }
                 responseSuccess(userJobs)
             }
-        }else {
+        } else {
             responseNotFound("User", "Project", params.id)
         }
     }
-
 
 
 }

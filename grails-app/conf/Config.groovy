@@ -167,6 +167,14 @@ log4j = {
     println "Log4j consoleLevel"
 
     appenders {
+        rollingFile  name:'infoLog', file:'/tmp/cytomine-info.log', threshold: org.apache.log4j.Level.INFO, maxFileSize:1024
+        rollingFile  name:'warnLog', file:'/tmp/cytomine-warn.log', threshold: org.apache.log4j.Level.WARN, maxFileSize:1024
+        rollingFile  name:'errorLog', file:'/tmp/cytomine-error.log', threshold: org.apache.log4j.Level.ERROR, maxFileSize:1024
+        rollingFile  name:'custom', file:'/tmp/cytomine-custom.log', maxFileSize:1024
+    }
+
+
+    /*appenders {
 	    'null' name:'stacktrace'
         rollingFile name:"logfile", maxFileSize:'300kB',
                 layout:pattern(conversionPattern: "%d{[ dd.MM.yy HH:mm:ss.SSS]} [%t] %-5p %c %x - %m%n"),
@@ -175,7 +183,7 @@ log4j = {
 //               SMTPHost:'smtp.gmail.com', SMTPUsername:'cytomine.ulg@gmail.com', SMTPPassword: 'C3=8wj9R',
 //               layout: pattern(conversionPattern: '%d{[ dd.MM.yy HH:mm:ss.SSS]} [%t] %n%-5p %n%c %n%C %n %x %n %m%n %n'),
 //               threshold:org.apache.log4j.Level.ERROR)
-    }
+    }*/
 
     warn  'org.codehaus.groovy.grails.web.servlet',  //  controllers
             'org.codehaus.groovy.grails.web.pages', //  GSP

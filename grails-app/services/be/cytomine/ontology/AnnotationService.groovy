@@ -560,14 +560,6 @@ class AnnotationService extends ModelService {
         }
     }
 
-    //experimental
-    private def simplifyPolygonPreserving(String geometryString) {
-        Geometry geometry = new WKTReader().read(geometryString);
-        TopologyPreservingSimplifier tps = new TopologyPreservingSimplifier(geometry)
-        return [geometry: tps.getResultGeometry(), rate: 0]
-
-    }
-
     private def simplifyPolygon(String form) {
 
         Geometry annotationFull = new WKTReader().read(form);
@@ -605,8 +597,14 @@ class AnnotationService extends ModelService {
     }
 
     private def simplifyPolygon(String form, double rate) {
-        Geometry annotation = new WKTReader().read(form);
-        annotation = DouglasPeuckerSimplifier.simplify(annotation, rate)
+       Geometry annotation = new WKTReader().read(form);
+        Boolean isPolygonAndNotValid =  (annotation instanceof com.vividsolutions.jts.geom.Polygon && !((Polygon)annotationFull).isValid())
+        if (isPolygonAndNotValid) {
+            //Preserving polygon shape but slower than DouglasPeuker
+            annotation = TopologyPreservingSimplifier.simplify(annotation, rate)
+        } else {
+            annotation = DouglasPeuckerSimplifier.simplify(annotation, rate)
+        }
         return [geometry: annotation, rate: rate]
     }
 

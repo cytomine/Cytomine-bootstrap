@@ -16,7 +16,7 @@ class SoftwareService extends ModelService {
 
     static transactional = true
 
-    boolean saveOnUndoRedoStack = true
+    final boolean saveOnUndoRedoStack = true
 
     def cytomineService
     def transactionService

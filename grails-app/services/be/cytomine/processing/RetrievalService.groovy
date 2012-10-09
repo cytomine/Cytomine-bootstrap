@@ -15,7 +15,6 @@ import groovyx.net.http.HTTPBuilder
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException
 
-import java.util.concurrent.Future
 
 import static groovyx.net.http.Method.DELETE
 import static groovyx.net.http.Method.POST

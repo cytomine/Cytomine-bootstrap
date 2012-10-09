@@ -19,7 +19,7 @@ class RelationTermService extends ModelService {
     def cytomineService
     def domainService
 
-    boolean saveOnUndoRedoStack = true
+    final boolean saveOnUndoRedoStack = true
 
     def list() {
         RelationTerm.list()

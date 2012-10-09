@@ -13,8 +13,8 @@ import java.awt.image.BufferedImage
 
 class ImageProcessingService {
 
-    private static def BLACK = 0
-    private static def WHITE = 255
+    private static final int BLACK = 0
+    private static final int WHITE = 255
 
 
     static transactional = false

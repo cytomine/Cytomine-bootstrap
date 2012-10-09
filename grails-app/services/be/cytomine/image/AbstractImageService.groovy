@@ -95,7 +95,7 @@ class AbstractImageService extends ModelService {
 
 
     def add(def json) throws CytomineException {
-        Transaction transaction = transactionService.start()
+        transactionService.start()
 
         SecUser currentUser = cytomineService.getCurrentUser()
 
@@ -119,7 +119,7 @@ class AbstractImageService extends ModelService {
     }
 
     def update(def domain,def json) throws CytomineException {
-        Transaction transaction = transactionService.start()
+        transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
         def res = executeCommand(new EditCommand(user: currentUser), json)
         AbstractImage abstractImage = res.object
@@ -139,7 +139,7 @@ class AbstractImageService extends ModelService {
     }
 
     def delete(def domain,def json) throws CytomineException {
-        Transaction transaction = transactionService.start()
+        transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
         AbstractImage abstractImage = AbstractImage.read(json.id)
         Group group = Group.findByName(currentUser.getUsername())
@@ -221,7 +221,7 @@ class AbstractImageService extends ModelService {
         int windowWidth = parameters.width
         int windowHeight = parameters.height
         int stepX = parameters.width * (1 - parameters.overlapX)
-        int stepY = parameters.height * (1 - parameters.overlapY)
+        //int stepY = parameters.height * (1 - parameters.overlapY)
         for (int y = 0; y < abstractImage.getHeight(); y +=  stepY) {
             for (int x = 0; x < abstractImage.getWidth(); x += stepX) {
                 int x_window = x

@@ -165,30 +165,11 @@ class AbstractImage extends CytomineDomain {
     }
 
     def getPreviewURL() {
-        def imageServers = getImageServers()
-        if (imageServers == null || imageServers.size() == 0) {
-            return null
-        }
-        def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
-        Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        //String url = resolver.getPreviewUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath())
         return getCropURLWithMaxWithOrHeight(0, this.height, this.width, this.height, 5096, 5096)
     }
 
     def getThumbURL() {
-        def imageServers = getImageServers()
-        if (imageServers == null || imageServers.size() == 0 || getWidth() == null || getHeight() == null) {
-            return null
-        }
-        def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
-        Integer desiredWidth = this.getWidth()
-        while (desiredWidth > 512) {
-            desiredWidth /= 2
-        }
-        Resolver resolver = Resolver.getResolver(imageServers[index].className)
         return getCropURLWithMaxWithOrHeight(0, this.height, this.width, this.height, 256, 256)
-        /*String url = resolver.getThumbUrl(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath(), desiredWidth)
-        return url*/
     }
 
     def getMetadataURL() {
@@ -213,7 +194,7 @@ class AbstractImage extends CytomineDomain {
         return url
     }
 
-    def getCropURLWithMaxWithOrHeight(int topLeftX, int topLeftY, int width, int height, int desiredWidth, int desiredHeight) {
+    def getCropURLWithMaxWithOrHeight(def topLeftX, def topLeftY, def width, def height, def desiredWidth, def desiredHeight) {
         def imageServers = getImageServers()
         if (imageServers == null || imageServers.size() == 0) {
             return null
@@ -240,7 +221,6 @@ class AbstractImage extends CytomineDomain {
     }
 
     def getZoomLevels() {
-
         def imageServers = getImageServers()
         if (imageServers == null || imageServers.size() == 0 || width == null || height == null) return null
         Resolver resolver = Resolver.getResolver(imageServers[0].className)

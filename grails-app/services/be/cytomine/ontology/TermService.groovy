@@ -27,7 +27,7 @@ class TermService extends ModelService {
     def relationTermService
     def domainService
 
-    boolean saveOnUndoRedoStack = true
+    final boolean saveOnUndoRedoStack = true
 
     def list() {
         return Term.list()
