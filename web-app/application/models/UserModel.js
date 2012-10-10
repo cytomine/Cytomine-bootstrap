@@ -13,29 +13,28 @@ var UserModel = Backbone.Model.extend({
      }
      },*/
 
-    url : function() {
+    url:function () {
         var base = 'api/user';
         var format = '.json';
         if (this.isNew()) return base + format;
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
     },
 
-    prettyName : function () {
+    prettyName:function () {
         return this.get('lastname') + " " + this.get('firstname');
     }
 });
 
 
-
 var UserFriendCollection = Backbone.Collection.extend({
-    model: UserModel,
-    url: function() {
+    model:UserModel,
+    url:function () {
         return "api/user/" + this.id + "/friends.json";
     },
-    initialize: function (options) {
+    initialize:function (options) {
         this.id = options.id;
-    },comparator : function(user) {
-        if(user.get("lastname")!=undefined) {
+    }, comparator:function (user) {
+        if (user.get("lastname") != undefined) {
             return user.get("lastname") + " " + user.get("firstname")
         }
         else return user.get("username").toLowerCase();
@@ -43,44 +42,44 @@ var UserFriendCollection = Backbone.Collection.extend({
 });
 
 var UserOnlineCollection = Backbone.Collection.extend({
-    model: UserModel,
-    url: function() {
+    model:UserModel,
+    url:function () {
         return "api/project/" + this.project + "/online/user.json";
     },
-    initialize: function (options) {
+    initialize:function (options) {
         this.project = options.project;
     }
 });
 
 // define our collection
 var UserCollection = Backbone.Collection.extend({
-    model: UserModel,
-    url: function() {
+    model:UserModel,
+    url:function () {
         if (this.project != undefined && this.admin == true) {
             return "api/project/" + this.project + "/admin.json";
         } else if (this.project != undefined && this.creator == true) {
             return "api/project/" + this.project + "/creator.json";
         } else if (this.project != undefined && this.online == true) {
-                    return "api/project/" + this.project + "/user.json?online=true";
-       }else if (this.project != undefined) {
+            return "api/project/" + this.project + "/user.json?online=true";
+        } else if (this.project != undefined) {
             return "api/project/" + this.project + "/user.json";
         } else if (this.ontology != undefined && this.creator == true) {
             return "api/ontology/" + this.ontology + "/creator.json";
-        }else if (this.ontology != undefined) {
-            console.log("ontologyYYY="+this.ontology);
+        } else if (this.ontology != undefined) {
+            console.log("ontologyYYY=" + this.ontology);
             return "api/ontology/" + this.ontology + "/user.json";
-        }else {
+        } else {
             return "api/user.json";
         }
     },
-    initialize: function (options) {
+    initialize:function (options) {
         this.project = options.project;
         this.ontology = options.ontology;
         this.admin = options.admin;
         this.creator = options.creator;
         this.online = options.online;
-    },comparator : function(user) {
-        if(user.get("lastname")!=undefined) {
+    }, comparator:function (user) {
+        if (user.get("lastname") != undefined) {
             return user.get("lastname") + " " + user.get("firstname")
         }
         else return user.get("username").toLowerCase();
@@ -89,26 +88,26 @@ var UserCollection = Backbone.Collection.extend({
 
 
 var UserLayerCollection = Backbone.Collection.extend({
-    url: function() {
+    url:function () {
         if (this.project != undefined) {
             return "api/project/" + this.project + "/userlayer.json";
         }
     },
-    initialize: function (options) {
+    initialize:function (options) {
         this.project = options.project;
     }
 });
 
 
-var UserSecRole =  Backbone.Model.extend({
-    url: function() {
+var UserSecRole = Backbone.Model.extend({
+    url:function () {
         if (this.role != undefined || this.isNew()) {
             return "api/user/" + this.user + "/role.json";
         } else {
-            return "api/user/" + this.user + "/role/"+this.role+".json";
+            return "api/user/" + this.user + "/role/" + this.role + ".json";
         }
     },
-    initialize: function (options) {
+    initialize:function (options) {
         this.user = options.user;
         this.role = options.role;
     }
@@ -117,8 +116,8 @@ var UserSecRole =  Backbone.Model.extend({
 
 // define our collection
 var UserJobCollection = Backbone.Collection.extend({
-    model: UserModel,
-    url: function() {
+    model:UserModel,
+    url:function () {
         if (this.project && !this.tree) {
             return "api/project/" + this.project + "/userjob.json";
         } else if (this.project && this.tree) {
@@ -127,13 +126,13 @@ var UserJobCollection = Backbone.Collection.extend({
             return "api/userjob.json";
         }
     },
-    prettyName : function () {
+    prettyName:function () {
         return this.get('softwareName');
     },
-    initialize: function (options) {
+    initialize:function (options) {
         this.project = options.project;
         this.tree = options.tree || false;
-    },comparator : function(user) {
+    }, comparator:function (user) {
         return -user.get("created");
     }
 });

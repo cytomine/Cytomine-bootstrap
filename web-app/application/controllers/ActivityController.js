@@ -1,12 +1,12 @@
 var ActivityController = Backbone.Router.extend({
-    routes: {
-        "activity"          :   "activity"
+    routes:{
+        "activity":"activity"
     },
 
-    activity : function() {
+    activity:function () {
         if (!this.view) {
             this.view = new ActivityView({
-                el : "#activity-content"
+                el:"#activity-content"
             }).render();
 
         }

@@ -1,11 +1,11 @@
 var ExplorerTabs = Backbone.View.extend({
-    tagName : "div",
-    triggerRoute : true,
+    tagName:"div",
+    triggerRoute:true,
     /**
      * ExplorerTabs constructor
      * @param options
      */
-    initialize: function(options) {
+    initialize:function (options) {
         this.tabs = []; //that we are browsing
         this.container = options.container;
         this.dashboard = null;
@@ -13,9 +13,9 @@ var ExplorerTabs = Backbone.View.extend({
     /**
      * Grab the layout and call ask for render
      */
-    render : function() {
+    render:function () {
         var self = this;
-        require(["text!application/templates/explorer/Tabs.tpl.html"], function(tpl) {
+        require(["text!application/templates/explorer/Tabs.tpl.html"], function (tpl) {
             self.doLayout(tpl);
         });
         return this;
@@ -24,7 +24,7 @@ var ExplorerTabs = Backbone.View.extend({
      * Render the html into the DOM element associated to the view
      * @param tpl
      */
-    doLayout: function(tpl) {
+    doLayout:function (tpl) {
         var self = this;
         $(this.el).html(_.template(tpl, {}));
         return this;
@@ -34,7 +34,7 @@ var ExplorerTabs = Backbone.View.extend({
      *  @idImage : the id of the Image we want to display
      *  @options : some init options we want to pass the the BrowseImageView Instance
      */
-    addBrowseImageView : function(idImage, options) {
+    addBrowseImageView:function (idImage, options) {
         var self = this;
         var tab = this.getBrowseImageView(idImage);
         if (tab != null) {
@@ -45,16 +45,18 @@ var ExplorerTabs = Backbone.View.extend({
 
         var tabs = $("#explorer-tab-content");
         var view = new BrowseImageView({
-                initCallback : function(){view.show(options)},
-                el: tabs
+            initCallback:function () {
+                view.show(options)
+            },
+            el:tabs
         });
-        self.tabs.push({idImage : idImage,view : view});
+        self.tabs.push({idImage:idImage, view:view});
 
-        new ImageInstanceModel({id : idImage}).fetch({
-            success : function(model, response) {
+        new ImageInstanceModel({id:idImage}).fetch({
+            success:function (model, response) {
                 view.model = model;
                 view.render();
-                $(".closeTab").on("click",function(e) {
+                $(".closeTab").on("click", function (e) {
                     var idImage = $(this).attr("data-image");
                     self.removeTab(idImage);
                 });
@@ -68,8 +70,8 @@ var ExplorerTabs = Backbone.View.extend({
      * contained in a tab
      * @param idImage the ID of an Image contained in a BrowseImageView
      */
-    getBrowseImageView : function(idImage) {
-        var object  = _.detect(this.tabs, function(object) {
+    getBrowseImageView:function (idImage) {
+        var object = _.detect(this.tabs, function (object) {
             return object.idImage == idImage;
         });
         return object != null ? object : null;
@@ -78,41 +80,41 @@ var ExplorerTabs = Backbone.View.extend({
      * Remove a Tab
      * @param index the identifier of the Tab
      */
-    removeTab : function (idImage) {
+    removeTab:function (idImage) {
         var browseImageView = this.getBrowseImageView(idImage);
         browseImageView.view.stopBroadcastingInterval();
         browseImageView.view.stopWatchOnlineUsersInterval();
         var indexOf = this.tabs.indexOf(browseImageView);
 
-        this.tabs.splice(indexOf,1);
+        this.tabs.splice(indexOf, 1);
         var tabs = $(this.el).children('.nav-tab');
         //Remove Tab
-        $('#tabs-image-'+idImage).parent().remove();
+        $('#tabs-image-' + idImage).parent().remove();
         //Remove dropdown
-        $('#tabs-image-'+idImage+"-dropdown").parent().remove();
+        $('#tabs-image-' + idImage + "-dropdown").parent().remove();
         //Remove content
-        $('#tabs-image-'+window.app.status.currentProject+'-'+idImage+'-').remove();
+        $('#tabs-image-' + window.app.status.currentProject + '-' + idImage + '-').remove();
     },
     /**
      * Show a tab
      * @param idImage the identifier of the Tab
      */
-    showTab : function(idImage) {
+    showTab:function (idImage) {
         var tabs = $("#explorer > .browser").find(".nav-tabs");
         window.app.controllers.browse.tabs.triggerRoute = false;
-        $('#tabs-image-'+idImage).click();
+        $('#tabs-image-' + idImage).click();
         window.app.controllers.browse.tabs.triggerRoute = true;
     },
     /**
      * Return the number of opened tabs
      */
-    size : function() {
+    size:function () {
         return _.size(this.tabs);
     },
     /**
      * Close all the Tabs
      */
-    closeAll : function() {
+    closeAll:function () {
         var tabs = $(this.el).children('.tabs');
         this.tabs = [];
         $(this.el).hide();
@@ -122,20 +124,20 @@ var ExplorerTabs = Backbone.View.extend({
      * Add a ProjectDashBoardView instance in the first Tab
      * @param dashboard the ProjectDashBoardView instance
      */
-    addDashboard : function(dashboard) {
+    addDashboard:function (dashboard) {
         var self = this;
         this.dashboard = dashboard;
         var tabs = $('#explorer-tab-content');
-        $(".nav-tabs").append(_.template("<li><a id='dashboardLink-<%= idProject %>' href='#tabs-dashboard-<%= idProject %>' data-toggle='tab'><i class='icon-road' /> Dashboard</a></li>",{ idProject : window.app.status.currentProject}));
-        $(".nav-tabs").append(_.template("<li><a href='#tabs-images-<%= idProject %>' data-toggle='tab'><i class='icon-picture' /> Images</a></li>",{ idProject : window.app.status.currentProject}));
-        $(".nav-tabs").append(_.template("<li><a href='#tabs-annotations-<%= idProject %>' data-toggle='tab'><i class='icon-pencil' /> Annotations</a></li>",{ idProject : window.app.status.currentProject}));
-        $(".nav-tabs").append(_.template("<li><a href='#tabs-algos-<%= idProject %>' data-toggle='tab'><i class='icon-tasks' /> Jobs</a></li>",{ idProject : window.app.status.currentProject}));
-        $(".nav-tabs").append(_.template("<li><a href='#tabs-config-<%= idProject %>' data-toggle='tab'><i class='icon-wrench' /> Configuration</a></li>",{ idProject : window.app.status.currentProject}));
+        $(".nav-tabs").append(_.template("<li><a id='dashboardLink-<%= idProject %>' href='#tabs-dashboard-<%= idProject %>' data-toggle='tab'><i class='icon-road' /> Dashboard</a></li>", { idProject:window.app.status.currentProject}));
+        $(".nav-tabs").append(_.template("<li><a href='#tabs-images-<%= idProject %>' data-toggle='tab'><i class='icon-picture' /> Images</a></li>", { idProject:window.app.status.currentProject}));
+        $(".nav-tabs").append(_.template("<li><a href='#tabs-annotations-<%= idProject %>' data-toggle='tab'><i class='icon-pencil' /> Annotations</a></li>", { idProject:window.app.status.currentProject}));
+        $(".nav-tabs").append(_.template("<li><a href='#tabs-algos-<%= idProject %>' data-toggle='tab'><i class='icon-tasks' /> Jobs</a></li>", { idProject:window.app.status.currentProject}));
+        $(".nav-tabs").append(_.template("<li><a href='#tabs-config-<%= idProject %>' data-toggle='tab'><i class='icon-wrench' /> Configuration</a></li>", { idProject:window.app.status.currentProject}));
 
         $('a[data-toggle="tab"]').live('show', function (e) {
             var hash = this.href.split("#")[1];
-            $("#"+hash).attr('style', 'width:100%;height:500;overflow:hidden;');
-            if (self.triggerRoute) window.app.controllers.browse.navigate("#"+hash, self.triggerRoute);
+            $("#" + hash).attr('style', 'width:100%;height:500;overflow:hidden;');
+            if (self.triggerRoute) window.app.controllers.browse.navigate("#" + hash, self.triggerRoute);
         });
 
         $("#explorer > .browser").show();
@@ -144,7 +146,7 @@ var ExplorerTabs = Backbone.View.extend({
     /**
      * Ask to the dashboard view to refresh
      */
-    getDashboard : function () {
+    getDashboard:function () {
         return this.dashboard;
     }
 });

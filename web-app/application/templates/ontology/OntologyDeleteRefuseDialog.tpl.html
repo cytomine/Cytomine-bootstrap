@@ -3,11 +3,14 @@
         <h3>Delete an ontology</h3>
     </div>
     <div class="modal-body">
-         <div class="alert">
-            <p>You cannot delete ontology <%= name %> because this ontology is associated with <%= numberOfProject %> projects.</p>
+        <div class="alert">
+            <p>You cannot delete ontology <%= name %> because this ontology is associated with <%= numberOfProject %>
+                projects.</p>
         </div>
         <div id="delete-ontology-refuse-error-label" class="alert alert-error" style="display: none;">
-            <i class="icon-warning-sign" /> <div id="delete-ontology-refuse-error-message"></div>
+            <i class="icon-warning-sign"/>
+
+            <div id="delete-ontology-refuse-error-message"></div>
         </div>
         <form id="delete-ontology-refuse-form">
         </form>

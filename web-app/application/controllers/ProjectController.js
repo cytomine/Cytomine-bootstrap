@@ -1,21 +1,20 @@
-
 var ProjectController = Backbone.Router.extend({
-    manageView : null,
-    routes: {
-        "project"     :   "project",
-        "project-manage-:idProject" : "manage"
+    manageView:null,
+    routes:{
+        "project":"project",
+        "project-manage-:idProject":"manage"
     },
 
-    initView : function() {
+    initView:function () {
         var self = this;
 
         var projects = null;
-        var loadHandler = function() {
+        var loadHandler = function () {
             if (projects == null) return;
             self.view = new ProjectView({
-                model : projects,
+                model:projects,
                 el:$("#project"),
-                container : window.app.view.components.project
+                container:window.app.view.components.project
             }).render();
 
             self.view.container.views.project = self.view;
@@ -25,13 +24,13 @@ var ProjectController = Backbone.Router.extend({
         }
 
         window.app.models.projects.fetch({
-            success : function (collection, response) {
+            success:function (collection, response) {
                 projects = collection;
                 loadHandler();
             }});
     },
 
-    project : function(callback) {
+    project:function (callback) {
         console.log("controller.project");
         var self = this;
         $("#warehouse-button").attr("href", "#project");
@@ -57,19 +56,19 @@ var ProjectController = Backbone.Router.extend({
 
     },
 
-    manage : function(idProject) {
+    manage:function (idProject) {
         var self = this;
 
-        var showManageImages = function() {
+        var showManageImages = function () {
             $("#projectdiv").hide();
             $("#addimagediv").show();
             new ProjectModel({id:idProject}).fetch({
-                success : function (model, response) {
-                    self.manageView = new ProjectManageSlideDialog({model:model,projectPanel:null,el:$("#project")}).render();
+                success:function (model, response) {
+                    self.manageView = new ProjectManageSlideDialog({model:model, projectPanel:null, el:$("#project")}).render();
                 }});
         }
 
-        if (self.view==undefined) {
+        if (self.view == undefined) {
             self.project(showManageImages);
         } else {
             self.view.container.show(self.view, "#project", "project");

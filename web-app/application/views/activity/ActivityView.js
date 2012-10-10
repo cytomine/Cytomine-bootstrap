@@ -1,10 +1,10 @@
 var ActivityView = Backbone.View.extend({
 
-    initialize: function(options) {
+    initialize:function (options) {
         this.el = options.el
     },
 
-    render : function() {
+    render:function () {
         var self = this;
         require([
             "text!application/templates/activity/ActivityView.tpl.html"
@@ -13,15 +13,15 @@ var ActivityView = Backbone.View.extend({
         });
     },
 
-    doLayout: function (tpl) {
+    doLayout:function (tpl) {
         var self = this;
         $(self.el).html(tpl);
         var divTarget = $("#activity-content");
         divTarget.empty();
         new CommandCollection().fetch({
-            success : function (collection, response) {
-                collection.each(function (commandHistory){
-                    var commandHTML = _.template("<li><%= message %></li>", { message : commandHistory.get("command").action});
+            success:function (collection, response) {
+                collection.each(function (commandHistory) {
+                    var commandHTML = _.template("<li><%= message %></li>", { message:commandHistory.get("command").action});
                     $(self.el).append(commandHTML);
                 });
 

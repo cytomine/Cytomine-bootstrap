@@ -1,6 +1,6 @@
 var SoftwareDetailsView = Backbone.View.extend({
     project:null,
-    detailsRendered : false,
+    detailsRendered:false,
     initialize:function (options) {
         this.project = options.project;
         this.stats = options.stats;
@@ -10,15 +10,15 @@ var SoftwareDetailsView = Backbone.View.extend({
         require([
             "text!application/templates/processing/SoftwareDetails.tpl.html"
         ],
-                function (softwareDetailsTpl) {
-                    self.doLayout(softwareDetailsTpl);
-                });
+            function (softwareDetailsTpl) {
+                self.doLayout(softwareDetailsTpl);
+            });
         return this;
     },
     doLayout:function (softwareDetailsTpl) {
         var self = this;
-        self.model.set({_created : window.app.convertLongToDate(self.model.get("created"))});
-        $(self.el).html(_.template(softwareDetailsTpl,  $.extend({}, self.model.toJSON(), self.stats.toJSON())));
+        self.model.set({_created:window.app.convertLongToDate(self.model.get("created"))});
+        $(self.el).html(_.template(softwareDetailsTpl, $.extend({}, self.model.toJSON(), self.stats.toJSON())));
         $("#softwareHideDetailsButton").on("click", function (e) {
             $("#softwareDetailsPanel").hide();
             $("#softwareDescription").show();
@@ -89,7 +89,7 @@ var SoftwareDetailsView = Backbone.View.extend({
         ]);
         var width = $("#softwareInfoChart").width();
         var options = {
-            title:'Job status for '+self.model.get('name')+' (over all projects)',
+            title:'Job status for ' + self.model.get('name') + ' (over all projects)',
             legend:{position:"right"},
             width:width, height:350,
             vAxis:{title:"Amount"},

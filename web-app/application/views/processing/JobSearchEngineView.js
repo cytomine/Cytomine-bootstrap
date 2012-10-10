@@ -21,9 +21,9 @@ var JobSearchEngineView = Backbone.View.extend({
         require([
             "text!application/templates/processing/JobSearchEngine.tpl.html"
         ],
-                function (JobSearchEngineTpl) {
-                    self.loadResult(JobSearchEngineTpl);
-                });
+            function (JobSearchEngineTpl) {
+                self.loadResult(JobSearchEngineTpl);
+            });
         return this;
     },
     loadResult:function (JobSearchEngineTpl) {
@@ -33,14 +33,14 @@ var JobSearchEngineView = Backbone.View.extend({
         $(self.el).empty();
         $(self.el).append(content);
 
-        console.log("$('#myTab')="+$('#myTab').length);
-        console.log("$('#myTab').find('a')="+$('#myTab').find('a').length);
+        console.log("$('#myTab')=" + $('#myTab').length);
+        console.log("$('#myTab').find('a')=" + $('#myTab').find('a').length);
 
         $('#myTab').find('a').click(function (e) {
             console.log("click");
-          e.preventDefault();
-          $(this).tab('show');
-            history.replaceState(null, '', '#tabs-algos-'+self.project.id +"-" + self.software.id + "-" + self.idJob);
+            e.preventDefault();
+            $(this).tab('show');
+            history.replaceState(null, '', '#tabs-algos-' + self.project.id + "-" + self.software.id + "-" + self.idJob);
             return false;
         });
 
@@ -55,10 +55,10 @@ var JobSearchEngineView = Backbone.View.extend({
             console.log(self);
             console.log("launchQuickSearch:" + $("#searchJobFilterAll").val());
             self.listing.table.fnFilter(
-                    $("#searchJobFilterAll").val(),
-                    null,
-                    false,
-                    true
+                $("#searchJobFilterAll").val(),
+                null,
+                false,
+                true
             );
         };
         $("#searchJobFilterAll").keyup(launchQuickSearch);
@@ -306,7 +306,7 @@ var InputNumberViewSearch = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
-        self.trElem =  tbody.find('tr#' + self.param.id);
+        self.trElem = tbody.find('tr#' + self.param.id);
     },
     getHtmlElem:function () {
         var self = this;
@@ -334,7 +334,7 @@ var InputBooleanViewSearch = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
-        self.trElem =  tbody.find('tr#' + self.param.id);
+        self.trElem = tbody.find('tr#' + self.param.id);
     },
     getHtmlElem:function () {
         return '<select class="input-medium"><option value="">All</option><option value="true">Yes</option><option value="false">No</option></select>';
@@ -361,7 +361,7 @@ var InputListViewSearch = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
-        self.trElem =  tbody.find('tr#' + self.param.id);
+        self.trElem = tbody.find('tr#' + self.param.id);
         self.trElem.find('.icon-plus-sign').click(function () {
             console.log("Add entry");
             var value = $(this).parent().find("input").val();
@@ -421,7 +421,7 @@ var InputDateViewSearch = Backbone.View.extend({
     addRow:function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
-        self.trElem =  tbody.find('tr#' + self.param.id);
+        self.trElem = tbody.find('tr#' + self.param.id);
 
         var dates = self.trElem.find("#from" + self.param.id + ", #to" + self.param.id).datepicker({
             defaultDate:"+1w",
@@ -429,8 +429,8 @@ var InputDateViewSearch = Backbone.View.extend({
             numberOfMonths:3,
             onSelect:function (selectedDate) {
                 var option = this.id == "from" + self.param.id ? "minDate" : "maxDate",
-                        instance = $(this).data("datepicker"),
-                        date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat, selectedDate, instance.settings);
+                    instance = $(this).data("datepicker"),
+                    date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat, selectedDate, instance.settings);
                 dates.not(this).datepicker("option", option, date);
             }
         });
@@ -474,17 +474,17 @@ var InputListDomainViewSearch = Backbone.View.extend({
     },
     addRow:function (tbody) {
         var self = this;
-        tbody.append('<tr id="' + self.param.id + '"><td id="'+self.param.id+'" style="text-align:left;"><b>' + self.param.name + '</b><br></tr>');
+        tbody.append('<tr id="' + self.param.id + '"><td id="' + self.param.id + '" style="text-align:left;"><b>' + self.param.name + '</b><br></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
-        console.log("### " + window.app.replaceVariable(self.param.uri) +" ###"+self.param.uriSortAttribut);
-        self.collection = new SoftwareParameterModelCollection({uri: window.app.replaceVariable(self.param.uri), sortAttribut : self.param.uriSortAttribut});
+        console.log("### " + window.app.replaceVariable(self.param.uri) + " ###" + self.param.uriSortAttribut);
+        self.collection = new SoftwareParameterModelCollection({uri:window.app.replaceVariable(self.param.uri), sortAttribut:self.param.uriSortAttribut});
         if (self.collection == undefined || (self.collection.length > 0 && self.collection.at(0).id == undefined)) {
             self.collection.fetch({
                 success:function (collection, response) {
                     console.log(collection);
                     self.collection = collection;
                     self.collection.comparator = function (item) {
-                      return item.get(self.param.uriSortAttribut);
+                        return item.get(self.param.uriSortAttribut);
                     };
                     self.collection.sort();
                     self.addHtmlElem();

@@ -1,6 +1,6 @@
 var AnnotationFilterModel = Backbone.Model.extend({
 
-    url : function() {
+    url:function () {
         var base = 'api/annotationfilter';
         var format = '.json';
         if (this.isNew()) return base + format;
@@ -10,11 +10,11 @@ var AnnotationFilterModel = Backbone.Model.extend({
 
 
 var AnnotationFilterCollection = Backbone.Collection.extend({
-    model: AnnotationFilterModel,
-    initialize : function (options) {
-      this.project = options.project
+    model:AnnotationFilterModel,
+    initialize:function (options) {
+        this.project = options.project
     },
-    url: function() {
+    url:function () {
         return "api/annotationfilter.json?project=" + this.project;
     }
 });

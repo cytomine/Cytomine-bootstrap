@@ -1,14 +1,14 @@
 var MultiSelectView = Backbone.View.extend({
-    collection: null,
-    multiple : null,
-    initialize: function(options) {
+    collection:null,
+    multiple:null,
+    initialize:function (options) {
         this.el = options.el;
         this.collection = options.collection;
         this.multiple = options.multiple;
     },
-    buildMultiSelect : function() {
-       var self = this;
-       self.addHtmlElem();
+    buildMultiSelect:function () {
+        var self = this;
+        self.addHtmlElem();
     },
     getHtmlElem:function () {
         console.log("getHtmlElem");
@@ -77,20 +77,20 @@ var MultiSelectView = Backbone.View.extend({
         self.el.find(".domainList").multiselect("close");
 
     },
-    checkAll : function() {
+    checkAll:function () {
         console.log("checkAll");
         this.el.find(".domainList").multiselect("checkAll");
     },
-    uncheckAll : function() {
+    uncheckAll:function () {
         console.log("uncheckAll");
         this.el.find(".domainList").multiselect("uncheckAll");
     },
-    isCheckAll : function() {
+    isCheckAll:function () {
         var self = this;
         var numberOfChoice = self.el.find(".domainList").length;
         var numberOfSelect = self.el.find(".domainList").multiselect("getChecked").length;
-        console.log("numberOfChoice="+numberOfChoice);
-        console.log("numberOfSelect="+numberOfSelect);
-        return (numberOfChoice==numberOfSelect);
+        console.log("numberOfChoice=" + numberOfChoice);
+        console.log("numberOfSelect=" + numberOfSelect);
+        return (numberOfChoice == numberOfSelect);
     }
 });

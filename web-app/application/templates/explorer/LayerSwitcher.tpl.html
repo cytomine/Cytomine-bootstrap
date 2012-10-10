@@ -1,14 +1,18 @@
-<div class="dragHandle minimized label">LAYERS <i class="icon-move icon-white" style="float:right" ></i></div>
+<div class="dragHandle minimized label">LAYERS <i class="icon-move icon-white" style="float:right"></i></div>
 <div class="layerSwitcher" id="layerswitchercontent<%= id %>" style="padding: 5px;">
-    <% if (isDesktop) { %> <i class="dragHandle icon-move icon-white" style="float:right" ></i> <% } %>
-    <h4 style="color : #ffffff; display: inline;">Layers</h4> <span><a href="#" class="toggleShowBaseLayers">(Show/Hide)</a></span>
+    <% if (isDesktop) { %> <i class="dragHandle icon-move icon-white" style="float:right"></i> <% } %>
+    <h4 style="color : #ffffff; display: inline;">Layers</h4> <span><a href="#"
+                                                                       class="toggleShowBaseLayers">(Show/Hide)</a></span>
+
     <div style="display: block">
         <ul class="baseLayers"></ul>
     </div>
     <h4 style="color : #ffffff; display: inline;">Annotations</h4> <a href="#" class="toggleShowVectorLayers">(Show/Hide)</a>
+
     <div style="display: block">
         <ul class="annotationLayers">
-            <li><i id="selectLayersIcon<%= id %>" class="icon icon-eye-open icon-white" ></i> <i class="icon icon-lock icon-white" ></i></li>
+            <li><i id="selectLayersIcon<%= id %>" class="icon icon-eye-open icon-white"></i> <i
+                    class="icon icon-lock icon-white"></i></li>
         </ul>
     </div>
 </div>

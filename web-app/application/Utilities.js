@@ -6,7 +6,7 @@
 // - `model` model to watch
 // - `callback` function to call when a change occurs to the model
 // - `interval` interval to polling the server (in milliseconds)
-var Watcher = function(model, callback, interval) {
+var Watcher = function (model, callback, interval) {
     _.bindAll(this, 'fetch', 'destroy');
     var that = this;
     this.model = model;
@@ -16,22 +16,23 @@ var Watcher = function(model, callback, interval) {
     this.watcher = setInterval(this.fetch, this.interval);
 };
 
-Watcher.prototype.fetch = function() {
+Watcher.prototype.fetch = function () {
     var that = this;
     this.model.fetch({
         silent:true,
-        success: function() {
+        success:function () {
             var state = JSON.stringify(that.model);
             if (that.current !== state) {
                 that.current = state;
                 that.callback && that.callback();
             }
         },
-        error: function() {}
+        error:function () {
+        }
     });
 };
 
-Watcher.prototype.destroy = function() {
+Watcher.prototype.destroy = function () {
     window.clearInterval(this.watcher);
 };
 
@@ -42,7 +43,7 @@ Watcher.prototype.destroy = function() {
 // - `url` URL to poll
 // - `callback` function to call if the URL request results in an error
 // - `interval` interval to poll the URL (in milliseconds)
-var Status = function(url, errorcallback, successcallback, interval) {
+var Status = function (url, errorcallback, successcallback, interval) {
     _.bindAll(this, 'start', 'error', 'stop');
     this.url = url;
     this.errorcallback = errorcallback;
@@ -51,21 +52,21 @@ var Status = function(url, errorcallback, successcallback, interval) {
     this.start();
 };
 
-Status.prototype.start = function() {
+Status.prototype.start = function () {
     var self = this;
-    var ajaxFn = function() {
+    var ajaxFn = function () {
 
         var project = window.app.status.currentProject;
-        if(project==undefined) project = "null";
-        new PingModel({project : project}).save({},{
-                  success: function (model, response) {
-                      self.successcallback();
-                  },
-                  error: function (model, response) {
-                      self.error();
-                  }
-              }
-          );
+        if (project == undefined) project = "null";
+        new PingModel({project:project}).save({}, {
+                success:function (model, response) {
+                    self.successcallback();
+                },
+                error:function (model, response) {
+                    self.error();
+                }
+            }
+        );
     };
     if (!this.watcher) {
         var that = this;
@@ -73,12 +74,12 @@ Status.prototype.start = function() {
     }
 };
 
-Status.prototype.error = function() {
+Status.prototype.error = function () {
     this.stop();
     this.errorcallback(this);
 };
 
-Status.prototype.stop = function() {
+Status.prototype.stop = function () {
     if (this.watcher) {
         window.clearInterval(this.watcher);
         delete this.watcher;

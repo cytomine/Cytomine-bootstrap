@@ -1,4 +1,5 @@
-<div id='projectUsers<%= id %>' title="Project Users" class="modal xbigModal hide fade projectUserDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id='projectUsers<%= id %>' title="Project Users" class="modal xbigModal hide fade projectUserDialog" tabindex="-1"
+     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
         <h3>Users project list for project <%= name %></h3>
     </div>
@@ -6,11 +7,20 @@
     <div class="modal-body">
         <div id="projectUsersDialog<%= id %>">
             <h4>Creator</h4>
-            <div id="projectCreatorDialog"><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
+
+            <div id="projectCreatorDialog">
+                <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+            </div>
             <h4>Admins</h4>
-            <div id="projectAdminsDialog"><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
+
+            <div id="projectAdminsDialog">
+                <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+            </div>
             <h4>Users</h4>
-            <div id="projectUsersDialog"><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>
+
+            <div id="projectUsersDialog">
+                <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+            </div>
         </div>
     </div>
 

@@ -1,23 +1,23 @@
-var projectUsersDialog = Backbone.View.extend({
-    usersProjectDialog : null,
-    initialize: function(options) {
+var ProjectUsersDialog = Backbone.View.extend({
+    usersProjectDialog:null,
+    initialize:function (options) {
         _.bindAll(this, 'render');
     },
-    render : function() {
+    render:function () {
         var self = this;
         require([
             "text!application/templates/project/ProjectUsers.tpl.html"
         ],
-                function(projectUsersDialogTpl) {
-                    self.doLayout(projectUsersDialogTpl);
-                });
+            function (projectUsersDialogTpl) {
+                self.doLayout(projectUsersDialogTpl);
+            });
         return this;
     },
-    doLayout : function(projectUsersDialogTpl) {
+    doLayout:function (projectUsersDialogTpl) {
         var self = this;
 
-        var dialog = _.template(projectUsersDialogTpl, {id:self.model.id,name:self.model.get("name")});
-        $("#projectUsers"+self.model.id).replaceWith("");
+        var dialog = _.template(projectUsersDialogTpl, {id:self.model.id, name:self.model.get("name")});
+        $("#projectUsers" + self.model.id).replaceWith("");
         $(self.el).append(dialog);
 
         self.printCreator();
@@ -25,56 +25,57 @@ var projectUsersDialog = Backbone.View.extend({
         self.printUsers();
 
         //Build dialog
-        console.log("Open element:"+$("#projectUsers"+self.model.id).length);
-        self.usersProjectDialog = $("#projectUsers"+self.model.id).modal({
-            keyboard : true,
-            backdrop : false
+        console.log("Open element:" + $("#projectUsers" + self.model.id).length);
+        self.usersProjectDialog = $("#projectUsers" + self.model.id).modal({
+            keyboard:true,
+            backdrop:false
         });
-        $("#closeUserProjectDialog").click(function()
-        {$("#projectUsers"+self.model.id).modal('hide');
-            $("#projectUsers"+self.model.id).remove();
-            return false;});
+        $("#closeUserProjectDialog").click(function () {
+            $("#projectUsers" + self.model.id).modal('hide');
+            $("#projectUsers" + self.model.id).remove();
+            return false;
+        });
         self.open();
         return this;
     },
-    printCreator : function() {
+    printCreator:function () {
         var self = this;
         new UserCollection({project:self.model.id, creator:true}).fetch({
-                success : function (creator, response) {
-                    $("#projectCreatorDialog").empty();
-                    var list = [];
-                    creator.each(function(user) {
-                        list.push(user.prettyName());
-                 });
-                 $("#projectCreatorDialog").append(list.join(", "));
-        }});
+            success:function (creator, response) {
+                $("#projectCreatorDialog").empty();
+                var list = [];
+                creator.each(function (user) {
+                    list.push(user.prettyName());
+                });
+                $("#projectCreatorDialog").append(list.join(", "));
+            }});
     },
-    printAdmins : function() {
+    printAdmins:function () {
         var self = this;
         new UserCollection({project:self.model.id, admin:true}).fetch({
-                success : function (admin, response) {
-                    $("#projectAdminsDialog").empty();
-                    var list = [];
-                    admin.each(function(user) {
-                        list.push(user.prettyName());
-                 });
-                    $("#projectAdminsDialog").append(list.join(", "));
-        }});
+            success:function (admin, response) {
+                $("#projectAdminsDialog").empty();
+                var list = [];
+                admin.each(function (user) {
+                    list.push(user.prettyName());
+                });
+                $("#projectAdminsDialog").append(list.join(", "));
+            }});
     },
-    printUsers : function() {
+    printUsers:function () {
         var self = this;
         new UserCollection({project:self.model.id}).fetch({
-                success : function (users, response) {
-                    $("#projectUsersDialog").empty();
-                    var list = [];
-                    users.each(function(user) {
-                        list.push(user.prettyName());
-                 });
-                    $("#projectUsersDialog").append(list.join(", "));
-        }});
+            success:function (users, response) {
+                $("#projectUsersDialog").empty();
+                var list = [];
+                users.each(function (user) {
+                    list.push(user.prettyName());
+                });
+                $("#projectUsersDialog").append(list.join(", "));
+            }});
     },
-    open: function() {
+    open:function () {
         var self = this;
-        $("#projectUsers"+self.model.id).modal('show');
+        $("#projectUsers" + self.model.id).modal('show');
     }
 });

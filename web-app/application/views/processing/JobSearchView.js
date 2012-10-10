@@ -14,9 +14,9 @@ var JobSearchView = Backbone.View.extend({
         require([
             "text!application/templates/processing/JobSearch.tpl.html"
         ],
-                function (jobSearchViewTpl) {
-                    self.loadResult(jobSearchViewTpl);
-                });
+            function (jobSearchViewTpl) {
+                self.loadResult(jobSearchViewTpl);
+            });
         return this;
     },
     loadResult:function (jobSearchViewTpl) {
@@ -89,7 +89,7 @@ var JobSearchView = Backbone.View.extend({
                     width:self.software,
                     project:self.project,
                     software:self.software,
-                    idJob : self.idJob,
+                    idJob:self.idJob,
                     el:$("#jobFilterList"),
                     parent:self,
                     listing:listing,

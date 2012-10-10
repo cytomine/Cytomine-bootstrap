@@ -1,10 +1,10 @@
 var ProjectView = Backbone.View.extend({
-    tagName : "div",
-    searchProjectPanelElem : "#searchProjectPanel",
-    projectListElem : "#projectlist",
-    projectList : null,
-    addSlideDialog : null,
-    initialize: function(options) {
+    tagName:"div",
+    searchProjectPanelElem:"#searchProjectPanel",
+    projectListElem:"#projectlist",
+    projectList:null,
+    addSlideDialog:null,
+    initialize:function (options) {
         this.container = options.container;
         this.model = options.model;
         this.el = options.el;
@@ -13,26 +13,26 @@ var ProjectView = Backbone.View.extend({
         this.ontologies = this.getOntologiesChoice();
         this.disciplines = this.getDisciplinesChoice();
     },
-    render : function () {
+    render:function () {
         var self = this;
         require([
             "text!application/templates/project/ProjectList.tpl.html",
             "text!application/templates/project/NewProjectBox.tpl.html"
         ],
-                function(tpl, newProjectBoxTpl) {
-                    self.doLayout(tpl, newProjectBoxTpl);
-                });
+            function (tpl, newProjectBoxTpl) {
+                self.doLayout(tpl, newProjectBoxTpl);
+            });
 
         return this;
     },
-    doLayout: function(tpl, newProjectBoxTpl) {
+    doLayout:function (tpl, newProjectBoxTpl) {
         var self = this;
         $(this.el).find("#projectdiv").html(_.template(tpl, {}));
 
         //clear de list
         $(self.projectListElem).empty();
         $(self.projectListElem).append(_.template(newProjectBoxTpl, {}));
-        $("#projectaddbutton").on("click", function(){
+        $("#projectaddbutton").on("click", function () {
             self.showAddProjectPanel();
         });
         //print addProjectPanel
@@ -51,36 +51,36 @@ var ProjectView = Backbone.View.extend({
     /**
      * Show dialog to add a project
      */
-    showAddProjectPanel : function() {
+    showAddProjectPanel:function () {
 
         var self = this;
         $('#addproject').remove();
         self.addProjectDialog = new AddProjectDialog({
             projectsPanel:self,
             el:self.el,
-            ontologies : self.ontologies,
-            disciplines : self.disciplines
+            ontologies:self.ontologies,
+            disciplines:self.disciplines
         }).render();
     },
     /**
      * Refresh all project panel
      */
-    refresh : function() {
+    refresh:function () {
         var self = this;
-        var idUser =  undefined;
+        var idUser = undefined;
 
         //_.each(self.projectList, function(panel){ panel.refresh(); });
-        if(self.addSlideDialog!=null) self.addSlideDialog.refresh();
+        if (self.addSlideDialog != null) self.addSlideDialog.refresh();
 
 
-        new ProjectCollection({user : idUser}).fetch({
-            success : function (collection, response) {
+        new ProjectCollection({user:idUser}).fetch({
+            success:function (collection, response) {
                 self.model = collection;
                 self.render();
             }});
     },
-    dateHoverOut : null,
-    printProjectInfo : function() {
+    dateHoverOut:null,
+    printProjectInfo:function () {
         console.log("printProjectInfo");
         var self = this;
 
@@ -89,183 +89,186 @@ var ProjectView = Backbone.View.extend({
         require([
             "text!application/templates/project/ProjectBigPanel.tpl.html"
         ],
-                function(tpl) {
-                    allProjectsPanel.hover(function() {
-                        console.log("Hover on:"+self.dateHoverOut);
-                        self.dateHoverOut = null;
-                        console.log("Hover on:"+self.dateHoverOut);
-                        $(".projectBigInfo").replaceWith("");
-                        $(self.el).find(".projectInfoPanel").css("border-color","#ffffff");
+            function (tpl) {
+                allProjectsPanel.hover(function () {
+                    console.log("Hover on:" + self.dateHoverOut);
+                    self.dateHoverOut = null;
+                    console.log("Hover on:" + self.dateHoverOut);
+                    $(".projectBigInfo").replaceWith("");
+                    $(self.el).find(".projectInfoPanel").css("border-color", "#ffffff");
 
-                        var id = $(this).attr('data-id');
-                        var project = self.model.get(id);
-                        var indexNextRow = self.getIndiceNextRow($(this),allProjectsPanel);
+                    var id = $(this).attr('data-id');
+                    var project = self.model.get(id);
+                    var indexNextRow = self.getIndiceNextRow($(this), allProjectsPanel);
 
-                        $(this).css("border-color","#000000");
+                    $(this).css("border-color", "#000000");
 
-                        //var htmlCode = '<div class="well span2 projectBigInfo" style="padding: 5px;margin: 0 15px 15px 0px;min-width: '+self.getFullWidth()+'px;font-size: 12px;">'+project.get("name")+'</div>';
-                        var htmlCode = _.template(tpl,{projectName:project.get('name'),width:self.getFullWidth(),id:project.id});
-                       // $(".projectBigInfo").replaceWith("");
-                        var newRowItem = $(allProjectsPanel).eq(indexNextRow);
-                        //console.log("newRowItem="+newRowItem.attr('data-id'));
-                        if(newRowItem.attr('data-id')!=undefined) {
-                            newRowItem.parent().before(htmlCode);
-                        } else {
-                            //last row
-                            allProjectsPanel.last().after(htmlCode);
-                        }
+                    //var htmlCode = '<div class="well span2 projectBigInfo" style="padding: 5px;margin: 0 15px 15px 0px;min-width: '+self.getFullWidth()+'px;font-size: 12px;">'+project.get("name")+'</div>';
+                    var htmlCode = _.template(tpl, {projectName:project.get('name'), width:self.getFullWidth(), id:project.id});
+                    // $(".projectBigInfo").replaceWith("");
+                    var newRowItem = $(allProjectsPanel).eq(indexNextRow);
+                    //console.log("newRowItem="+newRowItem.attr('data-id'));
+                    if (newRowItem.attr('data-id') != undefined) {
+                        newRowItem.parent().before(htmlCode);
+                    } else {
+                        //last row
+                        allProjectsPanel.last().after(htmlCode);
+                    }
 
-                        $(".projectBigInfoPanel").fadeIn('slow');
-
-
-                        new ImageInstanceCollection({project:project.id,inf:0,sup:3}).fetch({
-                            success : function (collection, response) {
-                                if(collection.length!=0) {
-                                    collection.each(function(image) {
-
-                                        var str = '<div style="min-height: 128px;max-width: 30%;" class="span6">' +
-                                                '<a href="#tabs-image-'+project.id+'-'+image.id+'-">' +
-                                                '     <img class="lazy" src="'+image.get("thumb")+'" alt="'+image.get("filename")+'" style="max-height:150px; max-width:100%;">' +
-                                                '</a></div>';
-                                        $("#imageInfoBigPanel-"+project.id).find(".row").append(str);
-                                    })
-                                } else {
-                                    $("#imageInfoBigPanel-"+project.id).find(".row").append("<div class='alert alert-block'>No data to display</div>");
-                                }
-
-                            }});
-
-                        new UserCollection({project:project.id, creator:true}).fetch({
-                            success : function (creator, response) {
-                                $("#userInfoBigPanel-"+project.id).find("#projectCreator").empty();
-                                var list = [];
-                                creator.each(function(user) {
-                                    list.push(user.prettyName());
-                                });
-                                $("#userInfoBigPanel-"+project.id).find("#projectCreator").append(list.join(", "));
-                            }});
-
-                        new UserCollection({project:project.id, admin:true}).fetch({
-                            success : function (admin, response) {
-                                $("#userInfoBigPanel-"+project.id).find("#projectAdmins").empty();
-                                var list = [];
-                                admin.each(function(user) {
-                                    list.push(user.prettyName());
-                                });
-                                $("#userInfoBigPanel-"+project.id).find("#projectAdmins").append(list.join(", "));
-
-                            }});
-                        new UserCollection({project:project.id}).fetch({
-                            success : function (users, response) {
-                                $("#userInfoBigPanel-"+project.id).find("#projectUsers").empty();
-                                var list = [];
-                                users.each(function(user) {
-                                    list.push(user.prettyName());
-                                });
-                                $("#userInfoBigPanel-"+project.id).find("#projectUsers").append(list.join(", "));
-
-                            }});
-                        new UserCollection({project:project.id,online:true}).fetch({
-                            success : function (users, response) {
-                                $("#userInfoBigPanel-"+project.id).find("#projectUsersOnline").empty();
-                                var list = [];
-                                users.each(function(user) {
-                                    list.push('<span style="color:green;font-style: bold;">'+user.prettyName()+'</span>');
-                                });
-                                $("#userInfoBigPanel-"+project.id).find("#projectUsersOnline").append(list.join(", "));
-
-                            }});
+                    $(".projectBigInfoPanel").fadeIn('slow');
 
 
+                    new ImageInstanceCollection({project:project.id, inf:0, sup:3}).fetch({
+                        success:function (collection, response) {
+                            if (collection.length != 0) {
+                                collection.each(function (image) {
 
-                        $(".projectBigInfoPanel").hover(
-                                function() {
-                                    //if going on big panel, don't remove it
-                                    self.dateHoverOut = null;
-                                },
-                                function() {
-                                    //if going out of the big panel, remove it after x sec
-                                    self.dateHoverOut = new Date().getTime();
-                                    setTimeout(function() { self.removePanelIfNeccessary(self.dateHoverOut);}, 1500);
+                                    var str = '<div style="min-height: 128px;max-width: 30%;" class="span6">' +
+                                        '<a href="#tabs-image-' + project.id + '-' + image.id + '-">' +
+                                        '     <img class="lazy" src="' + image.get("thumb") + '" alt="' + image.get("filename") + '" style="max-height:150px; max-width:100%;">' +
+                                        '</a></div>';
+                                    $("#imageInfoBigPanel-" + project.id).find(".row").append(str);
                                 })
+                            } else {
+                                $("#imageInfoBigPanel-" + project.id).find(".row").append("<div class='alert alert-block'>No data to display</div>");
+                            }
 
-                    }, function() {
-                        self.dateHoverOut = new Date().getTime();
-                        setTimeout(function() { self.removePanelIfNeccessary(self.dateHoverOut);}, 1500);
-                    });
+                        }});
+
+                    new UserCollection({project:project.id, creator:true}).fetch({
+                        success:function (creator, response) {
+                            $("#userInfoBigPanel-" + project.id).find("#projectCreator").empty();
+                            var list = [];
+                            creator.each(function (user) {
+                                list.push(user.prettyName());
+                            });
+                            $("#userInfoBigPanel-" + project.id).find("#projectCreator").append(list.join(", "));
+                        }});
+
+                    new UserCollection({project:project.id, admin:true}).fetch({
+                        success:function (admin, response) {
+                            $("#userInfoBigPanel-" + project.id).find("#projectAdmins").empty();
+                            var list = [];
+                            admin.each(function (user) {
+                                list.push(user.prettyName());
+                            });
+                            $("#userInfoBigPanel-" + project.id).find("#projectAdmins").append(list.join(", "));
+
+                        }});
+                    new UserCollection({project:project.id}).fetch({
+                        success:function (users, response) {
+                            $("#userInfoBigPanel-" + project.id).find("#projectUsers").empty();
+                            var list = [];
+                            users.each(function (user) {
+                                list.push(user.prettyName());
+                            });
+                            $("#userInfoBigPanel-" + project.id).find("#projectUsers").append(list.join(", "));
+
+                        }});
+                    new UserCollection({project:project.id, online:true}).fetch({
+                        success:function (users, response) {
+                            $("#userInfoBigPanel-" + project.id).find("#projectUsersOnline").empty();
+                            var list = [];
+                            users.each(function (user) {
+                                list.push('<span style="color:green;font-style: bold;">' + user.prettyName() + '</span>');
+                            });
+                            $("#userInfoBigPanel-" + project.id).find("#projectUsersOnline").append(list.join(", "));
+
+                        }});
+
+
+                    $(".projectBigInfoPanel").hover(
+                        function () {
+                            //if going on big panel, don't remove it
+                            self.dateHoverOut = null;
+                        },
+                        function () {
+                            //if going out of the big panel, remove it after x sec
+                            self.dateHoverOut = new Date().getTime();
+                            setTimeout(function () {
+                                self.removePanelIfNeccessary(self.dateHoverOut);
+                            }, 1500);
+                        })
+
+                }, function () {
+                    self.dateHoverOut = new Date().getTime();
+                    setTimeout(function () {
+                        self.removePanelIfNeccessary(self.dateHoverOut);
+                    }, 1500);
                 });
+            });
 
     },
-    removePanelIfNeccessary : function(dateHoverOut) {
-        if(dateHoverOut==null) return;
+    removePanelIfNeccessary:function (dateHoverOut) {
+        if (dateHoverOut == null) return;
         var now = new Date().getTime();
-        if((now-dateHoverOut)>=1000)
+        if ((now - dateHoverOut) >= 1000)
             $(".projectBigInfoPanel").fadeOut('slow');
     },
-    getFullWidth : function () {
+    getFullWidth:function () {
         return Math.round($(window).width() - 90);
     },
-    getIndiceNextRow : function(projectPanel,allProjectsPanel) {
+    getIndiceNextRow:function (projectPanel, allProjectsPanel) {
         var currentY = projectPanel.position().top;
 
         var i = 0;
-        _.each(allProjectsPanel,function(panel) {
+        _.each(allProjectsPanel, function (panel) {
             //console.log($(panel).position());
-            if($(panel).position().top<=currentY) {
+            if ($(panel).position().top <= currentY) {
                 i++;
             }
         });
         return i;
     },
-    generateAddProjectPanel : function () {
+    generateAddProjectPanel:function () {
         var self = this;
         require([
             "text!application/templates/project/AddProjectPanel.tpl.html"
         ],
-                function(tpl) {
-                    $(self.projectListElem).append(_.template(tpl, {}));
-                });
+            function (tpl) {
+                $(self.projectListElem).append(_.template(tpl, {}));
+            });
 
         return this;
     },
     /**
      * Create search project panel
      */
-    loadSearchProjectPanel : function() {
+    loadSearchProjectPanel:function () {
 
 
         var self = this;
         //create project search panel
         self.searchProjectPanel = new ProjectSearchPanel({
-            model : self.model,
-            ontologies : self.ontologies,
-            disciplines : self.disciplines,
+            model:self.model,
+            ontologies:self.ontologies,
+            disciplines:self.disciplines,
             el:$("#projectViewNorth"),
-            container : self,
-            projectsPanel : self
+            container:self,
+            projectsPanel:self
         }).render();
     },
 
-    getOntologiesChoice : function() {
+    getOntologiesChoice:function () {
         var ontologies = new Backbone.Collection;
-        ontologies.comparator = function(item) {
+        ontologies.comparator = function (item) {
             return item.get("name");
         };
-        _.each(this.model.models, function(project) {
-            if(ontologies.get(project.get("ontology"))==undefined)
-                ontologies.add({id: project.get("ontology"),name: project.get("ontologyName")});
+        _.each(this.model.models, function (project) {
+            if (ontologies.get(project.get("ontology")) == undefined)
+                ontologies.add({id:project.get("ontology"), name:project.get("ontologyName")});
         });
         return ontologies;
 
     },
-    getDisciplinesChoice : function() {
+    getDisciplinesChoice:function () {
         var disciplines = new Backbone.Collection;
-        disciplines.comparator = function(item) {
+        disciplines.comparator = function (item) {
             return item.get("name");
         };
-        _.each(this.model.models, function(project) {
-            if(disciplines.get(project.get("discipline"))==undefined && project.get("discipline")!=null)
-                disciplines.add({id: project.get("discipline"),name: project.get("disciplineName")});
+        _.each(this.model.models, function (project) {
+            if (disciplines.get(project.get("discipline")) == undefined && project.get("discipline") != null)
+                disciplines.add({id:project.get("discipline"), name:project.get("disciplineName")});
         });
         return disciplines;
     },
@@ -273,21 +276,21 @@ var ProjectView = Backbone.View.extend({
     /**
      * Print all project panel
      */
-    loadProjectsListing : function() {
+    loadProjectsListing:function () {
         var self = this;
 
 
         /* Create new Project span */
 
 
-        self.projectList = new Array();
+        self.projectList = [];
 
         //print each project panel
-        self.model.each(function(project) {
+        self.model.each(function (project) {
             var panel = new ProjectPanelView({
-                model : project,
-                projectsPanel : self,
-                container : self
+                model:project,
+                projectsPanel:self,
+                container:self
             }).render();
             self.projectList.push(panel);
             $(self.projectListElem).append(panel.el);
@@ -298,15 +301,15 @@ var ProjectView = Backbone.View.extend({
      * Show all project from the collection and hide the other
      * @param projectsShow  Project collection
      */
-    showProjects : function(projectsShow) {
+    showProjects:function (projectsShow) {
         var self = this;
-        self.model.each(function(project) {
+        self.model.each(function (project) {
             //if project is in project result list, show it
-            if(projectsShow.get(project.id)!=null)
+            if (projectsShow.get(project.id) != null)
 
-                $(self.projectListElem+project.id).show();
+                $(self.projectListElem + project.id).show();
             else
-                $(self.projectListElem+project.id).hide();
+                $(self.projectListElem + project.id).hide();
         });
     }
 

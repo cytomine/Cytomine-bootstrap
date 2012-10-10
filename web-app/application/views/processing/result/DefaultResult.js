@@ -19,7 +19,7 @@ var DefaultResult = Backbone.View.extend({
             });
         return this;
     },
-    doLayout : function(tpl) {
+    doLayout:function (tpl) {
         var content = _.template(tpl, {});
         $(this.el).append(content);
     }

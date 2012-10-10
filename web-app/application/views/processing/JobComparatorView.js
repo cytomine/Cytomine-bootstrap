@@ -29,9 +29,9 @@ var JobComparatorView = Backbone.View.extend({
         require([
             "text!application/templates/processing/JobComparator.tpl.html"
         ],
-                function (JobComparatorTpl) {
-                    self.loadResult(JobComparatorTpl);
-                });
+            function (JobComparatorTpl) {
+                self.loadResult(JobComparatorTpl);
+            });
         return this;
     },
     loadResult:function (JobComparatorTpl) {
@@ -278,12 +278,12 @@ var JobComparatorView = Backbone.View.extend({
         var self = this;
 
         if (window.app.status.currentTermsCollection == undefined) {
-                    new TermCollection({idProject:self.project.id}).fetch({
-                        success:function (terms, response) {
-                            window.app.status.currentTermsCollection = terms;
-                            self.initJobResult(job, elemParent);
+            new TermCollection({idProject:self.project.id}).fetch({
+                success:function (terms, response) {
+                    window.app.status.currentTermsCollection = terms;
+                    self.initJobResult(job, elemParent);
 
-                        }
+                }
             });
         } else {
             self.initJobResult(job, elemParent);

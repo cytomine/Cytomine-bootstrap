@@ -7,13 +7,13 @@
  */
 
 var OntologyPanel = Backbone.View.extend({
-    tagName : "div",
+    tagName:"div",
 
     /**
      * ExplorerTabs constructor
      * @param options
      */
-    initialize: function(options) {
+    initialize:function (options) {
         this.ontologyTreeView = null;
         this.callback = options.callback;
         this.browseImageView = options.browseImageView;
@@ -21,17 +21,17 @@ var OntologyPanel = Backbone.View.extend({
     /**
      * Grab the layout and call ask for render
      */
-    render : function() {
-        var self =this;
+    render:function () {
+        var self = this;
         new ProjectModel({id:window.app.status.currentProject}).fetch({
-            success : function(model, response) {
+            success:function (model, response) {
                 var idOntology = model.get('ontology');
                 var ontology = new OntologyModel({id:idOntology}).fetch({
-                    success : function(model, response) {
+                    success:function (model, response) {
                         self.ontologyTreeView = new OntologyTreeView({
-                            el: $("#ontologyTree" + self.model.get("id")),
-                            browseImageView : self.browseImageView,
-                            model: model
+                            el:$("#ontologyTree" + self.model.get("id")),
+                            browseImageView:self.browseImageView,
+                            model:model
                         }).render();
                         self.callback(self.ontologyTreeView);
                     }
@@ -39,7 +39,7 @@ var OntologyPanel = Backbone.View.extend({
 
                 require([
                     "text!application/templates/explorer/OntologyTree.tpl.html"
-                ], function(tpl) {
+                ], function (tpl) {
                     self.doLayout(tpl);
                 });
             }
@@ -50,12 +50,12 @@ var OntologyPanel = Backbone.View.extend({
      * Render the html into the DOM element associated to the view
      * @param tpl
      */
-    doLayout: function(tpl) {
+    doLayout:function (tpl) {
 
         new DraggablePanelView({
-            el : $('#ontologyTree' + this.model.get('id')),
-            className : "ontologyPanel",
-            template : _.template(tpl, {id : this.model.get('id')})
+            el:$('#ontologyTree' + this.model.get('id')),
+            className:"ontologyPanel",
+            template:_.template(tpl, {id:this.model.get('id')})
         }).render();
     }
 });

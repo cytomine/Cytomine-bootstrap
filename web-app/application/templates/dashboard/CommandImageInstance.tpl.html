@@ -1,3 +1,7 @@
 <li>
-    <b><%= datestr %></b> : <a href="#tabs-image-<%= idProject %>-<%= idImage %>-" onmouseout="$('#thumbcommand<%= idImage %>').hide();" onMouseOver="$('#thumbcommand<%= idImage %>').css('display','<%= cropStyle %>');"><img class="thumbcommand" id="thumbcommand<%= idImage %>" src="<%= cropURL %>" style="display:none;position: absolute;z-index: 100;max-width: 300px;" /><%= text %></a>
+    <b><%= datestr %></b> : <a href="#tabs-image-<%= idProject %>-<%= idImage %>-"
+                               onmouseout="$('#thumbcommand<%= idImage %>').hide();"
+                               onMouseOver="$('#thumbcommand<%= idImage %>').css('display','<%= cropStyle %>');"><img
+        class="thumbcommand" id="thumbcommand<%= idImage %>" src="<%= cropURL %>"
+        style="display:none;position: absolute;z-index: 100;max-width: 300px;"/><%= text %></a>
 </li>

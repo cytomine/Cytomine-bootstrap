@@ -9,37 +9,37 @@
 
 
 var OverviewMapPanel = Backbone.View.extend({
-       tagName : "div",
+    tagName:"div",
 
-       /**
-        * ExplorerTabs constructor
-        * @param options
-        */
-       initialize: function(options) {
+    /**
+     * ExplorerTabs constructor
+     * @param options
+     */
+    initialize:function (options) {
 
-       },
-       /**
-        * Grab the layout and call ask for render
-        */
-       render : function() {
-          var self = this;
-          require([
-             "text!application/templates/explorer/OverviewMap.tpl.html"
-          ], function(tpl) {
-             self.doLayout(tpl);
-          });
-          return this;
-       },
-       /**
-        * Render the html into the DOM element associated to the view
-        * @param tpl
-        */
-       doLayout: function(tpl) {
-          var self = this;
-          new DraggablePanelView({
-                 el : $('#overviewMap' + self.model.get('id')),
-                 className : "overviewPanel",
-                 template : _.template(tpl, {id : self.model.get('id'), isDesktop : !window.app.view.isMobile})
-              }).render();
-       }
-    });
+    },
+    /**
+     * Grab the layout and call ask for render
+     */
+    render:function () {
+        var self = this;
+        require([
+            "text!application/templates/explorer/OverviewMap.tpl.html"
+        ], function (tpl) {
+            self.doLayout(tpl);
+        });
+        return this;
+    },
+    /**
+     * Render the html into the DOM element associated to the view
+     * @param tpl
+     */
+    doLayout:function (tpl) {
+        var self = this;
+        new DraggablePanelView({
+            el:$('#overviewMap' + self.model.get('id')),
+            className:"overviewPanel",
+            template:_.template(tpl, {id:self.model.get('id'), isDesktop:!window.app.view.isMobile})
+        }).render();
+    }
+});

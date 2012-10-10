@@ -1,79 +1,98 @@
 <div class="container-fluid">
 
-        <div class="widget-header">
-            <i class="icon-upload"></i>
-            <h3>Upload</h3>
-        </div>
-        <div class="widget-content" style="padding: 10px;">
-            <div class="alert alert-block">
-                <h4 class="alert-heading">Important notes !</h4>
-                <ul>
-                    <li>The maximum file size (per file) for uploads is <strong>1 GB</strong></li>
-                    <li>Only image files (<strong>JP(E)G, GIF, PNG, TIF, TIFF, JP2, SVS, <span style="text-decoration:line-through;">NDPI</span> (soon), SCN</strong>) are allowed</li>
-                    <!--<li><strong>ZIP</strong> files are also allowed (and can contains multiple images)</li>
-<li><strong>MRXS</strong> and <strong>VMS</strong> files and its nested files must be always contained in one zipped file. The hierarchy of files and directories must be preserved.</li>-->
-                    <li>You can <strong>drag &amp; drop</strong> files from your desktop on the 'Add files...' button with Google Chrome, Mozilla Firefox and Apple Safari.</li>
-                    <li>You are also able to link images with project manually after upload is done.</li>
-                </ul>
-            </div>
+    <div class="widget-header">
+        <i class="icon-upload"></i>
 
-            <form class="form-horizontal" id="fileupload" action="api/uploadedfile" method="POST" enctype="multipart/form-data">
-                <fieldset>
-                    <div class="control-group">
-                        <label class="control-label">Project</label>
-                        <div class="controls">
-                            <label class="checkbox">
-                                <input type="checkbox" id="linkWithProject" value="true">
-                                Link automatically uploaded file with selected project
-                            </label>
-                            <select class="span3" id="linkProjectSelect">
-                            </select>
-                        </div>
+        <h3>Upload</h3>
+    </div>
+    <div class="widget-content" style="padding: 10px;">
+        <div class="alert alert-block">
+            <h4 class="alert-heading">Important notes !</h4>
+            <ul>
+                <li>The maximum file size (per file) for uploads is <strong>1 GB</strong></li>
+                <li>Only image files (<strong>JP(E)G, GIF, PNG, TIF, TIFF, JP2, SVS, <span
+                        style="text-decoration:line-through;">NDPI</span> (soon), SCN</strong>) are allowed
+                </li>
+                <!--<li><strong>ZIP</strong> files are also allowed (and can contains multiple images)</li>
+<li><strong>MRXS</strong> and <strong>VMS</strong> files and its nested files must be always contained in one zipped file. The hierarchy of files and directories must be preserved.</li>-->
+                <li>You can <strong>drag &amp; drop</strong> files from your desktop on the 'Add files...' button with
+                    Google Chrome, Mozilla Firefox and Apple Safari.
+                </li>
+                <li>You are also able to link images with project manually after upload is done.</li>
+            </ul>
+        </div>
+
+        <form class="form-horizontal" id="fileupload" action="api/uploadedfile" method="POST"
+              enctype="multipart/form-data">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label">Project</label>
+
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox" id="linkWithProject" value="true">
+                            Link automatically uploaded file with selected project
+                        </label>
+                        <select class="span3" id="linkProjectSelect">
+                        </select>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label">Files</label>
-                        <div class="controls ">
-                            <div class="progressbar fileupload-progressbar fade">
-                                <div style="width:0%;"></div>
-                            </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Files</label>
+
+                    <div class="controls ">
+                        <div class="progressbar fileupload-progressbar fade">
+                            <div style="width:0%;"></div>
+                        </div>
                             <span class="btn btn-success fileinput-button">
-                            <span><i class="icon icon-plus icon-white" /> Add files...</span>
+                            <span><i class="icon icon-plus icon-white"/> Add files...</span>
                                 <input type="file" name="files[]" multiple>
                             </span>
-                        </div>
                     </div>
-                    <div class="control-group">
-                        <div class="controls">
+                </div>
+                <div class="control-group">
+                    <div class="controls">
 
-                        </div>
                     </div>
-                    <div class="control-group">
-                        <div class="controls">
-                            <table class="zebra-striped"><tbody class="files-list"></tbody></table>
-                        </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <table class="zebra-striped">
+                            <tbody class="files-list"></tbody>
+                        </table>
                     </div>
-                    <div class="form-actions fileupload-buttonbar">
-                        <button type="submit" class="btn btn-primary start"><i class="icon icon-plus icon-white" /> Start upload</button>
-                        <button type="reset" class="btn btn-warning cancel"><i class="icon-ban-circle icon-white"></i> Cancel upload</button>
-                        <button type="button" class="btn btn-danger delete"><i class="icon-trash icon-white"></i> Hide selected</button>
-                        <!--<input type="checkbox" class="toggle">-->
-                    </div>
+                </div>
+                <div class="form-actions fileupload-buttonbar">
+                    <button type="submit" class="btn btn-primary start"><i class="icon icon-plus icon-white"/> Start
+                        upload
+                    </button>
+                    <button type="reset" class="btn btn-warning cancel"><i class="icon-ban-circle icon-white"></i>
+                        Cancel upload
+                    </button>
+                    <button type="button" class="btn btn-danger delete"><i class="icon-trash icon-white"></i> Hide
+                        selected
+                    </button>
+                    <!--<input type="checkbox" class="toggle">-->
+                </div>
 
-                </fieldset>
-            </form>
-        </div>
-
+            </fieldset>
+        </form>
+    </div>
 
 
     <div style="margin-top: 30px;margin-bottom: 30px;">
         <div class="widget-header">
             <i class="icon-list-alt"></i>
+
             <h3>Uploaded files</h3>
         </div>
         <div class="widget-content" style="padding: 10px;">
-            <p><a id="refreshUploadedFiles" class="btn" href="#"><i class="icon icon-refresh" /> Refresh</a></p>
-            <div id="loadingUploadedFiles" class="alert alert-info"><i class="icon-refresh" /> Loading...</div>
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="uploaded_files" style="display: none;">
+            <p><a id="refreshUploadedFiles" class="btn" href="#"><i class="icon icon-refresh"/> Refresh</a></p>
+
+            <div id="loadingUploadedFiles" class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+            <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                   class="table table-striped table-bordered table-condensed" id="uploaded_files"
+                   style="display: none;">
                 <thead>
                 <tr>
                     <th>Filename</th>

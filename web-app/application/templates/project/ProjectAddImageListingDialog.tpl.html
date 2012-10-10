@@ -1,9 +1,11 @@
 <div class="hero-unit" style="padding-top: 20px;padding-bottom: 20px;">
     <h3>Search Image Panel for project <%= name %> (<%= ontologyName %>)</h3>
-    Filename: <input id="filenamesearchtextboxup<%= id %>-<%= tab %>" type="text" />
+    Filename: <input id="filenamesearchtextboxup<%= id %>-<%= tab %>" type="text"/>
     Between : <input id="datestartsearchup<%= id %>-<%= tab %>" style="display:inline;"/>
     and : <input id="dateendsearchup<%= id %>-<%= tab %>" style="display:inline;"/>
-    <button id='imagesallbutton<%= id %>-<%= tab %>' class="btn" style="display:inline;" class="showAllProject">Show All Images</button>
+    <button id='imagesallbutton<%= id %>-<%= tab %>' class="btn" style="display:inline;" class="showAllProject">Show All
+        Images
+    </button>
 </div>
 <div class="row">
     <div id="imagesProjectContainer" class="span6">
@@ -11,8 +13,12 @@
         <div id="pagemanageproject<%= id %>"></div>
     </div>
     <div id="imageTableSeparator" class="span1">
-            <button class="btn addImageProject" id="addimageprojectbutton<%= id %>" type="button"><i class="icon-chevron-left"></i></button><br>
-            <button class="btn delImageProject" id="delimageprojectbutton<%= id %>" type="button"><i class="icon-chevron-right"></i></button><br>
+        <button class="btn addImageProject" id="addimageprojectbutton<%= id %>" type="button"><i
+                class="icon-chevron-left"></i></button>
+        <br>
+        <button class="btn delImageProject" id="delimageprojectbutton<%= id %>" type="button"><i
+                class="icon-chevron-right"></i></button>
+        <br>
     </div>
 
     <div id="allImagesContainer" class="span9">

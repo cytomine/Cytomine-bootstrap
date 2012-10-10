@@ -9,6 +9,7 @@
                     <fieldset>
                         <div class="control-group">
                             <label class="control-label" id="optionsCheckboxes">Share with</label>
+
                             <div class="controls">
                                 <label class="radio">
                                     <input type="radio" name="shareWithOption" value="everyone" checked>
@@ -19,7 +20,7 @@
                                     One person in particular
                                 </label>
                                 <label>
-                                    <select id="selectUserShare<%= id %>" name="selectUserShare<%= id %>" disabled />
+                                    <select id="selectUserShare<%= id %>" name="selectUserShare<%= id %>" disabled/>
                                 </label>
 
                             </div>
@@ -27,9 +28,11 @@
 
                         <div class="control-group">
                             <label for="annotationComment<%= id %>">Your comment</label>
+
                             <div class="input">
                                 <ul class="inputs-list">
-                                    <textarea class="xlarge" id="annotationComment<%= id %>" name="annotationComment<%= id %>" rows="8"></textarea>
+                                    <textarea class="xlarge" id="annotationComment<%= id %>"
+                                              name="annotationComment<%= id %>" rows="8"></textarea>
                                 </ul>
                             </div>
                         </div>

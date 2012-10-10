@@ -1,14 +1,14 @@
 var PhonoController = Backbone.Router.extend({
 
-    routes: {
-        "phono" : "createMenu"
+    routes:{
+        "phono":"createMenu"
     },
 
-    initialize : function(options) {
+    initialize:function (options) {
 
     },
 
-    createMenu : function() {
+    createMenu:function () {
         new PhonoMenu().render();
     }
 

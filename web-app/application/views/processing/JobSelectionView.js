@@ -25,9 +25,9 @@ var JobSelectionView = Backbone.View.extend({
         require([
             "text!application/templates/processing/JobSelection.tpl.html"
         ],
-                function (jobSelectionViewTpl) {
-                    self.loadResult(jobSelectionViewTpl);
-                });
+            function (jobSelectionViewTpl) {
+                self.loadResult(jobSelectionViewTpl);
+            });
         return this;
     },
     loadResult:function (jobSelectionViewTpl) {
@@ -198,23 +198,23 @@ var JobSelectionView = Backbone.View.extend({
 
         //add select input elemen for each column
         /*var fnCreateSelect = function fnCreateSelect( aData )
-        {
-            var r='<select><option value=""></option>', i, iLen=aData.length;
-            for ( i=0 ; i<iLen ; i++ )
-            {
-                r += '<option value="'+aData[i]+'">'+aData[i]+'</option>';
-            }
-            return r+'</select>';
-        }
-        $("#selectJobTable").append('<tfoot><th rowspan="1" colspan="1"><th rowspan="1" colspan="1"><th rowspan="1" colspan="1"><th rowspan="1" colspan="1"><th rowspan="1" colspan="1"></tfoot>');
-        _.each([], function ( i ) {
-            alert(i);
-            var th_elem = $("#selectJobTable").find("tfoot th:eq("+i+")");
-            th_elem.html(fnCreateSelect( self.table.fnGetColumnData(i)));
-            $('select', this).change( function () {
-                self.table.fnFilter( $(this).val(), i );
-            } );
-        } ); */
+         {
+         var r='<select><option value=""></option>', i, iLen=aData.length;
+         for ( i=0 ; i<iLen ; i++ )
+         {
+         r += '<option value="'+aData[i]+'">'+aData[i]+'</option>';
+         }
+         return r+'</select>';
+         }
+         $("#selectJobTable").append('<tfoot><th rowspan="1" colspan="1"><th rowspan="1" colspan="1"><th rowspan="1" colspan="1"><th rowspan="1" colspan="1"><th rowspan="1" colspan="1"></tfoot>');
+         _.each([], function ( i ) {
+         alert(i);
+         var th_elem = $("#selectJobTable").find("tfoot th:eq("+i+")");
+         th_elem.html(fnCreateSelect( self.table.fnGetColumnData(i)));
+         $('select', this).change( function () {
+         self.table.fnFilter( $(this).val(), i );
+         } );
+         } ); */
     },
     getStateElement:function (job) {
         if (job.isNotLaunch()) return '<span class="label btn-inverse">not launch</span> ';
@@ -250,10 +250,10 @@ var JobSelectionView = Backbone.View.extend({
                     success:function (model, response) {
                         var tableParam = $(self.el).find('#selectJobTable').find('table[id=' + aData[1] + ']');
                         _.each(model.get('jobParameter'), function (param) {
-                            console.log("param.value="+param.value);
-                            var value =  param.value
-                            if(value.length>50) {
-                                value = value.substring(0,50)+"..."
+                            console.log("param.value=" + param.value);
+                            var value = param.value
+                            if (value.length > 50) {
+                                value = value.substring(0, 50) + "..."
                             }
 
                             tableParam.append('<tr><td>' + param.name + '</td><td>' + value + '</td><td>' + param.type + '</td></tr>');
@@ -276,7 +276,7 @@ var JobSelectionView = Backbone.View.extend({
         return sOut;
     },
 
-    initDataTableSelectFiltering : function() {
+    initDataTableSelectFiltering:function () {
         /*
          * Function: fnGetColumnData
          * Purpose:  Return an array of table values from a particular column.
@@ -288,18 +288,18 @@ var JobSelectionView = Backbone.View.extend({
          *           bool:bIgnoreEmpty - optional - if set to false empty values are not filtered from the result array
          * Author:   Benedikt Forchhammer <b.forchhammer /AT\ mind2.de>
          */
-        $.fn.dataTableExt.oApi.fnGetColumnData = function ( oSettings, iColumn, bUnique, bFiltered, bIgnoreEmpty ) {
+        $.fn.dataTableExt.oApi.fnGetColumnData = function (oSettings, iColumn, bUnique, bFiltered, bIgnoreEmpty) {
             // check that we have a column id
-            if ( typeof iColumn == "undefined" ) return new Array();
+            if (typeof iColumn == "undefined") return [];
 
             // by default we only wany unique data
-            if ( typeof bUnique == "undefined" ) bUnique = true;
+            if (typeof bUnique == "undefined") bUnique = true;
 
             // by default we do want to only look at filtered data
-            if ( typeof bFiltered == "undefined" ) bFiltered = true;
+            if (typeof bFiltered == "undefined") bFiltered = true;
 
             // by default we do not wany to include empty values
-            if ( typeof bIgnoreEmpty == "undefined" ) bIgnoreEmpty = true;
+            if (typeof bIgnoreEmpty == "undefined") bIgnoreEmpty = true;
 
             // list of rows which we're going to loop through
             var aiRows;
@@ -310,9 +310,9 @@ var JobSelectionView = Backbone.View.extend({
             else aiRows = oSettings.aiDisplayMaster; // all row numbers
 
             // set up data array
-            var asResultData = new Array();
+            var asResultData = [];
 
-            for (var i=0,c=aiRows.length; i<c; i++) {
+            for (var i = 0, c = aiRows.length; i < c; i++) {
                 iRow = aiRows[i];
                 var aData = this.fnGetData(iRow);
                 var sValue = aData[iColumn];

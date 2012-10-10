@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 var DisciplineModel = Backbone.Model.extend({
-    url : function() {
+    url:function () {
         var base = 'api/discipline';
         var format = '.json';
         if (this.isNew()) return base + format;
@@ -16,16 +16,16 @@ var DisciplineModel = Backbone.Model.extend({
 
 // define our collection
 var DisciplineCollection = Backbone.Collection.extend({
-    model: DisciplineModel,
-    CLASS_NAME: "be.cytomine.project.Discipline",
-    url: function() {
-            return "api/discipline.json";
+    model:DisciplineModel,
+    CLASS_NAME:"be.cytomine.project.Discipline",
+    url:function () {
+        return "api/discipline.json";
     },
-    initialize: function (options) {
-        if(options!=undefined) {
-        this.light = options.light;
+    initialize:function (options) {
+        if (options != undefined) {
+            this.light = options.light;
         }
-    },comparator : function(discipline) {
+    }, comparator:function (discipline) {
         return discipline.get("name");
     }
 });

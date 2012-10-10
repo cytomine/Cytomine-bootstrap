@@ -1,29 +1,29 @@
-Storage.prototype.setObject = function(key, value) {
+Storage.prototype.setObject = function (key, value) {
     this.setItem(key, JSON.stringify(value));
 }
 
-Storage.prototype.getObject = function(key) {
+Storage.prototype.getObject = function (key) {
     return JSON.parse(this.getItem(key));
 }
 
 var ApplicationView = Backbone.View.extend({
 
-    tagName : "div",
-    className : "layout",
-    components : {},
-    intervals : [], //references to followInterval, positionInterval...
-    isMobile : ( navigator.userAgent.match(/iPad/i) != null ),
-    panelsConfiguration : [
-        {key : "toolbar-panel", linkID : "toggle-toolbar-panel", name : "Toolbar", className : "toolbarPanel", value : { visible : true , position : { bottom : 0}, align : "center"}},
-        {key : "overview-panel", linkID : "toggle-overview-panel", name : "Overview", className : "overviewPanel", value : { visible : true , position : { right : 250, top : 325}}},
-        {key : "ontology-panel", linkID : "toggle-ontology-panel", name : "Ontology", className : "ontologyPanel", value : { visible : true , position : { left : 20, top : 280}}},
-        {key : "layer-panel", linkID : "toggle-layer-panel", name : "Layer switcher", className : "layerSwitcherPanel", value : { visible : false , position : { right : 250, top : 100}}},
-        {key : "filters-panel", linkID : "toggle-filters-panel", name : "Filters", className : "imageFiltersPanel", value : { visible : false , position : { right : 250, bottom : 15}}}
+    tagName:"div",
+    className:"layout",
+    components:{},
+    intervals:[], //references to followInterval, positionInterval...
+    isMobile:( navigator.userAgent.match(/iPad/i) != null ),
+    panelsConfiguration:[
+        {key:"toolbar-panel", linkID:"toggle-toolbar-panel", name:"Toolbar", className:"toolbarPanel", value:{ visible:true, position:{ bottom:0}, align:"center"}},
+        {key:"overview-panel", linkID:"toggle-overview-panel", name:"Overview", className:"overviewPanel", value:{ visible:true, position:{ right:250, top:325}}},
+        {key:"ontology-panel", linkID:"toggle-ontology-panel", name:"Ontology", className:"ontologyPanel", value:{ visible:true, position:{ left:20, top:280}}},
+        {key:"layer-panel", linkID:"toggle-layer-panel", name:"Layer switcher", className:"layerSwitcherPanel", value:{ visible:false, position:{ right:250, top:100}}},
+        {key:"filters-panel", linkID:"toggle-filters-panel", name:"Filters", className:"imageFiltersPanel", value:{ visible:false, position:{ right:250, bottom:15}}}
     ],
-    events: {
+    events:{
 
     },
-    clearIntervals : function (){
+    clearIntervals:function () {
         _.each(this.intervals, function (interval) {
             clearInterval(interval);
         });
@@ -31,29 +31,29 @@ var ApplicationView = Backbone.View.extend({
     /**
      *  UNDO the last command
      */
-    undo : function () {
+    undo:function () {
         window.app.controllers.command.undo();
     },
 
     /**
      * REDO the last command
      */
-    redo : function () {
+    redo:function () {
         window.app.controllers.command.redo();
     },
-    hideFloatingPanels : function() {
+    hideFloatingPanels:function () {
         _.each(this.panelsConfiguration, function (item) {
             if (item.key == "toolbar-panel") return;
-            $("."+item.className).hide();
+            $("." + item.className).hide();
         });
     },
-    showFloatingPanels : function() {
+    showFloatingPanels:function () {
         _.each(this.panelsConfiguration, function (item) {
             if (item.key == "toolbar-panel") return;
-            $("."+item.className).show();
+            $("." + item.className).show();
         });
     },
-    toggleVisibility : function (item) {
+    toggleVisibility:function (item) {
         var self = this;
         var preference = localStorage.getObject(item.key);
         preference.visible = !preference.visible;
@@ -67,30 +67,30 @@ var ApplicationView = Backbone.View.extend({
                 }
                 preferencePanel = localStorage.getObject(panel.key);
                 preferencePanel.visible = visible;
-                localStorage.setObject(panel.key , preferencePanel);
+                localStorage.setObject(panel.key, preferencePanel);
                 self.updateMenuItem(panel);
             });
         }
-        localStorage.setObject(item.key , preference);
+        localStorage.setObject(item.key, preference);
         this.updateMenuItem(item);
 
     },
-    updateMenuItem : function (item) {
+    updateMenuItem:function (item) {
         var preference = localStorage.getObject(item.key);
         if (preference != undefined && preference.visible != undefined && preference.visible == true) {
-            $("#"+item.linkID).html("<i class='icon-eye-close' /> " + item.name);
-            $("."+item.className).each(
-                    function( intIndex ){
-                        $(this).show('fast');
-                    }
+            $("#" + item.linkID).html("<i class='icon-eye-close' /> " + item.name);
+            $("." + item.className).each(
+                function (intIndex) {
+                    $(this).show('fast');
+                }
             );
         }
         else {
-            $("#"+item.linkID).html("<i class='icon-eye-open' /> " + item.name);
-            $("."+item.className).each(
-                    function( intIndex ){
-                        $(this).hide('fast');
-                    }
+            $("#" + item.linkID).html("<i class='icon-eye-open' /> " + item.name);
+            $("." + item.className).each(
+                function (intIndex) {
+                    $(this).hide('fast');
+                }
             );
         }
     },
@@ -98,11 +98,11 @@ var ApplicationView = Backbone.View.extend({
      * ApplicationView constructor. Call the initialization of its components
      * @param options
      */
-    initialize: function(options) {
+    initialize:function (options) {
         var resizeTO = null;
-        $(window).resize(function() {
-            if(resizeTO) clearTimeout(resizeTO);
-            resizeTO = setTimeout(function() {
+        $(window).resize(function () {
+            if (resizeTO) clearTimeout(resizeTO);
+            resizeTO = setTimeout(function () {
                 $(window).trigger('resizeEnd');
             }, 500);
         });
@@ -111,7 +111,7 @@ var ApplicationView = Backbone.View.extend({
      * Render the html into the DOM element associated to the view
      * @param tpl
      */
-    doLayout: function(tpl, renderCallback) {
+    doLayout:function (tpl, renderCallback) {
         var self = this;
         $("body").prepend(_.template(tpl, {}));
         _.each(this.components, function (component) {
@@ -124,38 +124,38 @@ var ApplicationView = Backbone.View.extend({
         renderCallback.call();
         return this;
     },
-    initEvents : function (){
+    initEvents:function () {
         $("#undo").live('click', this.undo);
         $("#redo").live('click', this.redo);
     },
     /**
      * Grab the layout and call ask for render
      */
-    render : function(renderCallback) {
+    render:function (renderCallback) {
         this.initComponents();
         var self = this;
         require([
             "text!application/templates/BaseLayout.tpl.html"
         ],
-                function(tpl) {
-                    self.doLayout(tpl, renderCallback);
-                });
+            function (tpl) {
+                self.doLayout(tpl, renderCallback);
+            });
         return this;
     },
-    initPreferences : function () {
+    initPreferences:function () {
         _.each(this.panelsConfiguration, function (item) {
             if (localStorage.getObject(item.key)) return;
             localStorage.setObject(item.key, item.value);
         });
     },
-    applyPreferences : function() {
+    applyPreferences:function () {
         var self = this;
         _.each(self.panelsConfiguration, function (item) {
             self.updatePanelPosition(item, true);
             self.updateMenuItem(item);
         });
     },
-    updatePanelPosition : function (item, triggerMoveEvent) {
+    updatePanelPosition:function (item, triggerMoveEvent) {
 
         var preference = localStorage.getObject(item.key);
 
@@ -184,13 +184,13 @@ var ApplicationView = Backbone.View.extend({
         }
         var panelWidth = 0;
         var panelHeight = 0;
-       $.each($("."+item.className) , function(index, value) {
-           var width = $(value).width();
-           var height = $(value).height();
-           if (width > 0) panelWidth = width;
-           if (height > 0) panelHeight = height;
+        $.each($("." + item.className), function (index, value) {
+            var width = $(value).width();
+            var height = $(value).height();
+            if (width > 0) panelWidth = width;
+            if (height > 0) panelHeight = height;
         });
-        var panel = $("."+item.className);
+        var panel = $("." + item.className);
 
         var windowWidth = $(window).width();
         var windowHeight = $(window).height();
@@ -214,17 +214,17 @@ var ApplicationView = Backbone.View.extend({
         // Position
         var position = preference.position;
         if (position.top == undefined) position.top = '';
-        $("."+item.className).css("top", position.top);
+        $("." + item.className).css("top", position.top);
         if (position.left == undefined) position.left = '';
-        $("."+item.className).css("left", position.left);
+        $("." + item.className).css("left", position.left);
         if (position.right == undefined) position.right = '';
-        $("."+item.className).css("right", position.right);
+        $("." + item.className).css("right", position.right);
         if (position.bottom == undefined) position.bottom = '';
-        $("."+item.className).css("bottom", position.bottom);
+        $("." + item.className).css("bottom", position.bottom);
 
-        if (triggerMoveEvent) $("."+item.className).trigger("movedProgramatically");
+        if (triggerMoveEvent) $("." + item.className).trigger("movedProgramatically");
     },
-    updatePosition : function (className, position, triggerMoveEvent) {
+    updatePosition:function (className, position, triggerMoveEvent) {
         var self = this;
         var panelConfig = _.find(self.panelsConfiguration, function (item) {
             return item.className == className;
@@ -235,26 +235,26 @@ var ApplicationView = Backbone.View.extend({
         localStorage.setObject(panelConfig.key, preference);
         self.updatePanelPosition(panelConfig, triggerMoveEvent);
     },
-    initUserMenu : function () {
+    initUserMenu:function () {
         var self = this;
         //Init user menu
         require([
             "text!application/templates/MenuDropDown.tpl.html"
-        ],function(tpl) {
+        ], function (tpl) {
             $("#menu-right").append(tpl);
-            $("#logout").click(function() {
+            $("#logout").click(function () {
                 window.app.controllers.auth.logout();
                 return false;
             });
             $("#loggedUser").html(window.app.status.user.model.prettyName());
-            _.each(self.panelsConfiguration, function (item){
+            _.each(self.panelsConfiguration, function (item) {
                 self.updateMenuItem(item);
-                $("#"+item.linkID).on('click',function(){
+                $("#" + item.linkID).on('click', function () {
                     self.toggleVisibility(item);
                     self.updatePanelPosition(item, true);
                 });
             });
-            $("#toggle-floating-panel").on("click", function(){
+            $("#toggle-floating-panel").on("click", function () {
                 var key = "toggle-floating-panel";
                 var preference = localStorage.getObject(key);
                 preference.activated = !preference.activated;
@@ -266,7 +266,7 @@ var ApplicationView = Backbone.View.extend({
     /**
      * Initialize the components of the application
      */
-    initComponents : function() {
+    initComponents:function () {
         var self = this;
         require([
             "text!application/templates/upload/UploadComponent.tpl.html",
@@ -277,105 +277,105 @@ var ApplicationView = Backbone.View.extend({
             "text!application/templates/activity/ActivityComponent.tpl.html",
             "text!application/templates/account/AccountComponent.tpl.html"
         ],
-                function(uploadTpl, projectTpl, ontologyTpl, explorerTpl, adminTpl, activityTpl, accountTpl) {
-                    self.components.activity = new Component({
-                        el : "#content",
-                        template : _.template(activityTpl, {}),
-                        buttonAttr : {
-                            elButton : "activity-button"
-                        },
-                        divId : "activity"
-                    });
-                    self.components.upload = new Component({
-                        el : "#content",
-                        template : _.template(uploadTpl, {}),
-                        buttonAttr : {
-                            elButton : "upload-button"
-                        },
-                        divId : "upload"
-                    });
-                    self.components.account = new Component({
-                        el : "#content",
-                        template : _.template(accountTpl, {}),
-                        buttonAttr : {
-                            elButton : "upload-button"
-                        },
-                        divId : "account"
-                    });
-                    self.components.project = new Component({
-                        el : "#content",
-                        template : _.template(projectTpl, {}),
-                        buttonAttr : {
-                            elButton : "project-button"
-                        },
-                        divId : "project"
-                    });
-                    self.components.ontology = new Component({
-                        el : "#content",
-                        template : _.template(ontologyTpl, {}),
-                        buttonAttr : {
-                            elButton : "ontology-button"
-                        },
-                        divId : "ontology"
-                    });
-                    self.components.explorer = new Component({
-                        el : "#content",
-                        template : _.template(explorerTpl, {}),
-                        buttonAttr : {
-                            elButton : "explorer-button"
-                        },
-                        divId : "explorer",
-                        activate: function () {
-                            if (window.app.status.currentProject == undefined)
-                                $("#explorer > .noProject").show();
-                            else
-                                $("#explorer > .noProject").hide();
-                            $("#" + this.divId).show();
-                            $("#" + this.buttonAttr.elButton).parent().addClass("active");
-                        }
-                    });
-                    /*self.components.admin = new Component({
-                     el : "#content",
-                     template : _.template(adminTpl, {}),
-                     buttonAttr : {
-                     elButton : "admin-button",
-                     buttonText : "Admin",
-                     buttonWrapper : "#menu",
-                     icon : "ui-icon-wrench",
-                     route : "#admin/users"
-                     },
-                     divId : "admin"
-                     });*/
-
-                    /*self.components.logout = new Component({
-                     el : "#content",
-                     template : "",
-                     buttonAttr : {
-                     elButton : "user-button",
-                     buttonText :,
-                     buttonWrapper : "#menu",
-                     dataContent : "we have to delete this popover for logout",
-                     dataTitle : "huhu",
-                     icon : "ui-icon-power",
-                     route : "#",
-                     click :
-                     },
-                     divId : "logout"
-                     });*/
+            function (uploadTpl, projectTpl, ontologyTpl, explorerTpl, adminTpl, activityTpl, accountTpl) {
+                self.components.activity = new Component({
+                    el:"#content",
+                    template:_.template(activityTpl, {}),
+                    buttonAttr:{
+                        elButton:"activity-button"
+                    },
+                    divId:"activity"
                 });
+                self.components.upload = new Component({
+                    el:"#content",
+                    template:_.template(uploadTpl, {}),
+                    buttonAttr:{
+                        elButton:"upload-button"
+                    },
+                    divId:"upload"
+                });
+                self.components.account = new Component({
+                    el:"#content",
+                    template:_.template(accountTpl, {}),
+                    buttonAttr:{
+                        elButton:"upload-button"
+                    },
+                    divId:"account"
+                });
+                self.components.project = new Component({
+                    el:"#content",
+                    template:_.template(projectTpl, {}),
+                    buttonAttr:{
+                        elButton:"project-button"
+                    },
+                    divId:"project"
+                });
+                self.components.ontology = new Component({
+                    el:"#content",
+                    template:_.template(ontologyTpl, {}),
+                    buttonAttr:{
+                        elButton:"ontology-button"
+                    },
+                    divId:"ontology"
+                });
+                self.components.explorer = new Component({
+                    el:"#content",
+                    template:_.template(explorerTpl, {}),
+                    buttonAttr:{
+                        elButton:"explorer-button"
+                    },
+                    divId:"explorer",
+                    activate:function () {
+                        if (window.app.status.currentProject == undefined)
+                            $("#explorer > .noProject").show();
+                        else
+                            $("#explorer > .noProject").hide();
+                        $("#" + this.divId).show();
+                        $("#" + this.buttonAttr.elButton).parent().addClass("active");
+                    }
+                });
+                /*self.components.admin = new Component({
+                 el : "#content",
+                 template : _.template(adminTpl, {}),
+                 buttonAttr : {
+                 elButton : "admin-button",
+                 buttonText : "Admin",
+                 buttonWrapper : "#menu",
+                 icon : "ui-icon-wrench",
+                 route : "#admin/users"
+                 },
+                 divId : "admin"
+                 });*/
+
+                /*self.components.logout = new Component({
+                 el : "#content",
+                 template : "",
+                 buttonAttr : {
+                 elButton : "user-button",
+                 buttonText :,
+                 buttonWrapper : "#menu",
+                 dataContent : "we have to delete this popover for logout",
+                 dataTitle : "huhu",
+                 icon : "ui-icon-power",
+                 route : "#",
+                 click :
+                 },
+                 divId : "logout"
+                 });*/
+            });
     },
     /**
      * Show a component
      * @param Component the reference to the component
      */
-    showComponent : function (component) {
+    showComponent:function (component) {
         _.each(this.components, function (c) {
             if (c != component) c.deactivate();
         });
         $("#app").show();
         component.activate();
     },
-    getUserNameById : function(userId) {
+    getUserNameById:function (userId) {
         if (window.app.models.projectUser.get(userId)) {
             return window.app.models.projectUser.get(userId).prettyName();
         } else if (window.app.models.projectUserJob.get(userId)) {
@@ -386,21 +386,21 @@ var ApplicationView = Backbone.View.extend({
     }
 });
 
-ApplicationView.prototype.message =  function(title, message, type) {
+ApplicationView.prototype.message = function (title, message, type) {
     if (type == "" || type == undefined)
         type = 'alert-info';
     else
-        type = 'alert-'+type;
+        type = 'alert-' + type;
 
-    if(message!=undefined) {
+    if (message != undefined) {
         message.responseText && (message = message.responseText);
     }
 
     var tpl = '<div style="min-width: 200px" id="alert<%=   timestamp %>" class="alert <%=   type %> fade in" data-alert="alert"><a class="close" data-dismiss="alert">×</a><p><strong><%=   alert %></strong> <%=   message %></p></div>';
     var timestamp = new Date().getTime();
-    $("#alerts").append(_.template(tpl, { alert : title, message : message, timestamp : timestamp, type : type}));
-    setTimeout(function(){
-        $("#alert"+timestamp).remove();
+    $("#alerts").append(_.template(tpl, { alert:title, message:message, timestamp:timestamp, type:type}));
+    setTimeout(function () {
+        $("#alert" + timestamp).remove();
     }, 3000);
 
 }

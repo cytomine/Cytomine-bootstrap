@@ -35,9 +35,9 @@ var JobTableView = Backbone.View.extend({
         require([
             "text!application/templates/processing/JobListing.tpl.html"
         ],
-                function (jobListingViewTpl) {
-                    self.loadResult(jobListingViewTpl);
-                });
+            function (jobListingViewTpl) {
+                self.loadResult(jobListingViewTpl);
+            });
         return this;
     },
     loadResult:function (jobListingViewTpl) {
@@ -134,7 +134,7 @@ var JobTableView = Backbone.View.extend({
         var cellState = self.getStateElement(job);
         var cellSee = '<button id="' + job.id + '">See details</button>';
         var cellRate = "";
-        if(job.get('rate') != -1) cellRate = (job.get('rate')*100).toFixed(2)+"%";
+        if (job.get('rate') != -1) cellRate = (job.get('rate') * 100).toFixed(2) + "%";
 
         //fill array with first column info
         var colArray = ['<tr>', '<td>' + cellIcon + '</td>', '<td  style="text-align:left;">' + cellId + '</td>', '<td  style="text-align:center;">' + cellNumber + '</td>', '<td  style="text-align:center;">' + cellDate + '</td>', '<td  style="text-align:center;">' + cellState + '</td>', '<td  style="text-align:center;">' + cellRate + '</td>', '<td>' + cellSee + '</td>']
@@ -178,7 +178,7 @@ var JobTableView = Backbone.View.extend({
             }
             else return "<td></td>";
         } else if (param.type == 'ListDomain' || param.type == 'Domain') {
-            return '<td><label style="display:inline;" data="'+param.value+'" class="'+param.softwareParameter+'" id="paramsTable'+param.id+'"><i class="icon-refresh" />Loading...</label></td>';
+            return '<td><label style="display:inline;" data="' + param.value + '" class="' + param.softwareParameter + '" id="paramsTable' + param.id + '"><i class="icon-refresh" />Loading...</label></td>';
         } else return '<td>' + param.value + '</td>';
 
     },
@@ -221,7 +221,7 @@ var JobTableView = Backbone.View.extend({
                     success:function (model, response) {
                         var tableParam = $(self.el).find('#searchJobTable').find('table[id=' + aData[1] + ']');
                         _.each(model.get('jobParameter'), function (param) {
-                            tableParam.append('<tr><td>' + param.name + '</td><td>' + param.value+ '</td><td>' + param.type + '</td></tr>');
+                            tableParam.append('<tr><td>' + param.name + '</td><td>' + param.value + '</td><td>' + param.type + '</td></tr>');
                         });
                     }
                 });
@@ -377,35 +377,35 @@ var JobTableView = Backbone.View.extend({
         datatable.fnSetColumnVis(columnParamIndex, self.paramsFromSoftwaresVisibility[columnIndex]);
 
         var param = self.paramsFromSoftwaresFull[columnIndex];
-        self.fillDomainElement(param,columnIndex);
+        self.fillDomainElement(param, columnIndex);
     },
-    fillDomainElement: function(param,index) {
+    fillDomainElement:function (param, index) {
 
 
-            if(param.type=="Domain" || param.type=="ListDomain") {
-                if(!this.paramsFromSoftwaresDomainFill[index]) this.retrieveAndReplaceCell(param,index);
-            }
+        if (param.type == "Domain" || param.type == "ListDomain") {
+            if (!this.paramsFromSoftwaresDomainFill[index]) this.retrieveAndReplaceCell(param, index);
+        }
 
     },
-    retrieveAndReplaceCell : function(param,index) {
+    retrieveAndReplaceCell:function (param, index) {
         var self = this;
-        new SoftwareParameterModelCollection({uri: window.app.replaceVariable(param.uri), sortAttribut : param.uriSortAttribut}).fetch({
-               success:function (collection, response) {
-                   _.each($(self.el).find("label."+param.id),function(cell) {
-                       var domainList = $(cell).attr("data");
-                       var domainName = [];
-                       _.each(domainList.split(","), function (id) {
-                           var domain = collection.get(id);
-                           if (domain != undefined)
-                               domainName.push(domain.get(param.uriPrintAttribut));
-                       });
-                       $(cell).empty();
-                       $(cell).text(domainName.join(","));
+        new SoftwareParameterModelCollection({uri:window.app.replaceVariable(param.uri), sortAttribut:param.uriSortAttribut}).fetch({
+            success:function (collection, response) {
+                _.each($(self.el).find("label." + param.id), function (cell) {
+                    var domainList = $(cell).attr("data");
+                    var domainName = [];
+                    _.each(domainList.split(","), function (id) {
+                        var domain = collection.get(id);
+                        if (domain != undefined)
+                            domainName.push(domain.get(param.uriPrintAttribut));
+                    });
+                    $(cell).empty();
+                    $(cell).text(domainName.join(","));
 
-                   });
+                });
 
-                   self.paramsFromSoftwaresDomainFill[index] = true;
-               }
-         });
+                self.paramsFromSoftwaresDomainFill[index] = true;
+            }
+        });
     }
 });

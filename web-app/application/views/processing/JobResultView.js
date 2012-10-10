@@ -61,7 +61,7 @@ var JobResultView = Backbone.View.extend({
             software:self.software
         }).render();
     },
-    downloadFiles : function() {
+    downloadFiles:function () {
         var self = this;
         new DownloadFiles({
             model:self.model,

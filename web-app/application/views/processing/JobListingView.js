@@ -15,9 +15,9 @@ var JobListingView = Backbone.View.extend({
         require([
             "text!application/templates/processing/JobListing.tpl.html"
         ],
-                function (jobListingViewTpl) {
-                    self.loadResult(jobListingViewTpl);
-                });
+            function (jobListingViewTpl) {
+                self.loadResult(jobListingViewTpl);
+            });
         return this;
     },
     loadResult:function (jobListingViewTpl) {

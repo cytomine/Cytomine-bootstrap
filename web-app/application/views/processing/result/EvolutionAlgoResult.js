@@ -21,9 +21,9 @@ var EvolutionAlgoResult = Backbone.View.extend({
         require([
             "text!application/templates/processing/EvolutionAlgoResult.tpl.html"
         ],
-                function (retrievalAlgoViewTpl) {
-                    self.loadResult(retrievalAlgoViewTpl);
-                });
+            function (retrievalAlgoViewTpl) {
+                self.loadResult(retrievalAlgoViewTpl);
+            });
         return this;
     },
     loadResult:function (retrievalAlgoViewTpl) {
@@ -84,7 +84,7 @@ var EvolutionAlgoResult = Backbone.View.extend({
                 indiceJob = i;
             }
             var avg = 0;
-            if(evolution[i].avg!=-1) avg = (evolution[i].avg*100);
+            if (evolution[i].avg != -1) avg = (evolution[i].avg * 100);
             data.addRow([date, evolution[i].size, avg ]);
         }
 
@@ -92,23 +92,23 @@ var EvolutionAlgoResult = Backbone.View.extend({
         // Create and draw the visualization.
         var evolChart = new google.visualization.LineChart($(this.el).find('#avgEvolutionLineChart')[0]);
         evolChart.draw(data, {
-                    colors:['#dc3912', '#3366cc'],
-                    title:'',
-                    width:this.width, height:350,
-                    vAxes:{
-                        0:{
-                            label:'Y1'
-                        },
-                        1:{
-                            label:'Y2'
-                        }
+                colors:['#dc3912', '#3366cc'],
+                title:'',
+                width:this.width, height:350,
+                vAxes:{
+                    0:{
+                        label:'Y1'
                     },
-                    vAxis:{title:"", minValue:0, maxValue:100},
-                    hAxis:{title:"Time"},
-                    backgroundColor:"white",
-                    seriesType:"line",
-                    series:{0:{targetAxisIndex:0}, 1:{type:"area", targetAxisIndex:1}},
-                    lineWidth:1}
+                    1:{
+                        label:'Y2'
+                    }
+                },
+                vAxis:{title:"", minValue:0, maxValue:100},
+                hAxis:{title:"Time"},
+                backgroundColor:"white",
+                seriesType:"line",
+                series:{0:{targetAxisIndex:0}, 1:{type:"area", targetAxisIndex:1}},
+                lineWidth:1}
         );
         evolChart.setSelection([
             {row:indiceJob, column:1}
@@ -170,7 +170,7 @@ var EvolutionAlgoResult = Backbone.View.extend({
                 indiceJob = i;
             }
             var avg = 0;
-            if(evolution[i].avg!=-1) avg = (evolution[i].avg*100);
+            if (evolution[i].avg != -1) avg = (evolution[i].avg * 100);
             data.addRow([date, evolution[i].size, avg ]);
         }
 
@@ -178,23 +178,23 @@ var EvolutionAlgoResult = Backbone.View.extend({
         // Create and draw the visualization.
         var evolChart = new google.visualization.LineChart($(this.el).find('#avgEvolutionLineChartByTerm')[0]);
         evolChart.draw(data, {
-                    colors:['#dc3912', '#3366cc'],
-                    title:'',
-                    width:this.width, height:350,
-                    vAxes:{
-                        0:{
-                            label:'Y1'
-                        },
-                        1:{
-                            label:'Y2'
-                        }
+                colors:['#dc3912', '#3366cc'],
+                title:'',
+                width:this.width, height:350,
+                vAxes:{
+                    0:{
+                        label:'Y1'
                     },
-                    vAxis:{title:"", minValue:0, maxValue:100},
-                    hAxis:{title:"Time"},
-                    backgroundColor:"white",
-                    seriesType:"line",
-                    series:{0:{targetAxisIndex:0}, 1:{type:"area", targetAxisIndex:1}},
-                    lineWidth:1}
+                    1:{
+                        label:'Y2'
+                    }
+                },
+                vAxis:{title:"", minValue:0, maxValue:100},
+                hAxis:{title:"Time"},
+                backgroundColor:"white",
+                seriesType:"line",
+                series:{0:{targetAxisIndex:0}, 1:{type:"area", targetAxisIndex:1}},
+                lineWidth:1}
         );
         evolChart.setSelection([
             {row:indiceJob, column:1}
