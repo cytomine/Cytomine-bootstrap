@@ -18,6 +18,8 @@ import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.model.Permission
 import org.springframework.transaction.annotation.Transactional
 import be.cytomine.command.*
+import be.cytomine.social.LastConnection
+import be.cytomine.social.UserPosition
 
 class ProjectService extends ModelService {
 
@@ -258,6 +260,15 @@ class ProjectService extends ModelService {
         UploadedFile.findAllByProject(domain).each { uploadedFile ->
             uploadedFile.delete()
         }
+
+        LastConnection.findAllByProject(domain).each {
+            it.delete()
+        }
+
+        UserPosition.findAllByProject(domain).each {
+            it.delete()
+        }
+
         log.info "createResponseMessage"
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
