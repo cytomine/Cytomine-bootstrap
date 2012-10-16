@@ -33,6 +33,10 @@ class CommandHistory extends CytomineDomain {
         project(nullable: true)
     }
 
+    /**
+     * Define JSON info
+     * @param cytomineBaseUrl Cytomine base url
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + CommandHistory.class)
         JSON.registerObjectMarshaller(CommandHistory) {

@@ -10,16 +10,6 @@ import grails.converters.JSON
 class EditCommand extends Command {
 
     /**
-     * Return a response message for the domain instance thanks to message parameters un params
-     * @param domain Domain instance
-     * @param params Message parameters
-     * @return Message
-     */
-    def createMessage(def updatedTerm, def params) {
-        responseService.createMessage(updatedTerm, params, "Edit")
-    }
-
-    /**
      * Add command info for the new domain concerned by the command
      * @param newObject domain after update
      * @param oldObject domain before update
@@ -60,13 +50,12 @@ class EditCommand extends Command {
      */
     def execute() {
         initService()
-        //Create new domain
+        //Retrieve domain to update it
         def updatedDomain = service.retrieve(json)
         def oldDomain = updatedDomain.encodeAsJSON()
         updatedDomain.getFromData(updatedDomain, json)
         //Init command info
         setProject(updatedDomain?.projectDomain())
-
         def response = service.edit(updatedDomain, printMessage)
         fillCommandInfo(updatedDomain, oldDomain, response.data.message)
         return response

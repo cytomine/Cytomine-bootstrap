@@ -2,6 +2,10 @@ package be.cytomine.image.acquisition
 
 import be.cytomine.CytomineDomain
 
+/**
+ * @author lrollus
+ * Device that allow to digitalized a picture (Scanner, Camera,...)
+ */
 class Instrument extends CytomineDomain {
 
     String brand

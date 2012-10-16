@@ -90,6 +90,10 @@ environments {
         grails.plugins.springsecurity.basic.realmName = "Cytomine log"
     }
 }
+coverage {
+    enableByDefault = false
+    xml = true
+}
 elasticSearch {
   /**
    * Date formats used by the unmarshaller of the JSON responses

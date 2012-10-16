@@ -10,28 +10,18 @@ import grails.converters.JSON
 class DeleteCommand extends Command {
 
     /**
-     * Return a response message for the domain instance thanks to message parameters un params
-     * @param domain Domain instance
-     * @param params Message parameters
-     * @return Message
-     */
-    def createMessage(def updatedTerm, def params) {
-        responseService.createMessage(updatedTerm, params, "Delete")
-    }
-
-    /**
      * Process an Add operation for this command
      * @return Message
      */
     def execute() {
         initService()
-        //Create new domain
+        //Retrieve domain to delete it
         def oldDomain = service.retrieve(json)
+        //Create a backup (for 'undo' op)
         def backup = oldDomain.encodeAsJSON()
         //Init command info
         super.setProject(oldDomain?.projectDomain())
         def response = service.destroy(oldDomain, printMessage)
-
         fillCommandInfoJSON(backup, response.data.message)
         return response
     }

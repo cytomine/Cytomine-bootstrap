@@ -79,7 +79,7 @@ class Command extends CytomineDomain {
     }
 
     /**
-     * Load domaine service
+     * Load domaine service thanks to its name
      */
     void initService() {
         if (!service) {
@@ -89,18 +89,6 @@ class Command extends CytomineDomain {
 
     public String toString() {
         return this.id + "[" + this.created + "]";
-    }
-
-    /**
-     * Get the class name of an object without package name
-     * @param o Object
-     * @return Class name (without package) of o
-     */
-    protected String getClassName(Object o) {
-        String name = o.getClass()   //be.cytomine.image.Image
-        String[] array = name.split("\\.")  //[be,cytomine,image,Image]
-        log.info array.length
-        return array[array.length - 1] // Image
     }
 
     /**
@@ -123,6 +111,10 @@ class Command extends CytomineDomain {
         actionMessage = message
     }
 
+    /**
+     * Define JSON info
+     * @param cytomineBaseUrl Cytomine base url
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info "Register custom JSON renderer for " + Command.class
         JSON.registerObjectMarshaller(Command) {

@@ -10,25 +10,16 @@ import grails.converters.JSON
 class AddCommand extends Command {
 
     /**
-     * Return a response message for the domain instance thanks to message parameters un params
-     * @param domain Domain instance
-     * @param params Message parameters
-     * @return Message
-     */
-    def createMessage(def domain, def params) {
-        responseService.createMessage(domain, params, "Add")
-    }
-
-    /**
      * Process an Add operation for this command
      * @return Message
      */
     def execute() {
         initService()
-        //Create new domain
+        //Create new domain from json data
         def newDomain = service.createFromJSON(json)
+        //Save new domain in database
         def response = service.create(newDomain, printMessage)
-        //Init command info
+        //Init command domain
         newDomain = response.object
         fillCommandInfo(newDomain, response.data.message)
         super.setProject(newDomain?.projectDomain())
