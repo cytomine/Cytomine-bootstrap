@@ -15,17 +15,22 @@ import javax.xml.transform.stream.StreamResult
  * User: lrollus
  * Date: 16/03/12
  * GIGA-ULg
- * 
+ * Extract data from viewport (import cytomine js + lib js) and build 2 xml files with application and lib data.
+ * Thanks to these two xml files, we ca create application.js and lib.js
+ * application.js: all js files from cytomine
+ * lib.js: all js files from lib
  */
 class ViewPortToBuildXML {
 
     public static void process() {
         //Read viewport
         def inputStreamFileSourceFull = new FileInputStream("grails-app/views/layouts/viewport.gsp");
+
         //must skip line 0->11 because not valid xml
         String content = convertStreamToString(inputStreamFileSourceFull,12)
-        def  inputStreamFileSource = new ByteArrayInputStream(content.getBytes("UTF-8"));
 
+        //convert string to xml element
+        def  inputStreamFileSource = new ByteArrayInputStream(content.getBytes("UTF-8"));
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
         Element viewPortXML = builder.parse(inputStreamFileSource).documentElement
 
@@ -42,12 +47,6 @@ class ViewPortToBuildXML {
         writeToFile(appXML,"scripts/yui-compressor-ant-task/doc/example/build.xml")
     }
 
-
-    public static void writeToFile(def xmlString, def filePath) {
-      new File("$filePath").withWriter { out ->
-          out.println xmlString
-      }
-    }
 
     public static String addLinesToConcatElem(List<String> lines, String file) {
         //readLibFilesXML
@@ -176,5 +175,13 @@ class ViewPortToBuildXML {
             i++
         }
         return total.toString()
+    }
+
+
+
+    public static void writeToFile(def xmlString, def filePath) {
+      new File("$filePath").withWriter { out ->
+          out.println xmlString
+      }
     }
 }

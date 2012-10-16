@@ -46,21 +46,25 @@ class Infos {
     public static String BEGINTRANSACT = "transaction/begin"
     public static String ENDTRANSACT = "transaction/end"
 
+    /**
+     * Add the admin right on a project to a user
+     * @param username Username
+     * @param project Project
+     */
     static void addUserRight(String username, Project project) {
         addUserRight(User.findByUsername(username), project)
     }
 
+    /**
+     * Add the admin right on a project to a user
+     * @param user User
+     * @param project Project
+     */
     static void addUserRight(User user, Project project) {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         def aclService = ApplicationHolder.application.getMainContext().getBean("aclService")
         def objectIdentityRetrievalStrategy = ApplicationHolder.application.getMainContext().getBean("objectIdentityRetrievalStrategy")
         def aclUtilService = ApplicationHolder.application.getMainContext().getBean("aclUtilService")
-//        try {
-//            //if(!aclService.readAclById(objectIdentityRetrievalStrategy.getObjectIdentity(project))) {
-//            aclService.createAcl objectIdentityRetrievalStrategy.getObjectIdentity(project)
-//            // }
-//        } catch (Exception e) {println e}
-
 
         ObjectIdentity oi = new ObjectIdentityImpl(project.class, project.id);
         try {
@@ -76,6 +80,10 @@ class Infos {
         SCH.clearContext()
     }
 
+    /**
+     * Print all right info for a specific domain
+     * @param domain Domain to check
+     */
     static void printRight(def domain) {
         def aclUtilService = ApplicationHolder.application.getMainContext().getBean("aclUtilService")
         if(!AclObjectIdentity.findByObjectId(domain.id)) return
@@ -87,6 +95,10 @@ class Infos {
         }
     }
 
+    /**
+     * Print all right info for a specific user
+     * @param user User to check
+     */
     static void printUserRight(User user) {
         def roles = user.getAuthorities()
         println "User $user.username has role:"
@@ -95,6 +107,11 @@ class Infos {
         }
     }
 
+    /**
+     * Convert permission object to a permission string
+     * @param permission Permission object
+     * @return Permission string
+     */
     static String findPermissionName(BasePermission permission) {
         if (permission.equals(READ)) return "READ"
         if (permission.equals(ADMINISTRATION)) return "ADMINISTRATION"
@@ -102,5 +119,4 @@ class Infos {
         if (permission.equals(DELETE)) return "DELETE"
         return "NOT FOUND"
     }
-
 }

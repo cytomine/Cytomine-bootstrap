@@ -22,7 +22,7 @@ import be.cytomine.security.*
  * User: lrollus
  * Date: 9/02/11
  * Time: 13:37
- * To change this template use File | Settings | File Templates.
+ * Build sample domain data
  */
 class BasicInstance {
 
@@ -503,18 +503,6 @@ class BasicInstance {
         assert relationTerm != null
         relationTerm
     }
-    
-    
-    
-    
-    
-    
-    
-    
-
-
-
-
 
     static Mime createOrGetBasicMime() {
 
@@ -540,8 +528,6 @@ class BasicInstance {
         mime
     }
 
-
-
     static Instrument createOrGetBasicScanner() {
 
         log.debug "createOrGetBasicScanner()"
@@ -554,7 +540,6 @@ class BasicInstance {
         log.debug "scanner.errors=" + scanner.errors
         assert scanner != null
         scanner
-
     }
 
     static Instrument getNewScannerNotExist() {
@@ -567,7 +552,6 @@ class BasicInstance {
         log.debug "scanner.errors=" + scanner.errors
         assert scanner != null
         scanner
-
     }
 
     static Slide createOrGetBasicSlide() {

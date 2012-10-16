@@ -10,6 +10,7 @@ grails.project.dependency.resolution = {
         // excludes 'ehcache'
     }
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
+
     repositories {
         grailsPlugins()
         grailsHome()
@@ -23,15 +24,19 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
+        mavenLocal()
+      		mavenCentral()
+
+      		// For Geb snapshot
+      		mavenRepo "https://nexus.codehaus.org/content/repositories/snapshots"
     }
     dependencies {
-		
-        // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
-        // runtime 'mysql:mysql-connector-java:5.1.5'
     }
-}
+    plugins {
 
+   	}
+}
 coverage {
 	exclusions = [
             "**/be/cytomine/data/**",

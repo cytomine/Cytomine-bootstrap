@@ -44,8 +44,6 @@ class AbstractImageAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-
-
     static def listByUser(Long id, String username, String password) {
         log.info("list AbstractImage by user")
         String URL = Infos.CYTOMINEURL + "api/user/$id/image.json"

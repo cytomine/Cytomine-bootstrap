@@ -8,6 +8,10 @@ import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 
 import static org.springframework.security.acls.domain.BasePermission.*
 
+/**
+ * CytomineDomain is the parent class for all domain.
+ * It allow to give an id to each instance of a domain, to get a created date,...
+ */
 abstract class CytomineDomain {
 
     def springSecurityService
@@ -51,12 +55,16 @@ abstract class CytomineDomain {
         updated = new Date()
     }
 
+    /**
+     * This function check if a domain already exist (e.g. project with same name).
+     * A domain that must be unique should rewrite it and throw AlreadyExistException
+     */
     void checkAlreadyExist() {
         //do nothing ; if override by a sub-class, should throw AlreadyExist exception
     }
 
     /**
-     * Return domain project (annotation project, ...)
+     * Return domain project (annotation project, image project...)
      * By default, a domain has no project.
      * You need to override getProject() in domain class
      * @return Domain project
@@ -65,10 +73,21 @@ abstract class CytomineDomain {
         return null;
     }
 
+    /**
+     * Build callback data for a domain (by default null)
+     * Callback are metadata used by client
+     * You need to override getCallBack() in domain class
+     * @return Callback data
+     */
     def getCallBack() {
         return null
     }
 
+    /**
+     * This method check if current user has permission on the current domain
+     * @param permission Type of permission (read, admin,...)
+     * @return True if user has this permission on the current domain, otherwise false
+     */
     boolean hasPermission(String permission) {
         try {
             return hasPermission(this,permission)
@@ -76,6 +95,13 @@ abstract class CytomineDomain {
         return false
     }
 
+    /**
+     * This method check if current user has permission on the domain from className with this id
+     * @param id  Domain id
+     * @param className Domain class
+     * @param permission Type of permission
+     * @return  True if user has this permission on the specific domain, otherwise false
+     */
     boolean hasPermission(Long id,String className, String permission) {
         try {
             def obj = grailsApplication.classLoader.loadClass(className).get(id)
@@ -86,6 +112,12 @@ abstract class CytomineDomain {
         return false
     }
 
+    /**
+     *  This method check if current user has permission on a domain
+     * @param domain Domainto check
+     * @param permissionStr Type of permission
+     * @return  True if user has this permission on the specific domain, otherwise false
+     */
     boolean hasPermission(def domain,String permissionStr) {
         try {
             SecUser currentUser = cytomineService.getCurrentUser()
@@ -96,6 +128,9 @@ abstract class CytomineDomain {
             else if(permissionStr.equals("DELETE")) permission = DELETE.mask
             else if(permissionStr.equals("CREATE")) permission = CREATE.mask
             else if(permissionStr.equals("ADMIN")) permission = ADMINISTRATION.mask
+
+            //TODO:: this function is call very often, make a direct SQL request instead 3 request
+
             AclObjectIdentity aclObject = AclObjectIdentity.findByObjectId(domain.id)
             AclSid aclSid = AclSid.findBySid(usernameParentUser)
 
@@ -109,7 +144,6 @@ abstract class CytomineDomain {
                     hasPermission=true
                 }
             }
-
             return hasPermission
 
         } catch (Exception e) {

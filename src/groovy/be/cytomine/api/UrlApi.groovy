@@ -5,7 +5,7 @@ package be.cytomine.api
  * User: lrollus
  * Date: 1/03/11
  * Time: 13:33
- * To change this template use File | Settings | File Templates.
+ * Utility class to build url for specific data
  */
 class UrlApi {
 
@@ -31,11 +31,5 @@ class UrlApi {
 
     static def getAnnotationURL(String url,Long idProject, Long idImage, Long idAnnotation) {
         return  url + '/#tabs-image-' + idProject + "-" + idImage + "-" +  idAnnotation
-    }
-
-    static Date getTimeAndReset(Date start,String op) {
-        Date end = new Date()
-        println "Time for $op = " +  (end.time - start.time)
-        return end
     }
 }

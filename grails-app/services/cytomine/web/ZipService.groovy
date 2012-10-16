@@ -8,7 +8,6 @@ class ZipService {
     static transactional = false
 
     def serviceMethod() {
-        //todo
     }
 
     static Boolean zipDirectory(String srcDirPath, String destFilePath, List excludeDirs) {

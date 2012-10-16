@@ -5,6 +5,7 @@ package be.cytomine.utils;
  * Date: 6/02/12
  * GIGA-ULg
  */
+
 import java.util.*;
 
 public class Utils {
@@ -13,12 +14,11 @@ public class Utils {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.SECOND, secondes);
-        Date xSecondAgo = cal.getTime();
-        return xSecondAgo;
+        return cal.getTime();
     }
 
 
-public static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> entriesSortedByValues(
+    public static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> entriesSortedByValues(
             Map<K, V> map) {
         SortedSet<Map.Entry<K, V>> sortedEntries = new TreeSet<Map.Entry<K, V>>(
                 new Comparator<Map.Entry<K, V>>() {
@@ -30,7 +30,7 @@ public static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> en
         return sortedEntries;
     }
 
-public static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> entriesSortedByValuesDesc(
+    public static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> entriesSortedByValuesDesc(
             Map<K, V> map) {
         SortedSet<Map.Entry<K, V>> sortedEntries = new TreeSet<Map.Entry<K, V>>(
                 new Comparator<Map.Entry<K, V>>() {
@@ -41,4 +41,4 @@ public static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> en
         sortedEntries.addAll(map.entrySet());
         return sortedEntries;
     }
- }
+}
