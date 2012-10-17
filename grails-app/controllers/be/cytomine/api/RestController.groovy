@@ -19,12 +19,21 @@ class RestController {
 
     def transactionService
 
+    /**
+     * Call add function for this service with the json
+     * json parameter can be an array or a single item
+     * If json is array => add multiple item
+     * otherwise add single item
+     * @param service Service for this domain
+     * @param json JSON data
+     * @return response
+     */
     public Object add(def service, def json) {
         try {
             if (json instanceof JSONArray) {
-                responseResult(addMultiple(service,json))
+                responseResult(addMultiple(service, json))
             } else {
-                responseResult(addOne(service,json))
+                responseResult(addOne(service, json))
             }
         } catch (CytomineException e) {
             log.error("add error:" + e.msg)
@@ -33,18 +42,65 @@ class RestController {
         }
     }
 
-    public Object addOne(def service, def json) {
-          return service.add(json)
+    /**
+     * Call update function for this service with the json
+     * @param service Service for this domain
+     * @param json JSON data
+     * @return response
+     */
+    public Object update(def service, def json) {
+        try {
+            def domain = service.retrieve(json)
+            def result = service.update(domain, json)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
     }
 
+    /**
+     * Call delete function for this service with the json
+     * @param service Service for this domain
+     * @param json JSON data
+     * @return response
+     */
+    public Object delete(def service, def json) {
+        try {
+            def domain = service.retrieve(json)
+            def result = service.delete(domain, json)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+    }
+
+    /**
+     * Call add function for this service with the json
+     * @param service Service for this domain
+     * @param json JSON data
+     * @return response
+     */
+    public Object addOne(def service, def json) {
+        return service.add(json)
+    }
+
+    /**
+     * Call add function for this service for each item from the json array
+     * @param service Service for this domain
+     * @param json JSON data
+     * @return response
+     */
     public Object addMultiple(def service, def json) {
         def result = [:]
         result.data = []
         int i = 0
         json.each {
-            def resp = addOne(service, it)  //TODO: when exception here, what should we do? For the time being, stop everything and response error
+            def resp = addOne(service, it)  //TODO:: when exception here, what should we do? For the time being, stop everything and response error
             result.data << resp
-            if(i%100==0) cleanUpGorm()
+            //sometimes, call clean cache (improve very well perf for big set)
+            if (i % 100 == 0) cleanUpGorm()
             i++
         }
         cleanUpGorm()
@@ -52,47 +108,38 @@ class RestController {
         result
     }
 
-    public void  cleanUpGorm() {
+    /**
+     * Clean GORM cache
+     */
+    public void cleanUpGorm() {
         def session = sessionFactory.currentSession
         session.flush()
         session.clear()
         propertyInstanceMap.get().clear()
     }
 
-    public Object  update(def service, def json) {
-        try {
-            def domain = service.retrieve(json)
-            def result = service.update(domain,json)
-            responseResult(result)
-        } catch (CytomineException e) {
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
-        }
-    }
-
-    public Object delete(def service, def json) {
-        try {
-            def domain = service.retrieve(json)
-            def result = service.delete(domain,json)
-            responseResult(result)
-        } catch (CytomineException e) {
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
-        }
-    }
-
-  protected def response(data) {
+    /**
+     * Response this data as HTTP response
+     * @param data Data ro send
+     * @return response
+     */
+    protected def response(data) {
         withFormat {
             json { render data as JSON }
-            jsonp { 
-				response.contentType = 'application/javascript'
-				render "${params.callback}(${data as JSON})" 
-			}
+            jsonp {
+                response.contentType = 'application/javascript'
+                render "${params.callback}(${data as JSON})"
+            }
             xml { render data as XML}
         }
     }
 
-  protected  def responseResult(result) {
+    /**
+     * Build a response message for an object return by a command
+     * @param result Command result
+     * @return response
+     */
+    protected def responseResult(result) {
         response.status = result.status
         withFormat {
             json { render result.data as JSON }
@@ -100,20 +147,41 @@ class RestController {
         }
     }
 
-  protected def responseSuccess(data, code) {
+    /**
+     * Response a successful HTTP message
+     * @param data Message content
+     * @param code HTTP code
+     */
+    protected def responseSuccess(data, code) {
         response(data, code)
     }
 
-  protected  def responseSuccess(data) {
+    /**
+     * Response a successful HTTP message
+     * @param data Message content
+     */
+    protected def responseSuccess(data) {
         response(data)
     }
 
-  protected  def response(data, code) {
+    /**
+     * Response an HTTP message
+     * @param data Message content
+     * @param code HTTP code
+     */
+    protected def response(data, code) {
         response.status = code
         response(data)
     }
 
-  protected  def responseNotFound(className, id) {
+    /**
+     * Build a response message for a domain not found
+     * E.g. annotation 34 was not found
+     * className = annotation, id = 34.
+     * @param className Type of domain not found
+     * @param id Domain id
+     */
+    protected def responseNotFound(className, id) {
         log.info "responseNotFound"
         log.error className + " Id " + id + " don't exist"
         response.status = NOT_FOUND_CODE
@@ -122,7 +190,15 @@ class RestController {
         }
     }
 
-  protected def responseNotFound(className, filter, id) {
+    /**
+     * Build a response message for a domain not found with 1 filter
+     * E.g. relationterm find by relation => relationterm not found
+     * className = relationterm, filter1 = relation, ids = relation.id, ...
+     * @param className Type of domain not found
+     * @param filter1 Type of domain for the first filter
+     * @param id1 Id for the first filter
+     */
+    protected def responseNotFound(className, filter, id) {
         log.error className + ": " + filter + " " + id + " don't exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
@@ -130,7 +206,17 @@ class RestController {
         }
     }
 
-  protected def responseNotFound(className, filter1, filter2, id1, id2) {
+    /**
+     * Build a response message for a domain not found with 2 filter
+     * E.g. relationterm find by relation + term1 => relationterm not found
+     * className = relationterm, filter1 = relation, ids = relation.id, ...
+     * @param className Type of domain not found
+     * @param filter1 Type of domain for the first filter
+     * @param id1 Id for the first filter
+     * @param filter2 Type of domain for the second filter
+     * @param id2 Id for the second filter
+     */
+    protected def responseNotFound(className, filter1, filter2, id1, id2) {
         log.error className + ": " + filter1 + " " + id1 + ", " + filter2 + " " + id2 + " don't exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
@@ -138,7 +224,19 @@ class RestController {
         }
     }
 
-  protected def responseNotFound(className, filter1, id1, filter2, id2, filter3, id3) {
+    /**
+     * Build a response message for a domain not found with 3 filter
+     * E.g. relationterm find by relation + term1 + term 2 => relationterm not found
+     * className = relationterm, filter1 = relation, ids = relation.id, ...
+     * @param className Type of domain not found
+     * @param filter1 Type of domain for the first filter
+     * @param id1 Id for the first filter
+     * @param filter2 Type of domain for the second filter
+     * @param id2 Id for the second filter
+     * @param filter3 Type of domain for the third filter
+     * @param id3 Id for the third filter
+     */
+    protected def responseNotFound(className, filter1, id1, filter2, id2, filter3, id3) {
         log.error className + ": " + filter1 + " " + id1 + ", " + filter2 + " " + id2 + " and " + filter3 + " " + id3 + " don't exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
@@ -146,84 +244,62 @@ class RestController {
         }
     }
 
-//  protected def responseImage(String url) {
-//        def out = new ByteArrayOutputStream()
-//        withFormat {
-//            png {
-//                if (request.method == 'HEAD') {
-//                    render(text: "", contentType: "image/png")
-//                }
-//                else {
-//                    //IIP Send JPEG, so we have to convert to PNG
-//                    BufferedImage bufferedImage = getImageFromURL(url)
-//                    ImageIO.write(bufferedImage, "PNG", out)
-//                    response.contentType = "image/png"
-//                    response.getOutputStream() << out.toByteArray()
-//                }
-//            }
-//            jpg {
-//                if (request.method == 'HEAD') {
-//                    render(text: "", contentType: "image/jpeg")
-//                }
-//                else {
-//                    out << new URL(url).openStream()
-//                    response.contentLength = out.size();
-//                    response.contentType = "image/jpeg"
-//                    response.getOutputStream() << out.toByteArray()
-//                }
-//            }
-//        }
-//    }
-
+    /**
+     * Response an image as a HTTP response
+     * @param url Image url
+     */
     protected def responseImage(String url) {
-          withFormat {
-              png {
-                  if (request.method == 'HEAD') {
-                      render(text: "", contentType: "image/png")
-                  }
-                  else {
-                      HttpClient client = new HttpClient()
-                      client.timeout = 60000;
-                      client.connect(url,"","")
-                      byte[] imageData = client.getData()
-                      //IIP Send JPEG, so we have to convert to PNG
-                      InputStream input = new ByteArrayInputStream(imageData);
-                      BufferedImage bufferedImage = ImageIO.read(input);
-                      def out = new ByteArrayOutputStream()
-                      ImageIO.write(bufferedImage, "PNG", out)
-                      response.contentType = "image/png"
-                      response.getOutputStream() << out.toByteArray()
-                  }
-              }
-              jpg {
-                  if (request.method == 'HEAD') {
-                      render(text: "", contentType: "image/jpeg")
+        withFormat {
+            png {
+                if (request.method == 'HEAD') {
+                    render(text: "", contentType: "image/png")
+                }
+                else {
+                    HttpClient client = new HttpClient()
+                    client.timeout = 60000;
+                    client.connect(url, "", "")
+                    byte[] imageData = client.getData()
+                    //IIP Send JPEG, so we have to convert to PNG
+                    InputStream input = new ByteArrayInputStream(imageData);
+                    BufferedImage bufferedImage = ImageIO.read(input);
+                    def out = new ByteArrayOutputStream()
+                    ImageIO.write(bufferedImage, "PNG", out)
+                    response.contentType = "image/png"
+                    response.getOutputStream() << out.toByteArray()
+                }
+            }
+            jpg {
+                if (request.method == 'HEAD') {
+                    render(text: "", contentType: "image/jpeg")
 
-                  }
-                  redirect(url: url)
-              }
-          }
+                }
+                redirect(url: url)
+            }
+        }
 
-      }
+    }
 
-
-  protected BufferedImage getImageFromURL(String url) {
+    /**
+     * Read a picture from url
+     * @param url Picture url
+     * @return Picture as an object
+     */
+    protected BufferedImage getImageFromURL(String url) {
         def out = new ByteArrayOutputStream()
         try {
             out << new URL(url).openStream()
-        } catch(Exception e) {
-            print e.printStackTrace()
-            //out = IOUtils.toByteArray(new FileInputStream(url));
-            //IOUtils.copy(new FileInputStream(url),out);
-
-         //            InputStream input = new BufferedInputStream(new FileInputStream(url));
-//            input.read(out)
+        } catch (Exception e) {
+            e.printStackTrace()
         }
         InputStream inputStream = new ByteArrayInputStream(out.toByteArray())
         return ImageIO.read(inputStream)
     }
 
-  protected def responseBufferedImage(BufferedImage bufferedImage) {
+    /**
+     * Response an image as a HTTP response
+     * @param bufferedImage Image
+     */
+    protected def responseBufferedImage(BufferedImage bufferedImage) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         withFormat {
 
@@ -238,7 +314,6 @@ class RestController {
                     response.setHeader("Connection", "Keep-Alive")
                     response.setHeader("Accept-Ranges", "bytes")
                     response.setHeader("Content-Type", "image/png")
-                    //response.contentType = "image/jpeg"
                     response.getOutputStream() << bytesOut
                     response.getOutputStream().flush()
                 }
@@ -254,7 +329,6 @@ class RestController {
                     response.setHeader("Connection", "Keep-Alive")
                     response.setHeader("Accept-Ranges", "bytes")
                     response.setHeader("Content-Type", "image/jpeg")
-                    //response.contentType = "image/jpeg"
                     response.getOutputStream() << bytesOut
                     response.getOutputStream().flush()
                 }

@@ -29,12 +29,6 @@ class StatsUrlMappings {
             action = [GET:"statAnnotationEvolution"]
         }
 
-        "/api/project/$id/stats/test"(controller:"stats"){
-            action = [GET:"test"]
-        }
-
-
-
         "/api/stats/retrieval/avg"(controller:"retrievalSuggestStats"){
             action = [GET:"statRetrievalAVG"]
         }

@@ -10,7 +10,6 @@ class ErrorsController extends RestController {
         render(contentType: 'text/json') {
             errors(message: "You are not allowed to do this!")
         }
-
     }
 
     def error404 = {

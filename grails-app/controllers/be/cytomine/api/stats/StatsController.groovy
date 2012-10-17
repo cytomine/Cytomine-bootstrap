@@ -1,46 +1,33 @@
-package be.cytomine.api
+package be.cytomine.api.stats
 
 import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
-import grails.orm.PagedResultList
+import be.cytomine.api.RestController
 
 class StatsController extends RestController {
 
     def annotationService
     def termService
-    def algoAnnotationTermService
     def jobService
-    def retrievalSuggestedTermJobService
-    def retrievalEvolutionJobService
-    def securityService
-    def relationService
 
-    def test = {
-
-        PagedResultList annotations = Annotation.createCriteria().list(offset: 0, max: 5) {
-               eq("project", Project.read(57))
-               order 'created', 'desc'
-           }
-
-        def data = [:]
-        data.records = annotations.totalCount
-        data.total = Math.ceil(annotations.totalCount / 5) + "" //[100/10 => 10 page] [5/15
-        data.rows = annotations.list
-        responseSuccess(data)
-
-    }
-
-
+    /**
+     * Compute for each user, the number of annotation of each term
+     */
     def statUserAnnotations = {
         Project project = Project.read(params.id)
-        if (project == null) responseNotFound("Project", params.id)
+        if (project == null)
+            responseNotFound("Project", params.id)
         def terms = Term.findAllByOntology(project.getOntology())
         if(terms.isEmpty()) {
             responseSuccess([])
             return
         }
+
+        Map<Long, Object> result = new HashMap<Long, Object>()
+
+        //compute number of annotation for each user and each term
         def nbAnnotationsByUserAndTerms = AnnotationTerm.createCriteria().list {
             inList("term", terms)
             join("annotation")
@@ -53,7 +40,7 @@ class StatsController extends RestController {
             }
         }
 
-        Map<Long, Object> result = new HashMap<Long, Object>()
+        //build empty result table
         project.userLayers().each { user ->
             def item = [:]
             item.id = user.id
@@ -69,6 +56,8 @@ class StatsController extends RestController {
             }
             result.put(user.id, item)
         }
+
+        //complete stats for each user and term
         nbAnnotationsByUserAndTerms.each { stat ->
             def user = result.get(stat[0])
             if(user) {
@@ -82,9 +71,18 @@ class StatsController extends RestController {
         responseSuccess(result.values())
     }
 
+    /**
+     *
+     */
     def statUser = {
+
         Project project = Project.read(params.id)
-        if (project == null) { responseNotFound("Project", params.id) }
+        if (project == null) {
+            responseNotFound("Project", params.id)
+        }
+        Map<Long, Object> result = new HashMap<Long, Object>()
+
+        //compute number of annotation for each user
         def userAnnotations = Annotation.createCriteria().list {
             eq("project", project)
             join("user")  //right join possible ? it will be sufficient
@@ -94,7 +92,7 @@ class StatsController extends RestController {
             }
         }
 
-        Map<Long, Object> result = new HashMap<Long, Object>()
+        //build empty result table
         project.userLayers().each { user ->
             def item = [:]
             item.id = user.id
@@ -102,6 +100,8 @@ class StatsController extends RestController {
             item.value = 0
             result.put(item.id, item)
         }
+
+        //fill result table with number of annotation
         userAnnotations.each { item ->
             def user = result.get(item[1])
             if(user) user.value = item[0]
@@ -110,13 +110,16 @@ class StatsController extends RestController {
         responseSuccess(result.values())
     }
 
+    /**
+     * Compute the number of annotation for each term
+     */
     def statTerm = {
+
         Project project = Project.read(params.id)
         if (project == null) responseNotFound("Project", params.id)
-
         def terms = project.ontology.leafTerms()
 
-        def results = Annotation.executeQuery('select t.term.id, count(t) from AnnotationTerm as t, Annotation as b where b.id=t.annotation.id and b.project = ? group by t.term.id', [project])
+        def numberOfAnnotationForEachTerm = Annotation.executeQuery('select t.term.id, count(t) from AnnotationTerm as t, Annotation as b where b.id=t.annotation.id and b.project = ? group by t.term.id', [project])
 
         def stats = [:]
         def color = [:]
@@ -124,7 +127,7 @@ class StatsController extends RestController {
         def idsRevert = [:]
         def list = []
 
-        //init list
+        //build empty result table
         terms.each { term ->
                 stats[term.name] = 0
                 color[term.name] = term.color
@@ -132,19 +135,25 @@ class StatsController extends RestController {
                 idsRevert[term.id] = term.name
         }
 
-        results.each { result ->
+        //init result table with data
+        numberOfAnnotationForEachTerm .each { result ->
             def name = idsRevert[result[0]]
             if(name) stats[name]=result[1]
         }
 
+        //fill results stats tabble
         stats.each {
             list << ["id": ids.get(it.key), "key": it.key, "value": it.value, "color": color.get(it.key)]
         }
+
         responseSuccess(list)
     }
 
-    /* Pour chaque terme, le nombre de slides dans lesquels ils ont été annotés. */
+    /**
+     * Compute the number of annotation for each slide and for each term
+     */
     def statTermSlide = {
+
         Project project = Project.read(params.id)
         if (project == null) responseNotFound("Project", params.id)
         def terms = Term.findAllByOntology(project.getOntology())
@@ -153,7 +162,10 @@ class StatsController extends RestController {
             responseSuccess([])
             return
         }
-        def annotations = AnnotationTerm.createCriteria().list {
+        Map<Long, Object> result = new HashMap<Long, Object>()
+
+        //annotationsNumber[0] = image id, annotationsNumber[1] = term id, annotationsNumber[2]= number of annotation
+        def annotationsNumber = AnnotationTerm.createCriteria().list {
             inList("term", terms)
             inList("user", userLayers)
             join("annotation")
@@ -165,7 +177,8 @@ class StatsController extends RestController {
                 count("term.id")
             }
         }
-        Map<Long, Object> result = new HashMap<Long, Object>()
+
+        //build empty result table
         terms.each { term ->
             def item = [:]
             item.id = term.id
@@ -173,7 +186,9 @@ class StatsController extends RestController {
             item.value = 0
             result.put(item.id, item)
         }
-        annotations.each { item ->
+
+        //Fill result table
+        annotationsNumber.each { item ->
             def term = item[1]
             result.get(term).value++;
         }
@@ -181,7 +196,9 @@ class StatsController extends RestController {
         responseSuccess(result.values())
     }
 
-    /*Pour chaque user, le nombre de slides dans lesquels ils ont fait des annotations.*/
+    /**
+     * For each user, compute the number of slide where he made annotation
+     */
     def statUserSlide = {
         Project project = Project.read(params.id)
         if (project == null) responseNotFound("Project", params.id)
@@ -190,7 +207,10 @@ class StatsController extends RestController {
             responseSuccess([])
             return
         }
-        def annotations = AnnotationTerm.createCriteria().list {
+        Map<Long, Object> result = new HashMap<Long, Object>()
+
+        //numberOfAnnotationsByUserAndImage[0] = id image, numberOfAnnotationsByUserAndImage[1] = user, numberOfAnnotationsByUserAndImage[2] = number of annotation
+        def numberOfAnnotationsByUserAndImage = AnnotationTerm.createCriteria().list {
             inList("term", terms)
             join("annotation")
             createAlias("annotation", "a")
@@ -201,7 +221,8 @@ class StatsController extends RestController {
                 count("a.user")
             }
         }
-        Map<Long, Object> result = new HashMap<Long, Object>()
+
+        //build empty result table
         project.userLayers().each { user ->
             def item = [:]
             item.id = user.id
@@ -209,15 +230,21 @@ class StatsController extends RestController {
             item.value = 0
             result.put(item.id, item)
         }
-        annotations.each { item ->
+
+        //Fill result table
+        numberOfAnnotationsByUserAndImage.each { item ->
             def user = result.get(item[1].id)
             if(user) user.value++;
         }
 
         responseSuccess(result.values())
     }
-    
-    
+
+    /**
+     * Compute user annotation number evolution over the time for a project (start = project creation, stop = today)
+     * params.daysRange = number of days between each measure
+     * param.term = (optional) filter on a specific term
+     */
     def statAnnotationEvolution = {
 
         Project project = Project.read(params.id)
@@ -230,22 +257,26 @@ class StatsController extends RestController {
 
         def annotations = null;
         if(!term) {
+            //find all annotation user for this project
             annotations = Annotation.executeQuery("select a.created from Annotation a where a.project = ? and a.user.class = ? order by a.created desc", [project,"be.cytomine.security.User"])
         }
         else {
             log.info "Search on term " + term.name
+            //find all annotation user for this project and this term
             annotations = Annotation.executeQuery("select b.created from Annotation b where b.project = ? and b.id in (select x.annotation.id from AnnotationTerm x where x.term = ?) and b.user.class = ? order by b.created desc", [project,term,"be.cytomine.security.User"])
         }
 
-
-
+        //start a the project creation and stop today
         Date creation = project.created
-        //stop today
         Date current = new Date()
-        
+
+        //for each day (step = daysRange), compute annotation number
+        //start at the end date until the begining
         while(current.getTime()>=creation.getTime()) {
+
             def item = [:]
             while(count<annotations.size()) {
+                //compute each annotation until the next step
                 if(annotations.get(count).getTime()<current.getTime()) break;
                 count++;
             }
@@ -254,6 +285,7 @@ class StatsController extends RestController {
             item.size = annotations.size()-count;
             data << item
 
+            //add a new step
             Calendar cal = Calendar.getInstance();
             cal.setTime(current);
             cal.add(Calendar.DATE, -daysRange);

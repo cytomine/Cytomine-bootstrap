@@ -44,15 +44,12 @@ class SecurityService {
     }
 
     List<Project> getProjectList(SecUser user) {
-        AclClass aclClassProject = AclClass.findByClassName('be.cytomine.project.Project')
-        Collection<AclEntry> aclEntries = AclEntry.findAllBySid(AclSid.findBySid(user.getUsername()))
-        List<AclObjectIdentity> aclObjectIdentities = AclObjectIdentity.createCriteria().list {
-            eq('aclClass', aclClassProject)
-            inList('id', aclEntries.collect{it.aclObjectIdentity.id})
-        }
-        return Project.createCriteria().list() {
-            inList("id", aclObjectIdentities.collect{it.objectId})
-        }
+        return Project.executeQuery(
+                "select distinct project "+
+                "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project "+
+                "where aclObjectId.objectId = project.id " +
+                "and aclEntry.aclObjectIdentity = aclObjectId.id "+
+                "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
     }
 
 }

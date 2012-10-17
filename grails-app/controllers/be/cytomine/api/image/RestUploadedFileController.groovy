@@ -5,13 +5,12 @@ import be.cytomine.image.UploadedFile
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import grails.converters.JSON
+import be.cytomine.utils.FilesUtils
 
 class RestUploadedFileController extends RestController {
 
     def backgroundService
-    def remoteCopyService
     def cytomineService
-    def storageService
     def imagePropertiesService
     def projectService
     def convertImagesService
@@ -19,19 +18,14 @@ class RestUploadedFileController extends RestController {
 
     static allowedMethods = [image: 'POST']
 
-    private def getExtensionFromFilename = {filename ->
-        def returned_value = ""
-        def m = (filename =~ /(\.[^\.]*)$/)
-        if (m.size() > 0) returned_value = ((m[0][0].size() > 0) ? m[0][0].substring(1).trim().toLowerCase() : "");
-        return returned_value
-    }
-
-
 
     def list = {
+        //get all uploaded file for this user
         def uploadedFiles = UploadedFile.createCriteria().list(sort : "created", order : "desc") {
             eq("user", cytomineService.getCurrentUser())
         }
+
+        //if view is datatables, change way to store data
         if (params.dataTables) {
             uploadedFiles = ["aaData" : uploadedFiles]
         }
@@ -47,43 +41,39 @@ class RestUploadedFileController extends RestController {
         def destPath = "/tmp/cytominebuffer"
         SecUser currentUser = cytomineService.getCurrentUser()
         String errorMessage = ""
+
+        //read project
         String projectParam = request.getParameter("idProject")
         Project project = null
         if (projectParam != null && projectParam != "undefined" && projectParam != "null") {
             project = projectService.read(Integer.parseInt(projectParam), new Project())
         }
-        def f = request.getFile('files[]')
 
+        //get file to upload
+        def f = request.getFile('files[]')
         UploadedFile uploadedFile = null
         if (!f.empty) {
 
-            def ext = getExtensionFromFilename(f.originalFilename)
-/*           def tmpFile = File.createTempFile(f.originalFilename, ext)
-            tmpFile.deleteOnExit()
-            f.transferTo(tmpFile) */
             long timestamp = new Date().getTime()
 
+            //compute path/filename info
             String fullDestPath = destPath + "/" + currentUser.getId() + "/" + timestamp.toString()
-            String newFilename = f.originalFilename
-            newFilename = newFilename.replace(" ", "_")
-            newFilename = newFilename.replace("(", "_")
-            newFilename = newFilename.replace(")", "_")
-            newFilename = newFilename.replace("+", "_")
-            newFilename = newFilename.replace("*", "_")
-            newFilename = newFilename.replace("/", "_")
-            newFilename = newFilename.replace("@", "_")
+            String newFilename = FilesUtils.correctFileName(f.originalFilename)
             String pathFile = fullDestPath + "/" + newFilename
+
+            //create dir and transfer file
             def mkdirCommand = "mkdir -p " + fullDestPath
             def proc = mkdirCommand.execute()
             proc.waitFor()
             File destFile = new File(pathFile)
             f.transferTo(destFile)
 
+            //create domain
             uploadedFile = new UploadedFile(
                     originalFilename: f.originalFilename,
                     filename : currentUser.getId() + "/" + timestamp.toString() + "/" + newFilename,
                     path : destPath.toString(),
-                    ext : ext.toLowerCase(),
+                    ext : FilesUtils.getExtensionFromFilename(f.originalFilename).toLowerCase(),
                     size : f.size,
                     contentType : f.contentType,
                     project : project,
@@ -94,6 +84,7 @@ class RestUploadedFileController extends RestController {
         else {
             response.status = 400;
             render errorMessage
+            return
         }
 
         def content = [:]

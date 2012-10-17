@@ -21,23 +21,18 @@ class RestProjectController extends RestController {
     def transactionService
     def retrievalService
     def imageInstanceService
+    def securityService
 
     def list = {
         SecUser user = cytomineService.currentUser
-        //Use post filter (better code) or this request (good perf)?
+
         if(user.isAdmin()) {
             responseSuccess(Project.list())
         } else {
-            List<Project> projects = Project.executeQuery(
-                    "select distinct project "+
-                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project "+
-                    "where aclObjectId.objectId = project.id " +
-                    "and aclEntry.aclObjectIdentity = aclObjectId.id "+
-                    "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
-            responseSuccess(projects)
+            //better perf with this direct sql request (than post filter)
+            responseSuccess(securityService.getProjectList(user))
         }
     }
-
 
     def listBySoftware = {
         Software software = Software.read(params.long('id'))
@@ -66,6 +61,9 @@ class RestProjectController extends RestController {
         else responseNotFound("Project", "Discipline", params.id)
     }
 
+    /**
+     * List all retrieval-project for a specific project
+     */
     def listRetrieval = {
         log.info "listRetrieval with project id:" + params.id
         Project project = projectService.read(params.long('id'), new Project())
@@ -92,7 +90,7 @@ class RestProjectController extends RestController {
 
     def lastAction = {
         log.info "lastAction"
-        Project project = projectService.read(params.long('id'),new Project())    //need to be filter by project
+        Project project = projectService.read(params.long('id'),new Project())
         int max = Integer.parseInt(params.max);
 
         if (project)

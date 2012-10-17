@@ -6,12 +6,6 @@ import be.cytomine.project.Slide
 import be.cytomine.security.SecUser
 import grails.converters.JSON
 
-/**
- * Cytomine @ GIGA-ULG
- * User: stevben
- * Date: 30/05/11
- * Time: 13:47
- */
 class RestSlideController extends RestController {
 
     def springSecurityService
@@ -24,7 +18,7 @@ class RestSlideController extends RestController {
     }
 
     def listByUser = {
-        SecUser user = null
+        SecUser user
         if (params.id != null) {
             user = userService.read(params.long('id'))
         } else {
@@ -55,12 +49,9 @@ class RestSlideController extends RestController {
     def add = {
         try {
             def json = request.JSON
-            log.debug("add")
             def result = slideService.add(json)
-            log.debug("result")
             responseResult(result)
         } catch (CytomineException e) {
-            log.error("add error:" + e.msg)
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
