@@ -22,15 +22,18 @@ import javax.xml.transform.stream.StreamResult
  */
 class ViewPortToBuildXML {
 
+    /**
+     * Create lib build.xml and app build.xml thanks to viewport info
+     */
     public static void process() {
         //Read viewport
         def inputStreamFileSourceFull = new FileInputStream("grails-app/views/layouts/viewport.gsp");
 
         //must skip line 0->11 because not valid xml
-        String content = convertStreamToString(inputStreamFileSourceFull,12)
+        String content = convertStreamToString(inputStreamFileSourceFull, 12)
 
         //convert string to xml element
-        def  inputStreamFileSource = new ByteArrayInputStream(content.getBytes("UTF-8"));
+        def inputStreamFileSource = new ByteArrayInputStream(content.getBytes("UTF-8"));
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
         Element viewPortXML = builder.parse(inputStreamFileSource).documentElement
 
@@ -39,81 +42,88 @@ class ViewPortToBuildXML {
         List<String> appFiles = getAppFilesFromViewPort(viewPortXML);
 
         //Add lines to build.xml template files
-        String libXML = addLinesToConcatElem(libFiles, "scripts/yui-compressor-ant-task/doc/lib/build_template.xml");
-        String appXML = addLinesToConcatElem(appFiles, "scripts/yui-compressor-ant-task/doc/example/build_template.xml");
+        String libXML = fillTemplateFile(libFiles, "scripts/yui-compressor-ant-task/doc/lib/build_template.xml");
+        String appXML = fillTemplateFile(appFiles, "scripts/yui-compressor-ant-task/doc/example/build_template.xml");
 
         //Write files
-        writeToFile(libXML,"scripts/yui-compressor-ant-task/doc/lib/build.xml")
-        writeToFile(appXML,"scripts/yui-compressor-ant-task/doc/example/build.xml")
+        writeToFile(libXML, "scripts/yui-compressor-ant-task/doc/lib/build.xml")
+        writeToFile(appXML, "scripts/yui-compressor-ant-task/doc/example/build.xml")
     }
 
+    /**
+     * Read template xml file and fill js files path from viewport
+     * @param lines All js files to include
+     * @param file Template file
+     * @return XML string with all js files include template
+     */
+    public static String fillTemplateFile(List<String> lines, String file) {
 
-    public static String addLinesToConcatElem(List<String> lines, String file) {
-        //readLibFilesXML
+        //read template file
         def inputStreamFileSource = new FileInputStream(file);
         def builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
         Document doc = builder.parse(inputStreamFileSource)
         def buildXML = doc.documentElement
 
-        //addLibFilesToBuilXML
         def build = null
 
+
         def targetsElem = buildXML.getElementsByTagName("target")
-        (0..<targetsElem.length).each{
+        (0..<targetsElem.length).each {
             def targetElem = targetsElem.item(it)
             def scriptElemSrc = targetElem.attributes.getNamedItem('name').nodeValue.toString()
-
-            if(scriptElemSrc.startsWith("build")) build = targetElem;
+            if (scriptElemSrc.startsWith("build")) build = targetElem;
         }
 
         //save it as a new files
-
-        def concat= build.getElementsByTagName("concat").item(0)
-
-         if ( concat.hasChildNodes() )
-        {
-            while ( concat.childNodes.length >= 1 )
-            {
-                concat.removeChild( concat.firstChild );
+        def concat = build.getElementsByTagName("concat").item(0)
+        if (concat.hasChildNodes()) {
+            while (concat.childNodes.length >= 1) {
+                concat.removeChild(concat.firstChild);
             }
         }
 
-
+        //write lines
         lines.each {
             Element fileset = doc.createElement('fileset')
-            fileset.setAttribute("dir","\${src.dir}")
-            fileset.setAttribute("includes",it)
+            fileset.setAttribute("dir", "\${src.dir}")
+            fileset.setAttribute("includes", it)
             concat.appendChild(fileset)
         }
+
+        //save it as xml and return it as string
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-        //initialize StreamResult with File object to save to file
         StreamResult result = new StreamResult(new StringWriter());
         DOMSource source = new DOMSource(doc);
         transformer.transform(source, result);
 
         String xmlString = result.getWriter().toString();
-        System.out.println(xmlString);
         return xmlString
     }
 
-
+    /**
+     * Get all lib js files from viewPort
+     * @param viewPortXML ViewPortXML
+     * @return List of js files
+     */
     public static List<String> getLibFilesFromViewPort(def viewPortXML) {
+
         List<String> libFiles = new ArrayList<String>()
 
+        //get root element
         def gElem = getGElement(viewPortXML)
 
+        //get all script element
         def scriptElems = gElem.getElementsByTagName("script")
 
-        (0..<scriptElems.length).each{
+        //browse script elements and get src value if element is lib
+        (0..<scriptElems.length).each {
             def scriptElem = scriptElems.item(it)
 
-            if(scriptElem.attributes.getNamedItem('src')!=null)  {
+            if (scriptElem.attributes.getNamedItem('src') != null) {
                 def scriptElemSrc = scriptElem.attributes.getNamedItem('src').nodeValue.toString()
-                if(scriptElemSrc.startsWith("lib")) libFiles.add(scriptElemSrc);
+                if (scriptElemSrc.startsWith("lib")) libFiles.add(scriptElemSrc);
             }
-
         }
 
         libFiles.each {
@@ -123,21 +133,28 @@ class ViewPortToBuildXML {
         return libFiles
     }
 
+    /**
+     * Get all application js files from viewPort
+     * @param viewPortXML ViewPortXML
+     * @return List of js files
+     */
     public static List<String> getAppFilesFromViewPort(def viewPortXML) {
 
         List<String> appFiles = new ArrayList<String>()
 
-
+        //get root element
         def gElem = getGElement(viewPortXML)
 
+        //get all script element
         def scriptElems = gElem.getElementsByTagName("script")
 
-        (0..<scriptElems.length).each{
+        //browse script elements and get src value if element is app
+        (0..<scriptElems.length).each {
             def scriptElem = scriptElems.item(it)
 
-            if( scriptElem.attributes.getNamedItem('src')!=null) {
+            if (scriptElem.attributes.getNamedItem('src') != null) {
                 def scriptElemSrc = scriptElem.attributes.getNamedItem('src').nodeValue.toString()
-                if(scriptElemSrc.startsWith("app")) appFiles.add(scriptElemSrc);
+                if (scriptElemSrc.startsWith("app")) appFiles.add(scriptElemSrc);
             }
         }
         appFiles.each {
@@ -147,41 +164,49 @@ class ViewPortToBuildXML {
         return appFiles
     }
 
-
-
-
-    public static def getGElement(def records) {
+    /**
+     * Get g element which is the parent of all import files
+     * @param viewPortXML View port xml
+     * @return G element
+     */
+    public static def getGElement(def viewPortXML) {
         def g = null
-        records.getElementsByTagName("head").item(0).childNodes.each {
-            if(it.nodeName.equals("g:if") && g==null) g = it
+        viewPortXML.getElementsByTagName("head").item(0).childNodes.each {
+            if (it.nodeName.equals("g:if") && g == null) g = it
             //println it.nodeName
         }
         return g
     }
 
-
-    public static String convertStreamToString(InputStream is, int offset)
-            throws IOException {
+    /**
+     * Convert stream to string and start at line offset
+     * @param is Stream
+     * @param offset Line where the stream start to read
+     * @return String with stream content
+     * @throws IOException Error when reading file
+     */
+    public static String convertStreamToString(InputStream is, int offset) throws IOException {
         BufferedReader r = new BufferedReader(new InputStreamReader(is));
         StringBuilder total = new StringBuilder();
         String line;
-        int i=0;
+        int i = 0;
         while ((line = r.readLine()) != null) {
-            if(i>=offset) {
-                //println line
+            if (i >= offset) {
                 total.append(line);
             }
-
             i++
         }
         return total.toString()
     }
 
-
-
+    /**
+     * Write an xml string to a file
+     * @param xmlString XML String
+     * @param filePath Destination file
+     */
     public static void writeToFile(def xmlString, def filePath) {
-      new File("$filePath").withWriter { out ->
-          out.println xmlString
-      }
+        new File("$filePath").withWriter { out ->
+            out.println xmlString
+        }
     }
 }

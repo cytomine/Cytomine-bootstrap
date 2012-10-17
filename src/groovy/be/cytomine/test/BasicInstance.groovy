@@ -30,6 +30,10 @@ class BasicInstance {
 
     private static Log log = LogFactory.getLog(BasicInstance.class)
 
+    /**
+     * Check if a domain is valide during test
+     * @param domain Domain to check
+     */
     static void checkDomain(def domain) {
         if(!domain.validate()) {
             log.warn domain.class+".errors=" + domain.errors
@@ -37,6 +41,10 @@ class BasicInstance {
         }
     }
 
+    /**
+     *  Check if a domain is well saved during test
+     * @param domain Domain to check
+     */
     static void saveDomain(def domain) {
         if(!domain.save(flush: true)) {
             log.warn domain.class+".errors=" + domain.errors
@@ -730,9 +738,6 @@ class BasicInstance {
         return project
     }
 
-
-
-
     static Term createOrGetBasicTerm() {
         log.debug "createOrGetBasicTerm()"
         def term = Term.findByName("BasicTerm")
@@ -937,9 +942,7 @@ class BasicInstance {
 
 
     static createUserJob(User user) {
-
        String username = new Date().toString()
-
        UserJob newUser = new UserJob()
        newUser.username = username
        newUser.password = "password"
@@ -955,103 +958,124 @@ class BasicInstance {
         return newUser
     }
 
+    /**
+     * Compare Annotation expected data (in map) to annotation new data (json)
+     * This method is used in update test method to check if data are well changed
+     * @param map Excpected data
+     * @param json New Data
+     */
     static void compareAnnotation(map, json) {
-
         assert map.geom.replace(' ', '').equals(json.location.replace(' ', ''))
         assert toDouble(map.zoomLevel).equals(toDouble(json.zoomLevel))
         assert map.channels.equals(json.channels)
         assert toLong(map.user.id).equals(toLong(json.user))
     }
 
+    /**
+     * Compare Abstract image expected data (in map) to abstract image new data (json)
+     * This method is used in update test method to check if data are well changed
+     * @param map Excpected data
+     * @param json New Data
+     */
     static void compareAbstractImage(map, json) {
-
         assert map.filename.equals(json.filename)
-//    assert map.geom.replace(' ', '').equals(json.roi.replace(' ',''))
         assert toLong(map.scanner.id).equals(toLong(json.scanner))
         assert toLong(map.slide.id).equals(toLong(json.slide))
         assert map.path.equals(json.path)
         assert map.mime.extension.equals(json.mime)
-/*    assert toInteger(map.width).equals(toInteger(json.width))
-    assert toInteger(map.height).equals(toInteger(json.height))
-    assert toDouble(map.scale).equals(toDouble(json.scale))*/
-
     }
 
+    /**
+     * Compare image expected data (in map) to image new data (json)
+     * This method is used in update test method to check if data are well changed
+     * @param map Excpected data
+     * @param json New Data
+     */
     static void compareImageInstance(map, json) {
-
         assert toLong(map.baseImage.id).equals(toLong(json.baseImage))
         assert toLong(map.project.id).equals(toLong(json.project))
         assert toLong(map.user.id).equals(toLong(json.user))
-
     }
 
+    /**
+     * Compare project expected data (in map) to project new data (json)
+     * This method is used in update test method to check if data are well changed
+     * @param map Excpected data
+     * @param json New Data
+     */
     static void compareProject(map, json) {
-
         assert map.name.toUpperCase().equals(json.name)
         assert toLong(map.ontology.id).equals(toLong(json.ontology))
-
     }
 
-
-    static void compareRelation(map, json) {
-
-        assert map.name.equals(json.name)
-
-    }
-
+    /**
+     * Compare discipline expected data (in map) to discipline new data (json)
+     * This method is used in update test method to check if data are well changed
+     * @param map Excpected data
+     * @param json New Data
+     */
     static void compareDiscipline(map, json) {
-
         assert map.name.equals(json.name)
-
     }
 
-    static void compareJobParameter(map, json) {
-
-        assert map.value.equals(json.value)
-
-    }
-
+    /**
+     * Compare term expected data (in map) to term new data (json)
+     * This method is used in update test method to check if data are well changed
+     * @param map Excpected data
+     * @param json New Data
+     */
     static void compareTerm(map, json) {
-
         assert map.name.equals(json.name)
         assert map.comment.equals(json.comment)
         assert map.color.equals(json.color)
         assert toLong(map.ontology.id).equals(toLong(json.ontology))
-
     }
 
+    /**
+     * Compare jobdata expected data (in map) to jobdata new data (json)
+     * This method is used in update test method to check if data are well changed
+     * @param map Excpected data
+     * @param json New Data
+     */
     static void compareJobData(map, json) {
-
         assert map.key.equals(json.key)
         assert toLong(map.job.id).equals(toLong(json.job))
-
     }
 
+    /**
+     * Compare user expected data (in map) to user new data (json)
+     * This method is used in update test method to check if data are well changed
+     * @param map Excpected data
+     * @param json New Data
+     */
     static void compareUser(map, json) {
-
         assert map.firstname.equals(json.firstname)
         assert map.lastname.equals(json.lastname)
         assert map.email.equals(json.email)
         assert map.username.equals(json.username)
-
     }
 
+    /**
+     * Compare ontology expected data (in map) to ontology new data (json)
+     * This method is used in update test method to check if data are well changed
+     * @param map Excpected data
+     * @param json New Data
+     */
     static void compareOntology(map, json) {
         assert map.name.equals(json.name)
     }
 
-    static void compareJob(map, json) {
-        assert map.progress.equals(json.progress)
-    }
-
+    /**
+     * Compare software expected data (in map) to software new data (json)
+     * This method is used in update test method to check if data are well changed
+     * @param map Excpected data
+     * @param json New Data
+     */
     static void compareSoftware(map, json) {
         assert map.name.equals(json.name)
         assert map.serviceName.equals(json.serviceName)
     }
 
-    static void compareSoftwareParameter(map, json) {
-        assert map.name.equals(json.name)
-    }
 
     static Double toDouble(String s) {
         if (s == null && s.equals("null")) return null
@@ -1064,15 +1088,6 @@ class BasicInstance {
     }
 
     static Double toDouble(Double s) {
-        return s
-    }
-
-    static Integer toInteger(String s) {
-        if (s == null && s.equals("null")) return null
-        else return Integer.parseDouble(s)
-    }
-
-    static Integer toInteger(Integer s) {
         return s
     }
 

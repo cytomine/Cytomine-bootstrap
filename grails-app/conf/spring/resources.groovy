@@ -1,9 +1,11 @@
+import be.cytomine.CytomineMultipartHttpServletRequest
+
 // Place your Spring DSL code here
 beans = {
     'apiAuthentificationFilter'(cytomine.web.APIAuthentificationFilters) {
         // properties
     }
-    'multipartResolver'(be.cytomine.CytomineMultipartHttpServletRequest) {
+    'multipartResolver'(CytomineMultipartHttpServletRequest) {
         // Max in memory 100kbytes
         maxInMemorySize=10240*3
 
