@@ -1,4 +1,4 @@
-import be.cytomine.CytomineMultipartHttpServletRequest
+import be.cytomine.web.CytomineMultipartHttpServletRequest
 
 // Place your Spring DSL code here
 beans = {
