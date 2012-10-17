@@ -14,7 +14,7 @@ import org.codehaus.groovy.grails.web.json.JSONArray
  * User: lrollus
  * Date: 6/12/11
  * GIGA-ULg
- *
+ * This class implement all method to easily get/create/update/delete/manage Term to Cytomine with HTTP request during functional test
  */
 class TermAPI extends DomainAPI {
 

@@ -246,8 +246,7 @@ class AlgoAnnotationTermService extends ModelService {
         def algoAnnotationsTerm = AlgoAnnotationTerm.findAllByUserJob(userJob);
 
         algoAnnotationsTerm.each {
-            if (it.term && it.expectedTerm) matrix.addEntry(it.expectedTerm?.id + "", it.term?.id + "")
-            //matrix.print()
+            if (it.term && it.expectedTerm) matrix.incrementEntry(it.expectedTerm?.id + "", it.term?.id + "")
         }
         return matrix
     }

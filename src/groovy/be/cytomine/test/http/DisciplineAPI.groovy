@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory
  * User: lrollus
  * Date: 6/12/11
  * GIGA-ULg
- *
+ * This class implement all method to easily get/create/update/delete/manage Discipline to Cytomine with HTTP request during functional test
  */
 class DisciplineAPI extends DomainAPI {
 

@@ -14,6 +14,7 @@ import java.util.Map;
 public class ValueComparator implements Comparator {
 
   Map base;
+
   public ValueComparator(Map base) {
       this.base = base;
   }

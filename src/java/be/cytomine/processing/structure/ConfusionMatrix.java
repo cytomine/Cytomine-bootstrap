@@ -8,46 +8,78 @@ import java.util.Map;
  * User: lrollus
  * Date: 2/02/12
  * GIGA-ULg
+ * This class implement a confusion matrix
+ * Each column of the matrix represents the instances in a predicted class,
+ * while each row represents the instances in an actual class
  */
 public class ConfusionMatrix {
 
+    /**
+     * Match class and its position (in row and column)
+     */
+    private Map<String, Integer> header;
 
-    public Map<String, Integer> header;
-    public Map<Integer, String> headerInverse;
-    public Integer[][] matrix;
-    public double[] result;
+    /**
+     * Match position and its class
+     */
+    private Map<Integer, String> headerInverse;
 
+    /**
+     * Matrix without header
+     */
+    private Integer[][] matrix;
+
+    /**
+     * Last column of matrix (result)
+     */
+    private double[] result;
+
+    /**
+     * Build a confusion matrix with class list
+     * @param className Class list
+     */
     public ConfusionMatrix(List<String> className) {
+
+        //build header info
         header = new HashMap<String,Integer>();
         headerInverse = new HashMap<Integer,String>();
         for(int i=0;i<className.size();i++) {
             header.put(className.get(i),i);
             headerInverse.put(i,className.get(i));
         }
-        matrix = new Integer[className.size()][className.size()];
 
-        //fill with 0
+        //build matrix and fill with 0
+        matrix = new Integer[className.size()][className.size()];
         for(int i=0;i<matrix.length;i++) {
             for(int j=0;j<matrix.length;j++) {
                 matrix[i][j]=0;
             }
         }
 
+        //build result column and fill with -1
         result = new double[className.size()];
         for(int i=0;i<result.length;i++) {
              result[i]=-1d;
         }
     }
 
-    public void addEntry(String termReal, String termSuggest) {
+    /**
+     * Increment an entry from matrix; Add 1 to the cell corresponding to [termReal,termSuggest]
+     * @param termReal Real class
+     * @param termSuggest Suggest class
+     */
+    public void incrementEntry(String termReal, String termSuggest) {
         int i =  header.get(termReal);
         int j =  header.get(termSuggest);
         Integer oldValue = matrix[i][j];
-        //System.out.println("oldValue:"+oldValue);
         matrix[i][j]=oldValue+1;
         updateResult(i);
     }
 
+    /**
+     * Compute result column for line i
+     * @param i Line
+     */
     public void updateResult(int i) {
         double sum = 0;
         for(int j=0;j<matrix[i].length;j++) {
@@ -56,48 +88,31 @@ public class ConfusionMatrix {
         result[i] = (double)matrix[i][i]/sum;
     }
 
-    public double[] getResults() {
-        return result;
-    }
-
-    public double getDiagonalSum() {
-        double sum = 0;
-        for(int i=0;i<matrix.length;i++) {
-            sum=sum+matrix[i][i];
-        }
-        return sum;
-    }
-
-    public double getTotalSum() {
-        double sum = 0;
-        for(int i=0;i<matrix.length;i++) {
-            for(int j=0;j<matrix[i].length;j++) {
-                sum=sum+matrix[i][j];
-            }
-        }
-        return sum;
-    }
-
-    public void print() {
-        System.out.println("******************************************");
-        System.out.print("X;");
+    public String toString()  {
+        String matrixStr = "******************************************\n";
+        matrixStr = matrixStr + "X;";
         for(int j=0;j<matrix.length;j++) {
-           System.out.print(headerInverse.get(j) + ";");
+            matrixStr = matrixStr + headerInverse.get(j) + ";";
         }
-        System.out.println("");
+        matrixStr = matrixStr + "\n";
 
         for(int i=0;i<matrix.length;i++) {
-            System.out.print(headerInverse.get(i)+";");
+            matrixStr = matrixStr + headerInverse.get(i) + ";";
             for(int j=0;j<matrix.length;j++) {
-                System.out.print(matrix[i][j]+";");
+                matrixStr = matrixStr + matrix[i][j]+";";
             }
-            System.out.println(result[i] + ";");
+            matrixStr = matrixStr + result[i] + ";";
+            matrixStr = matrixStr + "\n";
 
         }
-        System.out.println("******************************************");
+        matrixStr = matrixStr + "******************************************\n";
+        return matrixStr;
     }
 
-
+    /**
+     * Convert confusion matrix object to JSON
+     * @return confusion matrix in JSON
+     */
     public String toJSON() {
         //start a new array
         String json  = "[";
@@ -107,9 +122,7 @@ public class ConfusionMatrix {
            json = json + headerInverse.get(j)+",";
         }
         json = json + "0";
-        //json = json.substring(0,json.length()-2);
         json = json+"],";
-        //json = json + "\n";
 
         for(int i=0;i<matrix.length;i++) {
             json = json + "[";
@@ -119,11 +132,10 @@ public class ConfusionMatrix {
             }
             json = json + result[i];
             json = json+"],";
-            //json = json + "\n";
         }
         json = json.substring(0,json.length()-2);
         json = json+"]";
-         json = json+"]";
+        json = json+"]";
         return json;
     }
 }

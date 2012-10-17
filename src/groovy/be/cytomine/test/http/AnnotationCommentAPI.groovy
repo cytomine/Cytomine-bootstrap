@@ -11,15 +11,11 @@ import org.apache.commons.logging.LogFactory
  * User: lrollus
  * Date: 6/12/11
  * GIGA-ULg
- *
+ * This class implement all method to easily get/create/update/delete/manage AnnotationComment to Cytomine with HTTP request during functional test
  */
 class AnnotationCommentAPI extends DomainAPI {
 
     private static final log = LogFactory.getLog(this)
-
-//    "/api/annotation/$annotation/comment"(controller:"restAnnotation"){
-//        action = [POST: "addComment", GET:"listComments"]
-//    }
 
     static def show(Long idAnnotation, Long idComment,String username, String password) {
         log.info "show comment $idComment for annotation $idAnnotation"
