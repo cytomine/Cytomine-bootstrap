@@ -10,7 +10,7 @@ import org.apache.log4j.Logger
 
 class AnnotationTerm extends CytomineDomain implements Serializable {
 
-    Annotation annotation
+    UserAnnotation userAnnotation
     Term term
     SecUser user
 
@@ -18,14 +18,14 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     String toString() {
-        "[" + this.id + " <" + annotation + "," + term + "," + user + ">]"
+        "[" + this.id + " <" + userAnnotation + "," + term + "," + user + ">]"
     }
 
-    static AnnotationTerm link(Annotation annotation, Term term,SecUser user) {
+    static AnnotationTerm link(UserAnnotation annotation, Term term,SecUser user) {
         if (!annotation) throw new WrongArgumentException("Annotation cannot be null")
         if (!term) throw new WrongArgumentException("Term cannot be null")
         if (!user) throw new WrongArgumentException("User cannot be null")
-        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term,'user': user)
+        def annotationTerm = AnnotationTerm.findWhere(userAnnotation: annotation, 'term': term,'user': user)
         if (annotationTerm) throw new AlreadyExistException("Annotation - term already exist")
         //Annotation.withTransaction {
         if (!annotationTerm) {
@@ -40,12 +40,12 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         return annotationTerm
     }
 
-    static void unlink(Annotation annotation, Term term,SecUser user) {
+    static void unlink(UserAnnotation annotation, Term term,SecUser user) {
 
         if (!annotation) throw new WrongArgumentException("Annotation cannot be null")
         if (!term) throw new WrongArgumentException("Term cannot be null")
         if (!user) throw new WrongArgumentException("User cannot be null")
-        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
+        def annotationTerm = AnnotationTerm.findWhere(userAnnotation: annotation, 'term': term, 'user': user)
         if (!annotationTerm) throw new WrongArgumentException("Annotation - term - user not exist")
 
         if (annotationTerm) {
@@ -69,10 +69,19 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     static AnnotationTerm getFromData(annotationTerm, jsonAnnotationTerm) {
-        annotationTerm.annotation = Annotation.get(jsonAnnotationTerm.annotation.toString())
+        println jsonAnnotationTerm
+        try{annotationTerm.userAnnotation = UserAnnotation.get(Long.parseLong(jsonAnnotationTerm.userannotation.toString()))}
+        catch(Exception e) {
+           println e
+        }
+        UserAnnotation.list().each {
+            println "***"+it.id
+        }
+
+
         annotationTerm.term = Term.get(jsonAnnotationTerm.term.toString())
         annotationTerm.user = SecUser.get(jsonAnnotationTerm.user.toString())
-        if (!annotationTerm.annotation) throw new WrongArgumentException("Annotation ${jsonAnnotationTerm.annotation.toString()} doesn't exist!")
+        if (!annotationTerm.userAnnotation) throw new WrongArgumentException("Annotation ${jsonAnnotationTerm.userannotation.toString()} doesn't exist!")
         if (!annotationTerm.term) throw new WrongArgumentException("Term ${jsonAnnotationTerm.term.toString()} doesn't exist!")
         if (!annotationTerm.user) throw new WrongArgumentException("User ${jsonAnnotationTerm.user.toString()} doesn't exist!")
         return annotationTerm;
@@ -81,9 +90,9 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
 
     def getCallBack() {
         HashMap<String, Object> callback = new HashMap<String, Object>();
-        callback.put("annotationID", this.annotation.id)
+        callback.put("annotationID", this.userAnnotation.id)
         callback.put("termID", this.term.id)
-        callback.put("imageID", this.annotation.image.id)
+        callback.put("imageID", this.userAnnotation.image.id)
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
@@ -92,7 +101,7 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
             def returnArray = [:]
             //returnArray['class'] = it.class
             returnArray['id'] = it.id
-            returnArray['annotation'] = it.annotation?.id
+            returnArray['userannotation'] = it.userAnnotation?.id
             returnArray['term'] = it.term?.id
             returnArray['user'] = it.user?.id
             return returnArray
@@ -100,6 +109,6 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
     }
 
      public Project projectDomain() {
-        return annotation.image.project
+        return userAnnotation.image.project
     }
 }

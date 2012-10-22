@@ -11,6 +11,7 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.AnnotationDomain
 
 class AnnotationTermService extends ModelService {
 
@@ -23,32 +24,32 @@ class AnnotationTermService extends ModelService {
 
     boolean saveOnUndoRedoStack = true
 
-    @PreAuthorize("#annotation.hasPermission(#annotation.project,'READ') or hasRole('ROLE_ADMIN')")
-    def list(Annotation annotation) {
-        annotation.annotationTerm
+    @PreAuthorize("#userAnnotation.hasPermission(#userAnnotation.project,'READ') or hasRole('ROLE_ADMIN')")
+    def list(UserAnnotation userAnnotation) {
+        userAnnotation.annotationTerm
     }
 
-    @PreAuthorize("#annotation.hasPermission(#annotation.project,'READ') or hasRole('ROLE_ADMIN')")
-    def listNotUser(Annotation annotation, User user) {
-        AnnotationTerm.findAllByAnnotationAndUserNotEqual(annotation, user)
+    @PreAuthorize("#userAnnotation.hasPermission(#userAnnotation.project,'READ') or hasRole('ROLE_ADMIN')")
+    def listNotUser(UserAnnotation userAnnotation, User user) {
+        AnnotationTerm.findAllByUserAnnotationAndUserNotEqual(userAnnotation, user)
     }
 
    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
    def list(ImageInstance image, Term term) {
 
         def annotations = []
-        Annotation.findAllByImage(image).each { annotation ->
-            annotation.annotationTerm.each { annotationTerm ->
-                if (annotationTerm.getTerm() == term) annotations << annotation
+       UserAnnotation.findAllByImage(image).each { userAnnotations ->
+           userAnnotations.annotationTerm.each { annotationTerm ->
+                if (annotationTerm.getTerm() == term) annotations << userAnnotations
             }
         }
         annotations
     }
 
     @PreAuthorize("#annotation.hasPermission(#annotation.project,'READ') or hasRole('ROLE_ADMIN')")
-    def read(Annotation annotation, Term term, SecUser user) {
-        if (user) AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
-        else AnnotationTerm.findByAnnotationAndTerm(annotation, term)
+    def read(AnnotationDomain annotation, Term term, SecUser user) {
+        if (user) AnnotationTerm.findWhere('userAnnotation.id': annotation.id, 'term': term, 'user': user)
+        else AnnotationTerm.findWhere('userAnnotation.id':annotation.id, 'term':term)
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -60,15 +61,15 @@ class AnnotationTermService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def addAnnotationTerm(def idAnnotation, def idTerm, def idExpectedTerm, def idUser, SecUser currentUser,Transaction transaction) {
-        def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, expectedTerm: $idExpectedTerm, user: $idUser}")
+    def addAnnotationTerm(def idUserAnnotation, def idTerm, def idExpectedTerm, def idUser, SecUser currentUser,Transaction transaction) {
+        def json = JSON.parse("{userannotation: $idUserAnnotation, term: $idTerm, expectedTerm: $idExpectedTerm, user: $idUser}")
         return executeCommand(new AddCommand(user: currentUser,transaction:transaction), json)
     }
 
     @PreAuthorize("#domain.user.id == principal.id or hasRole('ROLE_ADMIN')")
     def delete(def domain,def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return deleteAnnotationTerm(json.annotation, json.term, domain.user.id, currentUser,null)
+        return deleteAnnotationTerm(json.userannotation, json.term, domain.user.id, currentUser,null)
     }
 
     def update(def domain,def json) {
@@ -79,7 +80,7 @@ class AnnotationTermService extends ModelService {
      */
     def addWithDeletingOldTerm(def idAnnotation, def idterm) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        Annotation annotation = Annotation.read(idAnnotation)
+        UserAnnotation annotation = UserAnnotation.read(idAnnotation)
         if (!annotation) throw new ObjectNotFoundException("Annotation $idAnnotation not found")
         //Start transaction
         Transaction transaction = transactionService.start()
@@ -104,7 +105,7 @@ class AnnotationTermService extends ModelService {
     }
 
     def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser, boolean printMessage, Transaction transaction) {
-        def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, user: $idUser}")
+        def json = JSON.parse("{userannotation: $idAnnotation, term: $idTerm, user: $idUser}")
         def result = executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
         return result
     }
@@ -112,28 +113,28 @@ class AnnotationTermService extends ModelService {
     /**
      * Delete all term map by user for annotation
      */
-    def deleteAnnotationTermFromUser(Annotation annotation, User user, User currentUser, Transaction transaction) {
+    def deleteAnnotationTermFromUser(UserAnnotation annotation, User user, User currentUser, Transaction transaction) {
         //Delete all annotation term
-        def annotationTerm = AnnotationTerm.findAllByAnnotationAndUser(annotation, user)
+        def annotationTerm = AnnotationTerm.findAllByUserAnnotationAndUser(annotation, user)
         log.info "Delete old annotationTerm= " + annotationTerm.size()
 
         annotationTerm.each { annotterm ->
             log.info "unlink annotterm:" + annotterm.id
-            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.user.id, currentUser, false,transaction)
+            deleteAnnotationTerm(annotterm.userAnnotation.id, annotterm.term.id, annotterm.user.id, currentUser, false,transaction)
         }
     }
 
     /**
      * Delete all term map for annotation
      */
-    def deleteAnnotationTermFromAllUser(Annotation annotation, User currentUser, Transaction transaction) {
+    def deleteAnnotationTermFromAllUser(UserAnnotation annotation, User currentUser, Transaction transaction) {
         //Delete all annotation term
-        def annotationTerms = AnnotationTerm.findAllByAnnotation(annotation)
+        def annotationTerms = AnnotationTerm.findAllByUserAnnotation(annotation)
         log.info "Delete old annotationTerm= " + annotationTerms.size()
 
         annotationTerms.each { annotationTerm ->
             log.info "unlink annotterm:" + annotationTerm.id
-            deleteAnnotationTerm(annotationTerm.annotation.id, annotationTerm.term.id, annotationTerm.user.id, currentUser, false,transaction)
+            deleteAnnotationTerm(annotationTerm.userAnnotation.id, annotationTerm.term.id, annotationTerm.user.id, currentUser, false,transaction)
         }
     }
 
@@ -147,7 +148,7 @@ class AnnotationTermService extends ModelService {
 
         annotationTerm.each { annotterm ->
             log.info "unlink annotterm:" + annotterm.id
-            deleteAnnotationTerm(annotterm.annotation.id, annotterm.term.id, annotterm.user.id, currentUser, false,transaction)
+            deleteAnnotationTerm(annotterm.userAnnotation.id, annotterm.term.id, annotterm.user.id, currentUser, false,transaction)
         }
     }
 
@@ -166,8 +167,8 @@ class AnnotationTermService extends ModelService {
         log.debug "domain=" + domain + " responseService=" + responseService
         //Save new object
         //domainService.saveDomain(domain)
-        domain = AnnotationTerm.link(domain.annotation, domain.term,domain.user)
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.annotation.id, domain.term.name, domain.user?.username], printMessage, "Add", domain.getCallBack())
+        domain = AnnotationTerm.link(domain.userAnnotation, domain.term,domain.user)
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username], printMessage, "Add", domain.getCallBack())
 
         return response
     }
@@ -184,9 +185,9 @@ class AnnotationTermService extends ModelService {
 
     def destroy(AnnotationTerm domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.annotation.id, domain.term.name, domain.user?.username], printMessage, "Delete", domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username], printMessage, "Delete", domain.getCallBack())
         //Delete new object
-        AnnotationTerm.unlink(domain.annotation, domain.term, domain.user)
+        AnnotationTerm.unlink(domain.userAnnotation, domain.term, domain.user)
         //domainService.deleteDomain(domain)
         return response
     }
@@ -196,10 +197,10 @@ class AnnotationTermService extends ModelService {
     }
 
     def retrieve(def json) {
-        Annotation annotation = Annotation.get(json.annotation)
+        UserAnnotation annotation = UserAnnotation.get(json.userannotation)
         Term term = Term.get(json.term)
         User user = User.get(json.user)
-        AnnotationTerm relation = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
+        AnnotationTerm relation = AnnotationTerm.findWhere(userAnnotation: annotation, 'term': term, 'user': user)
         if (!relation) throw new ObjectNotFoundException("Annotation term not found ($annotation,$term,$user)")
         return relation
     }

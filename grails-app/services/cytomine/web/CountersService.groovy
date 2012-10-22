@@ -1,7 +1,7 @@
 package cytomine.web
 
-import be.cytomine.ontology.Annotation
 import be.cytomine.social.SharedAnnotation
+import be.cytomine.ontology.UserAnnotation
 
 /**
  * Cytomine @ GIGA-ULG
@@ -57,15 +57,15 @@ class CountersService {
 
         try {
             def statement = connection.createStatement()
-            statement.execute("update annotation set count_comments = 0;")
+            statement.execute("update user_annotation set count_comments = 0;")
         } catch (org.postgresql.util.PSQLException e) {
             log.info e
         }
 
 
-        Collection<Annotation> annotations = (Collection<Annotation>) SharedAnnotation.list().collect { it.annotation }.unique()
+        Collection<UserAnnotation> annotations = (Collection<UserAnnotation>) SharedAnnotation.list().collect { it.userAnnotation }.unique()
         annotations.each { annotation ->
-            long countComments = (long) SharedAnnotation.countByAnnotation(annotation)
+            long countComments = (long) SharedAnnotation.countByUserAnnotation(annotation)
 
             annotation.setCountComments(countComments)
             annotation.save()

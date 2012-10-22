@@ -30,7 +30,7 @@ class RelationTermAPI extends DomainAPI {
     }
 
     static def listByRelation(Long idRelation,String username, String password) {
-        log.info "List by annotation idRelation=$idRelation"
+        log.info "List by userAnnotation idRelation=$idRelation"
         String URL = Infos.CYTOMINEURL+"api/relation/"+idRelation+"/term.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -42,7 +42,7 @@ class RelationTermAPI extends DomainAPI {
     }
 
     static def listByTerm(Long idRelation,Long indexTerm,String username, String password) {
-        log.info "List by annotation idRelation=$idRelation"
+        log.info "List by userAnnotation idRelation=$idRelation"
         String URL = Infos.CYTOMINEURL+"api/relation/term/"+indexTerm+"/" + idRelation +  ".json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);

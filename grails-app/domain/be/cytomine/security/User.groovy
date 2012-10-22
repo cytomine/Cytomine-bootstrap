@@ -199,6 +199,7 @@ class User extends SecUser {
     }
 
     def beforeInsert() {
+        println "beforeInsert.user"
         super.beforeInsert()
     }
 

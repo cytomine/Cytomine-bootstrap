@@ -6,7 +6,6 @@ import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
-import be.cytomine.ontology.Annotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.social.FollowRequest
@@ -15,6 +14,8 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.ontology.UserAnnotation
+import be.cytomine.ontology.AlgoAnnotation
 
 class ImageInstanceService extends ModelService {
 
@@ -23,9 +24,10 @@ class ImageInstanceService extends ModelService {
     def cytomineService
     def commandService
     def transactionService
-    def annotationService
     def responseService
     def domainService
+    def userAnnotationService
+    def algoAnnotationService
 
     boolean saveOnUndoRedoStack = true
 
@@ -152,10 +154,15 @@ class ImageInstanceService extends ModelService {
         }
         //Delete each annotation from image (if possible)
         if (imageInstance) {
-            log.info "Delete annotation from image"
-            def annotations = Annotation.findAllByImage(imageInstance)
-            annotations.each { annotation ->
-                annotationService.deleteAnnotation(annotation, currentUser, false,transaction)
+            log.info "Delete userAnnotation from image"
+            def userAnnotations = UserAnnotation.findAllByImage(imageInstance)
+            userAnnotations.each { annotation ->
+                userAnnotationService.deleteAnnotation(annotation, currentUser, false,transaction)
+            }
+            log.info "Delete algoAnnotations from image"
+            def algoAnnotations = AlgoAnnotation.findAllByImage(imageInstance)
+            algoAnnotations.each { annotation ->
+                algoAnnotationService.deleteAnnotation(annotation, currentUser, false,transaction)
             }
         }
         //Delete image

@@ -11,12 +11,12 @@ import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.RetrievalServer
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
-import be.cytomine.ontology.Annotation
 import be.cytomine.project.Project
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import grails.orm.PagedResultList
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.AnnotationDomain
 
 class AbstractImageService extends ModelService {
 
@@ -192,11 +192,11 @@ class AbstractImageService extends ModelService {
         }
     }
 
-    def cropWithMaxSize(Annotation annotation, int maxSize) {
+    def cropWithMaxSize(AnnotationDomain annotation, int maxSize) {
         return annotation.toCropURLWithMaxSize(maxSize)
     }
 
-    def crop(Annotation annotation, Integer zoom) {
+    def crop(AnnotationDomain annotation, Integer zoom) {
         def boundaries = annotation.getBoundaries()
         if (zoom != null) {
             log.info "zoom=$zoom"
@@ -211,7 +211,7 @@ class AbstractImageService extends ModelService {
         }
     }
 
-    def retrieval(Annotation annotation, int zoom, int maxSimilarPictures) {
+    def retrieval(AnnotationDomain annotation, int zoom, int maxSimilarPictures) {
         def retrievalServers = RetrievalServer.findAll()
         return retrievalServers.get(0).search(annotation.toCropURL(zoom), maxSimilarPictures)
     }

@@ -122,6 +122,8 @@ abstract class CytomineDomain {
         try {
             SecUser currentUser = cytomineService.getCurrentUser()
             String usernameParentUser = currentUser.realUsername()
+            println "* usernameParentUser="+usernameParentUser
+            println "* domain="+domain.id
             int permission = -1
             if(permissionStr.equals("READ")) permission = READ.mask
             else if(permissionStr.equals("WRITE")) permission = WRITE.mask
@@ -133,13 +135,15 @@ abstract class CytomineDomain {
 
             AclObjectIdentity aclObject = AclObjectIdentity.findByObjectId(domain.id)
             AclSid aclSid = AclSid.findBySid(usernameParentUser)
-
+            println "*** aclObject="+aclObject
+            println "*** aclSid="+aclSid
             if(!aclObject) return false
             if(!aclSid) return false
 
             boolean hasPermission = false;
             List<AclEntry> acls = AclEntry.findAllByAclObjectIdentityAndSid(aclObject,aclSid)
             acls.each { acl ->
+                println "*** usernameParentUser="+acl.aclObjectIdentity.objectId
                 if(acl.mask>=permission) {
                     hasPermission=true
                 }

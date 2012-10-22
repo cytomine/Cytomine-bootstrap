@@ -8,6 +8,7 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
+import be.cytomine.project.Project
 
 class RestController {
 
@@ -41,6 +42,8 @@ class RestController {
             response([success: false, errors: e.msg], e.code)
         }
     }
+
+
 
     /**
      * Call update function for this service with the json

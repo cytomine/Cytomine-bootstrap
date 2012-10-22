@@ -6,7 +6,7 @@ import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
 import org.apache.log4j.Logger
 
-class Discipline extends CytomineDomain {
+class Discipline extends CytomineDomain implements Serializable{
 
     String name
 

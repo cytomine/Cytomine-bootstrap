@@ -3,7 +3,6 @@ package be.cytomine.processing
 import be.cytomine.Exception.ServerException
 import be.cytomine.api.UrlApi
 import be.cytomine.image.server.RetrievalServer
-import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
 import be.cytomine.test.HttpClient
@@ -20,6 +19,9 @@ import static groovyx.net.http.Method.DELETE
 import static groovyx.net.http.Method.POST
 import org.apache.log4j.Logger
 
+import be.cytomine.AnnotationDomain
+import be.cytomine.ontology.UserAnnotation
+
 class RetrievalService {
 
     static transactional = true
@@ -33,7 +35,7 @@ class RetrievalService {
      * @return [annotation: #list of similar annotation#, term: #map with best term#]
      * @throws Exception
      */
-    def listSimilarAnnotationAndBestTerm(Project project, Annotation annotation) throws Exception {
+    def listSimilarAnnotationAndBestTerm(Project project, AnnotationDomain annotation) throws Exception {
 
         def data = [:]
 
@@ -89,8 +91,8 @@ class RetrievalService {
         map
     }
 
-    private def loadAnnotationSimilarities(Annotation searchAnnotation,List<Long> projectSearch) {
-        log.info "get similarities for annotation " + searchAnnotation.id + " on " + projectSearch
+    private def loadAnnotationSimilarities(AnnotationDomain searchAnnotation,List<Long> projectSearch) {
+        log.info "get similarities for userAnnotation " + searchAnnotation.id + " on " + projectSearch
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         def response = getPostSearchResponse(server.url,'/retrieval-web/api/retrieval/search.json', searchAnnotation,projectSearch)
         def json = JSON.parse(response)
@@ -100,24 +102,24 @@ class RetrievalService {
             def annotationjson = json.get(i)  //{"id":6754,"url":"http://beimport java.util.concurrent.Futureta.cytomine.be:48/api/annotation/6754/crop.jpg","sim":6.922589484181173E-6},{"id":5135,"url":"http://beta.cytomine.be:48/api/annotation/5135/crop.jpg","sim":6.912057598973113E-6}]
 
             try {
-                Annotation annotation = Annotation.read(annotationjson.id)
+                UserAnnotation annotation = UserAnnotation.read(annotationjson.id)
                 if (annotation && annotation.id != searchAnnotation.id) {
                     projectService.checkAuthorization(annotation.project)
                     annotation.similarity = new Double(annotationjson.sim)
                     data << annotation
                 }
             }
-            catch (AccessDeniedException ex) {log.info "User cannot have access to this annotation"}
-            catch (NotFoundException ex) {log.info "User cannot have access to this annotation"}
+            catch (AccessDeniedException ex) {log.info "User cannot have access to this userAnnotation"}
+            catch (NotFoundException ex) {log.info "User cannot have access to this userAnnotation"}
         }
         return data
     }
 
-    public String getPostSearchResponse(String URL, String resource, Annotation annotation,List<Long> projectsSearch) {
+    public String getPostSearchResponse(String URL, String resource, AnnotationDomain annotation,List<Long> projectsSearch) {
 
         def http = new HTTPBuilder(URL)
         http.auth.basic 'xxx', 'xxx'
-        def params = ["id": annotation.id, "url": UrlApi.getAnnotationCropWithAnnotationId(grailsApplication.config.grails.serverURL,annotation.id), "containers": projectsSearch]
+        def params = ["id": annotation.id, "url": UrlApi.getUserAnnotationCropWithAnnotationId(grailsApplication.config.grails.serverURL,annotation.id), "containers": projectsSearch]
         def paramsJSON = params as JSON
 
         http.request(POST) {
@@ -184,7 +186,7 @@ class RetrievalService {
         Logger.getLogger(this).info("index synchronous id")
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String res = "/retrieval-web/api/resource.json"
-        getPostResponse(server.url, res, Annotation.read(id))
+        getPostResponse(server.url, res, UserAnnotation.read(id))
     }
 
     public static def deleteAnnotationSynchronous(Long id) {
@@ -207,7 +209,7 @@ class RetrievalService {
         indexAnnotationSynchronous(id)
     }
 
-    public static def indexAnnotationAsynchronous(Annotation annotation,RetrievalServer server) {
+    public static def indexAnnotationAsynchronous(AnnotationDomain annotation,RetrievalServer server) {
         //indexAnnotationSynchronous(annotation)
         Logger.getLogger(this).info("index asynchronous")
         String url = server.url
@@ -269,7 +271,7 @@ class RetrievalService {
         //Get indexed resources
         List<Long> resources = getIndexedResource()
         //Check if each annotation is well indexed
-        def annotations = Annotation.list()
+        def annotations = UserAnnotation.list()
         int i = 1
         annotations.each { annotation ->
             log.debug "Annotation $i/" + annotations.size()

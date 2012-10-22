@@ -2,11 +2,12 @@ package be.cytomine
 
 import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
-import be.cytomine.test.http.AnnotationAPI
+
 import be.cytomine.test.http.AnnotationTermAPI
 import be.cytomine.test.http.ImageInstanceAPI
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import be.cytomine.test.http.UserAnnotationAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -84,14 +85,14 @@ class AnnotationAddConcurrent extends Thread {
     public Integer code = -1
 
     public AnnotationAddConcurrent() {
-        def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
+        def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
         json = annotationToAdd.encodeAsJSON()
     }
 
     public void run() {
         log.info("start thread")
-        log.info("create annotation")
-        def result = AnnotationAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        log.info("create userannotation")
+        def result = UserAnnotationAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         log.info("check response")
         code = result.code
         log.info("end thread")

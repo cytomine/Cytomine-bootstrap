@@ -120,7 +120,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
   void testDeleteImageWithData()  {
     def imageToDelete = BasicInstance.createOrGetBasicImageInstance()
-    def annotation = BasicInstance.createOrGetBasicAnnotation()
+    def annotation = BasicInstance.createOrGetBasicUserAnnotation()
     annotation.image = imageToDelete
     annotation.save(flush:true)
       Long id = imageToDelete.baseImage.id

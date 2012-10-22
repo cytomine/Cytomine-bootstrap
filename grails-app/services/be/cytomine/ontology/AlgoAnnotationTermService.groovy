@@ -15,6 +15,7 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 
 import java.util.TreeMap.Entry
+import be.cytomine.AnnotationDomain
 
 class AlgoAnnotationTermService extends ModelService {
 
@@ -30,12 +31,12 @@ class AlgoAnnotationTermService extends ModelService {
         AlgoAnnotationTerm.list()
     }
 
-    def list(Annotation annotation) {
-        AlgoAnnotationTerm.findAllByAnnotation(annotation)
+    def list(AnnotationDomain annotation) {
+        AlgoAnnotationTerm.findAllByAnnotationIdent(annotation.id)
     }
 
-    def read(Annotation annotation, Term term, UserJob userJob) {
-        AlgoAnnotationTerm.findWhere(annotation: annotation, term: term, userJob: userJob)
+    def read(AnnotationDomain annotation, Term term, UserJob userJob) {
+        AlgoAnnotationTerm.findWhere(annotationIdent: annotation.id, term: term, userJob: userJob)
     }
 
     def add(def json) {
@@ -48,7 +49,7 @@ class AlgoAnnotationTermService extends ModelService {
 
     def delete(def domain,def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def result = deleteAlgoAnnotationTerm(json.annotation, json.term, json.userJob, currentUser,null)
+        def result = deleteAlgoAnnotationTerm(json.userannotation, json.term, json.user, currentUser,null)
         return result
     }
 
@@ -67,14 +68,14 @@ class AlgoAnnotationTermService extends ModelService {
     /**
      * Delete all term map for annotation
      */
-    def deleteAlgoAnnotationTermFromAllUser(Annotation annotation, User currentUser, Transaction transaction) {
+    def deleteAlgoAnnotationTermFromAllUser(AnnotationDomain annotation, User currentUser, Transaction transaction) {
         //Delete all annotation term
-        def suggestedterm = AlgoAnnotationTerm.findAllByAnnotation(annotation)
+        def suggestedterm = AlgoAnnotationTerm.findAllByAnnotationIdent(annotation)
         log.info "Delete old suggestedterm= " + suggestedterm.size()
 
         suggestedterm.each { sugterm ->
             log.info "unlink sugterm:" + sugterm.id
-            deleteAlgoAnnotationTerm(sugterm.annotation.id, sugterm.term.id, sugterm.userJob.id, currentUser,transaction)
+            deleteAlgoAnnotationTerm(sugterm.retrieveAnnotationDomain().id, sugterm.term.id, sugterm.userJob.id, currentUser,transaction)
         }
     }
 
@@ -88,7 +89,7 @@ class AlgoAnnotationTermService extends ModelService {
 
         algoannotationterm.each { algoterm ->
             log.info "unlink sugterm:" + algoterm.id
-            deleteAlgoAnnotationTerm(algoterm.annotation.id, algoterm.term.id, algoterm.userJob.id, currentUser,transaction)
+            deleteAlgoAnnotationTerm(algoterm.retrieveAnnotationDomain().id, algoterm.term.id, algoterm.userJob.id, currentUser,transaction)
         }
     }
 
@@ -107,7 +108,7 @@ class AlgoAnnotationTermService extends ModelService {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain, [domain.term?.name, domain.annotation.id, domain.userJob], printMessage, "Add", domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.term?.name, domain.retrieveAnnotationDomain().id, domain.userJob], printMessage, "Add", domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -123,7 +124,7 @@ class AlgoAnnotationTermService extends ModelService {
 
     def destroy(AlgoAnnotationTerm domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.userJob], printMessage, "Delete", domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.retrieveAnnotationDomain().id, domain.userJob], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -142,7 +143,7 @@ class AlgoAnnotationTermService extends ModelService {
 
     def edit(AlgoAnnotationTerm domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.annotation.id, domain.userJob], printMessage, "Edit", domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.retrieveAnnotationDomain().id, domain.userJob], printMessage, "Edit", domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response
@@ -164,11 +165,11 @@ class AlgoAnnotationTermService extends ModelService {
      */
     def retrieve(JSONObject json) {
         //Retrieve domain
-        Annotation annotation = Annotation.read(json.annotation)
+        Long idAnnotation = Long.parseLong(json.annotationIdent)
         Term term = Term.read(json.term)
         UserJob userJob = UserJob.read(json.userJob)
-        AlgoAnnotationTerm domain = AlgoAnnotationTerm.findWhere(annotation: annotation, term: term, userJob: userJob)
-        if (!domain) throw new ObjectNotFoundException("SuggestedTerm was not found with annotation:$annotation,term:$term,userJob:$userJob")
+        AlgoAnnotationTerm domain = AlgoAnnotationTerm.findWhere(annotationIdent: idAnnotation, term: term, userJob: userJob)
+        if (!domain) throw new ObjectNotFoundException("SuggestedTerm was not found with annotation:$json.annotationIdent,term:$term,userJob:$userJob")
         return domain
     }
 
@@ -272,11 +273,11 @@ class AlgoAnnotationTermService extends ModelService {
         def annotations = null;
         //List<Annotation> annotations = Annotation.findAllByProject(project,[sort:'created', order:"desc"])
         if(!term) {
-            annotations = Annotation.executeQuery("select a.created from Annotation a where a.project = ? and a.user.class = ? order by a.created desc", [project,"be.cytomine.security.User"])
+            annotations = UserAnnotation.executeQuery("select a.created from UserAnnotation a where a.project = ?  order by a.created desc", [project])
         }
         else {
             log.info "Search on term " + term.name
-            annotations = Annotation.executeQuery("select b.created from Annotation b where b.project = ? and b.id in (select x.annotation.id from AnnotationTerm x where x.term = ?) and b.user.class = ? order by b.created desc", [project,term,"be.cytomine.security.User"])
+            annotations = UserAnnotation.executeQuery("select b.created from UserAnnotation b where b.project = ? and b.id in (select x.userAnnotation.id from AnnotationTerm x where x.term = ?)  order by b.created desc", [project,term])
         }
         userJobs.each {
             def userJobIt = it

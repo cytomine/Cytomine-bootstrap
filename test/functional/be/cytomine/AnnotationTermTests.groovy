@@ -22,14 +22,14 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
   void testGetAnnotationTermWithCredential() {
     User currentUser = User.findByUsername(Infos.GOODLOGIN)
     def annotationTermToAdd = BasicInstance.createOrGetBasicAnnotationTerm()
-    def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.annotation.id,annotationTermToAdd.term.id,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.userAnnotation.id,annotationTermToAdd.term.id,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     assertEquals(200,result.code)
     def json = JSON.parse(result.data)
     assert json instanceof JSONObject
   }
 
   void testListAnnotationTermByAnnotationWithCredential() {
-    def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstance.createOrGetBasicAnnotation().id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstance.createOrGetBasicUserAnnotation().id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     assertEquals(200,result.code)
     def json = JSON.parse(result.data)
     assert json instanceof JSONArray
@@ -52,9 +52,9 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     assertEquals(200,result.code)
 
     AnnotationTerm annotationTerm = result.data
-    Long idAnnotation = annotationTerm.annotation.id
+    Long idAnnotation = annotationTerm.userAnnotation.id
     Long idTerm = annotationTerm.term.id
-    log.info("check if object "+ annotationTerm.annotation.id +"/"+ annotationTerm.term.id +"exist in DB")
+    log.info("check if object "+ annotationTerm.userAnnotation.id +"/"+ annotationTerm.term.id +"exist in DB")
 
     result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     assertEquals(200,result.code)
@@ -83,9 +83,9 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
       assertEquals(200,result.code)
 
       AnnotationTerm annotationTerm = result.data
-      Long idAnnotation = annotationTerm.annotation.id
+      Long idAnnotation = annotationTerm.userAnnotation.id
       Long idTerm = annotationTerm.term.id
-      log.info("check if object "+ annotationTerm.annotation.id +"/"+ annotationTerm.term.id +"exist in DB")
+      log.info("check if object "+ annotationTerm.userAnnotation.id +"/"+ annotationTerm.term.id +"exist in DB")
 
       result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
       assertEquals(200,result.code)
@@ -118,7 +118,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     def annotationTermAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermWithAnnotationNotExist")
     String jsonAnnotationTerm = annotationTermAdd.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonAnnotationTerm)
-    jsonUpdate.annotation = -99
+    jsonUpdate.userannotation = -99
     jsonAnnotationTerm = jsonUpdate.encodeAsJSON()
     def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     assertEquals(400,result.code)
@@ -138,7 +138,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     User currentUser = User.findByUsername(Infos.GOODLOGIN)
 
     def annotationTermToDelete = BasicInstance.createOrGetBasicAnnotationTerm()
-    int idAnnotation = annotationTermToDelete.annotation.id
+    int idAnnotation = annotationTermToDelete.userAnnotation.id
     int idTerm = annotationTermToDelete.term.id
     int idUser = currentUser.id
 

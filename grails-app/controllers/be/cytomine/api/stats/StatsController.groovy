@@ -1,14 +1,13 @@
 package be.cytomine.api.stats
 
-import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
 import be.cytomine.api.RestController
+import be.cytomine.ontology.UserAnnotation
 
 class StatsController extends RestController {
 
-    def annotationService
     def termService
     def jobService
 
@@ -30,8 +29,8 @@ class StatsController extends RestController {
         //compute number of annotation for each user and each term
         def nbAnnotationsByUserAndTerms = AnnotationTerm.createCriteria().list {
             inList("term", terms)
-            join("annotation")
-            createAlias("annotation", "a")
+            join("userAnnotation")
+            createAlias("userAnnotation", "a")
             projections {
                 eq("a.project", project)
                 groupProperty("a.user.id")
@@ -83,7 +82,7 @@ class StatsController extends RestController {
         Map<Long, Object> result = new HashMap<Long, Object>()
 
         //compute number of annotation for each user
-        def userAnnotations = Annotation.createCriteria().list {
+        def userAnnotations = UserAnnotation.createCriteria().list {
             eq("project", project)
             join("user")  //right join possible ? it will be sufficient
             projections {
@@ -119,7 +118,7 @@ class StatsController extends RestController {
         if (project == null) responseNotFound("Project", params.id)
         def terms = project.ontology.leafTerms()
 
-        def numberOfAnnotationForEachTerm = Annotation.executeQuery('select t.term.id, count(t) from AnnotationTerm as t, Annotation as b where b.id=t.annotation.id and b.project = ? group by t.term.id', [project])
+        def numberOfAnnotationForEachTerm = UserAnnotation.executeQuery('select t.term.id, count(t) from AnnotationTerm as t, UserAnnotation as b where b.id=t.userAnnotation.id and b.project = ? group by t.term.id', [project])
 
         def stats = [:]
         def color = [:]
@@ -168,8 +167,8 @@ class StatsController extends RestController {
         def annotationsNumber = AnnotationTerm.createCriteria().list {
             inList("term", terms)
             inList("user", userLayers)
-            join("annotation")
-            createAlias("annotation", "a")
+            join("userAnnotation")
+            createAlias("userAnnotation", "a")
             projections {
                 eq("a.project", project)
                 groupProperty("a.image.id")
@@ -212,8 +211,8 @@ class StatsController extends RestController {
         //numberOfAnnotationsByUserAndImage[0] = id image, numberOfAnnotationsByUserAndImage[1] = user, numberOfAnnotationsByUserAndImage[2] = number of annotation
         def numberOfAnnotationsByUserAndImage = AnnotationTerm.createCriteria().list {
             inList("term", terms)
-            join("annotation")
-            createAlias("annotation", "a")
+            join("userAnnotation")
+            createAlias("userAnnotation", "a")
             projections {
                 eq("a.project", project)
                 groupProperty("a.image.id")
@@ -258,12 +257,12 @@ class StatsController extends RestController {
         def annotations = null;
         if(!term) {
             //find all annotation user for this project
-            annotations = Annotation.executeQuery("select a.created from Annotation a where a.project = ? and a.user.class = ? order by a.created desc", [project,"be.cytomine.security.User"])
+            annotations = UserAnnotation.executeQuery("select a.created from UserAnnotation a where a.project = ? order by a.created desc", [project])
         }
         else {
             log.info "Search on term " + term.name
             //find all annotation user for this project and this term
-            annotations = Annotation.executeQuery("select b.created from Annotation b where b.project = ? and b.id in (select x.annotation.id from AnnotationTerm x where x.term = ?) and b.user.class = ? order by b.created desc", [project,term,"be.cytomine.security.User"])
+            annotations = UserAnnotation.executeQuery("select b.created from UserAnnotation b where b.project = ? and b.id in (select x.userAnnotation.id from AnnotationTerm x where x.term = ?) order by b.created desc", [project,term])
         }
 
         //start a the project creation and stop today

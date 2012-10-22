@@ -14,7 +14,7 @@ import org.apache.http.impl.client.DefaultHttpClient
  * Date: 19/07/11
  * Time: 15:19
  */
-class ImagePropertiesService {
+class ImagePropertiesService implements Serializable{
 
     def clear(AbstractImage image) {
         image.imageProperties.each {

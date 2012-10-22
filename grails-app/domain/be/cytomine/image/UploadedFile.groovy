@@ -6,7 +6,7 @@ import be.cytomine.security.SecUser
 import grails.converters.JSON
 import org.apache.log4j.Logger
 
-class UploadedFile extends CytomineDomain {
+class UploadedFile extends CytomineDomain implements Serializable{
 
     public static allowedMime = ["vms", "mrxs", "svs", "opt", "jp2"]
     public static mimeToConvert = ["jpg", "png", "tiff", "tif","pgm"]

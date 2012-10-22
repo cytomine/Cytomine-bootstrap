@@ -1,17 +1,17 @@
 package be.cytomine.social
 
 import be.cytomine.CytomineDomain
-import be.cytomine.ontology.Annotation
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.apache.log4j.Logger
+import be.cytomine.ontology.UserAnnotation
 
 class SharedAnnotation extends CytomineDomain {
 
     User sender
     String comment
-    Annotation annotation
+    UserAnnotation userAnnotation
 
     static hasMany = [receiver : User]
 
@@ -20,7 +20,7 @@ class SharedAnnotation extends CytomineDomain {
     }
     
     String toString() {
-        "Annotation " + annotation + " shared by " + sender
+        "Annotation " + userAnnotation + " shared by " + sender
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
@@ -32,7 +32,7 @@ class SharedAnnotation extends CytomineDomain {
             returnArray['id'] = it.id
             returnArray['comment'] = it.comment
             returnArray['sender'] = it.sender.toString()
-            returnArray['annotation'] = it.annotation.id
+            returnArray['userannotation'] = it.userAnnotation.id
             returnArray['receiver'] = it.receiver.collect { it.toString() }
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null

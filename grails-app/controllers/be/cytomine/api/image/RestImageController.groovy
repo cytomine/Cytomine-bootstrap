@@ -2,12 +2,15 @@ package be.cytomine.api.image
 
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
-import be.cytomine.ontology.Annotation
 import be.cytomine.project.Project
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.ontology.UserAnnotation
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.CytomineDomain
+import be.cytomine.AnnotationDomain
 
 class RestImageController extends RestController {
 
@@ -116,8 +119,16 @@ class RestImageController extends RestController {
         }
     }
 
-    def crop = {
-        Annotation annotation = Annotation.read(params.id)
+    def cropUserAnnotation = {
+        def annotation = UserAnnotation.read(params.id)
+        return cropAnnotation(annotation,params)
+    }
+    def cropAlgoAnnotation = {
+        def annotation = AlgoAnnotation.read(params.id)
+        return cropAnnotation(annotation,params)
+    }
+
+    private def cropAnnotation(AnnotationDomain annotation, def params) {
         Integer zoom = 0
         Integer maxSize = -1
         if (params.max_size != null) maxSize =  Integer.parseInt(params.max_size)
@@ -143,6 +154,7 @@ class RestImageController extends RestController {
         }
     }
 
+
     def slidingWindow = {
         int width = params.width != null ? Integer.parseInt(params.width) : 1000
         int height = params.height != null ? Integer.parseInt(params.width) : 1000
@@ -153,7 +165,7 @@ class RestImageController extends RestController {
     }
 
     def retrieval = {
-        Annotation annotation = Annotation.read(params.idannotation)
+        UserAnnotation annotation = UserAnnotation.read(params.idannotation)
         int zoom = (params.zoom != null) ? Integer.parseInt(params.zoom) : annotation.getImage().getZoomLevels().middle
 
         if (annotation == null)

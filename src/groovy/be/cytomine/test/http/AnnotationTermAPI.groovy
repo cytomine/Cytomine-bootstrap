@@ -31,7 +31,7 @@ class AnnotationTermAPI extends DomainAPI {
     }
 
     static def listAnnotationTermByAnnotation(Long idAnnotation,String username, String password) {
-        log.info "List by annotation idAnnotation=$idAnnotation"
+        log.info "List by userAnnotation idAnnotation=$idAnnotation"
         String URL = Infos.CYTOMINEURL+"api/annotation/"+idAnnotation+"/term.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -43,8 +43,8 @@ class AnnotationTermAPI extends DomainAPI {
     }
 
     static def listAnnotationTermByTerm(Long idTerm, String username, String password) {
-        log.info "List by annotation idTerm=$idTerm"
-        String URL = Infos.CYTOMINEURL+"api/term/"+idTerm+"/annotation.json"
+        log.info "List by userAnnotation idTerm=$idTerm"
+        String URL = Infos.CYTOMINEURL+"api/term/"+idTerm+"/userannotation.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
         client.get()
@@ -76,8 +76,8 @@ class AnnotationTermAPI extends DomainAPI {
         def json = JSON.parse(jsonAnnotationTerm);
         String URL = ""
         if(deleteOldTerm) 
-            URL=Infos.CYTOMINEURL+"api/annotation/"+ json.annotation +"/term/"+ json.term +"/clearBefore.json"
-        else  URL=Infos.CYTOMINEURL+"api/annotation/"+ json.annotation +"/term/"+ json.term +".json"
+            URL=Infos.CYTOMINEURL+"api/annotation/"+ json.userannotation +"/term/"+ json.term +"/clearBefore.json"
+        else  URL=Infos.CYTOMINEURL+"api/annotation/"+ json.userannotation +"/term/"+ json.term +".json"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
         client.post(jsonAnnotationTerm)
@@ -130,7 +130,7 @@ class AnnotationTermAPI extends DomainAPI {
     static def createAlgoAnnotationTerm(String jsonAnnotationTerm, String username, String password) {
         log.info("create algoannotationterm")
         def json = JSON.parse(jsonAnnotationTerm);
-        String URL = Infos.CYTOMINEURL+"api/annotation/"+ json.annotation +"/term/"+ json.term +".json"
+        String URL = Infos.CYTOMINEURL+"api/annotation/"+ json.userannotation +"/term/"+ json.term +".json"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
         client.post(jsonAnnotationTerm)

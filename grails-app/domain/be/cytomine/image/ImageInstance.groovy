@@ -3,13 +3,13 @@ package be.cytomine.image
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.ontology.Annotation
 import be.cytomine.project.Project
 import be.cytomine.project.Slide
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.ontology.UserAnnotation
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,7 +18,7 @@ import org.apache.log4j.Logger
  * Time: 8:33
  * To change this template use File | Settings | File Templates.
  */
-class ImageInstance extends CytomineDomain {
+class ImageInstance extends CytomineDomain implements Serializable {
 
     AbstractImage baseImage
     Project project
@@ -49,7 +49,7 @@ class ImageInstance extends CytomineDomain {
 
     def terms() {
         def terms = []
-        def anntotations = Annotation.findAllByImage(this)
+        def anntotations = UserAnnotation.findAllByImage(this)
         anntotations.each { annotation ->
             annotation.terms().each { term ->
                 terms << term

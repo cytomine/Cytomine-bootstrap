@@ -38,8 +38,8 @@ class Term extends CytomineDomain implements Serializable, Comparable {
     def annotations() {
         def annotations = []
         annotationTerm.each {
-            if (!annotations.contains(it.annotation))
-                annotations << it.annotation
+            if (!annotations.contains(it.userAnnotation))
+                annotations << it.userAnnotation
         }
         annotations
     }

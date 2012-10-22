@@ -12,7 +12,6 @@ class RestUserPositionController extends RestController {
     def imageInstanceService
     def userService
     def dataSource
-    def sequenceService
 
     def add = {
         synchronized (this.getClass()) {

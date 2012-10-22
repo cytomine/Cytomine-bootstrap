@@ -1,8 +1,8 @@
 package be.cytomine.api.processing
 
 import be.cytomine.api.RestController
-import be.cytomine.ontology.Annotation
 import be.cytomine.security.SecUser
+import be.cytomine.ontology.UserAnnotation
 
 class RestRetrievalController extends RestController {
 
@@ -10,14 +10,14 @@ class RestRetrievalController extends RestController {
     def cytomineService
 
     def search = {
-        log.info "List with id annotation:" + params.idannotation
-        responseSuccess(retrievalService.loadAnnotationSimilarities(Annotation.read(params.idannotation)))
+        log.info "List with id userannotation:" + params.iduserannotation
+        responseSuccess(retrievalService.loadAnnotationSimilarities(UserAnnotation.read(params.iduserannotation)))
     }
 
     def listSimilarAnnotationAndBestTerm = {
-        log.info "List with id annotation:" + params.idannotation
+        log.info "List with id userannotation:" + params.iduserannotation
         try {
-            Annotation annotation = Annotation.read(params.idannotation)
+            UserAnnotation annotation = UserAnnotation.read(params.iduserannotation)
             def data = retrievalService.listSimilarAnnotationAndBestTerm(annotation.project, annotation)
             response.status = 200
             responseSuccess(data)
@@ -28,9 +28,9 @@ class RestRetrievalController extends RestController {
     }
 
     def index = {
-        log.info "index with id annotation:" + params.idannotation
+        log.info "index with id userannotation:" + params.iduserannotation
         SecUser user = cytomineService.currentUser
-        retrievalService.indexAnnotationAsynchronous(Annotation.read(params.idannotation))
+        retrievalService.indexAnnotationAsynchronous(UserAnnotation.read(params.iduserannotation))
         responseSuccess([])
     }
 

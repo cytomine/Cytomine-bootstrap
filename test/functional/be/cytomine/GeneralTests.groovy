@@ -3,7 +3,7 @@ package be.cytomine
 import be.cytomine.test.BasicInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
-import be.cytomine.test.http.AnnotationAPI
+import be.cytomine.test.http.UserAnnotationAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.codehaus.groovy.grails.web.json.JSONArray
@@ -70,24 +70,24 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
     }
 
     void testLastAction() {
-        def annotationToAdd = BasicInstance.createOrGetBasicAnnotation()
-        def result = AnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         int idAnnotation = result.data.id
 
-        result = AnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
 
-        result = AnnotationAPI.undo()
+        result = UserAnnotationAPI.undo()
         assertEquals(200, result.code)
 
-        result = AnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(404, result.code)
 
-        result = AnnotationAPI.redo()
+        result = UserAnnotationAPI.redo()
         assertEquals(200, result.code)
 
-        result = AnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
 
         /*

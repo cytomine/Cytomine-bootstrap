@@ -25,8 +25,12 @@ class TriggerService {
             statement.execute(getProjectImageCountTriggerDecr())
             statement.execute(getProjectAnnotationCountTriggerIncr())
             statement.execute(getProjectAnnotationCountTriggerDecr())
+            statement.execute(getProjectAnnotationAlgoCountTriggerIncr())
+            statement.execute(getProjectAnnotationAlgoCountTriggerDecr())
             statement.execute(getImageAnnotationCountTriggerIncr())
             statement.execute(getImageAnnotationCountTriggerDecr())
+            statement.execute(getImageAnnotationAlgoCountTriggerIncr())
+            statement.execute(getImageAnnotationAlgoCountTriggerDecr())
             statement.execute(getAnnotationCommentTriggerIncr())
 
         } catch (org.postgresql.util.PSQLException e) {
@@ -38,7 +42,7 @@ class TriggerService {
     String getAnnotationCommentTriggerIncr() {
         String createFunction = """
         CREATE OR REPLACE FUNCTION incrementAnnotationComment() RETURNS trigger as '
-        BEGIN UPDATE annotation SET count_comments = count_comments + 1 WHERE id = NEW.annotation_id; RETURN NEW; END ;'
+        BEGIN UPDATE user_annotation SET count_comments = count_comments + 1 WHERE id = NEW.user_annotation_id; RETURN NEW; END ;'
         LANGUAGE plpgsql;"""
 
         String dropTrigger = "DROP TRIGGER IF EXISTS countIncrementAnnotationComment on shared_annotation;"
@@ -88,32 +92,19 @@ class TriggerService {
     String getProjectAnnotationCountTriggerIncr() {
         String createFunction = """
         CREATE OR REPLACE FUNCTION incrementProjectAnnotation() RETURNS TRIGGER AS \$incProjAnn\$
-        DECLARE
-            current_class sec_user.class%TYPE;
-            user_class sec_user.class%TYPE := 'be.cytomine.security.User';
-            job_class sec_user.class%TYPE := 'be.cytomine.security.UserJob';
         BEGIN
-		    SELECT class INTO current_class from sec_user where id = NEW.user_id;
-            IF current_class = user_class THEN
-                UPDATE project
-                SET count_annotations = count_annotations + 1
-                FROM image_instance
-                WHERE project.id = image_instance.project_id
-                AND image_instance.id = NEW.image_id;
-            ELSEIF current_class = job_class THEN
-                UPDATE project
-                SET count_job_annotations = count_job_annotations + 1
-                FROM image_instance
-                WHERE project.id = image_instance.project_id
-                AND image_instance.id = NEW.image_id;
-            END IF;
+            UPDATE project
+            SET count_annotations = count_annotations + 1
+            FROM image_instance
+            WHERE project.id = image_instance.project_id
+            AND image_instance.id = NEW.image_id;
             RETURN NEW;
         END ;
         \$incProjAnn\$ LANGUAGE plpgsql; """
 
-        String dropTrigger = "DROP TRIGGER IF EXISTS countAnnotationProject on annotation;"
+        String dropTrigger = "DROP TRIGGER IF EXISTS countAnnotationProject on user_annotation;"
 
-        String createTrigger = "CREATE TRIGGER countAnnotationProject AFTER INSERT ON annotation FOR EACH ROW EXECUTE PROCEDURE incrementProjectAnnotation(); "
+        String createTrigger = "CREATE TRIGGER countAnnotationProject AFTER INSERT ON user_annotation FOR EACH ROW EXECUTE PROCEDURE incrementProjectAnnotation(); "
 
         log.info createFunction
         log.info dropTrigger
@@ -121,67 +112,93 @@ class TriggerService {
         return createFunction + dropTrigger + createTrigger
     }
 
+    String getProjectAnnotationAlgoCountTriggerIncr() {
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION incrementProjectAnnotationAlgo() RETURNS TRIGGER AS \$incProjAnnAlgo\$
+        BEGIN
+            UPDATE project
+            SET count_job_annotations = count_job_annotations + 1
+            FROM image_instance
+            WHERE project.id = image_instance.project_id
+            AND image_instance.id = NEW.image_id;
+            RETURN NEW;
+        END ;
+        \$incProjAnn\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS countAlgoAnnotationProject on algo_annotation;"
+
+        String createTrigger = "CREATE TRIGGER countAlgoAnnotationProject AFTER INSERT ON algo_annotation FOR EACH ROW EXECUTE PROCEDURE incrementProjectAnnotationAlgo(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+
+
     String getProjectAnnotationCountTriggerDecr() {
         String createFunction = """
         CREATE OR REPLACE FUNCTION decrementProjectAnnotation() RETURNS TRIGGER AS \$decProjAnn\$
-        DECLARE
-            current_class sec_user.class%TYPE;
-            user_class sec_user.class%TYPE := 'be.cytomine.security.User';
-            job_class sec_user.class%TYPE := 'be.cytomine.security.UserJob';
         BEGIN
-		SELECT class INTO current_class from sec_user where id = OLD.user_id;
-		IF current_class = user_class THEN
             UPDATE project
             SET count_annotations = count_annotations - 1
             FROM image_instance
             WHERE project.id = image_instance.project_id
             AND image_instance.id = OLD.image_id;
-		ELSEIF current_class = job_class THEN
+		    RETURN OLD;
+        END ;
+         \$decProjAnn\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationProject on user_annotation;"
+
+        String createTrigger = "CREATE TRIGGER countDecrAnnotationProject AFTER DELETE ON user_annotation FOR EACH ROW EXECUTE PROCEDURE decrementProjectAnnotation(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+    String getProjectAnnotationAlgoCountTriggerDecr() {
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION decrementProjectAnnotationAlgo() RETURNS TRIGGER AS \$decProjAnnAlgo\$
+        BEGIN
             UPDATE project
             SET count_job_annotations = count_job_annotations - 1
             FROM image_instance
             WHERE project.id = image_instance.project_id
             AND image_instance.id = OLD.image_id;
-		END IF;
-		RETURN OLD;
+		    RETURN OLD;
         END ;
          \$decProjAnn\$ LANGUAGE plpgsql; """
 
-        String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationProject on annotation;"
+        String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationProjectAlgo on user_annotation;"
 
-        String createTrigger = "CREATE TRIGGER countDecrAnnotationProject AFTER DELETE ON annotation FOR EACH ROW EXECUTE PROCEDURE decrementProjectAnnotation(); "
+        String createTrigger = "CREATE TRIGGER countDecrAnnotationProjectAlgo AFTER DELETE ON user_annotation FOR EACH ROW EXECUTE PROCEDURE decrementProjectAnnotationAlgo(); "
 
         log.info createFunction
         log.info dropTrigger
         log.info createTrigger
         return createFunction + dropTrigger + createTrigger
     }
+
+
 
     String getImageAnnotationCountTriggerIncr() {
         String createFunction = """
         CREATE OR REPLACE FUNCTION incrementImageAnnotation() RETURNS trigger as \$incImageAnn\$
-        DECLARE
-            current_class sec_user.class%TYPE;
-            user_class sec_user.class%TYPE := 'be.cytomine.security.User';
-            job_class sec_user.class%TYPE := 'be.cytomine.security.UserJob';
         BEGIN
-        SELECT class INTO current_class from sec_user where id = NEW.user_id;
-        IF current_class = user_class THEN
             UPDATE image_instance
             SET count_image_annotations = count_image_annotations + 1
             WHERE image_instance.id = NEW.image_id;
-        ELSEIF current_class = job_class THEN
-            UPDATE image_instance
-            SET count_image_job_annotations = count_image_job_annotations + 1
-            WHERE image_instance.id = NEW.image_id;
-        END IF;
-        RETURN NEW;
+            RETURN NEW;
         END ;
         \$incImageAnn\$ LANGUAGE plpgsql; """
 
-        String dropTrigger = "DROP TRIGGER IF EXISTS countAnnotationImage on annotation;"
+        String dropTrigger = "DROP TRIGGER IF EXISTS countAnnotationImage on user_annotation;"
 
-        String createTrigger = "CREATE TRIGGER countAnnotationImage AFTER INSERT ON annotation FOR EACH ROW EXECUTE PROCEDURE incrementImageAnnotation(); "
+        String createTrigger = "CREATE TRIGGER countAnnotationImage AFTER INSERT ON user_annotation FOR EACH ROW EXECUTE PROCEDURE incrementImageAnnotation(); "
 
         log.info createFunction
         log.info dropTrigger
@@ -189,36 +206,70 @@ class TriggerService {
         return createFunction + dropTrigger + createTrigger
     }
 
+    String getImageAnnotationAlgoCountTriggerIncr() {
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION incrementImageAnnotationAlgo() RETURNS trigger as \$incImageAnn\$
+        BEGIN
+            UPDATE image_instance
+            SET count_image_annotations = count_image_annotations + 1
+            WHERE image_instance.id = NEW.image_id;
+            RETURN NEW;
+        END ;
+        \$incImageAnn\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS countAnnotationImageAlgo on algo_annotation;"
+
+        String createTrigger = "CREATE TRIGGER countAnnotationImageAlgo AFTER INSERT ON algo_annotation FOR EACH ROW EXECUTE PROCEDURE incrementImageAnnotationAlgo(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+
     String getImageAnnotationCountTriggerDecr() {
         String createFunction = """
         CREATE OR REPLACE FUNCTION decrementImageAnnotation() RETURNS trigger as \$decImageAnn\$
-        DECLARE
-            current_class sec_user.class%TYPE;
-            user_class sec_user.class%TYPE := 'be.cytomine.security.User';
-            job_class sec_user.class%TYPE := 'be.cytomine.security.UserJob';
         BEGIN
-        SELECT class INTO current_class from sec_user where id = OLD.user_id;
-        IF current_class = user_class THEN
             UPDATE image_instance
             SET count_image_annotations = count_image_annotations - 1
             WHERE image_instance.id = OLD.image_id;
-        ELSEIF current_class = job_class THEN
-            UPDATE image_instance
-            SET count_image_job_annotations = count_image_job_annotations - 1
-            WHERE image_instance.id = OLD.image_id;
-        END IF;
         RETURN OLD;
 
         END ;
         \$decImageAnn\$ LANGUAGE plpgsql; """
 
-        String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationImage on annotation;"
+        String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationImage on user_annotation;"
 
-        String createTrigger = "CREATE TRIGGER countDecrAnnotationImage AFTER DELETE ON annotation FOR EACH ROW EXECUTE PROCEDURE decrementImageAnnotation(); "
+        String createTrigger = "CREATE TRIGGER countDecrAnnotationImage AFTER DELETE ON user_annotation FOR EACH ROW EXECUTE PROCEDURE decrementImageAnnotation(); "
 
         log.info createFunction
         log.info dropTrigger
         log.info createTrigger
         return createFunction + dropTrigger + createTrigger
     }
+
+    String getImageAnnotationAlgoCountTriggerDecr() {
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION decrementImageAnnotationAlgo() RETURNS trigger as \$decImageAnn\$
+        BEGIN
+            UPDATE image_instance
+            SET count_image_annotations = count_image_annotations - 1
+            WHERE image_instance.id = OLD.image_id;
+        RETURN OLD;
+
+        END ;
+        \$decImageAnn\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationImageAlgo on algo_annotation;"
+
+        String createTrigger = "CREATE TRIGGER countDecrAnnotationImageAlgo AFTER DELETE ON algo_annotation FOR EACH ROW EXECUTE PROCEDURE decrementImageAnnotationAlgo(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
 }

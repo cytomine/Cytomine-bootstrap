@@ -5,7 +5,6 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
@@ -26,6 +25,8 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
+import be.cytomine.AnnotationDomain
+import be.cytomine.ontology.UserAnnotation
 
 /**
  * Created by IntelliJ IDEA.
@@ -154,7 +155,7 @@ class RestImageInstanceController extends RestController {
     def cropGeometry = {
         String geometrySTR = params.geometry
         def geometry = new WKTReader().read(geometrySTR)
-        def annotation = new Annotation(location: geometry)
+        def annotation = new UserAnnotation(location: geometry)
         annotation.image = ImageInstance.read(params.id)
         responseImage(abstractImageService.crop(annotation, null))
     }
@@ -191,20 +192,20 @@ class RestImageInstanceController extends RestController {
             LinearRing linearRing = new GeometryFactory().createLinearRing(roiPoints)
             Geometry roiGeometry = new GeometryFactory().createPolygon(linearRing)
 
-            Collection<Annotation> annotations = []
-            Collection<Annotation> annotations_in_roi = Annotation.createCriteria()
+            Collection<UserAnnotation> annotations = []
+            Collection<UserAnnotation> annotations_in_roi = UserAnnotation.createCriteria()
                     .add(Restrictions.eq("image", image))
                     .add(SpatialRestrictions.within("location",roiGeometry))
                     .list()
 
             if (!annotations_in_roi.isEmpty()) {
-                annotations = (Collection<Annotation>) AnnotationTerm.createCriteria().list {
+                annotations = (Collection<UserAnnotation>) AnnotationTerm.createCriteria().list {
                     inList("term", [term])
-                    join("annotation")
-                    createAlias("annotation", "a")
+                    join("userAnnotation")
+                    createAlias("userAnnotation", "a")
                     projections {
                         inList("a.id", annotations_in_roi.collect{it.id})
-                        groupProperty("annotation")
+                        groupProperty("userAnnotation")
                     }
                 }
             }
@@ -216,7 +217,7 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-    private BufferedImage getMaskImage(Annotation annotation, Term term, Integer zoom, Boolean withAlpha) {
+    private BufferedImage getMaskImage(AnnotationDomain annotation, Term term, Integer zoom, Boolean withAlpha) {
         BufferedImage crop = getImageFromURL(abstractImageService.crop(annotation, zoom))
         BufferedImage mask = new BufferedImage(crop.getWidth(),crop.getHeight(),BufferedImage.TYPE_INT_ARGB);
         AbstractImage abstractImage = annotation.getImage().getBaseImage()
@@ -234,7 +235,7 @@ class RestImageInstanceController extends RestController {
     }
 
     def alphamask = {
-        Annotation annotation = Annotation.read(params.annotation)
+        UserAnnotation annotation = UserAnnotation.read(params.annotation)
         if (!annotation) {
             responseNotFound("Annotation", params.annotation)
         }
@@ -243,7 +244,7 @@ class RestImageInstanceController extends RestController {
             responseNotFound("Term", params.term)
         }
         if (!annotation.termsId().contains(term.id)) {
-            response([ error : "Term not associated with annotation", annotation : annotation.id, term : term.id])
+            response([ error : "Term not associated with userAnnotation", annotation : annotation.id, term : term.id])
         }
         Integer zoom = null
         if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
@@ -261,7 +262,7 @@ class RestImageInstanceController extends RestController {
     }
 
     def cropmask = {
-        Annotation annotation = Annotation.read(params.annotation)
+        UserAnnotation annotation = UserAnnotation.read(params.annotation)
         if (!annotation) {
             responseNotFound("Annotation", params.annotation)
         }
@@ -270,7 +271,7 @@ class RestImageInstanceController extends RestController {
             responseNotFound("Term", params.term)
         }
         if (!annotation.termsId().contains(term.id)) {
-            response([ error : "Term not associated with annotation", annotation : annotation.id, term : term.id])
+            response([ error : "Term not associated with userAnnotation", annotation : annotation.id, term : term.id])
         }
         Integer zoom = null
         if (params.zoom != null) zoom = Integer.parseInt(params.zoom)

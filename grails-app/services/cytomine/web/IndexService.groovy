@@ -40,9 +40,13 @@ class IndexService {
             /**
              * Annotation
              */
-            createIndex(statement, "annotation", "image_id");
-            createIndex(statement, "annotation", "created");
-            createIndex(statement, "annotation", "project_id");
+            createIndex(statement, "user_annotation", "image_id");
+            createIndex(statement, "user_annotation", "created");
+            createIndex(statement, "user_annotation", "project_id");
+            createIndex(statement, "algo_annotation", "image_id");
+            createIndex(statement, "algo_annotation", "created");
+            createIndex(statement, "algo_annotation", "project_id");
+
             /**
              * Annotation_term
              */

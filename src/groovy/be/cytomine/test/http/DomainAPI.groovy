@@ -63,4 +63,37 @@ class DomainAPI {
         client.disconnect();
         return [data: response, code: code]
     }
+
+
+    /**
+     * Make undo request to cytomine server
+     */
+    static def undo(String username, String password) {
+        log.info("test undo")
+        HttpClient client = new HttpClient()
+        String URL = Infos.CYTOMINEURL + Infos.UNDOURL
+        client.connect(URL, username, password)
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        println "undo = " + response
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+    /**
+     * Make redo request to cytomine server
+     */
+    static def redo(String username, String password) {
+        log.info("test redo")
+        HttpClient client = new HttpClient()
+        String URL = Infos.CYTOMINEURL + Infos.REDOURL
+        client.connect(URL, username, password)
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        println "redo = " + response
+        client.disconnect();
+        return [data: response, code: code]
+    }
 }

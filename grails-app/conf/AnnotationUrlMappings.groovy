@@ -8,65 +8,87 @@ class AnnotationUrlMappings {
 
     static mappings = {
         /**
-         * Annotation
+         * User Annotation
          */
-        "/api/annotation"(controller:"restAnnotation"){
+        "/api/userannotation"(controller:"restUserAnnotation"){
             action = [GET: "list",POST:"add"]
         }
-        "/api/annotation/union"(controller:"restAnnotation"){
-            action = [PUT:"union", GET:"union"]
-        }
-        "/api/annotation/$id"(controller:"restAnnotation"){
+        "/api/userannotation/$id"(controller:"restUserAnnotation"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
-        "/api/annotation/$id/copy"(controller:"restAnnotation"){
-            action = [POST:"copy"]
-        }
-        "/api/project/$id/annotation"(controller: "restAnnotation"){
-            action = [GET:"listByProject"]
-        }
-        "/api/imageinstance/$id/annotation"(controller:"restAnnotation"){
+        "/api/project/$id/userannotation"(controller: "restUserAnnotation"){
+             action = [GET:"listByProject"]
+         }
+        "/api/imageinstance/$id/userannotation"(controller:"restUserAnnotation"){
             action = [GET:"listByImage"]
         }
-        "/api/user/$idUser/imageinstance/$idImage/annotation"(controller:"restAnnotation"){
+        "/api/user/$idUser/imageinstance/$idImage/userannotation"(controller:"restUserAnnotation"){
             action = [GET:"listByImageAndUser"]
         }
-
-        "/api/term/$idterm/annotation"(controller:"restAnnotation"){
+        "/api/term/$idterm/userannotation"(controller:"restUserAnnotation"){
             action = [GET: "listAnnotationByTerm"]
         }
-        "/api/term/$idterm/project/$idproject/annotation"(controller:"restAnnotation"){
+        "/api/term/$idterm/project/$idproject/userannotation"(controller:"restUserAnnotation"){
             action = [GET: "listAnnotationByProjectAndTerm"]
         }
-        "/api/term/$idterm/imageinstance/$idimageinstance/annotation"(controller:"restAnnotationTerm"){
+        "/api/term/$idterm/imageinstance/$idimageinstance/userannotation"(controller:"restAnnotationTerm"){
             action = [GET: "listAnnotationByProjectAndImageInstance"]
         }
 
-        /**
-        * Download listing
-        */
-        "/api/project/$id/annotation/download"(controller: "restAnnotation"){
+        "/api/project/$id/userannotation/download"(controller: "restUserAnnotation"){
             action = [GET:"downloadDocumentByProject"]
         }
 
         /**
          * Comment annotation
          */
-        "/api/annotation/$annotation/comment"(controller:"restAnnotation"){
+        "/api/userannotation/$userannotation/comment"(controller:"restUserAnnotation"){
             action = [POST: "addComment", GET:"listComments"]
         }
-        "/api/annotation/$annotation/comment/$id"(controller:"restAnnotation"){
+        "/api/userannotation/$userannotation/comment/$id"(controller:"restUserAnnotation"){
             action = [GET:"showComment"]
         }
+
 
         /**
          * Retrieval annotation suggestion
          */
-        "/api/retrieval/missing/annotation"(controller: "restRetrieval"){
+        "/api/retrieval/missing/userannotation"(controller: "restRetrieval"){
             action = [GET:"missingAnnotation"]
         }
-        "/api/annotation/$idannotation/retrieval"(controller:"restRetrieval"){
+        "/api/userannotation/$idannotation/userannotation"(controller:"restRetrieval"){
             action = [GET:"listSimilarAnnotationAndBestTerm",POST:"index"]
+        }
+
+        /**
+         * Algo Annotation
+         */
+        "/api/algoannotation/union"(controller:"restAlgoAnnotation"){
+            action = [PUT:"union", GET:"union"]
+        }
+        "/api/algoannotation"(controller:"restAlgoAnnotation"){
+            action = [GET: "list",POST:"add"]
+        }
+        "/api/algoannotation/$id"(controller:"restAlgoAnnotation"){
+            action = [GET:"show",PUT:"update", DELETE:"delete"]
+        }
+        "/api/imageinstance/$id/algoannotation"(controller:"restAlgoAnnotation"){
+            action = [GET:"listByImage"]
+        }
+        "/api/project/$id/algoannotation"(controller: "restAlgoAnnotation"){
+             action = [GET:"listByProject"]
+         }
+        "/api/imageinstance/$id/algoannotation"(controller:"restAlgoAnnotation"){
+            action = [GET:"listByImage"]
+        }
+        "/api/user/$idUser/imageinstance/$idImage/algoannotation"(controller:"restAlgoAnnotation"){
+            action = [GET:"listByImageAndUser"]
+        }
+        "/api/project/$id/algoannotation/download"(controller: "restAlgoAnnotation"){
+            action = [GET:"downloadDocumentByProject"]
+        }
+        "/api/term/$idterm/project/$idproject/algoannotation"(controller:"restAlgoAnnotation"){
+            action = [GET: "listAnnotationByProjectAndTerm"]
         }
     }
 }

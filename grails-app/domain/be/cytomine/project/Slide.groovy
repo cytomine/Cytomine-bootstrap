@@ -5,7 +5,7 @@ import be.cytomine.image.AbstractImage
 import grails.converters.JSON
 import org.apache.log4j.Logger
 
-class Slide extends CytomineDomain {
+class Slide extends CytomineDomain implements Serializable{
 
     String name
     int index

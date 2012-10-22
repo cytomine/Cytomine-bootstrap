@@ -53,12 +53,11 @@ class BasicInstance {
         assert domain != null
     }
 
-    static Annotation createOrGetBasicAnnotation() {
-        log.debug "createOrGetBasicAnnotation()"
+    static UserAnnotation createOrGetBasicUserAnnotation() {
+        log.debug "createOrGetBasicUserAnnotation()"
         def image = createOrGetBasicImageInstance()
-        def annotation = Annotation.findOrCreateWhere(
+        def annotation = UserAnnotation.findOrCreateWhere(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
-                 name: "test",
                 image: image,
                 user: User.findByUsername(Infos.GOODLOGIN),
                 project:image.project
@@ -68,18 +67,11 @@ class BasicInstance {
         annotation
     }
 
-    static Annotation getBasicAnnotationNotExist() {
-        log.debug "getBasicAnnotationNotExist()"
-        def randomInt = Math.random()
-        def annotation = Annotation.findByName(randomInt + "")
-        while (annotation) {
-            randomInt = Math.random()
-            annotation = Annotation.findByName(randomInt + "")
-        }
+    static UserAnnotation getBasicUserAnnotationNotExist() {
+        log.debug "getBasicUserAnnotationNotExist()"
         def image = createOrGetBasicImageInstance()
-        annotation = new Annotation(
+        UserAnnotation annotation = new UserAnnotation(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
-                name: randomInt,
                 image:image,
                 user: User.findByUsername(Infos.GOODLOGIN),
                 project:image.project
@@ -88,13 +80,47 @@ class BasicInstance {
         annotation
     }
 
+    static AlgoAnnotation createOrGetBasicAlgoAnnotation() {
+        log.debug "createOrGetBasicAlgoAnnotation()"
+
+        UserJob userJob = createOrGetBasicUserJob()
+
+        def image = createOrGetBasicImageInstance()
+        def annotation = AlgoAnnotation.findOrCreateWhere(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                image: image,
+                user: userJob,
+                project:image.project
+        )
+        checkDomain(annotation)
+        saveDomain(annotation)
+        annotation
+    }
+
+    static AlgoAnnotation getBasicAlgoAnnotationNotExist() {
+        log.debug "getBasicAlgoAnnotationNotExist()"
+
+        UserJob userJob = createOrGetBasicUserJob()
+        def image = createOrGetBasicImageInstance()
+        AlgoAnnotation annotation = new AlgoAnnotation(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                image:image,
+                user: userJob,
+                project:image.project
+        )
+        checkDomain(annotation)
+        annotation
+    }
+
+
+
     static SharedAnnotation createOrGetBasicSharedAnnotation() {
         log.debug "createOrGetBasicSharedAnnotation()"
 
         def sharedannotation = SharedAnnotation.findOrCreateWhere(
                 sender: User.findByUsername(Infos.GOODLOGIN),
                 comment: "This is a test",
-                annotation: createOrGetBasicAnnotation()
+                userAnnotation: createOrGetBasicUserAnnotation()
         )
         checkDomain(sharedannotation)
         saveDomain(sharedannotation)
@@ -106,7 +132,7 @@ class BasicInstance {
         def sharedannotation = new SharedAnnotation(
                 sender: User.findByUsername(Infos.GOODLOGIN),
                 comment: "This is a test",
-                annotation: createOrGetBasicAnnotation()
+                userAnnotation: createOrGetBasicUserAnnotation()
         )
         checkDomain(sharedannotation)
         sharedannotation
@@ -120,16 +146,18 @@ class BasicInstance {
                     username: "BasicUserJob",
                     password: "PasswordUserJob",
                     enabled: true,
-                    user : createOrGetBasicUser(),
+                    user : User.findByUsername(Infos.GOODLOGIN),
                     job: createOrGetBasicJob()
             )
-            createOrGetBasicUser().getAuthorities().each { secRole ->
+
+            userJob.generateKeys()
+            checkDomain(userJob)
+            saveDomain(userJob)
+            User.findByUsername(Infos.GOODLOGIN).getAuthorities().each { secRole ->
                 SecUserSecRole.create(userJob, secRole)
             }
-            userJob.generateKeys()
         }
-        checkDomain(userJob)
-        saveDomain(userJob)
+
         userJob
     }
 
@@ -185,7 +213,7 @@ class BasicInstance {
     
     static AnnotationTerm createOrGetBasicAnnotationTerm() {
         log.debug "createOrGetBasicAnnotationTerm()"
-        def annotation = getBasicAnnotationNotExist()
+        def annotation = getBasicUserAnnotationNotExist()
         annotation.save(flush: true)
         assert annotation != null
         def term = getBasicTermNotExist()
@@ -194,7 +222,7 @@ class BasicInstance {
         def user = User.findByUsername(Infos.GOODLOGIN)
         assert user != null
 
-        def annotationTerm = AnnotationTerm.findWhere('annotation': annotation, 'term': term, 'user': user)
+        def annotationTerm = AnnotationTerm.findWhere(userAnnotation: annotation, 'term': term, 'user': user)
         assert annotationTerm == null
         annotationTerm = AnnotationTerm.link(annotation, term,user)
         saveDomain(annotationTerm)
@@ -206,20 +234,20 @@ class BasicInstance {
         def term = getBasicTermNotExist()
         term.save(flush: true)
         assert term != null
-        def annotation = getBasicAnnotationNotExist()
+        def annotation = getBasicUserAnnotationNotExist()
         annotation.save(flush: true)
         assert annotation != null
 
         def user = User.findByUsername(Infos.GOODLOGIN)
         assert user != null
 
-        def annotationTerm = new AnnotationTerm(annotation:annotation,term:term,user:user)
+        def annotationTerm = new AnnotationTerm(userAnnotation:annotation,term:term,user:user)
         annotationTerm
     }
 
     static AlgoAnnotationTerm createOrGetBasicAlgoAnnotationTerm() {
         log.debug "createOrGetBasicAlgoAnnotationTerm()"
-        def annotation = getBasicAnnotationNotExist()
+        def annotation = getBasicUserAnnotationNotExist()
         annotation.save(flush: true)
         assert annotation != null
         def term = getBasicTermNotExist()
@@ -229,9 +257,30 @@ class BasicInstance {
         user.save(flush: true)
         assert user != null
 
-        def algoannotationTerm = AlgoAnnotationTerm.findWhere('annotation': annotation, 'term': term, 'userJob': user)
+        def algoannotationTerm = AlgoAnnotationTerm.findWhere('annotationIdent': annotation.id, 'term': term, 'userJob': user)
         assert algoannotationTerm == null
-        algoannotationTerm = new AlgoAnnotationTerm(annotation:annotation, term:term,expectedTerm:term,userJob:user,rate:0)
+        algoannotationTerm = new AlgoAnnotationTerm(term:term,expectedTerm:term,userJob:user,rate:0)
+        algoannotationTerm.setAnnotation(annotation)
+        saveDomain(algoannotationTerm)
+        algoannotationTerm
+    }
+
+    static AlgoAnnotationTerm createOrGetBasicAlgoAnnotationTermForAlgoAnnotation() {
+        log.debug "createOrGetBasicAlgoAnnotationTerm()"
+        def annotation = getBasicAlgoAnnotationNotExist()
+        annotation.save(flush: true)
+        assert annotation != null
+        def term = getBasicTermNotExist()
+        term.save(flush: true)
+        assert term != null
+        def user = getBasicUserJobNotExist()
+        user.save(flush: true)
+        assert user != null
+
+        def algoannotationTerm = AlgoAnnotationTerm.findWhere('annotationIdent': annotation.id, 'term': term, 'userJob': user)
+        assert algoannotationTerm == null
+        algoannotationTerm = new AlgoAnnotationTerm(term:term,expectedTerm:term,userJob:user,rate:0)
+        algoannotationTerm.setAnnotation(annotation)
         saveDomain(algoannotationTerm)
         algoannotationTerm
     }
@@ -241,14 +290,32 @@ class BasicInstance {
         def term = getBasicTermNotExist()
         term.save(flush: true)
         assert term != null
-        def annotation = getBasicAnnotationNotExist()
+        def annotation = getBasicUserAnnotationNotExist()
         annotation.save(flush: true)
         assert annotation != null
         def user = getBasicUserJobNotExist()
         user.save(flush: true)
         assert user != null
         Infos.addUserRight(user.user,annotation.project)
-        def algoannotationTerm = new AlgoAnnotationTerm(annotation:annotation,term:term,userJob:user, expectedTerm: term, rate:1d)
+        def algoannotationTerm = new AlgoAnnotationTerm(term:term,userJob:user, expectedTerm: term, rate:1d)
+        algoannotationTerm.setAnnotation(annotation)
+        algoannotationTerm
+    }
+
+    static AlgoAnnotationTerm getBasicAlgoAnnotationTermNotExistForAlgoAnnotation() {
+        log.debug "getBasicAlgoAnnotationTermNotExistForAlgoAnnotation()"
+        def term = getBasicTermNotExist()
+        term.save(flush: true)
+        assert term != null
+        def annotation = getBasicAlgoAnnotationNotExist()
+        annotation.save(flush: true)
+        assert annotation != null
+        def user = getBasicUserJobNotExist()
+        user.save(flush: true)
+        assert user != null
+        Infos.addUserRight(user.user,annotation.project)
+        def algoannotationTerm = new AlgoAnnotationTerm(term:term,userJob:user, expectedTerm: term, rate:1d)
+        algoannotationTerm.setAnnotation(annotation)
         algoannotationTerm
     }
 
@@ -966,8 +1033,6 @@ class BasicInstance {
      */
     static void compareAnnotation(map, json) {
         assert map.geom.replace(' ', '').equals(json.location.replace(' ', ''))
-        assert toDouble(map.zoomLevel).equals(toDouble(json.zoomLevel))
-        assert map.channels.equals(json.channels)
         assert toLong(map.user.id).equals(toLong(json.user))
     }
 

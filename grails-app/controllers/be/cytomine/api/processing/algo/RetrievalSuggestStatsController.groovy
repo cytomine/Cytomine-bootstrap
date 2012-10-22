@@ -2,7 +2,6 @@ package be.cytomine.api.processing.algo
 
 import be.cytomine.api.RestController
 import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.ontology.Annotation
 import be.cytomine.ontology.Term
 import be.cytomine.processing.Job
 import be.cytomine.processing.Software
@@ -14,9 +13,10 @@ import be.cytomine.utils.Utils
 
 import java.util.TreeMap.Entry
 
+import be.cytomine.AnnotationDomain
+
 class RetrievalSuggestStatsController extends RestController {
 
-    def annotationService
     def termService
     def algoAnnotationTermService
     def jobService
@@ -201,7 +201,7 @@ class RetrievalSuggestStatsController extends RestController {
             //def annotation = suggest.annotation
             //def realTerm = termService.list(annotation, annotation.user)
             result['id'] = suggest.id
-            Annotation annotation = suggest.annotation
+            AnnotationDomain annotation = suggest.retrieveAnnotationDomain()
             result['annotation'] = annotation.id
             result['project'] = annotation.image.id
             result['cropURL'] = annotation.toCropURL()

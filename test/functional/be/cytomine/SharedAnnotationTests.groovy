@@ -19,7 +19,7 @@ class SharedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testGetAnnotationCommentWithCredential() {
         def sharedAnnotation = BasicInstance.createOrGetBasicSharedAnnotation()
-        def result = AnnotationCommentAPI.show(sharedAnnotation.annotation.id, sharedAnnotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = AnnotationCommentAPI.show(sharedAnnotation.userAnnotation.id, sharedAnnotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -27,7 +27,7 @@ class SharedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testListAnnotationCommentsByAnnotationWithCredential() {
         def sharedAnnotation = BasicInstance.createOrGetBasicSharedAnnotation()
-        def result = AnnotationCommentAPI.list(sharedAnnotation.annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationCommentAPI.list(sharedAnnotation.userAnnotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
@@ -39,7 +39,7 @@ class SharedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         json.subject = "subject for test mail"
         json.message = "message for test mail"
         json.users = [User.findByUsername('lbtd').id]
-        def result = AnnotationCommentAPI.create(sharedAnnotation.annotation.id,json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationCommentAPI.create(sharedAnnotation.userAnnotation.id,json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
     }
 }

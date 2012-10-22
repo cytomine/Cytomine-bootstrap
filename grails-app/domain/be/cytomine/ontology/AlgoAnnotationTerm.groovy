@@ -6,10 +6,13 @@ import be.cytomine.project.Project
 import be.cytomine.security.UserJob
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.AnnotationDomain
 
 class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
 
-    Annotation annotation
+    String annotationClassName
+    Long annotationIdent
+
     Term term
     Term expectedTerm
     Double rate
@@ -17,7 +20,8 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
     Project project
 
     static constraints = {
-        annotation nullable: false
+        annotationClassName nullable: false
+        annotationIdent nullable: false
         term nullable: true
         expectedTerm nullable: true
         rate(min: 0d, max: 1d)
@@ -25,9 +29,34 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
         project nullable: true
     }
 
+    public String toString() {
+        return annotationClassName + " " + annotationIdent + " with term " + term + " from userjob " + userJob + " and  project " + project
+    }
+
+    public def setAnnotation(AnnotationDomain annotation) {
+        annotationClassName = annotation.class.getName()
+        annotationIdent = annotation.id
+    }
+
     public beforeInsert() {
+        println "beforeInsert"
+        println "getRetrieveAnnotationDomain()="+retrieveAnnotationDomain()
+        println "getRetrieveAnnotationDomain()="+retrieveAnnotationDomain()?.image
+        println "getRetrieveAnnotationDomain()="+retrieveAnnotationDomain()?.image?.project
         super.beforeInsert()
-        project = annotation?.image?.project;
+        println "beforeInsert"
+        println "getRetrieveAnnotationDomain()="+retrieveAnnotationDomain()
+        println "getRetrieveAnnotationDomain()="+retrieveAnnotationDomain()?.image
+        println "getRetrieveAnnotationDomain()="+retrieveAnnotationDomain()?.image?.project
+        if(project==null) project = retrieveAnnotationDomain()?.image?.project;
+    }
+
+    public AnnotationDomain retrieveAnnotationDomain() {
+        Class.forName(annotationClassName, false, Thread.currentThread().contextClassLoader).read(annotationIdent)
+    }
+
+    public static AnnotationDomain retrieveAnnotationDomain(String id, String className) {
+        Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
     }
 
     static AlgoAnnotationTerm createFromDataWithId(json) {
@@ -47,12 +76,14 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
 
     static AlgoAnnotationTerm getFromData(AlgoAnnotationTerm algoAnnotationTerm, jsonAlgoAnnotationTerm) {
 
-        String annotationId = jsonAlgoAnnotationTerm.annotation.toString()
-        if (!annotationId.equals("null")) {
-            algoAnnotationTerm.annotation = Annotation.read(annotationId)
-            if (algoAnnotationTerm.annotation == null) throw new WrongArgumentException("Annotation was not found with id:" + annotationId)
-        }
-        else algoAnnotationTerm.annotation = null
+        String annotationId = jsonAlgoAnnotationTerm.annotationIdent.toString()
+            def annotation = UserAnnotation.read(annotationId)
+            if(!annotation){
+                annotation = AlgoAnnotation.read(annotationId)
+            }
+            if (annotation == null) throw new WrongArgumentException("Annotation was not found with id:" + annotationId)
+            algoAnnotationTerm.annotationClassName = annotation.class.getName()
+            algoAnnotationTerm.annotationIdent = annotation.id
 
         String termId = jsonAlgoAnnotationTerm.term.toString()
         if (!termId.equals("null")) {
@@ -86,7 +117,10 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
         JSON.registerObjectMarshaller(AlgoAnnotationTerm) {
             def returnArray = [:]
             returnArray['id'] = it.id
-            returnArray['annotation'] = it.annotation?.id
+
+            returnArray['annotationIdent'] = it.annotationIdent
+            returnArray['annotationClassName'] = it.annotationClassName
+
             returnArray['term'] = it.term?.id
             returnArray['expectedTerm'] = it.expectedTerm?.id
             returnArray['rate'] = it.rate

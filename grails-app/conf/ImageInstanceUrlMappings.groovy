@@ -20,10 +20,10 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/$id/mask-$oriwidth"(controller: "restImageInstance"){
             action = [GET:"mask", POST : "putMask"]
         }
-        "/api/annotation/$annotation/mask-$term"(controller: "restImageInstance"){
+        "/api/userannotation/$annotation/mask-$term"(controller: "restImageInstance"){
             action = [GET:"cropmask"]
         }
-        "/api/annotation/$annotation/alphamask-$term"(controller: "restImageInstance"){
+        "/api/userannotation/$annotation/alphamask-$term"(controller: "restImageInstance"){
             action = [GET:"alphamask"]
         }
         "/api/project/$id/imageinstance"(controller: "restImageInstance"){

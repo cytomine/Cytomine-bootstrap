@@ -45,13 +45,25 @@ class ImageUrlMappings {
         "/api/project/$id/image"(controller: "restImage"){
             action = [GET:"listByProject"]
         }
-        "/api/annotation/$id/$zoom/crop"(controller: "restImage"){
-            action = [GET:"crop"]
+
+        "/api/userannotation/$id/$zoom/crop"(controller: "restImage"){
+            action = [GET:"cropUserAnnotation"]
         }
-        "/api/annotation/$id/crop"(controller: "restImage"){
-            action = [GET:"crop"]
+        "/api/userannotation/$id/crop"(controller: "restImage"){
+            action = [GET:"cropUserAnnotation"]
         }
-        "/api/annotation/$id/retrieval/$zoom/$maxsimilarpictures"(controller: "restImage") {
+
+        "/api/algoannotation/$id/$zoom/crop"(controller: "restImage"){
+            action = [GET:"cropAlgoAnnotation"]
+        }
+        "/api/algoannotation/$id/crop"(controller: "restImage"){
+            action = [GET:"cropAlgoAnnotation"]
+        }
+
+
+
+
+        "/api/userannotation/$id/retrieval/$zoom/$maxsimilarpictures"(controller: "restImage") {
             action = [GET:"retrieval"]
         }
         "/api/image/$idabstractimage/group/$idgroup"(controller:"restAbstractImageGroup"){

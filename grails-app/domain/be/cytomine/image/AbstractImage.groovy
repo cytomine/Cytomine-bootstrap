@@ -14,7 +14,7 @@ import be.cytomine.server.resolvers.Resolver
 import grails.converters.JSON
 import org.apache.log4j.Logger
 
-class AbstractImage extends CytomineDomain {
+class AbstractImage extends CytomineDomain implements Serializable {
 
     def imagePropertiesService
 

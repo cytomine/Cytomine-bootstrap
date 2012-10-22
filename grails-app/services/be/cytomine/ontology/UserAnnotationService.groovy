@@ -30,7 +30,7 @@ import org.hibernatespatial.criterion.SpatialRestrictions
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize
 
-class AnnotationService extends ModelService {
+class UserAnnotationService extends ModelService {
 
     static transactional = true
     def cytomineService
@@ -46,25 +46,24 @@ class AnnotationService extends ModelService {
 
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image) {
-        Annotation.findAllByImage(image)
+        UserAnnotation.findAllByImage(image)
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
-        Annotation.findAllByProject(project)
+        UserAnnotation.findAllByProject(project)
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listUserAnnotation(Project project) {
         List<SecUser> users = securityService.getUserList(project)
-        List<Annotation> annotations = Annotation.findAllByProjectAndUserInList(project,users)
-        return annotations
+        return UserAnnotation.findAllByProjectAndUserInList(project,users)
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList, boolean noTerm, boolean multipleTerm) {
          if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob ) {
-             listForUserJob(project,userList,imageInstanceList,noTerm,multipleTerm)
+             throw new IllegalArgumentException("Method not supported for this type of data!!!")
          } else {
              listForUser(project,userList,imageInstanceList,noTerm,multipleTerm)
          }
@@ -80,13 +79,13 @@ class AnnotationService extends ModelService {
             def terms = Term.findAllByOntology(project.getOntology())
             def annotationsWithTerms = AnnotationTerm.withCriteria() {
                 inList("term", terms)
-                join("annotation")
-                createAlias("annotation", "a")
+                join("userAnnotation")
+                createAlias("userAnnotation", "a")
                 eq("a.project", project)
                 inList("a.image", imageInstanceList)
                 inList("a.user", userList)
                 projections {
-                    groupProperty("annotation")
+                    groupProperty("userAnnotation")
                     countDistinct("term")
                     countDistinct('created', 'createdSort')
 
@@ -106,13 +105,13 @@ class AnnotationService extends ModelService {
             def terms = Term.findAllByOntology(project.getOntology())
             def annotationsWithTerms = AnnotationTerm.createCriteria().list {
                 inList("term", terms)
-                join("annotation")
-                createAlias("annotation", "a")
+                join("userAnnotation")
+                createAlias("userAnnotation", "a")
                 inList("a.image", imageInstanceList)
                 inList("a.user", userList)
                 projections {
                     eq("a.project", project)
-                    groupProperty("annotation.id")
+                    groupProperty("userAnnotation.id")
                 }
             }
 
@@ -120,7 +119,7 @@ class AnnotationService extends ModelService {
             //inList crash is argument is an empty list so we have to use if/else at this time
             def annotations = null
             if (annotationsWithTerms.size() == 0) {
-                annotations = Annotation.createCriteria().list {
+                annotations = UserAnnotation.createCriteria().list {
                     eq("project", project)
                     inList("image", imageInstanceList)
                     inList("user", userList)
@@ -129,7 +128,7 @@ class AnnotationService extends ModelService {
 //                    maxResults(max)
                 }
             } else {
-                annotations = Annotation.createCriteria().list {
+                annotations = UserAnnotation.createCriteria().list {
                     eq("project", project)
                     inList("image", imageInstanceList)
                     inList("user", userList)
@@ -146,7 +145,7 @@ class AnnotationService extends ModelService {
         } else {
             log.info "findAllByProjectAndUserInList=" + project + " users=" + userList
             long start = new Date().time
-            def annotations = Annotation.createCriteria().list {
+            def annotations = UserAnnotation.createCriteria().list {
                 eq("project", project)
                 inList("user", userList)
                 inList("image", imageInstanceList)
@@ -162,90 +161,6 @@ class AnnotationService extends ModelService {
         }
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-     def listForUserJob(Project project, Collection<UserJob> userList, Collection<ImageInstance> imageInstanceList, boolean noTerm, boolean multipleTerm) {
-         log.info("project/userList/noTerm/multipleTerm for UserJob")
-         if (userList.isEmpty()) return []
-         if (imageInstanceList.isEmpty()) return []
-         else if (multipleTerm) {
-             log.info "multipleTerm"
-             def terms = Term.findAllByOntology(project.getOntology())
-             def annotationsWithTerms = AlgoAnnotationTerm.withCriteria() {
-                 inList("term", terms)
-                 join("annotation")
-                 createAlias("annotation", "a")
-                 eq("a.project", project)
-                 inList("a.image", imageInstanceList)
-                 inList("a.user", userList)
-                 projections {
-                     groupProperty("annotation")
-                     countDistinct("term")
-                     countDistinct('created', 'createdSort')
-
-                 }
-                 order('createdSort','desc')
-             }
-             def annotations = []
-             annotationsWithTerms.eachWithIndex {  result, index ->
-                 if (result[1] > 1) annotations.add(result[0])
-                 //filter in groovy, to do : I tried greaterThan criteria on alias nbTerms whithout success
-                 //+todo: add  (index>=offset && index<max) in request to improve perf
-             }
-             annotations
-         }
-         else if (noTerm) {
-             log.info "noTerm"
-             def terms = Term.findAllByOntology(project.getOntology())
-             def annotationsWithTerms = AlgoAnnotationTerm.createCriteria().list {
-                 inList("term", terms)
-                 join("annotation")
-                 createAlias("annotation", "a")
-                 inList("a.image", imageInstanceList)
-                 inList("a.user", userList)
-                 projections {
-                     eq("a.project", project)
-                     groupProperty("annotation.id")
-                 }
-             }
-
-             //inList crash is argument is an empty list so we have to use if/else at this time
-             def annotations = null
-             if (annotationsWithTerms.size() == 0) {
-                 annotations = Annotation.createCriteria().list {
-                     eq("project", project)
-                     inList("image", imageInstanceList)
-                     inList("user", userList)
-                     order 'created', 'desc'
-                 }
-             } else {
-                 annotations = Annotation.createCriteria().list {
-                     eq("project", project)
-                     inList("image", imageInstanceList)
-                     inList("user", userList)
-                     not {
-                         inList("id", annotationsWithTerms)
-                     }
-                     order 'created', 'desc'
-                 }
-             }
-
-             return annotations
-         } else {
-             log.info "findAllByProjectAndUserInList=" + project + " users=" + userList
-             long start = new Date().time
-             def annotations = Annotation.createCriteria().list {
-                 eq("project", project)
-                 inList("user", userList)
-                 inList("image", imageInstanceList)
-                 fetchMode 'image', FetchMode.JOIN
-                 fetchMode 'image.baseImage', FetchMode.JOIN
-                 order 'created', 'desc'
-             }
-             long end = new Date().time
-             log.info "time = " + (end - start) + "ms"
-             return annotations
-         }
-     }
 
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
@@ -257,7 +172,7 @@ class AnnotationService extends ModelService {
         SecUser user = UserJob.findByJob(job)
 
         //Get all annotation from this project with this term
-        def criteria = Annotation.withCriteria() {
+        def criteria = UserAnnotation.withCriteria() {
             eq('project', project)
             annotationTerm {
                 eq('term', realTerm)
@@ -270,11 +185,11 @@ class AnnotationService extends ModelService {
         def algoAnnotationsTerm = AlgoAnnotationTerm.createCriteria().list {
             eq("userJob", user)
             eq("term", suggestedTerm)
-            inList("annotation",annotations)
-            join("annotation")
-            createAlias("annotation", "a")
+            inList("userAnnotation",annotations)
+            join("userAnnotation")
+            createAlias("userAnnotation", "a")
             projections {
-                groupProperty("annotation")
+                groupProperty("userAnnotation")
             }
         }
 
@@ -284,7 +199,7 @@ class AnnotationService extends ModelService {
 
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, SecUser user) {
-        return Annotation.findAllByImageAndUser(image, user)
+        return UserAnnotation.findAllByImageAndUser(image, user)
     }
 
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
@@ -296,7 +211,7 @@ class AnnotationService extends ModelService {
         double topY = Double.parseDouble(coordinates[3])
         Coordinate[] boundingBoxCoordinates = [new Coordinate(bottomX, bottomY), new Coordinate(bottomX, topY), new Coordinate(topX, topY), new Coordinate(topX, bottomY), new Coordinate(bottomX, bottomY)]
         Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
-        Annotation.createCriteria()
+        UserAnnotation.createCriteria()
                 .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq("image", image))
                 .add(SpatialRestrictions.within("location",boundingbox))
@@ -323,7 +238,7 @@ class AnnotationService extends ModelService {
         if (userList.isEmpty()) return []
         if (imageInstanceList.isEmpty()) return []
         if (imageInstanceList.size() == project.countImages) {
-            def criteria = Annotation.withCriteria() {
+            def criteria = UserAnnotation.withCriteria() {
                 eq('project', project)
                 annotationTerm {
                     eq('term', term)
@@ -335,7 +250,7 @@ class AnnotationService extends ModelService {
             }
             return criteria.unique()
         } else {
-            def criteria = Annotation.withCriteria() {
+            def criteria = UserAnnotation.withCriteria() {
                 eq('project', project)
                 inList("image", imageInstanceList)
                 annotationTerm {
@@ -355,12 +270,12 @@ class AnnotationService extends ModelService {
         if (imageInstanceList.isEmpty()) return []
         if (imageInstanceList.size() == project.countImages) {
             def criteria = AlgoAnnotationTerm.withCriteria() {
-                createAlias("annotation", "a")
+                createAlias("userAnnotation", "a")
                 eq('project', project)
                 eq('term', term)
                 inList('userJob', userList)
                 projections {
-                    groupProperty("annotation")
+                    groupProperty("userAnnotation")
                     groupProperty("rate")
                     groupProperty("term.id")
                     groupProperty("expectedTerm.id")
@@ -370,13 +285,13 @@ class AnnotationService extends ModelService {
             return criteria
         } else {
             def criteria = AlgoAnnotationTerm.withCriteria() {
-                createAlias("annotation", "a")
+                createAlias("userAnnotation", "a")
                 eq('project', project)
                 eq('term', term)
                 inList('userJob', userList)
                 inList("a.image", imageInstanceList)
                 projections {
-                    groupProperty("annotation")
+                    groupProperty("userAnnotation")
                     groupProperty("rate")
                     groupProperty("term.id")
                     groupProperty("expectedTerm.id")
@@ -389,12 +304,12 @@ class AnnotationService extends ModelService {
 
 
 
-    Annotation get(def id) {
-        Annotation.get(id)
+    UserAnnotation get(def id) {
+        UserAnnotation.get(id)
     }
 
-    Annotation read(def id) {
-        Annotation.read(id)
+    UserAnnotation read(def id) {
+        UserAnnotation.read(id)
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -421,8 +336,8 @@ class AnnotationService extends ModelService {
             //Add Annotation
             log.debug this.toString()
             def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
-            def annotationID = result?.data?.annotation?.id
-            log.info "annotation=" + annotationID + " json.term=" + json.term
+            def annotationID = result?.data?.userannotation?.id
+            log.info "userAnnotation=" + annotationID + " json.term=" + json.term
             //Add annotation-term if term
             if (annotationID) {
                 def term = json.term;
@@ -438,7 +353,7 @@ class AnnotationService extends ModelService {
             transactionService.stop()
 
             //add annotation on the retrieval
-            if(Annotation.read(annotationID).location.getNumPoints() >= 3)  {
+            if(UserAnnotation.read(annotationID).location.getNumPoints() >= 3)  {
                 if(!currentUser.algo())  {
                     try {if (annotationID) indexRetrievalAnnotation(annotationID)
                     } catch (CytomineException ex) {
@@ -458,7 +373,7 @@ class AnnotationService extends ModelService {
         SecUser currentUser = cytomineService.getCurrentUser()
         //simplify annotation
         try {
-            def annotation = Annotation.read(json.id)
+            def annotation = UserAnnotation.read(json.id)
             def data = simplifyPolygon(json.location, annotation?.geometryCompression)
             json.location = new WKTWriter().write(data.geometry)
         } catch (Exception e) {
@@ -468,7 +383,7 @@ class AnnotationService extends ModelService {
         def result = executeCommand(new EditCommand(user: currentUser), json)
 
         if (result.success) {
-            Long id = result.annotation.id
+            Long id = result.userannotation.id
             try {updateRetrievalAnnotation(id)} catch (Exception e) { log.error "Cannot update in retrieval:" + e.toString()}
         }
         return result
@@ -500,7 +415,7 @@ class AnnotationService extends ModelService {
         return deleteAnnotation(idAnnotation, currentUser, true, transaction)
     }
 
-    def deleteAnnotation(Annotation annotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
+    def deleteAnnotation(UserAnnotation annotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
 
         log.info "*** deleteAnnotation1.vesion=" + annotation.version
 
@@ -508,11 +423,8 @@ class AnnotationService extends ModelService {
             //Delete Annotation-Term before deleting Annotation
             annotationTermService.deleteAnnotationTermFromAllUser(annotation, currentUser, transaction)
             log.info "*** deleteAnnotation2.vesion=" + annotation.version
-            //Delete Suggested-Term before deleting Annotation
-            algoAnnotationTermService.deleteAlgoAnnotationTermFromAllUser(annotation, currentUser, transaction)
-            log.info "*** deleteAnnotation3.vesion=" + annotation.version
             //Delete Shared annotation:
-            def sharedAnnotation = SharedAnnotation.findAllByAnnotation(annotation)
+            def sharedAnnotation = SharedAnnotation.findAllByUserAnnotation(annotation)
             sharedAnnotation.each {
                 it.delete()
             }
@@ -525,8 +437,8 @@ class AnnotationService extends ModelService {
     }
 
     def deleteAnnotation(Long idAnnotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
-        log.info "Delete annotation: " + idAnnotation
-        Annotation annotation = Annotation.read(idAnnotation)
+        log.info "Delete userAnnotation: " + idAnnotation
+        UserAnnotation annotation = UserAnnotation.read(idAnnotation)
         return deleteAnnotation(annotation, currentUser, printMessage, transaction)
     }
 
@@ -534,28 +446,28 @@ class AnnotationService extends ModelService {
     private indexRetrievalAnnotation(Long id) {
         //index in retrieval (asynchronous)
         RetrievalServer retrieval = RetrievalServer.findByDescription("retrieval")
-        log.info "annotation.id=" + id + " stevben-server=" + retrieval
+        log.info "userAnnotation.id=" + id + " stevben-server=" + retrieval
         if (id && retrieval) {
-            log.info "index annotation " + id + " on  " + retrieval.url
-            retrievalService.indexAnnotationAsynchronous(Annotation.read(id),RetrievalServer.findByDescription("retrieval"))
+            log.info "index userAnnotation " + id + " on  " + retrieval.url
+            retrievalService.indexAnnotationAsynchronous(UserAnnotation.read(id),RetrievalServer.findByDescription("retrieval"))
 
         }
     }
 
     private deleteRetrievalAnnotation(Long id) {
         RetrievalServer retrieval = RetrievalServer.findByDescription("retrieval")
-        log.info "annotation.id=" + id + " retrieval-server=" + retrieval
+        log.info "userAnnotation.id=" + id + " retrieval-server=" + retrieval
         if (id && retrieval) {
-            log.info "delete annotation " + id + " on  " + retrieval.url
+            log.info "delete userAnnotation " + id + " on  " + retrieval.url
             retrievalService.deleteAnnotationAsynchronous(id)
         }
     }
 
     private updateRetrievalAnnotation(Long id) {
         RetrievalServer retrieval = RetrievalServer.findByDescription("retrieval")
-        log.info "annotation.id=" + id + " retrieval-server=" + retrieval
+        log.info "userAnnotation.id=" + id + " retrieval-server=" + retrieval
         if (id && retrieval) {
-            log.info "update annotation " + id + " on  " + retrieval.url
+            log.info "update userAnnotation " + id + " on  " + retrieval.url
             retrievalService.updateAnnotationAsynchronous(id)
         }
     }
@@ -598,7 +510,7 @@ class AnnotationService extends ModelService {
 
     private def simplifyPolygon(String form, double rate) {
        Geometry annotation = new WKTReader().read(form);
-        Boolean isPolygonAndNotValid =  (annotation instanceof com.vividsolutions.jts.geom.Polygon && !((Polygon)annotationFull).isValid())
+        Boolean isPolygonAndNotValid =  (annotation instanceof com.vividsolutions.jts.geom.Polygon && !((Polygon)annotation).isValid())
         if (isPolygonAndNotValid) {
             //Preserving polygon shape but slower than DouglasPeuker
             annotation = TopologyPreservingSimplifier.simplify(annotation, rate)
@@ -615,10 +527,10 @@ class AnnotationService extends ModelService {
      * @return response
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Annotation.createFromDataWithId(json), printMessage)
+        create(UserAnnotation.createFromDataWithId(json), printMessage)
     }
 
-    def create(Annotation domain, boolean printMessage) {
+    def create(UserAnnotation domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
@@ -632,10 +544,10 @@ class AnnotationService extends ModelService {
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
-        destroy(Annotation.get(json.id), printMessage)
+        destroy(UserAnnotation.get(json.id), printMessage)
     }
 
-    def destroy(Annotation domain, boolean printMessage) {
+    def destroy(UserAnnotation domain, boolean printMessage) {
         //Build response message
         log.info "destroy remove " + domain.id
         def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Delete", domain.getCallBack())
@@ -652,10 +564,10 @@ class AnnotationService extends ModelService {
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new Annotation(), json), printMessage)
+        edit(fillDomainWithData(new UserAnnotation(), json), printMessage)
     }
 
-    def edit(Annotation domain, boolean printMessage) {
+    def edit(UserAnnotation domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Edit", domain.getCallBack())
         //Save update
@@ -668,8 +580,8 @@ class AnnotationService extends ModelService {
      * @param json JSON with new domain info
      * @return new domain
      */
-    Annotation createFromJSON(def json) {
-        return Annotation.createFromData(json)
+    UserAnnotation createFromJSON(def json) {
+        return UserAnnotation.createFromData(json)
     }
 
     /**
@@ -678,8 +590,8 @@ class AnnotationService extends ModelService {
      * @return domain retrieve thanks to json
      */
     def retrieve(JSONObject json) {
-        Annotation annotation = Annotation.get(json.id)
-        if (!annotation) throw new ObjectNotFoundException("Annotation " + json.id + " not found")
+        UserAnnotation annotation = UserAnnotation.get(json.id)
+        if (!annotation) throw new ObjectNotFoundException("UserAnnotation " + json.id + " not found")
         return annotation
     }
 

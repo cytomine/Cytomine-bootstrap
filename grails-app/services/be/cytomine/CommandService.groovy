@@ -52,7 +52,9 @@ class CommandService {
             c.save()
             CommandHistory ch = new CommandHistory(command: c, prefixAction: "", project: c.project)
             ch.save();
+            log.info "c.saveOnUndoRedoStack=" + c.saveOnUndoRedoStack
             if (c.saveOnUndoRedoStack) {
+                log.info "c.user=" + c.user
                 SecUser user = c.user
                 new UndoStackItem(command: c, user: user, transaction: c.transaction).save(flush: true)
             }

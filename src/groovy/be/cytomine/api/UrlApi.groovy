@@ -21,12 +21,20 @@ class UrlApi {
         return url + "/api/image/"+idImage+"/preview.png"
     }
 
-    static def getAnnotationCropWithAnnotationId(String url,Long idAnnotation) {
-        return url+'/api/annotation/' + idAnnotation +'/crop.jpg'
+    static def getUserAnnotationCropWithAnnotationId(String url,Long idAnnotation) {
+        return url+'/api/userannotation/' + idAnnotation +'/crop.jpg'
     }
 
-    static def getAnnotationCropWithAnnotationIdWithMaxWithOrHeight(String url, Long idAnnotation, int maxWidthOrHeight) {
-        return url+'/api/annotation/' + idAnnotation +'/crop.jpg?max_size='+maxWidthOrHeight
+    static def getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(String url, Long idAnnotation, int maxWidthOrHeight) {
+        return url+'/api/userannotation/' + idAnnotation +'/crop.jpg?max_size='+maxWidthOrHeight
+    }
+
+    static def getAlgoAnnotationCropWithAnnotationId(String url,Long idAnnotation) {
+        return url+'/api/algoannotation/' + idAnnotation +'/crop.jpg'
+    }
+
+    static def getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(String url, Long idAnnotation, int maxWidthOrHeight) {
+        return url+'/api/algoannotation/' + idAnnotation +'/crop.jpg?max_size='+maxWidthOrHeight
     }
 
     static def getAnnotationURL(String url,Long idProject, Long idImage, Long idAnnotation) {

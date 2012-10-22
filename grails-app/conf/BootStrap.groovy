@@ -36,6 +36,7 @@ import be.cytomine.image.server.*
 import be.cytomine.ontology.*
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
+import be.cytomine.security.SecUser
 
 class BootStrap {
     def springSecurityService
@@ -68,8 +69,6 @@ class BootStrap {
 
         //Register API Authentifier
         log.info "Current directory="+new File( 'test.html' ).absolutePath
-
-
 
         SpringSecurityUtils.clientRegisterFilter( 'apiAuthentificationFilter', SecurityFilterPosition.DIGEST_AUTH_FILTER.order + 1)
         log.info "###################" + grailsApplication.config.grails.serverURL + "##################"
@@ -354,16 +353,6 @@ class BootStrap {
     }
 
 
-    private def createAnnotationGrant() {
-        //if(Annotation.list().first().project) return
-        Annotation.findAllByProjectIsNull().each{
-            it.project = it.image.project
-            it.save(flush:true)
-        }
-        //Annotation.findAllByProjectIsNull().each {it -> log.info it}
-
-    }
-
 
 
 
@@ -562,12 +551,30 @@ class BootStrap {
                     password: item.password,
                     enabled: true)
             user.generateKeys()
+
+            println "# user="+user.username + " " + user.id
+            SecUser.list().each {
+                println "### user="+it.username + " " + it.publicKey+ " " + user.privateKey
+            }
+
+
             log.info "Before validating ${user.username}..."
             if (user.validate()) {
                 log.info "Creating user ${user.username}..."
                 // user.addToTransactions(new Transaction())
                 //user.encodePassword()
-                user.save(flush: true)
+
+                println "# user="+user.username + " " + user.id
+                SecUser.list().each {
+                    println "### user="+it.username + " " + it.publicKey+ " " + user.privateKey
+                }
+                try {user.save(flush: true) } catch(Exception e) {println e}
+
+
+                SecUser.list().each {
+                    println "###TheEnd user="+it.username + " " + it.publicKey+ " " + user.privateKey
+                }
+
 
                 log.info "Save ${user.username}..."
 
@@ -808,11 +815,11 @@ class BootStrap {
 
     def createAnnotations(annotationSamples) {
 
-
-        def annotation = null
+        if (!UserAnnotation.list().isEmpty()) return
+        UserAnnotation userAnnotation = null
         GeometryFactory geometryFactory = new GeometryFactory()
         annotationSamples.each { item ->
-            if (Annotation.findByName(item.name)) return
+
             /* Read spatial data an create annotation*/
             def geom
             if (item.location[0].startsWith('POINT')) {
@@ -836,24 +843,24 @@ class BootStrap {
             def user = User.findByUsername(item.user)
             log.info "user " + item.user + "=" + user.username
 
-            annotation = new Annotation(name: item.name, location: geom, image: imageParent, user: user)
+            userAnnotation = new UserAnnotation(location: geom, image: imageParent, user: user)
 
             /* Save annotation */
-            if (annotation.validate()) {
-                log.info "Creating annotation : ${annotation.name}..."
+            if (userAnnotation.validate()) {
+                log.info "Creating userannotation : ${userAnnotation.name}..."
 
-                annotation.save(flush: true)
+                userAnnotation.save(flush: true)
 
                 item.term.each {  term ->
                     log.info "add Term " + term
                     //annotation.addToTerm(Term.findByName(term))
-                    AnnotationTerm.link(annotation, Term.findByName(term))
+                    AnnotationTerm.link(userAnnotation, Term.findByName(term))
                 }
 
 
             } else {
                 log.info("\n\n\n Errors in account boostrap for ${item.name}!\n\n\n")
-                annotation.errors.each {
+                userAnnotation.errors.each {
                     err -> log.info err
                 }
 

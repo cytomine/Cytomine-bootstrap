@@ -2,7 +2,7 @@ package be.cytomine.image
 
 import be.cytomine.CytomineDomain
 
-class ImageFile extends CytomineDomain {
+class ImageFile extends CytomineDomain implements Serializable{
 
     File file
     AbstractImage image

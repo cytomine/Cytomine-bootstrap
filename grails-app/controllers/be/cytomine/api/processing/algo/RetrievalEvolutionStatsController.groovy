@@ -10,7 +10,6 @@ import be.cytomine.security.UserJob
 
 class RetrievalEvolutionStatsController extends RestController {
 
-    def annotationService
     def termService
     def algoAnnotationTermService
     def jobService

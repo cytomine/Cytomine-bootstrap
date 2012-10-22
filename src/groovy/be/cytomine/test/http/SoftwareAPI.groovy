@@ -75,7 +75,7 @@ class SoftwareAPI extends DomainAPI {
         String oldName = "Name1"
         String newName = "Name2"
         String oldNameService = "projectService"
-        String newNameService = "annotationService"
+        String newNameService = "userAnnotationService"
 
         def mapNew = ["name": newName,"serviceName" : newNameService]
         def mapOld = ["name": oldName,"serviceName" : oldNameService]

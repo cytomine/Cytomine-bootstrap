@@ -54,8 +54,8 @@ class TermService extends ModelService {
     }
 
 
-    def list(Annotation annotation, User user) {
-        return AnnotationTerm.findAllByUserAndAnnotation(user, annotation).collect {it.term.id}
+    def list(UserAnnotation annotation, User user) {
+        return AnnotationTerm.findAllByUserAndUserAnnotation(user, annotation).collect {it.term.id}
     }
 
     def statProject(Term term) {
@@ -175,7 +175,7 @@ class TermService extends ModelService {
     def destroy(Term domain, boolean printMessage) {
         //Build response message
         if (!AlgoAnnotationTerm.findAllByTerm(domain).isEmpty()) throw new ConstraintException("Term " + domain.id + " has suggested term")
-        if (!AnnotationTerm.findAllByTerm(domain).isEmpty()) throw new ConstraintException("Term " + domain.id + " has annotation term")
+        if (!AnnotationTerm.findAllByTerm(domain).isEmpty()) throw new ConstraintException("Term " + domain.id + " has userannotation term")
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name, domain.ontology?.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)

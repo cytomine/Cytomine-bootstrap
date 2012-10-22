@@ -18,7 +18,7 @@ class AlgoAnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
     void testGetAlgoAnnotationTermWithCredential() {
         def annotationTermToAdd = BasicInstance.createOrGetBasicAlgoAnnotationTerm()
-        def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.annotation.id,annotationTermToAdd.term.id,annotationTermToAdd.userJob.id,annotationTermToAdd.userJob.username,"PasswordUserJob")
+        def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.retrieveAnnotationDomain().id,annotationTermToAdd.term.id,annotationTermToAdd.userJob.id,annotationTermToAdd.userJob.username,"PasswordUserJob")
         assertEquals(200,result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -27,7 +27,7 @@ class AlgoAnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     void testAddAlgoAnnotationTermCorrect() {
         def annotationTermToAdd = BasicInstance.getBasicAlgoAnnotationTermNotExist()
         UserJob currentUserJob = annotationTermToAdd.userJob
-        Infos.addUserRight(currentUserJob.user,annotationTermToAdd.annotation.project)
+        Infos.addUserRight(currentUserJob.user,annotationTermToAdd.retrieveAnnotationDomain().project)
         annotationTermToAdd.discard()
         String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
 
@@ -35,7 +35,7 @@ class AlgoAnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
         assertEquals(200,result.code)
 
-        result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.annotation.id,annotationTermToAdd.term.id,annotationTermToAdd.userJob.id,annotationTermToAdd.userJob.username,"PasswordUserJob")
+        result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.retrieveAnnotationDomain().id,annotationTermToAdd.term.id,annotationTermToAdd.userJob.id,annotationTermToAdd.userJob.username,"PasswordUserJob")
         assertEquals(200,result.code)
 
     }
