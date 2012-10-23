@@ -39,15 +39,7 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     public beforeInsert() {
-        println "beforeInsert"
-        println "getRetrieveAnnotationDomain()="+retrieveAnnotationDomain()
-        println "getRetrieveAnnotationDomain()="+retrieveAnnotationDomain()?.image
-        println "getRetrieveAnnotationDomain()="+retrieveAnnotationDomain()?.image?.project
         super.beforeInsert()
-        println "beforeInsert"
-        println "getRetrieveAnnotationDomain()="+retrieveAnnotationDomain()
-        println "getRetrieveAnnotationDomain()="+retrieveAnnotationDomain()?.image
-        println "getRetrieveAnnotationDomain()="+retrieveAnnotationDomain()?.image?.project
         if(project==null) project = retrieveAnnotationDomain()?.image?.project;
     }
 
@@ -56,6 +48,10 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     public static AnnotationDomain retrieveAnnotationDomain(String id, String className) {
+        Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
+    }
+
+    public static AnnotationDomain retrieveAnnotationDomain(Long id, String className) {
         Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
     }
 
@@ -76,14 +72,16 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
 
     static AlgoAnnotationTerm getFromData(AlgoAnnotationTerm algoAnnotationTerm, jsonAlgoAnnotationTerm) {
 
-        String annotationId = jsonAlgoAnnotationTerm.annotationIdent.toString()
-            def annotation = UserAnnotation.read(annotationId)
-            if(!annotation){
-                annotation = AlgoAnnotation.read(annotationId)
-            }
-            if (annotation == null) throw new WrongArgumentException("Annotation was not found with id:" + annotationId)
-            algoAnnotationTerm.annotationClassName = annotation.class.getName()
-            algoAnnotationTerm.annotationIdent = annotation.id
+        String annotationId = jsonAlgoAnnotationTerm.annotationIdent?.toString()
+        if(annotationId==null || annotationId.equals("") || annotationId.equals("null"))
+            annotationId = jsonAlgoAnnotationTerm.annotation?.toString()
+        def annotation = UserAnnotation.read(annotationId)
+        if(!annotation){
+            annotation = AlgoAnnotation.read(annotationId)
+        }
+        if (annotation == null) throw new WrongArgumentException("Annotation was not found with id:" + annotationId)
+        algoAnnotationTerm.annotationClassName = annotation.class.getName()
+        algoAnnotationTerm.annotationIdent = annotation.id
 
         String termId = jsonAlgoAnnotationTerm.term.toString()
         if (!termId.equals("null")) {
@@ -120,7 +118,7 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
 
             returnArray['annotationIdent'] = it.annotationIdent
             returnArray['annotationClassName'] = it.annotationClassName
-
+            returnArray['annotation'] = it.annotationIdent
             returnArray['term'] = it.term?.id
             returnArray['expectedTerm'] = it.expectedTerm?.id
             returnArray['rate'] = it.rate

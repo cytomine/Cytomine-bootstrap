@@ -399,7 +399,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             var newTerm = $(this).attr("data-term");
             if (term == newTerm) return;
             $(ui.draggable).hide();
-            new AnnotationTermModel({term:newTerm, annotation:annotation, clear:true}).save({}, {
+            new AnnotationTermModel({term:newTerm, userannotation:annotation, clear:true}).save({}, {
                 success:function (model, response) {
                     $("#tabsterm-" + self.model.id + "-" + newTerm).append($(ui.draggable));
                     setTimeout(function () {

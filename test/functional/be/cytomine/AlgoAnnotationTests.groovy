@@ -15,6 +15,7 @@ import be.cytomine.test.http.AlgoAnnotationAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.test.http.AnnotationDomainAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -262,7 +263,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
-        int idAnnotation = json.algoannotation.id
+        int idAnnotation = json.annotation.id
 
         def showResult = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
         json = JSON.parse(showResult.data)
@@ -385,8 +386,14 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
-        println "### annotationWithoutTerm="+annotationWithoutTerm
-        println "### annotationWithTerm="+annotationWithTerm
+        assert DomainAPI.containsInJSONList(annotationWithoutTerm.id,json)
+        assert !DomainAPI.containsInJSONList(annotationWithTerm.id,json)
+
+        //list annotation without term with this user
+        result = AnnotationDomainAPI.listByProjectAndUsersWithoutTerm(project.id, userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        json = JSON.parse(result.data)
+        assert json instanceof JSONArray
 
         assert DomainAPI.containsInJSONList(annotationWithoutTerm.id,json)
         assert !DomainAPI.containsInJSONList(annotationWithTerm.id,json)
@@ -437,6 +444,15 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def result = AlgoAnnotationAPI.listByProjectAndUsersSeveralTerm(project.id, userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        assert !DomainAPI.containsInJSONList(annotationWithNoTerm.id,json)
+        assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)
+
+        //list annotation without term with this user
+        result = AnnotationDomainAPI.listByProjectAndUsersSeveralTerm(project.id, userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
         assert !DomainAPI.containsInJSONList(annotationWithNoTerm.id,json)

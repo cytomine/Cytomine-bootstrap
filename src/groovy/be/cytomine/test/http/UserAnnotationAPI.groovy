@@ -214,7 +214,7 @@ class UserAnnotationAPI extends DomainAPI {
         log.info("check response")
         def json = JSON.parse(response)
         if(JSON.parse(jsonAnnotation) instanceof JSONArray) return [code: code]
-        Long idAnnotation = json?.userannotation?.id
+        Long idAnnotation = json?.annotation?.id
         return [data: UserAnnotation.get(idAnnotation), code: code]
     }
 
@@ -288,7 +288,7 @@ class UserAnnotationAPI extends DomainAPI {
         String response = client.getResponseData()
         client.disconnect();
         def json = JSON.parse(response)
-        Long idAnnotation = json?.userannotation?.id
+        Long idAnnotation = json?.annotation?.id
         return [data: UserAnnotation.get(idAnnotation), code: code]
     }
 

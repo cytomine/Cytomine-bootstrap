@@ -216,7 +216,7 @@ class AlgoAnnotationAPI extends DomainAPI {
         log.info("check response")
         def json = JSON.parse(response)
         if(JSON.parse(jsonAnnotation) instanceof JSONArray) return [code: code]
-        Long idAnnotation = json?.algoannotation?.id
+        Long idAnnotation = json?.annotation?.id
         return [data: AlgoAnnotation.get(idAnnotation), code: code]
     }
 
@@ -290,7 +290,7 @@ class AlgoAnnotationAPI extends DomainAPI {
         String response = client.getResponseData()
         client.disconnect();
         def json = JSON.parse(response)
-        Long idAnnotation = json?.algoannotation?.id
+        Long idAnnotation = json?.annotation?.id
         return [data: AlgoAnnotation.get(idAnnotation), code: code]
     }
 

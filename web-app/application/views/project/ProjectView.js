@@ -82,121 +82,121 @@ var ProjectView = Backbone.View.extend({
     dateHoverOut:null,
     printProjectInfo:function () {
         console.log("printProjectInfo");
-        var self = this;
-
-        var allProjectsPanel = $(self.el).find(".projectInfoPanel");
-
-        require([
-            "text!application/templates/project/ProjectBigPanel.tpl.html"
-        ],
-            function (tpl) {
-                allProjectsPanel.hover(function () {
-                    console.log("Hover on:" + self.dateHoverOut);
-                    self.dateHoverOut = null;
-                    console.log("Hover on:" + self.dateHoverOut);
-                    $(".projectBigInfo").replaceWith("");
-                    $(self.el).find(".projectInfoPanel").css("border-color", "#ffffff");
-
-                    var id = $(this).attr('data-id');
-                    var project = self.model.get(id);
-                    var indexNextRow = self.getIndiceNextRow($(this), allProjectsPanel);
-
-                    $(this).css("border-color", "#000000");
-
-                    //var htmlCode = '<div class="well span2 projectBigInfo" style="padding: 5px;margin: 0 15px 15px 0px;min-width: '+self.getFullWidth()+'px;font-size: 12px;">'+project.get("name")+'</div>';
-                    var htmlCode = _.template(tpl, {projectName:project.get('name'), width:self.getFullWidth(), id:project.id});
-                    // $(".projectBigInfo").replaceWith("");
-                    var newRowItem = $(allProjectsPanel).eq(indexNextRow);
-                    //console.log("newRowItem="+newRowItem.attr('data-id'));
-                    if (newRowItem.attr('data-id') != undefined) {
-                        newRowItem.parent().before(htmlCode);
-                    } else {
-                        //last row
-                        allProjectsPanel.last().after(htmlCode);
-                    }
-
-                    $(".projectBigInfoPanel").fadeIn('slow');
-
-
-                    new ImageInstanceCollection({project:project.id, inf:0, sup:3}).fetch({
-                        success:function (collection, response) {
-                            if (collection.length != 0) {
-                                collection.each(function (image) {
-
-                                    var str = '<div style="min-height: 128px;max-width: 30%;" class="span6">' +
-                                        '<a href="#tabs-image-' + project.id + '-' + image.id + '-">' +
-                                        '     <img class="lazy" src="' + image.get("thumb") + '" alt="' + image.get("filename") + '" style="max-height:150px; max-width:100%;">' +
-                                        '</a></div>';
-                                    $("#imageInfoBigPanel-" + project.id).find(".row").append(str);
-                                })
-                            } else {
-                                $("#imageInfoBigPanel-" + project.id).find(".row").append("<div class='alert alert-block'>No data to display</div>");
-                            }
-
-                        }});
-
-                    new UserCollection({project:project.id, creator:true}).fetch({
-                        success:function (creator, response) {
-                            $("#userInfoBigPanel-" + project.id).find("#projectCreator").empty();
-                            var list = [];
-                            creator.each(function (user) {
-                                list.push(user.prettyName());
-                            });
-                            $("#userInfoBigPanel-" + project.id).find("#projectCreator").append(list.join(", "));
-                        }});
-
-                    new UserCollection({project:project.id, admin:true}).fetch({
-                        success:function (admin, response) {
-                            $("#userInfoBigPanel-" + project.id).find("#projectAdmins").empty();
-                            var list = [];
-                            admin.each(function (user) {
-                                list.push(user.prettyName());
-                            });
-                            $("#userInfoBigPanel-" + project.id).find("#projectAdmins").append(list.join(", "));
-
-                        }});
-                    new UserCollection({project:project.id}).fetch({
-                        success:function (users, response) {
-                            $("#userInfoBigPanel-" + project.id).find("#projectUsers").empty();
-                            var list = [];
-                            users.each(function (user) {
-                                list.push(user.prettyName());
-                            });
-                            $("#userInfoBigPanel-" + project.id).find("#projectUsers").append(list.join(", "));
-
-                        }});
-                    new UserCollection({project:project.id, online:true}).fetch({
-                        success:function (users, response) {
-                            $("#userInfoBigPanel-" + project.id).find("#projectUsersOnline").empty();
-                            var list = [];
-                            users.each(function (user) {
-                                list.push('<span style="color:green;font-style: bold;">' + user.prettyName() + '</span>');
-                            });
-                            $("#userInfoBigPanel-" + project.id).find("#projectUsersOnline").append(list.join(", "));
-
-                        }});
-
-
-                    $(".projectBigInfoPanel").hover(
-                        function () {
-                            //if going on big panel, don't remove it
-                            self.dateHoverOut = null;
-                        },
-                        function () {
-                            //if going out of the big panel, remove it after x sec
-                            self.dateHoverOut = new Date().getTime();
-                            setTimeout(function () {
-                                self.removePanelIfNeccessary(self.dateHoverOut);
-                            }, 1500);
-                        })
-
-                }, function () {
-                    self.dateHoverOut = new Date().getTime();
-                    setTimeout(function () {
-                        self.removePanelIfNeccessary(self.dateHoverOut);
-                    }, 1500);
-                });
-            });
+//        var self = this;
+//
+//        var allProjectsPanel = $(self.el).find(".projectInfoPanel");
+//
+//        require([
+//            "text!application/templates/project/ProjectBigPanel.tpl.html"
+//        ],
+//            function (tpl) {
+//                allProjectsPanel.hover(function () {
+//                    console.log("Hover on:" + self.dateHoverOut);
+//                    self.dateHoverOut = null;
+//                    console.log("Hover on:" + self.dateHoverOut);
+//                    $(".projectBigInfo").replaceWith("");
+//                    $(self.el).find(".projectInfoPanel").css("border-color", "#ffffff");
+//
+//                    var id = $(this).attr('data-id');
+//                    var project = self.model.get(id);
+//                    var indexNextRow = self.getIndiceNextRow($(this), allProjectsPanel);
+//
+//                    $(this).css("border-color", "#000000");
+//
+//                    //var htmlCode = '<div class="well span2 projectBigInfo" style="padding: 5px;margin: 0 15px 15px 0px;min-width: '+self.getFullWidth()+'px;font-size: 12px;">'+project.get("name")+'</div>';
+//                    var htmlCode = _.template(tpl, {projectName:project.get('name'), width:self.getFullWidth(), id:project.id});
+//                    // $(".projectBigInfo").replaceWith("");
+//                    var newRowItem = $(allProjectsPanel).eq(indexNextRow);
+//                    //console.log("newRowItem="+newRowItem.attr('data-id'));
+//                    if (newRowItem.attr('data-id') != undefined) {
+//                        newRowItem.parent().before(htmlCode);
+//                    } else {
+//                        //last row
+//                        allProjectsPanel.last().after(htmlCode);
+//                    }
+//
+//                    $(".projectBigInfoPanel").fadeIn('slow');
+//
+//
+//                    new ImageInstanceCollection({project:project.id, inf:0, sup:3}).fetch({
+//                        success:function (collection, response) {
+//                            if (collection.length != 0) {
+//                                collection.each(function (image) {
+//
+//                                    var str = '<div style="min-height: 128px;max-width: 30%;" class="span6">' +
+//                                        '<a href="#tabs-image-' + project.id + '-' + image.id + '-">' +
+//                                        '     <img class="lazy" src="' + image.get("thumb") + '" alt="' + image.get("filename") + '" style="max-height:150px; max-width:100%;">' +
+//                                        '</a></div>';
+//                                    $("#imageInfoBigPanel-" + project.id).find(".row").append(str);
+//                                })
+//                            } else {
+//                                $("#imageInfoBigPanel-" + project.id).find(".row").append("<div class='alert alert-block'>No data to display</div>");
+//                            }
+//
+//                        }});
+//
+//                    new UserCollection({project:project.id, creator:true}).fetch({
+//                        success:function (creator, response) {
+//                            $("#userInfoBigPanel-" + project.id).find("#projectCreator").empty();
+//                            var list = [];
+//                            creator.each(function (user) {
+//                                list.push(user.prettyName());
+//                            });
+//                            $("#userInfoBigPanel-" + project.id).find("#projectCreator").append(list.join(", "));
+//                        }});
+//
+//                    new UserCollection({project:project.id, admin:true}).fetch({
+//                        success:function (admin, response) {
+//                            $("#userInfoBigPanel-" + project.id).find("#projectAdmins").empty();
+//                            var list = [];
+//                            admin.each(function (user) {
+//                                list.push(user.prettyName());
+//                            });
+//                            $("#userInfoBigPanel-" + project.id).find("#projectAdmins").append(list.join(", "));
+//
+//                        }});
+//                    new UserCollection({project:project.id}).fetch({
+//                        success:function (users, response) {
+//                            $("#userInfoBigPanel-" + project.id).find("#projectUsers").empty();
+//                            var list = [];
+//                            users.each(function (user) {
+//                                list.push(user.prettyName());
+//                            });
+//                            $("#userInfoBigPanel-" + project.id).find("#projectUsers").append(list.join(", "));
+//
+//                        }});
+//                    new UserCollection({project:project.id, online:true}).fetch({
+//                        success:function (users, response) {
+//                            $("#userInfoBigPanel-" + project.id).find("#projectUsersOnline").empty();
+//                            var list = [];
+//                            users.each(function (user) {
+//                                list.push('<span style="color:green;font-style: bold;">' + user.prettyName() + '</span>');
+//                            });
+//                            $("#userInfoBigPanel-" + project.id).find("#projectUsersOnline").append(list.join(", "));
+//
+//                        }});
+//
+//
+//                    $(".projectBigInfoPanel").hover(
+//                        function () {
+//                            //if going on big panel, don't remove it
+//                            self.dateHoverOut = null;
+//                        },
+//                        function () {
+//                            //if going out of the big panel, remove it after x sec
+//                            self.dateHoverOut = new Date().getTime();
+//                            setTimeout(function () {
+//                                self.removePanelIfNeccessary(self.dateHoverOut);
+//                            }, 1500);
+//                        })
+//
+//                }, function () {
+//                    self.dateHoverOut = new Date().getTime();
+//                    setTimeout(function () {
+//                        self.removePanelIfNeccessary(self.dateHoverOut);
+//                    }, 1500);
+//                });
+//            });
 
     },
     removePanelIfNeccessary:function (dateHoverOut) {

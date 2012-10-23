@@ -473,7 +473,7 @@ AnnotationLayer.prototype = {
     createSuggestedTermLink:function (term, annotation) {
         var self = this;
         $("#changeBySuggest" + term.id).click(function () {
-            new AnnotationTermModel({term:term.id, annotation:annotation.id, clear:true
+            new AnnotationTermModel({term:term.id, userannotation:annotation.id, clear:true
             }).save(null, {success:function (termModel, response) {
                     window.app.view.message("Correct Term", response.message, "");
                     //Refresh tree

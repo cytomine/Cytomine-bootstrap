@@ -12,6 +12,8 @@ import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.web.json.JSONArray
+import be.cytomine.AnnotationDomain
+import be.cytomine.ontology.UserAnnotation
 
 /**
  * User: lrollus
@@ -165,11 +167,11 @@ class AnnotationDomainAPI extends DomainAPI {
         client.disconnect();
         return [code: code]
     }
-    static def create(AlgoAnnotation annotationToAdd, User user) {
+    static def create(AnnotationDomain annotationToAdd, User user) {
        create(annotationToAdd.encodeAsJSON(),user.username,user.password)
     }
 
-    static def create(AlgoAnnotation annotationToAdd, String username, String password) {
+    static def create(AnnotationDomain annotationToAdd, String username, String password) {
         return create(annotationToAdd.encodeAsJSON(), username, password)
     }
 
@@ -192,37 +194,62 @@ class AnnotationDomainAPI extends DomainAPI {
         def json = JSON.parse(response)
         if(JSON.parse(jsonAnnotation) instanceof JSONArray) return [code: code]
         Long idAnnotation = json?.annotation?.id
-        return [data: AlgoAnnotation.get(idAnnotation), code: code]
+        AnnotationDomain annotation = UserAnnotation.read(idAnnotation)
+        if(!annotation)  annotation = AlgoAnnotation.read(idAnnotation)
+
+
+        return [data: annotation, code: code]
     }
 
-    static def update(AlgoAnnotation annotation, String username, String password) {
-        log.info "update algoAnnotation:" + annotation
+    static def update(AnnotationDomain annotation, String username, String password) {
+        log.info "update AnnotationDomain:" + annotation
 
         String oldGeom = "POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"
         String newGeom = "POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))"
 
-        UserJob oldUser = annotation.user
-        UserJob newUser = annotation.user
+        def oldUser = annotation.user
+        def newUser = annotation.user
 
         def mapNew = ["geom":newGeom,"user":newUser]
         def mapOld = ["geom":oldGeom,"user":oldUser]
 
         /* Create a old annotation with point 1111 1111 */
-        log.info("create algoAnnotation")
-        AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
-        annotationToAdd.location =  new WKTReader().read(oldGeom)
-        annotationToAdd.user = oldUser
-        assert (annotationToAdd.save(flush:true) != null)
+        log.info("create AnnotationDomain")
 
-        /* Encode a niew annotation with point 9999 9999 */
-        AlgoAnnotation annotationToEdit = AlgoAnnotation.get(annotationToAdd.id)
-        def jsonEdit = annotationToEdit
-        def jsonAnnotation = jsonEdit.encodeAsJSON()
-        def jsonUpdate = JSON.parse(jsonAnnotation)
-        jsonUpdate.location = newGeom
-        jsonUpdate.user = newUser.id
-        jsonAnnotation = jsonUpdate.encodeAsJSON()
+        def jsonAnnotation
 
+        if(annotation instanceof UserAnnotation) {
+            log.info("create userAnnotation")
+            UserAnnotation annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+            annotationToAdd.location =  new WKTReader().read(oldGeom)
+            annotationToAdd.user = oldUser
+            assert (annotationToAdd.save(flush:true) != null)
+
+            /* Encode a niew annotation with point 9999 9999 */
+            UserAnnotation annotationToEdit = UserAnnotation.get(annotationToAdd.id)
+            def jsonEdit = annotationToEdit
+            jsonAnnotation = jsonEdit.encodeAsJSON()
+            def jsonUpdate = JSON.parse(jsonAnnotation)
+            jsonUpdate.location = newGeom
+            jsonUpdate.user = newUser.id
+            jsonAnnotation = jsonUpdate.encodeAsJSON()
+        } else if(annotation instanceof AlgoAnnotation) {
+            AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+            annotationToAdd.location =  new WKTReader().read(oldGeom)
+            annotationToAdd.user = oldUser
+            assert (annotationToAdd.save(flush:true) != null)
+
+            /* Encode a niew annotation with point 9999 9999 */
+            AlgoAnnotation annotationToEdit = AlgoAnnotation.get(annotationToAdd.id)
+            def jsonEdit = annotationToEdit
+            jsonAnnotation = jsonEdit.encodeAsJSON()
+            def jsonUpdate = JSON.parse(jsonAnnotation)
+            jsonUpdate.location = newGeom
+            jsonUpdate.user = newUser.id
+            jsonAnnotation = jsonUpdate.encodeAsJSON()
+        } else {
+            throw new Exception("Type is not supported!")
+        }
         def data = update(annotation.id, jsonAnnotation, username, password)
         data.mapNew = mapNew
         data.mapOld = mapOld

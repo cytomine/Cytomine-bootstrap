@@ -50,7 +50,7 @@ class IndexService {
             /**
              * Annotation_term
              */
-            createIndex(statement, "annotation_term", "annotation_id");
+            createIndex(statement, "annotation_term", "user_annotation_id");
             createIndex(statement, "annotation_term", "term_id");
             /**
              * relation_term

@@ -121,14 +121,17 @@ class RestImageController extends RestController {
 
     def cropUserAnnotation = {
         def annotation = UserAnnotation.read(params.id)
-        return cropAnnotation(annotation,params)
+        def cropURL = cropAnnotation(annotation,params)
+        responseImage(cropURL)
     }
     def cropAlgoAnnotation = {
         def annotation = AlgoAnnotation.read(params.id)
-        return cropAnnotation(annotation,params)
+        def cropURL = cropAnnotation(annotation,params)
+        responseImage(cropURL)
     }
 
     private def cropAnnotation(AnnotationDomain annotation, def params) {
+        println "cropAnnotation:"+annotation
         Integer zoom = 0
         Integer maxSize = -1
         if (params.max_size != null) maxSize =  Integer.parseInt(params.max_size)
@@ -147,8 +150,9 @@ class RestImageController extends RestController {
                 }
 
                 if (cropURL == null) cropURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
-                responseImage(cropURL)
+                return cropURL
             } catch (Exception e) {
+                e.printStackTrace()
                 log.error("GetCrop:" + e)
             }
         }

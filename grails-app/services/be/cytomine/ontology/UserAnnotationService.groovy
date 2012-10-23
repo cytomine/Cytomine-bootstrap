@@ -41,6 +41,7 @@ class UserAnnotationService extends ModelService {
     def responseService
     def domainService
     def securityService
+    def simplifyGeometryService
 
     boolean saveOnUndoRedoStack = true
 
@@ -319,7 +320,7 @@ class UserAnnotationService extends ModelService {
 
         //simplify annotation
         try {
-            def data = simplifyPolygon(json.location)
+            def data = simplifyGeometryService.simplifyPolygon(json.location)
             json.location = new WKTWriter().write(data.geometry)
             json.geometryCompression = data.rate
         } catch (Exception e) {
@@ -336,7 +337,7 @@ class UserAnnotationService extends ModelService {
             //Add Annotation
             log.debug this.toString()
             def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
-            def annotationID = result?.data?.userannotation?.id
+            def annotationID = result?.data?.annotation?.id
             log.info "userAnnotation=" + annotationID + " json.term=" + json.term
             //Add annotation-term if term
             if (annotationID) {
@@ -374,7 +375,7 @@ class UserAnnotationService extends ModelService {
         //simplify annotation
         try {
             def annotation = UserAnnotation.read(json.id)
-            def data = simplifyPolygon(json.location, annotation?.geometryCompression)
+            def data = simplifyGeometryService.simplifyPolygon(json.location, annotation?.geometryCompression)
             json.location = new WKTWriter().write(data.geometry)
         } catch (Exception e) {
             log.error("Cannot simplify:" + e)
@@ -417,18 +418,14 @@ class UserAnnotationService extends ModelService {
 
     def deleteAnnotation(UserAnnotation annotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
 
-        log.info "*** deleteAnnotation1.vesion=" + annotation.version
-
         if (annotation) {
             //Delete Annotation-Term before deleting Annotation
             annotationTermService.deleteAnnotationTermFromAllUser(annotation, currentUser, transaction)
-            log.info "*** deleteAnnotation2.vesion=" + annotation.version
             //Delete Shared annotation:
             def sharedAnnotation = SharedAnnotation.findAllByUserAnnotation(annotation)
             sharedAnnotation.each {
                 it.delete()
             }
-            log.info "*** deleteAnnotation4.vesion=" + annotation.version
         }
         //Delete annotation
         def json = JSON.parse("{id: $annotation.id}")
@@ -472,54 +469,6 @@ class UserAnnotationService extends ModelService {
         }
     }
 
-    private def simplifyPolygon(String form) {
-
-        Geometry annotationFull = new WKTReader().read(form);
-
-        Geometry lastAnnotationFull = annotationFull
-        double ratioMax = 1.6d
-        double ratioMin = 2d
-        /* Number of point (ex: 500 points) */
-        double numberOfPoint = annotationFull.getNumPoints()
-        /* Maximum number of point that we would have (500/5 (max 150)=max 100 points)*/
-        double rateLimitMax = Math.min(numberOfPoint / ratioMax, 150)
-        /* Minimum number of point that we would have (500/10 (min 10 max 100)=min 50 points)*/
-        double rateLimitMin = Math.min(Math.max(numberOfPoint / ratioMin, 10), 100)
-        /* Increase value for the increment (allow to converge faster) */
-        float incrThreshold = 0.25f
-        double increaseIncrThreshold = numberOfPoint / 100d
-        float i = 0;
-        /* Max number of loop (prevent infinite loop) */
-        int maxLoop = 500
-        double rate = 0
-
-        Boolean isPolygonAndNotValid =  (annotationFull instanceof com.vividsolutions.jts.geom.Polygon && !((Polygon)annotationFull).isValid())
-        while (numberOfPoint > rateLimitMax && maxLoop > 0) {
-            rate = i
-            if (isPolygonAndNotValid) {
-                lastAnnotationFull = TopologyPreservingSimplifier.simplify(annotationFull, rate)
-            } else {
-                lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull, rate)
-            }
-            if (lastAnnotationFull.getNumPoints() < rateLimitMin) break;
-            annotationFull = lastAnnotationFull
-            i = i + (incrThreshold * increaseIncrThreshold); maxLoop--;
-        }
-        return [geometry: lastAnnotationFull, rate: rate]
-    }
-
-    private def simplifyPolygon(String form, double rate) {
-       Geometry annotation = new WKTReader().read(form);
-        Boolean isPolygonAndNotValid =  (annotation instanceof com.vividsolutions.jts.geom.Polygon && !((Polygon)annotation).isValid())
-        if (isPolygonAndNotValid) {
-            //Preserving polygon shape but slower than DouglasPeuker
-            annotation = TopologyPreservingSimplifier.simplify(annotation, rate)
-        } else {
-            annotation = DouglasPeuckerSimplifier.simplify(annotation, rate)
-        }
-        return [geometry: annotation, rate: rate]
-    }
-
     /**
      * Restore domain which was previously deleted
      * @param json domain info
@@ -534,7 +483,13 @@ class UserAnnotationService extends ModelService {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Add", domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Add", domain.getCallBack())
+
+         //we store data into annotation instead of userannotation
+        response.data['annotation'] = response.data.userannotation
+        response.data.remove('userannotation')
+
+        return response
     }
     /**
      * Destroy domain which was previously added
@@ -551,6 +506,9 @@ class UserAnnotationService extends ModelService {
         //Build response message
         log.info "destroy remove " + domain.id
         def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Delete", domain.getCallBack())
+         //we store data into annotation instead of userannotation
+        response.data['annotation'] = response.data.userannotation
+        response.data.remove('userannotation')
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -570,6 +528,9 @@ class UserAnnotationService extends ModelService {
     def edit(UserAnnotation domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Edit", domain.getCallBack())
+         //we store data into annotation instead of userannotation
+        response.data['annotation'] = response.data.userannotation
+        response.data.remove('userannotation')
         //Save update
         domainService.saveDomain(domain)
         return response

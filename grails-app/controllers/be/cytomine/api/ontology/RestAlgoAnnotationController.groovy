@@ -190,11 +190,12 @@ class RestAlgoAnnotationController extends RestController {
            if(list.isEmpty() || list[0] instanceof AlgoAnnotation) return list
            def result = []
            list.each {
-               AlgoAnnotation annotation = it[0]
+               AnnotationDomain annotation = it[0]
                annotation.rate = it[1]
                annotation.idTerm = it[2]
                annotation.idExpectedTerm = it[3]
                result << annotation
+
            }
            return result
        }
@@ -340,7 +341,6 @@ class RestAlgoAnnotationController extends RestController {
     private boolean unionPostgisSQL(ImageInstance image, SecUser user, Term term,Integer minIntersectLength,Integer bufferLength) {
         log.info "unionPostgisSQL"
 
-        log.info "********************\n********************\n********************\n********************\n"
         log.info "image=$image"
         log.info "user=$user"
         log.info "term=$term"

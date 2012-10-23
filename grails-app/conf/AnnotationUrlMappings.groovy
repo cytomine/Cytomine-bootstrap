@@ -8,6 +8,38 @@ class AnnotationUrlMappings {
 
     static mappings = {
         /**
+         * Annotation generic
+         */
+        "/api/annotation/union"(controller:"restAnnotationDomain"){
+            action = [PUT:"union", GET:"union"]
+        }
+        "/api/annotation"(controller:"restAnnotationDomain"){
+            action = [GET: "list",POST:"add"]
+        }
+        "/api/annotation/$id"(controller:"restAnnotationDomain"){
+            action = [GET:"show",PUT:"update", DELETE:"delete"]
+        }
+        "/api/imageinstance/$id/annotation"(controller:"restAnnotationDomain"){
+            action = [GET:"listByImage"]
+        }
+        "/api/project/$id/annotation"(controller: "restAnnotationDomain"){
+             action = [GET:"listByProject"]
+         }
+        "/api/imageinstance/$id/annotation"(controller:"restAnnotationDomain"){
+            action = [GET:"listByImage"]
+        }
+        "/api/user/$idUser/imageinstance/$idImage/annotation"(controller:"restAnnotationDomain"){
+            action = [GET:"listByImageAndUser"]
+        }
+        "/api/project/$id/annotation/download"(controller: "restAnnotationDomain"){
+            action = [GET:"downloadDocumentByProject"]
+        }
+        "/api/term/$idterm/project/$idproject/annotation"(controller:"restAnnotationDomain"){
+            action = [GET: "listAnnotationByProjectAndTerm"]
+        }
+
+
+        /**
          * User Annotation
          */
         "/api/userannotation"(controller:"restUserAnnotation"){

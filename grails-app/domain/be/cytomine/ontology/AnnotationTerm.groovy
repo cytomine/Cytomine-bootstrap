@@ -74,11 +74,6 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         catch(Exception e) {
            println e
         }
-        UserAnnotation.list().each {
-            println "***"+it.id
-        }
-
-
         annotationTerm.term = Term.get(jsonAnnotationTerm.term.toString())
         annotationTerm.user = SecUser.get(jsonAnnotationTerm.user.toString())
         if (!annotationTerm.userAnnotation) throw new WrongArgumentException("Annotation ${jsonAnnotationTerm.userannotation.toString()} doesn't exist!")

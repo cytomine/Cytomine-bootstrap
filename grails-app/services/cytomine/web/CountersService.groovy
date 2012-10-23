@@ -2,6 +2,9 @@ package cytomine.web
 
 import be.cytomine.social.SharedAnnotation
 import be.cytomine.ontology.UserAnnotation
+import be.cytomine.project.Project
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.image.ImageInstance
 
 /**
  * Cytomine @ GIGA-ULG
@@ -14,42 +17,67 @@ class CountersService {
     def sessionFactory
 
     def updateCounters() {
-        /*Project.list().each { project ->
+//        Project.list().each { project ->
+//            log.info "update counter for project " + project.name
+//            def images = project.imagesinstance()
+//            def users = project.users()
+//            log.info "users = " + users
+//            if (images.size() > 0) {
+//                long totalCountAnnotations = Annotation.countByImageInList(images)
+//                log.info "totalCountAnnotations = " + totalCountAnnotations
+//                long totalCountAnnotationsByUser = Annotation.countByImageInListAndUserInList(images, users)
+//                log.info "totalCountAnnotationsByUser = " + totalCountAnnotationsByUser
+//                project.countAnnotations = totalCountAnnotationsByUser
+//                project.countJobAnnotations = totalCountAnnotations - totalCountAnnotationsByUser
+//            }
+//            else {
+//                project.setCountAnnotations(0L)
+//                project.setCountJobAnnotations(0L)
+//            }
+//            project.setCountImages(ImageInstance.countByProject(project))
+//            if (!project.validate()) {
+//                project.errors.each {
+//                    log.info it
+//                }
+//            } else {
+//                log.info "Project OK : " + project
+//                project.save(flush : true)
+//            }
+//            project.imagesinstance().each { image ->
+//                long totalCountAnnotations = Annotation.countByImage(image)
+//                long totalCountAnnotationsByUser = Annotation.countByImageAndUserInList(image, users)
+//                image.setCountImageAnnotations(totalCountAnnotationsByUser)
+//                image.setCountImageJobAnnotations(totalCountAnnotations - totalCountAnnotationsByUser)
+//                image.save(flush : true)
+//            }
+//
+//        }
+
+
+        Project.list().each { project ->
             log.info "update counter for project " + project.name
-            def images = project.imagesinstance()
-            def users = project.users()
-            log.info "users = " + users
-            if (images.size() > 0) {
-                long totalCountAnnotations = Annotation.countByImageInList(images)
-                log.info "totalCountAnnotations = " + totalCountAnnotations
-                long totalCountAnnotationsByUser = Annotation.countByImageInListAndUserInList(images, users)
-                log.info "totalCountAnnotationsByUser = " + totalCountAnnotationsByUser
-                project.countAnnotations = totalCountAnnotationsByUser
-                project.countJobAnnotations = totalCountAnnotations - totalCountAnnotationsByUser
-            }
-            else {
-                project.setCountAnnotations(0L)
-                project.setCountJobAnnotations(0L)
-            }
-            project.setCountImages(ImageInstance.countByProject(project))
-            if (!project.validate()) {
-                project.errors.each {
-                    log.info it
+            def userAnnotations = UserAnnotation.countByProject(project)
+            def algoAnnotations = AlgoAnnotation.countByProject(project)
+
+            if(project.countAnnotations!=userAnnotations) {
+                project.setCountAnnotations(userAnnotations)
+                project.setCountJobAnnotations(algoAnnotations)
+
+                project.save(flush: true)
+
+                def images = ImageInstance.findAllByProject(project)
+
+                images.each { image ->
+                    log.info "update counter for image " + image.id
+                    def userAnnotationsImage = UserAnnotation.countByProjectAndImage(project,image)
+                    def algoAnnotationsImage = AlgoAnnotation.countByProjectAndImage(project,image)
+
+                    image.setCountImageAnnotations(userAnnotationsImage)
+                    image.setCountImageJobAnnotations(algoAnnotationsImage)
+                    image.save(flush: true)
                 }
-            } else {
-                log.info "Project OK : " + project
-                project.save(flush : true)
             }
-            project.imagesinstance().each { image ->
-                long totalCountAnnotations = Annotation.countByImage(image)
-                long totalCountAnnotationsByUser = Annotation.countByImageAndUserInList(image, users)
-                image.setCountImageAnnotations(totalCountAnnotationsByUser)
-                image.setCountImageJobAnnotations(totalCountAnnotations - totalCountAnnotationsByUser)
-                image.save(flush : true)
-            }
-
-        }*/
-
+        }
 
 
         sessionFactory.getCurrentSession().clear();
@@ -68,7 +96,7 @@ class CountersService {
             long countComments = (long) SharedAnnotation.countByUserAnnotation(annotation)
 
             annotation.setCountComments(countComments)
-            annotation.save()
+            annotation.save(flush: true)
         }
     }
 }
