@@ -85,7 +85,7 @@ class BootStrap {
         indexService.initIndex()
         grantService.initGrant()
 
-        countersService.updateCounters()
+        //countersService.updateCounters()
 
         grailsApplication.domainClasses.each {domainClass ->//iterate over the domainClasses
             if (domainClass.clazz.name.contains("be.cytomine")) {//only add it to the domains in my plugin
@@ -553,11 +553,6 @@ class BootStrap {
                     password: item.password,
                     enabled: true)
             user.generateKeys()
-
-            println "# user="+user.username + " " + user.id
-            SecUser.list().each {
-                println "### user="+it.username + " " + it.publicKey+ " " + user.privateKey
-            }
 
 
             log.info "Before validating ${user.username}..."

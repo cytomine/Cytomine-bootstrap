@@ -37,6 +37,14 @@ class UrlApi {
         return url+'/api/algoannotation/' + idAnnotation +'/crop.jpg?max_size='+maxWidthOrHeight
     }
 
+    static def getReviewedAnnotationCropWithAnnotationId(String url,Long idAnnotation) {
+        return url+'/api/reviewedannotation/' + idAnnotation +'/crop.jpg'
+    }
+
+    static def getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(String url, Long idAnnotation, int maxWidthOrHeight) {
+        return url+'/api/reviewedannotation/' + idAnnotation +'/crop.jpg?max_size='+maxWidthOrHeight
+    }
+
     static def getAnnotationURL(String url,Long idProject, Long idImage, Long idAnnotation) {
         return  url + '/#tabs-image-' + idProject + "-" + idImage + "-" +  idAnnotation
     }

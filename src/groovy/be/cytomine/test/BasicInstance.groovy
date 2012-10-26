@@ -112,7 +112,48 @@ class BasicInstance {
         annotation
     }
 
+    static ReviewedAnnotation createOrGetBasicReviewedAnnotation() {
+        log.debug "createOrGetBasicReviewedAnnotation()"
 
+        def basedAnnotation = getBasicUserAnnotationNotExist()
+        basedAnnotation.save(flush: true)
+
+        def image = createOrGetBasicImageInstance()
+        def annotation = ReviewedAnnotation.findOrCreateWhere(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                image: image,
+                user: User.findByUsername(Infos.GOODLOGIN),
+                project:image.project,
+                status : 0
+        )
+        annotation.putParentAnnotation(basedAnnotation)
+        checkDomain(annotation)
+        saveDomain(annotation)
+
+        annotation.addToTerm(createOrGetBasicTerm())
+        checkDomain(annotation)
+        saveDomain(annotation)
+        annotation
+    }
+
+    static ReviewedAnnotation getBasicReviewedAnnotationNotExist() {
+        log.debug "getBasicReviewedAnnotation()"
+
+        def basedAnnotation = getBasicUserAnnotationNotExist()
+        basedAnnotation.save(flush: true)
+
+        def image = createOrGetBasicImageInstance()
+        def annotation = ReviewedAnnotation.findOrCreateWhere(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                image: image,
+                user: User.findByUsername(Infos.GOODLOGIN),
+                project:image.project,
+                status : 0
+        )
+        annotation.putParentAnnotation(basedAnnotation)
+        checkDomain(annotation)
+        annotation
+    }
 
     static SharedAnnotation createOrGetBasicSharedAnnotation() {
         log.debug "createOrGetBasicSharedAnnotation()"
@@ -1034,6 +1075,12 @@ class BasicInstance {
     static void compareAnnotation(map, json) {
         assert map.geom.replace(' ', '').equals(json.location.replace(' ', ''))
         assert toLong(map.user.id).equals(toLong(json.user))
+    }
+
+    static void compareReviewedAnnotation(map, json) {
+        assert map.geom.replace(' ', '').equals(json.location.replace(' ', ''))
+        assert toLong(map.user.id).equals(toLong(json.user))
+        assert toLong(map.term.id).equals(toLong(json.term[0]))
     }
 
     /**

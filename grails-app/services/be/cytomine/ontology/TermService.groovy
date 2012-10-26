@@ -14,6 +14,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
+import org.springframework.security.access.prepost.PreAuthorize
 
 class TermService extends ModelService {
 
@@ -56,6 +57,11 @@ class TermService extends ModelService {
 
     def list(UserAnnotation annotation, User user) {
         return AnnotationTerm.findAllByUserAndUserAnnotation(user, annotation).collect {it.term.id}
+    }
+
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    def list(Project project, List ids) {
+        Term.findAllByIdInList(ids)
     }
 
     def statProject(Term term) {

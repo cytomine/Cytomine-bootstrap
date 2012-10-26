@@ -19,7 +19,7 @@ class AnnotationCommentAPI extends DomainAPI {
 
     static def show(Long idAnnotation, Long idComment,String username, String password) {
         log.info "show comment $idComment for userAnnotation $idAnnotation"
-        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/comment/$idComment" + ".json"
+        String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/comment/$idComment" + ".json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
         client.get()
@@ -31,7 +31,7 @@ class AnnotationCommentAPI extends DomainAPI {
 
     static def list(Long idAnnotation,String username, String password) {
         log.info "list comment by userAnnotation $idAnnotation"
-        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/comment.json"
+        String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/comment.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
         client.get()
@@ -56,7 +56,7 @@ class AnnotationCommentAPI extends DomainAPI {
 
     static def create(Long idAnnotation,String jsonAnnotationComment, String username, String password) {
         log.info("post userAnnotation:" + jsonAnnotationComment.replace("\n", ""))
-        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/comment.json"
+        String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/comment.json"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
         client.post(jsonAnnotationComment)

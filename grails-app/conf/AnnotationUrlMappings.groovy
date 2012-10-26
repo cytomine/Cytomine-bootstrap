@@ -74,10 +74,10 @@ class AnnotationUrlMappings {
         /**
          * Comment annotation
          */
-        "/api/userannotation/$userannotation/comment"(controller:"restUserAnnotation"){
+        "/api/annotation/$userannotation/comment"(controller:"restUserAnnotation"){
             action = [POST: "addComment", GET:"listComments"]
         }
-        "/api/userannotation/$userannotation/comment/$id"(controller:"restUserAnnotation"){
+        "/api/annotation/$userannotation/comment/$id"(controller:"restUserAnnotation"){
             action = [GET:"showComment"]
         }
 
@@ -88,7 +88,7 @@ class AnnotationUrlMappings {
         "/api/retrieval/missing/userannotation"(controller: "restRetrieval"){
             action = [GET:"missingAnnotation"]
         }
-        "/api/userannotation/$idannotation/userannotation"(controller:"restRetrieval"){
+        "/api/annotation/$idannotation/retrieval"(controller:"restRetrieval"){
             action = [GET:"listSimilarAnnotationAndBestTerm",POST:"index"]
         }
 

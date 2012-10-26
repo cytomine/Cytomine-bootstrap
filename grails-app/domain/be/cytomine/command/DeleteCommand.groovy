@@ -19,6 +19,8 @@ class DeleteCommand extends Command {
         def oldDomain = service.retrieve(json)
         //Create a backup (for 'undo' op)
         def backup = oldDomain.encodeAsJSON()
+        println "oldDomain:"+oldDomain
+        println "backup:"+backup
         //Init command info
         super.setProject(oldDomain?.projectDomain())
         def response = service.destroy(oldDomain, printMessage)

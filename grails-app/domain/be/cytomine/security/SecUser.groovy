@@ -3,7 +3,7 @@ package be.cytomine.security
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 
-class SecUser extends CytomineDomain {
+class SecUser extends CytomineDomain implements Serializable {
 
     String username
     String password

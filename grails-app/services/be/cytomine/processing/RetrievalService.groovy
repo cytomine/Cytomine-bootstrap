@@ -91,7 +91,7 @@ class RetrievalService {
         map
     }
 
-    private def loadAnnotationSimilarities(AnnotationDomain searchAnnotation,List<Long> projectSearch) {
+    def loadAnnotationSimilarities(AnnotationDomain searchAnnotation,List<Long> projectSearch) {
         log.info "get similarities for userAnnotation " + searchAnnotation.id + " on " + projectSearch
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         def response = getPostSearchResponse(server.url,'/retrieval-web/api/retrieval/search.json', searchAnnotation,projectSearch)
