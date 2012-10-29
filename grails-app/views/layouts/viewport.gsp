@@ -263,6 +263,14 @@ body {
 <div id='dialogs'></div>
 <div id="alerts"></div>
 <div id="phono-messages"></div>
+<script type="text/javascript">
+    var uvOptions = {};
+    (function() {
+        var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+        uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/Ck6lCDC4t7hqSRznqq9yw.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
+    })();
+</script>
 </body>
 <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">
     <script type="text/javascript" src="lib.js" ></script>

@@ -51,6 +51,8 @@ class RestUploadedFileController extends RestController {
 
         //get file to upload
         def f = request.getFile('files[]')
+        println "files[]=" + f
+        println "originalFilename =" + f.getOriginalFilename()
         UploadedFile uploadedFile = null
         if (!f.empty) {
 

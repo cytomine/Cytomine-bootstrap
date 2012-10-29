@@ -14,7 +14,7 @@ var PhonoMenu = Backbone.View.extend({
         ], function (tplPhonoMenu) {
             $("#menu-right").append(tplPhonoMenu);
             self.bindEvents();
-            //self.activate();
+            self.activate();
             $(".online-user").live('click', function (e) {
                 e.preventDefault();
                 var idUser = $(this).attr("data-call-id");
@@ -103,7 +103,7 @@ var PhonoMenu = Backbone.View.extend({
         var loggingBox = this.message("Info", "Logging in progress...");
         var self = this;
         require([
-            "text!application/templates/phono/phonoMenu.tpl.html", "text!application/templates/phono/phonoUser.tpl.html"
+            "text!application/templates/phono/phonoUser.tpl.html"
         ], function (tplPhonoUser) {
             self.loadUsersInterval = setInterval(function () {
                 self.loadUsers(tplPhonoUser);
@@ -131,8 +131,6 @@ var PhonoMenu = Backbone.View.extend({
             phone:{
                 onIncomingCall:function (event) {
                     var call = event.call;
-                    console.log("From " + call.initiator);
-                    console.log("headers=" + call.headers);
                     var cytomine_header = _.find(call.headers, function (header) {
                         return header["name"] == self.sip_cytomine_header
                     });

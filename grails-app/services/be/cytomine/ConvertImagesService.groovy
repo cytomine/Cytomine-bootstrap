@@ -36,9 +36,9 @@ class ConvertImagesService {
             String contextPath = uploadedFile.getPath().endsWith("/") ?  uploadedFile.getPath() :  uploadedFile.getPath() + "/"
             String originalFilenameFullPath = contextPath + uploadedFile.getFilename()
             String convertedFilenameFullPath = contextPath + convertFileName
-            /*def convertCommand = """/usr/local/bin/vips im_vips2tiff "$originalFilenameFullPath" "$convertedFilenameFullPath":jpeg:95,tile:256x256,pyramid"""
-            log.info convertCommand*/
-            def convertCommand = """"$originalFilenameFullPath" -define tiff:tile-geometry=256x256 -compress jpeg 'ptif:$convertedFilenameFullPath'"""
+            def convertCommand = """im_vips2tiff "$originalFilenameFullPath" "$convertedFilenameFullPath":jpeg:95,tile:256x256,pyramid"""
+            log.info convertCommand
+            /*def convertCommand = """"$originalFilenameFullPath" -define tiff:tile-geometry=256x256 -compress jpeg 'ptif:$convertedFilenameFullPath'"""*/
             log.info convertCommand
             try {
                 def ant = new AntBuilder()   // create an antbuilder
@@ -46,7 +46,7 @@ class ConvertImagesService {
                         errorproperty: "cmdErr",
                         resultproperty:"cmdExit",
                         failonerror: "true",
-                        executable: '/usr/local/bin/convert') {
+                        executable: 'vips') {
                     arg(line:convertCommand)
                 }
                 log.info "return code:  ${ant.project.properties.cmdExit}"

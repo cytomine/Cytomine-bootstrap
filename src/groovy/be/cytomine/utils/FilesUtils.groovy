@@ -24,8 +24,8 @@ class FilesUtils {
      * @param file File
      * @return Correct filename for this file
      */
-    public static String correctFileName(def file) {
-        String newFilename = file.originalFilename
+    public static String correctFileName(def originalFilename) {
+        String newFilename = originalFilename
         newFilename = newFilename.replace(" ", "_")
         newFilename = newFilename.replace("(", "_")
         newFilename = newFilename.replace(")", "_")
@@ -33,6 +33,15 @@ class FilesUtils {
         newFilename = newFilename.replace("*", "_")
         newFilename = newFilename.replace("/", "_")
         newFilename = newFilename.replace("@", "_")
+        newFilename = newFilename.replace("'", "_")
+        newFilename = newFilename.replace('"', "_")
+        newFilename = newFilename.replace('$', "_")
+        newFilename = newFilename.replace('€', "_")
+        newFilename = newFilename.replace('£', "_")
+        newFilename = newFilename.replace('°', "_")
+        newFilename = newFilename.replace('`', "_")
+        newFilename = newFilename.replace('[', "_")
+        newFilename = newFilename.replace(']', "_")
         return newFilename
     }
 
