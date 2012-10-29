@@ -18,15 +18,15 @@ var TermModel = Backbone.Model.extend({
 var AnnotationTermModel = Backbone.Model.extend({
     url:function () {
         if (this.term == null)
-            return 'api/annotation/' + this.annotation + '/term.json';
+            return 'api/annotation/' + this.userannotation + '/term.json';
         else if (this.clear != null) {
-            return 'api/annotation/' + this.annotation + '/term/' + this.term + '/clearBefore.json';
+            return 'api/annotation/' + this.userannotation + '/term/' + this.term + '/clearBefore.json';
         }
         else
-            return 'api/annotation/' + this.annotation + '/term/' + this.term + '.json';
+            return 'api/annotation/' + this.userannotation + '/term/' + this.term + '.json';
     },
     initialize:function (options) {
-        this.annotation = options.annotation;
+        this.userannotation = options.userannotation;
         this.term = options.term;
         this.clear = options.clear;
     }

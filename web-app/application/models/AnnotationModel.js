@@ -116,11 +116,11 @@ var AnnotationCollection = Backbone.Collection.extend({
         } else if (this.project != undefined) {
             return "api/project/" + this.project + "/annotation.json";
         } else if (this.image != undefined && this.term != undefined) {
-            return "api/term/" + this.term + "/imageinstance/" + this.image + "/annotation.json";
+            return "api/term/" + this.term + "/imageinstance/" + this.image + "/userannotation.json";
         } else if (this.term != undefined) {
             return "api/term/" + this.term + "/annotation.json";
         } else if (this.image != undefined) {
-            return "api/imageinstance/" + this.image + "/annotation.json";
+            return "api/imageinstance/" + this.image + "/userannotation.json";
         } else {
             return "api/annotation.json";
         }

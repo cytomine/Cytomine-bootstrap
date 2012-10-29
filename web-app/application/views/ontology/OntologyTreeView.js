@@ -158,7 +158,7 @@ var OntologyTreeView = Backbone.View.extend({
     },
     linkTerm:function (idTerm) {
         var self = this;
-        new AnnotationTermModel({userannotation:this.idAnnotation, term:idTerm}).save({annotation:this.idAnnotation, term:idTerm},
+        new AnnotationTermModel({userannotation:this.idAnnotation, term:idTerm}).save({userannotation:this.idAnnotation, term:idTerm},
             {
                 success:function (model, response) {
                     window.app.view.message("Annotation Term", response.message, "success");
@@ -178,7 +178,7 @@ var OntologyTreeView = Backbone.View.extend({
         var annotationTerm = self.annotationTerm.find(function (annotationTerm) {
             return (annotationTerm.get("term") == idTerm && annotationTerm.get("user") == window.app.status.user.id);
         });
-        new AnnotationTermModel({ id:annotationTerm.id, userannotation:this.idAnnotation, term:idTerm}).destroy({
+        new AnnotationTermModel({ id:annotationTerm.id, userannotation:self.idAnnotation, term:idTerm}).destroy({
                 success:function (model, response) {
                     window.app.view.message("Annotation Term", response.message, "success");
                     self.browseImageView.reloadAnnotation(self.idAnnotation);
