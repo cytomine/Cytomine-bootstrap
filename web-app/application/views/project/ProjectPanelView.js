@@ -27,7 +27,8 @@ var ProjectPanelView = Backbone.View.extend({
         "click .addSlide":"showAddSlidesPanel",
         "click .seeSlide":"showSlidesPanel",
         "click .editProject":"editProject",
-        "click .deleteProject":"deleteProject"
+        "click .deleteProject":"deleteProject",
+        "click .infoProject":"infoProject"
     },
     render:function () {
         var self = this;
@@ -114,14 +115,10 @@ var ProjectPanelView = Backbone.View.extend({
         $(self.el).find(".imagesPopover").popover();
         self.renderCurrentProjectButton();
         self.renderShowImageButton(json.numberOfImages);
-
-        /*$(self.el).find(self.imageAddElem + self.model.id).button({
-         icons : {secondary : "ui-icon-plus"}
-         });*/
-
-        /*$(self.el).find(self.projectElem + self.model.get('id')).panel({
-         collapsible:false
-         });*/
+    },
+    infoProject : function() {
+        var self = this;
+        new ProjectInfoDialog({el : self.el, model : self.model}).render();
     },
     editProject:function () {
 
@@ -201,16 +198,13 @@ var ProjectPanelView = Backbone.View.extend({
 
         var self = this;
         var idProject = self.model.get('id');
-        var cont = false;
 
         if (idProject == window.app.status.currentProject) return true;
 
         window.app.controllers.browse.closeAll();
         window.app.status.currentProject = idProject;
 
-
         return true;//go to dashboard
-
     },
     renderShowImageButton:function (imageNumber) {
 

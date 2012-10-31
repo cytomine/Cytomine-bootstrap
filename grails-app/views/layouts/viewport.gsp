@@ -220,6 +220,7 @@ body {
     <script type="text/javascript" src="application/views/project/ProjectAddImageListingDialog.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectAddImageThumbDialog.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectAddImageSearchPanel.js" ></script>
+    <script type="text/javascript" src="application/views/project/ProjectInfoDialog.js" ></script>
 
 
     <script type="text/javascript" src="application/views/annotation/AnnotationListView.js" ></script>

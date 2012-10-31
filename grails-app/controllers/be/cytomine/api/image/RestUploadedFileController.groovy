@@ -51,8 +51,7 @@ class RestUploadedFileController extends RestController {
 
         //get file to upload
         def f = request.getFile('files[]')
-        println "files[]=" + f
-        println "originalFilename =" + f.getOriginalFilename()
+
         UploadedFile uploadedFile = null
         if (!f.empty) {
 
@@ -62,7 +61,7 @@ class RestUploadedFileController extends RestController {
             String fullDestPath = destPath + "/" + currentUser.getId() + "/" + timestamp.toString()
             String newFilename = FilesUtils.correctFileName(f.originalFilename)
             String pathFile = fullDestPath + "/" + newFilename
-
+            String extension = FilesUtils.getExtensionFromFilename(f.originalFilename).toLowerCase()
             //create dir and transfer file
             def mkdirCommand = "mkdir -p " + fullDestPath
             def proc = mkdirCommand.execute()
@@ -75,7 +74,7 @@ class RestUploadedFileController extends RestController {
                     originalFilename: f.originalFilename,
                     filename : currentUser.getId() + "/" + timestamp.toString() + "/" + newFilename,
                     path : destPath.toString(),
-                    ext : FilesUtils.getExtensionFromFilename(f.originalFilename).toLowerCase(),
+                    ext : extension,
                     size : f.size,
                     contentType : f.contentType,
                     project : project,

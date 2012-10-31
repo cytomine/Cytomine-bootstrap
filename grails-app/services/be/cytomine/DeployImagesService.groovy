@@ -26,6 +26,7 @@ class DeployImagesService {
 
         long timestamp = new Date().getTime()
         Slide slide = new Slide(name : timestamp.toString() + "-" + uploadedFile.getOriginalFilename(), index : 0)
+        def _ext = uploadedFile.getConvertedExt()
         Mime mime = Mime.findByExtension(uploadedFile.getConvertedExt())
         AbstractImage abstractImage = new AbstractImage(
                 filename: uploadedFile.getConvertedFilename(),

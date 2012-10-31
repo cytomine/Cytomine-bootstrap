@@ -1,0 +1,32 @@
+<div id="infoProject" title="" class="modal xbigModal hide">
+    <div class="modal-header">
+        <h3><%= name %></h3>
+    </div>
+    <div class="modal-body">
+        <div class="projectBigInfo">
+            <div class="projectBigInfoPanel">
+                <div id="userInfoBigPanel-<%= id %>">
+                    <h5>Creator</h5>
+                    <div id="projectCreator"></div>
+
+                    <h5>Admins</h5>
+                    <div id="projectAdmins"></div>
+
+                    <h5>Users</h5>
+                    <div id="projectUsers"></div>
+
+                    <h5>Online</h5>
+                    <div id="projectUsersOnline"></div>
+                </div>
+                <hr />
+                <h5>Some images</h5>
+                <div id="imageInfoBigPanel-<%= id %>" style="margin-left: 30px;">
+                    <div class="row"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="closeInfoProject" class="btn btn-primary">Close</a>
+    </div>
+</div>

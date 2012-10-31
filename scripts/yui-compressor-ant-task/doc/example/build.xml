@@ -159,6 +159,7 @@
 <fileset dir="${src.dir}" includes="application/views/project/ProjectAddImageListingDialog.js"/>
 <fileset dir="${src.dir}" includes="application/views/project/ProjectAddImageThumbDialog.js"/>
 <fileset dir="${src.dir}" includes="application/views/project/ProjectAddImageSearchPanel.js"/>
+<fileset dir="${src.dir}" includes="application/views/project/ProjectInfoDialog.js"/>
 <fileset dir="${src.dir}" includes="application/views/annotation/AnnotationListView.js"/>
 <fileset dir="${src.dir}" includes="application/views/annotation/AnnotationRetrievalView.js"/>
 <fileset dir="${src.dir}" includes="application/views/annotation/AnnotationQuestionableView.js"/>

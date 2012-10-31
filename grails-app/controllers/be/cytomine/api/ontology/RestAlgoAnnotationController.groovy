@@ -370,8 +370,8 @@ class RestAlgoAnnotationController extends RestController {
                     " AND annotation2.created > annotation1.created\n" +
                     " AND annotation1.user_id = ${user.id}\n" +
                     " AND annotation2.user_id = ${user.id}\n" +
-                    " AND annotation1.id = at1.annotation_id\n" +
-                    " AND annotation2.id = at2.annotation_id\n" +
+                    " AND annotation1.id = at1.annotation_ident\n" +
+                    " AND annotation2.id = at2.annotation_ident\n" +
                     " AND at1.term_id = ${term.id}\n" +
                     " AND at2.term_id = ${term.id}\n" +
                     " AND ST_Perimeter(ST_Intersection(annotation1.location, annotation2.location))>=$minIntersectLength\n"
@@ -386,8 +386,8 @@ class RestAlgoAnnotationController extends RestController {
                     " AND annotation2.created > annotation1.created\n" +
                     " AND annotation1.user_id = ${user.id}\n" +
                     " AND annotation2.user_id = ${user.id}\n" +
-                    " AND annotation1.id = at1.annotation_id\n" +
-                    " AND annotation2.id = at2.annotation_id\n" +
+                    " AND annotation1.id = at1.annotation_ident\n" +
+                    " AND annotation2.id = at2.annotation_ident\n" +
                     " AND at1.term_id = ${term.id}\n" +
                     " AND at2.term_id = ${term.id}\n" +
                     " AND ST_Perimeter(ST_Intersection(ST_Buffer(annotation1.location,$bufferLength), ST_Buffer(annotation2.location,$bufferLength)))>=$minIntersectLength\n"
