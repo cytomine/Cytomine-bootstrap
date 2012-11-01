@@ -9,10 +9,11 @@ import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.MimeImageServer
 import be.cytomine.image.server.StorageAbstractImage
-import be.cytomine.project.Slide
+
 import be.cytomine.server.resolvers.Resolver
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.laboratory.Sample
 
 class AbstractImage extends CytomineDomain implements Serializable {
 
@@ -21,7 +22,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
     String originalFilename
     String filename
     Instrument scanner
-    Slide slide
+    Sample sample
     String path
     Mime mime
     Integer width
@@ -48,7 +49,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
         }
     }
 
-    static belongsTo = Slide
+    static belongsTo = Sample
 
     static hasMany = [abstractimagegroup: AbstractImageGroup, storageAbstractImages: StorageAbstractImage, imageProperties: ImageProperty]
 
@@ -59,7 +60,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
         filename(blank: false, unique: true)
 
         scanner(nullable: true)
-        slide(nullable: true)
+        sample(nullable: true)
 
         path(nullable: false)
         mime(nullable: false)
@@ -106,12 +107,12 @@ class AbstractImage extends CytomineDomain implements Serializable {
         }
         else image.scanner = null
 
-        String slideId = jsonImage.slide.toString()
-        if (!slideId.equals("null")) {
-            image.slide = Slide.get(slideId)
-            if (image.slide == null) throw new WrongArgumentException("Slide was not found with id:" + slideId)
+        String sampleId = jsonImage.sample.toString()
+        if (!sampleId.equals("null")) {
+            image.sample = Sample.get(sampleId)
+            if (image.sample == null) throw new WrongArgumentException("Sample was not found with id:" + sampleId)
         }
-        else image.slide = null
+        else image.sample = null
 
         String mimeId = jsonImage.mime.toString()
         image.mime = Mime.findByExtension(mimeId)
@@ -135,7 +136,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
             returnArray['filename'] = it.filename
             returnArray['originalFilename'] = it.originalFilename
             returnArray['scanner'] = it.scanner?.id
-            returnArray['slide'] = it.slide?.id
+            returnArray['sample'] = it.sample?.id
             returnArray['path'] = it.path
             returnArray['mime'] = it.mime.extension
             returnArray['created'] = it.created ? it.created.time.toString() : null

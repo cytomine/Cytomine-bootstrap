@@ -11,7 +11,7 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.Software
 import be.cytomine.project.Discipline
 import be.cytomine.project.Project
-import be.cytomine.project.Slide
+import be.cytomine.laboratory.Sample
 import be.cytomine.security.Group
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUserSecRole
@@ -355,16 +355,6 @@ class BootStrap {
     }
 
 
-
-
-
-
-
-    private def updateImageProperties() {
-        def c = new ImportController()
-        c.imageproperties()
-    }
-
     /* Methods */
 
     def createImageFilters(imageFilters) {
@@ -419,25 +409,26 @@ class BootStrap {
             }
             if (AbstractImage.findByFilename(item.name)) return
 
-            def slide
+            def sample
             if (item.slidename != null)
-                slide = Slide.findByName(item.slidename)
+                sample = Sample.findByName(item.slidename)
 
-            if (!slide) {
-                String slideName;
+            String sampleName
+            if (!sample) {
+                
                 if (item.slidename == null) {
-                    slideName = "SLIDE " + item.name
+                    sampleName = "SLIDE " + item.name
                 }
                 else {
-                    slideName = item.slidename
+                    sampleName = item.slidename
                 }
 
                 //create one with slidename name
-                slide = new Slide(name: slideName, order: item.order ?: 1)
+                sampleName = new Sample(name: sampleName, order: item.order ?: 1)
 
-                if (slide.validate()) {
+                if (sampleName.validate()) {
 
-                    slide.save(flush: true)
+                    sampleName.save(flush: true)
                 }
             }
             def extension = item.extension ?: "jp2"
@@ -456,7 +447,7 @@ class BootStrap {
             AbstractImage image = new AbstractImage(
                     filename: item.name,
                     scanner: scanner,
-                    slide: slide,
+                    sample: sample,
                     width: item.width,
                     height: item.height,
                     magnification: item.magnification,
@@ -488,8 +479,7 @@ class BootStrap {
                     ImageInstance imageinstance = new ImageInstance(
                             baseImage: image,
                             user: user,
-                            project: project,
-                            slide: image.slide
+                            project: project
                     )
                     if (imageinstance.validate()) {
                         imageinstance.save(flush: true)
@@ -743,25 +733,25 @@ class BootStrap {
         //        }
     }
 
-    def createSlides(slideSamples) {
-        slideSamples.each {item ->
-            if (Slide.findByName(item.name)) return
-            def slide = new Slide(name: item.name, order: item.order)
+    def createSamples(samples) {
+        samples.each {item ->
+            if (Sample.findByName(item.name)) return
+            def slide = new Sample(name: item.name, order: item.order)
 
             if (slide.validate()) {
-                log.info "Creating slide  ${item.name}..."
+                log.info "Creating sample  ${item.name}..."
 
                 slide.save(flush: true)
 
                 /* Link to projects */
                 /*item.projects.each { elem ->
                     Project project = Project.findByName(elem.name)
-                    ProjectSlide.link(project, slide)
+                    ProjectSlide.link(project, sample)
                 }*/
 
 
             } else {
-                log.info("\n\n\n Errors in slide boostrap for ${item.name}!\n\n\n")
+                log.info("\n\n\n Errors in sample boostrap for ${item.name}!\n\n\n")
                 slide.errors.each {
                     err -> log.info err
                 }
@@ -785,7 +775,7 @@ class BootStrap {
                     path: item.path,
                     mime: mime,
                     scanner: null,
-                    slide: slides[item.slide],
+                    sample: slides[item.slide],
                     created: created
             )
 

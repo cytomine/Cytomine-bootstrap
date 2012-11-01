@@ -1,4 +1,4 @@
-package be.cytomine.project.laboratory
+package be.cytomine.laboratory
 
 import be.cytomine.CytomineDomain
 

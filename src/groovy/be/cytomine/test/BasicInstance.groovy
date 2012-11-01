@@ -7,7 +7,7 @@ import be.cytomine.image.Mime
 import be.cytomine.image.acquisition.Instrument
 import be.cytomine.project.Discipline
 import be.cytomine.project.Project
-import be.cytomine.project.Slide
+
 import be.cytomine.social.SharedAnnotation
 import com.vividsolutions.jts.io.WKTReader
 import org.apache.commons.logging.Log
@@ -16,6 +16,7 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder
 import be.cytomine.ontology.*
 import be.cytomine.processing.*
 import be.cytomine.security.*
+import be.cytomine.laboratory.Sample
 
 /**
  * Created by IntelliJ IDEA.
@@ -231,7 +232,7 @@ class BasicInstance {
         log.debug "createOrGetBasicAbstractImage()"
         AbstractImage image = AbstractImage.findByFilename("filename")
         if (!image) {
-            image = new AbstractImage(filename: "filename", scanner: createOrGetBasicScanner(), slide: null, mime: BasicInstance.createOrGetBasicMime(), path: "pathpathpath")
+            image = new AbstractImage(filename: "filename", scanner: createOrGetBasicScanner(), sample: null, mime: BasicInstance.createOrGetBasicMime(), path: "pathpathpath")
         }
         checkDomain(image)
         saveDomain(image)
@@ -247,7 +248,7 @@ class BasicInstance {
             randomInt = random.nextInt()
             image = AbstractImage.findByFilename(randomInt + "")
         }
-        image = new AbstractImage(filename: randomInt, scanner: createOrGetBasicScanner(), slide: null, mime: BasicInstance.createOrGetBasicMime(), path: "pathpathpath")
+        image = new AbstractImage(filename: randomInt, scanner: createOrGetBasicScanner(), sample: null, mime: BasicInstance.createOrGetBasicMime(), path: "pathpathpath")
         checkDomain(image)
         image
     }
@@ -670,37 +671,37 @@ class BasicInstance {
         scanner
     }
 
-    static Slide createOrGetBasicSlide() {
+    static Sample createOrGetBasicSlide() {
         log.debug "createOrGetBasicSlide()"
         def name = "BasicSlide".toUpperCase()
-        def slide = Slide.findByName(name)
+        def slide = Sample.findByName(name)
         if (!slide) {
 
-            slide = new Slide(name: name)
+            slide = new Sample(name: name)
             slide.validate()
-            log.debug "slide.errors=" + slide.errors
+            log.debug "sample.errors=" + slide.errors
             slide.save(flush: true)
-            log.debug "slide.errors=" + slide.errors
+            log.debug "sample.errors=" + slide.errors
         }
         assert slide != null
         slide
     }
 
-    static Slide getBasicSlideNotExist() {
+    static Sample getBasicSlideNotExist() {
 
         log.debug "getBasicSlideNotExist()"
         def random = new Random()
         def randomInt = random.nextInt()
-        def slide = Slide.findByName(randomInt + "")
+        def slide = Sample.findByName(randomInt + "")
 
         while (slide) {
             randomInt = random.nextInt()
-            slide = Slide.findByName(randomInt + "")
+            slide = Sample.findByName(randomInt + "")
         }
 
-        slide = new Slide(name: randomInt + "")
+        slide = new Sample(name: randomInt + "")
         assert slide.validate()
-        log.debug "slide.errors=" + slide.errors
+        log.debug "sample.errors=" + slide.errors
         slide
     }
 
@@ -1092,7 +1093,7 @@ class BasicInstance {
     static void compareAbstractImage(map, json) {
         assert map.filename.equals(json.filename)
         assert toLong(map.scanner.id).equals(toLong(json.scanner))
-        assert toLong(map.slide.id).equals(toLong(json.slide))
+//        assert toLong(map.sample.id).equals(toLong(json.sample))
         assert map.path.equals(json.path)
         assert map.mime.extension.equals(json.mime)
     }

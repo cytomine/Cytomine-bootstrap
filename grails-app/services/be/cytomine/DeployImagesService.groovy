@@ -3,7 +3,7 @@ package be.cytomine
 import be.cytomine.image.server.MimeImageServer
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
-import be.cytomine.project.Slide
+import be.cytomine.laboratory.Sample
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import grails.converters.JSON
@@ -16,7 +16,6 @@ class DeployImagesService {
     def remoteCopyService
     def cytomineService
     def abstractImageService
-    def slideService
     def imageInstanceService
     static transactional = true
 
@@ -25,18 +24,18 @@ class DeployImagesService {
         uploadedFile.refresh()
 
         long timestamp = new Date().getTime()
-        Slide slide = new Slide(name : timestamp.toString() + "-" + uploadedFile.getOriginalFilename(), index : 0)
+        Sample sample = new Sample(name : timestamp.toString() + "-" + uploadedFile.getOriginalFilename())
         def _ext = uploadedFile.getConvertedExt()
         Mime mime = Mime.findByExtension(uploadedFile.getConvertedExt())
         AbstractImage abstractImage = new AbstractImage(
                 filename: uploadedFile.getConvertedFilename(),
                 originalFilename:  uploadedFile.getOriginalFilename(),
                 scanner: null,
-                slide: slide,
+                sample: sample,
                 path: uploadedFile.getConvertedFilename(),
                 mime: mime)
 
-        if (slide.validate() && abstractImage.validate()) {
+        if (sample.validate() && abstractImage.validate()) {
 
             Collection<Storage> storages = MimeImageServer.findAllByMime(mime).collect {it.imageServer.storage}.unique()
             storages.each { storage ->
@@ -50,10 +49,10 @@ class DeployImagesService {
 
             uploadedFile.setStatus(UploadedFile.DEPLOYED)
             uploadedFile.save()
-            //slideService.add(JSON.parse(slide.encodeAsJSON()))
-            slide.save(flush : true)
-            slide.refresh()
-            abstractImage.setSlide(slide)
+            //slideService.add(JSON.parse(sample.encodeAsJSON()))
+            sample.save(flush : true)
+            sample.refresh()
+            abstractImage.setSample(sample)
             //abstractImageService.add(JSON.parse(abstractImage.encodeAsJSON()))
             //abstractImage.refresh()
             abstractImage.save(flush: true)
@@ -64,7 +63,7 @@ class DeployImagesService {
             }
             if (uploadedFile.getProject() != null) {
 
-                ImageInstance imageInstance = new ImageInstance( baseImage : abstractImage, project:  uploadedFile.getProject(), slide:  slide, user :currentUser)
+                ImageInstance imageInstance = new ImageInstance( baseImage : abstractImage, project:  uploadedFile.getProject(), user :currentUser)
                 imageInstanceService.add(JSON.parse(imageInstance.encodeAsJSON()))
                 //imageInstance.save()
             }
@@ -73,11 +72,11 @@ class DeployImagesService {
             abstractImage.save(flush : true)
 
         } else {
-            slide.errors?.each {
-                log.info "Slide error : " + it
+            sample.errors?.each {
+                log.info "Sample error : " + it
             }
             abstractImage.errors?.each {
-                log.info "Slide error : " + it
+                log.info "Sample error : " + it
             }
         }
     }

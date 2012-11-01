@@ -500,7 +500,7 @@ public class Auto_Threshold implements PlugIn {
 		// Annals of the New York Academy of Sciences, vol. 128, pp. 1035-1053, 1966.
 		// ported to ImageJ plugin by G.Landini from Antti Niemisto's Matlab code (GPL)
 		// Original Matlab code Copyright (C) 2004 Antti Niemisto
-		// See http://www.cs.tut.fi/~ant/histthresh/ for an excellent slide presentation
+		// See http://www.cs.tut.fi/~ant/histthresh/ for an excellent sample presentation
 		// and the original Matlab code.
 		//
 		// Assumes a bimodal histogram. The histogram needs is smoothed (using a
@@ -794,7 +794,7 @@ public class Auto_Threshold implements PlugIn {
 		 // C. A. Glasbey, "An analysis of histogram-based thresholding algorithms," CVGIP: Graphical Models and Image Processing, vol. 55, pp. 532-537, 1993.
 		// Ported to ImageJ plugin by G.Landini from Antti Niemisto's Matlab code (GPL)
 		// Original Matlab code Copyright (C) 2004 Antti Niemisto
-		// See http://www.cs.tut.fi/~ant/histthresh/ for an excellent slide presentation
+		// See http://www.cs.tut.fi/~ant/histthresh/ for an excellent sample presentation
 		// and the original Matlab code.
 
 		int threshold =  Mean(data); //Initial estimate for the threshold is found with the MEAN algorithm.
@@ -863,7 +863,7 @@ public class Auto_Threshold implements PlugIn {
 		// Annals of the New York Academy of Sciences, vol. 128, pp. 1035-1053, 1966.
 		// ported to ImageJ plugin by G.Landini from Antti Niemisto's Matlab code (GPL)
 		// Original Matlab code Copyright (C) 2004 Antti Niemisto
-		// See http://www.cs.tut.fi/~ant/histthresh/ for an excellent slide presentation
+		// See http://www.cs.tut.fi/~ant/histthresh/ for an excellent sample presentation
 		// and the original Matlab code.
 		//
 		// Assumes a bimodal histogram. The histogram needs is smoothed (using a
@@ -1015,7 +1015,7 @@ public class Auto_Threshold implements PlugIn {
 		// Journal of the Association for Computing Machinery, vol. 9,pp. 259-267, 1962.
 		// ported to ImageJ plugin by G.Landini from Antti Niemisto's Matlab code (GPL)
 		// Original Matlab code Copyright (C) 2004 Antti Niemisto
-		// See http://www.cs.tut.fi/~ant/histthresh/ for an excellent slide presentation
+		// See http://www.cs.tut.fi/~ant/histthresh/ for an excellent sample presentation
 		// and the original Matlab code.
 
 		int iter =0;

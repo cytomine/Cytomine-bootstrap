@@ -166,7 +166,7 @@ var ProjectSearchPanel = Backbone.View.extend({
     refreshSearchPanel:function (Projects) {
 
         //refresh item from search panel
-        //ex: if a user add 1 slide to the project that have the hight number of slide, number of slides slider value must be change
+        //ex: if a user add 1 sample to the project that have the hight number of sample, number of slides slider value must be change
         var self = this;
 
         self.loadSlider();
@@ -255,7 +255,7 @@ var ProjectSearchPanel = Backbone.View.extend({
      * @param searchText Project Name
      * @param searchOntologies Ontologies
      * @param searchNumberOfImages Number of image array [min,max]
-     * @param searchNumberOfSlides Number of slide array [min,max]
+     * @param searchNumberOfSlides Number of sample array [min,max]
      * @param searchNumberOfAnnotations  Number of annotations array [min,max]
      */
     filterProjects:function (searchText, searchOntologies, searchDisciplines, searchNumberOfImages, searchNumberOfSlides, searchNumberOfAnnotations) {

@@ -4,7 +4,7 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.project.Project
-import be.cytomine.project.Slide
+
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
@@ -22,7 +22,6 @@ class ImageInstance extends CytomineDomain implements Serializable {
 
     AbstractImage baseImage
     Project project
-    Slide slide
     SecUser user
     Long countImageAnnotations = 0L
     Long countImageJobAnnotations = 0L
@@ -31,7 +30,6 @@ class ImageInstance extends CytomineDomain implements Serializable {
 
     static constraints = {
         baseImage(unique: ['project'])
-        slide(nullable: true)
         countImageAnnotations nullable: true
     }
 
@@ -94,13 +92,6 @@ class ImageInstance extends CytomineDomain implements Serializable {
         }
         else image.project = null
 
-        String slideId = jsonImage.slide.toString()
-        if (!slideId.equals("null")) {
-            image.slide = Slide.get(Long.parseLong(slideId))
-            if (image.slide == null) throw new WrongArgumentException("Slide was not found with id:" + slideId)
-        }
-        else image.slide = null
-
         try {image.countImageAnnotations = Long.parseLong(jsonImage.numberOfAnnotations.toString()) } catch (Exception e) {
             image.countImageAnnotations = 0
         }
@@ -132,8 +123,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
             returnArray['filename'] = it.baseImage ? it.baseImage.filename : null
             returnArray['originalFilename'] = it.baseImage ? it.baseImage.originalFilename : null
 
-            if (it.slideId) returnArray['slide'] = it.slideId
-            else returnArray['slide'] = it.slide?.id
+            returnArray['sample'] = it.baseImage ? it.baseImage.sample : null
 
             returnArray['path'] = it.baseImage.path
             returnArray['mime'] = it.baseImage?.mime?.extension
@@ -147,7 +137,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
 
             returnArray['roi'] = it.baseImage.roi.toString()*/
 
-            //returnArray['info'] = it.baseImage.slide?.name
+            //returnArray['info'] = it.baseImage.sample?.name
             //returnArray['annotations'] = it.annotations
             // returnArray['thumb'] = it.baseImage.getThumbURL()
             //returnArray['preview'] = it.baseImage ? it.baseImage.getPreviewURL() : null

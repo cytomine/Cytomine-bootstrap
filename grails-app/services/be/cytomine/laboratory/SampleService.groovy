@@ -1,18 +1,18 @@
-package be.cytomine.image
+package be.cytomine.laboratory
 
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
-import be.cytomine.project.Slide
+
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.orm.PagedResultList
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 
-class SlideService extends ModelService {
+class SampleService extends ModelService {
 
     static transactional = true
 
@@ -20,11 +20,11 @@ class SlideService extends ModelService {
     def cytomineService
 
     def list() {
-        Slide.list()
+        Sample.list()
     }
 
     def list(User user) {
-        user.slides()
+        user.samples()
     }
 
     PagedResultList list(SecUser user, def page, def limit, def sortedRow, def sord) {
@@ -33,7 +33,7 @@ class SlideService extends ModelService {
         int pg = Integer.parseInt(page) - 1
         int max = Integer.parseInt(limit)
         int offset = pg * max
-        PagedResultList results = user.slides(max, offset, sortedRow, sord)
+        PagedResultList results = user.samples(max, offset, sortedRow, sord)
 
         data.page = pg + ""
         data.records = results.totalCount
@@ -43,7 +43,7 @@ class SlideService extends ModelService {
     }
 
     def read(def id) {
-        Slide.read(id)
+        Sample.read(id)
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -68,8 +68,8 @@ class SlideService extends ModelService {
      * @param json JSON with new domain info
      * @return new domain
      */
-    Slide createFromJSON(def json) {
-        return Slide.createFromData(json)
+    Sample createFromJSON(def json) {
+        return Sample.createFromData(json)
     }
 
     /**
@@ -80,10 +80,10 @@ class SlideService extends ModelService {
      * @return response
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Slide.createFromDataWithId(json), printMessage)
+        create(Sample.createFromDataWithId(json), printMessage)
     }
 
-    def create(Slide domain, boolean printMessage) {
+    def create(Sample domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
@@ -98,10 +98,10 @@ class SlideService extends ModelService {
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
-        destroy(Slide.get(json.id), printMessage)
+        destroy(Sample.get(json.id), printMessage)
     }
 
-    def destroy(Slide domain, boolean printMessage) {
+    def destroy(Sample domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain,  [domain.id, domain.name, domain.index], printMessage, "Delete", domain.getCallBack())
         //Delete object
@@ -117,10 +117,10 @@ class SlideService extends ModelService {
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new Slide(), json), printMessage)
+        edit(fillDomainWithData(new Sample(), json), printMessage)
     }
 
-    def edit(Slide domain, boolean printMessage) {
+    def edit(Sample domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain,  [domain.id, domain.name, domain.index], printMessage, "Edit", domain.getCallBack())
         //Save update
@@ -135,9 +135,9 @@ class SlideService extends ModelService {
      * @return domain retrieve thanks to json
      */
     def retrieve(JSONObject json) {
-        Slide slide
-        slide = Slide.read(json.id)
-        if (!slide) throw new ObjectNotFoundException("Slide " + json.id + " not found")
-        return slide
+        Sample sample
+        sample = Sample.read(json.id)
+        if (!sample) throw new ObjectNotFoundException("Sample " + json.id + " not found")
+        return sample
     }
 }

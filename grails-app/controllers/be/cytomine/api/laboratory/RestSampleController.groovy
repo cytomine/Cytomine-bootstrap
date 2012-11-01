@@ -1,20 +1,21 @@
-package be.cytomine.api.image
+package be.cytomine.api.laboratory
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
-import be.cytomine.project.Slide
+
 import be.cytomine.security.SecUser
 import grails.converters.JSON
+import be.cytomine.laboratory.Sample
 
-class RestSlideController extends RestController {
+class RestSampleController extends RestController {
 
     def springSecurityService
     def userService
-    def slideService
+    def sampleService
     def cytomineService
 
     def list = {
-        responseSuccess(slideService.list())
+        responseSuccess(sampleService.list())
     }
 
     def listByUser = {
@@ -31,9 +32,9 @@ class RestSlideController extends RestController {
             String sortedRow = params.sidx
             String sord = params.sord
             if (page || limit || sortedRow || sord)
-                responseSuccess(slideService.list(user, page, limit, sortedRow, sord))
+                responseSuccess(sampleService.list(user, page, limit, sortedRow, sord))
             else
-                responseSuccess(slideService.list(user))
+                responseSuccess(sampleService.list(user))
 
         }
         else responseNotFound("User", params.id)
@@ -41,15 +42,15 @@ class RestSlideController extends RestController {
 
 
     def show = {
-        Slide slide = slideService.read(params.long('id'))
-        if (slide) responseSuccess(slide)
-        else responseNotFound("Slide", params.id)
+        Sample sample = sampleService.read(params.long('id'))
+        if (sample) responseSuccess(sample)
+        else responseNotFound("Sample", params.id)
     }
 
     def add = {
         try {
             def json = request.JSON
-            def result = slideService.add(json)
+            def result = sampleService.add(json)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -61,8 +62,8 @@ class RestSlideController extends RestController {
     def update = {
         def json = request.JSON
         try {
-            def domain = slideService.retrieve(json)
-            def result = slideService.update(domain,json)
+            def domain = sampleService.retrieve(json)
+            def result = sampleService.update(domain,json)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -73,8 +74,8 @@ class RestSlideController extends RestController {
     def delete = {
         def json = JSON.parse("{id : $params.id}")
         try {
-            def domain = slideService.retrieve(json)
-            def result = slideService.delete(domain,json)
+            def domain = sampleService.retrieve(json)
+            def result = sampleService.delete(domain,json)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)

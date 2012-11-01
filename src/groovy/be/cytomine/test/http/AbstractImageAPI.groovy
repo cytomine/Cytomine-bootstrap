@@ -3,7 +3,7 @@ package be.cytomine.test.http
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.Mime
 import be.cytomine.image.acquisition.Instrument
-import be.cytomine.project.Slide
+import be.cytomine.laboratory.Sample
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstance
 import be.cytomine.test.HttpClient
@@ -96,8 +96,8 @@ class AbstractImageAPI extends DomainAPI {
         Instrument newScanner = BasicInstance.getNewScannerNotExist()
         newScanner.save(flush:true)
 
-        Slide oldSlide = BasicInstance.createOrGetBasicSlide()
-        Slide newSlide = BasicInstance.getBasicSlideNotExist()
+        Sample oldSlide = BasicInstance.createOrGetBasicSlide()
+        Sample newSlide = BasicInstance.getBasicSlideNotExist()
         newSlide.save(flush:true)
 
         User oldUser = BasicInstance.createOrGetBasicUser()
@@ -118,8 +118,8 @@ class AbstractImageAPI extends DomainAPI {
         Integer newHeight = 900000
 
 
-        def mapNew = ["filename":newFilename,"geom":newGeom,"scanner":newScanner,"slide":newSlide,"path":newPath,"mime":newMime,"width":newWidth,"height":newHeight,"user":newUser]
-        def mapOld = ["filename":oldFilename,"geom":oldGeom,"scanner":oldScanner,"slide":oldSlide,"path":oldPath,"mime":oldMime,"width":oldWidth,"height":oldHeight,"user":oldUser]
+        def mapNew = ["filename":newFilename,"geom":newGeom,"scanner":newScanner,"sample":newSlide,"path":newPath,"mime":newMime,"width":newWidth,"height":newHeight,"user":newUser]
+        def mapOld = ["filename":oldFilename,"geom":oldGeom,"scanner":oldScanner,"sample":oldSlide,"path":oldPath,"mime":oldMime,"width":oldWidth,"height":oldHeight,"user":oldUser]
 
         /* Create a old AbstractImage with point 1111 1111 */
         /* Create a old image */
@@ -127,7 +127,7 @@ class AbstractImageAPI extends DomainAPI {
         AbstractImage imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
         imageToAdd.filename = oldFilename
         imageToAdd.scanner = oldScanner
-        imageToAdd.slide = oldSlide
+        imageToAdd.sample = oldSlide
         imageToAdd.path = oldPath
         imageToAdd.mime = oldMime
         imageToAdd.width = oldWidth

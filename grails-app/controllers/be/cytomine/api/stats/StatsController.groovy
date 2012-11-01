@@ -149,7 +149,7 @@ class StatsController extends RestController {
     }
 
     /**
-     * Compute the number of annotation for each slide and for each term
+     * Compute the number of annotation for each sample and for each term
      */
     def statTermSlide = {
 
@@ -196,7 +196,7 @@ class StatsController extends RestController {
     }
 
     /**
-     * For each user, compute the number of slide where he made annotation
+     * For each user, compute the number of sample where he made annotation
      */
     def statUserSlide = {
         Project project = Project.read(params.id)

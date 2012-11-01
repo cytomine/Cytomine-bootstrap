@@ -88,11 +88,11 @@ class Project extends CytomineDomain implements Serializable {
         countJobAnnotations  //may return null
     }
 
-    def slides() {
+    def samples() {
         ImageInstance.createCriteria().list {
-            join 'slide'
+            join 'sample'
             projections {
-                groupProperty('slide')
+                groupProperty('sample')
             }
             eq("project", this)
         }
@@ -100,9 +100,9 @@ class Project extends CytomineDomain implements Serializable {
 
     def countSlides() {
         def query = ImageInstance.createCriteria().list {
-            join 'slide'
+            join 'sample'
             projections {
-                countDistinct('slide.id')
+                countDistinct('sample.id')
             }
             eq("project", this)
         }

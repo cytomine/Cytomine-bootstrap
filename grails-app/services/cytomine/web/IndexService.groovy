@@ -24,7 +24,7 @@ class IndexService {
             /**
              * Abastract Image //already created (via unique) on filename
              */
-            createIndex(statement, "abstract_image", "slide_id");
+            createIndex(statement, "abstract_image", "sample_id");
             createIndex(statement, "abstract_image", "created");
             /**
              * Abstract_Image_group
@@ -34,7 +34,6 @@ class IndexService {
             /**
              * Image_Instance //base image & project already created
              */
-            createIndex(statement, "image_instance", "slide_id");
             createIndex(statement, "image_instance", "user_id");
             createIndex(statement, "image_instance", "created");
             /**
@@ -64,10 +63,10 @@ class IndexService {
             createIndex(statement, "project_group", "project_id");
             createIndex(statement, "project_group", "group_id");
             /**
-             * Slide
+             * Sample
              */
-            createIndex(statement, "slide", "name");
-            createIndex(statement, "slide", "created");
+            createIndex(statement, "sample", "name");
+            createIndex(statement, "sample", "created");
             /**
              * Use_group
              */

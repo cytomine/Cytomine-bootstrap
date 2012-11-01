@@ -111,7 +111,7 @@ class User extends SecUser {
 
     }
 
-    def slides() {
+    def samples() {
         def userGroup = userGroups()
         AbstractImage.createCriteria().list {
             inList("id", AbstractImageGroup.createCriteria().list {
@@ -121,12 +121,12 @@ class User extends SecUser {
                 }
             })
             projections {
-                groupProperty('slide')
+                groupProperty('sample')
             }
         }
     }
 
-    def slides(int max, int first, String col, String order) {
+    def samples(int max, int first, String col, String order) {
         def userGroup = userGroups()
         AbstractImage.createCriteria().list(offset: first, max: max, sort: col, order: order) {
             inList("id", AbstractImageGroup.createCriteria().list {
@@ -136,7 +136,7 @@ class User extends SecUser {
                 }
             })
             projections {
-                groupProperty('slide')
+                groupProperty('sample')
             }
         }
     }

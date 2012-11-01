@@ -60,12 +60,12 @@ class UserJob extends SecUser {
         user.abstractimage(max,first,col,order,filename,dateAddedStart,dateAddedStop)
     }
 
-    def slides() {
-        user.slides()
+    def samples() {
+        user.samples()
     }
 
-    def slides(int max, int first, String col, String order) {
-        user.slides(max,first,col,order)
+    def samples(int max, int first, String col, String order) {
+        user.samples(max,first,col,order)
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {

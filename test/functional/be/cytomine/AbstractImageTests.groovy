@@ -75,7 +75,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
   void testaddImageWithUnexistingSlide() {
       def imageToAdd = BasicInstance.getBasicAbstractImageNotExist()
       def json = JSON.parse((String)imageToAdd.encodeAsJSON())
-      json.slide = -99
+      json.sample = -99
       def result = AbstractImageAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(400, result.code)
   }

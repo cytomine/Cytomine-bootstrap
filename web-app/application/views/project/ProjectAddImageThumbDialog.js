@@ -210,7 +210,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
 
     addImageToProject:function (idImage, idProject) {
 
-        //add slide to project
+        //add sample to project
         new ImageInstanceModel({}).save({project:idProject, user:null, baseImage:idImage}, {
             success:function (image, response) {
 
@@ -226,8 +226,8 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
 
     deleteImageToProject:function (idImage, idProject) {
 
-        //add slide to project
-        //delete slide from project
+        //add sample to project
+        //delete sample from project
         //use fake ID since backbone > 0.5 : we should destroy only object saved or fetched
         new ImageInstanceModel({id:1, project:idProject, user:null, baseImage:idImage}).destroy({
             success:function (image, response) {
