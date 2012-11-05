@@ -459,4 +459,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)
     }
 
+
+
 }

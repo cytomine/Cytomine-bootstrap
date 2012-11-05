@@ -11,6 +11,9 @@ import be.cytomine.test.http.ProjectAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.UserAnnotation
 
 /**
  * Created by IntelliJ IDEA.
@@ -182,4 +185,133 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
         def result = ProjectAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(404, result.code)
     }
+
+
+    void testProjectCounterUserAnnotationCounter() {
+          //create project
+          Project project = BasicInstance.getBasicProjectNotExist()
+          BasicInstance.checkDomain(project)
+          BasicInstance.saveDomain(project)
+          ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+          image.project = project
+          BasicInstance.checkDomain(image)
+          BasicInstance.saveDomain(image)
+
+          //check if 0 algo annotation
+          assert project.countAnnotations == 0
+          assert image.countImageAnnotations == 0
+
+          //add algo annotation
+          UserAnnotation a1 = BasicInstance.getBasicUserAnnotationNotExist()
+          a1.image = image
+          a1.project = project
+          BasicInstance.checkDomain(a1)
+          BasicInstance.saveDomain(a1)
+
+          project.refresh()
+          image.refresh()
+
+          //check if 1 algo annotation
+          assert project.countAnnotations == 1
+          assert image.countImageAnnotations == 1
+
+          //add algo annotation
+          UserAnnotation a2 = BasicInstance.getBasicUserAnnotationNotExist()
+          a2.image = image
+          a2.project = project
+          BasicInstance.checkDomain(a2)
+          BasicInstance.saveDomain(a2)
+
+          project.refresh()
+          image.refresh()
+
+         //check if 2 algo annotation
+          assert project.countAnnotations == 2
+          assert image.countImageAnnotations == 2
+
+          //remove algo annotation
+          a1.delete(flush: true)
+
+
+          project.refresh()
+          image.refresh()
+
+          //check if 1 algo annotation
+          assert project.countAnnotations == 1
+          assert image.countImageAnnotations == 1
+
+          //remove algo annotation
+          a2.delete(flush: true)
+
+          project.refresh()
+          image.refresh()
+
+          //check if 1 algo annotation
+          assert project.countAnnotations == 0
+          assert image.countImageAnnotations == 0
+
+      }
+
+
+
+    void testProjectCounterAlgoAnnotationCounter() {
+         //create project
+         Project project = BasicInstance.getBasicProjectNotExist()
+         BasicInstance.saveDomain(project)
+         ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+         image.project = project
+         BasicInstance.saveDomain(image)
+
+         //check if 0 algo annotation
+         project.refresh()
+         image.refresh()
+         assert project.countJobAnnotations == 0
+         assert image.countImageJobAnnotations == 0
+
+         //add algo annotation
+         AlgoAnnotation a1 = BasicInstance.getBasicAlgoAnnotationNotExist()
+         a1.image = image
+         a1.project = project
+         BasicInstance.checkDomain(a1)
+         BasicInstance.saveDomain(a1)
+
+         //check if 1 algo annotation
+        project.refresh()
+        image.refresh()
+         assert project.countJobAnnotations == 1
+         assert image.countImageJobAnnotations == 1
+
+         //add algo annotation
+         AlgoAnnotation a2 = BasicInstance.getBasicAlgoAnnotationNotExist()
+         a2.image = image
+         a2.project = project
+         BasicInstance.checkDomain(a2)
+         BasicInstance.saveDomain(a2)
+
+        //check if 2 algo annotation
+        project.refresh()
+        image.refresh()
+         assert project.countJobAnnotations == 2
+         assert image.countImageJobAnnotations == 2
+
+         //remove algo annotation
+         a1.delete(flush: true)
+
+         //check if 1 algo annotation
+        project.refresh()
+        image.refresh()
+         assert project.countJobAnnotations == 1
+         assert image.countImageJobAnnotations == 1
+
+         //remove algo annotation
+         a2.delete(flush: true)
+
+         //check if 1 algo annotation
+        project.refresh()
+        image.refresh()
+         assert project.countJobAnnotations == 0
+         assert image.countImageJobAnnotations == 0
+
+     }
+
 }

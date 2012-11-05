@@ -173,9 +173,9 @@ class TriggerService {
         END ;
          \$decProjAnnAlgo\$ LANGUAGE plpgsql; """
 
-        String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationProjectAlgo on user_annotation;"
+        String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationProjectAlgo on algo_annotation;"
 
-        String createTrigger = "CREATE TRIGGER countDecrAnnotationProjectAlgo AFTER DELETE ON user_annotation FOR EACH ROW EXECUTE PROCEDURE decrementProjectAnnotationAlgo(); "
+        String createTrigger = "CREATE TRIGGER countDecrAnnotationProjectAlgo AFTER DELETE ON algo_annotation FOR EACH ROW EXECUTE PROCEDURE decrementProjectAnnotationAlgo(); "
 
         log.info createFunction
         log.info dropTrigger
@@ -211,7 +211,7 @@ class TriggerService {
         CREATE OR REPLACE FUNCTION incrementImageAnnotationAlgo() RETURNS trigger as \$incImageAnn\$
         BEGIN
             UPDATE image_instance
-            SET count_image_annotations = count_image_annotations + 1
+            SET count_image_job_annotations = count_image_job_annotations + 1
             WHERE image_instance.id = NEW.image_id;
             RETURN NEW;
         END ;
@@ -255,7 +255,7 @@ class TriggerService {
         CREATE OR REPLACE FUNCTION decrementImageAnnotationAlgo() RETURNS trigger as \$decImageAnnAlgo\$
         BEGIN
             UPDATE image_instance
-            SET count_image_annotations = count_image_annotations - 1
+            SET count_image_job_annotations = count_image_job_annotations - 1
             WHERE image_instance.id = OLD.image_id;
         RETURN OLD;
 

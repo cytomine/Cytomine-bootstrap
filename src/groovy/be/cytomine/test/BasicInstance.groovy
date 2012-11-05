@@ -131,7 +131,12 @@ class BasicInstance {
         checkDomain(annotation)
         saveDomain(annotation)
 
-        annotation.addToTerm(createOrGetBasicTerm())
+        def term = createOrGetBasicTerm()
+        term.ontology = image.project.ontology
+        checkDomain(term)
+        saveDomain(term)
+
+        annotation.addToTerm(term)
         checkDomain(annotation)
         saveDomain(annotation)
         annotation
