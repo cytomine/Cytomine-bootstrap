@@ -90,6 +90,7 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testListReviewedAnnotationByProjectAndUserAndImage() {
         def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
         println "annotation.term="+annotation.term
+        println "annotation.term="+annotation.term.id
         println "project.term="+annotation.project.ontology.terms()
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,annotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
