@@ -87,6 +87,7 @@ class RestReviewedAnnotationController extends RestController {
                 termList = termService.list(project, params.terms.split("_").collect{ Long.parseLong(it)})
             } else {
                 termList = termService.list(project)
+                log.info "termList=$termList"
             }
 
             if (userList.isEmpty()) {
