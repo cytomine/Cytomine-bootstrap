@@ -18,6 +18,7 @@ import grails.converters.JSON
 import java.awt.image.BufferedImage
 import java.text.SimpleDateFormat
 import javax.imageio.ImageIO
+import be.cytomine.ontology.Ontology
 
 class RestAnnotationDomainController extends RestController {
 
@@ -32,6 +33,7 @@ class RestAnnotationDomainController extends RestController {
     def cytomineService
     def mailService
     def dataSource
+    def algoAnnotationService
 
     def listByProject = {
         Project project = projectService.read(params.long('id'), new Project())
@@ -64,6 +66,20 @@ class RestAnnotationDomainController extends RestController {
             }
         }
         else if (!user) responseNotFound("User", params.idUser)
+    }
+
+    def listAnnotationByTerm = {
+        Term term = termService.read(params.long('idterm'))
+        if (term) {
+            def allAnnotations = []
+            List<Project> projects = term.ontology.projects
+            projects.each {
+                allAnnotations.addAll(userAnnotationService.list(it))
+                allAnnotations.addAll(algoAnnotationService.list(it))
+            }
+            responseSuccess(allAnnotations)
+        }
+        else responseNotFound("Term", params.idterm)
     }
 
 
