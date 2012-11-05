@@ -19,9 +19,9 @@ class RestImageController extends RestController {
     def abstractImageService
     def cytomineService
 
-    def index = {
-        redirect(controller: "image")
-    }
+//    def index = {
+//        redirect(controller: "image")
+//    }
     def list = {
         response(abstractImageService.list())
     }
@@ -120,14 +120,22 @@ class RestImageController extends RestController {
     }
 
     def cropUserAnnotation = {
-        def annotation = UserAnnotation.read(params.id)
-        def cropURL = cropAnnotation(annotation,params)
-        responseImage(cropURL)
+        try {
+            def annotation = UserAnnotation.read(params.id)
+            def cropURL = cropAnnotation(annotation,params)
+            if(cropURL!=null) responseImage(cropURL)
+        } catch (Exception e) {
+            log.error("GetThumb:" + e)
+        }
     }
     def cropAlgoAnnotation = {
-        def annotation = AlgoAnnotation.read(params.id)
-        def cropURL = cropAnnotation(annotation,params)
-        responseImage(cropURL)
+        try {
+            def annotation = AlgoAnnotation.read(params.id)
+            def cropURL = cropAnnotation(annotation,params)
+            responseImage(cropURL)
+        } catch (Exception e) {
+            log.error("GetThumb:" + e)
+        }
     }
 
     private def cropAnnotation(AnnotationDomain annotation, def params) {
@@ -140,6 +148,8 @@ class RestImageController extends RestController {
             responseNotFound("Crop", "Annotation", params.id)
         else if ((params.zoom != null) && (zoom < annotation.getImage().getBaseImage().getZoomLevels().min || zoom > annotation.getImage().getBaseImage().getZoomLevels().max))
             responseNotFound("Crop", "Zoom", zoom)
+//        else if (annotation.location.numPoints<3)
+//            responseNotFound("Crop", "Annotation size", annotation.location.numPoints)
         else {
             try {
                 String cropURL = null
@@ -154,6 +164,7 @@ class RestImageController extends RestController {
             } catch (Exception e) {
                 e.printStackTrace()
                 log.error("GetCrop:" + e)
+                return null
             }
         }
     }

@@ -39,6 +39,11 @@ class RetrievalService {
 
         def data = [:]
 
+        if(annotation.location.numPoints<3) {
+            data.term = []
+            return data
+        }
+
         //find project used for retrieval
         List<Long> projectSearch = []
         if(project.retrievalDisable) return data

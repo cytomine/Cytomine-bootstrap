@@ -19,7 +19,8 @@ class RequestFilters {
                 if(actionName.equals("crop")) return
                 if(actionName.equals("ping")) return
                 if(actionName.equals("listOnlineFriendsWithPosition")) return
-                if(actionName.equals("listOnlineFriendsWithPosition")) return
+                if(actionName.equals("listOnlineUsersByImage")) return
+
                 if(controllerName.equals("restUserPosition") && actionName.equals("add")) return
                 request.currentTime = System.currentTimeMillis()
                 String userInfo = ""
