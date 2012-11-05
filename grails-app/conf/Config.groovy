@@ -189,7 +189,7 @@ log4j = {
 //               threshold:org.apache.log4j.Level.ERROR)
     }*/
 
-    warn  'org.codehaus.groovy.grails.web.servlet',  //  controllers
+    error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
             'org.codehaus.groovy.grails.web.pages', //  GSP
             'org.codehaus.groovy.grails.web.sitemesh', //  layouts
             'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
@@ -201,8 +201,6 @@ log4j = {
             'net.sf.ehcache.hibernate',
             'org.hibernate.engine.StatefulPersistenceContext.ProxyWarnLog'
 
-    warn 'org.codehaus.groovy.grails.plugins.springsecurity.AnnotationFilterInvocationDefinition','be.cytomine'
-    warn   'org.hibernate'
     error 'org.springframework.security.web.context', 'org.hibernate.engine','net.sf.hibernate.impl.SessionImpl'
 
 
