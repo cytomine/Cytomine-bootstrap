@@ -26,5 +26,7 @@ class ReviewedAnnotationUrlMappings {
         "/api/user/$idUser/imageinstance/$idImage/reviewedannotation"(controller:"restReviewedAnnotation"){
             action = [GET:"listByImageAndUser"]
         }
+
+        //validate all annotation for a job?
     }
 }
