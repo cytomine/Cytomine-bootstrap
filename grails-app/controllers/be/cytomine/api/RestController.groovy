@@ -185,7 +185,7 @@ class RestController {
      * @param id Domain id
      */
     protected def responseNotFound(className, id) {
-        log.info "responseNotFound"
+        log.info "responseNotFound $className $id"
         log.error className + " Id " + id + " don't exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {

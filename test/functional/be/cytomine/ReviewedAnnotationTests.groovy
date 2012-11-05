@@ -71,6 +71,7 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.saveDomain(annotationNotCriteria.user)
         BasicInstance.checkDomain(annotationNotCriteria)
         BasicInstance.saveDomain(annotationNotCriteria)
+        Infos.addUserRight(annotationNotCriteria.user,annotationNotCriteria.project)
 
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
