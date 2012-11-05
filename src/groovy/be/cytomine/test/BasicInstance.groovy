@@ -521,6 +521,12 @@ class BasicInstance {
             saveDomain(ontology)
         }
         assert ontology != null
+
+        def term = getBasicTermNotExist()
+        term.ontology = ontology
+        checkDomain(term)
+        saveDomain(term)
+
         ontology
     }
 
