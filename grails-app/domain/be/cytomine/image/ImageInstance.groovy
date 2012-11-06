@@ -26,11 +26,21 @@ class ImageInstance extends CytomineDomain implements Serializable {
     Long countImageAnnotations = 0L
     Long countImageJobAnnotations = 0L
 
+    //stack stuff
+    ImageStack stack
+    Integer zIndex
+    Integer channel
+
     static belongsTo = [AbstractImage, Project, User]
 
     static constraints = {
         baseImage(unique: ['project'])
         countImageAnnotations nullable: true
+
+        //stack stuff
+        stack(nullable: true)
+        zIndex(nullable: true) //order in z-stack referenced by stack
+        channel(nullable : true)  //e.g. fluo channel
     }
 
     static mapping = {

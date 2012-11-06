@@ -1104,7 +1104,7 @@ class BasicInstance {
     static void compareAbstractImage(map, json) {
         assert map.filename.equals(json.filename)
         assert toLong(map.scanner.id).equals(toLong(json.scanner))
-//        assert toLong(map.sample.id).equals(toLong(json.sample))
+        assert toLong(map.sample.id).equals(toLong(json.sample))
         assert map.path.equals(json.path)
         assert map.mime.extension.equals(json.mime)
     }

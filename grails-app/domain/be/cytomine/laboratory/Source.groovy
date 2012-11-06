@@ -5,6 +5,7 @@ import be.cytomine.CytomineDomain
 class Source extends CytomineDomain {
 
     String name
+    Sample sample
 
     static constraints = {
     }
