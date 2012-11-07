@@ -177,6 +177,10 @@ class RestController {
         response(data)
     }
 
+    protected def responseError(CytomineException e) {
+        response([success: false, errors: e.msg], e.code)
+    }
+
     /**
      * Build a response message for a domain not found
      * E.g. annotation 34 was not found

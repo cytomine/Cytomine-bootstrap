@@ -35,6 +35,24 @@ class AlgoAnnotationTermService extends ModelService {
         AlgoAnnotationTerm.findAllByAnnotationIdent(annotation.id)
     }
 
+    def list(Job job) {
+        List<AlgoAnnotationTerm> annotations = []
+        List<UserJob> users = UserJob.findAllByJob(job)
+        users.each {
+            annotations.addAll(AlgoAnnotationTerm.findAllByUserJob(it))
+        }
+        annotations
+    }
+
+    def count(Job job) {
+        long total = 0
+        List<UserJob> users = UserJob.findAllByJob(job)
+        users.each {
+            total = total + AlgoAnnotationTerm.countByUserJob(it)
+        }
+        total
+    }
+
     def read(AnnotationDomain annotation, Term term, UserJob userJob) {
         AlgoAnnotationTerm.findWhere(annotationIdent: annotation.id, term: term, userJob: userJob)
     }
@@ -176,17 +194,19 @@ class AlgoAnnotationTermService extends ModelService {
      double computeAVG(def userJob) {
         log.info "userJob="+userJob
         log.info "userJob.id="+userJob.id
-        def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
-            eq("userJob", userJob)
-            isNotNull("term")
-            isNotNull("expectedTerm")
-            eqProperty("term", "expectedTerm")
-        }
+
         def nbTermTotal = AlgoAnnotationTerm.createCriteria().count {
             eq("userJob", userJob)
             isNotNull("expectedTerm")
         }
          if(nbTermTotal==0) throw new Exception("UserJob has no algo-annotation-term!")
+
+         def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
+             eq("userJob", userJob)
+             isNotNull("term")
+             isNotNull("expectedTerm")
+             eqProperty("term", "expectedTerm")
+         }
          log.info "nbTermNotCorrect="+nbTermCorrect +" nbTermTotal="+nbTermTotal
         return (double) (nbTermCorrect / nbTermTotal)
     }
@@ -195,15 +215,17 @@ class AlgoAnnotationTermService extends ModelService {
        log.info "userJob="+userJob
        log.info "userJob.id="+userJob.id
        def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
-           eq("userJob", userJob)
-           eq("expectedTerm",term)
-           eqProperty("term", "expectedTerm")
-       }
+
        def nbTermTotal = AlgoAnnotationTerm.createCriteria().count {
            eq("userJob", userJob)
            eq("expectedTerm",term)
        }
         if(nbTermTotal==0) throw new Exception("UserJob has no algo-annotation-term!")
+
+           eq("userJob", userJob)
+           eq("expectedTerm",term)
+           eqProperty("term", "expectedTerm")
+       }
         log.info "nbTermNotCorrect="+nbTermCorrect +" nbTermTotal="+nbTermTotal
        return (double) (nbTermCorrect / nbTermTotal)
    }

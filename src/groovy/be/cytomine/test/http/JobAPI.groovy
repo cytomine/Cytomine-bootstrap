@@ -150,4 +150,16 @@ class JobAPI extends DomainAPI {
         client.disconnect();
         return [data: response, code: code]
     }
+
+    static def deleteAllJobData(def id, String username, String password) {
+        log.info "delete job"
+        String URL = Infos.CYTOMINEURL + "api/job/" + id + "/alldata.json"
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        client.delete()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
 }

@@ -10,12 +10,14 @@ package be.cytomine.Exception;
  */
 public class ConstraintException extends CytomineException {
 
+    static int CODE = 400;
+
     /**
      * Message map with this exception
      * @param message Message
      */
     public ConstraintException(String message) {
-        super(message,400);
+        super(message,CODE);
 
     }
 }

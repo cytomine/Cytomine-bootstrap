@@ -68,6 +68,7 @@ class JobService extends ModelService {
             job.status = it.status
             job.number = it.number
             job.created = it.created ? it.created.time.toString() : null
+            job.dataDeleted = it.dataDeleted
             data << job
         }
         return data

@@ -7,6 +7,13 @@ import be.cytomine.test.http.JobAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.processing.SoftwareProject
+import be.cytomine.security.UserJob
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.AlgoAnnotationTerm
+import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.processing.JobData
+import be.cytomine.processing.JobDataBinaryValue
 
 /**
  * Created by IntelliJ IDEA.
@@ -122,4 +129,117 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         def result = JobAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(404, result.code)
     }
+
+    void testDeleteAllJobDataJobNotExist() {
+        def result = JobAPI.deleteAllJobData(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
+    void testDeleteAllJobData() {
+        //create a job
+        Job job = BasicInstance.getBasicJobNotExist()
+        BasicInstance.checkDomain(job)
+        BasicInstance.saveDomain(job)
+        BasicInstance.createSoftwareProject(job.software,job.project)
+
+        UserJob userJob = BasicInstance.getBasicUserJobNotExist()
+        userJob.job = job
+        userJob.user = BasicInstance.getNewUser()
+        BasicInstance.checkDomain(userJob)
+        BasicInstance.saveDomain(userJob)
+
+        //add algo-annotation for this job
+        AlgoAnnotation a1 = BasicInstance.getBasicAlgoAnnotationNotExist()
+        a1.project = job.project
+        a1.user = userJob
+        BasicInstance.checkDomain(a1)
+        BasicInstance.saveDomain(a1)
+
+        //add algo-annotation-term for this job
+        AlgoAnnotationTerm at1 = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        at1.project = job.project
+        at1.annotationIdent = a1.id
+        at1.annotationClassName = a1.class.getName()
+        at1.userJob = userJob
+        BasicInstance.checkDomain(at1)
+        BasicInstance.saveDomain(at1)
+
+        //add job data
+        JobData data1 = BasicInstance.getBasicJobDataNotExist()
+        data1.job = job
+        BasicInstance.checkDomain(data1)
+        BasicInstance.saveDomain(data1)
+
+//        JobDataBinaryValue dataValue1 = new JobDataBinaryValue(data: "toto".bytes,jobData:data1)
+//        BasicInstance.checkDomain(dataValue1)
+//        BasicInstance.saveDomain(dataValue1)
+
+        Infos.addUserRight(userJob.user,job.project)
+
+        //count data = 1-1
+        assert AlgoAnnotationTerm.findAllByUserJobInList(UserJob.findAllByJob(job)).size() == 1
+        assert AlgoAnnotation.findAllByUserInList(UserJob.findAllByJob(job)).size() == 1
+        assert JobData.findAllByJob(job).size() == 1
+//        assert JobDataBinaryValue.findAllByJobDataInList(JobData.findAllByJob(job)).size() == 1
+
+        //delete all job data
+        def result = JobAPI.deleteAllJobData(job.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        //count data = 0-0
+        assert AlgoAnnotationTerm.findAllByUserJobInList(UserJob.findAllByJob(job)).size() == 0
+        assert AlgoAnnotation.findAllByUserInList(UserJob.findAllByJob(job)).size() == 0
+        assert JobData.findAllByJob(job).size() == 0
+ //       assert JobDataBinaryValue.findAllByJobDataInList(JobData.findAllByJob(job)).size() == 0
+    }
+
+    void testDeleteAllJobDataWithReviewedAnnotations() {
+        //create a job
+        Job job = BasicInstance.getBasicJobNotExist()
+        BasicInstance.checkDomain(job)
+        BasicInstance.saveDomain(job)
+        BasicInstance.createSoftwareProject(job.software,job.project)
+
+        UserJob userJob = BasicInstance.getBasicUserJobNotExist()
+        userJob.job = job
+        userJob.user = BasicInstance.getNewUser()
+        BasicInstance.checkDomain(userJob)
+        BasicInstance.saveDomain(userJob)
+
+        //add algo-annotation for this job
+        AlgoAnnotation a1 = BasicInstance.getBasicAlgoAnnotationNotExist()
+        a1.project = job.project
+        a1.user = userJob
+        BasicInstance.checkDomain(a1)
+        BasicInstance.saveDomain(a1)
+
+        //add algo-annotation-term for this job
+        AlgoAnnotationTerm at1 = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        at1.project = job.project
+        at1.annotationIdent = a1.id
+        at1.annotationClassName = a1.class.getName()
+        at1.userJob = userJob
+        BasicInstance.checkDomain(at1)
+        BasicInstance.saveDomain(at1)
+
+        Infos.addUserRight(userJob.user,job.project)
+
+        //add reviewed annotation
+        ReviewedAnnotation reviewed = BasicInstance.getBasicReviewedAnnotationNotExist()
+        reviewed.project = job.project
+        reviewed.parentIdent = a1.id
+        reviewed.parentClassName = a1.class.getName()
+        BasicInstance.checkDomain(reviewed)
+        BasicInstance.saveDomain(reviewed)
+
+        //count data = 1-1
+        assert AlgoAnnotationTerm.findAllByUserJobInList(UserJob.findAllByJob(job)).size() == 1
+        assert AlgoAnnotation.findAllByUserInList(UserJob.findAllByJob(job)).size() == 1
+
+        //delete all job data
+        def result = JobAPI.deleteAllJobData(job.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(400, result.code)
+    }
+
+
 }

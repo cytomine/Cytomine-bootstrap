@@ -28,6 +28,8 @@ import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.GeometryFactory
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
+import be.cytomine.processing.Job
+import be.cytomine.security.UserJob
 
 class AlgoAnnotationService extends ModelService {
 
@@ -53,6 +55,28 @@ class AlgoAnnotationService extends ModelService {
     def list(Project project) {
         AlgoAnnotation.findAllByProject(project)
     }
+
+    @PreAuthorize("#job.hasPermission(#job.project,'READ') or hasRole('ROLE_ADMIN')")
+    def list(Job job) {
+        List<UserJob> user = UserJob.findAllByJob(job);
+        List<AlgoAnnotation> algoAnnotations = []
+        user.each {
+            algoAnnotations.addAll(AlgoAnnotation.findAllByUser(it))
+        }
+        return algoAnnotations
+    }
+
+    @PreAuthorize("#job.hasPermission(#job.project,'READ') or hasRole('ROLE_ADMIN')")
+    def count(Job job) {
+        List<UserJob> user = UserJob.findAllByJob(job);
+        long total = 0
+        user.each {
+            total = total + AlgoAnnotation.countByUser(it)
+        }
+        return total
+    }
+
+
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, SecUser user) {
         return AlgoAnnotation.findAllByImageAndUser(image, user)

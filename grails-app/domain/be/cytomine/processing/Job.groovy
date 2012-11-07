@@ -27,6 +27,8 @@ class Job extends CytomineDomain  {
 
     Double rate = null
 
+    boolean dataDeleted
+
     static transients = ["url"]
 
     static belongsTo = [software: Software]
@@ -40,6 +42,7 @@ class Job extends CytomineDomain  {
         statusComment(nullable:true)
         status(range: 0..6)
         rate(nullable: true)
+        dataDeleted(nullable:true)
     }
 
     static mapping = {
@@ -80,6 +83,8 @@ class Job extends CytomineDomain  {
             try {
                 job.jobParameter =  it.jobParameter
             } catch(Exception e) {log.info e}
+
+            job.dataDeleted = it.dataDeleted
 
             return job
         }
@@ -122,6 +127,9 @@ class Job extends CytomineDomain  {
             } else job.software = null
 
             job.rate = (!jsonJob.rate.toString().equals("null")) ? Double.parseDouble(jsonJob.rate.toString()) : -1
+
+            if (!jsonJob.dataDeleted.toString().equals("null"))
+                job.dataDeleted = Boolean.parseBoolean(jsonJob.progress.toString())
 
             job.created = (!jsonJob.created.toString().equals("null")) ? new Date(Long.parseLong(jsonJob.created.toString())) : null
             job.updated = (!jsonJob.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonJob.updated.toString())) : null

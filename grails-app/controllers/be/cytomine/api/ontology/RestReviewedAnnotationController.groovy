@@ -120,6 +120,15 @@ class RestReviewedAnnotationController extends RestController {
         add(reviewedAnnotationService, request.JSON)
     }
 
+    def addAllJobImageAnnotation = {
+        //TODO::
+
+    }
+
+    def addAllUserImageAnnotation = {
+       //TODO::
+    }
+
     //update
     def update = {
         update(reviewedAnnotationService, request.JSON)

@@ -16,7 +16,16 @@ class ReviewedAnnotationUrlMappings {
         "/api/reviewedannotation/$id"(controller:"restReviewedAnnotation"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
-        //user+image+project+term+conflict
+
+        "/api/user/$iduser/reviewedannotation"(controller: "restReviewedAnnotation"){
+            action = [POST:"add"]
+         }
+
+
+
+
+
+        //?params.users+images+terms+conflict
         "/api/project/$idProject/reviewedannotation"(controller: "restReviewedAnnotation"){
              action = [GET:"listByProjectImageTermAndUser"]
          }

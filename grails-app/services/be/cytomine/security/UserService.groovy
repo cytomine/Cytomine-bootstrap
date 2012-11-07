@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import static org.springframework.security.acls.domain.BasePermission.READ
+import be.cytomine.processing.Job
 
 class UserService extends ModelService {
 
@@ -57,6 +58,7 @@ class UserService extends ModelService {
     def list(Project project, List ids) {
         SecUser.findAllByIdInList(ids)
     }
+
 
     def add(def json) {
         User currentUser = cytomineService.getCurrentUser()

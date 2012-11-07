@@ -17,5 +17,9 @@ class JobUrlMappings {
         "/api/software/$idSoftware/project/$idProject/job"(controller:"restJob"){
             action = [GET: "listBySoftwareAndProject"]
         }
+
+        "/api/job/$id/alldata"(controller:"restJob") {
+            action = [DELETE: "deleteAllJobData", GET: "listAllJobData"]
+        }
     }
 }

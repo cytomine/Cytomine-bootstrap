@@ -177,6 +177,7 @@ body {
     <script type="text/javascript" src="application/views/processing/JobSearchView.js"></script>
     <script type="text/javascript" src="application/views/processing/JobTableView.js"></script>
     <script type="text/javascript" src="application/views/processing/JobSearchEngineView.js"></script>
+    <script type="text/javascript" src="application/views/processing/JobDeleteAllDataView.js"></script>
 
     <script type="text/javascript" src="application/views/processing/result/RetrievalAlgoResult.js"></script>
     <script type="text/javascript" src="application/views/processing/result/EvolutionAlgoResult.js"></script>

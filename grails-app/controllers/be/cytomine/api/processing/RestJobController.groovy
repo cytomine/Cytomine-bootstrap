@@ -10,6 +10,12 @@ import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.Exception.ConstraintException
+import be.cytomine.ontology.AlgoAnnotationTerm
+
+import be.cytomine.processing.JobData
 
 class RestJobController extends RestController {
 
@@ -20,6 +26,10 @@ class RestJobController extends RestController {
     def retrievalSuggestTermJobService
     def userService
     def backgroundService
+    def algoAnnotationService
+    def annotationTermService
+    def algoAnnotationTermService
+    def jobDataService
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
@@ -123,5 +133,76 @@ class RestJobController extends RestController {
             SecUserSecRole.create(userJob, secRole)
         }
         return userJob
+    }
+
+
+    def deleteAllJobData = {
+        //TODO:: secure this method!
+        Job job = jobService.read(params.long('id'));
+        if (!job)
+            responseNotFound("Job",params.id)
+        else {
+            log.info "load all annotations..."
+            //TODO:: inseatd of loading all annotations to check if there are reviewed annotation => make a single SQL request to see if there are reviewed annotation
+            List<AlgoAnnotation> annotations = algoAnnotationService.list(job)
+            List<ReviewedAnnotation> reviewed = hasReviewedAnnotation(annotations)
+
+            if(!reviewed.isEmpty())
+                responseError(new ConstraintException("There are ${reviewed.size()} reviewed annotations. You cannot delete all job data!"))
+            else {
+                List<UserJob> users = UserJob.findAllByJob(job)
+                log.info "delete all algo annotation term..."
+                deleteAllAlgoAnnotationsTerm(users)
+                log.info "delete all annotation..."
+                deleteAllAlgoAnnotations(users)
+                log.info "delete all data..."
+                deleteAllJobData(JobData.findAllByJob(job))
+                log.info "End..."
+                job.dataDeleted = true;
+                job.save(flush:true)
+                responseSuccess([])
+            }
+        }
+    }
+
+    def listAllJobData = {
+        Job job = jobService.read(params.long('id'));
+        if (!job)
+            responseNotFound("Job",params.id)
+        else {
+            log.info "load all algo annotations..."
+            List<AlgoAnnotation> annotations = algoAnnotationService.list(job)
+            log.info "load all annotations..."
+            long annotationsTermNumber = algoAnnotationTermService.count(job)
+            log.info "load all job datas..."
+            List<JobData> jobDatas = jobDataService.list(job)
+
+            responseSuccess([annotations:annotations.size(),annotationsTerm:annotationsTermNumber,jobDatas:jobDatas.size(), reviewed:hasReviewedAnnotation(annotations).size()])
+
+        }
+    }
+
+    private def hasReviewedAnnotation(List<AlgoAnnotation> annotations) {
+        List<Long> annotationsId = annotations.collect{ it.id }
+        if (annotationsId.isEmpty()) []
+        return ReviewedAnnotation.findAllByParentIdentInList(annotationsId)
+    }
+
+    private void deleteAllAlgoAnnotations(List<UserJob> users) {
+        List<Long> usersId = users.collect{ it.id }
+        if (usersId.isEmpty()) return
+        AlgoAnnotation.executeUpdate("delete from AlgoAnnotation a where a.user.id in (:list)",[list:usersId])
+    }
+
+    private void deleteAllAlgoAnnotationsTerm(List<UserJob> users) {
+        List<Long> usersId = users.collect{ it.id }
+        if (usersId.isEmpty()) return
+        AlgoAnnotationTerm.executeUpdate("delete from AlgoAnnotationTerm a where a.userJob.id IN (:list)",[list:usersId])
+    }
+
+    private void deleteAllJobData(List<JobData> jobDatas) {
+        List<Long> jobDatasId = jobDatas.collect{ it.id }
+        if (jobDatasId.isEmpty()) return
+        JobData.executeUpdate("delete from JobData a where a.id IN (:list)",[list:jobDatasId])
     }
 }

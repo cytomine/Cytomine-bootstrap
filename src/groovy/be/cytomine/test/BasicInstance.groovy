@@ -469,6 +469,21 @@ class BasicInstance {
         job
     }
 
+    static SoftwareProject createSoftwareProject(Software software, Project project) {
+        SoftwareProject softProj = SoftwareProject.findBySoftwareAndProject(software,project)
+        if(softProj) return softProj
+        else {
+            softProj = new SoftwareProject(project: project, software: software)
+            checkDomain(softProj)
+            saveDomain(softProj)
+        }
+        softProj
+    }
+
+
+
+
+
 
     static JobData getBasicJobDataNotExist() {
         log.debug "getBasicJobDataNotExist()"

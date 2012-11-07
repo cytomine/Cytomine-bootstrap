@@ -12,5 +12,13 @@ class JobDataBinaryValue extends CytomineDomain {
     static constraints = {
         data(nullable: true)
     }
+    static mapping = {
+        id generator: "assigned"
+    }
 
+    public beforeValidate() {
+        println "beforeValidate"
+        super.beforeValidate()
+        println "this.id="+this.id
+    }
 }
