@@ -16,7 +16,7 @@ var JobDataModel = Backbone.Model.extend({
 
 // define our collection
 var JobDataCollection = Backbone.Collection.extend({
-    model:JobModel,
+    model:JobDataModel,
 
     url:function () {
         if (this.job != undefined) {
@@ -30,5 +30,16 @@ var JobDataCollection = Backbone.Collection.extend({
     },
     comparator:function (jobdata) {
         return -jobdata.get("created");
+    }
+});
+
+
+var JobDataStatsModel = Backbone.Model.extend({
+    url:function () {
+            console.log("url="+"api/job/" + this.id + "/alldata.json");
+            return "api/job/" + this.id + "/alldata.json";
+    },
+    initialize:function (options) {
+        this.id = options.id;
     }
 });

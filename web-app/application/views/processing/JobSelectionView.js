@@ -160,7 +160,15 @@ var JobSelectionView = Backbone.View.extend({
                     //else if comparator then print "see details" and click must select job
                     cellSee = '<a href="#tabs-algos-' + self.project.id + "-" + self.software.id + "-" + job.id + '" id="' + job.id + '">See details<br></a>'
                 }
-                tbody.append('<tr><td>' + cellIcon + '</td><td  style="text-align:left;">' + cellId + '</td><td  style="text-align:center;">' + cellNumber + '</td><td  style="text-align:center;">' + cellDate + '</td><td  style="text-align:center;">' + cellState + '</td><td>' + cellSee + '</td></tr>');
+                var cellDelete = "";
+                if(job.get('dataDeleted')) {
+                    cellDelete = "All job data are deleted"
+                } else {
+                    cellDelete =  '<button id="'+job.id+'">Delete all job data</button>';
+                }
+
+
+                tbody.append('<tr><td>' + cellIcon + '</td><td  style="text-align:left;">' + cellId + '</td><td  style="text-align:center;">' + cellNumber + '</td><td  style="text-align:center;">' + cellDate + '</td><td  style="text-align:center;">' + cellState + '</td><td>' + cellDelete + '</td><td>' + cellSee + '</td></tr>');
 
                 if (self.comparator) {
                     tbody.find("#select" + job.id).click(function () {
@@ -170,6 +178,22 @@ var JobSelectionView = Backbone.View.extend({
                 }
             });
         }
+
+        //add delete job data listener
+        $(self.el).find('#selectJobTable').find("tbody").find("button").click(function(elem) {
+
+            var id = elem.currentTarget.id;
+            new JobModel({ id:id}).fetch({
+                success:function (model, response) {
+                    new JobDeleteAllDataView({
+                        model: model,
+                        project : self.model,
+                        container : self
+                    }).render();
+                }
+            });
+        });
+
         self.table = $(self.el).find('#selectJobTable').dataTable({
             "bFilter":false,
             "sDom":'<"toolbar">frtip',
@@ -195,6 +219,9 @@ var JobSelectionView = Backbone.View.extend({
 
         //hide id column
         self.table.fnSetColumnVis(1, false);
+
+
+
 
         //add select input elemen for each column
         /*var fnCreateSelect = function fnCreateSelect( aData )
