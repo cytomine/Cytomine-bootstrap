@@ -51,6 +51,17 @@ class IndexService {
              */
             createIndex(statement, "annotation_term", "user_annotation_id");
             createIndex(statement, "annotation_term", "term_id");
+
+            /**
+             * Algo_annotation_term
+             */
+            createIndex(statement,"algo_annotation_term","annotation_ident")
+            createIndex(statement,"algo_annotation_term","project_id")
+            createIndex(statement,"algo_annotation_term","rate")
+            createIndex(statement,"algo_annotation_term","term_id")
+            createIndex(statement,"algo_annotation_term","user_job_id")
+
+
             /**
              * relation_term
              */

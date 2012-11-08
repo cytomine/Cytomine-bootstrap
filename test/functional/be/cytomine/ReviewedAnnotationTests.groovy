@@ -16,6 +16,10 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.test.http.ReviewedAnnotationAPI
 import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.processing.Job
+import be.cytomine.security.UserJob
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.AlgoAnnotationTerm
 
 /**
  * Created by IntelliJ IDEA.
@@ -462,5 +466,67 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def result = ReviewedAnnotationAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(404, result.code)
     }
+
+
+
+//    void testAddReviewedAnnotationForAllJobData() {
+//        Job job = BasicInstance.getBasicJobNotExist()
+//        BasicInstance.checkDomain(job)
+//        BasicInstance.saveDomain(job)
+//        BasicInstance.createSoftwareProject(job.software,job.project)
+//
+//        UserJob userJob = BasicInstance.getBasicUserJobNotExist()
+//        userJob.job = job
+//        userJob.user = BasicInstance.getNewUser()
+//        BasicInstance.checkDomain(userJob)
+//        BasicInstance.saveDomain(userJob)
+//
+//        //add algo-annotation for this job
+//        AlgoAnnotation a1 = createAlgoAnnotation(job, userJob)
+//
+//        //add algo-annotation-term for this job
+//        AlgoAnnotationTerm at1 = createAlgoAnnotationTerm(job, a1, userJob)
+//
+//        //add user-annotation for this job
+//        UserAnnotation a2 = createUserAnnotation(job)
+//
+//        //add algo-annotation-term for this job
+//        AlgoAnnotationTerm at2 = createAlgoAnnotationTerm(job, a2, userJob)
+//
+//        //add algo-annotation for this job without term!
+//        AlgoAnnotation a3 = createAlgoAnnotation(job,userJob)
+//
+//
+//        Infos.addUserRight(userJob.user,job.project)
+//
+//
+//        assert ReviewedAnnotation.findAllByParentIdent(a1.id).size() == 0
+//        assert ReviewedAnnotation.findAllByParentIdent(a2.id).size() == 0
+//        assert ReviewedAnnotation.findAllByParentIdent(a3.id).size() == 0
+//
+//        def result = ReviewedAnnotationAPI.addForJob(job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        assertEquals(200, result.code)
+//        def json = JSON.parse(result.data)
+//        assert json instanceof JSONArray
+//        assert json.size()==1
+//        //a3 shouldn't be reviewed (because no term), and should be in response with all annotation not reviewed
+//        assert json.get(0)["id"]==a3.id
+//
+//        assert ReviewedAnnotation.findAllByParentIdent(a1.id).size() == 1
+//        assert ReviewedAnnotation.findAllByParentIdent(a2.id).size() == 1
+//        assert ReviewedAnnotation.findAllByParentIdent(a3.id).size() == 0
+//
+//    }
+
+
+
+
+//    void testAddReviewedAnnotationForDataFromImageUser() {
+//
+//    }
+
+
+
+
 
 }

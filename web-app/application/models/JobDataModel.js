@@ -19,27 +19,26 @@ var JobDataCollection = Backbone.Collection.extend({
     model:JobDataModel,
 
     url:function () {
-        if (this.job != undefined) {
+        if(this.task==null || this.task==undefined)
             return "api/job/" + this.job + "/jobdata.json";
-        } else {
-            return "api/jobdata.json";
-        }
+        else return "api/job/" + this.job + "/jobdata.json?task="+this.task;
     },
     initialize:function (options) {
         this.job = options.job;
-    },
-    comparator:function (jobdata) {
-        return -jobdata.get("created");
+        this.task = options.task;
     }
 });
 
 
 var JobDataStatsModel = Backbone.Model.extend({
     url:function () {
-            console.log("url="+"api/job/" + this.id + "/alldata.json");
+        console.log("task="+this.task);
+        if(this.task==null || this.task==undefined)
             return "api/job/" + this.id + "/alldata.json";
+        else return "api/job/" + this.id + "/alldata.json?task="+this.task;
     },
     initialize:function (options) {
         this.id = options.id;
+        this.task = options.task;
     }
 });

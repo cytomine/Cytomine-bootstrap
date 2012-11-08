@@ -187,7 +187,7 @@ var JobSelectionView = Backbone.View.extend({
                 success:function (model, response) {
                     new JobDeleteAllDataView({
                         model: model,
-                        project : self.model,
+                        project : self.project,
                         container : self
                     }).render();
                 }

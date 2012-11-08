@@ -197,6 +197,22 @@ class ReviewedAnnotationAPI extends DomainAPI {
         return [data: ReviewedAnnotation.get(idAnnotation), code: code]
     }
 
+//    static def create(Long job, String username, String password) {
+//        log.info("post reviewedannotation for all job from :" + job)
+//        String URL = Infos.CYTOMINEURL + "api/job/$job/reviewedannotation.json"
+//        HttpClient client = new HttpClient()
+//        client.connect(URL, username, password)
+//        client.post("")
+//        int code = client.getResponseCode()
+//        String response = client.getResponseData()
+//        println response
+//        client.disconnect();
+//        log.info("check response")
+//        def json = JSON.parse(response)
+//        Long idAnnotation = json?.reviewedannotation?.id
+//        return [data: ReviewedAnnotation.get(idAnnotation), code: code]
+//    }
+
     static def update(ReviewedAnnotation annotation, String username, String password) {
         log.info "update reviewedannotation:" + annotation
 

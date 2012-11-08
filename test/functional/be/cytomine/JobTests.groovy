@@ -149,20 +149,10 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.saveDomain(userJob)
 
         //add algo-annotation for this job
-        AlgoAnnotation a1 = BasicInstance.getBasicAlgoAnnotationNotExist()
-        a1.project = job.project
-        a1.user = userJob
-        BasicInstance.checkDomain(a1)
-        BasicInstance.saveDomain(a1)
+        AlgoAnnotation a1 = BasicInstance.createAlgoAnnotation(job,userJob)
 
         //add algo-annotation-term for this job
-        AlgoAnnotationTerm at1 = BasicInstance.getBasicAlgoAnnotationTermNotExist()
-        at1.project = job.project
-        at1.annotationIdent = a1.id
-        at1.annotationClassName = a1.class.getName()
-        at1.userJob = userJob
-        BasicInstance.checkDomain(at1)
-        BasicInstance.saveDomain(at1)
+        AlgoAnnotationTerm at1 = BasicInstance.createAlgoAnnotationTerm(job,a1,userJob)
 
         //add job data
         JobData data1 = BasicInstance.getBasicJobDataNotExist()
@@ -170,9 +160,6 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.checkDomain(data1)
         BasicInstance.saveDomain(data1)
 
-//        JobDataBinaryValue dataValue1 = new JobDataBinaryValue(data: "toto".bytes,jobData:data1)
-//        BasicInstance.checkDomain(dataValue1)
-//        BasicInstance.saveDomain(dataValue1)
 
         Infos.addUserRight(userJob.user,job.project)
 
@@ -180,7 +167,6 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         assert AlgoAnnotationTerm.findAllByUserJobInList(UserJob.findAllByJob(job)).size() == 1
         assert AlgoAnnotation.findAllByUserInList(UserJob.findAllByJob(job)).size() == 1
         assert JobData.findAllByJob(job).size() == 1
-//        assert JobDataBinaryValue.findAllByJobDataInList(JobData.findAllByJob(job)).size() == 1
 
         //delete all job data
         def result = JobAPI.deleteAllJobData(job.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -190,7 +176,6 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         assert AlgoAnnotationTerm.findAllByUserJobInList(UserJob.findAllByJob(job)).size() == 0
         assert AlgoAnnotation.findAllByUserInList(UserJob.findAllByJob(job)).size() == 0
         assert JobData.findAllByJob(job).size() == 0
- //       assert JobDataBinaryValue.findAllByJobDataInList(JobData.findAllByJob(job)).size() == 0
     }
 
     void testDeleteAllJobDataWithReviewedAnnotations() {
@@ -207,20 +192,10 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.saveDomain(userJob)
 
         //add algo-annotation for this job
-        AlgoAnnotation a1 = BasicInstance.getBasicAlgoAnnotationNotExist()
-        a1.project = job.project
-        a1.user = userJob
-        BasicInstance.checkDomain(a1)
-        BasicInstance.saveDomain(a1)
+        AlgoAnnotation a1 = BasicInstance.createAlgoAnnotation(job,userJob)
 
         //add algo-annotation-term for this job
-        AlgoAnnotationTerm at1 = BasicInstance.getBasicAlgoAnnotationTermNotExist()
-        at1.project = job.project
-        at1.annotationIdent = a1.id
-        at1.annotationClassName = a1.class.getName()
-        at1.userJob = userJob
-        BasicInstance.checkDomain(at1)
-        BasicInstance.saveDomain(at1)
+        AlgoAnnotationTerm at1 = BasicInstance.createAlgoAnnotationTerm(job,a1,userJob)
 
         Infos.addUserRight(userJob.user,job.project)
 

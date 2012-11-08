@@ -121,9 +121,6 @@ class AlgoAnnotationService extends ModelService {
 
             def data = []
 
-
-
-
             def annotationsWithTerms = AlgoAnnotationTerm.withCriteria() {
                 eq("project", project)
                 inList("userJob", userList)
@@ -225,46 +222,24 @@ class AlgoAnnotationService extends ModelService {
          if (userList.isEmpty()) return []
          if (imageInstanceList.isEmpty()) return []
          if (imageInstanceList.size() == project.countImages) {
-             def data = []
-             def criteria = AlgoAnnotationTerm.withCriteria() {
-                 eq('project', project)
-                 eq('term', term)
-                 inList('userJob', userList)
-                 projections {
-                     groupProperty("annotationIdent")
-                     groupProperty("annotationClassName")
-                     groupProperty("rate")
-                     groupProperty("term.id")
-                     groupProperty("expectedTerm.id")
-                 }
-                 order 'rate', 'desc'
-             }
+             List annotationsUsers = AlgoAnnotation.executeQuery(
+                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM UserAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob IN (:userList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList])
 
-             criteria.each {
-                 data << [AlgoAnnotationTerm.retrieveAnnotationDomain(it[0],it[1]),it[2],it[3],it[4]]
-             }
-             return data
+             List annotationsAlgo = AlgoAnnotation.executeQuery(
+                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM AlgoAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob IN (:userList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList])
+
+             annotationsUsers.addAll(annotationsAlgo)
+             return annotationsUsers
          } else {
-             def data = []
-             def criteria = AlgoAnnotationTerm.withCriteria() {
-                 eq('project', project)
-                 eq('term', term)
-                 inList('userJob', userList)
-                 projections {
-                     groupProperty("annotationIdent")
-                     groupProperty("annotationClassName")
-                     groupProperty("rate")
-                     groupProperty("term.id")
-                     groupProperty("expectedTerm.id")
-                 }
-                 order 'rate', 'desc'
-             }
-             criteria.each {
-                 AnnotationDomain annotation = AlgoAnnotationTerm.retrieveAnnotationDomain(it[0],it[1])
-                 if(imageInstanceList.contains(annotation.image))
-                    data << [annotation,it[2],it[3],it[4]]
-             }
-             return data
+
+             List annotationsUsers = AlgoAnnotation.executeQuery(
+                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM UserAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob IN (:userList) AND a.image IN (:imageInstanceList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList,imageInstanceList:imageInstanceList])
+
+             List annotationsAlgo = AlgoAnnotation.executeQuery(
+                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM AlgoAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob IN (:userList) AND a.image IN (:imageInstanceList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList,imageInstanceList:imageInstanceList])
+
+             annotationsUsers.addAll(annotationsAlgo)
+             return annotationsUsers
          }
      }
 

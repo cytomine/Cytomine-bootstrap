@@ -114,13 +114,6 @@ class BootStrap {
         log.info "create discipline"
         createDiscipline()
 
-        log.info "fill project for position (may take some time...)"
-        UserPosition.findAllByProjectIsNull().each {
-            it.project = it.image.project
-            if(!it.updated) it.updated = it.created
-            it.save()
-        }
-
 
         //countersService.updateCounters()
         //updateImageProperties()

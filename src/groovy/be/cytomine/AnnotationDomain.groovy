@@ -94,17 +94,19 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
     }
 
    def getBoundaries() {
-        /*def metadata = JSON.parse(new URL(image.getMetadataURL()).text)
-     int zoom = Integer.parseInt(metadata.levels)*/
-        Coordinate[] coordinates = location.getEnvelope().getCoordinates()
-        int topLeftX = coordinates[3].x
-        int topLeftY = coordinates[3].y
-        //int topLeftY = Integer.parseInt(metadata.height) - coordinates[3].y
-        int width = coordinates[1].x - coordinates[0].x
-        int height = coordinates[3].y - coordinates[0].y
+       //get num points
+       if (location.getNumPoints()>3) {
+           Coordinate[] coordinates = location.getEnvelope().getCoordinates()
+           int topLeftX = coordinates[3].x
+           int topLeftY = coordinates[3].y
+           //int topLeftY = Integer.parseInt(metadata.height) - coordinates[3].y
+           int width = coordinates[1].x - coordinates[0].x
+           int height = coordinates[3].y - coordinates[0].y
 
-        //log.debug "topLeftX :" + topLeftX + " topLeftY :" + topLeftY + " width :" + width + " height :" + height
-        return [topLeftX: topLeftX, topLeftY: topLeftY, width: width, height: height]
+           //log.debug "topLeftX :" + topLeftX + " topLeftY :" + topLeftY + " width :" + width + " height :" + height
+           return [topLeftX: topLeftX, topLeftY: topLeftY, width: width, height: height]
+       } else throw new be.cytomine.Exception.InvalidRequestException("Cannot make a crop for a POINT")
+
     }
 
     def toCropURL() {

@@ -184,6 +184,9 @@ class RestAlgoAnnotationController extends RestController {
         }
     }
 
+
+
+
        //return a list of annotation (if list = [[annotation1,rate1, term1, expectedTerm1],..], add rate value in annotation]
        private def mergeResults(def list) {
            //list = [ [a,b],...,[x,y]]  => [a.rate = b, x.rate = y...]

@@ -17,6 +17,7 @@ import be.cytomine.ontology.*
 import be.cytomine.processing.*
 import be.cytomine.security.*
 import be.cytomine.laboratory.Sample
+import be.cytomine.AnnotationDomain
 
 /**
  * Created by IntelliJ IDEA.
@@ -53,6 +54,42 @@ class BasicInstance {
         }
         assert domain != null
     }
+
+
+    static UserAnnotation createUserAnnotation(Job job) {
+        UserAnnotation a2 = BasicInstance.getBasicUserAnnotationNotExist()
+        a2.project = job.project
+        a2.user = BasicInstance.getNewUser()
+        BasicInstance.checkDomain(a2)
+        BasicInstance.saveDomain(a2)
+        a2
+    }
+
+    static AlgoAnnotation createAlgoAnnotation(Job job, UserJob userJob) {
+        AlgoAnnotation annotation = BasicInstance.getBasicAlgoAnnotationNotExist()
+        annotation.project = job.project
+        annotation.user = userJob
+        BasicInstance.checkDomain(annotation)
+        BasicInstance.saveDomain(annotation)
+        annotation
+    }
+
+    static AlgoAnnotationTerm createAlgoAnnotationTerm(Job job, AnnotationDomain annotation, UserJob userJob) {
+        AlgoAnnotationTerm at = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        at.project = job.project
+        at.annotationIdent = annotation.id
+        at.annotationClassName = annotation.class.getName()
+        at.userJob = userJob
+        BasicInstance.checkDomain(at)
+        BasicInstance.saveDomain(at)
+        at
+    }
+
+
+
+
+
+
 
     static UserAnnotation createOrGetBasicUserAnnotation() {
         log.debug "createOrGetBasicUserAnnotation()"

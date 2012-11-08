@@ -147,6 +147,7 @@ body {
     <script type="text/javascript" src="application/models/JobDataModel.js" ></script>
     <script type="text/javascript" src="application/models/SoftwareModel.js" ></script>
     <script type="text/javascript" src="application/models/PingModel.js" ></script>
+    <script type="text/javascript" src="application/models/TaskModel.js" ></script>
 
     <!-- View -->
     <script type="text/javascript" src="application/views/activity/ActivityView.js" ></script>

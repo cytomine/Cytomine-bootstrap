@@ -16,6 +16,7 @@ import be.cytomine.Exception.ConstraintException
 import be.cytomine.ontology.AlgoAnnotationTerm
 
 import be.cytomine.processing.JobData
+import be.cytomine.command.Task
 
 class RestJobController extends RestController {
 
@@ -30,6 +31,8 @@ class RestJobController extends RestController {
     def annotationTermService
     def algoAnnotationTermService
     def jobDataService
+    def taskService
+    def cytomineService
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
@@ -142,25 +145,34 @@ class RestJobController extends RestController {
         if (!job)
             responseNotFound("Job",params.id)
         else {
+            Task task = taskService.read(params.long('task'))
             log.info "load all annotations..."
             //TODO:: inseatd of loading all annotations to check if there are reviewed annotation => make a single SQL request to see if there are reviewed annotation
+
+            taskService.updateTask(task,10,"Check if annotations are not reviewed...")
             List<AlgoAnnotation> annotations = algoAnnotationService.list(job)
             List<ReviewedAnnotation> reviewed = hasReviewedAnnotation(annotations)
 
-            if(!reviewed.isEmpty())
+            if(!reviewed.isEmpty()) {
+                taskService.finishTask(task)
                 responseError(new ConstraintException("There are ${reviewed.size()} reviewed annotations. You cannot delete all job data!"))
+            }
             else {
                 List<UserJob> users = UserJob.findAllByJob(job)
-                log.info "delete all algo annotation term..."
+
+                taskService.updateTask(task,30,"Delete all terms from annotations...")
                 deleteAllAlgoAnnotationsTerm(users)
-                log.info "delete all annotation..."
+
+                taskService.updateTask(task,60,"Delete all annotations...")
                 deleteAllAlgoAnnotations(users)
-                log.info "delete all data..."
+
+                taskService.updateTask(task,90,"Delete all files...")
                 deleteAllJobData(JobData.findAllByJob(job))
-                log.info "End..."
+
+                taskService.finishTask(task)
                 job.dataDeleted = true;
                 job.save(flush:true)
-                responseSuccess([])
+                responseSuccess([message:"All data from job launch "+ job.created + " are deleted!"])
             }
         }
     }
@@ -170,13 +182,17 @@ class RestJobController extends RestController {
         if (!job)
             responseNotFound("Job",params.id)
         else {
+            Task task = taskService.read(params.long('task'))
             log.info "load all algo annotations..."
+            taskService.updateTask(task,10,"Looking for algo annotations...")
             List<AlgoAnnotation> annotations = algoAnnotationService.list(job)
             log.info "load all annotations..."
+            taskService.updateTask(task,50,"Looking for algo annotations term...")
             long annotationsTermNumber = algoAnnotationTermService.count(job)
-            log.info "load all job datas..."
+            log.info "load all job data..."
+            taskService.updateTask(task,75,"Looking for all job data...")
             List<JobData> jobDatas = jobDataService.list(job)
-
+            taskService.finishTask(task)
             responseSuccess([annotations:annotations.size(),annotationsTerm:annotationsTermNumber,jobDatas:jobDatas.size(), reviewed:hasReviewedAnnotation(annotations).size()])
 
         }

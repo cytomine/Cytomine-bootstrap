@@ -269,6 +269,10 @@ class ProjectService extends ModelService {
             it.delete()
         }
 
+        Task.findAllByProject(domain).each {
+            it.delete()
+        }
+
         log.info "createResponseMessage"
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
