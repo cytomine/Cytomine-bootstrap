@@ -142,9 +142,7 @@ class ImageInstanceService extends ModelService {
         Transaction transaction = transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
         //Read image
-        Project project = Project.read(json.project)
-        AbstractImage image = AbstractImage.read(json.image)
-        ImageInstance imageInstance = ImageInstance.findByBaseImageAndProject(image, project)
+        ImageInstance imageInstance = retrieve(json)
         /* Delete social stuff */
         UserPosition.findAllByImage(imageInstance).each { userPosition ->
             userPosition.delete()

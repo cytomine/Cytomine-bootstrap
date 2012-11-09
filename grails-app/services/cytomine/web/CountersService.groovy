@@ -60,22 +60,25 @@ class CountersService {
             def algoAnnotations = AlgoAnnotation.countByProject(project)
 
 //            if(project.countAnnotations!=userAnnotations) {
-                project.setCountAnnotations(userAnnotations)
-                project.setCountJobAnnotations(algoAnnotations)
+            project.setCountAnnotations(userAnnotations)
+            project.setCountJobAnnotations(algoAnnotations)
 
-                project.save(flush: true)
+            project.save(flush: true)
 
-                def images = ImageInstance.findAllByProject(project)
+            def images = ImageInstance.findAllByProject(project)
 
-                images.each { image ->
-                    log.info "update counter for image " + image.id
-                    def userAnnotationsImage = UserAnnotation.countByProjectAndImage(project,image)
-                    def algoAnnotationsImage = AlgoAnnotation.countByProjectAndImage(project,image)
+            images.each { image ->
+                log.info "update counter for image " + image.id
+                def userAnnotationsImage = UserAnnotation.countByProjectAndImage(project,image)
+                def algoAnnotationsImage = AlgoAnnotation.countByProjectAndImage(project,image)
 
+                if (image.getCountImageAnnotations() != userAnnotationsImage || image.getCountImageJobAnnotations() != algoAnnotationsImage) {
                     image.setCountImageAnnotations(userAnnotationsImage)
                     image.setCountImageJobAnnotations(algoAnnotationsImage)
                     image.save(flush: true)
                 }
+
+            }
 //            }
         }
 

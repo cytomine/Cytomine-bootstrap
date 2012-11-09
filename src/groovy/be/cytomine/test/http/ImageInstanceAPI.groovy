@@ -145,7 +145,7 @@ class ImageInstanceAPI extends DomainAPI {
 
     static def delete(ImageInstance image, String username, String password) {
         log.info "delete ImageInstance"
-        String URL = Infos.CYTOMINEURL + "api/project/" + image.project.id + "/image/"+ image.baseImage.id +"/imageinstance.json"
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + image.id + ".json"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
         client.delete()
