@@ -34,7 +34,7 @@ class MailService {
         helper.setSubject(subject)
         helper.setText("",message)
         attachment?.each {
-            helper.addInline(it.cid, new FileSystemResource(it.file))
+            helper.addInline((String) it.cid, new FileSystemResource(it.file))
         }
         
         sender.send(mail);

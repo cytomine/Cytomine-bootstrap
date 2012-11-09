@@ -27,15 +27,34 @@ var AnnotationController = Backbone.Router.extend({
     },
 
     share:function (idAnnotation) {
-        new AnnotationModel({id:idAnnotation}).fetch({
-            success:function (model, response) {
-                new ShareAnnotationView({
-                    model:model,
-                    image:model.get("image"),
-                    project:model.get("project")
-                }).render();
-            }
-        });
+
+            new AnnotationModel({id:idAnnotation}).fetch({
+                success:function (model, response) {
+                    var shareAnnotationView = new ShareAnnotationView({
+                        model:model,
+                        image:model.get("image"),
+                        project:model.get("project")
+                    });
+                    if (!window.app.models.projectUser) {  //direct access
+                        new ProjectModel({id : model.get("project")}).fetch({
+                            success : function (projectModel, response) {
+                                window.app.status.currentProject =  projectModel.get("id");
+                                window.app.status.currentProjectModel =  projectModel;
+                                new UserCollection({project:window.app.status.currentProject}).fetch({
+                                    success:function (collection, response) {
+                                        window.app.models.projectUser = collection;
+                                        shareAnnotationView.render();
+                                    }
+                                });
+
+                            }
+                        });
+                    } else {
+                        shareAnnotationView.render();
+                    }
+
+                }
+            });
     },
 
     copy:function (idAnnotation) {
