@@ -180,16 +180,9 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
 
     void testDeleteAllJobDataWithReviewedAnnotations() {
         //create a job
-        Job job = BasicInstance.getBasicJobNotExist()
-        BasicInstance.checkDomain(job)
-        BasicInstance.saveDomain(job)
-        BasicInstance.createSoftwareProject(job.software,job.project)
 
-        UserJob userJob = BasicInstance.getBasicUserJobNotExist()
-        userJob.job = job
-        userJob.user = BasicInstance.getNewUser()
-        BasicInstance.checkDomain(userJob)
-        BasicInstance.saveDomain(userJob)
+        UserJob userJob = BasicInstance.createUserJob()
+        Job job = userJob.job
 
         //add algo-annotation for this job
         AlgoAnnotation a1 = BasicInstance.createAlgoAnnotation(job,userJob)

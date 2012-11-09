@@ -7,6 +7,8 @@ import be.cytomine.test.http.ImageInstanceAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.project.Project
+import be.cytomine.ontology.AlgoAnnotation
 
 /**
  * Created by IntelliJ IDEA.

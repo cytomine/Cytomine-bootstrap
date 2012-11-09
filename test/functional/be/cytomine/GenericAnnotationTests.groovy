@@ -18,6 +18,9 @@ import be.cytomine.test.http.AnnotationDomainAPI
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.test.http.UserAnnotationAPI
 import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.processing.Job
+import be.cytomine.ontology.Annotation
+import be.cytomine.test.http.ReviewedAnnotationAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,8 +46,6 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
-
-
 
     void testListAnnotationByProjecImageAndUsertWithCredentialWithAnnotationAlgo() {
         AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
@@ -116,6 +117,53 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(result.data)
         //assert json instanceof JSONArray
     }
+
+    void testListAnnotationByProjectWithSuggestTerm() {
+        //create annotation
+        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+        annotationTerm.term = BasicInstance.createOrGetBasicTerm()
+        BasicInstance.checkDomain(annotationTerm)
+        BasicInstance.saveDomain(annotationTerm)
+        UserAnnotation annotation = annotationTerm.userAnnotation
+
+        //create job
+        UserJob userJob = BasicInstance.createUserJob(annotation.project)
+        Job job = userJob.job
+
+        //create suggest with different term
+        AlgoAnnotationTerm suggest = BasicInstance.createAlgoAnnotationTerm(job,annotation,userJob)
+        suggest.term = BasicInstance.createOrGetAnotherBasicTerm()
+        BasicInstance.checkDomain(suggest)
+        BasicInstance.saveDomain(suggest)
+
+        def result = AnnotationDomainAPI.listByProjectAndTermWithSuggest(annotation.project.id, annotationTerm.term.id, suggest.term.id, job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+        assert AnnotationDomainAPI.containsInJSONList(annotation.id,json)
+
+        //create annotation
+        AnnotationTerm annotationTerm2 = BasicInstance.createOrGetBasicAnnotationTerm()
+        annotationTerm2.userAnnotation = BasicInstance.createUserAnnotation(annotationTerm2.projectDomain())
+        annotationTerm2.term = BasicInstance.createOrGetBasicTerm()
+        BasicInstance.checkDomain(annotationTerm2)
+        BasicInstance.saveDomain(annotationTerm2)
+        UserAnnotation annotation2 = annotationTerm2.userAnnotation
+
+        //create suggest with same term
+        AlgoAnnotationTerm suggest2 = BasicInstance.createAlgoAnnotationTerm(job,annotation2,userJob)
+        suggest2.term = BasicInstance.createOrGetBasicTerm()
+        BasicInstance.checkDomain(suggest)
+        BasicInstance.saveDomain(suggest)
+
+        //We are looking for a different term => annotation shouldn't be in result
+        result = AnnotationDomainAPI.listByProjectAndTermWithSuggest(annotation2.project.id, annotationTerm2.term.id, suggest.term.id, job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+        assert !AnnotationDomainAPI.containsInJSONList(annotation2.id,json)
+    }
+
 
     void testDownloadAnnotationDocumentForAnnotationAlgo() {
         AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()

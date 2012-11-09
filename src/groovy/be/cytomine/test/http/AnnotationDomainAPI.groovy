@@ -109,6 +109,18 @@ class AnnotationDomainAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def listByProjectAndTermWithSuggest(Long idProject, Long idTerm,Long idSuggest, Long idJob,String username, String password) {
+        log.info "listByProjectAndTermWithSuggest by project $idProject and term $idTerm"
+        String URL = Infos.CYTOMINEURL + "api/term/$idTerm/project/$idProject/annotation.json?suggestTerm="+idSuggest+"&job=$idJob"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
     static def listByImageAndUser(Long idImage,Long idUser, String username, String password) {
         log.info "list annotation by user " + idUser + " and image " + idImage
         String URL = Infos.CYTOMINEURL+"api/user/"+ idUser +"/imageinstance/"+idImage+"/annotation.json"

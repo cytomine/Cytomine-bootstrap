@@ -179,20 +179,19 @@ class UserAnnotationService extends ModelService {
                 eq('term', realTerm)
                 inList('user', userList)
             }
-        }
-        def annotations = criteria.unique()
-
-        //Get all annotation from this project with this suggestedTerm
-        def algoAnnotationsTerm = AlgoAnnotationTerm.createCriteria().list {
-            eq("userJob", user)
-            eq("term", suggestedTerm)
-            inList("userAnnotation",annotations)
-            join("userAnnotation")
-            createAlias("userAnnotation", "a")
             projections {
-                groupProperty("userAnnotation")
+                groupProperty("id")
             }
         }
+        //def annotations = criteria.unique()
+
+        def algoAnnotationsTerm = AnnotationTerm.executeQuery("SELECT ua " +
+                "FROM AlgoAnnotationTerm aat, UserAnnotation ua " +
+                "WHERE aat.userJob = :user " +
+                "AND aat.term = :suggestedTerm " +
+                "AND aat.annotationIdent = ua.id " +
+                "AND aat.annotationIdent IN (:annotations)",[user:user,suggestedTerm:suggestedTerm,annotations:criteria])
+
 
         return algoAnnotationsTerm
 

@@ -55,10 +55,13 @@ class BasicInstance {
         assert domain != null
     }
 
-
     static UserAnnotation createUserAnnotation(Job job) {
+        createUserAnnotation(job.project)
+    }
+
+    static UserAnnotation createUserAnnotation(Project project) {
         UserAnnotation a2 = BasicInstance.getBasicUserAnnotationNotExist()
-        a2.project = job.project
+        a2.project = project
         a2.user = BasicInstance.getNewUser()
         BasicInstance.checkDomain(a2)
         BasicInstance.saveDomain(a2)
@@ -83,6 +86,24 @@ class BasicInstance {
         BasicInstance.checkDomain(at)
         BasicInstance.saveDomain(at)
         at
+    }
+
+    static UserJob createUserJob() {
+        createUserJob(null)
+    }
+    static UserJob createUserJob(Project project) {
+        Job job = BasicInstance.getBasicJobNotExist()
+        if(!project) job.project = project
+        BasicInstance.checkDomain(job)
+        BasicInstance.saveDomain(job)
+        BasicInstance.createSoftwareProject(job.software,job.project)
+
+        UserJob userJob = BasicInstance.getBasicUserJobNotExist()
+        userJob.job = job
+        userJob.user = BasicInstance.getNewUser()
+        BasicInstance.checkDomain(userJob)
+        BasicInstance.saveDomain(userJob)
+        userJob
     }
 
 

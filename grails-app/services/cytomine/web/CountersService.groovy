@@ -59,7 +59,7 @@ class CountersService {
             def userAnnotations = UserAnnotation.countByProject(project)
             def algoAnnotations = AlgoAnnotation.countByProject(project)
 
-            if(project.countAnnotations!=userAnnotations) {
+//            if(project.countAnnotations!=userAnnotations) {
                 project.setCountAnnotations(userAnnotations)
                 project.setCountJobAnnotations(algoAnnotations)
 
@@ -76,7 +76,7 @@ class CountersService {
                     image.setCountImageJobAnnotations(algoAnnotationsImage)
                     image.save(flush: true)
                 }
-            }
+//            }
         }
 
 
