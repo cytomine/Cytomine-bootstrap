@@ -165,6 +165,7 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     }
 
 
+
     void testDownloadAnnotationDocumentForAnnotationAlgo() {
         AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
         def result = AnnotationDomainAPI.downloadDocumentByProject(annotationTerm.retrieveAnnotationDomain().project.id,annotationTerm.retrieveAnnotationDomain().user.id,annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

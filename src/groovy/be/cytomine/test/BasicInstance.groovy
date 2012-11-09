@@ -93,7 +93,7 @@ class BasicInstance {
     }
     static UserJob createUserJob(Project project) {
         Job job = BasicInstance.getBasicJobNotExist()
-        if(!project) job.project = project
+        if(project) job.project = project
         BasicInstance.checkDomain(job)
         BasicInstance.saveDomain(job)
         BasicInstance.createSoftwareProject(job.software,job.project)
