@@ -22,6 +22,7 @@ class RetrievalSuggestStatsController extends RestController {
     def jobService
     def retrievalSuggestedTermJobService
     def retrievalEvolutionJobService
+    def projectService
 
     /**
      * If params.project && params.software, get the last userJob from this software from this project
@@ -91,9 +92,16 @@ class RetrievalSuggestStatsController extends RestController {
             responseNotFound("UserJob","Params", params)
             return null
         }
+        long start = System.currentTimeMillis()
+
+        println "1="+ (System.currentTimeMillis()-start)
         def worstTerms = listWorstTermWithSuggestedTerm(userJob)
+        println "2="+ (System.currentTimeMillis()-start)
         def avg =  retrievalSuggestedTermJobService.computeRate(userJob.job)
+        println "3="+ (System.currentTimeMillis()-start)
         def avgAveragedPerClass =  retrievalSuggestedTermJobService.computeAVGAveragePerClass(userJob)
+        println "4="+ (System.currentTimeMillis()-start)
+
         log.info "avg = " + avg + " avgAveragedPerClass=" + avgAveragedPerClass
         def data = ['worstTerms': worstTerms, 'avg':avg, 'avgMiddlePerClass' : avgAveragedPerClass]
         responseSuccess(data)
@@ -125,6 +133,7 @@ class RetrievalSuggestStatsController extends RestController {
     }
 
     def listWorstTerm(UserJob userJob) {
+        //TODO:: could be optim with no .each loop and a single request
         Map<Term, Integer> termMap = new HashMap<Term, Integer>()
         List<Term> termList = termService.list(userJob?.job?.project)
         termList.each {
@@ -150,39 +159,78 @@ class RetrievalSuggestStatsController extends RestController {
     }
 
     def listWorstTermWithSuggestedTerm(def userJob) {
-        TreeMap<Long, TreeMap<Long, Integer>> termMap = new TreeMap<Long, TreeMap<Long, Integer>>()
-        List<Term> termList = termService.list(userJob?.job?.project)
-        termList.each {
-            termMap.put(it.id, new TreeMap<Long, Integer>())
 
+        def allCouple = AlgoAnnotationTerm.executeQuery("SELECT at1.expectedTerm.id, at2.term.id, count(*) as sumterm  " +
+                "FROM AlgoAnnotationTerm at1, AlgoAnnotationTerm at2  " +
+                "WHERE at1.id = at2.id " +
+                "AND at1.userJob.id = :userJob " +
+                "GROUP BY at1.expectedTerm.id, at2.term.id " +
+                "ORDER BY at1.expectedTerm.id, sumterm desc, at2.term.id",[userJob:userJob.id])
+
+        /**
+         * All couple =
+         * [idTerm1, idTerm1, sum(idTerm1,idTerm1),
+         *  idTerm1, idTerm2, sum(idTerm1,idTerm2),
+         *  ...
+         *  idTerm2, idTerm...
+         *  ]
+         */
+
+        Map<Long,Map<Long,Long>> resultBySum = [:]
+        Map<Long,Long> totalPerTerm = [:]
+        Map<Long,SortedSet<Map.Entry<Long, Double>>> resultByAverage = [:]
+
+        //browse each couple <termX,termY,SumPrediction and put it on a map (key = termX, value = Map of all predicted term with sum as value
+        allCouple.each { couple ->
+            Long expectedTerm = couple[0]
+            Long predictedTerm = couple[1]
+            Long sum = couple[2]
+
+            if(!resultBySum.containsKey(expectedTerm))
+                resultBySum.put(expectedTerm,new HashMap<Long,Long>())
+
+            resultBySum.get(expectedTerm)put(predictedTerm,sum)
+
+            //for each term, compute sum of all predicted term entries (for all terms)
+            if(!totalPerTerm.get(expectedTerm))
+                totalPerTerm.put(expectedTerm,0)
+
+            totalPerTerm.put(expectedTerm,totalPerTerm.get(expectedTerm)+sum)
         }
 
-        def algoAnnotationsTerm = AlgoAnnotationTerm.createCriteria().list {
-            eq("userJob", userJob)
-        }
+        //browse each term...
+        resultBySum.each {
+            def expectedTerm = it.key
+            def allPredictedTerm = it.value
+            def totalForTerm = totalPerTerm.get(expectedTerm)
 
-        algoAnnotationsTerm.each {
-            TreeMap<Long, Integer> subMap = termMap.get(it.expectedTerm?.id);
-            Integer oldValue = subMap.get(it.term?.id)
-            if (!oldValue) oldValue = 0
-            subMap.put(it.term?.id, oldValue + 1)
+            def predictedTermMap = [:]
 
-            termMap.put(it.expectedTerm?.id, subMap)
-        }
-        def data = [:]
-        termMap.each {
-            SortedSet<Entry<Long, Integer>> mapSorted = Utils.entriesSortedByValuesDesc(termMap.get(it.key));
-            data[it.key] = []
-            long sum = algoAnnotationTermService.computeSumOfValue(mapSorted)
-
-            mapSorted.each { entry ->
-                Map map = [:]
-                map[entry.key] = Math.round(((entry.value / sum) * 100))
-                data[it.key].add(map)
+            //replace sum by avg
+            allPredictedTerm.each { term, sum ->
+                predictedTermMap.put(term,(Math.round(((double)sum/(double)totalForTerm)*100))+"#"+term)
             }
-            ///log.info "mapSorted= " + mapSorted
+            //sort predicted term map on avg (desc). We use suffix #termid because entriesSortedByValuesDesc will
+            //erase data if values are equal (term1:3, term2:3,...=> will only keep term1:3 or term2:3).
+            //with #termid we don't have similar value
+            SortedSet<Map.Entry<Long, Double>> mapSorted = Utils.entriesSortedByValuesDesc(predictedTermMap)
+            def list = []
+            mapSorted.each {
+                def item = [:]
+                item.put(it.key,Integer.parseInt(it.value.split("#")[0]))
+                list.add(item)
+            }
+
+            resultByAverage.put(expectedTerm,list)
         }
-        return data
+
+        def projectTerms = termService.list(userJob.job.project)
+
+        projectTerms.each {
+            if(!resultByAverage.containsKey(it.id))
+                resultByAverage.put(it.id,[])
+        }
+        resultByAverage
     }
 
     def listWorstAnnotationTerm(def userJob, def max) {
