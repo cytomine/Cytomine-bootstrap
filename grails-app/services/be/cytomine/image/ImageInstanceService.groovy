@@ -251,12 +251,6 @@ class ImageInstanceService extends ModelService {
     def retrieve(JSONObject json) {
         ImageInstance imageInstance
         imageInstance = ImageInstance.read(json.id)
-
-        if(!imageInstance) {
-            AbstractImage image = AbstractImage.read(json.image)
-            Project project = Project.read(json.project)
-            imageInstance = ImageInstance.findByProjectAndBaseImage(project,image)
-        }
         if (!imageInstance) throw new ObjectNotFoundException("ImageInstance " + json.id + " not found")
         return imageInstance
     }

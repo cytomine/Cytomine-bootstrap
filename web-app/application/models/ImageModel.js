@@ -52,19 +52,13 @@ var ImageServerUrlsModel = Backbone.Model.extend({
 
 var ImageInstanceModel = Backbone.Model.extend({
     url:function () {
-        if (this.project == undefined && this.baseImage == undefined) {
-            var base = 'api/imageinstance';
-            var format = '.json';
-            if (this.isNew()) return base + format;
-            return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
-        }
-        else {
-            return 'api/project/' + this.project + '/image/' + this.baseImage + '/imageinstance.json';
-        }
+        var base = 'api/imageinstance';
+        var format = '.json';
+        if (this.isNew()) return base + format;
+        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
     },
     initialize:function (options) {
-        this.project = options.project;
-        this.baseImage = options.baseImage;
+        this.id = options.id;
     }
 });
 

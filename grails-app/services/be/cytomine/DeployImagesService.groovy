@@ -68,6 +68,8 @@ class DeployImagesService {
                 //imageInstance.save()
             }
 
+            imagePropertiesService.clear(abstractImage)
+            imagePropertiesService.populate(abstractImage)
             imagePropertiesService.extractUseful(abstractImage)
             abstractImage.save(flush : true)
 

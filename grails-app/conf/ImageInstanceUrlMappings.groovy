@@ -29,9 +29,6 @@ class ImageInstanceUrlMappings {
         "/api/project/$id/imageinstance"(controller: "restImageInstance"){
             action = [GET:"listByProject"]
         }
-        "/api/project/$idproject/image/$idimage/imageinstance"(controller:"restImageInstance"){
-            action = [GET:"showByProjectAndImage",DELETE:"delete"]
-        }
         "/api/imageinstance/$id/cropgeometry"(controller :"restImageInstance") {
             action = [GET:"cropGeometry"]
         }

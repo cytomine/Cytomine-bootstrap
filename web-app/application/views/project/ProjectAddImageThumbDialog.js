@@ -231,12 +231,9 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         //use fake ID since backbone > 0.5 : we should destroy only object saved or fetched
         new ImageInstanceModel({id:1, project:idProject, user:null, baseImage:idImage}).destroy({
             success:function (image, response) {
-
                 window.app.view.message("ImageInstance", response.message, "success");
-
             },
             error:function (model, response) {
-
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Image", json.errors[0], "error");
             }
@@ -244,7 +241,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
     },
 
     initEvents:function () {
-
+        alert("initEvents");
         /* TO DO
          Recode this method : don't repeat yourself
          Use Backbone view EVENTs to bind CLICK
@@ -257,7 +254,6 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         $(self.checklistSelected).click(
             function (event) {
                 event.preventDefault();
-                var slideID = $(this).parent().attr("class");
 
                 $(this).parent().addClass(self.selectedClass);
                 $(this).parent().find(":checkbox").attr(self.checkedAttr, self.checkedAttr);

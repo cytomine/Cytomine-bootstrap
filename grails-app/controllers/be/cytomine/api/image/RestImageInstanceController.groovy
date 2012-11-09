@@ -106,7 +106,7 @@ class RestImageInstanceController extends RestController {
     }
 
     def delete = {
-        def json = JSON.parse("{project : $params.idproject, image : $params.idimage}")
+        def json = JSON.parse("{id : $params.id}")
         log.info "delete image instance:" + json.toString()
         try {
             log.info "retrieve domain"

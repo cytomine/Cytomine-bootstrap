@@ -99,6 +99,7 @@
 <fileset dir="${src.dir}" includes="application/models/JobDataModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/SoftwareModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/PingModel.js"/>
+<fileset dir="${src.dir}" includes="application/models/TaskModel.js"/>
 <fileset dir="${src.dir}" includes="application/views/activity/ActivityView.js"/>
 <fileset dir="${src.dir}" includes="application/views/phono/PhonoMenu.js"/>
 <fileset dir="${src.dir}" includes="application/views/account/AccountDetails.js"/>
@@ -123,6 +124,7 @@
 <fileset dir="${src.dir}" includes="application/views/processing/JobSearchView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobTableView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobSearchEngineView.js"/>
+<fileset dir="${src.dir}" includes="application/views/processing/JobDeleteAllDataView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/result/RetrievalAlgoResult.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/result/EvolutionAlgoResult.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/result/DefaultResult.js"/>
