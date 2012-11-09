@@ -82,6 +82,7 @@ var ProjectDashboardView = Backbone.View.extend({
         this.projectDashboardImages.refreshImagesTable();
     },
     refreshAnnotations:function (terms, users) {
+        console.log("ProjectDashboardView.refreshAnnotations="+users);
         var self = this;
 
         if (this.projectDashboardAnnotations == null) {

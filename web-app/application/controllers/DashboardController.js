@@ -66,6 +66,7 @@ var DashboardController = Backbone.Router.extend({
         this.init(project, func);
     },
     annotations:function (project, terms, users) {
+        console.log("controller.annotations="+users);
         var self = this;
         var func = function () {
             window.app.controllers.browse.tabs.triggerRoute = false;

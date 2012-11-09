@@ -11,6 +11,8 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     ontology:null,
     shouldRefresh:true,
     render:function (callback) {
+        console.log("ProjectDashboardAnnotations.selectedUsers="+this.selectedUsers);
+        console.log("ProjectDashboardAnnotations.selectedJobs="+this.selectedJobs);
         var self = this;
         new UserJobCollection({project:window.app.status.currentProject, tree:true}).fetch({
             success:function (collection, response) {
@@ -292,7 +294,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         }
         this.hideAllTerms();
         this.hideAllUsers();
-        this.hideAllImages();
+        //this.hideAllImages();
         if (terms == "all") {
             this.showAllTerms();
         } else if (terms != "" && terms != undefined) {
@@ -659,6 +661,8 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
      * @param $elem  elem that will keep all annotations
      */
     printAnnotationThumbAllTerms:function (terms, users, jobs, images) {
+        console.log("1users="+users);
+        console.log("1jobs="+jobs);
         var self = this;
         self.updateContentVisibility();
         self.updateDownloadLinks();
