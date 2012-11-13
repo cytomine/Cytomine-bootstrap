@@ -18,6 +18,7 @@ var ApplicationView = Backbone.View.extend({
         {key:"overview-panel", linkID:"toggle-overview-panel", name:"Overview", className:"overviewPanel", value:{ visible:true, position:{ right:250, top:325}}},
         {key:"ontology-panel", linkID:"toggle-ontology-panel", name:"Ontology", className:"ontologyPanel", value:{ visible:true, position:{ left:20, top:280}}},
         {key:"layer-panel", linkID:"toggle-layer-panel", name:"Layer switcher", className:"layerSwitcherPanel", value:{ visible:false, position:{ right:250, top:100}}},
+        {key:"review-panel", linkID:"toggle-review-panel", name:"Review", className:"reviewPanel", value:{ visible:true, position:{ right:250, top:100}}},
         {key:"filters-panel", linkID:"toggle-filters-panel", name:"Filters", className:"imageFiltersPanel", value:{ visible:false, position:{ right:250, bottom:15}}}
     ],
     events:{

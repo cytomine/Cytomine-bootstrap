@@ -29,7 +29,7 @@ var ImageFiltersPanel = Backbone.View.extend({
      */
     doLayout:function (tpl) {
         var self = this;
-        var el = $('#imageFiltersPanel' + this.model.get('id'));
+        var el = $("#"+this.browseImageView.divId).find('#imageFiltersPanel' + this.model.get('id'));
         this.model.set({isDesktop:!window.app.view.isMobile});
         new DraggablePanelView({
             el:el,
@@ -115,7 +115,7 @@ var ImageFiltersPanel = Backbone.View.extend({
             this.updateGetURL();
             return;
         }
-        var el = $("#imageFiltersPanel" + this.model.get("id"));
+        var el = $("#"+this.browseImageView.divId).find("#imageFiltersPanel" + this.model.get("id"));
         var brightness = parseInt(el.find("#brightness" + this.model.get("id")).slider("value"));
         var contrast = parseInt(el.find("#contrast" + this.model.get("id")).slider("value"));
         var invert = (el.find("input[name=invert]").attr("checked") == "checked");

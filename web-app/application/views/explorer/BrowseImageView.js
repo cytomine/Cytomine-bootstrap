@@ -1,12 +1,17 @@
 var BrowseImageView = Backbone.View.extend({
     tagName:"div",
     tileSize:256,
+    review:false,
+    divPrefixId : "",
+    divId :"",
     /**
      * BrowseImageView constructor
      * Accept options used for initialization
      * @param options
      */
     initialize:function (options) {
+        console.log("initialize");
+        console.log(options);
         this.iPad = ( navigator.userAgent.match(/iPad/i) != null );
         this.initCallback = options.initCallback;
         this.layers = [];
@@ -16,6 +21,7 @@ var BrowseImageView = Backbone.View.extend({
         this.watchOnlineUsersInterval = null;
         this.annotationsPanel = null;
         this.ontologyPanel = null;
+        this.reviewPanel = null;
         this.map = null;
         //this.nbDigitialZoom = Math.round(Math.log(80 / this.model.get('magnification')) / Math.log(2));//max zoom desired is 80X
         this.nbDigitialZoom = 0; //TMP DISABLED DUE TO OPENLAYERS BUG. http://dev.cytomine.be/jira/browse/CYTO-613
@@ -24,6 +30,10 @@ var BrowseImageView = Backbone.View.extend({
             this.digitalResolutions.push(1 / Math.pow(2, i + 1));
         }
         this.currentAnnotation = null;
+        if(options.review!=undefined) this.review = options.review;
+        if(!this.review) this.divPrefixId = "tabs-image";
+        else this.divPrefixId = "tabs-review";
+
         _.bindAll(this, "initVectorLayers");
     },
 
@@ -33,17 +43,43 @@ var BrowseImageView = Backbone.View.extend({
      */
     doLayout:function (tpl) {
         var self = this;
+        console.log("BrowseImageView:doLayout");
+
+        if(!this.review) this.divId = "tabs-image-"+window.app.status.currentProject+"-"+this.model.id+"-";
+        else this.divId = "tabs-review-"+window.app.status.currentProject+"-"+this.model.id+"-";
+
         var templateData = this.model.toJSON();
+
         templateData.project = window.app.status.currentProject;
+        templateData.type = self.divPrefixId;
         $(this.el).append(_.template(tpl, templateData));
         var shortOriginalFilename = this.model.get('originalFilename');
         if (shortOriginalFilename.length > 25) {
             shortOriginalFilename = shortOriginalFilename.substring(0, 23) + "...";
         }
-        var tabTpl = "<li><a style='float: left;' id='tabs-image-<%= idImage %>' rel='tooltip' title='<%= originalFilename %>' href='#tabs-image-<%= idProject %>-<%= idImage %>-' data-toggle='tab'><i class='icon-search' /> <%= shortOriginalFilename %> </a></li>";
+
+        var backgroundColor = ""
+        if(this.review) backgroundColor = "background-color:#ff0000;";
+
+        var tabTpl =
+                "<li>" +
+                "<a style='float: left;"+backgroundColor+" ' id='"+self.divPrefixId+"-<%= idImage %>' rel='tooltip' title='<%= originalFilename %>' href='#"+self.divPrefixId+"-<%= idProject %>-<%= idImage %>-' data-toggle='tab'>" +
+                "<i class='icon-search' /> <%= shortOriginalFilename %> " +
+                "</a>" +
+                "</li>";
         $(".nav-tabs").append(_.template(tabTpl, { idProject:window.app.status.currentProject, idImage:this.model.get('id'), originalFilename:this.model.get('originalFilename'), shortOriginalFilename:shortOriginalFilename}));
-        var dropdownTpl = '<li class="dropdown"><a href="#" id="tabs-image-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab"><i class="icon-remove" /> Close</a></li></ul></li>';
+        var dropdownTpl = '<li class="dropdown"><a href="#" id="'+self.divPrefixId+'-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab"><i class="icon-remove" /> Close</a></li></ul></li>';
         $(".nav-tabs").append(_.template(dropdownTpl, { idProject:window.app.status.currentProject, idImage:this.model.get('id'), filename:this.model.get('filename')}));
+
+        console.log("nav-tabs="+$(".nav-tabs").length);
+
+        console.log($(".nav-tabs").html());
+
+        console.log("tabs-review="+"#tabs-review-"+self.model.id);
+
+        console.log("tabs-review="+$("#tabs-review-"+self.model.id).length);
+
+
         this.initToolbar();
         this.initMap();
         this.initAnnotationsTabs();
@@ -132,20 +168,22 @@ var BrowseImageView = Backbone.View.extend({
                 }
             });
         }
-
     },
+
     refreshAnnotationTabs:function (idTerm) {
         this.annotationsPanel.refreshAnnotationTabs(idTerm);
     },
+
     setAllLayersVisibility:function (visibility) {
         var self = this;
         _.each(this.layers, function (layer) {
             self.setLayerVisibility(layer, visibility);
         });
     },
+
     setLayerVisibility:function (layer, visibility) {
         // manually check (or uncheck) the checkbox in the menu:
-        $("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers").find(":checkbox").each(function () {
+        $("#"+this.divId).find("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers").find(":checkbox").each(function () {
             if (layer.name != $(this).attr("value")) return;
             if (visibility) {
                 if ($(this).attr("checked") != "checked") {
@@ -159,7 +197,7 @@ var BrowseImageView = Backbone.View.extend({
         });
     },
     switchControl:function (controlName) {
-        var toolbar = $('#toolbar' + this.model.get('id'));
+        var toolbar = $("#"+this.divId).find('#toolbar' + this.model.get('id'));
         toolbar.find('input[id=' + controlName + this.model.get('id') + ']').click();
     },
     /**
@@ -249,7 +287,7 @@ var BrowseImageView = Backbone.View.extend({
                     layer.vectorsLayer.setVisibility(true);
                     layer.toggleIrregular();
                     //Simulate click on None toolbar
-                    var toolbar = $('#toolbar' + self.model.get('id'));
+                    var toolbar = $("#"+self.divId).find('#toolbar' + self.model.get('id'));
                     toolbar.find('input[id=none' + self.model.get('id') + ']').click();
                 } else {
                     layer.controls.select.activate();
@@ -286,7 +324,8 @@ var BrowseImageView = Backbone.View.extend({
         this.map.addLayer(layer);
         this.baseLayers.push(layer);
         self.map.setBaseLayer(layer);
-        this.layerSwitcherPanel.addBaseLayer(layer, this.model);
+        if(!this.review)
+            this.layerSwitcherPanel.addBaseLayer(layer, this.model);
     },
 
     /**
@@ -299,7 +338,11 @@ var BrowseImageView = Backbone.View.extend({
         this.map.addLayer(layer.vectorsLayer);
         this.layers.push(layer);
 
-        this.layerSwitcherPanel.addVectorLayer(layer, this.model, userID);
+        if(!this.review) {
+            this.layerSwitcherPanel.addVectorLayer(layer, this.model, userID);
+        } else{
+            this.reviewPanel.addVectorLayer(layer, this.model, userID);
+        }
     },
     /**
      * Create a draggable Panel containing Layers names
@@ -312,13 +355,22 @@ var BrowseImageView = Backbone.View.extend({
             el:this.el
         }).render();
     },
+    createReviewPanel:function () {
+        var self = this;
+        this.reviewPanel = new ReviewPanel({
+            browseImageView:self,
+            model:self.model,
+            el:self.el
+        }).render();
+    },
     /**
      * Create a draggable Panel containing a OverviewMap
      */
     createOverviewMap:function () {
         new OverviewMapPanel({
             model:this.model,
-            el:this.el
+            el:this.el,
+            browseImageView: this
         }).render();
     },
     /**
@@ -330,15 +382,16 @@ var BrowseImageView = Backbone.View.extend({
         //HACK : Set the height of the map manually
         var paddingTop = 77;
         var height = $(window).height() - paddingTop;
-        $("#map" + self.model.get('id')).css("height", height);
-        $("#map" + self.model.get('id')).css("width", "100%");
+        $("#"+self.divId).find("#map" +self.divPrefixId  + self.model.get('id')).css("height", height);
+        $("#"+self.divId).find("#map" + self.divPrefixId+self.model.get('id')).css("width", "100%");
         $(window).resize(function () {
             var height = $(window).height() - paddingTop;
-            $("#map" + self.model.get('id')).css("height", height);
+            $("#"+self.divId).find("#map" + self.divPrefixId+self.model.get('id')).css("height", height);
         });
 
         var initZoomifyLayer = function (metadata, zoomify_urls, imageFilters) {
-            self.createLayerSwitcher();
+            if(!self.review) self.createLayerSwitcher();
+            else self.createReviewPanel();
             self.initImageFiltersPanel();
             //var numZoomLevels =  metadata.nbZoom;
             /* Map with raster coordinates (pixels) from Zoomify image */
@@ -377,13 +430,13 @@ var BrowseImageView = Backbone.View.extend({
                             magnification = maxMagnification / (Math.pow(2, deltaZoom));
                         magnification = Math.round(magnification * 100) / 100;
                         if (magnification > self.model.get("magnification")) {
-                            $("#zoomInfoPanel" + self.model.id).css("color", "red");
-                            $("#zoomInfoPanel" + self.model.id).html(magnification + "X<br/>digital");
-                            $("#zoomInfoPanel" + self.model.id).css("height", 40);
+                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).css("color", "red");
+                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).html(magnification + "X<br/>digital");
+                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).css("height", 40);
                         } else {
-                            $("#zoomInfoPanel" + self.model.id).css("color", "white");
-                            $("#zoomInfoPanel" + self.model.id).html(magnification + "X");
-                            $("#zoomInfoPanel" + self.model.id).css("height", 20);
+                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).css("color", "white");
+                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).html(magnification + "X");
+                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).css("height", 20);
                         }
 
                         self.broadcastPosition();
@@ -405,7 +458,7 @@ var BrowseImageView = Backbone.View.extend({
             var overviewMapControl = new OpenLayers.Control.OverviewMap({
                 size:new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight),
                 layers:[overviewMap],
-                div:document.getElementById('overviewmapcontent' + self.model.get('id')),
+                div:$("#"+self.divId).find('#overviewmapcontent' + self.model.get('id'))[0],
                 minRatio:1,
                 maxRatio:1024,
                 mapOptions:{
@@ -415,7 +468,7 @@ var BrowseImageView = Backbone.View.extend({
             });
 
 
-            self.map = new OpenLayers.Map("map" + self.model.get('id'), options);
+            self.map = new OpenLayers.Map("map"+ self.divPrefixId + self.model.get('id'), options);
             self.initOntology();
 
 
@@ -490,7 +543,7 @@ var BrowseImageView = Backbone.View.extend({
             //broadcast position every 5 seconds even if user id idle
             self.initBroadcastingInterval();
             //check users online of this image
-            self.initWatchOnlineUsersInterval();
+            if(!self.review) self.initWatchOnlineUsersInterval();
         }
 
         var t_width = self.model.get("width");
@@ -545,6 +598,7 @@ var BrowseImageView = Backbone.View.extend({
     },
     initWatchOnlineUsersInterval:function () {
         var self = this;
+        if(this.review) return;
         this.watchOnlineUsersInterval = setInterval(function () {
             new UserOnlineModel({image:self.model.get("id")}).fetch({
                 success:function (model, response) {
@@ -578,7 +632,7 @@ var BrowseImageView = Backbone.View.extend({
             newCanvas.height = newCanvasHeight;
             newCanvas.display = 'none';
             document.body.appendChild(newCanvas);
-            var mapContainerDiv = $("#map" + self.model.id).children().children()[0];
+            var mapContainerDiv = $("#"+self.divId).find("#map" + self.model.id).children().children()[0];
             var viewPositionLeft = parseInt($(mapContainerDiv).css("left"), 10);
             var viewPositionTop = parseInt($(mapContainerDiv).css("top"), 10);
             for (var row = 0; row < tiles.length; row++) {
@@ -675,9 +729,10 @@ var BrowseImageView = Backbone.View.extend({
      * Init the toolbar
      */
     initToolbar:function () {
-        var toolbar = $('#toolbar' + this.model.get('id'));
+
         var self = this;
-        $('a[id=none' + this.model.get('id') + ']').click(function () {
+        var toolbar = $("#"+self.divId).find('#toolbar' + this.model.get('id'));
+        $("#"+self.divId).find('a[id=none' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("none");
             self.getUserLayer().enableHightlight();
@@ -783,7 +838,8 @@ var BrowseImageView = Backbone.View.extend({
     initAnnotationsTabs:function () {
         this.annotationsPanel = new AnnotationsPanel({
             el:this.el,
-            model:this.model
+            model:this.model,
+            browseImageView : this
         }).render();
 
     },

@@ -15,6 +15,7 @@ var AnnotationsPanel = Backbone.View.extend({
      */
     initialize:function (options) {
         this.refreshAnnotationsTabsFunc = [];
+        this.browseImageView = options.browseImageView;
     },
     /**
      * Grab the layout and call ask for render
@@ -55,7 +56,7 @@ var AnnotationsPanel = Backbone.View.extend({
                 });
                 i++;
             });
-            $("#annotationsPanel" + self.model.id).find(".tabsAnnotation").tabs({
+            $("#"+self.browseImageView.divId).find("#annotationsPanel" + self.model.id).find(".tabsAnnotation").tabs({
                 add:function (event, ui) {
 
                 },
@@ -66,7 +67,7 @@ var AnnotationsPanel = Backbone.View.extend({
                     obj.refresh.call();
                 }
             });
-            $("#annotationsPanel" + self.model.id).find(".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *")
+            $("#"+self.browseImageView.divId).find("#annotationsPanel" + self.model.id).find(".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *")
                 .removeClass("ui-corner-all ui-corner-top")
                 .addClass("ui-corner-bottom");
 
@@ -80,7 +81,7 @@ var AnnotationsPanel = Backbone.View.extend({
             });
             obj.refresh.call();
         } else { //refresh the current tab
-            var selected = $("#annotationsPanel" + self.model.id).find(".tabsAnnotation").tabs("option", "selected");
+            var selected = $("#"+self.browseImageView.divId).find("#annotationsPanel" + self.model.id).find(".tabsAnnotation").tabs("option", "selected");
             self.refreshAnnotationsTabsFunc[selected].refresh.call();
         }
     },
@@ -103,8 +104,9 @@ var AnnotationsPanel = Backbone.View.extend({
      * @param name term name
      */
     addTermToTab:function (termTabTpl, termTabContentTpl, data) {
-        $("#annotationsPanel" + this.model.id).find(".ultabsannotation").append(_.template(termTabTpl, data));
-        $("#annotationsPanel" + this.model.id).find(".listtabannotation").append(_.template(termTabContentTpl, data));
+        var self = this;
+        $("#"+self.browseImageView.divId).find("#annotationsPanel" + this.model.id).find(".ultabsannotation").append(_.template(termTabTpl, data));
+        $("#"+self.browseImageView.divId).find("#annotationsPanel" + this.model.id).find(".listtabannotation").append(_.template(termTabContentTpl, data));
     },
     /**
      * Render the html into the DOM element associated to the view
@@ -112,7 +114,7 @@ var AnnotationsPanel = Backbone.View.extend({
      */
     doLayout:function (tpl) {
         var self = this;
-        var el = $('#annotationsPanel' + self.model.get('id'));
+        var el = $("#"+self.browseImageView.divId).find('#annotationsPanel' + self.model.get('id'));
         var width = parseInt($(window).width());
         el.html(_.template(tpl, {id:self.model.get('id')}));
         new ProjectModel({id:window.app.status.currentProject}).fetch({

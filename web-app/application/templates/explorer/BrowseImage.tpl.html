@@ -1,5 +1,5 @@
-<div class="tab-pane" id="tabs-image-<%= project %>-<%= id %>-">
-    <div class="map" id="map<%= id %>"></div>
+<div class="tab-pane" id="<%= type %>-<%= project %>-<%= id %>-">
+    <div class="map" id="map<%= type %><%= id %>"></div>
     <div class="controlPanels" id="controlsPanels<%= id %>">
         <div class="toolbar toolbarPanel" style="display : none">
             <div class="btn-group" data-toggle="buttons-radio" id="toolbar<%= id %>">
@@ -10,8 +10,7 @@
                 <a class="btn btn-inverse" id="regular4<%= id %>" data-toggle="button">Quadrilateral</a>
                 <a class="btn btn-inverse" id="regular30<%= id %>" data-toggle="button">Ellipse</a>
                 <a class="btn btn-inverse" id="polygon<%= id %>" data-toggle="button">Polygon</a>
-                <a class="btn btn-inverse" id="freehand<%= id %>" data-toggle="button"><i
-                        class="icon-pencil icon-white"/> Freehand</a>
+                <a class="btn btn-inverse" id="freehand<%= id %>" data-toggle="button"><i class="icon-pencil icon-white"/> Freehand</a>
                 <a class="btn btn-inverse" id="magic<%= id %>" data-toggle="button">Magic Wand</a>
                 <a class="btn btn-inverse" id="modify<%= id %>" data-toggle="button">Edit</a>
                 <a class="btn btn-inverse" id="rotate<%= id %>" data-toggle="button">Rotate</a>
@@ -27,6 +26,7 @@
         <div class="ontologyPanel" id="ontologyTree<%= id %>" style="display : none"></div>
         <div class="imageFiltersPanel" id="imageFiltersPanel<%= id %>" style="display : none"></div>
         <div class="annotationDetailPanel" id="annotationDetailPanel<%= id %>" style="display : none"></div>
+        <div class="reviewPanel" id="reviewPanel<%= id %>" style="display : none"></div>
     </div>
     <div class="annotationsPanel" id="annotationsPanel<%= id %>"></div>
     <div class="zoomInfoPanel" id="zoomInfoPanel<%= id %>"></div>

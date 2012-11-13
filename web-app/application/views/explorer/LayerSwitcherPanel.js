@@ -36,8 +36,8 @@ var LayerSwitcherPanel = Backbone.View.extend({
         var radioName = "layerSwitch-" + model.get("id");
         var layerID = "layerSwitch-" + model.get("id") + "-" + new Date().getTime(); //index of the layer in this.layers array
         var liLayer = _.template("<li><input type='radio' id='<%=   id %>' name='<%=   radioName %>' checked/><span style='color : #ffffff;'> <%=   name %></span></li>", {id:layerID, radioName:radioName, name:layer.name.substr(0, 15)});
-        $("#layerSwitcher" + this.model.get("id")).find(".baseLayers").append(liLayer);
-        $("#layerSwitcher" + this.model.get("id")).find(".baseLayers").find("#" + layerID);
+        $("#"+this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find(".baseLayers").append(liLayer);
+        $("#"+this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find(".baseLayers").find("#" + layerID);
         $("#" + layerID).change(function () {
             self.browseImageView.map.setBaseLayer(layer);
         });
@@ -55,7 +55,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
             layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : #ffffff;'><%= name %></span></a> </li>", {userID:userID, id:layerID, name:layer.vectorsLayer.name, color:color});
         }
         console.log("*** addVectorLayer " + model.get("id"));
-        $("#layerSwitcher" + model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
+        $("#"+this.browseImageView.divId).find("#layerSwitcher" + model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
 
         $("#" + layerID).click(function () {
             var checked = $(this).attr("checked");
@@ -65,7 +65,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
     },
     updateOnlineUsers:function (onlineUsers) {
         var self = this;
-        var userList = $("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers");
+        var userList = $("#"+this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers");
         var projectUsers = _.pluck(window.app.models.projectUser, 'id');
         //check if the the user we are following is always connected, if not disconneted
         if (!_.include(onlineUsers, self.userFollowed)) {
@@ -117,21 +117,21 @@ var LayerSwitcherPanel = Backbone.View.extend({
     doLayout:function (tpl) {
         var self = this;
         var content = _.template(tpl, {id:self.model.get("id"), isDesktop:!window.app.view.isMobile});
-        $("#layerSwitcher" + self.model.get("id")).html(content);
+        $("#"+this.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).html(content);
 
-        $("#layerSwitcher" + self.model.get("id")).find(".toggleShowBaseLayers").click(function () {
-            $("#layerSwitcher" + self.model.get("id")).find("ul.baseLayers").toggle(150);
+        $("#"+this.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find(".toggleShowBaseLayers").click(function () {
+            $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find("ul.baseLayers").toggle(150);
             return false;
         });
 
-        $("#layerSwitcher" + self.model.get("id")).find(".toggleShowVectorLayers").click(function () {
-            $("#layerSwitcher" + self.model.get("id")).find("ul.annotationLayers").toggle(150);
+        $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find(".toggleShowVectorLayers").click(function () {
+            $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find("ul.annotationLayers").toggle(150);
             return false;
         });
 
-        $("#layerSwitcher" + self.model.get("id")).find(".followUser").live('click', function (e) {
+        $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find(".followUser").live('click', function (e) {
             var followUser = $(this).attr("checked") == "checked";
-            $("#layerSwitcher" + self.model.get("id")).find('.followUser:checked').each(function () {
+            $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find('.followUser:checked').each(function () {
                 $(this).attr('checked', false);
             });
             $(this).attr('checked', followUser);
@@ -146,7 +146,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
         $("#selectLayersIcon" + self.model.get("id")).off("click");
         $("#selectLayersIcon" + self.model.get("id")).on("click", function (event) {
             var project = window.app.status.currentProjectModel;
-            var userList = $("#layerSwitcher" + self.model.get("id")).find("ul.annotationLayers");
+            var userList = $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find("ul.annotationLayers");
             var projectUsers = _.pluck(window.app.models.projectUser, 'id');
             var almostOneCheckedState = false;
             _.each(projectUsers, function (userID) {
@@ -156,7 +156,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
             self.browseImageView.setAllLayersVisibility(!almostOneCheckedState);
         });
         new DraggablePanelView({
-            el:$('#layerSwitcher' + self.model.get('id')),
+            el:$("#"+self.browseImageView.divId).find('#layerSwitcher' + self.model.get('id')),
             className:"layerSwitcherPanel"
         }).render();
     }

@@ -65,12 +65,53 @@ var ExplorerTabs = Backbone.View.extend({
             }
         });
     },
+    addReviewImageView:function (idImage, options) {
+        console.log("addReviewImageView:"+idImage);
+        var self = this;
+        var tab = this.getReviewImageView("review-"+idImage);
+        console.log("tab="+tab);
+        if (tab != null) {
+            tab.view.show(options);
+            self.showReviewTab(idImage);
+            return;
+        }
+
+        var tabs = $("#explorer-tab-content");
+        var view = new BrowseImageView({
+            initCallback:function () {
+                view.show(options)
+            },
+            el:tabs,
+            review : true
+        });
+        self.tabs.push({idImage:"review-"+idImage, view:view});
+
+        new ImageInstanceModel({id:idImage}).fetch({
+            success:function (model, response) {
+                view.model = model;
+                view.render();
+                $(".closeTab").on("click", function (e) {
+                    var idImage = $(this).attr("data-image");
+                    self.removeReviewTab("review-"+idImage);
+                });
+                self.showReviewTab(idImage);
+            }
+        });
+    },
+
     /**
      * Return the reference to a BrowseImageView instance
      * contained in a tab
      * @param idImage the ID of an Image contained in a BrowseImageView
      */
     getBrowseImageView:function (idImage) {
+        var object = _.detect(this.tabs, function (object) {
+            return object.idImage == idImage;
+        });
+        return object != null ? object : null;
+    },
+    getReviewImageView:function (idImage) {
+        console.log("getReviewImageView="+idImage);
         var object = _.detect(this.tabs, function (object) {
             return object.idImage == idImage;
         });
@@ -95,6 +136,23 @@ var ExplorerTabs = Backbone.View.extend({
         //Remove content
         $('#tabs-image-' + window.app.status.currentProject + '-' + idImage + '-').remove();
     },
+
+    removeReviewTab:function (idImage) {
+        var reviewImageView = this.getReviewImageView(idImage);
+        reviewImageView.view.stopBroadcastingInterval();
+        reviewImageView.view.stopWatchOnlineUsersInterval();
+        var indexOf = this.tabs.indexOf(reviewImageView);
+
+        this.tabs.splice(indexOf, 1);
+        var tabs = $(this.el).children('.nav-tab');
+        //Remove Tab
+        $('#tabs-review-' + idImage).parent().remove();
+        //Remove dropdown
+        $('#tabs-review-' + idImage + "-dropdown").parent().remove();
+        //Remove content
+        $('#tabs-review-' + window.app.status.currentProject + '-' + idImage + '-').remove();
+    },
+
     /**
      * Show a tab
      * @param idImage the identifier of the Tab
@@ -103,6 +161,15 @@ var ExplorerTabs = Backbone.View.extend({
         var tabs = $("#explorer > .browser").find(".nav-tabs");
         window.app.controllers.browse.tabs.triggerRoute = false;
         $('#tabs-image-' + idImage).click();
+        window.app.controllers.browse.tabs.triggerRoute = true;
+    },
+    showReviewTab:function (idImage) {
+        console.log("showReviewTab:"+idImage);
+        var tabs = $("#explorer > .browser").find(".nav-tabs");
+        window.app.controllers.browse.tabs.triggerRoute = false;
+        console.log("click on item:"+$('#tabs-review-' + idImage).length);
+        console.log('#tabs-review-' + idImage);
+        $('#tabs-review-' + idImage).click();
         window.app.controllers.browse.tabs.triggerRoute = true;
     },
     /**

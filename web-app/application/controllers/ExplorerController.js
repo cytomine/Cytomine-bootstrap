@@ -5,7 +5,7 @@ var ExplorerController = Backbone.Router.extend({
     routes:{
         "tabs-annotation-:idAnnotation":"browseAnnotation",
         "tabs-image-:idProject-:idImage-:idAnnotation":"browse",
-
+        "tabs-review-:idProject-:idImage-":"review",
         "close":"close"
     },
 
@@ -63,9 +63,43 @@ var ExplorerController = Backbone.Router.extend({
         }
 
         createBrowseImageViewTab();
+    },
+
+
+
+    review:function (idProject, idImage) {
+        console.log("review:"+idProject+"-"+idImage);
+
+        var self = this;
+        //create tabs if not exist
+        if (this.tabs == null) {
+            console.log("this.tabs==null");
+            this.initTabs();
+        }
+        var createReviewImageViewTab = function () {
+            console.log("createReviewImageViewTab");
+            var reviewImageViewInitOptions = {};
+            self.tabs.addReviewImageView(idImage, reviewImageViewInitOptions);
+            //$('#tabs-image-'+idImage).tab('show');
+            // window.app.view.showComponent(self.tabs.container);
+            console.log("showView");
+
+            self.showView();
+        };
+
+        if (window.app.status.currentProject == undefined || window.app.status.currentProject != idProject) {//direct access -> create dashboard
+            console.log("project check");
+            window.app.controllers.dashboard.dashboard(idProject, createReviewImageViewTab);
+            return;
+        }
+
+        createReviewImageViewTab();
 
 
     },
+
+
+
     closeAll:function () {
         if (this.tabs == null) return;
         this.tabs = null;

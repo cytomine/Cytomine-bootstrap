@@ -1,13 +1,18 @@
-<a class="title-thumb-<%= id %>" rel="tooltip" data-original-title="<%= originalFilename %> "
-   href='#tabs-image-<%= project %>-<%=  id  %>-'><%= originalFilename %></a>
-<p><b>Magnification</b> : <%= magnification %> X<br/>
+<a class="title-thumb-<%= id %>" rel="tooltip" data-original-title="<%= originalFilename %> " href='#tabs-image-<%= project %>-<%=  id  %>-'><%= originalFilename %></a>
+<p>
+    <b>Magnification</b> : <%= magnification %> X<br/>
     <b>Resolution</b> : <%= resolution %><br/>
     <b>Width</b> : <%= width %><br/>
     <b>Height</b> : <%= height %><br/>
-    <b>User annotations</b> <% if (numberOfAnnotations == 0) { %> <span class="badge badge-error"><%= numberOfAnnotations %></span>
-    <% } else if (numberOfAnnotations < 100) { %><span class="badge badge-warning"><%= numberOfAnnotations %></span> <%
-    } else { %><span class="badge badge-success"><%= numberOfAnnotations %></span> <% } %><br/>
-    <b>Job annotations</b> : <%= numberOfJobAnnotations %></p>
-<p><a class="btn btn-small" id="getImageProperties-<%= id %>" href="#"><i class="icon-info-sign"></i> More info</a> <a
-        href='#tabs-image-<%= project %>-<%=  id  %>-' class="btn btn-inverse btn-small"><i
-        class="icon-eye-open icon-white"></i> Explore</a></p>
+    <b>User annotations</b>
+        <% if (numberOfAnnotations == 0) { %> <span class="badge badge-error"><%= numberOfAnnotations %></span>
+        <% } else if (numberOfAnnotations < 100) { %><span class="badge badge-warning"><%= numberOfAnnotations %></span> <%
+        } else { %><span class="badge badge-success"><%= numberOfAnnotations %></span> <% } %><br/>
+        <b>Job annotations</b> : <%= numberOfJobAnnotations %></p>
+<p>
+    <a class="btn btn-small" id="getImageProperties-<%= id %>" href="#"><i class="icon-info-sign"></i> More info</a>
+    <a href='#tabs-image-<%= project %>-<%=  id  %>-' class="btn btn-inverse btn-small"><i class="icon-eye-open icon-white"></i> Explore</a>
+
+
+    <a href='#tabs-review-<%= project %>-<%=  id  %>-' class="btn btn-inverse btn-small"><i class="icon-check icon-white"></i> Review</a>
+</p>

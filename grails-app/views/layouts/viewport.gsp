@@ -194,6 +194,7 @@ body {
     <script type="text/javascript" src="application/views/explorer/ImageFiltersPanel.js" ></script>
     <script type="text/javascript" src="application/views/explorer/OverviewMapPanel.js" ></script>
     <script type="text/javascript" src="application/views/explorer/OntologyPanel.js" ></script>
+    <script type="text/javascript" src="application/views/explorer/ReviewPanel.js" ></script>
 
     <script type="text/javascript" src="application/views/upload/UploadFormView.js" ></script>
 

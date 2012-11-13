@@ -16,7 +16,7 @@ var OverviewMapPanel = Backbone.View.extend({
      * @param options
      */
     initialize:function (options) {
-
+        this.browseImageView = options.browseImageView;
     },
     /**
      * Grab the layout and call ask for render
@@ -37,7 +37,7 @@ var OverviewMapPanel = Backbone.View.extend({
     doLayout:function (tpl) {
         var self = this;
         new DraggablePanelView({
-            el:$('#overviewMap' + self.model.get('id')),
+            el:$('#'+self.browseImageView.divId).find('#overviewMap' + self.model.get('id')),
             className:"overviewPanel",
             template:_.template(tpl, {id:self.model.get('id'), isDesktop:!window.app.view.isMobile})
         }).render();

@@ -29,7 +29,7 @@ var OntologyPanel = Backbone.View.extend({
                 var ontology = new OntologyModel({id:idOntology}).fetch({
                     success:function (model, response) {
                         self.ontologyTreeView = new OntologyTreeView({
-                            el:$("#ontologyTree" + self.model.get("id")),
+                            el:$('#'+self.browseImageView.divId).find("#ontologyTree" + self.model.get("id")),
                             browseImageView:self.browseImageView,
                             model:model
                         }).render();
@@ -53,7 +53,7 @@ var OntologyPanel = Backbone.View.extend({
     doLayout:function (tpl) {
 
         new DraggablePanelView({
-            el:$('#ontologyTree' + this.model.get('id')),
+            el:$('#'+this.browseImageView.divId).find('#ontologyTree' + this.model.get('id')),
             className:"ontologyPanel",
             template:_.template(tpl, {id:this.model.get('id')})
         }).render();

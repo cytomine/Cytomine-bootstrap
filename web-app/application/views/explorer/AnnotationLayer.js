@@ -305,7 +305,7 @@ AnnotationLayer.prototype = {
     },
     clearPopup:function (map, evt) {
         var self = this;
-        var elem = $("#annotationDetailPanel" + self.browseImageView.model.id);
+        var elem = $("#"+self.browseImageView.divId).find("#annotationDetailPanel" + self.browseImageView.model.id);
         elem.empty();
         elem.hide();
     },
@@ -343,7 +343,7 @@ AnnotationLayer.prototype = {
                     annotation.set({"terms":terms.join(", ")});
 
                     var content = _.template(tpl, annotation.toJSON());
-                    var elem = $("#annotationDetailPanel" + self.browseImageView.model.id);
+                    var elem = $("#"+self.browseImageView.divId).find("#annotationDetailPanel" + self.browseImageView.model.id);
                     elem.html(content);
                     elem.show();
                     $("#annotationHide" + annotation.id).off('click');
