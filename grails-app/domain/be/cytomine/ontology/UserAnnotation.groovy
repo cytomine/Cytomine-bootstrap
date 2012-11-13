@@ -38,11 +38,19 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
 
     def termsId() {
         if (user.algo()) {
-            return AlgoAnnotationTerm.findAllByAnnotation(this).collect{it.term?.id}.unique()
+            return AlgoAnnotationTerm.findAllByAnnotationIdent(this.id).collect{it.term?.id}.unique()
         } else {
             return annotationTerm.collect{it.term?.id}.unique()
         }
 
+    }
+
+    List<Term> termsForReview() {
+        terms().unique()
+    }
+
+    boolean isAlgoAnnotation() {
+        return false
     }
 
     def usersIdByTerm() {

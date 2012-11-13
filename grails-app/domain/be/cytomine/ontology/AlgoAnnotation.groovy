@@ -50,6 +50,15 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
         super.beforeUpdate()
     }
 
+    boolean isAlgoAnnotation() {
+        return true
+    }
+
+    List<Term> termsForReview() {
+        AlgoAnnotationTerm.findAllByAnnotationIdentAndUserJob(id,user).collect{it.term}.unique()
+    }
+
+
     static AlgoAnnotation createFromDataWithId(json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}

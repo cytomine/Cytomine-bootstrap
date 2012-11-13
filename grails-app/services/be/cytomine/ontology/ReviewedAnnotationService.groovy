@@ -55,12 +55,11 @@ class ReviewedAnnotationService extends ModelService {
 
     //reviewedAnnotationService.list(Project, List<SecUser>, Lis<ImageInstance>, List<Term>, boolean duplicate)
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Project project, List<SecUser> userList, List<ImageInstance> imageList, List<Term> termList, boolean conflict) {
+    def list(Project project, List<SecUser> userList, List<ImageInstance> imageList, List<Term> termList) {
         //TODO:: improve perf by query duplication (if imageList.size = project.image.size then don't query with inList)
         log.info "userList="+userList
         log.info "imageList="+imageList
         log.info "termList="+termList
-        if(!conflict) {
             def reviewed = ReviewedAnnotation.createCriteria().list {
                 eq("project",project)
                 inList("user", userList)
@@ -77,53 +76,6 @@ class ReviewedAnnotationService extends ModelService {
                 if(hasTerm) annotationWithThisTerm << review
             }
             return annotationWithThisTerm
-        } else {
-            def reviewed = ReviewedAnnotation.createCriteria().list {
-                eq("project",project)
-                inList("user", userList)
-                inList("image", imageList)
-                order("created", "desc")
-            }
-            def annotationWithThisTerm = []
-            def termListId = termList.collect {it.id}
-            reviewed.each { review ->
-                boolean hasTerm = false
-                review.terms().each { term ->
-                    if(termListId.contains(term.id)) hasTerm = true
-                }
-                if(hasTerm) annotationWithThisTerm << review
-            }
-
-            def data = [:]
-            def skipId = new HashMap<Long,Long>()
-            annotationWithThisTerm.each { reviewedAnnotation ->
-                if(!skipId.containsKey(reviewedAnnotation.id)) {
-                    List<ReviewedAnnotation> alreadyExistReviewedAnnotation = ReviewedAnnotation.findAllByParentIdent(reviewedAnnotation.parentIdent)
-                    boolean initialAnnotationAdded = false;
-                    alreadyExistReviewedAnnotation.each { alreadyExist ->
-                        //add to skip list to ignore next time
-                        skipId.put(alreadyExist.id,0)
-                        if(!shareCommonTerm(reviewedAnnotation,alreadyExist)) {
-                            def item = data.get(reviewedAnnotation.parentIdent)
-                            if(item==null) item = []
-                            item << alreadyExist
-                            //if first iteration, include based review annotation
-                            if(!initialAnnotationAdded) {
-                                initialAnnotationAdded = true;
-                                skipId.put(reviewedAnnotation.id,0)
-                                item << reviewedAnnotation
-                            }
-                            data.put(reviewedAnnotation.parentIdent,item)
-                        }
-
-                    }
-                }
-
-
-            }
-            return data
-
-        }
     }
 
     boolean shareCommonTerm(ReviewedAnnotation annotation1,ReviewedAnnotation annotation2) {

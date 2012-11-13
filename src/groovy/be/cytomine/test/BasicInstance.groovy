@@ -38,7 +38,7 @@ class BasicInstance {
      */
     static void checkDomain(def domain) {
         if(!domain.validate()) {
-            log.warn domain.class+".errors=" + domain.errors
+            log.warn domain.class.name+".errors=" + domain.errors
             assert false
         }
     }
@@ -60,12 +60,30 @@ class BasicInstance {
     }
 
     static UserAnnotation createUserAnnotation(Project project) {
+        createUserAnnotation(project,null)
+    }
+
+    static UserAnnotation createUserAnnotation(Project project, ImageInstance image) {
         UserAnnotation a2 = BasicInstance.getBasicUserAnnotationNotExist()
         a2.project = project
+        if(image) a2.image = image
         a2.user = BasicInstance.getNewUser()
         BasicInstance.checkDomain(a2)
         BasicInstance.saveDomain(a2)
+        BasicInstance.createAnnotationTerm(a2)
         a2
+    }
+
+    static AnnotationTerm createAnnotationTerm(UserAnnotation annotation) {
+        AnnotationTerm at = BasicInstance.getBasicAnnotationTermNotExist("")
+        Term term = getBasicTermNotExist()
+        term.ontology = annotation.project.ontology
+        term.save(flush: true)
+        at.userAnnotation = annotation
+        at.term = term
+        BasicInstance.checkDomain(at)
+        BasicInstance.saveDomain(at)
+        at
     }
 
     static AlgoAnnotation createAlgoAnnotation(Job job, UserJob userJob) {
@@ -86,6 +104,23 @@ class BasicInstance {
         BasicInstance.checkDomain(at)
         BasicInstance.saveDomain(at)
         at
+    }
+
+    static ImageInstance createImageInstance(Project project) {
+        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        image.project = project
+        BasicInstance.checkDomain(image)
+        BasicInstance.saveDomain(image)
+        image
+    }
+
+    static ReviewedAnnotation createReviewAnnotation(ImageInstance image) {
+        ReviewedAnnotation review = BasicInstance.getBasicReviewedAnnotationNotExist()
+        review.project = image.project
+        review.image = image
+        BasicInstance.checkDomain(review)
+        BasicInstance.saveDomain(review)
+        review
     }
 
     static UserJob createUserJob() {
@@ -183,7 +218,8 @@ class BasicInstance {
                 image: image,
                 user: User.findByUsername(Infos.GOODLOGIN),
                 project:image.project,
-                status : 0
+                status : 0,
+                reviewUser: User.findByUsername(Infos.GOODLOGIN)
         )
         annotation.putParentAnnotation(basedAnnotation)
         checkDomain(annotation)
@@ -212,7 +248,8 @@ class BasicInstance {
                 image: image,
                 user: User.findByUsername(Infos.GOODLOGIN),
                 project:image.project,
-                status : 0
+                status : 0,
+                reviewUser: User.findByUsername(Infos.GOODLOGIN)
         )
         annotation.putParentAnnotation(basedAnnotation)
         checkDomain(annotation)
@@ -493,7 +530,7 @@ class BasicInstance {
         ImageInstance image = new ImageInstance(
                 baseImage: img,
                 project: BasicInstance.createOrGetBasicProject(),
-                slide: BasicInstance.createOrGetBasicSlide(),
+                //slide: BasicInstance.createOrGetBasicSlide(),
                 user: BasicInstance.createOrGetBasicUser())
         image.baseImage.save(flush: true)
         checkDomain(image)

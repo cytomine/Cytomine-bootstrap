@@ -20,6 +20,10 @@ import be.cytomine.processing.Job
 import be.cytomine.security.UserJob
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.AlgoAnnotationTerm
+import be.cytomine.test.http.ImageInstanceAPI
+import be.cytomine.Exception.ConstraintException
+import be.cytomine.Exception.AlreadyExistException
+import be.cytomine.security.SecUser
 
 /**
  * Created by IntelliJ IDEA.
@@ -184,132 +188,6 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(404, result.code)
     }
 
-
-    public def getReviewedAnnotationWithConflict(boolean conflict) {
-        def basedAnnotation = BasicInstance.createOrGetBasicUserAnnotation()
-        def goodTerm = BasicInstance.getBasicTermNotExist()
-        goodTerm.ontology = basedAnnotation.project.ontology
-        goodTerm.save(flush: true)
-        def badTerm = BasicInstance.getBasicTermNotExist()
-        badTerm.ontology = basedAnnotation.project.ontology
-        badTerm.save(flush: true)
-
-        def annotation1 = BasicInstance.getBasicReviewedAnnotationNotExist()
-        annotation1.putParentAnnotation(basedAnnotation)
-        annotation1.image = basedAnnotation.image
-        annotation1.project = basedAnnotation.project
-        annotation1.save(flush: true)
-        annotation1.addToTerm(goodTerm)
-        annotation1.save(flush: true)
-
-        def annotation2 = BasicInstance.getBasicReviewedAnnotationNotExist()
-        annotation2.putParentAnnotation(basedAnnotation)
-        annotation2.image = basedAnnotation.image
-        annotation2.project = basedAnnotation.project
-        annotation2.save(flush: true)
-        if(conflict) annotation2.addToTerm(badTerm)
-        else annotation2.addToTerm(goodTerm)
-        annotation2.save(flush: true)
-        Infos.addUserRight(User.findByUsername(Infos.GOODLOGIN),basedAnnotation.project)
-        return [based:basedAnnotation, review1:annotation1, review2: annotation2]
-    }
-
-    void testListReviewedAnnotationByProjectConflictWithNotConflict() {
-
-        def data = getReviewedAnnotationWithConflict(false)
-        def based = data.based
-        def review1 = data.review1
-        def review2 = data.review2
-        def listConflict
-        def json
-        def result
-
-
-
-        //annotation 1 and 2 have the same annotation parent but with equal term => no conflict!
-        result = ReviewedAnnotationAPI.listByProjectConflict(based.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        json = JSON.parse(result.data)
-        assert json instanceof JSONObject
-        listConflict = json.get(based.id)
-        assert listConflict == null
-
-        result = ReviewedAnnotationAPI.listByProjectConflict(based.project.id,based.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        json = JSON.parse(result.data)
-        assert json instanceof JSONObject
-        listConflict = json.get(based.id)
-        assert listConflict == null
-
-        result = ReviewedAnnotationAPI.listByProjectConflict(based.project.id,based.user.id,based.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        json = JSON.parse(result.data)
-        assert json instanceof JSONObject
-        listConflict = json.get(based.id)
-        assert listConflict == null
-
-        result = ReviewedAnnotationAPI.listByProjectConflict(based.project.id,based.user.id,based.image.id,review1.termsId().first(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        json = JSON.parse(result.data)
-        assert json instanceof JSONObject
-        listConflict = json.get(based.id)
-        assert listConflict == null
-    }
-
-    void testListReviewedAnnotationByProjectConflictWithConflict() {
-
-        def data = getReviewedAnnotationWithConflict(true)
-        def based = data.based
-        def review1 = data.review1
-        def review2 = data.review2
-
-        println "review1="+ data.review1
-        println "review2="+ data.review2
-        println "review1="+ data.review1.id
-        println "review2="+ data.review2.id
-
-        def listConflict
-        def json
-        def result
-
-        //annotation 1 and 2 have the same annotation parent but with different term => conflict!
-        result = ReviewedAnnotationAPI.listByProjectConflict(based.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        json = JSON.parse(result.data)
-        assert json instanceof JSONObject
-        println json
-        println "based.id="+based.id
-
-        json.each {
-            println it.key + "=>"+it.value
-        }
-
-        listConflict = json[based.id.toString()]
-        assert listConflict!=null
-        assert listConflict.size()==2
-        assert ReviewedAnnotationAPI.containsInJSONList(review1.id,listConflict)
-        assert ReviewedAnnotationAPI.containsInJSONList(review2.id,listConflict)
-
-        result = ReviewedAnnotationAPI.listByProjectConflict(based.project.id,based.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        json = JSON.parse(result.data)
-        assert json instanceof JSONObject
-        listConflict = json[based.id.toString()]
-        assert listConflict.size()==2
-        assert ReviewedAnnotationAPI.containsInJSONList(review1.id,listConflict)
-        assert ReviewedAnnotationAPI.containsInJSONList(review2.id,listConflict)
-
-        result = ReviewedAnnotationAPI.listByProjectConflict(based.project.id,based.user.id,based.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        json = JSON.parse(result.data)
-        assert json instanceof JSONObject
-        listConflict = json[based.id.toString()]
-        assert listConflict.size()==2
-        assert ReviewedAnnotationAPI.containsInJSONList(review1.id,listConflict)
-        assert ReviewedAnnotationAPI.containsInJSONList(review2.id,listConflict)
-
-    }
-
     void testAddReviewedAnnotationCorrect() {
         def annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
@@ -335,14 +213,14 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
     }
 
-    void testAddReviewedAnnotationCorrectWithoutTerm() {
-        def annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
-        def json = JSON.parse(annotationToAdd.encodeAsJSON())
-        json.term = []
-
-        def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
-    }
+//    void testAddReviewedAnnotationCorrectWithoutTerm() {
+//        def annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
+//        def json = JSON.parse(annotationToAdd.encodeAsJSON())
+//        json.term = []
+//
+//        def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        assertEquals(400, result.code)
+//    }
 
     void testAddReviewedAnnotationCorrectWithBadProject() {
         def annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
@@ -362,14 +240,14 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(400, result.code)
     }
 
-    void testAddReviewedAnnotationCorrectWithBadParent() {
-        def annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
-        def json = JSON.parse(annotationToAdd.encodeAsJSON())
-        json.annotationIdent = null
-
-        def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
-    }
+//    void testAddReviewedAnnotationCorrectWithBadParent() {
+//        def annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
+//        def json = JSON.parse(annotationToAdd.encodeAsJSON())
+//        json.annotationIdent = null
+//
+//        def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        assertEquals(400, result.code)
+//    }
 
     void testAddReviewedAnnotationCorrectWithBadStatus() {
         def annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
@@ -527,6 +405,215 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
 
 
+    void testStartImageReviewing() {
+         //check image review flag true AND false AND true (no rev => rev => stop rev)
 
+          //create image
+          ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+
+          //check image attributes
+          def result = ImageInstanceAPI.show(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(200, result.code)
+          def json = JSON.parse(result.data)
+          json = JSON.parse(result.data)
+          assert json instanceof JSONObject
+          assert json.id == image.id
+          assert json.isNull('reviewStart')
+          assert json.isNull('reviewStop')
+          assert json.isNull('reviewUser')
+
+          //mark start review + check attr
+          result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(200, result.code)
+          json = JSON.parse(result.data)
+          assert json instanceof JSONObject
+          assert json.id == image.id
+          assert !json.isNull('reviewStart')
+          assert json.isNull('reviewStop')
+          assert !json.isNull('reviewUser')
+
+          //mark stop review + check attr
+          result = ReviewedAnnotationAPI.markStopReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(200, result.code)
+          json = JSON.parse(result.data)
+          assert json instanceof JSONObject
+          assert json.id == image.id
+        assert !json.isNull('reviewStart')
+        assert !json.isNull('reviewStop')
+        assert !json.isNull('reviewUser')
+          assert Long.parseLong(json.reviewStart.toString())<Long.parseLong(json.reviewStop.toString())
+      }
+
+      void testLockImageReviewing() {
+          //check image lock, only review if image is mark as review star
+          //create image
+          ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+
+          //add review
+          UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+
+          def result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(ConstraintException.CODE, result.code)
+
+          //mark start review + check attr
+          result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(200, result.code)
+
+          //add review
+          result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(201, result.code)
+
+          //mark stop review + check attr
+          result = ReviewedAnnotationAPI.markStopReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(200, result.code)
+
+          //create image
+          ImageInstance image2 = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+          UserAnnotation annotation2 = BasicInstance.createUserAnnotation(image2.project,image2)
+          result = ReviewedAnnotationAPI.addReviewAnnotation(annotation2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(ConstraintException.CODE, result.code)
+
+      }
+
+     void testLockImageReviewingForOtherUser() {
+          //create image
+          ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+          try {Infos.addUserRight(Infos.ANOTHERLOGIN,image.project)} catch(Exception e) {}
+
+          //mark start review + check attr
+          def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(200, result.code)
+
+          //add review with another login/user
+          UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+          result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD)
+          assertEquals(ConstraintException.CODE, result.code)
+
+     }
+
+      void testUnReviewing() {
+          //review image => add review => check image is not reviewed
+          //create image
+          ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+          UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+
+          //mark start review + check attr
+          def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(200, result.code)
+
+          result = ReviewedAnnotationAPI.markStopReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(200, result.code)
+
+          result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(200, result.code)
+
+          result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          assertEquals(201, result.code)
+      }
+
+    void testAddReviewForAnnotationTerm() {
+        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(201, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert Long.parseLong(json.parentIdent.toString()) == annotation.id
+        assert json.term !=null
+        assert json.term.size()==1
+    }
+
+    void testAddReviewForAlgoAnnotationTerm() {
+        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        UserJob user = BasicInstance.createUserJob(image.project)
+        AlgoAnnotation annotation = BasicInstance.createAlgoAnnotation(user.job,user)
+        annotation.image = image
+        BasicInstance.saveDomain(annotation)
+        BasicInstance.createAlgoAnnotationTerm(user.job,annotation,user)
+
+
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(201, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert Long.parseLong(json.parentIdent.toString()) == annotation.id
+        assert json.term !=null
+        assert json.term.size()==1
+    }
+
+
+    void testAddReviewAndUpdateGeometry() {
+        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(201, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        String newLocation = "POLYGON ((19830 21680, 21070 21600, 20470 20740, 19830 21680))"
+        json.location = newLocation
+
+        result = ReviewedAnnotationAPI.update(json.id,json.toString(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        println result.data
+        assert JSON.parse(result.data).reviewedannotation.location.trim().equals("POLYGON ((19830 21680, 21070 21600, 20470 20740, 19830 21680))")
+    }
+
+    void testaddConflictReview() {
+        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(201, result.code)
+
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(AlreadyExistException.CODE, result.code)
+    }
+
+
+    void testReviewAllUserLayer() {
+        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+        List<Long> users = [annotation.user.id, SecUser.findByUsername(Infos.ANOTHERLOGIN).id]
+
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+
+        result =  ReviewedAnnotationAPI.addReviewAll(image.id,users,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+        assert json.size()==1
+    }
+
+    void testReviewAllJobLayer() {
+        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        UserJob userJob = BasicInstance.createUserJob(image.project)
+        AlgoAnnotation annotation = BasicInstance.createAlgoAnnotation(userJob.job,userJob)
+        annotation.image = image
+        annotation.project = image.project
+        BasicInstance.saveDomain(annotation)
+        List<Long> users = [annotation.user.id, SecUser.findByUsername(Infos.ANOTHERLOGIN).id]
+
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+
+        result =  ReviewedAnnotationAPI.addReviewAll(image.id,users,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+        assert json.size()==1
+    }
 
 }

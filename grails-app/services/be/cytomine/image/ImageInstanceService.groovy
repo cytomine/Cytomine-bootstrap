@@ -16,6 +16,8 @@ import org.hibernate.FetchMode
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.Exception.ConstraintException
 
 class ImageInstanceService extends ModelService {
 
@@ -143,6 +145,10 @@ class ImageInstanceService extends ModelService {
         SecUser currentUser = cytomineService.getCurrentUser()
         //Read image
         ImageInstance imageInstance = retrieve(json)
+
+        if(imageInstance && imageInstance.reviewStart!=null)
+            throw new ConstraintException("You cannot remove a image instance that is review or has been reviewed...")
+
         /* Delete social stuff */
         UserPosition.findAllByImage(imageInstance).each { userPosition ->
             userPosition.delete()

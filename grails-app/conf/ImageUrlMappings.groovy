@@ -46,6 +46,13 @@ class ImageUrlMappings {
             action = [GET:"listByProject"]
         }
 
+        "/api/annotation/$id/$zoom/crop"(controller: "restImage"){
+            action = [GET:"cropAnnotation"]
+        }
+        "/api/annotation/$id/crop"(controller: "restImage"){
+            action = [GET:"cropAnnotation"]
+        }
+
         "/api/userannotation/$id/$zoom/crop"(controller: "restImage"){
             action = [GET:"cropUserAnnotation"]
         }

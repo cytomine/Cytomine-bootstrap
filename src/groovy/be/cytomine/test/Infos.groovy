@@ -37,6 +37,9 @@ class Infos {
     public static String GOODLOGIN = "lrollus"
     public static String GOODPASSWORD = 'lR$2011'
 
+    public static String ANOTHERLOGIN = "rmaree"
+    public static String ANOTHERPASSWORD = 'rM$2011'
+
     public static String GOODPASSWORDUSERJOB = 'PasswordUserJob'
 
     public static String BADLOGIN = 'badlogin'

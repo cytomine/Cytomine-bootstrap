@@ -119,6 +119,17 @@ class RestImageController extends RestController {
         }
     }
 
+    def cropAnnotation = {
+        try {
+            def annotation = UserAnnotation.read(params.id)
+            if(!annotation) annotation = AlgoAnnotation.read(params.id)
+            def cropURL = cropAnnotation(annotation,params)
+            if(cropURL!=null) responseImage(cropURL)
+        } catch (Exception e) {
+            log.error("GetThumb:" + e)
+        }
+    }
+
     def cropUserAnnotation = {
         try {
             def annotation = UserAnnotation.read(params.id)
@@ -128,6 +139,7 @@ class RestImageController extends RestController {
             log.error("GetThumb:" + e)
         }
     }
+
     def cropAlgoAnnotation = {
         try {
             def annotation = AlgoAnnotation.read(params.id)

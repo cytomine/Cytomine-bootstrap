@@ -21,10 +21,6 @@ class ReviewedAnnotationUrlMappings {
             action = [POST:"add"]
          }
 
-
-
-
-
         //?params.users+images+terms+conflict
         "/api/project/$idProject/reviewedannotation"(controller: "restReviewedAnnotation"){
              action = [GET:"listByProjectImageTermAndUser"]
@@ -35,6 +31,20 @@ class ReviewedAnnotationUrlMappings {
         "/api/user/$idUser/imageinstance/$idImage/reviewedannotation"(controller:"restReviewedAnnotation"){
             action = [GET:"listByImageAndUser"]
         }
+
+
+        "/api/annotation/$id/review"(controller: "restReviewedAnnotation"){
+            action = [POST:"addAnnotationReview",DELETE:"deleteAnnotationReview"]
+         }
+
+        "/api/imageinstance/$id/review"(controller: "restReviewedAnnotation"){
+            action = [POST:"startImageInstanceReview",DELETE: "stopImageInstanceReview"]
+         }
+
+        "/api/imageinstance/$image/annotation/review"(controller: "restReviewedAnnotation"){
+            action = [POST:"reviewLayer"]
+         }
+
 
         //validate all annotation for a job?
     }

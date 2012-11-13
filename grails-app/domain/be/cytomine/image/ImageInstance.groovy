@@ -31,6 +31,11 @@ class ImageInstance extends CytomineDomain implements Serializable {
     Integer zIndex
     Integer channel
 
+    Date reviewStart
+    Date reviewStop
+    SecUser reviewUser
+
+
     static belongsTo = [AbstractImage, Project, User]
 
     static constraints = {
@@ -41,6 +46,9 @@ class ImageInstance extends CytomineDomain implements Serializable {
         stack(nullable: true)
         zIndex(nullable: true) //order in z-stack referenced by stack
         channel(nullable : true)  //e.g. fluo channel
+        reviewStart nullable:true
+        reviewStop nullable:true
+        reviewUser nullable:true
     }
 
     static mapping = {
@@ -106,6 +114,19 @@ class ImageInstance extends CytomineDomain implements Serializable {
             image.countImageAnnotations = 0
         }
 
+        image.reviewStart = (!jsonImage.reviewStart.toString().equals("null")) ? new Date(Long.parseLong(jsonImage.reviewStart)) : null
+        image.reviewStop = (!jsonImage.reviewStop.toString().equals("null")) ? new Date(Long.parseLong(jsonImage.reviewStop)) : null
+
+        String reviewUserId = jsonImage.reviewUser.toString()
+        if (!reviewUserId.equals("null")) {
+            image.reviewUser = User.get(Long.parseLong(reviewUserId))
+            if (image.reviewUser == null) throw new WrongArgumentException("User was not found with id:" + reviewUserId)
+        }
+        else image.reviewUser = null
+
+        if ((image.reviewUser==null && image.reviewStart!=null) ||(image.reviewUser!=null && image.reviewStart==null) || (image.reviewStart==null && image.reviewStop!=null))
+            throw new WrongArgumentException("Review data are not valid: user=${image.reviewUser} start=${image.reviewStart} stop=${image.reviewStop}")
+
         return image;
     }
 
@@ -165,8 +186,23 @@ class ImageInstance extends CytomineDomain implements Serializable {
             //returnArray['imageServerBaseURL'] = it.baseImage.getMime().imageServers().collect { it.getZoomifyUrl() }
             //returnArray['imageServerBaseURL'] = UrlApi.getImageServerInfosWithImageId(it.id)
 
+            returnArray['reviewStart'] = it.reviewStart ? it.reviewStart.time.toString() : null
+            returnArray['reviewStop'] = it.reviewStop ? it.reviewStop.time.toString() : null
+            returnArray['reviewUser'] = it.reviewUser
+
+            returnArray['reviewed'] = it.isReviewed()
+            returnArray['inReview'] = it.isInReviewMode()
+
             return returnArray
         }
+    }
+
+    public boolean isInReviewMode() {
+        return (reviewStart!=null && reviewUser!=null)
+    }
+
+    public boolean isReviewed() {
+        return (reviewStop!=null)
     }
 
      public Project projectDomain() {

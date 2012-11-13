@@ -12,6 +12,7 @@ import be.cytomine.Exception.WrongArgumentException
 import org.apache.log4j.Logger
 import grails.converters.JSON
 import be.cytomine.api.UrlApi
+import be.cytomine.ontology.Term
 
 /**
  * User: lrollus
@@ -54,6 +55,8 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
     abstract def terms()
     abstract def termsId()
+    abstract boolean isAlgoAnnotation()
+    abstract List<Term> termsForReview()
 
     String toString() {return "Annotation " + id}
 
@@ -64,6 +67,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         super.beforeInsert()
         project = image.project
     }
+
 
 
     def getFilename() {

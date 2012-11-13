@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.Term
+import be.cytomine.security.SecUser
 
 /**
  * User: lrollus
@@ -111,54 +112,6 @@ class ReviewedAnnotationAPI extends DomainAPI {
     static def listByImageAndUser(Long idImage,Long idUser, String username, String password) {
         log.info "list reviewedannotation by user " + idUser + " and image " + idImage
         String URL = Infos.CYTOMINEURL+"api/user/"+ idUser +"/imageinstance/"+idImage+"/reviewedannotation.json?conflict=true"
-        HttpClient client = new HttpClient();
-        client.connect(URL, username, password);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
-    }
-
-    static def listByProjectConflict(Long id, String username, String password) {
-        log.info "list reviewedannotation by project " + id
-        String URL = Infos.CYTOMINEURL + "api/project/$id/reviewedannotation.json?conflict=true"
-        HttpClient client = new HttpClient();
-        client.connect(URL, username, password);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
-    }
-
-    static def listByProjectConflict(Long id, Long idUser, String username, String password) {
-        log.info "list reviewedannotation by project " + id
-        String URL = Infos.CYTOMINEURL + "api/project/$id/reviewedannotation.json?users="+idUser+"&conflict=true"
-        HttpClient client = new HttpClient();
-        client.connect(URL, username, password);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
-    }
-
-    static def listByProjectConflict(Long id, Long idUser, Long idImage, String username, String password) {
-        log.info "list reviewedannotation by project " + id
-        String URL = Infos.CYTOMINEURL + "api/project/$id/reviewedannotation.json?users="+idUser+"&images="+idImage +"&conflict=true"
-        HttpClient client = new HttpClient();
-        client.connect(URL, username, password);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
-    }
-
-    static def listByProjectConflict(Long id, Long idUser, Long idImage, Long idTerm, String username, String password) {
-        log.info "list reviewedannotation by project " + id
-        String URL = Infos.CYTOMINEURL + "api/project/$id/reviewedannotation.json?users="+idUser+"&images="+idImage+"&terms="+idTerm+"&conflict=true"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
         client.get()
@@ -279,6 +232,77 @@ class ReviewedAnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def markStartReview(def id, String username, String password) {
+        log.info "update reviewedannotation:" + id
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/review.json"
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        client.post("")
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        println response
+        client.disconnect();
+        log.info("check response")
+        return [data: response, code: code]
+    }
+
+    static def markStopReview(def id, String username, String password) {
+        log.info "update reviewedannotation:" + id
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/review.json"
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        client.delete()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        println response
+        client.disconnect();
+        log.info("check response")
+        return [data: response, code: code]
+    }
+
+    static def addReviewAnnotation(def id, String username, String password) {
+        log.info "update reviewedannotation:" + id
+        String URL = Infos.CYTOMINEURL + "api/annotation/" + id + "/review.json"
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        client.post("")
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        println response
+        client.disconnect();
+        log.info("check response")
+        return [data: response, code: code]
+    }
+
+
+    static def addReviewAll(Long idImage, List<Long> users, String username, String password) {
+        log.info "update reviewedannotation:" + idImage
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + idImage + "/annotation/review.json?users="+users.join(",")
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        client.post("")
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        println response
+        client.disconnect();
+        log.info("check response")
+        return [data: response, code: code]
+    }
+
+    static def removeReviewAnnotation(def id, String username, String password) {
+        log.info "update reviewedannotation:" + id
+        String URL = Infos.CYTOMINEURL + "api/annotation/" + id + "/review.json"
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        client.delete()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        println response
+        client.disconnect();
+        log.info("check response")
+        return [data: response, code: code]
+    }
+
     static def buildBasicReviewedAnnotation(String username, String password) {
         //Create project with user 1
         def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(), username, password)
@@ -301,4 +325,8 @@ class ReviewedAnnotationAPI extends DomainAPI {
         annotation = result.data
         return annotation
     }
+
+
+
+
 }

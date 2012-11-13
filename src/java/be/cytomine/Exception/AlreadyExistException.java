@@ -10,11 +10,12 @@ package be.cytomine.Exception;
  */
 public class AlreadyExistException extends CytomineException {
 
+    public static int CODE = 409;
     /**
      * Message map with this exception
      * @param message Message
      */
     public AlreadyExistException(String message) {
-             super(message,409);
+             super(message,CODE);
     }
 }

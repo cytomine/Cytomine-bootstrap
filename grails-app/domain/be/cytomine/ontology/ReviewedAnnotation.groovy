@@ -19,6 +19,7 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
     Long parentIdent
     Integer status
     SecUser user
+    SecUser reviewUser
 
     static constraints = {
     }
@@ -29,6 +30,7 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
               location type: org.hibernatespatial.GeometryUserType
           }
         term fetch: 'join'
+
      }
 
     public String toString() {
@@ -68,6 +70,14 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
          super.beforeUpdate()
      }
 
+    boolean isAlgoAnnotation() {
+        return false
+    }
+
+    List<Term> termsForReview() {
+        term
+    }
+
      static ReviewedAnnotation createFromDataWithId(json) {
          def domain = createFromData(json)
          try {domain.id = json.id} catch (Exception e) {}
@@ -84,6 +94,8 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
          def annotation = new ReviewedAnnotation()
          getFromData(annotation, jsonAnnotation)
      }
+
+
 
      /**
       * Fill annotation with data attributes
@@ -123,6 +135,12 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
                  if (!annotation.user) throw new Exception()
              }catch(Exception e) {throw new WrongArgumentException("User $jsonAnnotation.user not found!:"+e)}
 
+             //review user
+             try {
+                 annotation.reviewUser = SecUser.read(Long.parseLong(jsonAnnotation.reviewUser.toString()));
+                 if (!annotation.reviewUser) throw new Exception()
+             }catch(Exception e) {throw new WrongArgumentException("User $jsonAnnotation.reviewUser not found!:"+e)}
+
              //annotation parent
              String annotationParentId = jsonAnnotation.parentIdent?.toString()
              if(annotationParentId==null || annotationParentId.equals("") || annotationParentId.equals("null"))
@@ -148,7 +166,7 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
                  annotation.addToTerm(Term.read(it))
              }
              println "annotation.term="+annotation.term
-             if (!annotation.term || annotation.term.isEmpty()) throw new WrongArgumentException("Term list cannot be empty: json.term = "+jsonAnnotation.term+" annotation.term="+annotation.term)
+             //if (!annotation.term || annotation.term.isEmpty()) throw new WrongArgumentException("Term list cannot be empty: json.term = "+jsonAnnotation.term+" annotation.term="+annotation.term)
 
 
          } catch (com.vividsolutions.jts.io.ParseException ex) {
@@ -176,6 +194,7 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
              returnArray['project'] = annotation.project.id
              returnArray['container'] = annotation.project.id
              returnArray['user'] = annotation.user?.id
+             returnArray['reviewUser'] = annotation.reviewUser?.id
              returnArray['area'] = annotation.computeArea()
              returnArray['perimeter'] = annotation.computePerimeter()
              returnArray['centroid'] = annotation.getCentroid()
