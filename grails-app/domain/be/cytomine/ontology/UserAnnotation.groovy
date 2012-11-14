@@ -12,6 +12,7 @@ import be.cytomine.api.UrlApi
 class UserAnnotation extends AnnotationDomain implements Serializable {
 
     User user
+    Integer countReviewedAnnotations = 0
 
     static hasMany = [ annotationTerm: AnnotationTerm ]
 
@@ -25,6 +26,10 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
           }
           annotationTerm fetch: 'join'
       }
+
+    boolean hasReviewedAnnotation() {
+        return countReviewedAnnotations>0
+    }
 
     /**
      * Get all terms map with the annotation

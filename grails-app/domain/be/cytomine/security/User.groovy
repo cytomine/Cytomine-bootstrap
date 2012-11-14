@@ -194,6 +194,8 @@ class User extends SecUser {
             returnArray['color'] = it.color
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null
+
+            returnArray['algo'] = it.algo()
             return returnArray
         }
     }

@@ -12,6 +12,7 @@ import be.cytomine.api.UrlApi
 class AlgoAnnotation extends AnnotationDomain implements Serializable {
 
     UserJob user
+    Integer countReviewedAnnotations = 0
 
     static constraints = {
     }
@@ -56,6 +57,10 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
 
     List<Term> termsForReview() {
         AlgoAnnotationTerm.findAllByAnnotationIdentAndUserJob(id,user).collect{it.term}.unique()
+    }
+
+    boolean hasReviewedAnnotation() {
+        return countReviewedAnnotations>0
     }
 
 

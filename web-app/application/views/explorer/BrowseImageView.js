@@ -242,37 +242,8 @@ var BrowseImageView = Backbone.View.extend({
     layerLoadedCallback:function (layer) {
         var self = this;
         this.layersLoaded++;
-        var project = window.app.status.currentProjectModel;
-        if (this.layersLoaded == window.app.models.userLayer.length) {
-            //Init MultiSelected in LayerSwitcher
-            /*$("#layerSwitcher"+this.model.get("id")).find("select").multiselect({
-             click: function(event, ui){
-             _.each(self.layers, function(layer){
-             if (layer.name != ui.value) return;
-             if (ui.checked) {
-             _.each(layer.vectorsLayer.features, function (feature) {
-             if (feature.style != undefined && feature.style.display != 'none') return;
-             layer.showFeature(feature);
-             });
-             }
-             layer.vectorsLayer.setVisibility(ui.checked);
-             });
-             },
-             checkAll: function(){
-             _.each(self.layers, function(layer){
-             layer.vectorsLayer.setVisibility(true);
-             _.each(layer.vectorsLayer.features, function (feature) {
-             if (feature.style != undefined && feature.style.display != 'none') return;
-             layer.showFeature(feature);
-             });
-             });
-             },
-             uncheckAll: function(){
-             _.each(self.layers, function(layer){
-             layer.vectorsLayer.setVisibility(false);
-             });
-             }
-             });*/
+
+        if (this.layersLoaded == window.app.models.userLayer.length && self.review==false) {
 
             //Init Controls on Layers
             var vectorLayers = _.map(this.layers, function (layer) {
@@ -299,7 +270,6 @@ var BrowseImageView = Backbone.View.extend({
 
             self.initAutoAnnoteTools();
         }
-
     },
     /**
      * Return the AnnotationLayer of the logged user
@@ -360,7 +330,9 @@ var BrowseImageView = Backbone.View.extend({
         this.reviewPanel = new ReviewPanel({
             browseImageView:self,
             model:self.model,
-            el:self.el
+            el:self.el,
+            userLayers: window.app.models.projectUser,
+            userJobLayers : window.app.models.projectUserJob
         }).render();
     },
     /**
@@ -824,15 +796,18 @@ var BrowseImageView = Backbone.View.extend({
      */
     initVectorLayers:function (ontologyTreeView) {
         var self = this;
-        var project = window.app.status.currentProjectModel;
-        var projectUsers = window.app.models.projectUser.select(function (user) {
-            return window.app.models.userLayer.get(user.id) != undefined;
-        });
-        _.each(projectUsers, function (user) {
-            var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map);
-            layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
-            layerAnnotation.loadAnnotations(self);
-        });
+        if(!self.review) {
+            var project = window.app.status.currentProjectModel;
+            var projectUsers = window.app.models.projectUser.select(function (user) {
+                return window.app.models.userLayer.get(user.id) != undefined;
+            });
+            _.each(projectUsers, function (user) {
+                var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map);
+                layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
+                layerAnnotation.loadAnnotations(self);
+            });
+        }
+
     },
 
     initAnnotationsTabs:function () {

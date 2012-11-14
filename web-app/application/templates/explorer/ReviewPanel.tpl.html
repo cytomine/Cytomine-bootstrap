@@ -1,5 +1,33 @@
-<div class="dragHandle minimized label">REVIEW <i class="icon-move icon-white" style="float:right"/></div>
-<div id="reviewPanelContent<%= id %>" style="padding: 5px;">
+<div class="dragHandle minimized label">REVIEWS <i class="icon-move icon-white" style="float:right"/></div>
+
+
+<div class="reviewPanelContent" id="reviewPanelcontent<%= id %>" style="padding: 5px;">
     <% if (isDesktop) { %> <i class="dragHandle icon-move icon-white" style="float:right"></i> <% } %>
-    TEST-TEST-TEST-TEST-TEST-TEST-TEST
+    <h4 style="color : #ffffff; display: inline;">Layers</h4>
+
+
+
+    <div style="display: block;" id="reviewChoice<%= id %>">
+        <select>
+        </select>
+        <br>
+        <button style="display: block; margin-left: auto; margin-right: auto;" id="addReviewLayers<%= id %>" class="btn"><i class="icon-plus icon-black"></i> Add&nbsp;&nbsp;&nbsp;</button>
+    </div>
+
+    <div style="display: block" id="reviewSelection<%= id %>">
+
+    </div>
+
+    <h4 style="color : #ffffff; display: inline;">Action</h4>
+
+    <div style="display: block;" >
+        <ul class="reviewAction">
+            <li>
+                <button class="btn" id="reviewSingle<%= id %>">Review Annotation</button>
+                <button class="btn" id="reviewMultiple<%= id %>">Review Visible Annotations</button><br><br>
+                <button class="btn" id="reviewValidate<%= id %>">Validate image</button>
+                <button class="btn" id="reviewGotoNext<%= id %>">Go to next image</button>
+            </li>
+        </ul>
+    </div>
 </div>

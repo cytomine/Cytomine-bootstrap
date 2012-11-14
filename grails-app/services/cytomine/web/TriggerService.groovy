@@ -32,6 +32,9 @@ class TriggerService {
             statement.execute(getImageAnnotationAlgoCountTriggerIncr())
             statement.execute(getImageAnnotationAlgoCountTriggerDecr())
             statement.execute(getAnnotationCommentTriggerIncr())
+            statement.execute(getAnnotationReviewCountTriggerIncr())
+            statement.execute(getAnnotationReviewCountTriggerDecr())
+
 
         } catch (org.postgresql.util.PSQLException e) {
             log.info e
@@ -271,5 +274,81 @@ class TriggerService {
         log.info createTrigger
         return createFunction + dropTrigger + createTrigger
     }
+
+
+
+
+
+
+
+
+
+    String getAnnotationReviewCountTriggerIncr() {
+
+        //be.cytomine.ontology.AlgoAnnotation
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION incrementAnnotationReviewedAnnotation() RETURNS trigger as \$incAnnRevAnn\$
+        DECLARE
+           current_class reviewed_annotation.parent_class_name%TYPE;
+           algo_class reviewed_annotation.parent_class_name%TYPE := 'be.cytomine.ontology.AlgoAnnotation';
+           user_class reviewed_annotation.parent_class_name%TYPE := 'be.cytomine.ontology.UserAnnotation';
+        BEGIN
+            SELECT parent_class_name INTO current_class from reviewed_annotation where id = NEW.id;
+            IF current_class = user_class THEN
+                UPDATE user_annotation
+                SET count_reviewed_annotations = count_reviewed_annotations + 1
+                WHERE user_annotation.id = NEW.parent_ident;
+            ELSEIF current_class = algo_class THEN
+                UPDATE algo_annotation
+                SET count_reviewed_annotations = count_reviewed_annotations + 1
+                WHERE algo_annotation.id = NEW.parent_ident;
+            END IF;
+            RETURN NEW;
+        END ;
+        \$incAnnRevAnn\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS countAnnotationReviewedAnnotation on reviewed_annotation;"
+
+        String createTrigger = "CREATE TRIGGER countAnnotationReviewedAnnotation AFTER INSERT ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE incrementAnnotationReviewedAnnotation(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+    String getAnnotationReviewCountTriggerDecr() {
+
+        //be.cytomine.ontology.AlgoAnnotation
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION decrementAnnotationReviewedAnnotation() RETURNS trigger as \$decrAnnRevAnn\$
+        DECLARE
+           current_class reviewed_annotation.parent_class_name%TYPE;
+           algo_class reviewed_annotation.parent_class_name%TYPE := 'be.cytomine.ontology.AlgoAnnotation';
+           user_class reviewed_annotation.parent_class_name%TYPE := 'be.cytomine.ontology.UserAnnotation';
+        BEGIN
+            IF OLD.parent_class_name = user_class THEN
+                UPDATE user_annotation
+                SET count_reviewed_annotations = count_reviewed_annotations - 1
+                WHERE user_annotation.id = OLD.parent_ident;
+            ELSEIF OLD.parent_class_name = algo_class THEN
+                UPDATE algo_annotation
+                SET count_reviewed_annotations = count_reviewed_annotations - 1
+                WHERE algo_annotation.id = OLD.parent_ident;
+            END IF;
+            RETURN OLD;
+        END ;
+        \$decrAnnRevAnn\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS countAnnotationReviewedAnnotationDecr on reviewed_annotation;"
+
+        String createTrigger = "CREATE TRIGGER countAnnotationReviewedAnnotationDecr AFTER DELETE ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE decrementAnnotationReviewedAnnotation(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
 
 }

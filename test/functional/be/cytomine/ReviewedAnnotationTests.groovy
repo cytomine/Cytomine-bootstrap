@@ -616,4 +616,57 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assert json.size()==1
     }
 
+
+    void testAnnotationReviewedCounterForAnnotationAlgo() {
+        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        UserJob userJob = BasicInstance.createUserJob(image.project)
+        AlgoAnnotation annotation = BasicInstance.createAlgoAnnotation(userJob.job,userJob)
+        assert annotation.countReviewedAnnotations==0
+
+        ReviewedAnnotation review = BasicInstance.getBasicReviewedAnnotationNotExist()
+        review.image = annotation.image
+        review.project = annotation.project
+        review.putParentAnnotation(annotation)
+        BasicInstance.checkDomain(review)
+        BasicInstance.saveDomain(review)
+
+        annotation.refresh()
+
+        println "review.class="+review.parentClassName
+        println "review.id="+review.parentIdent
+        println "annotation.id="+annotation.id
+
+        assert annotation.countReviewedAnnotations==1
+
+        review.delete(flush: true)
+
+        annotation.refresh()
+
+        assert annotation.countReviewedAnnotations==0
+    }
+
+    void testAnnotationReviewedCounterForAnnotationUser() {
+        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        UserJob userJob = BasicInstance.createUserJob(image.project)
+        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+        assert annotation.countReviewedAnnotations==0
+
+        ReviewedAnnotation review = BasicInstance.getBasicReviewedAnnotationNotExist()
+        review.image = annotation.image
+        review.project = annotation.project
+        review.putParentAnnotation(annotation)
+        BasicInstance.checkDomain(review)
+        BasicInstance.saveDomain(review)
+
+        annotation.refresh()
+
+        assert annotation.countReviewedAnnotations==1
+
+        review.delete(flush: true)
+
+        annotation.refresh()
+
+        assert annotation.countReviewedAnnotations==0
+    }
+
 }

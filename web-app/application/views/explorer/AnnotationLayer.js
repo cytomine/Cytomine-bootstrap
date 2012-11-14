@@ -164,6 +164,7 @@ AnnotationLayer.prototype = {
 
             },
             featureselected:function (evt) {
+                console.log("featureselected");
                 if (!self.measureOnSelect) {
                     self.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
 
@@ -228,7 +229,7 @@ AnnotationLayer.prototype = {
     },
     initControls:function (map, selectFeature) {
         /*if (isOwner) { */
-
+        console.log("initControls");
         this.controls = {
             'freehand':new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon, {
                 handlerOptions:{

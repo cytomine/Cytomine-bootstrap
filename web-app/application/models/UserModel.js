@@ -22,6 +22,11 @@ var UserModel = Backbone.Model.extend({
 
     prettyName:function () {
         return this.get('lastname') + " " + this.get('firstname');
+    },
+    layerName:function () {
+        if(this.get('algo'))
+            return this.get("softwareName") + " " + window.app.convertLongToDate(this.get("created"));
+        else return this.get('lastname') + " " + this.get('firstname');
     }
 });
 
@@ -133,6 +138,7 @@ var UserJobCollection = Backbone.Collection.extend({
         this.project = options.project;
         this.tree = options.tree || false;
     }, comparator:function (user) {
-        return -user.get("created");
+        //return -user.get("created");
+        return [user.get("softwareName"), -user.get("created")]
     }
 });

@@ -84,6 +84,7 @@ class UserJob extends SecUser {
             returnArray['rate'] = it.rate
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['updated'] = it.updated ? it.updated.time.toString() : null
+            returnArray['algo'] = it.algo()
             return returnArray
         }
     }

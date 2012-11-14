@@ -8,14 +8,18 @@
 
 var ReviewPanel = Backbone.View.extend({
     tagName:"div",
-
+    userLayers : null,
+    userJobLayers : null,
     /**
      * ExplorerTabs constructor
      * @param options
      */
     initialize:function (options) {
         this.browseImageView = options.browseImageView;
-        this.vectorLayers = [];
+        this.userLayers = options.userLayers;
+        this.userJobLayers = options.userJobLayers;
+        this.printedLayer = [];
+        this.layerName = {};
     },
     /**
      * Grab the layout and call ask for render
@@ -29,15 +33,105 @@ var ReviewPanel = Backbone.View.extend({
         });
         return this;
     },
-    /**
-     * Render the html into the DOM element associated to the view
-     * @param tpl
-     */
+    addLayerToReview : function(layer) {
+        var self = this;
+        var panelElem = $("#"+this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
+        console.log("addLayerToReview:"+layer);
+
+        self.addToListLayer(layer);
+
+        var user = self.userLayers.get(layer);
+        if(user==undefined) user = self.userJobLayers(layer);
+        if(user==undefined) console.log("ERROR! LAYER NOT DEFINED!!!");
+
+        var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map);
+        layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
+        layerAnnotation.loadAnnotations(self.browseImageView);
+
+        self.printedLayer.push({id:layer,vectorsLayer:layerAnnotation.vectorsLayer});
+
+        //disable from selecy list
+        var selectElem = panelElem.find("#reviewChoice"+self.model.get("id")).find("select");
+        selectElem.find("option#"+layer).attr("disabled","disabled");
+
+        //select the first not selected
+        selectElem.val(selectElem.find("option[disabled!=disabled]").first().attr("value"));
+
+
+
+
+        var selectFeature = new OpenLayers.Control.SelectFeature([layerAnnotation.vectorsLayer]); //may be other param?
+
+        layerAnnotation.initControls(self.browseImageView, selectFeature);
+        layerAnnotation.registerEvents(self.browseImageView.map);
+
+        self.browseImageView.userLayer = layer;
+        layerAnnotation.vectorsLayer.setVisibility(true);
+        layerAnnotation.toggleIrregular();
+        //Simulate click on None toolbar
+        var toolbar = $("#"+self.browseImageView.divId).find('#toolbar' + self.model.get('id'));
+        toolbar.find('input[id=none' + self.model.get('id') + ']').click();
+
+        layerAnnotation.controls.select.activate();
+
+    },
+    removeLayerFromReview : function(layer) {
+        var self = this;
+        console.log("removeLayerFromReview"+layer);
+        var panelElem = $("#"+this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
+        //hide this layer
+        _.each(self.printedLayer, function(elem) {
+            if(elem.id==layer) elem.vectorsLayer.setVisibility(false);
+        });
+
+        //remove from layer list
+        self.printedLayer = _.filter(self.printedLayer, function(elem){ return elem.id!=layer });
+        $("#reviewLayerElem"+layer).replaceWith("");
+
+
+        //enable from select list
+        var selectElem = panelElem.find("#reviewChoice"+self.model.get("id")).find("select");
+        selectElem.find("option#"+layer).removeAttr("disabled");
+
+    },
+    addVectorLayer:function (layer, model, userID) {
+        var self = this;
+        console.log("addVectorLayer " + model.get("id"));
+        layer.vectorsLayer.setVisibility(true);
+     },
+    addToListLayer : function(layer) {
+        var self= this;
+        //disable from select box
+        var panelElem = $("#"+this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
+         console.log(self.layerName);
+        //add to list
+        panelElem.find("#reviewSelection"+self.model.id).append('<label style="display:inline;" id="reviewLayerElem'+layer+'">'+self.layerName[layer]+'<i class="icon-remove icon-white" id="removeReviewLayer'+layer+'"></i></label>');
+        $("#removeReviewLayer"+layer).click(function(elem) {
+            console.log("click on remove layer");
+            self.removeLayerFromReview(layer);
+        });
+    },
     doLayout:function (tpl) {
         var self = this;
-        console.log("ReviewPanel.doLayout");
+        var panelElem = $("#"+this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
         var content = _.template(tpl, {id:self.model.get("id"), isDesktop:!window.app.view.isMobile});
-        $("#"+this.browseImageView.divId).find("#reviewPanel" + self.model.get("id")).html(content);
+        panelElem.html(content);
+        var selectElem = panelElem.find("#reviewChoice"+self.model.get("id")).find("select");
+
+        this.userLayers.each(function(layer) {
+            console.log(layer.layerName());
+            self.layerName[layer.id] = layer.layerName();
+            selectElem.append('<option value="'+layer.id+'" id="'+layer.id+'">'+layer.layerName()+'</option>');
+        });
+
+        this.userJobLayers.each(function(layer) {
+            self.layerName[layer.id] = layer.layerName();
+            selectElem.append('<option value="'+layer.id+'" id="'+layer.id+'">'+layer.layerName()+'</option>');
+        });
+
+        $("#addReviewLayers"+self.model.id).click(function() {
+            self.addLayerToReview(panelElem.find("#reviewChoice"+self.model.get("id")).find("select").val());
+        });
 
 
 //        $("#selectLayersIcon" + self.model.get("id")).off("click");
@@ -52,8 +146,7 @@ var ReviewPanel = Backbone.View.extend({
 //            });
 //            self.browseImageView.setAllLayersVisibility(!almostOneCheckedState);
 //        });
-        console.log("DraggablePanelView");
-        console.log($("#"+self.browseImageView.divId).find('#reviewPanel' + self.model.get('id')).length);
+
         new DraggablePanelView({
             el:$("#"+self.browseImageView.divId).find('#reviewPanel' + self.model.get('id')),
             className:"reviewPanel"
@@ -65,28 +158,8 @@ var ReviewPanel = Backbone.View.extend({
 //            template:_.template(tpl, {id:this.model.get('id')})
 //        }).render();
 
-    },
-    addVectorLayer:function (layer, model, userID) {
-
-//        this.vectorLayers.push({ id:userID, vectorsLayer:layer.vectorsLayer});
-//        var layerID = "layerSwitch-" + model.get("id") + "-" + userID + "-" + new Date().getTime(); //index of the layer in this.layers array
-//        var color = "#FFF";
-//        var layerOptionTpl;
-//        if (layer.isOwner) {
-//            layerOptionTpl = _.template("<li><input id='<%= id %>' class='showUser' type='checkbox'  value='<%= name %>' checked />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color : #ffffff;'> <%=   name %></span></li>", {id:layerID, name:layer.vectorsLayer.name, color:color});
-//        } else {
-//            /*layerOptionTpl = _.template("<li><input id='<%= id %>' type='checkbox' value='<%=   name %>' /> <span style='color : #ffffff;'><%=   name %></span> <a class='followUser' data-user-id='<%= userID %>' href='#'>Follow</a></li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});*/
-//            layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : #ffffff;'><%= name %></span></a> </li>", {userID:userID, id:layerID, name:layer.vectorsLayer.name, color:color});
-//        }
-//        console.log("*** addVectorLayer " + model.get("id"));
-//        $("#"+this.browseImageView.divId).find("#layerSwitcher" + model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
-//
-//        $("#" + layerID).click(function () {
-//            var checked = $(this).attr("checked");
-//            layer.vectorsLayer.setVisibility(checked);
-//        });
-
     }
+
 //    updateOnlineUsers:function (onlineUsers) {
 //        var self = this;
 //        var userList = $("#"+this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers");
