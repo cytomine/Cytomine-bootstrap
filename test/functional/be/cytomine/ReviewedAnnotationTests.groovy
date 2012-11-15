@@ -427,21 +427,21 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
           assertEquals(200, result.code)
           json = JSON.parse(result.data)
           assert json instanceof JSONObject
-          assert json.id == image.id
-          assert !json.isNull('reviewStart')
-          assert json.isNull('reviewStop')
-          assert !json.isNull('reviewUser')
+          assert json.imageinstance.id == image.id
+          assert !json.imageinstance.isNull('reviewStart')
+          assert json.imageinstance.isNull('reviewStop')
+          assert !json.imageinstance.isNull('reviewUser')
 
           //mark stop review + check attr
           result = ReviewedAnnotationAPI.markStopReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assertEquals(200, result.code)
           json = JSON.parse(result.data)
           assert json instanceof JSONObject
-          assert json.id == image.id
-        assert !json.isNull('reviewStart')
-        assert !json.isNull('reviewStop')
-        assert !json.isNull('reviewUser')
-          assert Long.parseLong(json.reviewStart.toString())<Long.parseLong(json.reviewStop.toString())
+          assert json.imageinstance.id == image.id
+        assert !json.imageinstance.isNull('reviewStart')
+        assert !json.imageinstance.isNull('reviewStop')
+        assert !json.imageinstance.isNull('reviewUser')
+          assert Long.parseLong(json.imageinstance.reviewStart.toString())<Long.parseLong(json.imageinstance.reviewStop.toString())
       }
 
       void testLockImageReviewing() {
@@ -522,9 +522,9 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(201, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
-        assert Long.parseLong(json.parentIdent.toString()) == annotation.id
-        assert json.term !=null
-        assert json.term.size()==1
+        assert Long.parseLong(json.reviewedannotation.parentIdent.toString()) == annotation.id
+        assert json.reviewedannotation.term !=null
+        assert json.reviewedannotation.term.size()==1
     }
 
     void testAddReviewForAlgoAnnotationTerm() {
@@ -543,9 +543,9 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(201, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
-        assert Long.parseLong(json.parentIdent.toString()) == annotation.id
-        assert json.term !=null
-        assert json.term.size()==1
+        assert Long.parseLong(json.reviewedannotation.parentIdent.toString()) == annotation.id
+        assert json.reviewedannotation.term !=null
+        assert json.reviewedannotation.term.size()==1
     }
 
 
@@ -561,9 +561,9 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         String newLocation = "POLYGON ((19830 21680, 21070 21600, 20470 20740, 19830 21680))"
-        json.location = newLocation
+        json.reviewedannotation.location = newLocation
 
-        result = ReviewedAnnotationAPI.update(json.id,json.toString(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.update(json.reviewedannotation.id,json.reviewedannotation.toString(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         println result.data
         assert JSON.parse(result.data).reviewedannotation.location.trim().equals("POLYGON ((19830 21680, 21070 21600, 20470 20740, 19830 21680))")
@@ -621,7 +621,16 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
         UserJob userJob = BasicInstance.createUserJob(image.project)
         AlgoAnnotation annotation = BasicInstance.createAlgoAnnotation(userJob.job,userJob)
+        annotation.image = image
+        BasicInstance.checkDomain(annotation)
+        BasicInstance.saveDomain(annotation)
+
+        image.refresh()
+        image.project.refresh()
+
         assert annotation.countReviewedAnnotations==0
+        assert image.countImageReviewedAnnotations==0
+        int nbreRevAnnotationProject = image.project.countReviewedAnnotations
 
         ReviewedAnnotation review = BasicInstance.getBasicReviewedAnnotationNotExist()
         review.image = annotation.image
@@ -631,18 +640,28 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.saveDomain(review)
 
         annotation.refresh()
+        image.refresh()
+        image.project.refresh()
 
         println "review.class="+review.parentClassName
         println "review.id="+review.parentIdent
         println "annotation.id="+annotation.id
+        println "image.id="+image.id
+        println "review.image.id="+review.image.id
 
         assert annotation.countReviewedAnnotations==1
+        assert image.countImageReviewedAnnotations==1
+//        assert image.project.countReviewedAnnotations==nbreRevAnnotationProject+1
 
         review.delete(flush: true)
 
         annotation.refresh()
+        image.refresh()
+        image.project.refresh()
 
         assert annotation.countReviewedAnnotations==0
+        assert image.countImageReviewedAnnotations==0
+        assert image.project.countReviewedAnnotations==nbreRevAnnotationProject
     }
 
     void testAnnotationReviewedCounterForAnnotationUser() {
@@ -650,6 +669,9 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         UserJob userJob = BasicInstance.createUserJob(image.project)
         UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
         assert annotation.countReviewedAnnotations==0
+        assert image.countImageReviewedAnnotations==0
+        image.project.refresh()
+        int nbreRevAnnotationProject = image.project.countReviewedAnnotations
 
         ReviewedAnnotation review = BasicInstance.getBasicReviewedAnnotationNotExist()
         review.image = annotation.image
@@ -659,14 +681,22 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.saveDomain(review)
 
         annotation.refresh()
+        image.refresh()
+        image.project.refresh()
 
         assert annotation.countReviewedAnnotations==1
+        assert image.countImageReviewedAnnotations==1
+        assert image.project.countReviewedAnnotations==nbreRevAnnotationProject+1
 
         review.delete(flush: true)
 
         annotation.refresh()
+        image.refresh()
+        image.project.refresh()
 
         assert annotation.countReviewedAnnotations==0
+        assert image.countImageReviewedAnnotations==0
+        assert image.project.countReviewedAnnotations==nbreRevAnnotationProject
     }
 
 }

@@ -103,6 +103,22 @@ class ReviewedAnnotationService extends ModelService {
         return intersection;
     }
 
+    //reviewedAnnotationService.list(image, (String) params.bbox (optional))
+    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
+    def list(ImageInstance image, String bbox) {
+        String[] coordinates = bbox.split(",")
+        double bottomX = Double.parseDouble(coordinates[0])
+        double bottomY = Double.parseDouble(coordinates[1])
+        double topX = Double.parseDouble(coordinates[2])
+        double topY = Double.parseDouble(coordinates[3])
+        Coordinate[] boundingBoxCoordinates = [new Coordinate(bottomX, bottomY), new Coordinate(bottomX, topY), new Coordinate(topX, topY), new Coordinate(topX, bottomY), new Coordinate(bottomX, bottomY)]
+        Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
+        ReviewedAnnotation.createCriteria()
+                .add(Restrictions.eq("image", image))
+                .add(SpatialRestrictions.within("location",boundingbox))
+                .list()
+
+    }
 
     //reviewedAnnotationService.list(image, user, (String) params.bbox (optional))
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")

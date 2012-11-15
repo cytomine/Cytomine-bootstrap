@@ -1,7 +1,8 @@
 var AnnotationStatus = {
     NO_TERM:'NO_TERM',
     MULTIPLE_TERM:'MULTIPLE_TERM',
-    TOO_SMALL:'TOO_SMALL'
+    TOO_SMALL:'TOO_SMALL',
+    REVIEW:'REVIEW'
 }
 var AnnotationLayerUtils = AnnotationLayerUtils || {};
 AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
@@ -42,13 +43,14 @@ OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
 
 });
 
-var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView, map) {
+var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView, map,reviewMode) {
     this.ontologyTreeView = ontologyTreeView;
     this.pointRadius = window.app.view.isMobile ? 12 : 8;
     this.name = name;
     this.map = map;
     this.imageID = imageID;
     this.userID = userID;
+    this.reviewLayer = (name=="REVIEW");
     var rules = [new OpenLayers.Rule({
         symbolizer:{strokeColor:"#00FF00", strokeWidth:2},
         // symbolizer: {}, // instead if you want to keep default colors
@@ -70,23 +72,48 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         'strokeWidth':3,
         'pointRadius':this.pointRadius
     });
+
     selectStyle.addRules(rules);
     var styleMap = new OpenLayers.StyleMap({
         'default':defaultStyle,
         'select':selectStyle
     });
 
-    styleMap.styles["default"].addRules(rules);
-    styleMap.addUniqueValueRules('default', 'term', this.getSymbolizer());
-    styleMap.styles["select"].addRules(rules);
-    styleMap.addUniqueValueRules('select', 'term', this.getSymbolizer(true));
+    if(!reviewMode) {
+        styleMap.styles["default"].addRules(rules);
+        styleMap.addUniqueValueRules('default', 'term', this.getSymbolizer(false));
+        styleMap.styles["select"].addRules(rules);
+        styleMap.addUniqueValueRules('select', 'term', this.getSymbolizer(true));
+    } else if(this.reviewLayer) {
+        //review layer: paint it green
+        styleMap.styles["default"].addRules(rules);
+        styleMap.addUniqueValueRules('default', 'term', this.getSymbolizerReview(false));
+        styleMap.styles["select"].addRules(rules);
+        styleMap.addUniqueValueRules('select', 'term', this.getSymbolizerReview(true));
+    }else {
+        //a layer in review mode but not a review layer: paint it red
+        styleMap.styles["default"].addRules(rules);
+        styleMap.addUniqueValueRules('default', 'term', this.getSymbolizerReviewNotReviewLayer(false));
+        styleMap.styles["select"].addRules(rules);
+        styleMap.addUniqueValueRules('select', 'term', this.getSymbolizerReviewNotReviewLayer(true));
+     }
+
+
+    var annotationsCollection = null;
+    if(name!="REVIEW") {
+        annotationsCollection= new AnnotationCollection({user:this.userID, image:this.imageID, term:undefined}).url().replace("json", "jsonp");
+    } else {
+        annotationsCollection= new AnnotationReviewedCollection({image:this.imageID, term:undefined}).url().replace("json", "jsonp");
+    }
+
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
         //renderers: ["Canvas", "SVG", "VML"],
         strategies:[
             new OpenLayers.Strategy.BBOX({resFactor:1})
         ],
+
         protocol:new OpenLayers.Protocol.Script({
-            url:new AnnotationCollection({user:this.userID, image:this.imageID, term:undefined}).url().replace("json", "jsonp"),
+            url: annotationsCollection,
             format:new OpenLayers.Format.Cytomine({ annotationLayer:this}),
             callbackKey:"callback"
         }),
@@ -152,6 +179,95 @@ AnnotationLayer.prototype = {
         });
         return symbolizers_lookup
     },
+    getSymbolizerReview:function (selected) {
+        var strokeColor = this.defaultStrokeColor;
+        if (selected) strokeColor = this.selectedStrokeColor;
+        var symbolizers_lookup = {};
+        var self = this;
+        symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
+            'fillColor':"#00FF00",
+            'fillOpacity':.6,
+            'strokeColor':strokeColor,
+            'strokeWidth':3,
+            'pointRadius':this.pointRadius
+        };
+        symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
+            'fillColor':"#00FF00",
+            'fillOpacity':.6,
+            'strokeColor':strokeColor,
+            'strokeWidth':3,
+            'pointRadius':this.pointRadius
+        };
+        symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
+            'fillColor':"#00FF00",
+            'fillOpacity':1,
+            'strokeColor':strokeColor,
+            'strokeWidth':5,
+            'pointRadius':this.pointRadius
+        };
+        symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
+            'fillColor':"#00FF00",
+            'fillOpacity':1,
+            'strokeColor':strokeColor,
+            'strokeWidth':5,
+            'pointRadius':this.pointRadius
+        };
+        window.app.status.currentTermsCollection.each(function (term) {
+            symbolizers_lookup[term.id] = {
+                'fillColor':"#00FF00",
+                'fillOpacity':.6,
+                'strokeColor':strokeColor,
+                'strokeWidth':3,
+                'pointRadius':self.pointRadius
+            }
+        });
+        return symbolizers_lookup
+    },
+    getSymbolizerReviewNotReviewLayer:function (selected) {
+        var strokeColor = this.defaultStrokeColor;
+        if (selected) strokeColor = this.selectedStrokeColor;
+        var symbolizers_lookup = {};
+        var self = this;
+        symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
+            'fillColor':"#FF0000",
+            'fillOpacity':.6,
+            'strokeColor':strokeColor,
+            'strokeWidth':3,
+            'pointRadius':this.pointRadius
+        };
+        symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
+            'fillColor':"#FF0000",
+            'fillOpacity':.6,
+            'strokeColor':strokeColor,
+            'strokeWidth':3,
+            'pointRadius':this.pointRadius
+        };
+        symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
+            'fillColor':"#FF0000",
+            'fillOpacity':1,
+            'strokeColor':strokeColor,
+            'strokeWidth':5,
+            'pointRadius':this.pointRadius
+        };
+        symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
+            'fillColor':"#FF0000",
+            'fillOpacity':1,
+            'strokeColor':strokeColor,
+            'strokeWidth':5,
+            'pointRadius':this.pointRadius
+        };
+        window.app.status.currentTermsCollection.each(function (term) {
+            symbolizers_lookup[term.id] = {
+                'fillColor':"#FF0000",
+                'fillOpacity':.6,
+                'strokeColor':strokeColor,
+                'strokeWidth':3,
+                'pointRadius':self.pointRadius
+            }
+        });
+        return symbolizers_lookup
+    },
+
     registerEvents:function (map) {
 
         var self = this;
@@ -329,7 +445,7 @@ AnnotationLayer.prototype = {
             new AnnotationModel({id:evt.feature.attributes.idAnnotation}).fetch({
                 success:function (annotation, response) {
                     annotation.set({"username":window.app.models.projectUser.get(annotation.get("user")).prettyName()});
-
+                    self.browseImageView.currentAnnotation =annotation;
                     var terms = [];
                     //browse all term and compute the number of user who add this term
                     _.each(annotation.get("userByTerm"), function (termuser) {
@@ -343,8 +459,14 @@ AnnotationLayer.prototype = {
                     });
                     annotation.set({"terms":terms.join(", ")});
 
+                    if(annotation.get("nbComments")==undefined) {
+                        annotation.set({"nbComments":0});
+                    }
+
                     var content = _.template(tpl, annotation.toJSON());
                     var elem = $("#"+self.browseImageView.divId).find("#annotationDetailPanel" + self.browseImageView.model.id);
+
+
                     elem.html(content);
                     elem.show();
                     $("#annotationHide" + annotation.id).off('click');

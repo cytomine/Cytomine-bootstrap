@@ -33,18 +33,49 @@ var ReviewPanel = Backbone.View.extend({
         });
         return this;
     },
+    addReviewLayerToReview : function() {
+        var self = this;
+        var panelElem = $("#"+this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
+        var layer= "REVIEW";
+        console.log("addReviewLayerToReview:"+layer);
+
+        console.log("*** " + self.browseImageView.ontologyPanel);
+        console.log("*** " + self.browseImageView.ontologyPanel.ontologyTreeView);
+
+        var layerAnnotation = new AnnotationLayer(layer, self.model.get('id'), 0,"#ff0000", self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map,true);
+
+        layerAnnotation.loadAnnotations(self.browseImageView);
+        self.printedLayer.push({id:layer,vectorsLayer:layerAnnotation.vectorsLayer});
+
+        var selectFeature = new OpenLayers.Control.SelectFeature([layerAnnotation.vectorsLayer]);
+        layerAnnotation.isOwner = true;
+        layerAnnotation.initControls(self.browseImageView, selectFeature);
+        layerAnnotation.registerEvents(self.browseImageView.map);
+
+        self.browseImageView.userLayer = layerAnnotation;
+        layerAnnotation.vectorsLayer.setVisibility(true);
+        layerAnnotation.toggleIrregular();
+        //Simulate click on None toolbar
+        var toolbar = $("#"+self.browseImageView.divId).find('#toolbar' + self.model.get('id'));
+        toolbar.find('input[id=none' + self.model.get('id') + ']').click();
+
+        layerAnnotation.controls.select.activate();
+    },
+
+
     addLayerToReview : function(layer) {
         var self = this;
         var panelElem = $("#"+this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
         console.log("addLayerToReview:"+layer);
 
         self.addToListLayer(layer);
+        console.log("*** " + self.browseImageView.ontologyPanel);
 
         var user = self.userLayers.get(layer);
-        if(user==undefined) user = self.userJobLayers(layer);
+        if(user==undefined) user = self.userJobLayers.get(layer);
         if(user==undefined) console.log("ERROR! LAYER NOT DEFINED!!!");
 
-        var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map);
+        var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map,true);
         layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
         layerAnnotation.loadAnnotations(self.browseImageView);
 
@@ -65,7 +96,7 @@ var ReviewPanel = Backbone.View.extend({
         layerAnnotation.initControls(self.browseImageView, selectFeature);
         layerAnnotation.registerEvents(self.browseImageView.map);
 
-        self.browseImageView.userLayer = layer;
+        //self.browseImageView.userLayer = layerAnnotation;
         layerAnnotation.vectorsLayer.setVisibility(true);
         layerAnnotation.toggleIrregular();
         //Simulate click on None toolbar
@@ -105,7 +136,7 @@ var ReviewPanel = Backbone.View.extend({
         var panelElem = $("#"+this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
          console.log(self.layerName);
         //add to list
-        panelElem.find("#reviewSelection"+self.model.id).append('<label style="display:inline;" id="reviewLayerElem'+layer+'">'+self.layerName[layer]+'<i class="icon-remove icon-white" id="removeReviewLayer'+layer+'"></i></label>');
+        panelElem.find("#reviewSelection"+self.model.id).append('<label style="display:inline;" id="reviewLayerElem'+layer+'">'+self.layerName[layer]+'<i class="icon-remove icon-white" id="removeReviewLayer'+layer+'"></i>&nbsp;&nbsp;</label>');
         $("#removeReviewLayer"+layer).click(function(elem) {
             console.log("click on remove layer");
             self.removeLayerFromReview(layer);
@@ -133,79 +164,27 @@ var ReviewPanel = Backbone.View.extend({
             self.addLayerToReview(panelElem.find("#reviewChoice"+self.model.get("id")).find("select").val());
         });
 
-
-//        $("#selectLayersIcon" + self.model.get("id")).off("click");
-//        $("#selectLayersIcon" + self.model.get("id")).on("click", function (event) {
-//            var project = window.app.status.currentProjectModel;
-//            var userList = $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find("ul.annotationLayers");
-//            var projectUsers = _.pluck(window.app.models.projectUser, 'id');
-//            var almostOneCheckedState = false;
-//            _.each(projectUsers, function (userID) {
-//                var checked = userList.find("li[data-id=" + userID + "]").find('input.showUser').attr("checked") == "checked";
-//                if (!almostOneCheckedState && checked) almostOneCheckedState = true;
-//            });
-//            self.browseImageView.setAllLayersVisibility(!almostOneCheckedState);
-//        });
-
         new DraggablePanelView({
             el:$("#"+self.browseImageView.divId).find('#reviewPanel' + self.model.get('id')),
             className:"reviewPanel"
         }).render();
 
-//        new DraggablePanelView({
-//            el:$('#'+this.browseImageView.divId).find('#ontologyTree' + this.model.get('id')),
-//            className:"ontologyPanel",
-//            template:_.template(tpl, {id:this.model.get('id')})
-//        }).render();
+        $("#reviewSingle"+self.model.get('id')).click(function() {
+            self.addReviewAnnotation();
+        });
+    },
+    addReviewAnnotation : function() {
+        var self = this;
+        var annotation = self.browseImageView.currentAnnotation;
 
+            new AnnotationReviewedModel({id:annotation.id}).save({}, {
+                success:function (model, response) {
+                    window.app.view.message("Annotation", response.message, "success");
+                },
+                error:function (model, response) {
+                    var json = $.parseJSON(response.responseText);
+                    window.app.view.message("Annotation", json.errors, "error");
+            }});
     }
-
-//    updateOnlineUsers:function (onlineUsers) {
-//        var self = this;
-//        var userList = $("#"+this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers");
-//        var projectUsers = _.pluck(window.app.models.projectUser, 'id');
-//        //check if the the user we are following is always connected, if not disconneted
-//        if (!_.include(onlineUsers, self.userFollowed)) {
-//            userList.find("li[data-id=" + self.userFollowed + "]").find('input.followUser').removeAttr('checked');
-//            self.stopFollowing();
-//        }
-//        _.each(projectUsers, function (userID) {
-//            if (!_.include(onlineUsers, userID)) {
-//                userList.find("li[data-id=" + userID + "]").find('span').css('color', 'white');
-//                userList.find("li[data-id=" + userID + "]").find('input.followUser').attr("disabled", "disabled")
-//            }
-//        });
-//        _.each(onlineUsers, function (userID) {
-//            userList.find("li[data-id=" + userID + "]").find('span').css('color', '#46a546');
-//            userList.find("li[data-id=" + userID + "]").find('input.followUser').removeAttr("disabled");
-//        });
-//    },
-//    startFollowing:function () {
-//        var self = this;
-//        window.app.view.message("", "Start following " + window.app.models.projectUser.get(self.userFollowed).prettyName(), "success");
-//        var image = this.model.get("id");
-//        this.followInterval = setInterval(function () {
-//            new UserPositionModel({ image:image, user:self.userFollowed }).fetch({
-//                success:function (model, response) {
-//                    self.browseImageView.map.moveTo(new OpenLayers.LonLat(model.get("longitude"), model.get("latitude")), model.get("zoom"));
-//                    var layerWrapper = _.detect(self.vectorLayers, function (item) {
-//                        return item.id == self.userFollowed;
-//                    });
-//                    if (layerWrapper) layerWrapper.vectorsLayer.refresh();
-//                },
-//                error:function (model, response) {
-//                }
-//            });
-//        }, 1000);
-//    },
-//    stopFollowing:function () {
-//        var self = this;
-//        if (self.followInterval != undefined) {
-//            window.app.view.message("", "Stop following " + window.app.models.projectUser.get(self.userFollowed).prettyName(), "success");
-//            clearInterval(self.followInterval);
-//            self.followInterval = null;
-//            self.userFollowed = null;
-//        }
-//    },
 
 });

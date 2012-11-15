@@ -19,6 +19,7 @@ import java.awt.image.BufferedImage
 import java.text.SimpleDateFormat
 import javax.imageio.ImageIO
 import be.cytomine.ontology.Ontology
+import be.cytomine.AnnotationDomain
 
 class RestAnnotationDomainController extends RestController {
 
@@ -122,9 +123,20 @@ class RestAnnotationDomainController extends RestController {
     }
 
     def show = {
-        UserAnnotation annotation = userAnnotationService.read(params.long('id'))
-        if(annotation) forward(controller: "restUserAnnotation", action: "show")
-        else forward(controller: "restAlgoAnnotation", action: "show")
+        AnnotationDomain annotation = userAnnotationService.read(params.long('id'))
+        if(annotation) {
+            log.info "Annotation is userAnnotation"
+            forward(controller: "restUserAnnotation", action: "show")
+        }
+        else {
+            annotation = algoAnnotationService.read(params.long('id'))
+            if(annotation) {
+                log.info "Annotation is algoAnnotation"
+                forward(controller: "restAlgoAnnotation", action: "show")
+            } else {
+                forward(controller: "restReviewedAnnotation", action: "show")
+            }
+        }
     }
 
 

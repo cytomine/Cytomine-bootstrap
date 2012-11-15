@@ -32,6 +32,21 @@ var AnnotationModel = Backbone.Model.extend({
     }
 });
 
+
+
+var AnnotationReviewedModel = Backbone.Model.extend({
+    isNew:function () {
+        return true;
+    },
+    url:function () {
+        return 'api/annotation/' + this.id + "/review.json";
+    },
+    initialize:function (options) {
+        this.id = options.id;
+    }
+});
+
+
 var AnnotationCopyModel = Backbone.Model.extend({
     isNew:function () {
         return true;
@@ -152,6 +167,55 @@ var AnnotationCollection = Backbone.Collection.extend({
      return -annotation.get("id"); //id or created (chronology?)
      }*/
 });
+
+
+
+
+
+
+
+
+// define our collection
+var AnnotationReviewedCollection = Backbone.Collection.extend({
+    model:AnnotationModel,
+    fullSize:-1,
+    url:function () {
+        var offset = "";
+        if (this.offset != undefined) {
+            offset = offset + "&offset=" + this.offset;
+        }
+        return "api/imageinstance/" + this.image + "/reviewedannotation.json" + offset;
+    },
+    initialize:function (options) {
+        this.image = options.image;//one image
+    },
+    build:function () {
+        var self = this;
+        var model = self.at(0);
+        var coll = model.get("collection");
+        this.remove(self.models);
+        this.fullSize = model.get("size");
+        _.each(coll, function (item) {
+            self.add(item);
+        });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 AnnotationCollection.comparator = function (annotation) {

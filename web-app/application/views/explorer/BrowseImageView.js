@@ -4,6 +4,7 @@ var BrowseImageView = Backbone.View.extend({
     review:false,
     divPrefixId : "",
     divId :"",
+    currentAnnotation : null,
     /**
      * BrowseImageView constructor
      * Accept options used for initialization
@@ -83,6 +84,7 @@ var BrowseImageView = Backbone.View.extend({
         this.initToolbar();
         this.initMap();
         this.initAnnotationsTabs();
+
         if (this.iPad) this.initMobile();
         return this;
     },
@@ -154,7 +156,7 @@ var BrowseImageView = Backbone.View.extend({
                     } else {
                         new UserModel({id:annotation.get('user')}).fetch({
                             success:function (userAlgo, response) {
-                                var layer = new AnnotationLayer(userAlgo.get('username'), self.model.get('id'), annotation.get('user'), "", self.ontologyPanel.ontologyTreeView, self, self.map);
+                                var layer = new AnnotationLayer(userAlgo.get('username'), self.model.get('id'), annotation.get('user'), "", self.ontologyPanel.ontologyTreeView, self, self.map,this.review);
                                 layer.isOwner = false;
                                 layer.loadAnnotations(self);
                                 layer.registerEvents(self.map);
@@ -233,6 +235,8 @@ var BrowseImageView = Backbone.View.extend({
         return this.userLayer.getFeature(idAnnotation);
     },
     removeFeature:function (idAnnotation) {
+        console.log("removeFeature"+idAnnotation);
+        console.log(this.userLayer);
         return this.userLayer.removeFeature(idAnnotation);
     },
     /**
@@ -362,8 +366,12 @@ var BrowseImageView = Backbone.View.extend({
         });
 
         var initZoomifyLayer = function (metadata, zoomify_urls, imageFilters) {
-            if(!self.review) self.createLayerSwitcher();
-            else self.createReviewPanel();
+            if(!self.review) {
+                self.createLayerSwitcher();
+            }
+            else {
+                self.createReviewPanel();
+            }
             self.initImageFiltersPanel();
             //var numZoomLevels =  metadata.nbZoom;
             /* Map with raster coordinates (pixels) from Zoomify image */
@@ -442,6 +450,7 @@ var BrowseImageView = Backbone.View.extend({
 
             self.map = new OpenLayers.Map("map"+ self.divPrefixId + self.model.get('id'), options);
             self.initOntology();
+
 
 
             var baseLayer = new OpenLayers.Layer.Zoomify(
@@ -802,10 +811,12 @@ var BrowseImageView = Backbone.View.extend({
                 return window.app.models.userLayer.get(user.id) != undefined;
             });
             _.each(projectUsers, function (user) {
-                var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map);
+                var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map,self.review);
                 layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
                 layerAnnotation.loadAnnotations(self);
             });
+        } else {
+            self.reviewPanel.addReviewLayerToReview();
         }
 
     },

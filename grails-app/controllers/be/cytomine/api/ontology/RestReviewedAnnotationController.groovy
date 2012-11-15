@@ -51,9 +51,24 @@ class RestReviewedAnnotationController extends RestController {
     def listByImage = {
         log.info "listByImage"
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
-        if (image) responseSuccess(reviewedAnnotationService.list(image))
+        if (image && params.bbox) responseSuccess(reviewedAnnotationService.list(image,(String) params.bbox))
+        else if(image) responseSuccess(reviewedAnnotationService.list(image))
         else responseNotFound("Image", params.idImage)
     }
+
+//
+//    //listByImageAndUser
+//    def listByImageAndUser = {
+//        def image = imageInstanceService.read(params.long('idImage'))
+//        def user = userService.read(params.idUser)
+//        if (image && user && params.bbox) {
+//            responseSuccess(reviewedAnnotationService.list(image, user, (String) params.bbox))
+//        }
+//        else if (image && user) responseSuccess(reviewedAnnotationService.list(image, user))
+//        else if (!user) responseNotFound("User", params.idUser)
+//        else if (!image) responseNotFound("Image", params.idImage)
+//    }
+
 
     //list all by project
     def listByProject = {
@@ -110,6 +125,7 @@ class RestReviewedAnnotationController extends RestController {
 
     //show
     def show = {
+        log.info "show annotation = " + params.long('id')
         ReviewedAnnotation annotation = reviewedAnnotationService.read(params.long('id'))
         if (annotation) {
             reviewedAnnotationService.checkAuthorization(annotation.project)
@@ -168,13 +184,17 @@ class RestReviewedAnnotationController extends RestController {
     def startImageInstanceReview = {
         try {
             def image = imageInstanceService.read(params.long("id"))
+            def response = [:]
 
             if (image) {
                 image.reviewStart = new Date()
                 image.reviewUser = cytomineService.currentUser
                 if (!image.validate()) throw new WrongArgumentException("Cannot review (validate) image instance:" + image.errors)
                 if (image.save(flush: true) == null) throw new WrongArgumentException("Cannot review (add) image instance:" + image.errors)
-                responseSuccess(image)
+
+                response.message = image.reviewUser.username + " start reviewing on " + image.baseImage.filename
+                response.imageinstance = image
+                responseSuccess(response)
             } else responseNotFound("Image", params.idImage)
         } catch (CytomineException e) {
             log.error(e)
@@ -185,13 +205,35 @@ class RestReviewedAnnotationController extends RestController {
     def stopImageInstanceReview = {
         try {
             def image = imageInstanceService.read(params.long("id"))
+            def response = [:]
 
+            boolean isCancel = params.getBoolean("cancel")
             if (image) {
                 if (image.reviewStart == null || image.reviewUser == null) throw new WrongArgumentException("Image is not in review mode: image.reviewStart=${image.reviewStart} and image.reviewUser=${image.reviewUser}")
-                image.reviewStop = new Date()
+                if (cytomineService.currentUser != image.reviewUser) throw new WrongArgumentException("Review can only be validate or stop by "+image.reviewUser.username)
+
+                if(isCancel) {
+                    if(!image.reviewStop) {
+                        //cancel reviewing
+                        image.reviewStart = null
+                        image.reviewUser = null
+                    } else {
+                        //cancel finish reviewing (validate)
+                        image.reviewStop = null
+                    }
+
+                } else {
+                    image.reviewStop = new Date()
+                }
                 if (!image.validate()) throw new WrongArgumentException("Cannot stop review (validate) image instance:" + image.errors)
                 if (image.save(flush: true) == null) throw new WrongArgumentException("Cannot stop review (add) image instance:" + image.errors)
-                responseSuccess(image)
+
+                response.imageinstance = image
+
+                if(isCancel)
+                    response.message = cytomineService.currentUser.username + " cancel review or validate on " + image.baseImage.filename
+                else response.message = cytomineService.currentUser.username + " validate reviewing on " + image.baseImage.filename
+                responseSuccess(response)
             } else responseNotFound("Image", params.idImage)
         } catch (CytomineException e) {
             log.error(e)
@@ -207,7 +249,10 @@ class RestReviewedAnnotationController extends RestController {
             if(ReviewedAnnotation.findByParentIdent(basedAnnotation.id)) throw new AlreadyExistException("Annotation is already review!")
 
             ReviewedAnnotation reviewedAnnotation = reviewAnnotation(basedAnnotation)
-            responseSuccess(reviewedAnnotation,201)
+            def response = [:]
+            response.reviewedannotation = reviewedAnnotation
+            response.message = "Annotation review is added"
+            responseSuccess(response,201)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
@@ -219,7 +264,10 @@ class RestReviewedAnnotationController extends RestController {
             ReviewedAnnotation reviewedAnnotation = ReviewedAnnotation.read(params.long('id'))
             if (!reviewedAnnotation) throw new ObjectNotFoundException("Review Annotation ${params.long('id')} not found!")
             def json = reviewedAnnotation.encodeAsJSON()
-            domainService.deleteDomain(reviewedAnnotation,200)
+            def response = [:]
+            response.reviewedannotation = json
+            response.message = "Annotation review is deleted"
+            domainService.deleteDomain(response,200)
             responseSuccess(json)
         } catch (CytomineException e) {
             log.error(e)
@@ -232,7 +280,7 @@ class RestReviewedAnnotationController extends RestController {
         review.parentIdent = annotation.id
         review.parentClassName = annotation.class.name
         review.status = 1
-        review.user = annotation.user
+        review.user = cytomineService.currentUser
         review.location = annotation.location
         review.image = annotation.image
         review.project = annotation.project

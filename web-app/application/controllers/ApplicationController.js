@@ -225,6 +225,20 @@ var ApplicationController = Backbone.Router.extend({
     clearCache:function () {
         this.models.currentCollection = new Object();
     },
+    addOrReplaceEvent : function (element, eventType, fCallback) {
+            if (!element || !element.data('events') || !element.data('events')[eventType] || !fCallback) {
+                return false;
+            }
+
+            for (runner in element.data('events')[eventType]) {
+                if (element.data('events')[eventType][runner].handler == fCallback) {
+                    return true;
+                }
+
+            }
+
+            return false;
+        },
     dataTablesBootstrap:function () {
         /* Default class modification */
         $.extend($.fn.dataTableExt.oStdClasses, {

@@ -35,6 +35,12 @@ class TriggerService {
             statement.execute(getAnnotationReviewCountTriggerIncr())
             statement.execute(getAnnotationReviewCountTriggerDecr())
 
+            statement.execute(getProjectAnnotationReviewedCountTriggerIncr())
+            statement.execute(getProjectAnnotationReviewedCountTriggerDecr())
+            statement.execute(getImageAnnotationReviewedCountTriggerIncr())
+            statement.execute(getImageAnnotationReviewedCountTriggerDecr())
+
+
 
         } catch (org.postgresql.util.PSQLException e) {
             log.info e
@@ -275,14 +281,6 @@ class TriggerService {
         return createFunction + dropTrigger + createTrigger
     }
 
-
-
-
-
-
-
-
-
     String getAnnotationReviewCountTriggerIncr() {
 
         //be.cytomine.ontology.AlgoAnnotation
@@ -350,5 +348,89 @@ class TriggerService {
         return createFunction + dropTrigger + createTrigger
     }
 
+    String getProjectAnnotationReviewedCountTriggerIncr() {
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION incrementProjectAnnotationReviewed() RETURNS TRIGGER AS \$incProjAnnRev\$
+        BEGIN
+            UPDATE project
+            SET count_reviewed_annotations = count_reviewed_annotations + 1
+            WHERE project.id = NEW.project_id;
+            RETURN NEW;
+        END ;
+        \$incProjAnnRev\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS countReviewedAnnotationProject on reviewed_annotation;"
+
+        String createTrigger = "CREATE TRIGGER countReviewedAnnotationProject AFTER INSERT ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE incrementProjectAnnotationReviewed();"
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+    String getProjectAnnotationReviewedCountTriggerDecr() {
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION decrementProjectAnnotationReviewed() RETURNS TRIGGER AS \$decProjAnnRev\$
+        BEGIN
+            UPDATE project
+            SET count_reviewed_annotations = count_reviewed_annotations - 1
+            WHERE project.id = OLD.project_id;
+		    RETURN OLD;
+        END ;
+         \$decProjAnnRev\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationProjectReviewed on reviewed_annotation;"
+
+        String createTrigger = "CREATE TRIGGER countDecrAnnotationProjectReviewed AFTER DELETE ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE decrementProjectAnnotationReviewed(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+
+    String getImageAnnotationReviewedCountTriggerIncr() {
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION incrementImageAnnotationReviewed() RETURNS TRIGGER AS \$incImgAnnRev\$
+        BEGIN
+            UPDATE image_instance
+            SET count_image_reviewed_annotations = count_image_reviewed_annotations + 1
+            WHERE image_instance.id = NEW.image_id;
+            RETURN NEW;
+        END ;
+        \$incImgAnnRev\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS countReviewedAnnotationImage on reviewed_annotation;"
+
+        String createTrigger = "CREATE TRIGGER countReviewedAnnotationImage AFTER INSERT ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE incrementImageAnnotationReviewed();"
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+    String getImageAnnotationReviewedCountTriggerDecr() {
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION decrementImageAnnotationReviewed() RETURNS TRIGGER AS \$decImgAnnRev\$
+        BEGIN
+            UPDATE image_instance
+            SET count_image_reviewed_annotations = count_image_reviewed_annotations - 1
+            WHERE image_instance.id = OLD.image_id;
+		    RETURN OLD;
+        END ;
+         \$decImgAnnRev\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS countDecrAnnotationImageReviewed on reviewed_annotation;"
+
+        String createTrigger = "CREATE TRIGGER countDecrAnnotationImageReviewed AFTER DELETE ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE decrementImageAnnotationReviewed(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
 
 }

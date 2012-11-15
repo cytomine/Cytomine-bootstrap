@@ -32,13 +32,12 @@ class ReviewedAnnotationUrlMappings {
             action = [GET:"listByImageAndUser"]
         }
 
-
         "/api/annotation/$id/review"(controller: "restReviewedAnnotation"){
             action = [POST:"addAnnotationReview",DELETE:"deleteAnnotationReview"]
          }
 
         "/api/imageinstance/$id/review"(controller: "restReviewedAnnotation"){
-            action = [POST:"startImageInstanceReview",DELETE: "stopImageInstanceReview"]
+            action = [POST:"startImageInstanceReview",PUT:"startImageInstanceReview",DELETE: "stopImageInstanceReview"]
          }
 
         "/api/imageinstance/$image/annotation/review"(controller: "restReviewedAnnotation"){

@@ -24,6 +24,7 @@ class Project extends CytomineDomain implements Serializable {
     long countAnnotations
 	long countJobAnnotations
     long countImages
+    long countReviewedAnnotations
 
     boolean retrievalDisable = false
     boolean retrievalAllOntology = true
@@ -190,6 +191,7 @@ class Project extends CytomineDomain implements Serializable {
 			try {returnArray['numberOfJobAnnotations'] = project.countJobAnnotations()} catch (Exception e) { returnArray['numberOfJobAnnotations'] = -1}
             try {returnArray['retrievalProjects'] = project.retrievalProjects.collect { it.id } } catch (Exception e) {log.info "users:"+e}
 
+            returnArray['numberOfReviewedAnnotations'] = project.countReviewedAnnotations
             returnArray['retrievalDisable'] = project.retrievalDisable
             returnArray['retrievalAllOntology'] = project.retrievalAllOntology
 

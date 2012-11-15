@@ -8,6 +8,22 @@ var ImageModel = Backbone.Model.extend({
 });
 
 
+var ImageReviewModel = Backbone.Model.extend({
+    url:function () {
+        if(this.cancel!=undefined) {
+            return "/api/imageinstance/"+this.id+"/review?cancel="+this.cancel;
+        } else return "/api/imageinstance/"+this.id+"/review";
+    },
+    initialize:function (options) {
+        this.id = options.id;
+        this.cancel = options.cancel;
+    }
+});
+
+
+
+
+
 var ImageMetadataModel = Backbone.Model.extend({
     initialize:function (options) {
         this.image = options.image;

@@ -25,6 +25,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
     SecUser user
     Long countImageAnnotations = 0L
     Long countImageJobAnnotations = 0L
+    Long countImageReviewedAnnotations = 0L
 
     //stack stuff
     ImageStack stack
@@ -181,6 +182,9 @@ class ImageInstance extends CytomineDomain implements Serializable {
 
             try {returnArray['numberOfAnnotations'] = it.countImageAnnotations} catch (Exception e) {returnArray['numberOfAnnotations'] = -1}
             try {returnArray['numberOfJobAnnotations'] = it.countImageJobAnnotations} catch (Exception e) {returnArray['numberOfJobAnnotations'] = -1}
+            try {returnArray['numberOfReviewedAnnotations'] = it.countImageReviewedAnnotations} catch (Exception e) {returnArray['numberOfReviewedAnnotations'] = -1}
+
+
             //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
 
             //returnArray['imageServerBaseURL'] = it.baseImage.getMime().imageServers().collect { it.getZoomifyUrl() }
@@ -188,7 +192,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
 
             returnArray['reviewStart'] = it.reviewStart ? it.reviewStart.time.toString() : null
             returnArray['reviewStop'] = it.reviewStop ? it.reviewStop.time.toString() : null
-            returnArray['reviewUser'] = it.reviewUser
+            returnArray['reviewUser'] = it.reviewUser?.id
 
             returnArray['reviewed'] = it.isReviewed()
             returnArray['inReview'] = it.isInReviewMode()
