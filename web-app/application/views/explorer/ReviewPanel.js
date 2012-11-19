@@ -10,6 +10,7 @@ var ReviewPanel = Backbone.View.extend({
     tagName:"div",
     userLayers : null,
     userJobLayers : null,
+    reviewLayer : null,
     /**
      * ExplorerTabs constructor
      * @param options
@@ -45,7 +46,7 @@ var ReviewPanel = Backbone.View.extend({
         var layerAnnotation = new AnnotationLayer(layer, self.model.get('id'), 0,"#ff0000", self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map,true);
 
         layerAnnotation.loadAnnotations(self.browseImageView);
-        self.printedLayer.push({id:layer,vectorsLayer:layerAnnotation.vectorsLayer});
+        self.printedLayer.push({id:layer,vectorsLayer:layerAnnotation.vectorsLayer,layer:layerAnnotation});
 
         var selectFeature = new OpenLayers.Control.SelectFeature([layerAnnotation.vectorsLayer]);
         layerAnnotation.isOwner = true;
@@ -60,6 +61,40 @@ var ReviewPanel = Backbone.View.extend({
         toolbar.find('input[id=none' + self.model.get('id') + ']').click();
 
         layerAnnotation.controls.select.activate();
+        self.reviewLayer = layerAnnotation;
+        self.initControl();
+    },
+    initControl : function() {
+            var self = this;
+             //Init Controls on Layers
+        console.log("printedLayer:");
+        console.log(this.printedLayer);
+            var vectorLayers = _.map(this.printedLayer, function (layer) {
+                return layer.vectorsLayer;
+            });
+        console.log("vectorLayers:");
+        console.log(vectorLayers);
+            var selectFeature = new OpenLayers.Control.SelectFeature(vectorLayers);
+            _.each(this.printedLayer, function (item) {
+                console.log("item:"+item.id);
+                var layer = item.layer;
+                layer.initControls(self.browseImageView, selectFeature);
+                layer.registerEvents(self.browseImageView.map);
+//                if (layer.isOwner) {
+//                    self.userLayer = layer;
+//                    layer.vectorsLayer.setVisibility(true);
+//                    layer.toggleIrregular();
+//                    //Simulate click on None toolbar
+//                    var toolbar = $("#"+self.divId).find('#toolbar' + self.model.get('id'));
+//                    toolbar.find('input[id=none' + self.model.get('id') + ']').click();
+//                } else {
+                    layer.controls.select.activate();
+//                    layer.vectorsLayer.setVisibility(false);
+//                }
+            });
+
+            if (_.isFunction(self.browseImageView.initCallback)) self.browseImageView.initCallback.call();
+            self.browseImageView.initAutoAnnoteTools();
     },
 
 
@@ -79,7 +114,7 @@ var ReviewPanel = Backbone.View.extend({
         layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
         layerAnnotation.loadAnnotations(self.browseImageView);
 
-        self.printedLayer.push({id:layer,vectorsLayer:layerAnnotation.vectorsLayer});
+        self.printedLayer.push({id:layer,vectorsLayer:layerAnnotation.vectorsLayer,layer:layerAnnotation});
 
         //disable from selecy list
         var selectElem = panelElem.find("#reviewChoice"+self.model.get("id")).find("select");
@@ -104,6 +139,13 @@ var ReviewPanel = Backbone.View.extend({
         toolbar.find('input[id=none' + self.model.get('id') + ']').click();
 
         layerAnnotation.controls.select.activate();
+
+//        self.reviewLayer.redraw();
+//        console.log(self.reviewLayer);
+//        self.reviewLayer.vectorsLayer.refresh();
+//        console.log("getZIndex refresh:"+self.reviewLayer.getZIndex());
+//       // console.log("getZIndex layer:"+layerAnnotation.getZIndex());
+        self.initControl();
 
     },
     removeLayerFromReview : function(layer) {
@@ -145,8 +187,12 @@ var ReviewPanel = Backbone.View.extend({
     doLayout:function (tpl) {
         var self = this;
         var panelElem = $("#"+this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
-        var content = _.template(tpl, {id:self.model.get("id"), isDesktop:!window.app.view.isMobile});
+        var params = {id:self.model.get("id"), isDesktop:!window.app.view.isMobile};
+        var content = _.template(tpl,params);
         panelElem.html(content);
+        self.showCurrentAnnotation(null);
+
+
         var selectElem = panelElem.find("#reviewChoice"+self.model.get("id")).find("select");
 
         this.userLayers.each(function(layer) {
@@ -169,15 +215,41 @@ var ReviewPanel = Backbone.View.extend({
             className:"reviewPanel"
         }).render();
 
-        $("#reviewSingle"+self.model.get('id')).click(function() {
-            self.addReviewAnnotation();
+        $("#reviewMultiple"+self.model.id).click(function() {
+            self.addAllReviewAnnotation();
         });
+
     },
     addReviewAnnotation : function() {
         var self = this;
+        console.log("addReviewAnnotation");
         var annotation = self.browseImageView.currentAnnotation;
-
+            self.browseImageView.removeFeature(annotation.id);
             new AnnotationReviewedModel({id:annotation.id}).save({}, {
+                success:function (model, response) {
+                    window.app.view.message("Annotation", response.message, "success");
+                    var newFeature = AnnotationLayerUtils.createFeatureFromAnnotation(response.reviewedannotation);
+                    self.reviewLayer.addFeature(newFeature);
+                    self.reviewLayer.controls.select.unselectAll();
+                    self.reviewLayer.controls.select.select(newFeature);
+                    var cropURL = annotation.get('cropURL');
+                    var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url:cropURL, alt:cropURL});
+                    var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message:response.message, cropImage:cropImage});
+                    window.app.view.message("Reviewed annotation", alertMessage, "success");
+                    //self.reviewLayer.moveTo(self.browseImageView.map.getExtent(), true);
+
+                },
+                error:function (model, response) {
+                    var json = $.parseJSON(response.responseText);
+                    window.app.view.message("Annotation", json.errors, "error");
+            }});
+    },
+    deleteReviewAnnotation : function() {
+        var self = this;
+        console.log("deleteReviewAnnotation");
+        var annotation = self.browseImageView.currentAnnotation;
+        self.browseImageView.removeFeature(annotation.id);
+            new AnnotationReviewedModel({id:annotation.id}).destroy({
                 success:function (model, response) {
                     window.app.view.message("Annotation", response.message, "success");
                 },
@@ -185,6 +257,67 @@ var ReviewPanel = Backbone.View.extend({
                     var json = $.parseJSON(response.responseText);
                     window.app.view.message("Annotation", json.errors, "error");
             }});
-    }
+    },
+    showCurrentAnnotation : function(annotation) {
+        var self = this;
+        console.log("showCurrentAnnotation="+annotation);
+        $("#currentReviewAnnotation"+self.model.id).empty();
+        require([
+            "text!application/templates/explorer/ReviewPanelSelectedAnnotation.tpl.html"
+        ], function (tpl) {
+            var params = {};
+            var idAnnotation;
+            if(annotation==null) {
+                params = {id:self.model.get("id"), username:"",date:"",yourTerms:"",otherTerms:"",isReviewed:false,idAnnotation:"-1"};
+                idAnnotation = "";
+            }
+            else {
+                params = {
+                    id:self.model.get("id"),
+                    username:window.app.models.projectUser.get(annotation.get("user")).prettyName(),
+                    date:window.app.convertLongToDate(annotation.get("created")),
+                    yourTerms:"",
+                    otherTerms:"",
+                    isReviewed:annotation.get("reviewed"),
+                    idAnnotation : annotation.id }
+                idAnnotation= annotation.id;
+            }
 
+            var content = _.template(tpl,params);
+            $("#currentReviewAnnotation"+self.model.id).append(content);
+
+            if(params.idAnnotation="") {
+                $("#currentReviewAnnotation"+self.model.id).find("#reviewSingle"+idAnnotation).attr("disabled","disabled")
+                $("#currentReviewAnnotation"+self.model.id).find("#unreviewSingle"+idAnnotation).attr("disabled","disabled")
+            } else if(params.isReviewed) {
+                $("#currentReviewAnnotation"+self.model.id).find("#reviewSingle"+idAnnotation).attr("disabled","disabled")
+            } else {
+                $("#currentReviewAnnotation"+self.model.id).find("#unreviewSingle"+idAnnotation).attr("disabled","disabled")
+            }
+
+            $("#currentReviewAnnotation"+self.model.id).find("#reviewSingle"+idAnnotation).click(function() {
+                self.addReviewAnnotation();
+            });
+            $("#currentReviewAnnotation"+self.model.id).find("#unreviewSingle"+idAnnotation).click(function() {
+                self.deleteReviewAnnotation();
+            });
+        });
+    },
+    addAllReviewAnnotation : function() {
+        var self = this;
+        console.log("addReviewAllAnnotation");
+
+        var layers = _.map(_.filter(self.printedLayer, function(num){ return num.id!="REVIEW"; }),function(item) {
+            return item.id
+        });
+        console.log(layers);
+            new AnnotationImageReviewedModel({image: self.model.id,layers:layers}).save({}, {
+                success:function (model, response) {
+                    window.app.view.message("Annotation", "Annotation are reviewed!", "success");
+                },
+                error:function (model, response) {
+                    var json = $.parseJSON(response.responseText);
+                    window.app.view.message("Annotation", json.errors, "error");
+            }});
+    }
 });

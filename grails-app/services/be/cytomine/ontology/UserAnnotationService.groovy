@@ -203,7 +203,7 @@ class UserAnnotationService extends ModelService {
     }
 
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
-    def list(ImageInstance image, SecUser user, String bbox) {
+    def list(ImageInstance image, SecUser user, String bbox, Boolean notReviewedOnly) {
         String[] coordinates = bbox.split(",")
         double bottomX = Double.parseDouble(coordinates[0])
         double bottomY = Double.parseDouble(coordinates[1])
@@ -211,11 +211,21 @@ class UserAnnotationService extends ModelService {
         double topY = Double.parseDouble(coordinates[3])
         Coordinate[] boundingBoxCoordinates = [new Coordinate(bottomX, bottomY), new Coordinate(bottomX, topY), new Coordinate(topX, topY), new Coordinate(topX, bottomY), new Coordinate(bottomX, bottomY)]
         Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
-        UserAnnotation.createCriteria()
-                .add(Restrictions.eq("user", user))
-                .add(Restrictions.eq("image", image))
-                .add(SpatialRestrictions.within("location",boundingbox))
-                .list()
+
+        if(!notReviewedOnly) {
+            UserAnnotation.createCriteria()
+                    .add(Restrictions.eq("user", user))
+                    .add(Restrictions.eq("image", image))
+                    .add(SpatialRestrictions.within("location",boundingbox))
+                    .list()
+        } else {
+            UserAnnotation.createCriteria()
+                    .add(Restrictions.eq("user", user))
+                    .add(Restrictions.eq("image", image))
+                    .add(Restrictions.eq("countReviewedAnnotations", 0))
+                    .add(SpatialRestrictions.within("location",boundingbox))
+                    .list()
+        }
 
     }
 

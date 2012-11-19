@@ -60,7 +60,8 @@ var BrowseImageView = Backbone.View.extend({
         }
 
         var backgroundColor = ""
-        if(this.review) backgroundColor = "background-color:#ff0000;";
+        if(this.review && this.model.get('inReview')) backgroundColor = "background-color:#BD362F;";
+        else if(this.review && this.model.get('reviewed')) backgroundColor = "background-color:#5BB75B;";
 
         var tabTpl =
                 "<li>" +
@@ -71,15 +72,6 @@ var BrowseImageView = Backbone.View.extend({
         $(".nav-tabs").append(_.template(tabTpl, { idProject:window.app.status.currentProject, idImage:this.model.get('id'), originalFilename:this.model.get('originalFilename'), shortOriginalFilename:shortOriginalFilename}));
         var dropdownTpl = '<li class="dropdown"><a href="#" id="'+self.divPrefixId+'-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab"><i class="icon-remove" /> Close</a></li></ul></li>';
         $(".nav-tabs").append(_.template(dropdownTpl, { idProject:window.app.status.currentProject, idImage:this.model.get('id'), filename:this.model.get('filename')}));
-
-        console.log("nav-tabs="+$(".nav-tabs").length);
-
-        console.log($(".nav-tabs").html());
-
-        console.log("tabs-review="+"#tabs-review-"+self.model.id);
-
-        console.log("tabs-review="+$("#tabs-review-"+self.model.id).length);
-
 
         this.initToolbar();
         this.initMap();
@@ -307,16 +299,29 @@ var BrowseImageView = Backbone.View.extend({
      * @param layer the layer to add
      * @param userID the id of the user associated to the layer
      */
+    reviewLayer : null,
     addVectorLayer:function (layer, userID) {
         layer.vectorsLayer.setVisibility(false);
         this.map.addLayer(layer.vectorsLayer);
+
+        console.log(this.map.layers);
+
+        if(userID==0) {
+            this.reviewLayer = layer;
+        }
+
         this.layers.push(layer);
 
         if(!this.review) {
             this.layerSwitcherPanel.addVectorLayer(layer, this.model, userID);
         } else{
             this.reviewPanel.addVectorLayer(layer, this.model, userID);
+            this.map.raiseLayer(this.reviewLayer.vectorsLayer,1000);
         }
+    },
+    showAnnotationInReviewPanel : function(annotation){
+        if(this.review)
+            this.reviewPanel.showCurrentAnnotation(annotation);
     },
     /**
      * Create a draggable Panel containing Layers names

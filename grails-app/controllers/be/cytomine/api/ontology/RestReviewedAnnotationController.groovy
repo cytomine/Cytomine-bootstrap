@@ -267,8 +267,8 @@ class RestReviewedAnnotationController extends RestController {
             def response = [:]
             response.reviewedannotation = json
             response.message = "Annotation review is deleted"
-            domainService.deleteDomain(response,200)
-            responseSuccess(json)
+            domainService.deleteDomain(reviewedAnnotation);
+            responseSuccess(response)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
@@ -315,6 +315,7 @@ class RestReviewedAnnotationController extends RestController {
                 SecUser.read(Long.parseLong(it))
             }
             ImageInstance image = ImageInstance.read(params.long('image'))
+            if(!image) throw new WrongArgumentException("Image ${params.image} was not found!")
             if(!image.isInReviewMode()) throw new WrongArgumentException("Cannot review annotation, enable image review mode!")
             if(image.reviewUser && image.reviewUser.id!=cytomineService.currentUser.id) throw new WrongArgumentException("You must be the image reviewer to review annotation. Image reviewer is ${image.reviewUser?.username}.")
 

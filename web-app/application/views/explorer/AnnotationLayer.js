@@ -72,7 +72,9 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         'strokeWidth':3,
         'pointRadius':this.pointRadius
     });
-
+    var zindex = 100;
+    if(name=="REVIEW") zindex = 1;
+    console.log("zindex " + name + "="+zindex);
     selectStyle.addRules(rules);
     var styleMap = new OpenLayers.StyleMap({
         'default':defaultStyle,
@@ -101,7 +103,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 
     var annotationsCollection = null;
     if(name!="REVIEW") {
-        annotationsCollection= new AnnotationCollection({user:this.userID, image:this.imageID, term:undefined}).url().replace("json", "jsonp");
+        annotationsCollection= new AnnotationCollection({user:this.userID, image:this.imageID, term:undefined, notReviewedOnly: reviewMode}).url().replace("json", "jsonp");
     } else {
         annotationsCollection= new AnnotationReviewedCollection({image:this.imageID, term:undefined}).url().replace("json", "jsonp");
     }
@@ -111,7 +113,6 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         strategies:[
             new OpenLayers.Strategy.BBOX({resFactor:1})
         ],
-
         protocol:new OpenLayers.Protocol.Script({
             url: annotationsCollection,
             format:new OpenLayers.Format.Cytomine({ annotationLayer:this}),
@@ -185,28 +186,28 @@ AnnotationLayer.prototype = {
         var symbolizers_lookup = {};
         var self = this;
         symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
-            'fillColor':"#00FF00",
-            'fillOpacity':.6,
+            'fillColor':"#5BB75B",
+            'fillOpacity':1,
             'strokeColor':strokeColor,
             'strokeWidth':3,
             'pointRadius':this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#00FF00",
-            'fillOpacity':.6,
+            'fillColor':"#5BB75B",
+            'fillOpacity':1,
             'strokeColor':strokeColor,
             'strokeWidth':3,
             'pointRadius':this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#00FF00",
+            'fillColor':"#5BB75B",
             'fillOpacity':1,
             'strokeColor':strokeColor,
             'strokeWidth':5,
             'pointRadius':this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#00FF00",
+            'fillColor':"#5BB75B",
             'fillOpacity':1,
             'strokeColor':strokeColor,
             'strokeWidth':5,
@@ -214,8 +215,8 @@ AnnotationLayer.prototype = {
         };
         window.app.status.currentTermsCollection.each(function (term) {
             symbolizers_lookup[term.id] = {
-                'fillColor':"#00FF00",
-                'fillOpacity':.6,
+                'fillColor':"#5BB75B",
+                'fillOpacity':1,
                 'strokeColor':strokeColor,
                 'strokeWidth':3,
                 'pointRadius':self.pointRadius
@@ -229,28 +230,28 @@ AnnotationLayer.prototype = {
         var symbolizers_lookup = {};
         var self = this;
         symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
-            'fillColor':"#FF0000",
+            'fillColor':"#BD362F",
             'fillOpacity':.6,
             'strokeColor':strokeColor,
             'strokeWidth':3,
             'pointRadius':this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#FF0000",
+            'fillColor':"#BD362F",
             'fillOpacity':.6,
             'strokeColor':strokeColor,
             'strokeWidth':3,
             'pointRadius':this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#FF0000",
+            'fillColor':"#BD362F",
             'fillOpacity':1,
             'strokeColor':strokeColor,
             'strokeWidth':5,
             'pointRadius':this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#FF0000",
+            'fillColor':"#BD362F",
             'fillOpacity':1,
             'strokeColor':strokeColor,
             'strokeWidth':5,
@@ -258,7 +259,7 @@ AnnotationLayer.prototype = {
         };
         window.app.status.currentTermsCollection.each(function (term) {
             symbolizers_lookup[term.id] = {
-                'fillColor':"#FF0000",
+                'fillColor':"#BD362F",
                 'fillOpacity':.6,
                 'strokeColor':strokeColor,
                 'strokeWidth':3,
@@ -444,6 +445,7 @@ AnnotationLayer.prototype = {
         ], function (tpl) {
             new AnnotationModel({id:evt.feature.attributes.idAnnotation}).fetch({
                 success:function (annotation, response) {
+                    self.browseImageView.showAnnotationInReviewPanel(annotation);
                     annotation.set({"username":window.app.models.projectUser.get(annotation.get("user")).prettyName()});
                     self.browseImageView.currentAnnotation =annotation;
                     var terms = [];

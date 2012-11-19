@@ -151,6 +151,8 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
             returnArray['url'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
             returnArray['imageURL'] = UrlApi.getAnnotationURL(cytomineBaseUrl,imageinstance.project?.id, imageinstance.id, annotation.id)
 
+            returnArray['reviewed'] = annotation.hasReviewedAnnotation()
+
             return returnArray
         }
     }

@@ -3,6 +3,13 @@
 
 <div class="reviewPanelContent" id="reviewPanelcontent<%= id %>" style="padding: 5px;">
     <% if (isDesktop) { %> <i class="dragHandle icon-move icon-white" style="float:right"></i> <% } %>
+
+
+
+    <h4 style="color : #ffffff; display: inline;">Annotation</h4>
+    <div id="currentReviewAnnotation<%= id %>"></div>
+
+
     <h4 style="color : #ffffff; display: inline;">Layers</h4>
     <br/><br/>
 
@@ -19,11 +26,11 @@
     <br/>
     <br/>
     <h4 style="color : #ffffff; display: inline;">Action</h4>
-    <br/>
+    <br/><br/>
+
     <div style="display: block;" >
         <ul class="reviewAction">
             <li>
-                <button class="btn" id="reviewSingle<%= id %>">Review Annotation</button>
                 <button class="btn" id="reviewMultiple<%= id %>">Review Visible Annotations</button><br><br>
                 <button class="btn" id="reviewValidate<%= id %>">Validate image</button>
                 <button class="btn" id="reviewGotoNext<%= id %>">Go to next image</button>

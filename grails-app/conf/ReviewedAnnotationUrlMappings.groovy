@@ -33,7 +33,7 @@ class ReviewedAnnotationUrlMappings {
         }
 
         "/api/annotation/$id/review"(controller: "restReviewedAnnotation"){
-            action = [POST:"addAnnotationReview",DELETE:"deleteAnnotationReview"]
+            action = [POST:"addAnnotationReview",PUT:"addAnnotationReview",DELETE:"deleteAnnotationReview"]
          }
 
         "/api/imageinstance/$id/review"(controller: "restReviewedAnnotation"){

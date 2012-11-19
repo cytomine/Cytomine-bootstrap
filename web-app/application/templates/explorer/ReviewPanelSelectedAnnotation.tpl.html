@@ -1,0 +1,15 @@
+<ul>
+    <li style="color:#FFFFFF;"><b>Annotation</b> : <%= idAnnotation %></li>
+    <li style="color:#FFFFFF;"><b>User</b> : <%= username %></li>
+    <li style="color:#FFFFFF;"><b>Created</b> : <%= date %></li>
+    <li style="color:#FFFFFF;"><b>Your term(s)</b> : <%= yourTerms %></li>
+    <li style="color:#FFFFFF;"><b>Other term(s)</b> : <%= otherTerms %></li>
+
+</ul>
+
+<ul class="reviewAction">
+    <li>
+        <button class="btn" id="reviewSingle<%= idAnnotation %>">Review</button>
+        <button class="btn" id="unreviewSingle<%= idAnnotation %>">UnReview</button>
+    </li>
+</ul>
