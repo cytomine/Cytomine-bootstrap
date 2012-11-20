@@ -27,11 +27,13 @@ var ReviewPanel = Backbone.View.extend({
      */
     render:function () {
         var self = this;
-        require([
-            "text!application/templates/explorer/ReviewPanel.tpl.html"
-        ], function (tpl) {
-            self.doLayout(tpl);
-        });
+
+            require([
+                "text!application/templates/explorer/ReviewPanel.tpl.html"
+            ], function (tpl) {
+                self.doLayout(tpl);
+            });
+
         return this;
     },
     addReviewLayerToReview : function() {
@@ -96,8 +98,6 @@ var ReviewPanel = Backbone.View.extend({
             if (_.isFunction(self.browseImageView.initCallback)) self.browseImageView.initCallback.call();
             self.browseImageView.initAutoAnnoteTools();
     },
-
-
     addLayerToReview : function(layer) {
         var self = this;
         var panelElem = $("#"+this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
@@ -186,46 +186,102 @@ var ReviewPanel = Backbone.View.extend({
     },
     doLayout:function (tpl) {
         var self = this;
+        console.log("doLayout");
         var panelElem = $("#"+this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
         var params = {id:self.model.get("id"), isDesktop:!window.app.view.isMobile};
         var content = _.template(tpl,params);
         panelElem.html(content);
         self.showCurrentAnnotation(null);
 
+        console.log("reviewed="+self.model.get("reviewed"));
 
-        var selectElem = panelElem.find("#reviewChoice"+self.model.get("id")).find("select");
 
-        this.userLayers.each(function(layer) {
-            console.log(layer.layerName());
-            self.layerName[layer.id] = layer.layerName();
-            selectElem.append('<option value="'+layer.id+'" id="'+layer.id+'">'+layer.layerName()+'</option>');
-        });
+        if(!self.model.get("reviewed")) {
+            console.log("Not validate!");
+            var selectElem = panelElem.find("#reviewChoice"+self.model.get("id")).find("select");
 
-        this.userJobLayers.each(function(layer) {
-            self.layerName[layer.id] = layer.layerName();
-            selectElem.append('<option value="'+layer.id+'" id="'+layer.id+'">'+layer.layerName()+'</option>');
-        });
+           this.userLayers.each(function(layer) {
+               console.log(layer.layerName());
+               self.layerName[layer.id] = layer.layerName();
+               selectElem.append('<option value="'+layer.id+'" id="'+layer.id+'">'+layer.layerName()+'</option>');
+           });
 
-        $("#addReviewLayers"+self.model.id).click(function() {
-            self.addLayerToReview(panelElem.find("#reviewChoice"+self.model.get("id")).find("select").val());
-        });
+           this.userJobLayers.each(function(layer) {
+               self.layerName[layer.id] = layer.layerName();
+               selectElem.append('<option value="'+layer.id+'" id="'+layer.id+'">'+layer.layerName()+'</option>');
+           });
+
+           $("#addReviewLayers"+self.model.id).click(function() {
+               self.addLayerToReview(panelElem.find("#reviewChoice"+self.model.get("id")).find("select").val());
+           });
+
+           $("#reviewMultiple"+self.model.id).click(function() {
+               self.addAllReviewAnnotation();
+           });
+
+            $("#reviewValidate"+self.model.id).click(function() {
+                self.validatePicture();
+            });
+
+            panelElem.find(".toggleShowAnnotation").click(function () {
+                panelElem.find("#currentReviewAnnotation"+self.model.get("id")).toggle(150);
+                return false;
+            });
+
+            panelElem.find(".toggleShowLayers").click(function () {
+                panelElem.find("#reviewChoice"+self.model.get("id")).toggle(150);
+                return false;
+            });
+
+            panelElem.find(".toggleShowAction").click(function () {
+                panelElem.find("#reviewAction"+self.model.get("id")).toggle(150);
+                return false;
+            });
+
+        } else {
+            console.log("Validate!");
+            var panel = $("#"+self.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
+            panel.find("#addReviewLayers" +self.model.id).attr("disabled","disabled");
+            panel.find("select").attr("disabled","disabled");
+            panel.find("#reviewMultiple" +self.model.id).attr("disabled","disabled");
+
+            panel.find("#reviewValidate" +self.model.id).hide();
+            panel.find("#reviewUnValidate" +self.model.id).show();
+//            panel.find("#reviewGotoNext" +self.model.id).show();
+
+            $("#reviewUnValidate"+self.model.id).click(function() {
+                self.unvalidatePicture();
+            });
+
+            panelElem.find("#currentReviewAnnotation"+self.model.get("id")).hide();
+            panelElem.find("#reviewChoice"+self.model.get("id")).hide();
+
+            panelElem.find(".toggleShowAnnotation").click(function () {
+                return false;
+            });
+
+            panelElem.find(".toggleShowLayers").click(function () {
+                return false;
+            });
+
+            panelElem.find(".toggleShowAction").click(function () {
+                return false;
+            });
+        }
 
         new DraggablePanelView({
             el:$("#"+self.browseImageView.divId).find('#reviewPanel' + self.model.get('id')),
             className:"reviewPanel"
         }).render();
-
-        $("#reviewMultiple"+self.model.id).click(function() {
-            self.addAllReviewAnnotation();
-        });
-
     },
     addReviewAnnotation : function() {
         var self = this;
         console.log("addReviewAnnotation");
         var annotation = self.browseImageView.currentAnnotation;
+        var terms = self.getSelectedTerm(annotation);
+
             self.browseImageView.removeFeature(annotation.id);
-            new AnnotationReviewedModel({id:annotation.id}).save({}, {
+            new AnnotationReviewedModel({id:annotation.id}).save({terms:terms}, {
                 success:function (model, response) {
                     window.app.view.message("Annotation", response.message, "success");
                     var newFeature = AnnotationLayerUtils.createFeatureFromAnnotation(response.reviewedannotation);
@@ -251,6 +307,25 @@ var ReviewPanel = Backbone.View.extend({
         self.browseImageView.removeFeature(annotation.id);
             new AnnotationReviewedModel({id:annotation.id}).destroy({
                 success:function (model, response) {
+                    console.log("response="+response);
+
+
+                   console.log("response.basedannotation.user="+response.basedannotation.user);
+                    console.log("self.userLayers="+self.userLayers);
+                    var layerItem = _.find(self.printedLayer, function(item){
+                        console.log("item.id="+item.id);
+                        return item.id==response.basedannotation.user;
+                    });
+                    console.log("Layer found:"+layerItem);
+                    var newFeature = AnnotationLayerUtils.createFeatureFromAnnotation(response.basedannotation);
+
+                    layerItem.layer.addFeature(newFeature);
+                    layerItem.layer.controls.select.unselectAll();
+                    layerItem.layer.controls.select.select(newFeature);
+
+
+
+                    console.log(response.basedannotation);
                     window.app.view.message("Annotation", response.message, "success");
                 },
                 error:function (model, response) {
@@ -268,7 +343,7 @@ var ReviewPanel = Backbone.View.extend({
             var params = {};
             var idAnnotation;
             if(annotation==null) {
-                params = {id:self.model.get("id"), username:"",date:"",yourTerms:"",otherTerms:"",isReviewed:false,idAnnotation:"-1"};
+                params = {id:self.model.get("id"), username:"",date:"",isReviewed:false,idAnnotation:""};
                 idAnnotation = "";
             }
             else {
@@ -276,8 +351,6 @@ var ReviewPanel = Backbone.View.extend({
                     id:self.model.get("id"),
                     username:window.app.models.projectUser.get(annotation.get("user")).prettyName(),
                     date:window.app.convertLongToDate(annotation.get("created")),
-                    yourTerms:"",
-                    otherTerms:"",
                     isReviewed:annotation.get("reviewed"),
                     idAnnotation : annotation.id }
                 idAnnotation= annotation.id;
@@ -286,7 +359,7 @@ var ReviewPanel = Backbone.View.extend({
             var content = _.template(tpl,params);
             $("#currentReviewAnnotation"+self.model.id).append(content);
 
-            if(params.idAnnotation="") {
+            if(params.idAnnotation=="") {
                 $("#currentReviewAnnotation"+self.model.id).find("#reviewSingle"+idAnnotation).attr("disabled","disabled")
                 $("#currentReviewAnnotation"+self.model.id).find("#unreviewSingle"+idAnnotation).attr("disabled","disabled")
             } else if(params.isReviewed) {
@@ -301,7 +374,34 @@ var ReviewPanel = Backbone.View.extend({
             $("#currentReviewAnnotation"+self.model.id).find("#unreviewSingle"+idAnnotation).click(function() {
                 self.deleteReviewAnnotation();
             });
+
+            $("#currentReviewAnnotation"+self.model.id).find("#reviewValidate"+idAnnotation).click(function() {
+                self.validatePicture();
+            });
+
+            self.showAnnotationTerm(annotation)
         });
+    },
+    showAnnotationTerm : function(annotation) {
+        var self = this;
+
+        if(annotation!=null) {
+            var termsListElem = $("#currentReviewAnnotation"+self.model.id).find("#termsChoice"+annotation.id);
+            termsListElem.empty();
+            _.each(annotation.get('term'), function(term) {
+               termsListElem.append('<input type="checkbox" checked="checked" name="terms" value="'+term+'"> '+ window.app.status.currentTermsCollection.get(term).get('name') +"&nbsp;&nbsp;");
+           });
+        }
+    },
+    getSelectedTerm : function(annotation) {
+        var self = this;
+        var termsListElem = $("#currentReviewAnnotation"+self.model.id).find("#termsChoice"+annotation.id);
+        var selectedInput = termsListElem.find("input[name='terms']:checked:enabled");
+        var selectedTermsId = []
+        _.each(selectedInput,function(input) {
+            selectedTermsId.push($(input).val())
+        });
+        return selectedTermsId;
     },
     addAllReviewAnnotation : function() {
         var self = this;
@@ -319,5 +419,18 @@ var ReviewPanel = Backbone.View.extend({
                     var json = $.parseJSON(response.responseText);
                     window.app.view.message("Annotation", json.errors, "error");
             }});
+    },
+    validatePicture : function() {
+        var self = this;
+        self.browseImageView.validatePicture();
+    },
+    unvalidatePicture : function() {
+        var self = this;
+        self.browseImageView.unvalidatePicture();
+    },
+    refresh : function(model) {
+        var self = this;
+        self.model = model;
+        self.render();
     }
 });

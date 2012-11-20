@@ -243,12 +243,13 @@ class RestReviewedAnnotationController extends RestController {
 
     def addAnnotationReview = {
         try {
+            def json = request.JSON
             AnnotationDomain basedAnnotation = getAnnotationDomain(params.long('id'))
             if(!basedAnnotation.image.isInReviewMode()) throw new WrongArgumentException("Cannot review annotation, enable image review mode!")
             if(basedAnnotation.image.reviewUser && basedAnnotation.image.reviewUser.id!=cytomineService.currentUser.id) throw new WrongArgumentException("You must be the image reviewer to review annotation. Image reviewer is ${basedAnnotation.image.reviewUser?.username}.")
             if(ReviewedAnnotation.findByParentIdent(basedAnnotation.id)) throw new AlreadyExistException("Annotation is already review!")
 
-            ReviewedAnnotation reviewedAnnotation = reviewAnnotation(basedAnnotation)
+            ReviewedAnnotation reviewedAnnotation = reviewAnnotation(basedAnnotation,json.terms)
             def response = [:]
             response.reviewedannotation = reviewedAnnotation
             response.message = "Annotation review is added"
@@ -266,6 +267,7 @@ class RestReviewedAnnotationController extends RestController {
             def json = reviewedAnnotation.encodeAsJSON()
             def response = [:]
             response.reviewedannotation = json
+            response.basedannotation = reviewedAnnotation.retrieveParentAnnotation()
             response.message = "Annotation review is deleted"
             domainService.deleteDomain(reviewedAnnotation);
             responseSuccess(response)
@@ -275,7 +277,7 @@ class RestReviewedAnnotationController extends RestController {
         }
     }
 
-    private ReviewedAnnotation reviewAnnotation(AnnotationDomain annotation) {
+    private ReviewedAnnotation reviewAnnotation(AnnotationDomain annotation, def terms) {
         ReviewedAnnotation review = new ReviewedAnnotation()
         review.parentIdent = annotation.id
         review.parentClassName = annotation.class.name
@@ -286,10 +288,17 @@ class RestReviewedAnnotationController extends RestController {
         review.project = annotation.project
         review.geometryCompression = annotation.geometryCompression
 
-        List<Term> terms = annotation.termsForReview()
+//        List<Term> terms = annotation.termsForReview()
+//        terms.each {
+//            review.addToTerm(it)
+//        }
+        println "terms="+terms
+
         terms.each {
-            review.addToTerm(it)
+            println "it="+it
+            review.addToTerm(Term.read(Long.parseLong(it)))
         }
+
         review.reviewUser = cytomineService.currentUser
         domainService.saveDomain(review)
         review
@@ -309,6 +318,8 @@ class RestReviewedAnnotationController extends RestController {
         try {
             log.info "params.users="+params.users
             log.info("image="+params.image)
+
+            if(true) throw new WrongArgumentException("Implémenter l'ajout des termes!!!!!")
 
             String[] layersParam = params.users.split(",")
             List<SecUser> users = layersParam.collect {

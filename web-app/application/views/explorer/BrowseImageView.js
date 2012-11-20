@@ -59,13 +59,9 @@ var BrowseImageView = Backbone.View.extend({
             shortOriginalFilename = shortOriginalFilename.substring(0, 23) + "...";
         }
 
-        var backgroundColor = ""
-        if(this.review && this.model.get('inReview')) backgroundColor = "background-color:#BD362F;";
-        else if(this.review && this.model.get('reviewed')) backgroundColor = "background-color:#5BB75B;";
-
         var tabTpl =
                 "<li>" +
-                "<a style='float: left;"+backgroundColor+" ' id='"+self.divPrefixId+"-<%= idImage %>' rel='tooltip' title='<%= originalFilename %>' href='#"+self.divPrefixId+"-<%= idProject %>-<%= idImage %>-' data-toggle='tab'>" +
+                "<a style='float: left;' id='"+self.divPrefixId+"-<%= idImage %>' rel='tooltip' title='<%= originalFilename %>' href='#"+self.divPrefixId+"-<%= idProject %>-<%= idImage %>-' data-toggle='tab'>" +
                 "<i class='icon-search' /> <%= shortOriginalFilename %> " +
                 "</a>" +
                 "</li>";
@@ -73,12 +69,22 @@ var BrowseImageView = Backbone.View.extend({
         var dropdownTpl = '<li class="dropdown"><a href="#" id="'+self.divPrefixId+'-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab"><i class="icon-remove" /> Close</a></li></ul></li>';
         $(".nav-tabs").append(_.template(dropdownTpl, { idProject:window.app.status.currentProject, idImage:this.model.get('id'), filename:this.model.get('filename')}));
 
+        if(this.review && this.model.get('reviewed')) self.changeValidateColor(true);
+        else if(this.review && this.model.get('inReview')) self.changeValidateColor(false);
+
         this.initToolbar();
         this.initMap();
         this.initAnnotationsTabs();
 
         if (this.iPad) this.initMobile();
         return this;
+    },
+    changeValidateColor : function(isValidate) {
+        var self = this;
+        var color = ""
+        if(isValidate) color = "#5BB75B";
+        else color = "#BD362F";
+        $(".nav-tabs").find("a#"+self.divPrefixId+"-"+self.model.id).css("background-color",color);
     },
     initMobile:function () {
 
@@ -320,6 +326,7 @@ var BrowseImageView = Backbone.View.extend({
         }
     },
     showAnnotationInReviewPanel : function(annotation){
+        console.log("showAnnotationInReviewPanel");
         if(this.review)
             this.reviewPanel.showCurrentAnnotation(annotation);
     },
@@ -864,7 +871,65 @@ var BrowseImageView = Backbone.View.extend({
         for (var key in controls) {
             this.map.addControl(controls[key]);
         }
+    },
+    validatePicture : function() {
+        var self = this;
+        console.log("validateImage");
+        new ImageReviewModel({id:self.model.id}).destroy({
+            success:function (model, response) {
+                window.app.view.message("Image", response.message, "success");
+                self.model = new ImageModel(response.imageinstance);
+                self.changeValidateColor(true);
+                self.reviewPanel.refresh(self.model);
+            },
+            error:function (model, response) {
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Image", json.errors, "error");
+        }});
+    },
+    unvalidatePicture : function() {
+        var self = this;
+        console.log("cancelReviewing");
+        new ImageReviewModel({id:self.model.id, cancel:true}).destroy({
+            success:function (model, response) {
+                window.app.view.message("Image", response.message, "success");
+                self.model = new ImageModel(response.imageinstance);
+                self.changeValidateColor(false);
+                self.reviewPanel.refresh(self.model);
+            },
+            error:function (model, response) {
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Image", json.errors, "error");
+        }});
+
     }
+
+
+
+//    },
+//    validateImage : function() {
+//        var self = this;
+//        console.log("validateImage");
+//        new ImageReviewModel({id:self.model.id}).destroy({
+//            success:function (model, response) {
+//                //window.location = "#tabs-images-"+self.model.get('project');
+////                window.app.controllers.dashboard.view.projectDashboardImages.refreshImagesThumbs();
+//                window.app.view.message("Image", response.message, "success");
+//                console.log(response);
+//                self.model = new ImageModel(response.imageinstance);
+//                self.render();
+//            },
+//            error:function (model, response) {
+//                var json = $.parseJSON(response.responseText);
+//                window.app.view.message("Image", json.errors, "error");
+//        }});
+//    }
+//
+//
+//
+
+
+
 });
 
 

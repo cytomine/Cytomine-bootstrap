@@ -51,6 +51,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.imageID = imageID;
     this.userID = userID;
     this.reviewLayer = (name=="REVIEW");
+    this.reviewMode = reviewMode;
     var rules = [new OpenLayers.Rule({
         symbolizer:{strokeColor:"#00FF00", strokeWidth:2},
         // symbolizer: {}, // instead if you want to keep default colors
@@ -231,14 +232,14 @@ AnnotationLayer.prototype = {
         var self = this;
         symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
             'fillColor':"#BD362F",
-            'fillOpacity':.6,
+            'fillOpacity':1,
             'strokeColor':strokeColor,
             'strokeWidth':3,
             'pointRadius':this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
             'fillColor':"#BD362F",
-            'fillOpacity':.6,
+            'fillOpacity':1,
             'strokeColor':strokeColor,
             'strokeWidth':3,
             'pointRadius':this.pointRadius
@@ -260,7 +261,7 @@ AnnotationLayer.prototype = {
         window.app.status.currentTermsCollection.each(function (term) {
             symbolizers_lookup[term.id] = {
                 'fillColor':"#BD362F",
-                'fillOpacity':.6,
+                'fillOpacity':1,
                 'strokeColor':strokeColor,
                 'strokeWidth':3,
                 'pointRadius':self.pointRadius
@@ -296,12 +297,13 @@ AnnotationLayer.prototype = {
 
             },
             'featureunselected':function (evt) {
-
+                console.log("featureunselected");
                 if (self.measureOnSelect) self.vectorsLayer.removeFeatures(evt.feature);
 
                 if (self.dialog != null) self.dialog.destroy();
                 self.ontologyTreeView.clear();
                 self.ontologyTreeView.clearAnnotation();
+                self.browseImageView.showAnnotationInReviewPanel(null);
                 self.clearPopup(map, evt);
                 self.vectorsLayer.drawFeature(evt.feature);
                 //alias.ontologyTreeView.refresh(null);
@@ -450,15 +452,28 @@ AnnotationLayer.prototype = {
                     self.browseImageView.currentAnnotation =annotation;
                     var terms = [];
                     //browse all term and compute the number of user who add this term
-                    _.each(annotation.get("userByTerm"), function (termuser) {
-                        var idTerm = termuser.term;
-                        var termName = window.app.status.currentTermsCollection.get(idTerm).get('name');
-                        var userCount = termuser.user.length;
-                        var idOntology = window.app.status.currentProjectModel.get('ontology');
-                        var tpl = _.template("<a href='#ontology/<%=   idOntology %>/<%=   idTerm %>'><%=   termName %></a> (<%=   userCount %>)", {idOntology:idOntology, idTerm:idTerm, termName:termName, userCount:userCount});
-                        terms.push(tpl);
 
-                    });
+                    if(annotation.get("reviewed")) {
+                        _.each(annotation.get("term"), function (idTerm) {
+                            var termName = window.app.status.currentTermsCollection.get(idTerm).get('name');
+                            var idOntology = window.app.status.currentProjectModel.get('ontology');
+                            var tpl = _.template("<a href='#ontology/<%=   idOntology %>/<%=   idTerm %>'><%=   termName %></a> ", {idOntology:idOntology, idTerm:idTerm, termName:termName});
+                            terms.push(tpl);
+
+                        });
+                    } else {
+                        _.each(annotation.get("userByTerm"), function (termuser) {
+                            var idTerm = termuser.term;
+                            var termName = window.app.status.currentTermsCollection.get(idTerm).get('name');
+                            var userCount = termuser.user.length;
+                            var idOntology = window.app.status.currentProjectModel.get('ontology');
+                            var tpl = _.template("<a href='#ontology/<%=   idOntology %>/<%=   idTerm %>'><%=   termName %></a> (<%=   userCount %>)", {idOntology:idOntology, idTerm:idTerm, termName:termName, userCount:userCount});
+                            terms.push(tpl);
+
+                        });
+                    }
+
+
                     annotation.set({"terms":terms.join(", ")});
 
                     if(annotation.get("nbComments")==undefined) {
@@ -478,7 +493,10 @@ AnnotationLayer.prototype = {
                         var feature = self.getFeature(annotation.id);
                         if (feature == undefined || feature == null) return false;
                         self.hideFeature(feature);
-                        var url = "tabs-image-" + window.app.status.currentProjectModel.get("id") + "-" + self.browseImageView.model.get("id") + "-";
+                        var url = "";
+                        if(!self.reviewMode)
+                            url = "tabs-image-" + window.app.status.currentProjectModel.get("id") + "-" + self.browseImageView.model.get("id") + "-";
+                        else url = "tabs-review-" + window.app.status.currentProjectModel.get("id") + "-" + self.browseImageView.model.get("id") + "-";
                         window.app.controllers.browse.navigate(url, false);
                         return false;
                     });

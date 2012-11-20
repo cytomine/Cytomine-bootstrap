@@ -114,6 +114,20 @@ div .annotationsPanel {
 
 }
 
+div .layerSwitcherPanel {
+    position : absolute;
+    /*right : 20px;
+    top : 100px;*/
+    z-index : 1000;
+    background-color: black;
+    color : #fff;
+    padding: 0px;
+    margin : 0px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+
+}
 
 div .reviewPanel {
     position : absolute;
@@ -123,7 +137,7 @@ div .reviewPanel {
     padding: 0px;
     margin : 0px;
     width : 400px;
-    height : 500px;
+    /*height : 500px;*/
 
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
@@ -250,20 +264,7 @@ input .layerSwitcher{
 }
 
 
-div .layerSwitcherPanel {
-    position : absolute;
-    /*right : 20px;
-    top : 100px;*/
-    z-index : 1000;
-    background-color: black;
-    color : #fff;
-    padding: 0px;
-    margin : 0px;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
 
-}
 
 div .annotationDetailPanel {
     position : absolute;

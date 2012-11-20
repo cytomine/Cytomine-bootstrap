@@ -62,7 +62,7 @@ var ImageThumbView = Backbone.View.extend({
         if(self.isNotReviewed()) {
             reviewingDiv.append('<span class="label">Not yet reviewed</span>');
         } else if(self.isInReviewing()) {
-            reviewingDiv.append('<span class="label label-warning">'+window.app.models.projectUser.get(self.model.get("reviewUser")).prettyName()+' start reviewing</span>');
+            reviewingDiv.append('<span class="label label-warning">'+window.app.models.projectUser.get(self.model.get("reviewUser")).prettyName()+' starts reviewing</span>');
         } else {
             reviewingDiv.append('<span class="label label-success">'+window.app.models.projectUser.get(self.model.get("reviewUser")).prettyName()+' has reviewed</span>');
         }
