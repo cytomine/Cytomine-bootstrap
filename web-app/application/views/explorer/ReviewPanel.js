@@ -307,24 +307,18 @@ var ReviewPanel = Backbone.View.extend({
         self.browseImageView.removeFeature(annotation.id);
             new AnnotationReviewedModel({id:annotation.id}).destroy({
                 success:function (model, response) {
-                    console.log("response="+response);
-
-
-                   console.log("response.basedannotation.user="+response.basedannotation.user);
-                    console.log("self.userLayers="+self.userLayers);
                     var layerItem = _.find(self.printedLayer, function(item){
-                        console.log("item.id="+item.id);
                         return item.id==response.basedannotation.user;
                     });
                     console.log("Layer found:"+layerItem);
-                    var newFeature = AnnotationLayerUtils.createFeatureFromAnnotation(response.basedannotation);
+                    if(layerItem) {
+                        //if layer is undefined, don't need to add old annotation
+                        var newFeature = AnnotationLayerUtils.createFeatureFromAnnotation(response.basedannotation);
 
-                    layerItem.layer.addFeature(newFeature);
-                    layerItem.layer.controls.select.unselectAll();
-                    layerItem.layer.controls.select.select(newFeature);
-
-
-
+                        layerItem.layer.addFeature(newFeature);
+                        layerItem.layer.controls.select.unselectAll();
+                        layerItem.layer.controls.select.select(newFeature);
+                    }
                     console.log(response.basedannotation);
                     window.app.view.message("Annotation", response.message, "success");
                 },
@@ -397,7 +391,7 @@ var ReviewPanel = Backbone.View.extend({
         var self = this;
         var termsListElem = $("#currentReviewAnnotation"+self.model.id).find("#termsChoice"+annotation.id);
         var selectedInput = termsListElem.find("input[name='terms']:checked:enabled");
-        var selectedTermsId = []
+        var selectedTermsId = [];
         _.each(selectedInput,function(input) {
             selectedTermsId.push($(input).val())
         });
@@ -405,20 +399,48 @@ var ReviewPanel = Backbone.View.extend({
     },
     addAllReviewAnnotation : function() {
         var self = this;
-        console.log("addReviewAllAnnotation");
 
-        var layers = _.map(_.filter(self.printedLayer, function(num){ return num.id!="REVIEW"; }),function(item) {
-            return item.id
-        });
-        console.log(layers);
-            new AnnotationImageReviewedModel({image: self.model.id,layers:layers}).save({}, {
-                success:function (model, response) {
-                    window.app.view.message("Annotation", "Annotation are reviewed!", "success");
-                },
-                error:function (model, response) {
-                    var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Annotation", json.errors, "error");
-            }});
+        console.log("addAllReviewAnnotation");
+
+//
+
+        new TaskModel({project:self.model.get('project')}).save({}, {
+                  success:function (task, response) {
+                      console.log("task="+task);
+                    var layers = _.map(_.filter(self.printedLayer, function(num){ return num.id!="REVIEW"; }),function(item) {
+                        return item.id
+                    });
+
+                      $("#taskreview"+self.model.id).append('<div id="task-'+task.id+'"></div>');
+                      $("#reviewChoice"+self.model.id).hide();
+                      $("#taskreview"+self.model.id).show();
+
+
+                      var timer = window.app.view.printTaskEvolution(task,$("#taskreview"+self.model.id).find("#task-"+task.id),1000,true);
+
+                    new AnnotationImageReviewedModel({image: self.model.id,layers:layers,task:task.id}).save({}, {
+                        success:function (model, response) {
+                            clearInterval(timer);
+                            $("#taskreview"+self.model.id).empty();
+                            $("#taskreview"+self.model.id).hide();
+                            $("#reviewChoice"+self.model.id).show();
+                            window.app.view.message("Annotation", "Annotation are reviewed!", "success");
+                            self.reviewLayer.vectorsLayer.refresh();
+                        },
+                        error:function (model, response) {
+                            clearInterval(timer);
+                            var json = $.parseJSON(response.responseText);
+                            window.app.view.message("Annotation", json.errors, "error");
+                    }});
+
+                  },
+                  error:function (model, response) {
+                      var json = $.parseJSON(response.responseText);
+                      window.app.view.message("Task", json.errors, "error");
+                  }
+              }
+          );
+
     },
     validatePicture : function() {
         var self = this;

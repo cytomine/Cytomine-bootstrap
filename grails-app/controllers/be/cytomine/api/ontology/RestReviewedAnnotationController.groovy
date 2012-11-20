@@ -22,6 +22,8 @@ import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.security.UserJob
+import be.cytomine.command.Task
+import be.cytomine.processing.JobData
 
 class RestReviewedAnnotationController extends RestController {
 
@@ -36,6 +38,7 @@ class RestReviewedAnnotationController extends RestController {
     def cytomineService
     def dataSource
     def reviewedAnnotationService
+    def taskService
 
     //list all
     def list = {
@@ -277,6 +280,10 @@ class RestReviewedAnnotationController extends RestController {
         }
     }
 
+    private ReviewedAnnotation reviewAnnotation(AnnotationDomain annotation) {
+        reviewAnnotation(annotation,annotation.termsId())
+    }
+
     private ReviewedAnnotation reviewAnnotation(AnnotationDomain annotation, def terms) {
         ReviewedAnnotation review = new ReviewedAnnotation()
         review.parentIdent = annotation.id
@@ -287,16 +294,19 @@ class RestReviewedAnnotationController extends RestController {
         review.image = annotation.image
         review.project = annotation.project
         review.geometryCompression = annotation.geometryCompression
-
-//        List<Term> terms = annotation.termsForReview()
-//        terms.each {
-//            review.addToTerm(it)
-//        }
         println "terms="+terms
 
-        terms.each {
-            println "it="+it
-            review.addToTerm(Term.read(Long.parseLong(it)))
+        if(terms) {
+            //terms in request param
+            terms.each {
+                println "it="+it
+                review.addToTerm(Term.read(Long.parseLong(it+"")))
+            }
+        } else {
+            //nothing in param, add term from annotation
+            annotation.terms().each {
+                review.addToTerm(it)
+            }
         }
 
         review.reviewUser = cytomineService.currentUser
@@ -318,13 +328,13 @@ class RestReviewedAnnotationController extends RestController {
         try {
             log.info "params.users="+params.users
             log.info("image="+params.image)
-
-            if(true) throw new WrongArgumentException("Implémenter l'ajout des termes!!!!!")
-
+            Task task = taskService.read(params.long('task'))
+            taskService.updateTask(task,2,"Extract parameters...")
             String[] layersParam = params.users.split(",")
             List<SecUser> users = layersParam.collect {
                 SecUser.read(Long.parseLong(it))
             }
+            taskService.updateTask(task,3,"Review ${layersParam.length} layers...")
             ImageInstance image = ImageInstance.read(params.long('image'))
             if(!image) throw new WrongArgumentException("Image ${params.image} was not found!")
             if(!image.isInReviewMode()) throw new WrongArgumentException("Cannot review annotation, enable image review mode!")
@@ -339,24 +349,26 @@ class RestReviewedAnnotationController extends RestController {
                 def data = []
 
                 List<AnnotationDomain> annotations = []
-
+                taskService.updateTask(task,5,"Look for all annotations...")
                 users.eachWithIndex { user, indexUser ->
                     if(user.algo())
                         annotations.addAll(AlgoAnnotation.findAllByUserAndImage(user,image))
                     else
                         annotations.addAll(UserAnnotation.findAllByUserAndImage(user,image))
                 }
-
-                println "annotations="+annotations
-
+                taskService.updateTask(task,10,"${annotations.size()} annotations found...")
+                int realReviewed = 0
                 annotations.eachWithIndex { annotation, indexAnnotation ->
-                    println "annotation="+annotation
+                    if(indexAnnotation%10==0)
+                        taskService.updateTask(task,10+(int)(((double)indexAnnotation/(double)annotations.size())*0.9d*100),"${realReviewed} new reviewed annotations...")
                     if(!ReviewedAnnotation.findByParentIdent(annotation.id)) {
                         println "review"
+                        realReviewed++
                         def review = reviewAnnotation(annotation)
                         data << review.id
                     }
                 }
+                taskService.finishTask(task)
                 responseSuccess(data)
             }
         } catch (CytomineException e) {

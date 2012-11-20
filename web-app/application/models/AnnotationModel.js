@@ -212,11 +212,16 @@ var AnnotationReviewedCollection = Backbone.Collection.extend({
 // define our collection
 var AnnotationImageReviewedModel = Backbone.Model.extend({
     url:function () {
-        return "api/imageinstance/" + this.image + "/annotation/review.json?users=" +this.layers.join(",");
+        var task = ""
+        if(this.task) task = "&task="+this.task;
+
+
+        return "api/imageinstance/" + this.image + "/annotation/review.json?users=" +this.layers.join(",")+task;
     },
     initialize:function (options) {
         this.image = options.image;//one image
         this.layers = options.layers;
+        this.task = options.task;
     }
 });
 

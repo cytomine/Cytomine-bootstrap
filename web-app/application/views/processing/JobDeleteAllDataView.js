@@ -25,7 +25,7 @@ var JobDeleteAllDataView = Backbone.View.extend({
         new TaskModel({project:self.project.id}).save({}, {
                  success:function (task, response) {
                      $("#jobDataStat-"+self.model.id).append('<div id="task-'+task.id+'"></div>');
-                     var timer = self.printTaskEvolution(task,$("#jobDataStat-"+self.model.id).find("#task-"+task.id),1000);
+                     var timer = window.app.view.printTaskEvolution(task,$("#jobDataStat-"+self.model.id).find("#task-"+task.id),1000);
 
                     //load all job data
                     new JobDataStatsModel({id:self.model.id, task:task.id}).fetch({
@@ -83,7 +83,7 @@ var JobDeleteAllDataView = Backbone.View.extend({
             new TaskModel({project:self.project.id}).save({}, {
                       success:function (task, response) {
                           $("#jobDataStat-"+self.model.id).append('<div id="task-'+task.id+'"></div>');
-                          var timer = self.printTaskEvolution(task,$("#jobDataStat-"+self.model.id).find("#task-"+task.id),1000);
+                          var timer = window.app.view.printTaskEvolution(task,$("#jobDataStat-"+self.model.id).find("#task-"+task.id),1000);
 
                           new JobDataStatsModel({id:self.model.id, task:task.id}).destroy(
                               {
@@ -121,27 +121,5 @@ var JobDeleteAllDataView = Backbone.View.extend({
         require(["text!application/templates/processing/JobDeleteData.tpl.html"], function (jobDeleteDataViewTpl) {
             self.doLayout(jobDeleteDataViewTpl);
         });
-    },
-    //TODO:: create a specific view for this
-    printTaskEvolution:function(task,divToFill, timeout) {
-        function checkTask() {
-           //load all job data
-           new TaskModel({id:task.id}).fetch({
-               success:function(taskInfo,response) {
-                   divToFill.empty();
-                   divToFill.append('' +
-                               '<div class="progress progress-striped active">' +
-                               '   <div class="bar" style="width: '+taskInfo.get('progress')+'%;"></div>' +
-                               '</div>');
-                   divToFill.append(taskInfo.get('comments').join('<br>'));
-               },
-               error:function (collection, response) {
-                    console.log("error getting task");
-               }}
-           );
-        }
-        checkTask();
-        var timer=setInterval(function(){checkTask()}, timeout);
-        return timer;
     }
 });

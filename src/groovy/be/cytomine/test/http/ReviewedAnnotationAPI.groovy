@@ -261,11 +261,16 @@ class ReviewedAnnotationAPI extends DomainAPI {
     }
 
     static def addReviewAnnotation(def id, String username, String password) {
+        addReviewAnnotation(id,null,username,password)
+    }
+
+    static def addReviewAnnotation(def id, def terms, String username, String password) {
         log.info "update reviewedannotation:" + id
         String URL = Infos.CYTOMINEURL + "api/annotation/" + id + "/review.json"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
-        client.post("")
+        if(!terms) client.post("")
+        else client.post("{ \"terms\":[${terms.join(",")}]}")
         int code = client.getResponseCode()
         String response = client.getResponseData()
         println response

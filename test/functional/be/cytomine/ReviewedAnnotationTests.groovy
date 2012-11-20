@@ -515,10 +515,10 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
         UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
 
-        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
 
-        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(201, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -539,7 +539,7 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
 
-        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(201, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject

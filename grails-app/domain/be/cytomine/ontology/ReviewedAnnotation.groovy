@@ -200,7 +200,7 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
              returnArray['centroid'] = annotation.getCentroid()
              returnArray['created'] = annotation.created ? annotation.created.time.toString() : null
              returnArray['updated'] = annotation.updated ? annotation.updated.time.toString() : null
-             println "save json:"+annotation.termsId()
+             //println "save json:"+annotation.termsId()
              returnArray['term'] = annotation.termsId()
 
              try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}

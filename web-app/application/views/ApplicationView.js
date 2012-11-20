@@ -264,6 +264,30 @@ var ApplicationView = Backbone.View.extend({
         });
 
     },
+    printTaskEvolution:function(task,divToFill, timeout) {
+        printTaskEvolution(task,divToFill,timeout, false)
+    },
+    printTaskEvolution:function(task,divToFill, timeout, reverse) {
+        function checkTask() {
+           //load all job data
+           new TaskModel({id:task.id}).fetch({
+               success:function(taskInfo,response) {
+                   divToFill.empty();
+                   divToFill.append('' +
+                               '<div class="progress progress-striped active">' +
+                               '   <div class="bar" style="width: '+taskInfo.get('progress')+'%;"></div>' +
+                               '</div>');
+                   divToFill.append(taskInfo.get('comments').reverse().join('<br>'));
+               },
+               error:function (collection, response) {
+                    console.log("error getting task");
+               }}
+           );
+        }
+        checkTask();
+        var timer=setInterval(function(){checkTask()}, timeout);
+        return timer;
+    },
     /**
      * Initialize the components of the application
      */

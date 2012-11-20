@@ -30,7 +30,7 @@ class Task extends CytomineDomain{
             def returnArray = [:]
             returnArray['id'] = it.id
             returnArray['progress'] = it.progress
-            println "marshaller:"+ it.comments
+            //println "marshaller:"+ it.comments
             returnArray['comments'] = it.comments
 
             returnArray['project'] = it.project.id
