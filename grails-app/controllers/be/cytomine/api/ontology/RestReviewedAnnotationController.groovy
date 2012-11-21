@@ -253,7 +253,7 @@ class RestReviewedAnnotationController extends RestController {
             if(basedAnnotation.image.reviewUser && basedAnnotation.image.reviewUser.id!=cytomineService.currentUser.id) throw new WrongArgumentException("You must be the image reviewer to review annotation. Image reviewer is ${basedAnnotation.image.reviewUser?.username}.")
             if(ReviewedAnnotation.findByParentIdent(basedAnnotation.id)) throw new AlreadyExistException("Annotation is already review!")
 
-            ReviewedAnnotation reviewedAnnotation = reviewAnnotation(basedAnnotation,json.terms)
+            ReviewedAnnotation reviewedAnnotation = reviewAnnotation(basedAnnotation,json.terms,true)
             def response = [:]
             response.reviewedannotation = reviewedAnnotation
             response.message = "Annotation review is added"
@@ -304,7 +304,7 @@ class RestReviewedAnnotationController extends RestController {
             }
         } else {
             //nothing in param, add term from annotation
-            annotation.terms().each {
+            annotation.termsForReview().each {
                 review.addToTerm(it)
             }
         }
@@ -365,6 +365,7 @@ class RestReviewedAnnotationController extends RestController {
                     if(indexAnnotation%taskRefresh==0) {
                         taskService.updateTask(task,10+(int)(((double)indexAnnotation/(double)annotations.size())*0.9d*100),"${realReviewed} new reviewed annotations...")
                         cleanUpGorm()
+                        annotation.refresh()
                     }
 
 
