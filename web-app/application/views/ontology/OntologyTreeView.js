@@ -55,9 +55,29 @@ var OntologyTreeView = Backbone.View.extend({
                 if (self.idAnnotation == null) return; // nothing to do
 
                 if (node.isSelected()) {
-                    self.linkTerm(node.data.key);
+                    if(self.browseImageView.isCurrentAnnotationUser()) {
+                        console.log("link");
+
+
+                        if(self.browseImageView.currentAnnotation.get("class")=="be.cytomine.ontology.ReviewedAnnotation") {
+                            window.app.view.message("Reviewed annotation", "You cannot add a term to an accepted annotation, you must reject it before!", "error");
+                            self.activeEvent = false;
+                            node.select(false);
+                            self.activeEvent = true;
+
+                        } else self.linkTerm(node.data.key);
+
+                    } else {
+                        console.log("addTermToReviewPanel");
+                        self.browseImageView.addTermToReviewPanel(node.data.key);
+                    }
+
                 } else if (!node.isSelected()) {
-                    self.unlinkTerm(node.data.key);
+                    if(self.browseImageView.isCurrentAnnotationUser()) {
+                        self.unlinkTerm(node.data.key);
+                    } else {
+                        self.browseImageView.deleteTermFromReviewPanel(node.data.key);
+                    }
                 }
             },
             onDblClick:function (node, event) {
@@ -158,38 +178,39 @@ var OntologyTreeView = Backbone.View.extend({
     },
     linkTerm:function (idTerm) {
         var self = this;
-        new AnnotationTermModel({userannotation:this.idAnnotation, term:idTerm}).save({userannotation:this.idAnnotation, term:idTerm},
-            {
-                success:function (model, response) {
-                    window.app.view.message("Annotation Term", response.message, "success");
-                    self.browseImageView.reloadAnnotation(self.idAnnotation);
-                    self.browseImageView.refreshAnnotationTabs(idTerm);
-                },
-                error:function (model, response) {
-                    var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Annotation-Term", json.errors, "error");
+            new AnnotationTermModel({userannotation:this.idAnnotation, term:idTerm}).save({userannotation:this.idAnnotation, term:idTerm},
+                {
+                    success:function (model, response) {
+                        window.app.view.message("Annotation Term", response.message, "success");
+                        self.browseImageView.reloadAnnotation(self.idAnnotation);
+                        self.browseImageView.refreshAnnotationTabs(idTerm);
+                    },
+                    error:function (model, response) {
+                        var json = $.parseJSON(response.responseText);
+                        window.app.view.message("Annotation-Term", json.errors, "error");
+                    }
                 }
-            }
-        );
+            );
     },
     unlinkTerm:function (idTerm) {
         var self = this;
         console.log("unlinkTerm IdTerm " + idTerm + " : " + this.idAnnotation);
-        var annotationTerm = self.annotationTerm.find(function (annotationTerm) {
-            return (annotationTerm.get("term") == idTerm && annotationTerm.get("user") == window.app.status.user.id);
-        });
-        new AnnotationTermModel({ id:annotationTerm.id, userannotation:self.idAnnotation, term:idTerm}).destroy({
-                success:function (model, response) {
-                    window.app.view.message("Annotation Term", response.message, "success");
-                    self.browseImageView.reloadAnnotation(self.idAnnotation);
-                    self.browseImageView.refreshAnnotationTabs(idTerm);
-                },
-                error:function (model, response) {
-                    var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Annotation-Term", json.errors, "error");
-                }
-            }
-        );
+
+            var annotationTerm = self.annotationTerm.find(function (annotationTerm) {
+                       return (annotationTerm.get("term") == idTerm && annotationTerm.get("user") == window.app.status.user.id);
+                   });
+                   new AnnotationTermModel({ id:annotationTerm.id, userannotation:self.idAnnotation, term:idTerm}).destroy({
+                           success:function (model, response) {
+                               window.app.view.message("Annotation Term", response.message, "success");
+                               self.browseImageView.reloadAnnotation(self.idAnnotation);
+                               self.browseImageView.refreshAnnotationTabs(idTerm);
+                           },
+                           error:function (model, response) {
+                               var json = $.parseJSON(response.responseText);
+                               window.app.view.message("Annotation-Term", json.errors, "error");
+                           }
+                       }
+                   );
     }
 
 });

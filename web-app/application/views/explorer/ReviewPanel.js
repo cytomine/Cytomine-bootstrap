@@ -341,9 +341,12 @@ var ReviewPanel = Backbone.View.extend({
                 idAnnotation = "";
             }
             else {
+                var user = window.app.models.projectUser.get(annotation.get("user"));
+                if (user==undefined) user = window.app.models.projectUserJob.get(annotation.get("user"));
+
                 params = {
                     id:self.model.get("id"),
-                    username:window.app.models.projectUser.get(annotation.get("user")).prettyName(),
+                    username:user.prettyName(),
                     date:window.app.convertLongToDate(annotation.get("created")),
                     isReviewed:annotation.get("reviewed"),
                     idAnnotation : annotation.id }
@@ -383,9 +386,21 @@ var ReviewPanel = Backbone.View.extend({
             var termsListElem = $("#currentReviewAnnotation"+self.model.id).find("#termsChoice"+annotation.id);
             termsListElem.empty();
             _.each(annotation.get('term'), function(term) {
-               termsListElem.append('<input type="checkbox" checked="checked" name="terms" value="'+term+'"> '+ window.app.status.currentTermsCollection.get(term).get('name') +"&nbsp;&nbsp;");
+                self.addTermChoice(term,annotation.id);
            });
         }
+    },
+    addTermChoice : function(idTerm, idAnnotation) {
+        console.log("addTermChoice.idTerm="+idTerm);
+        console.log("addTermChoice.idAnnotation="+idAnnotation);
+        var self = this;
+        var termsListElem = $("#currentReviewAnnotation"+self.model.id).find("#termsChoice"+idAnnotation);
+        termsListElem.append('<input type="checkbox" checked="checked" name="terms" value="'+idTerm+'" id="termInput'+idTerm+'"> '+ window.app.status.currentTermsCollection.get(idTerm).get('name') +"&nbsp;&nbsp;");
+    },
+    deleteTermChoice : function(idTerm, idAnnotation) {
+        var self = this;
+        var termsListElem = $("#currentReviewAnnotation"+self.model.id).find("#termsChoice"+idAnnotation)
+        termsListElem.find("input#termInput"+idTerm).replaceWith("");
     },
     getSelectedTerm : function(annotation) {
         var self = this;
@@ -416,7 +431,7 @@ var ReviewPanel = Backbone.View.extend({
                       $("#taskreview"+self.model.id).show();
 
 
-                      var timer = window.app.view.printTaskEvolution(task,$("#taskreview"+self.model.id).find("#task-"+task.id),1000,true);
+                      var timer = window.app.view.printTaskEvolution(task,$("#taskreview"+self.model.id).find("#task-"+task.id),2000,true);
 
                     new AnnotationImageReviewedModel({image: self.model.id,layers:layers,task:task.id}).save({}, {
                         success:function (model, response) {

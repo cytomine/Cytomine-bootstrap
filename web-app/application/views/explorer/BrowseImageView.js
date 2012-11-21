@@ -90,6 +90,21 @@ var BrowseImageView = Backbone.View.extend({
 
 
     },
+    isCurrentAnnotationUser : function() {
+        console.log("isCurrentAnnotationUser="+window.app.models.projectUser.get( this.currentAnnotation.get('user')));
+        return window.app.models.projectUser.get( this.currentAnnotation.get('user'))!=undefined
+    },
+    addTermToReviewPanel : function(idTerm) {
+        console.log("addTermToReviewPanel="+idTerm);
+        if(this.review) {
+            this.reviewPanel.addTermChoice(idTerm,this.currentAnnotation.id);
+        }
+    },
+    deleteTermFromReviewPanel : function(idTerm) {
+        if(this.review) {
+            this.reviewPanel.deleteTermChoice(idTerm,this.currentAnnotation.id);
+        }
+    },
     /**
      * Grab the layout and call ask for render
      */

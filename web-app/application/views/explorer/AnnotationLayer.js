@@ -448,7 +448,12 @@ AnnotationLayer.prototype = {
             new AnnotationModel({id:evt.feature.attributes.idAnnotation}).fetch({
                 success:function (annotation, response) {
                     self.browseImageView.showAnnotationInReviewPanel(annotation);
-                    annotation.set({"username":window.app.models.projectUser.get(annotation.get("user")).prettyName()});
+
+                    var user = window.app.models.projectUser.get(annotation.get("user"));
+                    if (user==undefined) user = window.app.models.projectUserJob.get(annotation.get("user"));
+
+
+                    annotation.set({"username":user.prettyName()});
                     self.browseImageView.currentAnnotation =annotation;
                     var terms = [];
                     //browse all term and compute the number of user who add this term

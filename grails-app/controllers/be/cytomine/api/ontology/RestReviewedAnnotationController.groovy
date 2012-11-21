@@ -24,6 +24,7 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.security.UserJob
 import be.cytomine.command.Task
 import be.cytomine.processing.JobData
+import org.hibernate.SessionFactory
 
 class RestReviewedAnnotationController extends RestController {
 
@@ -280,11 +281,12 @@ class RestReviewedAnnotationController extends RestController {
         }
     }
 
+
     private ReviewedAnnotation reviewAnnotation(AnnotationDomain annotation) {
-        reviewAnnotation(annotation,annotation.termsId())
+        reviewAnnotation(annotation,annotation.termsId(), true)
     }
 
-    private ReviewedAnnotation reviewAnnotation(AnnotationDomain annotation, def terms) {
+    private ReviewedAnnotation reviewAnnotation(AnnotationDomain annotation, def terms, boolean flush) {
         ReviewedAnnotation review = new ReviewedAnnotation()
         review.parentIdent = annotation.id
         review.parentClassName = annotation.class.name
@@ -294,12 +296,10 @@ class RestReviewedAnnotationController extends RestController {
         review.image = annotation.image
         review.project = annotation.project
         review.geometryCompression = annotation.geometryCompression
-        println "terms="+terms
 
         if(terms) {
             //terms in request param
             terms.each {
-                println "it="+it
                 review.addToTerm(Term.read(Long.parseLong(it+"")))
             }
         } else {
@@ -310,7 +310,8 @@ class RestReviewedAnnotationController extends RestController {
         }
 
         review.reviewUser = cytomineService.currentUser
-        domainService.saveDomain(review)
+        if(flush) domainService.saveDomain(review)
+        else review.save()
         review
     }
 
@@ -326,6 +327,7 @@ class RestReviewedAnnotationController extends RestController {
     def reviewLayer = {
 
         try {
+            assert sessionFactory != null
             log.info "params.users="+params.users
             log.info("image="+params.image)
             Task task = taskService.read(params.long('task'))
@@ -358,16 +360,24 @@ class RestReviewedAnnotationController extends RestController {
                 }
                 taskService.updateTask(task,10,"${annotations.size()} annotations found...")
                 int realReviewed = 0
+                int taskRefresh =  annotations.size()>1000? 100 : 10
                 annotations.eachWithIndex { annotation, indexAnnotation ->
-                    if(indexAnnotation%10==0)
+                    if(indexAnnotation%taskRefresh==0) {
                         taskService.updateTask(task,10+(int)(((double)indexAnnotation/(double)annotations.size())*0.9d*100),"${realReviewed} new reviewed annotations...")
+                        cleanUpGorm()
+                    }
+
+
                     if(!ReviewedAnnotation.findByParentIdent(annotation.id)) {
-                        println "review"
                         realReviewed++
-                        def review = reviewAnnotation(annotation)
+                        def review = reviewAnnotation(annotation, null, false)
                         data << review.id
                     }
                 }
+                cleanUpGorm()
+//                def hibSession = sessionFactory.getCurrentSession()
+//                assert hibSession != null
+//                hibSession.flush()
                 taskService.finishTask(task)
                 responseSuccess(data)
             }
