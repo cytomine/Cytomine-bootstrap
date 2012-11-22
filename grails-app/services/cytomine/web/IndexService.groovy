@@ -47,6 +47,12 @@ class IndexService {
             createIndex(statement, "algo_annotation", "project_id");
 
             /**
+             * ReviewedAnnotation
+             */
+            createIndex(statement, "reviewed_annotation", "image_id");  //GIST
+            createIndex(statement, "reviewed_annotation", "location", "GIST");
+
+            /**
              * Annotation_term
              */
             createIndex(statement, "annotation_term", "user_annotation_id");
@@ -109,11 +115,15 @@ class IndexService {
     }
 
     def createIndex(def statement, String table, String col) {
+        createIndex(statement,table,col,"btree");
+    }
+
+    def createIndex(def statement, String table, String col, String type) {
         String name = table + "_" + col + "_index"
         String reqdrop = "DROP INDEX IF EXISTS " + name + ";"
         log.info reqdrop
         statement.execute(reqdrop);
-        String reqcreate = "CREATE INDEX " + name + " ON " + table + " (" + col + ");"
+        String reqcreate = "CREATE INDEX " + name + " ON " + table + " USING $type (" + col + ");"
         log.info reqcreate
         statement.execute(reqcreate);
     }

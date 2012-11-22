@@ -50,7 +50,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.map = map;
     this.imageID = imageID;
     this.userID = userID;
-    this.reviewLayer = (name=="REVIEW");
+    this.reviewLayer = (name=="REVIEW") || (name=="Review layer");
     this.reviewMode = reviewMode;
     var rules = [new OpenLayers.Rule({
         symbolizer:{strokeColor:"#00FF00", strokeWidth:2},
@@ -66,34 +66,45 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         'pointRadius':this.pointRadius
     });
     defaultStyle.addRules(rules);
-    var selectStyle = new OpenLayers.Style({
-        'fillColor':'#EEEEEE',
-        'fillOpacity':.8,
-        'strokeColor':'#00FF00',
-        'strokeWidth':3,
-        'pointRadius':this.pointRadius
-    });
-    var zindex = 100;
-    if(name=="REVIEW") zindex = 1;
-    console.log("zindex " + name + "="+zindex);
+    var selectStyle = null;
+
+//    if(!reviewMode)  {
+        selectStyle = new OpenLayers.Style({
+            'fillColor':'#EEEEEE',
+            'fillOpacity':.8,
+            'strokeColor':'#00FF00',
+            'strokeWidth':3,
+            'pointRadius':this.pointRadius
+        });
+//    } else {
+//        selectStyle = new OpenLayers.Style({
+//            'fillColor':'#F89406',
+//            'fillOpacity':.8,
+//            'strokeColor':'#F89406',
+//            'strokeWidth':3,
+//            'pointRadius':this.pointRadius
+//        });
+//    }
+
     selectStyle.addRules(rules);
     var styleMap = new OpenLayers.StyleMap({
         'default':defaultStyle,
         'select':selectStyle
     });
 
-    if(!reviewMode) {
-        styleMap.styles["default"].addRules(rules);
-        styleMap.addUniqueValueRules('default', 'term', this.getSymbolizer(false));
-        styleMap.styles["select"].addRules(rules);
-        styleMap.addUniqueValueRules('select', 'term', this.getSymbolizer(true));
-    } else if(this.reviewLayer) {
+    console.log("reviewMode="+reviewMode +" this.reviewLayer=" + this.reviewLayer);
+     if(this.reviewLayer) {
         //review layer: paint it green
         styleMap.styles["default"].addRules(rules);
         styleMap.addUniqueValueRules('default', 'term', this.getSymbolizerReview(false));
         styleMap.styles["select"].addRules(rules);
         styleMap.addUniqueValueRules('select', 'term', this.getSymbolizerReview(true));
-    }else {
+    }else if(!reviewMode) {
+        styleMap.styles["default"].addRules(rules);
+        styleMap.addUniqueValueRules('default', 'term', this.getSymbolizer(false));
+        styleMap.styles["select"].addRules(rules);
+        styleMap.addUniqueValueRules('select', 'term', this.getSymbolizer(true));
+     } else {
         //a layer in review mode but not a review layer: paint it red
         styleMap.styles["default"].addRules(rules);
         styleMap.addUniqueValueRules('default', 'term', this.getSymbolizerReviewNotReviewLayer(false));
@@ -103,7 +114,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 
 
     var annotationsCollection = null;
-    if(name!="REVIEW") {
+    if(!this.reviewLayer) {
         annotationsCollection= new AnnotationCollection({user:this.userID, image:this.imageID, term:undefined, notReviewedOnly: reviewMode}).url().replace("json", "jsonp");
     } else {
         annotationsCollection= new AnnotationReviewedCollection({image:this.imageID, term:undefined}).url().replace("json", "jsonp");
@@ -284,7 +295,9 @@ AnnotationLayer.prototype = {
             featureselected:function (evt) {
                 console.log("featureselected");
                 if (!self.measureOnSelect) {
-                    self.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
+                    self.ontologyTreeView.idAnnotation = evt.feature.attributes.idAnnotation;
+                    if(!self.reviewLayer)
+                        self.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
 
                     if (self.deleteOnSelect == true) {
                         self.removeSelection();
@@ -297,7 +310,7 @@ AnnotationLayer.prototype = {
 
             },
             'featureunselected':function (evt) {
-                console.log("featureunselected");
+                console.log("featureunselected on " + self.name);
                 if (self.measureOnSelect) self.vectorsLayer.removeFeatures(evt.feature);
 
                 if (self.dialog != null) self.dialog.destroy();
@@ -309,6 +322,7 @@ AnnotationLayer.prototype = {
                 //alias.ontologyTreeView.refresh(null);
             },
             'featureadded':function (evt) {
+              // console.log("*********** featureadded on " + self.name);
                 //Abort if the geometry contains less than 3 vertices
 //                if (evt.feature.geometry.getVertices().length < 3) {
 //                    self.vectorsLayer.removeFeatures(evt.feature);
@@ -454,6 +468,7 @@ AnnotationLayer.prototype = {
 
 
                     annotation.set({"username":user.prettyName()});
+                    console.log("current annotation = "+annotation.id);
                     self.browseImageView.currentAnnotation =annotation;
                     var terms = [];
                     //browse all term and compute the number of user who add this term
@@ -687,6 +702,13 @@ AnnotationLayer.prototype = {
             term:terms
         });
 
+        if(self.reviewMode && !self.browseImageView.reviewPanel.isLayerPrinted(window.app.status.user.id)) {
+            window.app.view.message("Add annotation", "You must add your layer to add new annotation!", "error");
+            self.vectorsLayer.removeFeatures([feature]);
+            return;
+        }
+
+
         annotation.save({}, {
             success:function (annotation, response) {
                 new AnnotationModel({id:response.annotation.id}).fetch({
@@ -702,6 +724,7 @@ AnnotationLayer.prototype = {
                         var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url:cropURL, alt:cropURL});
                         var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message:message, cropImage:cropImage});
                         window.app.view.message("Annotation added", alertMessage, "success");
+                        //if(self.reviewMode) self.vectorsLayer.refresh();
                     }
                 });
 

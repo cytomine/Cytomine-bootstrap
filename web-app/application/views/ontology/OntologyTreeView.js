@@ -138,6 +138,9 @@ var OntologyTreeView = Backbone.View.extend({
     refresh:function (idAnnotation) {
         var self = this;
         console.log("refresh term for annotation " + idAnnotation);
+
+        //if(self.browseImageView.currentAnnotation.get("class")=="be.cytomine.ontology.ReviewedAnnotation")  return;
+
         this.idAnnotation = idAnnotation;
         var refreshTree = function (collection, response) {
             console.log("collection.lenght=" + collection.length);

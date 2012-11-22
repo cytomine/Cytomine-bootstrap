@@ -16,40 +16,23 @@ var ImageThumbView = Backbone.View.extend({
         var self = this;
         require(["text!application/templates/image/ImageThumb.tpl.html", "text!application/templates/image/ImageThumbProperties.tpl.html"], function (tpl, tplProperties) {
             self.tplProperties = tplProperties;
-            console.log("ImageThumbView.render");
             var filename = self.model.get('filename');
             var title = (filename.length < 27) ? filename : filename.substr(0, 24) + "...";
             var resolution = Math.round(1000 * self.model.get('resolution')) / 1000; //round to third decimal
             self.model.set({title:title, resolution:resolution});
             $(self.el).html(_.template(tpl, self.model.toJSON()));
             $(self.el).find("#image-properties-" + self.model.id).html(_.template(tplProperties, self.model.toJSON()));
-
-
-            console.log("add event on image prop info");
-            console.log($(self.el).find("#moreinfo" + self.model.id).length);
             $(self.el).find("#moreinfo" + self.model.id).on("click", function () {
-                console.log("get image info");
                 $("#image-properties").remove();
                 new ImagePropertiesView({model:self.model}).render();
                 return false;
             });
-
-//            window.app.addOrReplaceEvent($(self.el).find("#moreinfo" + self.model.id),"click",function () {
-//                $("#image-properties").remove();
-//                new ImagePropertiesView({model:self.model}).render();
-//                return false;
-//            });
-
             self.addReviewInfo();
-            console.log("configureAction");
             self.configureAction();
         });
 
         return this;
     },
-
-
-
     isNotReviewed : function() {
         return this.model.get("reviewStart")==null
     },

@@ -20,6 +20,10 @@ import java.text.SimpleDateFormat
 import javax.imageio.ImageIO
 import be.cytomine.ontology.Ontology
 import be.cytomine.AnnotationDomain
+import be.cytomine.ontology.ReviewedAnnotation
+import org.omg.PortableServer.POAPackage.ObjectNotActive
+import javassist.tools.rmi.ObjectNotFoundException
+import be.cytomine.Exception.ForbiddenException
 
 class RestAnnotationDomainController extends RestController {
 
@@ -164,7 +168,19 @@ class RestAnnotationDomainController extends RestController {
             if(user.algo()) {
                 forward(controller: "restAlgoAnnotation", action: "update")
             } else {
-                forward(controller: "restUserAnnotation", action: "update")
+                AnnotationDomain annotation = UserAnnotation.read(params.getLong("id"))
+
+                if(annotation)
+                    forward(controller: "restUserAnnotation", action: "update")
+                else {
+                    annotation = ReviewedAnnotation.read(params.getLong("id"))
+
+                    if(annotation) {
+                        if(annotation.user!=user) throw new ForbiddenException("You cannot update this annotation! Only ${annotation.user.username} can do that!");
+                        forward(controller: "restReviewedAnnotation", action: "update")
+                    }
+                    else throw new ObjectNotFoundException("Annotation not found with id " + params.id)
+                }
             }
             //responseResult(result)
         } catch (CytomineException e) {

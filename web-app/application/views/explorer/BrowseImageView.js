@@ -195,7 +195,6 @@ var BrowseImageView = Backbone.View.extend({
             self.setLayerVisibility(layer, visibility);
         });
     },
-
     setLayerVisibility:function (layer, visibility) {
         // manually check (or uncheck) the checkbox in the menu:
         $("#"+this.divId).find("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers").find(":checkbox").each(function () {
@@ -248,8 +247,6 @@ var BrowseImageView = Backbone.View.extend({
         return this.userLayer.getFeature(idAnnotation);
     },
     removeFeature:function (idAnnotation) {
-        console.log("removeFeature"+idAnnotation);
-        console.log(this.userLayer);
         return this.userLayer.removeFeature(idAnnotation);
     },
     /**
@@ -260,7 +257,7 @@ var BrowseImageView = Backbone.View.extend({
         var self = this;
         this.layersLoaded++;
 
-        if (this.layersLoaded == window.app.models.userLayer.length && self.review==false) {
+        if (self.review==false && this.layersLoaded == (window.app.models.userLayer.length+1)) { //+1 for review layer
 
             //Init Controls on Layers
             var vectorLayers = _.map(this.layers, function (layer) {
@@ -324,8 +321,6 @@ var BrowseImageView = Backbone.View.extend({
     addVectorLayer:function (layer, userID) {
         layer.vectorsLayer.setVisibility(false);
         this.map.addLayer(layer.vectorsLayer);
-
-        console.log(this.map.layers);
 
         if(userID==0) {
             this.reviewLayer = layer;
@@ -842,6 +837,10 @@ var BrowseImageView = Backbone.View.extend({
                 layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
                 layerAnnotation.loadAnnotations(self);
             });
+            //init review layer in explore mode
+            var layerAnnotation = new AnnotationLayer("Review layer", self.model.get('id'), "REVIEW", "", ontologyTreeView, self, self.map,self.review);
+            layerAnnotation.isOwner = false;
+            layerAnnotation.loadAnnotations(self);
         } else {
             self.reviewPanel.addReviewLayerToReview();
         }
@@ -918,33 +917,6 @@ var BrowseImageView = Backbone.View.extend({
         }});
 
     }
-
-
-
-//    },
-//    validateImage : function() {
-//        var self = this;
-//        console.log("validateImage");
-//        new ImageReviewModel({id:self.model.id}).destroy({
-//            success:function (model, response) {
-//                //window.location = "#tabs-images-"+self.model.get('project');
-////                window.app.controllers.dashboard.view.projectDashboardImages.refreshImagesThumbs();
-//                window.app.view.message("Image", response.message, "success");
-//                console.log(response);
-//                self.model = new ImageModel(response.imageinstance);
-//                self.render();
-//            },
-//            error:function (model, response) {
-//                var json = $.parseJSON(response.responseText);
-//                window.app.view.message("Image", json.errors, "error");
-//        }});
-//    }
-//
-//
-//
-
-
-
 });
 
 

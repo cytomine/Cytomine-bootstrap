@@ -47,18 +47,21 @@ var LayerSwitcherPanel = Backbone.View.extend({
         this.vectorLayers.push({ id:userID, vectorsLayer:layer.vectorsLayer});
         var layerID = "layerSwitch-" + model.get("id") + "-" + userID + "-" + new Date().getTime(); //index of the layer in this.layers array
         var color = "#FFF";
+        if(userID=="REVIEW") color = "#5BB75B";
         var layerOptionTpl;
         if (layer.isOwner) {
-            layerOptionTpl = _.template("<li><input id='<%= id %>' class='showUser' type='checkbox'  value='<%= name %>' checked />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color : #ffffff;'> <%=   name %></span></li>", {id:layerID, name:layer.vectorsLayer.name, color:color});
+            layerOptionTpl = _.template("<li><input id='<%= id %>' class='showUser' type='checkbox'  value='<%= name %>' checked />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color :<%=   color %>;'> <%=   name %></span></li>", {id:layerID, name:layer.vectorsLayer.name, color:color});
         } else {
             /*layerOptionTpl = _.template("<li><input id='<%= id %>' type='checkbox' value='<%=   name %>' /> <span style='color : #ffffff;'><%=   name %></span> <a class='followUser' data-user-id='<%= userID %>' href='#'>Follow</a></li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});*/
-            layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : #ffffff;'><%= name %></span></a> </li>", {userID:userID, id:layerID, name:layer.vectorsLayer.name, color:color});
+            layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : <%=   color %>;'><%= name %></span></a> </li>", {userID:userID, id:layerID, name:layer.vectorsLayer.name, color:color});
         }
         console.log("*** addVectorLayer " + model.get("id"));
         $("#"+this.browseImageView.divId).find("#layerSwitcher" + model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
 
         $("#" + layerID).click(function () {
+            console.log("click");
             var checked = $(this).attr("checked");
+            console.log("visible:"+checked);
             layer.vectorsLayer.setVisibility(checked);
         });
 
@@ -145,6 +148,7 @@ var LayerSwitcherPanel = Backbone.View.extend({
 
         $("#selectLayersIcon" + self.model.get("id")).off("click");
         $("#selectLayersIcon" + self.model.get("id")).on("click", function (event) {
+            console.log("click");
             var project = window.app.status.currentProjectModel;
             var userList = $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find("ul.annotationLayers");
             var projectUsers = _.pluck(window.app.models.projectUser, 'id');
@@ -153,6 +157,8 @@ var LayerSwitcherPanel = Backbone.View.extend({
                 var checked = userList.find("li[data-id=" + userID + "]").find('input.showUser').attr("checked") == "checked";
                 if (!almostOneCheckedState && checked) almostOneCheckedState = true;
             });
+            if(userList.find("li[data-id=REVIEW]").find('input.showUser').attr("checked") == "checked") almostOneCheckedState = true;
+            console.log("almostOneCheckedState="+almostOneCheckedState);
             self.browseImageView.setAllLayersVisibility(!almostOneCheckedState);
         });
         new DraggablePanelView({

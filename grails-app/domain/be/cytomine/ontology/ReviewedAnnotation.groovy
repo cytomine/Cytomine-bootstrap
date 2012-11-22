@@ -218,4 +218,50 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
              return returnArray
          }
      }
+
+    def getObjectMap(String cytomineBaseUrl) {
+        ReviewedAnnotation annotation = this
+        def returnArray = [:]
+        ImageInstance imageinstance = annotation.image
+        returnArray['class'] = annotation.class
+        returnArray['id'] = annotation.id
+
+        returnArray['parentIdent'] = annotation.parentIdent
+        returnArray['parentClassName'] = annotation.parentClassName
+        returnArray['status'] = annotation.status
+
+
+        returnArray['location'] = annotation.location.toString()
+        returnArray['image'] = annotation.image?.id
+        returnArray['geometryCompression'] = annotation.geometryCompression
+        returnArray['project'] = annotation.project.id
+        returnArray['container'] = annotation.project.id
+        returnArray['user'] = annotation.user?.id
+        returnArray['reviewUser'] = annotation.reviewUser?.id
+        returnArray['area'] = annotation.computeArea()
+        returnArray['perimeter'] = annotation.computePerimeter()
+        returnArray['centroid'] = annotation.getCentroid()
+        returnArray['created'] = annotation.created ? annotation.created.time.toString() : null
+        returnArray['updated'] = annotation.updated ? annotation.updated.time.toString() : null
+        //println "save json:"+annotation.termsId()
+        returnArray['term'] = annotation.termsId()
+
+        try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
+        try {if (annotation?.rate) returnArray['rate'] = annotation.rate} catch (Exception e) {}
+        try {if (annotation?.rate) returnArray['idTerm'] = annotation.idTerm} catch (Exception e) {}
+        try {if (annotation?.rate) returnArray['idExpectedTerm'] = annotation.idExpectedTerm} catch (Exception e) {}
+
+        returnArray['cropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
+        returnArray['smallCropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl,annotation.id, 256)
+        returnArray['url'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
+        returnArray['imageURL'] = UrlApi.getAnnotationURL(cytomineBaseUrl,imageinstance.project?.id, imageinstance.id, annotation.id)
+
+        returnArray['reviewed'] = true
+
+        return returnArray
+    }
+
+
+
+
 }

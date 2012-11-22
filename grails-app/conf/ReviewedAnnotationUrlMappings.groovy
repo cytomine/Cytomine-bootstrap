@@ -41,7 +41,7 @@ class ReviewedAnnotationUrlMappings {
          }
 
         "/api/imageinstance/$image/annotation/review"(controller: "restReviewedAnnotation"){
-            action = [POST:"reviewLayer"]
+            action = [POST:"reviewLayer",PUT:"reviewLayer",DELETE: "unReviewLayer"]
          }
 
 

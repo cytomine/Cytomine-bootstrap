@@ -25,6 +25,9 @@ import be.cytomine.security.UserJob
 import be.cytomine.command.Task
 import be.cytomine.processing.JobData
 import org.hibernate.SessionFactory
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.hibernate.criterion.Restrictions
+import org.hibernatespatial.criterion.SpatialRestrictions
 
 class RestReviewedAnnotationController extends RestController {
 
@@ -54,8 +57,49 @@ class RestReviewedAnnotationController extends RestController {
     //list all by image
     def listByImage = {
         log.info "listByImage"
+        long start = System.currentTimeMillis()
+        println "START:"+ start
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
-        if (image && params.bbox) responseSuccess(reviewedAnnotationService.list(image,(String) params.bbox))
+        if (image && params.bbox) {
+            def list = reviewedAnnotationService.list(image,(String) params.bbox)
+
+            String baseUrl = grailsApplication.config.grails.serverURL
+
+            println "ADECOMPTER="+(System.currentTimeMillis()-start)
+            //version 0 marshaller
+            responseSuccess(list)
+
+//            //version 1 jackson
+//            def listOut = []
+//            ObjectMapper mapper = new ObjectMapper()
+//            list.each {
+//                Map jsonObject = it.getObjectMap(baseUrl)
+//
+//                String jsonString = mapper.writeValueAsString(jsonObject)
+//                listOut << jsonString
+//            }
+//
+//            String jsonStringFinal = mapper.writeValueAsString(listOut)
+//            response.status = 200
+//            render jsonStringFinal
+//
+//
+//            //version 2 jackson
+//            StringBuilder string = new StringBuilder(10000000)
+//            string.append("[")
+//            ObjectMapper mapper = new ObjectMapper()
+//            list.eachWithIndex { annotation, index ->
+//                Map jsonObject = annotation.getObjectMap(baseUrl)
+//
+//                String jsonString = mapper.writeValueAsString(jsonObject)
+//                string.append(jsonString)
+//                if(index!=list.size()-1) string.append(",")
+//            }
+//            string.append("]")
+//            response.status = 200
+//            render string
+
+        }
         else if(image) responseSuccess(reviewedAnnotationService.list(image))
         else responseNotFound("Image", params.idImage)
     }
@@ -164,10 +208,29 @@ class RestReviewedAnnotationController extends RestController {
 
     //listByImageAndUser
     def listByImageAndUser = {
+        long start = System.currentTimeMillis()
+        println "START:"+ start
         def image = imageInstanceService.read(params.long('idImage'))
         def user = userService.read(params.idUser)
         if (image && user && params.bbox) {
-            responseSuccess(reviewedAnnotationService.list(image, user, (String) params.bbox))
+            //responseSuccess(reviewedAnnotationService.list(image, user, (String) params.bbox))
+            String baseUrl = grailsApplication.config.grails.serverURL
+            def list = reviewedAnnotationService.list(image, user, (String) params.bbox)
+
+            println "ADECOMPTER="+(System.currentTimeMillis()-start)
+
+            def listOut = []
+            ObjectMapper mapper = new ObjectMapper()
+            list.each {
+                Map jsonObject = it.getObjectMap(baseUrl)
+
+                String jsonString = mapper.writeValueAsString(jsonObject)
+                listOut << jsonString
+            }
+
+            String jsonStringFinal = mapper.writeValueAsString(listOut)
+            response.status = 200
+            render jsonStringFinal
         }
         else if (image && user) responseSuccess(reviewedAnnotationService.list(image, user))
         else if (!user) responseNotFound("User", params.idUser)
@@ -266,8 +329,13 @@ class RestReviewedAnnotationController extends RestController {
 
     def deleteAnnotationReview = {
         try {
+            println "deleteAnnotationReview"
             ReviewedAnnotation reviewedAnnotation = ReviewedAnnotation.read(params.long('id'))
             if (!reviewedAnnotation) throw new ObjectNotFoundException("Review Annotation ${params.long('id')} not found!")
+
+            if(reviewedAnnotation.image.reviewUser && reviewedAnnotation.image.reviewUser.id!=cytomineService.currentUser.id)
+                throw new WrongArgumentException("You must be the image reviewer to reject annotation. Image reviewer is ${reviewedAnnotation.image.reviewUser?.username}.")
+
             def json = reviewedAnnotation.encodeAsJSON()
             def response = [:]
             response.reviewedannotation = json
@@ -365,9 +433,9 @@ class RestReviewedAnnotationController extends RestController {
                     if(indexAnnotation%taskRefresh==0) {
                         taskService.updateTask(task,10+(int)(((double)indexAnnotation/(double)annotations.size())*0.9d*100),"${realReviewed} new reviewed annotations...")
                         cleanUpGorm()
-                        annotation.refresh()
-                    }
 
+                    }
+                    annotation.refresh()
 
                     if(!ReviewedAnnotation.findByParentIdent(annotation.id)) {
                         realReviewed++
@@ -388,5 +456,67 @@ class RestReviewedAnnotationController extends RestController {
         }
 
     }
+
+
+    def unReviewLayer = {
+        try {
+            log.info "params.users="+params.users
+            log.info("image="+params.image)
+            Task task = taskService.read(params.long('task'))
+            taskService.updateTask(task,2,"Extract parameters...")
+            String[] layersParam = params.users.split(",")
+            List<SecUser> users = layersParam.collect {
+                SecUser.read(Long.parseLong(it))
+            }
+            taskService.updateTask(task,3,"Review ${layersParam.length} layers...")
+            ImageInstance image = ImageInstance.read(params.long('image'))
+            if(!image) throw new WrongArgumentException("Image ${params.image} was not found!")
+            if(!image.isInReviewMode()) throw new WrongArgumentException("Cannot reject annotation, enable image review mode!")
+            if(image.reviewUser && image.reviewUser.id!=cytomineService.currentUser.id) throw new WrongArgumentException("You must be the image reviewer to reject annotation. Image reviewer is ${image.reviewUser?.username}.")
+
+            if(users.isEmpty())
+                throw new WrongArgumentException("There is no layer:"+params.users)
+            if(!image)
+                responseNotFound("ImageInstance",params.image)
+            else {
+                def data = []
+
+                List<AnnotationDomain> annotations = []
+                taskService.updateTask(task,5,"Look for all annotations...")
+                users.eachWithIndex { user, indexUser ->
+                    if(user.algo())
+                        annotations.addAll(AlgoAnnotation.findAllByUserAndImage(user,image))
+                    else
+                        annotations.addAll(UserAnnotation.findAllByUserAndImage(user,image))
+                }
+                println "NUmber of annotations="+annotations.size()
+                taskService.updateTask(task,10,"${annotations.size()} annotations found...")
+                int realUnReviewed = 0
+                int taskRefresh =  annotations.size()>1000? 100 : 10
+                annotations.eachWithIndex { annotation, indexAnnotation ->
+                    if(indexAnnotation%taskRefresh==0) {
+                        taskService.updateTask(task,10+(int)(((double)indexAnnotation/(double)annotations.size())*0.9d*100),"${realUnReviewed} new reviewed annotations...")
+                        cleanUpGorm()
+                    }
+                    //annotation.refresh()
+                    ReviewedAnnotation reviewed = ReviewedAnnotation.findByParentIdent(annotation.id)
+                    if(reviewed) {
+                        realUnReviewed++
+                        data << reviewed.id
+                        reviewed.delete()
+                    }
+                }
+                cleanUpGorm()
+                taskService.finishTask(task)
+                responseSuccess(data)
+            }
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+
+    }
+
+
 
 }
