@@ -103,6 +103,7 @@ class RestProjectController extends RestController {
     }
 
     def update = {
+        println "request.JSON="+request.JSON
         update(projectService, request.JSON)
     }
 

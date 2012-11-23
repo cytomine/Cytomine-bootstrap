@@ -28,6 +28,9 @@ class ReviewedAnnotationUrlMappings {
         "/api/imageinstance/$idImage/reviewedannotation"(controller: "restReviewedAnnotation"){
              action = [GET:"listByImage"]
          }
+        "/api/term/$idTerm/imageinstance/$idImage/reviewedannotation"(controller: "restReviewedAnnotation"){
+             action = [GET:"listByImageAndTerm"]
+         }
         "/api/user/$idUser/imageinstance/$idImage/reviewedannotation"(controller:"restReviewedAnnotation"){
             action = [GET:"listByImageAndUser"]
         }

@@ -104,6 +104,20 @@ class RestReviewedAnnotationController extends RestController {
         else responseNotFound("Image", params.idImage)
     }
 
+    //list all by image
+    def listByImageAndTerm = {
+        log.info "listByImageAndTerm"
+        long start = System.currentTimeMillis()
+        ImageInstance image = imageInstanceService.read(params.long('idImage'))
+        Term term = termService.read(params.long('idTerm'))
+        if (image && term) {
+            def list = reviewedAnnotationService.list(image,term)
+            responseSuccess(list)
+        }
+        else if(image) responseSuccess(reviewedAnnotationService.list(image))
+        else responseNotFound("Image", params.idImage)
+    }
+
 //
 //    //listByImageAndUser
 //    def listByImageAndUser = {

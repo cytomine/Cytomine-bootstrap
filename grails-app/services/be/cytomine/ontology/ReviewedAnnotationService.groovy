@@ -138,6 +138,18 @@ class ReviewedAnnotationService extends ModelService {
 
     }
 
+    //reviewedAnnotationService.list(image, user, (String) params.bbox (optional))
+    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
+    def list(ImageInstance image, Term term) {
+        def reviewed = ReviewedAnnotation.createCriteria().list {
+            createAlias "term", "t"
+            eq("image",image)
+            eq("t.id",term.id)
+            order("created", "desc")
+        }
+        reviewed
+    }
+
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, SecUser user) {
         ReviewedAnnotation.createCriteria()
