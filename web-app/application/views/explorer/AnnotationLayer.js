@@ -7,6 +7,7 @@ var AnnotationStatus = {
 var AnnotationLayerUtils = AnnotationLayerUtils || {};
 AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
     var location = annotation.location || annotation.get('location');
+
     var terms = annotation.term || annotation.get('term');
     var format = new OpenLayers.Format.WKT();
     var point = format.read(location);

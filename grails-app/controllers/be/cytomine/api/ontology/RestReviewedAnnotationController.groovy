@@ -28,6 +28,9 @@ import org.hibernate.SessionFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
+import com.vividsolutions.jts.geom.Coordinate
+import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom.GeometryFactory
 
 class RestReviewedAnnotationController extends RestController {
 
@@ -54,6 +57,10 @@ class RestReviewedAnnotationController extends RestController {
         responseSuccess(annotations)
     }
 
+
+
+
+
     //list all by image
     def listByImage = {
         log.info "listByImage"
@@ -62,8 +69,6 @@ class RestReviewedAnnotationController extends RestController {
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
         if (image && params.bbox) {
             def list = reviewedAnnotationService.list(image,(String) params.bbox)
-
-            String baseUrl = grailsApplication.config.grails.serverURL
 
             println "ADECOMPTER="+(System.currentTimeMillis()-start)
             //version 0 marshaller

@@ -661,8 +661,6 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
      * @param $elem  elem that will keep all annotations
      */
     printAnnotationThumbAllTerms:function (terms, users, jobs, images) {
-        console.log("1users="+users);
-        console.log("1jobs="+jobs);
         var self = this;
         self.updateContentVisibility();
         self.updateDownloadLinks();

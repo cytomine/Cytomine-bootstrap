@@ -139,14 +139,13 @@ var UserJobCollection = Backbone.Collection.extend({
         this.tree = options.tree || false;
     }, comparator:function (user) {
         var newString =""
-        //substract each datetime digit from 9 (e.g 3 => 6 because 9-3).
-        //It was impossible to sort with two critera, 1 asc and 1 desc
+        if(!user.get("created")) return user.get("created")
+        //substract each datetime digit from 9 (e.g 3 => 6 because 9-3; 123 => 876).
+        //It was impossible to sort with two critera and 1 asc and 1 desc
         //So sort with 2 asc but the second critera value is invert
         for (counter=0  ;counter<user.get("created").toString().length ;counter++ ) {
            newString = newString + (9-user.get("created").toString()[counter]);
         }
-        console.log(user.get("softwareName")+newString);
-
         return user.get("softwareName")+newString;
     }, invertNumber : function(number) {
 

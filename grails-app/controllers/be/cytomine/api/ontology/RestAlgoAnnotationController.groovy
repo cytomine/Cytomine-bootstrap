@@ -22,6 +22,11 @@ import be.cytomine.AnnotationDomain
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ontology.UserAnnotation
+import com.vividsolutions.jts.geom.Coordinate
+import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom.GeometryFactory
+import org.hibernate.criterion.Restrictions
+import org.hibernatespatial.criterion.SpatialRestrictions
 
 class RestAlgoAnnotationController extends RestController {
 
@@ -137,7 +142,60 @@ class RestAlgoAnnotationController extends RestController {
         def image = imageInstanceService.read(params.long('idImage'))
         def user = userService.read(params.idUser)
         if (image && user && params.bbox) {
-            responseSuccess(algoAnnotationService.list(image, user, (String) params.bbox, params.getBoolean("notreviewed")))
+            //responseSuccess(algoAnnotationService.list(image, user, (String) params.bbox, params.getBoolean("notreviewed")))
+             String bbox = params.bbox
+             boolean notReviewedOnly = params.getBoolean("notreviewed")
+
+            String[] coordinates = bbox.split(",")
+            double bottomX = Double.parseDouble(coordinates[0])
+            double bottomY = Double.parseDouble(coordinates[1])
+            double topX = Double.parseDouble(coordinates[2])
+            double topY = Double.parseDouble(coordinates[3])
+            Coordinate[] boundingBoxCoordinates = [new Coordinate(bottomX, bottomY), new Coordinate(bottomX, topY), new Coordinate(topX, topY), new Coordinate(topX, bottomY), new Coordinate(bottomX, bottomY)]
+            Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
+
+            println "boundingbox.toString()=" + boundingbox.toString()
+            String request
+
+            if(!notReviewedOnly) {
+                request = "SELECT annotation.id, AsText(annotation.location), at.term_id \n" +
+                    " FROM algo_annotation annotation, algo_annotation_term at\n" +
+                    " WHERE annotation.image_id = $image.id\n" +
+                    " AND annotation.user_id= $user.id\n" +
+                    " AND annotation.id = at.annotation_ident " +
+                    " AND ST_within(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
+                    " ORDER BY annotation.id "
+
+            } else {
+                request = "SELECT annotation.id, AsText(annotation.location), at.term_id \n" +
+                    " FROM algo_annotation annotation, algo_annotation_term at\n" +
+                    " WHERE annotation.image_id = $image.id\n" +
+                    " AND annotation.user_id= $user.id\n" +
+                    " AND annotation.id = at.annotation_ident " +
+                    " AND annotation.countReviewedAnnotations = 0 " +
+                    " AND ST_within(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
+                    " ORDER BY annotation.id "
+            }
+
+            println "REQUEST=" + request
+            def sql = new Sql(dataSource)
+
+            def data = []
+            long lastAnnotationId = -1
+            sql.eachRow(request) {
+
+                long idAnnotation = it[0]
+                String location = it[1]
+                long idTerm = it[2]
+
+                if(idAnnotation!=lastAnnotationId) {
+                    data << [id: idAnnotation, location: location, term: [idTerm]]
+                } else {
+                    data.last().term.add(idTerm)
+                }
+                lastAnnotationId = idAnnotation
+            }
+            responseSuccess(data)
         }
         else if (image && user) responseSuccess(algoAnnotationService.list(image, user))
         else if (!user) responseNotFound("User", params.idUser)

@@ -25,6 +25,7 @@ import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize
+import groovy.sql.Sql
 
 class ReviewedAnnotationService extends ModelService {
 
@@ -38,6 +39,7 @@ class ReviewedAnnotationService extends ModelService {
     def domainService
     def securityService
     def simplifyGeometryService
+    def dataSource
 
     boolean saveOnUndoRedoStack = true
 
@@ -57,47 +59,45 @@ class ReviewedAnnotationService extends ModelService {
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, List<SecUser> userList, List<ImageInstance> imageList, List<Term> termList) {
         //TODO:: improve perf by query duplication (if imageList.size = project.image.size then don't query with inList)
-        log.info "userList="+userList
-        log.info "imageList="+imageList
-        log.info "termList="+termList
-            def reviewed = ReviewedAnnotation.createCriteria().list {
-                eq("project",project)
-                inList("user", userList)
-                inList("image", imageList)
-                order("created", "desc")
+        log.info "userList=" + userList
+        log.info "imageList=" + imageList
+        log.info "termList=" + termList
+        def reviewed = ReviewedAnnotation.createCriteria().list {
+            eq("project", project)
+            inList("user", userList)
+            inList("image", imageList)
+            order("created", "desc")
+        }
+        def annotationWithThisTerm = []
+        def termListId = termList.collect {it.id}
+        reviewed.each { review ->
+            boolean hasTerm = false
+            review.terms().each { term ->
+                if (termListId.contains(term.id)) hasTerm = true
             }
-            def annotationWithThisTerm = []
-            def termListId = termList.collect {it.id}
-            reviewed.each { review ->
-                boolean hasTerm = false
-                review.terms().each { term ->
-                    if(termListId.contains(term.id)) hasTerm = true
-                }
-                if(hasTerm) annotationWithThisTerm << review
-            }
-            return annotationWithThisTerm
+            if (hasTerm) annotationWithThisTerm << review
+        }
+        return annotationWithThisTerm
     }
 
-    boolean shareCommonTerm(ReviewedAnnotation annotation1,ReviewedAnnotation annotation2) {
+    boolean shareCommonTerm(ReviewedAnnotation annotation1, ReviewedAnnotation annotation2) {
 
-       return differenceTerm(annotation1.term,annotation2.term).isEmpty();
-   }
+        return differenceTerm(annotation1.term, annotation2.term).isEmpty();
+    }
 
-    def differenceTerm(Set<Term> terms1,Set<Term> terms2) {
+    def differenceTerm(Set<Term> terms1, Set<Term> terms2) {
         Collection result = union(terms1, terms2);
         result.removeAll(intersect(terms1, terms2));
         return result;
     }
 
-    public static Collection union(Collection coll1, Collection coll2)
-    {
+    public static Collection union(Collection coll1, Collection coll2) {
         Set union = new HashSet(coll1);
         union.addAll(new HashSet(coll2));
         return new ArrayList(union);
     }
 
-    public static Set intersect(Set set1, Set set2)
-    {
+    public static Set intersect(Set set1, Set set2) {
         Set intersection = new HashSet(set1);
         intersection.retainAll(new HashSet(set2));
         return intersection;
@@ -113,11 +113,22 @@ class ReviewedAnnotationService extends ModelService {
         double topY = Double.parseDouble(coordinates[3])
         Coordinate[] boundingBoxCoordinates = [new Coordinate(bottomX, bottomY), new Coordinate(bottomX, topY), new Coordinate(topX, topY), new Coordinate(topX, bottomY), new Coordinate(bottomX, bottomY)]
         Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
-        ReviewedAnnotation.createCriteria()
-                .add(Restrictions.eq("image", image))
-                .add(SpatialRestrictions.within("location",boundingbox))
-                .list()
 
+        println "boundingbox.toString()=" + boundingbox.toString()
+        String request = "SELECT reviewed.id, AsText(reviewed.location)\n" +
+                " FROM reviewed_annotation reviewed\n" +
+                " WHERE reviewed.image_id = $image.id\n" +
+                " AND ST_within(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))"
+
+
+        println "REQUEST=" + request
+        def sql = new Sql(dataSource)
+
+        def data = []
+        sql.eachRow(request) {
+            data << [id: it[0], location: it[1], term: []]
+        }
+        data
     }
 
     //reviewedAnnotationService.list(image, user, (String) params.bbox (optional))
@@ -133,7 +144,7 @@ class ReviewedAnnotationService extends ModelService {
         ReviewedAnnotation.createCriteria()
                 .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq("image", image))
-                .add(SpatialRestrictions.within("location",boundingbox))
+                .add(SpatialRestrictions.within("location", boundingbox))
                 .list()
 
     }
@@ -143,8 +154,8 @@ class ReviewedAnnotationService extends ModelService {
     def list(ImageInstance image, Term term) {
         def reviewed = ReviewedAnnotation.createCriteria().list {
             createAlias "term", "t"
-            eq("image",image)
-            eq("t.id",term.id)
+            eq("image", image)
+            eq("t.id", term.id)
             order("created", "desc")
         }
         reviewed
@@ -170,38 +181,38 @@ class ReviewedAnnotationService extends ModelService {
 
     //reviewedAnnotationService.add
     @PreAuthorize("hasRole('ROLE_USER')")
-      def add(def json) {
+    def add(def json) {
 
-          SecUser currentUser = cytomineService.getCurrentUser()
+        SecUser currentUser = cytomineService.getCurrentUser()
 
-          //simplify annotation
-          try {
-              def data = simplifyGeometryService.simplifyPolygon(json.location)
-              json.location = new WKTWriter().write(data.geometry)
-              json.geometryCompression = data.rate
-          } catch (Exception e) {
-              log.error("Cannot simplify:" + e)
-          }
+        //simplify annotation
+        try {
+            def data = simplifyGeometryService.simplifyPolygon(json.location)
+            json.location = new WKTWriter().write(data.geometry)
+            json.geometryCompression = data.rate
+        } catch (Exception e) {
+            log.error("Cannot simplify:" + e)
+        }
 
-          //Start transaction
-          Transaction transaction = transactionService.start()
+        //Start transaction
+        Transaction transaction = transactionService.start()
 
-          //Synchronzed this part of code, prevent two annotation to be add at the same time
-          synchronized (this.getClass()) {
-              //Add annotation user
-              json.user = currentUser.id
-              //Add Annotation
-              log.debug this.toString()
-              def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
-              def annotationID = result?.data?.reviewedannotation?.id
-              log.info "reviewedannotation=" + annotationID + " json.term=" + json.term
+        //Synchronzed this part of code, prevent two annotation to be add at the same time
+        synchronized (this.getClass()) {
+            //Add annotation user
+            json.user = currentUser.id
+            //Add Annotation
+            log.debug this.toString()
+            def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
+            def annotationID = result?.data?.reviewedannotation?.id
+            log.info "reviewedannotation=" + annotationID + " json.term=" + json.term
 
-              //Stop transaction
-              transactionService.stop()
+            //Stop transaction
+            transactionService.stop()
 
-              return result
-          }
-      }
+            return result
+        }
+    }
 
     //reviewedAnnotationService.update
     @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
@@ -241,7 +252,7 @@ class ReviewedAnnotationService extends ModelService {
 
         if (annotation) {
             annotation.term.clear()
-            annotation.save(flush:true)
+            annotation.save(flush: true)
         }
         //Delete annotation
         def json = JSON.parse("{id: $annotation.id}")
