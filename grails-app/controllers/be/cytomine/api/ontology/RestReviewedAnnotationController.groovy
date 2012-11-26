@@ -326,9 +326,9 @@ class RestReviewedAnnotationController extends RestController {
         try {
             def json = request.JSON
             AnnotationDomain basedAnnotation = getAnnotationDomain(params.long('id'))
-            if(!basedAnnotation.image.isInReviewMode()) throw new WrongArgumentException("Cannot review annotation, enable image review mode!")
-            if(basedAnnotation.image.reviewUser && basedAnnotation.image.reviewUser.id!=cytomineService.currentUser.id) throw new WrongArgumentException("You must be the image reviewer to review annotation. Image reviewer is ${basedAnnotation.image.reviewUser?.username}.")
-            if(ReviewedAnnotation.findByParentIdent(basedAnnotation.id)) throw new AlreadyExistException("Annotation is already review!")
+            if(!basedAnnotation.image.isInReviewMode()) throw new WrongArgumentException("Cannot accept annotation, enable image review mode!")
+            if(basedAnnotation.image.reviewUser && basedAnnotation.image.reviewUser.id!=cytomineService.currentUser.id) throw new WrongArgumentException("You must be the image reviewer to accept annotation. Image reviewer is ${basedAnnotation.image.reviewUser?.username}.")
+            if(ReviewedAnnotation.findByParentIdent(basedAnnotation.id)) throw new AlreadyExistException("Annotation is already accepted!")
 
             ReviewedAnnotation reviewedAnnotation = reviewAnnotation(basedAnnotation,json.terms,true)
             def response = [:]
@@ -354,7 +354,7 @@ class RestReviewedAnnotationController extends RestController {
             def response = [:]
             response.reviewedannotation = json
             response.basedannotation = reviewedAnnotation.retrieveParentAnnotation()
-            response.message = "Annotation review is deleted"
+            response.message = "Annotation is rejected!"
             domainService.deleteDomain(reviewedAnnotation);
             responseSuccess(response)
         } catch (CytomineException e) {

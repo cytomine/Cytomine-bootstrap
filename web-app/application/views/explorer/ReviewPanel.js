@@ -199,8 +199,10 @@ var ReviewPanel = Backbone.View.extend({
             });
 
             this.userJobLayers.each(function (layer) {
-                self.layerName[layer.id] = layer.layerName();
-                selectElem.append('<option value="' + layer.id + '" id="' + layer.id + '">' + layer.layerName() + '</option>');
+                if(!layer.get("isDeleted")) {
+                    self.layerName[layer.id] = layer.layerName();
+                    selectElem.append('<option value="' + layer.id + '" id="' + layer.id + '">' + layer.layerName() + '</option>');
+                }
             });
 
             //init event
@@ -232,10 +234,14 @@ var ReviewPanel = Backbone.View.extend({
                 return false;
             });
 
+            $('#showReviewLayer'+self.model.id).click (function () {
+                self.reviewLayer.vectorsLayer.setVisibility($(this).attr("checked"));
+            });
+
         } else {
             //image is validate
             var panel = $("#" + self.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
-
+            panel.find('#showReviewLayer'+self.model.id).attr("disabled", "disabled")
             panel.find("#addReviewLayers" + self.model.id).attr("disabled", "disabled");
             panel.find("select").attr("disabled", "disabled");
             panel.find("#reviewMultiple" + self.model.id).attr("disabled", "disabled");
@@ -288,6 +294,9 @@ var ReviewPanel = Backbone.View.extend({
                 self.reviewLayer.addFeature(newFeature);
                 self.reviewLayer.controls.select.unselectAll();
                 self.reviewLayer.controls.select.select(newFeature);
+                _.each(self.printedLayer,function(layer) {
+                    layer.vectorsLayer.refresh();
+                });
             },
             error:function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -313,6 +322,9 @@ var ReviewPanel = Backbone.View.extend({
                     layerItem.layer.controls.select.select(newFeature);
                 }
                 window.app.view.message("Annotation", response.message, "success");
+                _.each(self.printedLayer,function(layer) {
+                    layer.vectorsLayer.refresh();
+                });
             },
             error:function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -381,6 +393,7 @@ var ReviewPanel = Backbone.View.extend({
             _.each(annotation.get('term'), function (term) {
                 self.addTermChoice(term, annotation.id, annotation.get("reviewed"));
             });
+            $("#termsChoice" + annotation.id +" .termchoice").sort(self.asc_sort).appendTo("#termsChoice" + annotation.id);
         }
     },
     addTermChoice:function (idTerm, idAnnotation) {
@@ -391,7 +404,10 @@ var ReviewPanel = Backbone.View.extend({
         var termsListElem = $("#currentReviewAnnotation" + self.model.id).find("#termsChoice" + idAnnotation);
         var lockCheckBox = ""
         if (lock) lockCheckBox = 'disabled="disabled"';
-        termsListElem.append('<input type="checkbox" ' + lockCheckBox + ' checked="checked" name="terms" value="' + idTerm + '" id="termInput' + idTerm + '"> ' + window.app.status.currentTermsCollection.get(idTerm).get('name') + "&nbsp;&nbsp;");
+        termsListElem.append('<div class="termchoice"><input type="checkbox" ' + lockCheckBox + ' checked="checked" name="terms" value="' + idTerm + '" id="termInput' + idTerm + '"> ' + window.app.status.currentTermsCollection.get(idTerm).get('name') + "&nbsp;&nbsp;</div>");
+    },
+    asc_sort:function(a, b){
+      return ($(b).text()) < ($(a).text());
     },
     deleteTermChoice:function (idTerm, idAnnotation) {
         var self = this;

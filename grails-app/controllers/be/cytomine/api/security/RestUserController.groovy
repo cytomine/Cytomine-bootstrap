@@ -384,6 +384,7 @@ class RestUserController extends RestController {
                         item.softwareName = job.software.name
                         item.created = job.created.getTime()
                         item.algo = true
+                        item.isDeleted = job.dataDeleted
                     }
                     userJobs << item
                 }
