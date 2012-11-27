@@ -261,28 +261,30 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         var id = self.model.id;
         var name = self.getNewName();
         var idOldParent = self.model.get("parent");
+        console.log("idParent=" + idOldParent);
         var idParent = self.getNewParent();
-        var isOldParentOntology = true;
-        if (idOldParent != null && self.ontology.id == idOldParent) {
-            isOldParentOntology = false;
-        }
-        var isParentOntology = true;
-
-        if (self.ontology.id != idParent) {
-            isParentOntology = false;
-        }
+        console.log("idNewParent=" + idParent);
+        console.log("self.ontology.id=" + self.ontology.id);
+        var isOldParentOntology = (idOldParent == null || self.ontology.id == idOldParent);
+        var isParentOntology = (self.ontology.id == idParent);
         var color = self.getNewColor();
         self.model.set({name:name, color:color});
         self.model.save({name:name, color:color}, {
             success:function (model, response) {
                 //TODO: check it relation/term is changed
-                if (idParent != idOldParent) {
-                    if (isOldParentOntology && isParentOntology) {
-                        self.close();
+                if ((idParent != idOldParent) && !(isOldParentOntology && isParentOntology)) {
+                    if (isOldParentOntology) {
+                        //parent was ontology so nothing to delete
+                        console.log("//parent was ontology so nothing to delete");
+                        self.addRelation(id, idParent);
                     }
-                    else if (isOldParentOntology)  self.addRelation(id, idParent); //parent was ontology so nothing to delete
-                    else if (isParentOntology) self.resetRelation(id, idOldParent, null); //new parent is ontology so nothing to add
-                    else {
+                    else if (isParentOntology) {
+                        //new parent is ontology so nothing to add
+                        console.log("//new parent is ontology so nothing to add");
+                        self.resetRelation(id, idOldParent, null);
+                    } else {
+                        //resetRelation
+                        console.log("resetRelation");
                         self.resetRelation(id, idOldParent, idParent);
                     }
                 }
@@ -335,10 +337,13 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
 
     },
     resetRelation:function (child, oldParent, newParent) {
+        console.log("reset relation");
         var self = this;
+        console.log("resetRelation1");
         //use fake ID since backbone > 0.5 : we should destroy only object saved or fetched
         new RelationTermModel({id:1, term1:oldParent, term2:child}).destroy({
             success:function (model, response) {
+                console.log("resetRelation2");
                 //create relation with new parent
                 if (newParent != null) {
                     self.addRelation(child, newParent);
@@ -355,9 +360,11 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             }});
     },
     addRelation:function (child, newParent) {
+        console.log("add relation");
         var self = this;
         new RelationTermModel({}).save({term1:newParent, term2:child}, {
             success:function (model, response) {
+                console.log("add relation2");
                 window.app.view.message("Term", response.message, "success");
                 self.close();
             },

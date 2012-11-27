@@ -43,3 +43,4 @@ coverage {
             "**/be/cytomine/processing/image/filters/**"
     ]
 }
+

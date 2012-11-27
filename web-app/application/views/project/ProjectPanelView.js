@@ -90,12 +90,6 @@ var ProjectPanelView = Backbone.View.extend({
         if (json.ontologyName.length > maxNumberOfChar) json.ontologyName = json.ontologyName.substr(0, maxNumberOfChar) + "...";
         json.ontologyId = idOntology;
 
-        var previewImages = []
-        for (var i = 0; i < 1 && i < json.numberOfImages; i++) {
-            var imageTpl = _.template("<img src='<%= url %>' style='max-width: 200px;padding: 5px;' />", { url:"api/project/" + json.id + "/preview.png?inf=" + i});
-            previewImages.push(imageTpl);
-        }
-        json.images = _.template("<div style='width : 500px'><%= previewImages %></div>", { previewImages:previewImages.join("")});
         var html = _.template(tpl, json);
 
         if (replace) {
@@ -104,15 +98,6 @@ var ProjectPanelView = Backbone.View.extend({
         else
             $(self.el).append(html);
 
-        $(self.el).find(".usersPopover").popover();
-        $(self.el).find(".usersPopover").click(function () {
-            return false;
-        });
-        $(self.el).find(".adminsPopover").popover();
-        $(self.el).find(".adminsPopover").click(function () {
-            return false;
-        });
-        $(self.el).find(".imagesPopover").popover();
         self.renderCurrentProjectButton();
         self.renderShowImageButton(json.numberOfImages);
     },

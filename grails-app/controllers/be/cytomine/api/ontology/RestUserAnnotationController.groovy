@@ -326,7 +326,7 @@ class RestUserAnnotationController extends RestController {
                 userAnnotation: annotation
         )
         def attachments = []
-        if (annnotationCrop != null) attachments << [cid : "userannotation", file : annnotationCrop]
+        if (annnotationCrop != null) attachments << [cid : "annotation", file : annnotationCrop]
         if (sharedAnnotation.save()) {
             mailService.send("cytomine.ulg@gmail.com", receiversEmail, sender.getEmail(), request.JSON.subject, request.JSON.message, attachments)
             response([success: true, message: "Annotation shared to " + receivers.toString()], 200)

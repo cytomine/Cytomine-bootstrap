@@ -138,6 +138,7 @@
 <fileset dir="${src.dir}" includes="application/views/explorer/ImageFiltersPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/OverviewMapPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/OntologyPanel.js"/>
+<fileset dir="${src.dir}" includes="application/views/explorer/ReviewPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/upload/UploadFormView.js"/>
 <fileset dir="${src.dir}" includes="application/views/image/ImageThumbView.js"/>
 <fileset dir="${src.dir}" includes="application/views/image/ImageSelectView.js"/>
