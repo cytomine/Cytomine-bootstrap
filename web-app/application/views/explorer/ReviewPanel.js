@@ -419,9 +419,12 @@ var ReviewPanel = Backbone.View.extend({
         var termsListElem = $("#currentReviewAnnotation" + self.model.id).find("#termsChoice" + annotation.id);
         var selectedInput = termsListElem.find("input[name='terms']:checked:enabled");
         var selectedTermsId = [];
+
         _.each(selectedInput, function (input) {
+            console.log("selectedTermsId it="+input);
             selectedTermsId.push($(input).val())
         });
+        console.log("selectedTermsId="+selectedTermsId);
         return selectedTermsId;
     },
     /**

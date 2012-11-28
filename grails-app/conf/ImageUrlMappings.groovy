@@ -67,7 +67,12 @@ class ImageUrlMappings {
             action = [GET:"cropAlgoAnnotation"]
         }
 
-
+        "/api/reviewedannotation/$id/$zoom/crop"(controller: "restImage"){
+            action = [GET:"cropReviewedAnnotation"]
+        }
+        "/api/reviewedannotation/$id/crop"(controller: "restImage"){
+            action = [GET:"cropReviewedAnnotation"]
+        }
 
 
         "/api/userannotation/$id/retrieval/$zoom/$maxsimilarpictures"(controller: "restImage") {

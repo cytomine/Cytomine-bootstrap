@@ -11,6 +11,7 @@ import be.cytomine.ontology.UserAnnotation
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.CytomineDomain
 import be.cytomine.AnnotationDomain
+import be.cytomine.ontology.ReviewedAnnotation
 
 class RestImageController extends RestController {
 
@@ -145,6 +146,16 @@ class RestImageController extends RestController {
     def cropAlgoAnnotation = {
         try {
             def annotation = AlgoAnnotation.read(params.id)
+            def cropURL = cropAnnotation(annotation,params)
+            responseImage(cropURL)
+        } catch (Exception e) {
+            log.error("GetThumb:" + e)
+        }
+    }
+
+    def cropReviewedAnnotation = {
+        try {
+            def annotation = ReviewedAnnotation.read(params.id)
             def cropURL = cropAnnotation(annotation,params)
             responseImage(cropURL)
         } catch (Exception e) {

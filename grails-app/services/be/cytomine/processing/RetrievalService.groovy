@@ -124,7 +124,7 @@ class RetrievalService {
 
         def http = new HTTPBuilder(URL)
         http.auth.basic 'xxx', 'xxx'
-        def params = ["id": annotation.id, "url": UrlApi.getUserAnnotationCropWithAnnotationId(grailsApplication.config.grails.serverURL,annotation.id), "containers": projectsSearch]
+        def params = ["id": annotation.id, "url": annotation.getCropUrl(grailsApplication.config.grails.serverURL), "containers": projectsSearch]
         def paramsJSON = params as JSON
 
         http.request(POST) {

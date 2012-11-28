@@ -5,6 +5,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.AnnotationDomain
 import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.ReviewedAnnotation
 
 class RestRetrievalController extends RestController {
 
@@ -21,6 +22,7 @@ class RestRetrievalController extends RestController {
         try {
             AnnotationDomain annotation = UserAnnotation.read(params.idannotation)
             if(!annotation) annotation = AlgoAnnotation.read(params.idannotation)
+            if(!annotation) annotation = ReviewedAnnotation.read(params.idannotation)
             if(!annotation) responseNotFound("AnnotationDomain",params.idannotation)
             else {
                 def data = retrievalService.listSimilarAnnotationAndBestTerm(annotation.project, annotation)

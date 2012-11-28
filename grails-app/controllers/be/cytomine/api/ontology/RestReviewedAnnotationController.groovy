@@ -59,16 +59,10 @@ class RestReviewedAnnotationController extends RestController {
 
     //list all by image
     def listByImage = {
-        long start = System.currentTimeMillis()
-        println "START:"+ start
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
         if (image && params.bbox) {
             def list = reviewedAnnotationService.list(image,(String) params.bbox)
-
-            println "ADECOMPTER="+(System.currentTimeMillis()-start)
-            //version 0 marshaller
             responseSuccess(list)
-
         }
         else if(image) responseSuccess(reviewedAnnotationService.list(image))
         else responseNotFound("Image", params.idImage)
@@ -197,24 +191,24 @@ class RestReviewedAnnotationController extends RestController {
         def image = imageInstanceService.read(params.long('idImage'))
         def user = userService.read(params.idUser)
         if (image && user && params.bbox) {
-            //responseSuccess(reviewedAnnotationService.list(image, user, (String) params.bbox))
-            String baseUrl = grailsApplication.config.grails.serverURL
-            def list = reviewedAnnotationService.list(image, user, (String) params.bbox)
-
-            println "ADECOMPTER="+(System.currentTimeMillis()-start)
-
-            def listOut = []
-            ObjectMapper mapper = new ObjectMapper()
-            list.each {
-                Map jsonObject = it.getObjectMap(baseUrl)
-
-                String jsonString = mapper.writeValueAsString(jsonObject)
-                listOut << jsonString
-            }
-
-            String jsonStringFinal = mapper.writeValueAsString(listOut)
-            response.status = 200
-            render jsonStringFinal
+            responseSuccess(reviewedAnnotationService.list(image, user, (String) params.bbox))
+//            String baseUrl = grailsApplication.config.grails.serverURL
+//            def list = reviewedAnnotationService.list(image, user, (String) params.bbox)
+//
+//            println "ADECOMPTER="+(System.currentTimeMillis()-start)
+//
+//            def listOut = []
+//            ObjectMapper mapper = new ObjectMapper()
+//            list.each {
+//                Map jsonObject = it.getObjectMap(baseUrl)
+//
+//                String jsonString = mapper.writeValueAsString(jsonObject)
+//                listOut << jsonString
+//            }
+//
+//            String jsonStringFinal = mapper.writeValueAsString(listOut)
+//            response.status = 200
+//            render jsonStringFinal
         }
         else if (image && user) responseSuccess(reviewedAnnotationService.list(image, user))
         else if (!user) responseNotFound("User", params.idUser)
@@ -349,7 +343,7 @@ class RestReviewedAnnotationController extends RestController {
         review.project = annotation.project
         review.geometryCompression = annotation.geometryCompression
 
-        if(terms) {
+        if(terms!=null) {
             //terms in request param
             terms.each {
                 review.addToTerm(Term.read(Long.parseLong(it+"")))

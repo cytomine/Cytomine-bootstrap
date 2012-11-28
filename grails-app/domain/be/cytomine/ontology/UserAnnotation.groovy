@@ -58,6 +58,10 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
         return false
     }
 
+    def getCropUrl(String cytomineUrl) {
+        UrlApi.getUserAnnotationCropWithAnnotationId(cytomineUrl,id)
+    }
+
     def usersIdByTerm() {
         def results = []
         annotationTerm.each { annotationTerm ->

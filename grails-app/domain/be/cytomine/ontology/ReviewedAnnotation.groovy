@@ -54,6 +54,10 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
         Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
     }
 
+    def getCropUrl(String cytomineUrl) {
+        UrlApi.getReviewedAnnotationCropWithAnnotationId(cytomineUrl,id)
+    }
+
     def terms() {
         return term
     }

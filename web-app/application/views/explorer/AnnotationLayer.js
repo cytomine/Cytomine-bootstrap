@@ -334,7 +334,8 @@ AnnotationLayer.prototype = {
                  * true: annotation already in database (no new insert!)
                  * false: new annotation that just have been draw (need insert)
                  * */
-                if (!self.measureOnSelect) {
+                 console.log("featureadded");
+                 if (!self.measureOnSelect) {
                     if (evt.feature.attributes.listener != 'NO') {
 
                         evt.feature.attributes.measure = 'YES';
