@@ -57,13 +57,8 @@ class RestReviewedAnnotationController extends RestController {
         responseSuccess(annotations)
     }
 
-
-
-
-
     //list all by image
     def listByImage = {
-        log.info "listByImage"
         long start = System.currentTimeMillis()
         println "START:"+ start
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
@@ -73,36 +68,6 @@ class RestReviewedAnnotationController extends RestController {
             println "ADECOMPTER="+(System.currentTimeMillis()-start)
             //version 0 marshaller
             responseSuccess(list)
-
-//            //version 1 jackson
-//            def listOut = []
-//            ObjectMapper mapper = new ObjectMapper()
-//            list.each {
-//                Map jsonObject = it.getObjectMap(baseUrl)
-//
-//                String jsonString = mapper.writeValueAsString(jsonObject)
-//                listOut << jsonString
-//            }
-//
-//            String jsonStringFinal = mapper.writeValueAsString(listOut)
-//            response.status = 200
-//            render jsonStringFinal
-//
-//
-//            //version 2 jackson
-//            StringBuilder string = new StringBuilder(10000000)
-//            string.append("[")
-//            ObjectMapper mapper = new ObjectMapper()
-//            list.eachWithIndex { annotation, index ->
-//                Map jsonObject = annotation.getObjectMap(baseUrl)
-//
-//                String jsonString = mapper.writeValueAsString(jsonObject)
-//                string.append(jsonString)
-//                if(index!=list.size()-1) string.append(",")
-//            }
-//            string.append("]")
-//            response.status = 200
-//            render string
 
         }
         else if(image) responseSuccess(reviewedAnnotationService.list(image))

@@ -29,6 +29,9 @@ import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.utils.GeometryUtils
+import groovy.sql.Sql
+import be.cytomine.api.UrlApi
 
 class UserAnnotationService extends ModelService {
 
@@ -42,6 +45,8 @@ class UserAnnotationService extends ModelService {
     def domainService
     def securityService
     def simplifyGeometryService
+    def dataSource
+
 
     boolean saveOnUndoRedoStack = true
 
@@ -55,6 +60,12 @@ class UserAnnotationService extends ModelService {
         UserAnnotation.findAllByProject(project)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostFilter("filterObject.hasPermission('READ')")
+    def list(Term term) {
+        term.annotations()
+    }
+
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listUserAnnotation(Project project) {
         List<SecUser> users = securityService.getUserList(project)
@@ -62,110 +73,7 @@ class UserAnnotationService extends ModelService {
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Project project, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList, boolean noTerm, boolean multipleTerm) {
-         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob ) {
-             throw new IllegalArgumentException("Method not supported for this type of data!!!")
-         } else {
-             listForUser(project,userList,imageInstanceList,noTerm,multipleTerm)
-         }
-    }
-
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def listForUser(Project project, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList, boolean noTerm, boolean multipleTerm) {
-        log.info("project/userList/noTerm/multipleTerm project=$project.id userList=$userList imageInstanceList=${imageInstanceList.size()} noTerm=$noTerm multipleTerm=$multipleTerm")
-        if (userList.isEmpty()) return []
-        if (imageInstanceList.isEmpty()) return []
-        else if (multipleTerm) {
-            log.info "multipleTerm"
-            def terms = Term.findAllByOntology(project.getOntology())
-            def annotationsWithTerms = AnnotationTerm.withCriteria() {
-                inList("term", terms)
-                join("userAnnotation")
-                createAlias("userAnnotation", "a")
-                eq("a.project", project)
-                inList("a.image", imageInstanceList)
-                inList("a.user", userList)
-                projections {
-                    groupProperty("userAnnotation")
-                    countDistinct("term")
-                    countDistinct('created', 'createdSort')
-
-                }
-                order('createdSort','desc')
-            }
-            def annotations = []
-            annotationsWithTerms.eachWithIndex {  result, index ->
-                if (result[1] > 1) annotations.add(result[0])
-                //filter in groovy, to do : I tried greaterThan criteria on alias nbTerms whithout success
-                //+todo: add  (index>=offset && index<max) in request to improve perf
-            }
-            annotations
-        }
-        else if (noTerm) {
-            log.info "noTerm"
-            def terms = Term.findAllByOntology(project.getOntology())
-            def annotationsWithTerms = AnnotationTerm.createCriteria().list {
-                inList("term", terms)
-                join("userAnnotation")
-                createAlias("userAnnotation", "a")
-                inList("a.image", imageInstanceList)
-                inList("a.user", userList)
-                projections {
-                    eq("a.project", project)
-                    groupProperty("userAnnotation.id")
-                }
-            }
-
-
-            //inList crash is argument is an empty list so we have to use if/else at this time
-            def annotations = null
-            if (annotationsWithTerms.size() == 0) {
-                annotations = UserAnnotation.createCriteria().list {
-                    eq("project", project)
-                    inList("image", imageInstanceList)
-                    inList("user", userList)
-                    order 'created', 'desc'
-//                    firstResult(offset)
-//                    maxResults(max)
-                }
-            } else {
-                annotations = UserAnnotation.createCriteria().list {
-                    eq("project", project)
-                    inList("image", imageInstanceList)
-                    inList("user", userList)
-                    not {
-                        inList("id", annotationsWithTerms)
-                    }
-                    order 'created', 'desc'
-//                    firstResult(offset)
-//                    maxResults(max)
-                }
-            }
-
-            return annotations
-        } else {
-            log.info "findAllByProjectAndUserInList=" + project + " users=" + userList
-            long start = new Date().time
-            def annotations = UserAnnotation.createCriteria().list {
-                eq("project", project)
-                inList("user", userList)
-                inList("image", imageInstanceList)
-                fetchMode 'image', FetchMode.JOIN
-                fetchMode 'image.baseImage', FetchMode.JOIN
-                order 'created', 'desc'
-//                firstResult(offset)
-//                maxResults(max)
-            }
-            long end = new Date().time
-            log.info "time = " + (end - start) + "ms"
-            return annotations
-        }
-    }
-
-
-
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Project project, List<SecUser> userList, Term realTerm, Term suggestedTerm, Job job) {
+    def list(Project project, List<Long> userList, Term realTerm, Term suggestedTerm, Job job) {
         // POUR realTerm == null => voir dans la fonction précédente le bloc else if (noTerm) {
         log.info "list with suggestedTerm"
         if (userList.isEmpty()) return []
@@ -177,7 +85,7 @@ class UserAnnotationService extends ModelService {
             eq('project', project)
             annotationTerm {
                 eq('term', realTerm)
-                inList('user', userList)
+                inList('user.id', userList)
             }
             projections {
                 groupProperty("id")
@@ -194,88 +102,109 @@ class UserAnnotationService extends ModelService {
 
 
         return algoAnnotationsTerm
-
-    }
-
-    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
-    def list(ImageInstance image, SecUser user) {
-        return UserAnnotation.findAllByImageAndUser(image, user)
-    }
-
-    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
-    def list(ImageInstance image, SecUser user, String bbox, Boolean notReviewedOnly) {
-        String[] coordinates = bbox.split(",")
-        double bottomX = Double.parseDouble(coordinates[0])
-        double bottomY = Double.parseDouble(coordinates[1])
-        double topX = Double.parseDouble(coordinates[2])
-        double topY = Double.parseDouble(coordinates[3])
-        Coordinate[] boundingBoxCoordinates = [new Coordinate(bottomX, bottomY), new Coordinate(bottomX, topY), new Coordinate(topX, topY), new Coordinate(topX, bottomY), new Coordinate(bottomX, bottomY)]
-        Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
-
-        if(!notReviewedOnly) {
-            UserAnnotation.createCriteria()
-                    .add(Restrictions.eq("user", user))
-                    .add(Restrictions.eq("image", image))
-                    .add(SpatialRestrictions.within("location",boundingbox))
-                    .list()
-        } else {
-            UserAnnotation.createCriteria()
-                    .add(Restrictions.eq("user", user))
-                    .add(Restrictions.eq("image", image))
-                    .add(Restrictions.eq("countReviewedAnnotations", 0))
-                    .add(SpatialRestrictions.within("location",boundingbox))
-                    .list()
-        }
-
-    }
-
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("filterObject.hasPermission('READ')")
-    def list(Term term) {
-        term.annotations()
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
+    def listMap(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm) {
+        if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob ) {
+            throw new IllegalArgumentException("Method not supported for this type of data!!!")
+        } else {
+            String request
+            if(multipleTerm)
+                request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerm,at2.user_id as userTerm,AsText(a.location) as location  \n" +
+                    " FROM user_annotation a, annotation_term at2, annotation_term at3\n" +
+                    " WHERE a.project_id = " + project.id + "\n"+
+                    " AND a.id = at2.user_annotation_id\n"+
+                    " AND a.id = at3.user_annotation_id\n"+
+                    " AND at2.id <> at3.id \n"+
+                    " AND at2.term_id <> at3.term_id \n"+
+                    " AND at2.user_id IN (" + userList.join(",") +") \n" +
+                    (imageInstanceList.size()==project.countImageInstance()? "" : "AND a.image_id IN("+imageInstanceList.join(",")+") \n") +
+                    " ORDER BY id desc, term"
+            else if(noTerm)
+                request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,null as term, null as annotationTerm,null as userTerm,AsText(a.location) as location  \n" +
+                    " FROM user_annotation a LEFT JOIN (SELECT * from annotation_term x where x.user_id IN ("+userList.join(",")+")) at ON a.id = at.user_annotation_id \n" +
+                    " WHERE a.project_id = " + project.id + "\n"+
+                    " AND at.id IS NULL\n"+
+                    " AND a.user_id IN (" + userList.join(",") +") \n" +
+                      (imageInstanceList.size()==project.countImageInstance()? "" : "AND a.image_id IN("+imageInstanceList.join(",")+") \n") +
+                    " ORDER BY id desc, term"
+            else
+                request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerm,at2.user_id as userTerm,AsText(a.location) as location  \n" +
+                    " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id \n" +
+                    " WHERE a.project_id = " + project.id + "\n"+
+                    " AND a.user_id IN (" + userList.join(",") +") \n" +
+                     (imageInstanceList.size()==project.countImageInstance()? "" : "AND a.image_id IN("+imageInstanceList.join(",")+") \n") +
+                    " ORDER BY id desc, term"
+
+            selectUserAnnotationFull(request)
+        }
+    }
+
+    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
+    def listMap(ImageInstance image, SecUser user) {
+        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerm,at2.user_id as userTerm,AsText(a.location) as location  \n" +
+            " FROM user_annotation a, annotation_term at2\n" +
+            " WHERE a.image_id = " + image.id + "\n"+
+            " AND a.id = at2.user_annotation_id\n"+
+            " AND a.user_id = " + user.id +"\n" +
+            " ORDER BY id desc, term"
+        return selectUserAnnotationFull(request)
+    }
+
+    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
+    def listMap(ImageInstance image, SecUser user, Geometry boundingbox, Boolean notReviewedOnly) {
+        String request = "SELECT DISTINCT annotation.id, AsText(annotation.location), at.term_id \n" +
+                " FROM user_annotation annotation, annotation_term at\n" +
+                " WHERE annotation.image_id = $image.id\n" +
+                " AND annotation.user_id= $user.id\n" +
+                " AND annotation.id = at.user_annotation_id \n" +
+                (notReviewedOnly? " AND annotation.count_reviewed_annotations = 0\n" :"") +
+                " AND ST_within(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) \n" +
+                " ORDER BY annotation.id desc"
+        return selectUserAnnotationLight(request)
+    }
+
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    def list(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob ) {
             listForUserJob(project, term, userList, imageInstanceList)
         } else {
-            listForUser(project, term, userList, imageInstanceList)
+            String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerm,at2.user_id as userTerm,AsText(a.location) as location  \n" +
+                    " FROM user_annotation a, annotation_term at,annotation_term at2,annotation_term at3\n" +
+                    " WHERE a.id = at.user_annotation_id \n" +
+                    " AND a.project_id = " + project.id + "\n"+
+                    " AND at3.term_id = " + term.id + "\n"+
+                    " AND a.id = at2.user_annotation_id\n"+
+                    " AND a.id = at3.user_annotation_id\n"+
+                    " AND at.user_id IN (" + userList.collect {it}.join(",") +") \n" +
+                    " ORDER BY id desc, term"
+            selectUserAnnotationFull(request)
         }
     }
 
-    private def listForUser(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
-        if (userList.isEmpty()) return []
-        if (imageInstanceList.isEmpty()) return []
-        if (imageInstanceList.size() == project.countImages) {
-            def criteria = UserAnnotation.withCriteria() {
-                eq('project', project)
-                annotationTerm {
-                    eq('term', term)
-                    inList('user', userList)
-                }
-                order 'created', 'desc'
-//                firstResult(offset)
-//                maxResults(max)
-            }
-            return criteria.unique()
-        } else {
-            def criteria = UserAnnotation.withCriteria() {
-                eq('project', project)
-                inList("image", imageInstanceList)
-                annotationTerm {
-                    eq('term', term)
-                    inList('user', userList)
-                }
-                order 'created', 'desc'
-//                firstResult(offset)
-//                maxResults(max)
-            }
-            return criteria.unique()
-        }
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    def listMap(Project project) {
+        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerm,at2.user_id as userTerm,AsText(a.location) as location  \n" +
+                " FROM user_annotation a,annotation_term at2\n" +
+                " WHERE a.id = at2.user_annotation_id \n" +
+                " AND a.project_id = " + project.id + "\n"+
+                " ORDER BY id desc, term"
+        selectUserAnnotationFull(request)
     }
 
-    private def listForUserJob(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
+    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
+    def listMap(ImageInstance image) {
+        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerm,at2.user_id as userTerm,AsText(a.location) as location  \n" +
+                " FROM user_annotation a,annotation_term at2\n" +
+                " WHERE a.id = at2.user_annotation_id \n" +
+                " AND a.image_id = " + image.id + "\n"+
+                " ORDER BY id desc, term"
+        selectUserAnnotationFull(request)
+    }
+
+    private def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
+        //TODO: mus be improved!!!!!!!!!!
         if (userList.isEmpty()) return []
         if (imageInstanceList.isEmpty()) return []
         if (imageInstanceList.size() == project.countImages) {
@@ -283,7 +212,7 @@ class UserAnnotationService extends ModelService {
                 createAlias("userAnnotation", "a")
                 eq('project', project)
                 eq('term', term)
-                inList('userJob', userList)
+                inList('userJob.id', userList)
                 projections {
                     groupProperty("userAnnotation")
                     groupProperty("rate")
@@ -298,8 +227,8 @@ class UserAnnotationService extends ModelService {
                 createAlias("userAnnotation", "a")
                 eq('project', project)
                 eq('term', term)
-                inList('userJob', userList)
-                inList("a.image", imageInstanceList)
+                inList('userJob.id', userList)
+                inList("a.image.id", imageInstanceList)
                 projections {
                     groupProperty("userAnnotation")
                     groupProperty("rate")
@@ -311,7 +240,6 @@ class UserAnnotationService extends ModelService {
             return criteria
         }
     }
-
 
 
     UserAnnotation get(def id) {
@@ -563,6 +491,78 @@ class UserAnnotationService extends ModelService {
         UserAnnotation annotation = UserAnnotation.get(json.id)
         if (!annotation) throw new ObjectNotFoundException("UserAnnotation " + json.id + " not found")
         return annotation
+    }
+
+
+    private def selectUserAnnotationFull(String request) {
+        println "REQUEST=" + request
+        def data = []
+        long lastAnnotationId = -1
+        long lastTermId = -1
+
+        def cytomineBaseUrl = grailsApplication.config.grails.serverURL
+        new Sql(dataSource).eachRow(request) {
+            /**
+             * If an annotation has n multiple term, it will be on "n" lines.
+             * For the first line for this annotation (it.id!=lastAnnotationId), add the annotation data,
+             * For the other lines, we add term data to the last annotation
+             */
+            if(it.id!=lastAnnotationId) {
+                data << [
+                        'class': 'be.cytomine.ontology.UserAnnotation',
+                        id: it.id,
+                        image: it.image,
+                        geometryCompression: it.geometryCompression,
+                        project:it.project,
+                        container:it.project,
+                        user: it.user,
+                        nbComments:it.nbComments,
+                        created:it.created,
+                        updated:it.updated,
+                        reviewed:(it.countReviewedAnnotations>0),
+                        cropURL : UrlApi.getUserAnnotationCropWithAnnotationId(cytomineBaseUrl,it.id),
+                        smallCropURL : UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl,it.id, 256),
+                        url : UrlApi.getUserAnnotationCropWithAnnotationId(cytomineBaseUrl,it.id),
+                        imageURL : UrlApi.getAnnotationURL(cytomineBaseUrl,it.project, it.image, it.id),
+                        term : (it.term? [it.term]:[]),
+                        userByTerm : (it.term? [[id: it.annotationTerm,term:it.term,user: [it.userTerm]]]:[]),
+                        location : it.location
+                ]
+            } else {
+                if(it.term) {
+                    data.last().term.add(it.term)
+                    data.last().term.unique()
+                    if(it.term==lastTermId) {
+                        data.last().userByTerm.last().user.add(it.userTerm)
+                        data.last().userByTerm.last().user.unique()
+                    } else {
+                        data.last().userByTerm.add([id: it.annotationTerm,term:it.term,user: [it.userTerm]])
+                    }
+                }
+            }
+            lastTermId = it.term
+            lastAnnotationId = it.id
+        }
+        data
+    }
+
+    private def selectUserAnnotationLight(String request) {
+         def data = []
+        long lastAnnotationId = -1
+         new Sql(dataSource).eachRow(request) {
+
+            long idAnnotation = it[0]
+            String location = it[1]
+            long idTerm = it[2]
+
+            if(idAnnotation!=lastAnnotationId) {
+                data << [id: idAnnotation, location: location, term: [idTerm]]
+            } else {
+                data.last().term.add(idTerm)
+            }
+            lastAnnotationId = idAnnotation
+        }
+        data
     }
 
 }

@@ -19,10 +19,14 @@ import java.awt.image.BufferedImage
 import java.text.SimpleDateFormat
 import javax.imageio.ImageIO
 import be.cytomine.ontology.UserAnnotation
-import com.vividsolutions.jts.geom.Coordinate
+
 import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.GeometryFactory
+
 import groovy.sql.Sql
+
+import be.cytomine.security.UserJob
+
+import be.cytomine.utils.GeometryUtils
 
 class RestUserAnnotationController extends RestController {
 
@@ -37,19 +41,20 @@ class RestUserAnnotationController extends RestController {
     def cytomineService
     def mailService
     def dataSource
+    def paramsService
 
     def list = {
         def annotations = []
         def projects = projectService.list()
         projects.each {
-            annotations.addAll(userAnnotationService.listUserAnnotation(it))
+            annotations.addAll(userAnnotationService.listMap(it))
         }
         responseSuccess(annotations)
     }
 
     def listByImage = {
         ImageInstance image = imageInstanceService.read(params.long('id'))
-        if (image) responseSuccess(userAnnotationService.list(image))
+        if (image) responseSuccess(userAnnotationService.listMap(image))
         else responseNotFound("Image", params.id)
     }
 
@@ -59,20 +64,11 @@ class RestUserAnnotationController extends RestController {
         if (project) {
             Integer offset = params.offset!=null? params.getInt('offset') : 0
             Integer max = params.max!=null? params.getInt('max') : Integer.MAX_VALUE
-            Collection<SecUser> userList = []
-            if (params.users != null && params.users != "null") {
-                if (params.users != "") userList = userService.list(project, params.users.split("_").collect{ Long.parseLong(it)})
-            }
-            else {
-                userList = userService.list(project)
-            }
-            Collection<ImageInstance> imageInstanceList = []
-            if (params.images != null && params.images != "null") {
-                if (params.images != "") imageInstanceList = imageInstanceService.list(project, params.images.split("_").collect{ Long.parseLong(it)})
-            } else {
-                imageInstanceList = imageInstanceService.list(project)
-            }
-            def list = userAnnotationService.list(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"))
+
+            List<Long> userList = paramsService.getParamsUserList(params.users,project)
+            List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images,project)
+
+            def list = userAnnotationService.listMap(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"))
             if(params.offset!=null) responseSuccess([size:list.size(),collection:substract(list,offset,max)])
             else responseSuccess(list)
         }
@@ -80,71 +76,22 @@ class RestUserAnnotationController extends RestController {
     }
 
     def listByImageAndUser = {
-        def image = imageInstanceService.read(params.long('idImage'))
-        def user = userService.read(params.idUser)
-        if (image && user && params.bbox) {
-            //def data = userAnnotationService.list(image, user, (String) params.bbox,params.getBoolean("notreviewed"))
-            String bbox = params.bbox
+         def image = imageInstanceService.read(params.long('idImage'))
+         def user = userService.read(params.idUser)
+         if (image && user && params.bbox) {
             boolean notReviewedOnly = params.getBoolean("notreviewed")
-
-           String[] coordinates = bbox.split(",")
-           double bottomX = Double.parseDouble(coordinates[0])
-           double bottomY = Double.parseDouble(coordinates[1])
-           double topX = Double.parseDouble(coordinates[2])
-           double topY = Double.parseDouble(coordinates[3])
-           Coordinate[] boundingBoxCoordinates = [new Coordinate(bottomX, bottomY), new Coordinate(bottomX, topY), new Coordinate(topX, topY), new Coordinate(topX, bottomY), new Coordinate(bottomX, bottomY)]
-           Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
-
-           println "boundingbox.toString()=" + boundingbox.toString()
-           String request
-
-           if(!notReviewedOnly) {
-               request = "SELECT annotation.id, AsText(annotation.location), at.term_id \n" +
-                   " FROM user_annotation annotation, annotation_term at\n" +
-                   " WHERE annotation.image_id = $image.id\n" +
-                   " AND annotation.user_id= $user.id\n" +
-                   " AND annotation.id = at.user_annotation_id  " +
-                   " AND ST_within(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
-                   " ORDER BY annotation.id "
-
-           } else {
-               request = "SELECT annotation.id, AsText(annotation.location), at.term_id \n" +
-                   " FROM user_annotation annotation, annotation_term at\n" +
-                   " WHERE annotation.image_id = $image.id\n" +
-                   " AND annotation.user_id= $user.id\n" +
-                   " AND annotation.id = at.user_annotation_id " +
-                   " AND annotation.countReviewedAnnotations = 0 " +
-                   " AND ST_within(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
-                   " ORDER BY annotation.id "
-           }
-
-           println "REQUEST=" + request
-           def sql = new Sql(dataSource)
-
-           def data = []
-           long lastAnnotationId = -1
-           sql.eachRow(request) {
-
-               long idAnnotation = it[0]
-               String location = it[1]
-               long idTerm = it[2]
-
-               if(idAnnotation!=lastAnnotationId) {
-                   data << [id: idAnnotation, location: location, term: [idTerm]]
-               } else {
-                   data.last().term.add(idTerm)
-               }
-               lastAnnotationId = idAnnotation
-           }
-           responseSuccess(data)
-       }
-        else if (image && user) responseSuccess(userAnnotationService.list(image, user))
-        else if (!user) responseNotFound("User", params.idUser)
-        else if (!image) responseNotFound("Image", params.idImage)
-    }
+            Geometry boundingbox = GeometryUtils.createBoundingBox(params.bbox)
+            def data = userAnnotationService.listMap(image,user,boundingbox,notReviewedOnly)
+            responseSuccess(data)
+        }
+         else if (image && user) responseSuccess(userAnnotationService.listMap(image, user))
+         else if (!user) responseNotFound("User", params.idUser)
+         else if (!image) responseNotFound("Image", params.idImage)
+     }
 
     def listAnnotationByTerm = {
         Term term = termService.read(params.long('idterm'))
+        //TODO:: improve this with a single SQL request
         if (term) responseSuccess(userAnnotationService.list(term))
         else responseNotFound("Annotation Term", "Term", params.idterm)
     }
@@ -153,40 +100,27 @@ class RestUserAnnotationController extends RestController {
         log.info "listAnnotationByProjectAndTerm"
         Term term = termService.read(params.long('idterm'))
         Project project = projectService.read(params.long('idproject'), new Project())
-
         Integer offset = params.offset!=null? params.getInt('offset') : 0
         Integer max = params.max!=null? params.getInt('max') : Integer.MAX_VALUE
 
-
-        log.info "offset=$offset max=$max"
-
-        Collection<SecUser> userList = []
-        if (params.users != null && params.users != "null") {
-            if (params.users != "") userList = userService.list(project, params.users.split("_").collect{ Long.parseLong(it)})
-        }
-        else {
-            userList = userService.list(project)
-        }
-
-        log.info "userList="+userList
-        Collection<ImageInstance> imageInstanceList = []
-        if (params.images != null && params.images != "null") {
-            if (params.images != "") imageInstanceList = imageInstanceService.list(project, params.images.split("_").collect{ Long.parseLong(it)})
-        } else {
-            imageInstanceList = imageInstanceService.list(project)
-        }
+        List<Long> userList = paramsService.getParamsUserList(params.users,project)
+        List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images,project)
 
         if (term == null) responseNotFound("Term", params.idterm)
         else if (project == null) responseNotFound("Project", params.idproject)
-        /*else if (userList.isEmpty()) responseNotFound("Users", params.users)
-        else if (imageInstanceList.isEmpty()) responseNotFound("ImageInstance", params.images)*/
         else if(!params.suggestTerm) {
-            def list = userAnnotationService.list(project, term, userList, imageInstanceList)
+            def list = []
+            if (userList.isEmpty()) list = []
+            else if (imageInstanceList.isEmpty()) list = []
+            else {
+                list = userAnnotationService.list(project,term,userList,imageInstanceList)
+            }
             if(params.offset!=null) responseSuccess([size:list.size(),collection:mergeResults(substract(list,offset,max))])
             else responseSuccess(list)
         }
         else {
             Term suggestedTerm = termService.read(params.suggestTerm)
+            //TODO:: improve this with a single SQL request
             def list = userAnnotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')))
             if(params.offset!=null) responseSuccess([size:list.size(),collection:mergeResults(substract(list,offset,max))])
             else responseSuccess(list)
@@ -196,7 +130,7 @@ class RestUserAnnotationController extends RestController {
        //return a list of annotation (if list = [[annotation1,rate1, term1, expectedTerm1],..], add rate value in annotation]
        private def mergeResults(def list) {
            //list = [ [a,b],...,[x,y]]  => [a.rate = b, x.rate = y...]
-           if(list.isEmpty() || list[0] instanceof UserAnnotation) return list
+           if(list.isEmpty() || list[0] instanceof UserAnnotation || list[0].class.equals("be.cytomine.ontology.UserAnnotation")) return list
            def result = []
            list.each {
                UserAnnotation annotation = it[0]

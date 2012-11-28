@@ -132,9 +132,11 @@ class RestImageController extends RestController {
 
     def cropUserAnnotation = {
         try {
+            long start = System.currentTimeMillis()
             def annotation = UserAnnotation.read(params.id)
             def cropURL = cropAnnotation(annotation,params)
             if(cropURL!=null) responseImage(cropURL)
+            println "TIME TOTAL="+(System.currentTimeMillis()-start)
         } catch (Exception e) {
             log.error("GetThumb:" + e)
         }
@@ -152,6 +154,8 @@ class RestImageController extends RestController {
 
     private def cropAnnotation(AnnotationDomain annotation, def params) {
         println "cropAnnotation:"+annotation
+
+        long start = System.currentTimeMillis()
         Integer zoom = 0
         Integer maxSize = -1
         if (params.max_size != null) maxSize =  Integer.parseInt(params.max_size)
@@ -172,6 +176,7 @@ class RestImageController extends RestController {
                 }
 
                 if (cropURL == null) cropURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
+                println "TIME="+(System.currentTimeMillis()-start)
                 return cropURL
             } catch (Exception e) {
                 e.printStackTrace()

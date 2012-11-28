@@ -494,45 +494,50 @@ var ReviewPanel = Backbone.View.extend({
         if (layers.length == 0) {
             window.app.view.message("Annotation", "You must add at least one layer!", "error");
         } else {
-            new TaskModel({project:self.model.get('project')}).save({}, {
-                        success:function (task, response) {
-                            console.log("task=" + task);
 
-                            $("#taskreview" + self.model.id).append('<div id="task-' + task.id + '"></div>');
-                            $("#reviewChoice" + self.model.id).hide();
-                            $("#taskreview" + self.model.id).show();
+            var x=window.confirm("Are you sure you to reject all annotation from these layers?")
+            if (x) {
+                new TaskModel({project:self.model.get('project')}).save({}, {
+                                        success:function (task, response) {
+                                            console.log("task=" + task);
 
-                            var timer = window.app.view.printTaskEvolution(task, $("#taskreview" + self.model.id).find("#task-" + task.id), 2000, true);
+                                            $("#taskreview" + self.model.id).append('<div id="task-' + task.id + '"></div>');
+                                            $("#reviewChoice" + self.model.id).hide();
+                                            $("#taskreview" + self.model.id).show();
 
-                            new AnnotationImageReviewedModel({image:self.model.id, layers:layers, task:task.id}).destroy({
-                                success:function (model, response) {
-                                    clearInterval(timer);
-                                    $("#taskreview" + self.model.id).empty();
-                                    $("#taskreview" + self.model.id).hide();
-                                    $("#reviewChoice" + self.model.id).show();
-                                    window.app.view.message("Annotation", "All visible annotations are rejected!", "success");
-                                    _.each(self.printedLayer,function(layer) {
-                                        layer.vectorsLayer.refresh();
-                                    });
-                                },
-                                error:function (model, response) {
-                                    console.log("AnnotationImageReviewedModel error");
-                                    var json = $.parseJSON(response.responseText);
-                                    window.app.view.message("Annotation", json.errors, "error");
-                                    $("#taskreview" + self.model.id).empty();
-                                    $("#taskreview" + self.model.id).hide();
-                                    $("#reviewChoice" + self.model.id).show();
-                                    clearInterval(timer);
+                                            var timer = window.app.view.printTaskEvolution(task, $("#taskreview" + self.model.id).find("#task-" + task.id), 2000, true);
 
-                                }});
+                                            new AnnotationImageReviewedModel({image:self.model.id, layers:layers, task:task.id}).destroy({
+                                                success:function (model, response) {
+                                                    clearInterval(timer);
+                                                    $("#taskreview" + self.model.id).empty();
+                                                    $("#taskreview" + self.model.id).hide();
+                                                    $("#reviewChoice" + self.model.id).show();
+                                                    window.app.view.message("Annotation", "All visible annotations are rejected!", "success");
+                                                    _.each(self.printedLayer,function(layer) {
+                                                        layer.vectorsLayer.refresh();
+                                                    });
+                                                },
+                                                error:function (model, response) {
+                                                    console.log("AnnotationImageReviewedModel error");
+                                                    var json = $.parseJSON(response.responseText);
+                                                    window.app.view.message("Annotation", json.errors, "error");
+                                                    $("#taskreview" + self.model.id).empty();
+                                                    $("#taskreview" + self.model.id).hide();
+                                                    $("#reviewChoice" + self.model.id).show();
+                                                    clearInterval(timer);
 
-                        },
-                        error:function (model, response) {
-                            var json = $.parseJSON(response.responseText);
-                            window.app.view.message("Task", json.errors, "error");
-                        }
-                    }
-            );
+                                                }});
+
+                                        },
+                                        error:function (model, response) {
+                                            var json = $.parseJSON(response.responseText);
+                                            window.app.view.message("Task", json.errors, "error");
+                                        }
+                                    }
+                            );
+            }
+
         }
     },
     validatePicture:function () {

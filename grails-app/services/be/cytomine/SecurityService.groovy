@@ -7,8 +7,11 @@ import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclClass
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
+import groovy.sql.Sql
 
 class SecurityService {
+
+    def dataSource
 
     def aclUtilService
 
@@ -51,5 +54,22 @@ class SecurityService {
                 "and aclEntry.aclObjectIdentity = aclObjectId.id "+
                 "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
     }
+
+    //=> security service
+    List<Long> getAllowedUserIdList(CytomineDomain domain) {
+        String request = "SELECT DISTINCT sec_user.id \n" +
+                " FROM acl_object_identity, acl_entry,acl_sid, sec_user \n" +
+                " WHERE acl_object_identity.object_id_identity = $domain.id\n" +
+                " AND acl_entry.acl_object_identity=acl_object_identity.id\n" +
+                " AND acl_entry.sid = acl_sid.id " +
+                " AND acl_sid.sid = sec_user.username " +
+                " AND sec_user.class = 'be.cytomine.security.User' "
+        def data = []
+        new Sql(dataSource).eachRow(request) {
+            data << it[0]
+        }
+        return data
+    }
+
 
 }

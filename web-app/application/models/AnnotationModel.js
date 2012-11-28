@@ -166,13 +166,10 @@ var AnnotationCollection = Backbone.Collection.extend({
         _.each(coll, function (item) {
             self.add(item);
         });
-    }
-
-
-    /*,
+    },
      comparator : function (annotation) {
      return -annotation.get("id"); //id or created (chronology?)
-     }*/
+     }
 });
 
 

@@ -18,6 +18,7 @@ import be.cytomine.ontology.UserAnnotation
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.Exception.ConstraintException
+import groovy.sql.Sql
 
 class ImageInstanceService extends ModelService {
 
@@ -30,6 +31,7 @@ class ImageInstanceService extends ModelService {
     def domainService
     def userAnnotationService
     def algoAnnotationService
+    def dataSource
 
     boolean saveOnUndoRedoStack = true
 
@@ -66,6 +68,17 @@ class ImageInstanceService extends ModelService {
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, List ids) {
         ImageInstance.findAllByIdInList(ids)
+    }
+
+
+    //=>imageinstance service
+    public List<Long> getAllImageId(Project project) {
+        String request = "SELECT a.id FROM image_instance a WHERE project_id="+project.id
+        def data = []
+        new Sql(dataSource).eachRow(request) {
+            data << it[0]
+        }
+        return data
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")

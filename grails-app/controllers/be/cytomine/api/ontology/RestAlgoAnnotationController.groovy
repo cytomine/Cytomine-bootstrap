@@ -172,7 +172,7 @@ class RestAlgoAnnotationController extends RestController {
                     " WHERE annotation.image_id = $image.id\n" +
                     " AND annotation.user_id= $user.id\n" +
                     " AND annotation.id = at.annotation_ident " +
-                    " AND annotation.countReviewedAnnotations = 0 " +
+                    " AND annotation.count_reviewed_annotations = 0 " +
                     " AND ST_within(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
                     " ORDER BY annotation.id "
             }
