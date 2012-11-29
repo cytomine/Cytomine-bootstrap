@@ -158,7 +158,7 @@ class UserAnnotationService extends ModelService {
                  " WHERE annotation.image_id = $image.id\n" +
                  " AND annotation.user_id= $user.id\n" +
                  (notReviewedOnly? " AND annotation.count_reviewed_annotations = 0\n" :"") +
-                 " AND ST_within(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) \n" +
+                 " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) \n" +
                  " ORDER BY annotation.id desc"
          return selectUserAnnotationLight(request)
      }

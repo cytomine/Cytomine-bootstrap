@@ -158,7 +158,7 @@ class RestAlgoAnnotationController extends RestController {
                     " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
                     " WHERE annotation.image_id = $image.id\n" +
                     " AND annotation.user_id= $user.id\n" +
-                    " AND ST_within(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
+                    " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
                     " ORDER BY annotation.id "
 
             } else {
@@ -167,7 +167,7 @@ class RestAlgoAnnotationController extends RestController {
                     " WHERE annotation.image_id = $image.id\n" +
                     " AND annotation.user_id= $user.id\n" +
                     " AND annotation.count_reviewed_annotations = 0 " +
-                    " AND ST_within(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
+                    " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
                     " ORDER BY annotation.id "
             }
 
