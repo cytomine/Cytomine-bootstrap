@@ -16,6 +16,9 @@ import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 
 import java.text.SimpleDateFormat
+import org.omg.PortableServer.POAPackage.ObjectNotActive
+import javassist.tools.rmi.ObjectNotFoundException
+import be.cytomine.ontology.AlgoAnnotation
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
@@ -30,6 +33,7 @@ class RestUserController extends RestController {
     def securityService
     def projectService
     def ontologyService
+    def imageInstanceService
 
     /**
      * Render and returns all Users into the specified format given in the request
@@ -370,14 +374,17 @@ class RestUserController extends RestController {
                 root.children = allSofts
                 responseSuccess(root)
 
-            } else {
+            } else if(params.getLong("image")){
                 def userJobs = []
+                def image = imageInstanceService.read(params.getLong("image"))
+                if(!image) throw new ObjectNotFoundException("Image ${params.image} was not found!")
+
                 List<Job> allJobs = Job.findAllByProject(project, [sort: 'created', order: 'desc'])
 
                 allJobs.each { job ->
-                    def item = [:]
                     def userJob = UserJob.findByJob(job);
-                    if (userJob) {
+                    if(userJob && AlgoAnnotation.countByUserAndImage(userJob,image)>0) {
+                        def item = [:]
                         item.id = userJob.id
                         item.idJob = job.id
                         item.idSoftware = job.software.id
@@ -385,11 +392,31 @@ class RestUserController extends RestController {
                         item.created = job.created.getTime()
                         item.algo = true
                         item.isDeleted = job.dataDeleted
+                        userJobs << item
                     }
-                    userJobs << item
+
                 }
                 responseSuccess(userJobs)
-            }
+            } else {
+                    def userJobs = []
+                    List<Job> allJobs = Job.findAllByProject(project, [sort: 'created', order: 'desc'])
+
+                    allJobs.each { job ->
+                        def item = [:]
+                        def userJob = UserJob.findByJob(job);
+                        if (userJob) {
+                            item.id = userJob.id
+                            item.idJob = job.id
+                            item.idSoftware = job.software.id
+                            item.softwareName = job.software.name
+                            item.created = job.created.getTime()
+                            item.algo = true
+                            item.isDeleted = job.dataDeleted
+                        }
+                        userJobs << item
+                    }
+                    responseSuccess(userJobs)
+                }
         } else {
             responseNotFound("User", "Project", params.id)
         }

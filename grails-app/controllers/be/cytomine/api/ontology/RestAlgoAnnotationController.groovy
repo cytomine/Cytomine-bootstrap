@@ -139,6 +139,7 @@ class RestAlgoAnnotationController extends RestController {
     }
 
     def listByImageAndUser = {
+        println "listByImageAndUser"
         def image = imageInstanceService.read(params.long('idImage'))
         def user = userService.read(params.idUser)
         if (image && user && params.bbox) {
@@ -159,19 +160,17 @@ class RestAlgoAnnotationController extends RestController {
 
             if(!notReviewedOnly) {
                 request = "SELECT annotation.id, AsText(annotation.location), at.term_id \n" +
-                    " FROM algo_annotation annotation, algo_annotation_term at\n" +
+                    " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
                     " WHERE annotation.image_id = $image.id\n" +
                     " AND annotation.user_id= $user.id\n" +
-                    " AND annotation.id = at.annotation_ident " +
                     " AND ST_within(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
                     " ORDER BY annotation.id "
 
             } else {
                 request = "SELECT annotation.id, AsText(annotation.location), at.term_id \n" +
-                    " FROM algo_annotation annotation, algo_annotation_term at\n" +
+                    " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
                     " WHERE annotation.image_id = $image.id\n" +
                     " AND annotation.user_id= $user.id\n" +
-                    " AND annotation.id = at.annotation_ident " +
                     " AND annotation.count_reviewed_annotations = 0 " +
                     " AND ST_within(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
                     " ORDER BY annotation.id "
@@ -186,12 +185,14 @@ class RestAlgoAnnotationController extends RestController {
 
                 long idAnnotation = it[0]
                 String location = it[1]
-                long idTerm = it[2]
+                def idTerm = it[2]
+
 
                 if(idAnnotation!=lastAnnotationId) {
-                    data << [id: idAnnotation, location: location, term: [idTerm]]
+                    data << [id: idAnnotation, location: location, term:  idTerm? [idTerm]:[]]
                 } else {
-                    data.last().term.add(idTerm)
+                    if(idTerm)
+                        data.last().term.add(idTerm)
                 }
                 lastAnnotationId = idAnnotation
             }

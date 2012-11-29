@@ -123,8 +123,10 @@ var UserSecRole = Backbone.Model.extend({
 var UserJobCollection = Backbone.Collection.extend({
     model:UserModel,
     url:function () {
-        if (this.project && !this.tree) {
+        if (this.project && !this.tree && !this.image) {
             return "api/project/" + this.project + "/userjob.json";
+        } else if (this.project && this.image) {
+            return "api/project/" + this.project + "/userjob.json?image="+this.image;
         } else if (this.project && this.tree) {
             return "api/project/" + this.project + "/userjob.json?tree=true";
         } else {
@@ -136,6 +138,7 @@ var UserJobCollection = Backbone.Collection.extend({
     },
     initialize:function (options) {
         this.project = options.project;
+        this.image = options.image;
         this.tree = options.tree || false;
     }, comparator:function (user) {
         var newString =""

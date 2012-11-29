@@ -5,6 +5,7 @@ var BrowseImageView = Backbone.View.extend({
     divPrefixId : "",
     divId :"",
     currentAnnotation : null,
+    userJobForImage : null,
     /**
      * BrowseImageView constructor
      * Accept options used for initialization
@@ -73,10 +74,22 @@ var BrowseImageView = Backbone.View.extend({
         else if(this.review && this.model.get('inReview')) self.changeValidateColor(false);
 
         this.initToolbar();
-        this.initMap();
-        this.initAnnotationsTabs();
 
-        if (this.iPad) this.initMobile();
+        if(this.review) {
+            console.log("this.review="+this.review);
+            new UserJobCollection({project:window.app.status.currentProject, image : self.model.id}).fetch({
+                success:function (collection, response) {
+                    self.userJobForImage = collection;
+                    self.initMap();
+                    self.initAnnotationsTabs();
+                    if (self.iPad) self.initMobile();
+                }
+            });
+        } else {
+            this.initMap();
+            this.initAnnotationsTabs();
+            if (this.iPad) this.initMobile();
+        }
         return this;
     },
     changeValidateColor : function(isValidate) {
@@ -297,7 +310,11 @@ var BrowseImageView = Backbone.View.extend({
     initMap:function () {
         var self = this;
         var mime = this.model.get('mime');
-        if (mime == "vms" || mime == "mrxs" || mime == "tif" || mime == "tiff" || mime == "svs" || mime == "jp2") self.initIIP();
+
+
+
+        if (mime == "vms" || mime == "mrxs" || mime == "tif" || mime == "tiff" || mime == "svs" || mime == "jp2")
+            self.initIIP();
     },
     /**
      * Add a base layer (image) on the Map
@@ -358,7 +375,7 @@ var BrowseImageView = Backbone.View.extend({
             model:self.model,
             el:self.el,
             userLayers: window.app.models.projectUser,
-            userJobLayers : window.app.models.projectUserJob
+            userJobLayers : self.userJobForImage
         }).render();
     },
     /**
