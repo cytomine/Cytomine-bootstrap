@@ -27,6 +27,7 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryFactory
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
+import be.cytomine.utils.GeometryUtils
 
 class RestAlgoAnnotationController extends RestController {
 
@@ -147,13 +148,7 @@ class RestAlgoAnnotationController extends RestController {
              String bbox = params.bbox
              boolean notReviewedOnly = params.getBoolean("notreviewed")
 
-            String[] coordinates = bbox.split(",")
-            double bottomX = Double.parseDouble(coordinates[0])
-            double bottomY = Double.parseDouble(coordinates[1])
-            double topX = Double.parseDouble(coordinates[2])
-            double topY = Double.parseDouble(coordinates[3])
-            Coordinate[] boundingBoxCoordinates = [new Coordinate(bottomX, bottomY), new Coordinate(bottomX, topY), new Coordinate(topX, topY), new Coordinate(topX, bottomY), new Coordinate(bottomX, bottomY)]
-            Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
+            Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
 
             println "boundingbox.toString()=" + boundingbox.toString()
             String request

@@ -26,6 +26,7 @@ import org.hibernatespatial.criterion.SpatialRestrictions
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize
 import groovy.sql.Sql
+import be.cytomine.utils.GeometryUtils
 
 class ReviewedAnnotationService extends ModelService {
 
@@ -106,13 +107,7 @@ class ReviewedAnnotationService extends ModelService {
     //reviewedAnnotationService.list(image, (String) params.bbox (optional))
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, String bbox) {
-        String[] coordinates = bbox.split(",")
-        double bottomX = Double.parseDouble(coordinates[0])
-        double bottomY = Double.parseDouble(coordinates[1])
-        double topX = Double.parseDouble(coordinates[2])
-        double topY = Double.parseDouble(coordinates[3])
-        Coordinate[] boundingBoxCoordinates = [new Coordinate(bottomX, bottomY), new Coordinate(bottomX, topY), new Coordinate(topX, topY), new Coordinate(topX, bottomY), new Coordinate(bottomX, bottomY)]
-        Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
+        Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
 
         println "boundingbox.toString()=" + boundingbox.toString()
         String request = "SELECT reviewed.id, AsText(reviewed.location)\n" +

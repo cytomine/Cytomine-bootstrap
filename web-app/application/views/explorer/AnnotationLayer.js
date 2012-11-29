@@ -122,9 +122,9 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     }
 
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
-        //renderers: ["Canvas", "SVG", "VML"],
+        renderers: ["Canvas", "SVG", "VML"],
         strategies:[
-            new OpenLayers.Strategy.BBOX({resFactor:1})
+            new OpenLayers.Strategy.BBOX({resFactor:0.5})
         ],
         protocol:new OpenLayers.Protocol.Script({
             url: annotationsCollection,
