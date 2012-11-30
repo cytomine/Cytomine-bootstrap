@@ -82,6 +82,17 @@ class RestUserAnnotationController extends RestController {
             boolean notReviewedOnly = params.getBoolean("notreviewed")
             Geometry boundingbox = GeometryUtils.createBoundingBox(params.bbox)
             def data = userAnnotationService.listMap(image,user,boundingbox,notReviewedOnly)
+//             String request = "SELECT DISTINCT annotation.id, AsText(annotation.location), at.term_id, (SELECT SUM(ST_CoveredBy(ga.location,gb.location)::integer) FROM user_annotation ga, user_annotation gb WHERE ga.id=annotation.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_IsValid(ga.location) AND ST_IsValid(gb.location)) as numberOfCoveringAnnotation \n" +
+//                     " FROM user_annotation annotation LEFT OUTER JOIN annotation_term at ON annotation.id = at.user_annotation_id\n" +
+//                     " WHERE annotation.image_id = $image.id\n" +
+//                     " AND annotation.user_id= $user.id\n" +
+//                     (notReviewedOnly? " AND annotation.count_reviewed_annotations = 0\n" :"") +
+//                     " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) \n" +
+//                     " ORDER BY numberOfCoveringAnnotation asc,annotation.id asc"
+//             println request
+//
+//             def data = userAnnotationService.selectUserAnnotationLight(request)
+
             responseSuccess(data)
         }
          else if (image && user) responseSuccess(userAnnotationService.listMap(image, user))

@@ -490,7 +490,7 @@ class UserAnnotationService extends ModelService {
     }
 
 
-    private def selectUserAnnotationFull(String request) {
+    def selectUserAnnotationFull(String request) {
         println "REQUEST=" + request
         def data = []
         long lastAnnotationId = -1
@@ -542,7 +542,7 @@ class UserAnnotationService extends ModelService {
         data
     }
 
-    private def selectUserAnnotationLight(String request) {
+    def selectUserAnnotationLight(String request) {
          def data = []
         long lastAnnotationId = -1
          new Sql(dataSource).eachRow(request) {

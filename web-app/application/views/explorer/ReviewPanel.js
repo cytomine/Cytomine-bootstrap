@@ -96,7 +96,17 @@ var ReviewPanel = Backbone.View.extend({
      */
     addLayerToReview:function (layer) {
         var self = this;
+        if(layer==undefined) return;
         var panelElem = $("#" + this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
+
+        //remeber if the current mode was "edit"
+        var isEdit = ($("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#modify' + self.model.get('id') +".active").length==1)
+
+        //disable edition
+        $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#none' + self.model.get('id')).click();
+
+        self.reviewLayer.controls.select.unselectAll();
+        self.reviewLayer.removeSelection();
 
         self.addToListLayer(layer);
 
@@ -132,11 +142,18 @@ var ReviewPanel = Backbone.View.extend({
             var toolbar = $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id'));
             toolbar.find('input[id=none' + self.model.get('id') + ']').click();
         } else {
-            layerAnnotation.controls.select.activate();
+           layerAnnotation.controls.select.activate();
         }
         _.each(this.printedLayer, function(item) {
             item.layer.controls.select.activate();
         });
+
+        //force unnselected
+        $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#none' + self.model.get('id')).click();
+        if(isEdit) {
+            $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#modify' + self.model.get('id')).click()
+        }
+
     },
     getVisibleVectorsLayer : function() {
         var vectorLayers = _.map(this.printedLayer, function (layer) {

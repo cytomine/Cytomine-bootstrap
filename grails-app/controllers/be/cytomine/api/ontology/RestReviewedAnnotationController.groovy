@@ -31,6 +31,7 @@ import org.hibernatespatial.criterion.SpatialRestrictions
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryFactory
+import be.cytomine.utils.GeometryUtils
 
 class RestReviewedAnnotationController extends RestController {
 
@@ -61,8 +62,26 @@ class RestReviewedAnnotationController extends RestController {
     def listByImage = {
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
         if (image && params.bbox) {
-            def list = reviewedAnnotationService.list(image,(String) params.bbox)
-            responseSuccess(list)
+//            def list = reviewedAnnotationService.list(image,(String) params.bbox)
+            Geometry boundingbox = GeometryUtils.createBoundingBox((String)params.bbox)
+
+            println "boundingbox.toString()=" + boundingbox.toString()
+            String request = "SELECT reviewed.id, AsText(reviewed.location), (SELECT SUM(ST_CoveredBy(ga.location,gb.location)::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,GeometryFromText('" + boundingbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
+                    " FROM reviewed_annotation reviewed\n" +
+                    " WHERE reviewed.image_id = $image.id\n" +
+                    " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))\n" +
+                    " ORDER BY numberOfCoveringAnnotation asc, id asc"
+
+
+            println "REQUEST=" + request
+            def sql = new Sql(dataSource)
+
+            def data = []
+            sql.eachRow(request) {
+                data << [id: it[0], location: it[1], term: []]
+            }
+
+            responseSuccess(data)
         }
         else if(image) responseSuccess(reviewedAnnotationService.list(image))
         else responseNotFound("Image", params.idImage)

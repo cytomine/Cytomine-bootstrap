@@ -121,18 +121,33 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         annotationsCollection= new AnnotationReviewedCollection({image:this.imageID, term:undefined}).url().replace("json", "jsonp");
     }
 
-    this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
-        renderers: ["Canvas", "SVG", "VML"],
-        strategies:[
-            new OpenLayers.Strategy.BBOX({resFactor:0.5})
-        ],
-        protocol:new OpenLayers.Protocol.Script({
-            url: annotationsCollection,
-            format:new OpenLayers.Format.Cytomine({ annotationLayer:this}),
-            callbackKey:"callback"
-        }),
-        'styleMap':styleMap
-    });
+
+//    if(this.reviewLayer) {
+//        this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
+//            //renderers: ["Canvas", "SVG", "VML"],
+////            protocol:new OpenLayers.Protocol.Script({
+////                url: annotationsCollection,
+////                format:new OpenLayers.Format.Cytomine({ annotationLayer:this}),
+////                callbackKey:"callback"
+////            }),
+//            'styleMap':styleMap
+//        });
+//    } else {
+        this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
+            //renderers: ["Canvas", "SVG", "VML"],
+            strategies:[
+                new OpenLayers.Strategy.BBOX({resFactor:1})
+            ],
+            protocol:new OpenLayers.Protocol.Script({
+                url: annotationsCollection,
+                format:new OpenLayers.Format.Cytomine({ annotationLayer:this}),
+                callbackKey:"callback"
+            }),
+            'styleMap':styleMap
+        });
+//    }
+
+
     this.controls = null;
     this.dialog = null;
     this.rotate = false;
@@ -200,14 +215,14 @@ AnnotationLayer.prototype = {
         var self = this;
         symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
             'fillColor':"#5BB75B",
-            'fillOpacity':1,
+            'fillOpacity':.6,
             'strokeColor':strokeColor,
             'strokeWidth':3,
             'pointRadius':this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
             'fillColor':"#5BB75B",
-            'fillOpacity':1,
+            'fillOpacity':.6,
             'strokeColor':strokeColor,
             'strokeWidth':3,
             'pointRadius':this.pointRadius
@@ -221,7 +236,7 @@ AnnotationLayer.prototype = {
         };
         symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
             'fillColor':"#5BB75B",
-            'fillOpacity':1,
+            'fillOpacity':.6,
             'strokeColor':strokeColor,
             'strokeWidth':5,
             'pointRadius':this.pointRadius
@@ -229,7 +244,7 @@ AnnotationLayer.prototype = {
         window.app.status.currentTermsCollection.each(function (term) {
             symbolizers_lookup[term.id] = {
                 'fillColor':"#5BB75B",
-                'fillOpacity':1,
+                'fillOpacity':.6,
                 'strokeColor':strokeColor,
                 'strokeWidth':3,
                 'pointRadius':self.pointRadius
@@ -244,28 +259,28 @@ AnnotationLayer.prototype = {
         var self = this;
         symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
             'fillColor':"#BD362F",
-            'fillOpacity':1,
+            'fillOpacity':.6,
             'strokeColor':strokeColor,
             'strokeWidth':3,
             'pointRadius':this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
             'fillColor':"#BD362F",
-            'fillOpacity':1,
+            'fillOpacity':.6,
             'strokeColor':strokeColor,
             'strokeWidth':3,
             'pointRadius':this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
             'fillColor':"#BD362F",
-            'fillOpacity':1,
+            'fillOpacity':.6,
             'strokeColor':strokeColor,
             'strokeWidth':5,
             'pointRadius':this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
             'fillColor':"#BD362F",
-            'fillOpacity':1,
+            'fillOpacity':.6,
             'strokeColor':strokeColor,
             'strokeWidth':5,
             'pointRadius':this.pointRadius
@@ -273,7 +288,7 @@ AnnotationLayer.prototype = {
         window.app.status.currentTermsCollection.each(function (term) {
             symbolizers_lookup[term.id] = {
                 'fillColor':"#BD362F",
-                'fillOpacity':1,
+                'fillOpacity':.6,
                 'strokeColor':strokeColor,
                 'strokeWidth':3,
                 'pointRadius':self.pointRadius

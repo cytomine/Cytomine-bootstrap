@@ -304,6 +304,11 @@ var BrowseImageView = Backbone.View.extend({
     getUserLayer:function () {
         return this.userLayer;
     },
+    getUserAndReviewLayer:function () {
+        console.log("getUserAndReviewLayer.user="+this.userLayer.name);
+        console.log("getUserAndReviewLayer.review="+this.reviewPanel.reviewLayer.name);
+        return {user:this.userLayer, review:this.reviewPanel.reviewLayer};
+    },
     /**
      * Initialize the OpenLayers Map
      */
@@ -802,9 +807,19 @@ var BrowseImageView = Backbone.View.extend({
             toolbar.find('a[id=magic' + this.model.get('id') + ']').hide();
         }
         toolbar.find('a[id=modify' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().toggleEdit();
-            self.getUserLayer().toggleControl("modify");
-            self.getUserLayer().disableHightlight();
+            if(!self.review) {
+                self.getUserLayer().toggleEdit();
+                self.getUserLayer().toggleControl("modify");
+                self.getUserLayer().disableHightlight();
+            } else {
+                self.getUserAndReviewLayer().user.toggleEdit();
+                self.getUserAndReviewLayer().user.toggleControl("modify");
+                self.getUserAndReviewLayer().user.disableHightlight();
+                self.getUserAndReviewLayer().review.toggleEdit();
+                self.getUserAndReviewLayer().review.toggleControl("modify");
+                self.getUserAndReviewLayer().review.disableHightlight();
+            }
+
         });
         toolbar.find('a[id=delete' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
