@@ -168,6 +168,7 @@ class AnnotationTermService extends ModelService {
         //Save new object
         //domainService.saveDomain(domain)
         domain = AnnotationTerm.link(domain.userAnnotation, domain.term,domain.user)
+
         def response = responseService.createResponseMessage(domain, [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username], printMessage, "Add", domain.getCallBack())
 
         return response

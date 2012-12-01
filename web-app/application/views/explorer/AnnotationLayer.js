@@ -937,11 +937,17 @@ AnnotationLayer.prototype = {
 
     },
     termAdded:function (idAnnotation, idTerm) {
+        this.annotationRemoved(idAnnotation);
+        this.annotationAdded(idAnnotation);
+                  /*console.log("term Added " + idTerm);
         this.ontologyTreeView.check(idTerm);
-        this.refresh();
+        this.refresh();*/
     },
     termRemoved:function (idAnnotation, idTerm) {
+        this.annotationRemoved(idAnnotation);
+        this.annotationAdded(idAnnotation);
+        /*console.log("term Removed " + idTerm);
         this.ontologyTreeView.uncheck(idTerm);
-        this.refresh();
+        this.refresh();*/
     }
 };

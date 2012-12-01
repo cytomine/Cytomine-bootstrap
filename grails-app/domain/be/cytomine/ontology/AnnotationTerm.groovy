@@ -82,12 +82,11 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         return annotationTerm;
     }
 
-
     def getCallBack() {
-        HashMap<String, Object> callback = new HashMap<String, Object>();
-        callback.put("annotationID", this.userAnnotation.id)
-        callback.put("termID", this.term.id)
-        callback.put("imageID", this.userAnnotation.image.id)
+        return [
+                annotationID: this.userAnnotation.id,
+                termID : this.term.id,
+                imageID : this.userAnnotation.image.id]
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {

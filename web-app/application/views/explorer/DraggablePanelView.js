@@ -110,7 +110,6 @@ var DraggablePanelView = Backbone.View.extend({
 
         $(this.el).draggable({
             cancel:'input olControlOverviewMapElement',
-            handle:'.dragHandle',
             start:function (event, ui) {
                 start(this, ui.helper.position(), self);
             },

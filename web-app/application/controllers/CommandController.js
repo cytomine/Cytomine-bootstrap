@@ -4,17 +4,13 @@ var CommandController = Backbone.Router.extend({
     },
     undo:function () {
         var self = this;
-        console.log("undo");
         if (self.commandInProgess) {
             window.app.view.message("Oh wait :-)", "Operation already in progress", "error");
             return
         }
         self.commandInProgess = true;
-        console.log("post undo");
         $.post('command/undo.json', {}, function (data) {
             _.each(data, function (undoElem) {
-                console.log("undoElem");
-                console.log(undoElem);
                 self.dispatch(undoElem.callback, undoElem.message, "Undo");
                 if (undoElem.printMessage) {
                     window.app.view.message("Undo", undoElem.message, "info");
@@ -44,16 +40,13 @@ var CommandController = Backbone.Router.extend({
     },
 
     dispatch:function (callback, message, operation) {
-        console.log("callback");
-        console.log(callback);
-        console.log("operation");
-        console.log(operation);
+
         if (!callback) return; //nothing to do
 
         /**
          * ANNOTATION
          */
-        if (callback.method == "be.cytomine.AddAnnotationCommand") {
+        if (callback.method == "be.cytomine.AddUserAnnotationCommand") {
 
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function (object) {
 
@@ -66,7 +59,7 @@ var CommandController = Backbone.Router.extend({
             image.getUserLayer().annotationAdded(callback.annotationID);
             if (window.app.controllers.dashboard.view != null)
                 window.app.controllers.dashboard.view.refreshAnnotations();
-        } else if (callback.method == "be.cytomine.EditAnnotationCommand") {
+        } else if (callback.method == "be.cytomine.EditUserAnnotationCommand") {
 
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function (object) {
                 return object.idImage == callback.imageID;
@@ -77,7 +70,8 @@ var CommandController = Backbone.Router.extend({
             image.getUserLayer().annotationUpdated(callback.annotationID);
             if (window.app.controllers.dashboard.view != null)
                 window.app.controllers.dashboard.view.refreshAnnotations();
-        } else if (callback.method == "be.cytomine.DeleteAnnotationCommand") {
+
+        } else if (callback.method == "be.cytomine.DeleteUserAnnotationCommand") {
             console.log("delete annotation");
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function (object) {
                 return object.idImage == callback.imageID;
