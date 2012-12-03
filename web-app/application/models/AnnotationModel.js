@@ -39,10 +39,13 @@ var AnnotationReviewedModel = Backbone.Model.extend({
 //        return true;
 //    },
     url:function () {
-        return 'api/annotation/' + this.id + "/review.json";
+        if(this.fill)
+            return 'api/annotation/' + this.id + "/review/fill.json";
+        else return 'api/annotation/' + this.id + "/review.json";
     },
     initialize:function (options) {
         this.id = options.id;
+        this.fill = options.fill;
     }
 });
 

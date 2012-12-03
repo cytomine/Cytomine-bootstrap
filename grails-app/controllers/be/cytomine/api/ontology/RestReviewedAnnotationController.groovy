@@ -32,6 +32,7 @@ import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryFactory
 import be.cytomine.utils.GeometryUtils
+import com.vividsolutions.jts.io.WKTReader
 
 class RestReviewedAnnotationController extends RestController {
 
@@ -79,8 +80,10 @@ class RestReviewedAnnotationController extends RestController {
             def xfactor = "1.05"
             def yfactor = "1.05"
              //ST_ExteriorRing(
+
+            //size
             String request = "SELECT reviewed.id, AsText(reviewed.location) as loc, SUM(ST_CoveredBy(reviewed.location,gb.location)::integer) as numberOfCoveringAnnotation\n" +
-                    " FROM reviewed_annotation reviewed LEFT OUTER JOIN (SELECT gc.id,gc.image_id,ST_Translate(ST_Scale(gc.location, $xfactor, $yfactor), ST_X(ST_Centroid(gc.location))*(1 - $xfactor), ST_Y(ST_Centroid(gc.location))*(1 - $yfactor) ) as location FROM reviewed_annotation gc WHERE gc.image_id = $image.id  AND ST_IsValid(gc.location) AND ST_Intersects(gc.location,GeometryFromText('" + boundingbox.toString() + "',0))) gb ON reviewed.id=gb.id\n" +
+                    " FROM reviewed_annotation reviewed , (SELECT gc.id,gc.image_id,ST_Translate(ST_Scale(gc.location, $xfactor, $yfactor), ST_X(ST_Centroid(gc.location))*(1 - $xfactor), ST_Y(ST_Centroid(gc.location))*(1 - $yfactor) ) as location FROM reviewed_annotation gc WHERE gc.image_id = $image.id  AND ST_IsValid(gc.location) AND ST_Intersects(gc.location,GeometryFromText('" + boundingbox.toString() + "',0))) gb\n" +
                     " WHERE reviewed.image_id = $image.id\n" +
 //                    " AND reviewed.id <> gb.id\n" +
                     " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))\n" +
@@ -528,6 +531,70 @@ class RestReviewedAnnotationController extends RestController {
 
     }
 
+    def fillAnnotationReview = {
+        try {
+            ReviewedAnnotation reviewedAnnotation = ReviewedAnnotation.read(params.long('id'))
+            if (!reviewedAnnotation) throw new ObjectNotFoundException("Review Annotation ${params.long('id')} not found!")
+
+            if(reviewedAnnotation.image.reviewUser && reviewedAnnotation.image.reviewUser.id!=cytomineService.currentUser.id)
+                throw new WrongArgumentException("You must be the image reviewer to modify annotation. Image reviewer is ${reviewedAnnotation.image.reviewUser?.username}.")
+
+            def response = [:]
+
+            reviewedAnnotation
+
+            //Is the first polygon always the big 'boundary' polygon?
+            String newGeom = "POLYGON (" + getFirstLocation(reviewedAnnotation.location.toString()) +"))"
+            reviewedAnnotation.location = new WKTReader().read(newGeom)
+            domainService.saveDomain(reviewedAnnotation)
 
 
+            response.reviewedannotation = reviewedAnnotation
+            response.message = "Annotation review is updated"
+            responseSuccess(response,200)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+    }
+
+
+
+
+//    def testn() {
+//        println "testN"
+//        ReviewedAnnotation reviewed = ReviewedAnnotation.read(8860194)
+//        String location = reviewed.location.toString()
+//        println "location=" + location
+//        println "getNumGeometries=" + reviewed.location.getNumGeometries()
+//        reviewed.location.normalize()
+//        println "getGeometryN=" + reviewed.location.getGeometryN(0).toString()
+//        String geom = "POLYGON (" + getFirstLocation(reviewed.location.toString()) +"))"
+//        println geom
+//        reviewed.location = new WKTReader().read(geom)
+//       reviewed.save(flush:true)
+//    }
+
+    private String getFirstLocation(String form) {
+        int i = 0
+        int start, stop
+        while(form.charAt(i)!='(') i++
+
+        while(form.charAt(i+1)=='(') i++
+
+        start = i
+        println "mustbe(=" + form.charAt(i)
+        println "mustNotbe(=" + form.charAt(i+1)
+
+        while(form.charAt(i)!=')') i++
+
+        stop = i
+        println "mustbe)=" + form.charAt(i)
+        println "mustNotbe)=" + form.charAt(i-1)
+
+        print "final="+ form.substring(start,stop+1)
+
+        form.substring(start,stop+1)
+
+    }
 }

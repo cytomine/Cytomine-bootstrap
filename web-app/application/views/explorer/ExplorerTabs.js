@@ -56,9 +56,12 @@ var ExplorerTabs = Backbone.View.extend({
             success:function (model, response) {
                 view.model = model;
                 view.render();
-                $(".closeTab").on("click", function (e) {
+                $("#closeTabtabs-image-"+idImage).on("click", function (e) {
+                    console.log("############### CLOSE TAB:"+$(this).html());
                     var idImage = $(this).attr("data-image");
+                    console.log("############### idImage:"+idImage);
                     self.removeTab(idImage,"image");
+                    console.log("############### removed");
                 });
                 self.showTab(idImage,"image");
 
@@ -89,7 +92,7 @@ var ExplorerTabs = Backbone.View.extend({
             success:function (model, response) {
                 view.model = model;
                 view.render();
-                $(".closeTab").on("click", function (e) {
+                $("#closeTabtabs-review-"+idImage).on("click", function (e) {
                     var idImage = $(this).attr("data-image");
                     self.removeTab(idImage,"review");
                 });
@@ -121,8 +124,10 @@ var ExplorerTabs = Backbone.View.extend({
      */
     removeTab:function (idImage, prefix) {
         var browseImageView = null
+        console.log("############### getImageView:"+idImage);
         if(prefix!="review") browseImageView = this.getImageView(idImage);
         else browseImageView = this.getImageView("review-"+idImage);
+        console.log("############### browseImageView:"+browseImageView);
         browseImageView.view.stopBroadcastingInterval();
         browseImageView.view.stopWatchOnlineUsersInterval();
         var indexOf = this.tabs.indexOf(browseImageView);

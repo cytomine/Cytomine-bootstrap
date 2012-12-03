@@ -302,18 +302,7 @@ var ReviewPanel = Backbone.View.extend({
         self.browseImageView.removeFeature(annotation.id);
         new AnnotationReviewedModel({id:annotation.id}).save({terms:terms}, {
             success:function (model, response) {
-                //add the reviewed annotation on the layer + print message
-                var newFeature = AnnotationLayerUtils.createFeatureFromAnnotation(response.reviewedannotation);
-                var cropURL = annotation.get('cropURL');
-                var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url:cropURL, alt:cropURL});
-                var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message:response.message, cropImage:cropImage});
-                window.app.view.message("Reviewed annotation", alertMessage, "success");
-                self.reviewLayer.addFeature(newFeature);
-                self.reviewLayer.controls.select.unselectAll();
-                self.reviewLayer.controls.select.select(newFeature);
-                _.each(self.printedLayer,function(layer) {
-                    layer.vectorsLayer.refresh();
-                });
+                self.refreshAnnotation(response,annotation);
             },
             error:function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -348,6 +337,36 @@ var ReviewPanel = Backbone.View.extend({
                 window.app.view.message("Annotation", json.errors, "error");
             }});
     },
+    removeEmptySpace:function () {
+        var self = this;
+        var annotation = self.browseImageView.currentAnnotation;
+
+        //remove the based annotation from the layer
+        self.browseImageView.removeFeature(annotation.id);
+        new AnnotationReviewedModel({id:annotation.id,fill:true}).save({}, {
+            success:function (model, response) {
+                self.refreshAnnotation(response,annotation);
+            },
+            error:function (model, response) {
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Annotation", json.errors, "error");
+            }});
+    },
+    refreshAnnotation : function(response,annotation) {
+        var self = this;
+         //add the reviewed annotation on the layer + print message
+        var newFeature = AnnotationLayerUtils.createFeatureFromAnnotation(response.reviewedannotation);
+        var cropURL = annotation.get('cropURL');
+        var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url:cropURL, alt:cropURL});
+        var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message:response.message, cropImage:cropImage});
+        window.app.view.message("Reviewed annotation", alertMessage, "success");
+        self.reviewLayer.addFeature(newFeature);
+        self.reviewLayer.controls.select.unselectAll();
+        self.reviewLayer.controls.select.select(newFeature);
+        _.each(self.printedLayer,function(layer) {
+            layer.vectorsLayer.refresh();
+        });
+    },
     showCurrentAnnotation:function (annotation) {
         var self = this;
         console.log("showCurrentAnnotation=" + annotation);
@@ -374,21 +393,36 @@ var ReviewPanel = Backbone.View.extend({
 
             if (params.idAnnotation == "") {
                 //no annotation selected
-                $("#currentReviewAnnotation" + self.model.id).find("#reviewSingle" + idAnnotation).attr("disabled", "disabled")
-                $("#currentReviewAnnotation" + self.model.id).find("#unreviewSingle" + idAnnotation).attr("disabled", "disabled")
+                $("#currentReviewAnnotation" + self.model.id).find("#reviewSingle" + idAnnotation).attr("disabled", "disabled");
+                $("#currentReviewAnnotation" + self.model.id).find("#unreviewSingle" + idAnnotation).attr("disabled", "disabled");
+                $("#currentReviewAnnotation" + self.model.id).find("#removeEmptySpace" + idAnnotation).attr("disabled", "disabled");
             } else if (params.isReviewed) {
                 //annotation is reviewed, cannot re-review
-                $("#currentReviewAnnotation" + self.model.id).find("#reviewSingle" + idAnnotation).attr("disabled", "disabled")
+                $("#currentReviewAnnotation" + self.model.id).find("#reviewSingle" + idAnnotation).attr("disabled", "disabled");
             } else {
                 //annotation is not reviewed, cannot unreview
-                $("#currentReviewAnnotation" + self.model.id).find("#unreviewSingle" + idAnnotation).attr("disabled", "disabled")
+                $("#currentReviewAnnotation" + self.model.id).find("#unreviewSingle" + idAnnotation).attr("disabled", "disabled");
+                $("#currentReviewAnnotation" + self.model.id).find("#removeEmptySpace" + idAnnotation).attr("disabled", "disabled");
             }
+
+            //if its not a multipolygon, we disable 'fill' form feature.
+            if(annotation == null || (annotation.get('location').indexOf('MULTIPOLYGON')!=0 && annotation.get('location').indexOf('POLYGON')!=0)) {
+                $("#currentReviewAnnotation" + self.model.id).find("#removeEmptySpace" + idAnnotation).attr("disabled", "disabled");
+                $("#currentReviewAnnotation" + self.model.id).find("#removeEmptySpace" + idAnnotation).hide();
+            } else {
+                $('<br>').insertAfter("#removeEmptySpace" + idAnnotation)
+            }
+
+
 
             $("#currentReviewAnnotation" + self.model.id).find("#reviewSingle" + idAnnotation).click(function () {
                 self.addReviewAnnotation();
             });
             $("#currentReviewAnnotation" + self.model.id).find("#unreviewSingle" + idAnnotation).click(function () {
                 self.deleteReviewAnnotation();
+            });
+            $("#currentReviewAnnotation" + self.model.id).find("#removeEmptySpace" + idAnnotation).click(function () {
+                self.removeEmptySpace();
             });
             $("#currentReviewAnnotation" + self.model.id).find("#reviewValidate" + idAnnotation).click(function () {
                 self.validatePicture();
