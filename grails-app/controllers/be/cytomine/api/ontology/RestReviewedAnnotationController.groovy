@@ -78,13 +78,13 @@ class RestReviewedAnnotationController extends RestController {
              */
             def xfactor = "1.2"
             def yfactor = "1.2"
-
-            String request = "SELECT reviewed.id, AsText(reviewed.location), SUM(ST_CoveredBy(reviewed.location,gb.location)::integer) as numberOfCoveringAnnotation\n" +
-                    " FROM reviewed_annotation reviewed, (SELECT gc.id,gc.image_id,ST_Translate(ST_Scale(gc.location, $xfactor, $yfactor), ST_X(ST_Centroid(gc.location))*(1 - $xfactor), ST_Y(ST_Centroid(gc.location))*(1 - $yfactor) ) as location FROM reviewed_annotation gc WHERE gc.image_id = $image.id  AND ST_IsValid(gc.location) AND ST_Intersects(gc.location,GeometryFromText('" + boundingbox.toString() + "',0))) gb\n" +
+             //ST_ExteriorRing(
+            String request = "SELECT reviewed.id, AsText(reviewed.location) as loc, SUM(ST_CoveredBy(reviewed.location,gb.location)::integer) as numberOfCoveringAnnotation\n" +
+                    " FROM reviewed_annotation reviewed LEFT OUTER JOIN (SELECT gc.id,gc.image_id,ST_Translate(ST_Scale(gc.location, $xfactor, $yfactor), ST_X(ST_Centroid(gc.location))*(1 - $xfactor), ST_Y(ST_Centroid(gc.location))*(1 - $yfactor) ) as location FROM reviewed_annotation gc WHERE gc.image_id = $image.id  AND ST_IsValid(gc.location) AND ST_Intersects(gc.location,GeometryFromText('" + boundingbox.toString() + "',0))) gb ON reviewed.id=gb.id\n" +
                     " WHERE reviewed.image_id = $image.id\n" +
-                    " AND reviewed.id <> gb.id\n" +
+//                    " AND reviewed.id <> gb.id\n" +
                     " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))\n" +
-                    " GROUP BY reviewed.id, AsText(reviewed.location) \n" +
+                    " GROUP BY reviewed.id, loc \n" +
                     " ORDER BY numberOfCoveringAnnotation asc, id desc"
 
             println "REQUEST=" + request

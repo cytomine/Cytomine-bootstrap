@@ -23,30 +23,30 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
     def sessionFactory
     def springSecurityService
 
-    void testCommandMaxSizeTooLong() {
-        String jsonImage = "{\"text\" : \"*************************************************************************"
-        String textAdded = "***************************************************************************************"
-        textAdded = textAdded + textAdded + textAdded + textAdded + textAdded + textAdded + textAdded + textAdded + textAdded + textAdded
-        //create a big string (don't care about content)
-        while (jsonImage.size() <= (ConfigurationHolder.config.cytomine.maxRequestSize * 2)) {
-            jsonImage += textAdded
-        }
-        jsonImage = jsonImage + "\"}"
-
-        log.info("post with data size:" + jsonImage.size())
-        String URL = Infos.CYTOMINEURL + "api/image.json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        client.post(jsonImage)
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        println response
-        client.disconnect();
-
-        log.info("check response")
-        assertEquals(413, code)
-        def json = JSON.parse(response)
-    }
+//    void testCommandMaxSizeTooLong() {
+//        String jsonImage = "{\"text\" : \"*************************************************************************"
+//        String textAdded = "***************************************************************************************"
+//        textAdded = textAdded + textAdded + textAdded + textAdded + textAdded + textAdded + textAdded + textAdded + textAdded + textAdded
+//        //create a big string (don't care about content)
+//        while (jsonImage.size() <= (ConfigurationHolder.config.cytomine.maxRequestSize * 2)) {
+//            jsonImage += textAdded
+//        }
+//        jsonImage = jsonImage + "\"}"
+//
+//        log.info("post with data size:" + jsonImage.size())
+//        String URL = Infos.CYTOMINEURL + "api/image.json"
+//        HttpClient client = new HttpClient()
+//        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        client.post(jsonImage)
+//        int code = client.getResponseCode()
+//        String response = client.getResponseData()
+//        println response
+//        client.disconnect();
+//
+//        log.info("check response")
+//        assertEquals(413, code)
+//        def json = JSON.parse(response)
+//    }
 
     void testCommandMaxSizeOK() {
         log.info("create image")
