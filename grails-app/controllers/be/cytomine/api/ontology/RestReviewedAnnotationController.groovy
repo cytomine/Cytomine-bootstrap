@@ -76,8 +76,8 @@ class RestReviewedAnnotationController extends RestController {
              * So in gc, we increase the size of each compare annotation just for the check
              * So if an annotation x is under y but x has some point next outside y, x will appear top (if no resize, it will appear top or behind).
              */
-            def xfactor = "1.2"
-            def yfactor = "1.2"
+            def xfactor = "1.05"
+            def yfactor = "1.05"
              //ST_ExteriorRing(
             String request = "SELECT reviewed.id, AsText(reviewed.location) as loc, SUM(ST_CoveredBy(reviewed.location,gb.location)::integer) as numberOfCoveringAnnotation\n" +
                     " FROM reviewed_annotation reviewed LEFT OUTER JOIN (SELECT gc.id,gc.image_id,ST_Translate(ST_Scale(gc.location, $xfactor, $yfactor), ST_X(ST_Centroid(gc.location))*(1 - $xfactor), ST_Y(ST_Centroid(gc.location))*(1 - $yfactor) ) as location FROM reviewed_annotation gc WHERE gc.image_id = $image.id  AND ST_IsValid(gc.location) AND ST_Intersects(gc.location,GeometryFromText('" + boundingbox.toString() + "',0))) gb ON reviewed.id=gb.id\n" +
