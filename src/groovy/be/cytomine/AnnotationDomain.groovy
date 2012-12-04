@@ -56,6 +56,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
     abstract def terms()
     abstract def termsId()
     abstract boolean isAlgoAnnotation()
+    abstract boolean isReviewedAnnotation()
     abstract List<Term> termsForReview()
     abstract def getCropUrl(String cytomineUrl)
 

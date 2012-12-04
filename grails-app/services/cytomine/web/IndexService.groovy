@@ -120,12 +120,12 @@ class IndexService {
 
     def createIndex(def statement, String table, String col, String type) {
         String name = table + "_" + col + "_index"
-        String reqdrop = "DROP INDEX IF EXISTS " + name + ";"
-        log.info reqdrop
-        statement.execute(reqdrop);
+//        String reqdrop = "DROP INDEX IF EXISTS " + name + ";"
+//        log.info reqdrop
+//        statement.execute(reqdrop);
         String reqcreate = "CREATE INDEX " + name + " ON " + table + " USING $type (" + col + ");"
         log.info reqcreate
-        statement.execute(reqcreate);
+        try {statement.execute(reqcreate); } catch(Exception e) { log.info "Cannot create index $name="+e}
     }
 
 }

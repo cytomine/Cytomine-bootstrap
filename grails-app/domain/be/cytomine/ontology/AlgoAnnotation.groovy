@@ -59,6 +59,10 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
         return true
     }
 
+    boolean isReviewedAnnotation() {
+        return false
+    }
+
     List<Term> termsForReview() {
         AlgoAnnotationTerm.findAllByAnnotationIdentAndUserJob(id,user).collect{it.term}.unique()
     }

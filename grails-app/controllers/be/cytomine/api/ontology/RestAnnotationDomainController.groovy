@@ -24,6 +24,9 @@ import be.cytomine.ontology.ReviewedAnnotation
 import org.omg.PortableServer.POAPackage.ObjectNotActive
 import javassist.tools.rmi.ObjectNotFoundException
 import be.cytomine.Exception.ForbiddenException
+import be.cytomine.Exception.ObjectNotFoundException
+import com.vividsolutions.jts.io.WKTReader
+import be.cytomine.ontology.AlgoAnnotation
 
 class RestAnnotationDomainController extends RestController {
 
@@ -39,6 +42,7 @@ class RestAnnotationDomainController extends RestController {
     def mailService
     def dataSource
     def algoAnnotationService
+    def reviewedAnnotationService
 
     def listByProject = {
         Project project = projectService.read(params.long('id'), new Project())
@@ -162,31 +166,40 @@ class RestAnnotationDomainController extends RestController {
 
     def update= {
         //def json = request.JSON
-        try {
-            SecUser user = cytomineService.currentUser
-            def result
-            if(user.algo()) {
-                forward(controller: "restAlgoAnnotation", action: "update")
-            } else {
-                AnnotationDomain annotation = UserAnnotation.read(params.getLong("id"))
+        log.info "update generic"
+        if(params.getBoolean('fill'))
+            forward(action: "fillAnnotation")
+        else {
 
-                if(annotation)
-                    forward(controller: "restUserAnnotation", action: "update")
-                else {
-                    annotation = ReviewedAnnotation.read(params.getLong("id"))
+            try {
+                log.info "update classic"
+                SecUser user = cytomineService.currentUser
+                def result
+                if(user.algo()) {
+                    forward(controller: "restAlgoAnnotation", action: "update")
+                } else {
+                    AnnotationDomain annotation = UserAnnotation.read(params.getLong("id"))
 
-                    if(annotation) {
-                        if(annotation.user!=user) throw new ForbiddenException("You cannot update this annotation! Only ${annotation.user.username} can do that!");
-                        forward(controller: "restReviewedAnnotation", action: "update")
+                    if(annotation)
+                        forward(controller: "restUserAnnotation", action: "update")
+                    else {
+                        annotation = ReviewedAnnotation.read(params.getLong("id"))
+
+                        if(annotation) {
+                            if(annotation.user!=user) throw new ForbiddenException("You cannot update this annotation! Only ${annotation.user.username} can do that!");
+                            forward(controller: "restReviewedAnnotation", action: "update")
+                        }
+                        else throw new ObjectNotFoundException("Annotation not found with id " + params.id)
                     }
-                    else throw new ObjectNotFoundException("Annotation not found with id " + params.id)
                 }
+                //responseResult(result)
+            } catch (CytomineException e) {
+                log.error(e)
+                response([success: false, errors: e.msg], e.code)
             }
-            //responseResult(result)
-        } catch (CytomineException e) {
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
+
         }
+
     }
 
     def delete = {
@@ -203,6 +216,65 @@ class RestAnnotationDomainController extends RestController {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
+    }
+
+    def fillAnnotation = {
+        log.info "fillAnnotation"
+        try {
+            AnnotationDomain annotation = getAnnotationDomain(params.long('id'))
+            if (!annotation) throw new ObjectNotFoundException("Review Annotation ${params.long('id')} not found!")
+
+//            if(annotation.image.reviewUser && annotation.image.reviewUser.id!=cytomineService.currentUser.id)
+//                throw new WrongArgumentException("You must be the image reviewer to modify annotation. Image reviewer is ${annotation.image.reviewUser?.username}.")
+
+            def response = [:]
+
+            //Is the first polygon always the big 'boundary' polygon?
+            String newGeom = "POLYGON (" + getFirstLocation(annotation.location.toString()) +"))"
+            def json = JSON.parse(annotation.encodeAsJSON())
+            json.location = newGeom
+
+            if(annotation.algoAnnotation) responseSuccess(algoAnnotationService.update(annotation,json))
+            else if(annotation.reviewedAnnotation) responseSuccess(reviewedAnnotationService.update(annotation,json))
+            else responseSuccess(userAnnotationService.update(annotation,json))
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+    }
+
+    private String getFirstLocation(String form) {
+        int i = 0
+        int start, stop
+        while(form.charAt(i)!='(') i++
+
+        while(form.charAt(i+1)=='(') i++
+
+        start = i
+        println "mustbe(=" + form.charAt(i)
+        println "mustNotbe(=" + form.charAt(i+1)
+
+        while(form.charAt(i)!=')') i++
+
+        stop = i
+        println "mustbe)=" + form.charAt(i)
+        println "mustNotbe)=" + form.charAt(i-1)
+
+        print "final="+ form.substring(start,stop+1)
+
+        form.substring(start,stop+1)
+
+    }
+
+    private AnnotationDomain getAnnotationDomain(long id) {
+        AnnotationDomain basedAnnotation = UserAnnotation.read(id)
+        if (!basedAnnotation)
+            basedAnnotation = AlgoAnnotation.read(id)
+        if (!basedAnnotation)
+            basedAnnotation = ReviewedAnnotation.read(id)
+        if (basedAnnotation) return basedAnnotation
+        else throw new ObjectNotFoundException("Annotation ${id} not found")
+
     }
 
 }

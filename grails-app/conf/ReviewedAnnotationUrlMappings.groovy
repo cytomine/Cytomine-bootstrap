@@ -39,9 +39,9 @@ class ReviewedAnnotationUrlMappings {
             action = [POST:"addAnnotationReview",PUT:"addAnnotationReview",DELETE:"deleteAnnotationReview"]
          }
 
-        "/api/annotation/$id/review/fill"(controller: "restReviewedAnnotation"){
-            action = [PUT:"fillAnnotationReview"]
-         }
+//        "/api/annotation/$id/review/fill"(controller: "restReviewedAnnotation"){
+//            action = [PUT:"fillAnnotationReview"]
+//         }
 
         "/api/imageinstance/$id/review"(controller: "restReviewedAnnotation"){
             action = [POST:"startImageInstanceReview",PUT:"startImageInstanceReview",DELETE: "stopImageInstanceReview"]

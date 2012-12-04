@@ -837,6 +837,32 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().toggleRotate();
             self.getUserLayer().disableHightlight();
         });
+        toolbar.find('a[id=fill' + this.model.get('id') + ']').click(function () {
+            var annotation = self.currentAnnotation;
+            if(annotation) {
+                new AnnotationModel({id:annotation.id, fill:true}).save({}, {
+                        success:function (annotation, response) {
+                            window.app.view.message("Annotation edited", response.message, "success");
+                            if(!self.review) {
+                                self.getUserLayer().vectorsLayer.refresh()
+                            } else {
+                                self.getUserAndReviewLayer().user.vectorsLayer.refresh()
+                                self.getUserAndReviewLayer().review.vectorsLayer.refresh()
+                            }
+                        },
+                        error:function (model, response) {
+                            var json = $.parseJSON(response.responseText);
+                            window.app.view.message("Annotation", json.errors, "");
+                        }
+                });
+             } else {
+                window.app.view.message("Annotation", "You must select an annotation!", "error");
+            }  //vectorsLayer.refresh()
+
+
+            return false;
+
+        });
         toolbar.find('a[id=resize' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().toggleResize();
             self.getUserLayer().disableHightlight();
@@ -880,8 +906,12 @@ var BrowseImageView = Backbone.View.extend({
             layerAnnotation.isOwner = false;
             layerAnnotation.loadAnnotations(self);
         } else {
+
             self.reviewPanel.addReviewLayerToReview();
             self.reviewPanel.addLayerToReview(window.app.status.user.id);
+            self.reviewPanel.removeLayerFromReview(window.app.status.user.id);
+            self.reviewPanel.addLayerToReview(window.app.status.user.id);
+
         }
 
     },
@@ -893,6 +923,10 @@ var BrowseImageView = Backbone.View.extend({
             browseImageView : this
         }).render();
 
+    },
+    clickSelect : function() {
+        var self = this;
+        $("#" + self.divId).find('#toolbar' + self.model.get('id')).find('a#select' + self.model.get('id')).click();
     },
     /**
      * Create a draggable Panel containing a tree which represents the Ontology

@@ -16,21 +16,29 @@ var AnnotationModel = Backbone.Model.extend({
     url:function () {
         var base = 'api/annotation';
         var format = '.json';
+        console.log("this.isNew()="+this.isNew());
+        console.log("this.id="+this.id);
         if (this.isNew()) return base + format;
-        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+        var params = "";
+        if(this.fill) params = "?fill=true";
+        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format+params;
+    },
+    initialize:function (options) {
+        this.id = options.id;
+        this.fill = options.fill;
     }
 });
 
 
-var AnnotationModel = Backbone.Model.extend({
-
-    url:function () {
-        var base = 'api/annotation';
-        var format = '.json';
-        if (this.isNew()) return base + format;
-        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
-    }
-});
+//var AnnotationModel = Backbone.Model.extend({
+//
+//    url:function () {
+//        var base = 'api/annotation';
+//        var format = '.json';
+//        if (this.isNew()) return base + format;
+//        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+//    }
+//});
 
 
 

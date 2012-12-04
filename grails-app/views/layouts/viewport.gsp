@@ -108,6 +108,7 @@ body {
     <!-- Datatables -->
     <script src="lib/DataTables-1.9.0/media/js/jquery.dataTables.js" type="text/javascript"></script>
 
+
     <!-- Application -->
     <script type="text/javascript" src="application/Utilities.js" ></script>
     <!-- controllers -->

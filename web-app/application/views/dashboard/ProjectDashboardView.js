@@ -104,16 +104,21 @@ var ProjectDashboardView = Backbone.View.extend({
 
         var refreshDashboard = function (model, response) {
             self.model = model;
-
+            console.log("fetchProjectInfo");
             self.fetchProjectInfo();
+            console.log("fetchCommands");
             self.fetchCommands();
+            console.log("fetchUsersOnline");
             self.fetchUsersOnline();
 
+            console.log("create stats view");
             //self.fetchWorstAnnotations(collection,terms);
             if (self.projectStats == null)
                 self.projectStats = new ProjectDashboardStats({model:self.model});
 
+            console.log("fetsh stats");
             self.projectStats.fetchStats(window.app.status.currentTermsCollection);
+            console.log("end-1...");
             //new ProjectDashboardStats({model : self.model}).fetchStats();
         }
         var fetchInformations = function () {
@@ -125,7 +130,9 @@ var ProjectDashboardView = Backbone.View.extend({
             });
         }
 
+        console.log("fetchInformations");
         fetchInformations();
+        console.log("end...");
 
     },
     fetchProjectInfo:function () {
@@ -373,7 +380,8 @@ var ProjectDashboardView = Backbone.View.extend({
                             action = _.template(commandImageInstanceTpl, {idProject:self.model.id, idImage:jsonCommand.id, imageFilename:jsonCommand.filename, icon:"delete.gif", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, cropURL:cropURL, cropStyle:cropStyle});
 
                         }
-                        ulContainer.append(action);
+                        if(action!="undefined")
+                            ulContainer.append(action);
                     });
                 }
                 commandCollection.fetch({

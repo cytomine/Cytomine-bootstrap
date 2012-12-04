@@ -151,6 +151,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.controls = null;
     this.dialog = null;
     this.rotate = false;
+    this.fill = false;
     this.featuresHidden = [];
     this.resize = false;
     this.drag = false;
@@ -335,6 +336,8 @@ AnnotationLayer.prototype = {
                 self.browseImageView.showAnnotationInReviewPanel(null);
                 self.clearPopup(map, evt);
                 self.vectorsLayer.drawFeature(evt.feature);
+
+//                self.browseImageView.clickSelect();
                 //alias.ontologyTreeView.refresh(null);
             },
             'featureadded':function (evt) {
@@ -799,6 +802,15 @@ AnnotationLayer.prototype = {
         this.resize = false;
         this.drag = false;
         this.rotate = true;
+        this.fill = false;
+        this.updateControls();
+        this.toggleControl("modify");
+    },
+    toggleFill:function () {
+        this.resize = false;
+        this.drag = false;
+        this.rotate = false;
+        this.fill = true;
         this.updateControls();
         this.toggleControl("modify");
     },
@@ -806,6 +818,7 @@ AnnotationLayer.prototype = {
         this.resize = true;
         this.drag = false;
         this.rotate = false;
+        this.fill = false;
         this.updateControls();
         this.toggleControl("modify");
     },
@@ -813,6 +826,7 @@ AnnotationLayer.prototype = {
         this.resize = false;
         this.drag = true;
         this.rotate = false;
+        this.fill = false;
         this.updateControls();
         this.toggleControl("modify");
 
@@ -821,6 +835,7 @@ AnnotationLayer.prototype = {
         this.resize = false;
         this.drag = false;
         this.rotate = false;
+        this.fill = false;
         this.updateControls();
         this.toggleControl("modify");
 

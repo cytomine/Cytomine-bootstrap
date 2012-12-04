@@ -7,6 +7,7 @@ import be.cytomine.test.http.UserAnnotationAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.codehaus.groovy.grails.web.json.JSONArray
+import be.cytomine.ontology.UserAnnotation
 
 /**
  * Created by IntelliJ IDEA.
@@ -107,4 +108,42 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
         assert json instanceof JSONArray
 
     }
+
+    void testMultipleAuthConnexion() {
+        BasicInstance.createOrGetBasicUserAnnotation()
+        UserAnnotation annotation = UserAnnotation.list().first()
+
+        log.info "show userannotation " + annotation.id
+        String URL = Infos.CYTOMINEURL + "api/userannotation/" + annotation.id + ".json"
+        HttpClient client1 = new HttpClient();
+        client1.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        client1.get()
+        int code = client1.getResponseCode()
+        String response = client1.getResponseData()
+        assert code == 200
+
+        HttpClient client2 = new HttpClient();
+        client2.connect(URL, Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD);
+        client2.get()
+        code = client2.getResponseCode()
+        assert code == 200
+        client1.disconnect()
+
+        client1.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        client1.get()
+        code = client1.getResponseCode()
+        assert code == 200
+
+        client2.disconnect();
+        client2.connect(URL, Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD);
+        client2.get()
+        code = client2.getResponseCode()
+        assert code == 200
+
+        client1.disconnect();
+        client2.disconnect();
+    }
+
+
+
 }

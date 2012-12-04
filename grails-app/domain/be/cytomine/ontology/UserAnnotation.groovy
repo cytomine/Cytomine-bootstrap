@@ -58,6 +58,10 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
         return false
     }
 
+    boolean isReviewedAnnotation() {
+        return false
+    }
+
     def getCropUrl(String cytomineUrl) {
         UrlApi.getUserAnnotationCropWithAnnotationId(cytomineUrl,id)
     }

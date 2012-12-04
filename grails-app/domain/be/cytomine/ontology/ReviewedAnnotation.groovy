@@ -78,6 +78,10 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
         return false
     }
 
+    boolean isReviewedAnnotation() {
+        return true
+    }
+
     List<Term> termsForReview() {
         term
     }

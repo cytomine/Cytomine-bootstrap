@@ -461,7 +461,7 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
           //add review
           result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(201, result.code)
+          assertEquals(200, result.code)
 
           //mark stop review + check attr
           result = ReviewedAnnotationAPI.markStopReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -508,7 +508,7 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
           assertEquals(200, result.code)
 
           result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(201, result.code)
+          assertEquals(200, result.code)
       }
 
     void testAddReviewForAnnotationTerm() {
@@ -519,12 +519,35 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
 
         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(201, result.code)
+        assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         assert Long.parseLong(json.reviewedannotation.parentIdent.toString()) == annotation.id
         assert json.reviewedannotation.term !=null
         assert json.reviewedannotation.term.size()==1
+
+        def idReviewAnnotation = json.reviewedannotation.id
+        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        annotation.refresh()
+        assert annotation.countReviewedAnnotations == 1
+        result = ReviewedAnnotationAPI.undo()
+        assertEquals(200, result.code)
+
+        annotation.refresh()
+        assert annotation.countReviewedAnnotations == 0
+        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+
+
+        result = ReviewedAnnotationAPI.redo()
+        assertEquals(200, result.code)
+
+        annotation.refresh()
+        assert annotation.countReviewedAnnotations == 1
+        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
     }
 
     void testAddReviewForAlgoAnnotationTerm() {
@@ -540,13 +563,103 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
 
         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(201, result.code)
+        assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         assert Long.parseLong(json.reviewedannotation.parentIdent.toString()) == annotation.id
         assert json.reviewedannotation.term !=null
         assert json.reviewedannotation.term.size()==1
     }
+
+
+
+
+
+
+
+    void testRemoveReviewForAlgoAnnotationTerm() {
+        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        UserJob user = BasicInstance.createUserJob(image.project)
+        AlgoAnnotation annotation = BasicInstance.createAlgoAnnotation(user.job,user)
+        annotation.image = image
+        BasicInstance.saveDomain(annotation)
+        BasicInstance.createAlgoAnnotationTerm(user.job,annotation,user)
+
+
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+//        def json = JSON.parse(result.data)
+//        def idReviewAnnotation = json.reviewedannotation.i
+
+        result = ReviewedAnnotationAPI.removeReviewAnnotation(annotation.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
+
+    void testRemoveReviewForAnnotationTerm() {
+        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+
+        def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def json = JSON.parse(result.data)
+        def idReviewAnnotation = json.reviewedannotation.id
+        assertEquals(200, result.code)
+
+        result = ReviewedAnnotationAPI.removeReviewAnnotation(annotation.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+
+        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+
+        annotation.refresh()
+        assert annotation.countReviewedAnnotations == 0
+        result = ReviewedAnnotationAPI.undo()
+        assertEquals(200, result.code)
+
+        annotation.refresh()
+        assert annotation.countReviewedAnnotations == 1
+        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+
+        result = ReviewedAnnotationAPI.redo()
+        assertEquals(200, result.code)
+
+        annotation.refresh()
+        assert annotation.countReviewedAnnotations == 0
+        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     void testAddReviewAndUpdateGeometry() {
@@ -557,7 +670,7 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
 
         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(201, result.code)
+        assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         String newLocation = "POLYGON ((19830 21680, 21070 21600, 20470 20740, 19830 21680))"
@@ -577,7 +690,7 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
 
         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(201, result.code)
+        assertEquals(200, result.code)
 
         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(AlreadyExistException.CODE, result.code)
@@ -642,12 +755,6 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         annotation.refresh()
         image.refresh()
         image.project.refresh()
-
-        println "review.class="+review.parentClassName
-        println "review.id="+review.parentIdent
-        println "annotation.id="+annotation.id
-        println "image.id="+image.id
-        println "review.image.id="+review.image.id
 
         assert annotation.countReviewedAnnotations==1
         assert image.countImageReviewedAnnotations==1

@@ -201,15 +201,6 @@ class RestReviewedAnnotationController extends RestController {
         add(reviewedAnnotationService, request.JSON)
     }
 
-    def addAllJobImageAnnotation = {
-        //TODO::
-
-    }
-
-    def addAllUserImageAnnotation = {
-        //TODO::
-    }
-
     //update
     def update = {
         update(reviewedAnnotationService, request.JSON)
@@ -227,24 +218,7 @@ class RestReviewedAnnotationController extends RestController {
         def image = imageInstanceService.read(params.long('idImage'))
         def user = userService.read(params.idUser)
         if (image && user && params.bbox) {
-            responseSuccess(reviewedAnnotationService.list(image, user, (String) params.bbox))
-//            String baseUrl = grailsApplication.config.grails.serverURL
-//            def list = reviewedAnnotationService.list(image, user, (String) params.bbox)
-//
-//            println "ADECOMPTER="+(System.currentTimeMillis()-start)
-//
-//            def listOut = []
-//            ObjectMapper mapper = new ObjectMapper()
-//            list.each {
-//                Map jsonObject = it.getObjectMap(baseUrl)
-//
-//                String jsonString = mapper.writeValueAsString(jsonObject)
-//                listOut << jsonString
-//            }
-//
-//            String jsonStringFinal = mapper.writeValueAsString(listOut)
-//            response.status = 200
-//            render jsonStringFinal
+            responseSuccess(reviewedAnnotationService.list(image, user, (String) params.bbox))l
         }
         else if (image && user) responseSuccess(reviewedAnnotationService.list(image, user))
         else if (!user) responseNotFound("User", params.idUser)
@@ -259,8 +233,6 @@ class RestReviewedAnnotationController extends RestController {
         log.info "collection=${collection.size()} offset=$offset max=$max compute=${collection.size() - offset} maxForCollection=$maxForCollection"
         return collection.subList(offset, offset + maxForCollection)
     }
-
-
 
     def startImageInstanceReview = {
         try {
@@ -324,87 +296,55 @@ class RestReviewedAnnotationController extends RestController {
 
     def addAnnotationReview = {
         try {
-            def json = request.JSON
             AnnotationDomain basedAnnotation = getAnnotationDomain(params.long('id'))
             if(!basedAnnotation.image.isInReviewMode()) throw new WrongArgumentException("Cannot accept annotation, enable image review mode!")
             if(basedAnnotation.image.reviewUser && basedAnnotation.image.reviewUser.id!=cytomineService.currentUser.id) throw new WrongArgumentException("You must be the image reviewer to accept annotation. Image reviewer is ${basedAnnotation.image.reviewUser?.username}.")
             if(ReviewedAnnotation.findByParentIdent(basedAnnotation.id)) throw new AlreadyExistException("Annotation is already accepted!")
 
-            ReviewedAnnotation reviewedAnnotation = reviewAnnotation(basedAnnotation,json.terms,true)
-            def response = [:]
-            response.reviewedannotation = reviewedAnnotation
-            response.message = "Annotation review is added"
-            responseSuccess(response,201)
+            try {
+                ReviewedAnnotation review = createReviewAnnotation(basedAnnotation, null)
+                def result = reviewedAnnotationService.add(JSON.parse(review.encodeAsJSON()))
+                responseResult(result)
+            } catch (CytomineException e) {
+                log.error(e)
+                response([success: false, errors: e.msg], e.code)
+            }
+
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
     }
+
+
 
     def deleteAnnotationReview = {
         try {
             println "deleteAnnotationReview"
-            ReviewedAnnotation reviewedAnnotation = ReviewedAnnotation.read(params.long('id'))
-            if (!reviewedAnnotation) throw new ObjectNotFoundException("Review Annotation ${params.long('id')} not found!")
+            AnnotationDomain annotation = getAnnotationDomain(params.long('id'))
+            println "annotation="+annotation
 
+            ReviewedAnnotation reviewedAnnotation = ReviewedAnnotation.findByParentIdent(annotation.id)
+            println "reviewedAnnotation="+reviewedAnnotation
             if(reviewedAnnotation.image.reviewUser && reviewedAnnotation.image.reviewUser.id!=cytomineService.currentUser.id)
                 throw new WrongArgumentException("You must be the image reviewer to reject annotation. Image reviewer is ${reviewedAnnotation.image.reviewUser?.username}.")
 
-            def json = reviewedAnnotation.encodeAsJSON()
-            def response = [:]
-            response.reviewedannotation = json
-            response.basedannotation = reviewedAnnotation.retrieveParentAnnotation()
-            response.message = "Annotation is rejected!"
-            domainService.deleteDomain(reviewedAnnotation);
-            responseSuccess(response)
+           def json = JSON.parse("{id : ${reviewedAnnotation.id}}")
+
+            try {
+                def domain = reviewedAnnotationService.retrieve(json)
+                def result = reviewedAnnotationService.delete(domain, json)
+                responseResult(result)
+            } catch (CytomineException e) {
+                log.error(e)
+                response([success: false, errors: e.msg], e.code)
+            }
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
     }
 
-
-    private ReviewedAnnotation reviewAnnotation(AnnotationDomain annotation) {
-        reviewAnnotation(annotation,annotation.termsId(), true)
-    }
-
-    private ReviewedAnnotation reviewAnnotation(AnnotationDomain annotation, def terms, boolean flush) {
-        ReviewedAnnotation review = new ReviewedAnnotation()
-        review.parentIdent = annotation.id
-        review.parentClassName = annotation.class.name
-        review.status = 1
-        review.user = cytomineService.currentUser
-        review.location = annotation.location
-        review.image = annotation.image
-        review.project = annotation.project
-        review.geometryCompression = annotation.geometryCompression
-
-        if(terms!=null) {
-            //terms in request param
-            terms.each {
-                review.addToTerm(Term.read(Long.parseLong(it+"")))
-            }
-        } else {
-            //nothing in param, add term from annotation
-            annotation.termsForReview().each {
-                review.addToTerm(it)
-            }
-        }
-
-        review.reviewUser = cytomineService.currentUser
-        if(flush) domainService.saveDomain(review)
-        else review.save()
-        review
-    }
-
-    private AnnotationDomain getAnnotationDomain(long id) {
-        AnnotationDomain basedAnnotation = UserAnnotation.read(id)
-        if (!basedAnnotation)
-            basedAnnotation = AlgoAnnotation.read(id)
-        if (basedAnnotation) return basedAnnotation
-        else throw new ObjectNotFoundException("Annotation ${id} not found")
-
-    }
 
     def reviewLayer = {
 
@@ -531,70 +471,48 @@ class RestReviewedAnnotationController extends RestController {
 
     }
 
-    def fillAnnotationReview = {
-        try {
-            ReviewedAnnotation reviewedAnnotation = ReviewedAnnotation.read(params.long('id'))
-            if (!reviewedAnnotation) throw new ObjectNotFoundException("Review Annotation ${params.long('id')} not found!")
+    private ReviewedAnnotation createReviewAnnotation(AnnotationDomain annotation, def terms) {
+        ReviewedAnnotation review = new ReviewedAnnotation()
+        review.parentIdent = annotation.id
+        review.parentClassName = annotation.class.name
+        review.status = 1
+        review.user = cytomineService.currentUser
+        review.location = annotation.location
+        review.image = annotation.image
+        review.project = annotation.project
+        review.geometryCompression = annotation.geometryCompression
 
-            if(reviewedAnnotation.image.reviewUser && reviewedAnnotation.image.reviewUser.id!=cytomineService.currentUser.id)
-                throw new WrongArgumentException("You must be the image reviewer to modify annotation. Image reviewer is ${reviewedAnnotation.image.reviewUser?.username}.")
-
-            def response = [:]
-
-            reviewedAnnotation
-
-            //Is the first polygon always the big 'boundary' polygon?
-            String newGeom = "POLYGON (" + getFirstLocation(reviewedAnnotation.location.toString()) +"))"
-            reviewedAnnotation.location = new WKTReader().read(newGeom)
-            domainService.saveDomain(reviewedAnnotation)
-
-
-            response.reviewedannotation = reviewedAnnotation
-            response.message = "Annotation review is updated"
-            responseSuccess(response,200)
-        } catch (CytomineException e) {
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
+        if(terms!=null) {
+            //terms in request param
+            terms.each {
+                review.addToTerm(Term.read(Long.parseLong(it+"")))
+            }
+        } else {
+            //nothing in param, add term from annotation
+            annotation.termsForReview().each {
+                review.addToTerm(it)
+            }
         }
+
+        review.reviewUser = cytomineService.currentUser
+        review
     }
 
+    private ReviewedAnnotation reviewAnnotation(AnnotationDomain annotation, def terms, boolean flush) {
+        ReviewedAnnotation review = createReviewAnnotation(annotation,terms)
 
+        review.reviewUser = cytomineService.currentUser
+        if(flush) domainService.saveDomain(review)
+        else review.save()
+        review
+    }
 
-
-//    def testn() {
-//        println "testN"
-//        ReviewedAnnotation reviewed = ReviewedAnnotation.read(8860194)
-//        String location = reviewed.location.toString()
-//        println "location=" + location
-//        println "getNumGeometries=" + reviewed.location.getNumGeometries()
-//        reviewed.location.normalize()
-//        println "getGeometryN=" + reviewed.location.getGeometryN(0).toString()
-//        String geom = "POLYGON (" + getFirstLocation(reviewed.location.toString()) +"))"
-//        println geom
-//        reviewed.location = new WKTReader().read(geom)
-//       reviewed.save(flush:true)
-//    }
-
-    private String getFirstLocation(String form) {
-        int i = 0
-        int start, stop
-        while(form.charAt(i)!='(') i++
-
-        while(form.charAt(i+1)=='(') i++
-
-        start = i
-        println "mustbe(=" + form.charAt(i)
-        println "mustNotbe(=" + form.charAt(i+1)
-
-        while(form.charAt(i)!=')') i++
-
-        stop = i
-        println "mustbe)=" + form.charAt(i)
-        println "mustNotbe)=" + form.charAt(i-1)
-
-        print "final="+ form.substring(start,stop+1)
-
-        form.substring(start,stop+1)
+    private AnnotationDomain getAnnotationDomain(long id) {
+        AnnotationDomain basedAnnotation = UserAnnotation.read(id)
+        if (!basedAnnotation)
+            basedAnnotation = AlgoAnnotation.read(id)
+        if (basedAnnotation) return basedAnnotation
+        else throw new ObjectNotFoundException("Annotation ${id} not found")
 
     }
 }

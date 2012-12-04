@@ -543,17 +543,7 @@ class BootStrap {
                 log.info "Creating user ${user.username}..."
                 // user.addToTransactions(new Transaction())
                 //user.encodePassword()
-
-                println "# user="+user.username + " " + user.id
-                SecUser.list().each {
-                    println "### user="+it.username + " " + it.publicKey+ " " + user.privateKey
-                }
                 try {user.save(flush: true) } catch(Exception e) {println e}
-
-
-                SecUser.list().each {
-                    println "###TheEnd user="+it.username + " " + it.publicKey+ " " + user.privateKey
-                }
 
 
                 log.info "Save ${user.username}..."

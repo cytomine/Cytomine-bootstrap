@@ -70,6 +70,9 @@ div .reviewPanel {
     color : #fff;
     padding: 0px;
     margin : 0px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
 }
 
 div .overviewPanel {
@@ -83,7 +86,9 @@ div .overviewPanel {
     -moz-border-radius: 0px;
     -webkit-border-radius: 0px;
     border-radius: 0px;
-
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
 }
 
 div .popupPanel a {
@@ -103,9 +108,9 @@ div .zoomInfoPanel {
     text-align: center;
     height : 20px;
     padding : 2px;
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
     border : 2px solid #000;
 }
 
@@ -122,7 +127,6 @@ div .annotationsPanel {
 
 
 }
-
 div .layerSwitcherPanel {
     position : absolute;
     /*right : 20px;
@@ -133,9 +137,9 @@ div .layerSwitcherPanel {
     padding: 0px;
     margin : 0px;
     border : 2px solid #000;
-    -moz-border-radius:0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
+    -moz-border-radius:6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
 
 }
 
@@ -149,9 +153,9 @@ div .reviewPanel {
     width : 350px;
     /*height : 500px;*/
     border : 2px solid #000;
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
 }
 
 
@@ -184,9 +188,9 @@ div .ontologyPanel {
     color : #fff;
     padding: 0px;
     border : 2px solid #000;
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
     overflow : auto;
 }
 
@@ -285,9 +289,9 @@ div .annotationDetailPanel {
     color : #fff;
     padding: 0px;
     border : 2px solid #000;
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
     background-color: rgba(0, 0, 0, 0.7);
     width : 250px;
 }
@@ -301,9 +305,9 @@ div .imageFiltersPanel {
     color : #fff;
     padding: 0px;
     border : 2px solid #000;
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
     background-color: rgba(0, 0, 0, 0.7);
     width : 250px;
 }

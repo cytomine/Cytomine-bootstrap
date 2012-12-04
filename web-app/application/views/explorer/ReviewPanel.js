@@ -65,27 +65,20 @@ var ReviewPanel = Backbone.View.extend({
 
         var layer = "REVIEW";
         var layerAnnotation = new AnnotationLayer(layer, self.model.get('id'), 0, "#ff0000", self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, true);
-
         layerAnnotation.loadAnnotations(self.browseImageView);
         self.printedLayer.push({id:layer, vectorsLayer:layerAnnotation.vectorsLayer, layer:layerAnnotation});
-
         var selectFeature = new OpenLayers.Control.SelectFeature([layerAnnotation.vectorsLayer]);
         layerAnnotation.isOwner = true;
         layerAnnotation.initControls(self.browseImageView, selectFeature);
         layerAnnotation.registerEvents(self.browseImageView.map);
-
         self.browseImageView.userLayer = layerAnnotation;
         layerAnnotation.vectorsLayer.setVisibility(true);
         layerAnnotation.toggleIrregular();
         //Simulate click on None toolbar
         var toolbar = $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id'));
-        toolbar.find('input[id=none' + self.model.get('id') + ']').click();
-
+        toolbar.find('a[id=select' + self.model.get('id') + ']').click();
         layerAnnotation.controls.select.activate();
         self.reviewLayer = layerAnnotation;
-        //self.initControl(layerAnnotation);
-
-
         _.each(this.printedLayer, function(item) {
             item.layer.controls.select.activate();
         });
@@ -98,21 +91,17 @@ var ReviewPanel = Backbone.View.extend({
         var self = this;
         if(layer==undefined) return;
         var panelElem = $("#" + this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
-
         //remeber if the current mode was "edit"
         var isEdit = ($("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#modify' + self.model.get('id') +".active").length==1)
-
         //disable edition
         $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#none' + self.model.get('id')).click();
 
         self.reviewLayer.controls.select.unselectAll();
         self.reviewLayer.removeSelection();
-
         self.addToListLayer(layer);
 
         var user = self.userLayers.get(layer);
         if (user == undefined) user = self.userJobLayers.get(layer);
-        if (user == undefined) console.log("ERROR! LAYER NOT DEFINED!!!");
 
         var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, true);
         layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
@@ -139,8 +128,6 @@ var ReviewPanel = Backbone.View.extend({
             layerAnnotation.vectorsLayer.setVisibility(true);
             layerAnnotation.toggleIrregular();
             //Simulate click on None toolbar
-            var toolbar = $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id'));
-            toolbar.find('input[id=none' + self.model.get('id') + ']').click();
         } else {
            layerAnnotation.controls.select.activate();
         }
@@ -149,7 +136,7 @@ var ReviewPanel = Backbone.View.extend({
         });
 
         //force unnselected
-        $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#none' + self.model.get('id')).click();
+        $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#select' + self.model.get('id')).click();
         if(isEdit) {
             $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#modify' + self.model.get('id')).click()
         }
@@ -313,39 +300,24 @@ var ReviewPanel = Backbone.View.extend({
         var self = this;
         var annotation = self.browseImageView.currentAnnotation;
         self.browseImageView.removeFeature(annotation.id);
-        new AnnotationReviewedModel({id:annotation.id}).destroy({
+        new AnnotationReviewedModel({id:annotation.get('parentIdent')}).destroy({
             success:function (model, response) {
                 //remove the reviewed annotation from the layer
-                var layerItem = _.find(self.printedLayer, function (item) {
-                    return item.id == response.basedannotation.user;
-                });
-
-                if (layerItem) {
-                    //if layer is undefined, don't need to add old annotation
-                    var newFeature = AnnotationLayerUtils.createFeatureFromAnnotation(response.basedannotation);
-                    layerItem.layer.addFeature(newFeature);
-                    layerItem.layer.controls.select.unselectAll();
-                    layerItem.layer.controls.select.select(newFeature);
-                }
+//                var layerItem = _.find(self.printedLayer, function (item) {
+//                    return item.id == response.basedannotation.user;
+//                });
+//
+//                if (layerItem) {
+//                    //if layer is undefined, don't need to add old annotation
+//                    var newFeature = AnnotationLayerUtils.createFeatureFromAnnotation(response.basedannotation);
+//                    layerItem.layer.addFeature(newFeature);
+//                    layerItem.layer.controls.select.unselectAll();
+//                    layerItem.layer.controls.select.select(newFeature);
+//                }
                 window.app.view.message("Annotation", response.message, "success");
                 _.each(self.printedLayer,function(layer) {
                     layer.vectorsLayer.refresh();
                 });
-            },
-            error:function (model, response) {
-                var json = $.parseJSON(response.responseText);
-                window.app.view.message("Annotation", json.errors, "error");
-            }});
-    },
-    removeEmptySpace:function () {
-        var self = this;
-        var annotation = self.browseImageView.currentAnnotation;
-
-        //remove the based annotation from the layer
-        self.browseImageView.removeFeature(annotation.id);
-        new AnnotationReviewedModel({id:annotation.id,fill:true}).save({}, {
-            success:function (model, response) {
-                self.refreshAnnotation(response,annotation);
             },
             error:function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -395,25 +367,13 @@ var ReviewPanel = Backbone.View.extend({
                 //no annotation selected
                 $("#currentReviewAnnotation" + self.model.id).find("#reviewSingle" + idAnnotation).attr("disabled", "disabled");
                 $("#currentReviewAnnotation" + self.model.id).find("#unreviewSingle" + idAnnotation).attr("disabled", "disabled");
-                $("#currentReviewAnnotation" + self.model.id).find("#removeEmptySpace" + idAnnotation).attr("disabled", "disabled");
             } else if (params.isReviewed) {
                 //annotation is reviewed, cannot re-review
                 $("#currentReviewAnnotation" + self.model.id).find("#reviewSingle" + idAnnotation).attr("disabled", "disabled");
             } else {
                 //annotation is not reviewed, cannot unreview
                 $("#currentReviewAnnotation" + self.model.id).find("#unreviewSingle" + idAnnotation).attr("disabled", "disabled");
-                $("#currentReviewAnnotation" + self.model.id).find("#removeEmptySpace" + idAnnotation).attr("disabled", "disabled");
             }
-
-            //if its not a multipolygon, we disable 'fill' form feature.
-            if(annotation == null || (annotation.get('location').indexOf('MULTIPOLYGON')!=0 && annotation.get('location').indexOf('POLYGON')!=0)) {
-                $("#currentReviewAnnotation" + self.model.id).find("#removeEmptySpace" + idAnnotation).attr("disabled", "disabled");
-                $("#currentReviewAnnotation" + self.model.id).find("#removeEmptySpace" + idAnnotation).hide();
-            } else {
-                $('<br>').insertAfter("#removeEmptySpace" + idAnnotation)
-            }
-
-
 
             $("#currentReviewAnnotation" + self.model.id).find("#reviewSingle" + idAnnotation).click(function () {
                 self.addReviewAnnotation();
@@ -421,12 +381,38 @@ var ReviewPanel = Backbone.View.extend({
             $("#currentReviewAnnotation" + self.model.id).find("#unreviewSingle" + idAnnotation).click(function () {
                 self.deleteReviewAnnotation();
             });
-            $("#currentReviewAnnotation" + self.model.id).find("#removeEmptySpace" + idAnnotation).click(function () {
-                self.removeEmptySpace();
-            });
             $("#currentReviewAnnotation" + self.model.id).find("#reviewValidate" + idAnnotation).click(function () {
                 self.validatePicture();
             });
+//            $("#example").multiselectNext({
+//            deselected:function (event, ui) {
+//                //lock current user (cannot be deselected
+////                if ($(ui.option).val() == window.app.status.user.id) {
+////                    $("#projectuser").multiselectNext('select', $(ui.option).text());
+////                    window.app.view.message("User", "You must be in user list of your project!", "error");
+////                }
+//            },
+//            selected:function (event, ui) {
+//                //alert($(ui.option).val() + " has been selected");
+//            }});
+
+//            $("#test").on("click", ".init", function() {
+//                $(this).closest("ul").children('li:not(.init)').toggle();
+//            });
+//
+//            var allOptions = $("#test").children('li:not(.init)');
+//            $("#test").on("click", "li:not(.init)", function() {
+//                allOptions.removeClass('selected');
+//                $(this).addClass('selected');
+//                $("#test").children('.init').html($(this).html());
+//                allOptions.toggle();
+//            });
+//
+//
+////            $("#submit").click(function() {
+////                alert("The selected Value is "+ $("#currentReviewAnnotation" + self.model.id).find("ul").find(".selected").data("value"));
+////            });
+
 
             self.showAnnotationTerm(annotation)
         });
