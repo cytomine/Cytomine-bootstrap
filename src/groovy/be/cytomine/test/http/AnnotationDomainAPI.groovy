@@ -282,6 +282,34 @@ class AnnotationDomainAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def fill(def id, String username, String password) {
+        log.info "update annotation:" + id
+        String URL = Infos.CYTOMINEURL + "api/annotation/" + id + ".json?fill=true"
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        client.put("")
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        println response
+        client.disconnect();
+        log.info("check response")
+        return [data: response, code: code]
+    }
+
+    static def correctAnnotation(def id, def data,String username, String password) {
+        log.info "update annotation:" + id
+        String URL = Infos.CYTOMINEURL + "api/annotationcorrection.json"
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        client.post(data)
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        println response
+        client.disconnect();
+        log.info("check response")
+        return [data: response, code: code]
+    }
+
     static def delete(def id, String username, String password) {
         log.info "delete annotation:" + id
         String URL = Infos.CYTOMINEURL + "api/annotation/" + id + ".json"

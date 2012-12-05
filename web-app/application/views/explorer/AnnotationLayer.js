@@ -113,12 +113,11 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         styleMap.addUniqueValueRules('select', 'term', this.getSymbolizerReviewNotReviewLayer(true));
      }
 
-
     var annotationsCollection = null;
     if(!this.reviewLayer) {
         annotationsCollection= new AnnotationCollection({user:this.userID, image:this.imageID, term:undefined, notReviewedOnly: reviewMode}).url().replace("json", "jsonp");
     } else {
-        annotationsCollection= new AnnotationReviewedCollection({image:this.imageID, term:undefined}).url().replace("json", "jsonp");
+        annotationsCollection= new AnnotationReviewedCollection({image:this.imageID, term:undefined,map:browseImageView}).url().replace("json", "jsonp");
     }
 
 
@@ -356,7 +355,13 @@ AnnotationLayer.prototype = {
                     if (evt.feature.attributes.listener != 'NO') {
 
                         evt.feature.attributes.measure = 'YES';
-                        self.addAnnotation(evt.feature);
+
+                        if(self.browseImageView.freeHandUpdateAdd)
+                            self.correctAnnotation(evt.feature,false);
+                        else if(self.browseImageView.freeHandUpdateRem)
+                            self.correctAnnotation(evt.feature,true);
+                        else
+                            self.addAnnotation(evt.feature);
                     }
                 }
                 else {
@@ -707,8 +712,36 @@ AnnotationLayer.prototype = {
     disableHightlight:function () {
         //this.hoverControl.deactivate();
     },
+    correctAnnotation : function(feature,remove) {
+        var self = this;
+        console.log("correctAddAnnotation");
+        var format = new OpenLayers.Format.WKT();
+        var geomwkt = format.write(feature);
+        var annotationCorrection = new AnnotationCorrectionModel({
+            location:geomwkt,
+            image:this.imageID,
+            review : self.reviewMode,
+            remove : remove
+        });
+
+        annotationCorrection.save({}, {
+            success:function (annotation, response) {
+                window.app.view.message("Annotation updated", "Annotation updated with success", "success");
+                self.vectorsLayer.refresh();
+                if(self.reviewMode) self.browseImageView.refreshReviewLayer();
+            },
+            error:function (model, response) {
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Cannot correct annotation", "error:" + json.errors, "error");
+            }
+        });
+
+    },
+
+
     /*Add annotation in database*/
     addAnnotation:function (feature) {
+        console.log("addAnnotation");
         var alias = this;
         var self = this;
         var format = new OpenLayers.Format.WKT();

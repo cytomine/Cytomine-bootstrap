@@ -154,7 +154,7 @@ class RestAlgoAnnotationController extends RestController {
             String request
 
             if(!notReviewedOnly) {
-                request = "SELECT annotation.id, AsText(annotation.location), at.term_id \n" +
+                request = "SELECT annotation.id, annotation.wkt_location, at.term_id \n" +
                     " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
                     " WHERE annotation.image_id = $image.id\n" +
                     " AND annotation.user_id= $user.id\n" +
@@ -162,7 +162,7 @@ class RestAlgoAnnotationController extends RestController {
                     " ORDER BY annotation.id "
 
             } else {
-                request = "SELECT annotation.id, AsText(annotation.location), at.term_id \n" +
+                request = "SELECT annotation.id, annotation.wkt_location, at.term_id \n" +
                     " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
                     " WHERE annotation.image_id = $image.id\n" +
                     " AND annotation.user_id= $user.id\n" +

@@ -30,6 +30,7 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
               location type: org.hibernatespatial.GeometryUserType
           }
         term fetch: 'join'
+        wktLocation(type: 'text')
 
      }
 

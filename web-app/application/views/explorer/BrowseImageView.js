@@ -233,6 +233,9 @@ var BrowseImageView = Backbone.View.extend({
         var toolbar = $("#"+this.divId).find('#toolbar' + this.model.get('id'));
         toolbar.find('input[id=' + controlName + this.model.get('id') + ']').click();
     },
+    getZoomLevel: function() {
+      return this.map.zoom
+    },
     /**
      * Move the OpenLayers view to the Annotation, at the
      * optimal zoom
@@ -756,6 +759,8 @@ var BrowseImageView = Backbone.View.extend({
             self.map.events.register("click", self.getUserLayer().vectorsLayer, handleMapClick);
         }
     },
+    freeHandUpdateAdd: false,
+    freeHandUpdateRem: false,
     /**
      * Init the toolbar
      */
@@ -795,6 +800,22 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('a[id=freehand' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
+            self.getUserLayer().controls.select.unselectAll();
+            self.getUserLayer().toggleControl("freehand");
+            self.getUserLayer().disableHightlight();
+        });
+        toolbar.find('a[id=freeAdd' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = true;
+            self.freeHandUpdateRem = false;
+            self.getUserLayer().controls.select.unselectAll();
+            self.getUserLayer().toggleControl("freehand");
+            self.getUserLayer().disableHightlight();
+        });
+        toolbar.find('a[id=freeRem' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = true;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("freehand");
             self.getUserLayer().disableHightlight();
@@ -915,7 +936,11 @@ var BrowseImageView = Backbone.View.extend({
         }
 
     },
-
+    refreshReviewLayer : function() {
+      if(this.reviewPanel) {
+          this.reviewPanel.reviewLayer.vectorsLayer.refresh();
+      }
+    },
     initAnnotationsTabs:function () {
         this.annotationsPanel = new AnnotationsPanel({
             el:this.el,

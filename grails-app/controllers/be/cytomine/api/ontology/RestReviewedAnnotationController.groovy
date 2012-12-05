@@ -77,18 +77,25 @@ class RestReviewedAnnotationController extends RestController {
              * So in gc, we increase the size of each compare annotation just for the check
              * So if an annotation x is under y but x has some point next outside y, x will appear top (if no resize, it will appear top or behind).
              */
-            def xfactor = "1.05"
-            def yfactor = "1.05"
+            def xfactor = "1.08"
+            def yfactor = "1.08"
              //ST_ExteriorRing(
-
-            //size
-            String request = "SELECT reviewed.id, AsText(reviewed.location) as loc, SUM(ST_CoveredBy(reviewed.location,gb.location)::integer) as numberOfCoveringAnnotation\n" +
-                    " FROM reviewed_annotation reviewed , (SELECT gc.id,gc.image_id,ST_Translate(ST_Scale(gc.location, $xfactor, $yfactor), ST_X(ST_Centroid(gc.location))*(1 - $xfactor), ST_Y(ST_Centroid(gc.location))*(1 - $yfactor) ) as location FROM reviewed_annotation gc WHERE gc.image_id = $image.id  AND ST_IsValid(gc.location) AND ST_Intersects(gc.location,GeometryFromText('" + boundingbox.toString() + "',0))) gb\n" +
-                    " WHERE reviewed.image_id = $image.id\n" +
-//                    " AND reviewed.id <> gb.id\n" +
-                    " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))\n" +
-                    " GROUP BY reviewed.id, loc \n" +
-                    " ORDER BY numberOfCoveringAnnotation asc, id desc"
+            //TODO:: get zoom info from UI client, display with scaling only with hight zoom (< annotations)
+            boolean zoomToLow = true
+            String request
+            if(zoomToLow) {
+                request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,gb.location )::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,GeometryFromText('" + boundingbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
+                      " FROM reviewed_annotation reviewed\n" +
+                      " WHERE reviewed.image_id = $image.id\n" +
+                      " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))\n" +
+                      " ORDER BY numberOfCoveringAnnotation asc, id asc"
+            } else {
+                request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,ST_Translate(ST_Scale(gb.location, $xfactor, $yfactor), ST_X(ST_Centroid(gb.location))*(1 - $xfactor), ST_Y(ST_Centroid(gb.location))*(1 - $yfactor) ))::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,GeometryFromText('" + boundingbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
+                       " FROM reviewed_annotation reviewed\n" +
+                       " WHERE reviewed.image_id = $image.id\n" +
+                       " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))\n" +
+                       " ORDER BY numberOfCoveringAnnotation asc, id asc"
+            }
 
             println "REQUEST=" + request
             def sql = new Sql(dataSource)

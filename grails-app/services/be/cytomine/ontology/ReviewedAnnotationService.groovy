@@ -110,7 +110,7 @@ class ReviewedAnnotationService extends ModelService {
         Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
 
         println "boundingbox.toString()=" + boundingbox.toString()
-        String request = "SELECT reviewed.id, AsText(reviewed.location)\n" +
+        String request = "SELECT reviewed.id, reviewed.wkt_location\n" +
                 " FROM reviewed_annotation reviewed\n" +
                 " WHERE reviewed.image_id = $image.id\n" +
                 " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))"

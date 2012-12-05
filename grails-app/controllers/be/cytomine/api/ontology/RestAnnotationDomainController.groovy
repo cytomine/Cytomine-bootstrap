@@ -27,6 +27,7 @@ import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.ontology.AlgoAnnotation
+import groovy.sql.Sql
 
 class RestAnnotationDomainController extends RestController {
 
@@ -277,4 +278,115 @@ class RestAnnotationDomainController extends RestController {
 
     }
 
+
+    def addCorrection = {
+        def json = request.JSON
+        println "json="+json
+        String location = json.location
+        boolean review = json.review
+        long idImage = json.image
+        boolean remove = json.remove
+        println "location="+location
+        println "review="+review
+        println "idImage="+idImage
+        try {
+            long idReviewedAnnotation = -1
+            long idUserAnnotation = -1
+
+            //if review mode, priority is done to reviewed annotation correction
+            if(review) {
+                idReviewedAnnotation = findReviewedAnnotationIdThatTouch(location,idImage,cytomineService.currentUser.id)
+            }
+
+            //there is no reviewed intersect annotation or user is not in review mode
+            if(idReviewedAnnotation==-1) {
+                idUserAnnotation = findUserAnnotationIdThatTouch(location,idImage,cytomineService.currentUser.id)
+            }
+
+            //there is no user/reviewed intersect
+            if (idUserAnnotation == -1 && idReviewedAnnotation== -1) throw new WrongArgumentException("There is no intersect annotation!")
+
+            def result
+            if(idUserAnnotation!=-1) {
+                def domain = userAnnotationService.read(idUserAnnotation)
+                String fullLocation
+                if(remove) fullLocation = doDiffAnnotation(domain.location.toString(),location)
+                else fullLocation = doUnionAnnotation(domain.location.toString(),location)
+                def jsonUpdate = JSON.parse(domain.encodeAsJSON())
+                jsonUpdate.location = fullLocation
+                result = userAnnotationService.update(domain,jsonUpdate)
+            } else {
+                def domain = reviewedAnnotationService.read(idReviewedAnnotation)
+                String fullLocation
+                if(remove) fullLocation = doDiffAnnotation(domain.location.toString(),location)
+                else fullLocation = doUnionAnnotation(domain.location.toString(),location)
+                def jsonUpdate = JSON.parse(domain.encodeAsJSON())
+                jsonUpdate.location = fullLocation
+                result = reviewedAnnotationService.update(domain,jsonUpdate)
+            }
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+    }
+
+    Long findUserAnnotationIdThatTouch(String location, long idImage, long idUser) {
+
+        String request = "SELECT annotation.id\n" +
+                "FROM user_annotation annotation\n" +
+                "WHERE annotation.image_id = $idImage\n" +
+                "AND user_id = $idUser\n" +
+                "AND ST_Intersects(annotation.location,GeometryFromText('"+location+"',0));"
+
+
+        println "REQUEST=" + request
+        def sql = new Sql(dataSource)
+
+        def data = []
+        long id = -1
+
+        sql.eachRow(request) {
+            if(id!=-1) {
+                throw new WrongArgumentException("There is more than one intersect annotation!")
+            }
+            id = it[0]
+        }
+        println "findUserAnnotationIdThatTouch="+ id
+        return id
+    }
+
+    Long findReviewedAnnotationIdThatTouch(String location, long idImage, long idUser) {
+        String request = "SELECT annotation.id\n" +
+                "FROM reviewed_annotation annotation\n" +
+                "WHERE annotation.image_id = $idImage\n" +
+                "AND user_id = $idUser\n" +
+                "AND ST_Intersects(annotation.location,GeometryFromText('"+location+"',0));"
+
+        println "REQUEST=" + request
+        def sql = new Sql(dataSource)
+
+        def data = []
+        long id = -1
+
+        sql.eachRow(request) {
+            if(id!=-1) {
+                throw new WrongArgumentException("There is more than one intersect annotation!")
+            }
+            id = it[0]
+        }
+        println "findReviewedAnnotationIdThatTouch="+ id
+        return id
+
+
+    }
+
+    String doUnionAnnotation(String basedLocation, String locationToAdd) {
+        String fullLocation = new WKTReader().read(basedLocation).union(new WKTReader().read(locationToAdd))
+        return fullLocation
+    }
+    String doDiffAnnotation(String basedLocation, String locationToAdd) {
+        String fullLocation = new WKTReader().read(basedLocation).difference(new WKTReader().read(locationToAdd))
+        return fullLocation
+    }
 }

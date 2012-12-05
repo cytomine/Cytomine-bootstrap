@@ -30,6 +30,21 @@ var AnnotationModel = Backbone.Model.extend({
 });
 
 
+var AnnotationCorrectionModel = Backbone.Model.extend({
+    url:function () {
+        var base = 'api/annotationcorrection';
+        var format = '.json';
+        console.log("this.isNew()="+this.isNew());
+        console.log("this.id="+this.id);
+        if (this.isNew()) return base + format;
+        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+    },
+    initialize:function (options) {
+        this.id = options.id;
+    }
+});
+
+
 //var AnnotationModel = Backbone.Model.extend({
 //
 //    url:function () {
@@ -195,14 +210,19 @@ var AnnotationReviewedCollection = Backbone.Collection.extend({
     model:AnnotationModel,
     fullSize:-1,
     url:function () {
-        var offset = "";
+        var offset = "?";
         if (this.offset != undefined) {
-            offset = offset + "&offset=" + this.offset;
+            offset = offset + "offset=" + this.offset;
         }
+//        console.log("ZOOM="+ this.map.getZoomLevel());
+//        if (this.map != undefined) {
+//            offset = offset + "&zoom=" + this.map.getZoomLevel();
+//        }
         return "api/imageinstance/" + this.image + "/reviewedannotation.json" + offset;
     },
     initialize:function (options) {
         this.image = options.image;//one image
+        this.map = options.map;
     },
     build:function () {
         var self = this;

@@ -21,6 +21,7 @@ import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.processing.Job
 import be.cytomine.ontology.Annotation
 import be.cytomine.test.http.ReviewedAnnotationAPI
+import com.vividsolutions.jts.io.WKTReader
 
 /**
  * Created by IntelliJ IDEA.
@@ -323,4 +324,69 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(404, result.code)
     }
 
+    void testFillAnnotation() {
+
+        //add annotation with empty space inside it
+        def annotationToFill = BasicInstance.getBasicUserAnnotationNotExist()
+        annotationToFill.location = new WKTReader().read("POLYGON ((4980 4980, 5516 4932, 5476 4188, 4956 4204, 4980 4980), (5100 4316, 5100 4804, 5404 4780, 5364 4316, 5100 4316))")
+        assert annotationToFill.save(flush: true)  != null
+
+        //do fill action
+        def result = AnnotationDomainAPI.fill(annotationToFill.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        //check if annotation is well filled
+        annotationToFill.refresh()
+        annotationToFill.location.toString().equals("POLYGON ((4980 4980, 5516 4932, 5476 4188, 4956 4204, 4980 4980))")
+    }
+
+
+    void testFreehandAnnotationCorrectionAdd() {
+        String basedLocation = "POLYGON ((0 0, 0 5000, 10000 5000, 10000 0, 0 0))"
+        String addedLocation = "POLYGON ((0 5000, 10000 5000, 10000 10000, 0 10000, 0 5000))"
+        String expectedLocation = "POLYGON ((0 0, 0 10000, 10000 10000, 10000 0, 0 0))"
+
+        //add annotation with empty space inside it
+        def annotationToFill = BasicInstance.getBasicUserAnnotationNotExist()
+        annotationToFill.user = User.findByUsername(Infos.GOODLOGIN)
+        annotationToFill.location = new WKTReader().read(basedLocation)
+        assert annotationToFill.save(flush: true)  != null
+
+        //correct remove
+        def json = [:]
+        json.location = addedLocation
+        json.image = annotationToFill.image.id
+        json.review = false
+        json.remove = false
+        def result = AnnotationDomainAPI.correctAnnotation(annotationToFill.id, json.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        annotationToFill.refresh()
+        assert new WKTReader().read(expectedLocation).equals(annotationToFill.location)
+        //assertEquals(expectedLocation,annotationToFill.location.toString())
+    }
+
+    void testFreehandAnnotationCorrectionRem() {
+        String basedLocation = "POLYGON ((0 0, 0 10000, 10000 10000, 10000 0, 0 0))"
+        String removedLocation = "POLYGON ((0 5000, 10000 5000, 10000 10000, 0 10000, 0 5000))"
+        String expectedLocation = "POLYGON ((0 0, 0 5000, 10000 5000, 10000 0, 0 0))"
+
+        //add annotation with empty space inside it
+        def annotationToFill = BasicInstance.getBasicUserAnnotationNotExist()
+        annotationToFill.user = User.findByUsername(Infos.GOODLOGIN)
+        annotationToFill.location = new WKTReader().read(basedLocation)
+        assert annotationToFill.save(flush: true)  != null
+
+        //correct remove
+        def json = [:]
+        json.location = removedLocation
+        json.image = annotationToFill.image.id
+        json.review = false
+        json.remove = true
+        def result = AnnotationDomainAPI.correctAnnotation(annotationToFill.id, json.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        annotationToFill.refresh()
+        assert new WKTReader().read(expectedLocation).equals(annotationToFill.location)
+    }
 }

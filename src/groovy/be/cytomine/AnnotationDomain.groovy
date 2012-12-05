@@ -27,6 +27,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
     Project project
     Double geometryCompression
     long countComments = 0L
+    String wktLocation  //speedup listing
 
     /* Transients values for JSON/XML rendering */
     Double similarity
@@ -43,9 +44,11 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         location(nullable: false)
         geometryCompression(nullable: true)
         project(nullable:true)
+        wktLocation(nullable:false, empty:false)
     }
 
     static mapping = {
+        wktLocation(type: 'text')
         tablePerHierarchy false
         id generator: "assigned"
         columns {
@@ -68,9 +71,26 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
     public beforeInsert() {
         super.beforeInsert()
         project = image.project
+        if(!wktLocation)
+            wktLocation = location.toText()
     }
 
+    def beforeUpdate() {
+        super.beforeUpdate()
+        wktLocation = location.toText()
+    }
 
+    def beforeValidate() {
+        if (!created) {
+            created = new Date()
+        }
+        if (id == null) {
+            id = sequenceService.generateID(this)
+        }
+
+        if(!wktLocation)
+            wktLocation = location.toText()
+    }
 
     def getFilename() {
           return this.image?.baseImage?.getFilename()

@@ -124,5 +124,12 @@ class AnnotationUrlMappings {
         "/api/term/$idterm/project/$idproject/algoannotation"(controller:"restAlgoAnnotation"){
             action = [GET: "listAnnotationByProjectAndTerm"]
         }
+
+        /**
+         * Annotation correction
+         */
+        "/api/annotationcorrection"(controller:"restAnnotationDomain"){
+            action = [POST:"addCorrection"]
+        }
     }
 }

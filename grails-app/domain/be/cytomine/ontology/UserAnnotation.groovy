@@ -25,6 +25,7 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
               location type: org.hibernatespatial.GeometryUserType
           }
           annotationTerm fetch: 'join'
+         wktLocation(type: 'text')
       }
 
     boolean hasReviewedAnnotation() {

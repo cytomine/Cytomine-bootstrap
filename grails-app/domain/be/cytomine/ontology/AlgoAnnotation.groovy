@@ -22,6 +22,7 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
           columns {
               location type: org.hibernatespatial.GeometryUserType
           }
+         wktLocation(type: 'text')
       }
 
     /**
