@@ -37,7 +37,6 @@ import com.vividsolutions.jts.io.WKTReader
 class RestReviewedAnnotationController extends RestController {
 
     def exportService
-    def grailsApplication
     def algoAnnotationService
     def domainService
     def termService
