@@ -2,7 +2,7 @@
     <div class="map" id="map<%= type %><%= id %>"></div>
     <div class="controlPanels" id="controlsPanels<%= id %>">
         <div class="toolbar toolbarPanel" style="display : none">
-            <div class="btn-group" data-toggle="buttons-radio" id="toolbar<%= id %>">
+            <div class="btn-group" data-toggle="buttons-radio" id="toolbar<%= id %>" align="center">
                 <a class="btn btn-inverse" id="none<%= id %>" data-toggle="button"><i class="icon-move icon-white"/>Navigate</a>
                 <a class="btn btn-inverse" id="select<%= id %>" data-toggle="button">Select</a>
                 <a class="btn btn-inverse" id="point<%= id %>" data-toggle="button">Point</a>
@@ -12,17 +12,48 @@
                 <a class="btn btn-inverse" id="freehand<%= id %>" data-toggle="button"><i class="icon-pencil icon-white"/> Freehand</a>
 
                 <a class="btn btn-inverse" id="magic<%= id %>" data-toggle="button">Magic Wand</a>
+                <br>
                 <a class="btn btn-inverse" id="modify<%= id %>" data-toggle="button">Edit</a>
                 <a class="btn btn-inverse" id="rotate<%= id %>" data-toggle="button">Rotate</a>
                 <a class="btn btn-inverse" id="resize<%= id %>" data-toggle="button">Resize</a>
                 <a class="btn btn-inverse" id="drag<%= id %>" data-toggle="button">Drag</a>
                 <a class="btn btn-inverse" id="fill<%= id %>" data-toggle="button">Fill</a>
-                <a class="btn btn-inverse" id="freeAdd<%= id %>" data-toggle="button"><i class="icon-plus icon-white"/> Free add</a>
-                <a class="btn btn-inverse" id="freeRem<%= id %>" data-toggle="button"><i class="icon-minus icon-white"/> Free Rem</a>
+                <a class="btn btn-inverse" id="freeAdd<%= id %>" data-toggle="button"><i class="icon-plus icon-white"/> Extend</a>
+                <a class="btn btn-inverse" id="freeRem<%= id %>" data-toggle="button"><i class="icon-minus icon-white"/> Subtract</a>
                 <a class="btn btn-inverse" id="delete<%= id %>" data-toggle="button"><i class="icon-trash icon-white"/>Delete</a>
                 <a class="btn btn-inverse" id="ruler<%= id %>" data-toggle="button">Ruler</a>
 
+                <!--<div class="btn-group dropup" data-toggle="buttons-radio" style="display : inline">-->
+                    <!--<a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">-->
+                      <!--Action-->
+                      <!--<span class="caret"></span>-->
+                    <!--</a>-->
+                    <!--<ul class="dropdown-menu">-->
+                        <!--<a class="btn btn-inverse" id="rotate<%= id %>" data-toggle="button">Rotate</a>-->
+                        <!--<a class="btn btn-inverse" id="resize<%= id %>" data-toggle="button">Resize</a>                      &lt;!&ndash; dropdown menu links &ndash;&gt;-->
+
+                    <!--</ul>-->
+                <!--</div>-->
+
+
+                <!--<div class="btn-group dropup" data-toggle="buttons-radio" style="display : inline">-->
+                <!--<button class="btn btn-inverse">Inverse</button>-->
+                <!--<button class="btn btn-inverse dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>-->
+                <!--<ul class="dropdown-menu">-->
+                  <!--<li><a href="#">Action</a></li>-->
+                  <!--<li><a href="#">Another action</a></li>-->
+                  <!--<li><a href="#">Something else here</a></li>-->
+                  <!--<li class="divider"></li>-->
+                  <!--<li><a href="#">Separated link</a></li>-->
+                <!--</ul>-->
+              <!--</div>-->
+
+
+
               </div>
+                <!--<div class="btn-group dropup" style="display : inline">-->
+
+                <!--</div>-->
         </div>
         <div class="overviewPanel " id="overviewMap<%= id %>" style="display : none"></div>
         <div class="layerSwitcherPanel" id="layerSwitcher<%= id %>" style="display : none;"></div>

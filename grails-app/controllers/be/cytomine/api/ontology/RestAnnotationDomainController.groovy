@@ -28,6 +28,7 @@ import be.cytomine.Exception.ObjectNotFoundException
 import com.vividsolutions.jts.io.WKTReader
 import be.cytomine.ontology.AlgoAnnotation
 import groovy.sql.Sql
+import com.vividsolutions.jts.geom.Geometry
 
 class RestAnnotationDomainController extends RestController {
 
@@ -232,6 +233,9 @@ class RestAnnotationDomainController extends RestController {
 
             //Is the first polygon always the big 'boundary' polygon?
             String newGeom = "POLYGON (" + getFirstLocation(annotation.location.toString()) +"))"
+            println "new geometry = "+ newGeom
+            println "old geometry = "+ annotation.location.toString().size()
+            println "new geometry = "+ newGeom.size()
             def json = JSON.parse(annotation.encodeAsJSON())
             json.location = newGeom
 
@@ -317,6 +321,7 @@ class RestAnnotationDomainController extends RestController {
                 result = userAnnotationService.update(domain,jsonUpdate)
             } else {
                 def domain = reviewedAnnotationService.read(idReviewedAnnotation)
+                println "SHOULD BE POLYGON:"+domain.location.toText()
                 String fullLocation
                 if(remove) fullLocation = doDiffAnnotation(domain.location.toString(),location)
                 else fullLocation = doUnionAnnotation(domain.location.toString(),location)
@@ -382,11 +387,17 @@ class RestAnnotationDomainController extends RestController {
     }
 
     String doUnionAnnotation(String basedLocation, String locationToAdd) {
-        String fullLocation = new WKTReader().read(basedLocation).union(new WKTReader().read(locationToAdd))
+        println "basedLocation:"+basedLocation
+        println "locationToAdd:"+locationToAdd
+
+        Geometry geometry = new WKTReader().read(basedLocation).union(new WKTReader().read(locationToAdd))
+        String fullLocation = geometry.toText()
         return fullLocation
     }
     String doDiffAnnotation(String basedLocation, String locationToAdd) {
-        String fullLocation = new WKTReader().read(basedLocation).difference(new WKTReader().read(locationToAdd))
-        return fullLocation
+        println "basedLocation:"+basedLocation
+        println "locationToAdd:"+locationToAdd
+        Geometry geometry = new WKTReader().read(basedLocation).difference(new WKTReader().read(locationToAdd))
+        return geometry.toText()
     }
 }

@@ -115,6 +115,7 @@ class BootStrap {
         createDiscipline()
 
 
+
         //countersService.updateCounters()
         //updateImageProperties()
         //generateAbstractImageOriginalFilename()

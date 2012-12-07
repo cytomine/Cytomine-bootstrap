@@ -179,16 +179,18 @@ class ReviewedAnnotationService extends ModelService {
     def add(def json) {
 
         SecUser currentUser = cytomineService.getCurrentUser()
-
-        //simplify annotation
-        try {
-            def data = simplifyGeometryService.simplifyPolygon(json.location)
-            json.location = new WKTWriter().write(data.geometry)
-            json.geometryCompression = data.rate
-        } catch (Exception e) {
-            log.error("Cannot simplify:" + e)
-        }
-
+//        println "x1:"+json.location
+//        //simplify annotation
+//        try {
+//            def data = simplifyGeometryService.simplifyPolygon(json.location)
+//            println "x2:"+data.geometry
+//            json.location = new WKTWriter().write(data.geometry)
+//            println "x3:"+json.location
+//            json.geometryCompression = data.rate
+//        } catch (Exception e) {
+//            log.error("Cannot simplify:" + e)
+//        }
+//        println "x4:"+json.location
         //Start transaction
         Transaction transaction = transactionService.start()
 

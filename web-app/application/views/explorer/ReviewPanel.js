@@ -90,6 +90,17 @@ var ReviewPanel = Backbone.View.extend({
     addLayerToReview:function (layer) {
         var self = this;
         if(layer==undefined) return;
+
+        var alreadyPrintBeforeLayer = null;
+        _.each(self.printedLayer, function (elem) {
+            if (elem.id == layer) {
+                alreadyPrintBeforeLayer = elem.vectorsLayer
+                alreadyPrintBeforeLayer.setVisibility(true);
+            }
+        });
+        if(alreadyPrintBeforeLayer) return;
+
+
         var panelElem = $("#" + this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
         //remeber if the current mode was "edit"
         var isEdit = ($("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#modify' + self.model.get('id') +".active").length==1)
@@ -129,7 +140,7 @@ var ReviewPanel = Backbone.View.extend({
             layerAnnotation.toggleIrregular();
             //Simulate click on None toolbar
         } else {
-           layerAnnotation.controls.select.activate();
+           //layerAnnotation.controls.select.activate();
         }
         _.each(this.printedLayer, function(item) {
             item.layer.controls.select.activate();

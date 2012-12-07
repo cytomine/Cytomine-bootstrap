@@ -714,9 +714,18 @@ AnnotationLayer.prototype = {
     },
     correctAnnotation : function(feature,remove) {
         var self = this;
+
         console.log("correctAddAnnotation");
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
+
+        console.log("geomwkt="+geomwkt);
+        console.log("geomwkt="+geomwkt.indexOf("LINESTRING"));
+        if(geomwkt.indexOf("LINESTRING")!=-1) {
+            self.vectorsLayer.removeFeatures([feature]);
+            return
+        }
+
         var annotationCorrection = new AnnotationCorrectionModel({
             location:geomwkt,
             image:this.imageID,
@@ -729,10 +738,12 @@ AnnotationLayer.prototype = {
                 window.app.view.message("Annotation updated", "Annotation updated with success", "success");
                 self.vectorsLayer.refresh();
                 if(self.reviewMode) self.browseImageView.refreshReviewLayer();
+                self.vectorsLayer.removeFeatures([feature]);
             },
             error:function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Cannot correct annotation", "error:" + json.errors, "error");
+                self.vectorsLayer.removeFeatures([feature]);
             }
         });
 
@@ -746,6 +757,7 @@ AnnotationLayer.prototype = {
         var self = this;
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
+
         var terms = alias.ontologyTreeView.getTermsChecked();
         var annotation = new AnnotationModel({
             name:"",

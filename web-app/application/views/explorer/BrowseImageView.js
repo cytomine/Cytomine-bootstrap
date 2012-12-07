@@ -421,9 +421,12 @@ var BrowseImageView = Backbone.View.extend({
         var initZoomifyLayer = function (metadata, zoomify_urls, imageFilters) {
             if(!self.review) {
                 self.createLayerSwitcher();
+                $(".reviewPanel").hide();
             }
             else {
                 self.createReviewPanel();
+                $(".layerSwitcherPanel").hide();
+                console.log("LAYER SWITECHER="+$(".layerSwitcherPanel").length)
             }
             self.initImageFiltersPanel();
             //var numZoomLevels =  metadata.nbZoom;
@@ -855,8 +858,15 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('a[id=rotate' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().toggleRotate();
-            self.getUserLayer().disableHightlight();
+            if(!self.review) {
+                self.getUserLayer().toggleRotate();
+                self.getUserLayer().disableHightlight();
+            } else {
+                self.getUserAndReviewLayer().user.toggleRotate();
+                self.getUserAndReviewLayer().user.disableHightlight();
+                self.getUserAndReviewLayer().review.toggleRotate();
+                self.getUserAndReviewLayer().review.disableHightlight();
+            }
         });
         toolbar.find('a[id=fill' + this.model.get('id') + ']').click(function () {
             var annotation = self.currentAnnotation;
@@ -885,13 +895,27 @@ var BrowseImageView = Backbone.View.extend({
 
         });
         toolbar.find('a[id=resize' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().toggleResize();
-            self.getUserLayer().disableHightlight();
+            if(!self.review) {
+                self.getUserLayer().toggleResize();
+                self.getUserLayer().disableHightlight();
+            } else {
+                self.getUserAndReviewLayer().user.toggleResize();
+                self.getUserAndReviewLayer().user.disableHightlight();
+                self.getUserAndReviewLayer().review.toggleResize();
+                self.getUserAndReviewLayer().review.disableHightlight();
+            }
 
         });
         toolbar.find('a[id=drag' + this.model.get('id') + ']').click(function () {
-            self.getUserLayer().toggleDrag();
-            self.getUserLayer().disableHightlight();
+            if(!self.review) {
+                self.getUserLayer().toggleDrag();
+                self.getUserLayer().disableHightlight();
+            } else {
+                self.getUserAndReviewLayer().user.toggleDrag();
+                self.getUserAndReviewLayer().user.disableHightlight();
+                self.getUserAndReviewLayer().review.toggleDrag();
+                self.getUserAndReviewLayer().review.disableHightlight();
+            }
         });
         toolbar.find('a[id=ruler' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
