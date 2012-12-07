@@ -271,16 +271,7 @@ class RestAnnotationDomainController extends RestController {
 
     }
 
-    private AnnotationDomain getAnnotationDomain(long id) {
-        AnnotationDomain basedAnnotation = UserAnnotation.read(id)
-        if (!basedAnnotation)
-            basedAnnotation = AlgoAnnotation.read(id)
-        if (!basedAnnotation)
-            basedAnnotation = ReviewedAnnotation.read(id)
-        if (basedAnnotation) return basedAnnotation
-        else throw new ObjectNotFoundException("Annotation ${id} not found")
 
-    }
 
 
     def addCorrection = {

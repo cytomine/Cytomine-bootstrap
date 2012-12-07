@@ -27,6 +27,8 @@ import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import be.cytomine.AnnotationDomain
 import be.cytomine.ontology.UserAnnotation
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.ReviewedAnnotation
 
 /**
  * Created by IntelliJ IDEA.
@@ -234,8 +236,43 @@ class RestImageInstanceController extends RestController {
             return mask
     }
 
-    def alphamask = {
-        UserAnnotation annotation = UserAnnotation.read(params.annotation)
+
+
+
+    def alphamaskUserAnnotation = {
+        try {
+            def annotation = UserAnnotation.read(params.annotation)
+            def cropURL = alphamask(annotation,params)
+            if(cropURL!=null) responseBufferedImage(cropURL)
+        } catch (Exception e) {
+            log.error("GetThumb:" + e)
+        }
+    }
+
+    def alphamaskAlgoAnnotation = {
+        try {
+            def annotation = AlgoAnnotation.read(params.annotation)
+            def cropURL = alphamask(annotation,params)
+            responseBufferedImage(cropURL)
+        } catch (Exception e) {
+            log.error("GetThumb:" + e)
+        }
+    }
+
+    def alphamaskReviewedAnnotation = {
+        try {
+            println "alphamaskReviewedAnnotation"
+            def annotation = ReviewedAnnotation.read(params.annotation)
+            println "alphamaskReviewedAnnotation"
+            println "params.id="+params.id
+            def cropURL = alphamask(annotation,params)
+            responseBufferedImage(cropURL)
+        } catch (Exception e) {
+            log.error("GetThumb:" + e)
+        }
+    }
+
+    private def alphamask(AnnotationDomain annotation, def params) {
         if (!annotation) {
             responseNotFound("Annotation", params.annotation)
         }
@@ -244,7 +281,7 @@ class RestImageInstanceController extends RestController {
             responseNotFound("Term", params.term)
         }
         if (!annotation.termsId().contains(term.id)) {
-            response([ error : "Term not associated with userAnnotation", annotation : annotation.id, term : term.id])
+            response([ error : "Term not associated with annotation", annotation : annotation.id, term : term.id])
         }
         Integer zoom = null
         if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
@@ -254,11 +291,12 @@ class RestImageInstanceController extends RestController {
             responseNotFound("Crop", "Zoom", zoom)
         else {
             try {
-                responseBufferedImage(getMaskImage(annotation, term, zoom, true))
+                return getMaskImage(annotation, term, zoom, true)
             } catch (Exception e) {
                 log.error("GetThumb:" + e);
             }
         }
+        return null;
     }
 
     def cropmask = {

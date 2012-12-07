@@ -24,7 +24,13 @@ class ImageInstanceUrlMappings {
             action = [GET:"cropmask"]
         }
         "/api/userannotation/$annotation/alphamask-$term"(controller: "restImageInstance"){
-            action = [GET:"alphamask"]
+            action = [GET:"alphamaskUserAnnotation"]
+        }
+        "/api/algoannotation/$annotation/alphamask-$term"(controller: "restImageInstance"){
+            action = [GET:"alphamaskAlgoAnnotation"]
+        }
+        "/api/reviewedannotation/$annotation/alphamask-$term"(controller: "restImageInstance"){
+            action = [GET:"alphamaskReviewedAnnotation"]
         }
         "/api/project/$id/imageinstance"(controller: "restImageInstance"){
             action = [GET:"listByProject"]

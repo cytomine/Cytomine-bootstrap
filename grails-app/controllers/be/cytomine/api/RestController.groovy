@@ -9,6 +9,11 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import be.cytomine.project.Project
+import be.cytomine.AnnotationDomain
+import be.cytomine.ontology.UserAnnotation
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.Exception.ObjectNotFoundException
 
 class RestController {
 
@@ -341,5 +346,16 @@ class RestController {
                 }
             }
         }
+    }
+
+    protected AnnotationDomain getAnnotationDomain(long id) {
+        AnnotationDomain basedAnnotation = UserAnnotation.read(id)
+        if (!basedAnnotation)
+            basedAnnotation = AlgoAnnotation.read(id)
+        if (!basedAnnotation)
+            basedAnnotation = ReviewedAnnotation.read(id)
+        if (basedAnnotation) return basedAnnotation
+        else throw new ObjectNotFoundException("Annotation ${id} not found")
+
     }
 }
