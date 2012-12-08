@@ -8,7 +8,6 @@ var ActivityController = Backbone.Router.extend({
             this.view = new ActivityView({
                 el:"#activity-content"
             }).render();
-
         }
         window.app.view.showComponent(window.app.view.components.activity);
     }

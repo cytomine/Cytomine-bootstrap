@@ -517,7 +517,7 @@ class RestReviewedAnnotationController extends RestController {
         review
     }
 
-    private AnnotationDomain getAnnotationDomain(long id) {
+    protected AnnotationDomain getAnnotationDomain(long id) {
         AnnotationDomain basedAnnotation = UserAnnotation.read(id)
         if (!basedAnnotation)
             basedAnnotation = AlgoAnnotation.read(id)

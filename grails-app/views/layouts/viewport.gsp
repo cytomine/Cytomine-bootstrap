@@ -41,6 +41,7 @@ body {
 <link rel="stylesheet" href="lib/bootstrap-2.1.1/css/bootstrap-responsive.min.css"/>
 
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
+<link rel='stylesheet' href='css/glyphicon.css' type='text/css'/>
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
 
 <!-- JQuery & JQuery UI -->
