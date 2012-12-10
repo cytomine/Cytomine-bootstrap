@@ -217,13 +217,13 @@ class ReviewedAnnotationService extends ModelService {
     def update(def domain, def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
         //simplify annotation
-        try {
-            def annotation = UserAnnotation.read(json.id)
-            def data = simplifyGeometryService.simplifyPolygon(json.location, annotation?.geometryCompression)
-            json.location = new WKTWriter().write(data.geometry)
-        } catch (Exception e) {
-            log.error("Cannot simplify:" + e)
-        }
+//        try {
+//            def annotation = UserAnnotation.read(json.id)
+//            def data = simplifyGeometryService.simplifyPolygon(json.location, annotation?.geometryCompression)
+//            json.location = new WKTWriter().write(data.geometry)
+//        } catch (Exception e) {
+//            log.error("Cannot simplify:" + e)
+//        }
 
         def result = executeCommand(new EditCommand(user: currentUser), json)
         return result

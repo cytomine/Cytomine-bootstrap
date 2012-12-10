@@ -3,30 +3,22 @@ package be.cytomine.api.ontology
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
-import be.cytomine.api.UrlApi
-import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.AnnotationTerm
+
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
-import be.cytomine.processing.Job
+
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import be.cytomine.security.User
-import be.cytomine.social.SharedAnnotation
+
 import grails.converters.JSON
 
-import java.awt.image.BufferedImage
-import java.text.SimpleDateFormat
-import javax.imageio.ImageIO
-import be.cytomine.ontology.Ontology
 import be.cytomine.AnnotationDomain
 import be.cytomine.ontology.ReviewedAnnotation
-import org.omg.PortableServer.POAPackage.ObjectNotActive
-import javassist.tools.rmi.ObjectNotFoundException
+
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
 import com.vividsolutions.jts.io.WKTReader
-import be.cytomine.ontology.AlgoAnnotation
+
 import groovy.sql.Sql
 import com.vividsolutions.jts.geom.Geometry
 
@@ -276,119 +268,200 @@ class RestAnnotationDomainController extends RestController {
 
     def addCorrection = {
         def json = request.JSON
-        println "json="+json
         String location = json.location
         boolean review = json.review
         long idImage = json.image
         boolean remove = json.remove
-        println "location="+location
-        println "review="+review
-        println "idImage="+idImage
         try {
-            long idReviewedAnnotation = -1
-            long idUserAnnotation = -1
+            List<Long> idsReviewedAnnotation = []
+            List<Long> idsUserAnnotation = []
 
             //if review mode, priority is done to reviewed annotation correction
             if(review) {
-                idReviewedAnnotation = findReviewedAnnotationIdThatTouch(location,idImage,cytomineService.currentUser.id)
+                idsReviewedAnnotation = findAnnotationIdThatTouch(location,idImage,cytomineService.currentUser.id,"reviewed_annotation")
             }
 
             //there is no reviewed intersect annotation or user is not in review mode
-            if(idReviewedAnnotation==-1) {
-                idUserAnnotation = findUserAnnotationIdThatTouch(location,idImage,cytomineService.currentUser.id)
+            if(idsReviewedAnnotation.isEmpty()) {
+                idsUserAnnotation = findAnnotationIdThatTouch(location,idImage,cytomineService.currentUser.id,"user_annotation")
             }
 
             //there is no user/reviewed intersect
-            if (idUserAnnotation == -1 && idReviewedAnnotation== -1) throw new WrongArgumentException("There is no intersect annotation!")
+            if (idsUserAnnotation.isEmpty() && idsReviewedAnnotation.isEmpty()) throw new WrongArgumentException("There is no intersect annotation!")
 
             def result
-            if(idUserAnnotation!=-1) {
-                def domain = userAnnotationService.read(idUserAnnotation)
-                String fullLocation
-                if(remove) fullLocation = doDiffAnnotation(domain.location.toString(),location)
-                else fullLocation = doUnionAnnotation(domain.location.toString(),location)
-                def jsonUpdate = JSON.parse(domain.encodeAsJSON())
-                jsonUpdate.location = fullLocation
-                result = userAnnotationService.update(domain,jsonUpdate)
+            if(!idsUserAnnotation.isEmpty()) {
+                result = doCorrectUserAnnotation(idsUserAnnotation,location,remove)
             } else {
-                def domain = reviewedAnnotationService.read(idReviewedAnnotation)
-                println "SHOULD BE POLYGON:"+domain.location.toText()
-                String fullLocation
-                if(remove) fullLocation = doDiffAnnotation(domain.location.toString(),location)
-                else fullLocation = doUnionAnnotation(domain.location.toString(),location)
-                def jsonUpdate = JSON.parse(domain.encodeAsJSON())
-                jsonUpdate.location = fullLocation
-                result = reviewedAnnotationService.update(domain,jsonUpdate)
+                result = doCorrectReviewedAnnotation(idsReviewedAnnotation,location,remove)
             }
+
             responseResult(result)
+
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
     }
 
-    Long findUserAnnotationIdThatTouch(String location, long idImage, long idUser) {
+    /**
+     * Find all annotation id from a specific table created by a user that touch location geometry
+     * @param location WKT Location that must touch result annotation
+     * @param idImage Annotation image
+     * @param idUser Annotation User
+     * @param table Table that store annotation (user, algo, reviewed)
+     * @return List of annotation id from idImage and idUser that touch location
+     */
+    def findAnnotationIdThatTouch(String location, long idImage, long idUser, String table) {
 
         String request = "SELECT annotation.id\n" +
-                "FROM user_annotation annotation\n" +
-                "WHERE annotation.image_id = $idImage\n" +
-                "AND user_id = $idUser\n" +
-                "AND ST_Intersects(annotation.location,GeometryFromText('"+location+"',0));"
-
-
-        println "REQUEST=" + request
-        def sql = new Sql(dataSource)
-
-        def data = []
-        long id = -1
-
-        sql.eachRow(request) {
-            if(id!=-1) {
-                throw new WrongArgumentException("There is more than one intersect annotation!")
-            }
-            id = it[0]
-        }
-        println "findUserAnnotationIdThatTouch="+ id
-        return id
-    }
-
-    Long findReviewedAnnotationIdThatTouch(String location, long idImage, long idUser) {
-        String request = "SELECT annotation.id\n" +
-                "FROM reviewed_annotation annotation\n" +
+                "FROM $table annotation\n" +
                 "WHERE annotation.image_id = $idImage\n" +
                 "AND user_id = $idUser\n" +
                 "AND ST_Intersects(annotation.location,GeometryFromText('"+location+"',0));"
 
         println "REQUEST=" + request
         def sql = new Sql(dataSource)
-
-        def data = []
-        long id = -1
-
+        List<Long> ids = []
         sql.eachRow(request) {
-            if(id!=-1) {
-                throw new WrongArgumentException("There is more than one intersect annotation!")
-            }
-            id = it[0]
+            ids << it[0]
         }
-        println "findReviewedAnnotationIdThatTouch="+ id
-        return id
-
-
+        return ids
     }
 
-    String doUnionAnnotation(String basedLocation, String locationToAdd) {
-        println "basedLocation:"+basedLocation
-        println "locationToAdd:"+locationToAdd
-
-        Geometry geometry = new WKTReader().read(basedLocation).union(new WKTReader().read(locationToAdd))
-        String fullLocation = geometry.toText()
-        return fullLocation
+    /**
+     * Find all reviewed annotation domain instance with ids and exactly the same term
+     * All these annotation must have this single term
+     * @param ids List of reviewed annotation id
+     * @param term Term that must have all reviewed annotation (
+     * @return Reviewed Annotation list
+     */
+    def findReviewedAnnotationWithTerm(def ids,Long term) {
+        List<ReviewedAnnotation> annotationsWithSameTerm = []
+        ids.each { id ->
+             ReviewedAnnotation compared = ReviewedAnnotation.read(id)
+             List<Long> idTerms = compared.termsId()
+             if(idTerms.isEmpty() || idTerms.size()>1) throw new WrongArgumentException("Annotations have not the same term!")
+             if (idTerms.contains(term)) {
+                 annotationsWithSameTerm << compared
+             } else throw new WrongArgumentException("Annotations have not the same term!")
+        }
+        annotationsWithSameTerm
     }
-    String doDiffAnnotation(String basedLocation, String locationToAdd) {
-        println "basedLocation:"+basedLocation
-        println "locationToAdd:"+locationToAdd
-        Geometry geometry = new WKTReader().read(basedLocation).difference(new WKTReader().read(locationToAdd))
-        return geometry.toText()
+
+    /**
+     * Find all user annotation domain instance with ids and exactly the same term
+     * All these annotation must have this single term
+     * @param ids List of user annotation id
+     * @param term Term that must have all user annotation (
+     * @return user Annotation list
+     */
+    def findUserAnnotationWithTerm(def ids,Long term) {
+        List<UserAnnotation> annotationsWithSameTerm = []
+        ids.each { id ->
+             UserAnnotation compared = UserAnnotation.read(id)
+             List<Long> idTerms = compared.termsId()
+             if(idTerms.isEmpty() || idTerms.size()>1) throw new WrongArgumentException("Annotations have not the same term!")
+             if (idTerms.contains(term)) {
+                 annotationsWithSameTerm << compared
+             } else throw new WrongArgumentException("Annotations have not the same term!")
+        }
+        annotationsWithSameTerm
+    }
+
+    /**
+     * Apply a union or a diff on all covering annotations list with the newLocation geometry
+     * @param coveringAnnotations List of reviewed annotations id that are covering by newLocation geometry
+     * @param newLocation A geometry (wkt format)
+     * @param remove Flag that tell to extend or substract part of geometry from  coveringAnnotations list
+     * @return The first annotation data
+     */
+    def doCorrectReviewedAnnotation(def coveringAnnotations, String newLocation, boolean remove) {
+        if(coveringAnnotations.isEmpty()) return
+
+        //Get the based annotation
+        ReviewedAnnotation based = ReviewedAnnotation.read(coveringAnnotations.first())
+
+        //Get the term of the based annotation, it will be the main term
+        def basedTerms = based.termsId()
+        if(basedTerms.isEmpty() || basedTerms.size()>1) throw new WrongArgumentException("Annotations have not the same term!")
+        Long basedTerm = basedTerms.first()
+
+        //Get all other annotation with same term
+        List<Long> allOtherAnnotationId = coveringAnnotations.subList(1,coveringAnnotations.size())
+        List<ReviewedAnnotation> allAnnotationWithSameTerm = findReviewedAnnotationWithTerm(allOtherAnnotationId,basedTerm)
+
+        //Create the new geometry
+        Geometry newGeometry = new WKTReader().read(newLocation)
+
+        def result
+        if(!remove) {
+            //union will be made:
+            // -add the new geometry to the based annotation location.
+            // -add all other annotation geometry to the based annotation location (and delete other annotation)
+            based.location = based.location.union(newGeometry)
+            allAnnotationWithSameTerm.eachWithIndex { other, i->
+                based.location = based.location.union(other.location)
+                reviewedAnnotationService.delete(other,JSON.parse(other.encodeAsJSON()))
+            }
+            result = reviewedAnnotationService.update(based,JSON.parse(based.encodeAsJSON()))
+        } else {
+            //diff will be made
+            //-remove the new geometry from the based annotation location
+            //-remove the new geometry from all other annotation location
+            based.location = based.location.difference(newGeometry)
+            if(based.location.getNumPoints()<2) throw new WrongArgumentException("You cannot delete an annotation with substract! Use reject or delete tool.")
+            result = reviewedAnnotationService.update(based,JSON.parse(based.encodeAsJSON()))
+            allAnnotationWithSameTerm.eachWithIndex { other, i->
+                other.location = other.location.difference(newGeometry)
+                reviewedAnnotationService.update(other,JSON.parse(other.encodeAsJSON()))
+            }
+        }
+        return result
+    }
+
+
+    def doCorrectUserAnnotation(def coveringAnnotations, String newLocation, boolean remove) {
+        if(coveringAnnotations.isEmpty()) return
+
+        //Get the based annotation
+        UserAnnotation based = UserAnnotation.read(coveringAnnotations.first())
+
+        //Get the term of the based annotation, it will be the main term
+        def basedTerms = based.termsId()
+        if(basedTerms.isEmpty() || basedTerms.size()>1) throw new WrongArgumentException("Annotations have not the same term!")
+        Long basedTerm = basedTerms.first()
+
+        //Get all other annotation with same term
+        List<Long> allOtherAnnotationId = coveringAnnotations.subList(1,coveringAnnotations.size())
+        List<UserAnnotation> allAnnotationWithSameTerm = findUserAnnotationWithTerm(allOtherAnnotationId,basedTerm)
+
+         //Create the new geometry
+        Geometry newGeometry = new WKTReader().read(newLocation)
+
+        def result
+        if(!remove) {
+            //union will be made:
+            // -add the new geometry to the based annotation location.
+            // -add all other annotation geometry to the based annotation location (and delete other annotation)
+            based.location = based.location.union(newGeometry)
+            allAnnotationWithSameTerm.eachWithIndex { other, i->
+                based.location = based.location.union(other.location)
+                userAnnotationService.delete(other,JSON.parse(other.encodeAsJSON()))
+            }
+            result = userAnnotationService.update(based,JSON.parse(based.encodeAsJSON()))
+        } else {
+            //diff will be made
+            //-remove the new geometry from the based annotation location
+            //-remove the new geometry from all other annotation location
+            based.location = based.location.difference(newGeometry)
+            if(based.location.getNumPoints()<2) throw new WrongArgumentException("You cannot delete an annotation with substract! Use reject or delete tool.")
+            result = userAnnotationService.update(based,JSON.parse(based.encodeAsJSON()))
+            allAnnotationWithSameTerm.eachWithIndex { other, i->
+                other.location = other.location.difference(newGeometry)
+                userAnnotationService.update(other,JSON.parse(other.encodeAsJSON()))
+            }
+        }
+        return result
     }
 }

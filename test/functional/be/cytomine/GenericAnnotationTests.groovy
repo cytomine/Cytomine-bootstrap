@@ -347,7 +347,7 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         String expectedLocation = "POLYGON ((0 0, 0 10000, 10000 10000, 10000 0, 0 0))"
 
         //add annotation with empty space inside it
-        def annotationToFill = BasicInstance.getBasicUserAnnotationNotExist()
+        def annotationToFill = BasicInstance.createUserAnnotation(BasicInstance.createOrGetBasicProject())
         annotationToFill.user = User.findByUsername(Infos.GOODLOGIN)
         annotationToFill.location = new WKTReader().read(basedLocation)
         assert annotationToFill.save(flush: true)  != null
@@ -372,7 +372,7 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         String expectedLocation = "POLYGON ((0 0, 0 5000, 10000 5000, 10000 0, 0 0))"
 
         //add annotation with empty space inside it
-        def annotationToFill = BasicInstance.getBasicUserAnnotationNotExist()
+        def annotationToFill = BasicInstance.createUserAnnotation(BasicInstance.createOrGetBasicProject())
         annotationToFill.user = User.findByUsername(Infos.GOODLOGIN)
         annotationToFill.location = new WKTReader().read(basedLocation)
         assert annotationToFill.save(flush: true)  != null

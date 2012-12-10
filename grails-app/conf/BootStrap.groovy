@@ -68,7 +68,7 @@ class BootStrap {
     def init = { servletContext ->
 
         //Register API Authentifier
-        log.info "Current directory="+new File( 'test.html' ).absolutePath
+        log.info "Current directory2="+new File( 'test.html' ).absolutePath
 
         SpringSecurityUtils.clientRegisterFilter( 'apiAuthentificationFilter', SecurityFilterPosition.DIGEST_AUTH_FILTER.order + 1)
         log.info "###################" + grailsApplication.config.grails.serverURL + "##################"

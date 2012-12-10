@@ -229,7 +229,9 @@ class RestImageInstanceController extends RestController {
         def boundaries = annotation.getBoundaries()
         double x_ratio = crop.getWidth() / boundaries.width
         double y_ratio = crop.getHeight() / boundaries.height
+
         mask = segmentationService.colorizeWindow(abstractImage, mask, geometries, Color.decode(term.color), boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
+
         if (withAlpha)
             return applyMaskToAlpha(crop, mask)
         else
@@ -264,7 +266,7 @@ class RestImageInstanceController extends RestController {
             println "alphamaskReviewedAnnotation"
             def annotation = ReviewedAnnotation.read(params.annotation)
             println "alphamaskReviewedAnnotation"
-            println "params.id="+params.id
+            println "params.id="+params.annotation
             def cropURL = alphamask(annotation,params)
             responseBufferedImage(cropURL)
         } catch (Exception e) {
@@ -285,16 +287,24 @@ class RestImageInstanceController extends RestController {
         }
         Integer zoom = null
         if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
-        if (annotation == null)
+        if (annotation == null) {
             responseNotFound("Crop", "Annotation", params.annotation)
-        else if ((params.zoom != null) && (zoom < annotation.getImage().getBaseImage().getZoomLevels().min || zoom > annotation.getImage().getBaseImage().getZoomLevels().max))
-            responseNotFound("Crop", "Zoom", zoom)
-        else {
-            try {
-                return getMaskImage(annotation, term, zoom, true)
-            } catch (Exception e) {
-                log.error("GetThumb:" + e);
-            }
+        }
+
+        def zoomMinMax = annotation.getImage().getBaseImage().getZoomLevels()
+        if ((params.zoom != null) && (zoom > zoomMinMax.max)) {
+            zoom = zoomMinMax.max
+        } else if ((params.zoom != null) && (zoom < zoomMinMax.min)) {
+            zoom = zoomMinMax.min
+        }
+
+        println "zoom=$zoom"
+        println "zoomMinMax=$zoomMinMax"
+
+        try {
+            return getMaskImage(annotation, term, zoom, true)
+        } catch (Exception e) {
+            log.error("GetThumb:" + e);
         }
         return null;
     }
