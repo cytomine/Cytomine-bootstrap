@@ -781,23 +781,31 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('a[id=point' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("point");
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('a[id=regular4' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().setSides(4);
             self.getUserLayer().toggleControl("regular");
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('a[id=regular30' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().setSides(15);
             self.getUserLayer().toggleControl("regular");
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('a[id=polygon' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("polygon");
             self.getUserLayer().disableHightlight();
@@ -828,6 +836,8 @@ var BrowseImageView = Backbone.View.extend({
             toolbar.find('a[id=freehand' + this.model.get('id') + ']').hide();
         }
         toolbar.find('a[id=magic' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("select");
             self.getUserLayer().magicOnClick = true;
@@ -837,6 +847,8 @@ var BrowseImageView = Backbone.View.extend({
             toolbar.find('a[id=magic' + this.model.get('id') + ']').hide();
         }
         toolbar.find('a[id=modify' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
             if(!self.review) {
                 self.getUserLayer().toggleEdit();
                 self.getUserLayer().toggleControl("modify");
@@ -852,12 +864,16 @@ var BrowseImageView = Backbone.View.extend({
 
         });
         toolbar.find('a[id=delete' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("select");
             self.getUserLayer().deleteOnSelect = true;
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('a[id=rotate' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
             if(!self.review) {
                 self.getUserLayer().toggleRotate();
                 self.getUserLayer().disableHightlight();
@@ -869,6 +885,8 @@ var BrowseImageView = Backbone.View.extend({
             }
         });
         toolbar.find('a[id=fill' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
             var annotation = self.currentAnnotation;
             if(annotation) {
                 new AnnotationModel({id:annotation.id, fill:true}).save({}, {
@@ -895,6 +913,8 @@ var BrowseImageView = Backbone.View.extend({
 
         });
         toolbar.find('a[id=resize' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
             if(!self.review) {
                 self.getUserLayer().toggleResize();
                 self.getUserLayer().disableHightlight();
@@ -907,6 +927,8 @@ var BrowseImageView = Backbone.View.extend({
 
         });
         toolbar.find('a[id=drag' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
             if(!self.review) {
                 self.getUserLayer().toggleDrag();
                 self.getUserLayer().disableHightlight();
@@ -918,6 +940,8 @@ var BrowseImageView = Backbone.View.extend({
             }
         });
         toolbar.find('a[id=ruler' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("line");
             self.getUserLayer().measureOnSelect = true;

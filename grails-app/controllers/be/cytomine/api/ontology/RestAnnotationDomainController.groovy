@@ -336,15 +336,17 @@ class RestAnnotationDomainController extends RestController {
      * @param term Term that must have all reviewed annotation (
      * @return Reviewed Annotation list
      */
-    def findReviewedAnnotationWithTerm(def ids,Long term) {
+    def findReviewedAnnotationWithTerm(def ids,def termsId) {
         List<ReviewedAnnotation> annotationsWithSameTerm = []
         ids.each { id ->
-             ReviewedAnnotation compared = ReviewedAnnotation.read(id)
-             List<Long> idTerms = compared.termsId()
-             if(idTerms.isEmpty() || idTerms.size()>1) throw new WrongArgumentException("Annotations have not the same term!")
-             if (idTerms.contains(term)) {
-                 annotationsWithSameTerm << compared
-             } else throw new WrongArgumentException("Annotations have not the same term!")
+            ReviewedAnnotation compared = ReviewedAnnotation.read(id)
+            List<Long> idTerms = compared.termsId()
+            if(idTerms.size()!=termsId.size()) throw new WrongArgumentException("Annotations have not the same term!")
+
+               idTerms.each { idTerm ->
+                   if(!termsId.contains(idTerm)) throw new WrongArgumentException("Annotations have not the same term!")
+               }
+             annotationsWithSameTerm << compared
         }
         annotationsWithSameTerm
     }
@@ -356,15 +358,17 @@ class RestAnnotationDomainController extends RestController {
      * @param term Term that must have all user annotation (
      * @return user Annotation list
      */
-    def findUserAnnotationWithTerm(def ids,Long term) {
+    def findUserAnnotationWithTerm(def ids,def termsId) {
         List<UserAnnotation> annotationsWithSameTerm = []
         ids.each { id ->
              UserAnnotation compared = UserAnnotation.read(id)
              List<Long> idTerms = compared.termsId()
-             if(idTerms.isEmpty() || idTerms.size()>1) throw new WrongArgumentException("Annotations have not the same term!")
-             if (idTerms.contains(term)) {
-                 annotationsWithSameTerm << compared
-             } else throw new WrongArgumentException("Annotations have not the same term!")
+             if(idTerms.size()!=termsId.size()) throw new WrongArgumentException("Annotations have not the same term!")
+
+                idTerms.each { idTerm ->
+                    if(!termsId.contains(idTerm)) throw new WrongArgumentException("Annotations have not the same term!")
+                }
+              annotationsWithSameTerm << compared
         }
         annotationsWithSameTerm
     }
@@ -384,12 +388,10 @@ class RestAnnotationDomainController extends RestController {
 
         //Get the term of the based annotation, it will be the main term
         def basedTerms = based.termsId()
-        if(basedTerms.isEmpty() || basedTerms.size()>1) throw new WrongArgumentException("Annotations have not the same term!")
-        Long basedTerm = basedTerms.first()
 
         //Get all other annotation with same term
         List<Long> allOtherAnnotationId = coveringAnnotations.subList(1,coveringAnnotations.size())
-        List<ReviewedAnnotation> allAnnotationWithSameTerm = findReviewedAnnotationWithTerm(allOtherAnnotationId,basedTerm)
+        List<ReviewedAnnotation> allAnnotationWithSameTerm = findReviewedAnnotationWithTerm(allOtherAnnotationId,basedTerms)
 
         //Create the new geometry
         Geometry newGeometry = new WKTReader().read(newLocation)
@@ -429,12 +431,12 @@ class RestAnnotationDomainController extends RestController {
 
         //Get the term of the based annotation, it will be the main term
         def basedTerms = based.termsId()
-        if(basedTerms.isEmpty() || basedTerms.size()>1) throw new WrongArgumentException("Annotations have not the same term!")
-        Long basedTerm = basedTerms.first()
+        //if(basedTerms.isEmpty() || basedTerms.size()>1) throw new WrongArgumentException("Annotations have not the same term!")
+        //Long basedTerm = basedTerms.first()
 
         //Get all other annotation with same term
         List<Long> allOtherAnnotationId = coveringAnnotations.subList(1,coveringAnnotations.size())
-        List<UserAnnotation> allAnnotationWithSameTerm = findUserAnnotationWithTerm(allOtherAnnotationId,basedTerm)
+        List<UserAnnotation> allAnnotationWithSameTerm = findUserAnnotationWithTerm(allOtherAnnotationId,basedTerms)
 
          //Create the new geometry
         Geometry newGeometry = new WKTReader().read(newLocation)
