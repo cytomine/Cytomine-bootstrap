@@ -37,6 +37,10 @@ class RestUploadedFileController extends RestController {
         responseSuccess(uploadedFile)
     }
 
+    def download = {
+
+    }
+
     def add = {
         def destPath = "/tmp/cytominebuffer"
         SecUser currentUser = cytomineService.getCurrentUser()

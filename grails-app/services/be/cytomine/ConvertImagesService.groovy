@@ -2,7 +2,6 @@ package be.cytomine
 
 import be.cytomine.image.UploadedFile
 import be.cytomine.security.SecUser
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 
 class ConvertImagesService {
@@ -10,7 +9,7 @@ class ConvertImagesService {
     static transactional = true
 
     def convertUploadedFile(UploadedFile uploadedFile, SecUser currentUser) {
-        SpringSecurityUtils.reauthenticate currentUser.getUsername(), null
+//        SpringSecurityUtils.reauthenticate currentUser.getUsername(), null
         //Check if file mime is allowed
         if (!UploadedFile.allowedMime.plus(UploadedFile.mimeToConvert).contains(uploadedFile.getExt())) {
             log.info uploadedFile.getFilename() + " : FORMAT NOT ALLOWED"
