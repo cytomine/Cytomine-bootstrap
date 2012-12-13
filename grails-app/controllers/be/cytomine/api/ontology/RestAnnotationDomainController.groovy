@@ -224,10 +224,8 @@ class RestAnnotationDomainController extends RestController {
             def response = [:]
 
             //Is the first polygon always the big 'boundary' polygon?
-            String newGeom = "POLYGON (" + getFirstLocation(annotation.location.toString()) +"))"
-            println "new geometry = "+ newGeom
-            println "old geometry = "+ annotation.location.toString().size()
-            println "new geometry = "+ newGeom.size()
+            String newGeom =fillForm(annotation.location.toText())
+            println "newGeom="+newGeom
             def json = JSON.parse(annotation.encodeAsJSON())
             json.location = newGeom
 
@@ -240,31 +238,73 @@ class RestAnnotationDomainController extends RestController {
         }
     }
 
-    private String getFirstLocation(String form) {
-        int i = 0
-        int start, stop
-        while(form.charAt(i)!='(') i++
-
-        while(form.charAt(i+1)=='(') i++
-
-        start = i
-        println "mustbe(=" + form.charAt(i)
-        println "mustNotbe(=" + form.charAt(i+1)
-
-        while(form.charAt(i)!=')') i++
-
-        stop = i
-        println "mustbe)=" + form.charAt(i)
-        println "mustNotbe)=" + form.charAt(i-1)
-
-        print "final="+ form.substring(start,stop+1)
-
-        form.substring(start,stop+1)
-
+    /**
+     * Fill form to complete empty space inside polygon/mulypolygon
+     * @param form A polygon or multipolygon wkt form
+     * @return A polygon or multipolygon filled points
+     */
+    private String fillForm(String form) {
+        if(form.startsWith("POLYGON")) return "POLYGON("+getFirstPolygonLocation(form)+")";
+        else if(form.startsWith("MULTIPOLYGON")) return "MULTIPOLYGON("+getFirstPolygonLocationForEachItem(form)+")";
+        else throw new WrongArgumentException("Form cannot be filled:"+form)
     }
 
+    /**
+     * Fill all polygon inside a Multipolygon WKT form
+     * @param form Multipolygon WKT form
+     * @return Multipolygon with all its polygon filled
+     */
+    private String getFirstPolygonLocationForEachItem(String form) {
+        //e.g: "MULTIPOLYGON (((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)) , ((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)) , ((6 3,9 2,9 4,6 3)))";
+        String workingForm = form.replaceAll("\\) ", ")"); //"MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))";
+        workingForm = form.replaceAll(" \\(", "(")
+        println "1="+workingForm
+        workingForm = workingForm.replace("MULTIPOLYGON(", ""); //"((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))";
+        println "2="+workingForm
+        workingForm = workingForm.substring(0,workingForm.length()-1); //"((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3))";
+        println "3="+workingForm
+        String[] polygons = workingForm.split("\\)\\)\\,\\(\\(");//"[ ((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2] [1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2] [6 3,9 2,9 4,6 3)) ]";
+        println "4="+polygons
+        List<String> fixedPolygon = new ArrayList<String>();
+        for(int i=0;i<polygons.length;i++) {
+            if(i==0) {
+               fixedPolygon.add(polygons[i]+"))");
+            } else if(i==polygons.length-1) {
+               fixedPolygon.add("(("+polygons[i]+"");
+            } else {
+               fixedPolygon.add("(("+polygons[i]+"))");
+            }
+            //"[ ((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))] [((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))] [((6 3,9 2,9 4,6 3)) ]";
+        }
+        println "5="+fixedPolygon
 
+        List<String> filledPolygon = new ArrayList<String>();
+        for(int i=0;i<fixedPolygon.size();i++) {
+            filledPolygon.add("("+getFirstPolygonLocation(fixedPolygon.get(i))+")");
+            //"[ ((1 1,5 1,5 5,1 5,1 1))] [((1 1,5 1,5 5,1 5,1 1))] [((6 3,9 2,9 4,6 3)) ]";
+        }
+        println "6="+filledPolygon
+        String multiPolygon = filledPolygon.join(",")
+        println "7="+multiPolygon
+        //"((1 1,5 1,5 5,1 5,1 1)),((1 1,5 1,5 5,1 5,1 1)),((6 3,9 2,9 4,6 3))";
+        return multiPolygon;
+    }
 
+    /**
+     * Fill a polygon
+     * @param form Polygon as wkt
+     * @return Polygon filled points
+     */
+    private String getFirstPolygonLocation(String form) {
+        int i = 0;
+        int start, stop;
+        while(form.charAt(i)!='(') i++;
+        while(form.charAt(i+1)=='(') i++;
+        start = i;
+        while(form.charAt(i)!=')') i++;
+        stop = i;
+        return form.substring(start,stop+1);
+    }
 
     def addCorrection = {
         def json = request.JSON
