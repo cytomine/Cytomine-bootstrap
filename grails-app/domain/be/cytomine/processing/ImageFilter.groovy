@@ -7,12 +7,14 @@ class ImageFilter {
 
     String name
     String baseUrl
+    ProcessingServer processingServer
 
     static hasMany = [imageFilterProjects: ImageFilterProject]
 
     static constraints = {
         name(blank: false, nullable: false)
         baseUrl(blank: false, nullable: false)
+        processingServer (nullable: true)
     }
 
     static void registerMarshaller(String cytomineBaseUrl) {
@@ -21,6 +23,7 @@ class ImageFilter {
             def returnArray = [:]
             returnArray['id'] = it.id
             returnArray['name'] = it.name
+            returnArray['processingServer'] = it.processingServer.url
             returnArray['baseUrl'] = it.baseUrl
             return returnArray
         }

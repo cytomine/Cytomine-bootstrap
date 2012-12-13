@@ -1,6 +1,6 @@
 package be.cytomine.admin
 
-import be.cytomine.image.server.ProcessingServer
+import be.cytomine.processing.ProcessingServer
 import grails.plugins.springsecurity.Secured
 
 @Secured(['ROLE_ADMIN'])

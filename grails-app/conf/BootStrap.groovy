@@ -1,3 +1,4 @@
+import be.cytomine.processing.ProcessingServer
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 
 import be.cytomine.ViewPortToBuildXML
@@ -113,7 +114,8 @@ class BootStrap {
         createBasicUser()
         log.info "create discipline"
         createDiscipline()
-
+        log.info "create processing server"
+        createProcessingServer()
 
 
         //countersService.updateCounters()
@@ -127,8 +129,21 @@ class BootStrap {
         //end of init
     }
 
+    public void createProcessingServer() {
+        ProcessingServer processingServer = null
+        if (ProcessingServer.count() == 0) {
+            processingServer = new ProcessingServer(url: "http://processing.cytomine.be/").save()
+        } else {
+            processingServer =  ProcessingServer.first()
+        }
+        ImageFilter.findAllByProcessingServerIsNull() { ImageFilter imageFilter ->
+            imageFilter.processingServer = processingServer
+            imageFilter.save()
+        }
+    }
+
     public void createBasicUser() {
-        if (User.list().isEmpty()) {
+        if (User.count() == 0) {
             User user = new User()
             user.username = "admin"
             user.firstname = "Admin"

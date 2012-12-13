@@ -543,7 +543,7 @@ var BrowseImageView = Backbone.View.extend({
             };
             imageFilters.each(function (imageFilter) {
                 var url = _.map(zoomify_urls, function (url) {
-                    return imageFilter.get("baseUrl") + url;
+                    return imageFilter.get('processingServer') + imageFilter.get("baseUrl") + url;
                 });
                 var layer = new OpenLayers.Layer.Zoomify(
                     imageFilter.get("name"),

@@ -1,4 +1,4 @@
-package be.cytomine.image.server
+package be.cytomine.processing
 
 import be.cytomine.CytomineDomain
 
