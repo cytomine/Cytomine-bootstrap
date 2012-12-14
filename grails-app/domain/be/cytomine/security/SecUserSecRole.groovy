@@ -17,8 +17,9 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
 
 
     static SecUserSecRole get(long secUserId, long secRoleId) {
-        find 'from SecUserSecRole where secUser.id=:secUserId and secRole.id=:secRoleId',
-                [secUserId: secUserId, secRoleId: secRoleId]
+//        find 'from SecUserSecRole where secUser.id=:secUserId and secRole.id=:secRoleId',
+//                [secUserId: secUserId, secRoleId: secRoleId]
+        SecUserSecRole.findBySecRoleAndSecUser(SecRole.get(secRoleId),SecUser.get(secUserId))
     }
 
     static SecUserSecRole create(SecUser secUser, SecRole secRole, boolean flush = false) {
