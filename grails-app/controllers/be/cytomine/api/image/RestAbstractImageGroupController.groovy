@@ -5,6 +5,10 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.security.Group
 import grails.converters.JSON
 
+/**
+ * Controller that handle operation on security access to abstractimage domain.
+ * An abstract image may be visible by some groups.
+ */
 class RestAbstractImageGroupController extends RestController {
 
     def abstractImageService

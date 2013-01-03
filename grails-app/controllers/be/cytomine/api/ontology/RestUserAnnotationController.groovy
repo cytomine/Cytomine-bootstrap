@@ -31,7 +31,6 @@ import be.cytomine.utils.GeometryUtils
 class RestUserAnnotationController extends RestController {
 
     def exportService
-    def grailsApplication
     def userAnnotationService
     def domainService
     def termService
@@ -45,11 +44,16 @@ class RestUserAnnotationController extends RestController {
 
     def list = {
         def annotations = []
-        def projects = projectService.list()
-        projects.each {
-            annotations.addAll(userAnnotationService.listMap(it))
-        }
-        responseSuccess(annotations)
+
+//        if(params.retrieval!=null && params.getBoolean('retrieval')) {
+            responseSuccess(userAnnotationService.listLightForRetrieval())
+//        } else {
+//            def projects = projectService.list()
+//            projects.each {
+//                annotations.addAll(userAnnotationService.listMap(it))
+//            }
+//            responseSuccess(annotations)
+//        }
     }
 
     def listByImage = {
@@ -62,6 +66,7 @@ class RestUserAnnotationController extends RestController {
         Project project = projectService.read(params.long('id'), new Project())
 
         if (project) {
+
             Integer offset = params.offset!=null? params.getInt('offset') : 0
             Integer max = params.max!=null? params.getInt('max') : Integer.MAX_VALUE
 

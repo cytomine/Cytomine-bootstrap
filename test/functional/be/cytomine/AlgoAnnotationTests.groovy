@@ -16,6 +16,7 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.test.http.AnnotationDomainAPI
+import com.vividsolutions.jts.io.WKTReader
 
 /**
  * Created by IntelliJ IDEA.
@@ -74,6 +75,9 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
+
+        result = AlgoAnnotationAPI.listByProject(-99, annotation.user.id, annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
     }
 
     void testListAlgoAnnotationByImageAndUserWithCredential() {
@@ -82,7 +86,22 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
+
+        String bbox = "1,1,10000,10000"
+
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        json = JSON.parse(result.data)
+        assert json instanceof JSONArray
     }
+
+
+
     void testListAlgoAnnotationByProjectAndTermAndUserWithCredential() {
         AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
         Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.retrieveAnnotationDomain().project)
@@ -90,6 +109,9 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         //assert json instanceof JSONArray
+        result = AlgoAnnotationAPI.listByProjectAndTerm(-99, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+        json = JSON.parse(result.data)
     }
     
     void testListAlgoAnnotationByProjectAndTermWithUserNullWithCredential() {
@@ -203,6 +225,30 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         result = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
         assertEquals(200, result.code)
+    }
+
+    void testAddAlgoAnnotationWithoutProject() {
+        def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        UserJob user = annotationToAdd.user
+        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
+
+        def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
+        updateAnnotation.project = null
+
+        def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
+        assertEquals(200, result.code)
+    }
+
+    void testAddAlgoAnnotationBadProject() {
+        def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        UserJob user = annotationToAdd.user
+        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
+
+        def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
+        updateAnnotation.project = null
+        updateAnnotation.image = null
+        def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
+        assertEquals(400, result.code)
     }
 
     void testAddAlgoAnnotationBadGeom() {
@@ -459,6 +505,66 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)
     }
 
+    void testUnionAlgoAnnotationByProjectWithCredential() {
+        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        image.save(flush: true)
+        assert AlgoAnnotation.findAllByImage(image).size()==0
 
+        def a1 = BasicInstance.getBasicAlgoAnnotationNotExist()
+        try {Infos.addUserRight(a1.user.user,image.project) }catch(Exception e){println e}
+        a1.location = new WKTReader().read("POLYGON ((0 0, 0 5000, 10000 5000, 10000 0, 0 0))")
+        a1.image = image
+        a1.project = image.project
+        assert a1.save(flush: true)  != null
+
+        def a2 = BasicInstance.getBasicAlgoAnnotationNotExist()
+        a2.location = new WKTReader().read("POLYGON ((0 5000, 10000 5000, 10000 10000, 0 10000, 0 5000))")
+        a2.image = image
+        a2.project = image.project
+        assert a2.save(flush: true)  != null
+
+        def at1 = BasicInstance.createAlgoAnnotationTerm(a1.user.job,a1,a1.user)
+        def at2 = BasicInstance.createAlgoAnnotationTerm(a2.user.job,a2,a2.user)
+        at2.term = at1.term
+        at2.save(flush:true)
+
+        assert AlgoAnnotation.findAllByImage(a1.image).size()==2
+
+        def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        assert AlgoAnnotation.findAllByImage(a1.image).size()==1
+    }
+
+    void testUnionAlgoAnnotationByProjectWithCredentialBufferNull() {
+        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        image.save(flush: true)
+        assert AlgoAnnotation.findAllByImage(image).size()==0
+
+        def a1 = BasicInstance.getBasicAlgoAnnotationNotExist()
+        try {Infos.addUserRight(a1.user.user,image.project) }catch(Exception e){println e}
+        a1.location = new WKTReader().read("POLYGON ((0 0, 0 5100, 10000 5100, 10000 0, 0 0))")
+        a1.image = image
+        a1.project = image.project
+        assert a1.save(flush: true)  != null
+
+        def a2 = BasicInstance.getBasicAlgoAnnotationNotExist()
+        a2.location = new WKTReader().read("POLYGON ((0 5000, 10000 5000, 10000 10000, 0 10000, 0 5000))")
+        a2.image = image
+        a2.project = image.project
+        assert a2.save(flush: true)  != null
+
+        def at1 = BasicInstance.createAlgoAnnotationTerm(a1.user.job,a1,a1.user)
+        def at2 = BasicInstance.createAlgoAnnotationTerm(a2.user.job,a2,a2.user)
+        at2.term = at1.term
+        at2.save(flush:true)
+
+        assert AlgoAnnotation.findAllByImage(a1.image).size()==2
+
+        def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        assert AlgoAnnotation.findAllByImage(a1.image).size()==1
+    }
 
 }

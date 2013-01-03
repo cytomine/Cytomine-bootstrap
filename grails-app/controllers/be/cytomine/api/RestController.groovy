@@ -20,6 +20,7 @@ class RestController {
     def sessionFactory
     def propertyInstanceMap = org.codehaus.groovy.grails.plugins.DomainClassGrailsPlugin.PROPERTY_INSTANCE_MAP
     def springSecurityService
+    def grailsApplication
 
     static final int NOT_FOUND_CODE = 404
 

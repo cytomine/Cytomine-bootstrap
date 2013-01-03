@@ -190,6 +190,15 @@ class UserAnnotationService extends ModelService {
         selectUserAnnotationFull(request)
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    def listLightForRetrieval() {
+        String request = "SELECT a.id as id, a.project_id as project\n" +
+                " FROM user_annotation a\n" +
+                " WHERE GeometryType(a.location) != 'POINT'\n"
+                " ORDER BY id desc"
+        selectUserAnnotationLightForRetrieval(request)
+    }
+
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def listMap(ImageInstance image) {
         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerm,at2.user_id as userTerm,a.wkt_location as location  \n" +
@@ -558,6 +567,20 @@ class UserAnnotationService extends ModelService {
                     data.last().term.add(idTerm)
             }
             lastAnnotationId = idAnnotation
+        }
+        data
+    }
+
+    def selectUserAnnotationLightForRetrieval(String request) {
+        def data = []
+        def cytomineBaseUrl = grailsApplication.config.grails.serverURL
+        long lastAnnotationId = -1
+         new Sql(dataSource).eachRow(request) {
+
+            long idAnnotation = it[0]
+            long idContainer = it[1]
+            def url = UrlApi.getAnnotationMinCropWithAnnotationId(cytomineBaseUrl,idAnnotation)
+            data << [id: idAnnotation, container: idContainer, url: url]
         }
         data
     }

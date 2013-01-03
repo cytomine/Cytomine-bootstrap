@@ -7,6 +7,9 @@ import be.cytomine.security.SecUser
 import grails.converters.JSON
 import be.cytomine.laboratory.Sample
 
+/**
+ * //TODO:: document this class
+ */
 class RestSampleController extends RestController {
 
     def springSecurityService

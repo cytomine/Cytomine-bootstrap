@@ -144,6 +144,18 @@ class AlgoAnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def listByImageAndUser(Long idImage,Long idUser, String bbox, boolean netReviewedOnly,String username, String password) {
+        log.info "list algoannotation by user " + idUser + " and image " + idImage
+        String URL = Infos.CYTOMINEURL+"api/user/"+ idUser +"/imageinstance/"+idImage+"/algoannotation.json?bbox=$bbox&notreviewed=$netReviewedOnly"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
     static def listByProjectAndUsers(Long id,Long idUser, String username, String password) {
         log.info "list algoannotation by user " + idUser + " and project " + id
         String URL = Infos.CYTOMINEURL+"api/project/"+ id +"/algoannotation.json?users=" +idUser
@@ -318,4 +330,16 @@ class AlgoAnnotationAPI extends DomainAPI {
         annotation = result.data
         return annotation
     }
+
+    static def union(def idImage, def idUser, def idTerm, def minIntersectionLength, def bufferLength, String username, String password) {
+        log.info "union algoannotation"
+        String URL = Infos.CYTOMINEURL + "api/algoannotation/union.json?idImage=$idImage&idUser=$idUser&idTerm=$idTerm&minIntersectionLength=$minIntersectionLength&bufferLength=$bufferLength"
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        client.put("")
+        int code = client.getResponseCode()
+        client.disconnect();
+        return [ code: code]
+    }
+
 }

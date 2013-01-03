@@ -34,8 +34,8 @@ import be.cytomine.ontology.ReviewedAnnotation
  * Created by IntelliJ IDEA.
  * User: lrollus
  * Date: 18/05/11
+ * Controller that handle request for project images.
  */
-
 class RestImageInstanceController extends RestController {
 
     def segmentationService
@@ -46,9 +46,7 @@ class RestImageInstanceController extends RestController {
     def userService
 
     def show = {
-        log.info "show"
         ImageInstance image = imageInstanceService.read(params.long('id'))
-
         if (image) {
             imageInstanceService.checkAuthorization(image.project)
             responseSuccess(image)
@@ -69,35 +67,41 @@ class RestImageInstanceController extends RestController {
 
     def listByProject = {
         Project project = projectService.read(params.long('id'), new Project())
-        if (project && params.dataTables) responseSuccess(imageInstanceService.listDatatables(project))
-        else if (project && params.inf && params.sup) responseSuccess(imageInstanceService.list(project, Integer.parseInt(params.inf), Integer.parseInt(params.sup)))
-        else if (project && params.tree && Boolean.parseBoolean(params.tree))  responseSuccess(imageInstanceService.listTree(project))
-        else if (project) responseSuccess(imageInstanceService.list(project))
-        else responseNotFound("ImageInstance", "Project", params.id)
+        if (project && params.dataTables) {
+            responseSuccess(imageInstanceService.listDatatables(project))
+        }
+        else if (project && params.inf && params.sup) {
+            responseSuccess(imageInstanceService.list(project, Integer.parseInt(params.inf), Integer.parseInt(params.sup)))
+        }
+        else if (project && params.tree && Boolean.parseBoolean(params.tree))  {
+            responseSuccess(imageInstanceService.listTree(project))
+        }
+        else if (project) {
+            responseSuccess(imageInstanceService.list(project))
+        }
+        else {
+            responseNotFound("ImageInstance", "Project", params.id)
+        }
     }
 
     def add = {
         try {
             def json = request.JSON
-            if(!json.project || !Project.read(json.project)) throw new WrongArgumentException("Image Instance must have a valide project:"+json.project)
+            if(!json.project || !Project.read(json.project)) {
+                throw new WrongArgumentException("Image Instance must have a valide project:"+json.project)
+            }
             imageInstanceService.checkAuthorization(Long.parseLong(json.project.toString()), new Project())
-            log.debug("add")
-            def result = imageInstanceService.add(json)
-            log.debug("result")
-            responseResult(result)
+            responseResult(imageInstanceService.add(json))
         } catch (CytomineException e) {
-            log.error("add error:" + e.msg)
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
     }
 
-
     def update = {
         def json = request.JSON
         try {
             def domain = imageInstanceService.retrieve(json)
-            try {Infos.printRight(domain?.project) } catch(Exception e) {log.info e}
             imageInstanceService.checkAuthorization(domain?.project)
             def result = imageInstanceService.update(domain,json)
             responseResult(result)
@@ -109,15 +113,10 @@ class RestImageInstanceController extends RestController {
 
     def delete = {
         def json = JSON.parse("{id : $params.id}")
-        log.info "delete image instance:" + json.toString()
         try {
-            log.info "retrieve domain"
             def domain = imageInstanceService.retrieve(json)
-            log.info "checkAuthorization"
             imageInstanceService.checkAuthorization(domain?.project)
-            log.info "delete"
             def result = imageInstanceService.delete(domain,json)
-            log.info "responseResult"
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -126,6 +125,7 @@ class RestImageInstanceController extends RestController {
     }
 
     def window = {
+        //TODO:: document this method
         ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
         int x = Integer.parseInt(params.x)
@@ -155,6 +155,7 @@ class RestImageInstanceController extends RestController {
     }
 
     def cropGeometry = {
+        //TODO:: document this method
         String geometrySTR = params.geometry
         def geometry = new WKTReader().read(geometrySTR)
         def annotation = new UserAnnotation(location: geometry)
@@ -163,6 +164,7 @@ class RestImageInstanceController extends RestController {
     }
 
     def mask = {
+        //TODO:: document this method
         ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
         int x = Integer.parseInt(params.x)
@@ -220,6 +222,7 @@ class RestImageInstanceController extends RestController {
     }
 
     private BufferedImage getMaskImage(AnnotationDomain annotation, Term term, Integer zoom, Boolean withAlpha) {
+        //TODO:: document this method
         BufferedImage crop = getImageFromURL(abstractImageService.crop(annotation, zoom))
         BufferedImage mask = new BufferedImage(crop.getWidth(),crop.getHeight(),BufferedImage.TYPE_INT_ARGB);
         AbstractImage abstractImage = annotation.getImage().getBaseImage()
@@ -237,9 +240,6 @@ class RestImageInstanceController extends RestController {
         else
             return mask
     }
-
-
-
 
     def alphamaskUserAnnotation = {
         try {
@@ -263,10 +263,7 @@ class RestImageInstanceController extends RestController {
 
     def alphamaskReviewedAnnotation = {
         try {
-            println "alphamaskReviewedAnnotation"
             def annotation = ReviewedAnnotation.read(params.annotation)
-            println "alphamaskReviewedAnnotation"
-            println "params.id="+params.annotation
             def cropURL = alphamask(annotation,params)
             responseBufferedImage(cropURL)
         } catch (Exception e) {
@@ -275,6 +272,7 @@ class RestImageInstanceController extends RestController {
     }
 
     private def alphamask(AnnotationDomain annotation, def params) {
+        //TODO:: document this method
         if (!annotation) {
             responseNotFound("Annotation", params.annotation)
         }
@@ -310,6 +308,7 @@ class RestImageInstanceController extends RestController {
     }
 
     def cropmask = {
+        //TODO:: document this method
         UserAnnotation annotation = UserAnnotation.read(params.annotation)
         if (!annotation) {
             responseNotFound("Annotation", params.annotation)
@@ -338,8 +337,8 @@ class RestImageInstanceController extends RestController {
 
     }
 
-    private BufferedImage applyMaskToAlpha(BufferedImage image, BufferedImage mask)
-    {
+    private BufferedImage applyMaskToAlpha(BufferedImage image, BufferedImage mask) {
+        //TODO:: document this method
         int width = image.getWidth()
         int height = image.getHeight()
         int[] imagePixels = image.getRGB(0, 0, width, height, null, 0, width)
@@ -361,6 +360,7 @@ class RestImageInstanceController extends RestController {
 
 
     def putMask = {
+        //TODO:: document this method
         //Load request attachment
         MultipartFile uploadedFile = ((MultipartHttpServletRequest)request).getFile('mask')
         ImagePlus original = new ImagePlus("ori", ImageIO.read ( new ByteArrayInputStream ( uploadedFile.getBytes() )))

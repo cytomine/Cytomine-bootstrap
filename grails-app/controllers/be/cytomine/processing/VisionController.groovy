@@ -17,7 +17,6 @@ import java.awt.image.BufferedImage
 class VisionController extends RestController {
 
     def imageProcessingService
-    def grailsApplication
 
     def process = {
         def split = request.queryString.split("url=http://")

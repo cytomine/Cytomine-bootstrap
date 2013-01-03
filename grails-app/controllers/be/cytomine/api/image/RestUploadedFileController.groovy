@@ -7,6 +7,9 @@ import be.cytomine.security.SecUser
 import grails.converters.JSON
 import be.cytomine.utils.FilesUtils
 
+/**
+ * Controller that handle request on file uploading (when a file is uploaded, list uploaded files...)
+ */
 class RestUploadedFileController extends RestController {
 
     def backgroundService
@@ -33,15 +36,18 @@ class RestUploadedFileController extends RestController {
     }
 
     def show = {
-        def uploadedFile = UploadedFile.findById(params.id)
-        responseSuccess(uploadedFile)
+        responseSuccess(UploadedFile.findById(params.id))
     }
 
     def download = {
+        //TODO:: remove this action or must be impl?
 
     }
 
     def add = {
+        //TODO:: document this method
+
+        //TODO:: externalized config
         def destPath = "/tmp/cytominebuffer"
         SecUser currentUser = cytomineService.getCurrentUser()
         String errorMessage = ""

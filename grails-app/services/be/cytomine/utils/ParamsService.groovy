@@ -20,6 +20,16 @@ class ParamsService {
            securityService.getAllowedUserIdList(project)
        }
     }
+    public List<Long> getParamsSecUserList(String paramsUsers, Project project) {
+       if(paramsUsers != null && !paramsUsers.equals("null")) {
+           if (!paramsUsers.equals(""))
+               return securityService.getUserIdList(paramsUsers.split(paramsUsers.contains("_")?"_":",").collect{ Long.parseLong(it)})
+           else return []
+       } else {
+           securityService.getAllowedUserIdList(project)
+       }
+    }
+
     public List<Long> getParamsImageInstanceList(String paramsImages, Project project) {
        if(paramsImages != null && !paramsImages.equals("null")) {
            if (!paramsImages.equals(""))

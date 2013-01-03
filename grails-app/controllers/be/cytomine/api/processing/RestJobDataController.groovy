@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest
 class RestJobDataController extends RestController {
 
     def jobDataService
-    def grailsApplication
     def domainService
 
     def list = {

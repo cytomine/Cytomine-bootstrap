@@ -301,12 +301,12 @@ var ProjectDashboardView = Backbone.View.extend({
                         }
                         else if (command.serviceName == "userAnnotationService" && command.CLASSNAME == "be.cytomine.command.EditCommand") {
                             var cropStyle = "";
-                            var cropURL = jsonCommand.newAnnotation.cropURL;
+                            var cropURL = jsonCommand.newUserAnnotation.cropURL;
 //                                if (annotations.get(jsonCommand.newAnnotation.id) == undefined) {
 //                                    cropStyle = "display : none;";
 //                                    cropURL = "";
 //                                }
-                            action = _.template(commandAnnotationTpl, {idProject:self.model.id, idAnnotation:jsonCommand.newAnnotation.id, idImage:jsonCommand.newAnnotation.image, imageFilename:jsonCommand.newAnnotation.imageFilename, icon:"delete.gif", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, cropURL:cropURL, cropStyle:cropStyle});
+                            action = _.template(commandAnnotationTpl, {idProject:self.model.id, idAnnotation:jsonCommand.newUserAnnotation.id, idImage:jsonCommand.newUserAnnotation.image, imageFilename:jsonCommand.newUserAnnotation.imageFilename, icon:"delete.gif", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, cropURL:cropURL, cropStyle:cropStyle});
                         }
                         else if (command.serviceName == "userAnnotationService" && command.CLASSNAME == "be.cytomine.command.DeleteCommand") {
                             var cropStyle = "";

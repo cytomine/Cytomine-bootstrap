@@ -122,7 +122,7 @@ class AlgoAnnotationService extends ModelService {
      * List all algoAnnotation
      */
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Project project, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList, boolean noTerm, boolean multipleTerm) {
+    def list(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm) {
         log.info("project/userList/noTerm/multipleTerm project=$project.id userList=$userList imageInstanceList=${imageInstanceList.size()} noTerm=$noTerm multipleTerm=$multipleTerm")
         if (userList.isEmpty()) return []
         if (imageInstanceList.isEmpty()) return []
@@ -134,7 +134,7 @@ class AlgoAnnotationService extends ModelService {
 
             def annotationsWithTerms = AlgoAnnotationTerm.withCriteria() {
                 eq("project", project)
-                inList("userJob", userList)
+                inList("userJob.id", userList)
                 projections {
                     groupProperty("annotationIdent")
                     groupProperty("annotationClassName")
@@ -150,7 +150,7 @@ class AlgoAnnotationService extends ModelService {
 
                 if(termNumber>1) {
                     AnnotationDomain annotation = AlgoAnnotationTerm.retrieveAnnotationDomain(id,className)
-                    if(imageInstanceList.contains(annotation.image)) {
+                    if(imageInstanceList.contains(annotation.image.id)) {
                         data << annotation
                     }
                 }
@@ -162,7 +162,7 @@ class AlgoAnnotationService extends ModelService {
 
             def annotationsWithTerms = AlgoAnnotationTerm.withCriteria() {
                 eq("project", project)
-                inList("userJob", userList)
+                inList("userJob.id", userList)
                 projections {
                     groupProperty("annotationIdent")
                 }
@@ -179,21 +179,21 @@ class AlgoAnnotationService extends ModelService {
             if (annotationsWithTerms.size() == 0) {
                 annotations.addAll(UserAnnotation.createCriteria().list {
                     eq("project", project)
-                    inList("image", imageInstanceList)
-                    inList("user", userList)
+                    inList("image.id", imageInstanceList)
+                    inList("user.id", userList)
                     order 'created', 'desc'
                 })
                 annotations.addAll(AlgoAnnotation.createCriteria().list {
                     eq("project", project)
-                    inList("image", imageInstanceList)
-                    inList("user", userList)
+                    inList("image.id", imageInstanceList)
+                    inList("user.id", userList)
                     order 'created', 'desc'
                 })
             } else {
                 annotations.addAll(UserAnnotation.createCriteria().list {
                     eq("project", project)
-                    inList("image", imageInstanceList)
-                    inList("user", userList)
+                    inList("image.id", imageInstanceList)
+                    inList("user.id", userList)
                     not {
                         inList("id", annotationsWithTerms)
                     }
@@ -201,8 +201,8 @@ class AlgoAnnotationService extends ModelService {
                 })
                 annotations.addAll(AlgoAnnotation.createCriteria().list {
                     eq("project", project)
-                    inList("image", imageInstanceList)
-                    inList("user", userList)
+                    inList("image.id", imageInstanceList)
+                    inList("user.id", userList)
                     not {
                         inList("id", annotationsWithTerms)
                     }
@@ -216,8 +216,8 @@ class AlgoAnnotationService extends ModelService {
             long start = new Date().time
             def annotations = AlgoAnnotation.createCriteria().list {
                 eq("project", project)
-                inList("user", userList)
-                inList("image", imageInstanceList)
+                inList("user.id", userList)
+                inList("image.id", imageInstanceList)
                 fetchMode 'image', FetchMode.JOIN
                 fetchMode 'image.baseImage', FetchMode.JOIN
                 order 'created', 'desc'
@@ -229,25 +229,26 @@ class AlgoAnnotationService extends ModelService {
     }
 
 
-    def listForUserJob(Project project, Term term, Collection<SecUser> userList, Collection<ImageInstance> imageInstanceList) {
+    def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
          if (userList.isEmpty()) return []
          if (imageInstanceList.isEmpty()) return []
          if (imageInstanceList.size() == project.countImages) {
+             //TODO:: May be speedup without using hibernate (direct SQL request)
              List annotationsUsers = AlgoAnnotation.executeQuery(
-                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM UserAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob IN (:userList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList])
+                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM UserAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList])
 
              List annotationsAlgo = AlgoAnnotation.executeQuery(
-                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM AlgoAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob IN (:userList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList])
+                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM AlgoAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList])
 
              annotationsUsers.addAll(annotationsAlgo)
              return annotationsUsers
          } else {
 
              List annotationsUsers = AlgoAnnotation.executeQuery(
-                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM UserAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob IN (:userList) AND a.image IN (:imageInstanceList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList,imageInstanceList:imageInstanceList])
+                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM UserAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND a.image.id IN (:imageInstanceList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList,imageInstanceList:imageInstanceList])
 
              List annotationsAlgo = AlgoAnnotation.executeQuery(
-                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM AlgoAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob IN (:userList) AND a.image IN (:imageInstanceList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList,imageInstanceList:imageInstanceList])
+                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM AlgoAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND a.image.id IN (:imageInstanceList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList,imageInstanceList:imageInstanceList])
 
              annotationsUsers.addAll(annotationsAlgo)
              return annotationsUsers

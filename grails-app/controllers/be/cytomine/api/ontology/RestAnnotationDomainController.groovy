@@ -25,7 +25,6 @@ import com.vividsolutions.jts.geom.Geometry
 class RestAnnotationDomainController extends RestController {
 
     def exportService
-    def grailsApplication
     def userAnnotationService
     def domainService
     def termService
@@ -33,7 +32,6 @@ class RestAnnotationDomainController extends RestController {
     def userService
     def projectService
     def cytomineService
-    def mailService
     def dataSource
     def algoAnnotationService
     def reviewedAnnotationService
