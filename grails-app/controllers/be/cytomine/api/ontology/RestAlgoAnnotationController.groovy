@@ -60,7 +60,9 @@ class RestAlgoAnnotationController extends RestController {
             algoAnnotationService.checkAuthorization(annotation.project)
             responseSuccess(annotation)
         }
-        else responseNotFound("Annotation", params.id)
+        else {
+            responseNotFound("Annotation", params.id)
+        }
     }
 
     /**
@@ -153,10 +155,16 @@ class RestAlgoAnnotationController extends RestController {
             List<Long> imagesList = paramsService.getParamsImageInstanceList(params.images,project)
 
             def list = algoAnnotationService.list(project, userList, imagesList, (params.noTerm == "true"), (params.multipleTerm == "true"))
-            if (params.offset != null) responseSuccess([size: list.size(), collection: substract(list, offset, max)])
-            else responseSuccess(list)
+            if (params.offset != null) {
+                responseSuccess([size: list.size(), collection: substract(list, offset, max)])
+            }
+            else {
+                responseSuccess(list)
+            }
         }
-        else responseNotFound("Project", params.id)
+        else {
+            responseNotFound("Project", params.id)
+        }
     }
 
     /**
@@ -231,9 +239,15 @@ class RestAlgoAnnotationController extends RestController {
             }
             responseSuccess(data)
         }
-        else if (image && user) responseSuccess(algoAnnotationService.list(image, user))
-        else if (!user) responseNotFound("User", params.idUser)
-        else if (!image) responseNotFound("Image", params.idImage)
+        else if (image && user) {
+            responseSuccess(algoAnnotationService.list(image, user))
+        }
+        else if (!user) {
+            responseNotFound("User", params.idUser)
+        }
+        else if (!image) {
+            responseNotFound("Image", params.idImage)
+        }
     }
 
     /**
@@ -251,11 +265,16 @@ class RestAlgoAnnotationController extends RestController {
             List<Long> userList = paramsService.getParamsUserList(params.users,project)
             List<Long> imagesList = paramsService.getParamsImageInstanceList(params.images,project)
 
-            if (term == null) responseNotFound("Term", params.idterm)
-            else if (!params.suggestTerm) {
+            if (term == null) {
+                responseNotFound("Term", params.idterm)
+            } else if (!params.suggestTerm) {
                 def list = algoAnnotationService.listForUserJob(project, term, userList, imagesList)
-                if (params.offset != null) responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
-                else responseSuccess(list)
+                if (params.offset != null) {
+                    responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
+                }
+                else {
+                    responseSuccess(list)
+                }
             }
         } else {
             responseNotFound("Project", params.id)
@@ -362,9 +381,15 @@ class RestAlgoAnnotationController extends RestController {
         Term term = Term.read(params.getLong('idTerm'))
         Integer minIntersectLength = params.getInt('minIntersectionLength')
         Integer bufferLength = params.getInt('bufferLength')
-        if (!image) responseNotFound("ImageInstance", params.getLong('idImage'))
-        else if (!term) responseNotFound("Term", params.getLong('idTerm'))
-        else if (!user) responseNotFound("User", params.getLong('idUser'))
+        if (!image) {
+            responseNotFound("ImageInstance", params.getLong('idImage'))
+        }
+        else if (!term) {
+            responseNotFound("Term", params.getLong('idTerm'))
+        }
+        else if (!user) {
+            responseNotFound("User", params.getLong('idUser'))
+        }
         else {
             unionAnnotations(image, user, term, minIntersectLength, bufferLength)
             def data = [:]

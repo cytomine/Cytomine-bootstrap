@@ -17,6 +17,8 @@ class RelationTermAPI extends DomainAPI {
 
     private static final log = LogFactory.getLog(this)
 
+
+
     static def show(Long idRelation, Long idTerm1, Long idTerm2,String username, String password) {
         log.info "Show idRelation=$idRelation and idTerm1=$idTerm1 and idTerm2=$idTerm2"
         String URL = Infos.CYTOMINEURL + "api/relation/" + idRelation + "/term1/"+ idTerm1 +"/term2/"+idTerm2+".json"
@@ -29,9 +31,33 @@ class RelationTermAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def list(String username, String password) {
+        log.info "List by userAnnotation idRelation"
+        String URL = Infos.CYTOMINEURL+"api/relation.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
     static def listByRelation(Long idRelation,String username, String password) {
         log.info "List by userAnnotation idRelation=$idRelation"
         String URL = Infos.CYTOMINEURL+"api/relation/"+idRelation+"/term.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+    static def listByTermAll(Long idTerm,String username, String password) {
+        log.info "List by userAnnotation idRelation=$idTerm"
+        String URL = Infos.CYTOMINEURL+"api/relation/term/"+idTerm+".json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
         client.get()

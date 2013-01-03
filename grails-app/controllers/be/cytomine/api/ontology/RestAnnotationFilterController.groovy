@@ -7,6 +7,9 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import grails.converters.JSON
 
+/**
+ * Controller that handle request on annotation filter
+ */
 class RestAnnotationFilterController extends RestController {
 
     def annotationFilterService
@@ -14,7 +17,9 @@ class RestAnnotationFilterController extends RestController {
     def cytomineService
 
     def listByProject = {
-        if (!params.long('project')) responseNotFound("Project", "undefined")
+        if (!params.long('project')) {
+            responseNotFound("Project", "undefined")
+        }
         Long idProject = params.long('project');
         projectService.checkAuthorization(idProject, new AnnotationFilter())
         Project project = projectService.read(idProject, new Project())
@@ -38,7 +43,9 @@ class RestAnnotationFilterController extends RestController {
 
     def show = {
         AnnotationFilter annotationFilter = annotationFilterService.read(params.id)
-        if (!annotationFilter) responseNotFound("AnnotationFilter", params.id)
+        if (!annotationFilter) {
+            responseNotFound("AnnotationFilter", params.id)
+        }
         projectService.checkAuthorization(annotationFilter.project)
         responseSuccess(annotationFilter)
     }
@@ -46,7 +53,9 @@ class RestAnnotationFilterController extends RestController {
     def add = {
         def json= request.JSON
         json.user = springSecurityService.principal.id
-        if(!json.project || !Project.read(json.project)) throw new WrongArgumentException("Annotation filter must have a valid project:"+json.project)
+        if(!json.project || !Project.read(json.project)) {
+            throw new WrongArgumentException("Annotation filter must have a valid project:"+json.project)
+        }
         projectService.checkAuthorization(Long.parseLong(json.project.toString()),new AnnotationFilter())
         add(annotationFilterService, json)
     }

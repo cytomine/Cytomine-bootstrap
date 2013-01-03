@@ -19,15 +19,5 @@ class OntologyUrlMappings {
         "/api/ontology/$id/tree"(controller:"restOntology"){
             action = [GET:"tree"]
         }
-        "/api/currentuser/ontology"(controller:"restOntology"){
-            action = [GET:"listByUser"]
-        }
-        "/api/currentuser/ontology/light"(controller:"restOntology"){
-            action = [GET: "listByUserLight"]
-        }
-        "/api/term/$id/ontology"(controller:"restOntology"){
-            action = [GET:"listByTerm"]
-        }
-
     }
 }

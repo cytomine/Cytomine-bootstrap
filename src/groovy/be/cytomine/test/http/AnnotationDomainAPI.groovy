@@ -85,6 +85,18 @@ class AnnotationDomainAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def listByTerm(Long idTerm, String username, String password) {
+        log.info "list annotation by idTerm $idTerm"
+        String URL = Infos.CYTOMINEURL + "api/term/$idTerm/annotation.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
     static def listByProjectAndTerm(Long idProject, Long idTerm, Long idUser,String username, String password) {
         log.info "list annotation by project $idProject and term $idTerm"
         String URL = Infos.CYTOMINEURL + "api/term/$idTerm/project/$idProject/annotation.json?users="+idUser

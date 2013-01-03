@@ -2,8 +2,11 @@ package be.cytomine
 
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
+import be.cytomine.test.BasicInstance
+import be.cytomine.ontology.Relation
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,4 +33,23 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
     def json = JSON.parse(response)
     assert json instanceof JSONArray
   }
+
+
+    void testShowRelationWithCredential() {
+
+      log.info("show relation")
+        Relation relation = BasicInstance.createOrGetBasicRelation()
+      String URL = Infos.CYTOMINEURL+"api/relation/${relation.id}.json"
+      HttpClient client = new HttpClient();
+      client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+      client.get()
+      int code  = client.getResponseCode()
+      String response = client.getResponseData()
+      client.disconnect();
+
+      log.info("check response:"+response)
+      assertEquals(200,code)
+      def json = JSON.parse(response)
+      assert json instanceof JSONObject
+    }
 }

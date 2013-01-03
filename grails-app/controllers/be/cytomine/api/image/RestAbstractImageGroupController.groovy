@@ -15,6 +15,9 @@ class RestAbstractImageGroupController extends RestController {
     def abstractImageGroupService
     def groupService
 
+    /**
+     * Show a link between an abstractimage and a group
+     */
     def show = {
         AbstractImage abstractimage = abstractImageService.read(params.long('idabstractimage'))
         Group group = groupService.read(params.long('idgroup'))
@@ -23,13 +26,21 @@ class RestAbstractImageGroupController extends RestController {
             if (abstractimageGroup) responseSuccess(abstractimageGroup)
             else responseNotFound("AbstractImageGroup", "Group", "AbstractImage", params.idgroup, params.idabstractimage)
         }
-        else responseNotFound("AbstractImageGroup", "Group", "AbstractImage", params.idgroup, params.idabstractimage)
+        else {
+            responseNotFound("AbstractImageGroup", "Group", "AbstractImage", params.idgroup, params.idabstractimage)
+        }
     }
 
+    /**
+     * Add a new group to an abstract image
+     */
     def add = {
         add(abstractImageGroupService, request.JSON)
     }
 
+    /**
+     * Remove a group from an abstract image
+     */
     def delete = {
         delete(abstractImageGroupService, JSON.parse("{abstractimage: $params.idabstractimage, group: $params.idgroup}"))
     }

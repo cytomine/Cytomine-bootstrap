@@ -35,13 +35,6 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
-
-    void testListOntologyUserLightWithCredential() {
-        def result = OntologyAPI.listByUserLight(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
-    }
   
     void testShowOntologyWithCredential() {
         def result = OntologyAPI.show(BasicInstance.createOrGetBasicOntology().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

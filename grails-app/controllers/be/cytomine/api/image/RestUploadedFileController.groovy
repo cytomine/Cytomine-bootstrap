@@ -9,6 +9,7 @@ import be.cytomine.utils.FilesUtils
 
 /**
  * Controller that handle request on file uploading (when a file is uploaded, list uploaded files...)
+ * //TODO:: tester ce controller
  */
 class RestUploadedFileController extends RestController {
 

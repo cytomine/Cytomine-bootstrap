@@ -14,6 +14,10 @@ import be.cytomine.ontology.UserAnnotation
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.AnnotationDomain
 
+/**
+ * Controller that handle link between an annotation and a term
+ * This controller carry request for (user)annotationterm and algoannotationterm
+ */
 class RestAnnotationTermController extends RestController {
 
     def termService
@@ -25,30 +29,46 @@ class RestAnnotationTermController extends RestController {
 
     def listTermByAnnotation = {
 
-        if (params.idannotation == "undefined") responseNotFound("Annotation Term", "Annotation", params.idannotation)
+        if (params.idannotation == "undefined") {
+            responseNotFound("Annotation Term", "Annotation", params.idannotation)
+        }
         else {
             AnnotationDomain annotation = userAnnotationService.read(params.long('idannotation'))
-            if (!annotation)
+            if (!annotation) {
                 annotation = algoAnnotationService.read(params.long('idannotation'))
-
-            if (annotation && !params.idUser) responseSuccess(annotationTermService.list(annotation))
-            else if (annotation && params.idUser) {
-                User user = User.read(params.long('idUser'))
-                if (user) responseSuccess(termService.list(annotation, user))
-                else responseNotFound("Annotation Term", "User", params.idUser)
             }
-            else responseNotFound("Annotation Term", "Annotation", params.idannotation)
+
+            if (annotation && !params.idUser) {
+                responseSuccess(annotationTermService.list(annotation))
+            } else if (annotation && params.idUser) {
+                User user = User.read(params.long('idUser'))
+                if (user) {
+                    responseSuccess(termService.list(annotation, user))
+                }
+                else {
+                    responseNotFound("Annotation Term", "User", params.idUser)
+                }
+            }
+            else {
+                responseNotFound("Annotation Term", "Annotation", params.idannotation)
+            }
         }
     }
 
     def listAnnotationTermByUserNot = {
-        if (params.idannotation == "undefined") responseNotFound("Annotation Term", "Annotation", params.idannotation)
+        if (params.idannotation == "undefined") {
+            responseNotFound("Annotation Term", "Annotation", params.idannotation)
+        }
         else {
             UserAnnotation annotation = userAnnotationService.read(params.long('idannotation'))
             if (annotation != null && params.idNotUser) {
                 User user = User.read(params.idNotUser)
-                if (user) responseSuccess(annotationTermService.listNotUser(annotation, user))
-                else responseNotFound("Annotation Term", "User", params.idUser)
+                if (user) {
+                    responseSuccess(annotationTermService.listNotUser(annotation, user))
+                }
+                else {
+                    responseNotFound("Annotation Term", "User", params.idUser)
+                }
             }
         }
     }
@@ -108,7 +128,7 @@ class RestAnnotationTermController extends RestController {
                 def result = annotationTermService.add(json)
                 responseResult(result)
             } else {
-                //TODO:: ca va pas fonctionner si on ajoute une algoannotationterm a un algoannotation
+                //TODO:: won't work if we add an annotation term to a algoannotation
                 AnnotationDomain annotation = AlgoAnnotation.read(json.annotationIdent)
                 if(!annotation) annotation = UserAnnotation.read(json.annotationIdent)
                 if(!json.annotationIdent || !annotation) throw new WrongArgumentException("AlgoAnnotationTerm must have a valide annotation:"+json.annotationIdent)
@@ -117,7 +137,6 @@ class RestAnnotationTermController extends RestController {
                 responseResult(result)
             }
         } catch (CytomineException e) {
-            log.error("add error:" + e.msg)
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
@@ -135,7 +154,9 @@ class RestAnnotationTermController extends RestController {
      */
     def addWithDeletingOldTerm = {
         try {
-            if(cytomineService.isUserAlgo()) throw new InvalidRequestException("A userJob cannot delete user term from userannotation")
+            if(cytomineService.isUserAlgo()) {
+                throw new InvalidRequestException("A userJob cannot delete user term from userannotation")
+            }
             def result = annotationTermService.addWithDeletingOldTerm(params.idannotation, params.idterm)
             responseResult(result)
         } catch (CytomineException e) {

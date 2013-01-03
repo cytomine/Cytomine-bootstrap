@@ -7,6 +7,7 @@ import be.cytomine.test.http.RelationTermAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.ontology.Relation
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,13 +24,32 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
-    }    
+
+        result = RelationTermAPI.show(-99,relationTerm.term1.id,relationTerm.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+        result = RelationTermAPI.show(relationTerm.relation.id,-99,relationTerm.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+        result = RelationTermAPI.show(relationTerm.relation.id,relationTerm.term1.id,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+        result = RelationTermAPI.show(null,relationTerm.term1.id,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
+    void testListRelation() {
+        def result = RelationTermAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
     
   void testListRelationTermByTerm1() {
       def result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
+
+      result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,3, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(400, result.code)
   }
 
     void testListRelationTermByTerm2() {
@@ -44,7 +64,25 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
-    }    
+    }
+
+
+    void testListRelationTermByTerm() {
+        def result = RelationTermAPI.listByTermAll(BasicInstance.createOrGetBasicTerm().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        result = RelationTermAPI.listByTermAll(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
+    void testListRelationTermByRelationParent() {
+        def result = RelationTermAPI.listByRelation(null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
 
   void testAddRelationTermCorrect() {
       def relationTermToAdd = BasicInstance.getBasicRelationTermNotExist()
@@ -79,6 +117,23 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
       assertEquals(200, result.code)
 
   }
+
+
+   void testAddRelationTermCorrectDefaultRelationParent() {
+        def relationTermToAdd = BasicInstance.getBasicRelationTermNotExist()
+
+        String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
+        def json = JSON.parse(jsonRelationTerm)
+        json.relation = null
+        json.term1 = relationTermToAdd.term1.id
+        json.term2 = relationTermToAdd.term2.id
+        jsonRelationTerm = json.toString()
+
+        def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        //int idRelationTerm = result.data.id
+
+    }
 
   void testAddRelationTermAlreadyExist() {
       def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
@@ -158,6 +213,15 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
       result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(404, result.code)
   }
+
+    void testDeleteRelationTermDefaultParent() {
+        def relationtermToDelete = BasicInstance.getBasicRelationTermNotExist()
+        relationtermToDelete.relation = Relation.findByName(RelationTerm.names.PARENT)
+        assert relationtermToDelete.save(flush: true)  != null
+        def result = RelationTermAPI.delete(null,relationtermToDelete.term1.id,relationtermToDelete.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+    }
 
   void testDeleteRelationTermNotExist() {
       def result = RelationTermAPI.delete(-99,-99,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)

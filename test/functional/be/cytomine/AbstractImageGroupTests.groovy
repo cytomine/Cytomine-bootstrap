@@ -50,6 +50,12 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
       assertEquals(200, result.code)
   }
 
+    void testGetAbstractImageGroupWithCredentialNotExist() {
+      def abstractimageGroupToAdd = BasicInstance.createOrGetBasicAbstractImageGroup()
+        def result = AbstractImageGroupAPI.show(abstractimageGroupToAdd.abstractimage.id,-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
   void testAddAbstractImageGroupCorrect() {
     def abstractimageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
     abstractimageGroupToAdd.discard()

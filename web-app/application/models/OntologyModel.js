@@ -21,9 +21,9 @@ var OntologyCollection = Backbone.Collection.extend({
     CLASS_NAME:"be.cytomine.ontology.Ontology",
     url:function () {
         if (this.light == undefined) {
-            return "api/currentuser/ontology.json";
+            return "api/ontology.json";
         } else {
-            return "api/currentuser/ontology/light.json";
+            return "api/ontology/light.json";
         }
     },
     initialize:function (options) {

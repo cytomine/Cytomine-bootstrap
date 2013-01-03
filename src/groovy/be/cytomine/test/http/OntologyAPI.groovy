@@ -36,19 +36,7 @@ class OntologyAPI extends DomainAPI {
 
     static def list(String username, String password, boolean light) {
         log.info "list ontology"
-        String URL = Infos.CYTOMINEURL + "api/ontology.json"
-        HttpClient client = new HttpClient();
-        client.connect(URL, username, password);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
-    }
-
-    static def listByUserLight(String username, String password) {
-        log.info "list ontology"
-        String URL = Infos.CYTOMINEURL + "/api/currentuser/ontology/light.json"
+        String URL = Infos.CYTOMINEURL + "api/ontology.json" + (light? "?light=true":"")
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
         client.get()

@@ -29,19 +29,31 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
   }
 
   void testListAnnotationTermByAnnotationWithCredential() {
-    def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstance.createOrGetBasicUserAnnotation().id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstance.createOrGetBasicUserAnnotation().id,null,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     assertEquals(200,result.code)
     def json = JSON.parse(result.data)
     assert json instanceof JSONArray
+
+    result = AnnotationTermAPI.listAnnotationTermByAnnotation(-99,null,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    assertEquals(404,result.code)
   }
 
-  void testListAnnotationTermByTermWithCredential() {
-    Term term = BasicInstance.createOrGetBasicTerm()
-    def result = AnnotationTermAPI.listAnnotationTermByTerm(term.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(200,result.code)
-    def json = JSON.parse(result.data)
-    assert json instanceof JSONArray
-  }
+    void testListAnnotationTermByAnnotationWithCredentialWithUser() {
+      def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstance.createOrGetBasicUserAnnotation().id,BasicInstance.newUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      assertEquals(200,result.code)
+      def json = JSON.parse(result.data)
+      assert json instanceof JSONArray
+
+      result = AnnotationTermAPI.listAnnotationTermByAnnotation(-99,BasicInstance.newUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      assertEquals(404,result.code)
+    }
+
+    void testListAnnotationTermByUserNotWithCredential() {
+      def result = AnnotationTermAPI.listAnnotationTermByUserNot(BasicInstance.createOrGetBasicUserAnnotation().id,BasicInstance.newUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      assertEquals(200,result.code)
+      def json = JSON.parse(result.data)
+      assert json instanceof JSONArray
+    }
 
   void testAddAnnotationTermCorrect() {
      User currentUser = User.findByUsername(Infos.GOODLOGIN)

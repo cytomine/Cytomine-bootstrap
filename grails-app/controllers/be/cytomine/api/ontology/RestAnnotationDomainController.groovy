@@ -1,27 +1,25 @@
 package be.cytomine.api.ontology
 
-import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.api.RestController
-
-import be.cytomine.ontology.Term
-import be.cytomine.ontology.UserAnnotation
-
-import be.cytomine.project.Project
-import be.cytomine.security.SecUser
-
-import grails.converters.JSON
-
 import be.cytomine.AnnotationDomain
-import be.cytomine.ontology.ReviewedAnnotation
-
+import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
-import com.vividsolutions.jts.io.WKTReader
-
-import groovy.sql.Sql
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.api.RestController
+import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.ontology.Term
+import be.cytomine.ontology.UserAnnotation
+import be.cytomine.project.Project
+import be.cytomine.security.SecUser
 import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.io.WKTReader
+import grails.converters.JSON
+import groovy.sql.Sql
 
+/**
+ * Controller that handle request on annotation.
+ * It's main utility is to redirect request to the correct controller: user/algo/reviewed
+ */
 class RestAnnotationDomainController extends RestController {
 
     def exportService
@@ -35,40 +33,49 @@ class RestAnnotationDomainController extends RestController {
     def dataSource
     def algoAnnotationService
     def reviewedAnnotationService
+    def paramsService
 
+    /**
+     * List annotation by project
+     * If user filter is set, redirect request to the user type controller
+     */
     def listByProject = {
+
         Project project = projectService.read(params.long('id'), new Project())
 
         if (project) {
-            Collection<SecUser> userList = []
-            if (params.users != null && params.users != "null" && params.users != "") {
-                userList = userService.list(project, params.users.split("_").collect{ Long.parseLong(it)})
-                if(!userList.isEmpty() && userList.get(0)?.algo()) {
-                   forward(controller: "restAlgoAnnotation", action: "listByProject")
-               } else {
-                   forward(controller: "restUserAnnotation", action: "listByProject")
-               }
-            }
-            else {
+            List<SecUser> userList = paramsService.getParamsSecUserDomainList(params.users, project)
+            if (!userList.isEmpty() && userList.get(0)?.algo()) {
+                forward(controller: "restAlgoAnnotation", action: "listByProject")
+            } else {
                 forward(controller: "restUserAnnotation", action: "listByProject")
             }
         }
-        else responseNotFound("Project", params.id)
+        else {
+            responseNotFound("Project", params.id)
+        }
     }
 
-
+    /**
+     * List annotation by image and user
+     * Redirect to the user corresponding controller
+     */
     def listByImageAndUser = {
         def user = SecUser.read(params.idUser)
         if (user) {
-            if(user.algo()) {
+            if (user.algo()) {
                 forward(controller: "restAlgoAnnotation", action: "listByImageAndUser")
             } else {
                 forward(controller: "restUserAnnotation", action: "listByImageAndUser")
             }
+        } else {
+            responseNotFound("User", params.idUser)
         }
-        else if (!user) responseNotFound("User", params.idUser)
     }
 
+    /**
+     * List user and algo annotation by term
+     */
     def listAnnotationByTerm = {
         Term term = termService.read(params.long('idterm'))
         if (term) {
@@ -80,35 +87,30 @@ class RestAnnotationDomainController extends RestController {
             }
             responseSuccess(allAnnotations)
         }
-        else responseNotFound("Term", params.idterm)
+        else {
+            responseNotFound("Term", params.idterm)
+        }
     }
 
-
+    /**
+     * List annotation by project and term
+     */
     def listAnnotationByProjectAndTerm = {
-        log.info "listAnnotationByProjectAndTerm"
+
         Project project = projectService.read(params.long('idproject'), new Project())
 
-        Collection<SecUser> userList = []
-        if (params.users != null && params.users != "null" && project) {
-            if (params.users != "") {
-                userList = userService.list(project, params.users.split("_").collect{ Long.parseLong(it)})
-                if(!userList.isEmpty() && userList.get(0)?.algo()) {
-                   forward(controller: "restAlgoAnnotation", action: "listAnnotationByProjectAndTerm")
-               } else {
-                   forward(controller: "restUserAnnotation", action: "listAnnotationByProjectAndTerm")
-               }
-            }
-        }
-        else {
+        List<SecUser> userList = paramsService.getParamsSecUserDomainList(params.users, project)
+        if (!userList.isEmpty() && userList.get(0)?.algo()) {
+            forward(controller: "restAlgoAnnotation", action: "listAnnotationByProjectAndTerm")
+        } else {
             forward(controller: "restUserAnnotation", action: "listAnnotationByProjectAndTerm")
         }
-
-
     }
 
-
-    def downloadDocumentByProject = {  //and filter by users and terms !
-        // Export service provided by Export plugin
+    /**
+     * Download report for an annotation listing
+     */
+    def downloadDocumentByProject = {
 
         def users = []
         if (params.users != null && params.users != "") {
@@ -117,21 +119,26 @@ class RestAnnotationDomainController extends RestController {
             }
         }
 
-        if(!users.isEmpty() && SecUser.read(users.first()).algo()) {
+        if (!users.isEmpty() && SecUser.read(users.first()).algo()) {
             forward(controller: "restAlgoAnnotation", action: "downloadDocumentByProject")
-        } else   forward(controller: "restUserAnnotation", action: "downloadDocumentByProject")
+        } else {
+            forward(controller: "restUserAnnotation", action: "downloadDocumentByProject")
+        }
     }
 
+    /**
+     * Read a specific annotation
+     * It's better to avoid the user of this method if we know the correct type of an annotation id
+     * Annotation x => annotation/x.json is slower than userannotation/x.json or algoannotation/x.json
+     */
     def show = {
         AnnotationDomain annotation = userAnnotationService.read(params.long('id'))
-        if(annotation) {
-            log.info "Annotation is userAnnotation"
+        if (annotation) {
             forward(controller: "restUserAnnotation", action: "show")
         }
         else {
             annotation = algoAnnotationService.read(params.long('id'))
-            if(annotation) {
-                log.info "Annotation is algoAnnotation"
+            if (annotation) {
                 forward(controller: "restAlgoAnnotation", action: "show")
             } else {
                 forward(controller: "restReviewedAnnotation", action: "show")
@@ -139,49 +146,53 @@ class RestAnnotationDomainController extends RestController {
         }
     }
 
-
+    /**
+     * Add an annotation
+     * Redirect to the controller depending on the user type
+     */
     def add = {
-        try {
-            SecUser user = cytomineService.currentUser
-            def result
-            if(user.algo()) {
-                forward(controller: "restAlgoAnnotation", action: "add")
-            } else {
-                forward(controller: "restUserAnnotation", action: "add")
-            }
-            //responseResult(result)
-        } catch (CytomineException e) {
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
+        SecUser user = cytomineService.currentUser
+        def result
+        if (user.algo()) {
+            forward(controller: "restAlgoAnnotation", action: "add")
+        } else {
+            forward(controller: "restUserAnnotation", action: "add")
         }
     }
 
-    def update= {
-        //def json = request.JSON
-        log.info "update generic"
-        if(params.getBoolean('fill'))
+    /**
+     * Update an annotation
+     * Redirect to the good controller with the annotation type
+     */
+    def update = {
+        if (params.getBoolean('fill'))
+        //if fill param is set, annotation will be filled (removed empty area inside geometry)
             forward(action: "fillAnnotation")
         else {
-
             try {
-                log.info "update classic"
                 SecUser user = cytomineService.currentUser
                 def result
-                if(user.algo()) {
+                if (user.algo()) {
+                    //if user is algo, redirect to the correct controller
                     forward(controller: "restAlgoAnnotation", action: "update")
                 } else {
+                    //if user is human, check if its a user annotation or a reviewed annotation
                     AnnotationDomain annotation = UserAnnotation.read(params.getLong("id"))
 
-                    if(annotation)
+                    if (annotation)
                         forward(controller: "restUserAnnotation", action: "update")
                     else {
                         annotation = ReviewedAnnotation.read(params.getLong("id"))
 
-                        if(annotation) {
-                            if(annotation.user!=user) throw new ForbiddenException("You cannot update this annotation! Only ${annotation.user.username} can do that!");
+                        if (annotation) {
+                            if (annotation.user != user) {
+                                throw new ForbiddenException("You cannot update this annotation! Only ${annotation.user.username} can do that!")
+                            }
                             forward(controller: "restReviewedAnnotation", action: "update")
                         }
-                        else throw new ObjectNotFoundException("Annotation not found with id " + params.id)
+                        else {
+                            throw new ObjectNotFoundException("Annotation not found with id " + params.id)
+                        }
                     }
                 }
                 //responseResult(result)
@@ -189,47 +200,54 @@ class RestAnnotationDomainController extends RestController {
                 log.error(e)
                 response([success: false, errors: e.msg], e.code)
             }
-
         }
-
     }
 
+    /**
+     * Delete an annotation
+     * Redirect to the good controller with the current user type
+     */
     def delete = {
         try {
-            SecUser user = cytomineService.currentUser
-            def result
-            if(user.algo()) {
+            if (cytomineService.currentUser.algo()) {
                 forward(controller: "restAlgoAnnotation", action: "delete")
             } else {
                 forward(controller: "restUserAnnotation", action: "delete")
             }
-            //responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
     }
 
+    /**
+     * Fill an annotation.
+     * Remove empty space in the polygon
+     */
     def fillAnnotation = {
         log.info "fillAnnotation"
         try {
             AnnotationDomain annotation = getAnnotationDomain(params.long('id'))
-            if (!annotation) throw new ObjectNotFoundException("Review Annotation ${params.long('id')} not found!")
-
-//            if(annotation.image.reviewUser && annotation.image.reviewUser.id!=cytomineService.currentUser.id)
-//                throw new WrongArgumentException("You must be the image reviewer to modify annotation. Image reviewer is ${annotation.image.reviewUser?.username}.")
+            if (!annotation) {
+                throw new ObjectNotFoundException("Review Annotation ${params.long('id')} not found!")
+            }
 
             def response = [:]
 
             //Is the first polygon always the big 'boundary' polygon?
-            String newGeom =fillForm(annotation.location.toText())
-            println "newGeom="+newGeom
+            String newGeom = fillForm(annotation.location.toText())
             def json = JSON.parse(annotation.encodeAsJSON())
             json.location = newGeom
 
-            if(annotation.algoAnnotation) responseSuccess(algoAnnotationService.update(annotation,json))
-            else if(annotation.reviewedAnnotation) responseSuccess(reviewedAnnotationService.update(annotation,json))
-            else responseSuccess(userAnnotationService.update(annotation,json))
+            if (annotation.algoAnnotation) {
+                responseSuccess(algoAnnotationService.update(annotation, json))
+            }
+            else if (annotation.reviewedAnnotation) {
+                responseSuccess(reviewedAnnotationService.update(annotation, json))
+            }
+            else {
+                responseSuccess(userAnnotationService.update(annotation, json))
+            }
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
@@ -242,9 +260,9 @@ class RestAnnotationDomainController extends RestController {
      * @return A polygon or multipolygon filled points
      */
     private String fillForm(String form) {
-        if(form.startsWith("POLYGON")) return "POLYGON("+getFirstPolygonLocation(form)+")";
-        else if(form.startsWith("MULTIPOLYGON")) return "MULTIPOLYGON("+getFirstPolygonLocationForEachItem(form)+")";
-        else throw new WrongArgumentException("Form cannot be filled:"+form)
+        if (form.startsWith("POLYGON")) return "POLYGON(" + getFirstPolygonLocation(form) + ")";
+        else if (form.startsWith("MULTIPOLYGON")) return "MULTIPOLYGON(" + getFirstPolygonLocationForEachItem(form) + ")";
+        else throw new WrongArgumentException("Form cannot be filled:" + form)
     }
 
     /**
@@ -254,36 +272,34 @@ class RestAnnotationDomainController extends RestController {
      */
     private String getFirstPolygonLocationForEachItem(String form) {
         //e.g: "MULTIPOLYGON (((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)) , ((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)) , ((6 3,9 2,9 4,6 3)))";
-        String workingForm = form.replaceAll("\\) ", ")"); //"MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))";
-        workingForm = form.replaceAll(" \\(", "(")
-        println "1="+workingForm
-        workingForm = workingForm.replace("MULTIPOLYGON(", ""); //"((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))";
-        println "2="+workingForm
-        workingForm = workingForm.substring(0,workingForm.length()-1); //"((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3))";
-        println "3="+workingForm
-        String[] polygons = workingForm.split("\\)\\)\\,\\(\\(");//"[ ((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2] [1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2] [6 3,9 2,9 4,6 3)) ]";
-        println "4="+polygons
+        String workingForm = form.replaceAll("\\) ", ")");
+        //"MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))";
+        workingForm = workingForm.replaceAll(" \\(", "(")
+        workingForm = workingForm.replace("MULTIPOLYGON(", "");
+        //"((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3)))";
+        workingForm = workingForm.substring(0, workingForm.length() - 1);
+        //"((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2)),((6 3,9 2,9 4,6 3))";
+        String[] polygons = workingForm.split("\\)\\)\\,\\(\\(");
+        //"[ ((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2] [1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2] [6 3,9 2,9 4,6 3)) ]";
         List<String> fixedPolygon = new ArrayList<String>();
-        for(int i=0;i<polygons.length;i++) {
-            if(i==0) {
-               fixedPolygon.add(polygons[i]+"))");
-            } else if(i==polygons.length-1) {
-               fixedPolygon.add("(("+polygons[i]+"");
+        for (int i = 0; i < polygons.length; i++) {
+            if (i == 0) {
+                fixedPolygon.add(polygons[i] + "))");
+            } else if (i == polygons.length - 1) {
+                fixedPolygon.add("((" + polygons[i] + "");
             } else {
-               fixedPolygon.add("(("+polygons[i]+"))");
+                fixedPolygon.add("((" + polygons[i] + "))");
             }
             //"[ ((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))] [((1 1,5 1,5 5,1 5,1 1),(2 2,2 3,3 3,3 2,2 2))] [((6 3,9 2,9 4,6 3)) ]";
         }
-        println "5="+fixedPolygon
 
         List<String> filledPolygon = new ArrayList<String>();
-        for(int i=0;i<fixedPolygon.size();i++) {
-            filledPolygon.add("("+getFirstPolygonLocation(fixedPolygon.get(i))+")");
+        for (int i = 0; i < fixedPolygon.size(); i++) {
+            filledPolygon.add("(" + getFirstPolygonLocation(fixedPolygon.get(i)) + ")");
             //"[ ((1 1,5 1,5 5,1 5,1 1))] [((1 1,5 1,5 5,1 5,1 1))] [((6 3,9 2,9 4,6 3)) ]";
         }
-        println "6="+filledPolygon
+
         String multiPolygon = filledPolygon.join(",")
-        println "7="+multiPolygon
         //"((1 1,5 1,5 5,1 5,1 1)),((1 1,5 1,5 5,1 5,1 1)),((6 3,9 2,9 4,6 3))";
         return multiPolygon;
     }
@@ -296,14 +312,18 @@ class RestAnnotationDomainController extends RestController {
     private String getFirstPolygonLocation(String form) {
         int i = 0;
         int start, stop;
-        while(form.charAt(i)!='(') i++;
-        while(form.charAt(i+1)=='(') i++;
+        while (form.charAt(i) != '(') i++;
+        while (form.charAt(i + 1) == '(') i++;
         start = i;
-        while(form.charAt(i)!=')') i++;
+        while (form.charAt(i) != ')') i++;
         stop = i;
-        return form.substring(start,stop+1);
+        return form.substring(start, stop + 1);
     }
 
+    /**
+     * Add/Remove a geometry Y to/from the annotation geometry X.
+     * Y must have intersection with X
+     */
     def addCorrection = {
         def json = request.JSON
         String location = json.location
@@ -315,26 +335,28 @@ class RestAnnotationDomainController extends RestController {
             List<Long> idsUserAnnotation = []
 
             //if review mode, priority is done to reviewed annotation correction
-            if(review) {
-                idsReviewedAnnotation = findAnnotationIdThatTouch(location,idImage,cytomineService.currentUser.id,"reviewed_annotation")
+            if (review) {
+                idsReviewedAnnotation = findAnnotationIdThatTouch(location, idImage, cytomineService.currentUser.id, "reviewed_annotation")
             }
 
             //there is no reviewed intersect annotation or user is not in review mode
-            if(idsReviewedAnnotation.isEmpty()) {
-                idsUserAnnotation = findAnnotationIdThatTouch(location,idImage,cytomineService.currentUser.id,"user_annotation")
+            if (idsReviewedAnnotation.isEmpty()) {
+                idsUserAnnotation = findAnnotationIdThatTouch(location, idImage, cytomineService.currentUser.id, "user_annotation")
             }
+
+            log.info "idsReviewedAnnotation=$idsReviewedAnnotation"
+            log.info "idsUserAnnotation=$idsUserAnnotation"
 
             //there is no user/reviewed intersect
-            if (idsUserAnnotation.isEmpty() && idsReviewedAnnotation.isEmpty()) throw new WrongArgumentException("There is no intersect annotation!")
-
-            def result
-            if(!idsUserAnnotation.isEmpty()) {
-                result = doCorrectUserAnnotation(idsUserAnnotation,location,remove)
-            } else {
-                result = doCorrectReviewedAnnotation(idsReviewedAnnotation,location,remove)
+            if (idsUserAnnotation.isEmpty() && idsReviewedAnnotation.isEmpty()) {
+                throw new WrongArgumentException("There is no intersect annotation!")
             }
 
-            responseResult(result)
+            if (!idsUserAnnotation.isEmpty()) {
+                responseResult(doCorrectUserAnnotation(idsUserAnnotation, location, remove))
+            } else {
+                responseResult(doCorrectReviewedAnnotation(idsReviewedAnnotation, location, remove))
+            }
 
         } catch (CytomineException e) {
             log.error(e)
@@ -356,9 +378,8 @@ class RestAnnotationDomainController extends RestController {
                 "FROM $table annotation\n" +
                 "WHERE annotation.image_id = $idImage\n" +
                 "AND user_id = $idUser\n" +
-                "AND ST_Intersects(annotation.location,GeometryFromText('"+location+"',0));"
+                "AND ST_Intersects(annotation.location,GeometryFromText('" + location + "',0));"
 
-        println "REQUEST=" + request
         def sql = new Sql(dataSource)
         List<Long> ids = []
         sql.eachRow(request) {
@@ -374,17 +395,21 @@ class RestAnnotationDomainController extends RestController {
      * @param term Term that must have all reviewed annotation (
      * @return Reviewed Annotation list
      */
-    def findReviewedAnnotationWithTerm(def ids,def termsId) {
+    def findReviewedAnnotationWithTerm(def ids, def termsId) {
         List<ReviewedAnnotation> annotationsWithSameTerm = []
         ids.each { id ->
             ReviewedAnnotation compared = ReviewedAnnotation.read(id)
             List<Long> idTerms = compared.termsId()
-            if(idTerms.size()!=termsId.size()) throw new WrongArgumentException("Annotations have not the same term!")
+            if (idTerms.size() != termsId.size()) {
+                throw new WrongArgumentException("Annotations have not the same term!")
+            }
 
-               idTerms.each { idTerm ->
-                   if(!termsId.contains(idTerm)) throw new WrongArgumentException("Annotations have not the same term!")
-               }
-             annotationsWithSameTerm << compared
+            idTerms.each { idTerm ->
+                if (!termsId.contains(idTerm)) {
+                    throw new WrongArgumentException("Annotations have not the same term!")
+                }
+            }
+            annotationsWithSameTerm << compared
         }
         annotationsWithSameTerm
     }
@@ -396,17 +421,21 @@ class RestAnnotationDomainController extends RestController {
      * @param term Term that must have all user annotation (
      * @return user Annotation list
      */
-    def findUserAnnotationWithTerm(def ids,def termsId) {
+    def findUserAnnotationWithTerm(def ids, def termsId) {
         List<UserAnnotation> annotationsWithSameTerm = []
         ids.each { id ->
-             UserAnnotation compared = UserAnnotation.read(id)
-             List<Long> idTerms = compared.termsId()
-             if(idTerms.size()!=termsId.size()) throw new WrongArgumentException("Annotations have not the same term!")
+            UserAnnotation compared = UserAnnotation.read(id)
+            List<Long> idTerms = compared.termsId()
+            if (idTerms.size() != termsId.size()) {
+                throw new WrongArgumentException("Annotations have not the same term!")
+            }
 
-                idTerms.each { idTerm ->
-                    if(!termsId.contains(idTerm)) throw new WrongArgumentException("Annotations have not the same term!")
+            idTerms.each { idTerm ->
+                if (!termsId.contains(idTerm)) {
+                    throw new WrongArgumentException("Annotations have not the same term!")
                 }
-              annotationsWithSameTerm << compared
+            }
+            annotationsWithSameTerm << compared
         }
         annotationsWithSameTerm
     }
@@ -419,7 +448,7 @@ class RestAnnotationDomainController extends RestController {
      * @return The first annotation data
      */
     def doCorrectReviewedAnnotation(def coveringAnnotations, String newLocation, boolean remove) {
-        if(coveringAnnotations.isEmpty()) return
+        if (coveringAnnotations.isEmpty()) return
 
         //Get the based annotation
         ReviewedAnnotation based = ReviewedAnnotation.read(coveringAnnotations.first())
@@ -428,33 +457,33 @@ class RestAnnotationDomainController extends RestController {
         def basedTerms = based.termsId()
 
         //Get all other annotation with same term
-        List<Long> allOtherAnnotationId = coveringAnnotations.subList(1,coveringAnnotations.size())
-        List<ReviewedAnnotation> allAnnotationWithSameTerm = findReviewedAnnotationWithTerm(allOtherAnnotationId,basedTerms)
+        List<Long> allOtherAnnotationId = coveringAnnotations.subList(1, coveringAnnotations.size())
+        List<ReviewedAnnotation> allAnnotationWithSameTerm = findReviewedAnnotationWithTerm(allOtherAnnotationId, basedTerms)
 
         //Create the new geometry
         Geometry newGeometry = new WKTReader().read(newLocation)
 
         def result
-        if(!remove) {
+        if (!remove) {
             //union will be made:
             // -add the new geometry to the based annotation location.
             // -add all other annotation geometry to the based annotation location (and delete other annotation)
             based.location = based.location.union(newGeometry)
-            allAnnotationWithSameTerm.eachWithIndex { other, i->
+            allAnnotationWithSameTerm.eachWithIndex { other, i ->
                 based.location = based.location.union(other.location)
-                reviewedAnnotationService.delete(other,JSON.parse(other.encodeAsJSON()))
+                reviewedAnnotationService.delete(other, JSON.parse(other.encodeAsJSON()))
             }
-            result = reviewedAnnotationService.update(based,JSON.parse(based.encodeAsJSON()))
+            result = reviewedAnnotationService.update(based, JSON.parse(based.encodeAsJSON()))
         } else {
             //diff will be made
             //-remove the new geometry from the based annotation location
             //-remove the new geometry from all other annotation location
             based.location = based.location.difference(newGeometry)
-            if(based.location.getNumPoints()<2) throw new WrongArgumentException("You cannot delete an annotation with substract! Use reject or delete tool.")
-            result = reviewedAnnotationService.update(based,JSON.parse(based.encodeAsJSON()))
-            allAnnotationWithSameTerm.eachWithIndex { other, i->
+            if (based.location.getNumPoints() < 2) throw new WrongArgumentException("You cannot delete an annotation with substract! Use reject or delete tool.")
+            result = reviewedAnnotationService.update(based, JSON.parse(based.encodeAsJSON()))
+            allAnnotationWithSameTerm.eachWithIndex { other, i ->
                 other.location = other.location.difference(newGeometry)
-                reviewedAnnotationService.update(other,JSON.parse(other.encodeAsJSON()))
+                reviewedAnnotationService.update(other, JSON.parse(other.encodeAsJSON()))
             }
         }
         return result
@@ -462,7 +491,7 @@ class RestAnnotationDomainController extends RestController {
 
 
     def doCorrectUserAnnotation(def coveringAnnotations, String newLocation, boolean remove) {
-        if(coveringAnnotations.isEmpty()) return
+        if (coveringAnnotations.isEmpty()) return
 
         //Get the based annotation
         UserAnnotation based = UserAnnotation.read(coveringAnnotations.first())
@@ -473,33 +502,33 @@ class RestAnnotationDomainController extends RestController {
         //Long basedTerm = basedTerms.first()
 
         //Get all other annotation with same term
-        List<Long> allOtherAnnotationId = coveringAnnotations.subList(1,coveringAnnotations.size())
-        List<UserAnnotation> allAnnotationWithSameTerm = findUserAnnotationWithTerm(allOtherAnnotationId,basedTerms)
+        List<Long> allOtherAnnotationId = coveringAnnotations.subList(1, coveringAnnotations.size())
+        List<UserAnnotation> allAnnotationWithSameTerm = findUserAnnotationWithTerm(allOtherAnnotationId, basedTerms)
 
-         //Create the new geometry
+        //Create the new geometry
         Geometry newGeometry = new WKTReader().read(newLocation)
 
         def result
-        if(!remove) {
+        if (!remove) {
             //union will be made:
             // -add the new geometry to the based annotation location.
             // -add all other annotation geometry to the based annotation location (and delete other annotation)
             based.location = based.location.union(newGeometry)
-            allAnnotationWithSameTerm.eachWithIndex { other, i->
+            allAnnotationWithSameTerm.eachWithIndex { other, i ->
                 based.location = based.location.union(other.location)
-                userAnnotationService.delete(other,JSON.parse(other.encodeAsJSON()))
+                userAnnotationService.delete(other, JSON.parse(other.encodeAsJSON()))
             }
-            result = userAnnotationService.update(based,JSON.parse(based.encodeAsJSON()))
+            result = userAnnotationService.update(based, JSON.parse(based.encodeAsJSON()))
         } else {
             //diff will be made
             //-remove the new geometry from the based annotation location
             //-remove the new geometry from all other annotation location
             based.location = based.location.difference(newGeometry)
-            if(based.location.getNumPoints()<2) throw new WrongArgumentException("You cannot delete an annotation with substract! Use reject or delete tool.")
-            result = userAnnotationService.update(based,JSON.parse(based.encodeAsJSON()))
-            allAnnotationWithSameTerm.eachWithIndex { other, i->
+            if (based.location.getNumPoints() < 2) throw new WrongArgumentException("You cannot delete an annotation with substract! Use reject or delete tool.")
+            result = userAnnotationService.update(based, JSON.parse(based.encodeAsJSON()))
+            allAnnotationWithSameTerm.eachWithIndex { other, i ->
                 other.location = other.location.difference(newGeometry)
-                userAnnotationService.update(other,JSON.parse(other.encodeAsJSON()))
+                userAnnotationService.update(other, JSON.parse(other.encodeAsJSON()))
             }
         }
         return result

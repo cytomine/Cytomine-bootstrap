@@ -1,6 +1,7 @@
 package be.cytomine.utils
 
 import be.cytomine.project.Project
+import be.cytomine.security.SecUser
 
 /**
  * @author lrollus
@@ -9,6 +10,7 @@ class ParamsService {
 
     def imageInstanceService
     def securityService
+    def userService
 
     //=> utility service
     public List<Long> getParamsUserList(String paramsUsers, Project project) {
@@ -38,5 +40,13 @@ class ParamsService {
        } else {
            imageInstanceService.getAllImageId(project)
        }
+    }
+
+    public List<SecUser> getParamsSecUserDomainList(String paramsUsers, Project project) {
+        List<SecUser> userList = []
+        if (paramsUsers != null && paramsUsers != "null" && paramsUsers != "") {
+            userList = userService.list(project, paramsUsers.split("_").collect{ Long.parseLong(it)})
+        }
+        return userList
     }
 }

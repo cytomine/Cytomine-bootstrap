@@ -13,6 +13,9 @@ import be.cytomine.CytomineDomain
 import be.cytomine.AnnotationDomain
 import be.cytomine.ontology.ReviewedAnnotation
 
+/**
+ * TODO: a refactorer, documenter et tester
+ */
 class RestImageController extends RestController {
 
     def imagePropertiesService
