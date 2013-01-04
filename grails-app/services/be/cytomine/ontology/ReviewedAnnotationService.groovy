@@ -58,23 +58,22 @@ class ReviewedAnnotationService extends ModelService {
 
     //reviewedAnnotationService.list(Project, List<SecUser>, Lis<ImageInstance>, List<Term>, boolean duplicate)
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Project project, List<SecUser> userList, List<ImageInstance> imageList, List<Term> termList) {
+    def list(Project project, List<Long> userList, List<Long> imageList, List<Long> termList) {
         //TODO:: improve perf by query duplication (if imageList.size = project.image.size then don't query with inList)
         log.info "userList=" + userList
         log.info "imageList=" + imageList
         log.info "termList=" + termList
         def reviewed = ReviewedAnnotation.createCriteria().list {
             eq("project", project)
-            inList("user", userList)
-            inList("image", imageList)
+            inList("user.id", userList)
+            inList("image.id", imageList)
             order("created", "desc")
         }
         def annotationWithThisTerm = []
-        def termListId = termList.collect {it.id}
         reviewed.each { review ->
             boolean hasTerm = false
             review.terms().each { term ->
-                if (termListId.contains(term.id)) hasTerm = true
+                if (termList.contains(term.id)) hasTerm = true
             }
             if (hasTerm) annotationWithThisTerm << review
         }

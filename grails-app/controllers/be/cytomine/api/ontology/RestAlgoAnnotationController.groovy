@@ -86,10 +86,12 @@ class RestAlgoAnnotationController extends RestController {
 
     @Override
     public Object addOne(def service, def json) {
-        if ((!json.project || json.isNull('project')) && json.image) {
+        if ((!json.project || json.isNull('project'))) {
             //fill project id thanks to image info
             ImageInstance image = ImageInstance.read(json.image)
-            if (image) json.project = image.project.id
+            if (image) {
+                json.project = image.project.id
+            }
         }
         if (json.isNull('project')) {
             throw new WrongArgumentException("Annotation must have a valide project:" + json.project)
@@ -520,20 +522,7 @@ class RestAlgoAnnotationController extends RestController {
         return mustBeRestart
     }
 
-    /**
-     * Substract the collection with offset (min) and max
-     * @param collection Full collection
-     * @param offset Min index
-     * @param max Maximum index
-     * @return Substracted collection with first elem = min and last elem (= max)
-     */
-    private def substract(List collection, Integer offset, Integer max) {
-        if (offset >= collection.size()) {
-            return []
-        }
-        def maxForCollection = Math.min(collection.size() - offset, max)
-        return collection.subList(offset, offset + maxForCollection)
-    }
+
 
     /**
      * Return a list of annotation

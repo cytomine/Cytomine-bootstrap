@@ -246,6 +246,7 @@ class BootStrap {
         }
 
         if(env == BootStrap.test) {
+            createRelation(BootStrapData.relationSamples)
             Project project = BasicInstance.createOrGetBasicProject()
             Infos.addUserRight(Infos.GOODLOGIN,project)
 //            BootStrapData.class.getDeclaredFields().each {

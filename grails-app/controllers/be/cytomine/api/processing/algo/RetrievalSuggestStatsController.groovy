@@ -15,37 +15,22 @@ import java.util.TreeMap.Entry
 
 import be.cytomine.AnnotationDomain
 
+/**
+ * Controller that provide stats service for retrieval result
+ */
 class RetrievalSuggestStatsController extends RestController {
 
     def termService
     def algoAnnotationTermService
     def jobService
     def retrievalSuggestedTermJobService
-    def retrievalEvolutionJobService
     def projectService
 
     /**
-     * If params.project && params.software, get the last userJob from this software from this project
-     * If params.job, get userjob with job
-     * @param params
-     * @return
+     * Get the AVG of prediction for this job
      */
-    private UserJob retrieveUserJobFromParams(def params) {
-        log.info "retrieveUserJobFromParams:" + params
-        SecUser userJob = null
-        if (params.project != null && params.software != null) {
-            Project project = Project.read(params.project)
-            Software software = Software.read(params.software)
-            if(project && software) userJob = jobService.getLastUserJob(project, software)
-        } else if (params.job != null) {
-            userJob = UserJob.findByJob(Job.read(params.long('job')))
-        }
-        return userJob
-    }
-
     def statRetrievalAVG = {
-
-        UserJob userJob = retrieveUserJobFromParams(params)
+        UserJob userJob = jobService.retrieveUserJobFromParams(params)
         if(!userJob) {
             responseNotFound("UserJob","Params", params)
             return null
@@ -59,98 +44,118 @@ class RetrievalSuggestStatsController extends RestController {
         responseSuccess(data)
     }
 
+    /**
+     * Compute confusion matrix for retrieval prediction
+     * Example:
+     * X ----------- Term 1 - Term 2 - Term 3
+     * Exp Term 1      3        2        0
+     * Exp Term 2      0        5        0
+     * Exp Term 3      1        0        1
+     */
     def statRetrievalConfusionMatrix = {
-        def data = []
-        UserJob userJob = retrieveUserJobFromParams(params)
-        log.info "get userjob.id=" + userJob.id
+        UserJob userJob = jobService.retrieveUserJobFromParams(params)
         if(!userJob) {
             responseNotFound("UserJob","Params", params)
             return null
         }
         ConfusionMatrix matrix = retrievalSuggestedTermJobService.computeConfusionMatrix(termService.list(userJob?.job?.project), userJob)
         String matrixJSON = matrix.toJSON()
-        data = ['matrix': matrixJSON]
+        def data = ['matrix': matrixJSON]
         responseSuccess(data)
     }
 
+    /**
+     * Compute the term that have poor prediction
+     */
     def statRetrievalWorstTerm = {
-        def data = []
-        UserJob userJob = retrieveUserJobFromParams(params)
+        UserJob userJob = jobService.retrieveUserJobFromParams(params)
         if(!userJob) {
             responseNotFound("UserJob","Params", params)
             return null
         }
         def worstTerms = listWorstTerm(userJob)
-        data = ['worstTerms': worstTerms]
+        def data = ['worstTerms': worstTerms]
         responseSuccess(data)
     }
 
+    /**
+     *  Compute the term that have poor prediction and compute the predicted term for each case
+     */
     def statWorstTermWithSuggestedTerm = {
         log.info "statWorstTermWithSuggestedTerm"
-        UserJob userJob = retrieveUserJobFromParams(params)
+        UserJob userJob = jobService.retrieveUserJobFromParams(params)
         if(!userJob) {
             responseNotFound("UserJob","Params", params)
             return null
         }
-        long start = System.currentTimeMillis()
-
-        println "1="+ (System.currentTimeMillis()-start)
         def worstTerms = listWorstTermWithSuggestedTerm(userJob)
-        println "2="+ (System.currentTimeMillis()-start)
         def avg =  retrievalSuggestedTermJobService.computeRate(userJob.job)
-        println "3="+ (System.currentTimeMillis()-start)
-        def avgAveragedPerClass =  retrievalSuggestedTermJobService.computeAVGAveragePerClass(userJob)
-        println "4="+ (System.currentTimeMillis()-start)
+        def avgAveragedPerClass = retrievalSuggestedTermJobService.computeAVGAveragePerClass(userJob)
 
         log.info "avg = " + avg + " avgAveragedPerClass=" + avgAveragedPerClass
         def data = ['worstTerms': worstTerms, 'avg':avg, 'avgMiddlePerClass' : avgAveragedPerClass]
         responseSuccess(data)
     }
 
+    /**
+     * Compute the worst annotation (annotation with wrong prediction and hight similarity rate)
+     */
     def statRetrievalWorstAnnotation = {
-        def data = []
-        UserJob userJob = retrieveUserJobFromParams(params)
+        UserJob userJob = jobService.retrieveUserJobFromParams(params)
         if(!userJob) {
             responseNotFound("UserJob","Params", params)
             return null
         }
         def worstTerms = listWorstAnnotationTerm(userJob, 30)
-        data = ['worstAnnotations': worstTerms]
-
+        def data = ['worstAnnotations': worstTerms]
         responseSuccess(data)
     }
 
+    /**
+     * Compute the all retrieval AVG during the time (for all job)
+     */
     def statRetrievalEvolution = {
-        UserJob userJob = retrieveUserJobFromParams(params)
+        UserJob userJob = jobService.retrieveUserJobFromParams(params)
         if(!userJob) {
             responseNotFound("UserJob","Params", params)
             return null
         }
         def data = []
         def evolution = retrievalSuggestedTermJobService.listAVGEvolution(userJob)
-        if (evolution) data = ['evolution': evolution]
+        if (evolution) {
+            data = ['evolution': evolution]
+        }
         responseSuccess(data)
     }
 
+    /**
+     * List terms sort by "worst prediction" for the userjob data
+     * @param userJob User
+     * @return Term
+     * //TODO:: could be optim with no .each loop and a single request
+     */
     def listWorstTerm(UserJob userJob) {
-        //TODO:: could be optim with no .each loop and a single request
+
+        //get a map with all term and a 0 value
         Map<Term, Integer> termMap = new HashMap<Term, Integer>()
         List<Term> termList = termService.list(userJob?.job?.project)
         termList.each {
             termMap.put(it, 0)
         }
 
+        //get all prediction for this job that are not good
         def algoAnnotationsTerm = AlgoAnnotationTerm.createCriteria().list {
             eq("userJob", userJob)
             neProperty("term", "expectedTerm")
         }
 
+        //increment the value for each term
         algoAnnotationsTerm.each {
             termMap.put(it.expectedTerm, termMap.get(it.expectedTerm) + 1);
         }
 
+        //make a new list with the rate for each term
         termList.clear()
-
         termMap.each {  key, value ->
             key.rate = value
             termList.add(key)
@@ -158,8 +163,15 @@ class RetrievalSuggestStatsController extends RestController {
         return termList
     }
 
+    /**
+     * List term ordered by worst term prediction
+     * @param userJob User job
+     * @return term list
+     * //TODO: could be improve with a SQL request (without hibernate)
+     */
     def listWorstTermWithSuggestedTerm(def userJob) {
 
+        //for each term, compute the total predicted term for all term
         def allCouple = AlgoAnnotationTerm.executeQuery("SELECT at1.expectedTerm.id, at2.term.id, count(*) as sumterm  " +
                 "FROM AlgoAnnotationTerm at1, AlgoAnnotationTerm at2  " +
                 "WHERE at1.id = at2.id " +
@@ -233,9 +245,16 @@ class RetrievalSuggestStatsController extends RestController {
         resultByAverage
     }
 
+    /**
+     * Do list of max 'max' annotation order by worst prediction
+     * worst prediction = (exp term <> term & rate is hight)
+     * @param userJob
+     * @param max
+     * @return
+     * //TODO:: can be optim with a single SQL request
+     */
     def listWorstAnnotationTerm(def userJob, def max) {
         def results = []
-
 
         def algoAnnotationsTerm = AlgoAnnotationTerm.createCriteria().list {
             eq("userJob", userJob)
@@ -246,8 +265,6 @@ class RetrievalSuggestStatsController extends RestController {
         for (int i = 0; i < algoAnnotationsTerm.size() && max > results.size(); i++) {
             def result = [:]
             def suggest = algoAnnotationsTerm.get(i)
-            //def annotation = suggest.annotation
-            //def realTerm = termService.list(annotation, annotation.user)
             result['id'] = suggest.id
             AnnotationDomain annotation = suggest.retrieveAnnotationDomain()
             result['annotation'] = annotation.id
@@ -260,9 +277,6 @@ class RetrievalSuggestStatsController extends RestController {
             result['project'] = suggest.project.id
             results << result;
         }
-
         return results
-
     }
-
 }

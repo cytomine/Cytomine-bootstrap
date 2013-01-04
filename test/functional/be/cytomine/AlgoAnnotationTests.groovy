@@ -239,18 +239,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
     }
 
-    void testAddAlgoAnnotationBadProject() {
-        def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
-        UserJob user = annotationToAdd.user
-        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
-
-        def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
-        updateAnnotation.project = null
-        updateAnnotation.image = null
-        def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
-        assertEquals(400, result.code)
-    }
-
     void testAddAlgoAnnotationBadGeom() {
         def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user

@@ -71,7 +71,7 @@ class HttpClient {
      * Response is saved and can be retrieved with getResponseCode()/getResponseData()
      */
     void get() {
-        log.debug("Get " + URL.toString())
+        log.info("Get " + URL.toString())
         HttpGet httpGet = new HttpGet(URL.toString());
         response = client.execute(targetHost, httpGet, localcontext);
     }
@@ -108,7 +108,7 @@ class HttpClient {
      * Response is saved and can be retrieved with getResponseCode()/getResponseData()
      */
     void delete() {
-        log.debug("Delete " + URL.toString())
+        log.info("Delete " + URL.toString())
         HttpDelete httpDelete = new HttpDelete(URL.toString());
         response = client.execute(targetHost, httpDelete, localcontext);
     }

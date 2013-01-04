@@ -9,6 +9,7 @@ import be.cytomine.test.http.TermAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.project.Project
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,18 +34,31 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
       assertEquals(404, result.code)
   }
 
-  void testListTermByImageWithCredential() {
-      AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
-      def result = TermAPI.listByImage(annotationTerm.userAnnotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
-      def json = JSON.parse(result.data)
-      assert json instanceof JSONArray
-  }
+    void testListOntologyTermByProjectWithCredential() {
+        Project project = BasicInstance.createOrGetBasicProject()
+        def result = TermAPI.listByProject(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
 
-  void testListTermByImageWithImageNotExist() {
-      def result = TermAPI.listByImage(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
-  }
+    void testListTermOntologyByProjectWithProjectNotExist() {
+        def result = TermAPI.listByProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
+    void testStatTerm() {
+        def result = TermAPI.statsTerm(BasicInstance.createOrGetBasicTerm().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
+
+    void testStatTermNotExist() {
+        def result = TermAPI.statsTerm(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
 
   void testListTermWithCredential() {
       def result = TermAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)

@@ -97,9 +97,27 @@ class ReviewedAnnotationAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def listByImage(Long id, String username, String password) {
+    static def listByImageAndTerm(Long idImage, Long idTerm, String username, String password) {
+        log.info "list listByImageAndTerm"
+        String URL = Infos.CYTOMINEURL + "api/term/$idTerm/imageinstance/$idImage/reviewedannotation.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+
+    static def listByImage(Long id,String username, String password) {
+        listByImage(id,null,username,password)
+    }
+
+    static def listByImage(Long id, String bbox, String username,String password) {
         log.info "list reviewedannotation by image " + id
-        String URL = Infos.CYTOMINEURL + "api/imageinstance/$id/reviewedannotation.json"
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/$id/reviewedannotation.json" + (bbox? "?bbox=$bbox" : "")
+        log.info URL
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
         client.get()
@@ -247,8 +265,13 @@ class ReviewedAnnotationAPI extends DomainAPI {
     }
 
     static def markStopReview(def id, String username, String password) {
+        markStopReview(id,false,username,password)
+    }
+
+    static def markStopReview(def id, boolean cancel, String username,String password) {
         log.info "update reviewedannotation:" + id
-        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/review.json"
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/review.json" + (cancel? "?cancel=true": "")
+        log.info URL
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
         client.delete()
@@ -286,6 +309,20 @@ class ReviewedAnnotationAPI extends DomainAPI {
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
         client.post("")
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        println response
+        client.disconnect();
+        log.info("check response")
+        return [data: response, code: code]
+    }
+
+    static def deleteReviewAll(Long idImage, List<Long> users, String username, String password) {
+        log.info "update reviewedannotation:" + idImage
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + idImage + "/annotation/review.json?users="+users.join(",")
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        client.delete()
         int code = client.getResponseCode()
         String response = client.getResponseData()
         println response

@@ -72,17 +72,6 @@ class SecurityService {
     }
 
 
-    //=> security service
-    List<Long> getUserIdList(List<Long> users) {
-        String request = "SELECT DISTINCT sec_user.id \n" +
-                " FROM sec_user \n" +
-                " WHERE id IN ("+users.join(",")+")"
-        def data = []
-        new Sql(dataSource).eachRow(request) {
-            data << it[0]
-        }
-        return data
-    }
 
 
 }

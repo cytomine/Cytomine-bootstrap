@@ -28,6 +28,9 @@ import be.cytomine.security.UserJob
 
 import be.cytomine.utils.GeometryUtils
 
+/**
+ * Controller for annotation created by user
+ */
 class RestUserAnnotationController extends RestController {
 
     def exportService
@@ -42,128 +45,133 @@ class RestUserAnnotationController extends RestController {
     def dataSource
     def paramsService
 
+    /**
+     * List all annotation with light format
+     */
     def list = {
-        def annotations = []
-
-//        if(params.retrieval!=null && params.getBoolean('retrieval')) {
-            responseSuccess(userAnnotationService.listLightForRetrieval())
-//        } else {
-//            def projects = projectService.list()
-//            projects.each {
-//                annotations.addAll(userAnnotationService.listMap(it))
-//            }
-//            responseSuccess(annotations)
-//        }
+        responseSuccess(userAnnotationService.listLightForRetrieval())
     }
 
+    /**
+     * List user annotation by image
+     */
     def listByImage = {
         ImageInstance image = imageInstanceService.read(params.long('id'))
-        if (image) responseSuccess(userAnnotationService.listMap(image))
-        else responseNotFound("Image", params.id)
+        if (image) {
+            responseSuccess(userAnnotationService.listMap(image))
+        } else {
+            responseNotFound("Image", params.id)
+        }
     }
 
+    /**
+     * List user annotation by project
+     */
     def listByProject = {
         Project project = projectService.read(params.long('id'), new Project())
-
         if (project) {
 
-            Integer offset = params.offset!=null? params.getInt('offset') : 0
-            Integer max = params.max!=null? params.getInt('max') : Integer.MAX_VALUE
+            Integer offset = params.offset != null ? params.getInt('offset') : 0
+            Integer max = params.max != null ? params.getInt('max') : Integer.MAX_VALUE
 
-            List<Long> userList = paramsService.getParamsUserList(params.users,project)
-            List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images,project)
+            List<Long> userList = paramsService.getParamsUserList(params.users, project)
+            List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images, project)
 
             def list = userAnnotationService.listMap(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"))
-            if(params.offset!=null) responseSuccess([size:list.size(),collection:substract(list,offset,max)])
-            else responseSuccess(list)
+            if (params.offset != null) {
+                responseSuccess([size: list.size(), collection: substract(list, offset, max)])
+            } else {
+                responseSuccess(list)
+            }
+        } else {
+            responseNotFound("Project", params.id)
         }
-        else responseNotFound("Project", params.id)
     }
 
+    /**
+     * List by image and user
+     * Bbbx params can be provide to select only annotation in a area
+     */
     def listByImageAndUser = {
-         def image = imageInstanceService.read(params.long('idImage'))
-         def user = userService.read(params.idUser)
-         if (image && user && params.bbox) {
+        def image = imageInstanceService.read(params.long('idImage'))
+        def user = userService.read(params.idUser)
+        if (image && user && params.bbox) {
             boolean notReviewedOnly = params.getBoolean("notreviewed")
             Geometry boundingbox = GeometryUtils.createBoundingBox(params.bbox)
-            def data = userAnnotationService.listMap(image,user,boundingbox,notReviewedOnly)
-//             String request = "SELECT DISTINCT annotation.id, AsText(annotation.location), at.term_id, (SELECT SUM(ST_CoveredBy(ga.location,gb.location)::integer) FROM user_annotation ga, user_annotation gb WHERE ga.id=annotation.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_IsValid(ga.location) AND ST_IsValid(gb.location)) as numberOfCoveringAnnotation \n" +
-//                     " FROM user_annotation annotation LEFT OUTER JOIN annotation_term at ON annotation.id = at.user_annotation_id\n" +
-//                     " WHERE annotation.image_id = $image.id\n" +
-//                     " AND annotation.user_id= $user.id\n" +
-//                     (notReviewedOnly? " AND annotation.count_reviewed_annotations = 0\n" :"") +
-//                     " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) \n" +
-//                     " ORDER BY numberOfCoveringAnnotation asc,annotation.id asc"
-//             println request
-//
-//             def data = userAnnotationService.selectUserAnnotationLight(request)
-
+            def data = userAnnotationService.listMap(image, user, boundingbox, notReviewedOnly)
             responseSuccess(data)
+        } else if (image && user) {
+            responseSuccess(userAnnotationService.listMap(image, user))
+        } else if (!user) {
+            responseNotFound("User", params.idUser)
+        } else if (!image) {
+            responseNotFound("Image", params.idImage)
         }
-         else if (image && user) responseSuccess(userAnnotationService.listMap(image, user))
-         else if (!user) responseNotFound("User", params.idUser)
-         else if (!image) responseNotFound("Image", params.idImage)
-     }
+    }
 
+    /**
+     * List user annotation by term
+     */
     def listAnnotationByTerm = {
         Term term = termService.read(params.long('idterm'))
         //TODO:: improve this with a single SQL request
-        if (term) responseSuccess(userAnnotationService.list(term))
-        else responseNotFound("Annotation Term", "Term", params.idterm)
+        if (term) {
+            responseSuccess(userAnnotationService.list(term))
+        } else {
+            responseNotFound("Annotation Term", "Term", params.idterm)
+        }
     }
 
+    /**
+     * List annotation by project and term
+     */
     def listAnnotationByProjectAndTerm = {
-        log.info "listAnnotationByProjectAndTerm"
         Term term = termService.read(params.long('idterm'))
         Project project = projectService.read(params.long('idproject'), new Project())
-        Integer offset = params.offset!=null? params.getInt('offset') : 0
-        Integer max = params.max!=null? params.getInt('max') : Integer.MAX_VALUE
+        Integer offset = params.offset != null ? params.getInt('offset') : 0
+        Integer max = params.max != null ? params.getInt('max') : Integer.MAX_VALUE
 
-        List<Long> userList = paramsService.getParamsUserList(params.users,project)
-        List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images,project)
+        List<Long> userList = paramsService.getParamsUserList(params.users, project)
+        List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images, project)
 
         if (term == null) responseNotFound("Term", params.idterm)
         else if (project == null) responseNotFound("Project", params.idproject)
-        else if(!params.suggestTerm) {
-            def list = []
-            if (userList.isEmpty()) list = []
-            else if (imageInstanceList.isEmpty()) list = []
-            else {
-                list = userAnnotationService.list(project,term,userList,imageInstanceList)
+        else if (!params.suggestTerm) {
+            def list
+            if (userList.isEmpty() || imageInstanceList.isEmpty()) {
+                list = []
+            } else {
+                list = userAnnotationService.list(project, term, userList, imageInstanceList)
             }
-            if(params.offset!=null) responseSuccess([size:list.size(),collection:mergeResults(substract(list,offset,max))])
-            else responseSuccess(list)
+            if (params.offset != null) {
+                responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
+            } else {
+                responseSuccess(list)
+            }
         }
         else {
             Term suggestedTerm = termService.read(params.suggestTerm)
             //TODO:: improve this with a single SQL request
             def list = userAnnotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')))
-            if(params.offset!=null) responseSuccess([size:list.size(),collection:mergeResults(substract(list,offset,max))])
-            else responseSuccess(list)
+            if (params.offset != null) {
+                responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
+            } else {
+                responseSuccess(list)
+            }
         }
     }
 
-       //return a list of annotation (if list = [[annotation1,rate1, term1, expectedTerm1],..], add rate value in annotation]
-       private def mergeResults(def list) {
-           //list = [ [a,b],...,[x,y]]  => [a.rate = b, x.rate = y...]
-           if(list.isEmpty() || list[0] instanceof UserAnnotation || list[0].class.equals("be.cytomine.ontology.UserAnnotation")) return list
-           def result = []
-           list.each {
-               UserAnnotation annotation = it[0]
-               annotation.rate = it[1]
-               annotation.idTerm = it[2]
-               annotation.idExpectedTerm = it[3]
-               result << annotation
-           }
-           return result
-       }
-
-
-    def downloadDocumentByProject = {  //and filter by users and terms !
+    /**
+     * Download report with annotation
+     * TODO:: this should be extract in a specific service (and use lot of same code as algo annotation
+     */
+    def downloadDocumentByProject = {
         // Export service provided by Export plugin
 
-        Project project = projectService.read(params.long('id'),new Project())
-        if (!project) responseNotFound("Project", params.long('id'))
+        Project project = projectService.read(params.long('id'), new Project())
+        if (!project) {
+            responseNotFound("Project", params.long('id'))
+        }
 
         projectService.checkAuthorization(project)
         def users = []
@@ -184,15 +192,15 @@ class RestUserAnnotationController extends RestController {
                 images << Long.parseLong(id)
             }
         }
-        def termsName = Term.findAllByIdInList(terms).collect{ it.toString() }
-        def usersName = SecUser.findAllByIdInList(users).collect{ it.toString() }
+        def termsName = Term.findAllByIdInList(terms).collect { it.toString() }
+        def usersName = SecUser.findAllByIdInList(users).collect { it.toString() }
         def imageInstances = ImageInstance.findAllByIdInList(images)
 
         if (params?.format && params.format != "html") {
             def exporterIdentifier = params.format;
             if (exporterIdentifier == "xls") exporterIdentifier = "excel"
             response.contentType = grailsApplication.config.grails.mime.types[params.format]
-            SimpleDateFormat  simpleFormat = new SimpleDateFormat("yyyyMMdd_hhmmss");
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyyMMdd_hhmmss");
             String datePrefix = simpleFormat.format(new Date())
             response.setHeader("Content-disposition", "attachment; filename=${datePrefix}_annotations_project${project.id}.${params.format}")
 
@@ -228,25 +236,29 @@ class RestUserAnnotationController extends RestController {
                 data.filename = annotation.getFilename()
                 data.user = annotation.user.toString()
                 data.term = term.name
-                data.cropURL =UrlApi.getUserAnnotationCropWithAnnotationId(grailsApplication.config.grails.serverURL,annotation.id)
-                data.cropGOTO = UrlApi.getAnnotationURL(grailsApplication.config.grails.serverURL,annotation?.image?.project?.id, annotation.image.id, annotation.id)
+                data.cropURL = UrlApi.getUserAnnotationCropWithAnnotationId(grailsApplication.config.grails.serverURL, annotation.id)
+                data.cropGOTO = UrlApi.getAnnotationURL(grailsApplication.config.grails.serverURL, annotation?.image?.project?.id, annotation.image.id, annotation.id)
                 exportResult.add(data)
             }
 
             List fields = ["id", "area", "perimeter", "XCentroid", "YCentroid", "image", "filename", "user", "term", "cropURL", "cropGOTO"]
-            Map labels = ["id": "Id", "area": "Area (µm²)", "perimeter": "Perimeter (µm)", "XCentroid" : "X", "YCentroid" : "Y", "image": "Image Id", "filename": "Image Filename", "user": "User", "term": "Term", "cropURL": "View userannotation picture", "cropGOTO": "View userannotation on image"]
+            Map labels = ["id": "Id", "area": "Area (µm²)", "perimeter": "Perimeter (µm)", "XCentroid": "X", "YCentroid": "Y", "image": "Image Id", "filename": "Image Filename", "user": "User", "term": "Term", "cropURL": "View userannotation picture", "cropGOTO": "View userannotation on image"]
             String title = "Annotations in " + project.getName() + " created by " + usersName.join(" or ") + " and associated with " + termsName.join(" or ") + " @ " + (new Date()).toLocaleString()
 
-            exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04,0.06,0.06,0.04, 0.04, 0.04,0.08,0.06,0.06,0.25,0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
+            exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04, 0.06, 0.06, 0.04, 0.04, 0.04, 0.08, 0.06, 0.06, 0.25, 0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
         }
     }
 
-
+    /**
+     * Add comment on an annotation to other user
+     */
     def addComment = {
-        //try {
+
         User sender = User.read(springSecurityService.principal.id)
         UserAnnotation annotation = UserAnnotation.read(params.getLong('userannotation'))
         log.info "add comment from " + sender + " and userannotation " + annotation
+
+        //create annotation crop (will be send with comment)
         File annnotationCrop = null
         try {
             String cropURL = annotation.toCropURL()
@@ -261,6 +273,12 @@ class RestUserAnnotationController extends RestController {
         } catch (FileNotFoundException e) {
             annnotationCrop = null
         }
+        def attachments = []
+        if (annnotationCrop != null) {
+            attachments << [cid: "annotation", file: annnotationCrop]
+        }
+
+        //do receivers email list
         List<User> receivers = request.JSON.users.collect { userID ->
             User.read(userID)
         }
@@ -269,14 +287,14 @@ class RestUserAnnotationController extends RestController {
             receiversEmail[i] = receivers[i].getEmail();
         }
         log.info "send mail to " + receiversEmail
+
+        //create shared annotation domain
         def sharedAnnotation = new SharedAnnotation(
-                sender : sender,
-                receiver : receivers,
-                comment : request.JSON.comment,
+                sender: sender,
+                receiver: receivers,
+                comment: request.JSON.comment,
                 userAnnotation: annotation
         )
-        def attachments = []
-        if (annnotationCrop != null) attachments << [cid : "annotation", file : annnotationCrop]
         if (sharedAnnotation.save()) {
             mailService.send("cytomine.ulg@gmail.com", receiversEmail, sender.getEmail(), request.JSON.subject, request.JSON.message, attachments)
             response([success: true, message: "Annotation shared to " + receivers.toString()], 200)
@@ -285,15 +303,26 @@ class RestUserAnnotationController extends RestController {
         }
     }
 
+    /**
+     * Show a single comment for an annotation
+     */
     def showComment = {
         UserAnnotation annotation = userAnnotationService.read(params.long('userannotation'))
-        if (!annotation)  responseNotFound("Annotation", params.annotation)
+        if (!annotation) {
+            responseNotFound("Annotation", params.annotation)
+        }
         userAnnotationService.checkAuthorization(annotation.project)
         def sharedAnnotation = SharedAnnotation.findById(params.long('id'))
-        if (!sharedAnnotation) responseNotFound("SharedAnnotation", params.id)
-        responseSuccess(sharedAnnotation)
+        if (!sharedAnnotation) {
+            responseNotFound("SharedAnnotation", params.id)
+        } else {
+            responseSuccess(sharedAnnotation)
+        }
     }
 
+    /**
+     * List all comments for an annotation
+     */
     def listComments = {
         UserAnnotation annotation = userAnnotationService.read(params.long('userannotation'))
         User user = User.read(springSecurityService.principal.id)
@@ -315,9 +344,11 @@ class RestUserAnnotationController extends RestController {
         }
     }
 
+    /**
+     * Get a single annotation
+     */
     def show = {
         UserAnnotation annotation = userAnnotationService.read(params.long('id'))
-
         if (annotation) {
             userAnnotationService.checkAuthorization(annotation.project)
             responseSuccess(annotation)
@@ -325,36 +356,38 @@ class RestUserAnnotationController extends RestController {
         else responseNotFound("Annotation", params.id)
     }
 
-    public void cleanUpGorm() {
-        def session = sessionFactory.currentSession
-        session.flush()
-        session.clear()
-        propertyInstanceMap.get().clear()
-
-    }
-
+    /**
+     * Add annotation created by user
+     */
     def add = {
         add(userAnnotationService, request.JSON)
     }
 
     @Override
     public Object addOne(def service, def json) {
-        if(!json.project || json.isNull('project')) {
+        if (!json.project || json.isNull('project')) {
             ImageInstance image = ImageInstance.read(json.image)
-            if(image) json.project = image.project.id
+            if (image) json.project = image.project.id
         }
-        if(json.isNull('project')) throw new WrongArgumentException("Annotation must have a valide project:"+json.project)
-        if(json.isNull('location')) throw new WrongArgumentException("Annotation must have a valide geometry:"+json.location)
+        if (json.isNull('project')) {
+            throw new WrongArgumentException("Annotation must have a valide project:" + json.project)
+        }
+        if (json.isNull('location')) {
+            throw new WrongArgumentException("Annotation must have a valide geometry:" + json.location)
+        }
         userAnnotationService.checkAuthorization(Long.parseLong(json.project.toString()), new UserAnnotation())
         def result = userAnnotationService.add(json)
         return result
     }
 
-    def update= {
+    /**
+     * Update annotation created by user
+     */
+    def update = {
         def json = request.JSON
         try {
             def domain = userAnnotationService.retrieve(json)
-            def result = userAnnotationService.update(domain,json)
+            def result = userAnnotationService.update(domain, json)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -362,18 +395,30 @@ class RestUserAnnotationController extends RestController {
         }
     }
 
-
+    /**
+     * Delete annotation created by user
+     */
     def delete = {
         def json = JSON.parse("{id : $params.id}")
         delete(userAnnotationService, json)
     }
 
-    private def substract(List collection, Integer offset, Integer max) {
-        //TODO:: extract
-        if (offset>=collection.size()) return []
-
-        def maxForCollection = Math.min(collection.size()-offset,max)
-        log.info "collection=${collection.size()} offset=$offset max=$max compute=${collection.size()-offset} maxForCollection=$maxForCollection"
-        return collection.subList(offset,offset+maxForCollection)
+    /**
+     * Return a list of annotation (if list = [[annotation1,rate1, term1, expectedTerm1],..], add rate,term1,expected value in annotation]
+     * @param list annotation list
+     * @return annotation list with all info
+     */
+    private def mergeResults(def list) {
+        //list = [ [a,b],...,[x,y]]  => [a.rate = b, x.rate = y...]
+        if (list.isEmpty() || list[0] instanceof UserAnnotation || list[0].class.equals("be.cytomine.ontology.UserAnnotation")) return list
+        def result = []
+        list.each {
+            UserAnnotation annotation = it[0]
+            annotation.rate = it[1]
+            annotation.idTerm = it[2]
+            annotation.idExpectedTerm = it[3]
+            result << annotation
+        }
+        return result
     }
 }

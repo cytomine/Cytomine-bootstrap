@@ -31,8 +31,6 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
         assertEquals(404, result.code)
         result = RelationTermAPI.show(relationTerm.relation.id,relationTerm.term1.id,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(404, result.code)
-        result = RelationTermAPI.show(null,relationTerm.term1.id,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
     }
 
     void testListRelation() {
@@ -49,7 +47,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
       assert json instanceof JSONArray
 
       result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,3, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(400, result.code)
+      assertEquals(404, result.code)
   }
 
     void testListRelationTermByTerm2() {

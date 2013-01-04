@@ -70,17 +70,6 @@ class ImageInstanceService extends ModelService {
         ImageInstance.findAllByIdInList(ids)
     }
 
-
-    //=>imageinstance service
-    public List<Long> getAllImageId(Project project) {
-        String request = "SELECT a.id FROM image_instance a WHERE project_id="+project.id
-        def data = []
-        new Sql(dataSource).eachRow(request) {
-            data << it[0]
-        }
-        return data
-    }
-
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listTree(Project project) {
         def children = []

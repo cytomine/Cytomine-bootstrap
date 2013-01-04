@@ -218,4 +218,27 @@ class JobService extends ModelService {
          List<UserJob> userJobs = getAllLastUserJob(project,software)
          return userJobs.isEmpty()? null : userJobs.first()
     }
+
+
+    /**
+     * If params.project && params.software, get the last userJob from this software from this project
+     * If params.job, get userjob with job
+     * @param params
+     * @return
+     */
+    public UserJob retrieveUserJobFromParams(def params) {
+        log.info "retrieveUserJobFromParams:" + params
+        SecUser userJob = null
+        if (params.project != null && params.software != null) {
+            Project project = Project.read(params.project)
+            Software software = Software.read(params.software)
+            if(project && software) userJob = getLastUserJob(project, software)
+        } else if (params.job != null) {
+            Job job = Job.read(params.long('job'))
+            if(job) {
+                userJob = UserJob.findByJob(job)
+            }
+        }
+        return userJob
+    }
 }

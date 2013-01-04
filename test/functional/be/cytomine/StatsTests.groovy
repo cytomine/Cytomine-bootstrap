@@ -5,6 +5,7 @@ import be.cytomine.test.BasicInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
+import be.cytomine.ontology.Term
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,111 +16,89 @@ import grails.converters.JSON
  */
 class StatsTests extends functionaltestplugin.FunctionalTestCase {
 
-    void testRetrievalAVG() {
-        Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
-
-        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/avg.json?job=${job.id}"
+    private void doGET(String URL, int expect) {
         HttpClient client = new HttpClient();
         client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
         client.get()
         int code = client.getResponseCode()
         String response = client.getResponseData()
         client.disconnect();
-        assertEquals(200,code)
-        def json = JSON.parse(response)
+        assertEquals(expect,code)
     }
+
+    void testRetrievalAVG() {
+        Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
+        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/avg.json?job=${job.id}"
+        doGET(URL,200)
+
+        URL = Infos.CYTOMINEURL + "/api/stats/retrieval/avg.json?job=-99"
+        doGET(URL,404)
+    }
+
+    void testRetrievalAVGNotExist() {
+        Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
+        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/avg.json?job=${job.id}"
+        doGET(URL,200)
+
+        URL = Infos.CYTOMINEURL + "/api/stats/retrieval/avg.json?job=-99"
+                doGET(URL,404)
+    }
+
 
     void testRetrievalConfusionMatrix() {
         Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
-
         String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/confusionmatrix.json?job=${job.id}"
-        HttpClient client = new HttpClient();
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200,code)
-        def json = JSON.parse(response)
+        doGET(URL,200)
+
+        URL = Infos.CYTOMINEURL + "/api/stats/retrieval/confusionmatrix.json?job=-99"
+                doGET(URL,404)
     }
 
     void testRetrievalWorstTerm() {
         Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
-
         String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/worstTerm.json?job=${job.id}"
-        HttpClient client = new HttpClient();
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200,code)
-        def json = JSON.parse(response)
+        doGET(URL,200)
+        URL = Infos.CYTOMINEURL + "/api/stats/retrieval/worstTerm.json?job=-99"
+                doGET(URL,404)
     }
 
     void testRetrievalWorstAnnotation() {
         Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
-
         String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/worstAnnotation.json?job=${job.id}"
-        HttpClient client = new HttpClient();
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200,code)
-        def json = JSON.parse(response)
-
+        doGET(URL,200)
+        URL = Infos.CYTOMINEURL + "/api/stats/retrieval/worstAnnotation.json?job=${job.id}"
+                doGET(URL,200)
     }
 
     void testRetrievalWorstTermWithSuggest() {
         Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
-
         String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/worstTermWithSuggest.json?job=${job.id}"
-        HttpClient client = new HttpClient();
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200,code)
-        def json = JSON.parse(response)
+        doGET(URL,200)
+        URL = Infos.CYTOMINEURL + "/api/stats/retrieval/worstTermWithSuggest.json?job=-99"
+                doGET(URL,404)
     }
 
     void testRetrievalEvolution() {
         Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
-
         String URL = Infos.CYTOMINEURL + "/api/stats/retrieval/evolution.json?job=${job.id}"
-        HttpClient client = new HttpClient();
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        assertEquals(200,code)
-        def json = JSON.parse(response)
+        doGET(URL,200)
+        URL = Infos.CYTOMINEURL + "/api/stats/retrieval/evolution.json?job=-99"
+                doGET(URL,404)
     }
 
-/**
-    *
-            "/api/stats/retrieval/confusionmatrix"(controller:"stats"){
-                action = [GET:"statRetrievalConfusionMatrix"]
-            }
-            "/api/stats/retrieval/worstTerm"(controller:"stats"){
-                action = [GET:"statRetrievalWorstTerm"]
-            }
-            "/api/stats/retrieval/worstTermWithSuggest"(controller:"stats"){
-                action = [GET:"statWorstTermWithSuggestedTerm"]
-            }
-            "/api/stats/retrieval/worstAnnotation"(controller:"stats"){
-                action = [GET:"statRetrievalWorstAnnotation"]
-            }
-            "/api/stats/retrieval/evolution"(controller:"stats"){
-                action = [GET:"statRetrievalEvolution"]
-            }
-            "/api/downloadPDF" (controller : "stats") {
-                action = [GET:"convertHtmlContentToPDF"]
-            }
-  */
+    void testRetrievalEvolutionAlgo() {
+        Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
+        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval-evolution/evolution?job=${job.id}"
+        doGET(URL,200)
+        URL = Infos.CYTOMINEURL + "/api/stats/retrieval-evolution/evolution?job=-99"
+                doGET(URL,404)
+    }
 
+    void testRetrievalEvolutionAlgoForTerm() {
+        Job job = BasicInstance.createJobWithAlgoAnnotationTerm()
+        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval-evolution/evolutionByTerm?job=${job.id}&term=${Term.findByOntology(job.project.ontology).id}"
+        doGET(URL,200)
+        URL = Infos.CYTOMINEURL + "/api/stats/retrieval-evolution/evolutionByTerm?job=-99&term=${Term.findByOntology(job.project.ontology).id}"
+         doGET(URL,404)
+    }
 }

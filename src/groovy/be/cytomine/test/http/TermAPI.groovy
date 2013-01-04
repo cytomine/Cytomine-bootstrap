@@ -56,9 +56,9 @@ class TermAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-    static def listByImage(Long id, String username, String password) {
+    static def listByProject(Long id, String username, String password) {
         log.info("list term")
-        String URL = Infos.CYTOMINEURL + "api/imageinstance/$id/term.json"
+        String URL = Infos.CYTOMINEURL + "api/project/$id/term.json"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
         client.get()
@@ -68,7 +68,17 @@ class TermAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
-
+    static def statsTerm(Long id, String username, String password) {
+        log.info("statsTerm")
+        String URL = Infos.CYTOMINEURL + "api/term/$id/project/stat.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
 
 
     static def create(Term termToAdd, User user) {

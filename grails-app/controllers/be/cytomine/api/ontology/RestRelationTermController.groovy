@@ -91,8 +91,9 @@ class RestRelationTermController extends RestController {
     def add = {
         def json = request.JSON
         Relation relation
-        if (json.relation != null) {
-            relation = relationService.read(params.long('id'))
+        if (json.relation != null && json.relation.toString()!="null") {
+            String strRel = json.relation
+            relation = relationService.read(Long.parseLong(strRel))
         } else {
             relation = relationService.getRelationParent()
         }

@@ -359,4 +359,19 @@ class RestController {
         else throw new ObjectNotFoundException("Annotation ${id} not found")
 
     }
+
+    /**
+     * Substract the collection with offset (min) and max
+     * @param collection Full collection
+     * @param offset Min index
+     * @param max Maximum index
+     * @return Substracted collection with first elem = min and last elem (= max)
+     */
+    protected def substract(List collection, Integer offset, Integer max) {
+        if (offset >= collection.size()) {
+            return []
+        }
+        def maxForCollection = Math.min(collection.size() - offset, max)
+        return collection.subList(offset, offset + maxForCollection)
+    }
 }

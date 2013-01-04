@@ -221,4 +221,7 @@ class RestJobController extends RestController {
         if (jobDatasId.isEmpty()) return
         JobData.executeUpdate("delete from JobData a where a.id IN (:list)",[list:jobDatasId])
     }
+
+
+
 }

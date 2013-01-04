@@ -65,16 +65,12 @@ class TermService extends ModelService {
     }
 
     def statProject(Term term) {
-        log.debug "term=" + term.name
         def projects = Project.findAllByOntology(term.ontology)
-
-        log.debug "There are " + projects.size() + " projects for this ontology " + term.ontology.name
         def count = [:]
         def percentage = [:]
 
         //init list
         projects.each { project ->
-            log.info "project=" + project.name
             count[project.name] = 0
             percentage[project.name] = 0
         }
