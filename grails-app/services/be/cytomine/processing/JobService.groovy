@@ -10,6 +10,11 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.ontology.AlgoAnnotationTerm
+import be.cytomine.security.User
+import be.cytomine.security.SecUserSecRole
 
 class JobService extends ModelService {
 
@@ -19,6 +24,8 @@ class JobService extends ModelService {
     def domainService
     def transactionService
     def jobParameterService
+    def springSecurityService
+    def backgroundService
 
     def list() {
         Job.list()
@@ -241,4 +248,66 @@ class JobService extends ModelService {
         }
         return userJob
     }
+
+    public def hasReviewedAnnotation(List<AlgoAnnotation> annotations) {
+        List<Long> annotationsId = annotations.collect{ it.id }
+        if (annotationsId.isEmpty()) []
+        return ReviewedAnnotation.findAllByParentIdentInList(annotationsId)
+    }
+
+    public void deleteAllAlgoAnnotations(List<UserJob> users) {
+        List<Long> usersId = users.collect{ it.id }
+        if (usersId.isEmpty()) return
+        AlgoAnnotation.executeUpdate("delete from AlgoAnnotation a where a.user.id in (:list)",[list:usersId])
+    }
+
+    public void deleteAllAlgoAnnotationsTerm(List<UserJob> users) {
+        List<Long> usersId = users.collect{ it.id }
+        if (usersId.isEmpty()) return
+        AlgoAnnotationTerm.executeUpdate("delete from AlgoAnnotationTerm a where a.userJob.id IN (:list)",[list:usersId])
+    }
+
+    public void deleteAllJobData(List<JobData> jobDatas) {
+        List<Long> jobDatasId = jobDatas.collect{ it.id }
+        if (jobDatasId.isEmpty()) return
+        JobData.executeUpdate("delete from JobData a where a.id IN (:list)",[list:jobDatasId])
+    }
+
+
+    /**
+     * Create a new user that will be link with the job and launch the exe with parameters
+     * @param job Job to launch
+     * @return The job
+     */
+    public def executeJob(Job job) {
+        log.info "Create UserJob..."
+        UserJob userJob = createUserJob(User.read(springSecurityService.principal.id), job)
+        job.software.service.init(job, userJob)
+
+        log.info "Launch async..."
+        backgroundService.execute("RunJobAsynchronously", {
+            log.info "Launch thread";
+            job.software.service.execute(job)
+        })
+        job
+    }
+
+    public UserJob createUserJob(User user, Job job) {
+        UserJob userJob = new UserJob()
+        userJob.job = job
+        userJob.username = "JOB[" + user.username + " ], " + new Date().toString()
+        userJob.password = user.password
+        userJob.generateKeys()
+        userJob.enabled = user.enabled
+        userJob.accountExpired = user.accountExpired
+        userJob.accountLocked = user.accountLocked
+        userJob.passwordExpired = user.passwordExpired
+        userJob.user = user
+        userJob = userJob.save(flush: true)
+        user.getAuthorities().each { secRole ->
+            SecUserSecRole.create(userJob, secRole)
+        }
+        return userJob
+    }
+
 }

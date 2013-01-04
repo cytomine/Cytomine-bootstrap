@@ -18,13 +18,16 @@ import be.cytomine.ontology.AlgoAnnotationTerm
 import be.cytomine.processing.JobData
 import be.cytomine.command.Task
 
+/**
+ * Controller for job request.
+ * A job is a software instance that has been, is or will be running.
+ */
 class RestJobController extends RestController {
 
     def jobService
     def softwareService
     def projectService
     def jobParameterService
-    def retrievalSuggestTermJobService
     def userService
     def backgroundService
     def algoAnnotationService
@@ -34,6 +37,9 @@ class RestJobController extends RestController {
     def taskService
     def cytomineService
 
+    /**
+     * List all job
+     */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
         log.info "list all job"
@@ -44,8 +50,10 @@ class RestJobController extends RestController {
         } else responseSuccess(jobService.list())
     }
 
+    /**
+     * List all job for a project
+     */
     def listByProject = {
-        log.info "list all job by project"
         boolean light = params.light==null ? false : params.boolean('light')
         int max = params.max==null? Integer.MAX_VALUE : params.int('max')
 
@@ -54,27 +62,49 @@ class RestJobController extends RestController {
             log.info "project="+project.id + " software="+params.software
             if(params.software!=null) {
                 Software software = Software.read(params.software)
-                if(software) responseSuccess(jobService.list(software,project,light,max))
-                else responseNotFound("Job", "Software", params.software)
+                if(software) {
+                    responseSuccess(jobService.list(software,project,light,max))
+                } else {
+                    responseNotFound("Job", "Software", params.software)
+                }
+            } else {
+                responseSuccess(jobService.list(project,light,max))
             }
-            else responseSuccess(jobService.list(project,light,max))
-        } else responseNotFound("Job", "Project", params.id)
+        } else {
+            responseNotFound("Job", "Project", params.id)
+        }
     }
 
+    /**
+     * List all job for a software
+     */
     def listBySoftware = {
         Software software = softwareService.read(params.long('id'));
-        if (software) responseSuccess(jobService.list(software,false,Integer.MAX_VALUE))
-        else responseNotFound("Job", "Software", params.id)
+        if (software) {
+            responseSuccess(jobService.list(software,false,Integer.MAX_VALUE))
+        } else {
+            responseNotFound("Job", "Software", params.id)
+        }
     }
 
+    /**
+     * List all job for a software and a project
+     */
     def listBySoftwareAndProject = {
         Software software = softwareService.read(params.long('idSoftware'));
         Project project = projectService.read(params.long('idProject'), new Project());
-        if (!software) responseNotFound("Job", "Software", params.idSoftware)
-        if (!project) responseNotFound("Job", "Project", params.idProject)
-        else responseSuccess(jobService.list(software, project,false,Integer.MAX_VALUE))
+        if (!software) {
+            responseNotFound("Job", "Software", params.idSoftware)
+        } else if (!project) {
+            responseNotFound("Job", "Project", params.idProject)
+        } else {
+            responseSuccess(jobService.list(software, project,false,Integer.MAX_VALUE))
+        }
     }
 
+    /**
+     * Get a specific job
+     */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
         Job job = jobService.read(params.long('id'))
@@ -82,76 +112,54 @@ class RestJobController extends RestController {
         else responseNotFound("Job", params.id)
     }
 
+    /**
+     * Add a new job and launch this new software instance
+     */
     def add = {
         try {
-            log.debug("add")
             def result = jobService.add(request.JSON)
-            log.debug("result="+result)
             def idJob = result?.data?.job?.id
-            log.debug("idJob="+idJob)
-            executeJob(Job.get(idJob))
+            jobService.executeJob(Job.get(idJob))
             responseResult(result)
         } catch (CytomineException e) {
-            log.error("add error:" + e.msg)
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
     }
 
-    private def executeJob(Job job) {
-        log.info "Create UserJob..."
-        UserJob userJob = createUserJob(User.read(springSecurityService.principal.id), job)
-        job.software.service.init(job, userJob)
-
-        log.info "Launch async..."
-        backgroundService.execute("RunJobAsynchronously", {
-            log.info "Launch thread";
-            job.software.service.execute(job)
-        })
-        job
-    }
-
+    /**
+     * Update a job
+     */
     def update = {
-        log.info "update job controller"
         update(jobService, request.JSON)
     }
 
+    /**
+     * Delete a job
+     */
     def delete = {
         delete(jobService, JSON.parse("{id : $params.id}"))
     }
 
-    public UserJob createUserJob(User user, Job job) {
-        UserJob userJob = new UserJob()
-        userJob.job = job
-        userJob.username = "JOB[" + user.username + " ], " + new Date().toString()
-        userJob.password = user.password
-        userJob.generateKeys()
-        userJob.enabled = user.enabled
-        userJob.accountExpired = user.accountExpired
-        userJob.accountLocked = user.accountLocked
-        userJob.passwordExpired = user.passwordExpired
-        userJob.user = user
-        userJob = userJob.save(flush: true)
-        user.getAuthorities().each { secRole ->
-            SecUserSecRole.create(userJob, secRole)
-        }
-        return userJob
-    }
-
-
+    /**
+     * Delete the full data set build by the job
+     * This method will delete: annotation prediction, uploaded files,...
+     * This method is heavy, so we use Task service to provide a progress status to the user interface
+     */
+    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def deleteAllJobData = {
-        //TODO:: secure this method!
         Job job = jobService.read(params.long('id'));
         if (!job)
             responseNotFound("Job",params.id)
         else {
+            jobService.checkAuthorization(job.project)
+
             Task task = taskService.read(params.long('task'))
             log.info "load all annotations..."
-            //TODO:: inseatd of loading all annotations to check if there are reviewed annotation => make a single SQL request to see if there are reviewed annotation
-
+            //TODO:: Optim inseatd of loading all annotations to check if there are reviewed annotation => make a single SQL request to see if there are reviewed annotation
             taskService.updateTask(task,10,"Check if annotations are not reviewed...")
             List<AlgoAnnotation> annotations = algoAnnotationService.list(job)
-            List<ReviewedAnnotation> reviewed = hasReviewedAnnotation(annotations)
+            List<ReviewedAnnotation> reviewed = jobService.hasReviewedAnnotation(annotations)
 
             if(!reviewed.isEmpty()) {
                 taskService.finishTask(task)
@@ -161,13 +169,13 @@ class RestJobController extends RestController {
                 List<UserJob> users = UserJob.findAllByJob(job)
 
                 taskService.updateTask(task,30,"Delete all terms from annotations...")
-                deleteAllAlgoAnnotationsTerm(users)
+                jobService.deleteAllAlgoAnnotationsTerm(users)
 
                 taskService.updateTask(task,60,"Delete all annotations...")
-                deleteAllAlgoAnnotations(users)
+                jobService.deleteAllAlgoAnnotations(users)
 
                 taskService.updateTask(task,90,"Delete all files...")
-                deleteAllJobData(JobData.findAllByJob(job))
+                jobService.deleteAllJobData(JobData.findAllByJob(job))
 
                 taskService.finishTask(task)
                 job.dataDeleted = true;
@@ -177,6 +185,10 @@ class RestJobController extends RestController {
         }
     }
 
+    /**
+     * List all data build by the job
+     * Job data are prediction (algoannotationterm, algoannotation,...) and uploaded files
+     */
     def listAllJobData = {
         Job job = jobService.read(params.long('id'));
         if (!job)
@@ -193,35 +205,8 @@ class RestJobController extends RestController {
             taskService.updateTask(task,75,"Looking for all job data...")
             List<JobData> jobDatas = jobDataService.list(job)
             taskService.finishTask(task)
-            responseSuccess([annotations:annotations.size(),annotationsTerm:annotationsTermNumber,jobDatas:jobDatas.size(), reviewed:hasReviewedAnnotation(annotations).size()])
+            responseSuccess([annotations:annotations.size(),annotationsTerm:annotationsTermNumber,jobDatas:jobDatas.size(), reviewed:jobService.hasReviewedAnnotation(annotations).size()])
 
         }
     }
-
-    private def hasReviewedAnnotation(List<AlgoAnnotation> annotations) {
-        List<Long> annotationsId = annotations.collect{ it.id }
-        if (annotationsId.isEmpty()) []
-        return ReviewedAnnotation.findAllByParentIdentInList(annotationsId)
-    }
-
-    private void deleteAllAlgoAnnotations(List<UserJob> users) {
-        List<Long> usersId = users.collect{ it.id }
-        if (usersId.isEmpty()) return
-        AlgoAnnotation.executeUpdate("delete from AlgoAnnotation a where a.user.id in (:list)",[list:usersId])
-    }
-
-    private void deleteAllAlgoAnnotationsTerm(List<UserJob> users) {
-        List<Long> usersId = users.collect{ it.id }
-        if (usersId.isEmpty()) return
-        AlgoAnnotationTerm.executeUpdate("delete from AlgoAnnotationTerm a where a.userJob.id IN (:list)",[list:usersId])
-    }
-
-    private void deleteAllJobData(List<JobData> jobDatas) {
-        List<Long> jobDatasId = jobDatas.collect{ it.id }
-        if (jobDatasId.isEmpty()) return
-        JobData.executeUpdate("delete from JobData a where a.id IN (:list)",[list:jobDatasId])
-    }
-
-
-
 }

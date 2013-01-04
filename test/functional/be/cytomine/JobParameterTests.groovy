@@ -30,6 +30,9 @@ class JobParameterTests extends functionaltestplugin.FunctionalTestCase {
          assertEquals(200, result.code)
          def json = JSON.parse(result.data)
          assert json instanceof JSONArray
+
+        result = JobParameterAPI.listByJob(jobparameter.job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assertEquals(404, result.code)
      }
  
      void testShowJobParameterWithCredential() {

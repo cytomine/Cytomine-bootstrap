@@ -4,34 +4,46 @@ import be.cytomine.api.RestController
 import be.cytomine.project.Project
 import grails.converters.JSON
 
+/**
+ * Controller that handle the link between a project and a image filter
+ */
 class RestImageFilterProjectController extends RestController {
 
-    def imageFilterService
     def imageFilterProjectService
     def projectService
     def cytomineService
 
-
+    /**
+     * List all image filter project
+     */
     def list = {
  		responseSuccess(imageFilterProjectService.list())
     }
 
+    /**
+     * List all image filter for a project
+     */
     def listByProject = {
         def project = Project.read(params.project)
-		if (!project) responseNotFound("Project", "Project", params.project)
-        println "listByProject"
+		if (!project) {
+            responseNotFound("Project", "Project", params.project)
+            return
+        }
         def imagesFiltersProject = imageFilterProjectService.list(project)
-        println "imagesFiltersProject=$imagesFiltersProject"
  		responseSuccess(imagesFiltersProject)
     }
 
-
+    /**
+     * Add an image filter to a project
+     */
     def add = {
         add(imageFilterProjectService, request.JSON)
     }
 
+    /**
+     * Delete an image filter from a project
+     */
     def delete = {
-        log.info "DELETE imageFilterProjectService " + params.id
         delete(imageFilterProjectService, JSON.parse("{id : $params.id}"))
     }
 

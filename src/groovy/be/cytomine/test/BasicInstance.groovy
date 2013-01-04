@@ -141,11 +141,37 @@ class BasicInstance {
         userJob
     }
 
+    static ImageFilter createOrGetBasicImageFilter() {
+       def imagefilter = ImageFilter.findByName("imagetest")
+       if(!imagefilter) {
+           imagefilter = new ImageFilter()
+           imagefilter.name = "imagetest"
+           imagefilter.baseUrl = "baseurl"
+           def processing = new ProcessingServer(url: "processingserverurl")
+           processing.save(flush:true)
+           imagefilter.processingServer = processing
+           BasicInstance.checkDomain(imagefilter)
+           BasicInstance.saveDomain(imagefilter)
+       }
+        imagefilter
+    }
 
+    static ImageFilterProject createOrGetBasicImageFilterProject() {
+       def imagefilter = createOrGetBasicImageFilter()
+       def project = createOrGetBasicProject()
+       def result = ImageFilterProject.findByProjectAndImageFilter(project,imagefilter)
+        if(!result) {
+            result = ImageFilterProject.link(imagefilter,project)
+        }
+        return result
+    }
 
-
-
-
+    static ImageFilterProject getBasicImageFilterProjectNotExist() {
+       def imagefilter = createOrGetBasicImageFilter()
+       def project = getBasicProjectNotExist()
+        project.save(flush: true)
+       return new ImageFilterProject(imageFilter: imagefilter, project: project)
+    }
 
     static UserAnnotation createOrGetBasicUserAnnotation() {
         log.debug "createOrGetBasicUserAnnotation()"

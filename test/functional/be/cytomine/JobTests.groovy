@@ -37,6 +37,9 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
+
+        result = JobAPI.listBySoftware(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
     }
 
     void testListJobBySoftwareAndProjectWithCredential() {
@@ -45,6 +48,12 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
+
+        result = JobAPI.listBySoftwareAndProject(-99,job.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,false)
+        assertEquals(404, result.code)
+
+        result = JobAPI.listBySoftwareAndProject(job.software.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD,false)
+        assertEquals(404, result.code)
     }
 
     void testListJobBySoftwareAndProjectWithCredentialLight() {
@@ -129,6 +138,17 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         def result = JobAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(404, result.code)
     }
+
+
+    void testListJobData() {
+        Job job = BasicInstance.createOrGetBasicJob()
+        def result = JobAPI.listAllJobData(job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        result = JobAPI.listAllJobData(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
 
     void testDeleteAllJobDataJobNotExist() {
         def result = JobAPI.deleteAllJobData(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
