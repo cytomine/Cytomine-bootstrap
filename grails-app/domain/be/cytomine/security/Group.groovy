@@ -5,6 +5,7 @@ import be.cytomine.image.AbstractImageGroup
 import be.cytomine.project.Project
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.Exception.AlreadyExistException
 
 class Group extends CytomineDomain {
 
@@ -70,6 +71,13 @@ class Group extends CytomineDomain {
             returnArray['id'] = it.id
             returnArray['name'] = it.name
             return returnArray
+        }
+    }
+
+    void checkAlreadyExist() {
+        Group.withNewSession {
+            Group groupAlreadyExist = Group.findByName(name)
+            if(groupAlreadyExist && (groupAlreadyExist.id!=id))  throw new AlreadyExistException("Group $name already exist!")
         }
     }
 

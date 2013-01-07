@@ -52,4 +52,19 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
       def json = JSON.parse(response)
       assert json instanceof JSONObject
     }
+
+    void testShowRelationWithCredentialNotExist() {
+
+      log.info("show relation")
+      String URL = Infos.CYTOMINEURL+"api/relation/-99.json"
+      HttpClient client = new HttpClient();
+      client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+      client.get()
+      int code  = client.getResponseCode()
+      String response = client.getResponseData()
+      client.disconnect();
+
+      log.info("check response:"+response)
+      assertEquals(404,code)
+    }
 }

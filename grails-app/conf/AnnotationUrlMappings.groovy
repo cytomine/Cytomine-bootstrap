@@ -91,7 +91,7 @@ class AnnotationUrlMappings {
             action = [GET:"missingAnnotation"]
         }
         "/api/annotation/$idannotation/retrieval"(controller:"restRetrieval"){
-            action = [GET:"listSimilarAnnotationAndBestTerm",POST:"index"]
+            action = [GET:"listSimilarAnnotationAndBestTerm"]
         }
 
         /**

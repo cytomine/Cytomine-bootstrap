@@ -8,6 +8,9 @@ import static groovyx.net.http.Method.POST
 import groovyx.net.http.ContentType
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.apache.log4j.Logger
+
+import static groovyx.net.http.Method.DELETE
 
 /**
  * User: lrollus
@@ -19,13 +22,7 @@ class RetrievalHttpUtils {
 
     private static Log log = LogFactory.getLog(RetrievalHttpUtils.class)
 
-    public static String getPostSearchResponse(String URL) {
-        println "getPostSearchResponse not mocked"
-    }
-
     public static String getPostSearchResponse(String URL, String resource, AnnotationDomain annotation, String urlAnnotation, List<Long> projectsSearch) {
-        println "getPostSearchResponse not mocked"
-        return
         def http = new HTTPBuilder(URL)
         http.auth.basic 'xxx', 'xxx'
         def params = ["id": annotation.id, "url": urlAnnotation, "containers": projectsSearch]
@@ -46,8 +43,42 @@ class RetrievalHttpUtils {
         }
     }
 
-    public static void print() {
-        println "RetrievalHttpUtils.println"
+    public static String getPostResponse(String URL, String resource, def jsonStr) {
+        def http = new HTTPBuilder(URL)
+        http.auth.basic 'xxx', 'xxx'
+
+        http.request(POST) {
+            uri.path = resource
+            send ContentType.JSON, jsonStr
+
+            response.success = { resp, json ->
+                Logger.getLogger(this).info("response succes: ${resp.statusLine}")
+                return json.toString()
+            }
+            response.failure = { resp ->
+                Logger.getLogger(this).info("response error: ${resp.statusLine}")
+                return ""
+            }
+        }
     }
+
+    public static String getDeleteResponse(String URL, String resource) {
+
+             def http = new HTTPBuilder(URL)
+             http.auth.basic 'xxx', 'xxx'
+
+             http.request(DELETE) {
+                 uri.path = resource
+
+                 response.success = { resp, json ->
+                     Logger.getLogger(this).info("response succes: ${resp.statusLine}")
+                     return json
+                 }
+                 response.failure = { resp ->
+                     Logger.getLogger(this).info("response error: ${resp.statusLine}")
+                     return ""
+                 }
+             }
+     }
 
 }

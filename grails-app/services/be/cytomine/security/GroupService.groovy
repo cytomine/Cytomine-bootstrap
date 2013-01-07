@@ -23,7 +23,7 @@ class GroupService extends ModelService {
         def groups = Group.createCriteria().list(max: maxRows, offset: rowOffset) {
             if (name != null)
                 ilike('name', "%$name%")
-            order(sortIndex, sortOrder).ignoreCase()
+            order(sortIndex, sortOrder)
         }
         return groups
     }

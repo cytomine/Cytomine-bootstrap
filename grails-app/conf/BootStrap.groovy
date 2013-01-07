@@ -41,7 +41,6 @@ import be.cytomine.security.SecUser
 import be.cytomine.processing.RetrievalService
 import be.cytomine.utils.RetrievalHttpUtils
 
-import mockit.Mockit
 import be.cytomine.AnnotationDomain
 
 class BootStrap {

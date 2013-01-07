@@ -7,6 +7,9 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 
+/**
+ * Controller to manage user role
+ */
 class RestSecUserSecRoleController extends RestController {
 
     def userService
@@ -15,45 +18,45 @@ class RestSecUserSecRoleController extends RestController {
     def cytomineService
     def transactionService
 
+    /**
+     * List all roles for a user
+     */
     @Secured(['ROLE_ADMIN'])
     def list = {
         User user = userService.read(params.long('user'));
         responseSuccess(secUserSecRoleService.list(user))
     }
 
+    /**
+     * Check a role for a user
+     * If user has not this role, send 404
+     */
     @Secured(['ROLE_ADMIN'])
     def show = {
         User user = userService.read(params.long('user'));
         SecRole role = secRoleService.read(params.long('role'));
         SecUserSecRole secUserSecRole = secUserSecRoleService.get(user, role)
-        if (!secUserSecRole) responseNotFound("SecUserSecRole", params.user)
-        responseSuccess(secUserSecRole)
+        if (!secUserSecRole) {
+            responseNotFound("SecUserSecRole", params.user)
+        } else {
+            responseSuccess(secUserSecRole)
+        }
     }
 
+    /**
+     * Add a new role to a user
+     */
     @Secured(['ROLE_ADMIN'])
-    def save = {
+    def add = {
         add(secUserSecRoleService, request.JSON)
     }
 
+    /**
+     * Delete a role from a user
+     */
     @Secured(['ROLE_ADMIN'])
     def delete = {
         delete(secUserSecRoleService, JSON.parse("{user : $params.user, role: $params.role}"))
-    }
-
-    @Secured(['ROLE_ADMIN'])
-    def grid = {
-        def sortIndex = params.sidx ?: 'id'
-        def sortOrder = params.sord ?: 'asc'
-        def maxRows = 50//params.row ? Integer.valueOf(params.rows) : 20
-        def currentPage = params.page ? Integer.valueOf(params.page) : 1
-        def rowOffset = currentPage == 1 ? 0 : (currentPage - 1) * maxRows
-
-        def secRoles = secUserSecRoleService.list(sortIndex, sortOrder, maxRows, currentPage, rowOffset)
-
-        def totalRows = secRoles.totalCount
-        def numberOfPages = Math.ceil(totalRows / maxRows)
-        def jsonData = [rows: secRoles, page: currentPage, records: totalRows, total: numberOfPages]
-        render jsonData as JSON
     }
 
 }

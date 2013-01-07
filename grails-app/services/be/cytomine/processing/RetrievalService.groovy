@@ -145,72 +145,32 @@ class RetrievalService {
     }
 
 
-
-
-    public static String getPostResponse(String URL, String resource, def jsonStr) {
-        def http = new HTTPBuilder(URL)
-        http.auth.basic 'xxx', 'xxx'
-
-        http.request(POST) {
-            uri.path = resource
-            send ContentType.JSON, jsonStr
-
-            response.success = { resp, json ->
-                Logger.getLogger(this).info("response succes: ${resp.statusLine}")
-                return json.toString()
-            }
-            response.failure = { resp ->
-                Logger.getLogger(this).info("response error: ${resp.statusLine}")
-                return ""
-            }
-        }
-    }
-
-    public static String getDeleteResponse(String URL, String resource) {
-
-            def http = new HTTPBuilder(URL)
-            http.auth.basic 'xxx', 'xxx'
-
-            http.request(DELETE) {
-                uri.path = resource
-
-                response.success = { resp, json ->
-                    Logger.getLogger(this).info("response succes: ${resp.statusLine}")
-                    return json
-                }
-                response.failure = { resp ->
-                    Logger.getLogger(this).info("response error: ${resp.statusLine}")
-                    return ""
-                }
-            }
-    }
-
     public static def indexAnnotationSynchronous(String json, String url) {
         Logger.getLogger(this).info("index synchronous json")
         Logger.getLogger(this).info("url = " + url)
         String res = "/retrieval-web/api/resource.json"
-        getPostResponse(url, res, json)
+        RetrievalHttpUtils.getPostResponse(url, res, json)
     }
 
     public static def indexAnnotationSynchronous(Long id) {
         Logger.getLogger(this).info("index synchronous id")
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String res = "/retrieval-web/api/resource.json"
-        getPostResponse(server.url, res, UserAnnotation.read(id))
+        RetrievalHttpUtils.getPostResponse(server.url, res, UserAnnotation.read(id))
     }
 
     public static def deleteAnnotationSynchronous(Long id) {
         Logger.getLogger(this).info("delete synchronous")
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String res = "/retrieval-web/api/resource/"+id+".json"
-        getDeleteResponse(server.url,res)
+        RetrievalHttpUtils.getDeleteResponse(server.url,res)
     }
 
     public static def deleteContainerSynchronous(Long id) {
         Logger.getLogger(this).info("delete container synchronous")
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String res = "/retrieval-web/api/container/" + id + ".json"
-        getDeleteResponse(server.url,res)
+        RetrievalHttpUtils.getDeleteResponse(server.url,res)
     }
 
     public static def updateAnnotationSynchronous(Long id) {

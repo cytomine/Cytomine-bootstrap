@@ -6,6 +6,7 @@ import be.cytomine.test.Infos
 import be.cytomine.test.http.SoftwareProjectAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
+import be.cytomine.processing.Job
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,8 +44,8 @@ class SoftwareProjectTests extends functionaltestplugin.FunctionalTestCase {
     }
 
     void testStatsSoftwareProject() {
-        SoftwareProject softwareProject = BasicInstance.createOrGetBasicSoftwareProject()
-        def result = SoftwareProjectAPI.stats(softwareProject.project.id,softwareProject.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        Job job = BasicInstance.createOrGetBasicJob()
+        def result = SoftwareProjectAPI.stats(job.project.id,job.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
     }

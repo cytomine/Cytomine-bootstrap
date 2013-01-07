@@ -39,15 +39,6 @@ class RestRetrievalController extends RestController {
         }
     }
 
-    def index = {
-        log.info "index with id userannotation:" + params.idannotation
-        UserAnnotation annotation = UserAnnotation.read(params.idannotation)
-        if(annotation) {
-            retrievalService.indexAnnotationSynchronous(annotation.id)
-        }
-        responseSuccess([])
-    }
-
     def missingAnnotation = {
         log.info "get missing annotation"
         retrievalService.indexMissingAnnotation()

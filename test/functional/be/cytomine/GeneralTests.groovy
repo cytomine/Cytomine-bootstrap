@@ -155,6 +155,15 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
         client2.disconnect();
     }
 
-
+    void testPing() {
+        HttpClient client = new HttpClient();
+        String url = Infos.CYTOMINEURL + "server/ping.json"
+        client.connect(url, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        def json = '{"project": "' + BasicInstance.createOrGetBasicProject().id + '"}'
+        client.post(json)
+        int code = client.getResponseCode()
+        client.disconnect();
+        assertEquals(200, code)
+    }
 
 }
