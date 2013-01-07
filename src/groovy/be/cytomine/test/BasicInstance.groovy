@@ -515,6 +515,17 @@ class BasicInstance {
         def abstractimageGroup = new AbstractImageGroup(abstractimage: abstractimage, group: group)
         abstractimageGroup
     }
+
+    static ProcessingServer createOrGetBasicProcessingServer() {
+        log.debug "createOrGetBasicProcessingServer()"
+        def ps = ProcessingServer.findByUrl("processing_server_url")
+        if (!ps) {
+            ps = new ProcessingServer(url: "processing_server_url")
+        }
+        checkDomain(ps)
+        saveDomain(ps)
+        ps
+    }
     
     static Discipline createOrGetBasicDiscipline() {
         log.debug "createOrGetBasicDiscipline()"

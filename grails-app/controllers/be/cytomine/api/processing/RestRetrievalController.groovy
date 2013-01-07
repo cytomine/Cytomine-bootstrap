@@ -7,24 +7,28 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
 
+/**
+ * Controller that handle Retrieval request
+ *
+ */
 class RestRetrievalController extends RestController {
 
     def retrievalService
     def cytomineService
 
-    def search = {
-        log.info "List with id userannotation:" + params.iduserannotation
-        responseSuccess(retrievalService.loadAnnotationSimilarities(UserAnnotation.read(params.iduserannotation)))
-    }
-
+    /**
+     * Look for similar annotation and term suggested for annotation in params
+     */
     def listSimilarAnnotationAndBestTerm = {
+
         log.info "List with id userannotation:" + params.idannotation
         try {
-            AnnotationDomain annotation = UserAnnotation.read(params.idannotation)
-            if(!annotation) annotation = AlgoAnnotation.read(params.idannotation)
-            if(!annotation) annotation = ReviewedAnnotation.read(params.idannotation)
-            if(!annotation) responseNotFound("AnnotationDomain",params.idannotation)
-            else {
+
+            AnnotationDomain annotation = getAnnotationDomain(params.idannotation)
+
+            if(!annotation) {
+                responseNotFound("AnnotationDomain",params.idannotation)
+            } else {
                 def data = retrievalService.listSimilarAnnotationAndBestTerm(annotation.project, annotation)
                response.status = 200
                responseSuccess(data)
@@ -38,8 +42,9 @@ class RestRetrievalController extends RestController {
     def index = {
         log.info "index with id userannotation:" + params.idannotation
         UserAnnotation annotation = UserAnnotation.read(params.idannotation)
-        if(annotation)
+        if(annotation) {
             retrievalService.indexAnnotationSynchronous(annotation.id)
+        }
         responseSuccess([])
     }
 

@@ -108,8 +108,11 @@ class RestJobController extends RestController {
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
         Job job = jobService.read(params.long('id'))
-        if (job) responseSuccess(job)
-        else responseNotFound("Job", params.id)
+        if (job) {
+            responseSuccess(job)
+        } else {
+            responseNotFound("Job", params.id)
+        }
     }
 
     /**
@@ -149,9 +152,9 @@ class RestJobController extends RestController {
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def deleteAllJobData = {
         Job job = jobService.read(params.long('id'));
-        if (!job)
+        if (!job) {
             responseNotFound("Job",params.id)
-        else {
+        } else {
             jobService.checkAuthorization(job.project)
 
             Task task = taskService.read(params.long('task'))
@@ -164,8 +167,7 @@ class RestJobController extends RestController {
             if(!reviewed.isEmpty()) {
                 taskService.finishTask(task)
                 responseError(new ConstraintException("There are ${reviewed.size()} reviewed annotations. You cannot delete all job data!"))
-            }
-            else {
+            } else {
                 List<UserJob> users = UserJob.findAllByJob(job)
 
                 taskService.updateTask(task,30,"Delete all terms from annotations...")

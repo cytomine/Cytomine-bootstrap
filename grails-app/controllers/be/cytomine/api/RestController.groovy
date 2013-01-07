@@ -349,6 +349,14 @@ class RestController {
         }
     }
 
+    protected AnnotationDomain getAnnotationDomain(String id) {
+        try {
+            getAnnotationDomain(Long.parseLong(id))
+        } catch(NumberFormatException e) {
+            throw new ObjectNotFoundException("Annotation ${id} not found")
+        }
+    }
+
     protected AnnotationDomain getAnnotationDomain(long id) {
         AnnotationDomain basedAnnotation = UserAnnotation.read(id)
         if (!basedAnnotation)

@@ -7,16 +7,25 @@ import be.cytomine.project.Project
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
 
+/**
+ * Controller for software: application that can be launch (job)
+ */
 class RestSoftwareController extends RestController {
 
     def softwareService
     def jobService
 
+    /**
+     * List all software available in cytomine
+     */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
         responseSuccess(softwareService.list())
     }
 
+    /**
+     * List all software by project
+     */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def listByProject = {
         Project project = Project.read(params.long('id'))
@@ -24,32 +33,54 @@ class RestSoftwareController extends RestController {
         else responseNotFound("Project", params.id)
     }
 
+    /**
+     * Get a specific software
+     */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
         Software software = softwareService.read(params.long('id'))
-        if (software) responseSuccess(software)
-        else responseNotFound("Software", params.id)
+        if (software) {
+            responseSuccess(software)
+        } else {
+            responseNotFound("Software", params.id)
+        }
     }
 
+    /**
+     * Add a new software to cytomine
+     * We must add in other request: parameters, software-project link,...
+     */
     def add = {
         add(softwareService, request.JSON)
     }
 
+    /**
+     * Update a software info
+     */
     def update = {
-        log.info "update software controller"
         update(softwareService, request.JSON)
     }
 
+    /**
+     * Delete software
+     */
     def delete = {
         delete(softwareService, JSON.parse("{id : $params.id}"))
     }
 
+    /**
+     * List software
+     * TODO:: could be improved with a single SQL request
+     *
+     */
     def softwareInfoForProject = {
         Project project = Project.read(params.long('idProject'))
         Software software = Software.read(params.long('idSoftware'))
-        if(!project) responseNotFound("Project", params.idProject)
-        else if(!software) responseNotFound("Software", params.idSoftware)
-        else {
+        if(!project) {
+            responseNotFound("Project", params.idProject)
+        } else if(!software) {
+            responseNotFound("Software", params.idSoftware)
+        } else {
             def result = [:]
             List<Job> jobs = Job.findAllByProjectAndSoftware(project,software)
             

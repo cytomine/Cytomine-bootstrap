@@ -66,6 +66,18 @@ class SoftwareProjectAPI extends DomainAPI {
         return [data: response, code: code]
     }
 
+    static def stats(Long idProject, Long idSoftware, String username, String password) {
+        log.info "list softwareproject by project/soft $idProject/$idSoftware"
+        String URL = Infos.CYTOMINEURL + "api/project/$idProject/software/$idSoftware/stats.json"
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
     static def create(SoftwareProject softwareprojectToAdd, User user) {
        create(softwareprojectToAdd.encodeAsJSON(),user.username,user.password)
     }

@@ -23,6 +23,7 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.ontology.UserAnnotation
 import groovy.sql.Sql
 import be.cytomine.ontology.Ontology
+import be.cytomine.utils.RetrievalHttpUtils
 
 class RetrievalService {
 
@@ -54,15 +55,12 @@ class RetrievalService {
      * @throws Exception
      */
     def listSimilarAnnotationAndBestTerm(Project project, AnnotationDomain annotation) throws Exception {
-        long start = System.currentTimeMillis()
-        start = printTimeAndReset(start,"1")
         def data = [:]
 
         if(annotation.location.numPoints<3) {
             data.term = []
             return data
         }
-        start = printTimeAndReset(start,"2")
 
         //find project used for retrieval
         List<Long> projectSearch = []
@@ -70,18 +68,15 @@ class RetrievalService {
         else if(project.retrievalAllOntology)
             projectSearch=getAllProjectId(annotation.project.ontology)
         else projectSearch=project.retrievalProjects.collect {it.id}
-        start = printTimeAndReset(start,"3")
 
         //Get similar annotation
         def similarAnnotations = loadAnnotationSimilarities(annotation,projectSearch)
         data.annotation = similarAnnotations
-        start = printTimeAndReset(start,"4")
 
         //Get all term from project
         def projectTerms = project.ontology.terms()
         def bestTermNotOrdered = getTermMap(projectTerms)
         ValueComparator bvc = new ValueComparator(bestTermNotOrdered);
-        start = printTimeAndReset(start,"5")
 
         //browse annotation
         similarAnnotations.each { similarAnnotation ->
@@ -95,13 +90,11 @@ class RetrievalService {
                 }
             }
         }
-        start = printTimeAndReset(start,"6")
 
         //Sort [term:rate] by rate (desc)
         TreeMap<Term, Double> bestTerm = new TreeMap(bvc);
         bestTerm.putAll(bestTermNotOrdered)
         def bestTermList = []
-        start = printTimeAndReset(start,"7")
 
         //Put them in a list
         for (Map.Entry<Term, Double> entry: bestTerm.entrySet()) {
@@ -109,7 +102,6 @@ class RetrievalService {
             term.rate = entry.getValue()
             bestTermList << term
         }
-        start = printTimeAndReset(start,"8")
         data.term = bestTermList
         return data
     }
@@ -123,24 +115,18 @@ class RetrievalService {
     }
 
     def loadAnnotationSimilarities(AnnotationDomain searchAnnotation,List<Long> projectSearch) {
-        long start = System.currentTimeMillis()
-        start = printTimeAndReset(start,"a")
         log.info "get similarities for userAnnotation " + searchAnnotation.id + " on " + projectSearch
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
-        start = printTimeAndReset(start,"b")
-        def response = getPostSearchResponse(server.url,'/retrieval-web/api/retrieval/search.json', searchAnnotation,projectSearch)
-        start = printTimeAndReset(start,"c")
+        def response = RetrievalHttpUtils.getPostSearchResponse(server.url,'/retrieval-web/api/retrieval/search.json', searchAnnotation, searchAnnotation.getCropUrl(grailsApplication.config.grails.serverURL),projectSearch)
+        println "response=$response"
         def json = JSON.parse(response)
-        start = printTimeAndReset(start,"d")
+        println "json=$json"
         def result =  readRetrievalResponse(searchAnnotation,json)
-        start = printTimeAndReset(start,"e")
         return result
     }
 
     private def readRetrievalResponse(AnnotationDomain searchAnnotation,def responseJSON) {
         def data = []
-        long start = System.currentTimeMillis()
-        start = printTimeAndReset(start,"a")
         for (int i = 0; i < responseJSON.length(); i++) {
             def annotationjson = responseJSON.get(i)  //{"id":6754,"url":"http://beimport java.util.concurrent.Futureta.cytomine.be:48/api/annotation/6754/crop.jpg","sim":6.922589484181173E-6},{"id":5135,"url":"http://beta.cytomine.be:48/api/annotation/5135/crop.jpg","sim":6.912057598973113E-6}]
 
@@ -155,31 +141,10 @@ class RetrievalService {
             catch (AccessDeniedException ex) {log.info "User cannot have access to this userAnnotation"}
             catch (NotFoundException ex) {log.info "User cannot have access to this userAnnotation"}
         }
-        start = printTimeAndReset(start,"b")
         return data
     }
 
-    public String getPostSearchResponse(String URL, String resource, AnnotationDomain annotation,List<Long> projectsSearch) {
 
-        def http = new HTTPBuilder(URL)
-        http.auth.basic 'xxx', 'xxx'
-        def params = ["id": annotation.id, "url": annotation.getCropUrl(grailsApplication.config.grails.serverURL), "containers": projectsSearch]
-        def paramsJSON = params as JSON
-
-        http.request(POST) {
-            uri.path = resource
-            send ContentType.JSON, paramsJSON.toString()
-
-            response.success = { resp, json ->
-                log.info "response succes: ${resp.statusLine}"
-                return json.toString()
-            }
-            response.failure = { resp ->
-                log.info "response error: ${resp.statusLine}"
-                return ""
-            }
-        }
-    }
 
 
     public static String getPostResponse(String URL, String resource, def jsonStr) {

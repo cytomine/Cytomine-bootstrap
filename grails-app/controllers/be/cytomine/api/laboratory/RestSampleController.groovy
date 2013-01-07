@@ -8,7 +8,7 @@ import grails.converters.JSON
 import be.cytomine.laboratory.Sample
 
 /**
- * //TODO:: document this class
+ * //TODO:: document/refactor/test this class
  */
 class RestSampleController extends RestController {
 

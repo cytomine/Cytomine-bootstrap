@@ -72,6 +72,7 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
 
     void testLastAction() {
         def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+
         def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         int idAnnotation = result.data.id
@@ -107,6 +108,16 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(response)
         assert json instanceof JSONArray
 
+    }
+
+    void testLastActionProjectNotExist() {
+        HttpClient client = new HttpClient();
+        String url = Infos.CYTOMINEURL + "api/project/-99/last/10.json"
+        client.connect(url, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        client.get()
+        int code = client.getResponseCode()
+        client.disconnect();
+        assertEquals(404, code)
     }
 
     void testMultipleAuthConnexion() {

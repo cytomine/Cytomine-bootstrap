@@ -24,20 +24,40 @@ class SoftwareProjectTests extends functionaltestplugin.FunctionalTestCase {
      }
  
      void testListSoftwareProjectByProject() {
-         SoftwareProject SoftwareProject = BasicInstance.createOrGetBasicSoftwareProject()
-         def result = SoftwareProjectAPI.listByProject(SoftwareProject.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         SoftwareProject softwareProject = BasicInstance.createOrGetBasicSoftwareProject()
+         def result = SoftwareProjectAPI.listByProject(softwareProject.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assertEquals(200, result.code)
          def json = JSON.parse(result.data)
          assert json instanceof JSONArray
+
+         result = SoftwareProjectAPI.listByProject(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assertEquals(404, result.code)
      }
  
     void testListSoftwareProjectBySoftware() {
-        SoftwareProject SoftwareProject = BasicInstance.createOrGetBasicSoftwareProject()
-        def result = SoftwareProjectAPI.listBySoftware(SoftwareProject.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        SoftwareProject softwareProject = BasicInstance.createOrGetBasicSoftwareProject()
+        def result = SoftwareProjectAPI.listBySoftware(softwareProject.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
+
+    void testStatsSoftwareProject() {
+        SoftwareProject softwareProject = BasicInstance.createOrGetBasicSoftwareProject()
+        def result = SoftwareProjectAPI.stats(softwareProject.project.id,softwareProject.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+    }
+
+    void testStatsSoftwareProjectNotExist() {
+        SoftwareProject softwareProject = BasicInstance.createOrGetBasicSoftwareProject()
+        def result = SoftwareProjectAPI.stats(-99,softwareProject.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+        result = SoftwareProjectAPI.stats(softwareProject.project.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
+
  
      void testAddSoftwareProjectCorrect() {
          def SoftwareProjectToAdd = BasicInstance.getBasicSoftwareProjectNotExist()

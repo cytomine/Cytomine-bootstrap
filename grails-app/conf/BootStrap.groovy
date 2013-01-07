@@ -38,6 +38,11 @@ import be.cytomine.ontology.*
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import be.cytomine.security.SecUser
+import be.cytomine.processing.RetrievalService
+import be.cytomine.utils.RetrievalHttpUtils
+
+import mockit.Mockit
+import be.cytomine.AnnotationDomain
 
 class BootStrap {
     def springSecurityService
@@ -249,6 +254,55 @@ class BootStrap {
             createRelation(BootStrapData.relationSamples)
             Project project = BasicInstance.createOrGetBasicProject()
             Infos.addUserRight(Infos.GOODLOGIN,project)
+
+
+            println "************************************************ MOCK"
+
+//
+//            RetrievalHttpUtils.print()
+//
+//            RetrievalHttpUtils.metaClass.'static'.print2 = { ->
+//                println "RetrievalHttpUtils.println2.mocked"
+//            }
+//
+//            RetrievalHttpUtils.print2()
+//
+//            RetrievalHttpUtils.metaClass.'static'.print = { ->
+//                println "RetrievalHttpUtils.println.mocked"
+//            }
+//
+//            RetrievalHttpUtils.print()
+//
+//            try {
+//                RetrievalHttpUtils.getPostSearchResponse("","",null,"",[])
+//                //RetrievalHttpUtils.getPostSearchResponse("")
+//            } catch(Exception e) {
+//                e.printStackTrace()
+//            }
+//
+////            RetrievalHttpUtils.metaClass.'static'.getPostSearchResponse  = {URL,resource,annotation,urlAnnotation,projectsSearch-> // stuff }
+////                println "getPostSearchResponse mocked"
+////                return "[]"
+////            }
+//
+//            RetrievalHttpUtils.metaClass.'static'.getPostSearchResponse  = {String URL, String resource, AnnotationDomain annotation, String urlAnnotation, List<Long> projectsSearch-> // stuff }
+//                println "getPostSearchResponse mocked"
+//                return "[]"
+//            }
+//
+//            try {
+//                RetrievalHttpUtils.getPostSearchResponse("","",null,"",[])
+//                //RetrievalHttpUtils.getPostSearchResponse("")
+//            } catch(Exception e) {
+//                e.printStackTrace()
+//            }
+
+
+//            RetrievalHttpUtils.metaClass.'static'.getPostSearchResponse = {URL, resource, annotation, urlAnnotation, projectsSearch ->
+//                println "getPostSearchResponse mocked"
+//                return "[]"
+//            }
+
 //            BootStrapData.class.getDeclaredFields().each {
 //                print it.class
 //            }
@@ -268,6 +322,16 @@ class BootStrap {
 
         //end of init
     }
+//
+//    public static class RetrievalHTTPMock2 {
+//
+//        public static String getPostSearchResponse(String URL, String resource, AnnotationDomain annotation, String urlAnnotation, List<Long> projectsSearch) {
+//            println "getPostSearchResponse mocked"
+//            return "[]"
+//        }
+//
+//    }
+
 
     private def generateAbstractImageOriginalFilename () {
         AbstractImage.findAllByOriginalFilenameIsNull().each { image ->
