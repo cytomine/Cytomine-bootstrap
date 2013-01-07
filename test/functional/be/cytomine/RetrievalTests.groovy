@@ -10,7 +10,6 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.processing.RetrievalService
 import be.cytomine.test.http.RetrievalAPI
 import be.cytomine.utils.RetrievalHttpUtils
-import mockit.Mockit
 
 
 /**
