@@ -19,6 +19,10 @@ import be.cytomine.security.*
 import be.cytomine.laboratory.Sample
 import be.cytomine.AnnotationDomain
 import be.cytomine.test.Infos
+import be.cytomine.test.http.ProjectAPI
+import be.cytomine.test.http.ImageInstanceAPI
+import be.cytomine.test.http.UserAnnotationAPI
+import be.cytomine.test.http.ReviewedAnnotationAPI
 
 /**
  * Created by IntelliJ IDEA.
@@ -705,6 +709,9 @@ class BasicInstance {
             project = new Project(name: name, ontology: createOrGetBasicOntology(), discipline: createOrGetBasicDiscipline())
             checkDomain(project)
             saveDomain(project)
+            try {
+                Infos.addUserRight(Infos.GOODLOGIN,project)
+            } catch(Exception e) {}
         }
         assert project != null
         project
@@ -1371,4 +1378,68 @@ class BasicInstance {
     static Integer toLong(Long s) {
         return s
     }
+
+
+    static def buildBasicUserAnnotation(String username, String password) {
+        //Create project with user 1
+        def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(), username, password)
+        assert 200==result.code
+        Project project = result.data
+
+        //Add image with user 1
+        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        image.project = project
+        result = ImageInstanceAPI.create(image.encodeAsJSON(), username, password)
+        assert 200==result.code
+        image = result.data
+
+        //Add annotation 1 with cytomine admin
+        UserAnnotation annotation = BasicInstance.getBasicUserAnnotationNotExist()
+        annotation.image = image
+        annotation.project = image.project
+        result = UserAnnotationAPI.create(annotation.encodeAsJSON(), username, password)
+        assert 200==result.code
+        annotation = result.data
+        return annotation
+    }
+
+
+
+    static ImageInstance buildBasicImage(String username, String password) {
+        //Create project with user 1
+        def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(), username, password)
+        assert 200==result.code
+        Project project = result.data
+        //Add image with user 1
+        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        image.project = project
+        result = ImageInstanceAPI.create(image.encodeAsJSON(), username, password)
+        assert 200==result.code
+        image = result.data
+        return image
+    }
+
+//    static def buildBasicReviewedAnnotation(String username, String password) {
+//        //Create project with user 1
+//        def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(), username, password)
+//        assert 200==result.code
+//        Project project = result.data
+//
+//        //Add image with user 1
+//        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+//        image.project = project
+//        result = ImageInstanceAPI.create(image, username, password)
+//        assert 200==result.code
+//        image = result.data
+//
+//        //Add annotation 1 with cytomine admin
+//        ReviewedAnnotation annotation = BasicInstance.getBasicReviewedAnnotationNotExist()
+//        annotation.image = image
+//        annotation.project = image.project
+//        result = ReviewedAnnotationAPI.create(annotation, username, password)
+//        assert 200==result.code
+//        annotation = result.data
+//        return annotation
+//    }
+
 }

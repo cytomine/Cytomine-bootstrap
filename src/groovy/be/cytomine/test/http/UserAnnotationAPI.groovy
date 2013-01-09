@@ -112,26 +112,4 @@ class UserAnnotationAPI extends DomainAPI {
         return doDELETE(URL,username,password)
     }
 
-    static def buildBasicUserAnnotation(String username, String password) {
-        //Create project with user 1
-        def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(), username, password)
-        assert 200==result.code
-        Project project = result.data
-
-        //Add image with user 1
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
-        image.project = project
-        result = ImageInstanceAPI.create(image.encodeAsJSON(), username, password)
-        assert 200==result.code
-        image = result.data
-
-        //Add annotation 1 with cytomine admin
-        UserAnnotation annotation = BasicInstance.getBasicUserAnnotationNotExist()
-        annotation.image = image
-        annotation.project = image.project
-        result = UserAnnotationAPI.create(annotation.encodeAsJSON(), username, password)
-        assert 200==result.code
-        annotation = result.data
-        return annotation
-    }
 }

@@ -131,26 +131,4 @@ class ReviewedAnnotationAPI extends DomainAPI {
         return doDELETE(URL,username,password)
     }
 
-    static def buildBasicReviewedAnnotation(String username, String password) {
-        //Create project with user 1
-        def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(), username, password)
-        assert 200==result.code
-        Project project = result.data
-
-        //Add image with user 1
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
-        image.project = project
-        result = ImageInstanceAPI.create(image, username, password)
-        assert 200==result.code
-        image = result.data
-
-        //Add annotation 1 with cytomine admin
-        ReviewedAnnotation annotation = BasicInstance.getBasicReviewedAnnotationNotExist()
-        annotation.image = image
-        annotation.project = image.project
-        result = ReviewedAnnotationAPI.create(annotation, username, password)
-        assert 200==result.code
-        annotation = result.data
-        return annotation
-    }
 }

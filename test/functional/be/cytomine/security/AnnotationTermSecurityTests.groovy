@@ -25,7 +25,7 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         User admin = getUserAdmin()
 
         //Create Annotation with user 1
-        UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        UserAnnotation annotation = BasicInstance.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
 
         //Add annotation-Term for annotation 1 with cytomine admin
         AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
@@ -50,7 +50,7 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         User user = getUser1()
 
         //Add annotation 1 with cytomine admin
-        UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        UserAnnotation annotation = BasicInstance.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
 
         //Add annotation-Term for annotation 1 with cytomine admin
         AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
@@ -77,7 +77,7 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         User user2 = getUser2()
 
         //Create project with user 1
-        UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        UserAnnotation annotation = BasicInstance.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
 
         //Add project right for user 2
         def resAddUser = ProjectAPI.addUserProject(annotation.project.id, user2.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
@@ -107,7 +107,7 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         User user2 = getUser2()
 
         //Create project with user 1
-        UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        UserAnnotation annotation = BasicInstance.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
 
         //Add annotation-Term for annotation 1 with cytomine admin
         AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
@@ -130,7 +130,7 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         User user = getUser1()
 
         //Create project with user 1
-        UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        UserAnnotation annotation = BasicInstance.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
 
         //Add annotation-Term for annotation 1 with cytomine admin
         AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")

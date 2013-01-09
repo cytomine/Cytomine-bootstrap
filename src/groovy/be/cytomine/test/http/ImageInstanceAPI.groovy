@@ -49,17 +49,4 @@ class ImageInstanceAPI extends DomainAPI {
         return doDELETE(URL,username,password)
     }
 
-    static ImageInstance buildBasicImage(String username, String password) {
-        //Create project with user 1
-        def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(), username, password)
-        assert 200==result.code
-        Project project = result.data
-        //Add image with user 1
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
-        image.project = project
-        result = ImageInstanceAPI.create(image.encodeAsJSON(), username, password)
-        assert 200==result.code
-        image = result.data
-        return image
-    }
 }

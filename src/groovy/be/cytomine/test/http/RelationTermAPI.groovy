@@ -51,7 +51,6 @@ class RelationTermAPI extends DomainAPI {
         def json = JSON.parse(jsonRelationTerm);
         String URL = Infos.CYTOMINEURL+"api/relation/"+ json.relation +"/term.json"
         def result = doPOST(URL,jsonRelationTerm,username,password)
-        result.data = RelationTerm.get(JSON.parse(result.data)?.relationterm?.id)
         return result
     }    
 
